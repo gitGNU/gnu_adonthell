@@ -433,8 +433,6 @@ void dialog_engine::update_keyboard ()
     if (input::is_pushed (SDLK_SPACE))
     {
         input::set_keyboard_mode (keyboard_mode);
-        // wait until SPACE is released
-        // while (input::is_pushed (SDLK_SPACE));
         game::engine = engine;
         delete this;
     }

@@ -60,7 +60,7 @@ void input::update()
 bool input::is_pushed(SDLKey key)
 {
   bool ret;
-  // if(keyboard_mode==MODE_PUSHED) keystate[key]=0;
+  if(keyboard_mode==MODE_PUSHED) keystate[key]=0;
   if(keyboard_mode==MODE_PUSHED) ret=p_keystate[key]; else ret=keystate[key];
   if(p_keystate[key]) p_keystate[key]--;
   return ret;

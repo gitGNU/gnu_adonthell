@@ -38,6 +38,31 @@ AC_CHECK_LIB(SDL_image, main,
   LIBS="$LIBS -lSDL_image",
   echo "Adonthell requires the SDL_image library.  Exitting..."; exit 1)
 
+dnl**************************************************
+dnl Seems SDL 1.1.5+ uses 255 for opaque instead of 0
+dnl**************************************************
+
+if test "$SDL_CONFIG" != "no" ; then
+    AC_MSG_CHECKING(whether to reverse alpha)
+    sdl_major_version=`$SDL_CONFIG $sdl_args --version | \
+           sed 's/\([[0-9]]*\).\([[0-9]]*\).\([[0-9]]*\)/\1/'`
+    sdl_minor_version=`$SDL_CONFIG $sdl_args --version | \
+           sed 's/\([[0-9]]*\).\([[0-9]]*\).\([[0-9]]*\)/\2/'`
+    sdl_micro_version=`$SDL_CONFIG $sdl_config_args --version | \
+           sed 's/\([[0-9]]*\).\([[0-9]]*\).\([[0-9]]*\)/\3/'`
+    if test $sdl_minor_version -ge 1 && 
+       test $sdl_micro_version -ge 5 ; then
+        AC_MSG_RESULT(yes) 
+        DEFS="$DEFS -DREVERSE_ALPHA"
+    else
+        AC_MSG_RESULT(no)
+    fi
+fi
+
+dnl********************
+dnl Check for SDL Mixer
+dnl********************
+
 SDL_MIXER=no
 AC_CHECK_LIB(SDLmixer,Mix_OpenAudio,
   SDL_MIXER=yes
