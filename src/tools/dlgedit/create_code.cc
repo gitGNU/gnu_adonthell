@@ -40,8 +40,8 @@ vector<string> vars;
 //
 // results in the following _p_rogram and _a_rgument stacks:
 //
-// p: branch or lt sub id num sub num id then let add id mul mul id id sub id
-//    div id id id let id id else let num id
+// p: branch or lt sub id num sub num id let add id mul mul id id sub id
+//    div id id id let id id jmp let num id endif
 // a: e 2 5 a b c d e f g x h y 0 z
 //
 // out of which we have to make: (with regx being temporary register x)

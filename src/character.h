@@ -19,25 +19,14 @@
 #include "storage.h"
 #include <vector>
 
-// character types
-enum
-{
-    PLAYER = 1,
-    NPC = 2,
-    ANIMAL = 3
-    // ...
-};
-
-// 
-enum
-{
-};
 
 // Base class for all sort of characters, like the player, NPC's, etc.
 class character : public storage
 {
 public:
-
+    void set_name (const char*);
+    char *get_name ();
+    
 protected:
     s_int32 type;                   // The characters type
     char *name;                     // The character's name (and ID)

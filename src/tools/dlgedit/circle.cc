@@ -36,6 +36,7 @@ crcle_dlg::crcle_dlg (Circle *c) : circle (c)
     vars = circle->variables;
     loop = actions[0][0];
     combat = actions[1][0]; 
+    change_dlg = 0;
 
     g_strfreev (actions);
     
@@ -123,4 +124,9 @@ void crcle_dlg::on_loop (u_int8 l)
 void crcle_dlg::on_change_dlg (u_int8 c)
 {
     change_dlg = c;
+}
+
+u_int16 crcle_dlg::get_cur_dlg ()
+{
+    return change_dlg;
 }

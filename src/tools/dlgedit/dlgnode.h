@@ -42,9 +42,12 @@ enum
     LOAD_COND = 11,
     LOAD_VARS = 12,
     LOAD_ACT = 13,
-    LOAD_STR = 14,
-    LOAD_NUM = 15,
-    LOAD_UNKNOWN = 16
+    LOAD_NAME = 14,
+    LOAD_RACE = 15,
+    LOAD_GENDER = 16,
+    LOAD_STR = 17,
+    LOAD_NUM = 18,
+    LOAD_UNKNOWN = 19
 };
 
 // Node Types

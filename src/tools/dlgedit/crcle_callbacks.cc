@@ -155,25 +155,58 @@ on_start_combat_clicked (GtkButton * button, gpointer user_data)
 void
 on_set_dlg_clicked (GtkButton * button, gpointer user_data)
 {
-
+    ((crcle_dlg *) user_data)->on_change_dlg (0);
 }
 
 void
 on_add_plugin_clicked (GtkButton * button, gpointer user_data)
 {
-
+    ((crcle_dlg *) user_data)->on_change_dlg (1);
 }
 
 void
 on_remove_plugin_clicked (GtkButton * button, gpointer user_data)
 {
-
+    ((crcle_dlg *) user_data)->on_change_dlg (2);
 }
 
 void
 on_add_dlg_button_clicked (GtkButton * button, gpointer user_data)
 {
+    crcle_dlg *dlg = (crcle_dlg *) user_data;
+    gchar* listitem[3];
+    GtkWidget* menuitem;
+    GtkLabel* label;
 
+    // Get NPC    
+    menuitem = gtk_menu_get_active ((GtkMenu *) dlg->npc_menu);
+    label = (GtkLabel *) g_list_nth_data (gtk_container_children ((GtkContainer *) menuitem), 0);
+    listitem[0] = label->label;
+
+    // Get Dialogue
+    menuitem = gtk_menu_get_active ((GtkMenu *) dlg->dlg_menu);
+    listitem[1] = ((GtkLabel *)((GtkBin *) menuitem)->child)->label;
+
+    switch (dlg->get_cur_dlg ())
+    {
+        case 0: 
+        {
+            listitem[2] = "Set Dialogue";
+            break;
+        }
+        case 1: 
+        {
+            listitem[2] = "Add Plugin";
+            break;
+        }
+        case 2: 
+        {
+            listitem[2] = "Remove Plugin";
+            break;
+        }        
+    }
+
+    gtk_clist_append ((GtkCList *) dlg->dlg_action_list, listitem);
 }
 
 void

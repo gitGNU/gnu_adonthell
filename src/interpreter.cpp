@@ -90,6 +90,15 @@ u_int8 interpreter::load (const char *file)
     // open File for reading
     FILE *dat = fopen (file, "r");
     if (!dat) return 0;
+
+    // delete old script
+    if (code)
+    {
+        for (i = 0; i < cmd_num; i++)
+            delete code[i];
+
+        delete[] code;
+    }
     
     // read program length and reserve temporary space
     fseek (dat, 0, SEEK_END);

@@ -2,7 +2,7 @@
 # Generated automatically by configure.
 # Run this file to recreate the current configuration.
 # This directory was configured as follows,
-# on host penguinmachine:
+# on host hund:
 #
 # ./configure 
 #
@@ -70,7 +70,7 @@ s%@ACLOCAL@%aclocal%g
 s%@AUTOCONF@%autoconf%g
 s%@AUTOMAKE@%automake%g
 s%@AUTOHEADER@%autoheader%g
-s%@MAKEINFO@%makeinfo%g
+s%@MAKEINFO@%/home/kai/adonthell/missing makeinfo%g
 s%@SET_MAKE@%%g
 s%@GCC@%/usr/bin/gcc%g
 s%@CXX@%c++%g

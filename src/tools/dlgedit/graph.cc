@@ -25,6 +25,7 @@ class dialog;
 
 #include "../../types.h"
 #include "../../interpreter.h"
+#include "../../character.h"
 #include "dlgnode.h"
 #include "main.h"
 #include "geometrie.h"
@@ -842,6 +843,28 @@ load_dialogue (MainFrame * wnd, const char *file)
                 break;             
             }
 
+            case LOAD_NAME:
+            {
+                if (parse_dlgfile (s, n) == LOAD_STR)
+                {
+                    delete[] wnd->myplayer->get_name ();
+                    wnd->myplayer->set_name (s.c_str ());
+                }
+                break;             
+            }
+
+            case LOAD_RACE:
+            {
+                if (parse_dlgfile (s, n) == LOAD_NUM) wnd->myplayer->set ("race", n);
+                break;
+            }
+
+            case LOAD_GENDER:
+            {
+                if (parse_dlgfile (s, n) == LOAD_NUM) wnd->myplayer->set ("gender", n);
+                break;
+            }
+            
             case LOAD_CIRCLE:
             {
                 circle = new Circle;
@@ -931,6 +954,14 @@ save_dialogue (MainFrame * wnd)
 
     // Preset variables
     if (wnd->pset_vars != "") out << "\nVars [" << wnd->pset_vars << "]\n";
+
+    // Players name, race and gender
+    if (strcmp ("Banec", wnd->myplayer->get_name ()))
+        out << "\nName [" << wnd->myplayer->get_name () << "]";
+    if (wnd->myplayer->get ("race") != 0)
+        out << "\nRace " << wnd->myplayer->get ("race");
+    if (wnd->myplayer->get ("gender") != 1)
+        out << "\nGender " << wnd->myplayer->get ("gender");
     
     // Save Circles and create position-table 
     for (i = 0; i < wnd->number; i++)

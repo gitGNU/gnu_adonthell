@@ -19,6 +19,7 @@
 #include <vector>
 #include <string>
 
+#include "../../character.h"
 #include "../../interpreter.h"
 #include "../../dialog.h"
 #include "../../yarg.h"
@@ -29,7 +30,7 @@ extern int vars_compile (const char*, string&, vector<command*>&);
 class run_dlg
 {
 public:
-    run_dlg (string, string);
+    run_dlg (string, string, player*);
     ~run_dlg ();
 
     GtkWidget *dlg;             // The actual Dialogue Window

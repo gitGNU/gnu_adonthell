@@ -32,6 +32,9 @@ main (int argc, char *argv[])
 
     gtk_init (&argc, &argv);
 
+    // Create a player
+    MainWnd->myplayer = new player;
+
     /* Misc initialization */
     init_app (MainWnd);
     init_interpreter ();
@@ -41,6 +44,10 @@ main (int argc, char *argv[])
     MainWnd->pixmap = NULL;
     MainWnd->project = NULL;
 
+    // create game_state array
+    storage *game_state = new storage ();
+    objects::set ("game_state", game_state);
+
     /* Create Top Level Window and Controls */
     create_mainframe (MainWnd);
 
@@ -49,6 +56,8 @@ main (int argc, char *argv[])
 
     /* Clean up */
     delete_dialogue (MainWnd);
+    delete MainWnd->myplayer;
+    delete game_state;
     delete MainWnd;
 
     return 0;
@@ -68,6 +77,9 @@ init_app (MainFrame * MainWnd)
     MainWnd->x_offset = 0;
     MainWnd->y_offset = 0;
     MainWnd->pset_vars = "";
+    MainWnd->myplayer->set_name ("Banec");
+    MainWnd->myplayer->set ("race", 0);     // Dwarf
+    MainWnd->myplayer->set ("gender", 1);   // Male
 }
 
 /* free allocated memory */

@@ -18,6 +18,7 @@
 
 #include <stdio.h>
 #include <fstream.h>
+#include <string>
 
 #include "types.h"
 #include "interpreter.h"
@@ -144,6 +145,9 @@ s_int32 text_cmd::run (u_int32 &pc, void *data)
 {
     dialog *dlg = (dialog *) data;
     dlg_text *t;
+    string s = dlg->strings[text];
+    s_int32 i;
+    string::iterator j;
 
     // Look if that part of the conversation was already in use     
     if (find (dlg->used_text.begin(), dlg->used_text.end(), text) == dlg->used_text.end ())
@@ -159,6 +163,35 @@ s_int32 text_cmd::run (u_int32 &pc, void *data)
         // npc here, different npc's are dealt with by the SPEAKER command.
         if (dlg->speaker == 0) dlg->player_text.push_back (t);
         else dlg->npc_text.push_back (t);
+
+        // Replace the $name and $fm macros by their proper values
+        while ((i = s.find ("$name")) != -1)
+            s.replace (i, 5, dlg->player_name);
+
+        while ((i = s.find ("$fm")) != -1)
+        {
+            s.erase (i, 3);
+            j = s.begin () + i;
+
+            // extract the male part
+            if (objects::get("player")->get("gender") == objects::get("game_state")->get("MALE"))
+            {
+                while ((*j) != '/') j++;
+                s.erase (s.begin()+i, j+1);
+                s.erase (s.find ("}", i), 1);
+            }
+            
+            // extract the female part
+            else
+            {
+                while ((*j) != '{') j++;
+                s.erase (s.begin()+i, j+1);
+                s.erase (s.find ("/", i), s.find ("}", i)+1-s.find ("/", i));
+            }
+        }
+
+        delete[] dlg->strings[text];
+        dlg->strings[text] = strdup (s.c_str ());
     }
     
     return 1;

@@ -38,6 +38,7 @@ public:
     u_int32 speaker;                    // The current speaker 
     u_int32 answer;                     // The text chosen by the player
     char *text_file;                    // The file with the dialogues strings
+    char *player_name;
 
     vector<dlg_text*> npc_text;         // NPC´s part
     vector<dlg_text*> player_text;      // Player´s part

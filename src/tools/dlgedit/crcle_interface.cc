@@ -420,13 +420,14 @@ create_dlg_node_window (Circle *circle, crcle_dlg *dlg)
     gtk_widget_show (hbox10);
     gtk_box_pack_start (GTK_BOX (vbox4), hbox10, FALSE, TRUE, 0);
 
-    label10 = gtk_label_new ("of ");
+    label10 = gtk_label_new ("NPC ");
     gtk_widget_ref (label10);
     gtk_object_set_data_full (GTK_OBJECT (dlg_node_window), "label10", label10,
 			    (GtkDestroyNotify) gtk_widget_unref);
     gtk_widget_show (label10);
     gtk_box_pack_start (GTK_BOX (hbox10), label10, FALSE, TRUE, 0);
 
+    // set NPCs
     optionmenu1 = gtk_option_menu_new ();
     gtk_widget_ref (optionmenu1);
     gtk_object_set_data_full (GTK_OBJECT (dlg_node_window), "optionmenu1",
@@ -435,18 +436,22 @@ create_dlg_node_window (Circle *circle, crcle_dlg *dlg)
     gtk_box_pack_start (GTK_BOX (hbox10), optionmenu1, TRUE, TRUE, 0);
     gtk_container_set_border_width (GTK_CONTAINER (optionmenu1), 2);
     optionmenu1_menu = gtk_menu_new ();
-    glade_menuitem = gtk_menu_item_new_with_label ("Text");
-    gtk_widget_show (glade_menuitem);
+    glade_menuitem = gtk_menu_item_new ();
+    label = gtk_label_new ("a NPC");
+    gtk_container_add(GTK_CONTAINER(glade_menuitem), label);
+    gtk_widget_show_all (glade_menuitem);
     gtk_menu_append (GTK_MENU (optionmenu1_menu), glade_menuitem);
     gtk_option_menu_set_menu (GTK_OPTION_MENU (optionmenu1), optionmenu1_menu);
+    dlg->npc_menu = optionmenu1_menu;
 
-    label11 = gtk_label_new (" to  ");
+    label11 = gtk_label_new (" Dialogue  ");
     gtk_widget_ref (label11);
     gtk_object_set_data_full (GTK_OBJECT (dlg_node_window), "label11", label11,
 			    (GtkDestroyNotify) gtk_widget_unref);
     gtk_widget_show (label11);
     gtk_box_pack_start (GTK_BOX (hbox10), label11, FALSE, TRUE, 0);
 
+    // set Dialgoue
     optionmenu2 = gtk_option_menu_new ();
     gtk_widget_ref (optionmenu2);
     gtk_object_set_data_full (GTK_OBJECT (dlg_node_window), "optionmenu2",
@@ -455,11 +460,14 @@ create_dlg_node_window (Circle *circle, crcle_dlg *dlg)
     gtk_box_pack_start (GTK_BOX (hbox10), optionmenu2, TRUE, TRUE, 0);
     gtk_container_set_border_width (GTK_CONTAINER (optionmenu2), 2);
     optionmenu2_menu = gtk_menu_new ();
-    glade_menuitem = gtk_menu_item_new_with_label ("Text");
-    gtk_widget_show (glade_menuitem);
+    glade_menuitem = gtk_menu_item_new ();
+    label = gtk_label_new ("a dialogue");
+    gtk_container_add(GTK_CONTAINER(glade_menuitem), label);
+    gtk_widget_show_all (glade_menuitem);
     gtk_menu_append (GTK_MENU (optionmenu2_menu), glade_menuitem);
     gtk_option_menu_set_menu (GTK_OPTION_MENU (optionmenu2), optionmenu2_menu);
-
+    dlg->dlg_menu = optionmenu2_menu;
+    
     hbuttonbox2 = gtk_hbutton_box_new ();
     gtk_widget_ref (hbuttonbox2);
     gtk_object_set_data_full (GTK_OBJECT (dlg_node_window), "hbuttonbox2",

@@ -108,5 +108,7 @@ storage* objects::get (const char* key)
 // Delete a key from the array
 void objects::erase (const char *key)
 {
-    data.erase (key);
+    // Check wether the key exists
+    if (data.find (key) != data.end ())
+        data.erase (key);
 }

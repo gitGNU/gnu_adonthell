@@ -19,6 +19,7 @@
 #include <string>
 #include <vector>
 #include "dlgnode.h"
+#include "../../character.h"
 
 // Internal Editor Modes
 enum
@@ -69,6 +70,7 @@ typedef struct
     s_int32 y_offset;           // Dito
 
     string pset_vars;           // Preset variables for running the Dialogue
+    player* myplayer;           // A player object
 }
 MainFrame;
 

@@ -114,12 +114,25 @@ void create_mainframe (MainFrame * MainWnd)
 
     /* Dialogue Menu */
     menu = gtk_menu_new ();
+    
+    /* Player Settings */
+    menuitem = gtk_menu_item_new_with_label ("Player");
+    gtk_container_add (GTK_CONTAINER (menu), menuitem);
+    gtk_widget_add_accelerator (menuitem, "activate", accel_group, GDK_l, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
+    gtk_signal_connect (GTK_OBJECT (menuitem), "activate", GTK_SIGNAL_FUNC (on_dialogue_player_activate), (gpointer) MainWnd);
+    gtk_widget_show (menuitem);
 
     /* Variables */
     menuitem = gtk_menu_item_new_with_label ("Variables");
     gtk_container_add (GTK_CONTAINER (menu), menuitem);
     gtk_widget_add_accelerator (menuitem, "activate", accel_group, GDK_v, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
     gtk_signal_connect (GTK_OBJECT (menuitem), "activate", GTK_SIGNAL_FUNC (on_dialogue_variables_activate), (gpointer) MainWnd);
+    gtk_widget_show (menuitem);
+
+    /* Seperator */
+    menuitem = gtk_menu_item_new ();
+    gtk_menu_append (GTK_MENU (menu), menuitem);
+    gtk_widget_set_sensitive (menuitem, FALSE);
     gtk_widget_show (menuitem);
 
     /* Compile */

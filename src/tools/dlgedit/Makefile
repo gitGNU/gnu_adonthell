@@ -56,19 +56,24 @@ LDFLAGS    =
 LOADLIBES := -lm -lstdc++ `gtk-config --libs`
 
 
-OBJECTS := ./callbacks.o ../../character.o ../../commands.o ./circle.o ./compile.o ./cond.tab.o ./crcle_callbacks.o ./crcle_interface.o ./create_code.o ./dlgnode.o ./events.o ../../generic_cmds.o ./geometrie.o ./graph.o ./interface.o ../../interpreter.o  ../../dialog_cmds.o ./lex.cond.o ./lex.loadlg.o ./lex.vars.o ./main.o ./pjt_interface.o ./pjt_callbacks.o ./preset.o ./project.o ./pset_callbacks.o ./pset_interface.o ./run.o ./run_callbacks.o ./run_interface.o ../../storage.o ./vars.tab.o ../../yarg.o
+OBJECTS := ./callbacks.o ../../character.o ../../commands.o ./circle.o ./compile.o ./cond.tab.o ./crcle_callbacks.o ./crcle_interface.o ./create_code.o ./dlgnode.o ./events.o ../../generic_cmds.o ./geometrie.o ./graph.o ./interface.o ../../interpreter.o  ../../dialog_cmds.o ./lex.cond.o ./lex.loadlg.o ./lex.vars.o ./main.o ./pjt_interface.o ./pjt_callbacks.o ./preset.o ./project.o ./ps_callbacks.o ./ps_dlg.o ./ps_interface.o ./pset_callbacks.o ./pset_interface.o ./run.o ./run_callbacks.o ./run_interface.o ../../storage.o ./vars.tab.o ../../yarg.o
 
+#
 # dlgedit
-
+#
 dlgedit : ${OBJECTS}
 	${LINKER} ${LDFLAGS} -o $@ ${filter-out %.a %.so, $^} ${LOADLIBES}
 
+#
 # target for making everything
-
+#
 .PHONY : all
 all: parser dlgedit
 
-
+#
+# stuff done with bison and flex
+#
+.PHONY : parser
 parser :
 	flex -olex.loadlg.cc loadlg.l
 	flex -olex.vars.cc variable.l
@@ -78,41 +83,51 @@ parser :
 	bison -d -p cond -o cond.tab.c condition.y
 	mv cond.tab.c cond.tab.cc
 
+#
 # target for removing all object files
-
+#
 .PHONY : tidy
 tidy::
 	@${RM} core ${OBJECTS} *~
 
+#
 # target for removing all object files
-
+#
 .PHONY : clean
 clean:: tidy
 	@${RM} dlgedit
 
-# list of all source files
 
-MM_ALL_SOURCES := ./callbacks.cc ./compile.cc ./dlgrun.cc ./events.cc ./function.cc ./geometrie.cc ./graph.cc ./interface.cc ./main.cc
-
-
-# target for checking a source file
-
-CHECKSYNTAXFILE := ${basename ${filter %${CHECKSTRING}, ${MM_ALL_SOURCES}}}
-
-.PHONY : checksyntax
-checksyntax:
-  ifneq (${CHECKSYNTAXFILE},)
-	@${MAKE} ${addsuffix .o, ${CHECKSYNTAXFILE}}
-  else
-	@echo No target to make ${CHECKSTRING}
-  endif
-
-
-# target for touching appropriate source files
-
-.PHONY : touch
-touch::
-	@list=$$(grep -l ${TOUCHSTRING} ${MM_ALL_SOURCES}); \
-     for file in $$list; do { echo $$file; touch $$file; } done
-
-
+./callbacks.o:
+../../character.o:
+../../commands.o:
+./circle.o:
+./compile.o:
+./cond.tab.o:
+./crcle_callbacks.o:
+./crcle_interface.o:
+./create_code.o:
+./dlgnode.o:
+./events.o:
+../../generic_cmds.o:
+./geometrie.o:
+./graph.o:
+./interface.o:
+../../interpreter.o:
+../../dialog_cmds.o:
+./lex.cond.o:
+./lex.loadlg.o:
+./lex.vars.o:
+./main.o:
+./pjt_interface.o:
+./pjt_callbacks.o:
+./preset.o:
+./project.o:
+./pset_callbacks.o:
+./pset_interface.o:
+./run.o:
+./run_callbacks.o:
+./run_interface.o:
+../../storage.o:
+./vars.tab.o:
+../../yarg.o:

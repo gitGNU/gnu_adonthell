@@ -43,6 +43,9 @@ Text            return LOAD_TEXT;
 Cond            return LOAD_COND;
 Vars            return LOAD_VARS;
 Act             return LOAD_ACT;
+Name            return LOAD_NAME;
+Race            return LOAD_RACE;
+Gender          return LOAD_GENDER;
 
 \[              mytext = ""; BEGIN(text);
 <text>\]        BEGIN(INITIAL); return LOAD_STR;

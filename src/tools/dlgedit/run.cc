@@ -18,8 +18,9 @@
 #include "../../dialog.h"
 #include "../../storage.h"
 #include "../../generic_cmds.h"
+#include "../../character.h"
 
-run_dlg::run_dlg (string f, string v)
+run_dlg::run_dlg (string f, string v, player *p)
 {
     interpreter varset;
     vector<command*> c;
@@ -31,9 +32,13 @@ run_dlg::run_dlg (string f, string v)
 
     dlg = create_run_dlg_wnd (this);
 
-    // create game_state array
-    storage *game_state = new storage ();
-    objects::set ("game_state", game_state);
+    // now set some global definitions
+    varset.load ("globals.script");
+    varset.run ();
+
+    // set the player
+    objects::erase ("player");
+    objects::set ("player", p);
 
     // preset variables
     if (v != "")
@@ -70,6 +75,7 @@ run_dlg::run_dlg (string f, string v)
     // Init Dialogue data
     dat = new dialog;
     dat->text_file = strdup (sf.c_str ());
+    dat->player_name = p->get_name ();
 
     // Init Interpreter
     vm = new interpreter (strdup (df.c_str ()), dat);
@@ -78,9 +84,6 @@ run_dlg::run_dlg (string f, string v)
 
 run_dlg::~run_dlg ()
 {
-    delete objects::get ("game_state");
-    objects::erase ("game_state");
-    
     delete[] dialog::offset;
     delete[] dialog::length;
 

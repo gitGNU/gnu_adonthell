@@ -33,9 +33,14 @@ public:
     void on_combat (u_int8);    // Combat updated
     void on_loop (u_int8);      // Loop updated
     void on_change_dlg (u_int8);// dialogue/plugin radiobuttons changed
+    u_int16 get_cur_dlg ();     // dialogue/plugin radiobutton setting
 
     GtkWidget *dlg;             // The actual Dialog Window
     GtkWidget *text_entry;      // The Editboxes for the Nodes text
+    GtkWidget *npc_menu;        // The "chose NPC" option-menu
+    GtkWidget *dlg_menu;        // The "chose dialogue" option-menu
+    GtkWidget *dlg_action_list; // The list containing dialogue actions
+    
     u_int8 retval;              // Return value
 
 private:

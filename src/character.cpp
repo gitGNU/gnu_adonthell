@@ -14,6 +14,18 @@
 
 #include "character.h"
 
+// Sets a characters name
+void character::set_name (const char* n)
+{
+    name = strdup (n);
+}
+
+// Returns a characters name
+char* character::get_name ()
+{
+    return name;
+}
+
 // Returns the active dialogue
 const char* npc::talk ()
 {
