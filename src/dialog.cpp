@@ -12,12 +12,9 @@
    See the COPYING file for more details
 */
 
-#include <stdio.h>
-#include <string>
+#include <string.h>
 #include <algorithm>
 
-#include "image.h"
-#include "input.h"
 #include "dialog.h"
 #include "py_inc.h"
 #include "yarg.h"
@@ -91,8 +88,8 @@ dialog::~dialog ()
     Py_XDECREF (instance);
 
     while (strings[i] != NULL)
-        delete[] strings[i++]; 
-    delete[] strings;
+        delete strings[i++]; 
+    delete strings;
 }
 
 // Gets the index of either the player or npc array
@@ -217,12 +214,23 @@ void dialog::scan_string (u_int32 index)
     char *start, *string = NULL;
     char *tmp, *newstr;
 
+    /*
+    // replace $... shortcuts
     while (1)
     {
-        // first replace $... macros, then python code
+        // check wether the string contains shortcut code at all
+        start = strchr (strings[index], '$');
+        if (start == NULL) break;
+    
+    }
+    */
+    
+    // execute python functions
+    while (1)
+    {
         // check wether the string contains python code at all
         start = strchr (strings[index], '{');
-        if (start == NULL) return;
+        if (start == NULL) break;
 
         end = strcspn (start, "}");
 
@@ -242,24 +250,24 @@ void dialog::scan_string (u_int32 index)
                 tmp = PyString_AS_STRING (result);    
         
         // Replace existing with new, changed string
-        // 1. Calculate strings length
+        // 1. Calculate string's length
         len = strlen(strings[index]);
         begin = len - strlen (start);
-        newstr = new char[strlen(tmp) + len - strlen(string)];
+        newstr = new char[(tmp ? strlen(tmp) : 0) + len - strlen(string)];
 
         // 2. Merge prefix, resulting string and postfix into new string
         strncpy (newstr, strings[index], begin);
         newstr[begin] = 0;
-        strcat (newstr, tmp);
+        if (tmp) strcat (newstr, tmp);
         strcat (newstr, start+end+1);
 
         // 3. Exchange strings
-        delete[] strings[index];
+        delete strings[index];
         strings[index] = newstr;
 
         // Cleanup
         Py_XDECREF (result);
-        delete[] string;
+        delete string;
     }
 }
 

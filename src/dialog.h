@@ -34,8 +34,6 @@ public:
 
 private:
 	PyObject *instance;             // Points to the instantiated dialogue class
-    PyObject *locals;
-    PyObject *globals;
 
     char **strings;                 // The dialogue text
 
