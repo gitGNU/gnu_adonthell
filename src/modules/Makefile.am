@@ -1,12 +1,22 @@
 moddatadir = $(gamedatadir)/modules
 
-moddata_DATA = *.pyc
+pyc_files = dialogue.pyc adonthell.pyc
+py_files = dialogue.py adonthell.py
 
-EXTRA_DIST = dialogue.py adonthell.py
+moddata_DATA = dialogue.pyc adonthell.pyc
 
-all: *.py
-	../adonthell -c
+EXTRA_DIST = $(py_files)
 
-*.pyc: *.py
+all: $(py_files)
+	$(top_builddir)/src/adonthell -c
 
-CLEANFILES = *.pyc
+dialogue.pyc: dialogue.py
+adonthell.pyc: adonthell.py
+
+dialogue.py:
+	cp $(top_srcdir)/src/modules/dialogue.py .
+
+adonthell.py:
+	cp $(top_srcdir)/src/modules/adonthell.py .
+
+CLEANFILES = $(pyc_files)

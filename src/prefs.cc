@@ -42,13 +42,17 @@
 config::config () 
 {
     // set some default values where possible
+#ifdef WIN32
+    screen_mode = 1;                // Fullscreen
+ #else
     screen_mode = 0;                // Fullscreen
-#ifdef QTOPIA
+#endif
+#if defined (QTOPIA) || defined (WIN32)
     double_screen = 0;              // Double screen
 #else
     double_screen = 1;              // Double screen
 #endif
-    quick_load = 1;                 // Quick-load enabled
+    quick_load = 0;                 // Quick-load disabled
     audio_channels = 1;             // Stereo
     audio_resolution = 1;           // 16 bit
     audio_sample_rate = 2;          // 11025, 22050 or 44100 Hz
