@@ -22,10 +22,12 @@
 #include <iterator>
 #include "dlg_compiler.h"
 #include "dlg_types.h"
+#include "gui_error.h"
 
 DlgCompiler::DlgCompiler (DlgModule *module)
 {
     dialogue = module;
+    errors = 0;
     
     int length = module->getNodes ().size () + 1;
     
@@ -51,6 +53,12 @@ DlgCompiler::~DlgCompiler ()
 // compile the dialogue into Python script
 void DlgCompiler::run ()
 {
+    // make sure the error console exists
+    if (GuiError::console == NULL)
+        GuiError::console = new GuiError ();
+    else
+        GuiError::console->clear ();
+    
     // try to open the file
     string fname = dialogue->name ();
 
@@ -79,6 +87,10 @@ void DlgCompiler::run ()
     
     // write the rest of the dialogue
     writeDialogue ();
+    
+    // display errors if there were any
+    if (errors > 0)
+        GuiError::console->display ();
 }
 
 void DlgCompiler::writeHeader (const string &theClass)
@@ -122,8 +134,7 @@ void DlgCompiler::writeText ()
 
         // build up condition vector
         if (entry->condition () != "")
-            if (!addCondition (entry->condition (), j))
-                cout << "\"" << entry->text () << "\"\n" << flush;
+            addCondition ((DlgCircle *) *i, j);
     
         // build up code vector
         if (entry->code () != "")
@@ -212,6 +223,9 @@ void DlgCompiler::writeDialogue ()
     
         circle = (DlgCircle *) (*i);
         
+        // check the conditions of the circle's children
+        checkConditions (circle);
+        
         // get the entry of the current circle
         entry = circle->entry ();
         
@@ -272,32 +286,46 @@ void DlgCompiler::addStart (DlgNode *node)
 }
 
 // add a condition to the list of conditions
-bool DlgCompiler::addCondition (const string &cnd, int idx)
+bool DlgCompiler::addCondition (DlgCircle *circle, int idx)
 {
-    string condition;
+    string error, condition, cnd = circle->entry ()->condition ();
     bool retval = true;
     
     // see what kind of statement the condition is and get rid of the keyword
-    if (strncmp ("if ", cnd.c_str (), 3) == 0)
+    switch (getKeyword (cnd))
     {
-        condition = cnd.substr (3);
-    }
-    else if (strncmp ("elif ", cnd.c_str (), 5) == 0)
-    {
-        condition = cnd.substr (5);
-        operationTable[idx] = 1;
-    }
-    else if (strncmp ("else:", cnd.c_str (), 5) == 0)
-    {
-        operationTable[idx] = 1;
-        return true;        
-    }
-    else
-    {
-        // a condition that doesn't start with any of the above is wrong
-        cout << "*** Compiler: Error in condition\n    \"" << cnd
-             << "\" of node\n    ";
-        return false;
+        case IF:
+        {
+            condition = cnd.substr (3);
+            break;
+        }
+        
+        case ELIF:
+        {
+            condition = cnd.substr (5);
+            operationTable[idx] = 1;
+            break;
+        }
+        
+        case ELSE:
+        {
+            operationTable[idx] = 1;
+            return true;        
+        }
+        
+        default:
+        {
+            // a condition that doesn't start with any of the above is wrong
+            error = "*** Error: Faulty condition\n    \"" + cnd;
+            error += "\" of node\n    \"" + circle->entry ()->text ();
+            error += "\"\n ";
+        
+            // add error to list
+            GuiError::console->add (error, circle);
+        
+            errors++;
+            return false;
+        }
     }
     
     // now get rid of the colon at the end of the condition
@@ -306,8 +334,14 @@ bool DlgCompiler::addCondition (const string &cnd, int idx)
     // if there is none, that's not too tragical, but report it anyway
     else
     {
-        cout << "*** Compiler: Colon missing in condition\n    \"" << cnd
-             << "\" of node\n    ";
+        error = "*** Warning: Colon missing in condition\n    \"" + cnd;
+        error += "\" of node\n    \"" + circle->entry ()->text ();
+        error += "\"\n ";
+
+        // add error to list
+        GuiError::console->add (error, circle);
+        
+        errors++;
         retval = false;
     }
     
@@ -349,6 +383,7 @@ int DlgCompiler::checkFollowers (DlgCircle *circle)
     if (child == NULL) return 1;
     
     node_type type = child->type ();
+    string error;
     
     // make sure that the followers are consistent
     for (; child != NULL; child = circle->child (NEXT))
@@ -359,13 +394,73 @@ int DlgCompiler::checkFollowers (DlgCircle *circle)
         if ((type == PLAYER && child->type () != PLAYER) ||
             (type != PLAYER && child->type () == PLAYER))
         {
-            cout << "*** Compiler: Followers must not mix PLAYER and NPC" 
-                 << "nodes in node\n    \"" << circle->entry ()->text () 
-                 << "\"\n" << flush;
+            // compose error text
+            error = "*** Error: Must not mix PLAYER and NPC nodes in";
+            error += " children of node\n    \"" + circle->entry ()->text ();
+            error += "\"\n ";
+            
+            // add error to the error console
+            GuiError::console->add (error, circle);            
+            
+            errors++;
             break;
         }
     }
     
     if (type == PLAYER) return 0;
     else return 1;
+}
+
+// check whether the children of given node have proper conditions
+bool DlgCompiler::checkConditions (DlgCircle *circle)
+{
+    DlgCircle *child = circle->child (FIRST);
+    if (child == NULL) return true;
+    
+    string error = "";
+    bool retval = true;
+    
+    // get keyword of first child
+    keyword k2, k1 = getKeyword (child->entry ()->condition ());
+    
+    for (; child != NULL; child = circle->child (NEXT), k1 = k2)
+    {
+        k2 = getKeyword (child->entry ()->condition ());
+        
+        // 'elif' may only follow 'if' or 'elif'
+        if (k2 == ELIF && (k1 != IF || k1 != ELIF))
+            error = "*** Error: 'elif' without preceeding 'if' in node\n    \"";
+        
+        // 'else' may only follow 'if' or 'elif'
+        else if (k2 == ELSE && (k1 != IF || k1 != ELIF))
+            error = "*** Error: 'else' without preceeding 'if' in node\n    \"";
+
+        // display error if there is any
+        if (error != "")
+        {
+            error += child->entry ()->text ();
+            error += "\"\n ";
+            
+            GuiError::console->add (error, child);
+            
+            errors++;
+            error = "";
+            retval = false;
+        }
+    }
+    
+    return retval;
+}
+
+// get the keyword the statement begins with
+keyword DlgCompiler::getKeyword (const string &statement)
+{
+    if (strncmp ("if ", statement.c_str (), 3) == 0)
+        return IF;
+    else if (strncmp ("elif ", statement.c_str (), 5) == 0)
+        return ELIF;
+    else if (strncmp ("else:", statement.c_str (), 5) == 0)
+        return ELSE;    
+
+    return NONE;
 }

@@ -23,6 +23,7 @@ dlgedit_SOURCES = \
     gui_dlgedit.cc \
     gui_dlgedit_events.cc \
     gui_edit.cc \
+    gui_error.cc \
     gui_file.cc \
     gui_graph.cc \
     gui_graph_events.cc \
@@ -49,6 +50,7 @@ dlgedit_SOURCES = \
     gui_dlgedit.h \
     gui_dlgedit_events.h \
     gui_edit.h \
+    gui_error.h \
     gui_file.h \
     gui_graph.h \
     gui_graph_events.h \

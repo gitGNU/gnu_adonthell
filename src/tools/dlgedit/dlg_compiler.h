@@ -28,6 +28,17 @@
 #include "dlg_circle.h"
 
 /**
+ * Python keywords
+ */ 
+enum keyword
+{
+    NONE    = 0,
+    IF      = 1,
+    ELIF    = 2,
+    ELSE    = 3
+};
+
+/**
  * It transforms the dialogue into the Python script needed by
  * the Dialogue Engine. 
  *
@@ -45,9 +56,19 @@
 class DlgCompiler
 {
 public:
+    /**
+     * Instantiate the compiler.
+     * @param module Module to be compiled
+     */
     DlgCompiler (DlgModule *module);
+    /**
+     * Dtor.
+     */
     ~DlgCompiler ();
     
+    /**
+     * Compile the module passed to DlgCompiler
+     */
     void run ();
     
 private:
@@ -61,9 +82,12 @@ private:
     
     void addStart (DlgNode *node);
     void addCode (const string &cde, int index);
-    bool addCondition (const string &cnd, int index);
+    bool addCondition (DlgCircle *circle, int index);
     
     int checkFollowers (DlgCircle *node);
+    bool checkConditions (DlgCircle* node);
+    
+    keyword getKeyword (const string &statement);
     
     ofstream file;
     DlgModule *dialogue;            // The dialogue to be compiled    
@@ -72,6 +96,8 @@ private:
     vector<string> code;            // Temporary storage for all code
     vector<string> conditions;      // Temporary storage for all conditions
 
+    int errors;                     // number of errors in dialogue
+    
     int *codeTable;                 // Mapping between nodes and code
     int *conditionTable;            // Mapping between nodes and conditions
     int *operationTable;            // Mapping between nodes and condition type
