@@ -316,6 +316,12 @@ size_t ogg_read_callback (void *ptr, size_t size, size_t nmemb, void *datasource
     // otherwise just read the next chunk of data
     return fread (ptr, size, nmemb, (FILE*) datasource);
 }
+
+// Wrapper around fread for to prevent some problems with glibc2.2 based systems
+size_t fread_wrap (void *ptr, size_t size, size_t nmemb, void *datasource)
+{
+    return fread (ptr, size, nmemb, (FILE*) datasource);
+}
 }
 #endif // OGG_VORBIS
 #endif // SDL_MIXER

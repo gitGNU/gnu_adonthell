@@ -238,7 +238,7 @@ void audio::fade_out_background(int time) {
   if (background_on == true) {
     Mix_FadeOutMusic(time);
 #ifdef OGG_VORBIS
-    music[current_background]->data.ogg->vf.callbacks.read_func = &fread;
+    music[current_background]->data.ogg->vf.callbacks.read_func = &fread_wrap;
 #endif
     background_on = false;
     current_background = -1;

@@ -1483,7 +1483,7 @@ else
 #line 1484 "configure"
 #include "confdefs.h"
 #ifdef __cplusplus
-extern "C" void exit(int);
+extern "C" void exit(int) throw();
 #endif
 
 #include <stdio.h>
@@ -1851,7 +1851,7 @@ else
 #line 1852 "configure"
 #include "confdefs.h"
 #ifdef __cplusplus
-extern "C" void exit(int);
+extern "C" void exit(int) throw();
 #endif
 
 #include <stdio.h>
@@ -2203,7 +2203,7 @@ echo "configure:2190: checking for GTK - version >= $min_gtk_version" >&5
       ac_save_CFLAGS="$CFLAGS"
       ac_save_LIBS="$LIBS"
       CFLAGS="$CFLAGS $GTK_CFLAGS"
-      LIBS="$GTK_LIBS $LIBS"
+      LIBS="$GTK_LIBS $GTK_CFLAGS $LIBS"
       rm -f conf.gtktest
       if test "$cross_compiling" = yes; then
   echo $ac_n "cross compiling; assumed OK... $ac_c"
@@ -2212,7 +2212,7 @@ else
 #line 2213 "configure"
 #include "confdefs.h"
 #ifdef __cplusplus
-extern "C" void exit(int);
+extern "C" void exit(int) throw();
 #endif
 
 #include <gtk/gtk.h>

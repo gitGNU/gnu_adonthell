@@ -35,6 +35,7 @@ public:
 #ifdef OGG_VORBIS
 // Callback passed to OggVorbis to read/and loop our background music
 extern "C" size_t ogg_read_callback (void *, size_t, size_t, void*);
+extern "C" size_t fread_wrap (void *, size_t, size_t, void*);
 
 // We've got to access internal SDL_mixer data, so here's it's redefiniton
 // from SDL_mixer/music_ogg.h:
