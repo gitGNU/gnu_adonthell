@@ -22,7 +22,7 @@ describes its occupation. While this shape must allow easy and fast
 collision tests against moving %objects to be performed, it also has to
 allow complex forms to be described. The most appropriate
 representation that matches both requirements is the polygon-based
-representation 
+representation.
  
 \subsection mobjs_repr_describe Describing the Shape of Objects with Polygons
 
@@ -171,14 +171,15 @@ division by 0).
 
 Once we have \e r and \e s, we can assume that if \f$0 <= r <= 1\f$
 and \f$0 <= s <= 1\f$, then there actually is an
-intersection. Otherwise the segments intersects, but not in the limits
-of our lines. We can get the exact coordinates of the intersection
+intersection. Otherwise the lines intersects, but not in the limits
+of our segments. We can get the exact coordinates of the intersection
 point \e P with:
 
 \f$P_x = A_x + r(B_x - A_x)\f$
+
 \f$P_y = A_y + r(B_y - A_y)\f$
 
-So if used as if, this algorithm will require one float division and four
+So if used as is, this algorithm will require one float division and four
 float multiplications. We can avoir working on floats all the time
 because we have a very small unit measure.
 

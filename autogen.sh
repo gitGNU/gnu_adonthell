@@ -11,7 +11,7 @@ rm -f `find . -name 'Makefile'`
 aclocal -I .
 libtoolize --force --copy
 autoheader
-automake --add-missing --gnu
+automake --add-missing --copy --gnu
 autoconf 
 
 echo
