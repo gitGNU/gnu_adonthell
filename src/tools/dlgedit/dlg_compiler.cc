@@ -20,6 +20,7 @@
  */
 
 #include <iterator>
+#include <ostream.h>
 #include "dlg_compiler.h"
 #include "dlg_types.h"
 #include "gui_error.h"
@@ -160,7 +161,7 @@ void DlgCompiler::writeConditions ()
     for (std::vector<std::string>::iterator i = conditions.begin (); i != conditions.end (); i++)
     {
         if (i != conditions.begin ()) file << ",\\";
-        file << "\n\t\t\"" << (*i) << "\"";
+        file << "\n\t\t\"" << escapeCode (*i) << "\\n\"";
     }
     
     // close array
@@ -179,13 +180,30 @@ void DlgCompiler::writeCode ()
     for (std::vector<std::string>::iterator i = code.begin (); i != code.end (); i++)
     {
         if (i != conditions.begin ()) file << ",\\";
-        file << "\n\t\t\"" << (*i) << "\"";
+        file << "\n\t\t\"" << escapeCode (*i) << "\\n\"";
     }
     
     // close array
     file << "]\n\n";
 }
- 
+
+// replace '\n', '\t', '"' and the like with '\\n' '\\t' and '\"'
+std::string DlgCompiler::escapeCode (std::string code)
+{
+    char c;
+
+    for (unsigned int i = 0; i < code.length (); i++)
+    {
+        c = code[i];
+
+        if (c == '"') code.insert (i++, "\\");
+        else if (c == '\n') code.replace (i, 1, "\\n");
+        else if (c == '\t') code.replace (i, 1, "    ");
+    }
+
+    return code;
+}
+
 // write the start of the dialogue
 void DlgCompiler::writeStart ()
 {

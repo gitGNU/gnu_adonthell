@@ -66,7 +66,7 @@ class base:
     def execute (self, statement):
         try:
             # -- try to execute the code
-            retval = eval (statement)
+            retval = exec (statement)
             return retval
         except:
             # -- in case of an error, print what happened and continue

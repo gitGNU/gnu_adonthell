@@ -86,7 +86,8 @@ private:
     
     int checkFollowers (DlgCircle *node);
     bool checkConditions (DlgCircle* node);
-    
+
+    std::string escapeCode (std::string code);
     keyword getKeyword (const std::string &statement);
     
     ofstream file;
