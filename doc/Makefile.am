@@ -5,4 +5,12 @@ dlgedit.lyx dlgedit_debug.ps dlgedit_edit.ps dlgedit_main.ps dlgedit_run.ps \
 event.lyx gfx_global.dia graphic_system.lyx graphic_system.ps \
 graphic_system.txt image.dia image.eps input.lyx interpreter.lyx items.txt \
 map.lyx screen.dia step1.ps step2.ps step3.ps step4.ps window.lyx window.ps \
-window.txt
+window.txt reference.cfg
+
+if BUILD_DOC
+all:
+	$(P_DOXYGEN) reference.cfg
+
+clean:
+	rm -Rf html latex
+endif
