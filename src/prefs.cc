@@ -43,7 +43,11 @@ config::config ()
 {
     // set some default values where possible
     screen_mode = 0;                // Fullscreen
+#ifdef QTOPIA
+    double_screen = 0;              // Double screen
+#else
     double_screen = 1;              // Double screen
+#endif
     quick_load = 1;                 // Quick-load enabled
     audio_channels = 1;             // Stereo
     audio_resolution = 1;           // 16 bit

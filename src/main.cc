@@ -90,6 +90,7 @@ bool init_python()
  * @return 0 in case of success, error code otherwise.
  * 
  */
+extern "C"
 int main(int argc, char * argv[])
 {
 #ifdef MEMORY_LEAKS
@@ -132,7 +133,9 @@ int main(int argc, char * argv[])
     // init video subsystem
     screen::set_video_mode (320, 240, 0, myconfig.double_screen, myconfig.screen_mode);
 
+#ifdef DEBUG
     printf("%s\n", screen::info().c_str());
+#endif
      
     // init audio subsystem
     if (myconfig.audio_volume > 0)

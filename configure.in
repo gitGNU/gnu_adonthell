@@ -82,6 +82,8 @@ if test x$gamedatadir = xnone; then
       DEFS="$DEFS -DDATA_DIR=\"\\\"$gamedatadir\\\"\""
     ;;
   esac
+else
+  DEFS="$DEFS -DDATA_DIR=\"\\\"$gamedatadir\\\"\""
 fi
 
 dnl **********************

@@ -38,7 +38,7 @@ void surface::resize_aux (u_int16 l, u_int16 h)
     set_length (l);
     set_height (h); 
 
-    vis = SDL_CreateRGBSurface (SDL_HWSURFACE | SDL_SRCCOLORKEY | SDL_SRCALPHA | SDL_ASYNCBLIT,
+    vis = SDL_CreateRGBSurface (SDL_SRCCOLORKEY | SDL_SRCALPHA | SDL_ASYNCBLIT,
                                 l, h,
                                 screen::bytes_per_pixel () * 8,
                                 screen::display.vis->format->Rmask,
@@ -418,7 +418,7 @@ void surface::resize (u_int16 l, u_int16 h)
         h <<= 1;
     }
 
-    vis = SDL_CreateRGBSurface (SDL_HWSURFACE | SDL_SRCCOLORKEY | SDL_SRCALPHA | SDL_ASYNCBLIT,
+    vis = SDL_CreateRGBSurface (SDL_SRCCOLORKEY | SDL_SRCALPHA | SDL_ASYNCBLIT,
                                 l, h,
                                 screen::bytes_per_pixel () * 8,
                                 screen::display.vis->format->Rmask,
