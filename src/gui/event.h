@@ -15,11 +15,12 @@
 #ifndef GUI_EVENT_H_
 #define GUI_EVENT_H_
 
+
 #include "Python.h"
 #include "python/callback.h"
 #include <vector>
 
-#include "types.h"
+#include "../types.h"
 #include "callback.h"
 
 

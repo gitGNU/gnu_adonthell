@@ -27,7 +27,7 @@
 #define GUI_BASE_H_
 
 #include "types.h"
-#include "input/listener.h"
+//#include "input/listener.h"
 
 #include "event.h"
 #include "border.h"
@@ -51,7 +51,7 @@ namespace gui {
    *      of being assigned a target parameter, which is a pointer
    *      to the surface they should be drawn.
    */ 
-  class base: public event, public border, public gfx::drawing_area, public background, protected input::listener
+  class base: public event, public border, public gfx::drawing_area, public background
     {
     public:
       

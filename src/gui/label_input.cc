@@ -15,6 +15,8 @@
 
 #include "label_input.h"
 
+using namespace gui;
+
 label_input::label_input () : label ()
 {
     set_cursor_visible (true);
@@ -49,7 +51,7 @@ bool label_input::input_update()
             lock (); 
             fillrect (my_cursor_.pos_x, my_cursor_.pos_y,
                       (*my_font_) [my_text_[my_cursor_.idx]].length (),
-                      my_font_->height (), screen::trans_col ()); 
+                      my_font_->height (), gfx::screen::trans_col ()); 
             unlock (); 
             
             build (false);

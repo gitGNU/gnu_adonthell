@@ -16,30 +16,31 @@
 
 #include "label.h"
 
-
-class label_input : public label
-{
- public:
-    /**
-       Constructor
-       Initialize to : cursor_moveable,  cursor_visible and editable
-    */ 
-    label_input (); 
-
-    /**
-       Set the label input in editable
-    */
-    void set_editable (const bool); 
-    
-    /**
+namespace gui {
+  
+  class label_input : public gui::label
+    {
+    public:
+      /**
+	 Constructor
+	 Initialize to : cursor_moveable,  cursor_visible and editable
+      */ 
+      label_input (); 
+      
+      /**
+	 Set the label input in editable
+      */
+      void set_editable (const bool); 
+      
+      /**
        Input update
-    */
-    bool input_update();
-
-protected:
-    bool editable_; 
-};
-
+      */
+      bool input_update();
+      
+    protected:
+      bool editable_; 
+    };
+}
 
 #endif
 
