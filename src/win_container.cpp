@@ -1,4 +1,6 @@
 /*
+   $Id$
+   
    (C) Copyright 2000 Joel Vennin
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
@@ -9,6 +11,7 @@
 
    See the COPYING file for more details
 */
+
 #include <list>
 #include "types.h"
 #include "image.h"

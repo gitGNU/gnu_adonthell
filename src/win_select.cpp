@@ -1,4 +1,6 @@
 /*
+   $Id$
+ 
    (C) Copyright 2000 Joel Vennin
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
@@ -223,7 +225,7 @@ void win_select::set_default(u_int16 nb)
   if(mode_selected_==WIN_SELECT_MODE_BRIGHTNESS)
     (*index_list)->set_draw_brightness(true);
   index_list=list_obj.begin();
-  while(index_list!=list_obj.end() && j<nb) index_list++;
+  while(index_list!=list_obj.end() && j++<nb) index_list++;
   if(index_list!=list_obj.end()) 
     {
       (*index_list)->set_select(true);
