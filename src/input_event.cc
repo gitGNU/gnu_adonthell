@@ -12,24 +12,4 @@
    See the COPYING file for more details.
 */
 
-
-#ifndef INPUT_MANAGER_H
-#define INPUT_MANAGER_H
-
-#include "input_listener.h"
-#include "keyboard_event.h"
-#include "joystick_event.h"
-#include <list> 
-
-class input_manager
-{
-public:
-    static void update();
-    static void raise_event(input_event ev);
-
-private:
-    static list <input_listener *> listeners;
-
-}; 
-
-#endif
+#include "input_event.h"
