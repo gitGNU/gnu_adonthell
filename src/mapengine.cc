@@ -12,7 +12,6 @@
 #include "map.h"
 #include "mapengine.h"
 
-#define _DLGENGINE_
 #include "interpreter.h"
 #include "array_tmpl.h"
 #include "dialog.h"
@@ -28,7 +27,7 @@ void mapengine::map_engine(map*amap)
 
   // Just a quick hack
   dlg = new dialog_engine;
-  dlg->update (&amap->win);
+  dlg->update (amap->win);
   
   amap->win.show();
   fade_in(amap);
@@ -46,11 +45,10 @@ void mapengine::update_and_show(map*amap)
   u_int16 i;
   for(i=0;i<screen::get_frames_to_do();i++)
     {
-      dlg->update_keyboard();
+      dlg->update(amap->win);
       amap->update_keyboard();
       amap->update_patterns();
       amap->update_all_characters();
-      dlg->update(&amap->win);
       amap->win.update();
     }
   amap->update_status();

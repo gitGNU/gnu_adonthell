@@ -28,18 +28,18 @@ public:
     Array<char*> strings;               // Text data
 };
 
-#ifdef _DLGENGINE_
+#ifndef _DLGEDIT_                       // Don't need this for compiling dlgedit
 class dialog_engine
 {
 public:
     dialog_engine ();
-    void update (window*);
-    void update_keyboard ();
+    void update (window&);
     char * run ();
 
 private:
     dialog *dlg;
     interpreter *engine;
+    int timer;
 };
 #endif
 

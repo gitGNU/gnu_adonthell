@@ -820,7 +820,7 @@ fi
 fi
 
 
-CXXFLAGS="-DSDL -D_REENTRANT -O6 -Wall -I/usr/local/include/SDL -I\$(top_srcdir)/src"
+CXXFLAGS="-g -DSDL -D_REENTRANT -Wall -I/usr/local/include/SDL -I\$(top_srcdir)/src"
 LIBS="-lSDL -lpthread"
 
 for ac_prog in $CCC c++ g++ gcc CC cxx cc++ cl

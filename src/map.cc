@@ -12,10 +12,6 @@
 #include "window.h"
 #include "map.h"
 #include "globals.h"
-#define _DLGENGINE_
-#include "array_tmpl.h"
-#include "interpreter.h"
-#include "dialog.h"
 using namespace std;
 
 map::map()

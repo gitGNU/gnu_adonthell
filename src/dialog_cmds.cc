@@ -12,6 +12,8 @@
    See the COPYING file for more details
 */
 
+#define _DLGEDIT_
+
 #include <stdio.h>
 #include <iostream.h>
 

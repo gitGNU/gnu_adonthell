@@ -6,7 +6,7 @@ AM_CONFIG_HEADER(header.h)
 AM_INIT_AUTOMAKE(mapengine, 0.1.1.7)
 AC_PREFIX_PROGRAM(gcc)
 
-CXXFLAGS="-DSDL -D_REENTRANT -O6 -Wall -I/usr/local/include/SDL -I\$(top_srcdir)/src"
+CXXFLAGS="-g -DSDL -D_REENTRANT -Wall -I/usr/local/include/SDL -I\$(top_srcdir)/src"
 LIBS="-lSDL -lpthread"
 
 dnl Checks for programs.

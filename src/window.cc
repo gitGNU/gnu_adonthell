@@ -193,12 +193,13 @@ bool window::end_text()
 
 void window::set_text(char  *string)
 { 
+  char *tmp;
   delete[] text_window;
-  text_window = NULL;
   text_window_pos=0;
   text_window_lenght=strlen(string);
-  text_window=new char [text_window_lenght];
-  strcpy(text_window,string);
+  tmp=new char [text_window_lenght];
+  strcpy(tmp,string);
+  text_window=tmp;
   continue_text=true;
 }
 
@@ -256,7 +257,7 @@ void window::draw_text()
      j=0;
      while(((sxtext+j)<extext) && (text_window_pos_tmp<text_window_lenght))
        {k=text_window[text_window_pos_tmp];
-        if(k==' ') 
+        if(k==' ' || k>NB_TABLE_CHAR) 
 	    {j+=WIN_SPACE_LENGHT;}
           else
 	    { 

@@ -12,8 +12,6 @@
    See the COPYING file for more details
 */
 
-#define _DLGENGINE_
-
 #include <iostream.h>
 #include <stdio.h>
 #include <string.h>
@@ -30,6 +28,8 @@
 // Init the dialogue engine
 dialog_engine::dialog_engine ()
 {  
+    timer = 0;
+
     // Init interpreter
     interpreter::callbacks.clear ();
     init_interpreter ();
@@ -59,19 +59,20 @@ dialog_engine::dialog_engine ()
     engine = new interpreter ("dialog/tomas_hterin.dat", dlg);
 }
 
-void dialog_engine::update_keyboard ()
+void dialog_engine::update (window &win)
 {
+    if (timer++ < 15) return;
     if (keyboard::is_pushed (97)) dlg->answer = 0;
     if (keyboard::is_pushed (98)) dlg->answer = 1;
     if (keyboard::is_pushed (99)) dlg->answer = 2;
     if (keyboard::is_pushed (100)) dlg->answer = 3;
-}
 
-void dialog_engine::update (window *win)
-{
     if (dlg->answer == 0xFFFF) return;
 
-    win->set_text (run ());
+    cout << dlg->answer << " " << flush;
+
+    timer = 0;
+    win.set_text (run ());
     dlg->answer = 0xFFFF;
 }
 
@@ -94,30 +95,28 @@ char *dialog_engine::run ()
         case 0:
         {
             // the end
-            return NULL;
+            return "";
         }
         
         case 1:
         {
             // Player part 
             str = strdup (dlg->npc_text);
+            cout << "\n\n - " << str;
+              
             for (i = 0; i < dlg->player_text.length () ; i++)
-            {
-                str = strcat (str, "   ");
-                str = strcat (str, abc[i]);
-                str = strcat (str, "> ");
-                str = strcat (str, dlg->player_text.get_element (i));
-            }
-
+                cout << "\n" << abc[i] << "> " << dlg->player_text.get_element(i) << flush;
+            
             return str;
         }
 
         case 2:
         {
             /* NPC only */
+            cout << "\n\n - " << dlg->npc_text << "\na> continue " << flush;
             return dlg->npc_text;
         }
     }
 
-    return str;   
+    return "";   
 }
