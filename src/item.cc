@@ -48,13 +48,15 @@ item::item() // default constructor
   setEquipEffAct( false );
   setUnequipEffAct( false );
   setUseEffAct( false );
+  for( unsigned int i = 0; i < NUM_EFF; i++ )
+    item_eff[i] = NULL;
   attached = NULL;
   number = 1;
 }
 
 item::item( const unsigned int ix, const string nm, const string gf,
 	    const unsigned int ty, const unsigned int at[],
-	    const bool ch[], const bool ae[], const effect ef[],
+	    const bool ch[], const bool ae[], effect ef[],
 	    const unsigned int n )
   // "full" constructor
 {
@@ -72,7 +74,7 @@ item::item( const unsigned int ix, const string nm, const string gf,
   for( unsigned int i = 0; i < NUM_EFF; i++ )
   {  
     item_ace[i] = ae[i];
-    item_eff[i] = ef[i];
+    item_eff[i] = &ef[i];
   }
   attached = NULL;
   number = n;
@@ -109,6 +111,8 @@ item::item( const unsigned int ix, const string nm, const string gf,
   setEquipEffAct( false );
   setUnequipEffAct( false );
   setUseEffAct( false );
+  for( unsigned int i = 0; i < NUM_EFF; i++ )
+    item_eff[i] = NULL;
   attached = NULL;
   number = n;
 }
@@ -152,11 +156,11 @@ item item::operator=( const item& it )
     setEquipEffAct( it.getEquipEffAct() );
     setUnequipEffAct( it.getUnequipEffAct() );
     setUseEffAct( it.getUseEffAct() );
-    setObtainEff( it.getObtainEff() );
-    setDropEff( it.getDropEff() );
-    setEquipEff( it.getEquipEff() );
-    setUnequipEff( it.getUnequipEff() );
-    setUseEff( it.getUseEff() );
+    setObtainEff( *it.getObtainEff() );
+    setDropEff( *it.getDropEff() );
+    setEquipEff( *it.getEquipEff() );
+    setUnequipEff( *it.getUnequipEff() );
+    setUseEff( *it.getUseEff() );
     if( it.getAttached() )
       attach( *( it.getAttItem() ) );
     number = it.number;
@@ -427,27 +431,27 @@ bool item::getUseEffAct() const // returns use effect active
   return item_ace[4];
 }
 
-effect item::getObtainEff() const // returns obtain effect
+effect* item::getObtainEff() const // returns obtain effect
 {
   return item_eff[0];
 }
 
-effect item::getDropEff() const // returns drop effect
+effect* item::getDropEff() const // returns drop effect
 {
   return item_eff[1];
 }
 
-effect item::getEquipEff() const // returns equip effect
+effect* item::getEquipEff() const // returns equip effect
 {
   return item_eff[2];
 }
 
-effect item::getUnequipEff() const // returns unequip effect
+effect* item::getUnequipEff() const // returns unequip effect
 {
   return item_eff[3];
 }
 
-effect item::getUseEff() const // returns use effect
+effect* item::getUseEff() const // returns use effect
 {
   return item_eff[4];
 }
@@ -670,33 +674,33 @@ bool item::setUseEffAct( const bool val ) // sets use effect active
   return true;
 }
 
-bool item::setObtainEff( const effect val ) // sets obtain effect
+bool item::setObtainEff( effect& val ) // sets obtain effect
 {
-  item_eff[0] = val;
+  item_eff[0] = &val;
   return true;
 }
 
-bool item::setDropEff( const effect val ) // sets drop effect
+bool item::setDropEff( effect& val ) // sets drop effect
 {
-  item_eff[1] = val;
+  item_eff[1] = &val;
   return true;
 }
 
-bool item::setEquipEff( const effect val ) // sets equip effect
+bool item::setEquipEff( effect& val ) // sets equip effect
 {
-  item_eff[2] = val;
+  item_eff[2] = &val;
   return true;
 }
 
-bool item::setUnequipEff( const effect val ) // sets unequip effect
+bool item::setUnequipEff( effect& val ) // sets unequip effect
 {
-  item_eff[3] = val;
+  item_eff[3] = &val;
   return true;
 }
 
-bool item::setUseEff( const effect val ) // sets use effect
+bool item::setUseEff( effect& val ) // sets use effect
 {
-  item_eff[4] = val;
+  item_eff[4] = &val;
   return true;
 }
 

@@ -41,7 +41,7 @@ class item
   item(); // default constructor
   item( const unsigned int ix, const string nm, const string gf,
 	const unsigned int ty, const unsigned int at[], const bool ch[],
-	const bool ae[], const effect ef[], const unsigned int n );
+	const bool ae[], effect ef[], const unsigned int n );
           // "full" constructor
   item( const unsigned int ix, const string nm, const string gf,
 	const unsigned int ty, const unsigned int n ); // "sparse" constructor
@@ -109,11 +109,11 @@ class item
   bool getEquipEffAct() const; // returns equip effect active?
   bool getUnequipEffAct() const; // returns unequip effect active?
   bool getUseEffAct() const; // returns use effect active
-  effect getObtainEff() const; // returns obtain effect
-  effect getDropEff() const; // returns drop effect
-  effect getEquipEff() const; // returns equip effect
-  effect getUnequipEff() const; // returns unequip effect
-  effect getUseEff() const; // returns use effect
+  effect* getObtainEff() const; // returns obtain effect
+  effect* getDropEff() const; // returns drop effect
+  effect* getEquipEff() const; // returns equip effect
+  effect* getUnequipEff() const; // returns unequip effect
+  effect* getUseEff() const; // returns use effect
   item* getAttItem() const; // returns a pointer to attached item
 
   // ===================================================================
@@ -146,11 +146,11 @@ class item
   bool setEquipEffAct( const bool val ); // sets equip effect active?
   bool setUnequipEffAct( const bool val ); // sets unequip effect active?
   bool setUseEffAct( const bool val ); // sets use effect active
-  bool setObtainEff( const effect val ); // sets obtain effect
-  bool setDropEff( const effect val ); // sets drop effect
-  bool setEquipEff( const effect val ); // sets equip effect
-  bool setUnequipEff( const effect val ); // sets unequip effect
-  bool setUseEff( const effect val ); // sets use effect
+  bool setObtainEff( effect& val ); // sets obtain effect
+  bool setDropEff( effect& val ); // sets drop effect
+  bool setEquipEff( effect& val ); // sets equip effect
+  bool setUnequipEff( effect& val ); // sets unequip effect
+  bool setUseEff( effect& val ); // sets use effect
   
   // ===================================================================
 
@@ -178,7 +178,7 @@ class item
   unsigned int item_att[NUM_ATT]; // attributes array, see item.txt
   bool item_chr[NUM_CHR]; // characteristics array, see item.txt
   bool item_ace[NUM_EFF]; // active effects array, see item.txt
-  effect item_eff[NUM_EFF]; // effects array, see item.txt
+  effect* item_eff[NUM_EFF]; // effects array, see item.txt
   item* attached; // pointer to combined item, see item.txt
 
   // ===================================================================

@@ -304,7 +304,8 @@ int main( int argc, char* argv[] )
 
   item FT_1, FT_3;
   item FT_2( 27, "Foo", "foo.gfx", 1, 99 );
-  effect FT_E( "Foobar" );
+  effect FT_E;
+  FT_E.setName( "Foobar" );
 
   if( debug )
   {
@@ -507,35 +508,35 @@ int main( int argc, char* argv[] )
     cout << "FAILED!\n";
 
   cout << "\tget/setObtainEff()... ";
-  FT_1.setObtainEff( FT_2.getObtainEff() );
+  FT_1.setObtainEff( *FT_2.getObtainEff() );
   if( FT_1.getObtainEff() == FT_2.getObtainEff() )
     cout << "OK!\n";
   else
     cout << "FAILED!\n";
 
   cout << "\tget/setDropEff()... ";
-  FT_1.setDropEff( FT_2.getDropEff() );
+  FT_1.setDropEff( *FT_2.getDropEff() );
   if( FT_1.getDropEff() == FT_2.getDropEff() )
     cout << "OK!\n";
   else
     cout << "FAILED!\n";
 
   cout << "\tget/setEquipEff()... ";
-  FT_1.setEquipEff( FT_2.getEquipEff() );
+  FT_1.setEquipEff( *FT_2.getEquipEff() );
   if( FT_1.getEquipEff() == FT_2.getEquipEff() )
     cout << "OK!\n";
   else
     cout << "FAILED!\n";
 
   cout << "\tget/setUnequipEff()... ";
-  FT_1.setUnequipEff( FT_2.getUnequipEff() );
+  FT_1.setUnequipEff( *FT_2.getUnequipEff() );
   if( FT_1.getUnequipEff() == FT_2.getUnequipEff() )
     cout << "OK!\n";
   else
     cout << "FAILED!\n";
 
   cout << "\tget/setUseEff()... ";
-  FT_1.setUseEff( FT_2.getUseEff() );
+  FT_1.setUseEff( *FT_2.getUseEff() );
   if( FT_1.getUseEff() == FT_2.getUseEff() )
     cout << "OK!\n";
   else

@@ -58,12 +58,12 @@ Protected member variables:
                    // 2 -- equip
                    // 3 -- unequip
                    // 4 -- use
-  effect item_eff[]; // Effect array, corresponds to:
-		     // 0 -- obtain
-                     // 1 -- drop
-                     // 2 -- equip
-                     // 3 -- unequip
-                     // 4 -- use
+  effect* item_eff[]; // Effect array, corresponds to:
+		      // 0 -- obtain
+                      // 1 -- drop
+                      // 2 -- equip
+                      // 3 -- unequip
+                      // 4 -- use
   item* attached; // Pointer to the item attached to this one
 
 Constructors:
@@ -153,11 +153,11 @@ Value returning functions:
   bool getEquipEffAct()    // returns equip effect active?
   bool getUnequipEffAct()  // returns unequip effect active?
   bool getUseEffAct()      // returns use effect active
-  effect getObtainEff()    // returns obtain effect
-  effect getDropEff()      // returns drop effect
-  effect getEquipEff()     // returns equip effect
-  effect getUnequipEff()   // returns unequip effect
-  effect getUseEff()       // returns use effect
+  effect* getObtainEff()   // returns obtain effect
+  effect* getDropEff()     // returns drop effect
+  effect* getEquipEff()    // returns equip effect
+  effect* getUnequipEff()  // returns unequip effect
+  effect* getUseEff()      // returns use effect
   item* getAttItem()	   // returns a pointer to the attached item
   
 Modifying functions:
@@ -186,11 +186,11 @@ Modifying functions:
   bool setEquipEffAct( bool )   // sets equip effect active?
   bool setUnequipEffAct( bool ) // sets unequip effect active?
   bool setUseEffAct( bool )     // sets use effect active
-  bool setObtainEff( effect )   // sets obtain effect
-  bool setDropEff( effect )     // sets drop effect
-  bool setEquipEff( effect )    // sets equip effect
-  bool setUnequipEff( effect )  // sets unequip effect
-  bool setUseEff( effect )      // sets use effect
+  bool setObtainEff( effect& )  // sets obtain effect
+  bool setDropEff( effect& )    // sets drop effect
+  bool setEquipEff( effect& )   // sets equip effect
+  bool setUnequipEff( effect& ) // sets unequip effect
+  bool setUseEff( effect& )     // sets use effect
 
   bool attach( item& it );      // attaches an item
   bool detach();                // detaches the attached item
