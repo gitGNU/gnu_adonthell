@@ -100,3 +100,4 @@ delete_dialogue (MainFrame * wnd)
     
     g_free (wnd->file_name);
 }
+
