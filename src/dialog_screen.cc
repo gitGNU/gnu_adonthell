@@ -104,10 +104,11 @@ void dialog_screen::init(character_base *mynpc, char * dlg_file, u_int8 size)
     sel->set_space_with_object (5);
     sel->set_circle (true);
     sel->set_visible_scrollbar (true);
+    sel->set_auto_scrollbar (true);
     sel->set_activate (true);
 
     sel->set_visible (true);
-    sel->set_focus(true); //due an error from window system
+    sel->set_focus (true); //due an error from window system
 
     // Notification when a dialogue item get's selected
     sel->set_signal_connect (makeFunctor (*this,  &dialog_screen::on_select),
