@@ -38,6 +38,7 @@ int
 main (int argc, char *argv[])
 {
     char tmp[256];
+    int c;
     
     // The Application Data
     MainFrame *MainWnd = new MainFrame;
@@ -48,6 +49,11 @@ main (int argc, char *argv[])
         return 1;
 
     myconf.gamedir = "."; 
+    
+    if (getopt (argc, argv, "g:") != -1)
+    {
+        myconf.gamedir = optarg;
+    }
     
     gtk_init (&argc, &argv);
 
