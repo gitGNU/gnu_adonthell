@@ -11,12 +11,17 @@
    See the COPYING file for more details.
 */
 
-#ifndef __AUDIO_THREAD_H__
-#define __AUDIO_THREAD_H__
+#ifndef __GLOBALS_H__
+#define __GLOBALS_H__
+
 #ifdef SDL_MIXER
 
-int audio_init();
-void audio_update();
-void audio_cleanup();
+#include "audio.h"
+
+// This is our audio 'hook' that anything in the project
+// can get at in order to trigger sounds. The actual
+// allocation is at the end of the 'audio.cc' file.
+extern audio *audio_in;
+
 #endif
 #endif

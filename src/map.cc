@@ -11,7 +11,7 @@
 #include "mapsquare.h"
 #include "window.h"
 #include "map.h"
-#include "audio_thread.h" // For sound effects tied to keyboard
+#include "globals.h"
 using namespace std;
 
 map::map()
@@ -314,8 +314,8 @@ void map::update_keyboard()
 
 #ifdef SDL_MIXER
 // Sound effects... not working at the moment
-  //if(keyboard::is_pushed(49)) audio_in->play_wave(1,0); // '1' Key
-  //if(keyboard::is_pushed(50)) audio_in->play_wave(1,1); // '2' Key
+  if(keyboard::is_pushed(49)) audio_in->play_wave(1,0); // '1' Key
+  if(keyboard::is_pushed(50)) audio_in->play_wave(1,1); // '2' Key
 #endif
 }
 

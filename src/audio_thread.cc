@@ -1,4 +1,5 @@
 /*
+   $Id$
    Copyright (C) 2000 Andrew Henderson <hendersa@db.erau.edu>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
@@ -18,13 +19,19 @@
 #include "SDL.h"
 #include "SDL_mixer.h"
 #include "SDL_thread.h"
+#include "globals.h"
 
 int audio_init() {
 
   // Open the audio device
   audio_in = new audio;
-  audio_in->load_background(0);
-  audio_in->load_wave(); // This should be done elsewhere...
+
+  // Load our background music and SFX in
+  audio_in->load_background(0, "audio/water.it");
+  audio_in->load_wave(0, "audio/at0.wav");
+  audio_in->load_wave(1, "audio/at1.wav");
+
+  // Start the background music playing
   audio_in->play_background(0);
   return(0);
 }

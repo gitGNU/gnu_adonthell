@@ -22,6 +22,7 @@
 #include "window.h"
 #include "map.h"
 #include "mapengine.h"
+#include "globals.h"
 #ifdef SDL
 #include "SDL.h"
 #include "SDL_thread.h"
@@ -62,9 +63,7 @@ int main(int argc, char * argv[])
 
   audio_init();
   audio_thread = SDL_CreateThread((void*)audio_update, NULL);
-  if ( audio_thread != NULL) {
-    NULL;
-  } else {
+  if ( audio_thread == NULL) {
      fprintf(stderr, "Couldn't create audio thread: %s\n", SDL_GetError());
      fprintf(stderr, "Audio will not be used\n");
   }

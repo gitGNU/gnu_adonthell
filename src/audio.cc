@@ -33,12 +33,8 @@ audio::audio() {
   background_paused = false; // Music isn't paused
   audio_initialized = false; // No audio connection yet
 
-  // Unload any junk in memory (if there is any)
-  // Alex: Ark! Looks like pointers are not initialized
-  // to NULL, enabling the 2 following lines cause a segfault
-  //  for (i = 0; i < NUM_WAVES; i++) unload_wave(i);
-  //  for (i = 0; i < NUM_MUSIC; i++) unload_background(i);
-
+  // Mark all slots in sound and music arrays as empty
+  for (i = 0; i < NUM_WAVES; i++) sounds[i] = NULL;
   for (i = 0; i < NUM_MUSIC; i++) music[i] = NULL; 
 
   // Try opening the audio device at our defaults
@@ -70,55 +66,62 @@ void audio::audio_cleanup(void) {
   current_background = -1;  // No music is queued to play
 
   // Null out those tunes and sound effects
-  for (i = 0; i < NUM_WAVES; i++) unload_wave(i);
-  for (i = 0; i < NUM_MUSIC; i++) unload_background(i);
+  for (i = 0; i < NUM_WAVES; i++) {
+    unload_wave(i);
+    sounds[i] = NULL;
+  }
+  for (i = 0; i < NUM_MUSIC; i++) {
+    unload_background(i);
+    music[i] = NULL;
+  }
 
   // Close out audio connection
   Mix_CloseAudio();
   audio_initialized = false;
 }
 
-int audio::load_background(int new_background) {
+int audio::load_background(int slot, char *filename) {
 
   // Check for bad input
-  if ((new_background >= NUM_MUSIC) || (new_background < 0))
+  if ((slot >= NUM_MUSIC) || (slot < 0)) {
+    fprintf(stderr, "Error: Tried to put music in invalid slot.\n");
     return(1);
+  }
 
   // If we are loading background music into the slot
   // the current background music is in...
-  if (current_background == new_background) {
+  if (current_background == slot) {
 
     // This warns the audio thread to stop updating
     background_on = false;
 
     current_background = -1;
     Mix_HaltMusic();  // Just a precaution
-    unload_background(new_background);
+    unload_background(slot);
     background_on = false;
 
     // Wow! Recursive call!
-    load_background(new_background);
+    load_background(slot, filename);
 
   // If we aren't loading background music over
   // music currently playing ...
   } else {
 
     // Music already occupies that slot
-
-    // Alex: Ark! Looks like pointers are not initialized
-    // to NULL, enabling the 2 following lines cause a segfault
-
-    //    if (music[new_background] != NULL)
-    //      unload_background(new_background);
+    if (music[slot] != NULL)
+      unload_background(slot);
 
     // No music in slot, load new tune in
-    music[new_background] = Mix_LoadMUS("audio/water.it");
+    music[slot] = Mix_LoadMUS(filename);
   }
   return(0);
 }
 
-void audio::unload_background(int tune) {
-  if (music[tune] != NULL) Mix_FreeMusic(music[tune]);
+void audio::unload_background(int slot) {
+  if (music[slot] != NULL) {
+    Mix_FreeMusic(music[slot]);
+    music[slot] = NULL;
+  }
 }
 
 void audio::pause_music(void) {
@@ -136,24 +139,39 @@ void audio::set_background_volume(int volume) {
 
 // This should be done better, but I'll wait until
 // I have enough sound effects to play with ;>
-void audio::load_wave(void) {
-  sounds[0] = Mix_LoadWAV("audio/at0.wav");
-  sounds[1] = Mix_LoadWAV("audio/at1.wav");
+int audio::load_wave(int slot, char *filename) {
+
+  // Check for bad input
+  if ((slot >= NUM_WAVES) || (slot < 0)) {
+    fprintf(stderr, "Error: Tried to put wave in invalid slot.\n");
+    return(1);
+  } else {
+    sounds[slot] = Mix_LoadWAV(filename);
+  }
+  return(0);
 }
 
 void audio::unload_wave(int wave) {
-  if (sounds[wave] != NULL) Mix_FreeChunk(sounds[wave]);
+  if (sounds[wave] != NULL) {
+    Mix_FreeChunk(sounds[wave]);
+    sounds[wave] = NULL;
+  }
 }
 
-void audio::play_wave(int channel, int sound) {
-  if (sounds[sound] != NULL) Mix_PlayChannel(channel, sounds[sound], 0);
+void audio::play_wave(int channel, int slot) {
+  if (sounds[slot] != NULL) Mix_PlayChannel(channel, sounds[slot], 0);
 }
 
-void audio::play_background(int background) {
-  if (music[background] != NULL) {
-    current_background = background;
+void audio::play_background(int slot) {
+  if (music[slot] != NULL) {
+    current_background = slot;
     background_on = true;
   }
 }
+
+// This is our audio 'hook'. In order to use audio,
+// you must include the 'globals.h' file to get
+// access to the hook.
+audio *audio_in;
 
 #endif

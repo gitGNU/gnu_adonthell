@@ -1,4 +1,5 @@
 /*
+   $Id$
    Copyright (C) 2000 Andrew Henderson <hendersa@db.erau.edu>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
@@ -44,8 +45,8 @@ public:
 
   // Background Music functions:
     // Use these to load/unload background music
-    int load_background(int);
-    void unload_background(int);
+    int load_background(int slot, char *filename);
+    void unload_background(int slot);
 
     void set_background_volume(int);
 
@@ -55,11 +56,11 @@ public:
 
   // Sound Effect functions:
     // Use these to load/unload wave files
-    void load_wave(void);
-    void unload_wave(int wave);
+    int load_wave(int slot, char *filename);
+    void unload_wave(int slot);
 
-    void play_wave(int channel, int sound);
-    void play_background(int background);
+    void play_wave(int channel, int slot);
+    void play_background(int slot);
 };
 
 #endif
