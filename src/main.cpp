@@ -56,16 +56,18 @@ int main(int argc, char * argv[])
 	exit(1);
       }
     
-    // The map view will display 16 squares horizontally and 12 vertically
-    // This is perfect for a 320x240 display, as 16*20=320 and 12*20=240
-    mview.resize(16,12);
+    // The map view will display 15 squares horizontally and 11 vertically
+    // This is perfect for a 320x240 display, as 15*20=300 and 11*20=220
+    // The number of squares to display must be even, or the character won't
+    // be centered on the map (may change soon)
+    mview.resize(15,11);
     // The map view will display "mymap"
     mview.attach_map(&mymap);
 
     // Now a little window tour!
     win_font * font=new win_font(WIN_THEME_ELFE);
     win_theme * theme=new win_theme(WIN_THEME_ELFE);
-    win_container * container=new win_container(50,11,150,80,theme);
+    win_container * container=new win_container(50,24,150,80,theme);
     win_label * label=new win_label(0,7,0,0,theme,font);
     image im;
     if(im.load_pnm("yeti.pnm"))
@@ -90,30 +92,30 @@ int main(int argc, char * argv[])
       {
 	input::update();
 	if(input::has_been_pushed(SDLK_ESCAPE)) break;
-	if(input::is_pushed(SDLK_RIGHT)) mview.scroll_right();
-	if(input::is_pushed(SDLK_LEFT)) mview.scroll_left();
-	if(input::is_pushed(SDLK_UP)) mview.scroll_up();
-	if(input::is_pushed(SDLK_DOWN)) mview.scroll_down();
 	for(int i=0;i<screen::frames_to_do();i++)
 	  {
+	    if(input::is_pushed(SDLK_RIGHT)) mview.scroll_right();
+	    if(input::is_pushed(SDLK_LEFT)) mview.scroll_left();
+	    if(input::is_pushed(SDLK_UP)) mview.scroll_up();
+	    if(input::is_pushed(SDLK_DOWN)) mview.scroll_down();
 	    mymap.update();
 	    container->update();
 	    // Updating the label position
 	    {
 	      static s_int8 xfac=1, yfac=1;
-	      if((container->x()+container->length()+10>=screen::length()) ||
-		 (container->x()<=10))
+	      if((container->x()+container->length()+23>=screen::length()) ||
+		 (container->x()<=23))
 		xfac=-xfac;
 	      
-     	      if((container->y()+container->height()+10>=screen::height()) ||
-		 (container->y()<=10))
+     	      if((container->y()+container->height()+23>=screen::height()) ||
+		 (container->y()<=23))
 		yfac=-yfac;
 
 	      container->move(container->x()+xfac,container->y()+yfac);
 	    }
 	  }
-	screen::clear();
-	mview.draw(0,0);
+	//      	screen::clear();
+	mview.draw(10,10);
 	// FIXME: there should be a draw(u_int16, u_int16) method to comply
 	// to the programming style. It would move the container then draw
 	// it.

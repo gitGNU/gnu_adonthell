@@ -103,150 +103,6 @@ void animation_off::draw_border(u_int16 x, u_int16 y,
   screen::drawbox(x+xoffset,y+yoffset,1,height+1,0xFFFFFF,da_opt);
 }
 
-mapsquaretpl::mapsquaretpl()
-{
-  walkable=true;
-}
-
-s_int8 mapsquaretpl::get(gzFile file)
-{
-  gzread(file,&walkable,sizeof(walkable));
-  return 0;
-}
-
-s_int8 mapsquaretpl::put(gzFile file)
-{
-  gzwrite(file,&walkable,sizeof(walkable));
-  return 0;
-}
-
-maptpl::maptpl(u_int16 x, u_int16 y, u_int16 l, u_int16 h,
-	       u_int16 d_l, u_int16 d_h) : mapselect(x,y,l,h,d_l,d_h)
-{
-  u_int16 i,j;
-  placetpl=new (mapsquaretpl*)[length];
-  for(i=0;i<length;i++) placetpl[i]=new mapsquaretpl[h];
-  selimg=new image(MAPSQUARE_SIZE, MAPSQUARE_SIZE);
-  selbaseimg=new image(MAPSQUARE_SIZE, MAPSQUARE_SIZE);
-  for(i=0;i<selimg->get_length();i++)
-    for(j=0;j<selimg->get_height();j++)
-      {
-	selimg->put_pix(i,j,0x0000FF);
-	selbaseimg->put_pix(i,j,0x00FF00);
-      }
-  basex=0;
-  basey=0;
-  selimg->set_alpha(110);
-  selbaseimg->set_alpha(110);
-}
-
-maptpl::~maptpl()
-{
-  u_int16 i;
-  for(i=0;i<length;i++)
-    delete[] placetpl[i];
-  delete[] placetpl;
-  delete selimg;
-  delete selbaseimg;
-}
-
-maptpl& maptpl::operator =(const maptpl& mt)
-{
-  return *this;
-}
-
-void maptpl::resize(u_int16 l, u_int16 h)
-{
-  u_int16 i,j;
-  mapsquaretpl ** oldplacetpl=placetpl;
-  placetpl=new (mapsquaretpl*)[l];
-  for(i=0;i<l;i++)
-    placetpl[i]=new mapsquaretpl[h];
-  for(i=0;i<l && i<length;i++)
-    for(j=0;j<h && j<height;j++)
-      placetpl[i][j]=oldplacetpl[i][j];
-  for(i=0;i<length;i++)
-    delete[] oldplacetpl[i];
-  delete[] oldplacetpl;
-  mapselect::resize(l,h);
-}
-
-s_int8 maptpl::get(gzFile file)
-{
-  u_int16 i,j;
-  for(i=0;i<length;i++)
-    delete[] placetpl[i];
-  delete[] placetpl;
-  gzread(file,&length,sizeof(length));
-  gzread(file,&height,sizeof(height));
-  placetpl=new (mapsquaretpl*)[length];
-  for(i=0;i<length;i++)
-    {
-      placetpl[i]=new mapsquaretpl[height];
-      for(j=0;j<height;j++)
-	placetpl[i][j].get(file);
-    }
-   gzread(file,&basex,sizeof(basex));
-   gzread(file,&basey,sizeof(basey));
-  return 0;
-}
-
-s_int8 maptpl::put(gzFile file)
-{
-  u_int16 i,j;
-  gzwrite(file,&length,sizeof(length));
-  gzwrite(file,&height,sizeof(height));
-  for(i=0;i<length;i++)
-    for(j=0;j<height;j++)
-      placetpl[i][j].put(file);
-  gzwrite(file,&basex,sizeof(basex));
-  gzwrite(file,&basey,sizeof(basey));
-  return 0;
-}
-
-void maptpl::set_base_tile(u_int16 x, u_int16 y)
-{
-  basex=x;
-  basey=y;
-}
-
-void maptpl::toggle_walkable()
-{
-  placetpl[posx][posy].walkable=placetpl[posx][posy].walkable?false:true;
-}
-
-void maptpl::draw_walkables()
-{
-  u_int16 i,j;
-  for(i=d_posx;(i<d_posx+dl)&&(i<length);i++)
-    for(j=d_posy;(j<d_posy+dh)&&(j<height);j++)
-      {
-	if(!placetpl[i][j].walkable)
-	  selimg->draw(s_posx+((i-d_posx)*MAPSQUARE_SIZE),
-		       s_posy+((j-d_posy)*MAPSQUARE_SIZE));
-      }
-}
-
-void maptpl::draw_base_tile()
-{
-  if((basex>=d_posx && basex<d_posx+dl)&&
-     (basey>=d_posy && basey<d_posy+dh))
-    selbaseimg->draw(s_posx+(basex-d_posx)*MAPSQUARE_SIZE,
-		     s_posy+(basey-d_posy)*MAPSQUARE_SIZE);
-}
-
-void maptpl::draw_base_tile(u_int16 x, u_int16 y, drawing_area * da_opt=NULL)
-{
-  selbaseimg->draw(x,y,da_opt);
-}
-
-void maptpl::draw()
-{
-  draw_walkables();
-  draw_base_tile();
-  mapselect::draw();
-}
-
 void mapobject::init()
 {
   nbr_of_parts=0;
@@ -796,32 +652,62 @@ void mapobject::update_editor_keys()
       init_parts();
     }
 
-  if(testkey(SDLK_LEFT))
+  if(testkey(SDLK_LEFT) && show_grid)
     {
       if(SDL_GetModState()&KMOD_LSHIFT)
-	{ set_part_xoffset(currentpart,part[currentpart].xoffset-1); }
-      else if (show_grid)
+	{ 
+	  if(part[currentpart].xoffset)
+	    set_part_xoffset(currentpart,part[currentpart].xoffset-1); 
+	}
+      else if(SDL_GetModState()&KMOD_LALT)
+	{ 
+	  if((maptpl::get_length()-1)*MAPSQUARE_SIZE>=
+	     part[currentpart].get_length()+part[currentpart].xoffset)
+	    maptpl::resize(maptpl::get_length()-1,maptpl::get_height()); 
+	}
+      else
 	{ move_cursor_left(); must_upt_label_part=true;}
     }
-  if(testkey(SDLK_RIGHT))
+  if(testkey(SDLK_RIGHT) && show_grid)
     {
       if(SDL_GetModState()&KMOD_LSHIFT)
-	{ set_part_xoffset(currentpart,part[currentpart].xoffset+1); }
-      else if (show_grid)
+	{ 
+	  if(part[currentpart].xoffset+part[currentpart].get_length()<
+	     maptpl::length*MAPSQUARE_SIZE)
+	    set_part_xoffset(currentpart,part[currentpart].xoffset+1); 
+	}
+      else if(SDL_GetModState()&KMOD_LALT)
+	{ maptpl::resize(maptpl::get_length()+1,maptpl::get_height()); }
+      else
 	{ move_cursor_right(); must_upt_label_part=true;}
     }
-  if(testkey(SDLK_UP))
+  if(testkey(SDLK_UP) && show_grid)
     {
       if(SDL_GetModState()&KMOD_LSHIFT)
-	{ set_part_yoffset(currentpart,part[currentpart].yoffset-1); }
-      else if (show_grid)
+	{ 
+	  if(part[currentpart].yoffset)
+	    set_part_yoffset(currentpart,part[currentpart].yoffset-1);
+	}
+      else if(SDL_GetModState()&KMOD_LALT)
+	{ 
+	  if((maptpl::get_height()-1)*MAPSQUARE_SIZE>=
+	     part[currentpart].get_height()+part[currentpart].yoffset)
+	    maptpl::resize(maptpl::get_length(),maptpl::get_height()-1); 
+	}
+      else
 	{ move_cursor_up(); must_upt_label_part=true;}
     }
-  if(testkey(SDLK_DOWN))
+  if(testkey(SDLK_DOWN) && show_grid)
     {
       if(SDL_GetModState()&KMOD_LSHIFT)
-	{ set_part_yoffset(currentpart,part[currentpart].yoffset+1); }
-      else if (show_grid)
+	{ 
+	  if(part[currentpart].yoffset+part[currentpart].get_height()<
+	     maptpl::height*MAPSQUARE_SIZE)
+	    set_part_yoffset(currentpart,part[currentpart].yoffset+1); 
+	}
+      else if(SDL_GetModState()&KMOD_LALT)
+	{ maptpl::resize(maptpl::get_length(),maptpl::get_height()+1); }
+      else
 	{ move_cursor_down(); must_upt_label_part=true;}
     }
   if(input::has_been_pushed(SDLK_SPACE))
@@ -889,7 +775,7 @@ void mapobject::editor()
     {
       static u_int16 i;
       input::update();
-      resize_grid();
+      //      resize_grid();
       for(i=0;i<screen::frames_to_do();i++) update_editor_keys();
       update_and_draw();
       screen::show();

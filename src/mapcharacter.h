@@ -13,13 +13,26 @@
 */
 
 
-#ifndef _MAPOBJ_H
-#define _MAPOBJ_H
+#ifndef _MAPCHARACTER_H
+#define _MAPCHARACTER_H
 
 #include <vector>
 #include "animation.h"
 #ifdef _EDIT_
 #include "mapselect.h"
+
+#include "win_types.h"
+#include "win_base.h"
+#include "win_font.h"
+#include "win_label.h"
+#include "win_write.h"
+#include "win_border.h"
+#include "win_image.h"
+#include "win_anim.h"
+#include "win_container.h"
+#include "win_select.h"
+#include "win_theme.h"
+#include "win_background.h"
 #endif
 
 class mapcharacter
@@ -31,6 +44,11 @@ class mapcharacter
   c_moves current_move;
 
   vector<animation*> anim;
+
+#ifdef _EDIT_
+  win_font * font;
+  win_theme * th;
+#endif
 
  public:
   void init();
@@ -44,13 +62,26 @@ class mapcharacter
   void update();
   void draw(s_int16 x, s_int16 y, drawing_area * da_opt=NULL);
 
+  void go_north();
+  void go_south();
+  void go_east();
+  void go_west();
+
 #ifdef _EDIT_
   s_int8 put(gzFile file);
   s_int8 save(const char * fname);
 
+  void load();
+  void save();
+
   void insert_anim(animation * an, c_moves pos);
+
+  void update_editor();
+  void draw_editor();
+  void update_and_draw();
+  void update_editor_keys();
+  void editor();
 #endif
 };
 
 #endif
-

@@ -8,20 +8,25 @@ OBJECTS = pnm.o drawing_area.o image.o screen.o animation.o game.o \
 	win_border.o win_base.o win_font.o win_image.o \
 	win_background.o win_scrolled.o win_scrollbar.o win_theme.o
 
-MOBJEDOBJ=mapobject.o mapobjedit.o
-MEDOBJ=mapobject.o landmap.o mapview.o mapedit.o
+MOBJEDOBJ=mapobject.o maptpl.o mapobjedit.o
+MCAREDOBJ=mapcharacter.o maptpl.o mapcharedit.o
+MEDOBJ=maptpl.o mapobject.o mapcharacter.o landmap.o mapview.o mapedit.o
 ANIMEDOBJ=animedit.o
 MOBJEDEXEC=mapobjedit
+MCAREDEXEC=mapcharedit
 MEDEXEC=mapedit
 ANIMEDEXEC=animedit
 
-all:animedit mapobjedit mapedit
+all:animedit mapobjedit mapcharedit mapedit
 
 mapedit:$(OBJECTS) $(MEDOBJ)
 	$(CPP) $(STDOBJECTS) $(OBJECTS) $(MEDOBJ) $(LIBS) -o $(MEDEXEC)
 
 mapobjedit:$(OBJECTS) $(MOBJEDOBJ)
 	$(CPP) $(STDOBJECTS) $(OBJECTS) $(MOBJEDOBJ) $(LIBS) -o $(MOBJEDEXEC)
+
+mapcharedit:$(OBJECTS) $(MCAREDOBJ)
+	$(CPP) $(STDOBJECTS) $(OBJECTS) $(MCAREDOBJ) $(LIBS) -o $(MCAREDEXEC)
 
 animedit:$(OBJECTS) $(ANIMEDOBJ)
 	$(CPP) $(STDOBJECTS) $(OBJECTS) $(ANIMEDOBJ) $(LIBS) -o $(ANIMEDEXEC)
@@ -166,6 +171,9 @@ landmap.o: ../../landmap.cpp
 
 mapview.o: ../../mapview.cpp
 	$(CPP) -c $(CPPFLAGS) ../../mapview.cpp -o mapview.o
+
+maptpl.o: ../../maptpl.cpp
+	$(CPP) -c $(CPPFLAGS) ../../maptpl.cpp -o maptpl.o
 
 clean:
 	rm -rf *.o

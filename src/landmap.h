@@ -16,6 +16,7 @@
 #define _LANDMAP_H
 
 #include "mapobject.h"
+#include "mapcharacter.h"
 #include <string>
 #include <vector>
 #include <list>
@@ -146,6 +147,7 @@ class landmap
 
 
  public:
+  vector<mapcharacter*> mapchar;
   mapobject ** pattern;
   u_int16 nbr_of_patterns;
 

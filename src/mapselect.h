@@ -13,6 +13,9 @@
 
 #include "image.h"
 
+#ifndef _MAPSELECT_H
+#define _MAPSELECT_H
+
 #define MAPSQUARE_SIZE 20
 #define CURSOR_BLINK_RATE 40
 
@@ -60,3 +63,5 @@ class mapselect
   void draw_grid();
   void draw();
 };
+
+#endif

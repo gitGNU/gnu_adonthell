@@ -18,7 +18,7 @@
 
 #include <vector>
 #include "animation.h"
-#include "mapselect.h"
+#include "maptpl.h"
 
 class animation_off : public animation
 {
@@ -41,44 +41,6 @@ class animation_off : public animation
   void draw_border(u_int16 x, u_int16 y, drawing_area * da_opt=NULL);
 
   friend class mapobject;
-};
-
-
-class mapsquaretpl
-{
- public:
-  bool walkable;
-
-  mapsquaretpl();
-  s_int8 get(gzFile file);
-  s_int8 put(gzFile file);
-  friend class maptpl;
-  
-};
-
-class maptpl : public mapselect
-{
- public:
-  mapsquaretpl ** placetpl;
-  u_int16 basex, basey;
-  image * selimg;
-  image * selbaseimg;
-
-  maptpl(u_int16 x, u_int16 y, u_int16 l, u_int16 h,
-	 u_int16 d_l, u_int16 d_h);
-  ~maptpl();
-  
-  maptpl& operator =(const maptpl& mt);
-
-  s_int8 get(gzFile file);
-  s_int8 put(gzFile file);
-  void resize(u_int16 l, u_int16 h);
-  void set_base_tile(u_int16 x, u_int16 y);
-  void toggle_walkable();
-  void draw_walkables();
-  void draw_base_tile();
-  void draw_base_tile(u_int16 x, u_int16 y, drawing_area * da_opt=NULL);
-  void draw();
 };
 
 class mapobject : public maptpl
