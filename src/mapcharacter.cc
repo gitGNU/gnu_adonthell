@@ -298,15 +298,15 @@ void mapcharacter::update_main_move(map*amap)
     {
     case DOWN:
       is_event=MAPCHAR_EVENT_LEFT;
-      if (amap->is_unreachable(posx,posy+1)||
-	  (amap->is_occuped(posx,posy+1))||(posy==amap->get_height()-1)||
+      if ((posy==amap->get_height()-1)||amap->is_unreachable(posx,posy+1)||
+	  (amap->is_occuped(posx,posy+1))||
 	  (amap->is_solid_down(posx,posy))) movtype=0;
       else amap->put_character(posx,posy+1,this);
       framefactor=0;
       break;
     case UP:
       is_event=MAPCHAR_EVENT_LEFT;
-      if (amap->is_unreachable(posx,posy-1)||(posy==0)||
+      if ((posy==0)||amap->is_unreachable(posx,posy-1)||
 	  (amap->is_occuped(posx,posy-1))||
 	  (amap->is_solid_up(posx,posy))) movtype=0;
       else amap->put_character(posx,posy-1,this);
@@ -314,88 +314,22 @@ void mapcharacter::update_main_move(map*amap)
       break;
     case RIGHT:
       is_event=MAPCHAR_EVENT_LEFT;
-      if (amap->is_unreachable(posx+1,posy)||
-	  (amap->is_occuped(posx+1,posy))||(posx==amap->get_lenght()-1)||
+      if ((posx==amap->get_lenght()-1)||amap->is_unreachable(posx+1,posy)||
+	  (amap->is_occuped(posx+1,posy))||
 	  (amap->is_solid_right(posx,posy))) movtype=0;
       else amap->put_character(posx+1,posy,this);
       framefactor=4;
       break;
     case LEFT:
       is_event=MAPCHAR_EVENT_LEFT;
-      if (amap->is_unreachable(posx-1,posy)||
-	  (amap->is_occuped(posx-1,posy))||(posx==0)||
+      if ((posx==0)||amap->is_unreachable(posx-1,posy)||
+	  (amap->is_occuped(posx-1,posy))||
 	  (amap->is_solid_left(posx,posy))) movtype=0;
       else amap->put_character(posx-1,posy,this);
       framefactor=6;
       break;
     }
 }
-
-/*void mapcharacter::update_main_move(map*amap)
-{
-  if (scridx==0)
-    {
-      switch (movtype)
-	{
-	case DOWN:
-	  is_event=MAPCHAR_EVENT_LEFT;
-	  framefactor=0;
-	  if (posy==amap->maphaut-1)
-	    movtype=0;
-	  else
-	    {
-	      if (amap->themap[posx][posy+1].flags&PARAM_UNREACHABLE) movtype=0;
-	      if ((amap->themap[posx][posy+1].OCCUPED!=0)||
-		  (amap->themap[posx][posy].solid&SOLID_DOWN))
-		movtype=0;
-	      else amap->themap[posx][posy+1].OCCUPED=mapcharnbr;
-	    }
-	  break;
-	case UP:
-	  is_event=MAPCHAR_EVENT_LEFT;
-	  framefactor=2;
-	  if (posy==0)
-	    movtype=0;
-	  else
-	    {
-	      if (amap->themap[posx][posy-1].flags&PARAM_UNREACHABLE) movtype=0;
-	      if ((amap->themap[posx][posy-1].OCCUPED!=0)||
-		  (amap->themap[posx][posy].solid&SOLID_UP))
-		movtype=0;
-	      else amap->themap[posx][posy-1].OCCUPED=mapcharnbr;
-	    }
-	  break;
-	case RIGHT:
-	  is_event=MAPCHAR_EVENT_LEFT;
-	  framefactor=4;
-	  if (posx==amap->maplong-1)
-	    movtype=0;
-	  else
-	    {
-	      if (amap->themap[posx+1][posy].flags&PARAM_UNREACHABLE) movtype=0;
-	      if ((amap->themap[posx+1][posy].OCCUPED!=0)||
-		  (amap->themap[posx][posy].solid&SOLID_RIGHT))
-		movtype=0;
-	      else amap->themap[posx+1][posy].OCCUPED=mapcharnbr;
-	    }
-	  break;
-	case LEFT:
-	  is_event=MAPCHAR_EVENT_LEFT;
-	  framefactor=6;
-	  if (posx==0) 
-	    movtype=0;
-	  else 
-	    {
-	      if (amap->themap[posx-1][posy].flags&PARAM_UNREACHABLE) movtype=0;
-	      if ((amap->themap[posx-1][posy].OCCUPED!=0)||
-		  (amap->themap[posx][posy].solid&SOLID_LEFT))
-		movtype=0;
-	      else amap->themap[posx-1][posy].OCCUPED=mapcharnbr;
-	    }
-	  break;
-	}
-    }
-}*/
 
 void mapcharacter::update_pos(map*amap)
 {
@@ -469,9 +403,6 @@ void mapcharacter::update_eventleave(map*amap)
       is_event=0;
       amap->launch_event
 	(this,amap->get_square_eventleavenbr(get_posx(),get_posy()));
-      //      event[amap->event[amap->themap[posx][posy].eventleave].type]
-      //	(&amap->event[amap->themap[posx][posy].eventleave],
-      //	 this,amap,posx,posy);
       return;
     }
 }
@@ -484,8 +415,6 @@ void mapcharacter::update_eventcome(map*amap)
       is_event=0;
       amap->launch_event
 	(this,amap->get_square_eventcomenbr(get_posx(),get_posy()));
-      //      event[amap->event[amap->themap[posx][posy].event].type]
-      //	(&amap->event[amap->themap[posx][posy].event],this,amap,posx,posy);
       return;
     }
 }
