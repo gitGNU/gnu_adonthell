@@ -15,107 +15,41 @@
 #ifndef __INPUT_H__
 #define __INPUT_H__
 
+#include "SDL_keysym.h"
+
 int input_update(void *);
 
 class input
 {
-  static u_int8 charkeys_pushed[65536];
-  static u_int8 charkeys_released[65536];
+  static u_int8 keyboard_mode;
+  static u_int8 * keystate;
+  static u_int8 * p_keystate;
 
  public:
+  static int FilterEvents(const SDL_Event *event);
+  static void init();
+  static void shutdown();
   static void update();
-  static bool charkeys[65536];
   static u_int16 last_key;
   static u_int16 getkeypressed();
-  static bool is_pushed(u_int16 key);
+  static bool is_pushed(SDLKey key);
 
   static u_int16 mouse_posx, mouse_posy;
   static bool mouse_button[3];
   
-  static u_int8 get_nbr_pushed(u_int16 k);
-  static u_int8 get_nbr_released(u_int16 k);
+  static s_int32 get_next_key();
+
+#define MODE_CHAR 1
+#define MODE_STATE 2
+#define MODE_PUSHED 3
+  static void set_keyboard_mode(u_int8 mode);
+  static u_int8 get_keyboard_mode();
+  static void set_key_repeat(int delay=SDL_DEFAULT_REPEAT_DELAY, int interval=SDL_DEFAULT_REPEAT_INTERVAL);
+  static void clear_keys_queue();
 
 #define LEFT_BUTTON 0
 #define MIDDLE_BUTTON 1
 #define RIGHT_BUTTON 2
 };
-
-
-#define Left_Key 57396
-#define Right_Key 57397
-#define Up_Key 57394
-#define Down_Key 57395
-#define Shift_Key 58112
-#define LeftCtrl_Key 306
-#define LeftAlt_Key 58114
-#define RightAlt_Key 57387
-#define Escape_Key 27
-#define Enter_Key 13
-#define Space_Key 32
-#define Backspace_Key 8
-#define KPPlus_Key 43
-#define KPMinus_Key 45
-#define Inser_Key 57378
-#define Home_Key 57400
-#define PgUp_Key 57398
-#define Del_Key 127
-#define End_Key 57401
-#define PgDown_Key 57399
-#define F1_Key 57601
-#define F2_Key 57602
-#define F3_Key 57603
-#define F4_Key 57604
-#define F5_Key 57605
-#define F6_Key 57606
-#define F7_Key 57607
-#define F8_Key 57608
-#define F9_Key 57609
-#define F10_Key 57610
-#define F11_Key 57611
-#define F12_Key 57612
-#define N0_Key 48
-#define N1_Key 49
-#define N2_Key 50
-#define N3_Key 51
-#define N4_Key 52
-#define N5_Key 53
-#define N6_Key 54
-#define N7_Key 55
-#define N8_Key 56
-#define N9_Key 57
-#define a_Key 65
-#define b_Key 66
-#define c_Key 67
-#define A_Key 97
-#define B_Key 98
-#define C_Key 99
-#define D_Key 100
-#define E_Key 101
-#define F_Key 102
-#define G_Key 103
-#define H_Key 104
-#define I_Key 105
-#define J_Key 106
-#define K_Key 107
-#define L_Key 108
-#define M_Key 109
-#define N_Key 110
-#define O_Key 111
-#define P_Key 112
-#define Q_Key 113
-#define R_Key 114
-#define S_Key 115
-#define T_Key 116
-#define U_Key 117
-#define V_Key 118
-#define W_Key 119
-#define X_Key 120
-#define Y_Key 121
-#define Z_Key 122
-
-#define CtrlS_Combo 19
-#define CtrlL_Combo 12
-#define CtrlC_Combo 3
-#define CtrlV_Combo 22
 
 #endif

@@ -82,7 +82,7 @@ PROGRAMS =  $(bin_PROGRAMS)
 DEFS = -DHAVE_CONFIG_H -I. -I$(srcdir) -I..
 CPPFLAGS = 
 LDFLAGS = 
-LIBS = -L/usr/local/lib -Wl,-rpath,/usr/local/lib -lSDL -lpthread -lSDL_image -lSDL_mixer -L/usr/lib/python1.5/config -lpython1.5
+LIBS = -L/usr/local/lib -Wl,-rpath,/usr/local/lib -lSDL -lpthread -lSDL_image -lSDL_mixer -L/usr/local/lib/python1.6/config -lpython1.6
 mapengine_OBJECTS =  animation.o audio.o audio_thread.o character.o \
 cutscene.o dialog.o fileops.o game.o image.o init.o input.o inventory.o \
 lex.prefs.o main.o map.o mapcharacter.o mapengine.o mapevent.o \
@@ -93,7 +93,7 @@ py_mapengine_wrap.o yarg.o event.o
 mapengine_LDADD = $(LDADD)
 mapengine_DEPENDENCIES = 
 mapengine_LDFLAGS = 
-CXXFLAGS = -O6 -g -Wall -I/usr/local/include -I/usr/local/include/SDL -D_REENTRANT -I/usr/include/python1.5  -DSDL_MIXER 
+CXXFLAGS = -O6 -g -Wall -I/usr/local/include -I/usr/local/include/SDL -D_REENTRANT -I/usr/local/include/python1.6  -DSDL_MIXER 
 CXXCOMPILE = $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
 CXXLD = $(CXX)
 CXXLINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(LDFLAGS) -o $@

@@ -39,116 +39,234 @@ input.h
 \emph default 
 .
  It gives control to keyboard and mouse.
+\layout Section
+
+Basics
 \layout Standard
 
-It has to be periodically updated.
+First of all, you need to initialize the system at your program startup:
+\layout LyX-Code
+
+void input::init();
+\layout Standard
+
+Then keep in mind that the event queue has to be periodically updated.
  Just call 
 \emph on 
 input::update()
 \emph default 
  in your main loop for example.
- No particular setup or shutdown functions have to be called.
+ If you omit it, don't hope to trap any event.
+ Once you are sure it is periodically updated, you're ready for using the
+ input functions.
 \layout Section
 
 Keyboard access
+\layout Subsection
+
+Keyboard modes
 \layout Standard
 
 The keyboard can be accessed by several methods, each one having a particular
- purpose:
-\layout Itemize
+ purpose.
+ The functions will act differently depending of the mode.
+\layout Description
 
-You may want to know if a key was pushed 
-\emph on 
-when the update function were called
-\emph default 
- with the following function: 
-\begin_deeper 
-\layout LyX-Code
-
-bool input::is_pushed(u_int16 key);
-\layout Standard
-
-The 
-\emph on 
-key
-\emph default 
- parameter is the keycode ; a list of all keycodes can be found in the 
-\emph on 
-SDL_keysym.h 
-\emph default 
-include file.
-\layout Standard
-
-Once a key is pushed or released a key table is updated, allowing you to
- know the 
+MODE_STATE: This is the default mode.
+ The functions will return the 
 \emph on 
 current
 \emph default 
- state of a key by calling 
-\emph on 
-input::is_pushed
-\emph default 
-.
- This method has one drawback: It may happen that the user press and release
- a key so rapidly that the 
-\emph on 
-push
-\emph default 
- and 
-\emph on 
-release
-\emph default 
- events will be caught at the same time by the same 
+ state of the keyboard.
+ That means that if a key is rapidly pushed then released between two 
 \emph on 
 input::update()
 \emph default 
- call.
- In this case, you will NOT catch the keypress which may be very ennoying
- especially in text input.
- The following methods can prevent this.
-\end_deeper 
-\layout Itemize
-
-You can know 
-\emph on 
-how many times a key has been pushed or released since the last method call
-\emph default 
-:
-\begin_deeper 
+ you won't get it.
+ On the other hand, if a key is kept pushed, the functions will return it
+ as pushed for each query as long as it is pushed.
 \layout LyX-Code
 
-u_int8 input::get_nbr_pushed(u_int16 k)
-\newline 
-u_int8 input::get_nbr_released(u_int16 k)
+bool input::is_pushed(SDLKey key);
 \layout Standard
 
-Once 
+Simply returns if a key is currently pushed or not.
+ The SDLKey list can be found in SDL's 
 \emph on 
-get_nbr_pushed
+SDL_keysym.h
 \emph default 
- or 
+ file.
+\layout Description
+
+MODE_PUSHED: This mode is a bit more reliable than the previous one, especially
+ if you are not sure about the delay between two 
 \emph on 
-get_nbr_released
+input::update()
 \emph default 
- are called they return the value of the key counter and reset it.
- That way, if a key has been pushed then immediatly released so the 
+ and don't want to lose any keypress.
+ Each keystoke will be recorded and the functions will return this state:
+ 
 \emph on 
-is_pushed
+has the key 
 \emph default 
- function can't catch it, these function will anyway return that it has
- been pushed one time and released one time.
- These functions MUST be used in text_input applications for example.
- They are not handy in other cases like character controlling when you only
- need to know if the key is pushed or not.
- To avoid problems, BE SURE to always call the two functions for all the
- keys you need.
- If you only call 
+been
 \emph on 
-get_nbr_pushed
+ pushed since the last query
 \emph default 
- this turn then call the two function the turn after, you may find weird
- that your key has been released 2 times and pushed 1 time...
-\end_deeper 
+? That also means that even if you keep a key pushed a long time, 
+\emph on 
+input::is_pushed()
+\emph default 
+ will only return 
+\emph on 
+true
+\emph default 
+ one time, contrary to 
+\emph on 
+MODE_STATE
+\emph default 
+ where it would return 
+\emph on 
+true
+\emph default 
+ as long as it's pushed.
+\layout LyX-Code
+
+bool input::is_pushed(SDLKey key);
+\layout Standard
+
+Returns 
+\emph on 
+true
+\emph default 
+ if 
+\emph on 
+key
+\emph default 
+ has 
+\emph on 
+been
+\emph default 
+ pushed.
+\layout Description
+
+MODE_CHAR: This mode is the most accurate if you're most interested in the
+ 
+\emph on 
+character
+\emph default 
+ rather than the 
+\emph on 
+key
+\emph default 
+.
+ When into this mode, the keyboard acts 
+\emph on 
+exactly
+\emph default 
+ as if you were typing text in an editor or a terminal, enabling key repeat.
+ This mode also takes into account your keyboad language.
+\layout LyX-Code
+
+s_int32 input::get_next_key();
+\layout Standard
+
+Get the next character that has been entered.
+ This function returns -1 if no character were entered since last call,
+ 0 if a character has been entered but is not printable, or the UNICODE
+ character that can be directly printed on the screen or used with the window
+ functions.
+\layout Standard
+
+Note that 
+\emph on 
+input::is_pushed()
+\emph default 
+ can be used as well and will act as if you were in 
+\emph on 
+STATE
+\emph default 
+ mode.
+ 
+\emph on 
+input::get_next_key()
+\emph default 
+ can be also used in the 
+\emph on 
+STATE
+\emph default 
+ and 
+\emph on 
+PUSHED
+\emph default 
+ modes, but will return the Key Code as defined in SDLKey instead of the
+ UNICODE.
+ So beware.
+\layout Subsection
+
+Mode Switching
+\layout LyX-Code
+
+void input::set_keyboard_mode(u_int8 mode);
+\layout LyX-Code
+
+u_int8 input::get_keyboard_mode();
+\layout Standard
+
+Set or get the current keyboard mode.
+ Arguments/return values are 
+\emph on 
+MODE_STATE
+\emph default 
+, 
+\emph on 
+MODE_PUSHED
+\emph default 
+ and 
+\emph on 
+MODE_CHAR
+\emph default 
+.
+\layout Subsection
+
+Other functions
+\layout LyX-Code
+
+void input::set_key_repeat(int delay=SDL_DEFAULT_REPEAT_DELAY, int interval=SDL_
+DEFAULT_REPEAT_INTERVAL);
+\layout Standard
+
+Change the key repeat status.
+ When called without arguments it will set the repeat delay to a 
+\begin_inset Quotes eld
+\end_inset 
+
+standard
+\begin_inset Quotes erd
+\end_inset 
+
+ value.
+ When called with (0,0) as arguments it disables the keyboard repeat.
+ Keyboard repeat default values are (depending of the keyboard mode):
+\layout Description
+
+MODE_STATE: Disabled.
+\layout Description
+
+MODE_PUSHED: Disabled.
+\layout Description
+
+MODE_CHAR: Enabled.
+\layout LyX-Code
+
+void input::clear_keys_queue();
+\layout Standard
+
+Clears all key strike from the event queue for the 
+\emph on 
+get_next_key()
+\emph default 
+ function.
 \layout Section
 
 Mouse access

@@ -96,43 +96,30 @@ void win_write::update()
 
 void win_write::write()
 {
-  static u_int16 curletter;
-  static bool alwayspush;
-  u_int16 n=input::getkeypressed();  
-  if(input::is_pushed(curletter))
+  static s_int32 c;
+  while((c=input::get_next_key())>0)
     {
-      if(!alwayspush)     
+      if(text.lenght<TEXT_MAX)
 	{
-	  if(text.lenght<TEXT_MAX)
-	    { 
-	      if(n==Enter_Key)
-		{
-		  beg_select=end_select+2;
-		  end_select=(text.lenght-1);
-		  ok_text=true;
-		  text.text[text.lenght++]='\n';
-		}      
-	      else   
-		{
-		  if(n==Backspace_Key && text.lenght>0) 
-		    {text.lenght--;
-		    if(text.pos>0) text.pos--;
-		    }
-		  else 
-		    //ERROR TO SEE UPPERCASE
-		    if(input::is_pushed(Shift_Key))
-		      text.text[text.lenght++]=n-30;
-		    else text.text[text.lenght++]=n;
-		}
+	  if(c==SDLK_RETURN)
+	    {
+	      beg_select=end_select+2;
+	      end_select=(text.lenght-1);
+	      cout << beg_select << " " << end_select << endl;
+	      ok_text=true;
+	      text.text[text.lenght++]='\n';
 	    }
-	  alwayspush=true;
+	  else
+	    {
+	      if(c==SDLK_BACKSPACE && text.lenght>0) 
+		{
+		  text.lenght--;
+		  if(text.pos>0) text.pos--;
+		}
+	      else text.text[text.lenght++]=c;
+	    }
 	}
     }
-  else
-    {
-      alwayspush=false;
-    }
-  curletter=n;
 }
 
 

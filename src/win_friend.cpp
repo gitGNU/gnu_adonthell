@@ -25,7 +25,7 @@ void draw_text(u_int16 sx,u_int16 sy,u_int16 ex,u_int16 ey,win_font *font,text_w
   u_int16 j;
   u_int8 k;
   bool b;
-  image tmp;
+  static image tmp;
   txt.len_fl=0;
   txt.pos_tmp=txt.pos;
   txt.end_win=false;

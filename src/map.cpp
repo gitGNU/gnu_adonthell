@@ -359,7 +359,7 @@ void landmap::update_all_characters()
 void landmap::update_keyboard()
 {
   if(status==MAP_STATUS_FADE) return;
-  if (input::is_pushed(Escape_Key)) {
+  if (input::is_pushed(SDLK_ESCAPE)) {
     status=MAP_STATUS_QUIT;
 
 #ifdef SDL_MIXER
@@ -370,25 +370,25 @@ void landmap::update_keyboard()
   if (heroe.get_scridx()) return;
 
   /* Process our hero */
-  if((heroe.get_movtype()==RIGHT&&!input::is_pushed(275))||
-     (heroe.get_movtype()==LEFT&&!input::is_pushed(276))||
-     (heroe.get_movtype()==UP&&!input::is_pushed(273))||
-     (heroe.get_movtype()==DOWN&&!input::is_pushed(274)))
+  if((heroe.get_movtype()==RIGHT&&!input::is_pushed(SDLK_RIGHT))||
+     (heroe.get_movtype()==LEFT&&!input::is_pushed(SDLK_LEFT))||
+     (heroe.get_movtype()==UP&&!input::is_pushed(SDLK_UP))||
+     (heroe.get_movtype()==DOWN&&!input::is_pushed(SDLK_DOWN)))
     heroe.set_movtype(0);
-  if(input::is_pushed(275)&&heroe.get_movtype()==0)
+  if(input::is_pushed(SDLK_RIGHT)&&heroe.get_movtype()==0)
     heroe.set_movtype(RIGHT);
-  if(input::is_pushed(276)&&heroe.get_movtype()==0)
+  if(input::is_pushed(SDLK_LEFT)&&heroe.get_movtype()==0)
     heroe.set_movtype(LEFT);
-  if(input::is_pushed(273)&&heroe.get_movtype()==0)
+  if(input::is_pushed(SDLK_UP)&&heroe.get_movtype()==0)
     heroe.set_movtype(UP);
-  if(input::is_pushed(274)&&heroe.get_movtype()==0)
+  if(input::is_pushed(SDLK_DOWN)&&heroe.get_movtype()==0)
     heroe.set_movtype(DOWN);
 
   /* HACK -- Test for inventory */
-  if ( input::is_pushed('I') || input::is_pushed('i') )
+  if (input::is_pushed(SDLK_i))
 	  test_inventory(this);
 
-    if (input::is_pushed(Space_Key))
+    if (input::is_pushed(SDLK_SPACE))
     {
         if (!de)
         {

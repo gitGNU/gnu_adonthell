@@ -51,7 +51,7 @@ void win_base::init_base(u_int16 tx,u_int16 ty, u_int16 tl,u_int16 th,win_contai
    wback=NULL;
    
    //initialize transluency of background
-   level_trans_back=180;
+   level_trans_back=128;
 
    //initialize select
    wselect=NULL;
@@ -229,7 +229,7 @@ void win_base::draw_border()
 		}
 	      else
 		{//if wselect but not select
-		  image tmp;
+		  static image tmp;
 		  if(wc)
 		    { 
 		      tmp.brightness(h_border,120);
@@ -333,7 +333,7 @@ void win_base::draw_background()
 	    } 
 	  else
 	    {
-	      image tmp;
+	      static image tmp;
 	      tmp.brightness(background,120);
 	      if(wc) tmp.putbox_trans(real_x,real_y,level_trans_back,wc->get_drawing_area());
 	      else tmp.putbox_trans(real_x,real_y,level_trans_back);

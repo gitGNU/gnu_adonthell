@@ -90,6 +90,7 @@ class animation
   win_label * label_frame_info;
   win_label * label_anim_info;
   image * bg;
+
   u_int16 currentimage;
 #endif
 
@@ -136,8 +137,12 @@ class animation
   void save();
   void load();
   void update_editor();
+  void update_editor_keys();
   void draw_editor();
+  void update_and_draw();
   void editor();
+  void info_window(char * t_label);
+  char * query_window(char * t_label);
 #endif
 
 };

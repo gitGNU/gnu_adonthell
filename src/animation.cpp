@@ -23,6 +23,9 @@ u_int16 animation::a_d_diff=0;
 
 void animation_frame::init()
 {
+  imagenbr=0;
+  is_masked=false;
+  alpha=0;
   gapx=0;
   gapy=0;
   delay=0;
@@ -138,10 +141,6 @@ s_int8 animation_frame::save(const char * fname)
 
 animation::animation()
 {
-#ifdef _DEBUG_
-  cout << "animation() called, "<< ++a_d_diff
-       << " objects currently allocated\n";
-#endif
   t_frame=NULL;
   frame=NULL;
   nbr_of_images=0;
@@ -172,7 +171,10 @@ animation::animation()
   container->set_border(border);
   container->show_all();
 #endif
-
+#ifdef _DEBUG_
+  cout << "animation() called, "<< ++a_d_diff
+       << " objects currently allocated\n";
+#endif
 }
 
 animation::~animation()
@@ -200,7 +202,7 @@ animation::~animation()
 
 void animation::update()
 {
-  if(!play_flag) return;
+  if((!play_flag)||(!nbr_of_frames)) return;
   if(frame[currentframe].delay==0) return;
   if(nbr_of_frames<=1) return;
     
@@ -297,27 +299,116 @@ s_int8 animation::save(const char * fname)
 
 void animation::save()
 {
-  char s[255];
-  cout << "Save as:";
-  cin >> s;
-  if(save(s)) cout << "Error saving!\n";
-  else cout << "Successfully saved!\n";
+  char * s=query_window("Save as:");
+  if(!s) return;
+  if(save(s)) info_window("Error saving!");
+  delete s;
+}
+
+void animation::info_window(char * t_label)
+{
+  win_container * querycont;
+  win_label * querylabel;
+  win_label * querylabel2;
+  win_border * queryborder;
+  win_font * queryfont;
+  win_background * queryback;
+  u_int8 previous_mode=input::get_keyboard_mode();
+
+  queryback=new win_background(WIN_THEME_ORIGINAL);
+  queryfont=new win_font(WIN_THEME_ORIGINAL);
+  queryborder=new win_border(WIN_THEME_ORIGINAL);
+  querycont=new win_container(70,40,200,120);
+  querylabel=querycont->add_label(5,5,190,130,queryfont);
+  querylabel->set_text(t_label);
+  querylabel2=querycont->add_label(60,90,80,15,queryfont);
+  querylabel2->set_text("Press any key...");
+  querycont->set_border(queryborder);
+  querycont->set_background(queryback);
+  querycont->show_all();
+  input::set_keyboard_mode(MODE_PUSHED);
+  input::clear_keys_queue();
+  do
+    {
+      input::update();
+      update_and_draw();
+      querycont->update();
+      querycont->draw();
+      screen::show();
+    } 
+  while(input::get_next_key()<0);
+  input::set_keyboard_mode(previous_mode);
+  delete querycont;
+  delete queryfont;
+  delete queryback;
+  input::clear_keys_queue();
+}
+
+char * animation::query_window(char * t_label)
+{
+  u_int8 previous_mode=input::get_keyboard_mode();
+  char * s;
+  win_container * querycont;
+  win_label * querylabel;
+  win_write * querywrite;
+  win_border * queryborder;
+  win_font * queryfont;
+  win_background * queryback;
+
+  queryback=new win_background(WIN_THEME_ORIGINAL);
+  queryfont=new win_font(WIN_THEME_ORIGINAL);
+  queryborder=new win_border(WIN_THEME_ORIGINAL);
+  querycont=new win_container(70,40,200,120);
+  querylabel=querycont->add_label(5,5,100,15,queryfont);
+  querylabel->set_text(t_label);
+  querywrite=querycont->add_write(5,20,100,30,queryfont);
+  querycont->set_border(queryborder);
+  querycont->set_background(queryback);
+  querycont->show_all();  
+  input::set_keyboard_mode(MODE_CHAR);
+  while(!querywrite->is_text())
+    {
+      input::update();
+      update_and_draw();
+      querycont->update();
+      querycont->draw();
+      screen::show();
+      if(input::is_pushed(SDLK_ESCAPE))
+	{
+	  input::set_keyboard_mode(previous_mode);
+	  delete querycont;
+	  delete queryfont;
+	  delete queryback;
+	  s=NULL;
+	  return(s);
+	}
+    }
+  input::set_keyboard_mode(previous_mode);
+  s=strdup(querywrite->get_text());
+  delete querycont;
+  delete queryfont;
+  delete queryback;
+  return(s);
 }
 
 void animation::load()
 {
   animation * t=new animation;
-  char s[255];
-  cout << "Load:";
-  cin >> s;
-  if(t->load(s)) cout << "Error loading!\n";
+  char * s;
+  s=query_window("Load animation:");
+  if(!s)
+    {
+      delete t;
+      return;
+    }
+  if(t->load(s)) info_window("Error loading!");
   else 
     {
       currentimage=0;
       *(animation*)this=*t;
-      cout << "Successfully loaded\n";
     }
   delete t;
+  delete s;
 }
 
 
@@ -386,22 +477,30 @@ s_int8 animation::insert_frame(animation_frame &af, u_int16 pos)
 void animation::add_image()
 {
   image im;
-  char s[255];
   u_int16 p;
-  cout << "File to load:";
-  cin >> s;
+  char * s=query_window("File to load:");
+  if(!s) return;
   if(!im.load_raw(s)) 
     {
-      cout << "Successfully loaded\n";
       do
 	{
-	  cout << "Insert at pos(0-" << nbr_of_images <<"):";
-	  cin >> p;
+	  char tmp[255];
+	  char * s2;
+	  sprintf(tmp,"Insert at pos(0-%d):",nbr_of_images);
+	  s2=query_window(tmp);
+	  if(!s2)
+	    {
+	      delete s;
+	      return;
+	    }
+	  p=atoi(s2);
+	  delete s2;
 	}
       while(p>nbr_of_images);
       insert_image(im,p);
     }
-  else cout << "Error loading\n";
+  else info_window("Error loading!");
+  delete s;
 }
 
 s_int8 animation::delete_image(u_int16 pos)
@@ -419,8 +518,13 @@ s_int8 animation::delete_image(u_int16 pos)
   delete[] oldt_frame;
   if(currentimage>=nbr_of_images) currentimage=nbr_of_images-1;
 #ifdef _DEBUG_
-  cout << "Added image: " << nbr_of_images << " total in animation.\n";
+  cout << "Removed image: " << nbr_of_images << " total in animation.\n";
 #endif
+  if(!nbr_of_images) 
+    {
+      t_frame=NULL;
+      currentimage=0;
+    }
   return 0;
 }
 
@@ -439,15 +543,21 @@ s_int8 animation::delete_frame(u_int16 pos)
   delete[] oldframe;
   if(currentframe>=nbr_of_frames) currentframe=nbr_of_frames-1;
 #ifdef _DEBUG_
-  cout << "Added frame: " << nbr_of_frames << " total in animation.\n";
+  cout << "Removed frame: " << nbr_of_frames << " total in animation.\n";
 #endif
+  if(!nbr_of_frames) 
+    {
+      frame=NULL;
+      currentframe=0;
+    }
   return 0;
 }
 
 void animation::add_frame()
 {
   animation_frame af;
-  insert_frame(af,nbr_of_frames);
+  if(!nbr_of_images) info_window("You must add at least one image before adding a frame!");
+  else insert_frame(af,nbr_of_frames);
 }
 
 u_int16 animation::increase_frame(u_int16 c)
@@ -480,18 +590,27 @@ u_int16 animation::decrease_image(u_int16 c)
 
 inline bool testkey(SDLKey k)
 {
-  return ((input::get_nbr_pushed(k))||((input::is_pushed(k)&&(SDL_GetModState()&&KMOD_LCTRL))));
+  return ((input::is_pushed(k)));//&&(SDL_GetModState()&&KMOD_LCTRL)));
 }
 
 void animation::update_editor()
+{  
+  update();
+  container->update();
+}
+
+void animation::update_editor_keys()
 {
+  if((SDL_GetModState()&&KMOD_LCTRL)) input::set_keyboard_mode(MODE_STATE);
+  else input::set_keyboard_mode(MODE_PUSHED);
+
   // Mode switching
-  if(input::get_nbr_pushed(SDLK_F1)) mode=IMAGE;
-  if(input::get_nbr_pushed(SDLK_F2)) mode=FRAME;
+  if(input::is_pushed(SDLK_F1)) mode=IMAGE;
+  if(input::is_pushed(SDLK_F2)) mode=FRAME;
 
   // General functions
-  if(input::get_nbr_pushed(SDLK_F5)) save();
-  if(input::get_nbr_pushed(SDLK_F6)) load();
+  if(input::is_pushed(SDLK_F5)) save();
+  if(input::is_pushed(SDLK_F6)) load();
 
   // Image mode functions
   if(mode==IMAGE)
@@ -501,57 +620,53 @@ void animation::update_editor()
       if(testkey(SDLK_LEFT)) 
 	currentimage=decrease_image(currentimage);
 
-      if(input::get_nbr_pushed(SDLK_a)) add_image();
-      if(input::get_nbr_pushed(SDLK_d)) delete_image(currentimage);
+      if(input::is_pushed(SDLK_a)) add_image();
+      if(input::is_pushed(SDLK_d)) delete_image(currentimage);
     }
 
   // Frame mode functions
   else
     {
-      if(input::get_nbr_pushed(SDLK_p)) play();
-      if(input::get_nbr_pushed(SDLK_o)) stop();
-      if(input::get_nbr_pushed(SDLK_i)) rewind();
-
-      if(input::get_nbr_pushed(SDLK_a)) add_frame();
-      if(input::get_nbr_pushed(SDLK_d)) delete_frame(currentframe);
+      if(input::is_pushed(SDLK_p)) play();
+      if(input::is_pushed(SDLK_o)) stop();
+      if(input::is_pushed(SDLK_i)) rewind();
 
       if(!play_flag)
 	{
-      if(testkey(SDLK_KP_PLUS))
-	frame[currentframe].imagenbr=
-	  increase_image(frame[currentframe].imagenbr);
-      if(testkey(SDLK_KP_MINUS)) 
-	frame[currentframe].imagenbr=
-	  decrease_image(frame[currentframe].imagenbr);
-
-      if(testkey(SDLK_RIGHT)) 
-	currentframe=increase_frame(currentframe);
-      if(testkey(SDLK_LEFT)) 
-	currentframe=decrease_frame(currentframe);
-
-      if(testkey(SDLK_UP))
-	frame[currentframe].delay++;
-      if(testkey(SDLK_DOWN)) 
-	frame[currentframe].delay--;
-
-      if(testkey(SDLK_PAGEUP)) frame[currentframe].alpha++;
-      if(testkey(SDLK_PAGEDOWN)) frame[currentframe].alpha--;
-
-      if(testkey(SDLK_HOME))
-	frame[currentframe].nextframe=
-	  increase_frame(frame[currentframe].nextframe);
-      if(testkey(SDLK_END)) 
-	frame[currentframe].nextframe=
-	  decrease_frame(frame[currentframe].nextframe);
-
-      if(testkey(SDLK_INSERT)) 
-	frame[currentframe].is_masked=frame[currentframe].is_masked==true?
-	  false:true;
+	  if(input::is_pushed(SDLK_a)) add_frame();
+	  if(input::is_pushed(SDLK_d)) delete_frame(currentframe);
+	  if(testkey(SDLK_KP_PLUS))
+	    frame[currentframe].imagenbr=
+	      increase_image(frame[currentframe].imagenbr);
+	  if(testkey(SDLK_KP_MINUS)) 
+	    frame[currentframe].imagenbr=
+	      decrease_image(frame[currentframe].imagenbr);
+	  
+	  if(testkey(SDLK_RIGHT)) 
+	    currentframe=increase_frame(currentframe);
+	  if(testkey(SDLK_LEFT)) 
+	    currentframe=decrease_frame(currentframe);
+	  
+	  if(testkey(SDLK_UP))
+	    frame[currentframe].delay++;
+	  if(testkey(SDLK_DOWN)) 
+	    frame[currentframe].delay--;
+	  
+	  if(testkey(SDLK_PAGEUP)) frame[currentframe].alpha++;
+	  if(testkey(SDLK_PAGEDOWN)) frame[currentframe].alpha--;
+	  
+	  if(testkey(SDLK_HOME))
+	    frame[currentframe].nextframe=
+	      increase_frame(frame[currentframe].nextframe);
+	  if(testkey(SDLK_END)) 
+	    frame[currentframe].nextframe=
+	      decrease_frame(frame[currentframe].nextframe);
+	  
+	  if(testkey(SDLK_INSERT)) 
+	    frame[currentframe].is_masked=frame[currentframe].is_masked==true?
+	      false:true;
 	}
     }
-  
-  update();
-  container->update();
 }
 
 void animation::draw_editor()
@@ -574,8 +689,8 @@ void animation::draw_editor()
 		nbr_of_images-1);
       else sprintf(frame_txt,"No image");
     }
-
   label_frame_nbr->set_text(frame_txt);
+
   if(mode==FRAME)
     {
       if(nbr_of_frames>0)
@@ -626,16 +741,24 @@ void animation::draw_editor()
   container->draw();
 }
 
+void animation::update_and_draw()
+{
+  static u_int16 i;
+  for(i=0;i<screen::frames_to_do;i++) update_editor();
+  draw_editor();
+}
+
 void animation::editor()
 {
-  while(!input::get_nbr_pushed(Escape_Key))
+  u_int8 previous_mode=input::get_keyboard_mode();
+  while(!input::is_pushed(SDLK_ESCAPE))
     {
-      static u_int16 i;
-      for(i=0;i<screen::frames_to_do;i++) update_editor();
-      draw_editor();
       input::update();
+      update_editor_keys();
+      update_and_draw();
       screen::show();
     }
+  input::set_keyboard_mode(previous_mode);
 }
 
 #endif

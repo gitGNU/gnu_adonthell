@@ -20,66 +20,102 @@
 #include "input.h"
 #include "SDL.h"
 
-u_int8 input::charkeys_pushed[65536];
-u_int8 input::charkeys_released[65536];
-bool input::charkeys[65536];
+u_int8 input::keyboard_mode;
+u_int8 * input::keystate=NULL;
+u_int8 * input::p_keystate=NULL;
 u_int16 input::last_key;
 
 u_int16 input::mouse_posx, input::mouse_posy;
 bool input::mouse_button[3];
 
-void input::update() 
+
+int input::FilterEvents(const SDL_Event *event)
 {
-  SDL_Event event;
-  SDL_EnableUNICODE(1);
-  // All key events are saved in the "charkeys" variable in the
-  // keyboard namespace.
-  while(SDL_PollEvent(&event))
+  if(event->type==SDL_KEYDOWN) p_keystate[event->key.keysym.sym]++;
+  return 1;
+}
+
+void input::init()
+{
+  int n;
+  keyboard_mode=0;
+  keystate=SDL_GetKeyState(&n);
+  set_keyboard_mode(MODE_STATE);
+  set_key_repeat(0,0);
+  SDL_SetEventFilter(FilterEvents);
+  p_keystate=new u_int8[n];
+  memset(p_keystate, 0, n);
+}
+
+void input::shutdown()
+{
+  delete[] p_keystate;
+}
+
+void input::update()
+{
+  SDL_PumpEvents();
+}
+
+bool input::is_pushed(SDLKey key)
+{
+  bool ret;
+  //  if(keyboard_mode==MODE_PUSHED) keystate[key]=0;
+  if(keyboard_mode==MODE_PUSHED) ret=p_keystate[key]; else ret=keystate[key];
+  if(p_keystate[key]) p_keystate[key]--;
+  return ret;
+}
+
+void input::set_keyboard_mode(u_int8 mode)
+{
+  if((mode==MODE_CHAR)&&(keyboard_mode!=MODE_CHAR))
     {
-      switch (event.type) {
-      case SDL_KEYDOWN:
-	input::charkeys_pushed[event.key.keysym.sym]++;
-	input::charkeys[event.key.keysym.sym]=true;
-	input::last_key = event.key.keysym.sym;
-	break;
-      case SDL_KEYUP:
-	input::charkeys_released[event.key.keysym.sym]++;
-	input::charkeys[event.key.keysym.sym]=false;
-	break;
-      case SDL_MOUSEMOTION:
-	input::mouse_posx=event.motion.x;
-	input::mouse_posy=event.motion.y;
-	break;
-      case SDL_MOUSEBUTTONDOWN:
-	input::mouse_button[event.button.button-1]=true;
-	break;
-      case SDL_MOUSEBUTTONUP:
-	input::mouse_button[event.button.button-1]=false;
-	break;
-      }
+      SDL_EnableUNICODE(1);
+      set_key_repeat();
+      //      SDL_SetEventFilter(NULL);
     }
+  if((mode==MODE_STATE)&&(keyboard_mode!=MODE_STATE))
+    {
+      SDL_EnableUNICODE(0);
+      set_key_repeat(0,0);
+      //      SDL_SetEventFilter(NULL);
+    }
+  if((mode==MODE_PUSHED)&&(keyboard_mode!=MODE_PUSHED))
+    {
+      SDL_EnableUNICODE(0);
+      set_key_repeat(0,0);
+    }
+  keyboard_mode=mode;
 }
 
-u_int16 input::getkeypressed() { return(last_key); }
-
-
-bool input::is_pushed(u_int16 key)
+void input::set_key_repeat(int delay=SDL_DEFAULT_REPEAT_DELAY, int interval=SDL_DEFAULT_REPEAT_INTERVAL)
 {
-  return(charkeys[key]);
+  SDL_EnableKeyRepeat(delay, interval);
 }
 
-u_int8 input::get_nbr_pushed(u_int16 k)
+u_int8 input::get_keyboard_mode()
 {
-  static u_int8 r;
-  r=charkeys_pushed[k];
-  charkeys_pushed[k]=0;
-  return r;
+  return(keyboard_mode);
 }
 
-u_int8 input::get_nbr_released(u_int16 k)
+s_int32 input::get_next_key()
 {
-  static u_int8 r;
-  r=charkeys_released[k];
-  charkeys_released[k]=0;
-  return r;
+  static SDL_Event event;
+  if(SDL_PeepEvents(&event,1,SDL_GETEVENT,SDL_KEYDOWNMASK)==1)
+    {
+      if(p_keystate[event.key.keysym.sym]) p_keystate[event.key.keysym.sym]--;
+      if(keyboard_mode==MODE_PUSHED) keystate[event.key.keysym.sym]=0;
+      if(keyboard_mode==MODE_CHAR) return(event.key.keysym.unicode);
+      else if((keyboard_mode==MODE_STATE)||(keyboard_mode==MODE_PUSHED)) 
+	return(event.key.keysym.sym);
+      else return(0);
+    }
+  else return(-1);
+}
+
+void input::clear_keys_queue()
+{
+  cout << "Clearing\n";
+  while(get_next_key()!=-1);
+  cout << "Done it\n";
 }

@@ -79,6 +79,7 @@ void win_font::load(char * rep)
   height=font->height;
   lenght=table['A'].length;
   fclose(f);
+  delete font;
 }
 
 

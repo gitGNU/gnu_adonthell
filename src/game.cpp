@@ -47,6 +47,8 @@ void game::init(config &myconfig)
     fprintf(stderr, "Audio will not be used\n");
   }
 #endif  
+  
+  input::init();
 
     // Set the theme (later: get from config file)
     theme = WIN_THEME_ORIGINAL;
