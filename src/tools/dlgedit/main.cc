@@ -28,12 +28,16 @@
 #include <locale.h>
 #include "gettext.h"
 #include "game.h"
+#include "cfg_io.h"
 #include "dlg_cmdline.h"
 #include "dlg_compiler.h"
 #include "gui_dlgedit.h"
 
 int main (int argc, char *argv[])
 {
+    // dlgedit configuration
+    CfgIO config;
+    
     // Init GTK+
     gtk_init (&argc, &argv);
     

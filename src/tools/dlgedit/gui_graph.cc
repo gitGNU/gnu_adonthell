@@ -269,10 +269,6 @@ bool GuiGraph::selectParent ()
     // if so ...
     if (selected)
     {
-        // see if selected is arrow
-        if (selected->type () == LINK)
-            selected = selected->prev (FIRST);
-            
         // ... try to retrieve it's parent
         DlgNode *parent = module->traverse ()->up ();
 
@@ -302,10 +298,6 @@ bool GuiGraph::selectChild ()
     // if so ...
     if (selected)
     {
-        // see if selected is arrow
-        if (selected->type () == LINK)
-            selected = selected->prev (FIRST);
-        
         // ... try to retrieve it's child
         DlgNode *child = module->traverse ()->down ();
 

@@ -133,7 +133,9 @@ enum
     LOAD_DTOR       = 23,
     LOAD_PROJECT    = 24,
     LOAD_LOOP       = 25,
-    LOAD_UNKNOWN    = 26
+    LOAD_FILE       = 26,
+    LOAD_BASE_DIR   = 27,
+    LOAD_UNKNOWN    = 28
 };
 
 /**

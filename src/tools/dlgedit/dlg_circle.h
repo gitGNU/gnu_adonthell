@@ -37,7 +37,7 @@
 class DlgCircle : public DlgNode
 {
 public:
-    DlgCircle () { mode_ = IDLE; last_parent = NULL; entry_ = NULL; }
+    DlgCircle () { mode_ = IDLE; entry_ = NULL; }
     DlgCircle (DlgPoint &p, node_type t, DlgCircleEntry *e = NULL);
     ~DlgCircle ();
     
@@ -47,15 +47,15 @@ public:
     //@{
     /**
      * This method retrieves a %DlgCircle preceeding this node, i.e.
-     * (one of) it's parent(s). 
+     * (one of) it's parent(s).
      * @param pos Defines from what position to start retrieving the parent.
      * @param offset Get the parent found at the specified offset from the
      *        position given above.
-     * @return The %DlgCircle found at the specified offset from the 
+     * @return The %DlgCircle found at the specified offset from the
      *        given position.
      * @see query_type
      */
-    DlgCircle* parent (query_type pos, int offset = 1);  
+    DlgCircle* parent (query_type pos, int offset = 1);
     /**
      * This method retrieves a %DlgCircle following this node, i.e.
      * (one of) it's child(ren). 
@@ -67,17 +67,6 @@ public:
      * @see query_type
      */
     DlgCircle* child (query_type pos, int offset = 1);  
-    /**
-     * This method retrieves %DlgCircle's that are the children of
-     * this node's parent(s), i.e. it's sibling(s).  
-     * @param pos Defines from what position to start retrieving the sibling.
-     * @param offset Get the sibling found at the specified offset from the
-     *        position given above.
-     * @return The %DlgCircle found at the specified offset from the 
-     *        given position.
-     * @see query_type
-     */
-    DlgCircle* sibling (query_type pos, int offset = 1);  
     //@}
 
     /**
@@ -132,10 +121,7 @@ public:
      */
     bool hasChild (DlgNode *child);
     
-    DlgCircle *lastParent ()            { return last_parent; }
-    void setLastParent (DlgCircle *p)   { last_parent = p; }
 private:
-    DlgCircle *last_parent;
     DlgCircleEntry *entry_;
 };
 

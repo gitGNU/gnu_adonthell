@@ -9,6 +9,7 @@ SUBDIRS = examples
 EXTRA_DIST = loadlg.l
 
 dlgedit_SOURCES = \
+    cfg_io.cc \
     dlg_arrow.cc \
     dlg_circle.cc \
     dlg_circle_entry.cc \
@@ -37,8 +38,10 @@ dlgedit_SOURCES = \
     gui_settings.cc \
     gui_tooltip.cc \
     kb_traverse.cc \
+    lex.loadcfg.cc \
     lex.loadlg.cc \
     main.cc \
+    cfg_io.h \
     dlg_arrow.h \
     dlg_circle.h \
     dlg_circle_entry.h \
@@ -83,6 +86,9 @@ dlgedit_LDADD = $(GTK_LIBS) ../../libadonthell.a
 
 lex.loadlg.cc: loadlg.l
 	flex -olex.loadlg.cc loadlg.l
+
+lex.loadcfg.cc: loadcfg.l
+	flex -olex.loadcfg.cc loadcfg.l
 
 # py_character_wrap.cc : py_character.i ../../character.h ../../character_base.h
 #	swig $(SWIGFLAGS) -python -shadow -c++ -make_default -o py_character_wrap.cc $<

@@ -145,7 +145,17 @@ bool KBTraverse::selectChildren ()
 // select a certain node
 bool KBTraverse::select (DlgNode *node)
 {
-    if (node == NULL || node->prev (FIRST) == NULL) return false;
+    if (node == NULL) return false;
+
+    // root node
+    if (node->prev (FIRST) == NULL)
+    {
+        clear ();
+        Siblings.push_back (node);
+        Current = Siblings.begin ();
+
+        return true;   
+    }
     
     DlgNode *prev;
 
