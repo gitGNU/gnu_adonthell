@@ -5,7 +5,6 @@
 #include "types.h"
 #include "character.h"
 #include "storage.h"
-#include "dialog_engine.h"
 
 %}
 
