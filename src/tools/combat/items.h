@@ -24,30 +24,41 @@ Item Class ranges, item IDS and item property definitions
 
 
 
-
-
 //Blade IDs, and properties
 /////////////////////////////////////
 
-//Blade  IDs  101..199
-#define DAGGER 101
-#define SHORT_SWORD 102
-#define RAPIER 103
-#define CUTLASS 104
-#define BROADSWORD 105
-#define SAMURAI_SWORD 106
-#define TWO_HANDED_SWORD 107
-#define BASTARD_SWORD 108
-#define MASSIVE_SWORD 109
-#define MAX_BLADES 109 //number of last item in this item class
 
-//Blade item properties
+#define  WEAP 100
+//Blade  IDs  1..
+
+#define DAGGER 0
+#define SHORTSWORD 1
+#define RAPIER 2
+#define CUTLASS 3
+#define BROADSWORD 4
+#define SAMURAISWORD 5
+#define TWOHANDEDSWORD 6
+#define BASTARDSWORD 7
+#define MASSIVESWORD 8
+
+#define CLUB 9
+#define CUDGELL 10
+#define SPIKEDCLUB 11
+#define MACE 12
+#define MORNINGSTAR 13
+#define WARMACE 14
+#define WARHAMMER 15
+#define TWOHANDEDMACE 16
+#define WIDOWMAKER 17
+
+
+#define MAX_WEAPONS 18//
 
 //Dagger peoperties
 #define DAGGER_BASE 10
 
 //Short sword properties
-#define SHORT_SWORD_BASE 20
+#define SHORT_BASE 20
 
 // Rapier properties
 #define RAPIER_BASE 25
@@ -56,40 +67,19 @@ Item Class ranges, item IDS and item property definitions
 #define CUTLASS_BASE 30
 
 //Broadsword properties
-#define BROADSWORD_BASE 45
+#define BROAD_BASE 45
 
 //Samurai sword properties
-#define SAMURAI_SWORD_BASE 50
+#define SAMURAI_BASE 50
 
 //Two-handed sword properties
-#define TWO_HANDED_SWORD_BASE 60
+#define TWOHANDED_BASE 60
 
 //Bastard sword properties
-#define BASTARD_SWORD_BASE 75
+#define BASTARD_BASE 75
 
 //Massive sword properties
-#define MASSIVE_SWORD_BASE 80
-
-
-
-
-//Blunt IDs and properties
-///////////////////////////////////
-
-//Blunts  IDs  201..299
-#define CLUB 201
-#define CUDGELL 202
-#define SPIKED_CLUB 203
-#define MACE 204
-#define MORNING_STAR 205
-#define WAR_MACE 206
-#define WAR_HAMMER 207
-#define TWO_HANDED_MACE 208
-#define WIDOWMAKER 209
-#define BLUNTS_MAX 109 //number of last item in this item class
-
-
-//Blunt item properties
+#define MASSIVE_BASE 80
 
 //Club properties
 #define CLUB_BASE 5
@@ -98,22 +88,22 @@ Item Class ranges, item IDS and item property definitions
 #define CUDGELL_BASE 10
 
 //Spiked club properties
-#define SPIKED_CLUB_BASE 15
+#define SPIKEDCLUB_BASE 15
 
 //Mace properties
 #define MACE_BASE 25
 
 //Morning start properties
-#define MORNING_STAR_BASE 40
+#define MORNINGSTAR_BASE 40
 
 //War mace properties
-#define WAR_MACE_BASE 50
+#define WARMACE_BASE 50
 
 //War hammer properties
-#define WAR_HAMMER_BASE 60
+#define WARHAMMER_BASE 60
 
 //Two-handed mace properties
-#define TWO_HANDED_MACE_BASE 75
+#define TWOHANDEDMACE_BASE 75
 
 //Widowmaker properties
 #define WIDOWMAKER_BASE 90
@@ -121,20 +111,21 @@ Item Class ranges, item IDS and item property definitions
 
 
 
+
 //Armor IDs and properties
 ////////////////////////////////////
-
+#define ARMOR 0
 //Armor  IDs  1..99
-#define CLOTH 1
-#define LEATHER 2
-#define STUDDED 3
-#define RINGMAIL 4
-#define CHAINMAIL 5
-#define CHAIN_PLATE 6
-#define PLATEMAIL 7
-#define MAGIC_CHAIN 8
-#define MAGIC_PLATE 9
-#define ARMOR_MAX 9 //number of last item in this item class
+#define CLOTH 0
+#define LEATHER 1
+#define STUDDED 2
+#define RINGMAIL 3
+#define CHAINMAIL 4
+#define CHAIN_PLATE 5
+#define PLATEMAIL 6
+#define MAGIC_CHAIN 7
+#define MAGIC_PLATE 8
+#define ARMOR_MAX 9 //number items in this item class
 
 
 //Armor item properties
@@ -202,3 +193,4 @@ Item Class ranges, item IDS and item property definitions
 #define MAGIC_PLATE_CHOP 5
 #define MAGIC_PLATE_SMASH 5
 #define MAGIC_PLATE_DEX_PEANLATY 5
+

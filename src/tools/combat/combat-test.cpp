@@ -18,8 +18,9 @@
 #include "combat_classes.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <iostream.h>
 #include <time.h>
-
+#include "items.h"
 void show_results(int);
 float get_dice(int);
 
@@ -45,8 +46,33 @@ int main (void) {
 	roler.randomize();
 
 	char garbage;
-		
-	while (1) {
+	printf("\n\nWeapon Properties\n===============\n\n");
+	printf("WEAPON_ID	WEAPON NAME	BASE_DAMAGE\n-------------------------------------------\n");
+	printf("%-8d	Dagger              %-10d\n", DAGGER, DAGGER_BASE);
+   printf("%-8d	Short Sword         %-10d\n", SHORTSWORD, SHORT_BASE);
+	printf("%-8d	Rapier              %-10d\n", RAPIER, RAPIER_BASE);
+	printf("%-8d	Cutlass             %-10d\n", CUTLASS, CUTLASS_BASE);
+	printf("%-8d	Broad Sword         %-10d\n", BROADSWORD, BROAD_BASE);
+   printf("%-8d	Samurai Sword       %-10d\n", SAMURAISWORD, SAMURAI_BASE);
+	printf("%-8d	Two Handed Sword    %-10d\n", TWOHANDEDSWORD, TWOHANDED_BASE);
+	printf("%-8d	Bastard Sword       %-10d\n", BASTARDSWORD, BASTARD_BASE);
+	printf("%-8d	Massive Sword       %-10d\n", MASSIVESWORD, MASSIVE_BASE);
+   printf("\n\nEnter desired weapon ID for Character A:");
+	cin >> test.a_weapon;
+	garbage = getc(stdin);
+	printf("Enter desired weapon ID for Character B:");
+	cin >> test.b_weapon;
+	garbage = getc(stdin);
+	printf("\n\n*****\nNOTE: Consult items.h for Armor properties, I'm not going to list them here.\n*****\n");
+   printf("Current Armor IDs range from 1 to %d\n", ARMOR_MAX);
+	printf("Enter Armor ID for character A:");
+	cin >> test.a_armor;
+	cout << "test.a_armor\n";
+	garbage = getc(stdin);
+	printf("Enter Armor ID for Character B:");
+   cin >> test.b_armor;
+	garbage = getc(stdin);
+   	while (1) {
         	//create 2 random characters, crunch players stats, show results.
 		test.create_characters();
 		test.calc_stats();
@@ -99,17 +125,29 @@ float get_dice (int pass) {
 //******Temporary, for testing purposes*******
 void show_results(int parity) {
 	float dice;
-   // get random number for this turn
+   int outcome;
+   int a_armor;
+	int a_weapon;
+	int b_weapon;
+	int b_armor;
+	char garbage;
+	// get random number for this turn
 	dice = get_dice(parity);
+
+	
 
 	printf("\n\n\n\n\n\n\n\n\n\n");
 	printf("\n\nCharacter Statistics:\n=====================\n");
 	printf("Character A:\n------------\n");
+	printf("Strength: %d\n", int(test.a_str));
+	printf("Hit Points: %d\n", int(test.a_str * 4));
 	printf("Dexterity: %d\n", int(test.a_dex));
 	printf("Luck: %d\n", int(test.a_luck));
 	printf("Attack Skill: %d\n", int(test.a_attack_skill));
 	printf("Defense Skill: %d\n\n", int(test.a_defense_skill));
 	printf("Chatacter B:\n------------\n");
+	printf("Strength: %d\n", int(test.b_str));
+	printf("Hit Points: %d\n", int(test.b_str * 4));
 	printf("Dexterity: %d\n", int(test.b_dex));
 	printf("Luck: %d\n", int(test.b_luck));
 	printf("Attack Skill: %d\n", int(test.b_attack_skill));
@@ -126,6 +164,8 @@ void show_results(int parity) {
 	   printf("Number Rolled: %4.4f\n", dice);
 	   if(dice <= test.a_attack_range) {
 	  		printf("HIT!\n\n");
+			outcome = test.calc_damage(parity, 0, 0); //parity, action, attack method
+			printf("\ncalcdamage results: %d\n", outcome);
 			b_hit += 1; }
 	  	if(dice > test.a_attack_range && (dice < (test.a_attack_total_allotment - test.a_attack_luck_allotment)))
 	  		printf("MISS!\n\n");

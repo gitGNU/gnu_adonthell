@@ -16,16 +16,70 @@
  ***************************************************************************/
  #include "combat_classes.h"
  #include <stdio.h>
- #include <stdlib.h>
+#include <iostream.h>
+#include <stdlib.h>
  #include <time.h>
+ #include "items.h"
 
- //Create 2 characters' stats for use in the test.
+
+//Definitions for structures containing item properties.
+struct weapon {   int base; //weapon base damage
+							};
+								
+struct armor {	int ar; //armor AR
+							int thrust; //thrust defense bonus
+							int chop; //chop defense bonus
+							int smash; //smash defense bonus
+							int dexhit; //dexterity peanlaty
+						};
+
+
+struct weapon weapons[MAX_WEAPONS] ={
+	{DAGGER_BASE},
+	{SHORT_BASE},
+	{RAPIER_BASE},
+	{CUTLASS_BASE},
+	{BROAD_BASE},
+	{SAMURAI_BASE},
+	{TWOHANDED_BASE},
+	{BASTARD_BASE},
+	{MASSIVE_BASE},
+	{CLUB_BASE},
+	{CUDGELL_BASE},
+	{SPIKEDCLUB_BASE},
+	{MACE_BASE},
+	{MORNINGSTAR_BASE},
+	{WARMACE_BASE},
+	{WARHAMMER_BASE},
+	{TWOHANDEDMACE_BASE},
+	{WIDOWMAKER_BASE}
+};
+
+struct armor armors[ARMOR_MAX] = {
+	{CLOTH_AR, CLOTH_THRUST, CLOTH_CHOP, CLOTH_SMASH, CLOTH_DEX_PEANALTY},
+	{LEATHER_AR, LEATHER_THRUST, LEATHER_CHOP, LEATHER_SMASH, LEATHER_DEX_PEANALTY},
+	{STUDDED_AR, STUDDED_THRUST, STUDDED_CHOP, STUDDED_SMASH, STUDDED_DEX_PEANALTY},
+	{RINGMAIL_AR, RINGMAIL_THRUST, RINGMAIL_CHOP, RINGMAIL_SMASH, RINGMAIL_DEX_PEANALTY},
+	{CHAINMAIL_AR, CHAINMAIL_THRUST, CHAINMAIL_CHOP, CHAINMAIL_SMASH, CHAINMAIL_DEX_PEANLATY},
+	{CHAIN_PLATE_AR, CHAIN_PLATE_THRUST, CHAIN_PLATE_CHOP,  CHAIN_PLATE_SMASH, CHAIN_PLATE_DEX_PEANLATY},
+	{PLATEMAIL_AR, PLATEMAIL_THRUST, PLATEMAIL_CHOP, PLATEMAIL_SMASH,  PLATEMAIL_DEX_PEANALTY},
+	{MAGIC_CHAIN_AR, MAGIC_CHAIN_THRUST, MAGIC_CHAIN_CHOP, MAGIC_CHAIN_SMASH, MAGIC_CHAIN_DEX_PEANLATY},
+	{MAGIC_PLATE_AR, MAGIC_PLATE_THRUST, MAGIC_PLATE_CHOP, MAGIC_PLATE_SMASH, MAGIC_PLATE_DEX_PEANLATY}
+};
+
+
+
+
+
+
+
+//Create 2 characters' stats for use in the test.
 
 void melee::create_characters() {
 	float dice;
-	int count = 10;
+	int count = 11;
 	  srandom((unsigned int)time((time_t *)NULL));
-	while (count--) {
+	while (--count) {
 		//populate character variables
 	  switch (count) {
 	  	case 10:
@@ -102,20 +156,81 @@ void melee::calc_stats() {
 	*
 	* See docs on the list for explanation
 	*/
-	a_attack_range = (a_dex + a_attack_skill) / 200 * .55;
-	a_defense_range = (a_dex + a_defense_skill) / 200 * .35;
-	b_attack_range = (b_dex + b_attack_skill) / 200 * .55;
-	b_defense_range = (b_dex + b_defense_skill) / 200 * .35;
+	a_attack_range = (a_dex + a_attack_skill) / 200 * .6;
+	a_defense_range = (a_dex + a_defense_skill) / 200 * .3;
+	b_attack_range = (b_dex + b_attack_skill) / 200 * .6;
+	b_defense_range = (b_dex + b_defense_skill) / 200 * .3;
 	a_attack_total_allotment = (a_attack_range + b_defense_range) / .9;
 	b_attack_total_allotment = (b_attack_range + a_defense_range) / .9;
 	a_attack_luck_allotment = a_attack_total_allotment - (a_attack_range + b_defense_range);
 	b_attack_luck_allotment = b_attack_total_allotment - (b_attack_range + a_defense_range);
 	a_attack_a_real_luck = (a_luck / (a_luck + b_luck)) * a_attack_luck_allotment;
-    a_attack_b_real_luck = a_attack_luck_allotment - a_attack_a_real_luck;
+   a_attack_b_real_luck = a_attack_luck_allotment - a_attack_a_real_luck;
 	b_attack_a_real_luck = (a_luck / (a_luck + b_luck)) * b_attack_luck_allotment;
 	b_attack_b_real_luck = b_attack_luck_allotment - b_attack_a_real_luck;
 }
 
-
-
+	//Calculate damage inflicted by a sucessful melee blow
+	int melee::calc_damage (
+		int parity,		// who is attacking whom
+		int action,		// hit = 0, critical_hit = 1, critical_miss = 2
+		int method		//  Attack method
+	) {
+	
+	float a_modifier;  //calculated value for character A
+	float b_modifier; //calculated value for character B
+   float a_ratio;
+	float b_ratio;
+	int result; 	//returned value
+	
+	//A is attacking, time for the number crunching.
+	if ( (parity % 2) > 0) {
+		switch (method) {
+		case  0:			//thrust
+			a_modifier = (weapons[a_weapon].base + a_str  + armors[b_armor].dexhit) * a_attack_range;
+			printf("\na_modifier: %3.4f\n", a_modifier);
+			b_modifier = (armors[b_armor].ar + armors[b_armor].thrust + b_dex) * b_defense_range * .5;	
+   			printf("b_modifier: %3.4f\n", b_modifier);
+			a_ratio = a_modifier / (a_modifier + b_modifier) ;
+			printf("a_ratio: %3.4f\n", a_ratio);
+			b_ratio = b_modifier / (a_modifier + b_modifier);
+			printf("b_ratio: %3.4f\n", b_ratio);
+			break;
+		case 1: 				//chop
+          a_modifier = int((weapons[a_weapon].base + a_str) * a_attack_range + armors[b_armor].dexhit);
+			b_modifier = int(b_defense_range * (armors[b_armor].ar + armors[b_armor].chop + b_dex));		
+			break;
+		case 2: 				//smash
+          a_modifier = int((weapons[a_weapon].base + a_str) * a_attack_range + armors[b_armor].dexhit);
+			b_modifier = int(b_defense_range * (armors[b_armor].ar + armors[b_armor].smash + b_dex));	
+          break;
+	}
+		
+		switch (action) {
+			case 0:			//hit
+			result = int(weapons[a_weapon].base * a_ratio) ;
+				return result;
+			case 1:		//critical hit
+				result = int(a_modifier / (a_modifier + b_modifier) * 1.75);
+				return result;
+			case 2:		//criitcal miss
+ 		    	result = int(b_modifier / (a_modifier + b_modifier) * weapons[a_weapon].base) * -2;
+				return result;
+		}
+	} else {
+		switch (action) {
+			case 0: 			//hit
+				result = int(weapons[a_weapon].base * (b_str / 100));;
+				return result;
+			case 1:		//critical hit
+				result = int(weapons[a_weapon].base * (b_str / 50));
+				return result;
+			case 2:		//criitcal miss
+ 		    	result = int(weapons[a_weapon].base * (a_str / 100));
+				return result;
+		}
+	}
+}
+		
+ 		
 
