@@ -7,6 +7,8 @@
 #include "mapevent.h"
 #include "window.h"
 
+class mapitem;
+
 typedef char lstr[100];
 
 class map
@@ -28,6 +30,7 @@ class map
   mapcharacter * othermapchar;
   u_int16 nbr_of_events;
   mapevent * event;
+  mapitem * items;
   sprite toplayer;
   s_int16 * toplayerposx;
   s_int16 * toplayerposy;

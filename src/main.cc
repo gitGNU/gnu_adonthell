@@ -25,6 +25,8 @@
 #ifdef SDL
 #include "SDL.h"
 #include "SDL_thread.h"
+#endif
+#ifdef SDL_MIXER
 #include "SDL_mixer.h"
 #include "audio_thread.h"
 #endif
@@ -45,15 +47,32 @@ int main(int argc, char * argv[])
 
 #ifdef SDL
   SDL_Thread *input_thread;
-  SDL_Thread *audio_thread;
-
   // Initialize SDL library
   if (SDL_Init(SDL_INIT_VIDEO) < 0) {
      fprintf(stderr, "Error initializing SDL: %s\n", SDL_GetError());
      exit(1);
   }
 
+  init_display(0);
+
+  cout << "Init_display done\n";
+
+   input_thread = SDL_CreateThread((void*)keyboard_init, NULL);
+  if ( input_thread != NULL) {
+     fprintf(stderr, "User input thread started.\n");
+  } else {
+     fprintf(stderr, "Couldn't create input thread: %s\n", SDL_GetError());
+     return(0);
+  }
+#endif
+
+#ifdef SDL_MIXER
+  SDL_Thread *audio_thread;
+  
   audio_init();
+
+  cout << "Audio init done\n";
+
   audio_thread = SDL_CreateThread((void*)audio_update, NULL);
   if ( audio_thread != NULL) {
      fprintf(stderr, "Audio thread started.\n");
@@ -61,24 +80,22 @@ int main(int argc, char * argv[])
      fprintf(stderr, "Couldn't create audio thread: %s\n", SDL_GetError());
      fprintf(stderr, "Audio will not be used\n");
   }
-
-  input_thread = SDL_CreateThread((void*)keyboard_init, NULL);
-  if ( input_thread != NULL) {
-     fprintf(stderr, "User input thread started.\n");
-  } else {
-     fprintf(stderr, "Couldn't create input thread: %s\n", SDL_GetError());
-     return(0);
-  }
-
 #endif
+
   mapengine::map_engine(&map1);
 #ifdef SDL
   fprintf(stderr, "Killing threads...\n");
   if (input_thread != NULL) SDL_KillThread(input_thread);
+#endif
+
+#ifdef SDL_MIXER
   if (audio_thread != NULL) {
     SDL_KillThread(audio_thread);
     audio_cleanup();
   }
+#endif
+
+#ifdef SDL
   SDL_Quit();
 #endif
   return(0);

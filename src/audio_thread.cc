@@ -10,7 +10,7 @@
    See the COPYING file for more details.
 */
 
-#ifdef SDL
+#ifdef SDL_MIXER
 
 #include <stdlib.h>
 #include "audio_thread.h"

@@ -11,8 +11,9 @@
 
    See the COPYING file for more details.
 */
-#ifdef SDL
+#ifdef SDL_MIXER
 
+#include <iostream.h>
 #include "audio.h"
 #include "SDL.h"
 #include "SDL_mixer.h"
@@ -23,15 +24,19 @@ Mix_Chunk *sounds[NUM_WAVES];
 
 audio::audio() {
 
+  int i;
+  
   music = NULL;
   background_volume = 128;
   background_on = false;
   current_background = 0;
   background_paused = false;
   audio_initialized = false;
-
+  cout << "1.2\n";
   // Open the audio device
-  if ( Mix_OpenAudio(22050, AUDIO_S16, 1, 128) < 0 ) {
+  i=Mix_OpenAudio(22050, AUDIO_S16, 1, 128);
+  cout << "1.3\n";
+  if ( i < 0 ) {
     fprintf(stderr, "Unable to open audio: %s\n", SDL_GetError());
     fprintf(stderr, "Audio will not be used.\n");
   } else {

@@ -12,7 +12,7 @@
 #ifndef __AUDIO_H__
 #define __AUDIO_H__
 
-#ifdef SDL
+#ifdef SDL_MIXER
 
 #include "SDL_mixer.h"
 

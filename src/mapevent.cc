@@ -31,6 +31,7 @@ void mapevent::get(FILE * file)
    
    pi->get(file);
    push_back(pi);
+   fread(&otherevent_val, sizeof(otherevent_val),1,file);
 }
 
 void mapevent::run(mapcharacter*aguy, map*amap, u_int16 x, u_int16 y)
@@ -44,3 +45,14 @@ void mapevent::run(mapcharacter*aguy, map*amap, u_int16 x, u_int16 y)
       i++;
    }
 }
+
+void mapevent::set_otherevent(const u_int16& other)
+{
+    otherevent_val=other;
+}
+
+u_int16 mapevent::otherevent()
+{
+    return otherevent_val;
+}
+

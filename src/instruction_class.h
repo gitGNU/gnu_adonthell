@@ -5,6 +5,8 @@
 
 class map;
 class mapcharacter;
+class mapitem;
+class mapevent;
 
 class instruction
 {
@@ -18,10 +20,14 @@ class instruction
   instruction(const int &, char *);
   virtual void exec(mapcharacter*, map*, u_int16, u_int16)=0;
   u_int16 param(int);
-  u_int16 otherevent();
+  //u_int16 otherevent();
   char* string();
   void get(FILE*);
 
   friend istream& operator>> (istream&, instruction&);
   friend ostream& operator<< (ostream&, instruction&);
+  friend int loaditems (char*, 
+          mapitem **, 
+          mapevent **,
+          u_int16*);
 };

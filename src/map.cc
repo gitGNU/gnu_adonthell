@@ -1,4 +1,4 @@
-#include <iostream.h>
+#include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
 #include "types.h"
@@ -12,6 +12,7 @@
 #include "window.h"
 #include "map.h"
 #include "audio_thread.h" // For sound effects tied to keyboard
+using namespace std;
 
 map::map()
 {
@@ -113,6 +114,7 @@ s_int8 map::get(FILE * file)
   fread(&nbr_of_patterns,sizeof(nbr_of_patterns),1,file);
 
   nbr_of_patternsets=0;
+  
   while(i<nbr_of_patterns)
     {
       getstringfromfile(filename,file);
@@ -122,12 +124,13 @@ s_int8 map::get(FILE * file)
     }
   fread(&maplong,sizeof(maplong),1,file);
   fread(&maphaut,sizeof(maphaut),1,file);
- 
+  
   themap=(mapsquare**)calloc(sizeof(mapsquare*),maplong);
   for(i=0;i<maplong;i++)
     themap[i]=(mapsquare*)calloc(sizeof(mapsquare),maphaut);
   fread(&mapx,sizeof(mapx),1,file);
   fread(&mapy,sizeof(mapy),1,file);
+
   for(j=0;j<maphaut;j++)
     for(i=0;i<maplong;i++)
       themap[i][j].get(file);
@@ -146,6 +149,7 @@ s_int8 map::get(FILE * file)
       
       themap[othermapchar[i].get_posx()][othermapchar[i].get_posy()].put_character(&othermapchar[i]);
     }
+
   /* Top layer */
 
   toplayer.get(file);
@@ -154,13 +158,13 @@ s_int8 map::get(FILE * file)
   fread(&toplayerparallaxspeed,sizeof(toplayerparallaxspeed),1,file);
   fread(&toplayerflags,sizeof(toplayerflags),1,file);
   /* Events */
-  
   fread(&nbr_of_events,sizeof(nbr_of_events),1,file);
   event=(mapevent*)calloc(sizeof(mapevent),nbr_of_events+1);
   for(i=1;i<=nbr_of_events;i++)
     event[i].get(file);
   fread(&scrolltype,sizeof(scrolltype),1,file);
   status=MAP_STATUS_NORMAL;
+  
   return(0);
 }
 
@@ -292,10 +296,6 @@ void map::update_keyboard()
     heroe.set_movtype(UP);
   if(keyboard::is_pushed(274)&&heroe.get_movtype()==0)
     heroe.set_movtype(DOWN);
-
-  // Sound effects
-  if(keyboard::is_pushed(49)) audio_in->play_wave(1,0); // '1' Key
-  if(keyboard::is_pushed(50)) audio_in->play_wave(1,1); // '2' Key
 #else
   if((heroe.get_movtype()==RIGHT&&!keyboard::is_pushed(Right_Key))||
      (heroe.get_movtype()==LEFT&&!keyboard::is_pushed(Left_Key))||
@@ -310,6 +310,12 @@ void map::update_keyboard()
     heroe.set_movtype(UP);
   if(keyboard::is_pushed(Down_Key)&&heroe.get_movtype()==0) 
     heroe.set_movtype(DOWN);
+#endif
+
+#ifdef SDL_MIXER
+// Sound effects
+  if(keyboard::is_pushed(49)) audio_in->play_wave(1,0); // '1' Key
+  if(keyboard::is_pushed(50)) audio_in->play_wave(1,1); // '2' Key
 #endif
 }
 
@@ -710,10 +716,18 @@ u_int16 map::get_square_eventleavenbr(u_int16 x, u_int16 y)
 
 void map::launch_event(mapcharacter * aguy, u_int16 nbr)
 {
-  event[nbr].run(aguy,this,mapx,mapy);
+  while(nbr!=0)
+  {
+    event[nbr].run(aguy,this,mapx,mapy);
+    nbr=event[nbr].otherevent();
+  }
 }
 
 void map::run_event(u_int16 nbr, mapcharacter * aguy, u_int16 x, u_int16 y)
 {
-  event[nbr].run(aguy,this,x,y);
+  while(nbr!=0)
+  {
+    event[nbr].run(aguy,this,x,y);
+    nbr=event[nbr].otherevent();
+  }
 }

@@ -14,7 +14,6 @@ void instruction::get(FILE* file)
    for(i=0;i<9;++i)
       fread(&param_val[i],sizeof(param_val[i]),1,file);
    getstringfromfile(string_val,file);
-   fread(&otherevent_val,sizeof(otherevent_val),1,file);
 }
 
 istream& operator >> (istream& stream, instruction &instr)
@@ -43,11 +42,6 @@ ostream& operator << (ostream& stream,instruction &instr)
 u_int16 instruction::param(int n)
 {
    return param_val[n-1];
-}
-
-u_int16 instruction::otherevent()
-{
-   return otherevent_val;
 }
 
 char* instruction::string()

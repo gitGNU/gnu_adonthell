@@ -40,6 +40,8 @@ u_int16 keyboard::getkeypressed() { return(last_key); }
 
 #else
 
+#include <ggi/ggi.h>
+
 void keyboard::update_keyboard()
 {
   ggi_event event;
