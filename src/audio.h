@@ -69,10 +69,9 @@ public:
 
     static bool is_initialized () { return audio_initialized; }
     static bool is_schedule_activated () { return schedule_active; }
-    static bool is_background_finished () { return !background_on; }
+    static bool is_background_finished () { return !Mix_PlayingMusic (); }
 
     static void set_schedule_active (bool a) { schedule_active = a; }
-    static void set_background_finished (bool b) { background_on = !b; }
 
     static void set_schedule (string file, PyObject * args = NULL);
     static void run_schedule ();
@@ -96,8 +95,8 @@ private:
     static Mix_Music *music[NUM_MUSIC];
     static string music_file[NUM_MUSIC];
     static Mix_Chunk *sounds[NUM_WAVES];
-    static bool background_on;
     static int current_background;
+    static int last_background;
     static bool background_paused;
     static int audio_rate;
     static Uint16 buffer_size;

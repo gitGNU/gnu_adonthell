@@ -30,8 +30,8 @@ int audio::effects_volume;
 Mix_Music *audio::music[NUM_MUSIC];
 string audio::music_file[NUM_MUSIC];
 Mix_Chunk *audio::sounds[NUM_WAVES];
-bool audio::background_on = false;
 int audio::current_background;
+int audio::last_background;
 bool audio::background_paused;
 int audio::audio_rate;
 Uint16 audio::buffer_size;
@@ -43,11 +43,6 @@ py_object audio::schedule;
 bool audio::schedule_active = 0;
 PyObject *audio::schedule_args = NULL;
 
-// callback to get notified when music finished playing
-void on_music_finished ()
-{
-    audio::set_background_finished (true);
-}
 
 void audio::init (config *myconfig) {
   int i;  // Generic counter variable
@@ -76,8 +71,8 @@ void audio::init (config *myconfig) {
 
   buffer_size = 4096;        // Audio buffer size
   effects_volume = 128;	     // Still figuring this one out...
-  background_on = false;     // No background music is playing
   current_background = -1;   // No song currently playing
+  last_background = -1;      // No song played so far
   background_paused = false; // Music isn't paused
   audio_initialized = false; // No audio connection yet
   schedule_active = false;   // No schedule file yet
@@ -105,15 +100,11 @@ void audio::init (config *myconfig) {
     fprintf(stderr, "Audio started in %d Hz %d bit %s format.\n", audio_rate,
      (audio_format&0xFF), (audio_channels > 1) ? "stereo" : "mono");
     set_background_volume (background_volume);
-    
-    // connect music finish callback
-    Mix_HookMusicFinished (&on_music_finished);
   }
 }
 
 void audio::cleanup(void) {
   int i;
-  background_on = false;    // no music is playing
   current_background = -1;  // No music is queued to play
 
   // Null out those tunes and sound effects
@@ -136,47 +127,30 @@ void audio::cleanup(void) {
 
 int audio::load_background(int slot, char *filename) {
 
-  if (!audio_initialized) return(1);
+  if (!audio_initialized) return (0);
 
   // Check for bad input
   if ((slot >= NUM_MUSIC) || (slot < 0)) {
     fprintf(stderr, "Error: Tried to put music in invalid slot.\n");
-    return(1);
+    return(0);
   }
 
   //  Check if the file exists at all...
   FILE *f = fopen (filename, "r");
-  if (!f)  
-  {
-      music[slot] = NULL; 
-      return 1;
+  if (!f) {
+    fprintf(stderr, "Error: No such file: %s.\n", filename);
+    return 0;
   }
   fclose (f);   
 
-  // If we are loading background music into the slot
-  // the current background music is in...
-  if (current_background == slot) {
+  // Music already occupies that slot
+  if (music[slot] != NULL)
+      unload_background (slot);
 
-    // This warns the audio thread to stop updating
-    background_on = false;
-    current_background = -1;
-
-    Mix_HaltMusic();  // Just a precaution
-    unload_background(slot);
-
-  // If we aren't loading background music over
-  // music currently playing ...
-  } else {
-
-    // Music already occupies that slot
-    if (music[slot] != NULL)
-      unload_background(slot);
-  }
-  
   // No music in slot, load new tune in, ...
   music[slot] = Mix_LoadMUS(filename);
   music_file[slot] = filename;
-  
+
 #ifdef OGG_MUSIC
   // read loop points and ...
   // loop[slot] = new loop_info (&music[slot]->ogg_data.ogg->vf);
@@ -184,22 +158,32 @@ int audio::load_background(int slot, char *filename) {
   // ... enable looping
   // music[slot]->ogg_data.ogg->vf.callbacks.read_func = &ogg_read_callback;
 #endif
-  return(0);
+  return(1);
 }
 
-void audio::unload_background(int slot) {
-  if (music[slot] != NULL) {
-    Mix_FreeMusic(music[slot]);
+void audio::unload_background (int slot)
+{
+    if (music[slot] == NULL) return;
+
+    // If we are unloading background music from the slot
+    // the current background music is in...
+    if (current_background == slot)
+    {
+        last_background = current_background;
+        current_background = -1;
+
+        // Just a precaution
+        Mix_HaltMusic();
+        Mix_ResumeMusic ();
+    }
+
+    Mix_FreeMusic (music[slot]);
     music[slot] = NULL;
     music_file[slot] = "";
-    
-    if (current_background == slot)
-        current_background = -1;
-        background_on = false;
+
 #ifdef OGG_MUSIC
     // delete loop[slot];
 #endif
-  }
 }
 
 void audio::pause_music(void) {
@@ -267,26 +251,25 @@ void audio::play_wave(int channel, int slot) {
 void audio::play_background(int slot) {
   if (music[slot] != NULL) {
     current_background = slot;
-    background_on = true;
     Mix_PlayMusic(music[current_background], 0);
   }
 }
 
 void audio::fade_out_background(int time) {
-  if (background_on == true) {
-    Mix_FadeOutMusic(time);
+    if (Mix_PlayingMusic ())
+    {
+        Mix_FadeOutMusic(time);
+        last_background = current_background;
+        current_background = -1;
+    }
 #ifdef OGG_MUSIC
     // music[current_background]->ogg_data.ogg->vf.callbacks.read_func = &fread_wrap;
 #endif
-    background_on = false;
-    current_background = -1;
-  }
 }
 
 void audio::fade_in_background(int slot, int time) {
-  if ((background_on == false) && (music[slot] != NULL)) {
+  if (music[slot] != NULL) {
     current_background = slot;
-    background_on = true;
     Mix_FadeInMusic(music[slot], 0, time);
   }
 }
@@ -324,7 +307,7 @@ void audio::set_schedule (string file, PyObject * args)
 // run the audio control schedule
 void audio::run_schedule ()
 {
-    PyObject *song = Py_BuildValue ("(i)", current_background);
+    PyObject *song = Py_BuildValue ("(i)", last_background);
     if (schedule_active) schedule.call_method ("music_finished", song);
     Py_DECREF (song);
 }
@@ -332,13 +315,12 @@ void audio::run_schedule ()
 // save state
 s_int8 audio::put_state (ogzstream& file)
 {
-    // avilable music 
-    NUM_MUSIC >> file;
-    for (int i = 0; i < NUM_MUSIC; i++) music_file[i] >> file;
-    
     // currently playing
     current_background >> file;
-    
+
+    // music file
+    if (current_background != -1) music_file[current_background] >> file;
+
     // Save the schedule script state
     schedule.object_file () >> file;
     if (schedule_args) 
@@ -355,21 +337,22 @@ s_int8 audio::put_state (ogzstream& file)
 // get state
 s_int8 audio::get_state (igzstream& file)
 {
-    string tune, script;
-    int num_music;
+    string song, script;
     bool have_args;
     
-    // avilable music 
-    num_music << file;
-    for (int i = 0; i < NUM_MUSIC && i < num_music; i++)
+    // current background
+    last_background << file;
+
+    // if song was playing, see which it is
+    if (last_background != -1)
     {
-        tune << file;
-        if (tune != "") load_background (i, (char*) tune.c_str ());
+        song << file;
+
+        // ... and resume playing
+        if (load_background (last_background, (char *) song.c_str ()))
+            play_background (last_background);
     }
 
-    // current background
-    num_music << file;
-        
     // Restore the schedule script state
     PyObject * args = NULL; 
     script << file;
@@ -380,9 +363,6 @@ s_int8 audio::get_state (igzstream& file)
     Py_XDECREF (args); 
     
     schedule_active << file;
-
-    // start music
-    if (num_music != -1) play_background (num_music);
 
     return 1;
 }

@@ -33,6 +33,14 @@
 #include "gamedata.h"
 #include "python_class.h"
 
+// File format versions of the various data files
+// *** Increase when changine file format! ***
+#define ENGINE_DAT_VER  1
+#define AUDIO_DAT_VER   2
+#define CHAR_DAT_VER    3
+#define QUEST_DAT_VER   1
+#define SAVE_DAT_VER    2
+
 vector<gamedata*> gamedata::saves;       // The list of available savegames
 string gamedata::user_data_dir_;         // The user's private adonthell directory
 string gamedata::game_data_dir_;         // The adonthell data directory
@@ -58,7 +66,7 @@ gamedata::~gamedata ()
 
 bool gamedata::get (igzstream& file)
 {
-    if (!fileops::get_version (file, 2, 2, "save.data")) 
+    if (!fileops::get_version (file, SAVE_DAT_VER, SAVE_DAT_VER, "save.data"))
         return false;
     directory_ << file; 
     description_ << file;
@@ -69,7 +77,7 @@ bool gamedata::get (igzstream& file)
 
 void gamedata::put (ogzstream& file)
 {
-    fileops::put_version (file, 2);
+    fileops::put_version (file, SAVE_DAT_VER);
     directory_ >> file;
     description_ >> file;
     location_ >> file;
@@ -104,7 +112,7 @@ bool gamedata::load_characters (u_int32 pos)
         return false;
     }
     
-    if (!fileops::get_version (in, 3, 3, filepath))
+    if (!fileops::get_version (in, CHAR_DAT_VER, CHAR_DAT_VER, filepath))
         return false;
     
     // load characters     
@@ -147,7 +155,7 @@ bool gamedata::load_quests (u_int32 pos)
         return false;
     }
     
-    if (!fileops::get_version (in, 1, 1, filepath))
+    if (!fileops::get_version (in, QUEST_DAT_VER, QUEST_DAT_VER, filepath))
         return false;
     
     // load quests
@@ -183,7 +191,7 @@ bool gamedata::load_mapengine (u_int32 pos)
         return false;
     }
     
-    if (!fileops::get_version (in, 1, 1, filepath))
+    if (!fileops::get_version (in, ENGINE_DAT_VER, ENGINE_DAT_VER, filepath))
         return false;
 
     if (!data::engine->get_state(in))
@@ -213,7 +221,7 @@ bool gamedata::load_audio (u_int32 pos)
         return false;
     }
     
-    if (!fileops::get_version (in, 1, 1, filepath))
+    if (!fileops::get_version (in, AUDIO_DAT_VER, AUDIO_DAT_VER, filepath))
         return false;
 
     if (!audio::get_state (in))
@@ -300,7 +308,7 @@ bool gamedata::save (u_int32 pos, string desc)
         return false;
     }
     
-    fileops::put_version (file, 3);
+    fileops::put_version (file, CHAR_DAT_VER);
 
     // save the player first
     data::the_player->character_base::put_state (file);
@@ -336,7 +344,7 @@ bool gamedata::save (u_int32 pos, string desc)
         return false;
     }
 
-    fileops::put_version (file, 1);
+    fileops::put_version (file, QUEST_DAT_VER);
 
     dictionary <quest *>::iterator itq;
     for (itq = data::quests.begin (); itq != data::quests.end (); itq++)
@@ -365,7 +373,7 @@ bool gamedata::save (u_int32 pos, string desc)
         return false;
     }
 
-    fileops::put_version (file, 1);
+    fileops::put_version (file, ENGINE_DAT_VER);
     data::engine->put_state(file);
     file.close (); 
 
@@ -380,7 +388,7 @@ bool gamedata::save (u_int32 pos, string desc)
         return false;
     }
     
-    fileops::put_version (file, 1);
+    fileops::put_version (file, AUDIO_DAT_VER);
     audio::put_state (file);
     file.close ();
     
