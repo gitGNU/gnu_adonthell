@@ -221,7 +221,7 @@ void dlg_compiler::write_custom_code (string code)
 string dlg_compiler::inflate (string code)
 {
     u_int32 i, begin = 0, pos, prefix, suffix;
-    string token, stripped;
+    string token, stripped, last_op = "";
     bool is_local = true;
 
 #ifdef _DEBUG_
@@ -231,15 +231,27 @@ string dlg_compiler::inflate (string code)
     for (pos = 0; pos < code.length (); pos++)
         for (i = 0; i < NUM_OPS; i++)
             // search for the leftmost operator from the current position
-            if (!code.compare (pos, operators[i].length (), operators[i]))
+            if (!strncmp (code.substr (pos).c_str (), operators[i].c_str (),
+                operators[i].length ()))
             {
+                token = code.substr (begin, pos-begin);
+
+                // strip leading and trailing whitespace
+                for (prefix = 0; prefix < token.length() && token[prefix] == ' '; prefix++);
+                for (suffix = token.length()-1; suffix >= 0 && token[suffix] == ' '; suffix--);
+                stripped = token.substr (prefix, suffix-prefix+1);
+#ifdef _DEBUG_                
+                cout << "token = '" << stripped << "', operator = '" << 
+                    operators[i] << "'\n" << flush;
+#endif
                 // have to be careful with textual operators and keywords
                 if (i == BAND || i == BOR || i == NOT || i == RETURN ||
                     i == PASS || i == IF || i == ELIF || i == ELSE)
                 {
                     if (pos > 0 && isalpha (code[pos-1]))
                         break;
-                    if (pos < code.length()-1 && isalpha (code[pos+1]))
+                    if (pos < code.length()-operators[i].length()-1 && 
+                        isalpha (code[pos+operators[i].length()]))
                         break;
                 }
                 
@@ -250,18 +262,11 @@ string dlg_compiler::inflate (string code)
                     break;
                 }
                 
-                token = code.substr (begin, pos-begin);
-
-                // strip leading and trailing whitespace
-                for (prefix = 0; token[prefix] == ' '; prefix++);
-                for (suffix = token.length()-1; token[suffix] == ' '; suffix--);
-                stripped = token.substr (prefix, suffix-prefix+1);
-                
                 // see whether we've got a variable and act accordingly
                 if (token_type (stripped) == VARIABLE)
                 {
                     // variable left of '.'
-                    if (i == ACCESS)
+                    if (i == ACCESS && last_op != ".")
                     {
                         // check whether we access the quest- or character array
                         if (data::quests.get (stripped.c_str()) != NULL)
@@ -306,18 +311,16 @@ string dlg_compiler::inflate (string code)
                 
                 // skip strings
                 if (i == QUOT || i == SQUOT)
-                    pos = code.find (operators[i], pos+1);
+                    pos = code.find (operators[i], pos+1) - 1;
 
                 // skip comments
                 if (i == COMMENT)
                     pos = code.length ();
 
+                last_op = operators[i];
                 pos += operators[i].length ();
                 begin = pos;
 #ifdef _DEBUG_
-                cout << "token = '" << stripped << "', operator = '" << 
-                    operators[i] << "'\n";
-
                 cout << code << endl;
                 for (u_int32 j = 0; j < begin; j++) cout << " ";
                 cout << "^\n";
@@ -334,7 +337,16 @@ string dlg_compiler::inflate (string code)
 u_int32 dlg_compiler::token_type (string &token)
 {
     u_int32 j;
-    
+
+    // No valid token
+    if (token == "")
+        return NONE;
+
+    // Operator
+    for (j = 0; j < NUM_OPS; j++)
+        if (token == operators[j])
+            return NONE;
+
     // Fixed: (i.e. something that never needs expanding)
     for (j = 0; j < NUM_FXD; j++)
         if (token == fixed[j])
