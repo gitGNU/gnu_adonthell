@@ -23,7 +23,7 @@
 
 #include "screen.h"
 #include <iostream>
-#include <strstream> 
+#include <sstream> 
 
 
 using namespace std; 
@@ -110,7 +110,7 @@ void screen::show ()
 string screen::info ()
 {
     const SDL_VideoInfo * vi = SDL_GetVideoInfo ();
-    ostrstream temp; 
+    ostringstream temp; 
 
     const int driver_name_length = 500;
     char drv_name[driver_name_length];
@@ -132,9 +132,7 @@ string screen::info ()
          << "Fullscreen:                          " << (fullscreen_ ? "Yes" : "No") << endl
          << ends;
 
-    char *s = temp.str ();
-    string ret (s);
-    delete[] s;
+    string ret = temp.str ();
 
     return ret; 
 }
