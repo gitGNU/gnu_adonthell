@@ -80,7 +80,6 @@ int main(int argc, char * argv[])
   if (audio_thread != NULL) {
     SDL_KillThread(audio_thread);
     audio_cleanup();
-    Mix_CloseAudio();
   }
   SDL_Quit();
 #endif

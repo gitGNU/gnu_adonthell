@@ -25,8 +25,6 @@ int audio_init() {
   // Open the audio device
   audio_in = new audio;
   audio_in->load_background(1);
-  audio_update();
-  free(audio_in);
   return(0);
 }
 
@@ -40,7 +38,6 @@ void audio_update()
 }
 
 void audio_cleanup() {
-//  Mix_FreeMusic(music);
-//  Mix_CloseAudio();
+  free(audio_in);
 }
 #endif
