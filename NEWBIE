@@ -178,7 +178,7 @@ installed and configured in your system.
 Now that the required libraries are built and installed on your
 system, you need to build the Adonthell program itself. The
 latest version of Adonthell is 0.3. You can download it from the
-Adonthell website: http://adonthell.linuxgames.com/download-data/.
+Adonthell website: http://adonthell.linuxgames.com/download/.
 
 
 The steps for installing Adonthell are similar to the steps for
@@ -190,10 +190,10 @@ a convenient directory.
 Step #2: Decompress the tar.gz files. Do this by typing:
 
 	tar -xzf adonthell-0.3.tar.gz
-    tar -xzf adonthell-data-0.3.tar.gz	
+	tar -xzf adonthell-data-0.3.tar.gz	
 
 Two new directories will be created in the current directory, named
-"adonthell-0.3" and adonthell-data-0.3. Complete step #3 and #4 for 
+"adonthell-0.3" and "adonthell-data-0.3". Complete step #3 and #4 for 
 both directories.
 
 Step #3: Build Adonthell. Do this by changing into the newly created 
@@ -240,7 +240,7 @@ there as well. You can launch Adonthell either by typing
 
 or by running the script:
 
-    adonthell-wastesedge
+	adonthell-wastesedge
 
 If the game engine and data have been correctly installed, you'll
 find yourself in the main menu. Here you can begin a new or continue
@@ -304,11 +304,11 @@ Developer list:		adonthell-devel@mail.freesoftware.fsf.org
 Artwork list:		adonthell-artwork@mail.freesoftware.fsf.org
 
 You can subscribe to these mailing lists by going to the URL:
-http://adonthell.linuxgames.com/contact-data/mailinglist.shtml
+http://adonthell.linuxgames.com/contact/mailinglist.shtml
 
 If you'd rather e-mail an Adonthell team member directly, you can get
 a list of contacts for the team from the Adonthell web page at:
-http://adonthell.linuxgames.com/development-data/team.shtml
+http://adonthell.linuxgames.com/development/team.shtml
 
 ************************
 * 7.0 Fullscreen Howto *
