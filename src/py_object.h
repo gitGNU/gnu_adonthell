@@ -76,6 +76,18 @@ public:
     bool create_instance (string file, string classname, PyObject * args = NULL);
 
     /**
+     * Similar to create_instance, except that it will reload the module
+     * from disk, in case it has been changed in the meantime. Mainly interesting
+     * for script development or tools like dlgedit.
+     *
+     * @param file file name of the module to use.
+     * @param classname name of the class to import.
+     * @param args Python tuple containing the arguments to pass to the
+     *             Python class constructor.
+     */
+    bool reload_instance (string file, string classname, PyObject * args = NULL);
+
+    /**
      * Direct access to the instance object
      *
      * @return the Python class instance
@@ -123,6 +135,12 @@ public:
     PyObject* get_attribute (const string & name);
 
 private:
+    /**
+     * Helper for create_instance and reload_instance
+     *
+     */
+    bool instanciate (PyObject*, string, string, PyObject*);
+
     string script_file_;
 
     PyObject *instance;

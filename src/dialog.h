@@ -80,11 +80,12 @@ public:
      *
      * @param fpath full path to the dialogue.
      * @param name name of the dialogue class.
+     * @param args arguments to pass to the dialogue class
      *
      * @return \e true in case of success, \e false otherwise.
      * @sa init()
      */
-    bool reload (char* fpath, char* name);
+    bool reload (string fpath, string name, PyObject *args);
     
     /**
      * Run the dialogue. Executes one step of the conversation.

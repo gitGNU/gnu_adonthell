@@ -57,9 +57,13 @@ int main (int argc, char *argv[])
 	Py_Initialize ();
 
 	// Init the python modules
-	initcharacterc ();
+    initcharacterc ();
 	initquestc ();
 
+    // Shared modules path
+    python::insert_path (DATA_DIR"/modules");
+
+    // Path to the dlgedit executable
     char *path = g_dirname (argv[0]);
     if (path[0] != '/') 
     {

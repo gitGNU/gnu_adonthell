@@ -52,8 +52,13 @@ void run_dlg::start ()
     if (dat) delete dat;
     dat = new dialog;
 
+    // Make the npc and player available to the dialogue engine
+    PyObject *args = PyTuple_New (2);
+    PyTuple_SetItem (args, 0, python::pass_instance (wnd->myplayer, "character"));
+    PyTuple_SetItem (args, 1, python::pass_instance (wnd->mynpc, "character_base"));
+
     // Import module
-    if (!dat->reload (file, file))
+    if (!dat->reload (file, file, args))
     {
         cout << "\n*** Error loading dialogue script! " << flush;
         answer = -1;
@@ -61,6 +66,9 @@ void run_dlg::start ()
 
     // The start of the dialogue
     else answer = 0;
+
+    // Clean up
+    Py_DECREF (args);
 }
 
 PyObject *run_dlg::get_instance ()

@@ -51,25 +51,47 @@ void py_object::clear ()
 // Pass a (new) Python module to be used
 bool py_object::create_instance (string file, string classname, PyObject * args = NULL)
 {
-    // Cleanup
-    clear (); 
-    
     // Try to import the given script
     PyObject *module = python::import_module (file);
     if (!module) return false;
 
-    PyObject * classobj = PyObject_GetAttrString (module, (char *) classname.c_str ()); 
-    Py_DECREF (module); 
-    if (!classobj) return false; 
-    
+    // Instanciate!
+    return instanciate (module, file, classname, args);
+}
+
+// Reload a python module in case it has changed on disk
+bool py_object::reload_instance (string file, string classname, PyObject * args = NULL)
+{
+    // Try to import the given script
+    PyObject *module = python::import_module (file);
+    if (!module) return false;
+
+    // Now Reload
+    PyObject *reload = PyImport_ReloadModule (module);
+    Py_DECREF (module);
+    if (!reload) return false;
+
+    return instanciate (reload, file, classname, args);
+}
+
+// Instanciate the given class from the module
+bool py_object::instanciate (PyObject *module, string file, string classname, PyObject * args)
+{
+    // Cleanup
+    clear ();
+
+    PyObject * classobj = PyObject_GetAttrString (module, (char *) classname.c_str ());
+    Py_DECREF (module);
+    if (!classobj) return false;
+
     // Create the instance
     instance = PyObject_CallObject (classobj, args);
-    Py_DECREF (classobj); 
-    if (!instance) return false; 
-    
-    script_file_ = file;      
+    Py_DECREF (classobj);
+    if (!instance) return false;
 
-    return true; 
+    script_file_ = file;
+
+    return true;
 }
 
 // Execute the body of the script

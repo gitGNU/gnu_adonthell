@@ -89,25 +89,17 @@ bool dialog::setup ()
 }
 
 // Reload a dialogue script that has changed on disk
-bool dialog::reload (char *fpath, char *name)
+bool dialog::reload (string fpath, string name, PyObject *args)
 {
-    PyObject *module;
-    
-    // Clean everything up
-    clear ();
+    // Load and instanciate the dialogue object
+    if (!dialogue.reload_instance (fpath, name, args))
+        return false;
 
-    // Try to import module
-    module = python::import_module (fpath);
-    
-    // Now try reload from disk 
-    if (module && PyImport_ReloadModule (module)) 
-    {
-        Py_DECREF (module);
-        return setup ();
-    }
-    
-    python::show_traceback ();
-    return false;
+    // Remaining setup tasks
+    if (!setup ())
+        return false;
+
+    return true;
 }
 
 // Clean up
