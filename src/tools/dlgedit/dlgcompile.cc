@@ -299,7 +299,7 @@ void dlg_compiler::write_player_answer (DlgNode *npc)
 
         if (find (todo_nodes.begin(), todo_nodes.end (), player) == todo_nodes.end () &&
             find (done_nodes.begin(), done_nodes.end (), player) == done_nodes.end ())
-        todo_nodes.push_back (player);               
+            todo_nodes.push_back (player);               
     }
 
     return;
@@ -319,15 +319,12 @@ void dlg_compiler::get_cur_nodes ()
 
     // For all following direct links (arrows) ...
     for (i = circle->next.begin (); i != circle->next.end (); i++)
-        // If following NPC-node (circle) wasn't already compiled ...
-        if (find (done_nodes.begin (), done_nodes.end (), (*i)->next[0]) == done_nodes.end ())
-            // Add the NPC-node to the nodes to compile next
-            cur_nodes.push_back ((*i)->next[0]);
+        // Add the NPC-node to the nodes to compile next
+        cur_nodes.push_back ((*i)->next[0]);
         
     // Now the same for the indirect followers
     for (i = circle->link.begin (); i != circle->link.end (); i++)
-        if (find (done_nodes.begin (), done_nodes.end (), (*i)->next[0]) == done_nodes.end ())
-            cur_nodes.push_back ((*i)->next[0]);
+        cur_nodes.push_back ((*i)->next[0]);
 
     script << "\n    def answer" << circle->number << " (self):";
 

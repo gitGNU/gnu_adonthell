@@ -15,7 +15,6 @@
 class dialog;
 
 #include <stdio.h>
-#include <unistd.h>
 #include <gtk/gtk.h>
 
 #include "../../types.h"
@@ -30,7 +29,6 @@ int
 main (int argc, char *argv[])
 {
     char tmp[256];
-    char *wd = NULL;
     
     // The Application Data
     MainFrame *MainWnd = new MainFrame;
@@ -53,6 +51,10 @@ main (int argc, char *argv[])
     // Insert our script directory to python's search path
     sprintf (tmp, "%s/scripts", myconf.datadir.c_str ());
     insert_path (tmp);
+    
+    // ... and the modules directory as well
+    sprintf (tmp, "%s/scripts/modules", myconf.datadir.c_str ());
+    insert_path (tmp);
 
     // Load module
     PyObject *m = import_module ("player");
@@ -71,20 +73,10 @@ main (int argc, char *argv[])
     PyObject *chars = PyDict_New ();
     PyDict_SetItemString (game::globals, "characters", chars);
 
-    // save cwd
-    wd = getcwd (NULL, 0);
-
-    // try to change into data directory
-    if (chdir (myconf.datadir.c_str ()))
-    {
-        printf ("\nSeems like %s is no valid data directory.", myconf.datadir.c_str ());
-        printf ("\nIf you have installed the Adonthell data files into a different location,");
-        printf ("\nplease make sure to update the $HOME/.adonthell/adonthellrc file\n");
-        return 1;
-    }  
+    sprintf (tmp, "%s/character.data", myconf.datadir.c_str ());
 
     // load characters from character.data
-    FILE *in = fopen ("character.data", "r");
+    FILE *in = fopen (tmp, "r");
     if (in)
     {
         npc *mynpc = NULL;
@@ -92,9 +84,8 @@ main (int argc, char *argv[])
         while (fgetc (in))
         {
             mynpc = new npc;
-            mynpc->load (in);
+            mynpc->load (in, false);
             PyDict_SetItemString (chars, mynpc->name, pass_instance (mynpc, "npc"));
-            game::characters.set (mynpc->name, mynpc);
         }
 
         // set a shortcut to one of the NPC's
@@ -102,8 +93,6 @@ main (int argc, char *argv[])
     
         fclose (in);
     }
-
-    chdir (wd);
     
     // Misc initialization
     init_app (MainWnd);
@@ -126,7 +115,6 @@ main (int argc, char *argv[])
     delete_dialogue (MainWnd);
     delete MainWnd->myplayer;
     delete MainWnd;
-    delete wd;
 
     return 0;
 }
