@@ -48,10 +48,11 @@ void dialog_screen::init(character_base *mynpc, char * dlg_file, u_int8 size)
 
     audio::play_wave (-1, 0);
     is_running = true;
-
+    portrait = "None";
+    
     // Init position & size
-    win_container::move(20,20);
-    win_container::resize(280,105);
+    win_container::move (20, 20);
+    win_container::resize (280, 105);
 
     // Load the different fonts
     fonts[0] = win_manager::get_font ("white");
@@ -63,9 +64,9 @@ void dialog_screen::init(character_base *mynpc, char * dlg_file, u_int8 size)
 
     theme = win_manager::get_theme ("original");
 
-    set_border(*theme);
-    set_background(*theme);
-    set_trans_background(true);
+    set_border (*theme);
+    set_background (*theme);
+    set_trans_background (true);
 
     // Full or half-sized window
     if (size)
@@ -75,29 +76,29 @@ void dialog_screen::init(character_base *mynpc, char * dlg_file, u_int8 size)
     }
 
     // Init the low level dialogue stuff
-    dlg = new dialog;
+    dlg = new dialog (mynpc);
 
     // Create dialogue window
     // The NPC's portrait
     face = new win_image();
-    face->move(5,5);
-    ((image*)face)->resize(64,64);
+    face->move (5, 5);
+    ((image*)face)->resize (64, 64);
     face->pack();
     face->set_visible (true);
 
     // The NPC's name
-    name = new win_label();
-    name->set_font(*(fonts[0]));
-    name->move(5,74);
-    ((label*)name)->resize(64,0);
+    name = new win_label ();
+    name->set_font (*(fonts[0]));
+    name->move (5, 74);
+    ((label*)name)->resize (64, 0);
     name->set_form (label::AUTO_HEIGHT);
     name->set_visible (true);
 
     // The list with the dialogue
-    sel = new win_select();
-    sel->set_scrollbar(*theme);
-    sel->move(80,0);
-    sel->resize(200,height());
+    sel = new win_select ();
+    sel->set_scrollbar (*theme);
+    sel->move (80, 0);
+    sel->resize (200, height ());
     sel->set_mode (win_select::MODE_BRIGHTNESS);
     sel->set_layout (win_container::LIST_LAYOUT);
     sel->set_space_with_border (5);
@@ -114,12 +115,6 @@ void dialog_screen::init(character_base *mynpc, char * dlg_file, u_int8 size)
     // Notification when a dialogue item get's selected
     sel->set_signal_connect (makeFunctor (*this,  &dialog_screen::on_select),
                              win_event::ACTIVATE_KEY);
-
-    // set the NPC's portrait
-    portrait = "none";
-    set_portrait (mynpc->get_portrait ());
-    // ... and name
-    set_name (mynpc->get_name ());
 
     // add everything to our container
     add (face);
@@ -186,8 +181,9 @@ void dialog_screen::run ()
         return;
     }
 
-    // update the NPC's portrait
+    // update the NPC's portrait and name
     set_portrait (dlg->npc_portrait ());
+    set_name (dlg->npc_name ());
 
     // Add NPC text and all player reactions to container
     for (string txt = dlg->text (); txt != ""; txt = dlg->text (), i++)
@@ -256,7 +252,7 @@ void dialog_screen::set_portrait (const string & new_portrait)
     if (new_portrait == "")
     {
         face->image::resize (64, 64);
-        face->fillrect (0, 0, 64, 64, 0xff00ff);
+        face->fillrect (0, 0, 64, 64, 0x00ff00ff);
         return;
     }
     face->load_pnm(string ("gfx/portraits/") + new_portrait);

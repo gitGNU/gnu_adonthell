@@ -25,7 +25,7 @@
  * 
  */
 
-
+#include "character_base.h"
 #include "python_class.h"
 #include "py_object.h"
 #include "types.h"
@@ -50,9 +50,9 @@ public:
 
     /** 
      * Default constructor.
-     * 
+     * @param npc The npc this dialogue is assigned to.
      */
-    dialog ();
+    dialog (character_base *npc);
 
     /** 
      * Destructor.
@@ -112,7 +112,7 @@ public:
      * Returns the color to be used for displaying the NPC's speech.
      * 
      * 
-     * @return the npc color.
+     * @return the NPC's color.
      */
     u_int32 npc_color () { return npc_color_; }
 
@@ -123,6 +123,14 @@ public:
      * @return name of the image.
      */
     string npc_portrait () { return npc_portrait_; }
+
+    /**
+     * Returns the name to be displayed under the NPC's portrait.
+     *
+     *
+     * @return name of the NPC.
+     */
+    string npc_name () { return npc_name_; }
 
     /** 
      * Returns the number of %text lines available at this point of 
@@ -154,9 +162,11 @@ private:
     char **strings;                 // The dialogue text
     vector<string> text_;           // NPC's speech and according Player responses
     vector<string>::iterator i_text;// Iterator for the text_ vector
-    u_int32 npc_color_;             // The color of the NPC's text
-    string npc_portrait_;           // Portrait of the NPC currently speaking
 
+    u_int32 npc_color_;             // Current NPCs text color
+    string npc_portrait_;           // Current NPCs portrait
+    string npc_name_;               // Current NPCs name 
+    
     vector<s_int32> answers;        // The indices with which to call instance.run () 
     vector<s_int32> choices;        // Strings player can chose from
     vector<s_int32> used;           // Dialogue parts that are already spoken

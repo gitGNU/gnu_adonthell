@@ -31,10 +31,11 @@
 #include "yarg.h"
 
 // Constructor
-dialog::dialog ()
+dialog::dialog (character_base *npc)
 {
     strings = NULL;
-    npc_portrait_= "Default";
+    npc_portrait_= npc->get_portrait ();
+    npc_name_ = npc->get_name ();
 }
 
 // Destructor
@@ -184,7 +185,7 @@ void dialog::run (u_int32 index)
             answer = PyInt_AsLong (PyList_GetItem (speech, rnd));
             text_.push_back (scan_string (nls::translate (strings[answer])));
             
-            // get the NPC color
+            // get the NPC color, portrait and name
             char *npc = PyString_AsString (PyList_GetItem (speaker, rnd));
             if (npc != NULL)
             {
@@ -196,6 +197,7 @@ void dialog::run (u_int32 index)
 
                     npc_color_ = mychar->get_color ();
                     npc_portrait_ = mychar->get_portrait ();
+                    npc_name_ = npc;
                 }
             }
             
