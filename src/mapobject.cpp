@@ -147,10 +147,10 @@ void mapobject::calculate_dimensions()
   for(i=0;i<nbr_of_parts;i++)
     {
       u_int16 tl,th;
-      if((tl=part[i].get_length()+part[i].xoffset)>length)
+      if((tl=part[i].length()+part[i].xoffset)>length)
 	length=tl;
       
-      if((th=part[i].get_height()+part[i].yoffset)>height)
+      if((th=part[i].height()+part[i].yoffset)>height)
 	height=th;
     }
 }
@@ -242,8 +242,8 @@ void mapobject::zoom(u_int16 sx, u_int16 sy, mapobject * src)
   part=new animation_off[nbr_of_parts];
   for(i=0;i<nbr_of_parts;i++)
     {
-      part[i].zoom((src->part[i].length*sx)/src->length,
-		   (src->part[i].height*sy)/src->height,&src->part[i]);
+      part[i].zoom((src->part[i].length()*sx)/src->length,
+		   (src->part[i].height()*sy)/src->height,&src->part[i]);
       part[i].xoffset=(src->part[i].xoffset*sx)/src->length;
       part[i].yoffset=(src->part[i].yoffset*sy)/src->height;
       part[i].play();
@@ -564,8 +564,8 @@ void mapobject::resize_grid()
   if(!nbr_of_parts) return;
   for(i=0;i<nbr_of_parts;i++)
     {
-      if(mx<part[i].length+part[i].xoffset) mx=part[i].length+part[i].xoffset;
-      if(my<part[i].height+part[i].yoffset) my=part[i].height+part[i].yoffset;
+      if(mx<part[i].length()+part[i].xoffset) mx=part[i].length()+part[i].xoffset;
+      if(my<part[i].height()+part[i].yoffset) my=part[i].height()+part[i].yoffset;
     }
   rx=mx/20+(mx%20!=0);
   ry=my/20+(my%20!=0);
@@ -661,7 +661,7 @@ void mapobject::update_editor_keys()
       else if(SDL_GetModState() & (KMOD_META | KMOD_ALT))
 	{ 
 	  if((maptpl::get_length()-1)*MAPSQUARE_SIZE>=
-	     part[currentpart].get_length()+part[currentpart].xoffset)
+	     part[currentpart].length()+part[currentpart].xoffset)
 	    maptpl::resize(maptpl::get_length()-1,maptpl::get_height()); 
 	}
       else
@@ -671,7 +671,7 @@ void mapobject::update_editor_keys()
     {
       if(SDL_GetModState()&KMOD_SHIFT)
 	{ 
-	  if(part[currentpart].xoffset+part[currentpart].get_length()<
+	  if(part[currentpart].xoffset+part[currentpart].length()<
 	     maptpl::length*MAPSQUARE_SIZE)
 	    set_part_xoffset(currentpart,part[currentpart].xoffset+1); 
 	}
@@ -690,7 +690,7 @@ void mapobject::update_editor_keys()
       else if(SDL_GetModState() & (KMOD_META | KMOD_ALT))
 	{ 
 	  if((maptpl::get_height()-1)*MAPSQUARE_SIZE>=
-	     part[currentpart].get_height()+part[currentpart].yoffset)
+	     part[currentpart].height()+part[currentpart].yoffset)
 	    maptpl::resize(maptpl::get_length(),maptpl::get_height()-1); 
 	}
       else
@@ -700,7 +700,7 @@ void mapobject::update_editor_keys()
     {
       if(SDL_GetModState()&KMOD_SHIFT)
 	{ 
-	  if(part[currentpart].yoffset+part[currentpart].get_height()<
+	  if(part[currentpart].yoffset+part[currentpart].height()<
 	     maptpl::height*MAPSQUARE_SIZE)
 	    set_part_yoffset(currentpart,part[currentpart].yoffset+1); 
 	}
@@ -780,7 +780,7 @@ void mapobject::draw_editor()
 void mapobject::update_and_draw()
 {
   static u_int16 i;
-  for(i=0;i<screen::get_frames_to_do();i++) update_editor();
+  for(i=0;i<screen::frames_to_do();i++) update_editor();
   draw_editor();
 }
 
@@ -831,7 +831,7 @@ void mapobject::editor()
       static u_int16 i;
       input::update();
       //      resize_grid();
-      for(i=0;i<screen::get_frames_to_do();i++) update_editor_keys();
+      for(i=0;i<screen::frames_to_do();i++) update_editor_keys();
       update_and_draw();
       screen::show();
     }

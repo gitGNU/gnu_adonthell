@@ -67,7 +67,7 @@ bool win_font_editor::update()
     
   if(win_container::update())
     {
-      while(curpos_<=newfont_->get_length() && (c=input::get_next_unicode())>0)
+      while(curpos_<=newfont_->length() && (c=input::get_next_unicode())>0)
 	{
 	  //create new inode to store part of image
 	  Tinode_ * t = new Tinode_;
@@ -77,14 +77,14 @@ bool win_font_editor::update()
 	  l_.push_back(t);
 	  
 	  //if not a end of font file, go to the next letter
-	  if(curpos_!=newfont_->get_length())
+	  if(curpos_!=newfont_->length())
 	    {
 	      lastpos_=curpos_++;
 	      update_next_letter();
 	    }
 	}
   
-      if(curpos_>=newfont_->get_length()) return false;
+      if(curpos_>=newfont_->length()) return false;
       
       return true;
     }
@@ -114,10 +114,10 @@ void win_font_editor::write()
 bool win_font_editor::update_next_letter()
 {
   
-  while(curpos_<=newfont_->get_length() && newfont_->get_pix(curpos_,newfont_->get_height()-1)!=0) curpos_++;
+  while(curpos_<=newfont_->length() && newfont_->get_pix(curpos_,newfont_->height()-1)!=0) curpos_++;
   
-  tmp->resize(curpos_-lastpos_,newfont_->get_height()-1);
-  tmp->putbox_part_img(newfont_,0,0,curpos_-lastpos_,newfont_->get_height()-1,lastpos_,0);
+  tmp->resize(curpos_-lastpos_,newfont_->height()-1);
+  tmp->putbox_part_img(newfont_,0,0,curpos_-lastpos_,newfont_->height()-1,lastpos_,0);
   img->set_image(tmp);
   return true;
 }

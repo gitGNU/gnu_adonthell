@@ -29,8 +29,8 @@ class image
   ~image();
   void clear();
   void resize(u_int16 l, u_int16 h);
-  u_int16 get_length() {return length;}
-  u_int16 get_height() {return height;}
+  u_int16 length() {return _length;}
+  u_int16 height() {return _height;}
 
   s_int8 get(gzFile file);
   s_int8 load(const char * fname);
@@ -44,9 +44,16 @@ class image
 
   void assign_drawing_area(drawing_area * da);
   void detach_drawing_area();
-  bool get_mask();
+  bool is_masked();
   void set_mask(bool m);
-  u_int8 get_alpha();
+  u_int8 alpha()
+    {
+#ifdef REVERSE_ALPHA
+      return _alpha;
+#else
+      return 255-_alpha;
+#endif
+    }
   void set_alpha(u_int8 t);
   void draw(s_int16 x, s_int16 y, drawing_area * da_opt=NULL);
   void putbox (s_int16 x, s_int16 y, drawing_area * da_opt=NULL);
@@ -83,10 +90,10 @@ class image
   static u_int16 a_d_diff;
 #endif
   SDL_Surface * data;
-  u_int16 length, height;
+  u_int16 _length, _height;
   u_int8 bytes_per_pixel;
   bool mask_on;
-  u_int8 alpha;
+  u_int8 _alpha;
 
   void init();
 

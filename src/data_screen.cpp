@@ -211,15 +211,15 @@ void data_screen::save_preview (char *path)
 
     // we'll need a 24 bit image for saving as pnm
     preview->bytes_per_pixel = 3;
-    preview->length = 72;
-    preview->height = 54;
-    preview->data = SDL_CreateRGBSurface (SDL_SWSURFACE, preview->get_length (),
-        preview->get_height (), 24,	0x000000FF, 0x0000FF00, 0x00FF0000, 0);
+    preview->_length = 72;
+    preview->_height = 54;
+    preview->data = SDL_CreateRGBSurface (SDL_SWSURFACE, preview->length (),
+        preview->height (), 24,	0x000000FF, 0x0000FF00, 0x00FF0000, 0);
     preview->zoom (shot);
 
     // write it to disk
     SDL_RWops * file = SDL_RWFromFile (path, "w"); 
-    pnmput (file, preview->data->pixels, preview->get_length (), preview->get_height ());
+    pnmput (file, preview->data->pixels, preview->length (), preview->height ());
     SDL_RWclose(file);
 
     delete preview;

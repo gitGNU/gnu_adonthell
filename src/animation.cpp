@@ -29,12 +29,12 @@ u_int16 animation::a_d_diff=0;
 void animationframe::init()
 {
   imagenbr=0;
-  is_masked=false;
+  _is_masked=false;
   set_alpha(255);
   gapx=0;
   gapy=0;
-  delay=0;
-  nextframe=0;
+  _delay=0;
+  _nextframe=0;
 }
 
 void animationframe::clear()
@@ -59,74 +59,16 @@ animationframe::~animationframe()
 #endif
 }
 
-u_int8 animationframe::get_alpha()
-{
-#ifdef REVERSE_ALPHA
-  return alpha;
-#else
-  return 255-alpha;
-#endif
-}
-
-void animationframe::set_alpha(u_int8 a)
-{
-#ifdef REVERSE_ALPHA
-  alpha=a;
-#else
-  alpha=255-a;
-#endif
-}
-
-bool animationframe::get_mask()
-{
-  return is_masked;
-}
-
-void animationframe::set_mask(bool mask)
-{
-  is_masked=mask;
-}
-
-u_int16 animationframe::get_image()
-{
-  return imagenbr;
-}
-
-void animationframe::set_image(u_int16 imnbr)
-{
-  imagenbr=imnbr;
-}
-
-u_int16 animationframe::get_delay()
-{
-  return delay;
-}
-
-void animationframe::set_delay(u_int16 d)
-{
-  delay=d;
-}
-
-u_int16 animationframe::get_nextframe()
-{
-  return nextframe;
-}
-
-void animationframe::set_nextframe(u_int16 nf)
-{
-  nextframe=nf;
-}
-
 s_int8 animationframe::get(gzFile file)
 {
   gzread(file,&imagenbr,sizeof(imagenbr));
-  gzread(file,&is_masked,sizeof(is_masked));
-  gzread(file,&alpha,sizeof(alpha));
-  set_alpha(alpha);
+  gzread(file,&_is_masked,sizeof(_is_masked));
+  gzread(file,&_alpha,sizeof(_alpha));
+  set_alpha(_alpha);
   gzread(file,&gapx,sizeof(gapx));
   gzread(file,&gapy,sizeof(gapy));
-  gzread(file,&delay,sizeof(delay));
-  gzread(file,&nextframe,sizeof(nextframe));
+  gzread(file,&_delay,sizeof(_delay));
+  gzread(file,&_nextframe,sizeof(_nextframe));
   return(0);
 }
 
@@ -150,7 +92,7 @@ s_int8 animation::insert_image(image * im, u_int16 pos)
   while(pos--) i++;
   t_frame.insert(i,im);
   for (j=frame.begin();j!=frame.end();j++)
-    if (j->get_image() >= pos) j->set_image(j->get_image()+1);
+    if (j->image_nbr() >= pos) j->set_image_nbr(j->image_nbr()+1);
 #ifdef _DEBUG_
   cout << "Added image: " << nbr_of_images() << " total in animation.\n";
 #endif
@@ -174,7 +116,7 @@ s_int8 animation::delete_image(u_int16 pos)
   while(pos--) i++;
   t_frame.erase(i);
   for(j=frame.begin();j!=frame.end();j++)
-    if (j->get_image() >= pos) j->set_image(j->get_image()-1);
+    if (j->image_nbr() >= pos) j->set_image_nbr(j->image_nbr()-1);
 #ifdef _EDIT_
   if(currentimage>=nbr_of_images()) currentimage=nbr_of_images()-1;
   if(in_editor) 
@@ -191,7 +133,7 @@ s_int8 animation::delete_image(u_int16 pos)
     {
       currentimage=0;
       frame.clear();
-      currentframe=0;
+      _currentframe=0;
     }
 #endif
   return 0;
@@ -205,7 +147,7 @@ s_int8 animation::insert_frame(animationframe af, u_int16 pos)
   while(pos--) i++;
   frame.insert(i,af);
   for (i=frame.begin(); i!=frame.end(); i++)
-    if (i->get_nextframe() >= pos) i->set_nextframe(i->get_nextframe()+1);
+    if (i->nextframe() >= pos) i->set_nextframe(i->nextframe()+1);
 #ifdef _DEBUG_
   cout << "Added frame: " << nbr_of_frames() << " total in animation.\n";
 #endif
@@ -217,13 +159,13 @@ s_int8 animation::delete_frame(u_int16 pos)
   vector<animationframe>::iterator i;
   if(pos>nbr_of_frames()-1) return -2;
   for (i=frame.begin(); i!=frame.end(); i++)
-    if (i->get_nextframe() >= pos) 
-      i->set_nextframe(frame[i->get_nextframe()].get_nextframe()); 
+    if (i->nextframe() >= pos) 
+      i->set_nextframe(frame[i->nextframe()].nextframe()); 
   i=frame.begin();
   while(pos--) i++;
   frame.erase(i);
 #ifdef _EDIT_
-  if(currentframe>=nbr_of_frames()) currentframe=nbr_of_frames()-1;
+  if(_currentframe>=nbr_of_frames()) _currentframe=nbr_of_frames()-1;
   if(in_editor) 
     {
       must_upt_label_frame_nbr=true;
@@ -234,7 +176,7 @@ s_int8 animation::delete_frame(u_int16 pos)
   cout << "Removed frame: " << nbr_of_frames() << " total in animation.\n";
 #endif
   if(!nbr_of_frames()) 
-    currentframe=0;
+    _currentframe=0;
   return 0;
 }
 
@@ -242,14 +184,14 @@ s_int8 animation::delete_frame(u_int16 pos)
 s_int8 animationframe::put(gzFile file)
 {
   gzwrite(file,&imagenbr,sizeof(imagenbr));
-  gzwrite(file,&is_masked,sizeof(is_masked));
-  set_alpha(alpha);
-  gzwrite(file,&alpha,sizeof(alpha));
-  set_alpha(alpha);
+  gzwrite(file,&_is_masked,sizeof(_is_masked));
+  set_alpha(_alpha);
+  gzwrite(file,&_alpha,sizeof(_alpha));
+  set_alpha(_alpha);
   gzwrite(file,&gapx,sizeof(gapx));
   gzwrite(file,&gapy,sizeof(gapy));
-  gzwrite(file,&delay,sizeof(delay));
-  gzwrite(file,&nextframe,sizeof(nextframe));
+  gzwrite(file,&_delay,sizeof(_delay));
+  gzwrite(file,&_nextframe,sizeof(_nextframe));
   return(0);
 }
 
@@ -269,10 +211,10 @@ void animation::init()
 {
   frame.clear();
   t_frame.clear();
-  currentframe=0;
+  _currentframe=0;
   speedcounter=0;
   play_flag=false;
-  length=height=0;
+  _length=_height=0;
 #ifdef _EDIT_
   in_editor=false;
   currentimage=0;
@@ -312,30 +254,20 @@ bool animation::is_empty()
   return((!nbr_of_frames())||(!nbr_of_images()));
 }
 
-u_int16 animation::get_length()
-{
-  return length;
-}
-
-u_int16 animation::get_height()
-{
-  return height;
-}
-
 void animation::update()
 {
   if((!play_flag)||(!nbr_of_frames())) return;
-  if(frame[currentframe].delay==0) return;
+  if(frame[currentframe()]._delay==0) return;
   if(nbr_of_frames()<=1) return;
     
   speedcounter++;
-  if (speedcounter>=frame[currentframe].delay)
+  if (speedcounter>=frame[currentframe()]._delay)
     next_frame();
 }
 
 void animation::next_frame()
 {
-  currentframe=frame[currentframe].nextframe;
+  _currentframe=frame[currentframe()]._nextframe;
   speedcounter=0;
 #ifdef _EDIT_
   if(in_editor)
@@ -364,7 +296,7 @@ void animation::stop()
 
 void animation::rewind()
 {
-  currentframe=0;
+  _currentframe=0;
   speedcounter=0;
 }
 
@@ -374,11 +306,11 @@ void animation::draw(s_int16 x, s_int16 y, drawing_area * da_opt=NULL)
   if(!nbr_of_frames()) return;
 #endif
 
-  t_frame[frame[currentframe].imagenbr]->set_mask(frame[currentframe].is_masked);
-  t_frame[frame[currentframe].imagenbr]->set_alpha(frame[currentframe].get_alpha());
+  t_frame[frame[currentframe()].image_nbr()]->set_mask(frame[currentframe()].is_masked());
+  t_frame[frame[currentframe()].image_nbr()]->set_alpha(frame[currentframe()].alpha());
   
-  t_frame[frame[currentframe].imagenbr]->draw(x+frame[currentframe].gapx,
-					     y+frame[currentframe].gapy,
+  t_frame[frame[currentframe()].image_nbr()]->draw(x+frame[currentframe()].gapx,
+					     y+frame[currentframe()].gapy,
 					     da_opt);
 }
 
@@ -389,8 +321,8 @@ s_int8 animation::get(gzFile file)
   u_int16 nbr_frames;
   clear();
   // TODO: Remove this! (length and height are calculated later)
-  gzread(file,&length,sizeof(length));
-  gzread(file,&height,sizeof(height));
+  gzread(file,&_length,sizeof(_length));
+  gzread(file,&_height,sizeof(_height));
   // Read images
   gzread(file,&nbr_images,sizeof(nbr_images));
   for(i=0;i<nbr_images;i++)
@@ -408,18 +340,16 @@ s_int8 animation::get(gzFile file)
 
   // Calculate length and height
   // TODO: move this into a separate protected function.
-  for(currentframe=0;currentframe<nbr_of_frames();currentframe++)
+  for(i=0;i<nbr_of_frames();i++)
     {
       u_int16 tl,th;
-      if((tl=t_frame[frame[currentframe].imagenbr]->
-	  get_length()+frame[currentframe].gapx)>length)
-	length=tl;
+      if((tl=t_frame[frame[i].imagenbr]->length()+frame[i].gapx)>length())
+	_length=tl;
       
-      if((th=t_frame[frame[currentframe].imagenbr]->
-	  get_height()+frame[currentframe].gapy)>height)
-	height=th;
+      if((th=t_frame[frame[i].imagenbr]->height()+frame[i].gapy)>height())
+	_height=th;
     }
-  currentframe=0;
+  _currentframe=0;
   return(0);
 }
 
@@ -441,8 +371,8 @@ void animation::zoom(u_int16 sx, u_int16 sy, animation * src)
   for(i=0;i<src->nbr_of_images();i++)
     {
       image * im=new image;
-      im->resize((src->t_frame[i]->get_length()*sx)/src->length,
-			(src->t_frame[i]->get_height()*sy)/src->height);
+      im->resize((src->t_frame[i]->length()*sx)/src->length(),
+			(src->t_frame[i]->height()*sy)/src->height());
       im->zoom(src->t_frame[i]);
       t_frame.push_back(im);
     }
@@ -450,8 +380,8 @@ void animation::zoom(u_int16 sx, u_int16 sy, animation * src)
   for(i=0;i<src->nbr_of_frames();i++)
     {
       frame.push_back(src->frame[i]);
-      frame.back().gapx=(src->frame[i].gapx*sx)/src->length;
-      frame.back().gapy=(src->frame[i].gapy*sy)/src->height;
+      frame.back().gapx=(src->frame[i].gapx*sx)/src->length();
+      frame.back().gapy=(src->frame[i].gapy*sy)/src->height();
     }
 }
 
@@ -461,15 +391,15 @@ s_int8 animation::put(gzFile file)
   u_int16 i;
   u_int16 nbr_images=(u_int16)nbr_of_images();
   u_int16 nbr_frames=(u_int16)nbr_of_frames();
-  gzwrite(file,&length,sizeof(length));
-  gzwrite(file,&height,sizeof(height));
+  gzwrite(file,&_length,sizeof(_length));
+  gzwrite(file,&_height,sizeof(_height));
   gzwrite(file,&nbr_images,sizeof(nbr_images));
   for(i=0;i<nbr_images;i++)
     t_frame[i]->put_raw(file);
   gzwrite(file,&nbr_frames,sizeof(nbr_frames));
   for(i=0;i<nbr_frames;i++)
       frame[i].put(file);
-  currentframe=0;
+  set_currentframe(0);
   return(0);
 }
 
@@ -559,7 +489,8 @@ void animation::load()
   else 
     {
       sprintf(st,"%s loaded successfully!",s);
-      currentimage=currentframe=0;
+      set_currentframe(0);
+      currentimage=currentframe();
       *(animation*)this=*t;
     }
   strcpy(file_name,s);
@@ -581,9 +512,9 @@ animation & animation::operator =(animation &a)
   for(i=0;i<nbr_of_images();i++)
     delete t_frame[i];
   t_frame.clear();
-  length=a.length;
-  height=a.height;
-  currentframe=a.currentframe;
+  _length=a._length;
+  _height=a._height;
+  _currentframe=a._currentframe;
   speedcounter=a.speedcounter;
   play_flag=a.play_flag;
   for(i=0;i<a.nbr_of_images();i++)
@@ -609,7 +540,7 @@ void animation::select_image(u_int16 nbr)
 
 void animation::select_frame(u_int16 nbr)
 {
-  currentframe=nbr;
+  set_currentframe(nbr);
   must_upt_label_frame_nbr=true;
   must_upt_label_frame_info=true;
 }
@@ -667,7 +598,6 @@ void animation::ed_add_image()
 			       makeFunctor(*this,&animation::draw_editor));
   if(!s) { delete wf; return; }
   char st[500];
-  cout << s << endl;
   if(!im->load_pnm(s)) 
     {
       do
@@ -872,7 +802,7 @@ void animation::update_label_frame_nbr()
   if(mode==FRAME)
     {
       if(nbr_of_frames()>0)
-	sprintf(frame_txt,"Frame %d/%d",currentframe,
+	sprintf(frame_txt,"Frame %d/%d",currentframe(),
 		nbr_of_frames()-1);
       else sprintf(frame_txt,"No frame");
     }
@@ -893,20 +823,20 @@ void animation::update_label_frame_info()
       if(nbr_of_frames()>0)
 	{
 	  char s_delay[6];
-	  sprintf(s_delay,"%d",frame[currentframe].delay);
+	  sprintf(s_delay,"%d",frame[currentframe()].delay());
 	  sprintf(frame_txt,"Frame info :\nImage number: %d\nLength: %d\n"
 		  "Height: %d\nDelay: %s\nX Offset:%d\nY Offset:%d\n"
 		  "Next Frame: %d\nMasked: %s\nAlpha: %d\n"
 		  "\nAnimation info:\nLength: %d\nHeight:%d\n",
-		  frame[currentframe].imagenbr,
-		  t_frame[frame[currentframe].imagenbr]->get_length(),
-		  t_frame[frame[currentframe].imagenbr]->get_height(),
-		  frame[currentframe].delay==0?"Infinite":s_delay,
-		  frame[currentframe].gapx,frame[currentframe].gapy,
-		  frame[currentframe].nextframe,
-		  frame[currentframe].get_mask()?"Yes":"No",
-		  frame[currentframe].get_alpha(),
-		  length,height);
+		  frame[currentframe()].imagenbr,
+		  t_frame[frame[currentframe()].image_nbr()]->length(),
+		  t_frame[frame[currentframe()].image_nbr()]->height(),
+		  frame[currentframe()].delay()==0?"Infinite":s_delay,
+		  frame[currentframe()].gapx,frame[currentframe()].gapy,
+		  frame[currentframe()].nextframe(),
+		  frame[currentframe()].is_masked()?"Yes":"No",
+		  frame[currentframe()].alpha(),
+		  length(),height());
 	  label_frame_info->set_text(frame_txt);
 	}
       else
@@ -920,8 +850,8 @@ void animation::update_label_frame_info()
       if(nbr_of_images()>0)
 	{
 	  sprintf(frame_txt,"Image info:\nLength: %d\nHeight: %d\n\nAnimation info:\nLength:%d\nHeight:%d",
-		  t_frame[currentimage]->get_length(),t_frame[currentimage]->get_height(),
-		  length,height);
+		  t_frame[currentimage]->length(),t_frame[currentimage]->height(),
+		  length(),height());
 	  label_frame_info->set_text(frame_txt);
 	}
       else
@@ -972,8 +902,8 @@ void animation::update_editor_keys()
       if(mode==IMAGE) select_image(increase_image(currentimage));
       if((mode==FRAME)&&(!play_flag))
 	if(!(SDL_GetModState()&KMOD_SHIFT))
-	  {select_frame(increase_frame(currentframe));}
-	else set_frame_gapx(currentframe,frame[currentframe].gapx+1);	    
+	  {select_frame(increase_frame(currentframe()));}
+	else set_frame_gapx(currentframe(),frame[currentframe()].gapx+1);	    
     }
   
   // Navigate through images and frames
@@ -983,23 +913,23 @@ void animation::update_editor_keys()
       if(mode==IMAGE) select_image(decrease_image(currentimage));
       if((mode==FRAME)&&(!play_flag))
 	if(!(SDL_GetModState()&KMOD_SHIFT))
-	  {select_frame(decrease_frame(currentframe));}
-     	else set_frame_gapx(currentframe,frame[currentframe].gapx-1);
+	  {select_frame(decrease_frame(currentframe()));}
+     	else set_frame_gapx(currentframe(),frame[currentframe()].gapx-1);
     }
 
   // Increase the frame delay in frame mode
   // + Shift: set the Y offset in frame mode
   if(testkey(SDLK_UP)&&mode==FRAME&&!play_flag) 
     if(!(SDL_GetModState()&KMOD_SHIFT))
-      {set_frame_delay(currentframe,frame[currentframe].delay+1);}
-    else set_frame_gapy(currentframe,frame[currentframe].gapy-1);
+      {set_frame_delay(currentframe(),frame[currentframe()].delay()+1);}
+    else set_frame_gapy(currentframe(),frame[currentframe()].gapy-1);
 
   // Decrease the frame delay in frame mode
   // + Shift: set the Y offset in frame mode
   if(testkey(SDLK_DOWN)&&mode==FRAME&&!play_flag) 
     if(!(SDL_GetModState()&KMOD_SHIFT))
-      {set_frame_delay(currentframe,frame[currentframe].delay-1);}
-    else set_frame_gapy(currentframe,frame[currentframe].gapy+1);
+      {set_frame_delay(currentframe(),frame[currentframe()].delay()-1);}
+    else set_frame_gapy(currentframe(),frame[currentframe()].gapy+1);
 
   // Start playing
   if(input::has_been_pushed(SDLK_p)) play();
@@ -1043,7 +973,7 @@ void animation::update_editor_keys()
   if(input::has_been_pushed(SDLK_F2))
     {
       if(mode==IMAGE) delete_image(currentimage);
-      if((mode==FRAME)&&(!play_flag)) delete_frame(currentframe);
+      if((mode==FRAME)&&(!play_flag)) delete_frame(currentframe());
     }
 
   // Loads an image in game format in image mode
@@ -1073,7 +1003,7 @@ void animation::update_editor_keys()
 	  if(mode==IMAGE)
 	    *clipboard=*(t_frame[currentimage]);
 	  if(mode==FRAME)
-	    f_clipboard=frame[currentframe];
+	    f_clipboard=frame[currentframe()];
 	}
     }
 
@@ -1086,8 +1016,8 @@ void animation::update_editor_keys()
 	    *(t_frame[currentimage])=*clipboard;
 	  if(mode==FRAME)
 	    {
-	      frame[currentframe].is_masked=f_clipboard.is_masked;
-	      frame[currentframe].alpha=f_clipboard.alpha;
+	      frame[currentframe()]._is_masked=f_clipboard.is_masked();
+	      frame[currentframe()]._alpha=f_clipboard.alpha();
 	    }
 	}
     }
@@ -1106,8 +1036,8 @@ void animation::update_editor_keys()
 	  if(mode==FRAME)
 	    {
 	      animationframe af;
-	      af.is_masked=f_clipboard.is_masked;
-	      af.alpha=f_clipboard.alpha;
+	      af._is_masked=f_clipboard.is_masked();
+	      af._alpha=f_clipboard.alpha();
 	      insert_frame(af,nbr_of_frames());
 	    }
 	}
@@ -1115,32 +1045,32 @@ void animation::update_editor_keys()
 
   // Sets next image as frame's image in frame mode
   if(testkey(SDLK_KP_PLUS)&&mode==FRAME&&!play_flag)
-    set_frame_imagenbr(currentframe,
-		       increase_image(frame[currentframe].imagenbr));
+    set_frame_imagenbr(currentframe(),
+		       increase_image(frame[currentframe()].image_nbr()));
     // Sets previous image as frame's image in frame mode
   if(testkey(SDLK_KP_MINUS)&&mode==FRAME&&!play_flag)
-    set_frame_imagenbr(currentframe,
-		       decrease_image(frame[currentframe].imagenbr));
+    set_frame_imagenbr(currentframe(),
+		       decrease_image(frame[currentframe()].image_nbr()));
 
   // Increase alpha in frame mode
   if(testkey(SDLK_PAGEUP)&&mode==FRAME&&!play_flag)
-    set_frame_alpha(currentframe,frame[currentframe].get_alpha()+1);
+    set_frame_alpha(currentframe(),frame[currentframe()].alpha()+1);
   // Decrease alpha in frame mode
   if(testkey(SDLK_PAGEDOWN)&&mode==FRAME&&!play_flag) 
-    set_frame_alpha(currentframe,frame[currentframe].get_alpha()-1);
+    set_frame_alpha(currentframe(),frame[currentframe()].alpha()-1);
 
   // Increase next frame in frame mode
   if(testkey(SDLK_HOME)&&mode==FRAME&&!play_flag)
-    set_frame_nextframe(currentframe,
-			increase_frame(frame[currentframe].nextframe));
+    set_frame_nextframe(currentframe(),
+			increase_frame(frame[currentframe()].nextframe()));
   // Decrease next frame in frame mode
   if(testkey(SDLK_END)&&mode==FRAME&&!play_flag) 
-    set_frame_nextframe(currentframe,
-			decrease_frame(frame[currentframe].nextframe));
+    set_frame_nextframe(currentframe(),
+			decrease_frame(frame[currentframe()].nextframe()));
   
   // Switch mask on/off in frame mode
   if(testkey(SDLK_INSERT)&&mode==FRAME&&!play_flag)
-    set_frame_mask(currentframe,frame[currentframe].is_masked==true?
+    set_frame_mask(currentframe(),frame[currentframe()].is_masked()==true?
 		   false:true);
 }
 
@@ -1148,18 +1078,16 @@ void animation::update_editor()
 {  
   update();
   u_int16 i;
-  length=0;
-  height=0;
+  _length=0;
+  _height=0;
   for(i=0;i<nbr_of_frames();i++)
     {
       u_int16 tl,th;
-      if((tl=t_frame[frame[i].imagenbr]->
-	get_length()+frame[i].gapx)>length)
-	length=tl;
+      if((tl=t_frame[frame[i].imagenbr]->length()+frame[i].gapx)>length())
+	_length=tl;
 
-      if((th=t_frame[frame[i].imagenbr]->
-	get_height()+frame[i].gapy)>height)
-	  height=th;
+      if((th=t_frame[frame[i].imagenbr]->height()+frame[i].gapy)>height())
+	_height=th;
     }
   if(info_win_count)
     {
@@ -1209,7 +1137,7 @@ void animation::draw_editor()
 void animation::update_and_draw()
 {
   static u_int16 i;
-  for(i=0;i<screen::get_frames_to_do();i++) update_editor();
+  for(i=0;i<screen::frames_to_do();i++) update_editor();
   draw_editor();
 }
 
@@ -1270,7 +1198,7 @@ void animation::editor()
   while(!input::has_been_pushed(SDLK_ESCAPE))
     {
       input::update();
-      for(i=0;i<screen::get_frames_to_do();i++) update_editor_keys();
+      for(i=0;i<screen::frames_to_do();i++) update_editor_keys();
       update_and_draw();
       screen::show();
     }

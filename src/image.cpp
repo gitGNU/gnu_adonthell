@@ -26,20 +26,20 @@ u_int16 image::a_d_diff=0;
 
 image &image::operator =(const image &im)
 {
-  length=im.length;
-  height=im.height;
+  _length=im._length;
+  _height=im._height;
   draw_to=im.draw_to;
   bytes_per_pixel=im.bytes_per_pixel;
   mask_on=im.mask_on;
-  alpha=im.alpha;
+  _alpha=im._alpha;
   if(data) SDL_FreeSurface(data);
 #ifdef _EDIT_
   if(simpledata) free(simpledata);
 #endif
   data=SDL_ConvertSurface(im.data,im.data->format,im.data->flags);
 #ifdef _EDIT_
-  simpledata=(void *)calloc(length*height,3);
-  memcpy(simpledata,im.simpledata,length*height*3);
+  simpledata=(void *)calloc(length()*height(),3);
+  memcpy(simpledata,im.simpledata,length()*height()*3);
 #endif
   return *this;
 }
@@ -48,7 +48,7 @@ void image::init()
 {
   bytes_per_pixel=0;
   data = NULL;
-  length=height=0;
+  _length=_height=0;
   mask_on=false;
   set_alpha(255);
   draw_to=NULL;
@@ -73,13 +73,13 @@ image::image (u_int16 l, u_int16 h)
        << " objects currently allocated\n";
 #endif
   init();
-  length=l;
-  height=h;
+  _length=l;
+  _height=h;
   bytes_per_pixel=screen::bytes_per_pixel;
-  data=SDL_CreateRGBSurface(SDL_SWSURFACE,length, height,
+  data=SDL_CreateRGBSurface(SDL_SWSURFACE,length(), height(),
 			    bytes_per_pixel*8,0,0,0,0);
 #ifdef _EDIT_
-  simpledata=(void*)calloc(length*height,3);
+  simpledata=(void*)calloc(length()*height(),3);
 #endif
 }
 
@@ -105,16 +105,16 @@ void image::resize(u_int16 l, u_int16 h)
 {
   set_mask(false);
   set_alpha(255);
-  if ((length==l)&&(height==h)) return;
+  if ((_length==l)&&(_height==h)) return;
   if (data) SDL_FreeSurface(data);
   bytes_per_pixel=screen::bytes_per_pixel;
-  length=l;
-  height=h;
-  data=SDL_CreateRGBSurface(SDL_SWSURFACE,length, height,
+  _length=l;
+  _height=h;
+  data=SDL_CreateRGBSurface(SDL_SWSURFACE,length(), height(),
 			    bytes_per_pixel*8,0,0,0,0);
 #ifdef _EDIT_
   if(simpledata) free(simpledata);
-  simpledata=(void *)calloc(length*height,3);
+  simpledata=(void *)calloc(length()*height(),3);
 #endif  
 }
 
@@ -132,7 +132,7 @@ void image::get_rects(s_int16 x, s_int16 y)
 {
   if(draw_to)
     {
-      drawing_area da_int, im_zone(x,y,length, height);
+      drawing_area da_int, im_zone(x,y,length(), height());
       SDL_Rect t=draw_to->get_rects();
       da_int=t;
       im_zone.assign_drawing_area(&da_int);
@@ -145,17 +145,17 @@ void image::get_rects(s_int16 x, s_int16 y)
     {
       sr.x=0;
       sr.y=0;
-      sr.w=length;
-      sr.h=height;
+      sr.w=length();
+      sr.h=height();
 
       dr.x=x;
       dr.y=y;
-      dr.w=length;
-      dr.h=height;
+      dr.w=length();
+      dr.h=height();
     }  
 }
 
-bool image::get_mask()
+bool image::is_masked()
 {
   return(mask_on);
 }
@@ -164,7 +164,7 @@ void image::set_mask(bool m)
 {
   if((m)&&(!mask_on))
     {
-      SDL_SetColorKey(data, SDL_SRCCOLORKEY, screen::get_trans_col());
+      SDL_SetColorKey(data, SDL_SRCCOLORKEY, screen::trans_col());
       mask_on=true;
     }
   else if((!m)&&(mask_on))
@@ -174,23 +174,14 @@ void image::set_mask(bool m)
       }
 }
 
-u_int8 image::get_alpha()
-{
-#ifdef REVERSE_ALPHA
-  return alpha;
-#else
-  return 255-alpha;
-#endif
-}    
-
 void image::set_alpha(u_int8 t)
 {
 #ifdef REVERSE_ALPHA
-  if((t==255)&&(alpha!=255)&&data) SDL_SetAlpha(data,0,0);
-  alpha=t;
+  if((t==255)&&(_alpha!=255)&&data) SDL_SetAlpha(data,0,0);
+  _alpha=t;
 #else
-  if((t==0)&&(alpha!=0)&&data) SDL_SetAlpha(data,0,0);
-  alpha=255-t;
+  if((t==0)&&(_alpha!=0)&&data) SDL_SetAlpha(data,0,0);
+  _alpha=255-t;
 #endif
 }
 
@@ -207,7 +198,7 @@ void image::draw(s_int16 x, s_int16 y, drawing_area * da_opt=NULL)
 
   get_rects(x,y);
   if(!dr.w||!dr.h) return;
-  if(get_alpha()!=255) SDL_SetAlpha(data, SDL_SRCALPHA, alpha);
+  if(alpha()!=255) SDL_SetAlpha(data, SDL_SRCALPHA, _alpha);
   SDL_BlitSurface(data, &sr, screen::vis, &dr);
   if(da_opt) draw_to=oldda;  
 }
@@ -254,8 +245,8 @@ void image::putbox_tile_img(image * source)
 {
   u_int16 posx;
   u_int16 posy;
-  for(posy=0; posy<height; posy+=source->height)
-    for(posx=0; posx<length; posx+=source->length)
+  for(posy=0; posy<height(); posy+=source->height())
+    for(posx=0; posx<length(); posx+=source->length())
 	putbox_img(source,posx,posy);
 }
 
@@ -263,12 +254,12 @@ void image::putbox_img(image * source, u_int16 x, u_int16 y)
 {
   sr.x=0;
   sr.y=0;
-  sr.w=source->length;
-  sr.h=source->height;
+  sr.w=source->length();
+  sr.h=source->height();
   dr.x=x;
   dr.y=y;
-  dr.w=source->length;
-  dr.h=source->height;
+  dr.w=source->length();
+  dr.h=source->height();
   SDL_BlitSurface(source->data, &sr, data, &dr);
 }
 
@@ -277,15 +268,15 @@ void image::putbox_mask_img (image * source, u_int16 x, u_int16 y)
 {
   sr.x=0;
   sr.y=0;
-  sr.w=source->length;
-  sr.h=source->height;
+  sr.w=source->length();
+  sr.h=source->height();
   dr.x=x;
   dr.y=y;
-  dr.w=source->length;
-  dr.h=source->height;
+  dr.w=source->length();
+  dr.h=source->height();
   if(!mask_on) 
     {
-      SDL_SetColorKey(data, SDL_SRCCOLORKEY, screen::trans);
+      SDL_SetColorKey(data, SDL_SRCCOLORKEY, screen::trans_col());
       mask_on=true;
     }
   SDL_BlitSurface(source->data, &sr, data, &dr);
@@ -309,12 +300,12 @@ void image::get_from_screen(s_int16 x, s_int16 y)
 {
   sr.x=x;
   sr.y=y;
-  sr.w=length;
-  sr.h=height;
+  sr.w=length();
+  sr.h=height();
   dr.x=0;
   dr.y=0;
-  dr.w=length;
-  dr.h=height;
+  dr.w=_length;
+  dr.h=_height;
   SDL_BlitSurface(screen::vis,&sr,data,&dr);
 }
 
@@ -322,13 +313,13 @@ s_int8 image::get(gzFile file)
 {
   s_int8 ret;
   gzread(file,&mask_on,sizeof(mask_on));
-  gzread(file,&alpha,sizeof(alpha));   
+  gzread(file,&_alpha,sizeof(_alpha));   
   ret=get_raw(file);
   if(!ret)
     {
       if(mask_on)
-	SDL_SetColorKey(data, SDL_SRCCOLORKEY, screen::trans);
-      set_alpha(alpha);
+	SDL_SetColorKey(data, SDL_SRCCOLORKEY, screen::trans_col());
+      set_alpha(_alpha);
     }
   return ret;
 }
@@ -349,13 +340,13 @@ s_int8 image::get_raw(gzFile file)
   void * simpledata;
 #endif
   SDL_Surface * tmp2;
-  gzread(file,&length,sizeof(length));
-  gzread(file,&height,sizeof(height));
-  simpledata=calloc(length*height,3);
-  gzread(file,simpledata,length*height*3);
+  gzread(file,&_length,sizeof(_length));
+  gzread(file,&_height,sizeof(_height));
+  simpledata=calloc(length()*height(),3);
+  gzread(file,simpledata,length()*height()*3);
 
-  tmp2=SDL_CreateRGBSurfaceFrom(simpledata,length,height,24,
-				length*3,0x0000FF,0x00FF00,0xFF0000,0);
+  tmp2=SDL_CreateRGBSurfaceFrom(simpledata,length(),height(),24,
+				length()*3,0x0000FF,0x00FF00,0xFF0000,0);
   data=SDL_DisplayFormat(tmp2);
   bytes_per_pixel=screen::bytes_per_pixel;
   SDL_FreeSurface(tmp2);
@@ -383,10 +374,10 @@ s_int8 image::get_pnm(SDL_RWops * file)
   void * simpledata;
 #endif
   SDL_Surface * tmp2;
-  simpledata=read_pnm(file,&length,&height);
+  simpledata=read_pnm(file,&_length,&_height);
 
-  tmp2=SDL_CreateRGBSurfaceFrom(simpledata,length,height,24,
-				length*3,0x0000FF,0x00FF00,0xFF0000,0);
+  tmp2=SDL_CreateRGBSurfaceFrom(simpledata,length(),height(),24,
+				length()*3,0x0000FF,0x00FF00,0xFF0000,0);
   data=SDL_DisplayFormat(tmp2);
   bytes_per_pixel=screen::bytes_per_pixel;
   SDL_FreeSurface(tmp2);
@@ -413,12 +404,12 @@ void image::screen_shot ()
     clear();
     init();
     bytes_per_pixel = 3;
-    length = screen::get_length();
-    height = screen::get_height();
+    _length = screen::length();
+    _height = screen::height();
     
 
     // We need a 24bpp image to save it as PNM afterwards
-    data = SDL_CreateRGBSurface (SDL_SWSURFACE, length, height, 24,
+    data = SDL_CreateRGBSurface (SDL_SWSURFACE, length(), height(), 24,
 				 0x000000FF, 0x0000FF00, 0x00FF0000, 0);
     
     // Copy the contents of the screen over to our image
@@ -428,8 +419,8 @@ void image::screen_shot ()
 	
 	bounds.x = 0;
 	bounds.y = 0;
-	bounds.w = length;
-	bounds.h = height;
+	bounds.w = length();
+	bounds.h = height();
 	
 	if (SDL_LowerBlit (screen::vis, &bounds, data, &bounds) < 0)
 	  {
@@ -442,9 +433,9 @@ void image::screen_shot ()
 s_int8 image::put(gzFile file)
 {
   gzwrite(file,&mask_on,sizeof(mask_on));
-  set_alpha(alpha);
-  gzwrite(file,&alpha,sizeof(alpha));
-  set_alpha(alpha);
+  set_alpha(_alpha);
+  gzwrite(file,&_alpha,sizeof(_alpha));
+  set_alpha(_alpha);
   return(put_raw(file));
 }
 
@@ -460,9 +451,9 @@ s_int8 image::save(char * fname)
 
 s_int8 image::put_raw(gzFile file)
 {
-  gzwrite(file,&length,sizeof(length));
-  gzwrite(file,&height,sizeof(height));
-  gzwrite(file,simpledata,length*height*3);
+  gzwrite(file,&_length,sizeof(_length));
+  gzwrite(file,&_height,sizeof(_height));
+  gzwrite(file,simpledata,length()*height()*3);
   return(0);
 }
 
@@ -478,7 +469,7 @@ s_int8 image::save_raw(char * fname)
 
 s_int8 image::put_pnm(SDL_RWops * file)
 {
-  pnmput(file,simpledata,length,height);
+  pnmput(file,simpledata,length(),height());
   return(0);
 }
 
@@ -498,8 +489,7 @@ u_int32 image::get_pix(u_int16 x, u_int16 y)
 {
   static u_int32 retvalue;
 
-#ifndef _EDIT_
-  const u_int32 offset=((y*((length%2?length+1:length)))+x);
+  const u_int32 offset=((y*((length()%2?length()+1:length())))+x);
   switch (bytes_per_pixel)
     {
     case 1: return *((u_int8*)data->pixels+offset);
@@ -513,20 +503,13 @@ u_int32 image::get_pix(u_int16 x, u_int16 y)
       return retvalue;
       break;
     }
-#else
-  memcpy(&retvalue,(char*)simpledata+((x+(y*length))*3),3);
-  return(retvalue);
-#endif
 }
 
 u_int32 image::get_rgb_pix(u_int16 x, u_int16 y)
 {
   u_int32 retvalue;
-#ifdef _EDIT_
-  memcpy(&retvalue,(char*)simpledata+((x+(y*length))*3),3);
-  return(retvalue);
-#else
-  const u_int32 offset=((y*((length%2?length+1:length)))+x);
+
+  const u_int32 offset=((y*((length()%2?length()+1:length())))+x);
   switch (bytes_per_pixel)
     {
     case 1: return *((u_int8*)data->pixels+offset);
@@ -540,12 +523,11 @@ u_int32 image::get_rgb_pix(u_int16 x, u_int16 y)
       return retvalue;
       break;
     }
-#endif
 }
 
 void image::put_pix(u_int16 x, u_int16 y, u_int32 col)
 {
-  const u_int32 offset=((y*((length%2?length+1:length)))+x);
+  const u_int32 offset=((y*((length()%2?length()+1:length())))+x);
 
   switch (bytes_per_pixel)
     {
@@ -574,7 +556,7 @@ void image::put_rgb_pix(u_int16 x, u_int16 y, u_int32 col)
   put_pix(x,y,col);
 
 #ifdef _EDIT_
-  memcpy((u_int8*)simpledata+((x+(y*length))*3),&col,3);
+  memcpy((u_int8*)simpledata+((x+(y*length()))*3),&col,3);
 #endif
 }
 
@@ -583,9 +565,10 @@ void image::zoom(image * src)
   static u_int16 i,j;
   SDL_LockSurface(src->data);
   SDL_LockSurface(data);
-  for(j=0;j<height;j++)
-    for(i=0;i<length;i++)
-       	put_pix(i,j,src->get_pix(i*src->length/length,j*src->height/height));
+  for(j=0;j<height();j++)
+    for(i=0;i<length();i++)
+       	put_pix(i,j,src->get_pix(i*src->length()/length(),
+				 j*src->height()/height()));
   SDL_UnlockSurface(src->data);
   SDL_UnlockSurface(data);
 }
@@ -593,13 +576,13 @@ void image::zoom(image * src)
 void image::reverse_lr(image * src)
 {
   static u_int16 i,j;
-  if((length!=src->length)||(height!=src->height))
-    resize(src->length,src->height);
+  if((length()!=src->length())||(height()!=src->height()))
+    resize(src->length(),src->height());
   SDL_LockSurface(src->data);
   SDL_LockSurface(data);
-  for(j=0;j<height;j++)
-    for(i=0;i<length;i++)
-      put_pix(length-i,j,src->get_pix(i,j));
+  for(j=0;j<height();j++)
+    for(i=0;i<length();i++)
+      put_pix(length()-i,j,src->get_pix(i,j));
   SDL_UnlockSurface(src->data);
   SDL_UnlockSurface(data);
 }
@@ -607,13 +590,13 @@ void image::reverse_lr(image * src)
 void image::reverse_ud(image * src)
 {
   static u_int16 i,j;
-  if((length!=src->length)||(height!=src->height))
-    resize(src->length,src->height);
+  if((length()!=src->length())||(height()!=src->height()))
+    resize(src->length(),src->height());
   SDL_LockSurface(src->data);
   SDL_LockSurface(data);
-  for(j=0;j<height;j++)
-    for(i=0;i<length;i++)
-      put_pix(i,height-(j+1),src->get_pix(i,j));
+  for(j=0;j<height();j++)
+    for(i=0;i<length();i++)
+      put_pix(i,height()-(j+1),src->get_pix(i,j));
   SDL_UnlockSurface(src->data);
   SDL_UnlockSurface(data);
 }
@@ -624,12 +607,12 @@ void image::brightness(image * src, u_int16 cont, bool proceed_mask=false)
   u_int8 ir, ig, ib;
   u_int32 temp=0;
   
-  resize(src->length,src->height);
-  for(j=0;j<height;j++)
-    for(i=0;i<length;i++)
+  resize(src->length(),src->height());
+  for(j=0;j<height();j++)
+    for(i=0;i<length();i++)
       {
 	temp=src->get_pix(i,j);
-	if((proceed_mask) || temp!=screen::get_trans_col())
+	if((proceed_mask) || temp!=screen::trans_col())
 	  {
 	    SDL_GetRGB(temp,src->data->format,&ir,&ig,&ib);
 	    ir=(ir*cont)>>8;

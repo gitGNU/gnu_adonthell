@@ -52,31 +52,46 @@ class animationframe
   animationframe();
   void clear();
   ~animationframe();
-  u_int8 get_alpha();
-  void set_alpha(u_int8 a);
-  bool get_mask();
-  void set_mask(bool mask);
-  u_int16 get_image();
-  void set_image(u_int16 imnbr);
-  u_int16 get_delay();
-  void set_delay(u_int16 d);
-  u_int16 get_nextframe();
-  void set_nextframe(u_int16 nf);
+  u_int8 alpha()
+    {
+#ifdef REVERSE_ALPHA
+      return _alpha;
+#else
+      return 255-_alpha;
+#endif
+      
+    }
+  void set_alpha(u_int8 a)
+    {
+#ifdef REVERSE_ALPHA
+  _alpha=a;
+#else
+  _alpha=255-a;
+#endif
+    }
+  bool is_masked() { return _is_masked; }
+  void set_mask(bool mask) { _is_masked=mask; }
+  u_int16 image_nbr() { return imagenbr; }
+  void set_image_nbr(u_int16 imnbr) { imagenbr=imnbr; }
+  u_int16 delay() { return _delay; }
+  void set_delay(u_int16 d) { _delay=d; }
+  u_int16 nextframe() { return _nextframe; }
+  void set_nextframe(u_int16 nf) { _nextframe=nf; }
   s_int8 get(gzFile file);
   s_int8 load(const char * fname);
 
-  u_int16 get_offx() { return gapx;}
+  u_int16 offx() { return gapx;}
   void set_offx(u_int16 ox) { gapx=ox;}
-  u_int16 get_offy() { return gapy;}
+  u_int16 offy() { return gapy;}
   void set_offy(u_int16 oy) { gapy=oy;}
  private:
   u_int16 imagenbr;
-  bool is_masked;
-  u_int8 alpha;
+  bool _is_masked;
+  u_int8 _alpha;
   s_int16 gapx;
   s_int16 gapy;
-  u_int16 delay;
-  u_int16 nextframe;
+  u_int16 _delay;
+  u_int16 _nextframe;
 #ifdef _DEBUG_
   static u_int16 a_d_diff;
 #endif
@@ -91,8 +106,6 @@ class animationframe
 
 #ifndef SWIG
   friend class animation;
-#endif
-#ifndef SWIG
   friend class win_anim;
   friend class animation_off;
 #endif
@@ -105,8 +118,8 @@ class animation
   void clear();
   ~animation();
   bool is_empty();
-  u_int16 get_length();
-  u_int16 get_height();
+  u_int16 length() { return _length; }
+  u_int16 height() { return _height; }
 
   void play();
   void stop();
@@ -121,14 +134,13 @@ class animation
   u_int16 nbr_of_frames() { return frame.size(); }
   u_int16 nbr_of_images() { return t_frame.size(); }
 
-  u_int16 get_currentframe() { return currentframe; };
+  u_int16 currentframe() { return _currentframe; };
+  void set_currentframe(u_int16 framenbr) { _currentframe=framenbr; }
 
   void next_frame();
-  void set_currentframe(u_int16 framenbr) { currentframe=framenbr; }
   
   animationframe * get_frame(u_int16 nbr) { return &(frame[nbr]); }
-  animationframe * get_current_frame() 
-    { return get_frame(get_currentframe()); }
+  animationframe * get_current_frame() { return get_frame(currentframe()); }
   image * get_image(u_int16 nbr) { return t_frame[nbr]; }
 
   u_int16 add_image(image * im) { insert_image(im, nbr_of_images()); return nbr_of_images()-1;}
@@ -172,8 +184,8 @@ class animation
 #endif
   vector<image *> t_frame;
   vector<animationframe> frame;
-  u_int16 length, height;
-  u_int16 currentframe;
+  u_int16 _length, _height;
+  u_int16 _currentframe;
   u_int16 speedcounter;
   bool play_flag;
 

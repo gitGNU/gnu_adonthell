@@ -39,8 +39,8 @@ maptpl::maptpl(u_int16 x, u_int16 y, u_int16 l, u_int16 h,
   for(i=0;i<length;i++) placetpl[i]=new mapsquaretpl[h];
   selimg=new image(MAPSQUARE_SIZE, MAPSQUARE_SIZE);
   selbaseimg=new image(MAPSQUARE_SIZE, MAPSQUARE_SIZE);
-  for(i=0;i<selimg->get_length();i++)
-    for(j=0;j<selimg->get_height();j++)
+  for(i=0;i<selimg->length();i++)
+    for(j=0;j<selimg->height();j++)
       {
 	selimg->put_pix(i,j,0x0000FF);
 	selbaseimg->put_pix(i,j,0x00FF00);

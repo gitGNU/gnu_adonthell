@@ -27,7 +27,7 @@ class screen
  public:
   static void set_video_mode(u_int16 nl, u_int16 nh);
   static void set_fullscreen(bool mode);
-  static bool get_fullscreen();
+  static bool is_fullscreen();
   static void init_frame_counter();
   static void show();
   // update the screen.
@@ -42,16 +42,16 @@ class screen
   // FIXME: Used in mapeditor only, move it somewhere else
 
   static void set_mouse_cursor_visible(bool b);
-  static bool mouse_cursor_visible() {return cur_visible;}
+  static bool is_mouse_cursor_visible() {return cur_visible;}
   // Mouse cursor display functions.
 
-  static u_int16 get_length() { return l;}
-  static u_int16 get_height() { return h;}
+  static u_int16 length() { return l;}
+  static u_int16 height() { return h;}
 
-  static u_int32 get_trans_col() {return trans;}
-  static u_int32 get_trans_col_rgb() {return trans_rgb;}
+  static u_int32 trans_col() {return trans;}
+  static u_int32 trans_col_rgb() {return trans_rgb;}
 
-  static u_int8 get_frames_to_do() { return ftd; }
+  static u_int8 frames_to_do() { return ftd; }
 
  private:
   static u_int16 l;

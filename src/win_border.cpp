@@ -133,9 +133,9 @@ void win_border::update(win_base *wb)
 {
   if(v_border && h_border && wb)
     {
-      v_border->resize(v_border_template->get_length(),wb->height());
+      v_border->resize(v_border_template->length(),wb->height());
       v_border->putbox_tile_img(v_border_template);
-      h_border->resize(wb->length(),h_border_template->get_height());
+      h_border->resize(wb->length(),h_border_template->height());
       h_border->putbox_tile_img(h_border_template); 
     }
 }

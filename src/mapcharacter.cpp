@@ -634,10 +634,10 @@ void mapcharacter::calculate_dimensions()
   for(i=0;i<NBR_MOVES;i++)
     {
       u_int16 tl,th;
-      if((tl=anim[i]->get_length()+anim[i]->xoffset)>length)
+      if((tl=anim[i]->length()+anim[i]->xoffset)>length)
 	length=tl;
       
-      if((th=anim[i]->get_height()+anim[i]->yoffset)>height)
+      if((th=anim[i]->height()+anim[i]->yoffset)>height)
 	height=th;
     }
 }
@@ -843,7 +843,7 @@ void mapcharacter::draw_editor()
 void mapcharacter::update_and_draw()
 {
   static u_int16 i;
-  for(i=0;i<screen::get_frames_to_do();i++) update_editor();
+  for(i=0;i<screen::frames_to_do();i++) update_editor();
   draw_editor();
 }
 
@@ -894,7 +894,7 @@ void mapcharacter::update_editor_keys()
       else if(SDL_GetModState() & (KMOD_META | KMOD_ALT))
 	{ 
 	  if((maptpl::get_length()-1)*MAPSQUARE_SIZE>=
-	     anim[current_move]->get_length()+anim[current_move]->xoffset)
+	     anim[current_move]->length()+anim[current_move]->xoffset)
 	    maptpl::resize(maptpl::get_length()-1,maptpl::get_height()); 
 	}
       else
@@ -904,7 +904,7 @@ void mapcharacter::update_editor_keys()
     {
       if(SDL_GetModState()&KMOD_SHIFT)
 	{ 
-	  if(anim[current_move]->xoffset+anim[current_move]->get_length()<
+	  if(anim[current_move]->xoffset+anim[current_move]->length()<
 	     maptpl::length*MAPSQUARE_SIZE)
 	    set_anim_xoffset(current_move,anim[current_move]->xoffset+1); 
 	}
@@ -923,7 +923,7 @@ void mapcharacter::update_editor_keys()
       else if(SDL_GetModState() & (KMOD_META | KMOD_ALT))
 	{ 
 	  if((maptpl::get_height()-1)*MAPSQUARE_SIZE>=
-	     anim[current_move]->get_height()+anim[current_move]->yoffset)
+	     anim[current_move]->height()+anim[current_move]->yoffset)
 	    maptpl::resize(maptpl::get_length(),maptpl::get_height()-1); 
 	}
       else
@@ -933,7 +933,7 @@ void mapcharacter::update_editor_keys()
     {
       if(SDL_GetModState()&KMOD_SHIFT)
 	{ 
-	  if(anim[current_move]->yoffset+anim[current_move]->get_height()<
+	  if(anim[current_move]->yoffset+anim[current_move]->height()<
 	     maptpl::height*MAPSQUARE_SIZE)
 	    set_anim_yoffset(current_move,anim[current_move]->yoffset+1); 
 	}
@@ -982,7 +982,7 @@ void mapcharacter::editor()
   while(!input::has_been_pushed(SDLK_ESCAPE))
     {
       input::update();
-      for(i=0;i<screen::get_frames_to_do();i++) update_editor_keys();
+      for(i=0;i<screen::frames_to_do();i++) update_editor_keys();
       update_and_draw();
       screen::show();
     }

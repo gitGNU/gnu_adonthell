@@ -71,7 +71,7 @@ s_int16 win_label::word_size(u_int16 begin,u_int16 & length)
     {
       if(font_->in_table(texte_[begin+length])) 
 	//size+=font_->table[texte_[begin+length]].get_length();
-	size+=(*font_)[texte_[begin+length]].get_length();
+	size+=(*font_)[texte_[begin+length]].length();
 
 	length++;
     }
@@ -135,11 +135,11 @@ void win_label::init_draw_surface()
 		{
 		  if(font_->in_table(texte_[j]))
 		    {
-		      if(curligne_+(*font_)[texte_[j]].get_length()>length_) 
+		      if(curligne_+(*font_)[texte_[j]].length()>length_) 
 			{
 			  curligne_=0;tmpheight_+=font_->height();
 			}
-		      curligne_+=(*font_)[texte_[j]].get_length();
+		      curligne_+=(*font_)[texte_[j]].length();
 		    }
 		}
 	      i+=wnbch_;
@@ -158,7 +158,7 @@ void win_label::init_draw_surface()
       //the blink cursor
         if(blinkcursor_)
 	{
-	  if(curligne_+font_->cursor->get_length()>length_) tmpheight_+=font_->height();
+	  if(curligne_+font_->cursor->length()>length_) tmpheight_+=font_->height();
 	}
       
       if(auto_height_ && height_!=tmpheight_+font_->height())
@@ -174,7 +174,7 @@ void win_label::init_draw_surface()
 	{
 	  while(i<texte_size_)
 	    {
-	      if(texte_[i]!='\n' && texte_[i]!=' ' && font_->in_table(texte_[i])) curligne_+=(*font_)[texte_[i]].get_length();
+	      if(texte_[i]!='\n' && texte_[i]!=' ' && font_->in_table(texte_[i])) curligne_+=(*font_)[texte_[i]].length();
 	      else if(texte_[i]=='\n')
 		{
 		  tmpheight_+=font_->height();
@@ -189,7 +189,7 @@ void win_label::init_draw_surface()
 	  //the blink cursor
 	  if(blinkcursor_)
 	    {
-	      if(curligne_+font_->cursor->get_length() > tmplength_) tmplength_=curligne_+font_->cursor->get_length();
+	      if(curligne_+font_->cursor->length() > tmplength_) tmplength_=curligne_+font_->cursor->length();
 	    }
 	  else if(curligne_>tmplength_) tmplength_=curligne_;
 
@@ -213,7 +213,7 @@ void win_label::init_draw()
   static u_int16 j;
   for (u_int16 k = 0; k < height_; k++)
     for (j = 0; j < length_; j++)
-      template_->put_pix(j, k,screen::get_trans_col());
+      template_->put_pix(j, k,screen::trans_col());
   while(i<texte_size_)
     {
       if(texte_[i]=='\n') {curligne_=0;tmpheight_+=font_->height();i++;}
@@ -226,7 +226,7 @@ void win_label::init_draw()
 	    }
 	  i++;
 	}
-      if(tmpheight_>=template_->get_height()) break;
+      if(tmpheight_>=template_->height()) break;
       switch(word_place(curligne_,(tmpwsize_=word_size(i,wnbch_))))
 	{
 	case 0:
@@ -234,11 +234,11 @@ void win_label::init_draw()
 	    {
 	      if(font_->in_table(texte_[j]))
 		{
-		  if(curligne_+(*font_)[texte_[j]].get_length()>length_) 
+		  if(curligne_+(*font_)[texte_[j]].length()>length_) 
 		    {curligne_=0;tmpheight_+=font_->height();}
-		  if(tmpheight_>=template_->get_height()) break;
+		  if(tmpheight_>=template_->height()) break;
 		  template_->putbox_img(&((*font_)[texte_[j]]),curligne_,tmpheight_);
-		  curligne_+=(*font_)[texte_[j]].get_length(); 
+		  curligne_+=(*font_)[texte_[j]].length(); 
 		}
 	    }
 	  i+=wnbch_;
@@ -249,7 +249,7 @@ void win_label::init_draw()
 	      if(font_->in_table(texte_[j]))
 		{
 		  template_->putbox_img(&((*font_)[texte_[j]]),curligne_,tmpheight_);
-		  curligne_+=(*font_)[texte_[j]].get_length();
+		  curligne_+=(*font_)[texte_[j]].length();
 		}
 	    }
 	  i+=wnbch_;
@@ -257,13 +257,13 @@ void win_label::init_draw()
 	case 2:
 	  tmpheight_+=font_->height();
 	  curligne_=0;
-	  if(tmpheight_>=template_->get_height()) break;
+	  if(tmpheight_>=template_->height()) break;
 	  for(j=i;j<wnbch_+i;j++)
 	    {
 	      if(font_->in_table(texte_[j]))
 		{
 		  template_->putbox_img(&((*font_)[texte_[j]]),curligne_,tmpheight_);
-		  curligne_+=(*font_)[texte_[j]].get_length();
+		  curligne_+=(*font_)[texte_[j]].length();
 		}
 	    }
 	  i+=wnbch_;
@@ -276,12 +276,12 @@ void win_label::init_draw()
   
  
   //insert the blink cursor
-  if(focus_ && blinkcursortimetodraw_ && blinkcursor_ && template_->get_length()!=0)
+  if(focus_ && blinkcursortimetodraw_ && blinkcursor_ && template_->length()!=0)
     {
       //modify because error if not autosize
       if(auto_size_) template_->putbox_img(font_->cursor,curligne_,tmpheight_);
       else {
-	if(curligne_+font_->cursor->get_length()>length_) {
+	if(curligne_+font_->cursor->length()>length_) {
 	  tmpheight_+=font_->height();
 	  curligne_=0;
 	}

@@ -104,7 +104,7 @@ void screen::set_fullscreen(bool mode)
   vis=SDL_SetVideoMode(l,h,bytes_per_pixel*8,SDL_flags);
 }
 
-bool screen::get_fullscreen()
+bool screen::is_fullscreen()
 {
   return(SDL_flags&SDL_FULLSCREEN);
 }

@@ -98,17 +98,18 @@ void win_font::load_font(char * rep)
       gzread(f,&i,sizeof(i));
       gzread(f,&pos,sizeof(pos));
       gzread(f,&tl,sizeof(tl));
-      if(i>0 && i<WIN_NB_TABLE_CHAR)
+      //      if(i>0 && i<WIN_NB_TABLE_CHAR)
+      if(i>0)
       	{
 	  table_core[i]=true;
-	  table[i].resize(tl,font->get_height()-1);
-	  table[i].putbox_part_img(font,0,0,tl,font->get_height()-1,pos,0);
+	  table[i].resize(tl,font->height()-1);
+	  table[i].putbox_part_img(font,0,0,tl,font->height()-1,pos,0);
 	} 
       j++;
     }
 
-  height_=font->get_height()-1;
-  length_=table[' '].get_length();
+  height_=font->height()-1;
+  length_=table[' '].length();
   
   if(font)delete font;
 }
@@ -145,12 +146,12 @@ void win_font::load(char * rep)
       fread(&pos,sizeof(pos),1,f);
       fread(&tl,sizeof(tl),1,f);
       table_core[i]=true;
-      table[i].resize(tl,font->get_height());
-      table[i].putbox_part_img(font,0,0,tl,font->get_height(),pos,0);
+      table[i].resize(tl,font->height());
+      table[i].putbox_part_img(font,0,0,tl,font->height(),pos,0);
       j++;
     }
-  height_=font->get_height();
-  length_=table[' '].get_length();
+  height_=font->height();
+  length_=table[' '].length();
   if(font)delete font;
 
 

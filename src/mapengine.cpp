@@ -53,7 +53,7 @@ void mapengine::run()
 void mapengine::mainloop()
 {
   input::update();
-  for(int i=0;i<screen::get_frames_to_do();i++)
+  for(int i=0;i<screen::frames_to_do();i++)
     {
       win_manager::update ();
       lmap->update();

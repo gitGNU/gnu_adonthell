@@ -23,8 +23,8 @@ void mapview::init()
 #ifdef _EDIT_
   currentobj=0;
   walkimg=new image(MAPSQUARE_SIZE, MAPSQUARE_SIZE);
-  for(u_int16 i=0;i<walkimg->get_length();i++)
-    for(u_int16 j=0;j<walkimg->get_height();j++)
+  for(u_int16 i=0;i<walkimg->length();i++)
+    for(u_int16 j=0;j<walkimg->height();j++)
       walkimg->put_pix(i,j,0x0000FF);
   walkimg->set_alpha(110);
 #endif
@@ -981,12 +981,12 @@ void mapview::draw_editor()
     }
   container->draw();
   if(m_map->nbr_of_patterns) m_map->mini_pattern[currentobj]->
-			       draw_free(245,75);
+			       draw_free(245,82);
   if(m_map->nbr_of_submaps)
     {
       if(!m_map->submap[currentsubmap]->
 	 land[mapselect::posx][mapselect::posy].tiles.empty())
-	m_map->mini_pattern[current_tile->objnbr]->draw_free(245,155);
+	m_map->mini_pattern[current_tile->objnbr]->draw_free(245,162);
       
       if(current_tile!=m_map->submap[currentsubmap]->land[mapselect::posx]
 	 [mapselect::posy].tiles.end())
@@ -1148,7 +1148,7 @@ void mapview::editor()
   while(!input::has_been_pushed(SDLK_ESCAPE))
     {
       input::update();
-      for(i=0;i<screen::get_frames_to_do();i++) 
+      for(i=0;i<screen::frames_to_do();i++) 
 	{
 	  update_editor_keys();
 	  update_editor();

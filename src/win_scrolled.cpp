@@ -92,7 +92,7 @@ void win_scrolled::update_amplitude()
       (*i)->update_real_position();
     }
   //position the cursor
-  cursory_=(u_int16)((float)((float)(height_-theme_->scrollbar->bar->get_height())/max_amplitude_)*cur_amplitude_);
+  cursory_=(u_int16)((float)((float)(height_-theme_->scrollbar->bar->height())/max_amplitude_)*cur_amplitude_);
 }
 
 
@@ -154,14 +154,14 @@ bool win_scrolled::draw()
 	  {
 	    image img;
 	    img.brightness(theme_->scrollbar->back,level_brightness_);
-	    img.putbox_mask(realx_ + length_ - theme_->scrollbar->back->get_length(),realy_,da_);
+	    img.putbox_mask(realx_ + length_ - theme_->scrollbar->back->length(),realy_,da_);
 	    img.brightness(theme_->scrollbar->bar,level_brightness_);
-	    img.putbox_mask(1 + realx_ + length_ - theme_->scrollbar->back->get_length(),realy_+cursory_,da_);
+	    img.putbox_mask(1 + realx_ + length_ - theme_->scrollbar->back->length(),realy_+cursory_,da_);
 	  }
 	else
 	  {
-	    theme_->scrollbar->back->putbox_mask(realx_ + length_ - theme_->scrollbar->back->get_length(),realy_,da_);
-	    theme_->scrollbar->bar->putbox_mask(1 + realx_ + length_ - theme_->scrollbar->back->get_length(),realy_+cursory_,da_);
+	    theme_->scrollbar->back->putbox_mask(realx_ + length_ - theme_->scrollbar->back->length(),realy_,da_);
+	    theme_->scrollbar->bar->putbox_mask(1 + realx_ + length_ - theme_->scrollbar->back->length(),realy_+cursory_,da_);
 	  }
       return true;
     }

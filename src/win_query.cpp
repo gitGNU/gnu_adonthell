@@ -50,7 +50,7 @@ char * win_query::wait_for_text(const Functor0 & updatefunc,
 	s=NULL;
 	return s;
       }
-      for(i=0;i<screen::get_frames_to_do();i++) update();
+      for(i=0;i<screen::frames_to_do();i++) update();
       draw();
       screen::show();
     }

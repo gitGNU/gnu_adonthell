@@ -2095,12 +2095,12 @@ static PyObject *_wrap_screen_set_fullscreen(PyObject *self, PyObject *args) {
 }
 
 
-static PyObject *_wrap_screen_get_fullscreen(PyObject *self, PyObject *args) {
+static PyObject *_wrap_screen_is_fullscreen(PyObject *self, PyObject *args) {
     PyObject *resultobj;
     bool result ;
     
-    if(!PyArg_ParseTuple(args,":screen_get_fullscreen")) return NULL;
-    result = (bool )screen::get_fullscreen();
+    if(!PyArg_ParseTuple(args,":screen_is_fullscreen")) return NULL;
+    result = (bool )screen::is_fullscreen();
     resultobj = PyInt_FromLong((long)result);
     return resultobj;
 }
@@ -2186,67 +2186,67 @@ static PyObject *_wrap_screen_set_mouse_cursor_visible(PyObject *self, PyObject 
 }
 
 
-static PyObject *_wrap_screen_mouse_cursor_visible(PyObject *self, PyObject *args) {
+static PyObject *_wrap_screen_is_mouse_cursor_visible(PyObject *self, PyObject *args) {
     PyObject *resultobj;
     bool result ;
     
-    if(!PyArg_ParseTuple(args,":screen_mouse_cursor_visible")) return NULL;
-    result = (bool )screen::mouse_cursor_visible();
+    if(!PyArg_ParseTuple(args,":screen_is_mouse_cursor_visible")) return NULL;
+    result = (bool )screen::is_mouse_cursor_visible();
     resultobj = PyInt_FromLong((long)result);
     return resultobj;
 }
 
 
-static PyObject *_wrap_screen_get_length(PyObject *self, PyObject *args) {
+static PyObject *_wrap_screen_length(PyObject *self, PyObject *args) {
     PyObject *resultobj;
     unsigned short result ;
     
-    if(!PyArg_ParseTuple(args,":screen_get_length")) return NULL;
-    result = (unsigned short )screen::get_length();
+    if(!PyArg_ParseTuple(args,":screen_length")) return NULL;
+    result = (unsigned short )screen::length();
     resultobj = PyInt_FromLong((long)result);
     return resultobj;
 }
 
 
-static PyObject *_wrap_screen_get_height(PyObject *self, PyObject *args) {
+static PyObject *_wrap_screen_height(PyObject *self, PyObject *args) {
     PyObject *resultobj;
     unsigned short result ;
     
-    if(!PyArg_ParseTuple(args,":screen_get_height")) return NULL;
-    result = (unsigned short )screen::get_height();
+    if(!PyArg_ParseTuple(args,":screen_height")) return NULL;
+    result = (unsigned short )screen::height();
     resultobj = PyInt_FromLong((long)result);
     return resultobj;
 }
 
 
-static PyObject *_wrap_screen_get_trans_col(PyObject *self, PyObject *args) {
+static PyObject *_wrap_screen_trans_col(PyObject *self, PyObject *args) {
     PyObject *resultobj;
     unsigned int result ;
     
-    if(!PyArg_ParseTuple(args,":screen_get_trans_col")) return NULL;
-    result = (unsigned int )screen::get_trans_col();
+    if(!PyArg_ParseTuple(args,":screen_trans_col")) return NULL;
+    result = (unsigned int )screen::trans_col();
     resultobj = PyInt_FromLong((long)result);
     return resultobj;
 }
 
 
-static PyObject *_wrap_screen_get_trans_col_rgb(PyObject *self, PyObject *args) {
+static PyObject *_wrap_screen_trans_col_rgb(PyObject *self, PyObject *args) {
     PyObject *resultobj;
     unsigned int result ;
     
-    if(!PyArg_ParseTuple(args,":screen_get_trans_col_rgb")) return NULL;
-    result = (unsigned int )screen::get_trans_col_rgb();
+    if(!PyArg_ParseTuple(args,":screen_trans_col_rgb")) return NULL;
+    result = (unsigned int )screen::trans_col_rgb();
     resultobj = PyInt_FromLong((long)result);
     return resultobj;
 }
 
 
-static PyObject *_wrap_screen_get_frames_to_do(PyObject *self, PyObject *args) {
+static PyObject *_wrap_screen_frames_to_do(PyObject *self, PyObject *args) {
     PyObject *resultobj;
     unsigned char result ;
     
-    if(!PyArg_ParseTuple(args,":screen_get_frames_to_do")) return NULL;
-    result = (unsigned char )screen::get_frames_to_do();
+    if(!PyArg_ParseTuple(args,":screen_frames_to_do")) return NULL;
+    result = (unsigned char )screen::frames_to_do();
     resultobj = PyInt_FromLong((long)result);
     return resultobj;
 }
@@ -2332,29 +2332,29 @@ static PyObject *_wrap_image_resize(PyObject *self, PyObject *args) {
 }
 
 
-static PyObject *_wrap_image_get_length(PyObject *self, PyObject *args) {
+static PyObject *_wrap_image_length(PyObject *self, PyObject *args) {
     PyObject *resultobj;
     image *arg0 ;
     PyObject * argo0 =0 ;
     unsigned short result ;
     
-    if(!PyArg_ParseTuple(args,"O:image_get_length",&argo0)) return NULL;
+    if(!PyArg_ParseTuple(args,"O:image_length",&argo0)) return NULL;
     if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_image,1)) == -1) return NULL;
-    result = (unsigned short )arg0->get_length();
+    result = (unsigned short )arg0->length();
     resultobj = PyInt_FromLong((long)result);
     return resultobj;
 }
 
 
-static PyObject *_wrap_image_get_height(PyObject *self, PyObject *args) {
+static PyObject *_wrap_image_height(PyObject *self, PyObject *args) {
     PyObject *resultobj;
     image *arg0 ;
     PyObject * argo0 =0 ;
     unsigned short result ;
     
-    if(!PyArg_ParseTuple(args,"O:image_get_height",&argo0)) return NULL;
+    if(!PyArg_ParseTuple(args,"O:image_height",&argo0)) return NULL;
     if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_image,1)) == -1) return NULL;
-    result = (unsigned short )arg0->get_height();
+    result = (unsigned short )arg0->height();
     resultobj = PyInt_FromLong((long)result);
     return resultobj;
 }
@@ -2501,15 +2501,15 @@ static PyObject *_wrap_image_detach_drawing_area(PyObject *self, PyObject *args)
 }
 
 
-static PyObject *_wrap_image_get_mask(PyObject *self, PyObject *args) {
+static PyObject *_wrap_image_is_masked(PyObject *self, PyObject *args) {
     PyObject *resultobj;
     image *arg0 ;
     PyObject * argo0 =0 ;
     bool result ;
     
-    if(!PyArg_ParseTuple(args,"O:image_get_mask",&argo0)) return NULL;
+    if(!PyArg_ParseTuple(args,"O:image_is_masked",&argo0)) return NULL;
     if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_image,1)) == -1) return NULL;
-    result = (bool )arg0->get_mask();
+    result = (bool )arg0->is_masked();
     resultobj = PyInt_FromLong((long)result);
     return resultobj;
 }
@@ -2532,15 +2532,15 @@ static PyObject *_wrap_image_set_mask(PyObject *self, PyObject *args) {
 }
 
 
-static PyObject *_wrap_image_get_alpha(PyObject *self, PyObject *args) {
+static PyObject *_wrap_image_alpha(PyObject *self, PyObject *args) {
     PyObject *resultobj;
     image *arg0 ;
     PyObject * argo0 =0 ;
     unsigned char result ;
     
-    if(!PyArg_ParseTuple(args,"O:image_get_alpha",&argo0)) return NULL;
+    if(!PyArg_ParseTuple(args,"O:image_alpha",&argo0)) return NULL;
     if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_image,1)) == -1) return NULL;
-    result = (unsigned char )arg0->get_alpha();
+    result = (unsigned char )arg0->alpha();
     resultobj = PyInt_FromLong((long)result);
     return resultobj;
 }
@@ -2929,15 +2929,15 @@ static PyObject *_wrap_delete_animationframe(PyObject *self, PyObject *args) {
 }
 
 
-static PyObject *_wrap_animationframe_get_alpha(PyObject *self, PyObject *args) {
+static PyObject *_wrap_animationframe_alpha(PyObject *self, PyObject *args) {
     PyObject *resultobj;
     animationframe *arg0 ;
     PyObject * argo0 =0 ;
     unsigned char result ;
     
-    if(!PyArg_ParseTuple(args,"O:animationframe_get_alpha",&argo0)) return NULL;
+    if(!PyArg_ParseTuple(args,"O:animationframe_alpha",&argo0)) return NULL;
     if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_animationframe,1)) == -1) return NULL;
-    result = (unsigned char )arg0->get_alpha();
+    result = (unsigned char )arg0->alpha();
     resultobj = PyInt_FromLong((long)result);
     return resultobj;
 }
@@ -2958,15 +2958,15 @@ static PyObject *_wrap_animationframe_set_alpha(PyObject *self, PyObject *args) 
 }
 
 
-static PyObject *_wrap_animationframe_get_mask(PyObject *self, PyObject *args) {
+static PyObject *_wrap_animationframe_is_masked(PyObject *self, PyObject *args) {
     PyObject *resultobj;
     animationframe *arg0 ;
     PyObject * argo0 =0 ;
     bool result ;
     
-    if(!PyArg_ParseTuple(args,"O:animationframe_get_mask",&argo0)) return NULL;
+    if(!PyArg_ParseTuple(args,"O:animationframe_is_masked",&argo0)) return NULL;
     if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_animationframe,1)) == -1) return NULL;
-    result = (bool )arg0->get_mask();
+    result = (bool )arg0->is_masked();
     resultobj = PyInt_FromLong((long)result);
     return resultobj;
 }
@@ -2989,44 +2989,44 @@ static PyObject *_wrap_animationframe_set_mask(PyObject *self, PyObject *args) {
 }
 
 
-static PyObject *_wrap_animationframe_get_image(PyObject *self, PyObject *args) {
+static PyObject *_wrap_animationframe_image_nbr(PyObject *self, PyObject *args) {
     PyObject *resultobj;
     animationframe *arg0 ;
     PyObject * argo0 =0 ;
     unsigned short result ;
     
-    if(!PyArg_ParseTuple(args,"O:animationframe_get_image",&argo0)) return NULL;
+    if(!PyArg_ParseTuple(args,"O:animationframe_image_nbr",&argo0)) return NULL;
     if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_animationframe,1)) == -1) return NULL;
-    result = (unsigned short )arg0->get_image();
+    result = (unsigned short )arg0->image_nbr();
     resultobj = PyInt_FromLong((long)result);
     return resultobj;
 }
 
 
-static PyObject *_wrap_animationframe_set_image(PyObject *self, PyObject *args) {
+static PyObject *_wrap_animationframe_set_image_nbr(PyObject *self, PyObject *args) {
     PyObject *resultobj;
     animationframe *arg0 ;
     unsigned short arg1 ;
     PyObject * argo0 =0 ;
     
-    if(!PyArg_ParseTuple(args,"Oh:animationframe_set_image",&argo0,&arg1)) return NULL;
+    if(!PyArg_ParseTuple(args,"Oh:animationframe_set_image_nbr",&argo0,&arg1)) return NULL;
     if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_animationframe,1)) == -1) return NULL;
-    arg0->set_image(arg1);
+    arg0->set_image_nbr(arg1);
     Py_INCREF(Py_None);
     resultobj = Py_None;
     return resultobj;
 }
 
 
-static PyObject *_wrap_animationframe_get_delay(PyObject *self, PyObject *args) {
+static PyObject *_wrap_animationframe_delay(PyObject *self, PyObject *args) {
     PyObject *resultobj;
     animationframe *arg0 ;
     PyObject * argo0 =0 ;
     unsigned short result ;
     
-    if(!PyArg_ParseTuple(args,"O:animationframe_get_delay",&argo0)) return NULL;
+    if(!PyArg_ParseTuple(args,"O:animationframe_delay",&argo0)) return NULL;
     if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_animationframe,1)) == -1) return NULL;
-    result = (unsigned short )arg0->get_delay();
+    result = (unsigned short )arg0->delay();
     resultobj = PyInt_FromLong((long)result);
     return resultobj;
 }
@@ -3047,15 +3047,15 @@ static PyObject *_wrap_animationframe_set_delay(PyObject *self, PyObject *args) 
 }
 
 
-static PyObject *_wrap_animationframe_get_nextframe(PyObject *self, PyObject *args) {
+static PyObject *_wrap_animationframe_nextframe(PyObject *self, PyObject *args) {
     PyObject *resultobj;
     animationframe *arg0 ;
     PyObject * argo0 =0 ;
     unsigned short result ;
     
-    if(!PyArg_ParseTuple(args,"O:animationframe_get_nextframe",&argo0)) return NULL;
+    if(!PyArg_ParseTuple(args,"O:animationframe_nextframe",&argo0)) return NULL;
     if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_animationframe,1)) == -1) return NULL;
-    result = (unsigned short )arg0->get_nextframe();
+    result = (unsigned short )arg0->nextframe();
     resultobj = PyInt_FromLong((long)result);
     return resultobj;
 }
@@ -3108,15 +3108,15 @@ static PyObject *_wrap_animationframe_load(PyObject *self, PyObject *args) {
 }
 
 
-static PyObject *_wrap_animationframe_get_offx(PyObject *self, PyObject *args) {
+static PyObject *_wrap_animationframe_offx(PyObject *self, PyObject *args) {
     PyObject *resultobj;
     animationframe *arg0 ;
     PyObject * argo0 =0 ;
     unsigned short result ;
     
-    if(!PyArg_ParseTuple(args,"O:animationframe_get_offx",&argo0)) return NULL;
+    if(!PyArg_ParseTuple(args,"O:animationframe_offx",&argo0)) return NULL;
     if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_animationframe,1)) == -1) return NULL;
-    result = (unsigned short )arg0->get_offx();
+    result = (unsigned short )arg0->offx();
     resultobj = PyInt_FromLong((long)result);
     return resultobj;
 }
@@ -3137,15 +3137,15 @@ static PyObject *_wrap_animationframe_set_offx(PyObject *self, PyObject *args) {
 }
 
 
-static PyObject *_wrap_animationframe_get_offy(PyObject *self, PyObject *args) {
+static PyObject *_wrap_animationframe_offy(PyObject *self, PyObject *args) {
     PyObject *resultobj;
     animationframe *arg0 ;
     PyObject * argo0 =0 ;
     unsigned short result ;
     
-    if(!PyArg_ParseTuple(args,"O:animationframe_get_offy",&argo0)) return NULL;
+    if(!PyArg_ParseTuple(args,"O:animationframe_offy",&argo0)) return NULL;
     if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_animationframe,1)) == -1) return NULL;
-    result = (unsigned short )arg0->get_offy();
+    result = (unsigned short )arg0->offy();
     resultobj = PyInt_FromLong((long)result);
     return resultobj;
 }
@@ -3219,29 +3219,29 @@ static PyObject *_wrap_animation_is_empty(PyObject *self, PyObject *args) {
 }
 
 
-static PyObject *_wrap_animation_get_length(PyObject *self, PyObject *args) {
+static PyObject *_wrap_animation_length(PyObject *self, PyObject *args) {
     PyObject *resultobj;
     animation *arg0 ;
     PyObject * argo0 =0 ;
     unsigned short result ;
     
-    if(!PyArg_ParseTuple(args,"O:animation_get_length",&argo0)) return NULL;
+    if(!PyArg_ParseTuple(args,"O:animation_length",&argo0)) return NULL;
     if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_animation,1)) == -1) return NULL;
-    result = (unsigned short )arg0->get_length();
+    result = (unsigned short )arg0->length();
     resultobj = PyInt_FromLong((long)result);
     return resultobj;
 }
 
 
-static PyObject *_wrap_animation_get_height(PyObject *self, PyObject *args) {
+static PyObject *_wrap_animation_height(PyObject *self, PyObject *args) {
     PyObject *resultobj;
     animation *arg0 ;
     PyObject * argo0 =0 ;
     unsigned short result ;
     
-    if(!PyArg_ParseTuple(args,"O:animation_get_height",&argo0)) return NULL;
+    if(!PyArg_ParseTuple(args,"O:animation_height",&argo0)) return NULL;
     if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_animation,1)) == -1) return NULL;
-    result = (unsigned short )arg0->get_height();
+    result = (unsigned short )arg0->height();
     resultobj = PyInt_FromLong((long)result);
     return resultobj;
 }
@@ -3382,30 +3382,16 @@ static PyObject *_wrap_animation_nbr_of_images(PyObject *self, PyObject *args) {
 }
 
 
-static PyObject *_wrap_animation_get_currentframe(PyObject *self, PyObject *args) {
+static PyObject *_wrap_animation_currentframe(PyObject *self, PyObject *args) {
     PyObject *resultobj;
     animation *arg0 ;
     PyObject * argo0 =0 ;
     unsigned short result ;
     
-    if(!PyArg_ParseTuple(args,"O:animation_get_currentframe",&argo0)) return NULL;
+    if(!PyArg_ParseTuple(args,"O:animation_currentframe",&argo0)) return NULL;
     if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_animation,1)) == -1) return NULL;
-    result = (unsigned short )arg0->get_currentframe();
+    result = (unsigned short )arg0->currentframe();
     resultobj = PyInt_FromLong((long)result);
-    return resultobj;
-}
-
-
-static PyObject *_wrap_animation_next_frame(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    animation *arg0 ;
-    PyObject * argo0 =0 ;
-    
-    if(!PyArg_ParseTuple(args,"O:animation_next_frame",&argo0)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_animation,1)) == -1) return NULL;
-    arg0->next_frame();
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
     return resultobj;
 }
 
@@ -3419,6 +3405,20 @@ static PyObject *_wrap_animation_set_currentframe(PyObject *self, PyObject *args
     if(!PyArg_ParseTuple(args,"Oh:animation_set_currentframe",&argo0,&arg1)) return NULL;
     if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_animation,1)) == -1) return NULL;
     arg0->set_currentframe(arg1);
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_animation_next_frame(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    animation *arg0 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"O:animation_next_frame",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_animation,1)) == -1) return NULL;
+    arg0->next_frame();
     Py_INCREF(Py_None);
     resultobj = Py_None;
     return resultobj;
@@ -7447,27 +7447,27 @@ static PyMethodDef adonthellcMethods[] = {
 	 { "delete_quest", _wrap_delete_quest, METH_VARARGS },
 	 { "screen_set_video_mode", _wrap_screen_set_video_mode, METH_VARARGS },
 	 { "screen_set_fullscreen", _wrap_screen_set_fullscreen, METH_VARARGS },
-	 { "screen_get_fullscreen", _wrap_screen_get_fullscreen, METH_VARARGS },
+	 { "screen_is_fullscreen", _wrap_screen_is_fullscreen, METH_VARARGS },
 	 { "screen_init_frame_counter", _wrap_screen_init_frame_counter, METH_VARARGS },
 	 { "screen_show", _wrap_screen_show, METH_VARARGS },
 	 { "screen_drawbox", _wrap_screen_drawbox, METH_VARARGS },
 	 { "screen_clear", _wrap_screen_clear, METH_VARARGS },
 	 { "screen_makesquare", _wrap_screen_makesquare, METH_VARARGS },
 	 { "screen_set_mouse_cursor_visible", _wrap_screen_set_mouse_cursor_visible, METH_VARARGS },
-	 { "screen_mouse_cursor_visible", _wrap_screen_mouse_cursor_visible, METH_VARARGS },
-	 { "screen_get_length", _wrap_screen_get_length, METH_VARARGS },
-	 { "screen_get_height", _wrap_screen_get_height, METH_VARARGS },
-	 { "screen_get_trans_col", _wrap_screen_get_trans_col, METH_VARARGS },
-	 { "screen_get_trans_col_rgb", _wrap_screen_get_trans_col_rgb, METH_VARARGS },
-	 { "screen_get_frames_to_do", _wrap_screen_get_frames_to_do, METH_VARARGS },
+	 { "screen_is_mouse_cursor_visible", _wrap_screen_is_mouse_cursor_visible, METH_VARARGS },
+	 { "screen_length", _wrap_screen_length, METH_VARARGS },
+	 { "screen_height", _wrap_screen_height, METH_VARARGS },
+	 { "screen_trans_col", _wrap_screen_trans_col, METH_VARARGS },
+	 { "screen_trans_col_rgb", _wrap_screen_trans_col_rgb, METH_VARARGS },
+	 { "screen_frames_to_do", _wrap_screen_frames_to_do, METH_VARARGS },
 	 { "new_screen", _wrap_new_screen, METH_VARARGS },
 	 { "delete_screen", _wrap_delete_screen, METH_VARARGS },
 	 { "new_image", _wrap_new_image, METH_VARARGS },
 	 { "delete_image", _wrap_delete_image, METH_VARARGS },
 	 { "image_clear", _wrap_image_clear, METH_VARARGS },
 	 { "image_resize", _wrap_image_resize, METH_VARARGS },
-	 { "image_get_length", _wrap_image_get_length, METH_VARARGS },
-	 { "image_get_height", _wrap_image_get_height, METH_VARARGS },
+	 { "image_length", _wrap_image_length, METH_VARARGS },
+	 { "image_height", _wrap_image_height, METH_VARARGS },
 	 { "image_get", _wrap_image_get, METH_VARARGS },
 	 { "image_load", _wrap_image_load, METH_VARARGS },
 	 { "image_get_raw", _wrap_image_get_raw, METH_VARARGS },
@@ -7477,9 +7477,9 @@ static PyMethodDef adonthellcMethods[] = {
 	 { "image_screen_shot", _wrap_image_screen_shot, METH_VARARGS },
 	 { "image_assign_drawing_area", _wrap_image_assign_drawing_area, METH_VARARGS },
 	 { "image_detach_drawing_area", _wrap_image_detach_drawing_area, METH_VARARGS },
-	 { "image_get_mask", _wrap_image_get_mask, METH_VARARGS },
+	 { "image_is_masked", _wrap_image_is_masked, METH_VARARGS },
 	 { "image_set_mask", _wrap_image_set_mask, METH_VARARGS },
-	 { "image_get_alpha", _wrap_image_get_alpha, METH_VARARGS },
+	 { "image_alpha", _wrap_image_alpha, METH_VARARGS },
 	 { "image_set_alpha", _wrap_image_set_alpha, METH_VARARGS },
 	 { "image_draw", _wrap_image_draw, METH_VARARGS },
 	 { "image_putbox", _wrap_image_putbox, METH_VARARGS },
@@ -7502,28 +7502,28 @@ static PyMethodDef adonthellcMethods[] = {
 	 { "new_animationframe", _wrap_new_animationframe, METH_VARARGS },
 	 { "animationframe_clear", _wrap_animationframe_clear, METH_VARARGS },
 	 { "delete_animationframe", _wrap_delete_animationframe, METH_VARARGS },
-	 { "animationframe_get_alpha", _wrap_animationframe_get_alpha, METH_VARARGS },
+	 { "animationframe_alpha", _wrap_animationframe_alpha, METH_VARARGS },
 	 { "animationframe_set_alpha", _wrap_animationframe_set_alpha, METH_VARARGS },
-	 { "animationframe_get_mask", _wrap_animationframe_get_mask, METH_VARARGS },
+	 { "animationframe_is_masked", _wrap_animationframe_is_masked, METH_VARARGS },
 	 { "animationframe_set_mask", _wrap_animationframe_set_mask, METH_VARARGS },
-	 { "animationframe_get_image", _wrap_animationframe_get_image, METH_VARARGS },
-	 { "animationframe_set_image", _wrap_animationframe_set_image, METH_VARARGS },
-	 { "animationframe_get_delay", _wrap_animationframe_get_delay, METH_VARARGS },
+	 { "animationframe_image_nbr", _wrap_animationframe_image_nbr, METH_VARARGS },
+	 { "animationframe_set_image_nbr", _wrap_animationframe_set_image_nbr, METH_VARARGS },
+	 { "animationframe_delay", _wrap_animationframe_delay, METH_VARARGS },
 	 { "animationframe_set_delay", _wrap_animationframe_set_delay, METH_VARARGS },
-	 { "animationframe_get_nextframe", _wrap_animationframe_get_nextframe, METH_VARARGS },
+	 { "animationframe_nextframe", _wrap_animationframe_nextframe, METH_VARARGS },
 	 { "animationframe_set_nextframe", _wrap_animationframe_set_nextframe, METH_VARARGS },
 	 { "animationframe_get", _wrap_animationframe_get, METH_VARARGS },
 	 { "animationframe_load", _wrap_animationframe_load, METH_VARARGS },
-	 { "animationframe_get_offx", _wrap_animationframe_get_offx, METH_VARARGS },
+	 { "animationframe_offx", _wrap_animationframe_offx, METH_VARARGS },
 	 { "animationframe_set_offx", _wrap_animationframe_set_offx, METH_VARARGS },
-	 { "animationframe_get_offy", _wrap_animationframe_get_offy, METH_VARARGS },
+	 { "animationframe_offy", _wrap_animationframe_offy, METH_VARARGS },
 	 { "animationframe_set_offy", _wrap_animationframe_set_offy, METH_VARARGS },
 	 { "new_animation", _wrap_new_animation, METH_VARARGS },
 	 { "animation_clear", _wrap_animation_clear, METH_VARARGS },
 	 { "delete_animation", _wrap_delete_animation, METH_VARARGS },
 	 { "animation_is_empty", _wrap_animation_is_empty, METH_VARARGS },
-	 { "animation_get_length", _wrap_animation_get_length, METH_VARARGS },
-	 { "animation_get_height", _wrap_animation_get_height, METH_VARARGS },
+	 { "animation_length", _wrap_animation_length, METH_VARARGS },
+	 { "animation_height", _wrap_animation_height, METH_VARARGS },
 	 { "animation_play", _wrap_animation_play, METH_VARARGS },
 	 { "animation_stop", _wrap_animation_stop, METH_VARARGS },
 	 { "animation_rewind", _wrap_animation_rewind, METH_VARARGS },
@@ -7533,9 +7533,9 @@ static PyMethodDef adonthellcMethods[] = {
 	 { "animation_load", _wrap_animation_load, METH_VARARGS },
 	 { "animation_nbr_of_frames", _wrap_animation_nbr_of_frames, METH_VARARGS },
 	 { "animation_nbr_of_images", _wrap_animation_nbr_of_images, METH_VARARGS },
-	 { "animation_get_currentframe", _wrap_animation_get_currentframe, METH_VARARGS },
-	 { "animation_next_frame", _wrap_animation_next_frame, METH_VARARGS },
+	 { "animation_currentframe", _wrap_animation_currentframe, METH_VARARGS },
 	 { "animation_set_currentframe", _wrap_animation_set_currentframe, METH_VARARGS },
+	 { "animation_next_frame", _wrap_animation_next_frame, METH_VARARGS },
 	 { "animation_get_frame", _wrap_animation_get_frame, METH_VARARGS },
 	 { "animation_get_current_frame", _wrap_animation_get_current_frame, METH_VARARGS },
 	 { "animation_get_image", _wrap_animation_get_image, METH_VARARGS },

@@ -93,8 +93,8 @@ void animation_off::draw(u_int16 x, u_int16 y, drawing_area * da_opt=NULL)
 void animation_off::draw_border(u_int16 x, u_int16 y, 
 				drawing_area * da_opt=NULL)
 {
-  screen::drawbox(x+xoffset,y+yoffset,length,1,0xFFFFFF,da_opt);
-  screen::drawbox(x+xoffset,y+yoffset+height,length,1,0xFFFFFF,da_opt);
-  screen::drawbox(x+xoffset+length,y+yoffset,1,height+1,0xFFFFFF,da_opt);
-  screen::drawbox(x+xoffset,y+yoffset,1,height+1,0xFFFFFF,da_opt);
+  screen::drawbox(x+xoffset,y+yoffset,length(),1,0xFFFFFF,da_opt);
+  screen::drawbox(x+xoffset,y+yoffset+height(),length(),1,0xFFFFFF,da_opt);
+  screen::drawbox(x+xoffset+length(),y+yoffset,1,height()+1,0xFFFFFF,da_opt);
+  screen::drawbox(x+xoffset,y+yoffset,1,height()+1,0xFFFFFF,da_opt);
 }
