@@ -8,7 +8,7 @@ LIBS = -lggi -lpthread -lSDL -lSDL_mixer
 #CPPFLAGS = -Wall -O6
 #LIBS = -lggi
  
-OBJECTS = instruction_class.o instruction.o interpreter.o commands.o dialog_cmds.o main.o init.o fileops.o keyboard.o gfx.o pnm.o window.o array_tmpl.o dlg_io.o mappattern.o mapsquare.o mapevent.o mapcharacter.o map.o mapengine.o audio_thread.o
+OBJECTS = interpreter.o commands.o dialog_cmds.o main.o init.o fileops.o keyboard.o gfx.o pnm.o window.o array_tmpl.o dlg_io.o mappattern.o mapsquare.o mapevent.o mapcharacter.o map.o mapengine.o audio_thread.o
 
 main:$(OBJECTS)
 	$(CC) $(OBJECTS) $(LIBS) -o ../mapengine

@@ -1,6 +1,6 @@
 #include "types.h"
 #include <vector>
-#include <String.h>
+#include <string.h>
 #include <stdio.h>
 
 class map;
