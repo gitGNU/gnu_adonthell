@@ -16,15 +16,27 @@
 #define INPUT_LISTENER_H
 
 #include "input_event.h"
+#include "callback.h"
+#include "types.h"
 
 class input_listener
 {
 private:
     bool Listen_to[input_event::NBR_INPUT_TYPES];
+    bool Callback_set[input_event::NBR_INPUT_TYPES];
+    Functor1wRet<input_event *, int> Callbacks[input_event::NBR_INPUT_TYPES];
     
 public:
-    input_listener ();
-    ~input_listener ();
+    input_listener ()
+    {
+        for (u_int16 i = 0; i < input_event::NBR_INPUT_TYPES; i++)
+        {
+            Listen_to[i] = false;
+            Callback_set[i] = false;
+        }
+    }
+
+    ~input_listener ();    
 
     bool is_listening_to (input_event::input_type t) 
     {
@@ -36,9 +48,22 @@ public:
         Listen_to[t] = val; 
     }
 
+    void connect_function(input_event::input_type t, Functor1wRet<input_event *, int> f)
+    {
+        Callbacks[t] = f;
+        Callback_set[t] = true;
+    }
+
+    void disconnect_function(input_event::input_type t)
+    {
+        Callback_set[t] = false;
+    }
+
     int raise_event (input_event * ev)
     {
-        return 1; 
+        if (is_listening_to(ev->type()) && Callback_set[ev->type()]) 
+            return Callbacks[ev->type()](ev);
+        return 0; 
     }
 };
 

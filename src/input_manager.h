@@ -25,7 +25,17 @@ class input_manager
 {
 public:
     static void update();
-    static void raise_event(input_event ev);
+    static void raise_event(input_event & ev);
+
+    static void add(input_listener * il)
+    {
+        listeners.push_back(il);
+    }
+
+    static void remove(input_listener * il)
+    {
+        listeners.remove(il);
+    }
 
 private:
     static list <input_listener *> listeners;

@@ -416,14 +416,12 @@ void input_manager::update()
             {
                 keyboard_event ke (keyboard_event::KEY_PUSHED, sdl_key_trans[event.key.keysym.sym]);
                 raise_event (ke);
-                cout << ke.symbol() << " Pressed\n";
                 break;
             }
             case SDL_KEYUP:
             {
                 keyboard_event ke (keyboard_event::KEY_RELEASED, sdl_key_trans[event.key.keysym.sym]);
                 raise_event (ke);
-                cout << ke.symbol() << " Released\n";
                 break;
             }
         }
@@ -431,9 +429,10 @@ void input_manager::update()
 }
 
 
-void input_manager::raise_event(input_event ev)
+void input_manager::raise_event(input_event & ev)
 {
     for (list<input_listener *>::iterator it = listeners.begin(); 
          it != listeners.end(); it++)
-        cout << "oki doki!\n";
+        if ((*it)->is_listening_to(ev.type()))
+            (*it)->raise_event(&ev);
 }

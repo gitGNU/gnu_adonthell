@@ -14,3 +14,9 @@
 
 
 #include "input_listener.h"
+
+
+input_listener::~input_listener()
+{
+}
+

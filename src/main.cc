@@ -16,15 +16,40 @@ struct mipcmp
 
 mipcmp boah; 
 
+bool letsexit = false;
+
+int testfunc(input_event * ev)
+{
+    cout << "Woohoo! " << ((keyboard_event*)ev)->symbol() << 
+        ((((keyboard_event*)ev)->type() == keyboard_event::KEY_PUSHED) ? " pushed"
+        : " released") << endl;
+
+    if (((keyboard_event*)ev)->key() == keyboard_event::ESCAPE_KEY)
+        letsexit = true;
+
+    return 1;
+}
+
 int main (int argc, char * argv[]) 
 {
     screen::init (); 
     screen::set_video_mode(640, 480);
 
-    while (1)
+    input_listener il;
+    il.listen_to(input_event::KEYBOARD_EVENT);
+    il.connect_function(input_event::KEYBOARD_EVENT, 
+                        makeFunctor<input_event *, int>(NULL, &testfunc));
+    
+
+    input_manager::add(&il);
+
+    while (!letsexit)
     {
         input_manager::update();
     }
+    
+    input_manager::remove(&il);
+
 //     input::init (); 
 
 //     screen::set_video_mode (640, 480, 16);
