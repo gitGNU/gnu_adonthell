@@ -266,7 +266,9 @@ void animation::draw(u_int16 x, u_int16 y, drawing_area * da_opt=NULL)
   t_frame[frame[currentframe].imagenbr].set_mask(frame[currentframe].is_masked);
   t_frame[frame[currentframe].imagenbr].set_alpha(frame[currentframe].alpha);
   
-  t_frame[frame[currentframe].imagenbr].draw(x,y,da_opt);
+  t_frame[frame[currentframe].imagenbr].draw(x+frame[currentframe].gapx,
+					     y+frame[currentframe].gapy,
+					     da_opt);
 }
 
 s_int8 animation::get(SDL_RWops * file)
@@ -314,6 +316,15 @@ void animation::zoom(u_int16 sx, u_int16 sy, animation * src)
   frame=new animation_frame[nbr_of_frames];
   for(i=0;i<nbr_of_frames;i++)
     frame[i]=src->frame[i]; 
+}
+
+void animation::get_zoom_scale(u_int16 &max_x, u_int16 &max_y)
+{
+  u_int16 i;
+  for(i=0;i<nbr_of_images;i++)
+    {
+      
+    }
 }
 
 #ifdef _EDIT_
@@ -656,14 +667,18 @@ void animation::update_editor_keys()
     {
       if(mode==IMAGE) currentimage=increase_image(currentimage);
       if((mode==FRAME)&&(!play_flag)) 
-	currentframe=increase_frame(currentframe);
+	if(!SDL_GetModState()&&KMOD_LSHIFT)
+	  {currentframe=increase_frame(currentframe);}
+      else frame[currentframe].gapx++;
     }
 
   if(testkey(SDLK_LEFT))
     {
       if(mode==IMAGE) currentimage=decrease_image(currentimage);
-      if((mode==FRAME)&&(!play_flag)) 
-	currentframe=decrease_frame(currentframe);
+      if((mode==FRAME)&&(!play_flag))
+	if(!SDL_GetModState()&&KMOD_LSHIFT)
+	  {currentframe=decrease_frame(currentframe);}
+	else frame[currentframe].gapx--;
     }
 
   if(input::has_been_pushed(SDLK_a))
@@ -685,11 +700,18 @@ void animation::update_editor_keys()
   if(testkey(SDLK_KP_PLUS)&&mode==FRAME)
     frame[currentframe].imagenbr=increase_image(frame[currentframe].imagenbr);
 
-  if(testkey(SDLK_KP_MINUS)&&mode==FRAME) 
+  if(testkey(SDLK_KP_MINUS)&&mode==FRAME)
     frame[currentframe].imagenbr=decrease_image(frame[currentframe].imagenbr);
 
-  if(testkey(SDLK_UP)&&mode==FRAME) frame[currentframe].delay++;
-  if(testkey(SDLK_DOWN)&&mode==FRAME) frame[currentframe].delay--;
+  if(testkey(SDLK_UP)&&mode==FRAME) 
+    if(!SDL_GetModState()&&KMOD_LSHIFT)
+      {frame[currentframe].delay++;}
+    else frame[currentframe].gapy--;
+
+  if(testkey(SDLK_DOWN)&&mode==FRAME) 
+    if(!SDL_GetModState()&&KMOD_LSHIFT)
+      {frame[currentframe].delay--;}
+    else frame[currentframe].gapy++;
 
   if(testkey(SDLK_PAGEUP)&&mode==FRAME) frame[currentframe].alpha++;
   if(testkey(SDLK_PAGEDOWN)&&mode==FRAME) frame[currentframe].alpha--;

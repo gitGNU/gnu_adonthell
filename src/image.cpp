@@ -519,7 +519,7 @@ s_int8 image::save_pnm(char * fname)
 
 u_int32 image::get_pix(u_int16 x, u_int16 y)
 {
-  const u_int32 offset=((y*length)+x);
+  const u_int32 offset=((y*((length%2?length+1:length)))+x);
   static u_int32 retvalue;
 
   switch (bytes_per_pixel)

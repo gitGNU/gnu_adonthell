@@ -128,6 +128,7 @@ class animation
   // Perform a zoom from the size of the currentframe of src to sx,sy.
   // All the other frame's sizes are adjusted from src->currentframe.
   void zoom(u_int16 sx, u_int16 sy, animation * src);
+  void get_zoom_scale(u_int16 &max_x, u_int16 &max_y);
 
 #ifdef _EDIT_
   s_int8 put(SDL_RWops * file);
