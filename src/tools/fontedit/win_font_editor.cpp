@@ -73,14 +73,13 @@ bool win_font_editor::update()
 	  Tinode_ * t = new Tinode_;
 	  t->letter=(char)c;
 	  t->pos=lastpos_;
-	  t->length=curpos_-lastpos_;
+	  t->length=curpos_-1-lastpos_;
 	  l_.push_back(t);
 
 	  //if not a end of font file, go to the next letter
 	  if(curpos_!=newfont_->length())
 	    {
-	      lastpos_=curpos_;
-	      curpos_++;
+	      lastpos_=curpos_++;
 	      update_next_letter();
 	    }
 	}
