@@ -50,15 +50,13 @@ bool label_input::input_update()
   while((c=input::get_next_unicode())>0)
     {
       
-      if( c == SDLK_BACKSPACE && text_size_>0 && cursor_pos_ > 0)
-	{
+      if((c == SDLK_BACKSPACE || c == SDLK_DELETE) && text_size_>0 && cursor_pos_ > 0)
+      {
 	  text_.erase(--cursor_pos_, 1);
-	  text_size_ = text_.length();
-          check_form (); 
-	}
+          text_size_ = text_.length();
+          check_form ();
+      }
       else if(c == SDLK_RETURN) {
-          // c='\n';
-          // insert(cursor_pos_,(char*) &c);
           insert(cursor_pos_, "\n");
       }
       else if(font_->in_table(c)) insert(cursor_pos_, (char*) &c);

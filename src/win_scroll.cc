@@ -187,7 +187,8 @@ bool win_scroll::update()
     {
       if(auto_scrollbar_)
 	{
-	  u_int16 old = amplitude(); find_amplitude(); 
+	  u_int16 old = amplitude();
+          find_amplitude(); 
 	  if(old != amplitude())
 	    {
 	      win_scrollbar::set_visible_scrollbar(amplitude()!=0);

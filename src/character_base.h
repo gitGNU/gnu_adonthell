@@ -107,7 +107,22 @@ class character_base : public storage
      * @param c new color representing the %character.
      */
     void set_color (int c) { color = c; } 
-
+    
+    /** 
+     * Returns the current portrait of the %character.
+     * 
+     * 
+     * @return the current portrait of the %character.
+     */
+    string get_portrait() const { return portrait; } 
+    
+    /** 
+     * Sets the current portrait of the %character.
+     * 
+     * @param fname filename of the new portrait to use.
+     */ 
+    void set_portrait (string fname) { portrait = fname; } 
+    
     /** 
      * Return the file name of the current %character's dialog.
      * 
@@ -144,6 +159,7 @@ class character_base : public storage
 private:
     string name;
     string dialogue;
+    string portrait; 
     u_int32 color; 
 };
 

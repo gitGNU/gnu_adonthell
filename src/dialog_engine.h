@@ -77,7 +77,7 @@ public:
      * 
      * @param new_portrait file name of the new portrait image to set.
      */
-    void set_portrait (char* new_portrait);
+    void set_portrait (const string & new_portrait);
 
     /** 
      * Changes the displayed NPC name.

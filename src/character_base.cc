@@ -73,7 +73,8 @@ void character_base::put_state(ogzstream& out)
         (*i).second >> out; 
     }
     
-    dialogue >> out; 
+    dialogue >> out;
+    portrait >> out; 
 }
 
 void character_base::get_state (igzstream& in)
@@ -100,5 +101,6 @@ void character_base::get_state (igzstream& in)
         set_val (key.c_str (), value);
     }
 
-    dialogue << in; 
+    dialogue << in;
+    portrait << in; 
 }

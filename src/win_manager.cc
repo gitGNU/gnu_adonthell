@@ -22,7 +22,7 @@ win_base * win_manager::wc=NULL;
 //add a container 
 void win_manager::add(win_base * tmp)
 {
-  lmanage.push_back(tmp);
+    lmanage.push_back(tmp);
 }
 
 void win_manager::add_after (win_base * toadd, win_base * after)
@@ -83,24 +83,34 @@ void win_manager::input_update()
 
 void win_manager::update()
 {
-  for(list<win_base *>::iterator i=lmanage.begin();i!=lmanage.end();i++)
+    list<win_base *>::iterator i=lmanage.begin();
+    while (i!=lmanage.end())
     {
-      if(!(*i)->update())
-	{
-	  if(*i==wc) wc=NULL;
-	  remove(*i);
-	  delete *i--;
-	}
+        if(!(*i)->update())
+        {
+            if(*i==wc) wc=NULL;
+            
+            if((*i)->is_focus()) 
+            {
+                (*i)->set_focus(false);
+                wc=NULL;
+            }
+            win_base * s = *i; 
+            i = lmanage.erase(i);
+            delete s; 
+            if (!wc) set_focus (lmanage.back ());
+        }
+        else i++; 
     }
-  if (!wc) set_focus (lmanage.back ());
+    if (!wc) set_focus (lmanage.back ());
 }
 
 void win_manager::set_focus(win_base * tmp)
 {
-  if(!lmanage.empty())
+    if(!lmanage.empty())
     {
-      if(wc) wc->set_focus(false);
-      wc=tmp;
-      wc->set_focus(true);
+        if(wc) wc->set_focus(false);
+        wc=tmp;
+        wc->set_focus(true);
     }   
 }

@@ -116,8 +116,13 @@ void dialog_engine::init(character_base *mynpc, char * dlg_file, u_int8 size)
     sel->set_circle (true);
     sel->set_visible_scrollbar (true);
     sel->set_activate (true);
-    sel->set_visible (true); 
 
+    // sel->set_auto_scrollbar (true); 
+
+    sel->set_visible (true); 
+    
+
+    
     sel->set_focus(true); //due an error from window system
     
     // Notification when a dialogue item get's selected
@@ -125,7 +130,7 @@ void dialog_engine::init(character_base *mynpc, char * dlg_file, u_int8 size)
                              win_event::ACTIVATE_KEY);
 
     // set the NPC's portrait (later:  get the portrait to use from the npc data)
-    set_portrait ("gfx/portraits/lyanna.pnm");
+    set_portrait (mynpc->get_portrait ());
     // ... and name
     set_name ((char *) mynpc->get_name().c_str ());
     
@@ -281,7 +286,7 @@ void dialog_engine::insert_plugin ()
 }
 
 // Set / change the NPC-portrait
-void dialog_engine::set_portrait (char *new_portrait)
+void dialog_engine::set_portrait (const string & new_portrait)
 {
   /* image * portrait = new image (64, 64);
     portrait->load_pnm (new_portrait);
@@ -289,9 +294,14 @@ void dialog_engine::set_portrait (char *new_portrait)
 
     face->set_image (portrait);
     delete portrait;*/
-  
-  ((image*)face)->resize(64,64);
-  face->load_pnm(new_portrait);
+ 
+  if (new_portrait == "") 
+  {
+      face->image::resize (64, 64);
+      face->fillrect (0, 0, 64, 64, 0);
+      return; 
+  }
+  face->load_pnm(string ("gfx/portraits/") + new_portrait);
   face->set_mask(true);
   face->pack();
 }
@@ -310,5 +320,5 @@ void dialog_engine::set_npc (char* new_npc)
   character_base *mynpc = (character_base *) data::characters[new_npc];
     
   set_name ((char *) mynpc->get_name().c_str ());
-  set_portrait ("gfx/portraits/lyanna.pnm");
+  set_portrait (mynpc->get_portrait ());
 }
