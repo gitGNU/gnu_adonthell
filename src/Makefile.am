@@ -13,8 +13,7 @@ moddatadir = $(gamedatadir)/modules
 
 #moddata_DATA = adonthell.pyc
 
-bin_PROGRAMS = alextest schedtest joltest 
-#pytest
+bin_PROGRAMS = alextest schedtest joltest pytest
 
 EXTRA_DIST = .indent.pro prefs.l # py_adonthell.i adonthell.py
 
@@ -104,17 +103,17 @@ alextest_SOURCES = main.cc
 
 joltest_SOURCES = joltest.cc
 
-#pytest_SOURCES = pytest.cc
+pytest_SOURCES = pytest.cc
 
 schedtest_SOURCES = schedtest.cc
 
-joltest_LDADD = gui/libgui.a gfx/libgfx.a input/libinput.a libbase.a $(libbase_LDADD) $(libgui_LDADD)
+joltest_LDADD = gui/libgui.a gfx/libgfx.a input/libinput.a python/libpython.a libbase.a $(libbase_LDADD) $(libgui_LDADD) $(libpython_LDADD)
 
-alextest_LDADD = lmap/libmap.a gfx/libgfx.a input/libinput.a libbase.a $(libbase_LDADD)
+alextest_LDADD = lmap/libmap.a gfx/libgfx.a input/libinput.a python/libpython.a libbase.a $(libbase_LDADD) $(libpython_LDADD)
 
-#pytest_LDADD = libbase.a libpython.a gfx/libgfx.a input/libinput.a $(libbase_LDADD) $(libpython_LDADD)
+pytest_LDADD = libbase.a python/libpython.a gfx/libgfx.a input/libinput.a $(libbase_LDADD) $(libpython_LDADD) $(libpython_LDADD)
 
-schedtest_LDADD = libbase.a python/libpython.a gfx/libgfx.a input/libinput.a $(libbase_LDADD) $(libpython_LDADD)
+schedtest_LDADD = libbase.a python/libpython.a gfx/libgfx.a python/libpython.a input/libinput.a $(libbase_LDADD) $(libpython_LDADD)
 
 # Note: .py files are also built by this target.
 py_%_wrap.cc : py_%.i

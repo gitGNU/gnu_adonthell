@@ -1,3 +1,5 @@
+#if 0
+
 #include "lmap/landmap.h"
 #include "gfx/animation.h"
 #include "gametime.h"
@@ -364,6 +366,7 @@ int main(int argc, char * argv[])
         }
 
         gametime::update (); 
+        gfx::screen::display.draw_line(10, 10, 40, 100, 0xFFFFFF);
         gfx::screen::show ();
         gfx::screen::clear (); 
     }
@@ -372,3 +375,123 @@ int main(int argc, char * argv[])
     
     return 0; 
 }
+
+#else
+#include "gfx/image.h"
+#include "input/manager.h"
+
+#include <unistd.h>
+#include <iostream>
+
+class point
+{
+public:
+    point(const s_int16 x, const s_int16 y)
+    {
+        X = x;
+        Y = y;
+    }
+
+    s_int16 x () const { return X; }
+    s_int16 y () const { return Y; }
+
+    void draw () const
+    {
+        gfx::screen::display.lock ();
+        gfx::screen::display.put_pix (x (), y (), 0x0000FF);
+        gfx::screen::display.unlock ();
+    }
+
+    s_int16 X, Y;
+};
+
+class vector : public point
+{
+public:
+    vector (const s_int16 x, const s_int16 y) : point (x, y)
+    {
+    }
+
+    s_int16 crossproduct (vector v) const
+    {
+        return (x () * v.x () - y () * v.y ());
+    }
+};
+
+class line
+{
+public:
+    line (const point & p1, const point & p2) : P1 (p1), P2 (p2), Respoint (0, 0)
+    {
+    }
+
+    line (const point p, const vector v) : P1 (p), P2 (p.x ()+ v.x (), p.y ()+ v.y ()), Respoint (0, 0)
+    {
+    }
+
+    void draw () const
+    {
+        gfx::screen::display.lock ();
+        gfx::screen::display.draw_line (P1.x (), P1.y (), P2.x (), P2.y (), 0xFFFFFF);
+        gfx::screen::display.unlock ();
+    }
+
+    bool intersect (const line & l) const
+    {
+        s_int16 t = (P2.x () - P1.x ()) * (l.P2.y () - l.P1.y ()) - 
+            (P2.y() - P1.y()) * (l.P2.x () - l.P1.x());
+        
+        if (!t) return false;
+
+        float denom = 1.0 / t;
+
+        s_int16 Tx = P1.x () - l.P1.x ();
+        s_int16 Ty = P1.y () - l.P1.y ();
+
+        float r = (Ty * (l.P2.x () - l.P1.x ()) - Tx * (l.P2.y () - l.P1.y ())) * denom;
+        float s = (Ty * (P2.x () - P1.x ()) - Tx * (P2.y () - P1.y ())) * denom;
+
+        std::cout << r << " " << s << std::endl;
+
+        if (s >= 0 && s <= 1 && r >= 0 && r <= 1)
+        {
+            Respoint = point ((s_int16)P1.x () + r * (P2.x () - P1.x ()),
+                              (s_int16)P1.y () + r * (P2.y () - P1.y ()));
+            return true;
+        }
+
+        return false;
+    }
+
+    point respoint () const { return Respoint; }
+
+    point P1, P2;
+    mutable point Respoint;
+};
+
+int main(int argc, char * argv[]) 
+{
+    gfx::screen::init (); 
+    gfx::screen::set_video_mode(640, 480);
+
+    input::manager::init();
+
+    input::listener il;
+
+    line l1 (point (10, 10), point (50, 70));
+    line l2 (point (60, 40), point (20, 80));
+
+    l1.draw();
+    l2.draw();
+    gfx::screen::show();
+
+    if (l1.intersect (l2))
+        std::cout << "Intersection point: " << l1.respoint ().x () << ", " << l1.respoint ().y () << std::endl;
+
+    sleep(1);
+
+    input::manager::cleanup();
+    
+    return 0; 
+}
+#endif

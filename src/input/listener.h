@@ -27,6 +27,7 @@
 
 #include "input/event.h"
 #include "callback.h"
+#include "python/base.h"
 #include "types.h"
 
 namespace input
@@ -73,6 +74,15 @@ namespace input
         void connect_function(event::input_type t, Functor1wRet<event *, int> f);
 
         /** 
+         * Connect a Python callback function to a type of event for this listener.
+         * The listener will automatically listen to this kind of events.
+         * 
+         * @param t type of event to listen to
+         * @param f callback function to call when an event of type \e t is raised
+         */
+        void connect_py_function(int t, PyObject * f);
+
+        /** 
          * Stops listening to events of type \e t. 
          * 
          * @param t type of events to stop listening to.
@@ -95,9 +105,12 @@ namespace input
         int raise_event (event * ev);
 
     private:
+        typedef enum callback_type { NO_CALLBACK, C_CALLBACK, PY_CALLBACK };
+
         bool Listen_to[event::NBR_INPUT_TYPES];
-        bool Callback_set[event::NBR_INPUT_TYPES];
+        callback_type Callback_set[event::NBR_INPUT_TYPES];
         Functor1wRet<event *, int> Callbacks[event::NBR_INPUT_TYPES];
+        PyObject * Py_callbacks[event::NBR_INPUT_TYPES];
     };
 }
 

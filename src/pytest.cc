@@ -1,4 +1,4 @@
-#include "python_class.h"
+#include "python/base.h"
 
 extern "C" {
 extern int Py_Main(int, char **);
@@ -14,18 +14,9 @@ extern "C"
     void initgfxc (void);
     void initinputc (void);
 }
-
+extern "C"
 int main(int argc, char * argv[])
 {    
-    // add the working directory to python's path (otherwise, scripts
-    // without absolute path cannot be executed)
-//     string path = dirname (argv[0]);
-//     if (path[0] != '/') 
-//     {
-//         string tmp = getcwd (NULL, 0);
-//         path = tmp + path;
-//     }
-
     python::init();
     initbasec();
     initgfxc();

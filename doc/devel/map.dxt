@@ -79,9 +79,13 @@ Of course, some geometry concepts have to be used and implemented in
 order to get these results. They will be summarized here, with the
 same terms that are used in the implementation:
 
+<b>Points</b>
+
 The most basic thing that will be used is the point. I won't make the
 offence to explain what is a point - we will simply
 describe them with their X, Y (and Z) positions in the space.
+
+<b>Vectors</b>
 
 The first real thing to deal with are vectors. Vectors are widely used
 in the map engine, as they represent every displacement of %objects,
@@ -90,7 +94,7 @@ vector. The representation is nothing to be discussed during hours, a
 X, Y, (and Z) displacement values, and voila. The length of a vector
 (it's \e norm, noted \f$||u||\f$), is equal to
 
-\f$||u|| = \sqrt{ux^2 + uy^2 + uz^2}\f$
+\f$||u|| = \sqrt{u_x^2 + u_y^2 + u_z^2}\f$
   
 In most operations however, we don't need the exact norm of a vector
 but we want to know which vector is the longest from a set of vectors.
@@ -106,10 +110,38 @@ the motion vector or not.
 \image latex vectors1.eps "Here, v2 and v3 are pointing in the same direction than v1 (the invert-clockwise angle between them in < 180°)" width=10cm
 \image html vectors1.png "Here, v2 and v3 are pointing in the same direction than v1 (the invert-clockwise angle between them in < 180°)"
 
-\image latex vectors1.eps "But here, v2 and v3 are pointing in the opposite direction of v1 (the invert-clockwise angle between them in >= 180°)" width=10cm
-\image html vectors1.png "But here, v2 and v3 are pointing in the opposite direction of v1 (the invert-clockwise angle between them in >= 180°)"
+\image latex vectors2.eps "But here, v2 and v3 are pointing in the opposite direction of v1 (the invert-clockwise angle between them in >= 180°)" width=10cm
+\image html vectors2.png "But here, v2 and v3 are pointing in the opposite direction of v1 (the invert-clockwise angle between them in >= 180°)"
 
+In easier words, <i>v points in the same direction than u</i> can be
+interpreted as <i>when having the same starting point, v is on u's
+left</i>, and <i>v points in the opposite direction of u</i> can be
+heard as <i>when having the same starting point, v is on u's
+right</i>.
 
+The cross product of two vectors \e u and \e v (noted \f$||u.v||)\f$
+can help us knowing if two vectors point in the same
+direction. Indeed:
+
+\f$||u.v|| = ||u|| * ||v|| * \sin(\theta)\f$
+
+\f$||u.v|| = u_x * v_y - u_y * v_x\f$
+
+Therefore:
+
+\f$\sin(\theta) = \frac{u_x * v_y - u_y * v_x}{||u|| * ||v||}\f$
+
+The sinus of an invert-clockwise angle will be negative if the angle
+is between 0 and 180 degrees (the vectors are pointing in the same
+direction), positive otherwise (the vectors are pointing in opposite
+directions).
+
+For the engine, we will only need the sign of
+\f$\sin(\theta)\f$. Therefore, we can get rid of the division, and
+directly consider the sign of the cross-product to know if two vectors
+point in the same direction or not.
+
+<b>Lines</b>
 
 Lines, as we hear them, are simply a vector which is given a starting
 point. One of the problems we'll have to solve is to know if two lines
@@ -118,20 +150,20 @@ intersect, and where?
 A first method is to consider the 4 points A, B, C and D. We want to
 check wether AB and CD intersect. If they do, then:
 
-\f$Ax + r(Bx - Ax) = Cx + s(Dx - Cx)\f$, and
+\f$A_x + r(B_x - A_x) = C_x + s(D_x - C_x)\f$, and
 
-\f$Ay + r(By - Ay) = Cy + s(Dy - Cy)\f$
+\f$A_y + r(B_y - A_y) = C_y + s(D_y - C_y)\f$
 
 for \e r and \e s between 0 and 1.
 
 Finding \e r and \e s is as simple as solving:
 
-\f$r = \frac{(Ay - Cy)(Dx - Cx) - (Ax - Cx)(Dy - Cy)}{(Bx - Ax)(Dy - Cy) - (By - Ay)(Dx - Cx)}\f$ and
+\f$r = \frac{(A_y - C_y)(D_x - C_x) - (A_x - C_x)(D_y - C_y)}{(B_x - A_x)(D_y - C_y) - (B_y - A_y)(D_x - C_x)}\f$ and
 
-\f$r = \frac{(Ay - Cy)(Bx - Ax) - (Ax - Cx)(By - Ay)}{(Bx - Ax)(Dy - Cy) - (By - Ay)(Dx - Cx)}\f$.
+\f$r = \frac{(A_y - C_y)(B_x - A_x) - (A_x - C_x)(B_y - A_y)}{(B_x - A_x)(D_y - C_y) - (B_y - A_y)(D_x - C_x)}\f$.
 
 Note that the denominator is the same - we can save one division by
-setting a variable to \f$frac{1}{denom}\f$ and using multiplications
+setting a variable to \f$\frac{1}{denom}\f$ and using multiplications
 instead of divisions while calculating \e r and \e s. Moreover,
 pre-calculating it is mandatory anyway, as if it is egal to 0 the
 lines are parallel and therefore never intersect (and we avoid a
@@ -143,8 +175,8 @@ intersection. Otherwise the segments intersects, but not in the limits
 of our lines. We can get the exact coordinates of the intersection
 point \e P with:
 
-\f$Px = Ax + r(Bx - Ax)\f$
-\f$Py = Ay + r(By - Ay)\f$
+\f$P_x = A_x + r(B_x - A_x)\f$
+\f$P_y = A_y + r(B_y - A_y)\f$
 
 So if used as if, this algorithm will require one float division and four
 float multiplications. We can avoir working on floats all the time
