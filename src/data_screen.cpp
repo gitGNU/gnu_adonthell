@@ -30,10 +30,10 @@ data_screen::data_screen (int m) : win_container (30, 15, 260, 210, NULL)
     // To get a clear view of the map, we have to get the screenshot in advance,
     // but it would be better if we could get it only in case it is needed
     if (mode == SAVE_SCREEN) 
-      {
-	shot=new image();
-	shot->screen_shot ();
-      }
+    {
+	   shot = new image ();
+	   shot->screen_shot ();
+    }
     else shot = NULL;
     entry = NULL;
 
@@ -146,7 +146,7 @@ void data_screen::init ()
 
 bool data_screen::update ()
 {
-    // nothing selected --> broese through available games
+    // nothing selected --> browse through available games
     if (!entry)
     {
         image_list->update ();

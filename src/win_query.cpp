@@ -47,10 +47,11 @@ char * win_query::wait_for_text(const Functor0 & updatefunc,
       input::update();
       if(input::has_been_pushed(SDLK_ESCAPE))
       {
-	s=NULL;
-	return s;
+    	s=NULL;
+	    return s;
       }
       for(i=0;i<screen::frames_to_do();i++) update();
+      entry->update ();
       draw();
       screen::show();
     }
