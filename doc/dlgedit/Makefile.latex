@@ -1,0 +1,31 @@
+all: dlgedit.dvi
+
+ps: dlgedit.ps
+
+pdf: dlgedit.pdf
+
+ps_2on1: dlgedit_2on1.ps
+
+pdf_2on1: dlgedit_2on1.pdf
+
+dlgedit.ps: dlgedit.dvi
+	dvips -o dlgedit.ps dlgedit.dvi
+
+dlgedit.pdf: dlgedit.ps
+	ps2pdf dlgedit.ps dlgedit.pdf
+
+dlgedit_2on1.ps: dlgedit.ps
+	psnup -2 dlgedit.ps >dlgedit_2on1.ps
+
+dlgedit_2on1.pdf: dlgedit_2on1.ps
+	ps2pdf dlgedit_2on1.ps dlgedit_2on1.pdf
+
+dlgedit.dvi: dlgedit.tex dlgedit.sty
+	echo "Running latex..."
+	latex dlgedit.tex 
+	echo "Running makeindex..."
+	makeindex dlgedit.idx
+	echo "Rerunning latex...."
+	latex dlgedit.tex
+clean:
+	rm -f *.ps *.dvi *.aux *.toc *.idx *.ind *.ilg *.log *.out
