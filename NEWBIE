@@ -117,7 +117,7 @@ and install another library:
 ********
 
 As of the writing of this guide, you can get the current
-version of SDL (1.2.3) at:
+version of SDL (1.2.4) at:
 
     http://www.libsdl.org/download-1.2/
 
@@ -125,7 +125,7 @@ version of SDL (1.2.3) at:
 
     http://www.python.org/
 
-... and the current version of OggVorbis (1.0rc2) at:
+... and the current version of OggVorbis (1.0) at:
 
     http://www.xiph.org/ogg/vorbis/download/
 
@@ -137,10 +137,10 @@ It usually is safe to use newer versions if available.
 
 The following steps show how to install the Python, SDL, SDL_mixer,
 and OggVorbis libraries. You must install Python and the SDL library 
-FIRST and OggVorbis last.
+FIRST and Ogg Vorbis last.
 
-OggVorbis itself consists of three libraries: libao, libogg and 
-libvorbis that have to be installed in this order.
+Ogg Vorbis itself consists of two libraries: libogg and libvorbis
+that have to be installed in this order.
 
 
 Step #1: Download the tar file of the library to a convient
@@ -154,7 +154,7 @@ Step #2: Decompress the tar.gz file. Do this by typing:
 		    or
 	tar -xzf Python-x.x.tar.gz          (for Python)
 		    or
-	tar -xzf libao-x.x.x.tar.gz         (for libao)
+	tar -xzf libogg-x.x.x.tar.gz        (for libogg)
                     
         etc. 
 
@@ -178,7 +178,7 @@ installed library. Do this by typing:
 	ldconfig
 
 Repeat these 4 steps for each library you want to install. If all
-went well, you now at least have Python, SDL, and OggVorbis 
+went well, you now at least have Python, SDL, and Ogg Vorbis 
 installed and configured in your system.
 
 ******************************************

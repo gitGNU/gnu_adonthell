@@ -28,10 +28,11 @@
 using std::string;
 
 /**
- * The time %event executes the attached python script at a certain point in
- * %game-time. This point can be specified relative to the current %gametime,
- * or absolute. Further, an interval can be given that determines when the
- * event will be repeated.
+ * The time %event executes the attached script or callback at a certain 
+ * point in %game-time. This point can either be relative to the current
+ * time, or absolute in time. In any case, this point should be in the
+ * future. Time %event with an alarm time in the past will be triggered
+ * at once.
  */
 class time_event : public event
 {

@@ -1,7 +1,7 @@
 /*
    $Id$
 
-   Copyright (C) 2001   Kai Sterker
+   Copyright (C) 2001/2002 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -14,32 +14,137 @@
 
 /*! \page page3 The Event System
  
- The %event system is divided into three parts. The %event handler
- keeps track of all registered %event scripts. Whenever an
- %event occurs, the %event handler is notified and executes
- all scripts registered for that particular %event. The %event
- list keeps track of the %events registered by a certain %object,
- (e.g. a NPC, a maptile or item) and automatically unregisters
- these %events when this %object is deleted. Finally, there
- are the %events themself, used both as message sent to the
- %event handler whenever an %event occurs and to register an
- %event script. Each %event has its own data structure with
+ The %event system is divided into three parts. The \ref event_sec1 
+ keeps track of all registered %event scripts. 
+ Whenever an %event occurs, the %event handler is notified and executes
+ all scripts registered for that particular %event. The \ref event_sec2
+ keeps track of the %events registered by a certain
+ %object, (e.g. a NPC, a maptile or item) and automatically unregisters
+ these %events when this %object is deleted. Finally, there are the 
+ \ref event_sec3 themself, used both as  message 
+ sent to the %event handler whenever an %event occurs and to register 
+ an %event script. Each %event has its own data structure with
  parameters corresponding to its type. These parameters are
  passed to the %event script, so all infomation regarding
  an %event is available from within the script as well. The
  parameters can further be used to specialize the script so it
  reacts to a smaller range of %events.
 
- \section event_usage Using the Event System
+
+ \section event_sec1 Event Handler
+
+ The %event handler is the core component of the %event system.
+ It provides a method to initilize the %event system and allows
+ global access to the specialized handlers for individual events.
+ For that purpose, it stores a list of event_handler_base %objects,
+ the virtual base class for the specialized handlers, and passes
+ any %event it recieves to the right handler.
+ 
+ The %event_handler_base class provides three pure virtual methods
+ that need to be implemented by each specialized handler:
+ 
+ - register_event() to pass a new %event to the handler. %Events
+   need to be registered with the handler before they can take
+   place
+   
+ - remove_event() to remove a previously registered %event from
+   the handler
+    
+ - raise_event() to send a message to the handler that will trigger
+   matching events. 
+ 
+ 
+ \section event_sec2 Event List
+
+ The event_list is a convenience class for %objects that register
+ events with the handler. As it is up to each object to save the
+ events it registers, and to load and re-register them, the %event
+ list has been written to take care of that.
+ 
+ To make the %event list independent from specific %event types,
+ it only works on pointers to the %event base class. That works fine
+ in all cases, except one. When loading events, the %event list needs
+ to instanciate the proper %event subclass. For that purpose, the %event
+ list stores a list of callbacks that return a newly instanciated %event
+ subclass of a given type. Two macros have been written that take care
+ of most of the work.
+
+\code
+NEW_EVENT (subclass)
+REGISTER_EVENT (type, subclass)
+\endcode
+
+ %NEW_EVENT provides the function that will return a newly allocated 
+ %event. %REGISTER_EVENT will pass this function to the %event list.
+ For each %event type, these two macros should be added to 
+ event_handler::init(), the %event system's init method. 
+
+ The %event list provides the following methods:
+ 
+ - event_list::add_event() adds an %event to the list and registers it 
+   with the %event handler.
+ 
+ - event_list::put_state() saves the list with all events inside.
+ 
+ - event_list::get_state() restores the list with all events and registers 
+   them with the %event handler.
+ 
+ 
+ \section event_sec3 Events
+ 
+ Events have two main purposes. Registered with the %event handler,
+ they allow to execute either a %python script, a %python or a C/C++
+ callback in case that %event takes place. But they are also sent
+ as messages to the handler, to trigger matching events.
+ 
+ Each specific %event may have its own %data fields and methods,
+ depending on its purpose. However, all events share a number of
+ common features, which are implemented by the %event base class.
+ 
+ The first feature is the %event's action, i.e. what happens if that
+ %event is triggered. The %event class allows to attach a \link py_object
+ python script \endlink, a \link py_callback python callback \endlink 
+ or a C/C++ callback.
+ 
+ C/C++ callbacks are only useful when the %game engine wants to make
+ use of the %event system internally. %Python callbacks allow scripts
+ like \link schedule character schedules \endlink to use the %event 
+ system. %Event scripts usually define the action of a certain class of 
+ events. For example an %event script might implement a trap that is 
+ activated whenever a %character steps on it. This 'trap' script can then 
+ be used by traps all over the place.
+  
+ Apart from the %event's action, the base %event class also provides
+ means to repeat events or prevent them from repeating. For example,
+ a trap might only work once. event::set_repeat() allows to specify
+ how often an %event can be executed. Once that repeat count reaches
+ zero, executing the event will automatically delete it. This will
+ also remove it from the %event_handler and %event_list. That way,
+ events that are used up vanish from the game, just as one would expect.
+ 
+ Further, the %event class has two pure virtual methods that need
+ to be implemented by the specific events. They are provided so
+ that (not so) specialized %event handlers may take care of different
+ %event types.
+ 
+ - equals() is used to compare two events for 'equality'. The message
+   sent to the handler is compared to all registered events to see if
+   they match.
+   
+ - execute() is used once the %event is triggered and should executed
+   the %event's action.
+ 
+ 
+ \section event_sec4 Using the Event System
  
  The %event handler is implemented in the event_handler class.
  It totally consists of static members and methods, to make it
  easily accessible from any part of the code. Just include
- the event.h file. To register a script with the handler that,
- for example, is executed whenever the player arrives at the
- coordinates (20, 20) of a map, you'd write:
+ the event_handler.h file. To register a script with the handler 
+ that is executed whenever the player arrives at the coordinates 
+ (20, 20) of a map, you'd write:
 
- \code
+\code
 // Create the filter and set it's parameters
 event *filter = new enter_event;
  
@@ -47,8 +152,41 @@ filter->x = 20;
 filter->y = 20;
 filter->c = data::the_player;
 
-// Create our arguments list that will be passed to the script
-// constructor
+// Set the script to be executed when the event occurs
+filter->set_script ("a_script");
+
+// Finally add the filter to the event list. This will register it with the event handler
+add_event (filter);
+\endcode
+ 
+ For a list of available events with their corresponding parameters
+ see the \link event API documentation \endlink.
+
+ The %event script in that example could look as follows:
+ 
+\verbatim
+class a_script:
+    # -- constructor
+    def __init__ (self, event, <additional arguments>):
+        # -- the event the script belongs to
+        self.myself = event
+        ...
+
+    # -- method called when the event occurs, the parameters
+    #    depend on the type of the event
+    def run (self, submap, x, y, direction, character):
+        print "%s arrived at %i, %i" % (character, x, y)
+\endverbatim
+
+ As you can see, you have the possibility to pass extra parameters
+ to the script constructor. This is limited to strings and integers
+ though. When you set the argument list from C++, you have to manually 
+ create a %Python tuple, and you should not forget to decrement its 
+ reference count when you are done with it. The following code could
+ be used for the example above:
+
+\code
+// Create our argument tuple that will be passed to the script constructor
 PyObject * args = PyTuple_New (2);
 PyTuple_SetItem (args, 0, PyInt_FromLong (10));
 PyTuple_SetItem (args, 0, PyString_FromString ("2nd argument"));
@@ -56,29 +194,15 @@ PyTuple_SetItem (args, 0, PyString_FromString ("2nd argument"));
 // Set the script to be executed when the event occurs
 filter->set_script ("a_script", args);
 
-// We don't use our reference to the tuple anymore
+// We don't need our reference to the tuple anymore
 Py_DECREF (args);
-
+\endcode
  
-// Finally add the filter to the event list. This will register it with the event handler
-add_event (filter);
- \endcode
+ The script constructor would then recieve two additional arguments. 
+ This is useful to create generic scripts that can be customized at
+ runtime. To return to our old trap example, the amount of damage the
+ trap does could be specified for each trap in this way.
  
- For a list of available events with their corresponding parameters
- see the \link event API documentation \endlink.
-
- As you can see, you have the possibility to pass extra parameters
-(only integers or strings) to the script constructor. This list is
-customizable and you can define yourself which arguments should your
-event receive. Of course, when you set the arguments list from C++,
-you have to manually create a Python tuple, and don't forget to
-decrement it's reference count when you don't need it anymore. If you
-set your script from Python, things are of course much easier:
-
-\verbatim
-filter.set_script ("a_script", (10, "2nd_argument"))
-\endverbatim
-
  Now we have registered an %event with the %event handler. But that alone
  won't get the %event triggered. So depending on its type, you'll have to
  notify the %event handler of an %event's occurance. In case of the \link
@@ -96,65 +220,77 @@ message.submap = mapcharacter::submap ();
 message.c = this;
 
 // Notify the event handler
-event_handler::raise_event (message);
+event_handler::raise_event (&message);
 \endcode
 
 The %event handler will then compare all %events of the given type with the
-message it recieved and execute the %event script of the matching %events.         
+message it recieved and execute the %event action of events that match.         
 
-\section event_new Defining new Events        
-Now that you know how events principly work, you might want to define your own.
-Doing so is quite easy. Take event as the base class, override it's methods with
-your own, and you're nearly done.
 
-There is only one problem remaining: loading your %event from a file. The %event
-list is taking care of that. But to avoid additional dependencies between the
-%event system and your code, the %event list cannot know about your %event at
-compile time. Otherwise, each part of the engine using the %event system had to
-#include every other part doing so, which we'd like to avoid. Basically, this is
-no restriction, since the %event list knows the base class and, thanks to virtual
-methods, can handle any derived %event without problem. The only situation where
-this fails is when a serialized %event list needs to be loaded from disk again.
-To do so, the \link event_list::load loader \endlink needs to be able to
-instanciate every possible %event. The way to go is pretty clear now: we need
-a function that returns a newly allocated %event structure, and we have to
-pass that function to the %event list at runtime, before loading an %event of
-that type. Since these steps are the same for each %event, two macros have been
-defined:
+\section event_sec5 The Different Event Types
 
-\code
-NEW_EVENT(evt)
-REGISTER_EVENT(type,evt)
-\endcode
+Various types of events are defined by the %game engine, all
+inheriting from the event class defined in event.h.
 
-%NEW_EVENT() provides the function that will return a newly allocated %event,
-and %REGISTER_EVENT() will pass this function to the %event list. The only
-information the %event system needs to know apart from that is the numerical
-%event ID, i.e. its type. 
+\subsection mapevents Map Events
 
-\section event_types List of existing events and their specificities
-Various types of events are defined in the %game engine, all
-inheriting from the event class.
-
-\subsection mapevents Map events
 There are 3 types of map events:
-\li enter_event, which are triggered whenever a %character enter a
+\li enter_event, which are triggered whenever a %character enters a
 square,
 \li leave_event, which are triggered whenever a %character leaves a
 square,
 \li action_event, which are triggered when the main %character "acts"
 on a given square.
 
-All these map events inherits from the base_map_event class, which
+All these map events inherits from the map_event class, which
 contains all the parameters they need:
 \li x, the X coordinate of the square the %event happened on,
 \li y, the Y coordinate of the square the %event happened on,
 \li submap, the number of the submap where the %event happened on,
-\li c, a pointer to the mapcharacter that triggered the %event,
-\li dir, the direction the mapcharacter is looking at when the %event
+\li c, a pointer to the %mapcharacter that triggered the %event,
+\li dir, the direction the %mapcharacter is facing when the %event
     is triggered.
 
-When a map %event is triggered, the run () method of the Python script
+When a map %event is triggered, the run ()method of the Python script
 is called, with the arguments \e submap, \e x, \e y and \e name, which
 is the name of the mapcharacter that triggered the %event.
+
+Map events are repeated forever by default.
+
+\subsection timeevent Time Event
+
+The time_event can be used to track relative or absolute %game time.
+Relative means, the %event will be triggered after a given amount of time
+has passed, starting at the moment it is created. Absolute means a fixed
+point in time, i.e. a certain hour at a certain day.
+
+Time events are not repeated by default. They can be told to repeat though,
+and it is also possible to specify the delay between two occurances.
+
+Time events pass no arguments to the run() method of the Python script.
+The script can easily get the current %game time from the gamedate class. 
+
+
+\section event_sec6 Saving and Restoring Events
+
+As described in the \ref event_sec2 section, events can be saved to disk
+and restored at a later point. For this to work, a few restrictions have
+to be made, especially regarding any %python arguments that get passed to
+script or callback. Events that contain a C/C++ callback cannot be saved
+at all, as it is not possible to restore that callback.
+
+For events with an attached %python script, the only restriction is that
+the argument needs to be a tuple, containing only string and/or integer 
+%objects. On saving, the name of the script and this argument tuple are 
+saved to disk. On loading, the arguments are loaded, and the script is
+instanciated with those arguments.
+
+The same restriction concerning arguments applies to events with an
+attached %python callback. However, when saving the callback, only the 
+name of the function or method is saved, but not the instance it belongs
+to. To restore the callback, it is neccessary to restore that instance 
+first. Then a pointer to it needs to be assigned to py_callback::instance,
+which is a static member of the %py_callback class. Only then can the
+callback be restored properly.
+
 */
