@@ -1,6 +1,4 @@
 /*
-   $Id$
-
    (C) Copyright 2000 Joel Vennin
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
@@ -12,89 +10,77 @@
    See the COPYING file for more details
 */
 
-#include <list>
 #include "types.h"
 #include "image.h"
+#include "win_types.h"
 #include "win_base.h"
-
-#include "win_container.h"
-#include "win_select.h"
+#include "win_theme.h"
 #include "win_image.h"
 
-
-win_image::win_image(s_int16 tx,s_int16 ty,image * tpic,win_container * twc):win_base(tx,ty,0,0,twc,twc->get_drawing_area())
+win_image::win_image(s_int16 tx,s_int16 ty,image * tpic,win_theme* them):win_base(tx,ty,tpic->length,tpic->height,them)
 {
-  picture=tpic;
-  if(picture)
-    {
-      height=picture->height;
-      length=picture->length;
-    }
+  picture=new image();
+  src=tpic;
+  *picture=*src; //copy image into *src
+  type_obj_=WIN_OBJ_IMAGE;
+}
+
+win_image::win_image(s_int16 tx,s_int16 ty,u_int16 tl,u_int16 th,win_theme* them):win_base(tx,ty,tl,th,them)
+{
+  picture=NULL;
+  src=NULL;
 }
 
 win_image::~win_image()
 {
-  //dettach_select();
+  if(picture) delete picture;
 }
 
 void win_image::set_image(image * tpic)
 {
-  picture=tpic;
-  if(picture)
+  if(picture) delete picture;
+  picture=new image();
+  *picture=*tpic;
+  src=tpic;
+}
+
+void win_image::set_stretch(bool b)
+{
+  stretch_=b;
+  update_image();
+}
+
+void win_image::resize(u_int16 tl,u_int16 th)
+{
+  win_base::resize(tl,th);
+  update_image();
+}
+
+void win_image::update_image()
+{
+  if(picture==NULL || src==NULL) return;
+  if(stretch_)
     {
-      height=picture->height;
-      length=picture->length;
+      picture->resize(length_,height_);
+      picture->zoom(src);
     }
+  else *picture=*src;
 }
 
 void win_image::draw()
 {
-  if(visible && wc && picture)
-    {
-       picture->draw(real_x,real_y,wc->get_drawing_area());
-       draw_border();
-    }
+  if(!visible_) return;
+  win_base::draw();
+  assign_drawing_area();
+  draw_background();
+  if(picture)
+    if(draw_brightness_)
+      {
+	image imgbright;
+	imgbright.brightness(picture,level_brightness_);
+	imgbright.draw(realx_,realy_,da_);
+      }
+      else picture->draw(realx_,realy_,da_);
+  draw_border();
+  detach_drawing_area();
 }
-
-void win_image::update()
-{
- 
-}
-
-
-/*
-
-
-void win_image::attach_select(win_select * tmp)
-{
-   wselect=tmp;
-}
-
-
-void win_image::dettach_select()
-{
-  if(wselect)
-    {
-      wselect->remove(this);
-      wselect=NULL;
-    }
-}
-
-
-
-
-
-*/
-
-
-
-
-
-
-
-
-
-
-
-
-

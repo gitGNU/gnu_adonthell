@@ -71,10 +71,10 @@ SUBDIRS = . tools
 
 bin_PROGRAMS = mapengine joltest
 
-mapengine_SOURCES = animation.cpp audio.cpp audio_thread.cpp character.cpp cutscene.cpp dialog.cpp drawing_area.cpp event.cpp fileops.cpp game.cpp image.cpp init.cpp input.cpp lex.prefs.cpp main.cpp map.cpp mapcharacter.cpp mapengine.cpp mapevent.cpp mapitem.cpp mappattern.cpp mapsquare.cpp pnm.cpp prefs.cpp py_inc.cpp py_character_wrap.cpp py_dialog_engine_wrap.cpp py_mapengine_wrap.cpp py_quest_wrap.cpp quest.cpp screen.cpp storage.cpp win_anim.cpp win_base.cpp win_border.cpp win_container.cpp win_font.cpp win_file.cpp win_image.cpp win_label.cpp win_select.cpp win_write.cpp yarg.cc
+mapengine_SOURCES = animation.cpp audio.cpp audio_thread.cpp character.cpp cutscene.cpp dialog.cpp drawing_area.cpp event.cpp fileops.cpp game.cpp image.cpp init.cpp input.cpp lex.prefs.cpp main.cpp map.cpp mapcharacter.cpp mapengine.cpp mapevent.cpp mapitem.cpp mappattern.cpp mapsquare.cpp pnm.cpp prefs.cpp py_inc.cpp py_character_wrap.cpp py_dialog_engine_wrap.cpp py_mapengine_wrap.cpp py_quest_wrap.cpp quest.cpp screen.cpp storage.cpp win_base.cpp win_border.cpp win_container.cpp win_font.cpp win_theme.cpp win_scrolled.cpp win_background.cpp win_scrollbar.cpp win_file.cpp win_image.cpp win_label.cpp win_select.cpp win_write.cpp yarg.cc
 
 
-joltest_SOURCES = audio.cpp audio_thread.cpp drawing_area.cpp image.cpp animation.cpp init.cpp input.cpp lex.prefs.cpp pnm.cpp prefs.cpp screen.cpp win_label.cpp win_write.cpp win_container.cpp win_select.cpp win_border.cpp win_base.cpp win_font.cpp win_image.cpp win_anim.cpp joel.cpp yarg.cc win_file.cpp
+joltest_SOURCES = audio.cpp audio_thread.cpp drawing_area.cpp image.cpp animation.cpp init.cpp input.cpp lex.prefs.cpp pnm.cpp prefs.cpp screen.cpp win_label.cpp win_write.cpp win_container.cpp win_select.cpp win_border.cpp win_base.cpp win_font.cpp win_image.cpp win_theme.cpp win_scrolled.cpp win_background.cpp win_scrollbar.cpp joel.cpp yarg.cc win_file.cpp
 
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = ../header.h
@@ -91,16 +91,18 @@ cutscene.o dialog.o drawing_area.o event.o fileops.o game.o image.o \
 init.o input.o lex.prefs.o main.o map.o mapcharacter.o mapengine.o \
 mapevent.o mapitem.o mappattern.o mapsquare.o pnm.o prefs.o py_inc.o \
 py_character_wrap.o py_dialog_engine_wrap.o py_mapengine_wrap.o \
-py_quest_wrap.o quest.o screen.o storage.o win_anim.o win_base.o \
-win_border.o win_container.o win_font.o win_file.o win_image.o \
-win_label.o win_select.o win_write.o yarg.o
+py_quest_wrap.o quest.o screen.o storage.o win_base.o win_border.o \
+win_container.o win_font.o win_theme.o win_scrolled.o win_background.o \
+win_scrollbar.o win_file.o win_image.o win_label.o win_select.o \
+win_write.o yarg.o
 mapengine_LDADD = $(LDADD)
 mapengine_DEPENDENCIES = 
 mapengine_LDFLAGS = 
 joltest_OBJECTS =  audio.o audio_thread.o drawing_area.o image.o \
 animation.o init.o input.o lex.prefs.o pnm.o prefs.o screen.o \
 win_label.o win_write.o win_container.o win_select.o win_border.o \
-win_base.o win_font.o win_image.o win_anim.o joel.o yarg.o win_file.o
+win_base.o win_font.o win_image.o win_theme.o win_scrolled.o \
+win_background.o win_scrollbar.o joel.o yarg.o win_file.o
 joltest_LDADD = $(LDADD)
 joltest_DEPENDENCIES = 
 joltest_LDFLAGS = 
@@ -113,7 +115,7 @@ DIST_COMMON =  Makefile.am Makefile.in
 
 DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 
-TAR = tar
+TAR = gtar
 GZIP_ENV = --best
 DEP_FILES =  .deps/animation.P .deps/audio.P .deps/audio_thread.P \
 .deps/character.P .deps/cutscene.P .deps/dialog.P .deps/drawing_area.P \
@@ -123,10 +125,11 @@ DEP_FILES =  .deps/animation.P .deps/audio.P .deps/audio_thread.P \
 .deps/mappattern.P .deps/mapsquare.P .deps/pnm.P .deps/prefs.P \
 .deps/py_character_wrap.P .deps/py_dialog_engine_wrap.P .deps/py_inc.P \
 .deps/py_mapengine_wrap.P .deps/py_quest_wrap.P .deps/quest.P \
-.deps/screen.P .deps/storage.P .deps/win_anim.P .deps/win_base.P \
+.deps/screen.P .deps/storage.P .deps/win_background.P .deps/win_base.P \
 .deps/win_border.P .deps/win_container.P .deps/win_file.P \
-.deps/win_font.P .deps/win_image.P .deps/win_label.P .deps/win_select.P \
-.deps/win_write.P .deps/yarg.P
+.deps/win_font.P .deps/win_image.P .deps/win_label.P \
+.deps/win_scrollbar.P .deps/win_scrolled.P .deps/win_select.P \
+.deps/win_theme.P .deps/win_write.P .deps/yarg.P
 SOURCES = $(mapengine_SOURCES) $(joltest_SOURCES)
 OBJECTS = $(mapengine_OBJECTS) $(joltest_OBJECTS)
 

@@ -33,6 +33,10 @@
 #include "win_anim.h"
 #include "win_container.h"
 #include "win_select.h"
+#include "win_theme.h"
+#include "win_background.h"
+#include "win_query.h"
+#include "win_info.h"
 
 #ifdef _EDIT_
 typedef enum anim_editor_mode {IMAGE, FRAME};
@@ -93,7 +97,7 @@ class animation
   bool mode;
   char frame_txt[500];
   win_font * font;
-  win_border * border;
+  win_theme * th;
   image * bg;
   win_container * container;
   win_label * label_mode;
@@ -175,12 +179,11 @@ class animation
   void update_label_frame_nbr();
   void update_label_frame_info();
   void update_label_status();
-  void update_editor();
   void update_editor_keys();
+  void update_editor();
+  void draw_editor();
   void update_and_draw();
   void editor();
-  void info_window(char * t_label);
-  char * query_window(char * t_label);
 #endif
 
   friend class win_anim;

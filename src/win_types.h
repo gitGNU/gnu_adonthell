@@ -15,7 +15,7 @@
 #ifndef TYPES_WIN_H_
 #define TYPES_WIN_H_
 
-#include "SDL_keysym.h"
+#include <SDL/SDL_keysym.h>
 
 #define WIN_NB_TABLE_CHAR 255
 #define WIN_TEXT_MAX_LENGTH 5000
@@ -23,6 +23,15 @@
 #define WIN_FONT_LENGHT 8
 #define WIN_SPACE_LENGHT 8
 
+//justify
+#define WIN_JUSTIFY_LEFT 0
+#define WIN_JUSTIFY_RIGHT 1
+#define WIN_JUSTIFY_CENTER 2
+#define WIN_JUSTIFY_NO 3
+
+//layout
+#define WIN_LAYOUT_NO 0
+#define WIN_LAYOUT_LIST 1
 
 
 //directory
@@ -50,18 +59,19 @@
 #define WIN_BACKGROUND_FILE "background.pnm"
 
 //scrollbar filename
-#define WIN_SCROLLBAR_BAR_FILE "scroll_bar.pnm"
-#define WIN_SCROLLBAR_MIDDLE_FILE "scroll_mid.pnm"
-#define WIN_SCROLLBAR_BOTTOM_FILE "scroll_bot.pnm"
-#define WIN_SCROLLBAR_TOP_FILE "scroll_top.pnm"
+#define WIN_SCROLLBAR_BAR_TOP "scroll_bar_top.pnm"
+#define WIN_SCROLLBAR_BAR_MID "scroll_bar_mid.pnm"
+#define WIN_SCROLLBAR_BAR_BOT "scroll_bar_bot.pnm"
+#define WIN_SCROLLBAR_BAR_FLEX "scroll_bar_flex.pnm"
+#define WIN_SCROLLBAR_BACK_TOP "scroll_back_top.pnm"
+#define WIN_SCROLLBAR_BACK_MID "scroll_back_mid.pnm"
+#define WIN_SCROLLBAR_BACK_BOT "scroll_back_bot.pnm"
 
 //default key For the selection
 #define WIN_SELECT_DEFAULT_KEY_NEXT SDLK_n
 #define WIN_SELECT_DEFAULT_KEY_PREVIOUS SDLK_p
-#define WIN_SELECT_DEFAULT_KEY_NEXT_SELECT SDLK_TAB
-#define WIN_SELECT_DEFAULT_KEY_UP_SELECT SDLK_BACKSPACE
-#define WIN_SELECT_DEFAULT_KEY_ACTIVATE SDLK_SPACE
-
+#define WIN_SELECT_DEFAULT_KEY_ACTIVATE SDLK_a
+#define WIN_SELECT_DEFAULT_KEY_BACK SDLK_b
 //cursor filename
 #define WIN_CURSOR_FILE "cursor.pnm"
 
@@ -71,39 +81,48 @@
 
 //just a start to build a theme
 #define WIN_THEME_ORIGINAL "original/" //dont forget '/'
-#define WIN_THEME_ELFE "elfe/"
+#define WIN_THEME_ELFE "silverleaf/"
 
 //win_OBJECT
-#define WIN_OBJ_LABEL 0
-#define WIN_OBJ_WRITE 1
-#define WIN_OBJ_IMAGE 2
-#define WIN_OBJ_CONTAINER 3
+#define WIN_OBJ_BASE 0
+#define WIN_OBJ_LABEL 1
+#define WIN_OBJ_WRITE 2
+#define WIN_OBJ_IMAGE 3
+#define WIN_OBJ_CONTAINER 4
+#define WIN_OBJ_SCROLLED 5
+#define WIN_OBJ_SELECT 6
+
+//win_signal
+#define WIN_SIG_ACTIVATE 0
+#define WIN_SIG_UNACTIVATE 1
+#define WIN_SIG_UPDATE 2
+#define WIN_SIG_DRAW 3
+#define WIN_SIG_ACTIVATE_KEY 4
+#define WIN_SIG_NEXT_KEY 5
+#define WIN_SIG_PREVIOUS_KEY 6
+#define WIN_SIG_SCROLL_UP 7
+#define WIN_SIG_SCROLL_DOWN 8
+#define WIN_SIG_SELECT 9
+#define WIN_SIG_UNSELECT 10
+
 
 //win_select
 #define WIN_SELECT_MODE_BRIGHTNESS 0
 #define WIN_SELECT_MODE_BORDER 1
-#define WIN_SELECT_MODE_CURSOR 2 //used with label!!!! 
+#define WIN_SELECT_MODE_CURSOR 2 
 
-#define WIN_SELECT_JUST_SELECT true
-#define WIN_SELECT_JUST_OBJECT false
-
+#define WIN_SIZE_NORMAL 0
+#define WIN_SIZE_MINI 1
 
 //WIN SCROLL BAR
 #define WIN_SCROLLBAR_PAD_DEFAULT 10;
-
-/*
-typedef struct 
-{
-  char text[WIN_TEXT_MAX_LENGTH];
-  u_int16 lenght;
-  u_int16 pos;
-  u_int16 pos_tmp;
-  u_int16 len_fl;
-  bool end_win; //if text reach the end of window
-}text_w;
-*/
+#define WIN_SPACE_BETWEEN_BORDER 10;
+#define WIN_SPACE_BETWEEN_OBJECT 5;
 
 #endif
+
+
+
 
 
 

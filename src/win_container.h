@@ -1,6 +1,4 @@
 /*
-   $Id$
-
    (C) Copyright 2000 Joel Vennin
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
@@ -12,146 +10,75 @@
    See the COPYING file for more details
 */
 
-#ifndef WIN_CONTAINER_H_
-#define WIN_CONTAINER_H_
+#ifndef _WIN_CONTAINER_H_
+#define _WIN_CONTAINER_H_
 
-#include "win_base.h"
-#include <list>
-
-class image;
-class animation;
-class win_write;
-class win_label;
-class win_font;
-class win_border;
-class win_image;
-class win_anim;
-class drawing_area;
-class win_background;
-class win_scrollbar;
-class win_select;
-
+class win_base;
+class win_theme;
 
 class win_container : public win_base
 {
- 
- private:
-  //  list<win_label *> l_label; //label list
-  //  list<win_write *> l_write; //write list
-  //  list<win_container *> l_container; //container list
-  //  list<win_image *> l_image; //image list
-  //  list<win_anim *> l_anim; //image list
-  list<win_base *> l_base;
+ protected:
+  list<win_base *> list_obj;
+  u_int16 space_between_border_;
+  u_int16 space_between_object_;
+  u_int8 justify_;
+  u_int8 layout_;
+  void update_layout();
 
-
-  // DATA TO SCROLLBAR
-  s_int16 cur_pos_scrollbar;
-  s_int16 max_y_object;
-  s_int16 cur_pos_index_scrollbar;
-  image * scroll_index;
-  image * scroll_bottom;
-  image * scroll_middle;
-  image * scroll_top;
-  image * scroll_bar_draw;
-  win_scrollbar * sb;
-  u_int16 pad_scroll;
-  
-  
-  void init_scrollbar();
-  void destroy_scrollbar();
-  void draw_scrollbar();
-  void update_scrollbar();
-  void update_scrollbar_index();
-  
-  //function activate in update
-  void (*func_update)();
-  
-  
  public:
-  
-
-  /**************************************************************************/
-   /****************************YOU CAN USE THIS *****************************/
-   /**************************************************************************/
-
-  //just for the first container
-  win_container(s_int16,s_int16,u_int16,u_int16);
-  
-  //destructor
+  win_container(s_int16 tx,s_int16 ty,u_int16 tl,u_int16 th,win_theme * wth);
   ~win_container();
-  
-  //it's to create label & write (x,y,length,height, type of font you want to use
-  win_label * add_label(s_int16,s_int16,u_int16,u_int16,win_font *);
-  win_write * add_write(s_int16,s_int16,u_int16,u_int16,win_font *);
-  
-  //next you create the first container, if you want to create another container you must use this function
-  win_container * add_container(s_int16,s_int16,u_int16,u_int16);
-  
-  //it's to create an win_image (x,y, and pointer to image)
-  win_image * add_image(s_int16,s_int16,image *);
 
-  win_anim * add_anim(s_int16,s_int16,animation *); 
- 
-  //used to remove object like win_label,win_write,win_container,win_image but NOT in MEMORY
-  /*void remove(win_label *);
-  void remove(win_write *);
-  void remove(win_container *);
-  void remove(win_image *);
-  void remove(win_anim *);
-  */
-  void remove(win_base *);
-  // Destroy all object in list && MEMORY
-  /*void destroy_all_label();
-  void destroy_all_image();
-  void destroy_all_anim();
-  void destroy_all_write();
-  void destroy_all_container();*/
-  void destroy_all();
+  //add an object
+  virtual void add(win_base *);
 
-  //used to draw all object of this container
-  void draw();
+  //remove an object
+  virtual void remove(win_base *);
+
+  //remove all, but not in memory
+  virtual void remove_all();
+
+  //destroy all object of the list and in memory
+  virtual void destroy();
+
+  //update function(not optimized actually)
+  virtual void update();
+
+  //draw on the screen
+  virtual void draw();
   
-  //update all object of this container
-  void update();
+  void move(s_int16 tx,s_int16 ty);
 
-  //move, resize this container and all object of this container
-  void move(s_int16,s_int16,bool move_by_scrollbar=false);
-  void resize(u_int16,u_int16);
+  //set the space between object and the border, work if you use layout or justify
+  virtual void set_space_between_border(u_int16);
   
-  //show all object of this container (this container too)
-  void show_all();
+  //set the space between object and the border, work if you use layout
+  virtual void set_space_between_object(u_int16);
 
-  //show all object of this container (this container too)
-  void hide_all();
+  u_int16 get_space_between_border(){return space_between_border_;}
+  u_int16 get_space_between_object(){return space_between_object_;}
 
-  void set_scrollbar(win_scrollbar * tmpsb);//if tmpsb==NULL then no scrollbar :)
-  void set_pad_scrollbar(u_int16); //change the pad to move 
-  void up_scrollbar();//use it to move up scrollbar
-  void down_scrollbar(); //use it to move down scrollbar
+  //if true all of this object is in brightness mode
+  void set_draw_brightness(bool b);
+
+  void set_visible_all(bool);
+
+  //justify all object : WIN_JUSTIFY_LEFT, WIN_JUSTIFY_RIGHT, WIN_JUSTIFY_CENTER
+  void set_justify(u_int8);
   
-  void attach_update_function(void (*f)());
+  //justify an win_base object in this object
+  void set_justify(win_base * wb,u_int8);
   
+  //set the layout (like in java i think) Now 2 sort of layout but i can add several if you suggest me. WIN_LAYOUT_NO (no layout: you put your object where you want)
+  //and WIN_LAYOUT_LIST( all object show like a listbox)
+  void set_layout(u_int8 lay);
 
-  /**************************************************************************/
-  /****************************NEVER USE THIS *****************************/
-  /**************************************************************************/
- 
- void is_object_max_y(s_int16); //if the object have the Max y 
-  win_select * tree_select;
-  void find_obj_max_y(); //search the object which have the max y
-  // void attach_select(win_select *); //this function is called by win_select
-  // void dettach_select(); //this function is called by win_select
-  //don't use it
-  void update_da(); //this function update some position about the drawing area
-  //you doesn't use this constructor !!!!!it's called by a creation of new container
-  win_container(s_int16,s_int16,u_int16,u_int16,win_container *);
+  //IMPORTANT: You can use set_justify and layout to do good window
+
+  void update_real_position();
 };
-
-
-
 #endif
-
-
 
 
 

@@ -1,6 +1,4 @@
 /*
-   $Id$
-
    (C) Copyright 2000 Joel Vennin
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
@@ -12,113 +10,90 @@
    See the COPYING file for more details
 */
 
-#ifndef WIN_SELECT_H_
-#define WIN_SELECT_H_
+#ifndef _WIN_SELECT_H_
+#define _WIN_SELECT_H_
 
-#include "win_types.h"
-#include <list>
+#include "win_scrolled.h"
 
-class win_image;
-class win_label;
-class win_write;
+class win_base;
+class win_theme;
 class win_container;
-class win_border;
-class win_select;
-class win_cursor;
-class image;
+class win_scrolled;
 
-class win_select
+class win_select : public win_scrolled
 {
- private:
+ protected:
+  //index of the current object which is selected
+  list<win_base *>::iterator index_list;
+  //to show the selected object if isn't visible in the select 
+  void update_position();
+  //mode to select
+  u_int8 mode_selected_;
+  //if this select has a father
+  win_select * fatherselect_;
+  //current win_select activate
+  static win_select * curselect_;
+  void next_();
+  void previous_();
+ 
+  static bool activate_keyboard_;
 
-#ifdef _DEBUG_
-  static u_int16 cpt_win_select_debug;
-#endif
+  virtual void on_next();
+  virtual void on_previous();
   
-  list<win_base *> l_list; 
-  list<win_base *>::iterator ite_list;
-  list<win_container *> l_select;
-  list<win_container *>::iterator ite_select;
+  //use this function to activate the object see win_base.h
+  void on_activate();
   
-  
-  bool type_select;
-  win_border * border_to_select;
-  win_cursor * cursor_to_select;
-  s_int16 get_y_move_to_be_visible(); 
-  static win_select * cur_select;
-  void adjust_visible();
-
+  void activate___();
+ 
  public:
-  //call this constructor to create the first win_select
-  win_select(win_container * tmp,bool b=WIN_SELECT_JUST_OBJECT);
-  
+  win_select(s_int16 tx,s_int16 ty,u_int16 tl,u_int16 th,win_theme * wth);
   ~win_select();
-  
-  //add an object in the win_select, so this win select is like a sheet of tree
-  void add(win_base * , u_int8 m);
-  //remove an object in the win_select but not destroy object !!!
+  //Add object
+  void add(win_base *);
+  void add(win_select *);
+  //remove
   void remove(win_base *);
-  //remove all object
   void remove_all();
-  //remove all select and destroy them
-  void remove_all_select();
-  //set border && cursor for the selection
-  void set_border(win_border * tmp);
-  void set_cursor(win_cursor * tmp);
-  
-  //pass to the next object
-  win_base * next();
-  
-  //pass to the previous object
-  win_base * previous();
-  
-  //add a selection, the twc is the container which 'll be attach to the select
-  win_select *  add_select(win_container * twc,bool b=WIN_SELECT_JUST_OBJECT);
-  
-  //remove a selection but don't destroy
-  void remove_select(win_select * tmp); 
-  
+  void destroy();
+  void update();
+  //get the pointer of the object which is selected
+  win_base * get();
+  //get the position of the object which is selected
+  u_int16 get_pos();
+  //set the default object
+  void set_default(win_base * wb);
+  void set_default(u_int16 ); //set the default object with a number, 1 is the first object 2 is the .....
+  //set the mode of the selection WIN_SELECT_MODE_BRIGHTNESS, WIN_SELECT_MODE_BORDER, cursor not implemented
+  void set_select_mode(u_int8);  
  
-  // call this function to change for another win_select
-  void next_select();
-  // call this function to return up of the cur winselect (like a tree)
-  void up_select();  
-  // call this function when you want activate function of the cur object
-  void activate_select(); 
-  //set the default object 
-  void set_default_obj(void * tmp); 
   
-  //get pointer of cur selection
-  win_base * get(); 
-  //get position of cur selection
-  u_int8 get_pos(); 
- 
+  //next object
+  static void next();
+  //previous object
+  static void previous();
+  //set the curselect
+  static void set_cur_select(win_select * ws);
+  //return a the father select
+  static void back();
+  static void activate();
+  static void set_activate_keyboard(bool b){activate_keyboard_=b;}
+  static bool is_activate_keyboard(){return activate_keyboard_;}
+  
+  //set the curselect to NULL, needed if you want clean select
+  static void init();
+  
+  /*IMPORTANT
+    you can with win_select browse a tree of selection, if you want to return at the last node call the back function, or if you want
+    to go at a node you have selected just call the on_activate_function
+  */  
+  
   static SDLKey next_key;
   static SDLKey previous_key;
-  static SDLKey next_select_key;
-  static SDLKey up_select_key;
   static SDLKey activate_key;
-  static bool activate_selection;
-
-  //update function
-  static void update(); 
-
-
-  /*****************************************************************************/
-  /******************NEVER USE THIS *******************************************/
- /*****************************************************************************/
-  win_select(win_container * twc,win_select *tws,bool b=WIN_SELECT_JUST_OBJECT);
-  win_select * father_select;
-  win_container * attached_container; //container which his attached at the select
-   
+  static SDLKey back_key;
 };
-
-
-
 #endif
-
-
-
 
 
 

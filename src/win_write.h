@@ -1,6 +1,4 @@
 /*
-   $Id$
-
    (C) Copyright 2000 Joel Vennin
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
@@ -15,71 +13,24 @@
 #ifndef WIN_WRITE_H_
 #define WIN_WRITE_H_
 
-
 class win_base;
 class win_label;
 class win_font;
-class win_container;
-class drawing_area;
+class win_theme;
 
 class win_write : public win_label
 {
-
-  char tmp_input[2];
-  //  char text_get[WIN_TEXT_MAX_LENGTH]; 
-  bool ok_text;
-  
-  void write();
- 
- public:
-  win_write(s_int16,s_int16,u_int16,u_int16,win_font * fo,win_container *);
-  
-
-
-  void update();
-  bool is_text();
-  char * get_text_entry(); //get text between two entry
-  
-  /*
-  // win_font * font;
-  
-  // void write();
-  
  protected:
-   
-  char text_result[WIN_TEXT_MAX_LENGTH];
+  bool ok_text_;
+  bool activate_keyboard_;
+  void write();
   
-  text_w text;
-  int beg_select;
-  int end_select;
-  bool ok_text;
-  
- 
  public:
-
-
-
-  
-  win_write(u_int16,u_int16,u_int16,u_int16,win_font *fo,win_container *);
-  ~win_write();
-  void set_font(win_font *fo);
-  bool is_text();//return true if seltext/lenght!=0
-  char * get_text();//return seltext if is_text
-  void draw();
+  win_write(s_int16,s_int16,u_int16,u_int16,win_theme *,win_font * fo);
   void update();
-  */
+  bool is_text(){return ok_text_;}
+  void set_activate_keyboard(bool b){activate_keyboard_=b;}
+  bool is_activate_keyboard(){return activate_keyboard_;}
+  char * get_text_entry();
 };
-
 #endif
-
-
-
-
-
-
-
-
-
-
-
-

@@ -372,24 +372,36 @@ dialog_engine::dialog_engine (const char *npc_name)
 
     // Create window
     font = new win_font (game::theme);
-    border = new win_border (game::theme,WIN_BORDER_MINI_SIZE);
-    cursor = new win_cursor (game::theme);
-    back = new win_background (game::theme);
-    wnd = new win_container (40, 20, 240, 160);
+    th= new win_theme (game::theme);
+    //    cursor = new win_cursor (game::theme);
+    wnd = new win_container (40, 20, 240, 160, th);
 
     // set the NPC's portrait (later:  get the portrait to use from the npc data)
     set_portrait ("gfxtree/portraits/lyanna.pnm");
     // ... and name
     set_name (mynpc->name);
-        
-    txt = wnd->add_container (80, 5, 155, 150);
-    sel = new win_select (txt);
-    sel->set_cursor (cursor);
-    sel->set_border (border);
+
+    win_select::next_key=SDLK_DOWN;
+    win_select::previous_key=SDLK_UP;
+
+    txt = new win_container (80, 5, 155, 150,th);
+    wnd->add(txt);
+    question=new win_label(10,10,100,30,th,font);
+    txt->add(question);
+    question->set_auto_height(true);
+    sel = new win_select (0,0,150,145,th);
+    txt->add(sel);
+    sel->set_activated(true);
+    sel->set_activate_keyboard(true);
+    //    sel->set_cursor (cursor);
+    //    sel->set_border (border);
     
-    wnd->set_border (border);
-    wnd->set_background (back);
-    wnd->show_all ();
+    /*    wnd->set_border (border);
+	  wnd->set_background (back);*/
+    wnd->set_visible_all (true);
+    txt->set_visible_all (true);
+    wnd->set_border_visible(true);
+    wnd->set_background_visible(true);
     wnd->draw ();
 
     // Load dialogue
@@ -423,17 +435,17 @@ dialog_engine::dialog_engine (const char *npc_name)
 dialog_engine::~dialog_engine ()
 {
     // refresh screen
-    screen::drawbox(0,0,320,200,0);
+  screen::drawbox(0,0,320,200,0);
 
     // restore engine
     game::engine = engine;
 
+    sel->set_activated(false);
     delete wnd;
-    delete border;
-    delete cursor;
+    delete th;
+    //    delete cursor;
     delete portrait;
     delete font;
-    delete back;
 
     Py_XDECREF (instance);
 }
@@ -461,23 +473,39 @@ void dialog_engine::run ()
     }
 
     // Add NPC text and all player reactions to container
-    for (i = 0; i < dlg->text_size; i++)
+
+    question->set_text(dlg->text[0]);
+
+    for (i = 1; i < dlg->text_size; i++)
     {
-        l = txt->add_label (10, h, 120, h+font->height, font);
+        l = new win_label (10, h, 100, h+font->height(), th, font);
         l->set_auto_height (true);
         l->set_text (dlg->text[i]);
-        sel->add (l, WIN_SELECT_MODE_BORDER);  
+	txt->add(l);
+        sel->add (l);  
         cur_answers.push_back (l);
 
-        h += l->height+10;
+        h += l->height()+10;
     }
 
     // Either select the single NPC speech ...
-    if (dlg->text_size == 1) sel->set_default_obj (cur_answers.front ());
-    // ... or the player's first answer
-    else sel->set_default_obj (cur_answers[1]);
+    if (dlg->text_size == 1) 
+      {
+        l = new win_label (10, h, 120, h+font->height(), th, font);
+        l->set_auto_height (true);
+        l->set_text ("Continue...");
+	txt->add(l);
+        sel->add (l);  
+        cur_answers.push_back (l);	
+	sel->set_default (cur_answers.front ());
+      }
     
-    txt->show_all ();
+    // ... or the player's first answer
+    else sel->set_default (cur_answers[0]);
+    
+    sel->move(0,question->y()+question->height()+10);
+    sel->resize(sel->length(),txt->height()-question->height()-15);
+    txt->set_visible_all (true);
     txt->draw ();
 }
 
@@ -489,12 +517,14 @@ void dialog_engine::realtime_tasks ()
 void dialog_engine::update_keyboard ()
 {
     // SPACE activates the current selection
+
     if (input::has_been_pushed (SDLK_SPACE))
     {
         vector<win_label*>::iterator i;
 
         // remember choice
-        answer = sel->get_pos () - 1;
+        answer = sel->get_pos ();
+	if(cur_answers.size()==1) answer--;
 
         // remove all the displayed text
         for (i = cur_answers.begin (); i != cur_answers.end (); i++)
@@ -509,19 +539,20 @@ void dialog_engine::update_keyboard ()
     }
 
     // Cursor keys iterate through possible answers
-    if (dlg->text_size > 1)
-    {
+    sel->update();
+    /*    if (dlg->text_size > 1)
+      {
         if (input::has_been_pushed (SDLK_UP))
-        {
-            if (sel->get_pos () == 2) sel->set_default_obj (cur_answers.back ());
+	  {
+            if (sel->get_pos () == 1) sel->set_default (cur_answers.back ());
             else sel->previous ();
-        }
+	  }
         if (input::has_been_pushed (SDLK_DOWN))
-        {
-            if (sel->get_pos () == cur_answers.size ()) sel->set_default_obj (cur_answers[1]);
+	  {
+            if (sel->get_pos () == cur_answers.size ()) sel->set_default (cur_answers[0]);
             else sel->next ();    
-        }
-    }
+	  }
+	  } */
 }
 
 void dialog_engine::gametime_tasks ()
@@ -548,8 +579,9 @@ void dialog_engine::set_portrait (char *new_portrait)
     portrait->load_pnm (new_portrait);
     portrait->set_mask (true);
 
-    face = wnd->add_image (10, 10, portrait);
-    face->show ();
+    face = new win_image (10, 10, portrait, th);
+    wnd->add(face);
+    face->set_visible (true);
 }
 
 // Set / change the NPC-name
@@ -561,10 +593,11 @@ void dialog_engine::set_name (char *new_name)
         delete name;
     }
     
-    name = wnd->add_label (10, 75, 64, 10, font);
+    name = new win_label (10, 75, 64, 10, th, font);
+    wnd->add(name);
     name->set_auto_height (true);
     name->set_text (new_name);
-    name->show ();
+    name->set_visible (true);
 }
 
 // Set / change the NPC-text color 

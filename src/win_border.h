@@ -1,6 +1,4 @@
 /*
-   $Id$
-
    (C) Copyright 2000 Joel Vennin
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
@@ -14,16 +12,11 @@
 
 #ifndef WIN_BORDER_H_
 #define WIN_BORDER_H_
-
-#include "win_types.h"
 class image;
-class win_container;
+class win_base;
 
 class win_border
 {
-  //image * h_border;
-  //image * v_border;
-
  public:
   image * h_border_template;
   image * v_border_template;
@@ -31,45 +24,18 @@ class win_border
   image * corner_top_left;
   image * corner_bottom_left;
   image * corner_bottom_right;
+  image * h_border;
+  image * v_border;
 
+  win_border(win_border &);
   win_border(char *rep ,char *size=WIN_BORDER_NORMAL_SIZE);
   ~win_border();
+  
+  win_border & operator=(win_border &);
   void load(char *,char *);
-};
-
-
-class win_background
-{
- public:
-  image * background_template;
-  win_background(char *);
-  ~win_background();
-  void load(char *);
-};
-
-class win_cursor
-{
- public:
-  image * cursor;
-  win_cursor(char *);
-  ~win_cursor();
-  void load(char *);
-};
-
-
-class win_scrollbar
-{
- public:
-  image * bar;
-  image * bottom;
-  image * middle;
-  image * top;
-  win_scrollbar(char *);
-  void load(char *);
-  ~win_scrollbar();
+  void update(win_base *);
+  void destroy();
 };
 #endif
-
-
 
 

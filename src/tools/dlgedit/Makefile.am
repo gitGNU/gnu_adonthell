@@ -14,20 +14,20 @@ pset_interface.cc run.cc run_callbacks.cc run_interface.cc
 # Evil, but it works...
 CPPFLAGS += -D_DLGEDIT_ -D_DEBUG_ -D_VERSION_=\"0.6\" `gtk-config --cflags`
 
-LDADD = ../../inventory.o ../../py_mapengine_wrap.o \
+LDADD = ../../py_mapengine_wrap.o \
 ../../animation.o ../../py_character_wrap.o \
 ../../audio.o ../../lex.prefs.o ../../screen.o \
 ../../audio_thread.o ../../drawing_area.o ../../event.o \
 ../../character.o ../../map.o ../../win_base.o \
 ../../mapcharacter.o ../../win_border.o \
 ../../cutscene.o ../../mapengine.o ../../win_container.o \
-../../mapevent.o ../../win_font.o \
-../../fileops.o ../../mapitem.o \
+../../mapevent.o ../../win_font.o ../../win_background.o \
+../../fileops.o ../../mapitem.o ../../win_theme.o \
 ../../game.o ../../mappattern.o ../../win_image.o \
 ../../mapsquare.o ../../win_label.o \
 ../../image.o ../../pnm.o ../../win_select.o \
 ../../init.o ../../prefs.o ../../win_write.o \
-../../input.o ../../yarg.o ../../win_anim.o \
+../../input.o ../../yarg.o ../../win_scrollbar.o ../../win_scrolled.o \
 ../../py_inc.o ../../dialog.o ../../storage.o \
 ../../py_dialog_engine_wrap.o \
 ../../py_quest_wrap.o ../../quest.o

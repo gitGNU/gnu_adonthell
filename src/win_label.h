@@ -1,6 +1,4 @@
 /*
-   $Id$
-
    (C) Copyright 2000 Joel Vennin
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
@@ -15,64 +13,51 @@
 #ifndef WIN_LABEL_H_
 #define WIN_LABEL_H_
 
-//#include "win_base.h"
-//#include "win_types.h"
-
-class win_font;
 class image;
-class win_cursor;
-class win_select;
+class win_font;
+class win_base;
+class win_theme;
 
 class win_label : public win_base
 {
  protected:
-  win_font * font;
-  char texte[WIN_TEXT_MAX_LENGTH];
-  u_int16 size_texte;
-  bool auto_height;
-  bool auto_size;
+  win_font * font_;
+  win_font * src_font_;
+  char texte_[5000];
+  u_int8 texte_size_;
+  bool auto_height_;
+  bool auto_size_;
   
-  image * tmp_image;
-  image * tmp_draw;
-  //image * cursor;
-
-  void draw_cursor();
- 
+  image * template_;
   
-  
- public:
-  
+  s_int16 word_size(u_int16 begin,u_int16 & length);
+  s_int8 word_place(u_int16 cur_line_size,s_int16 w_size);
   void init_draw();
-  
-  u_int16 cur_text_pos; //cur position of the text
-  u_int16 last_text_pos; //derniere position of the text
-
-  // u_int16 x_pad_l; //x start for the text
-  win_label(s_int16,s_int16,u_int16,u_int16,win_font * fo,win_container *);
-  
-  ~win_label();
-  void set_text(const char * tmp);
-  bool add_text(const char *tmp); //return true if text added
-  void clear_text();
-  char * get_text();//get full text of the label
-  
-  void set_font(win_font * tmp);  
-  void set_auto_size(bool tmp);
-  void set_auto_height(bool tmp);
-  
-
-  void update();
+  void init_draw_surface();
+ public:
+  win_label(s_int16,s_int16,u_int16,u_int16,win_theme *, win_font * fo);
   void draw();
-  void resize(u_int16 l,u_int16 h);
-  void set_select_mode(u_int8 tmp);
-
-  //void set_cursor(win_cursor * tmp);
-  void draw_text(u_int16);//position to begin text
-
-  // void attach_select(win_select *);
-  // void dettach_select();
+  void set_text(const char * tmp);
+  void add_text(const char * tmp);
+  bool is_auto_size(){return auto_size_;}
+  bool is_auto_height(){return auto_height_;}
+  void set_auto_size(bool );
+  void set_auto_height(bool );
+  void resize(u_int16 tl,u_int16 th);
+  void update();
+  char * get_text(){return texte_;}
+  ~win_label();
+  
 };
 #endif
+
+
+
+
+
+
+
+
 
 
 

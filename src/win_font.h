@@ -1,7 +1,5 @@
 /*
-   $Id$
-
-   (C) Copyright 2000 Joel Vennin
+  (C) Copyright 2000 Joel Vennin
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -22,18 +20,25 @@ class win_font{
  private:
   void erase();
   void init_in_table();
-
- public:
-  
-  image * table;
-  u_int8 height;
-  u_int8 length; //just for space bar
   bool table_core[WIN_NB_TABLE_CHAR];
+  
+  u_int8 height_;
+  u_int8 length_; //just for space bar
+ public:
+    
   win_font();
+  win_font(win_font &);
   win_font(char *);
   ~win_font();
   void load(char *);
   bool in_table(u_int16 tmp);
+  image & operator[](int);
+  win_font & operator=(win_font &);
+  
+  u_int16 height(){return height_;}
+  u_int16 length(){return length_;}
+  
+  image * table;
 };
 
 #endif

@@ -1,6 +1,4 @@
 /*
-   $Id$
-
    (C) Copyright 2000 Joel Vennin
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
@@ -11,412 +9,284 @@
 
    See the COPYING file for more details
 */
-
-#include <string.h>
-#include <list>
+#include <string>
 #include "types.h"
 #include "image.h"
 #include "win_types.h"
-#include "win_border.h"
 #include "win_font.h"
 #include "win_base.h"
-#include "win_select.h"
-#include "win_container.h"
+#include "win_theme.h"
 #include "win_label.h"
 
-
-win_label::win_label (s_int16 x, s_int16 y, u_int16 l, u_int16 h, win_font * fo, win_container * tmpwc):win_base (x, y, l, h, tmpwc, tmpwc->get_drawing_area ())
+win_label::win_label(s_int16 tx ,s_int16 ty ,u_int16 tl,u_int16 th,win_theme * wthem, win_font * fo)
+  :win_base(tx,ty,tl,th,wthem)
 {
-    font = fo;
-    auto_height = false;
-    auto_size = false;
-    cursor = NULL;
-    texte[0]='\0';
-    //x_pad_l = 0;
-    size_texte = 0;
-    cur_text_pos = 0;
-    tmp_image = new image ();
-    tmp_draw = new image ();
+  font_=fo;
+  auto_height_=false;
+  auto_size_=false;
+  template_ = new image();
+  template_->resize(tl,th);
+  set_text("");
+  type_obj_=WIN_OBJ_LABEL;
 }
 
-win_label::~win_label ()
+win_label::~win_label()
 {
-    if (cursor)
-        delete cursor;
-    delete tmp_image;
-    delete tmp_draw;
+  if(template_) delete template_;
+  font_=NULL;
 }
 
-void
-win_label::set_font (win_font * tmp)
+//return real size
+s_int16 win_label::word_size(u_int16 begin,u_int16 & length)
 {
-    font = tmp;
-    if (font)
-        init_draw ();
-}
-
-void
-win_label::set_text (const char *tmp)
-{
-    if (font)
+  if(begin>=texte_size_)return -1;
+  u_int16 size=0;
+  length=0;
+  while(begin+length<texte_size_ && texte_[begin+length]!='\n' && texte_[begin+length]!=' ')
     {
-        strcpy (texte, tmp);
-        size_texte = strlen (texte);
-        init_draw ();
+      if(font_->in_table(texte_[begin+length])) 
+	size+=font_->table[texte_[begin+length]].length;
+      length++;
     }
-    else
+  return size;
+} 
+
+//0: cut the word
+//1: Ok
+//2: Next Line
+s_int8 win_label::word_place(u_int16 cur_line_size,s_int16 w_size)
+{
+  if(w_size<0) return -1;
+  if(w_size>length_) return 0;
+  if(w_size>length_-cur_line_size) return 2;
+  else return 1;
+}
+
+void win_label::resize(u_int16 tl,u_int16 th)
+{
+  win_base::resize(tl,th); 
+  template_->init();
+  template_->resize(tl,th);
+  init_draw_surface();
+  init_draw();
+}
+
+void win_label::init_draw_surface()
+{
+  u_int16 tmplength_=0,tmpheight_=0,tmpwsize_;
+  u_int16 i=0,curligne_=0,wnbch_;
+  if(!auto_size_ && auto_height_)
     {
-        cout << "You must set font\n";
-        exit (1);
-    }
-}
-
-bool
-win_label::add_text (const char *tmp)
-{
-    if (strlen (tmp) + strlen (texte) < WIN_TEXT_MAX_LENGTH)
-    {
-        strcat (texte, tmp);
-        set_text (texte);
-        return true;
-    }
-    else
-        return false;
-}
-
-char *
-win_label::get_text ()
-{
-    if (size_texte == 0)
-        return NULL;
-    else
-        return texte;
-}
-
-void
-win_label::clear_text ()
-{
-    set_text ("");
-}
-
-void
-win_label::set_auto_size (bool tmp)
-{
-    auto_size = tmp;
-    if (auto_size)
-        auto_height = false;
-    init_draw ();
-    if (wc)
-        wc->find_obj_max_y ();  //for scrollbar
-}
-
-void
-win_label::set_auto_height (bool tmp)
-{
-    auto_height = tmp;
-    if (auto_height)
-        auto_size = false;
-    init_draw ();
-    if (wc)
-        wc->find_obj_max_y ();  //for scrollbar
-}
-
-/*
-void
-win_label::set_cursor (win_cursor * tmp)
-{
-    if (tmp)
-    {
-        if (cursor)
-            delete cursor;
-
-        cursor = new image ();
-        *cursor = *(tmp->cursor);
-    }
-}
-*/
-
-void
-win_label::init_draw ()
-{
-    u_int16 i = 0;
-
-    if (auto_size)
-    {
-        u_int16 max_length = 0;
-        u_int16 max_height = 0;
-        u_int16 tmp_length = 0 + x_pad_l;
-
-        while (i < size_texte && texte[i] != '\0')
-        {
-            if (texte[i] == '\n')
-            {
-                max_height += font->height;
-                if (max_length < tmp_length)
-                    max_length = tmp_length;
-                tmp_length = 0 + x_pad_l;
-            }
-            else
-            {
-                if (texte[i] == ' ')
-                    tmp_length += font->length;
-                else if (font->in_table (texte[i]))
-                    tmp_length += font->table[texte[i]].length;
-            }
-            i++;
-        }
-        if (max_length < tmp_length)
-            max_length = tmp_length;
-        win_base::resize (max_length, max_height + font->height);
-    }
-    else
-    {
-        if (auto_height)
-        {
-            u_int16 use_space = 0 + x_pad_l; //space used for the line
-            u_int16 word_space = 0; //size of the word
-            u_int16 begin_word = 0; //position of the word in the string
-            u_int16 tmp_pos, tmp_pos2, tmp_y = font->height;
-
-            i = 0;
-            while (i < size_texte && texte[i] != '\0')
-            {
-                begin_word = i;
-                tmp_pos = begin_word;
-                word_space = 0; //size of the word start at 0
-                while (texte[tmp_pos] != '\0' && texte[tmp_pos] != '\n' && texte[tmp_pos] != ' ')
-                {
-                    if (font->in_table (texte[tmp_pos]))
-                        word_space += font->table[texte[tmp_pos]].length; //calcul word size
-                    tmp_pos++;
-                }
-                //now tmp_pos is the index of end of the word in the string
-                if (word_space > length - use_space) //if size of word > of the free space on line
-                {
-                    if (word_space > length) //if size of word > at length of the label 
-                    {
-                        tmp_pos2 = begin_word;
-                        while (tmp_pos2 < tmp_pos)
-                        {
-                            if (font->in_table (texte[tmp_pos2]))
-                                if (use_space + font->table[texte[tmp_pos2]].length < length)
-                                    use_space += font->table[texte[tmp_pos2]].length;
-                                else
-                                {
-                                    tmp_y += font->height; //modify
-                                    use_space = x_pad_l + font->table[texte[tmp_pos2]].length;
-                                }
-                            tmp_pos2++;
-                        }
-                    }
-                    else
-                    {
-                        //if word_space < length && word_space > length-use_space
-                        tmp_pos2 = begin_word;
-                        use_space = x_pad_l + 0; //add the pad
-                        tmp_y += font->height;
-                        while (tmp_pos2 < tmp_pos)
-                        {
-                            if (font->in_table (texte[tmp_pos2]))
-                                use_space += font->table[texte[tmp_pos2]].length;
-                            tmp_pos2++;
-                        }
-                    }
-                }
-                else
-                {
-                    tmp_pos2 = begin_word;
-                    while (tmp_pos2 < tmp_pos)
-                    {
-                        if (font->in_table (texte[tmp_pos2]))
-                            use_space += font->table[texte[tmp_pos2]].length;
-                        tmp_pos2++;
-                    }
-                }
-                i = tmp_pos;
-                if (texte[i] == ' ')
-                    use_space += font->length;
-                else if (texte[i] == '\n')
-                {
-                    use_space = 0 + x_pad_l; //add pad
-                    tmp_y += font->height;
-                }
-                i++;
-            }                   //fin while
-            //set height to tmpy
-            win_base::resize (length, tmp_y);
-        }
-    }
-    //now resize drawing surface
-#warning no resize needed must change it (jol)
-    tmp_draw->resize (length, height);
-    draw_text (cur_text_pos);
-}
-
-
-void
-win_label::draw_text (u_int16 i)
-{
-    u_int16 tmp_y = 0;
-    u_int16 use_space = 0 + x_pad_l;
-    u_int16 word_space = 0;
-    u_int16 begin_word = 0;
-    u_int16 tmp_pos, tmp_pos2;
-
-    for (u_int16 k = 0; k < height; k++)
-        for (u_int16 j = 0; j < length; j++)
-            tmp_draw->put_pix (j, k, screen::trans_pix);
-    while (i < size_texte && texte[i] != '\0' && tmp_y < height)
-    {
-        begin_word = i;
-        tmp_pos = begin_word;
-        word_space = 0;
-        while (texte[tmp_pos] != '\0' && texte[tmp_pos] != '\n' && texte[tmp_pos] != ' ')
-        {
-
-            if (font->in_table (texte[tmp_pos]))
-                word_space += font->table[texte[tmp_pos]].length; //calcul word size
-            tmp_pos++;
-        }
-
-        if (word_space > length - use_space)
-        {
-            if (word_space > length)
-            {
-                tmp_pos2 = begin_word;
-                while (tmp_pos2 < tmp_pos)
-                {
-                    if (font->in_table (texte[tmp_pos2]))
-                        if (use_space + font->table[texte[tmp_pos2]].length < length)
-                        {
-                            tmp_draw->putbox_img (&(font->table[texte[tmp_pos2]]), use_space, tmp_y);
-                            use_space += font->table[texte[tmp_pos2++]].length;
-                        }
-                        else
-                        {
-                            use_space = 0 + x_pad_l;
-                            tmp_y += font->height;
-                            tmp_draw->putbox_img (&(font->table[texte[tmp_pos2]]), use_space, tmp_y);
-                            use_space += font->table[texte[tmp_pos2++]].length;
-                        }
-                    else
-                        tmp_pos2++;
-                }
-            }
-            else
-            {
-                //if word_space < length && word_space > length-use_space
-                tmp_pos2 = begin_word;
-                use_space = 0 + x_pad_l;
-                tmp_y += font->height;
-                while (tmp_pos2 < tmp_pos && tmp_y < height)
-                {
-
-                    if (font->in_table (texte[tmp_pos2]))
-                    {
-                        tmp_draw->putbox_img (&(font->table[texte[tmp_pos2]]), use_space, tmp_y);
-                        use_space += font->table[texte[tmp_pos2++]].length;
-                    }
-                    else
-                        tmp_pos2++;
-                }
-            }
-        }
-        else
-        {
-            tmp_pos2 = begin_word;
-            while (tmp_pos2 < tmp_pos && tmp_y < height)
-            {
-                if (font->in_table (texte[tmp_pos2]))
-                {
-                    tmp_draw->putbox_img (&(font->table[texte[tmp_pos2]]), use_space, tmp_y);
-                    use_space += font->table[texte[tmp_pos2]].length;
-                }
-                tmp_pos2++;
-            }
-        }
-        i = tmp_pos;
-        if (texte[i] == ' ')
-            use_space += font->length;
-        else if (texte[i] == '\n')
-        {
-            use_space = 0 + x_pad_l;
-            tmp_y += font->height;
-        }
-        i++;
-    }
-    last_text_pos = i;
-}
-
-void
-win_label::resize (u_int16 l, u_int16 h)
-{
-    win_base::resize (l, h);
-    if (font)
-        init_draw ();
-    else
-    {
-        cout << "You must set font\n";
-        exit (1);
-    }
-}
-
-void
-win_label::draw ()
-{
-  if (visible && font)
-    {
-      draw_background ();
-      if (wselect && selected)
-        {
-	  if (select_mode == WIN_SELECT_MODE_BRIGHTNESS)
-            {
-	      tmp_image->brightness (tmp_draw, 180);
-	      tmp_image->putbox_mask (real_x, real_y, da);
-            }
-	  else
-            {
-	      if (select_mode == WIN_SELECT_MODE_CURSOR)
-                {
-		  draw_cursor ();
-		  tmp_draw->putbox_mask (real_x, real_y, da);
-                }
-	      else
-                {
-		  if (select_mode == WIN_SELECT_MODE_BORDER)
-		    tmp_draw->putbox_mask (real_x, real_y, da);
-                }
-            }
-        }
-      else
-        {
+      
+      while(i<texte_size_)
+	{
+	  if(texte_[i]=='\n') {curligne_=0;tmpheight_+=font_->height();i++;}
+	  else if(texte_[i]==' ')
+	    {
+	      if(curligne_+font_->length()<length_) curligne_+=font_->length();
+	      else {
+		curligne_=0;tmpheight_+=font_->height();
+	      }
+	      i++;
+	    }
 	  
-	  tmp_draw->putbox_mask (real_x, real_y, da);
-	  
-        }
-      draw_border ();
+	  switch(word_place(curligne_,(tmpwsize_=word_size(i,wnbch_))))
+	    {
+	    case 0:
+	      for(int j=i;j<wnbch_+i;j++)
+		{
+		  if(font_->in_table(texte_[j]))
+		    {
+		      if(curligne_+font_->table[texte_[j]].length>length_) 
+			{
+			  curligne_=0;tmpheight_+=font_->height();
+			}
+		      curligne_+=font_->table[texte_[j]].length;
+		    }
+		}
+	      i+=wnbch_;
+	      break;
+	    case 1:
+	      curligne_+=tmpwsize_;i+=wnbch_;
+	      break;
+	    case 2:
+	      curligne_=tmpwsize_;i+=wnbch_;tmpheight_+=font_->height();
+	      break;
+	    default:
+	      break;
+	    }
+	}
+      if(auto_height_ && height_!=tmpheight_)
+	{
+	  win_base::resize(length_,tmpheight_+font_->height()); 
+	  template_->init();
+	  template_->resize(length_,tmpheight_+font_->height()); 
+	}
+    }
+  else
+    { //if autosize
+      if(auto_size_)
+	{
+	  while(i<texte_size_)
+	    {
+	      if(texte_[i]!='\n' && texte_[i]!=' ' && font_->in_table(texte_[i])) curligne_+=font_->table[texte_[i]].length;
+	      else if(texte_[i]=='\n')
+		{
+		  tmpheight_+=font_->height();
+		  if(curligne_>tmplength_) tmplength_=curligne_;
+		  curligne_=0;
+		}
+	      else if(texte_[i]==' ') curligne_+=font_->length();
+	      i++;
+	    }
+	  if(curligne_>tmplength_) tmplength_=curligne_;
+	  if(tmpheight_!=height_ || tmplength_!=length_) 
+	    {
+	      win_base::resize(tmplength_,tmpheight_+font_->height()); 
+	      template_->init();
+	      template_->resize(tmplength_,tmpheight_+font_->height());
+	    }
+	}
     }
 }
 
-void
-win_label::draw_cursor ()
+
+void win_label::init_draw()
 {
-  if (cursor) cursor->putbox_mask (real_x, real_y, da);
+  u_int16 tmpheight_=0,tmpwsize_;
+  u_int16 i=0,curligne_=0,wnbch_;
+  static u_int16 j;
+  for (u_int16 k = 0; k < height_; k++)
+    for (j = 0; j < length_; j++)
+      template_->put_pix(j, k,screen::trans_pix);
+  while(i<texte_size_)
+    {
+      if(texte_[i]=='\n') {curligne_=0;tmpheight_+=font_->height();i++;}
+      else if(texte_[i]==' ')
+	{
+	  if(curligne_+font_->length()<length_) curligne_+=font_->length();
+	  else 
+	    {
+	      curligne_=0;tmpheight_+=font_->height();
+	    }
+	  i++;
+	}
+      if(tmpheight_>=template_->height)break;
+      switch(word_place(curligne_,(tmpwsize_=word_size(i,wnbch_))))
+	{
+	case 0:
+	  for(j=i;j<wnbch_+i;j++)
+	    {
+	      if(font_->in_table(texte_[j]))
+		{
+		  if(curligne_+font_->table[texte_[j]].length>length_) 
+		    {curligne_=0;tmpheight_+=font_->height();}
+		  if(tmpheight_>=template_->height) break;
+		  template_->putbox_img(&(font_->table[texte_[j]]),curligne_,tmpheight_);
+		  curligne_+=font_->table[texte_[j]].length; 
+		}
+	    }
+	  i+=wnbch_;
+	  break;
+	case 1:
+	  for(j=i;j<wnbch_+i;j++)
+	    {  
+	      if(font_->in_table(texte_[j]))
+		{
+		  template_->putbox_img(&(font_->table[texte_[j]]),curligne_,tmpheight_);
+		  curligne_+=font_->table[texte_[j]].length;
+		}
+	    }
+	  i+=wnbch_;
+	  break;
+	case 2:
+	  tmpheight_+=font_->height();
+	  curligne_=0;
+	  if(tmpheight_>=template_->height) break;
+	  for(j=i;j<wnbch_+i;j++)
+	    {
+	      if(font_->in_table(texte_[j]))
+		{
+		  template_->putbox_img(&(font_->table[texte_[j]]),curligne_,tmpheight_);
+		  curligne_+=font_->table[texte_[j]].length;
+		}
+	    }
+	  i+=wnbch_;
+	  break;
+	default:
+	  
+	  break;
+	}
+    }
 }
 
-void
-win_label::update ()
+void win_label::draw()
 {
+  if(!visible_) return;
+  win_base::draw();
+  assign_drawing_area();
+  draw_background();
+  if(template_)
+    if(draw_brightness_)
+      {
+	static image imgbright;
+      	imgbright.brightness(template_,level_brightness_);
+	imgbright.putbox_mask(realx_,realy_,da_);
+      }
+      else template_->putbox_mask(realx_,realy_,da_);
+  draw_border();
+  detach_drawing_area();
+}
 
+void win_label::set_text(const char * tmp)
+{
+  strcpy(texte_,tmp);
+  texte_size_=strlen(texte_);
+  init_draw_surface();
+  init_draw();
+}
+
+void win_label::add_text(const char * tmp)
+{
+  strcat(texte_,tmp);
+  texte_size_=strlen(texte_);
+  init_draw_surface();
+  init_draw();
+}
+
+void win_label::set_auto_size(bool b)
+{
+  auto_size_=b;
+  if(b) auto_height_=false;
+  init_draw_surface();
+  init_draw();
+}
+
+void win_label::set_auto_height(bool b)
+{
+  auto_height_=b;
+  if(b) auto_size_=false;
+  init_draw_surface();
+  init_draw();
+}
+
+void win_label::update()
+{
+  win_base::update();
 }
 
 
-void
-win_label::set_select_mode (u_int8 tmp)
-{
-  /*win_base::set_select_mode (tmp);
-    if (select_mode == WIN_SELECT_MODE_CURSOR)
-        if (wselect->cursor)
-            x_pad_l = wselect->cursor->cursor->length;
-	    init_draw ();*/
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+

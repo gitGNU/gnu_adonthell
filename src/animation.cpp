@@ -387,107 +387,51 @@ s_int8 animation::save(const char * fname)
 
 void animation::save()
 {
-  char * s=query_window("Save as:");
-  if(!s) return;
-  if(save(s)) info_window("Error saving!");
-  delete s;
-}
-
-void animation::info_window(char * t_label)
-{
-  win_container * querycont;
-  win_label * querylabel;
-  win_label * querylabel2;
-  win_background * queryback;
-
-  queryback=new win_background(WIN_THEME_ORIGINAL);
-  querycont=new win_container(70,40,200,120);
-  querylabel=querycont->add_label(5,5,190,130,font);
-  querylabel->set_text(t_label);
-  querylabel2=querycont->add_label(60,90,80,15,font);
-  querylabel2->set_text("Press any key...");
-  querycont->set_border(border);
-  querycont->set_background(queryback);
-  querycont->show_all();
-  input::clear_keys_queue();
-  do
+  win_query * qw=new win_query(70,40,th,font,"Save as:");
+  char * s=qw->wait_for_text(makeFunctor(*this,
+					 &animation::update_editor),
+			     makeFunctor(*this,
+					 &animation::draw_editor));
+  if(!s) { delete qw; return; }
+  if(save(s))
     {
-      input::update();
-      update_and_draw();
-      querycont->update();
-      querycont->draw();
-      screen::show();
+      win_info * wi=new win_info(70,40,th,font,"Error saving!");
+      wi->wait_for_keypress(makeFunctor(*this,&animation::update_editor),
+			    makeFunctor(*this,&animation::draw_editor));
+      delete wi;
     }
-  while(input::get_next_key()<0);
-  delete querycont;
-  delete queryback;
-  input::clear_keys_queue();
-}
-
-char * animation::query_window(char * t_label)
-{
-  char * s, *t;
-  win_container * querycont;
-  win_label * querylabel;
-  win_write * querywrite;
-  win_background * queryback;
-
-  queryback=new win_background(WIN_THEME_ORIGINAL);
-  querycont=new win_container(70,40,200,120);
-  querylabel=querycont->add_label(5,5,100,15,font);
-  querylabel->set_text(t_label);
-  querywrite=querycont->add_write(5,20,100,30,font);
-  querycont->set_border(border);
-  querycont->set_background(queryback);
-  querycont->show_all();
-  input::clear_keys_queue();
-  input::set_key_repeat();
-  while(!querywrite->is_text())
-    {
-      input::update();
-      if(input::has_been_pushed(SDLK_ESCAPE))
-      {
-	delete querycont;
-	delete queryback;
-	s=NULL;
-	return(s);
-      }
-      update_and_draw();
-      querycont->update();
-      querycont->draw();
-      screen::show();
-    }
-  input::set_key_repeat(0);
-  input::clear_keys_queue();
-  t=querywrite->get_text();
-  if(t) s=strdup(t);
-  else s=NULL;
-  delete querycont;
-  delete queryback;
-#ifdef _DEBUG_
-  cout << "Returning:" << s << endl;
-#endif
-  return(s);
+  delete qw;
 }
 
 void animation::load()
 {
   animation * t=new animation;
-  char * s;
-  s=query_window("Load animation:");
+  win_query * qw=new win_query(70,40,th,font,"Load animation:");
+  char * s=qw->wait_for_text(makeFunctor(*this,
+					 &animation::update_editor),
+			     makeFunctor(*this,
+					 &animation::draw_editor));
   if(!s)
     {
       delete t;
+      delete qw;
       return;
     }
-  if(t->load(s)) info_window("Error loading!");
+  if(t->load(s))
+    {
+      win_info * wi=new win_info(70,40,th,font,"Error loading!");
+      wi->wait_for_keypress(makeFunctor(*this,&animation::update_editor),
+			    makeFunctor(*this,&animation::draw_editor));
+      delete wi;
+    }
+
   else 
     {
       currentimage=0;
       *(animation*)this=*t;
     }
   delete t;
-  delete s;
+  delete qw;
   if(in_editor) 
     {
       must_upt_label_mode=true;
@@ -636,29 +580,46 @@ void animation::add_image()
 {
   image im;
   u_int16 p;
-  char * s=query_window("File to load:");
-  if(!s) return;
+  win_query * qw=new win_query(70,40,th,font,"Load PNM file:");
+  char * s=qw->wait_for_text(makeFunctor(*this,
+					 &animation::update_editor),
+			     makeFunctor(*this,
+					 &animation::draw_editor));
+  if(!s) { delete qw; return; }
   if(!im.load_pnm(s)) 
     {
       do
 	{
 	  char tmp[255];
 	  char * s2;
-	  sprintf(tmp,"Insert at pos(0-%d):",nbr_of_images);
-	  s2=query_window(tmp);
+	  sprintf(tmp,"Insert at pos(0-%d): (Default %d)",nbr_of_images,
+		  nbr_of_images);
+	  win_query * qw2=new win_query(70,40,th,font,tmp);
+	  s2=qw2->wait_for_text(makeFunctor(*this,
+					    &animation::update_editor),
+				makeFunctor(*this,
+					    &animation::draw_editor));
 	  if(!s2)
-	    {
-	      delete s;
+	    { 
+	      delete qw2;
+	      delete qw;
 	      return;
 	    }
-	  p=atoi(s2);
-	  delete s2;
+	  if(!s2[0]) p=nbr_of_images;
+	  else p=atoi(s2);
+	  delete qw2;
 	}
       while(p>nbr_of_images);
       insert_image(im,p);
     }
-  else info_window("Error loading!");
-  delete s;
+  else
+    {
+      win_info * wi=new win_info(70,40,th,font,"Error loading PNM file!");
+      wi->wait_for_keypress(makeFunctor(*this,&animation::update_editor),
+			    makeFunctor(*this,&animation::draw_editor));
+      delete wi;
+    }
+  delete qw;
 }
 
 s_int8 animation::delete_image(u_int16 pos)
@@ -732,7 +693,14 @@ s_int8 animation::delete_frame(u_int16 pos)
 void animation::add_frame()
 {
   animation_frame af;
-  if(!nbr_of_images) info_window("You must add at least one image before adding a frame!");
+  if(!nbr_of_images)
+    {
+      win_info * wi=new win_info(70,40,th,font,"You must have at least one image in your animation before thinking about inserting a frame!");
+      wi->wait_for_keypress(makeFunctor(*this,&animation::update_editor),
+			    makeFunctor(*this,&animation::draw_editor));
+      delete wi;
+    }
+
   else insert_frame(af,nbr_of_frames);
 }
 
@@ -859,25 +827,6 @@ void animation::update_label_status()
       label_anim_info->set_text(frame_txt);
     }
   else label_anim_info->set_text("");
-}
-
-void animation::update_editor()
-{  
-  update();
-  u_int16 i;
-  length=0;
-  height=0;
-  for(i=0;i<nbr_of_frames;i++)
-    {
-      u_int16 tl,th;
-      if((tl=t_frame[frame[i].imagenbr].
-	get_length()+frame[i].gapx)>length)
-	length=tl;
-
-      if((th=t_frame[frame[i].imagenbr].
-	get_height()+frame[i].gapy)>height)
-	  height=th;
-    }
 }
 
 void animation::update_editor_keys()
@@ -1022,10 +971,27 @@ void animation::update_editor_keys()
 		   false:true);
 }
 
-void animation::update_and_draw()
+void animation::update_editor()
+{  
+  update();
+  u_int16 i;
+  length=0;
+  height=0;
+  for(i=0;i<nbr_of_frames;i++)
+    {
+      u_int16 tl,th;
+      if((tl=t_frame[frame[i].imagenbr].
+	get_length()+frame[i].gapx)>length)
+	length=tl;
+
+      if((th=t_frame[frame[i].imagenbr].
+	get_height()+frame[i].gapy)>height)
+	  height=th;
+    }
+}
+
+void animation::draw_editor()
 {
-  static u_int16 i;
-  for(i=0;i<screen::frames_to_do;i++) update_editor();
   bg->draw(0,0);
   if(mode==FRAME) draw(0,0);
   else if(nbr_of_images>0) t_frame[currentimage].putbox(0,0);
@@ -1037,6 +1003,13 @@ void animation::update_and_draw()
   must_upt_label_frame_info=false;}
   if(must_upt_label_status) {update_label_status(); 
   must_upt_label_status=false;}
+}
+
+void animation::update_and_draw()
+{
+  static u_int16 i;
+  for(i=0;i<screen::frames_to_do;i++) update_editor();
+  draw_editor();
 }
 
 void animation::editor()
@@ -1053,14 +1026,18 @@ void animation::editor()
   bg=new image(320,240);
   bg->putbox_tile_img(&temp);
   font=new win_font(WIN_THEME_ORIGINAL);
-  border=new win_border(WIN_THEME_ORIGINAL);
-  container=new win_container(200,12,110,216);
-  label_mode=container->add_label(5,5,100,30,font);
-  label_frame_nbr=container->add_label(5,35,100,30,font);
-  label_anim_info=container->add_label(5,65,100,65,font);
-  label_frame_info=container->add_label(5,80,100,120,font);
-  container->set_border(border);
-  container->show_all();
+  th=new win_theme(WIN_THEME_ORIGINAL);
+  container=new win_container(200,12,110,216,th);
+  label_mode=new win_label(5,5,100,30,th,font);
+  label_frame_nbr=new win_label(5,35,100,30,th,font);
+  label_anim_info=new win_label(5,65,100,65,th,font);
+  label_frame_info=new win_label(5,80,100,120,th,font);
+  container->add(label_mode);
+  container->add(label_frame_nbr);
+  container->add(label_anim_info);
+  container->add(label_frame_info);
+  container->set_visible_all(true);
+  container->set_border_visible(true);
   must_upt_label_mode=false;
   must_upt_label_frame_nbr=false;
   must_upt_label_frame_info=false;
@@ -1080,7 +1057,7 @@ void animation::editor()
   in_editor=false;
   delete container;
   delete bg;
-  delete border;
+  delete th;
   delete font;
   delete clipboard;
 }

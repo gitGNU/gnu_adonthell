@@ -22,9 +22,11 @@
 #include "window.h"
 #include "win_label.h"
 #include "win_container.h"
+#include "win_background.h"
 #include "win_border.h"
 #include "win_select.h"
 #include "win_image.h"
+#include "win_theme.h"
 #include "game.h"
 #include <vector>
 
@@ -85,12 +87,12 @@ private:
     win_container *txt;             // Container with the dialogue text
     win_image *face;                // Widget holding NPC portrait
     win_label *name;                // Widget holding NPC name
-    win_border *border;             // Window border
-    win_background *back;           // Window background
+    win_theme *th;                      // Window theme
     win_select *sel;                // Selection of possible answers
-    win_cursor *cursor;             // Cursor for selection
+    //    win_cursor *cursor;             // Cursor for selection
     image *portrait;                // The NPC's portrait
 
+    win_label * question;             // Label for the question
     vector <win_label*> cur_answers;// Answers currently available for selection
 
     PyObject* instance;             // Dialogue Engine Python wrapper class

@@ -1,6 +1,5 @@
 /*
-   $Id$
-
+  
    (C) Copyright 2000 Joel Vennin
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
@@ -11,8 +10,7 @@
 
    See the COPYING file for more details
 */
-
-#include <stdio.h>
+#include <iostream.h>
 #include <string.h>
 #include "types.h"
 #include "image.h"
@@ -30,13 +28,18 @@ win_font::win_font(char * fic)
   load(fic);
 }
 
+win_font::win_font(win_font & tmpfont)
+{
+  *this=tmpfont;
+}
+
 win_font::~win_font()
 {
   erase();
 }
 void win_font::erase()
 {
-  delete [] table;
+  if(table) delete [] table;
   table=NULL;
 }
 
@@ -52,7 +55,7 @@ void win_font::load(char * rep)
  
  //open file with information about font
   if((f=fopen(path,"rb"))==NULL)
-    {printf("%s not found\n",WIN_FONT_FILE_IDX);exit(1);}  
+    { cout << WIN_FONT_FILE_IDX << " not found !\n";exit(1);}  
 
   // load font
   image *font=new image();
@@ -61,8 +64,6 @@ void win_font::load(char * rep)
   strcat(path,rep);
   strcat(path,WIN_FONT_FILE_PIC);
   font->load_pnm(path);//new
-  //delete [] path;
-  //create a table for each letter
   table=new image[WIN_NB_TABLE_CHAR];
   init_in_table();
   char i;int j;
@@ -78,8 +79,8 @@ void win_font::load(char * rep)
       table[i].putbox_part_img(font,0,0,tl,font->height,pos,0);
       j++;
     }
-  height=font->height;
-  length=table['A'].length;
+  height_=font->height;
+  length_=table['A'].length;
   if(font)delete font;
   fclose(f);
 }
@@ -97,6 +98,28 @@ void win_font::init_in_table()
   for(i=0;i<WIN_NB_TABLE_CHAR;i++)
     table_core[i]=false;
 }
+
+image & win_font::operator[](int i)
+{
+  return table[i];
+}
+
+win_font & win_font::operator=(win_font & tmpfont)
+{
+  erase();
+  table=new image[WIN_NB_TABLE_CHAR];
+  for(u_int16 i=0;i<WIN_NB_TABLE_CHAR;i++)
+    if(table_core[i]=tmpfont.in_table(i))
+      table[i]=tmpfont.table[i];
+  height_=tmpfont.height();
+  length_=tmpfont.length();
+  return * this;
+}
+
+
+
+
+
 
 
 
