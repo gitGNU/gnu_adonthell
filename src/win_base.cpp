@@ -245,7 +245,7 @@ void win_base::draw_border()
   else if(!visible_border_) return;
 
   //create a static image to draw border
-  image imgbright;
+  static image imgbright;
   
   
   switch(draw_brightness_)
@@ -293,7 +293,7 @@ void win_base::draw_background()
 {
   //if not theme return
   if(!theme_)return;
-  image imgbright;
+  static image imgbright;
 
   //if is a visible background and if in win_select and this object is not select and mode select is brigthness so drawthe background in brightness mode
   if(visible_background_ && in_select_ && (!selected_) && mode_select_==WIN_SELECT_MODE_BRIGHTNESS)

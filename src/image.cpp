@@ -113,6 +113,8 @@ u_int16 image::get_height()
 
 void image::resize(u_int16 l, u_int16 h)
 {
+  set_mask(false);
+  set_alpha(255);
   if ((length==l)&&(height==h)) return;
   if (data) SDL_FreeSurface(data);
   bytes_per_pixel=screen::bytes_per_pixel;

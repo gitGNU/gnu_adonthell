@@ -76,7 +76,7 @@ void win_image::draw()
   if(picture)
     if(draw_brightness_)
       {
-	image imgbright;
+	static image imgbright;
 	imgbright.brightness(picture,level_brightness_);
 	imgbright.draw(realx_,realy_,da_);
       }
