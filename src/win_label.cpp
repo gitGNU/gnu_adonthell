@@ -21,6 +21,12 @@
 win_label::win_label(s_int16 tx ,s_int16 ty ,u_int16 tl,u_int16 th,win_theme * wthem, win_font * fo)
   :win_base(tx,ty,tl,th,wthem)
 {
+
+  blinkcursor_=false;
+  blinkcursortimetodraw_=true;
+  blinkinc_=0;
+  blinkingspeed_=WIN_CURSOR_BLINKING;
+
   font_=fo;
   auto_height_=false;
   auto_size_=false;
@@ -65,7 +71,7 @@ s_int8 win_label::word_place(u_int16 cur_line_size,s_int16 w_size)
 void win_label::resize(u_int16 tl,u_int16 th)
 {
   win_base::resize(tl,th); 
-  template_->init();
+  //template_->init();
   template_->resize(tl,th);
   init_draw_surface();
   init_draw();
@@ -116,6 +122,13 @@ void win_label::init_draw_surface()
 	      break;
 	    }
 	}
+      
+      //the blink cursor
+        if(blinkcursor_)
+	{
+	  if(curligne_+font_->cursor->length>length_) tmpheight_+=font_->height();
+	}
+      
       if(auto_height_ && height_!=tmpheight_+font_->height())
 	{
 	  win_base::resize(length_,tmpheight_+font_->height()); 
@@ -139,7 +152,17 @@ void win_label::init_draw_surface()
 	      else if(texte_[i]==' ') curligne_+=font_->length();
 	      i++;
 	    }
-	  if(curligne_>tmplength_) tmplength_=curligne_;
+	  
+
+	  //the blink cursor
+	  if(blinkcursor_)
+	    {
+	      if(curligne_+font_->cursor->length > tmplength_) tmplength_=curligne_+font_->cursor->length;
+	    }
+	  else if(curligne_>tmplength_) tmplength_=curligne_;
+
+
+	  
 	  if(tmpheight_!=height_+font_->height() || tmplength_!=length_) 
 	    {
 	      win_base::resize(tmplength_,tmpheight_+font_->height()); 
@@ -171,7 +194,7 @@ void win_label::init_draw()
 	    }
 	  i++;
 	}
-      if(tmpheight_>=template_->height)break;
+      if(tmpheight_>=template_->height) break;
       switch(word_place(curligne_,(tmpwsize_=word_size(i,wnbch_))))
 	{
 	case 0:
@@ -217,6 +240,21 @@ void win_label::init_draw()
 	  
 	  break;
 	}
+    }
+  
+ 
+  //insert the blink cursor
+  if(blinkcursortimetodraw_ && blinkcursor_ && template_->length!=0)
+    {
+      //modify because error if not autosize
+      if(auto_size_) template_->putbox_img(font_->cursor,curligne_,tmpheight_);
+      else {
+	if(curligne_+font_->cursor->length>length_) {
+	  tmpheight_+=font_->height();
+	  curligne_=0;
+	}
+	template_->putbox_img(font_->cursor,curligne_,tmpheight_);
+      }
     }
 }
 
@@ -272,7 +310,15 @@ void win_label::set_auto_height(bool b)
 
 void win_label::update()
 {
+  bool old=blinkcursortimetodraw_;
   win_base::update();
+  if(!visible_) return;
+  if(blinkcursor_)
+    {
+      if(blinkinc_++>blinkingspeed_) blinkinc_=0;
+      blinkcursortimetodraw_=(blinkinc_>(blinkingspeed_>>1));
+      if(old!=blinkcursortimetodraw_) init_draw();
+    }
 }
 
 

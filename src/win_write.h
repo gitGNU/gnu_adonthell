@@ -20,6 +20,10 @@ class win_theme;
 
 class win_write : public win_label
 {
+ private:
+  u_int8 blinkclock_;
+
+ 
  protected:
   bool ok_text_;
   bool activate_keyboard_;
@@ -28,9 +32,18 @@ class win_write : public win_label
  public:
   win_write(s_int16,s_int16,u_int16,u_int16,win_theme *,win_font * fo);
   void update();
+ 
   bool is_text(){return ok_text_;}
   void set_activate_keyboard(bool b){activate_keyboard_=b;}
   bool is_activate_keyboard(){return activate_keyboard_;}
   char * get_text_entry();
+
+  void set_activated(bool b);
+
 };
 #endif
+
+
+
+
+

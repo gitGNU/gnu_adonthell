@@ -4,7 +4,6 @@
 #include <unistd.h>
 #include <sys/stat.h>
 #include "types.h"
-#include "input.h"
 #include "image.h"
 #include "win_types.h"
 #include "win_base.h"

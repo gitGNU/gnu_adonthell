@@ -29,6 +29,7 @@ class win_file: public win_container
   win_file(s_int16 x,s_int16 y,u_int16 l,u_int16 h,win_theme * theme,win_font * wf);
   void resize(u_int16,u_int16);
   void set_title(char *);
+  char * gettext(){return entry_->get_text();}
   void set_curdirectory(char *);
   //choice what you want to do when these button are activated CALLBACK POWER
   void set_sig_activate_button_ok(Functor0 & func);

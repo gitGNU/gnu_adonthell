@@ -16,6 +16,13 @@ win_write::win_write(s_int16 tx,s_int16 ty,u_int16 tl,u_int16 th,win_theme * wth
   type_obj_=WIN_OBJ_WRITE;
 }
 
+void win_write::set_activated(bool b)
+{
+  win_label::set_activated(b);
+  if(b) input::clear_keys_queue();
+  set_cursor_blinking(b);
+}
+
 char * win_write::get_text_entry()
 {
   if(ok_text_)
@@ -32,7 +39,7 @@ void win_write::write()
   if(!activate_keyboard_ || !activated_) return;
   while((c=input::get_next_unicode())>0)
     {
-      if(font_->in_table(c) || c==SDLK_BACKSPACE || c==SDLK_RETURN)
+      if(font_->in_table(c) || c==SDLK_BACKSPACE || c==SDLK_RETURN || c==SDLK_SPACE)
 	if(c==SDLK_BACKSPACE && texte_size_>0) 
 	  {
 	    texte_[(texte_size_--)-1]='\0';
@@ -52,7 +59,9 @@ void win_write::write()
 			//			add_text("\n");
 		      }
 		  }
-		else add_text((char*)&c);
+		else {
+		  add_text((char*)&c);
+		}
 	      }
 	  }
     } 
@@ -61,5 +70,17 @@ void win_write::write()
 void win_write::update()
 {
   win_label::update();
-  write();
+  write();  
 }
+
+
+
+
+
+
+
+
+
+
+
+

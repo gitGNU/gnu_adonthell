@@ -27,7 +27,13 @@ class win_label : public win_base
   u_int8 texte_size_;
   bool auto_height_;
   bool auto_size_;
-  
+
+  bool blinkcursor_; //if there is a blink cursor to display
+  bool blinkcursortimetodraw_; //true when the cursor is enable to draw
+  u_int8 blinkinc_;
+  u_int8 blinkingspeed_;
+
+
   image * template_;
   
   s_int16 word_size(u_int16 begin,u_int16 & length);
@@ -45,6 +51,12 @@ class win_label : public win_base
   void set_auto_height(bool );
   void resize(u_int16 tl,u_int16 th);
   void update();
+  void set_cursor_blinking(bool b){
+    blinkcursor_=b;
+    if(!b){init_draw_surface();init_draw();}
+  }
+  bool is_cursor_blinking(){return blinkcursor_;}
+  void set_cursor_blinking_speed(u_int8 speed){blinkingspeed_=speed;}
   char * get_text(){return texte_;}
   ~win_label();
   

@@ -20,10 +20,12 @@
 win_font::win_font()
 {
   table=NULL;
+  cursor=NULL;
 }
 
 win_font::win_font(char * fic)
 {
+  cursor=NULL;
   table=NULL;
   load(fic);
 }
@@ -39,6 +41,7 @@ win_font::~win_font()
 }
 void win_font::erase()
 {
+  if(cursor) delete cursor;
   if(table) delete [] table;
   table=NULL;
 }
@@ -82,6 +85,16 @@ void win_font::load(char * rep)
   height_=font->height;
   length_=table['A'].length;
   if(font)delete font;
+
+
+  strcpy(path,WIN_DIRECTORY);
+  strcat(path,WIN_FONT_DIRECTORY);
+  strcat(path,rep);
+
+  strcat(path,"cursor.pnm");
+
+  cursor=new image();
+  cursor->load_pnm(path);
   fclose(f);
 }
 
@@ -108,6 +121,8 @@ win_font & win_font::operator=(win_font & tmpfont)
 {
   erase();
   table=new image[WIN_NB_TABLE_CHAR];
+  cursor=new image();
+  *cursor=*(tmpfont.cursor);
   for(u_int16 i=0;i<WIN_NB_TABLE_CHAR;i++)
     if(table_core[i]=tmpfont.in_table(i))
       table[i]=tmpfont.table[i];

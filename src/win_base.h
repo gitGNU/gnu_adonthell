@@ -105,7 +105,7 @@ class win_base
   void set_signal_connect(const Functor0 &func,u_int8 signal);
   
   //if true you can use function of this object like up and down to win_scrolled or write to win_write ....
-  void set_activated(bool b){if(b) on_activate();else on_unactivate();}
+  virtual void set_activated(bool b){if(b) on_activate();else on_unactivate();}
   
   //return true if activated
   bool is_activated(){return activated_;}

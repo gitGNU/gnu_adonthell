@@ -46,6 +46,11 @@
 #define WIN_FONT_FILE_IDX "font.idx"
 #define WIN_FONT_FILE_PIC "font.pnm"
 
+
+//CURSOR LABEL
+#define WIN_CURSOR_BLINKING 75
+
+
 //border filename
 #define WIN_V_BORDER_TEMPLATE_FILE "v_border.pnm"
 #define WIN_H_BORDER_TEMPLATE_FILE "h_border.pnm"
@@ -68,10 +73,10 @@
 #define WIN_SCROLLBAR_BACK_BOT "scroll_back_bot.pnm"
 
 //default key For the selection
-#define WIN_SELECT_DEFAULT_KEY_NEXT SDLK_DOWN
-#define WIN_SELECT_DEFAULT_KEY_PREVIOUS SDLK_UP
-#define WIN_SELECT_DEFAULT_KEY_ACTIVATE SDLK_SPACE
-#define WIN_SELECT_DEFAULT_KEY_BACK SDLK_ESCAPE
+#define WIN_SELECT_DEFAULT_KEY_NEXT SDLK_n
+#define WIN_SELECT_DEFAULT_KEY_PREVIOUS SDLK_p
+#define WIN_SELECT_DEFAULT_KEY_ACTIVATE SDLK_a
+#define WIN_SELECT_DEFAULT_KEY_BACK SDLK_b
 
 //cursor filename
 #define WIN_CURSOR_FILE "cursor.pnm"

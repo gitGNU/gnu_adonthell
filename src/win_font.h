@@ -21,6 +21,8 @@ class win_font{
   void erase();
   void init_in_table();
   bool table_core[WIN_NB_TABLE_CHAR];
+
+  
   
   u_int8 height_;
   u_int8 length_; //just for space bar
@@ -38,7 +40,9 @@ class win_font{
   u_int16 height(){return height_;}
   u_int16 length(){return length_;}
   
+  image * cursor;
   image * table;
 };
 
 #endif
+
