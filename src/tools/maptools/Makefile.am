@@ -4,7 +4,7 @@ bin_PROGRAMS = animedit mapobjedit mapcharedit mapedit
 
 animedit_SOURCES = animedit.cpp
 
-animedit_LDADD = animation.o animation_off.o \
+animedit_LDADD = animation.o \
 drawing_area.o fileops.o game.o image.o \
 input.o lex.prefs.o pnm.o prefs.o \
 screen.o storage.o quest.o win_manager.o win_base.o win_border.o \
@@ -15,7 +15,7 @@ win_file_select.o yarg.o $(SDL_LIBS)
 
 mapobjedit_SOURCES = mapobjedit.cpp
 
-mapobjedit_LDADD =  animation.o animation_off.o \
+mapobjedit_LDADD =  animation.o \
 drawing_area.o fileops.o game.o image.o \
 input.o lex.prefs.o pnm.o prefs.o mapselect.o maptpl.o \
 mapobject.o character_base.o screen.o storage.o quest.o \
@@ -26,7 +26,7 @@ win_info.o win_file_select.o yarg.o $(SDL_LIBS)
 
 mapcharedit_SOURCES = mapcharedit.cpp
 
-mapcharedit_LDADD =  animation.o animation_off.o \
+mapcharedit_LDADD =  animation.o \
 drawing_area.o fileops.o game.o image.o \
 input.o lex.prefs.o pnm.o prefs.o mapselect.o maptpl.o \
 screen.o storage.o quest.o win_manager.o win_base.o win_border.o \
@@ -38,7 +38,7 @@ win_file_select.o yarg.o $(SDL_LIBS)
 
 mapedit_SOURCES = mapedit.cpp
 
-mapedit_LDADD =  animation.o animation_off.o \
+mapedit_LDADD =  animation.o \
 drawing_area.o fileops.o game.o image.o \
 input.o lex.prefs.o mapselect.o maptpl.o mapobject.o \
 mapcharacter.o landmap.o character_base.o mapview.o pnm.o prefs.o \

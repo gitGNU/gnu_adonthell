@@ -530,7 +530,7 @@ s_int8 mapview::resize_map(u_int16 nbr)
 
 void mapview::add_mapobject()
 {
-  mapobject mobj;
+  mapobject * mobj=new mapobject;
   u_int16 p;
   win_file_select * wf=new win_file_select(60,20,200,200,th,font,".mobj",
 					   MAPOBJECTS_DIR);
@@ -538,10 +538,11 @@ void mapview::add_mapobject()
 			       makeFunctor(*this,&mapview::draw_editor));
   if(!s) return;
   char st[500];
-  if(mobj.load(s))
+  if(mobj->load(s))
     {
       sprintf(st,"Error loading %s!",s);
       delete wf;
+      delete mobj;
       return;
     }
   sprintf(st,"%s loaded successfully!",s);
@@ -558,6 +559,7 @@ void mapview::add_mapobject()
 	{ 
 	  delete qw2;
 	  delete wf;
+	  delete mobj;
 	  return;
 	}
       if(!s2[0]) p=m_map->nbr_of_patterns;

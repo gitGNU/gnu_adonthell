@@ -18,15 +18,16 @@
 
 #include "mapselect.h"
 
-class mapsquaretpl
-{
- public:
 #define ALL_WALKABLE 15
 #define WALKABLE_SOUTH 1
 #define WALKABLE_NORTH 2
 #define WALKABLE_EAST 4
 #define WALKABLE_WEST 8
 #define NONE_WALKABLE 0
+
+class mapsquaretpl
+{
+ public:
   u_int8 walkable;
 
   mapsquaretpl();

@@ -11,8 +11,7 @@ EXTRA_DIST = win_info.cpp win_file_select.cpp .indent.pro prefs.l win_query.cpp
 CPPFLAGS +=-DUSE_PYTHON -DUSE_MAP $(SDL_DEFS) $(OGG_DEFS) $(SDL_CFLAGS) $(OGG_CFLAGS) $(PY_CFLAGS)
 adonthell_LDADD = $(SDL_LIBS) $(OGG_LIBS) $(PY_LIBS)
 
-adonthell_SOURCES = animation.cpp animation_off.cpp audio.cpp \
-audio_loop.cpp \
+adonthell_SOURCES = animation.cpp audio.cpp audio_loop.cpp \
 character_base.cpp character.cpp data.cpp data_screen.cpp dialog.cpp dialog_engine.cpp \
 drawing_area.cpp event.cpp fileops.cpp game.cpp gametime.cpp \
 image.cpp input.cpp lex.prefs.cpp main.cpp \
@@ -36,8 +35,16 @@ win_manager.h window.h \
 yarg.h
 
 py_adonthell_wrap.cpp : py_adonthell.i *.h
-	swig -python -shadow -I/tmp/gnu/include/SDL -I/usr/local/include/SDL -I/usr/include/SDL -c++ -make_default -o $*.cpp $< 
-	@mv adonthell.py ../scripts
+	swig -python -shadow -I/tmp/gnu/include/SDL -I/usr/local/include/SDL -I/usr/include/SDL -I./ -I../ -c++ -make_default -o $*.cpp $< 
+	@datapath=`grep '^ *Data' ~/.adonthell/adonthellrc | sed 's/^ *Data *\[\(.*\)\] *$$/\1/'` ;\
+	for subdir in $$datapath ; do \
+	  if test -d "$$subdir" ; then \
+	    echo "Copying adonthell.py to $$subdir/scripts/modules" ; \
+	    cp adonthell.py $$subdir/scripts/modules ; \
+	  else \
+	    echo "$$subdir/scripts/modules isn't a valid directory. Check your config file!" ; \
+	  fi ; \
+	done
 
 lex.prefs.cpp : prefs.l
 	flex -olex.prefs.cpp $<

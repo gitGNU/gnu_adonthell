@@ -37,6 +37,7 @@ win_file_select::win_file_select(s_int16 tx,s_int16 ty,u_int16 tl,u_int16 th,win
   curdir_->set_border_size(WIN_SIZE_MINI);
   
   combo_file_=new win_select(0,0,0,0,theme_);
+  combo_file_->set_select_circle(true);
   combo_file_->set_border_visible(true);
   combo_file_->set_border_size(WIN_SIZE_MINI);
   combo_file_->set_space_between_border(5);
@@ -119,6 +120,7 @@ void win_file_select::list_directory(char * ext)
 	      strcat(tmpfile,dirlist->d_name);
 	      tmplabel=new win_label(0,0,combo_file_->length()-space_between_border_-theme_->scrollbar->back->length(),font_->height(),theme_,font_);
 	      tmplabel->set_text(tmpfile);
+	      tmplabel->set_border_size(WIN_SIZE_MINI);
 	      combo_file_->add(tmplabel);
 	      tmplabel=NULL;
 	    }

@@ -28,7 +28,7 @@ void mapcharacter::init()
   refmap=NULL;
   anim.resize(NBR_MOVES);
   for(u_int16 i=0; i<NBR_MOVES; i++)
-    anim[i]=new animation_off;
+    anim[i]=new animation;
   current_move=STAND_NORTH;
   ask_move=NO_MOVE;
 #if defined(USE_PYTHON)
@@ -66,7 +66,7 @@ s_int8 mapcharacter::get(gzFile file)
   int i;
   for(i=0;i<NBR_MOVES;i++)
     {
-      anim[i]->get(file);
+      anim[i]->get_off(file);
       anim[i]->play();
     }
   maptpl::get(file);
@@ -192,10 +192,10 @@ bool mapcharacter::can_go_north()
   u_int16 sy=(posy-basey<0)?0:posy-basey;
   s_int16 ax=sx-(posx-basex);
   s_int16 ay=sy-(posy-basey);
-  u_int16 ex=(posx-basex+mapselect::length>=refmap->submap[submap]->length)?
-    refmap->submap[submap]->length-1:posx-basex+mapselect::length;
-  u_int16 ey=(posy-basey+mapselect::height>=refmap->submap[submap]->height)?
-    refmap->submap[submap]->height-1:posy-basey+mapselect::height;
+  u_int16 ex=(posx-basex+mapselect::length()>=refmap->submap[submap]->length)?
+    refmap->submap[submap]->length-1:posx-basex+mapselect::length();
+  u_int16 ey=(posy-basey+mapselect::height()>=refmap->submap[submap]->height)?
+    refmap->submap[submap]->height-1:posy-basey+mapselect::height();
 
   for(j=sy;j<ey;j++)
     for(i=sx;i<ex;i++)
@@ -218,10 +218,10 @@ bool mapcharacter::can_go_south()
   u_int16 sy=(posy-basey<0)?0:posy-basey;
   s_int16 ax=sx-(posx-basex);
   s_int16 ay=sy-(posy-basey);
-  u_int16 ex=(posx-basex+mapselect::length>=refmap->submap[submap]->length)?
-    refmap->submap[submap]->length-1:posx-basex+mapselect::length;
-  u_int16 ey=(posy-basey+mapselect::height>=refmap->submap[submap]->height)?
-    refmap->submap[submap]->height-1:posy-basey+mapselect::height;
+  u_int16 ex=(posx-basex+mapselect::length()>=refmap->submap[submap]->length)?
+    refmap->submap[submap]->length-1:posx-basex+mapselect::length();
+  u_int16 ey=(posy-basey+mapselect::height()>=refmap->submap[submap]->height)?
+    refmap->submap[submap]->height-1:posy-basey+mapselect::height();
 
   for(j=sy;j<ey;j++)
     for(i=sx;i<ex;i++)
@@ -244,10 +244,10 @@ bool mapcharacter::can_go_east()
   u_int16 sy=(posy-basey<0)?0:posy-basey;
   s_int16 ax=sx-(posx-basex);
   s_int16 ay=sy-(posy-basey);
-  u_int16 ex=(posx-basex+mapselect::length>=refmap->submap[submap]->length)?
-    refmap->submap[submap]->length-1:posx-basex+mapselect::length;
-  u_int16 ey=(posy-basey+mapselect::height>=refmap->submap[submap]->height)?
-    refmap->submap[submap]->height-1:posy-basey+mapselect::height;
+  u_int16 ex=(posx-basex+mapselect::length()>=refmap->submap[submap]->length)?
+    refmap->submap[submap]->length-1:posx-basex+mapselect::length();
+  u_int16 ey=(posy-basey+mapselect::height()>=refmap->submap[submap]->height)?
+    refmap->submap[submap]->height-1:posy-basey+mapselect::height();
 
   for(j=sy;j<ey;j++)
     for(i=sx;i<ex;i++)
@@ -270,10 +270,10 @@ bool mapcharacter::can_go_west()
   u_int16 sy=(posy-basey<0)?0:posy-basey;
   s_int16 ax=sx-(posx-basex);
   s_int16 ay=sy-(posy-basey);
-  u_int16 ex=(posx-basex+mapselect::length>=refmap->submap[submap]->length)?
-    refmap->submap[submap]->length-1:posx-basex+mapselect::length;
-  u_int16 ey=(posy-basey+mapselect::height>=refmap->submap[submap]->height)?
-    refmap->submap[submap]->height-1:posy-basey+mapselect::height;
+  u_int16 ex=(posx-basex+mapselect::length()>=refmap->submap[submap]->length)?
+    refmap->submap[submap]->length-1:posx-basex+mapselect::length();
+  u_int16 ey=(posy-basey+mapselect::height()>=refmap->submap[submap]->height)?
+    refmap->submap[submap]->height-1:posy-basey+mapselect::height();
 
   for(j=sy;j<ey;j++)
     for(i=sx;i<ex;i++)
@@ -609,18 +609,18 @@ mapcharacter& mapcharacter::operator =(mapcharacter &m)
   u_int16 i,j;
   for (i=0;i<NBR_MOVES;i++)
     (*anim[i])=(*m.anim[i]);
-  for(i=0;i<maptpl::length;i++)
+  for(i=0;i<maptpl::length();i++)
     delete[] placetpl[i];
   delete[] placetpl;
-  maptpl::length=m.maptpl::length;
-  maptpl::height=m.maptpl::height;
+  maptpl::set_length(m.maptpl::_length);
+  maptpl::set_height(m.maptpl::_height);
   maptpl::basex=m.maptpl::basex;
   maptpl::basey=m.maptpl::basey;
-  placetpl=new (mapsquaretpl*)[maptpl::length];
-  for(i=0;i<maptpl::length;i++)
+  placetpl=new (mapsquaretpl*)[maptpl::length()];
+  for(i=0;i<maptpl::length();i++)
     { 
-      placetpl[i]=new mapsquaretpl[maptpl::height];
-      for(j=0;j<maptpl::height;j++)
+      placetpl[i]=new mapsquaretpl[maptpl::height()];
+      for(j=0;j<maptpl::height();j++)
 	placetpl[i][j].walkable=m.placetpl[i][j].walkable;
     }  
   return *this;
@@ -634,10 +634,10 @@ void mapcharacter::calculate_dimensions()
   for(i=0;i<NBR_MOVES;i++)
     {
       u_int16 tl,th;
-      if((tl=anim[i]->length()+anim[i]->xoffset)>length)
+      if((tl=anim[i]->length()+anim[i]->xoffset())>length)
 	length=tl;
       
-      if((th=anim[i]->height()+anim[i]->yoffset)>height)
+      if((th=anim[i]->height()+anim[i]->yoffset())>height)
 	height=th;
     }
 }
@@ -682,7 +682,7 @@ s_int8 mapcharacter::put(gzFile file)
 
   for(i=0;i<NBR_MOVES;i++)
     {
-      anim[i]->put(file);
+      anim[i]->put_off(file);
     }
   maptpl::put(file);
   return 0;
@@ -705,7 +705,7 @@ s_int8 mapcharacter::save(const char * fname)
 // New inserting method, much faster: the animation pointed by an must
 // however be kept in memory, and will be deleted by destructor.
 
-void mapcharacter::insert_anim(animation_off * an, u_int16 pos)
+void mapcharacter::insert_anim(animation * an, u_int16 pos)
 {
   delete anim[pos];
   anim[pos]=an;
@@ -731,7 +731,7 @@ void mapcharacter::load_anim()
     }
   else 
     {
-      animation_off * ao=new animation_off;
+      animation * ao=new animation;
       *ao=a;
       insert_anim(ao,current_move);
       anim[current_move]->play();
@@ -798,14 +798,14 @@ void mapcharacter::update_editor()
 void mapcharacter::set_anim_xoffset(u_int16 p, s_int16 xoff)
 {
   if(xoff<0) return;
-  anim[p]->xoffset=xoff;
+  anim[p]->set_offset(xoff,anim[p]->yoffset());
   must_upt_label_char=true;
 }
 
 void mapcharacter::set_anim_yoffset(u_int16 p, s_int16 yoff)
 {
   if(yoff<0) return;
-  anim[p]->yoffset=yoff;
+  anim[p]->set_offset(anim[p]->xoffset(),yoff);
   must_upt_label_char=true;
 }
 
@@ -888,14 +888,14 @@ void mapcharacter::update_editor_keys()
     {
       if(SDL_GetModState()&KMOD_SHIFT)
 	{ 
-	  if(anim[current_move]->xoffset)
-	    set_anim_xoffset(current_move,anim[current_move]->xoffset-1); 
+	  if(anim[current_move]->xoffset())
+	    set_anim_xoffset(current_move,anim[current_move]->xoffset()-1); 
 	}
       else if(SDL_GetModState() & (KMOD_META | KMOD_ALT))
 	{ 
-	  if((maptpl::get_length()-1)*MAPSQUARE_SIZE>=
-	     anim[current_move]->length()+anim[current_move]->xoffset)
-	    maptpl::resize(maptpl::get_length()-1,maptpl::get_height()); 
+	  if((maptpl::length()-1)*MAPSQUARE_SIZE>=
+	     anim[current_move]->length()+anim[current_move]->xoffset())
+	    maptpl::resize(maptpl::length()-1,maptpl::height()); 
 	}
       else
 	{ move_cursor_left(); }
@@ -904,12 +904,12 @@ void mapcharacter::update_editor_keys()
     {
       if(SDL_GetModState()&KMOD_SHIFT)
 	{ 
-	  if(anim[current_move]->xoffset+anim[current_move]->length()<
-	     maptpl::length*MAPSQUARE_SIZE)
-	    set_anim_xoffset(current_move,anim[current_move]->xoffset+1); 
+	  if(anim[current_move]->xoffset()+anim[current_move]->length()<
+	     maptpl::length()*MAPSQUARE_SIZE)
+	    set_anim_xoffset(current_move,anim[current_move]->xoffset()+1); 
 	}
       else if(SDL_GetModState() & (KMOD_META | KMOD_ALT))
-	{ maptpl::resize(maptpl::get_length()+1,maptpl::get_height()); }
+	{ maptpl::resize(maptpl::length()+1,maptpl::height()); }
       else
 	{ move_cursor_right(); }
     }
@@ -917,14 +917,14 @@ void mapcharacter::update_editor_keys()
     {
       if(SDL_GetModState()&KMOD_SHIFT)
 	{ 
-	  if(anim[current_move]->yoffset)
-	    set_anim_yoffset(current_move,anim[current_move]->yoffset-1);
+	  if(anim[current_move]->yoffset())
+	    set_anim_yoffset(current_move,anim[current_move]->yoffset()-1);
 	}
       else if(SDL_GetModState() & (KMOD_META | KMOD_ALT))
 	{ 
-	  if((maptpl::get_height()-1)*MAPSQUARE_SIZE>=
-	     anim[current_move]->height()+anim[current_move]->yoffset)
-	    maptpl::resize(maptpl::get_length(),maptpl::get_height()-1); 
+	  if((maptpl::height()-1)*MAPSQUARE_SIZE>=
+	     anim[current_move]->height()+anim[current_move]->yoffset())
+	    maptpl::resize(maptpl::length(),maptpl::height()-1); 
 	}
       else
 	{ move_cursor_up(); }
@@ -933,12 +933,12 @@ void mapcharacter::update_editor_keys()
     {
       if(SDL_GetModState()&KMOD_SHIFT)
 	{ 
-	  if(anim[current_move]->yoffset+anim[current_move]->height()<
-	     maptpl::height*MAPSQUARE_SIZE)
-	    set_anim_yoffset(current_move,anim[current_move]->yoffset+1); 
+	  if(anim[current_move]->yoffset()+anim[current_move]->height()<
+	     maptpl::height()*MAPSQUARE_SIZE)
+	    set_anim_yoffset(current_move,anim[current_move]->yoffset()+1); 
 	}
       else if(SDL_GetModState() & (KMOD_META | KMOD_ALT))
-	{ maptpl::resize(maptpl::get_length(),maptpl::get_height()+1); }
+	{ maptpl::resize(maptpl::length(),maptpl::height()+1); }
       else
 	{ move_cursor_down(); }
     }

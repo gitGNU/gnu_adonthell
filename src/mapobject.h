@@ -19,11 +19,75 @@
 #define MAPOBJECTS_DIR "gfx/mapobjects/"
 
 #include <vector>
-#include "animation_off.h"
+#include "animation.h"
 #include "maptpl.h"
+
+#ifdef USE_PYTHON
+#include "py_inc.h"
+#include "data.h"
+struct PyCodeObject;
+#endif
+
 
 class mapobject : public maptpl
 {
+ public:
+  mapobject();
+  void clear();
+  ~mapobject();
+
+  u_int16 length() { return _length; }
+  u_int16 height() { return _height; }
+
+  void play();
+  void stop();
+  void rewind();
+
+  void update();
+
+  // FIXME: draw -> draw_from_base, draw_free -> draw
+  void draw(s_int16 x, s_int16 y, drawing_area * da_opt=NULL);
+  void draw_free(s_int16 x, s_int16 y, drawing_area * da_opt=NULL);
+
+  void draw_border_free(u_int16 x, u_int16 y, drawing_area * da_opt=NULL);
+  void draw_border(u_int16 x, u_int16 y, drawing_area * da_opt=NULL);
+
+  s_int8 get(gzFile file);
+  s_int8 load(const char * fname);
+
+#ifdef USE_PYTHON
+  void set_schedule(char * file);
+  bool is_schedule_activated() { return schedule_activated; }
+  void set_schedule_active(bool a) { schedule_activated=a; }
+#endif
+
+  u_int16 nbr_of_animations() { return anim.size(); }
+  animation * get_animation(u_int16 nbr) { return anim[nbr]; }
+
+  s_int8 insert_animation(animation * an, u_int16 pos);
+  s_int8 delete_animation(u_int16 pos);
+
+
+  mapobject& operator =(const mapobject& mo);
+
+#ifdef _EDIT_
+  s_int8 put(gzFile file);
+  s_int8 save(const char * fname);
+
+  void editor();
+#endif
+
+ protected:
+#ifdef USE_PYTHON
+  PyCodeObject * schedule;
+#endif
+  bool schedule_activated;
+  u_int16 _length, _height;
+  vector<animation*> anim;
+
+  void init();
+
+ private:
 #ifdef _DEBUG_
   static u_int16 a_d_diff;
 #endif
@@ -48,38 +112,10 @@ class mapobject : public maptpl
   bool in_editor;
 #endif
 
-  u_int16 length, height;
-  animation_off * part;
-  u_int16 * partref;
-  u_int16 nbr_of_parts;
-
   void calculate_dimensions();
 
+#ifdef _EDIT_
  public:
-  void init();
-  void clear();
-  mapobject();
-  ~mapobject();
-  void play();
-  void stop();
-  void rewind();
-
-  mapobject& operator =(const mapobject& mo);
-  s_int8 get(gzFile file);
-  s_int8 load(const char * fname);
-  u_int16 get_length();
-  u_int16 get_height();
-#ifdef _EDIT_
-  s_int8 put(gzFile file);
-  s_int8 save(const char * fname);
-#endif
-
-  void update();
-  void draw_free(s_int16 x, s_int16 y, drawing_area * da_opt=NULL);
-  void draw(s_int16 x, s_int16 y, drawing_area * da_opt=NULL);
-  void draw_border_free(u_int16 x, u_int16 y, drawing_area * da_opt=NULL);
-  void draw_border(u_int16 x, u_int16 y, drawing_area * da_opt=NULL);
-#ifdef _EDIT_
   void zoom(u_int16 sx, u_int16 sy, mapobject * src);
   void zoom_to_fit(u_int16 sm, mapobject * src);
   void init_parts();
@@ -95,8 +131,6 @@ class mapobject : public maptpl
   void load();
   void new_animation();
   void add_animation();
-  s_int8 insert_animation(animation &an, u_int16 pos);
-  s_int8 delete_animation(u_int16 pos);
   void set_part_offset(u_int16 partnbr, u_int16 x, u_int16 y);
   void resize_grid();
   void update_editor_keys();
@@ -104,7 +138,6 @@ class mapobject : public maptpl
   void draw_editor();
   void update_and_draw();
   void set_info_win(char * text);
-  void editor();
 #endif
 };
 

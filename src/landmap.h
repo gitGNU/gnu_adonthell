@@ -31,6 +31,8 @@
 #endif // _EDIT_
 
 class mapview;
+class mapcharacter;
+class mapobject;
 
 #ifndef SWIG
 
@@ -281,7 +283,7 @@ class landmap
   
   void remove_mapobject(u_int16 smap,
 			list<mapsquare_tile>::iterator obj);  
-  s_int8 insert_mapobject(mapobject &an, u_int16 pos,
+  s_int8 insert_mapobject(mapobject  * an, u_int16 pos,
 			  const char * srcfile="");
   s_int8 delete_mapobject(u_int16 pos);
 

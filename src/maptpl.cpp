@@ -35,8 +35,8 @@ maptpl::maptpl(u_int16 x, u_int16 y, u_int16 l, u_int16 h,
 	       u_int16 d_l, u_int16 d_h) : mapselect(x,y,l,h,d_l,d_h)
 {
   u_int16 i,j;
-  placetpl=new (mapsquaretpl*)[length];
-  for(i=0;i<length;i++) placetpl[i]=new mapsquaretpl[h];
+  placetpl=new (mapsquaretpl*)[length()];
+  for(i=0;i<length();i++) placetpl[i]=new mapsquaretpl[h];
   selimg=new image(MAPSQUARE_SIZE, MAPSQUARE_SIZE);
   selbaseimg=new image(MAPSQUARE_SIZE, MAPSQUARE_SIZE);
   for(i=0;i<selimg->length();i++)
@@ -54,7 +54,7 @@ maptpl::maptpl(u_int16 x, u_int16 y, u_int16 l, u_int16 h,
 maptpl::~maptpl()
 {
   u_int16 i;
-  for(i=0;i<length;i++)
+  for(i=0;i<length();i++)
     delete[] placetpl[i];
   delete[] placetpl;
   delete selimg;
@@ -73,10 +73,10 @@ void maptpl::resize(u_int16 l, u_int16 h)
   placetpl=new (mapsquaretpl*)[l];
   for(i=0;i<l;i++)
     placetpl[i]=new mapsquaretpl[h];
-  for(i=0;i<l && i<length;i++)
-    for(j=0;j<h && j<height;j++)
+  for(i=0;i<l && i<length();i++)
+    for(j=0;j<h && j<height();j++)
       placetpl[i][j]=oldplacetpl[i][j];
-  for(i=0;i<length;i++)
+  for(i=0;i<length();i++)
     delete[] oldplacetpl[i];
   delete[] oldplacetpl;
   mapselect::resize(l,h);
@@ -85,16 +85,16 @@ void maptpl::resize(u_int16 l, u_int16 h)
 s_int8 maptpl::get(gzFile file)
 {
   u_int16 i,j;
-  for(i=0;i<length;i++)
+  for(i=0;i<length();i++)
     delete[] placetpl[i];
   delete[] placetpl;
-  gzread(file,&length,sizeof(length));
-  gzread(file,&height,sizeof(height));
-  placetpl=new (mapsquaretpl*)[length];
-  for(i=0;i<length;i++)
+  gzread(file,&_length,sizeof(_length));
+  gzread(file,&_height,sizeof(_height));
+  placetpl=new (mapsquaretpl*)[length()];
+  for(i=0;i<length();i++)
     {
-      placetpl[i]=new mapsquaretpl[height];
-      for(j=0;j<height;j++)
+      placetpl[i]=new mapsquaretpl[height()];
+      for(j=0;j<height();j++)
 	placetpl[i][j].get(file);
     }
    gzread(file,&basex,sizeof(basex));
@@ -105,10 +105,10 @@ s_int8 maptpl::get(gzFile file)
 s_int8 maptpl::put(gzFile file)
 {
   u_int16 i,j;
-  gzwrite(file,&length,sizeof(length));
-  gzwrite(file,&height,sizeof(height));
-  for(i=0;i<length;i++)
-    for(j=0;j<height;j++)
+  gzwrite(file,&_length,sizeof(_length));
+  gzwrite(file,&_height,sizeof(_height));
+  for(i=0;i<length();i++)
+    for(j=0;j<height();j++)
       placetpl[i][j].put(file);
   gzwrite(file,&basex,sizeof(basex));
   gzwrite(file,&basey,sizeof(basey));
@@ -130,8 +130,8 @@ void maptpl::toggle_walkable()
 void maptpl::draw_walkables()
 {
   u_int16 i,j;
-  for(i=d_posx;(i<d_posx+dl)&&(i<length);i++)
-    for(j=d_posy;(j<d_posy+dh)&&(j<height);j++)
+  for(i=d_posx;(i<d_posx+dl)&&(i<length());i++)
+    for(j=d_posy;(j<d_posy+dh)&&(j<height());j++)
       {
 	const u_int32 col=0x0ff000;
 	if(!placetpl[i][j].is_walkable_west())

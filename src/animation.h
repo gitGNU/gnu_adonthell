@@ -107,7 +107,6 @@ class animationframe
 #ifndef SWIG
   friend class animation;
   friend class win_anim;
-  friend class animation_off;
 #endif
 };
 
@@ -127,15 +126,27 @@ class animation
 
   void update();
   void draw(s_int16 x, s_int16 y, drawing_area * da_opt=NULL);
+  void draw_border(u_int16 x, u_int16 y, drawing_area * da_opt=NULL);
 
   s_int8 get(gzFile file);
   s_int8 load(const char * fname);
+  s_int8 get_off(gzFile file);
+  s_int8 load_off(const char * fname);
 
   u_int16 nbr_of_frames() { return frame.size(); }
   u_int16 nbr_of_images() { return t_frame.size(); }
 
   u_int16 currentframe() { return _currentframe; };
   void set_currentframe(u_int16 framenbr) { _currentframe=framenbr; }
+
+  s_int16 xoffset() { return _xoffset; }
+  s_int16 yoffset() { return _yoffset; }
+
+  void set_offset(s_int16 x, s_int16 y)
+    {
+      _xoffset=x;
+      _yoffset=y;
+    }
 
   void next_frame();
   
@@ -188,6 +199,7 @@ class animation
   u_int16 _currentframe;
   u_int16 speedcounter;
   bool play_flag;
+  s_int16 _xoffset, _yoffset;
 
   s_int8 insert_image(image * im, u_int16 pos);
   s_int8 insert_frame(animationframe af, u_int16 pos);
@@ -198,6 +210,8 @@ class animation
 #ifdef _EDIT_
   s_int8 put(gzFile file);
   s_int8 save(const char * fname);
+  s_int8 put_off(gzFile file);
+  s_int8 save_off(const char * fname);
 
   void select_image(u_int16 nbr);
   void select_frame(u_int16 nbr);
@@ -243,7 +257,6 @@ class animation
 
 #ifndef SWIG
   friend class win_anim;
-  friend class animation_off;
   animation &operator =(animation &a);
 #endif
 };

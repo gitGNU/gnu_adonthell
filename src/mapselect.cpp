@@ -19,8 +19,8 @@ mapselect::mapselect(u_int16 x, u_int16 y, u_int16 l, u_int16 h,
 {
   s_posx=x;
   s_posy=y;
-  length=l;
-  height=h;
+  _length=l;
+  _height=h;
   posx=posy=d_posx=d_posy=0;
   dl=d_l;
   dh=d_h;
@@ -37,18 +37,18 @@ mapselect::~mapselect()
 
 void mapselect::check_if_fits()
 {
-  if(length==0) posx=0;
-  else if(posx>=length) posx=length-1;
-  if(height==0) posy=0;
-  else if(posy>=height) posy=height-1;
-  if(d_posx+dl>length) d_posx=(length-dl<0)?0:length-dl;
-  if(d_posy+dh>height) d_posy=(height-dh<0)?0:height-dh;
+  if(_length==0) posx=0;
+  else if(posx>=_length) posx=_length-1;
+  if(_height==0) posy=0;
+  else if(posy>=_height) posy=_height-1;
+  if(d_posx+dl>_length) d_posx=(_length-dl<0)?0:_length-dl;
+  if(d_posy+dh>_height) d_posy=(_height-dh<0)?0:_height-dh;
 }
 
 void mapselect::resize(u_int16 l, u_int16 h)
 {
-  length=l;
-  height=h;
+  _length=l;
+  _height=h;
   check_if_fits();
   da->resize(dl*MAPSQUARE_SIZE,dh*MAPSQUARE_SIZE);
 }
@@ -77,7 +77,7 @@ void mapselect::set_cursor_pos(u_int16 x, u_int16 y)
 
 s_int8 mapselect::move_cursor_right()
 {
-  if(posx==length-1) return -1;
+  if(posx==_length-1) return -1;
   posx++;
   if (posx>=d_posx+dl) d_posx++;
   cursor_blink=0;
@@ -104,7 +104,7 @@ s_int8 mapselect::move_cursor_up()
 
 s_int8 mapselect::move_cursor_down()
 {
-  if(posy==height-1) return -1;
+  if(posy==_height-1) return -1;
   posy++;
   if (posy>=d_posy+dh) d_posy++;
   cursor_blink=0;
@@ -137,13 +137,13 @@ void mapselect::update()
 void mapselect::draw_grid()
 {
   static u_int16 i,j;
-  for(i=d_posx;(i<d_posx+dl+1)&&(i<=length);i++)
+  for(i=d_posx;(i<d_posx+dl+1)&&(i<=_length);i++)
     screen::drawbox(s_posx+((i-d_posx)*MAPSQUARE_SIZE),s_posy,1,
-		    (height<dh)?height*MAPSQUARE_SIZE+1:dh*MAPSQUARE_SIZE+1,
+		    (_height<dh)?_height*MAPSQUARE_SIZE+1:dh*MAPSQUARE_SIZE+1,
 		    0xFFFFFF);
-  for(j=d_posy;(j<d_posy+dh+1)&&(j<=height);j++)
+  for(j=d_posy;(j<d_posy+dh+1)&&(j<=_height);j++)
     screen::drawbox(s_posx,s_posy+((j-d_posy)*MAPSQUARE_SIZE),
-		    (length<dl)?length*MAPSQUARE_SIZE+1:dl*MAPSQUARE_SIZE+1,
+		    (_length<dl)?_length*MAPSQUARE_SIZE+1:dl*MAPSQUARE_SIZE+1,
 		    1,0xFFFFFF);
 }
 

@@ -215,6 +215,8 @@ void animation::init()
   speedcounter=0;
   play_flag=false;
   _length=_height=0;
+  _xoffset=0;
+  _yoffset=0;
 #ifdef _EDIT_
   in_editor=false;
   currentimage=0;
@@ -309,9 +311,18 @@ void animation::draw(s_int16 x, s_int16 y, drawing_area * da_opt=NULL)
   t_frame[frame[currentframe()].image_nbr()]->set_mask(frame[currentframe()].is_masked());
   t_frame[frame[currentframe()].image_nbr()]->set_alpha(frame[currentframe()].alpha());
   
-  t_frame[frame[currentframe()].image_nbr()]->draw(x+frame[currentframe()].gapx,
-					     y+frame[currentframe()].gapy,
+  t_frame[frame[currentframe()].image_nbr()]->draw(x+xoffset()+frame[currentframe()].gapx,
+					     y+yoffset()+frame[currentframe()].gapy,
 					     da_opt);
+}
+
+void animation::draw_border(u_int16 x, u_int16 y, 
+			    drawing_area * da_opt=NULL)
+{
+  screen::drawbox(x+xoffset(),y+yoffset(),length(),1,0xFFFFFF,da_opt);
+  screen::drawbox(x+xoffset(),y+yoffset()+height(),length(),1,0xFFFFFF,da_opt);
+  screen::drawbox(x+xoffset()+length(),y+yoffset(),1,height()+1,0xFFFFFF,da_opt);
+  screen::drawbox(x+xoffset(),y+yoffset(),1,height()+1,0xFFFFFF,da_opt);
 }
 
 s_int8 animation::get(gzFile file)
@@ -332,9 +343,10 @@ s_int8 animation::get(gzFile file)
     }
   // Read frames
   gzread(file,&nbr_frames,sizeof(nbr_frames));
+  animationframe aftemp;
   for(i=0;i<nbr_frames;i++)
     {
-      frame.push_back();
+      frame.push_back(aftemp);
       frame.back().get(file);
     }
 
@@ -362,6 +374,27 @@ s_int8 animation::load(const char * fname)
   retvalue=get(file);
   gzclose(file);
   return(retvalue);
+}
+
+s_int8 animation::get_off(gzFile file)
+{
+  u_int16 t_xoffset, t_yoffset;
+  gzread(file,&t_xoffset,sizeof(t_xoffset));
+  gzread(file,&t_yoffset,sizeof(t_yoffset));
+  get(file);
+  set_offset(t_xoffset,t_yoffset);
+  return 0;
+}
+
+s_int8 animation::load_off(const char * fname)
+{
+  gzFile file;
+  u_int8 retvalue;
+  file=gzopen(fname,"rb"); 
+  if(!file) return -1;
+  retvalue=get_off(file);
+  gzclose(file);
+  return retvalue;
 }
 
 void animation::zoom(u_int16 sx, u_int16 sy, animation * src)
@@ -412,6 +445,25 @@ s_int8 animation::save(const char * fname)
   retvalue=put(file);
   gzclose(file);
   return(retvalue);
+}
+
+s_int8 animation::put_off(gzFile file)
+{
+  gzwrite(file,&_xoffset,sizeof(_xoffset));
+  gzwrite(file,&_yoffset,sizeof(_yoffset));
+  put(file);
+  return 0;
+}
+
+s_int8 animation::save_off(const char * fname)
+{
+  gzFile file;
+  u_int8 retvalue;
+  file=gzopen(fname,"wb6"); 
+  if(!file) return -1;
+  retvalue=put_off(file);
+  gzclose(file);
+  return retvalue;
 }
 
 void animation::quick_save()
@@ -525,6 +577,7 @@ animation & animation::operator =(animation &a)
   frame.clear();
   for(i=0;i<a.nbr_of_frames();i++)
     frame.push_back(a.frame[i]);
+  set_offset(a.xoffset(),a.yoffset());
   return *this;
 }
 

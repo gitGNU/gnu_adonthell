@@ -86,7 +86,7 @@ class win_select : public win_scrolled
 
 
   //set the mode of the selection WIN_SELECT_MODE_BRIGHTNESS, WIN_SELECT_MODE_BORDER, cursor not implemented
-  void set_select_mode(u_int8);  
+  void set_select_mode(u_int8);
  
   void set_select_circle(bool b){select_circle_=b;}
   bool is_select_circle(){return select_circle_;}

@@ -19,7 +19,7 @@
 #define MAPCHAR_DIR "gfx/mapcharacters/"
 
 #include <vector>
-#include "animation_off.h"
+#include "animation.h"
 #include "maptpl.h"
 #include "landmap.h"
 #include "character_base.h"
@@ -161,7 +161,7 @@ class mapcharacter : public maptpl, public character_base
   s_int8 offx, offy;
   bool schedule_activated;
   bool action_activated;
-  vector<animation_off*> anim;
+  vector<animation*> anim;
   landmap * refmap;
   
   u_int16 length, height;
@@ -198,7 +198,7 @@ class mapcharacter : public maptpl, public character_base
   void load();
   void save();
 
-  void insert_anim(animation_off * an, u_int16 pos);
+  void insert_anim(animation * an, u_int16 pos);
   void load_anim();
   void update_editor();
   void set_anim_xoffset(u_int16 p, s_int16 xoff);

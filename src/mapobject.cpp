@@ -21,18 +21,24 @@ u_int16 mapobject::a_d_diff;
 
 void mapobject::init()
 {
-  nbr_of_parts=0;
-  length=height=0;
-  part=NULL;
+  _length=_height=0;
 #ifdef _EDIT_
   in_editor=false;
   strcpy(file_name,"");
 #endif
+#ifdef USE_PYTHON
+  schedule=NULL;
+#endif
+  schedule_activated=false;
 }
 
 void mapobject::clear()
 {
-  if(nbr_of_parts) delete[] part;
+  u_int16 i;
+  for(i=0;i<nbr_of_animations();i++)
+    delete anim[i];
+  anim.clear();
+  init();
 }
 
 mapobject::mapobject() : maptpl(0,0,1,1,9,9)
@@ -56,22 +62,22 @@ mapobject::~mapobject()
 void mapobject::play()
 {
   u_int16 i;
-  for(i=0;i<nbr_of_parts;i++)
-    part[i].play();
+  for(i=0;i<nbr_of_animations();i++)
+    anim[i]->play();
 }
 
 void mapobject::stop()
 {
   u_int16 i;
-  for(i=0;i<nbr_of_parts;i++)
-    part[i].stop();
+  for(i=0;i<nbr_of_animations();i++)
+    anim[i]->stop();
 }
 
 void mapobject::rewind()
 {
   u_int16 i;
-  for(i=0;i<nbr_of_parts;i++)
-    part[i].rewind();
+  for(i=0;i<nbr_of_animations();i++)
+    anim[i]->rewind();
 }
 
 mapobject &mapobject::operator =(const mapobject &mo)
@@ -79,45 +85,54 @@ mapobject &mapobject::operator =(const mapobject &mo)
   u_int16 i,j;
   posx=mo.posx;
   posy=mo.posy;
-  length=mo.length;
-  height=mo.height;
+  _length=mo._length;
+  _height=mo._height;
   basex=mo.basex;
   basey=mo.basey;
-  nbr_of_parts=mo.nbr_of_parts;
 #ifdef _EDIT_
   currentpart=mo.currentpart;
 #endif
-  for(i=0;i<maptpl::length;i++)
+  for(i=0;i<maptpl::length();i++)
     delete[] placetpl[i];
   delete[] placetpl;
-  maptpl::length=mo.maptpl::length;
-  maptpl::height=mo.maptpl::height;
-  placetpl=new (mapsquaretpl*)[maptpl::length];
-  for(i=0;i<maptpl::length;i++)
+  maptpl::set_length(mo.maptpl::_length);
+  maptpl::set_height(mo.maptpl::_height);
+  placetpl=new (mapsquaretpl*)[maptpl::length()];
+  for(i=0;i<maptpl::length();i++)
    { 
-     placetpl[i]=new mapsquaretpl[maptpl::height];
-     for(j=0;j<maptpl::height;j++)
+     placetpl[i]=new mapsquaretpl[maptpl::height()];
+     for(j=0;j<maptpl::height();j++)
        placetpl[i][j].walkable=mo.placetpl[i][j].walkable;
    }
-  delete[] part;
-  part=new animation_off[nbr_of_parts];
-  for(i=0;i<nbr_of_parts;i++)
-    part[i]=mo.part[i];
+  for(i=0;i<nbr_of_animations();i++)
+    delete anim[i];
+  anim.clear();
+  for(i=0;i<mo.anim.size();i++)
+    anim.push_back(NULL);
+  for(i=0;i<nbr_of_animations();i++)
+    {
+      anim[i]=new animation;
+      *(anim[i])=*(mo.anim[i]);
+    }
   return *this;
 }
 
 void mapobject::update()
 {
   static u_int16 i;
-  for(i=0;i<nbr_of_parts;i++)
-    part[i].update();
+  for(i=0;i<nbr_of_animations();i++)
+    anim[i]->update();
+#ifdef USE_PYTHON
+  if(schedule && schedule_activated) 
+    PyEval_EvalCode(schedule,data::globals,NULL);
+#endif
 }
 
 void mapobject::draw_free(s_int16 x, s_int16 y, drawing_area * da_opt=NULL)
 {
   static u_int16 i;
-  for(i=0;i<nbr_of_parts;i++)
-    part[i].draw(x,y,da_opt);
+  for(i=0;i<nbr_of_animations();i++)
+    anim[i]->draw(x,y,da_opt);
 }
 
 void mapobject::draw(s_int16 x, s_int16 y, drawing_area * da_opt=NULL)
@@ -128,10 +143,10 @@ void mapobject::draw(s_int16 x, s_int16 y, drawing_area * da_opt=NULL)
 void mapobject::draw_border_free(u_int16 x, u_int16 y, 
 				 drawing_area * da_opt=NULL)
 {
-  screen::drawbox(x,y,length,1,0xFFFFFF,da_opt);
-  screen::drawbox(x,y+height,length,1,0xFFFFFF,da_opt);
-  screen::drawbox(x+length,y,1,height+1,0xFFFFFF,da_opt);
-  screen::drawbox(x,y,1,height+1,0xFFFFFF,da_opt);
+  screen::drawbox(x,y,length(),1,0xFFFFFF,da_opt);
+  screen::drawbox(x,y+height(),length(),1,0xFFFFFF,da_opt);
+  screen::drawbox(x+length(),y,1,height()+1,0xFFFFFF,da_opt);
+  screen::drawbox(x,y,1,height()+1,0xFFFFFF,da_opt);
 }
 
 void mapobject::draw_border(u_int16 x, u_int16 y, drawing_area * da_opt=NULL)
@@ -142,32 +157,33 @@ void mapobject::draw_border(u_int16 x, u_int16 y, drawing_area * da_opt=NULL)
 void mapobject::calculate_dimensions()
 {
   u_int16 i;
-  length=0;
-  height=0;
-  for(i=0;i<nbr_of_parts;i++)
+  _length=0;
+  _height=0;
+  for(i=0;i<nbr_of_animations();i++)
     {
       u_int16 tl,th;
-      if((tl=part[i].length()+part[i].xoffset)>length)
-	length=tl;
+      if((tl=anim[i]->length()+anim[i]->xoffset())>length())
+	_length=tl;
       
-      if((th=part[i].height()+part[i].yoffset)>height)
-	height=th;
+      if((th=anim[i]->height()+anim[i]->yoffset())>height())
+	_height=th;
     }
 }
 
 s_int8 mapobject::get(gzFile file)
 {
   u_int16 i;
-  if(part) delete[] part;
+  u_int16 nbr_of_parts;
+  anim.clear();
   gzread(file,&nbr_of_parts,sizeof(nbr_of_parts));
 #ifdef _EDIT_
   currentpart=0;
 #endif
-  part=new animation_off[nbr_of_parts];
   for(i=0;i<nbr_of_parts;i++)
     {
-      part[i].get(file);
-      part[i].play();
+      anim.push_back(new animation);
+      anim.back()->get_off(file);
+      anim.back()->play();
     }
   maptpl::get(file);
   resize_view(9,9);
@@ -190,27 +206,90 @@ s_int8 mapobject::load(const char * fname)
   return retvalue;
 }
 
-u_int16 mapobject::get_length()
+s_int8 mapobject::insert_animation(animation * an, u_int16 pos)
 {
-  return length;
+  vector<animation*>::iterator i;
+  if(pos>nbr_of_animations()) return -2;
+  i=anim.begin();
+  while(pos--) i++;
+  anim.insert(i,an);
+  an->play();
+#ifdef _DEBUG_
+  cout << "Added animation: " << nbr_of_animations() << " total in mapobject.\n";
+#endif
+  return 0;
 }
 
-u_int16 mapobject::get_height()
+s_int8 mapobject::delete_animation(u_int16 pos)
 {
-  return height;
+  vector<animation*>::iterator i;
+
+  if(pos>nbr_of_animations()-1) return -2;
+  i=anim.begin();
+  while(pos--) i++;
+  anim.erase(i);
+#ifdef _DEBUG_
+  cout << "Removed part: " << nbr_of_animations() << " total in mapobject.\n";
+#endif
+#ifdef _EDIT_
+  if(currentpart>=nbr_of_animations()) currentpart=nbr_of_animations()-1;
+  if(in_editor) 
+    {
+      must_upt_label_part=true;
+    }
+  if(!nbr_of_animations()) 
+    {
+      currentpart=0;
+    }
+#endif
+  return 0;
 }
+
+#ifdef USE_PYTHON
+void mapobject::set_schedule(char * file)
+{
+  char script[255];
+  strcpy (script, "scripts/schedules/");
+  strcat (script, file);
+  strcat (script, ".py");
+  
+  FILE *f = fopen (script, "r");
+  
+  // See whether the script exists at all
+  if (f)
+    {
+      // Compile the script into a PyCodeObject for quicker execution
+      _node *n = PyParser_SimpleParseFile (f, script, Py_file_input);
+      if (n)
+        {
+	  // If no errors occured update schedule code ...
+	  if (schedule) delete schedule;
+	  schedule = PyNode_Compile (n, file);
+	  PyNode_Free (n);
+	}
+      else
+        {
+	  cout << "\n*** Cannot set schedule: Error in" << flush;
+	  show_traceback ();
+        }
+      fclose (f);
+    }
+  else cout << "\n*** Cannot open schedule: file \"" << script
+	    << "\" not found!" << flush;
+}
+#endif
 
 #ifdef _EDIT_
 s_int8 mapobject::put(gzFile file)
 {
   u_int16 i;
-
+  u_int16 nbr_of_parts=anim.size();
   // version information 
   fileops::put_version (file, 1);
 
   gzwrite(file,&nbr_of_parts,sizeof(nbr_of_parts));
   for(i=0;i<nbr_of_parts;i++)
-    part[i].put(file);
+    anim[i]->put_off(file);
   maptpl::put(file);
   return 0;
 }
@@ -237,39 +316,35 @@ void mapobject::zoom(u_int16 sx, u_int16 sy, mapobject * src)
 {
   u_int16 i;
   clear();
-  init();
-  nbr_of_parts=src->nbr_of_parts;
-  part=new animation_off[nbr_of_parts];
-  for(i=0;i<nbr_of_parts;i++)
+  for(i=0;i<nbr_of_animations();i++)
     {
-      part[i].zoom((src->part[i].length()*sx)/src->length,
-		   (src->part[i].height()*sy)/src->height,&src->part[i]);
-      part[i].xoffset=(src->part[i].xoffset*sx)/src->length;
-      part[i].yoffset=(src->part[i].yoffset*sy)/src->height;
-      part[i].play();
+      anim[i]->zoom((src->anim[i]->length()*sx)/src->length(),
+		   (src->anim[i]->height()*sy)/src->height(),src->anim[i]);
+      anim[i]->set_offset((src->anim[i]->xoffset()*sx)/src->length(),(src->anim[i]->yoffset()*sy)/src->height());
+      anim[i]->play();
     }
 }
 
 void mapobject::zoom_to_fit(u_int16 sm, mapobject * src)
 {
   u_int16 nl,nh,m;
-  m=src->get_length()>=src->get_height()?src->get_length():src->get_height();
+  m=src->length()>=src->height()?src->length():src->height();
   if(m<sm)
     {
-      nl=src->get_length();
-      nh=src->get_height();
+      nl=src->length();
+      nh=src->height();
     }
   else
     {
-      if(m==src->get_length())
+      if(m==src->length())
 	{
 	  nl=sm;
-	  nh=(src->get_height()*sm)/src->get_length();
+	  nh=(src->height()*sm)/src->length();
 	}
       else
 	{
 	  nh=sm;
-	  nl=(src->get_length()*sm)/src->get_height();
+	  nl=(src->length()*sm)/src->height();
 	}
     }
   zoom(nl,nh,src);
@@ -278,23 +353,23 @@ void mapobject::zoom_to_fit(u_int16 sm, mapobject * src)
 void mapobject::init_parts()
 {
   u_int16 i;
-  for(i=0;i<nbr_of_parts;i++)
+  for(i=0;i<nbr_of_animations();i++)
     {
-      part[i].rewind();
-      part[i].play();
+      anim[i]->rewind();
+      anim[i]->play();
     }
 }
 
 u_int16 mapobject::increase_part(u_int16 c)
 {
   c++;
-  if(c==nbr_of_parts) c=0;
+  if(c==nbr_of_animations()) c=0;
   return c;
 }
 
 u_int16 mapobject::decrease_part(u_int16 c)
 {
-  if(c==0) c=nbr_of_parts-1;
+  if(c==0) c=nbr_of_animations()-1;
   else c--;
   return c;
 }
@@ -308,32 +383,32 @@ void mapobject::set_currentpart(u_int16 p)
 void mapobject::set_part_xoffset(u_int16 p, s_int16 xoff)
 {
   if(xoff<0) return;
-  part[p].xoffset=xoff;
+  anim[p]->set_offset(xoff,anim[p]->yoffset());
   must_upt_label_part=true;
 }
 
 void mapobject::set_part_yoffset(u_int16 p, s_int16 yoff)
 {
   if(yoff<0) return;
-  part[p].yoffset=yoff;
+  anim[p]->set_offset(anim[p]->xoffset(),yoff);
   must_upt_label_part=true;
 }
 
 void mapobject::update_label_part()
 {
-  if(nbr_of_parts)
+  if(nbr_of_animations())
     {
       sprintf(label_txt,"Current part: %d/%d\nOffset: %d, %d\n"
 	      "Obj. size: %d, %d\n%s",
-	      currentpart,nbr_of_parts,part[currentpart].xoffset, 
-	      part[currentpart].yoffset,length,height,
-	      part[currentpart].is_empty()?"Part is empty\n":"");
+	      currentpart,nbr_of_animations(),anim[currentpart]->xoffset(), 
+	      anim[currentpart]->yoffset(),length(),height(),
+	      anim[currentpart]->is_empty()?"Part is empty\n":"");
       if(show_grid)
 	{
 	  static char tmps[300];
 	  sprintf(tmps,"\nCursor:\nX: %d\nY: %d\n"
 		  "\nObject size:\nLength: %d\nHeight: %d",
-		  posx,posy,length,height);
+		  posx,posy,length(),height());
 	  strcat(label_txt,tmps);
 	}
     }
@@ -431,14 +506,14 @@ void mapobject::load()
 
 void mapobject::new_animation()
 {
-  animation anim;
+  animation * anim=new animation;
   u_int16 p;
   do
     {
       char tmp[255];
       char * s2;
-      sprintf(tmp,"Insert at pos(0-%d): (Default %d)",nbr_of_parts,
-	      nbr_of_parts);
+      sprintf(tmp,"Insert at pos(0-%d): (Default %d)",nbr_of_animations(),
+	      nbr_of_animations());
       win_query * qw2=new win_query(70,40,th,font,tmp);
       s2=qw2->wait_for_text(makeFunctor(*this,
 				       &mapobject::update_editor),
@@ -447,32 +522,34 @@ void mapobject::new_animation()
       if(!s2)
 	{ 
 	  delete qw2;
+	  delete anim;
 	  return;
 	}
-      if(!s2[0]) p=nbr_of_parts;
+      if(!s2[0]) p=nbr_of_animations();
       else p=atoi(s2);
       delete qw2;
     }
-  while(p>nbr_of_parts);
+  while(p>nbr_of_animations());
   insert_animation(anim,p);
-  part[p].editor();
+  anim[p].editor();
   init_parts();
   must_upt_label_part=true;
 }
 
 void mapobject::add_animation()
 {
-  animation anim;
+  animation * anim=new animation;
   u_int16 p;
   win_file_select * wf=new win_file_select(60,20,200,200,th,font,".anim");
   char * s=wf->wait_for_select(makeFunctor(*this,&mapobject::update_editor),
 			       makeFunctor(*this,&mapobject::draw_editor));
   if(!s) return;
   char st[500];
-  if(anim.load(s))
+  if(anim->load(s))
     {
       sprintf(st,"Error loading %s!",s);
       delete wf;
+      delete anim;
       return;
     }
   sprintf(st,"%s loaded successfully!",s);
@@ -480,8 +557,8 @@ void mapobject::add_animation()
     {
       char tmp[255];
       char * s2;
-      sprintf(tmp,"Insert at pos(0-%d): (Default %d)",nbr_of_parts,
-	      nbr_of_parts);
+      sprintf(tmp,"Insert at pos(0-%d): (Default %d)",nbr_of_animations(),
+	      nbr_of_animations());
       win_query * qw2=new win_query(70,40,th,font,tmp);
       s2=qw2->wait_for_text(makeFunctor(*this,
 				       &mapobject::update_editor),
@@ -491,69 +568,24 @@ void mapobject::add_animation()
 	{ 
 	  delete qw2;
 	  delete wf;
+	  delete anim;
 	  return;
 	}
-      if(!s2[0]) p=nbr_of_parts;
+      if(!s2[0]) p=nbr_of_animations();
       else p=atoi(s2);
       delete qw2;
     }
-  while(p>nbr_of_parts);
+  while(p>nbr_of_animations());
   insert_animation(anim,p);
-  if(!strcmp(s,"new")) part[p].editor();
+  if(!strcmp(s,"new")) anim[p].editor();
   delete wf;
   init_parts();
   must_upt_label_part=true;
 }
 
-s_int8 mapobject::insert_animation(animation &an, u_int16 pos)
-{
-  animation_off * oldpart=part;
-  u_int16 i;
-  if(pos>nbr_of_parts) return -2;
-  part=new animation_off[++nbr_of_parts];
-  for(i=0;i<pos;i++)
-    part[i]=oldpart[i];
-  part[pos]=an;
-  part[pos].play();
-  for(i=pos+1;i<nbr_of_parts;i++)
-    part[i]=oldpart[i-1];
-  delete[] oldpart;
-#ifdef _DEBUG_
-  cout << "Added animation: " << nbr_of_parts << " total in mapobject.\n";
-#endif
-  return 0;
-}
-
-s_int8 mapobject::delete_animation(u_int16 pos)
-{
-  animation_off * oldpart=part;
-  u_int16 i;
-  if(pos>nbr_of_parts-1) return -2;
-  part=new animation_off[--nbr_of_parts];
-  for(i=0;i<pos;i++)
-    part[i]=oldpart[i];
-  for(i=pos;i<nbr_of_parts;i++)
-    part[i]=oldpart[i+1];
-  delete[] oldpart;
-  if(currentpart>=nbr_of_parts) currentpart=nbr_of_parts-1;
-  if(in_editor) 
-    {
-      must_upt_label_part=true;
-    }
-#ifdef _DEBUG_
-  cout << "Removed part: " << nbr_of_parts << " total in mapobject.\n";
-#endif
-  if(!nbr_of_parts) 
-    {
-      part=NULL;
-      currentpart=0;
-    }
-  return 0;
-}
-
 void mapobject::set_part_offset(u_int16 partnbr, u_int16 x, u_int16 y)
 {
-  part[partnbr].set_offset(x,y);
+  anim[partnbr]->set_offset(x,y);
 }
 
 void mapobject::resize_grid()
@@ -561,15 +593,15 @@ void mapobject::resize_grid()
   u_int16 mx=0,my=0;
   u_int16 rx,ry;
   u_int16 i;
-  if(!nbr_of_parts) return;
-  for(i=0;i<nbr_of_parts;i++)
+  if(!nbr_of_animations()) return;
+  for(i=0;i<nbr_of_animations();i++)
     {
-      if(mx<part[i].length()+part[i].xoffset) mx=part[i].length()+part[i].xoffset;
-      if(my<part[i].height()+part[i].yoffset) my=part[i].height()+part[i].yoffset;
+      if(mx<anim[i]->length()+anim[i]->xoffset()) mx=anim[i]->length()+anim[i]->xoffset();
+      if(my<anim[i]->height()+anim[i]->yoffset()) my=anim[i]->height()+anim[i]->yoffset();
     }
   rx=mx/20+(mx%20!=0);
   ry=my/20+(my%20!=0);
-  if(rx==maptpl::length && ry==maptpl::height) return;
+  if(rx==maptpl::length() && ry==maptpl::height()) return;
   resize(rx,ry);
   resize_view(9,9);
 }
@@ -613,17 +645,17 @@ void mapobject::update_editor_keys()
   if(input::has_been_pushed(SDLK_F3))
     { new_animation(); }
 
-  if(!nbr_of_parts) return;
+  if(!nbr_of_animations()) return;
 
   if(testkey(SDLK_KP_PLUS))
     if(SDL_GetModState()&KMOD_SHIFT)
       {
-	if(currentpart<nbr_of_parts-1)
+	if(currentpart<nbr_of_animations()-1)
 	  {
-	    animation_off tmp;
-	    tmp=part[currentpart];
-	    part[currentpart]=part[currentpart+1];
-	    part[currentpart+1]=tmp;
+	    animation tmp;
+	    tmp=*(anim[currentpart]);
+	    anim[currentpart]=anim[currentpart+1];
+	    *(anim[currentpart+1])=tmp;
 	    currentpart++;
 	    must_upt_label_part=true;
 	  }
@@ -635,10 +667,10 @@ void mapobject::update_editor_keys()
       {
 	if(currentpart>0)
 	  {
-	    animation_off tmp;
-	    tmp=part[currentpart];
-	    part[currentpart]=part[currentpart-1];
-	    part[currentpart-1]=tmp;
+	    animation tmp;
+	    tmp=*(anim[currentpart]);
+	    anim[currentpart]=anim[currentpart-1];
+	    *(anim[currentpart-1])=tmp;
 	    currentpart--;
 	    must_upt_label_part=true;
 	  }
@@ -647,7 +679,7 @@ void mapobject::update_editor_keys()
   
   if(input::has_been_pushed(SDLK_RETURN))
     {
-      part[currentpart].editor();
+      anim[currentpart]->editor();
       init_parts();
     }
 
@@ -655,14 +687,14 @@ void mapobject::update_editor_keys()
     {
       if(SDL_GetModState()&KMOD_SHIFT)
 	{ 
-	  if(part[currentpart].xoffset)
-	    set_part_xoffset(currentpart,part[currentpart].xoffset-1); 
+	  if(anim[currentpart]->xoffset())
+	    set_part_xoffset(currentpart,anim[currentpart]->xoffset()-1); 
 	}
       else if(SDL_GetModState() & (KMOD_META | KMOD_ALT))
 	{ 
-	  if((maptpl::get_length()-1)*MAPSQUARE_SIZE>=
-	     part[currentpart].length()+part[currentpart].xoffset)
-	    maptpl::resize(maptpl::get_length()-1,maptpl::get_height()); 
+	  if((maptpl::length()-1)*MAPSQUARE_SIZE>=
+	     anim[currentpart]->length()+anim[currentpart]->xoffset())
+	    maptpl::resize(maptpl::length()-1,maptpl::height()); 
 	}
       else
 	{ move_cursor_left(); must_upt_label_part=true;}
@@ -671,12 +703,12 @@ void mapobject::update_editor_keys()
     {
       if(SDL_GetModState()&KMOD_SHIFT)
 	{ 
-	  if(part[currentpart].xoffset+part[currentpart].length()<
-	     maptpl::length*MAPSQUARE_SIZE)
-	    set_part_xoffset(currentpart,part[currentpart].xoffset+1); 
+	  if(anim[currentpart]->xoffset()+anim[currentpart]->length()<
+	     maptpl::length()*MAPSQUARE_SIZE)
+	    set_part_xoffset(currentpart,anim[currentpart]->xoffset()+1); 
 	}
       else if(SDL_GetModState() & (KMOD_META | KMOD_ALT))
-	{ maptpl::resize(maptpl::get_length()+1,maptpl::get_height()); }
+	{ maptpl::resize(maptpl::length()+1,maptpl::height()); }
       else
 	{ move_cursor_right(); must_upt_label_part=true;}
     }
@@ -684,14 +716,14 @@ void mapobject::update_editor_keys()
     {
       if(SDL_GetModState()&KMOD_SHIFT)
 	{ 
-	  if(part[currentpart].yoffset)
-	    set_part_yoffset(currentpart,part[currentpart].yoffset-1);
+	  if(anim[currentpart]->yoffset())
+	    set_part_yoffset(currentpart,anim[currentpart]->yoffset()-1);
 	}
       else if(SDL_GetModState() & (KMOD_META | KMOD_ALT))
 	{ 
-	  if((maptpl::get_height()-1)*MAPSQUARE_SIZE>=
-	     part[currentpart].height()+part[currentpart].yoffset)
-	    maptpl::resize(maptpl::get_length(),maptpl::get_height()-1); 
+	  if((maptpl::height()-1)*MAPSQUARE_SIZE>=
+	     anim[currentpart]->height()+anim[currentpart]->yoffset())
+	    maptpl::resize(maptpl::length(),maptpl::height()-1); 
 	}
       else
 	{ move_cursor_up(); must_upt_label_part=true;}
@@ -700,12 +732,12 @@ void mapobject::update_editor_keys()
     {
       if(SDL_GetModState()&KMOD_SHIFT)
 	{ 
-	  if(part[currentpart].yoffset+part[currentpart].height()<
-	     maptpl::height*MAPSQUARE_SIZE)
-	    set_part_yoffset(currentpart,part[currentpart].yoffset+1); 
+	  if(anim[currentpart]->yoffset()+anim[currentpart]->height()<
+	     maptpl::height()*MAPSQUARE_SIZE)
+	    set_part_yoffset(currentpart,anim[currentpart]->yoffset()+1); 
 	}
       else if(SDL_GetModState() & (KMOD_META | KMOD_ALT))
-	{ maptpl::resize(maptpl::get_length(),maptpl::get_height()+1); }
+	{ maptpl::resize(maptpl::length(),maptpl::height()+1); }
       else
 	{ move_cursor_down(); must_upt_label_part=true;}
     }
@@ -762,11 +794,11 @@ void mapobject::update_editor()
 void mapobject::draw_editor()
 {
   bg->draw(0,0);
-  if(nbr_of_parts)
+  if(nbr_of_animations())
     {
       draw_free(0-(MAPSQUARE_SIZE*d_posx),0-(MAPSQUARE_SIZE*d_posy),da);
-      if(!part[currentpart].is_empty())
-	part[currentpart].draw_border(0-(MAPSQUARE_SIZE*d_posx),
+      if(!anim[currentpart]->is_empty())
+	anim[currentpart]->draw_border(0-(MAPSQUARE_SIZE*d_posx),
 				      0-(MAPSQUARE_SIZE*d_posy),da);
     }
   calculate_dimensions();

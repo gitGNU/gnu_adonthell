@@ -310,8 +310,8 @@ s_int8 landsubmap::put_mapobject(u_int16 px, u_int16 py,
   // base tile isn't at right of the object.
   // Bad initialisation of i0/j0/ie/je ( must be init like remove_obj)
   
-  u_int16 ie=m_map->pattern[patnbr]->maptpl::get_length();
-  u_int16 je=m_map->pattern[patnbr]->maptpl::get_height();
+  u_int16 ie=m_map->pattern[patnbr]->maptpl::length();
+  u_int16 je=m_map->pattern[patnbr]->maptpl::height();
   
   ie=px-m_map->pattern[patnbr]->basex+ie>length?length-px:ie;
   je=py-m_map->pattern[patnbr]->basey+je>height?height-py:je;
@@ -465,7 +465,7 @@ landmap& landmap::operator =(const landmap& lm)
 s_int8 landmap::get(gzFile file)
 {
   u_int16 i,j;
-  mapobject tobj;
+  mapobject * tobj;
   char tstr[500];
   clear();
   // Getting all mapobjects
@@ -477,7 +477,8 @@ s_int8 landmap::get(gzFile file)
 	{
 	  gzread(file,&tstr[j],sizeof(tstr[j]));
 	}while (tstr[j++]);
-      tobj.load(tstr);
+      tobj=new mapobject;
+      tobj->load(tstr);
       insert_mapobject(tobj,nbr_of_patterns,tstr);
     }
   // Getting all submaps
@@ -558,10 +559,10 @@ void landmap::put_mapchar(mapcharacter * mchar, u_int16 smap,
   list<mapsquare_char>::iterator it;
   u_int16 sx=(px-mchar->basex<0)?0:px-mchar->basex;
   u_int16 sy=(py-mchar->basey<0)?0:py-mchar->basey;
-  u_int16 ex=(sx+mchar->maptpl::length>submap[smap]->length)?
-    submap[smap]->length:sx+mchar->maptpl::length;
-  u_int16 ey=(sy+mchar->maptpl::height>submap[smap]->height)?
-    submap[smap]->height:sy+mchar->maptpl::height;
+  u_int16 ex=(sx+mchar->maptpl::length()>submap[smap]->length)?
+    submap[smap]->length:sx+mchar->maptpl::length();
+  u_int16 ey=(sy+mchar->maptpl::height()>submap[smap]->height)?
+    submap[smap]->height:sy+mchar->maptpl::height();
   u_int16 i,j;
   // Placing the base tile first
   mschar.mchar=mchar;
@@ -597,10 +598,10 @@ void landmap::remove_mapchar(mapcharacter * mchar, u_int16 smap,
   list<mapsquare_char>::iterator e;
   u_int16 sx=(px-mchar->basex<0)?0:px-mchar->basex;
   u_int16 sy=(py-mchar->basey<0)?0:py-mchar->basey;
-  u_int16 ex=(sx+mchar->maptpl::length>submap[smap]->length)?
-    submap[smap]->length:sx+mchar->maptpl::length;
-  u_int16 ey=(sy+mchar->maptpl::height>submap[smap]->height)?
-    submap[smap]->height:sy+mchar->maptpl::height;
+  u_int16 ex=(sx+mchar->maptpl::length()>submap[smap]->length)?
+    submap[smap]->length:sx+mchar->maptpl::length();
+  u_int16 ey=(sy+mchar->maptpl::height()>submap[smap]->height)?
+    submap[smap]->height:sy+mchar->maptpl::height();
   u_int16 i,j;
 
   
@@ -679,8 +680,8 @@ void landmap::remove_mapobject(u_int16 smap,
 {
   u_int16 i,j;
   list<mapsquare_tile>::iterator it;
-  u_int16 ie=pattern[obj->objnbr]->maptpl::get_length();
-  u_int16 je=pattern[obj->objnbr]->maptpl::get_height();
+  u_int16 ie=pattern[obj->objnbr]->maptpl::length();
+  u_int16 je=pattern[obj->objnbr]->maptpl::height();
 
   u_int16 i0=(obj->base_tile->x-pattern[obj->objnbr]->basex)>0?0:
     pattern[obj->objnbr]->basex-obj->base_tile->x;
@@ -725,7 +726,7 @@ void landmap::remove_mapobject(u_int16 smap,
       }
 }
 
-s_int8 landmap::insert_mapobject(mapobject &an, u_int16 pos, 
+s_int8 landmap::insert_mapobject(mapobject * an, u_int16 pos, 
 				 const char * srcfile="")
 {
   mapobject ** oldpat=pattern;
@@ -736,8 +737,8 @@ s_int8 landmap::insert_mapobject(mapobject &an, u_int16 pos,
   pattern=new (mapobject*)[++nbr_of_patterns];
   for(i=0;i<pos;i++)
     pattern[i]=oldpat[i];
-  pattern[pos]=new mapobject;
-  *(pattern[pos])=an;
+  //  pattern[pos]=new mapobject;
+  pattern[pos]=an;
   pattern[pos]->play();
   for(i=pos+1;i<nbr_of_patterns;i++)
     pattern[i]=oldpat[i-1];
@@ -748,7 +749,7 @@ s_int8 landmap::insert_mapobject(mapobject &an, u_int16 pos,
   for(i=0;i<pos;i++)
     mini_pattern[i]=oldpat[i];
   mini_pattern[pos]=new mapobject;
-  mini_pattern[pos]->zoom_to_fit(OBJSMPLSIZE,&an);
+  mini_pattern[pos]->zoom_to_fit(OBJSMPLSIZE,an);
   mini_pattern[pos]->play();
   for(i=pos+1;i<nbr_of_patterns;i++)
     mini_pattern[i]=oldpat[i-1];
