@@ -1101,7 +1101,7 @@ load_dialogue (MainFrame * wnd, const char *file)
     if (wnd->number > 0)
     {
         wnd->y_offset -= y_min - 15;
-        wnd->x_offset -= (x_min + x_max) / 2 - wnd->graph->allocation.width / 2;
+        wnd->x_offset -= (x_min + x_max - wnd->graph->allocation.width) / 2;
 
         redraw_graph (wnd);
     }

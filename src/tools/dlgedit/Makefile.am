@@ -32,8 +32,8 @@ $(SDL_LIBS) $(PY_LIBS) $(GTK_LIBS)
 lex.loadlg.cc: loadlg.l
 	flex -olex.loadlg.cc loadlg.l
 
-py_character_wrap.cc : py_character.i
+py_character_wrap.cc : py_character.i ../../character.h ../../character_base.h
 	swig $(SWIGFLAGS) -python -shadow -c++ -make_default -o py_character_wrap.cc $<
 
-py_quest_wrap.cc : py_quest.i
+py_quest_wrap.cc : py_quest.i ../../quest.h
 	swig $(SWIGFLAGS) -python -shadow -c++ -make_default -o py_quest_wrap.cc $<
