@@ -2,8 +2,13 @@ dnl **************************************************************
 dnl Process this file with autoconf to produce a configure script.
 dnl **************************************************************
 
-AC_INIT(README)
-AM_INIT_AUTOMAKE(adonthell, 0.4dev1)
+AC_INIT(adonthell, 0.4dev1, adonthell@linuxgames.com)
+
+dnl Detect the canonical host and target build environment
+AC_CANONICAL_HOST
+AC_CANONICAL_TARGET
+
+dnl AM_INIT_AUTOMAKE(adonthell, 0.4dev1)
 AM_CONFIG_HEADER(config.h)
 
 CFLAGS="-g -Wall -fno-exceptions -fno-rtti"
@@ -19,10 +24,6 @@ AC_LANG_C
 AC_PROG_CXXCPP
 AM_PROG_LIBTOOL
 AC_PROG_MAKE_SET
-
-dnl Detect the canonical host and target build environment
-AC_CANONICAL_HOST
-AC_CANONICAL_TARGET
 
 dnl ****
 dnl i18n
