@@ -186,48 +186,87 @@ void melee::calc_stats() {
 	//A is attacking, time for the number crunching.
 	if ( (parity % 2) > 0) {
 		switch (method) {
-		case  0:			//thrust
-			a_modifier = (weapons[a_weapon].base + a_str  + armors[b_armor].dexhit) * (a_attack_range / .6);
-			printf("\na_modifier: %3.4f\n", a_modifier);
-			b_modifier = (armors[b_armor].ar * .5 + armors[b_armor].thrust + b_dex) * (b_defense_range / .4);	
-   			printf("b_modifier: %3.4f\n", b_modifier);
-			a_ratio = a_modifier / (a_modifier + b_modifier) ;
-			printf("a_ratio: %3.4f\n", a_ratio);
-			b_ratio = b_modifier / (a_modifier + b_modifier);
-			printf("b_ratio: %3.4f\n", b_ratio);
-			break;
-		case 1: 				//chop
-          a_modifier = int((weapons[a_weapon].base + a_str) * a_attack_range + armors[b_armor].dexhit);
-			b_modifier = int(b_defense_range * (armors[b_armor].ar + armors[b_armor].chop + b_dex));		
-			break;
-		case 2: 				//smash
-          a_modifier = int((weapons[a_weapon].base + a_str) * a_attack_range + armors[b_armor].dexhit);
-			b_modifier = int(b_defense_range * (armors[b_armor].ar + armors[b_armor].smash + b_dex));	
-          break;
-	}
-		
+			case  0:			//thrust
+				a_modifier = (weapons[a_weapon].base + a_str  + armors[b_armor].dexhit) * (a_attack_range / .6);
+				printf("\na_modifier: %3.4f\n", a_modifier);
+				b_modifier = (armors[b_armor].ar * .5 + armors[b_armor].thrust + b_dex) * (b_defense_range / .4);	
+   				printf("b_modifier: %3.4f\n", b_modifier);
+				a_ratio = a_modifier / (a_modifier + b_modifier) ;
+				printf("a_ratio: %3.4f\n", a_ratio);
+				b_ratio = b_modifier / (a_modifier + b_modifier);
+				printf("b_ratio: %3.4f\n", b_ratio);
+				break;
+			case 1: 				//chop
+          	a_modifier = (weapons[a_weapon].base + a_str  + armors[b_armor].dexhit) * (a_attack_range / .6);
+				printf("\na_modifier: %3.4f\n", a_modifier);
+				b_modifier = (armors[b_armor].ar * .5 + armors[b_armor].chop + b_dex) * (b_defense_range / .4);	
+   				printf("b_modifier: %3.4f\n", b_modifier);
+				a_ratio = a_modifier / (a_modifier + b_modifier) ;
+				printf("a_ratio: %3.4f\n", a_ratio);
+				b_ratio = b_modifier / (a_modifier + b_modifier);
+				printf("b_ratio: %3.4f\n", b_ratio);
+				break;
+			case 2: 				//smash
+          	a_modifier = (weapons[a_weapon].base + a_str  + armors[b_armor].dexhit) * (a_attack_range / .6);
+				printf("\na_modifier: %3.4f\n", a_modifier);
+				b_modifier = (armors[b_armor].ar * .5 + armors[b_armor].smash + b_dex) * (b_defense_range / .4);	
+   				printf("b_modifier: %3.4f\n", b_modifier);
+				a_ratio = a_modifier / (a_modifier + b_modifier) ;
+				printf("a_ratio: %3.4f\n", a_ratio);
+				b_ratio = b_modifier / (a_modifier + b_modifier);
+				printf("b_ratio: %3.4f\n", b_ratio);
+				break;
+		}
 		switch (action) {
 			case 0:			//hit
 			result = int(weapons[a_weapon].base * a_ratio) ;
 				return result;
 			case 1:		//critical hit
-				result = int(a_modifier / (a_modifier + b_modifier) * 1.75);
 				return result;
 			case 2:		//criitcal miss
- 		    	result = int(b_modifier / (a_modifier + b_modifier) * weapons[a_weapon].base) * -2;
-				return result;
+ 		    	return result;
 		}
 	} else {
+		switch (method) {
+			case  0:			//thrust
+				b_modifier = (weapons[b_weapon].base + b_str  + armors[a_armor].dexhit) * (b_attack_range / .6);
+				printf("\na_modifier: %3.4f\n", b_modifier);
+				a_modifier = (armors[a_armor].ar * .5 + armors[a_armor].thrust + b_dex) * (b_defense_range / .4);	
+   				printf("a_modifier: %3.4f\n", a_modifier);
+				a_ratio = a_modifier / (a_modifier + b_modifier) ;
+				printf("a_ratio: %3.4f\n", a_ratio);
+				b_ratio = b_modifier / (a_modifier + b_modifier);
+				printf("b_ratio: %3.4f\n", b_ratio);
+				break;
+			case 1: 				//chop
+          	b_modifier = (weapons[b_weapon].base + b_str  + armors[a_armor].dexhit) * (b_attack_range / .6);
+				printf("\na_modifier: %3.4f\n", b_modifier);
+				a_modifier = (armors[a_armor].ar * .5 + armors[a_armor].chop + b_dex) * (b_defense_range / .4);	
+   				printf("a_modifier: %3.4f\n", a_modifier);
+				a_ratio = a_modifier / (a_modifier + b_modifier) ;
+				printf("a_ratio: %3.4f\n", a_ratio);
+				b_ratio = b_modifier / (a_modifier + b_modifier);
+				printf("b_ratio: %3.4f\n", b_ratio);
+				break;
+			case 2: 				//smash
+          	b_modifier = (weapons[b_weapon].base + b_str  + armors[a_armor].dexhit) * (b_attack_range / .6);
+				printf("\na_modifier: %3.4f\n", b_modifier);
+				a_modifier = (armors[a_armor].ar * .5 + armors[a_armor].smash + b_dex) * (b_defense_range / .4);	
+   				printf("a_modifier: %3.4f\n", a_modifier);
+				a_ratio = a_modifier / (a_modifier + b_modifier) ;
+				printf("a_ratio: %3.4f\n", a_ratio);
+				b_ratio = b_modifier / (a_modifier + b_modifier);
+				printf("b_ratio: %3.4f\n", b_ratio);
+				break;
+		}
 		switch (action) {
 			case 0: 			//hit
-				result = int(weapons[a_weapon].base * (b_str / 100));;
+				result = int(weapons[b_weapon].base * b_ratio) ;
 				return result;
 			case 1:		//critical hit
-				result = int(weapons[a_weapon].base * (b_str / 50));
 				return result;
 			case 2:		//criitcal miss
- 		    	result = int(weapons[a_weapon].base * (a_str / 100));
-				return result;
+ 		    	return result;
 		}
 	}
 }

@@ -23,7 +23,7 @@
 #include "items.h"
 void show_results(int);
 float get_dice(int);
-
+int attack_method = 4;
 
 
 //create melee and yarg classes
@@ -110,18 +110,22 @@ int main (void) {
 		cin >> test.b_defense_skill;
 	 	garbage = getc(stdin);
 	}
+	
 	while (1) {
         	//create 2 random characters, crunch players stats, show results.
 		if (random_chars == 1) {
 			test.create_characters();
 		}
 		test.calc_stats();
-		
 		do {
+			while (attack_method < 0 || attack_method > 3) {
+				cout << "\nChoose attack method[0/1/2]:";
+				cin >> attack_method;
+				garbage = getc(stdin);
+			}
 			show_results(++rounds);
-			printf("\npaused...");
-			garbage = getc(stdin);
-		} while (a_hit < 20 && b_hit < 20); 
+			attack_method = 4;
+		} while (a_hit < 20 && b_hit < 20);
 	
 		printf ("%s has won after %i rounds", (a_hit < b_hit ? "A" : "B"), rounds/2);
 		printf("\npaused...");
@@ -173,10 +177,7 @@ void show_results(int parity) {
 	char garbage;
 	// get random number for this turn
 	dice = get_dice(parity);
-
-	
-
-	printf("\n\n\n\n\n\n\n\n\n\n");
+   	printf("\n\n\n\n\n\n\n\n\n\n");
 	printf("\n\nCharacter Statistics:\n=====================\n");
 	printf("Character A:\n------------\n");
 	printf("Strength: %d\n", int(test.a_str));
@@ -204,7 +205,7 @@ void show_results(int parity) {
 	   printf("Number Rolled: %4.4f\n", dice);
 	   if(dice <= test.a_attack_range) {
 	  		printf("HIT!\n\n");
-			outcome = test.calc_damage(parity, 0, 0); //parity, action, attack method
+			outcome = test.calc_damage(parity, 0, attack_method); //parity, action, attack method
 			printf("\ncalcdamage results: %d\n", outcome);
 			b_hit += 1; }
 	  	if(dice > test.a_attack_range && (dice < (test.a_attack_total_allotment - test.a_attack_luck_allotment)))
@@ -227,6 +228,8 @@ void show_results(int parity) {
 	  	printf("Number Rolled: %4.4f\n", dice);
 	  	if(dice <= test.b_attack_range) {
 	  		printf("HIT!\n\n");
+			outcome = test.calc_damage(parity, 0, attack_method); //parity, action, attack method
+			printf("\ncalcdamage results: %d\n", outcome);
 			a_hit += 1; }
 	  	if(dice > test.b_attack_range && (dice < (test.b_attack_total_allotment - test.b_attack_luck_allotment)))
 	  		printf("MISS!\n\n");
