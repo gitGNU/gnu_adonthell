@@ -96,7 +96,10 @@ void DlgCompiler::run ()
     
     // write the dialogue text
     writeText ();
-    
+
+    // write loop table
+    writeLoop ();
+        
     // write the conditions
     writeConditions ();
     
@@ -162,19 +165,38 @@ void DlgCompiler::writeText ()
         // set index of this node for later use
         (*i)->setIndex (++j);
 
-        // build up condition vector
+        // build condition vector
         if (entry->condition () != "")
             addCondition ((DlgCircle *) *i, j);
     
-        // build up code vector
+        // build code vector
         if (entry->code () != "")
             addCode (entry->code (), j);
+
+        // build loop vector
+        if (entry->loop () != false)
+            loop.push_back (j);
         
         // write text of the node
         file << ",\\\n\t\t_(\"" << entry->text () << "\")";
     }
     
     // close text array
+    file << "]\n\n";
+}
+
+// write loops
+void DlgCompiler::writeLoop ()
+{
+    file << "\tloop = [";
+    
+    for (std::vector<int>::iterator i = loop.begin (); i != loop.end (); i++)
+    {
+        if (i != loop.begin ()) file << ", ";
+        file << (*i);
+    }
+    
+    // close array
     file << "]\n\n";
 }
 

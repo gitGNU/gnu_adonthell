@@ -47,6 +47,7 @@ NPC             return LOAD_NPC;
 Name            return LOAD_NAME;
 Race            return LOAD_RACE;
 Gender          return LOAD_GENDER;
+Loop            return LOAD_LOOP;
 Proj            return LOAD_PROJECT;
 Inc             return LOAD_IMPORTS;
 Dtor            return LOAD_DTOR;

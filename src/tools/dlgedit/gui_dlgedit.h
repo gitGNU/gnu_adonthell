@@ -131,8 +131,9 @@ public:
     /**
      * Display a dialogue
      * @param module The dialogue to display.
+     * @param center whether to center the dialgue in view or not
      */
-    void showDialogue (DlgModule *module);
+    void showDialogue (DlgModule *module, bool center = false);
     /**
      * Compile a dialogue
      */

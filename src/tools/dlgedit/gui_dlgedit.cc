@@ -390,8 +390,8 @@ void GuiDlgedit::loadDialogue (std::string file)
     // Display the dialogue
     else 
     {
-        message->display (200);        
-        showDialogue (module);
+        message->display (200);      
+        showDialogue (module, true);
     }
 }
 
@@ -448,13 +448,13 @@ void GuiDlgedit::closeDialogue ()
 }
 
 // display a certain dialogue
-void GuiDlgedit::showDialogue (DlgModule *module)
+void GuiDlgedit::showDialogue (DlgModule *module, bool center)
 {
     // remove the current module from the view
     graph_->detachModule ();
     
     // attach the dialogue to the view
-    graph_->attachModule (module);
+    graph_->attachModule (module, center);
     
     // update the custom code entry if neccessary
     if (GuiCode::dialog != NULL)

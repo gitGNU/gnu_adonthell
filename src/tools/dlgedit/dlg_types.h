@@ -121,7 +121,8 @@ enum
     LOAD_CTOR       = 22,
     LOAD_DTOR       = 23,
     LOAD_PROJECT    = 24,
-    LOAD_UNKNOWN    = 25
+    LOAD_LOOP       = 25,
+    LOAD_UNKNOWN    = 26
 };
 
 /**

@@ -59,6 +59,7 @@ private:
 
     GuiEdit *cond_edit;             // Text entry for conditions
     GuiEdit *code_edit;             // Text entry for code
+    GtkWidget *loop;                // Checkbox for looping text
     GtkWidget *text_entry;          // Entry for dialogue text
     GtkWidget *annotation_entry;    // Entry for annotations
     GtkWidget *npc_selection;       // The dropdown list with the various NPC's

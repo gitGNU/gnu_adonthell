@@ -127,9 +127,12 @@ void DlgCircle::draw (GdkPixmap *surface, DlgPoint &os)
     gdk_draw_arc (surface, gc, FALSE, position.x (), position.y (), 20, 20, 0, 36000);
     
     // Indicate wether node contains additional code
-    if (hasCode ())
+    if (hasCode () || entry_->loop ())
     {
-        GString *code = g_string_new ("!");
+        GString *code = g_string_sized_new (2);
+        
+        if (hasCode ()) g_string_append_c (code, '!');
+        if (entry_->loop ()) g_string_append_c (code, 'o');
         
         // get the font to use
         GdkFont *font = GuiDlgedit::window->font ();
@@ -167,10 +170,16 @@ bool DlgCircle::load ()
             case LOAD_TYPE:
             {
                 if (parse_dlgfile (str, n) == LOAD_NUM) type_ = (node_type) n;
-
                 break;
             }
-
+            
+            // Loop
+            case LOAD_LOOP:
+            {
+                if (parse_dlgfile (str, n) == LOAD_NUM) entry_->setLoop (n);
+                break;
+            }
+            
             // Coordinates of Circle
             case LOAD_POS:
             {
@@ -258,6 +267,10 @@ void DlgCircle::save (ofstream &file)
     // circle's code
     if (entry_->code () != "")
         file << "  Vars §" << entry_->code () << "§\n";
+    
+    // loop
+    if (entry_->loop () != false)
+        file << "  Loop 1\n";
     
     file << "End\n";
 }

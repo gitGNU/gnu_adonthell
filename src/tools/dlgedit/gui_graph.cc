@@ -57,12 +57,15 @@ GuiGraph::GuiGraph (GtkWidget *paned)
 }
 
 // attach a module
-void GuiGraph::attachModule (DlgModule *m)
+void GuiGraph::attachModule (DlgModule *m, bool cntr)
 {
     module = m;
     
     // get reference of the module's offset
     offset = &m->offset ();
+    
+    // center the module in view
+    if (cntr) center ();    
 
     // if a node is selected, update the instant preview
     GuiDlgedit::window->list ()->display (module->selected ());
@@ -429,6 +432,21 @@ bool GuiGraph::centerNode (DlgNode *node)
     return false;
 }
 
+// center whole dialogue in view
+void GuiGraph::center ()
+{
+    if (module == NULL) return;
+    
+    int min_x, max_x, y;
+    
+    module->extension (min_x, max_x, y);
+    
+    int x_off = (graph->allocation.width - (max_x - min_x))/2 - min_x;
+    int y_off = -y + 20;
+    
+    offset->move (x_off, y_off);
+}
+
 // edit selected node
 bool GuiGraph::editNode ()
 {
@@ -659,7 +677,7 @@ void GuiGraph::draw ()
 
     DlgRect rect (t);
 
-    // prevent changes to the drawing are to propagate to the screen
+    // prevent changes to the drawing area to propagate to the screen
     updateBackground = false;
     
     // Clear graph

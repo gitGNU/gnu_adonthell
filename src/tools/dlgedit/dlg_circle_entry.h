@@ -63,17 +63,24 @@ public:
      * @return the circle's condition.
      */
     std::string condition ()        { return condition_; }
+    /**
+     * Get whether the circle may loop.
+     * @return <b>true</b> if that's the case, <b>false</b> otherwise.
+     */
+    bool loop ()                    { return loop_; }
     
     void setText (std::string t);
     void setAnnotation (std::string a)   { annotation_ = a; }
     void setNpc (std::string n)          { npc_ = n; }
     void setCondition (std::string c);
     void setCode (std::string c)         { code_ = c; }
+    void setLoop (bool l)                { loop_ = l; }
     //@}
         
     bool hasCode ()                 { return code_ != "" || condition_ != ""; }
                 
 private:
+    bool loop_;                  // whether the text may loop
     std::string text_;           // the node's actual text
     std::string annotation_;     // comments of the author
     std::string npc_;            // name of the NPC this node is assigned to

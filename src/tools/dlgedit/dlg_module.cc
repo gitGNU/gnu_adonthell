@@ -179,10 +179,27 @@ DlgNode* DlgModule::deselectNode ()
     return retval;
 }
 
+// Get extension of the graph for proper displaying
+void DlgModule::extension (int &min_x, int &max_x, int &y)
+{
+    y = 0;
+    min_x = 0;
+    max_x = 0;
+    
+    for (std::vector<DlgNode*>::iterator i=nodes.begin(); i != nodes.end(); i++)
+        if ((*i)->type () != LINK)
+        {
+            if ((*i)->y () < y) y = (*i)->y ();
+
+            if ((*i)->x () < min_x) min_x = (*i)->x ();
+            else if ((*i)->x () > max_x) max_x = (*i)->x ();
+        }
+}
+
 // load a dialogue from file
 bool DlgModule::load ()
 {
-    int i = 1, n, y_min = 0, x_min = 0, x_max = 0;
+    int i = 1, n;
     DlgCircle *circle;
     DlgArrow *arrow;
     std::string s;
@@ -245,18 +262,7 @@ bool DlgModule::load ()
 
             case LOAD_NPC:
             {
-                // racter *mynpc = NULL;
-
                 if (parse_dlgfile (s, n) == LOAD_STR);
-                //    mynpc = data::characters.find (s.c_str ())->second;
-
-                // if (mynpc == NULL)
-                // {
-                //     dictionary <character *>::const_iterator itc = data::characters.begin ();
-                //     mynpc = itc->second;
-                // }
-
-                // wnd->set_npc (mynpc);
                 break;
             }
 
@@ -266,12 +272,6 @@ bool DlgModule::load ()
                 circle->load ();
 
                 nodes.push_back (circle);
-
-                // Get extension of the graph for proper displaying
-                if (circle->y () < y_min) y_min = circle->y ();
-
-                if (circle->x () < x_min) x_min = circle->x ();
-                else if (circle->x () > x_max) x_max = circle->x ();
 
                 break;
             }

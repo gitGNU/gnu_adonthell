@@ -103,6 +103,15 @@ public:
     DlgNode* selected ()                { return selected_; }
 
     /**
+     * Get the extension of the module for centering in view.
+     *
+     * @param min_x will contain position of leftmost node
+     * @param min_y will contain position of rightmost node
+     * @param y will contain position of topmost node
+     */
+    void extension (int &min_x, int &max_x, int &y);
+    
+    /**
      * Init the Dialogue from a file
      * @return <b>true</b> if loading was successful, <b>false</b>
      *         otherwise.

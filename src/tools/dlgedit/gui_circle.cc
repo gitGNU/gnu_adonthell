@@ -46,7 +46,8 @@ GuiCircle::GuiCircle (node_type *t, DlgCircleEntry *e, DlgModuleEntry *dme) : Gu
     GtkWidget *hbuttonbox1;
     GtkWidget *ok_button;
     GtkWidget *cancel_button;
-
+    GtkWidget *ebox;
+    
     // color to use for Player and Narrator text and labels    
     GdkColor dark_blue  = { 0, 0, 0, 35000 };
     GdkColor green      = { 0, 0, 27300, 15600 };
@@ -277,6 +278,21 @@ GuiCircle::GuiCircle (node_type *t, DlgCircleEntry *e, DlgModuleEntry *dme) : Gu
     gtk_text_insert (GTK_TEXT (annotation_entry), annotation_entry->style->font,
         &annotation_entry->style->black, &annotation_entry->style->white,
         e->annotation ().c_str (), -1);
+    
+    // the loop checkbox
+    ebox = gtk_event_box_new ();
+    gtk_widget_ref (ebox);
+    gtk_widget_show (ebox);
+    gtk_object_set_data_full (GTK_OBJECT (window), "ebox", ebox, (GtkDestroyNotify) gtk_widget_unref);
+    gtk_box_pack_end (GTK_BOX (vbox2), ebox, FALSE, FALSE, 0);
+    gtk_tooltips_set_tip (tooltips, ebox, "Unless this is checked, the text becomes unavailable after being uttered.", NULL);
+    
+    loop = gtk_check_button_new_with_label ("Loop");
+    gtk_widget_ref (loop);
+    gtk_object_set_data_full (GTK_OBJECT (window), "loop", loop, (GtkDestroyNotify) gtk_widget_unref);
+    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (loop), e->loop ());
+    gtk_widget_show (loop);
+    gtk_container_add (GTK_CONTAINER (ebox), loop);
 
     // Condition-editor
     cond_edit = new GuiEdit (notebook1);
@@ -377,6 +393,7 @@ void GuiCircle::applyChanges ()
     entry->setCode (code_edit->getText ());
     entry->setCondition (cond_edit->getText ());
     entry->setNpc (getOption (GTK_OPTION_MENU (npc_selection)));
+    entry->setLoop (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (loop)));
 }
 
 // returns selected option

@@ -31,6 +31,7 @@
 // Default Constructor
 DlgCircleEntry::DlgCircleEntry ()
 {
+    loop_ = false;
     text_ = "";
     annotation_ = "";
     npc_ = "Default";

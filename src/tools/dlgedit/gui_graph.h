@@ -48,8 +48,9 @@ public:
     /**
      * Attach a dialogue module to the view for drawing.
      * @param m the DlgModule to display and edit.
+     * @param cntr whether the module should be centered in the view
      */ 
-    void attachModule (DlgModule *m);
+    void attachModule (DlgModule *m, bool cntr = false);
     /**
      * Detach the dialogue module attached to the view.
      */ 
@@ -82,6 +83,10 @@ public:
      * Clear the drawing area.
      */
     void clear ();
+    /**
+     * Center the displayed dialogue on the drawing area.
+     */
+    void center ();
     //@}
     
     /**

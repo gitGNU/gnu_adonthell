@@ -111,6 +111,7 @@ private:
     void writeHeader (const std::string &theClass);
     void writeText ();
     void writeCode ();
+    void writeLoop ();
     void writeConditions ();
     void writeStart ();
     void writeDialogue ();
@@ -137,7 +138,7 @@ private:
     DlgCircle start;                // Start node of the dialogue
     std::vector<std::string> code;  // Temporary storage for all code
     std::vector<std::string> conditions; // Temporary storage for all conditions
-
+    std::vector<int> loop;          // nodes that are allowed to looped
     int errors;                     // number of errors in dialogue
     
     int *codeTable;                 // Mapping between nodes and code
