@@ -251,11 +251,21 @@ button_release_event (GtkWidget * widget, GdkEventButton * event, gpointer data)
     return TRUE;
 }
 
-/* Key pressed */
-guint 
-key_press_notify_event (GtkWidget * widget, GdkEventKey * event, gpointer data)
+// Key pressed
+guint key_press_notify_event (GtkWidget * widget, GdkEventKey * event, gpointer user_data)
 {
-/*   
+    GuiGraph *graph = (GuiGraph *) user_data;
+
+    switch (event->keyval)
+    {
+        // select parent node
+        case GDK_Up:
+        {
+            if (graph->selectParent ()) graph->centerNode ();
+            break;
+        }
+    }
+/*
     MainFrame *MainWnd = (MainFrame *) data;
     u_int32 index, offset = 5;
 

@@ -91,6 +91,13 @@ public:
      */
     bool selectNode (DlgNode *node);
     /**
+     * Select the parent of the currently selected node (or the first node
+     * in case no node is selected so far.
+     * @return <b>true</b> if the node exists and was selected successfully,
+     *         <b>false</b> otherwise.
+     */
+    bool selectParent ();
+    /**
      * Deselect the node currently selected.
      */
     void deselectNode ();
@@ -101,7 +108,7 @@ public:
      * @return <b>true</b> if the node exists and was centered on,
      *         <b>false</b> otherwise.
      */
-    bool centerNode (DlgNode *node);
+    bool centerNode (DlgNode *node = NULL);
     //@}
     
     /**

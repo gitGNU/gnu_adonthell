@@ -32,6 +32,6 @@ void on_list_select (GtkList *list, GtkWidget *widget, gpointer user_data)
     
     // change selection in the graph view
     graph->deselectNode ();
-    graph->centerNode (circle);
     graph->selectNode (circle);
+    graph->centerNode ();
 }

@@ -104,7 +104,7 @@ void DlgCircle::draw (GdkPixmap *surface, DlgPoint &os)
 
         g_string_free (code, TRUE);
     }
-    
+
     // Update the drawing area
     GuiDlgedit::window->graph ()->update (area);
 }

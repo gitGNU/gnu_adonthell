@@ -56,6 +56,15 @@ bool DlgModule::selectNode (DlgNode *node)
     return true;
 }
 
+// select the dialogue's root mode.
+bool DlgModule::selectRoot ()
+{
+    for (vector<DlgNode*>::iterator i = nodes.begin(); i != nodes.end (); i++)
+        if ((*i)->type () != LINK)
+            if ((*i)->prev (FIRST) == NULL)
+                return selectNode (*i);
+}
+
 // deselect the selected node
 DlgNode* DlgModule::deselectNode ()
 {

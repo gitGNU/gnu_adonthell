@@ -44,7 +44,7 @@ GuiGraph::GuiGraph (GtkWidget *paned)
     gtk_signal_connect (GTK_OBJECT (graph), "button_press_event", (GtkSignalFunc) button_press_event, this);
     gtk_signal_connect (GTK_OBJECT (graph), "button_release_event", (GtkSignalFunc) button_release_event, this);
     gtk_signal_connect (GTK_OBJECT (graph), "motion_notify_event", (GtkSignalFunc) motion_notify_event, this);
-    gtk_signal_connect (GTK_OBJECT (graph), "key_press_event", (GtkSignalFunc) key_press_notify_event, this);
+    gtk_signal_connect (GTK_OBJECT (GuiDlgedit::window->getWindow ()), "key_press_event", (GtkSignalFunc) key_press_notify_event, this);
 
     gtk_widget_set_events (graph, GDK_EXPOSURE_MASK | GDK_LEAVE_NOTIFY_MASK | GDK_BUTTON_PRESS_MASK |
         GDK_BUTTON_RELEASE_MASK | GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_KEY_PRESS_MASK);
@@ -88,10 +88,41 @@ bool GuiGraph::selectNode (DlgNode *node)
         
         // redraw the node
         node->draw (surface, *offset);
-        
+
         return true;
     }
     
+    return false;
+}
+
+// select parent
+bool GuiGraph::selectParent ()
+{
+    // if there is no module assigned to the view, there is nothing to select
+    if (module == NULL) return false;
+
+    // see if a node is currently selected
+    DlgNode *selected = module->selected ();
+
+    // if so ...
+    if (selected)
+    {
+        // ... try to retrieve it's parent
+        DlgNode *parent = ((DlgCircle *) selected)->parent (FIRST);
+
+        // if we have it, then select it
+        if (parent) return module->selectNode (parent);
+    }
+
+    // if no node is selected, we simply select the first one
+    if (module->selectRoot ())
+    {
+        // update the instant preview
+        GuiDlgedit::window->list ()->display (module->selected ());
+
+        return true;
+    }
+
     return false;
 }
 
@@ -123,19 +154,23 @@ bool GuiGraph::centerNode (DlgNode *node)
 {
     if (module == NULL) return false;
 
+    if (node == NULL && module->selected () != NULL)
+        node = module->selected ();
+    else return false;
+
     // calculate the correct offset for the given node
     DlgPoint pos = node->center ().offset (*offset);
     int x, y; 
     
-    x = -module->width () / 5;
-    y = -module->height () / 5;
+    x = module->width () / 5;
+    y = module->height () / 5;
 
-    // is node outside the views inner 60% ? 
-    if (!module->inflate (x, y).contains (pos))
+    // is node outside the views inner 60% ?
+    if (!module->inflate (-x, -y).contains (pos))
     {
         // then move the view so it is centered on the given point
         DlgPoint o (-(pos.x()-module->width()/2), -(pos.y()-module->height()/2));
-        module->move (o);
+        offset->move (o);
 
         draw ();
         return true;

@@ -39,7 +39,7 @@ GuiList::GuiList (GtkWidget *paned)
     // connect callbacks
     gtk_signal_connect (GTK_OBJECT (list), "select_child", (GtkSignalFunc) on_list_select, this);
     
-    // GTK_WIDGET_UNSET_FLAGS (MainWnd->list, GTK_CAN_FOCUS);
+    // GTK_WIDGET_UNSET_FLAGS (list, GTK_CAN_FOCUS);
     
     // no items in the list yet
     items = NULL;
@@ -56,12 +56,11 @@ void GuiList::draw ()
 
 void GuiList::clear ()
 {
-    // empty the list
-    g_list_free (items);
+    gtk_widget_hide (list);
+    gtk_list_clear_items (GTK_LIST (list), 0, -1);
+    gtk_widget_show (list);
+
     items = NULL;
-    
-    // redraw
-    draw ();
 }
 
 // display instant preview for a given node

@@ -32,13 +32,15 @@ DlgNode::DlgNode (node_type t, DlgRect area)
 // Get the next node
 DlgNode* DlgNode::next (query_type pos, int offset)
 {
-    return getNode (n, next_, pos, offset);
+    if (next_.empty ()) return NULL;
+    else return getNode (n, next_, pos, offset);
 }
 
 // Get the previous node
 DlgNode* DlgNode::prev (query_type pos, int offset)
 {
-    return getNode (p, prev_, pos, offset);
+    if (prev_.empty ()) return NULL;
+    else return getNode (p, prev_, pos, offset);
 }
 
 // Get a node from the specified list

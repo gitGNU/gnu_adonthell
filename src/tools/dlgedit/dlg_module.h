@@ -52,13 +52,26 @@ public:
      *         otherwise.
      */
     bool selectNode (DlgNode *node);
-    
+
+    /**
+     * Select the root node of the dialogue.
+     * @return <b>true</b> if the node has been selected, <b>false</b>
+     *         otherwise.
+     */
+    bool selectRoot ();
+
     /** 
      * Deselect a previously selected node.
      * @return the previously selected DlgNode, or <i>NULL</i> if no 
      *         node has been deselected
      */
     DlgNode* deselectNode ();
+
+    /**
+     * Get the node that is currently selected.
+     * @return the DlgNode currently selected
+     */
+    DlgNode* selected ()            { return selected_; }
 
     /**
      * Init the Dialogue from a file

@@ -54,7 +54,13 @@ public:
      * @return this point, offset by the given values.
      */
     DlgPoint offset (int x, int y)  { return DlgPoint (x_ + x, y_ + y); }
-                
+    /**
+     * Offset this point by the given values.
+     * @param x the offset in x direction
+     * @param y the offset in y direction
+     */
+    void move (DlgPoint &p)         { x_ += p.x (); y_ += p.y (); }
+
     /**
      * Convert a DlgPoint into a GdkPoint.
      */
