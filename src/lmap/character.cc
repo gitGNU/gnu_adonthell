@@ -21,10 +21,11 @@
  * 
  */
 
-#include "character.h"
 #include <math.h>
 
-using namespace map;
+#include "character.h"
+
+using namespace lmap;
 
 character::character (landmap & mymap) : moving (mymap)
 {

@@ -22,10 +22,10 @@
  * 
  */
 
-
-#include "pnm.h"
 #include <stdlib.h>
 #include <string.h>
+
+#include "pnm.h"
 
 using namespace gfx;
 

@@ -13,49 +13,42 @@
 */
 
 /**
- * @file   object.h
+ * @file   object_with_gfx.h
  * @author Alexandre Courbot <alexandrecourbot@linuxgames.com>
  * 
- * @brief  Declares the object class.
+ * @brief  Declares the object_with_gfx class.
  * 
  * 
  */
 
-#ifndef MAP_OBJECT_H
-#define MAP_OBJECT_H
 
-#include "placeable.h"
-#include "fileops.h"
+#ifndef MAP_OBJECT_WITH_GFX
+#define MAP_OBJECT_WITH_GFX
 
-namespace map
+#include "lmap/object.h"
+#include "lmap/placeable_gfx.h"
+
+namespace lmap
 {
 
     /**
-     * Implements a "landscape" map object.
-     *
-     * A object is a placeable that has some update abilities and can be
-     * placed several times on the same map. Note, however, that all instances of
-     * the same map object will have the same state and will always look the same.
-     * While this is most often ok, some special object (like doors) will require
-     * you to load one object per instance.
+     * A object associated with it's graphical representation.
      * 
      */
-    class object : public placeable
+    class object_with_gfx : public object, public placeable_gfx
     {
     public:
-        object(landmap & mymap); 
-
-        bool update()
-        {
-            return true;
-        }
+        object_with_gfx (landmap & mymap); 
 
         void put(ogzstream & file) const;
         void get(igzstream & file);
 
         s_int8 save(const std::string fname) const;
         s_int8 load(const std::string fname);
-    };
+
+        void draw(s_int16 x, s_int16 y, const gfx::drawing_area * da_opt = NULL,
+                  gfx::surface * target = NULL) const;
+    }; 
 }
 
 #endif

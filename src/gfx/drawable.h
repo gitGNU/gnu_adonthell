@@ -25,7 +25,7 @@
 #ifndef DRAWABLE_H_
 #define DRAWABLE_H_
 
-#include "drawing_area.h"
+#include "gfx/drawing_area.h"
 
 namespace gfx
 {

@@ -25,11 +25,12 @@
 #ifndef MAP_PLACEABLE_AREA_H_
 #define MAP_PLACEABLE_AREA_H_
 
-#include "coordinates.h"
 #include <vector>
+
+#include "lmap/coordinates.h"
 #include "fileops.h"
 
-namespace map
+namespace lmap
 {
 
     const int square_size = 40;

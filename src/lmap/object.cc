@@ -23,7 +23,7 @@
 
 #include "object.h"
 
-using namespace map;
+using namespace lmap;
 
 object::object(landmap & mymap) : placeable(mymap) 
 {

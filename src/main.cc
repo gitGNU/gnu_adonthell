@@ -1,4 +1,4 @@
-#include "map/landmap.h"
+#include "lmap/landmap.h"
 #include "gfx/animation.h"
 #include "gametime.h"
 #include "input/manager.h"
@@ -6,9 +6,9 @@
 class game_client
 {
 public:
-    map::landmap lmap;
-    map::character_with_gfx  * mchar;
-    map::character_with_gfx  * mchar2;
+    lmap::landmap lmap;
+    lmap::character_with_gfx  * mchar;
+    lmap::character_with_gfx  * mchar2;
     bool letsexit;
     bool draw_grid;
 
@@ -146,44 +146,44 @@ public:
         lmap.resize (16, 12);
         
         // Adding the map characters
-        mchar = (map::character_with_gfx *)lmap.add_character();
+        mchar = (lmap::character_with_gfx *)lmap.add_character();
         mchar->load("adontest/chrono.mdl");
         mchar->set_speed(1.0);
         mchar->set_position(6, 8);
         mchar->set_limits(16,12);
 
         // Quick fix for the character size.
-        for (map::placeable::iterator it = mchar->begin(); it != mchar->end(); ++it)
+        for (lmap::placeable::iterator it = mchar->begin(); it != mchar->end(); ++it)
             it->second.zsize += 5;
 
         // Adding map objects
-        map::object_with_gfx * mobj;
+        lmap::object_with_gfx * mobj;
         
-        mobj = (map::object_with_gfx *)lmap.add_object();
+        mobj = (lmap::object_with_gfx *)lmap.add_object();
         mobj->load("adontest/tree.mobj");
         
-        mobj = (map::object_with_gfx *)lmap.add_object();
+        mobj = (lmap::object_with_gfx *)lmap.add_object();
         mobj->load("adontest/sandy.mobj");
 
-        mobj = (map::object_with_gfx *)lmap.add_object();
+        mobj = (lmap::object_with_gfx *)lmap.add_object();
         mobj->load("adontest/rug.mobj");
         
-        mobj = (map::object_with_gfx *)lmap.add_object();
+        mobj = (lmap::object_with_gfx *)lmap.add_object();
         mobj->load("adontest/platform.mobj");
         
-        mobj = (map::object_with_gfx *)lmap.add_object();
+        mobj = (lmap::object_with_gfx *)lmap.add_object();
         mobj->load("adontest/pillar_l.mobj");
         
-        mobj = (map::object_with_gfx *)lmap.add_object();
+        mobj = (lmap::object_with_gfx *)lmap.add_object();
         mobj->load("adontest/pillar_r.mobj");
         
         
-        map::coordinates mc;
+        lmap::coordinates mc;
         
         for (int i = 0; i < lmap.length(); i++)
             for (int j = 0; j < lmap.height(); j++)
             {
-                map::coordinates mc(i, j, 0, 0, 0);
+                lmap::coordinates mc(i, j, 0, 0, 0);
                 lmap.put_object(1, mc); 
             }
         
@@ -199,7 +199,7 @@ public:
         for (int i = 10; i < 12; i++)
             for (int j = 4; j < 6; j++)
             {
-                map::coordinates mc(i, j, 40);
+                lmap::coordinates mc(i, j, 40);
                 lmap.put_object(3, mc); 
             }
         
@@ -227,13 +227,13 @@ public:
         for (int i = 7; i < 9; i++)
             for (int j = 4; j < 7; j++)
             {
-                map::coordinates mc(i, j, 80);
+                lmap::coordinates mc(i, j, 80);
                 lmap.put_object(3, mc); 
             }
         
         for (int i = 0; i < 13; i++)
         {
-            map::coordinates mc(i + 1, 9, 5 * (i + 1));
+            lmap::coordinates mc(i + 1, 9, 5 * (i + 1));
             lmap.put_object(3, mc); 
         }        
     }
@@ -292,7 +292,7 @@ int main(int argc, char * argv[])
             gc.lmap.update();
         }
 
-        std::list <map::square_info> drawqueue; 
+        std::list <lmap::square_info> drawqueue; 
 
         // Rendering phase        
         for (j = 0; j < gc.lmap.height (); j++)
@@ -300,8 +300,8 @@ int main(int argc, char * argv[])
 
             for (i = 0; i < gc.lmap.length (); i++) 
             {
-                map::square * sq = gc.lmap.get (i, j); 
-                map::square::iterator it = sq->end();
+                lmap::square * sq = gc.lmap.get (i, j); 
+                lmap::square::iterator it = sq->end();
                 while (it != sq->begin())
                 {
                     --it;
@@ -329,21 +329,21 @@ int main(int argc, char * argv[])
 
         drawqueue.sort();
             
-        for (std::list <map::square_info>::iterator it = drawqueue.begin ();
+        for (std::list <lmap::square_info>::iterator it = drawqueue.begin ();
              it != drawqueue.end (); it++)
         {
             switch ((*it).obj->type ()) 
             {
-                case map::CHARACTER:
-                    ((map::character_with_gfx *)
-                     (*it).obj)->draw ((*it).x () * map::square_size + (*it).ox (),
-                                       (*it).y () * map::square_size + (*it).oy ());
+                case lmap::CHARACTER:
+                    ((lmap::character_with_gfx *)
+                     (*it).obj)->draw ((*it).x () * lmap::square_size + (*it).ox (),
+                                       (*it).y () * lmap::square_size + (*it).oy ());
                     break; 
                     
-                case map::OBJECT:
-                    ((map::object_with_gfx *)
-                     (*it).obj)->draw ((*it).x () * map::square_size + (*it).ox (),
-                                       (*it).y () * map::square_size + (*it).oy () - (*it).z());
+                case lmap::OBJECT:
+                    ((lmap::object_with_gfx *)
+                     (*it).obj)->draw ((*it).x () * lmap::square_size + (*it).ox (),
+                                       (*it).y () * lmap::square_size + (*it).oy () - (*it).z());
                     break;
                     
                 default:
@@ -357,9 +357,9 @@ int main(int argc, char * argv[])
         
         if (gc.draw_grid)
         {
-            for (i = 0; i < gfx::screen::length (); i += map::square_size) 
+            for (i = 0; i < gfx::screen::length (); i += lmap::square_size) 
                 gfx::screen::display.fillrect (i, 0, 1, gfx::screen::height (), 0xFFFF00); 
-            for (i = 0; i < gfx::screen::height (); i += map::square_size) 
+            for (i = 0; i < gfx::screen::height (); i += lmap::square_size) 
                 gfx::screen::display.fillrect (0, i, gfx::screen::length (), 1, 0xFFFF00); 
         }
 

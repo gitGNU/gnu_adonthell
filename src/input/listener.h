@@ -25,7 +25,7 @@
 #ifndef INPUT_LISTENER_H
 #define INPUT_LISTENER_H
 
-#include "event.h"
+#include "input/event.h"
 #include "callback.h"
 #include "types.h"
 

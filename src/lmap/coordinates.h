@@ -18,7 +18,7 @@
 
 #include "types.h"
 
-namespace map
+namespace lmap
 {
 
     class coordinates

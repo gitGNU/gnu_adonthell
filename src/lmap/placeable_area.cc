@@ -23,7 +23,7 @@
 
 #include "placeable_area.h"
 
-using namespace map;
+using namespace lmap;
 
 void placeable_area::set_area_size(u_int16 nx, u_int16 ny)
 {

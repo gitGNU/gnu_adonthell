@@ -25,11 +25,12 @@
 #ifndef CONTROL_EVENT_H
 #define CONTROL_EVENT_H
 
-#include "event.h"
-#include "keyboard_event.h"
-#include "mouse_event.h"
-#include "joystick_event.h"
 #include <string>
+
+#include "input/event.h"
+#include "input/keyboard_event.h"
+#include "input/mouse_event.h"
+#include "input/joystick_event.h"
 
 namespace input
 {

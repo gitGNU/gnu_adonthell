@@ -24,11 +24,12 @@
 #ifndef MAP_PLACEABLE_H
 #define MAP_PLACEABLE_H
 
-#include "placeable_model.h"
 #include <string>
 #include <map>
 
-namespace map
+#include "lmap/placeable_model.h"
+
+namespace lmap
 {
 
     class landmap;

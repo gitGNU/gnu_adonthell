@@ -376,7 +376,7 @@ src/gfx/Makefile
 src/input/Makefile
 src/audio/Makefile
 src/python/Makefile
-src/map/Makefile
+src/lmap/Makefile
 src/tools/Makefile
 src/tools/charedit/Makefile
 src/tools/combat/Makefile

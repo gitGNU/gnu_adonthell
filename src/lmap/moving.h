@@ -25,9 +25,9 @@
 #ifndef MAP_MOVING_H
 #define MAP_MOVING_H
 
-#include "placeable.h"
+#include "lmap/placeable.h"
 
-namespace map
+namespace lmap
 {
 
     /**

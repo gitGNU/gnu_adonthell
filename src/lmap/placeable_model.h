@@ -25,12 +25,13 @@
 #ifndef MAP_PLACEABLE_MODEL_H
 #define MAP_PLACEABLE_MODEL_H
 
-#include "placeable_area.h"
-#include "fileops.h"
 #include <map>
 #include <string>
 
-namespace map
+#include "lmap/placeable_area.h"
+#include "fileops.h"
+
+namespace lmap
 {
 
     /**

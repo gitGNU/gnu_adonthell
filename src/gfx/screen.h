@@ -24,9 +24,9 @@
 #ifndef SCREEN_H_
 #define SCREEN_H_
 
-#include "surface.h"
 #include <string>
 
+#include "gfx/surface.h"
 
 namespace gfx
 {

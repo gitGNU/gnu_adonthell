@@ -16,11 +16,12 @@
 #ifndef LANDMAP_H
 #define LANDMAP_H
 
-#include "character_with_gfx.h"
-#include "object_with_gfx.h"
 #include <vector>
 
-namespace map
+#include "lmap/character_with_gfx.h"
+#include "lmap/object_with_gfx.h"
+
+namespace lmap
 {
     
     class square_info : public coordinates

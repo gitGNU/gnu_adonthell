@@ -13,11 +13,12 @@
 */
 
 
-#include "landmap.h"
 #include <algorithm>
 #include <iostream>
 
-using namespace map;
+#include "landmap.h"
+
+using namespace lmap;
 
 square_info::square_info (coordinates & pos)
  : coordinates (pos) 

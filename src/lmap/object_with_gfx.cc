@@ -23,7 +23,7 @@
 
 #include "object_with_gfx.h"
 
-using namespace map;
+using namespace lmap;
 
 object_with_gfx::object_with_gfx (landmap & mymap) : object (mymap), placeable_gfx ((placeable &) *this) 
 {

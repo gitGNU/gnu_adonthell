@@ -23,7 +23,7 @@
 
 #include "placeable_model_gfx.h"
 
-using namespace map;
+using namespace lmap;
 
 placeable_model_gfx::placeable_model_gfx (placeable_model & target) : Target(target)
 {

@@ -25,10 +25,10 @@
 #define MAP_PLACEABLE_AREA_GFX
 
 #include "gfx/animation.h"
-#include "placeable_area.h"
+#include "lmap/placeable_area.h"
 #include "fileops.h"
 
-namespace map
+namespace lmap
 {
 
     /**

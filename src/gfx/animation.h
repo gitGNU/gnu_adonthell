@@ -27,7 +27,7 @@
 #define _ANIMATION_H
 
 
-#include "image.h"
+#include "gfx/image.h"
 #include <vector>
 
 namespace gfx

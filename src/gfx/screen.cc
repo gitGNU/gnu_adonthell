@@ -21,9 +21,10 @@
  * 
  */
 
-#include "screen.h"
 #include <iostream>
 #include <sstream> 
+
+#include "screen.h"
 
 using namespace gfx;
 

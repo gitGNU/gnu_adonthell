@@ -26,12 +26,13 @@
 #ifndef INPUT_MANAGER_H
 #define INPUT_MANAGER_H
 
-#include "listener.h"
-#include "keyboard_event.h"
-#include "mouse_event.h"
-#include "joystick_event.h"
-#include "control_event.h"
 #include <list> 
+
+#include "input/listener.h"
+#include "input/keyboard_event.h"
+#include "input/mouse_event.h"
+#include "input/joystick_event.h"
+#include "input/control_event.h"
 
 namespace input
 {

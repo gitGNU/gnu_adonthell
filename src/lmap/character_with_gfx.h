@@ -25,10 +25,10 @@
 #ifndef MAP_CHARACTER_WITH_GFX_H
 #define MAP_CHARACTER_WITH_GFX_H
 
-#include "character.h"
-#include "placeable_gfx.h"
+#include "lmap/character.h"
+#include "lmap/placeable_gfx.h"
 
-namespace map
+namespace lmap
 {
 
     /**

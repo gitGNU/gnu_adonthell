@@ -26,8 +26,9 @@
 #ifndef INPUT_EVENT_H
 #define INPUT_EVENT_H
 
-#include "types.h"
 #include <string>
+
+#include "types.h"
 
 namespace input
 {

@@ -24,7 +24,7 @@
 #include "moving.h"
 #include "landmap.h"
 
-using namespace map;
+using namespace lmap;
 
 moving::moving (landmap & mymap)
     : placeable (mymap), coordinates ()

@@ -24,9 +24,9 @@
 #ifndef MAP_CHARACTER_H
 #define MAP_CHARACTER_H
 
-#include "moving.h"
+#include "lmap/moving.h"
 
-namespace map
+namespace lmap
 {
 
     /**

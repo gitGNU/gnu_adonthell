@@ -25,12 +25,13 @@
 #ifndef MAP_PLACEABLE_MODEL_GFX_H
 #define MAP_PLACEABLE_MODEL_GFX_H
 
-#include "placeable_area_gfx.h"
-#include "placeable_model.h"
 #include <map>
+
+#include "lmap/placeable_area_gfx.h"
+#include "lmap/placeable_model.h"
 #include "fileops.h"
 
-namespace map
+namespace lmap
 {
 
     /**

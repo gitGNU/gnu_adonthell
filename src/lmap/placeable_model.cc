@@ -24,7 +24,7 @@
 
 #include "placeable_model.h"
 
-using namespace map;
+using namespace lmap;
 
 placeable_model::placeable_model()
 {

@@ -1,6 +1,6 @@
 ## Process this file with automake to produce Makefile.in
 
-MODULES_SUBDIRS = gfx input audio python map
+MODULES_SUBDIRS = gfx input audio python lmap
 
 if BUILD_TOOLS
 SUBDIRS = $(MODULES_SUBDIRS) . tools
@@ -108,7 +108,7 @@ schedtest_SOURCES = schedtest.cc
 
 joltest_LDADD = libgui.a gfx/libgfx.a input/libinput.a libbase.a $(libbase_LDADD) $(libgui_LDADD)
 
-alextest_LDADD = map/libmap.a gfx/libgfx.a input/libinput.a libbase.a $(libbase_LDADD)
+alextest_LDADD = lmap/libmap.a gfx/libgfx.a input/libinput.a libbase.a $(libbase_LDADD)
 
 #pytest_LDADD = libbase.a libpython.a gfx/libgfx.a input/libinput.a $(libbase_LDADD) $(libpython_LDADD)
 

@@ -18,10 +18,10 @@
  * Defines the surface class.
  */ 
 
+#include <iostream>
+
 #include "surface.h"
 #include "screen.h"
-
-#include <iostream>
 
 using namespace gfx;
 

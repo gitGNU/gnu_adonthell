@@ -23,6 +23,7 @@
  */
  
 #include <SDL/SDL_endian.h>
+
 #include "image.h"
 #include "pnm.h"
 

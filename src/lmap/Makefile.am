@@ -1,4 +1,4 @@
-EXTRA_DIST = py_map.i
+EXTRA_DIST = py_lmap.i
 
 noinst_LIBRARIES = libmap.a
 
@@ -26,5 +26,5 @@ SWIGFLAGS = -I$(srcdir)/.. $(SDL_CFLAGS)
 #	   exit 1; \
 #	fi;
 
-py_map_wrap.cc:
-	touch py_map_wrap.cc
+py_lmap_wrap.cc:
+	touch py_lmap_wrap.cc

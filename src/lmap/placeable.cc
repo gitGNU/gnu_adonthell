@@ -24,7 +24,7 @@
 #include "placeable.h"
 #include "landmap.h"
 
-using namespace map;
+using namespace lmap;
 
 placeable::placeable(landmap & mymap) : Mymap(mymap)
 {

@@ -27,8 +27,8 @@
 #define IMAGE_H_
 
 #include "fileops.h"
-#include "screen.h"
 
+#include "gfx/screen.h"
 
 namespace gfx
 {

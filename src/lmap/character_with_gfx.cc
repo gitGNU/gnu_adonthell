@@ -24,7 +24,7 @@
 #include "character_with_gfx.h"
 #include "landmap.h"
 
-using namespace map;
+using namespace lmap;
 
 character_with_gfx::character_with_gfx (landmap & mymap) : character (mymap),
                                                            placeable_gfx((placeable &)*this),

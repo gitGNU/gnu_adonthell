@@ -15,7 +15,7 @@
 #include <iostream>
 #include "coordinates.h"
 
-using namespace map;
+using namespace lmap;
 
 coordinates::coordinates ()
 {

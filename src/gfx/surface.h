@@ -27,7 +27,7 @@
 #define SURFACE_H_
 
 
-#include "drawable.h"
+#include "gfx/drawable.h"
 
 namespace gfx
 {
