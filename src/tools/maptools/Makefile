@@ -3,7 +3,7 @@ CPPFLAGS = -D_EDIT_ -DREVERSE_ALPHA -g -Wall -I../../ -I/usr/local/include/SDL -
 LIBS = -lz -g `sdl-config --cflags` `sdl-config --libs` -L/home/maitrise/MAITRISE/lib
 OBJECTS = pnm.o drawing_area.o image.o screen.o animation.o game.o \
 	prefs.o lex.prefs.o input.o mapselect.o win_label.o win_write.o \
-	win_query.o \
+	win_query.o animation_off.o \
 	win_info.o win_container.o win_select.o win_file.o \
 	win_border.o win_base.o win_font.o win_image.o \
 	win_background.o win_scrolled.o win_scrollbar.o win_theme.o
@@ -45,6 +45,9 @@ screen.o: ../../screen.cpp
 
 animation.o: ../../animation.cpp
 	$(CPP) -c $(CPPFLAGS) ../../animation.cpp -o animation.o
+
+animation_off.o: ../../animation_off.cpp
+	$(CPP) -c $(CPPFLAGS) ../../animation_off.cpp -o animation_off.o
 
 prefs.o: ../../prefs.cpp
 	$(CPP) -c $(CPPFLAGS) ../../prefs.cpp -o prefs.o

@@ -2,7 +2,7 @@ SUBDIRS = . tools
 
 bin_PROGRAMS = adonthell
 
-adonthell_SOURCES = animation.cpp audio.cpp audio_thread.cpp \
+adonthell_SOURCES = animation.cpp animation_off.cpp audio.cpp audio_thread.cpp \
 character.cpp cutscene.cpp data.cpp dialog.cpp dialog_engine.cpp \
 drawing_area.cpp event.cpp fileops.cpp game.cpp gametime.cpp \
 image.cpp input.cpp lex.prefs.cpp main.cpp \

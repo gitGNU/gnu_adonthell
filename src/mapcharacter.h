@@ -17,7 +17,8 @@
 #define _MAPCHARACTER_H
 
 #include <vector>
-#include "animation.h"
+#include "animation_off.h"
+#include "maptpl.h"
 #ifdef _EDIT_
 #include "mapselect.h"
 
@@ -35,19 +36,38 @@
 #include "win_background.h"
 #endif
 
-class mapcharacter
+class mapcharacter : public maptpl
 {
-  typedef enum { STAND_NORTH, STAND_SOUTH, STAND_WEST, STAND_EAST,
-		 WALK_NORTH, WALK_SOUTH, WALK_WEST, WALK_EAST, NBR_MOVES } 
-  c_moves;
+#define STAND_NORTH 0
+#define STAND_SOUTH 1
+#define STAND_WEST 2
+#define STAND_EAST 3
+#define WALK_NORTH 4
+#define WALK_SOUTH 5
+#define WALK_WEST 6
+#define WALK_EAST 7
+#define NBR_MOVES 8
 
-  c_moves current_move;
+  u_int16 current_move;
 
-  vector<animation*> anim;
+  vector<animation_off*> anim;
+  
+  u_int16 length, height;
 
 #ifdef _EDIT_
+  char label_txt[500];
+  image * bg;
   win_font * font;
   win_theme * th;
+
+  win_container * container;
+  win_label * label_frame;
+  win_label * label_char;
+
+  bool must_upt_label_frame;
+  bool must_upt_label_char;
+
+  bool show_grid;
 #endif
 
  public:
@@ -67,6 +87,8 @@ class mapcharacter
   void go_east();
   void go_west();
 
+  mapcharacter& operator =(mapcharacter &m);
+  void calculate_dimensions();
 #ifdef _EDIT_
   s_int8 put(gzFile file);
   s_int8 save(const char * fname);
@@ -74,9 +96,13 @@ class mapcharacter
   void load();
   void save();
 
-  void insert_anim(animation * an, c_moves pos);
-
+  void insert_anim(animation_off * an, u_int16 pos);
+  void load_anim();
   void update_editor();
+  void set_anim_xoffset(u_int16 p, s_int16 xoff);
+  void set_anim_yoffset(u_int16 p, s_int16 yoff);
+  void update_label_frame();
+  void update_label_char();
   void draw_editor();
   void update_and_draw();
   void update_editor_keys();

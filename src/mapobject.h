@@ -17,31 +17,8 @@
 #define _MAPOBJ_H
 
 #include <vector>
-#include "animation.h"
+#include "animation_off.h"
 #include "maptpl.h"
-
-class animation_off : public animation
-{
-  s_int16 xoffset, yoffset;
- public:
-  animation_off();
-  ~animation_off();
-  animation_off & operator =(animation &a);
-  animation_off & operator =(animation_off &a);
-
-  s_int8 get(gzFile file);
-  s_int8 load(const char * fname);
-  
-#ifdef _EDIT_
-  s_int8 put(gzFile file);
-  s_int8 save(const char * fname);
-#endif
-  void set_offset(s_int16 x, s_int16 y);
-  void draw(u_int16 x, u_int16 y, drawing_area * da_opt=NULL);
-  void draw_border(u_int16 x, u_int16 y, drawing_area * da_opt=NULL);
-
-  friend class mapobject;
-};
 
 class mapobject : public maptpl
 {
