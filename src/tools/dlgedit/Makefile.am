@@ -26,9 +26,8 @@ CPPFLAGS +=-I../.. -D_VERSION_=\"0.7\" $(PY_CFLAGS) $(GTK_CFLAGS)  $(SDL_CFLAGS)
 
 SWIGFLAGS = -D_DLGEDIT_ -D_DEBUG_
 
-dlgedit_LDADD = character.o dialog.o \
-fileops.o lex.prefs.o prefs.o python.o \
-quest.o storage.o yarg.o character_base.o $(PY_LIBS) $(GTK_LIBS) -lm -lstdc++ -lpthread
+dlgedit_LDADD = ../../libadonthell.a \
+$(SDL_LIBS) $(PY_LIBS) $(GTK_LIBS)
 
 lex.loadlg.cc: loadlg.l
 	flex -olex.loadlg.cc loadlg.l
@@ -38,15 +37,3 @@ py_character_wrap.cc : py_character.i
 
 py_quest_wrap.cc : py_quest.i
 	swig $(SWIGFLAGS) -python -shadow -c++ -make_default -o py_quest_wrap.cc $<
-
-%.o : %.cc
-	$(CXXCOMPILE) -c $< -o $@
-
-%.o : ../../%.cc
-	$(CXXCOMPILE) -c $< -o $@
-
-%.o : ../../%.cc
-	$(CXXCOMPILE) -c $< -o $@
-
-
-install:

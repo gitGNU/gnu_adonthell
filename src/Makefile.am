@@ -14,12 +14,13 @@ EXTRA_DIST = .indent.pro prefs.l py_adonthell.i adonthell.py
 
 CPPFLAGS +=-DUSE_MAP $(SDL_DEFS) $(OGG_DEFS) $(SDL_CFLAGS) $(OGG_CFLAGS) $(PY_CFLAGS)
 
-adonthell_LDADD = $(SDL_LIBS) $(OGG_LIBS) $(PY_LIBS)
+noinst_LIBRARIES = libadonthell.a
 
-adonthell_SOURCES = animation.cc audio.cc audio_loop.cc character_base.cc \
-character.cc gamedata.cc data_screen.cc dialog.cc dialog_engine.cc \
-drawable.cc drawing_area.cc event.cc fileops.cc game.cc gametime.cc image.cc \
-input.cc landmap.cc lex.prefs.cc main.cc mapsquare_walkable.cc mapcharacter.cc mapengine.cc \
+libadonthell_a_SOURCES = animation.cc audio.cc audio_loop.cc \
+character_base.cc character.cc gamedata.cc data_screen.cc dialog.cc \
+dialog_engine.cc drawable.cc drawing_area.cc event.cc fileops.cc game.cc \
+gametime.cc image.cc input.cc landmap.cc lex.prefs.cc \
+mapsquare_walkable.cc mapcharacter.cc mapengine.cc \
 mapsquare.cc mapobject.cc mapview.cc pnm.cc prefs.cc \
 py_callback.cc python.cc py_adonthell_wrap.cc py_script.cc quest.cc \
 screen.cc surface.cc storage.cc win_background.cc win_base.cc win_border.cc \
@@ -37,6 +38,12 @@ win_scrollbar.h win_scroll.h win_select.h win_theme.h win_keys.h win_event.h win
 win_write.h win_manager.h win_object.h window.h win_wrappers.h yarg.h \
 mixer.c music.c music_cmd.c music_cmd.h music_ogg.c music_ogg.h wave.h \
 wavestream.c wavestream.h SDL_mixer.h
+
+libadonthell_LDADD = $(SDL_LIBS) $(OGG_LIBS) $(PY_LIBS)
+
+adonthell_LDADD = libadonthell.a $(libadonthell_LDADD)
+
+adonthell_SOURCES = main.cc
 
 
 # Note: adonthell.py is also built by this target. 

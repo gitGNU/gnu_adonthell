@@ -283,7 +283,7 @@ create_dlg_node_window (Circle *circle, crcle_dlg *dlg)
     gtk_menu_append (GTK_MENU (npc_selection_menu), glade_menuitem);
     gtk_option_menu_set_menu (GTK_OPTION_MENU (npc_selection), npc_selection_menu);
 
-    dictionnary <character *>::iterator itc; 
+    dictionary <character *>::iterator itc; 
     for (itc = data::characters.begin (); itc != data::characters.end () && itc->second != NULL; itc++) 
         //     while ((mychar = (character *) data::characters.next ()) != NULL)
     {

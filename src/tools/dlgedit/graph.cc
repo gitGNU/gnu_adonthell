@@ -997,7 +997,7 @@ load_dialogue (MainFrame * wnd, const char *file)
     init_app (wnd);
 
     // ... then load all nodes.
-    dictionnary <character *>::iterator itc = data::characters.begin (); 
+    dictionary <character *>::iterator itc = data::characters.begin (); 
     while (i)
     {
         switch (i = parse_dlgfile (s, n))
@@ -1020,7 +1020,8 @@ load_dialogue (MainFrame * wnd, const char *file)
                 {
                     data::characters.erase (wnd->myplayer->get_name().c_str ());
                     wnd->myplayer->set_name (s);
-                    data::characters[wnd->myplayer->get_name().c_str ()] = wnd->myplayer;
+                    data::characters[wnd->myplayer->get_name().c_str ()] =
+                        (character*) wnd->myplayer;
                 }
                 break;             
             }
@@ -1039,10 +1040,10 @@ load_dialogue (MainFrame * wnd, const char *file)
 
             case LOAD_NPC:
             {
-                character *mynpc = NULL;
+                character_base *mynpc = NULL;
 
                 if (parse_dlgfile (s, n) == LOAD_STR)
-                    mynpc = (character *) data::characters[s.c_str ()];
+                    mynpc = (character_base *) data::characters[s.c_str ()];
 
                 if (mynpc == NULL) 
                 {

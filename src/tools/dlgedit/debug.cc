@@ -146,7 +146,7 @@ void debug_dlg::update ()
     tree = GTK_CTREE (char_tree);
     gtk_clist_freeze (GTK_CLIST (char_tree));
 
-    dictionnary <character *>::iterator itc; 
+    dictionary <character *>::iterator itc; 
     for (itc = data::characters.begin (); itc != data::characters.end () && itc->second != NULL; itc++) 
         //     while ((mychar = (character *) data::characters.next ()) != NULL)
     {
@@ -168,7 +168,7 @@ void debug_dlg::update ()
     tree = GTK_CTREE (quest_tree);
     gtk_clist_freeze (GTK_CLIST (quest_tree));
 
-    dictionnary <quest *>::iterator itq; 
+    dictionary <quest *>::iterator itq; 
     for (itq = data::quests.begin (); itq != data::quests.end () && itq->second != NULL; itq++) 
         //     while ((myquest = (quest *) data::quests.next ()) != NULL)
     {
@@ -258,8 +258,8 @@ void debug_dlg::set (char *key, char *val)
 {
     int ival = atoi (val);
     storage *object;
-    dictionnary <character *>  *containerc = NULL;
-    dictionnary <quest *>  *containerq = NULL;
+    dictionary <character *>  *containerc = NULL;
+    dictionary <quest *>  *containerq = NULL;
     dbg_node_data *data;
     GtkCTreeRow *tree_row;
 	GtkCTreeNode *parent, *node;
@@ -391,7 +391,7 @@ void debug_dlg::init ()
     // Init character page
     gtk_clist_freeze (GTK_CLIST (char_tree));
 
-    dictionnary <character *>::iterator itc; 
+    dictionary <character *>::iterator itc; 
     for (itc = data::characters.begin (); itc != data::characters.end (); itc++) 
         //     while ((mychar = (character *) data::characters.next ()) != NULL)
     {
@@ -418,7 +418,7 @@ void debug_dlg::init ()
 
     // Init quest page
     gtk_clist_freeze (GTK_CLIST (quest_tree));
-    dictionnary <quest *>::iterator itq; 
+    dictionary <quest *>::iterator itq; 
     for (itq = data::quests.begin (); itq != data::quests.end (); itq++) 
         //     while ((myquest = (quest *) data::quests.next ()) != NULL)
     {

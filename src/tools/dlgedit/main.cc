@@ -38,7 +38,6 @@ int
 main (int argc, char *argv[])
 {
     char tmp[256];
-    int c;
     
     // The Application Data
     MainFrame *MainWnd = new MainFrame;
@@ -86,10 +85,10 @@ main (int argc, char *argv[])
         
     // Create a player
 	data::globals = PyModule_GetDict(m);
-    MainWnd->myplayer = new character;
+    MainWnd->myplayer = new character_base;
 
     // Add the player to the character array
-    data::the_player = MainWnd->myplayer;
+    data::the_player = (character*) MainWnd->myplayer;
 
     // Make "the_player" available to the interpreter 
     PyDict_SetItemString (data::globals, "the_player", python::pass_instance (MainWnd->myplayer, "character"));
@@ -101,27 +100,33 @@ main (int argc, char *argv[])
     sprintf (tmp, "%s/character.data", myconf.gamedir.c_str ());
 
     // load characters from character.data
-    igzstream in(tmp);
+    igzstream in (tmp);
     if (in.is_open ())
     {
-        character *mynpc = NULL;
+        char ctemp;
+        character_base *mynpc = NULL;
     
         if (!fileops::get_version (in, 2, 2, tmp))
             return 1;
 
-        char tc;
-        tc << in; 
-        while (tc)
+        while (ctemp << in)
         {
-            mynpc = new character;
+            mynpc = new character_base;
             mynpc->get_state (in);
-            PyDict_SetItemString (chars, (char *) mynpc->get_name().c_str (), python::pass_instance (mynpc, "character"));
-            tc << in; 
+
+            // Pass character over to Python interpreter
+            PyObject *charref = python::pass_instance (mynpc, "character");
+            PyDict_SetItemString (chars, (char *) mynpc->get_name().c_str (),
+                charref);
+            Py_DECREF (charref);
+
+            // Make this character available to the engine
+            data::characters[mynpc->get_name ().c_str ()] = (character*) mynpc;
         }
 
         if (mynpc == NULL)
         {
-            mynpc = new character ();
+            mynpc = new character_base ();
             mynpc->set_name("Dummy Character");
         }
         
@@ -129,8 +134,12 @@ main (int argc, char *argv[])
         PyDict_SetItemString (data::globals, "the_npc", python::pass_instance (mynpc, "character"));
         MainWnd->mynpc = mynpc;
 
-//         gzclose (in);
-        in.close (); 
+        in.close ();
+    }
+    else
+    {
+        cout << "Failed to read file " << tmp << endl << flush;
+        return 1;
     }
 
     // create quest array
@@ -140,39 +149,43 @@ main (int argc, char *argv[])
     // try to open quest.data
     sprintf (tmp, "%s/quest.data", myconf.gamedir.c_str ());
     in.open (tmp); 
-//     in = gzopen (tmp, "r");
 
     if (in.is_open ())
     {
+        char ctemp;
         quest *myquest;
         
         if (!fileops::get_version (in, 1, 1, tmp))
             return 1;
 
         // load quests
-        char tc;
-        tc << in; 
-        while (tc)
+        while (ctemp << in)
         {
             myquest = new quest;
             myquest->load (in);
-        
+
             // Pass quest over to Python interpreter
-            PyDict_SetItemString (quests, (char *) myquest->name.c_str (), python::pass_instance (myquest, "quest"));
+            PyObject *questref = python::pass_instance (myquest, "quest");
+            PyDict_SetItemString (quests, (char *) myquest->name.c_str (),
+                questref);
+            Py_DECREF (questref);
 
             // Make this quest available to the engine
             data::quests[myquest->name.c_str ()] = myquest;
-            tc << in; 
         }
-        
-//         gzclose (in);
+
         in.close (); 
     }
-    
+    else
+    {
+        cout << "Failed to read file " << tmp << endl << flush;
+        return 1;
+    }
+
     // Misc initialization
     init_app (MainWnd);
 
-    data::characters[MainWnd->myplayer->get_name().c_str ()] = MainWnd->myplayer;
+    data::characters[MainWnd->myplayer->get_name().c_str ()] = (character*) MainWnd->myplayer;
 
     MainWnd->wnd = NULL;
     MainWnd->text_dlg = NULL;

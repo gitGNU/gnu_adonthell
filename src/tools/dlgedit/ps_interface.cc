@@ -222,7 +222,7 @@ GtkWidget * create_ps_window (ps_dlg *dlg, const char* name, int race, int gende
 
     npc_selection_menu = gtk_menu_new ();
 
-    dictionnary <character *>::iterator itc; 
+    dictionary <character *>::iterator itc; 
     for (itc = data::characters.begin (); itc != data::characters.end () && itc->second != NULL; itc++) 
     {
         // don't add the player character to the list
