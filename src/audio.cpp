@@ -19,6 +19,8 @@
 #include "SDL.h"
 #include "SDL_mixer.h"
 
+extern unsigned short md_mode; // This is declared in MikMod
+
 audio::audio (config &myconfig) {
 
   int i;  // Generic counter variable
@@ -52,6 +54,9 @@ audio::audio (config &myconfig) {
   i=Mix_OpenAudio(audio_rate, audio_format,
     audio_channels, buffer_size);
 
+  // Activate sample interpolation to improve quality
+  md_mode |= 0x0200; // 0x0200 is DMODE_INTERP in MikMod
+
   // Now see what we got when opening the audio device
   // If we COULDN'T open the audio...
   if ( i < 0 ) {
@@ -62,7 +67,7 @@ audio::audio (config &myconfig) {
   } else {
     audio_initialized = true;
     Mix_QuerySpec(&audio_rate, &audio_format, &audio_channels);
-    printf("Audio thread started in %d Hz %d bit %s format.\n ", audio_rate,
+    fprintf(stderr, "Audio thread started in %d Hz %d bit %s format.\n ", audio_rate,
      (audio_format&0xFF), (audio_channels > 1) ? "stereo" : "mono");
   }
 }
