@@ -1,4 +1,6 @@
 /*
+   $Id$
+   
    (C) Copyright 2000 Joel Vennin
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
@@ -27,10 +29,10 @@
 win_select * win_select::curselect_=NULL;
 bool win_select::activate_keyboard_=true;
 
-SDLKey win_select::next_key=WIN_SELECT_DEFAULT_KEY_NEXT;
-SDLKey win_select::previous_key=WIN_SELECT_DEFAULT_KEY_PREVIOUS;
-SDLKey win_select::activate_key=WIN_SELECT_DEFAULT_KEY_ACTIVATE;
-SDLKey win_select::back_key=WIN_SELECT_DEFAULT_KEY_BACK;
+s_int32 win_select::next_key=WIN_SELECT_DEFAULT_KEY_NEXT;
+s_int32 win_select::previous_key=WIN_SELECT_DEFAULT_KEY_PREVIOUS;
+s_int32 win_select::activate_key=WIN_SELECT_DEFAULT_KEY_ACTIVATE;
+s_int32 win_select::back_key=WIN_SELECT_DEFAULT_KEY_BACK;
 
 
 win_select::win_select(s_int16 tx,s_int16 ty,u_int16 tl,u_int16 th,win_theme * wth):win_scrolled(tx,ty,tl,th,wth)
@@ -140,10 +142,10 @@ bool win_select::update()
     {
       if(focus_ && activate_keyboard_ && activated_)
 	{
-	  if(input::has_been_pushed(next_key)) next_();
-	  if(input::has_been_pushed(previous_key)) previous_();
-	  if(input::has_been_pushed(back_key)) back();
-	  if(input::has_been_pushed(activate_key)) activate___();
+	  if(input::has_been_pushed (SDLKey (next_key))) next_();
+	  if(input::has_been_pushed (SDLKey (previous_key))) previous_();
+	  if(input::has_been_pushed (SDLKey (back_key))) back();
+	  if(input::has_been_pushed (SDLKey (activate_key))) activate___();
 	} 
       return true;
     }

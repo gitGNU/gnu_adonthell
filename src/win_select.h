@@ -1,4 +1,6 @@
 /*
+   $Id$
+
    (C) Copyright 2000 Joel Vennin
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
@@ -23,6 +25,7 @@ class win_scrolled;
 class win_select : public win_scrolled
 {
  protected:
+#ifndef SWIG
   //index of the current object which is selected
   list<win_base *>::iterator index_list;
   //to show the selected object if isn't visible in the select 
@@ -56,7 +59,8 @@ class win_select : public win_scrolled
   
   
   void set_select_object(win_base*,bool b);
-  
+#endif
+
  public:
   win_select(s_int16 tx,s_int16 ty,u_int16 tl,u_int16 th,win_theme * wth);
   ~win_select();
@@ -112,11 +116,10 @@ class win_select : public win_scrolled
     you can with win_select browse a tree of selection, if you want to return at the last node call the back function, or if you want
     to go at a node you have selected just call the on_activate_function
   */  
-  
-  static SDLKey next_key;
-  static SDLKey previous_key;
-  static SDLKey activate_key;
-  static SDLKey back_key;
+  static s_int32 next_key;
+  static s_int32 previous_key;
+  static s_int32 activate_key;
+  static s_int32 back_key;
 };
 #endif
 

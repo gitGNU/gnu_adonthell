@@ -28,6 +28,9 @@
 class mapengine;
 #endif
 
+class character;
+
+#ifndef SWIG
 // all the attributes related to a saved game
 class gamedata
 {
@@ -53,12 +56,10 @@ private:
     char *location;                         // the map or area the player is on
     char *time;                             // the gametime of the save
 };
+#endif
 
 // that's most of the data needed by the game engine plus methods 
 // to load and save that data
-
-class character;
-
 class data
 {
 public:

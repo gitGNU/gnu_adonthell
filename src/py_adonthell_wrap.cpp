@@ -508,38 +508,40 @@ SWIG_InstallConstants(PyObject *d, swig_const_info constants[]) {
 #define  SWIGTYPE_p_leave_event swig_types[18] 
 #define  SWIGTYPE_p_time_event swig_types[19] 
 #define  SWIGTYPE_p_vector_event__ swig_types[20] 
-#define  SWIGTYPE_p_image swig_types[21] 
-#define  SWIGTYPE_p_config swig_types[22] 
-#define  SWIGTYPE_p_event_list swig_types[23] 
-#define  SWIGTYPE_p_event_handler swig_types[24] 
-#define  SWIGTYPE_p_win_image swig_types[25] 
-#define  SWIGTYPE_p_animation swig_types[26] 
-#define  SWIGTYPE_p_character swig_types[27] 
-#define  SWIGTYPE_p_mapcharacter swig_types[28] 
-#define  SWIGTYPE_p_win_container swig_types[29] 
-#define  SWIGTYPE_p_dialog_engine swig_types[30] 
-#define  SWIGTYPE_p_landmap swig_types[31] 
-#define  SWIGTYPE_p_mapobject swig_types[32] 
-#define  SWIGTYPE_p_event swig_types[33] 
-#define  SWIGTYPE_p_base_map_event swig_types[34] 
-#define  SWIGTYPE_p_enter_event swig_types[35] 
-#define  SWIGTYPE_p_short swig_types[36] 
-#define  SWIGTYPE_p_PyObject swig_types[37] 
-#define  SWIGTYPE_p_objects swig_types[38] 
-#define  SWIGTYPE_p_gamedata swig_types[39] 
-#define  SWIGTYPE_p_input swig_types[40] 
-#define  SWIGTYPE_p_equal_key swig_types[41] 
-#define  SWIGTYPE_p_Functor0 swig_types[42] 
-#define  SWIGTYPE_p_win_label swig_types[43] 
-#define  SWIGTYPE_p_animationframe swig_types[44] 
-#define  SWIGTYPE_p_mapsquare swig_types[45] 
-#define  SWIGTYPE_p_SDL_RWops swig_types[46] 
-#define  SWIGTYPE_p_mapengine swig_types[47] 
-#define  SWIGTYPE_p_win_border swig_types[48] 
-#define  SWIGTYPE_p_win_base swig_types[49] 
-#define  SWIGTYPE_p_win_font swig_types[50] 
-#define  SWIGTYPE_p_win_manager swig_types[51] 
-static swig_type_info *swig_types[53];
+#define  SWIGTYPE_p_win_select swig_types[21] 
+#define  SWIGTYPE_p_image swig_types[22] 
+#define  SWIGTYPE_p_config swig_types[23] 
+#define  SWIGTYPE_p_event_list swig_types[24] 
+#define  SWIGTYPE_p_event_handler swig_types[25] 
+#define  SWIGTYPE_p_win_image swig_types[26] 
+#define  SWIGTYPE_p_animation swig_types[27] 
+#define  SWIGTYPE_p_character swig_types[28] 
+#define  SWIGTYPE_p_mapcharacter swig_types[29] 
+#define  SWIGTYPE_p_win_container swig_types[30] 
+#define  SWIGTYPE_p_dialog_engine swig_types[31] 
+#define  SWIGTYPE_p_landmap swig_types[32] 
+#define  SWIGTYPE_p_mapobject swig_types[33] 
+#define  SWIGTYPE_p_event swig_types[34] 
+#define  SWIGTYPE_p_base_map_event swig_types[35] 
+#define  SWIGTYPE_p_enter_event swig_types[36] 
+#define  SWIGTYPE_p_short swig_types[37] 
+#define  SWIGTYPE_p_PyObject swig_types[38] 
+#define  SWIGTYPE_p_objects swig_types[39] 
+#define  SWIGTYPE_p_gamedata swig_types[40] 
+#define  SWIGTYPE_p_input swig_types[41] 
+#define  SWIGTYPE_p_equal_key swig_types[42] 
+#define  SWIGTYPE_p_Functor0 swig_types[43] 
+#define  SWIGTYPE_p_win_label swig_types[44] 
+#define  SWIGTYPE_p_win_scrolled swig_types[45] 
+#define  SWIGTYPE_p_animationframe swig_types[46] 
+#define  SWIGTYPE_p_mapsquare swig_types[47] 
+#define  SWIGTYPE_p_SDL_RWops swig_types[48] 
+#define  SWIGTYPE_p_mapengine swig_types[49] 
+#define  SWIGTYPE_p_win_border swig_types[50] 
+#define  SWIGTYPE_p_win_base swig_types[51] 
+#define  SWIGTYPE_p_win_font swig_types[52] 
+#define  SWIGTYPE_p_win_manager swig_types[53] 
+static swig_type_info *swig_types[55];
 
 /* -------- TYPES TABLE (END) -------- */
 
@@ -577,6 +579,8 @@ static swig_type_info *swig_types[53];
 #include "win_container.h"
 #include "win_label.h"
 #include "win_image.h"
+#include "win_scrolled.h"
+#include "win_select.h"
 #include "win_manager.h"
 #include "dialog_engine.h"
 #include "data_screen.h"
@@ -7182,6 +7186,670 @@ static PyObject *_wrap_win_image_is_stretch(PyObject *self, PyObject *args) {
 }
 
 
+static PyObject *_wrap_new_win_scrolled(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    short arg0 ;
+    short arg1 ;
+    unsigned short arg2 ;
+    unsigned short arg3 ;
+    win_theme *arg4 ;
+    PyObject * argo4 =0 ;
+    win_scrolled *result ;
+    
+    if(!PyArg_ParseTuple(args,"hhhhO:new_win_scrolled",&arg0,&arg1,&arg2,&arg3,&argo4)) return NULL;
+    if ((SWIG_ConvertPtr(argo4,(void **) &arg4,SWIGTYPE_p_win_theme,1)) == -1) return NULL;
+    result = (win_scrolled *)new win_scrolled(arg0,arg1,arg2,arg3,arg4);
+    resultobj = SWIG_NewPointerObj((void *) result, SWIGTYPE_p_win_scrolled);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_delete_win_scrolled(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_scrolled *arg0 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"O:delete_win_scrolled",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_scrolled,1)) == -1) return NULL;
+    delete arg0;
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_scrolled_up(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_scrolled *arg0 ;
+    PyObject * argo0 =0 ;
+    bool result ;
+    
+    if(!PyArg_ParseTuple(args,"O:win_scrolled_up",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_scrolled,1)) == -1) return NULL;
+    result = (bool )arg0->up();
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_scrolled_down(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_scrolled *arg0 ;
+    PyObject * argo0 =0 ;
+    bool result ;
+    
+    if(!PyArg_ParseTuple(args,"O:win_scrolled_down",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_scrolled,1)) == -1) return NULL;
+    result = (bool )arg0->down();
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_scrolled_amplitude(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_scrolled *arg0 ;
+    PyObject * argo0 =0 ;
+    unsigned short result ;
+    
+    if(!PyArg_ParseTuple(args,"O:win_scrolled_amplitude",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_scrolled,1)) == -1) return NULL;
+    result = (unsigned short )arg0->amplitude();
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_scrolled_add(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_scrolled *arg0 ;
+    win_base *arg1 ;
+    PyObject * argo0 =0 ;
+    PyObject * argo1 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"OO:win_scrolled_add",&argo0,&argo1)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_scrolled,1)) == -1) return NULL;
+    if ((SWIG_ConvertPtr(argo1,(void **) &arg1,SWIGTYPE_p_win_base,1)) == -1) return NULL;
+    arg0->add(arg1);
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_scrolled_remove(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_scrolled *arg0 ;
+    win_base *arg1 ;
+    PyObject * argo0 =0 ;
+    PyObject * argo1 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"OO:win_scrolled_remove",&argo0,&argo1)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_scrolled,1)) == -1) return NULL;
+    if ((SWIG_ConvertPtr(argo1,(void **) &arg1,SWIGTYPE_p_win_base,1)) == -1) return NULL;
+    arg0->remove(arg1);
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_scrolled_remove_all(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_scrolled *arg0 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"O:win_scrolled_remove_all",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_scrolled,1)) == -1) return NULL;
+    arg0->remove_all();
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_scrolled_resize(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_scrolled *arg0 ;
+    unsigned short arg1 ;
+    unsigned short arg2 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"Ohh:win_scrolled_resize",&argo0,&arg1,&arg2)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_scrolled,1)) == -1) return NULL;
+    arg0->resize(arg1,arg2);
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_scrolled_destroy(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_scrolled *arg0 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"O:win_scrolled_destroy",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_scrolled,1)) == -1) return NULL;
+    arg0->destroy();
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_scrolled_draw(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_scrolled *arg0 ;
+    PyObject * argo0 =0 ;
+    bool result ;
+    
+    if(!PyArg_ParseTuple(args,"O:win_scrolled_draw",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_scrolled,1)) == -1) return NULL;
+    result = (bool )arg0->draw();
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_scrolled_update(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_scrolled *arg0 ;
+    PyObject * argo0 =0 ;
+    bool result ;
+    
+    if(!PyArg_ParseTuple(args,"O:win_scrolled_update",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_scrolled,1)) == -1) return NULL;
+    result = (bool )arg0->update();
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_scrolled_set_space_between_border(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_scrolled *arg0 ;
+    unsigned short arg1 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"Oh:win_scrolled_set_space_between_border",&argo0,&arg1)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_scrolled,1)) == -1) return NULL;
+    arg0->set_space_between_border(arg1);
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_scrolled_set_space_between_object(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_scrolled *arg0 ;
+    unsigned short arg1 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"Oh:win_scrolled_set_space_between_object",&argo0,&arg1)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_scrolled,1)) == -1) return NULL;
+    arg0->set_space_between_object(arg1);
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_scrolled_set_scrollbar_visible(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_scrolled *arg0 ;
+    bool arg1 ;
+    PyObject * argo0 =0 ;
+    int tempbool1 ;
+    
+    if(!PyArg_ParseTuple(args,"Oi:win_scrolled_set_scrollbar_visible",&argo0,&tempbool1)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_scrolled,1)) == -1) return NULL;
+    arg1 = (bool ) tempbool1;
+    arg0->set_scrollbar_visible(arg1);
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_scrolled_is_scrollbar_visible(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_scrolled *arg0 ;
+    PyObject * argo0 =0 ;
+    bool result ;
+    
+    if(!PyArg_ParseTuple(args,"O:win_scrolled_is_scrollbar_visible",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_scrolled,1)) == -1) return NULL;
+    result = (bool )arg0->is_scrollbar_visible();
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_new_win_select(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    short arg0 ;
+    short arg1 ;
+    unsigned short arg2 ;
+    unsigned short arg3 ;
+    win_theme *arg4 ;
+    PyObject * argo4 =0 ;
+    win_select *result ;
+    
+    if(!PyArg_ParseTuple(args,"hhhhO:new_win_select",&arg0,&arg1,&arg2,&arg3,&argo4)) return NULL;
+    if ((SWIG_ConvertPtr(argo4,(void **) &arg4,SWIGTYPE_p_win_theme,1)) == -1) return NULL;
+    result = (win_select *)new win_select(arg0,arg1,arg2,arg3,arg4);
+    resultobj = SWIG_NewPointerObj((void *) result, SWIGTYPE_p_win_select);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_delete_win_select(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_select *arg0 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"O:delete_win_select",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_select,1)) == -1) return NULL;
+    delete arg0;
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_select_add(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_select *arg0 ;
+    win_base *arg1 ;
+    PyObject * argo0 =0 ;
+    PyObject * argo1 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"OO:win_select_add",&argo0,&argo1)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_select,1)) == -1) return NULL;
+    if ((SWIG_ConvertPtr(argo1,(void **) &arg1,SWIGTYPE_p_win_base,1)) == -1) return NULL;
+    arg0->add(arg1);
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_select_remove(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_select *arg0 ;
+    win_base *arg1 ;
+    PyObject * argo0 =0 ;
+    PyObject * argo1 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"OO:win_select_remove",&argo0,&argo1)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_select,1)) == -1) return NULL;
+    if ((SWIG_ConvertPtr(argo1,(void **) &arg1,SWIGTYPE_p_win_base,1)) == -1) return NULL;
+    arg0->remove(arg1);
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_select_remove_all(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_select *arg0 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"O:win_select_remove_all",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_select,1)) == -1) return NULL;
+    arg0->remove_all();
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_select_destroy(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_select *arg0 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"O:win_select_destroy",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_select,1)) == -1) return NULL;
+    arg0->destroy();
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_select_update(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_select *arg0 ;
+    PyObject * argo0 =0 ;
+    bool result ;
+    
+    if(!PyArg_ParseTuple(args,"O:win_select_update",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_select,1)) == -1) return NULL;
+    result = (bool )arg0->update();
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_select_get(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_select *arg0 ;
+    PyObject * argo0 =0 ;
+    win_base *result ;
+    
+    if(!PyArg_ParseTuple(args,"O:win_select_get",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_select,1)) == -1) return NULL;
+    result = (win_base *)arg0->get();
+    resultobj = SWIG_NewPointerObj((void *) result, SWIGTYPE_p_win_base);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_select_get_pos(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_select *arg0 ;
+    PyObject * argo0 =0 ;
+    unsigned short result ;
+    
+    if(!PyArg_ParseTuple(args,"O:win_select_get_pos",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_select,1)) == -1) return NULL;
+    result = (unsigned short )arg0->get_pos();
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_select_set_default(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_select *arg0 ;
+    win_base *arg1 ;
+    PyObject * argo0 =0 ;
+    PyObject * argo1 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"OO:win_select_set_default",&argo0,&argo1)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_select,1)) == -1) return NULL;
+    if ((SWIG_ConvertPtr(argo1,(void **) &arg1,SWIGTYPE_p_win_base,1)) == -1) return NULL;
+    arg0->set_default(arg1);
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_select_set_can_be_selected_all(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_select *arg0 ;
+    bool arg1 ;
+    PyObject * argo0 =0 ;
+    int tempbool1 ;
+    
+    if(!PyArg_ParseTuple(args,"Oi:win_select_set_can_be_selected_all",&argo0,&tempbool1)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_select,1)) == -1) return NULL;
+    arg1 = (bool ) tempbool1;
+    arg0->set_can_be_selected_all(arg1);
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_select_set_type(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_select *arg0 ;
+    unsigned char arg1 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"Ob:win_select_set_type",&argo0,&arg1)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_select,1)) == -1) return NULL;
+    arg0->set_type(arg1);
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_select_type(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_select *arg0 ;
+    PyObject * argo0 =0 ;
+    unsigned char result ;
+    
+    if(!PyArg_ParseTuple(args,"O:win_select_type",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_select,1)) == -1) return NULL;
+    result = (unsigned char )arg0->type();
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_select_set_select_mode(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_select *arg0 ;
+    unsigned char arg1 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"Ob:win_select_set_select_mode",&argo0,&arg1)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_select,1)) == -1) return NULL;
+    arg0->set_select_mode(arg1);
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_select_set_select_circle(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_select *arg0 ;
+    bool arg1 ;
+    PyObject * argo0 =0 ;
+    int tempbool1 ;
+    
+    if(!PyArg_ParseTuple(args,"Oi:win_select_set_select_circle",&argo0,&tempbool1)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_select,1)) == -1) return NULL;
+    arg1 = (bool ) tempbool1;
+    arg0->set_select_circle(arg1);
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_select_is_select_circle(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_select *arg0 ;
+    PyObject * argo0 =0 ;
+    bool result ;
+    
+    if(!PyArg_ParseTuple(args,"O:win_select_is_select_circle",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_select,1)) == -1) return NULL;
+    result = (bool )arg0->is_select_circle();
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_select_next(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    
+    if(!PyArg_ParseTuple(args,":win_select_next")) return NULL;
+    win_select::next();
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_select_previous(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    
+    if(!PyArg_ParseTuple(args,":win_select_previous")) return NULL;
+    win_select::previous();
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_select_set_cur_select(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_select *arg0 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"O:win_select_set_cur_select",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_select,1)) == -1) return NULL;
+    win_select::set_cur_select(arg0);
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_select_back(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    bool result ;
+    
+    if(!PyArg_ParseTuple(args,":win_select_back")) return NULL;
+    result = (bool )win_select::back();
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_select_activate(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    
+    if(!PyArg_ParseTuple(args,":win_select_activate")) return NULL;
+    win_select::activate();
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_select_set_activate_keyboard(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    bool arg0 ;
+    int tempbool0 ;
+    
+    if(!PyArg_ParseTuple(args,"i:win_select_set_activate_keyboard",&tempbool0)) return NULL;
+    arg0 = (bool ) tempbool0;
+    win_select::set_activate_keyboard(arg0);
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_select_is_activate_keyboard(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    bool result ;
+    
+    if(!PyArg_ParseTuple(args,":win_select_is_activate_keyboard")) return NULL;
+    result = (bool )win_select::is_activate_keyboard();
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_select_init(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    
+    if(!PyArg_ParseTuple(args,":win_select_init")) return NULL;
+    win_select::init();
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static int _wrap_win_select__next_key_set(PyObject *val) {
+    int  tval ;
+    
+    tval = (int ) PyInt_AsLong(val);
+    if (PyErr_Occurred()) {
+        PyErr_SetString(PyExc_TypeError,"C variable 'win_select_next_key'(int )");
+        return 1; 
+    }
+    win_select::next_key = tval;
+    return 0;
+}
+
+
+static PyObject *_wrap_win_select__next_key_get() {
+    PyObject *pyobj;
+    
+    pyobj = PyInt_FromLong((long) win_select::next_key);
+    return pyobj;
+}
+
+
+static int _wrap_win_select__previous_key_set(PyObject *val) {
+    int  tval ;
+    
+    tval = (int ) PyInt_AsLong(val);
+    if (PyErr_Occurred()) {
+        PyErr_SetString(PyExc_TypeError,"C variable 'win_select_previous_key'(int )");
+        return 1; 
+    }
+    win_select::previous_key = tval;
+    return 0;
+}
+
+
+static PyObject *_wrap_win_select__previous_key_get() {
+    PyObject *pyobj;
+    
+    pyobj = PyInt_FromLong((long) win_select::previous_key);
+    return pyobj;
+}
+
+
+static int _wrap_win_select__activate_key_set(PyObject *val) {
+    int  tval ;
+    
+    tval = (int ) PyInt_AsLong(val);
+    if (PyErr_Occurred()) {
+        PyErr_SetString(PyExc_TypeError,"C variable 'win_select_activate_key'(int )");
+        return 1; 
+    }
+    win_select::activate_key = tval;
+    return 0;
+}
+
+
+static PyObject *_wrap_win_select__activate_key_get() {
+    PyObject *pyobj;
+    
+    pyobj = PyInt_FromLong((long) win_select::activate_key);
+    return pyobj;
+}
+
+
+static int _wrap_win_select__back_key_set(PyObject *val) {
+    int  tval ;
+    
+    tval = (int ) PyInt_AsLong(val);
+    if (PyErr_Occurred()) {
+        PyErr_SetString(PyExc_TypeError,"C variable 'win_select_back_key'(int )");
+        return 1; 
+    }
+    win_select::back_key = tval;
+    return 0;
+}
+
+
+static PyObject *_wrap_win_select__back_key_get() {
+    PyObject *pyobj;
+    
+    pyobj = PyInt_FromLong((long) win_select::back_key);
+    return pyobj;
+}
+
+
 static PyObject *_wrap_win_manager_add(PyObject *self, PyObject *args) {
     PyObject *resultobj;
     win_container *arg0 ;
@@ -7454,151 +8122,6 @@ static PyObject *_wrap_data_screen_update(PyObject *self, PyObject *args) {
     if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_data_screen,1)) == -1) return NULL;
     result = (bool )arg0->update();
     resultobj = PyInt_FromLong((long)result);
-    return resultobj;
-}
-
-
-static PyObject *_wrap_new_gamedata(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    gamedata *result ;
-    
-    if(!PyArg_ParseTuple(args,":new_gamedata")) return NULL;
-    result = (gamedata *)new gamedata();
-    resultobj = SWIG_NewPointerObj((void *) result, SWIGTYPE_p_gamedata);
-    return resultobj;
-}
-
-
-static PyObject *_wrap_delete_gamedata(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    gamedata *arg0 ;
-    PyObject * argo0 =0 ;
-    
-    if(!PyArg_ParseTuple(args,"O:delete_gamedata",&argo0)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_gamedata,1)) == -1) return NULL;
-    delete arg0;
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
-static PyObject *_wrap_gamedata_save(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    gamedata *arg0 ;
-    gzFile *arg1 ;
-    PyObject * argo0 =0 ;
-    PyObject * argo1 =0 ;
-    
-    if(!PyArg_ParseTuple(args,"OO:gamedata_save",&argo0,&argo1)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_gamedata,1)) == -1) return NULL;
-    if ((SWIG_ConvertPtr(argo1,(void **) &arg1,SWIGTYPE_p_gzFile,1)) == -1) return NULL;
-    arg0->save(*arg1);
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
-static PyObject *_wrap_gamedata_load(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    gamedata *arg0 ;
-    gzFile *arg1 ;
-    PyObject * argo0 =0 ;
-    PyObject * argo1 =0 ;
-    bool result ;
-    
-    if(!PyArg_ParseTuple(args,"OO:gamedata_load",&argo0,&argo1)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_gamedata,1)) == -1) return NULL;
-    if ((SWIG_ConvertPtr(argo1,(void **) &arg1,SWIGTYPE_p_gzFile,1)) == -1) return NULL;
-    result = (bool )arg0->load(*arg1);
-    resultobj = PyInt_FromLong((long)result);
-    return resultobj;
-}
-
-
-static PyObject *_wrap_gamedata_get_directory(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    gamedata *arg0 ;
-    PyObject * argo0 =0 ;
-    char *result ;
-    
-    if(!PyArg_ParseTuple(args,"O:gamedata_get_directory",&argo0)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_gamedata,1)) == -1) return NULL;
-    result = (char *)arg0->get_directory();
-    resultobj = PyString_FromString(result);
-    return resultobj;
-}
-
-
-static PyObject *_wrap_gamedata_get_description(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    gamedata *arg0 ;
-    PyObject * argo0 =0 ;
-    char *result ;
-    
-    if(!PyArg_ParseTuple(args,"O:gamedata_get_description",&argo0)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_gamedata,1)) == -1) return NULL;
-    result = (char *)arg0->get_description();
-    resultobj = PyString_FromString(result);
-    return resultobj;
-}
-
-
-static PyObject *_wrap_gamedata_get_location(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    gamedata *arg0 ;
-    PyObject * argo0 =0 ;
-    char *result ;
-    
-    if(!PyArg_ParseTuple(args,"O:gamedata_get_location",&argo0)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_gamedata,1)) == -1) return NULL;
-    result = (char *)arg0->get_location();
-    resultobj = PyString_FromString(result);
-    return resultobj;
-}
-
-
-static PyObject *_wrap_gamedata_get_time(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    gamedata *arg0 ;
-    PyObject * argo0 =0 ;
-    char *result ;
-    
-    if(!PyArg_ParseTuple(args,"O:gamedata_get_time",&argo0)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_gamedata,1)) == -1) return NULL;
-    result = (char *)arg0->get_time();
-    resultobj = PyString_FromString(result);
-    return resultobj;
-}
-
-
-static PyObject *_wrap_gamedata_set_description(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    gamedata *arg0 ;
-    char *arg1 ;
-    PyObject * argo0 =0 ;
-    
-    if(!PyArg_ParseTuple(args,"Os:gamedata_set_description",&argo0,&arg1)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_gamedata,1)) == -1) return NULL;
-    arg0->set_description(arg1);
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
-static PyObject *_wrap_gamedata_set_directory(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    gamedata *arg0 ;
-    char *arg1 ;
-    PyObject * argo0 =0 ;
-    
-    if(!PyArg_ParseTuple(args,"Os:gamedata_set_directory",&argo0,&arg1)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_gamedata,1)) == -1) return NULL;
-    arg0->set_directory(arg1);
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
     return resultobj;
 }
 
@@ -8297,6 +8820,46 @@ static PyMethodDef adonthellcMethods[] = {
 	 { "win_image_draw", _wrap_win_image_draw, METH_VARARGS },
 	 { "win_image_set_stretch", _wrap_win_image_set_stretch, METH_VARARGS },
 	 { "win_image_is_stretch", _wrap_win_image_is_stretch, METH_VARARGS },
+	 { "new_win_scrolled", _wrap_new_win_scrolled, METH_VARARGS },
+	 { "delete_win_scrolled", _wrap_delete_win_scrolled, METH_VARARGS },
+	 { "win_scrolled_up", _wrap_win_scrolled_up, METH_VARARGS },
+	 { "win_scrolled_down", _wrap_win_scrolled_down, METH_VARARGS },
+	 { "win_scrolled_amplitude", _wrap_win_scrolled_amplitude, METH_VARARGS },
+	 { "win_scrolled_add", _wrap_win_scrolled_add, METH_VARARGS },
+	 { "win_scrolled_remove", _wrap_win_scrolled_remove, METH_VARARGS },
+	 { "win_scrolled_remove_all", _wrap_win_scrolled_remove_all, METH_VARARGS },
+	 { "win_scrolled_resize", _wrap_win_scrolled_resize, METH_VARARGS },
+	 { "win_scrolled_destroy", _wrap_win_scrolled_destroy, METH_VARARGS },
+	 { "win_scrolled_draw", _wrap_win_scrolled_draw, METH_VARARGS },
+	 { "win_scrolled_update", _wrap_win_scrolled_update, METH_VARARGS },
+	 { "win_scrolled_set_space_between_border", _wrap_win_scrolled_set_space_between_border, METH_VARARGS },
+	 { "win_scrolled_set_space_between_object", _wrap_win_scrolled_set_space_between_object, METH_VARARGS },
+	 { "win_scrolled_set_scrollbar_visible", _wrap_win_scrolled_set_scrollbar_visible, METH_VARARGS },
+	 { "win_scrolled_is_scrollbar_visible", _wrap_win_scrolled_is_scrollbar_visible, METH_VARARGS },
+	 { "new_win_select", _wrap_new_win_select, METH_VARARGS },
+	 { "delete_win_select", _wrap_delete_win_select, METH_VARARGS },
+	 { "win_select_add", _wrap_win_select_add, METH_VARARGS },
+	 { "win_select_remove", _wrap_win_select_remove, METH_VARARGS },
+	 { "win_select_remove_all", _wrap_win_select_remove_all, METH_VARARGS },
+	 { "win_select_destroy", _wrap_win_select_destroy, METH_VARARGS },
+	 { "win_select_update", _wrap_win_select_update, METH_VARARGS },
+	 { "win_select_get", _wrap_win_select_get, METH_VARARGS },
+	 { "win_select_get_pos", _wrap_win_select_get_pos, METH_VARARGS },
+	 { "win_select_set_default", _wrap_win_select_set_default, METH_VARARGS },
+	 { "win_select_set_can_be_selected_all", _wrap_win_select_set_can_be_selected_all, METH_VARARGS },
+	 { "win_select_set_type", _wrap_win_select_set_type, METH_VARARGS },
+	 { "win_select_type", _wrap_win_select_type, METH_VARARGS },
+	 { "win_select_set_select_mode", _wrap_win_select_set_select_mode, METH_VARARGS },
+	 { "win_select_set_select_circle", _wrap_win_select_set_select_circle, METH_VARARGS },
+	 { "win_select_is_select_circle", _wrap_win_select_is_select_circle, METH_VARARGS },
+	 { "win_select_next", _wrap_win_select_next, METH_VARARGS },
+	 { "win_select_previous", _wrap_win_select_previous, METH_VARARGS },
+	 { "win_select_set_cur_select", _wrap_win_select_set_cur_select, METH_VARARGS },
+	 { "win_select_back", _wrap_win_select_back, METH_VARARGS },
+	 { "win_select_activate", _wrap_win_select_activate, METH_VARARGS },
+	 { "win_select_set_activate_keyboard", _wrap_win_select_set_activate_keyboard, METH_VARARGS },
+	 { "win_select_is_activate_keyboard", _wrap_win_select_is_activate_keyboard, METH_VARARGS },
+	 { "win_select_init", _wrap_win_select_init, METH_VARARGS },
 	 { "win_manager_add", _wrap_win_manager_add, METH_VARARGS },
 	 { "win_manager_exist", _wrap_win_manager_exist, METH_VARARGS },
 	 { "win_manager_remove", _wrap_win_manager_remove, METH_VARARGS },
@@ -8317,16 +8880,6 @@ static PyMethodDef adonthellcMethods[] = {
 	 { "new_data_screen", _wrap_new_data_screen, METH_VARARGS },
 	 { "delete_data_screen", _wrap_delete_data_screen, METH_VARARGS },
 	 { "data_screen_update", _wrap_data_screen_update, METH_VARARGS },
-	 { "new_gamedata", _wrap_new_gamedata, METH_VARARGS },
-	 { "delete_gamedata", _wrap_delete_gamedata, METH_VARARGS },
-	 { "gamedata_save", _wrap_gamedata_save, METH_VARARGS },
-	 { "gamedata_load", _wrap_gamedata_load, METH_VARARGS },
-	 { "gamedata_get_directory", _wrap_gamedata_get_directory, METH_VARARGS },
-	 { "gamedata_get_description", _wrap_gamedata_get_description, METH_VARARGS },
-	 { "gamedata_get_location", _wrap_gamedata_get_location, METH_VARARGS },
-	 { "gamedata_get_time", _wrap_gamedata_get_time, METH_VARARGS },
-	 { "gamedata_set_description", _wrap_gamedata_set_description, METH_VARARGS },
-	 { "gamedata_set_directory", _wrap_gamedata_set_directory, METH_VARARGS },
 	 { "data_init", _wrap_data_init, METH_VARARGS },
 	 { "data_cleanup", _wrap_data_cleanup, METH_VARARGS },
 	 { "data_load", _wrap_data_load, METH_VARARGS },
@@ -8371,8 +8924,14 @@ static void *_p_characterTo_p_mapcharacter(void *x) {
 static void *_p_dialog_engineTo_p_win_container(void *x) {
     return (void *)((win_container *) ((dialog_engine *) x));
 }
+static void *_p_win_selectTo_p_win_container(void *x) {
+    return (void *)((win_container *) ((win_select *) x));
+}
 static void *_p_data_screenTo_p_win_container(void *x) {
     return (void *)((win_container *) ((data_screen *) x));
+}
+static void *_p_win_scrolledTo_p_win_container(void *x) {
+    return (void *)((win_container *) ((win_scrolled *) x));
 }
 static void *_p_leave_eventTo_p_base_map_event(void *x) {
     return (void *)((base_map_event *) ((leave_event *) x));
@@ -8392,6 +8951,9 @@ static void *_p_base_map_eventTo_p_event(void *x) {
 static void *_p_enter_eventTo_p_event(void *x) {
     return (void *)((event *) ((enter_event *) x));
 }
+static void *_p_win_selectTo_p_win_scrolled(void *x) {
+    return (void *)((win_scrolled *) ((win_select *) x));
+}
 static void *_p_dialog_engineTo_p_win_base(void *x) {
     return (void *)((win_base *) ((dialog_engine *) x));
 }
@@ -8401,11 +8963,17 @@ static void *_p_win_imageTo_p_win_base(void *x) {
 static void *_p_win_labelTo_p_win_base(void *x) {
     return (void *)((win_base *) ((win_label *) x));
 }
+static void *_p_win_selectTo_p_win_base(void *x) {
+    return (void *)((win_base *) ((win_select *) x));
+}
 static void *_p_data_screenTo_p_win_base(void *x) {
     return (void *)((win_base *) ((data_screen *) x));
 }
 static void *_p_win_containerTo_p_win_base(void *x) {
     return (void *)((win_base *) ((win_container *) x));
+}
+static void *_p_win_scrolledTo_p_win_base(void *x) {
+    return (void *)((win_base *) ((win_scrolled *) x));
 }
 static swig_type_info _swigt__p_screen[] = {{"_p_screen", 0, "screen *"},{"_p_screen"},{0}};
 static swig_type_info _swigt__p_data_screen[] = {{"_p_data_screen", 0, "data_screen *"},{"_p_data_screen"},{0}};
@@ -8428,6 +8996,7 @@ static swig_type_info _swigt__p_pair_const_char___signed_int_[] = {{"_p_pair_con
 static swig_type_info _swigt__p_leave_event[] = {{"_p_leave_event", 0, "leave_event *"},{"_p_leave_event"},{0}};
 static swig_type_info _swigt__p_time_event[] = {{"_p_time_event", 0, "time_event *"},{"_p_time_event"},{0}};
 static swig_type_info _swigt__p_vector_event__[] = {{"_p_vector_event__", 0, "vector<event*> *"},{"_p_vector_event__"},{0}};
+static swig_type_info _swigt__p_win_select[] = {{"_p_win_select", 0, "win_select *"},{"_p_win_select"},{0}};
 static swig_type_info _swigt__p_image[] = {{"_p_image", 0, "image *"},{"_p_image"},{0}};
 static swig_type_info _swigt__p_config[] = {{"_p_config", 0, "config *"},{"_p_config"},{0}};
 static swig_type_info _swigt__p_event_list[] = {{"_p_event_list", 0, "event_list *"},{"_p_landmap", _p_landmapTo_p_event_list},{"_p_event_list"},{0}};
@@ -8436,7 +9005,7 @@ static swig_type_info _swigt__p_win_image[] = {{"_p_win_image", 0, "win_image *"
 static swig_type_info _swigt__p_animation[] = {{"_p_animation", 0, "animation *"},{"_p_animation"},{0}};
 static swig_type_info _swigt__p_character[] = {{"_p_character", 0, "character *"},{"_p_character"},{0}};
 static swig_type_info _swigt__p_mapcharacter[] = {{"_p_mapcharacter", 0, "mapcharacter *"},{"_p_mapcharacter"},{"_p_character", _p_characterTo_p_mapcharacter},{0}};
-static swig_type_info _swigt__p_win_container[] = {{"_p_win_container", 0, "win_container *"},{"_p_dialog_engine", _p_dialog_engineTo_p_win_container},{"_p_data_screen", _p_data_screenTo_p_win_container},{"_p_win_container"},{0}};
+static swig_type_info _swigt__p_win_container[] = {{"_p_win_container", 0, "win_container *"},{"_p_dialog_engine", _p_dialog_engineTo_p_win_container},{"_p_data_screen", _p_data_screenTo_p_win_container},{"_p_win_select", _p_win_selectTo_p_win_container},{"_p_win_container"},{"_p_win_scrolled", _p_win_scrolledTo_p_win_container},{0}};
 static swig_type_info _swigt__p_dialog_engine[] = {{"_p_dialog_engine", 0, "dialog_engine *"},{"_p_dialog_engine"},{0}};
 static swig_type_info _swigt__p_landmap[] = {{"_p_landmap", 0, "landmap *"},{"_p_landmap"},{0}};
 static swig_type_info _swigt__p_mapobject[] = {{"_p_mapobject", 0, "mapobject *"},{"_p_mapobject"},{0}};
@@ -8451,12 +9020,13 @@ static swig_type_info _swigt__p_input[] = {{"_p_input", 0, "input *"},{"_p_input
 static swig_type_info _swigt__p_equal_key[] = {{"_p_equal_key", 0, "equal_key *"},{"_p_equal_key"},{0}};
 static swig_type_info _swigt__p_Functor0[] = {{"_p_Functor0", 0, "Functor0 *"},{"_p_Functor0"},{0}};
 static swig_type_info _swigt__p_win_label[] = {{"_p_win_label", 0, "win_label *"},{"_p_win_label"},{0}};
+static swig_type_info _swigt__p_win_scrolled[] = {{"_p_win_scrolled", 0, "win_scrolled *"},{"_p_win_select", _p_win_selectTo_p_win_scrolled},{"_p_win_scrolled"},{0}};
 static swig_type_info _swigt__p_animationframe[] = {{"_p_animationframe", 0, "animationframe *"},{"_p_animationframe"},{0}};
 static swig_type_info _swigt__p_mapsquare[] = {{"_p_mapsquare", 0, "mapsquare *"},{"_p_mapsquare"},{0}};
 static swig_type_info _swigt__p_SDL_RWops[] = {{"_p_SDL_RWops", 0, "SDL_RWops *"},{"_p_SDL_RWops"},{0}};
 static swig_type_info _swigt__p_mapengine[] = {{"_p_mapengine", 0, "mapengine *"},{"_p_mapengine"},{0}};
 static swig_type_info _swigt__p_win_border[] = {{"_p_win_border", 0, "win_border *"},{"_p_win_border"},{0}};
-static swig_type_info _swigt__p_win_base[] = {{"_p_win_base", 0, "win_base *"},{"_p_win_base"},{"_p_dialog_engine", _p_dialog_engineTo_p_win_base},{"_p_win_image", _p_win_imageTo_p_win_base},{"_p_win_label", _p_win_labelTo_p_win_base},{"_p_data_screen", _p_data_screenTo_p_win_base},{"_p_win_container", _p_win_containerTo_p_win_base},{0}};
+static swig_type_info _swigt__p_win_base[] = {{"_p_win_base", 0, "win_base *"},{"_p_win_base"},{"_p_dialog_engine", _p_dialog_engineTo_p_win_base},{"_p_win_image", _p_win_imageTo_p_win_base},{"_p_win_label", _p_win_labelTo_p_win_base},{"_p_data_screen", _p_data_screenTo_p_win_base},{"_p_win_select", _p_win_selectTo_p_win_base},{"_p_win_container", _p_win_containerTo_p_win_base},{"_p_win_scrolled", _p_win_scrolledTo_p_win_base},{0}};
 static swig_type_info _swigt__p_win_font[] = {{"_p_win_font", 0, "win_font *"},{"_p_win_font"},{0}};
 static swig_type_info _swigt__p_win_manager[] = {{"_p_win_manager", 0, "win_manager *"},{"_p_win_manager"},{0}};
 
@@ -8482,6 +9052,7 @@ _swigt__p_pair_const_char___signed_int_,
 _swigt__p_leave_event, 
 _swigt__p_time_event, 
 _swigt__p_vector_event__, 
+_swigt__p_win_select, 
 _swigt__p_image, 
 _swigt__p_config, 
 _swigt__p_event_list, 
@@ -8505,6 +9076,7 @@ _swigt__p_input,
 _swigt__p_equal_key, 
 _swigt__p_Functor0, 
 _swigt__p_win_label, 
+_swigt__p_win_scrolled, 
 _swigt__p_animationframe, 
 _swigt__p_mapsquare, 
 _swigt__p_SDL_RWops, 
@@ -8890,6 +9462,10 @@ SWIGEXPORT(void) initadonthellc(void) {
     SWIG_addvarlink(SWIG_globals,"input_last_key",_wrap_input__last_key_get, _wrap_input__last_key_set);
     SWIG_addvarlink(SWIG_globals,"input_mouse_posx",_wrap_input__mouse_posx_get, _wrap_input__mouse_posx_set);
     SWIG_addvarlink(SWIG_globals,"win_theme_theme",_wrap_win_theme__theme_get, _wrap_win_theme__theme_set);
+    SWIG_addvarlink(SWIG_globals,"win_select_next_key",_wrap_win_select__next_key_get, _wrap_win_select__next_key_set);
+    SWIG_addvarlink(SWIG_globals,"win_select_previous_key",_wrap_win_select__previous_key_get, _wrap_win_select__previous_key_set);
+    SWIG_addvarlink(SWIG_globals,"win_select_activate_key",_wrap_win_select__activate_key_get, _wrap_win_select__activate_key_set);
+    SWIG_addvarlink(SWIG_globals,"win_select_back_key",_wrap_win_select__back_key_get, _wrap_win_select__back_key_set);
     SWIG_addvarlink(SWIG_globals,"data_globals",_wrap_data__globals_get, _wrap_data__globals_set);
     SWIG_addvarlink(SWIG_globals,"data_py_module",_wrap_data__py_module_get, _wrap_data__py_module_set);
     SWIG_addvarlink(SWIG_globals,"data_time",_wrap_data__time_get, _wrap_data__time_set);

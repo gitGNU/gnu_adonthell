@@ -302,6 +302,9 @@ bool data::load (u_int32 pos)
 // Unload a game
 void data::unload ()
 {
+#if defined (USE_MAP)
+    landmap *map = map_engine->get_landmap ();
+#endif
     character *mychar;
     quest *myquest;
 
@@ -309,14 +312,19 @@ void data::unload ()
     while ((mychar = (character *) characters.next ()) != NULL)
     {
         characters.erase (mychar->get_name());
+
 #if defined (USE_MAP)
-        map_engine->get_landmap ()->remove_mapchar (mychar, 
-            mychar->get_submap (), mychar->get_posx (), mychar->get_posy ());
-        // This might be needed to catch moving characters (???)
-        map_engine->get_landmap ()->remove_mapchar (mychar, 
-            mychar->get_submap (), mychar->get_posx ()-1, mychar->get_posy ());
-        map_engine->get_landmap ()->remove_mapchar (mychar, 
-            mychar->get_submap (), mychar->get_posx (), mychar->get_posy ()-1);
+        if (map)
+        {
+            map->remove_mapchar (mychar, mychar->get_submap (),
+                mychar->get_posx (), mychar->get_posy ());
+
+            // This might be needed to catch moving characters (???)
+            map->remove_mapchar (mychar, mychar->get_submap (), 
+                mychar->get_posx ()-1, mychar->get_posy ());
+            map->remove_mapchar (mychar, mychar->get_submap (), 
+                mychar->get_posx (), mychar->get_posy ()-1);
+        }
 #endif
         delete mychar;
     }
@@ -333,7 +341,7 @@ void data::unload ()
 
     // clean the map
 #if defined (USE_MAP)
-    map_engine->get_landmap ()->mapchar.clear ();
+    if (map) map->mapchar.clear ();
 #endif
 }
 

@@ -1,7 +1,11 @@
 /*
+   $Id$
+
    (C) Copyright 2000 Joel Vennin
+
    Part of the Adonthell Project http://adonthell.linuxgames.com
    Special Thanks to Rich Hickey
+
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License.
    This program is distributed in the hope that it will be useful,
@@ -38,7 +42,7 @@ class FunctorBase
 	}	
       else func = f;
     }
-  
+
  public:
   operator bool()const{return callee||func;}
   friend bool operator==(const FunctorBase &lhs,const FunctorBase &rhs);

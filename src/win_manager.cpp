@@ -43,6 +43,7 @@ void win_manager::remove(win_container * tmp)
     {
       tmp->set_focus(false);
       wc=NULL;
+      set_focus (lmanage.back ());
     }
   lmanage.remove(tmp);
 }
@@ -76,6 +77,7 @@ void win_manager::update()
 	  delete *i--;
 	}
     }
+  if (!wc) set_focus (lmanage.back ());
 }
 
 void win_manager::set_focus(win_container * tmp)
