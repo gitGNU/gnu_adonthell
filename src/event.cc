@@ -1,7 +1,7 @@
 /*
    $Id$
 
-   Copyright (C) 2000/2001/2002 Kai Sterker <kaisterker@linuxgames.com>
+   Copyright (C) 2000/2001/2002/2003 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -219,16 +219,7 @@ void event::set_list (event_list *l)
 // repeat an event
 s_int32 event::do_repeat ()
 {
-    if (Repeat >= 0) 
-    {
-        Repeat--;
-        
-        if (Repeat <= 0) 
-        {
-            delete this;
-            return 0;
-        }
-    }
+    if (Repeat > 0) Repeat--;
     
     return Repeat;
 }

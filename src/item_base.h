@@ -50,13 +50,13 @@ public:
      * Default constructor. Creates an empty item.
      */
     item_base () : py_object () {};
-    
+#ifndef SWIG    
     /**
      * Create a new item from the given item data. 
      * @param item Name of the item data file defining the desired item.
      */
     item_base (const string & item);
-    
+#endif    
     /**
      * Destructor.
      */
@@ -174,6 +174,7 @@ public:
      * @name Loading/Saving
      */
     //@{
+#ifndef SWIG
     /**
      * Load item from named file. This will first load the item template
      * to instanciate the underlying Python item class. Then it will
@@ -194,7 +195,12 @@ public:
      * @return \b true if saving successful, \b false otherwise.
      */
     bool put_state (const string & file) const;
+#endif
     
+    // wrappers needed for SWIG
+    bool load (const string & file) { return get_state (file); }
+    bool save (const string & file) { return put_state (file); }
+        
     /**
      * Load item from stream. This will first load the item template
      * to instanciate the underlying Python item class. Then it will

@@ -22,7 +22,7 @@
  * 
  */
 
-
+#include <stdio.h>
 #include <iostream>
 #include <SDL/SDL_endian.h>
 #include "fileops.h"
@@ -87,6 +87,14 @@ bool& operator << (bool& n, igzstream& gfile)
     return (n = b);
 }
 
+/// Reads a boolean.
+bool igzstream::get_bool (igzstream& gfile)
+{
+    u_int8 b;
+    gzread (gfile.file, &b, sizeof (b));
+    return b;
+}
+
 /// Reads a char.
 char& operator << (char& n, igzstream& gfile)
 {
@@ -106,10 +114,26 @@ u_int8& operator << (u_int8& n, igzstream& gfile)
     return n;
 }
 
+/// Reads a u_int8.
+u_int8 igzstream::get_uint8 (igzstream& gfile)
+{
+    u_int8 n;
+    gzread (gfile.file, &n, sizeof (n));
+    return n;
+}
+
 /// Reads a s_int8.
 s_int8& operator << (s_int8& n, igzstream& gfile)
 {
     gzread(gfile.file, &n, sizeof (n));
+    return n;
+}
+
+/// Reads a s_int8.
+s_int8 igzstream::get_sint8 (igzstream& gfile)
+{
+    s_int8 n;
+    gzread (gfile.file, &n, sizeof (n));
     return n;
 }
 
@@ -121,11 +145,27 @@ u_int16& operator << (u_int16& n, igzstream& gfile)
     return n;
 }
 
+/// Reads a u_int16.
+u_int16 igzstream::get_uint16 (igzstream& gfile)
+{
+    u_int16 n;
+    gzread (gfile.file, &n, sizeof (n));
+    return n;
+}
+
 /// Reads a s_int16.
 s_int16& operator << (s_int16& n, igzstream& gfile)
 {
     gzread(gfile.file, &n, sizeof (n));
     n = SDL_SwapLE16(n);
+    return n;
+}
+
+/// Reads a s_int16.
+s_int16 igzstream::get_sint16 (igzstream& gfile)
+{
+    s_int16 n;
+    gzread (gfile.file, &n, sizeof (n));
     return n;
 }
 
@@ -137,11 +177,27 @@ u_int32& operator << (u_int32& n, igzstream& gfile)
     return n;
 }
 
+/// Reads a u_int32.
+u_int32 igzstream::get_uint32 (igzstream& gfile)
+{
+    u_int32 n;
+    gzread (gfile.file, &n, sizeof (n));
+    return n;
+}
+
 /// Reads a s_int32.
 s_int32& operator << (s_int32& n, igzstream& gfile)
 {
     gzread(gfile.file, &n, sizeof (n));
     n = SDL_SwapLE32(n);
+    return n;
+}
+
+/// Reads a s_int32.
+s_int32 igzstream::get_sint32 (igzstream& gfile)
+{
+    s_int32 n;
+    gzread (gfile.file, &n, sizeof (n));
     return n;
 }
 
@@ -160,6 +216,35 @@ string& operator << (string& s, igzstream& gfile)
     }
     return s;
 }
+
+/// Reads a string.
+string igzstream::get_string (igzstream& gfile)
+{
+    string s;
+    s << gfile;
+    return s;
+}
+
+/// Reads a float.
+float& operator << (float& f, igzstream& gfile)
+{
+    string sf;
+    sf << gfile;
+    
+    // floats saved as strings to remain independent of architecture
+    sscanf (sf.c_str (), "%f", &f);
+    
+    return f;
+}
+
+/// Reads a float.
+float igzstream::get_float (igzstream& gfile)
+{
+    float f;
+    f << gfile;
+    return f;
+}
+
 
 ogzstream::ogzstream () : gz_file ()
 {
@@ -254,6 +339,18 @@ string& operator >> (const string& s, ogzstream& gfile)
     for (i = ((string&) s).begin (); i != ((string&) s).end (); i++) 
         (*i) >>  gfile;
     return (string&) s;
+}
+
+/// Writes a float.
+const float& operator >> (const float& f, ogzstream& gfile)
+{
+    char sf[16];
+    
+    // floats saved as strings to remain independent of architecture
+    snprintf (sf, 16, "%f", f);
+    sf >> gfile;
+    
+    return f;
 }
 
 void fileops::put_version (ogzstream& file, u_int16 version)

@@ -1,7 +1,7 @@
 /*
    $Id$
 
-   Copyright (C) 2002 Kai Sterker <kaisterker@linuxgames.com>
+   Copyright (C) 2002/2003 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -47,6 +47,7 @@ void time_event_handler::raise_event (const event * e)
 
         // re-register event if it needs be repeated
         if (repeat) register_event (evt);
+        else delete evt;
     }
     
     return;

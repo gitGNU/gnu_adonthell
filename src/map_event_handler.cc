@@ -1,7 +1,7 @@
 /*
    $Id$
 
-   Copyright (C) 2002 Kai Sterker <kaisterker@linuxgames.com>
+   Copyright (C) 2002/2003 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -36,8 +36,10 @@ void map_event_handler::raise_event (const event* e)
         i--;
         
         // if the events match, execute them. Note that events that use up
-        // their repeat count are automatically deleted and unregistered.
-        if ((*i)->equals (e)) (*i)->execute (e);
+        // their repeat count are deleted (and automatically unregistered).
+        if ((*i)->equals (e)) 
+            if (!(*i)->execute (e))
+                delete *i;
     }
     
     return;

@@ -145,6 +145,7 @@ enum {Python = 1, C = 0};
 %include "input.h"
 %include "audio.h"
 %include "character_base.h"
+%include "py_object.h"
 %include "item_base.h"
 %include "drawing_area.h"
 %include "quest.h"
