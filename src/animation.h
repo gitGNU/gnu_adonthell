@@ -139,11 +139,9 @@ class animation
   void play();
   void stop();
   void rewind();
-  void draw(u_int16 x, u_int16 y, drawing_area * da_opt=NULL);
+  void draw(s_int16 x, s_int16 y, drawing_area * da_opt=NULL);
   s_int8 get(gzFile file);
   s_int8 load(const char * fname);
-  s_int8 get_old(SDL_RWops * file);
-  s_int8 load_old(const char * fname);
 
   // Perform a zoom from the size of the currentframe of src to sx,sy.
   // All the other frame's sizes are adjusted from src->currentframe.

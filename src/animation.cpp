@@ -306,7 +306,7 @@ void animation::rewind()
   speedcounter=0;
 }
 
-void animation::draw(u_int16 x, u_int16 y, drawing_area * da_opt=NULL)
+void animation::draw(s_int16 x, s_int16 y, drawing_area * da_opt=NULL)
 {
 #ifdef _EDIT_
   if(!nbr_of_frames) return;
@@ -359,34 +359,6 @@ s_int8 animation::load(const char * fname)
   if(!file) return(-1);
   retvalue=get(file);
   gzclose(file);
-  return(retvalue);
-}
-
-s_int8 animation::get_old(SDL_RWops * file)
-{
-  u_int16 i;
-  SDL_RWread(file,&nbr_of_images,sizeof(nbr_of_images),1);
-  delete[] t_frame;
-  t_frame=new image[nbr_of_images];
-  for(i=0;i<nbr_of_images;i++)
-    t_frame[i].get_pnm(file);
-  SDL_RWread(file,&nbr_of_frames,sizeof(nbr_of_frames),1);
-  delete[] frame;
-  frame=new animation_frame[nbr_of_frames];
-  for(i=0;i<nbr_of_frames;i++)
-      frame[i].get(file);
-  currentframe=0;
-  return(0);
-}
-
-s_int8 animation::load_old(const char * fname)
-{
-  SDL_RWops * file;
-  u_int8 retvalue;
-  file=SDL_RWFromFile(fname,"r"); 
-  if(!file) return(-1);
-  retvalue=get_old(file);
-  SDL_RWclose(file);
   return(retvalue);
 }
 
