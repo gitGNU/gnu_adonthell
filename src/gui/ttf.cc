@@ -68,8 +68,6 @@ bool ttf::load (const std::string & filename)
         return false; 
     }
     
-    //    error = FT_Select_Charmap (&my_face, FT_Encoding.FT_ENCODING_UNICODE);
-
     else if ( error )
     {
         std::cout << "FONT : Error undefined\n";
@@ -188,11 +186,13 @@ void ttf::copy_bitmap_to_image (u_int8 * bitmap_data, gfx::image * dest, s_int16
   for (int j = 0; j < dest->height (); j++)
     for (int i = 0; i < dest->length () ; i++)
       {
-	if (*pbmp > 50)  dest->put_pix (dx + i, dy +j, pixelcol); 
+	if (*pbmp > 70)  dest->put_pix (dx + i, dy +j, pixelcol); 
 	else dest->put_pix (dx + i, dy + j, gfx::screen::trans_col ()); 
 	pbmp++; 
       } 
   dest->unlock ();  
+  dest->set_mask (true);
+  std::cout << "Copy to Bitmap done\n";
 }
 
 
@@ -275,6 +275,8 @@ glyph_info::glyph_info (ttf & ft, wchar_t ch) : my_glyph (NULL)
   
   my_glyph = new gfx::image (glyph->bitmap.width, glyph->bitmap.rows);
   my_glyph->set_mask (true);
+  std::cout << "New Image: " << my_glyph->length() << " " << my_glyph->height () << "\n";
+  
   ft.copy_bitmap_to_image ( glyph->bitmap.buffer, my_glyph);
 }
 

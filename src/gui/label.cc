@@ -476,8 +476,10 @@ void label::update_cursor ()
 // if bool is false redraw all,  if bool is true redraw just at beginning of the cursor 
 void label::draw_string (const bool at_cursor)
 { 
-  glyph_info * glyph;
+  std::cout << "Draw String begin\n";
 
+  glyph_info * glyph;
+  
     u_int16 tmp_start_line;
     u_int16 tx = 0, ty = 0;
     u_int16 idx_cur_line, j; 
@@ -498,14 +500,16 @@ void label::draw_string (const bool at_cursor)
         idx_cur_line = my_vect_[tmp_start_line].idx_beg; 
     } 
     
+
     // draw the first line
     for (j = idx_cur_line;
          j < my_vect_[tmp_start_line].idx_end + 1 ;
          j++)
     {
       glyph = &((*my_font_) [my_text_[j]]);
-      //      std::cout << tx << " " <<  ty + glyph->my_yoffset << " " << length() << " " << height () << std::endl;
-      glyph->my_glyph->draw (tx + glyph->my_minx + 1 , ty + glyph->my_yoffset, NULL, this);
+      std::cout <<"First Line " <<  tx << " " << (s_int16)  (ty + glyph->my_yoffset) << " " << length() << " " << height () << std::endl;
+      glyph->my_glyph->draw ((s_int16) (tx + glyph->my_minx + 1) , (s_int16) (ty + glyph->my_yoffset),NULL, this);
+      std::cout << "NeXt\n";
       tx += glyph->my_advance; 
     }
     ty += my_font_->height ();
@@ -522,7 +526,7 @@ void label::draw_string (const bool at_cursor)
         {
 	  glyph = &((*my_font_) [my_text_[j]]);
 	  
-	  //	  std::cout << tx << " " <<  ty + glyph->my_yoffset << " " << length() << " " << height () << std::endl;
+	  std::cout << tx << " " <<  ty + glyph->my_yoffset << " " << length() << " " << height () << std::endl;
 	  
 	  glyph->my_glyph->draw (tx, ty + glyph->my_yoffset, NULL, this);
 	  tx += glyph->my_advance; 
@@ -530,6 +534,7 @@ void label::draw_string (const bool at_cursor)
         ty += my_font_->height ();
         tmp_start_line++; 
     } 
+    std::cout << "Draw String end\n";
 }
 
 
