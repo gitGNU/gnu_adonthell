@@ -1,25 +1,24 @@
-adonthell (0.3.2-1) unstable; urgency=low
+adonthell (0.3.3-1) unstable; urgency=low
 
-  * using 0.3.2 source code base.
+  * New upstream release
 
- -- Alexandre Courbot <alexandrecourbot@linuxgames.com>  Thu, 28 Feb 2002 10:34:59 +0100
+ -- Gordon Fraser <gordon@debian.org>  Thu, 19 Sep 2002 16:41:22 +0200
 
-adonthell (0.3.1-2) unstable; urgency=low
+adonthell (0.3.2.cvs.20020906-3) unstable; urgency=low
 
-  * fixed bad dependencies from libsdl1.2 to libsdl1.2debian
+  * Remove accidential need for autotools (Closes: #160665)
 
- -- Alexandre Courbot <alexandrecourbot@linuxgames.com>  Thu, 21 Feb 2002 10:52:27 +0100
+ -- Gordon Fraser <gordon@debian.org>  Fri, 13 Sep 2002 08:33:43 +0200
 
-adonthell (0.3.1-1) unstable; urgency=low
+adonthell (0.3.2.cvs.20020906-2) unstable; urgency=low
 
-  * using 0.3.1 source code base.
+  * Remove -fno-rtti to fix build problem on ia64
+  * Revert hash<string> changes to fix build problem on hppa
 
- -- Alexandre Courbot <alexandrecourbot@linuxgames.com>  Tue,  5 Feb 2002 13:28:29 +0100
+ -- Gordon Fraser <gordon@debian.org>  Thu, 12 Sep 2002 19:47:21 +0200
 
-adonthell (0.3-1) unstable; urgency=low
+adonthell (0.3.2.cvs.20020906-1) unstable; urgency=low
 
-  * Initial release.
+  * Initial Debian-upload (Closes: #158679)
 
- -- Alexandre Courbot <alexandrecourbot@linuxgames.com>  Sat,  2 Feb 2002 17:08:37 +0100
-
-
+ -- Gordon Fraser <gordon@debian.org>  Wed, 28 Aug 2002 20:37:34 +0200
