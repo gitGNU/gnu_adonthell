@@ -224,7 +224,7 @@ void mapcharacter::set_posy(u_int16 y)
   posy=y;
 }
 
-void mapcharacter::update_NPC(map * amap)
+void mapcharacter::update_NPC(landmap * amap)
 {
   if ((scridx==0)&&(is_ready())) 
     {
@@ -263,7 +263,7 @@ void mapcharacter::update_dir()
   if ((prevmovtype==0)&&(waitcounter!=0)) movtype=0;
 }
 
-void mapcharacter::update_move(map*amap)
+void mapcharacter::update_move(landmap *amap)
 {
   switch (movtype)
     {
@@ -322,7 +322,7 @@ void mapcharacter::update_move(map*amap)
     }
 }
 
-void mapcharacter::update_main_move(map*amap)
+void mapcharacter::update_main_move(landmap *amap)
 {
   if(get_scridx()) return;
   switch (movtype)
@@ -362,7 +362,7 @@ void mapcharacter::update_main_move(map*amap)
     }
 }
 
-void mapcharacter::update_pos(map*amap)
+void mapcharacter::update_pos(landmap *amap)
 {
   if (movtype!=0) speedcounter++;
   switch(movtype)
@@ -426,7 +426,7 @@ void mapcharacter::update_pos(map*amap)
     }
 }
 
-void mapcharacter::update_eventleave(map*amap)
+void mapcharacter::update_eventleave(landmap *amap)
 {
   if(!is_event) return;
   if(is_event==MAPCHAR_EVENT_LEFT)
@@ -438,7 +438,7 @@ void mapcharacter::update_eventleave(map*amap)
     }
 }
 
-void mapcharacter::update_eventcome(map*amap)
+void mapcharacter::update_eventcome(landmap *amap)
 {
   if(!is_event) return;
   if(is_event==MAPCHAR_EVENT_COME)

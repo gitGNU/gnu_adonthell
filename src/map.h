@@ -24,7 +24,7 @@ class mapitem;
 
 typedef char lstr[100];
 
-class map
+class landmap
 {
  protected:
   mapsquare ** maparea;
@@ -71,8 +71,8 @@ class map
   drawing_area * draw_zone;
   mapcharacter heroe;
 
-  map();
-  // ~map();
+  landmap();
+  // ~landmap();
   u_int16 get_patternset_to_map(SDL_RWops * file, u_int16 startpos);
   u_int16 load_patternset_to_map(char * fname, u_int16 startpos);
   s_int8 get(SDL_RWops * file);

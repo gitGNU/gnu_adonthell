@@ -148,7 +148,7 @@
 */
 int main(int argc, char * argv[])
 {
-    map * map1 = new map;
+    landmap * map1 = new landmap;
     config myconfig (argc > 1 ? argv[1] : "");
 
     // try to read adonthellrc

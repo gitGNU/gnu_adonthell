@@ -42,11 +42,11 @@ void mapevent::put(SDL_RWops * file)
   SDL_RWwrite(file,&otherevent,sizeof(otherevent),1);
 }
 
-void mapevent::map_action_0(mapcharacter*aguy,map*amap,u_int16 x,u_int16 y)
+void mapevent::map_action_0(mapcharacter*aguy,landmap *amap,u_int16 x,u_int16 y)
 {
 }
 
-void mapevent::map_action_1(mapcharacter*aguy,map*amap,u_int16 x,u_int16 y)
+void mapevent::map_action_1(mapcharacter*aguy,landmap *amap,u_int16 x,u_int16 y)
 {
   aguy->set_movtype(0);
   if((param[7])&&(aguy->get_nbr()==255)) mapengine::fade_out(amap);
@@ -67,7 +67,7 @@ void mapevent::map_action_1(mapcharacter*aguy,map*amap,u_int16 x,u_int16 y)
 }
 
 
-void mapevent::map_action_2(mapcharacter*aguy,map*amap,u_int16 x,u_int16 y)
+void mapevent::map_action_2(mapcharacter*aguy,landmap *amap,u_int16 x,u_int16 y)
 {
   if (aguy->get_nbr()==255)
     {
@@ -76,35 +76,35 @@ void mapevent::map_action_2(mapcharacter*aguy,map*amap,u_int16 x,u_int16 y)
     }
 }
 
-void mapevent::map_action_3(mapcharacter*aguy,map*amap,u_int16 x,u_int16 y)
+void mapevent::map_action_3(mapcharacter*aguy,landmap *amap,u_int16 x,u_int16 y)
 {
   if (aguy->get_nbr()==255) amap->set_scrolltype(1);
 }
 
-void mapevent::map_action_4(mapcharacter*aguy,map*amap,u_int16 x,u_int16 y)
+void mapevent::map_action_4(mapcharacter*aguy,landmap *amap,u_int16 x,u_int16 y)
 {
   if (aguy->get_nbr()==255) amap->set_scrolltype(2);
 }
 
-void mapevent::map_action_5(mapcharacter*aguy,map*amap,u_int16 x,u_int16 y)
+void mapevent::map_action_5(mapcharacter*aguy,landmap *amap,u_int16 x,u_int16 y)
 {
   if (aguy->get_nbr()==255)
     {
       if (param[7]) mapengine::fade_out(amap);
-      amap->~map();
+      amap->~landmap();
       amap->load(param_str);
       amap->init_for_scrolling();
       if (param[7]) mapengine::fade_in(amap);
     }
 }
 
-void mapevent::map_action_6(mapcharacter*aguy,map*amap,u_int16 x,u_int16 y)
+void mapevent::map_action_6(mapcharacter*aguy,landmap *amap,u_int16 x,u_int16 y)
 {
   if (aguy->get_nbr()==255)
     {
       if (param[7]) mapengine::fade_out(amap);
       amap->leave_character(aguy->get_posx(),aguy->get_posy());
-      amap->~map();
+      amap->~landmap();
       amap->load(param_str);
       aguy->set_posx(param[1]);
       aguy->set_posy(param[2]);
@@ -117,7 +117,7 @@ void mapevent::map_action_6(mapcharacter*aguy,map*amap,u_int16 x,u_int16 y)
     }
 }
 
-void mapevent::map_action_7(mapcharacter*aguy,map*amap,u_int16 x,u_int16 y)
+void mapevent::map_action_7(mapcharacter*aguy,landmap *amap,u_int16 x,u_int16 y)
 //      Enable Horizontal Scrolling
 {
   if (aguy->get_nbr()==255)
@@ -131,7 +131,7 @@ void mapevent::map_action_7(mapcharacter*aguy,map*amap,u_int16 x,u_int16 y)
     }
 }
 
-void mapevent::map_action_8(mapcharacter*aguy,map*amap,u_int16 x,u_int16 y)
+void mapevent::map_action_8(mapcharacter*aguy,landmap *amap,u_int16 x,u_int16 y)
 //      Disable Horizontal Scrolling
 {
   if (aguy->get_nbr()==255)
@@ -145,7 +145,7 @@ void mapevent::map_action_8(mapcharacter*aguy,map*amap,u_int16 x,u_int16 y)
     }
 }
 
-void mapevent::map_action_9(mapcharacter*aguy,map*amap,u_int16 x,u_int16 y)
+void mapevent::map_action_9(mapcharacter*aguy,landmap *amap,u_int16 x,u_int16 y)
 //      Enable Vertical Scrolling
 {
   if (aguy->get_nbr()==255)
@@ -159,7 +159,7 @@ void mapevent::map_action_9(mapcharacter*aguy,map*amap,u_int16 x,u_int16 y)
     }
 }
 
-void mapevent::map_action_10(mapcharacter*aguy,map*amap,u_int16 x,u_int16 y)
+void mapevent::map_action_10(mapcharacter*aguy,landmap *amap,u_int16 x,u_int16 y)
 //     Disable Vertical Scrolling
 {
   if (aguy->get_nbr()==255)
@@ -173,9 +173,9 @@ void mapevent::map_action_10(mapcharacter*aguy,map*amap,u_int16 x,u_int16 y)
     }
 }
 
-void mapevent::map_action_11(mapcharacter*aguy,map*amap,u_int16 x,u_int16 y)
+void mapevent::map_action_11(mapcharacter*aguy,landmap *amap,u_int16 x,u_int16 y)
 {
-  map tmap;
+  landmap tmap;
   if(aguy->get_nbr()!=255) return;
   aguy->set_movtype(0);
   mapengine::fade_out(amap);
@@ -185,12 +185,12 @@ void mapevent::map_action_11(mapcharacter*aguy,map*amap,u_int16 x,u_int16 y)
   mapengine::fade_in(amap);
 }
 
-void mapevent::map_action_255(mapcharacter*aguy,map*amap,u_int16 x,u_int16 y)
+void mapevent::map_action_255(mapcharacter*aguy,landmap *amap,u_int16 x,u_int16 y)
 {
   if (aguy->get_nbr()==255) amap->set_status(1);
 }
 
-u_int8 mapevent::action (mapcharacter * aguy, map * amap, u_int16 x, u_int16 y)
+u_int8 mapevent::action (mapcharacter * aguy, landmap * amap, u_int16 x, u_int16 y)
 {
   switch(type)
     {

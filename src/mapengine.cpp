@@ -31,7 +31,7 @@
 #include "audio.h"
 #endif
 
-void mapengine::map_engine(map * amap)
+void mapengine::map_engine(landmap * amap)
 {
   amap->set_status(0);
   amap->init_for_scrolling();
@@ -54,7 +54,7 @@ void mapengine::map_engine(map * amap)
   fade_out(amap);
 }
 
-void mapengine::update_and_show(map * amap)
+void mapengine::update_and_show(landmap * amap)
 {
   static u_int16 i;
 
@@ -75,7 +75,7 @@ void mapengine::update_and_show(map * amap)
   //  amap->win.draw();
 }
 
-void mapengine::fade_out(map * amap, u_int16 depx=56, u_int16 depy=12) 
+void mapengine::fade_out(landmap * amap, u_int16 depx=56, u_int16 depy=12) 
 {
   s_int8 i;
   amap->set_status(MAP_STATUS_FADE);
@@ -88,7 +88,7 @@ void mapengine::fade_out(map * amap, u_int16 depx=56, u_int16 depy=12)
   amap->set_status(MAP_STATUS_NORMAL);
 }
 
-void mapengine::fade_in(map * amap, u_int16 depx=56, u_int16 depy=12) 
+void mapengine::fade_in(landmap * amap, u_int16 depx=56, u_int16 depy=12) 
 {
   s_int8 i;
   amap->set_status(MAP_STATUS_FADE);

@@ -17,7 +17,7 @@
 
 #include "image.h"
 
-class map;
+class landmap;
 class mapcharacter
 {
   u_int16 posx;
@@ -69,13 +69,13 @@ class mapcharacter
   void set_posx(u_int16 x);
   void set_posy(u_int16 y);
   void update_frame();
-  void update_NPC(map * amap);
+  void update_NPC(landmap * amap);
   void update_dir();
-  void update_move(map*amap);
-  void update_main_move(map*amap);
-  void update_pos(map*amap);
-  void update_eventleave(map*amap);
-  void update_eventcome(map*amap);
+  void update_move(landmap *amap);
+  void update_main_move(landmap *amap);
+  void update_pos(landmap *amap);
+  void update_eventleave(landmap *amap);
+  void update_eventcome(landmap *amap);
 };
 
 #define MAPCHAR_EVENT_COME 1

@@ -30,7 +30,7 @@
 #endif
 using namespace std;
 
-map::map()
+landmap::landmap()
 {
   maparea=NULL;
   length=0;
@@ -92,7 +92,7 @@ map::~map()
   //  free(amap->toplayer.pixmap);
 }
 */
-u_int16 map::get_patternset_to_map(SDL_RWops * file, u_int16 startpos)
+u_int16 landmap::get_patternset_to_map(SDL_RWops * file, u_int16 startpos)
 {
   u_int16 i;
   u_int16 nbr_read;
@@ -105,7 +105,7 @@ u_int16 map::get_patternset_to_map(SDL_RWops * file, u_int16 startpos)
   return(nbr_read);
 }
 
-u_int16 map::load_patternset_to_map(lstr fname, u_int16 startpos)
+u_int16 landmap::load_patternset_to_map(lstr fname, u_int16 startpos)
 {
   u_int16 retvalue;
   SDL_RWops * file;
@@ -120,7 +120,7 @@ u_int16 map::load_patternset_to_map(lstr fname, u_int16 startpos)
   return(retvalue);
 }
 
-s_int8 map::get(SDL_RWops * file)
+s_int8 landmap::get(SDL_RWops * file)
 {
   u_int16 i=0,j;
   u_int16 rev_number=0;      // Revision number
@@ -168,7 +168,7 @@ s_int8 map::get(SDL_RWops * file)
   return(0);
 }
 
-s_int8 map::load_map_data()
+s_int8 landmap::load_map_data()
 {
   u_int16 i,oldnbr;
 
@@ -188,7 +188,7 @@ s_int8 map::load_map_data()
   return(0);
 }
 
-s_int8 map::put(SDL_RWops * file)
+s_int8 landmap::put(SDL_RWops * file)
 {
   u_int16 i=0,j;
   u_int16 rev_number=0;      // Revision number
@@ -227,7 +227,7 @@ s_int8 map::put(SDL_RWops * file)
   return(0);
 }
 
-s_int8 map::load(const char * fname)
+s_int8 landmap::load(const char * fname)
 {
   SDL_RWops * file;
   u_int8 retvalue;
@@ -238,7 +238,7 @@ s_int8 map::load(const char * fname)
   return(retvalue);
 }
 
-s_int8 map::save(const char * fname)
+s_int8 landmap::save(const char * fname)
 {
   SDL_RWops * file;
   u_int8 retvalue;
@@ -249,7 +249,7 @@ s_int8 map::save(const char * fname)
   return(retvalue);
 }
 
-void map::init_for_scrolling()
+void landmap::init_for_scrolling()
 {
   u_int16 i;
   // init_events();
@@ -271,7 +271,7 @@ void map::init_for_scrolling()
   //  inittoplayer(amap);
 }
 
-void map::follow(mapcharacter*aguy)
+void landmap::follow(mapcharacter*aguy)
 {
   if((aguy->get_posx()<6)||(aguy->get_posx()>=get_lenght()-7)
       ||(aguy->get_posy()<5)||(aguy->get_posy()>=get_height()-6)) return;
@@ -279,7 +279,7 @@ void map::follow(mapcharacter*aguy)
   movtype=aguy->get_movtype();
 }
 
-void map::center_on(mapcharacter*aguy)
+void landmap::center_on(mapcharacter*aguy)
 {
   if((aguy->get_posx()>5)&&(aguy->get_posx()<get_lenght()-7)&&(!H_SCROLL_DISABLED))
     {
@@ -303,12 +303,12 @@ void map::center_on(mapcharacter*aguy)
     }
 }
 
-void map::setspeeddelay(u_int8 sd)
+void landmap::setspeeddelay(u_int8 sd)
 {
   speeddelay=sd;
 }
 
-void map::update_status()
+void landmap::update_status()
 {
   if (status==MAP_STATUS_QUIT) 
     {
@@ -317,14 +317,14 @@ void map::update_status()
     }
 }
 
-void map::update_patterns()
+void landmap::update_patterns()
 {
   u_int16 j;
   for (j=0;j<nbr_of_patterns;j++)
     pattern[j].update();
 }
 
-void map::update_pos()
+void landmap::update_pos()
 {
   if(scrolltype==1)
     {
@@ -333,7 +333,7 @@ void map::update_pos()
     }
 }
 
-void map::update_all_characters()
+void landmap::update_all_characters()
 {
   static u_int16 i;
   heroe.update_main_move(this);
@@ -346,7 +346,7 @@ void map::update_all_characters()
     othermapchar[i].update_NPC(this);
 }
 
-void map::update_keyboard()
+void landmap::update_keyboard()
 {
   if(status==MAP_STATUS_FADE) return;
   if (input::is_pushed(Escape_Key)) {
@@ -388,7 +388,7 @@ void map::update_keyboard()
 #endif
 }
 
-bool map::is_ready()
+bool landmap::is_ready()
 {
   if (speedcounter==speeddelay)
     {
@@ -398,7 +398,7 @@ bool map::is_ready()
 }
 
 
-void map::drawdownsquare(int x, int y, mapsquare * msqr)
+void landmap::drawdownsquare(int x, int y, mapsquare * msqr)
 {
   static u_int8 alpha;
   if((msqr->is_up())&&(!(msqr->is_mask()))
@@ -423,7 +423,7 @@ void map::drawdownsquare(int x, int y, mapsquare * msqr)
     }
 }
 
-void map::drawupsquare(int x, int y, mapsquare * msqr)
+void landmap::drawupsquare(int x, int y, mapsquare * msqr)
 {
   static u_int8 alpha;
   if(!(msqr->is_up())) return;
@@ -500,7 +500,7 @@ void map::drawupsquarepart(int x, int y, int w, int h, mapsquare * msqr,
   pattern[msqr->get_up_pattern_nbr()].putbox_part(x,y,w,h,xo,yo);
 }
 */
-void map::draw_down(u_int16 depx=56, u_int16 depy=12, 
+void landmap::draw_down(u_int16 depx=56, u_int16 depy=12, 
 		    u_int16 length=13, u_int16 height=11)
 {
   u_int16 i,j;
@@ -557,7 +557,7 @@ void map::draw_down(u_int16 depx=56, u_int16 depy=12,
 	}*/
 }
 
-void map::draw_up(u_int16 depx=56, u_int16 depy=12,
+void landmap::draw_up(u_int16 depx=56, u_int16 depy=12,
 		  u_int16 length=13, u_int16 height=11)
 {
   u_int16 i,j;
@@ -615,7 +615,7 @@ void map::draw_up(u_int16 depx=56, u_int16 depy=12,
 	}*/
 }
 
-void map::draw_character(mapcharacter * aguy, u_int16 depx=56, u_int16 depy=12)
+void landmap::draw_character(mapcharacter * aguy, u_int16 depx=56, u_int16 depy=12)
 { 
   s_int16 drawx=depx+((96+(aguy->get_posx()*16)+aguy->get_addx()-
 		       ((posx*16)+addx)));
@@ -675,7 +675,7 @@ void map::draw_character(mapcharacter * aguy, u_int16 depx=56, u_int16 depy=12)
 	}*/
 }
 
-void map::draw_all_characters(u_int16 depx=56, u_int16 depy=12)
+void landmap::draw_all_characters(u_int16 depx=56, u_int16 depy=12)
 {
   u_int16 i;
   for(i=0;i<nbr_of_mapcharacters;i++)
@@ -683,134 +683,134 @@ void map::draw_all_characters(u_int16 depx=56, u_int16 depy=12)
   draw_character(&heroe);
 }
 
-bool map::is_unreachable(u_int16 x, u_int16 y)
+bool landmap::is_unreachable(u_int16 x, u_int16 y)
 {
   return(maparea[x][y].is_unreachable());
 }
   
-bool map::is_others_unreachable(u_int16 x, u_int16 y)
+bool landmap::is_others_unreachable(u_int16 x, u_int16 y)
 {
   return(maparea[x][y].is_others_unreachable());
 }
 
-u_int16 map::get_lenght()
+u_int16 landmap::get_lenght()
 {
   return(length);
 }
 
-u_int16 map::get_height()
+u_int16 landmap::get_height()
 {
   return(height);
 }
 
-u_int8 map::get_status()
+u_int8 landmap::get_status()
 {
   return(status);
 }
 
-u_int8 map::get_scrolltype()
+u_int8 landmap::get_scrolltype()
 {
   return(scrolltype);
 }
 
-void map::set_status(u_int8 st)
+void landmap::set_status(u_int8 st)
 {
   status=st;
 }
 
-void map::put_character(u_int16 x, u_int16 y, mapcharacter * aguy)
+void landmap::put_character(u_int16 x, u_int16 y, mapcharacter * aguy)
 {
   maparea[x][y].put_character(aguy);
 }
 
-void map::leave_character(u_int16 x, u_int16 y)
+void landmap::leave_character(u_int16 x, u_int16 y)
 {
   maparea[x][y].leave_character();
 }
 
-u_int16 map::is_occuped(u_int16 x, u_int16 y)
+u_int16 landmap::is_occuped(u_int16 x, u_int16 y)
 {
   return(maparea[x][y].is_occuped());
 }
 
-bool map::is_solid_up(u_int16 x, u_int16 y)
+bool landmap::is_solid_up(u_int16 x, u_int16 y)
 {
   return(maparea[x][y].is_solid_up());
 }
 
-bool map::is_solid_down(u_int16 x, u_int16 y)
+bool landmap::is_solid_down(u_int16 x, u_int16 y)
 {
   return(maparea[x][y].is_solid_down());
 }
 
-bool map::is_solid_left(u_int16 x, u_int16 y)
+bool landmap::is_solid_left(u_int16 x, u_int16 y)
 {
   return(maparea[x][y].is_solid_left());
 }
 
-bool map::is_solid_right(u_int16 x, u_int16 y)
+bool landmap::is_solid_right(u_int16 x, u_int16 y)
 {
   return(maparea[x][y].is_solid_right());
 }
 
-void map::set_posx(u_int16 x)
+void landmap::set_posx(u_int16 x)
 {
   posx=x;
 }
 
-void map::set_posy(u_int16 y)
+void landmap::set_posy(u_int16 y)
 {
   posy=y;
 }
 
-void map::set_movtype(u_int16 mt)
+void landmap::set_movtype(u_int16 mt)
 {
   movtype=mt;
 }
 
-void map::set_scrolltype(u_int16 st)
+void landmap::set_scrolltype(u_int16 st)
 {
   scrolltype=st;
 }
 
-void map::enable_horizontal_scrolling()
+void landmap::enable_horizontal_scrolling()
 {
   H_SCROLL_DISABLED=0;
 }
 
-void map::disable_horizontal_scrolling()
+void landmap::disable_horizontal_scrolling()
 {
   H_SCROLL_DISABLED=1;
 }
 
-void map::enable_vertical_scrolling()
+void landmap::enable_vertical_scrolling()
 {
   V_SCROLL_DISABLED=0;
 }
 
-void map::disable_vertical_scrolling()
+void landmap::disable_vertical_scrolling()
 {
   V_SCROLL_DISABLED=1;
 }
 
-u_int16 map::get_square_eventcomenbr(u_int16 x, u_int16 y)
+u_int16 landmap::get_square_eventcomenbr(u_int16 x, u_int16 y)
 {
   return(maparea[x][y].get_eventcomenbr());
 }
 
-u_int16 map::get_square_eventleavenbr(u_int16 x, u_int16 y)
+u_int16 landmap::get_square_eventleavenbr(u_int16 x, u_int16 y)
 {
   return(maparea[x][y].get_eventleavenbr());
 }
 
-void map::launch_event(mapcharacter * aguy, u_int16 nbr)
+void landmap::launch_event(mapcharacter * aguy, u_int16 nbr)
 {
   u_int16 ev=nbr;
   while(ev!=0)
       ev=event[ev].action(aguy,this,posx,posy);
 }
 
-void map::run_event(u_int16 nbr, mapcharacter * aguy, u_int16 x, u_int16 y)
+void landmap::run_event(u_int16 nbr, mapcharacter * aguy, u_int16 x, u_int16 y)
 {
   u_int16 ev=nbr;
   while(ev!=0)
