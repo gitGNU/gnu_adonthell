@@ -11,7 +11,7 @@ libinput_a_SOURCES = event.cc joystick_event.cc mouse_event.cc \
 	manager_SDL.cc py_input_wrap.cc \
 	$(headers)
 
-CPPFLAGS += -I$(srcdir)/.. $(SDL_DEFS) $(SDL_CFLAGS) $(PY_CFLAGS)
+CPPFLAGS = -I$(srcdir)/.. $(SDL_DEFS) $(SDL_CFLAGS) $(PY_CFLAGS)
 
 SWIGFLAGS = -I$(srcdir)/.. $(SDL_CFLAGS)
 

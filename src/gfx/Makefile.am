@@ -9,7 +9,7 @@ libgfx_a_SOURCES = drawable.cc drawing_area.cc screen.cc surface.cc pnm.cc \
 	image.cc animation.cc py_gfx_wrap.cc \
 	$(headers)
 
-CPPFLAGS += -I$(srcdir)/.. $(SDL_DEFS) $(SDL_CFLAGS) $(PY_CFLAGS)
+CPPFLAGS = -I$(srcdir)/.. $(SDL_DEFS) $(SDL_CFLAGS) $(PY_CFLAGS)
 
 SWIGFLAGS = -I$(srcdir)/.. $(SDL_CFLAGS)
 

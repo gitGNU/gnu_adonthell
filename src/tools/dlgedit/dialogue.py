@@ -32,7 +32,7 @@ class base:
         self.speech = []
         self.speaker = []
         
-        # -- get the code to execute, the hint fot the dialogue engine
+        # -- get the code to execute, the hint for the dialogue engine
         #    and the list of following dialogue options
         code, stop, follow = self.dlg[index][1:]
         
@@ -55,8 +55,11 @@ class base:
             
             # -- only append the option if the condition was met
             if result == 1:
+                speaker = self.dlg[speech][0]
+                if speaker == "Default": speaker = self.the_npc
+                 
+                self.speaker.append (speaker)
                 self.speech.append (speech)
-                self.speaker.append (self.dlg[speech][0])
 
         # -- finally, tell the dialogue engine what to do            
         return stop

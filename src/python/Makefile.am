@@ -7,7 +7,7 @@ headers = base.h object.h callback.h
 libpython_a_SOURCES = base.cc object.cc callback.cc \
 	$(headers)
 
-CPPFLAGS += -I$(srcdir)/.. $(SDL_DEFS) $(SDL_CFLAGS) $(PY_CFLAGS)
+CPPFLAGS = -I$(srcdir)/.. $(SDL_DEFS) $(SDL_CFLAGS) $(PY_CFLAGS)
 
 SWIGFLAGS = -I$(srcdir)/.. $(SDL_CFLAGS)
 

@@ -17,7 +17,7 @@ bin_PROGRAMS = alextest schedtest joltest pytest
 
 EXTRA_DIST = .indent.pro prefs.l # py_adonthell.i adonthell.py
 
-CPPFLAGS += $(SDL_DEFS) $(OGG_DEFS) $(SDL_CFLAGS) $(OGG_CFLAGS) $(PY_CFLAGS) $(FT2_CFLAGS)
+CPPFLAGS = $(SDL_DEFS) $(OGG_DEFS) $(SDL_CFLAGS) $(OGG_CFLAGS) $(PY_CFLAGS) $(FT2_CFLAGS)
 
 noinst_LIBRARIES = libbase.a
 
@@ -111,7 +111,7 @@ joltest_LDADD = gui/libgui.a gfx/libgfx.a input/libinput.a python/libpython.a li
 
 alextest_LDADD = lmap/libmap.a gfx/libgfx.a input/libinput.a python/libpython.a libbase.a $(libbase_LDADD) $(libpython_LDADD)
 
-pytest_LDADD = libbase.a python/libpython.a gfx/libgfx.a input/libinput.a $(libbase_LDADD) $(libpython_LDADD) $(libpython_LDADD)
+pytest_LDADD = gfx/libgfx.a libbase.a python/libpython.a input/libinput.a $(libbase_LDADD) $(libpython_LDADD) $(libpython_LDADD)
 
 schedtest_LDADD = libbase.a python/libpython.a gfx/libgfx.a python/libpython.a input/libinput.a $(libbase_LDADD) $(libpython_LDADD)
 
