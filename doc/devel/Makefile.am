@@ -8,6 +8,5 @@ if BUILD_DOC
 all:
 	$(P_DOXYGEN) reference.cfg
 
-clean:
-	rm -Rf html latex
+CLEANFILES = -R html latex
 endif

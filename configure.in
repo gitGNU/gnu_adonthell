@@ -283,6 +283,7 @@ Makefile
 doc/Makefile
 doc/devel/Makefile
 doc/dlgedit/Makefile
+doc/items/Makefile
 src/Makefile
 src/tools/Makefile
 src/tools/charedit/Makefile

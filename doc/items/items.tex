@@ -1,0 +1,66 @@
+\documentclass[11pt,a4paper,pdftex,twoside]{article}
+\usepackage{a4wide}
+\usepackage{makeidx}
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{items}
+\usepackage{alltt}
+\usepackage{times}
+\usepackage{amsmath}
+\usepackage[pdftex,
+            pagebackref=true,
+            colorlinks=true,
+            linkcolor=blue,
+            pdftitle={$projectname v$projectnumber},
+            pdfauthor={Kai Sterker},
+            bookmarksopen=True,
+            pdfsubject={Adonthell Developer's Reference}
+           ]{hyperref}
+\makeindex
+\setcounter{tocdepth}{2}
+\setlength{\footrulewidth}{0.4pt}
+\begin{document}
+
+% -- Title
+\title{The Adonthell Item System\\{}$projectname $projectnumber}
+\author{Kai Sterker}
+\date{$date}
+\maketitle
+
+% -- Copyright
+\pagenumbering{roman}
+\newpage
+\pagestyle{empty}
+
+\begin{center}
+{\sc The Adonthell Item System} \\
+\vspace*{\stretch{2}}
+This document is part of the Adonthell Developer's Documentation\\
+{\sf http://adonthell.linuxgames.com}\\
+\vspace{1em}
+\copyright 2001 Kai Sterker\\
+{\sf kaisterker@linuxgames.com}\\
+\vspace{1em}
+Created with Doxygen $doxygenversion\\
+{\sf http://www.doxygen.org}\\ 
+Typeset with \LaTeX
+\end{center}
+
+\clearemptydoublepage
+\tableofcontents
+\clearemptydoublepage
+\pagenumbering{arabic}
+\pagestyle{fancy}
+\input{abstract}
+\newpage
+\input{item}
+\newpage
+\input{combat}
+\newpage
+\input{inventory}
+\newpage
+\printindex
+\end{document}
+
+% -- File ends here --

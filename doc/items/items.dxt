@@ -1,0 +1,559 @@
+/*! \page abstract Abstract
+
+This document tries to explore what type of items are required for Adonthell and
+which attributes and properties are needed for each item type. We will first
+concentrate on the use items have for a character, then turn to trading of items
+and finally we'll design an interface to manage them (inventory).
+
+The main emphasis lies on the definition and explanation of requirements, not 
+on the implementation of the item subsystem. Once our needs are well defined,
+latter is just an exercise for the programmer.
+
+The goal is to create an item system that is both realistic and easy to use.
+More important, it should add new and interesting aspects to gameplay.
+
+*/
+
+/*! \page item Items
+
+\subsection items1 Purpose of Items
+
+Before we can deal with items themselves, we'll have to take a look what use
+they have in a role playing game. That will give us an idea what kind of items
+we will need.
+
+\par Customising a character
+A major aspect of RPG's is the ability to customise human controlled characters,
+to a certain amount, to one's liking. This includes improvement of attributes 
+and skills, but also the choice of a character's equipment. Among those items
+are armour and weapons, magic amulets and rings.
+
+\par Aiding a character
+There are plenty of items that can not be equipped, but have other uses that
+help a character in various situations. These include potions and light sources,
+but also items with certain magic powers. Books, which provide (valuable)
+information and lockpicks and keys to open doors and chests. 
+
+\par Reagents
+Most of these items have no use on their own. However, with the right recipe
+they can be used to create items that can aid a character. They might also
+enhance other items. Reagents are various herbs, ores and other raw materials.
+
+\par Treasure
+Some items have no worth for the player other than their price. Gems and
+jewellery and all kinds of objects d'art fall into this category.
+
+Practically all items will fall into one of these categories. While they give
+us a good idea of the variety of items needed, they are of little help to
+classify them. The items within each category are simply too different and 
+there might be items that fit into several categories. Before we try to find
+more practical organisation, we should have a look what all items have in
+common.
+
+
+\subsection items2 Basic Properties
+
+No matter how different two items may be, there are a few attributes they have
+in common.
+
+<h4>Physical properties</h4>
+As items are concrete objects, they need a number of attributes describing their
+appearance, namely weight, size and quality. 
+- Weight can be used to determine whether a character is able to carry an item.
+It's the only value that can be measured directly. 
+- Size determines whether an item is small or large, independent from it's
+weight. This value could be used to determine whether an item fits into a
+container or not. Also, up to a certain size, items of the same kind would be
+stackable, whereas identical, large items wouldn't be.
+- Quality denotes how well an item has been crafted or grown. It has an
+influence on the item's price but also on it's use as a reagent or bearer of
+enchantments.
+
+<h4>Immaterial properties</h4>
+There are a number of properties not directly defined through an objects 
+physical nature: name, description and worth.
+- Every item has a short identifier, describing it's nature or type. Often the
+name gives a hint to a special property that sets an item apart from other items
+of the same kind. 
+- Further, items should have a detailed explanation of their purpose as well as
+a listing of all special abilities. The description might also contain
+additional information about an item, like it's history or it's place in the
+game world. 
+- The worth is an abstract measure for an item's price compared to other items.
+The actual price of an item depends, apart from it's physical quality, on the
+personal impression of the character you are dealing with.
+
+Now that we've seen what items have in common, let's go a step further and see
+what differences there are.
+
+
+\subsection items3 Item classes
+
+Before breaking everything down to individual item types, we'll try a more
+abstract division. Or, to put it the other way around, we'll have a look what
+different groups of items might have in common. The idea is to find a number of
+distinct properties that can be combined to form an individual item. By looking
+at this combination we can easily determine what actions are possible with an
+item.
+
+\par Offensive
+Items that influence an attack fall under this category. They may influence a
+character's basic and derived attributes that define the chance to hit and the
+amount of damage a successful hit will cause. An item's effect on those values
+might be both positive or negative.
+
+\par Defensive
+When under attack, these items either effect the chance to receive a hit, or the
+damage caused by a successful hit. Again, they might work in favour of the
+bearer or against it.
+
+\par Magical
+The magical powers of an item are kept separate. The actual effect an enchanted
+or magical item has is determined by the other classes it belongs to. Items can
+have several magical powers, and each of them can fall into a different class.
+
+\par Chargeable
+These are items that are either consumed through usage, or items that only work
+in combination with other items or magical enchantments. First ones are
+destroyed once no charges are left, latter can be "recharged". The actual use of
+such an item has to be determined otherwise.
+
+\par Usable
+These are items that have to be explicitly "activated" to show any effect. In
+some cases, activating an item will "turn it on" and it needs to be activated
+once more to "turn it off" again. In other cases, the item will simply apply
+it's effect.
+
+\par Equipable
+Any item that needs to be equipped to show any effect falls under this category.
+Some equipped items immediately effect a character's attributes, whereas others
+are only activated on special occasions, depending on what other class they
+belong to.
+
+Any item should be describable through a subset of any of these classes. The
+most simple items with no use whatsoever would belong to no class at all. To
+better understand this concept, let's have a look at a few examples.
+
+\par a Gem
+- Categories: -
+- Description: A simple item without any use. However, it could be used as a
+reagent or be sold.
+
+\par a Book
+- Categories: usable
+- Description: "Using" the book would display it's contents, so the player may
+read it.
+
+\par a Candle
+- Categories: chargeable, usable
+- Description: Using the candle would turn it on. While it burns, it is spending
+light (it's effect), but in the process it gets used up, until it is destroyed.
+
+\par the Helmet of Light
+- Categories: defensive, magical, equipable
+- Description: When worn (and only then) the Helmet of Light absorbs a certain
+amount of damage. It also radiates light, allowing it's bearer to see in the
+dark. Latter exposes him to his enemies however, thus decreasing the chance to
+avert a hit.
+
+\par a Bow
+- Categories: offensive, chargeable, equipable
+- Description: The bow itself influences the damage done on a successful hit, but
+without arrows it is useless. Further, it must be equipped before it can be used
+at all.
+
+\par the Staff of Fire
+- Categories: offensive, magical, chargeable, usable, equipable
+- Description: The Staff of Fire can be used in two ways. Equipped it acts as
+any wooden staff, dealing a fair amount of damage in the hand of a trained
+fighter. However, it also holds an amount of magical charges and using it will
+hurl a ball of fire against the enemy, reducing the number of charges by one.
+
+Especially from the last example we can see that there must be ways to connect
+the different classes, otherwise it would not be clear under what effect to
+apply under what circumstances. We also could imagine a Staff of Fire that would
+simply burn the foe when hit, in which case the offensive effect had also to
+apply the magical one, as long as there are charges left. (Latter version of the
+staff would not need to be usable though.)
+
+Later I'll present some ideas for the implementation of those classes and their
+interaction with each other and the character. Right now it's more important
+to see what purpose they fulfil: they give us an easy way to create item 
+templates that can be turned into individual items by filling in the attributes.
+
+*/
+
+/*! \page combat Combat
+
+Now that we have a way to construct individual items, lets see what attributes
+individual items need and what effect they have. In order to define this, we also
+need to know a character's attributes and some combat rules. What follows is
+a proposal for now, trying to take all prior discussions on that subject into
+account. In fact it's a summary of Mike Avery's work from early 2000. Credit
+whom credit is due.
+
+Combat will happen in real time, but for the sake of proper calculations, we'll
+break everything down into rounds behind the scenes. A round is the time a
+character needs for a single attack. That means that the length of a round will
+vary for different characters, unlike D&D where a round is a fixed length of
+time, but characters can do multiple attacks per round.
+
+For now we'll just concentrate on one character attacking another and leave
+anything else aside. An attack is divided into two phases: first, we determine
+whether the opponent is hit at all or not. Then, if we hit, we determine the
+amount of damage done.
+
+\subsection combat1 Hit Calculations
+For those calculations, each character needs the following attributes:
+<tt>dexterity</tt> and <tt>luck</tt> are basic attributes, the <tt>attack
+skill</tt> reflects a character's proficiency with the equipped weapon and the
+<tt>defence skill</tt> is the general ability to avoid being hit. From those we will calculate 4 ranges
+that determine the odds for a hit, a miss, a critical hit and a critical miss.
+These ranges will be scaled so that their sum equals 1 and weighted so that,
+given opponents of equal strength, the odds for hit, miss, critical hit and
+critical miss are 12:6:1:1. Then we roll the dice and see what we've got. Since
+we need attributes of both characters, we mark them with <i>A</i> (attacker) and
+<i>D</i> (defender) to tell them apart.
+
+First of all, we calculate the attack and defence ranges:
+
+\f[
+\begin{aligned}
+    hit\_range  &= \frac{dexterity_A + attack\_skill_A}{200} \cdot 0.6, \\[2pt]
+    miss\_range &= \frac{dexterity_D + defence\_skill_D}{200} \cdot 0.3. \\
+\end{aligned}
+\f]
+
+From those two values we can calculate the remaining range, and the characters'
+luck attributes give us the ratio between critical hit and miss: 
+
+\f[
+\begin{aligned}
+    crit\_allotment &= \frac{hit\_range + miss\_range}{9}, \\[2pt]
+    crit\_ratio     &= \frac{luck_A}{luck_A + luck_D}. \\
+\end{aligned}
+\f]
+
+Now we can determine the actual critical hit and miss ranges:
+
+\f[
+\begin{aligned}
+    hit\_range_{crit}  &= crit\_allotment \cdot crit\_ratio, \\[2pt]
+    miss\_range_{crit} &= crit\_allotment - hit\_range_{crit}.
+\end{aligned}
+\f]
+
+The only thing left now is scaling these four ranges to 1. That is done by
+multiplying each value with a factor \f$x = 1 / (hit\_range + miss\_range +
+hit\_range_{crit} + miss\_range_{crit})\f$.
+
+And finally, to give you an impression how the formulas work, lets look at a few
+examples: 
+
+- Opponents of equal strength
+\verbatim
+                 A       D                              Raw      Scaled
+
+dexterity        10      10            hit              0.075    0.603
+luck             12      12    --->    miss             0.037    0.297
+attack skill     15      13            critical hit     0.006    0.048
+defence skill    18      15            critical miss    0.006    0.048
+\endverbatim
+
+- Attacker (much) weaker
+\verbatim
+                 A       D                              Raw      Scaled
+
+dexterity        10      40            hit              0.072    0.324
+luck             12      42    --->    miss             0.128    0.577
+attack skill     15      38            critical hit     0.005    0.023
+defence skill    18      45            critical miss    0.017    0.077
+\endverbatim
+
+- Attacker (much) stronger
+\verbatim
+                 A       D                              Raw      Scaled
+
+dexterity        40      10            hit              0.255    0.787
+luck             42      12    --->    miss             0.037    0.114
+attack skill     38      13            critical hit     0.025    0.077
+defence skill    45      15            critical miss    0.007    0.022
+\endverbatim
+
+
+\subsection combat2 Damage Calculations
+We've seen how the hit determination works and can find out whether an attack
+was successful. Now we'll have a look how much damage a hit inflicts on the
+target. Here the equipment comes into play, although skills may influence the
+use a character can draw from a weapon or piece of armour. Only skilled
+characters can use good armour and weapons efficiently. On the other hand,
+skilled characters with poor equipment won't be able to make use of their
+full strength.
+
+We use the following attributes: the characters' <tt>strength</tt> and
+<tt>dexterity</tt> as well as the <tt>hit</tt>- and <tt>miss</tt> ranges
+calculated earlier. We further need the <tt>weapon base damage</tt>, 
+<tt>armour rating</tt> and armour <tt>dexterity penalty</tt>.  
+
+From those we calculate two modifiers that represent the abilities to inflict
+damage, and to absorb/avert damage: 
+
+\f[
+\begin{aligned}
+    modifier_A &= (base\_damage_A + strength_A + dex\_penalty_A) \cdot hit\_range \\
+    modifier_D &= (armour\_rating_D \cdot 0.5 + dexterity_D) \cdot miss\_range
+\end{aligned}
+\f]
+
+\note
+The '0.5' in the \f$ modifier_D \f$ formula denotes the maximum percentage of
+base damage that armour can absorb. This is of course adjustable.
+
+From above values we can calculate the base damage:
+
+\f[
+    damage_{base} = \frac {modifier_A}{modifier_A + modifier_D} \cdot base\_damage_A
+\f]
+
+As you can see, the base damage will always be the same as long as the
+conditions do not change. Therefore, it should be randomly adjusted by a certain
+amount. \f$ \pm 20\% \f$ seems to be a good value.
+
+Lets have a look at some examples:
+- Opponents of equal strength
+\verbatim
+                 A       D         Equipment of A and D            Base Damage
+                                  Weapon  Armour  Penalty         
+strength         10      10
+dexterity        10      10         20      20      -2               15.032
+luck             12      12         20      40      -4      --->     13.039            
+attack skill     15      13         40      20      -2               33.535
+defence skill    18      15         40      40      -4               30.728     
+\endverbatim
+
+- Attacker (much) weaker
+\verbatim
+                 A       D         Equipment of A and D            Base Damage
+                                  Weapon  Armour  Penalty         
+strength         15      35
+dexterity        10      40         20      20      -2                5.415
+luck             12      42         20      40      -4      --->      4.504            
+attack skill     15      38         40      20      -2               14.941
+defence skill    18      45         40      40      -4               12.939  
+\endverbatim
+
+- Attacker (much) stronger
+\verbatim
+                 A       D         Equipment of A and D            Base Damage
+                                  Weapon  Armour  Penalty         
+strength         35      15
+dexterity        40      10         20      20      -2               18.962
+luck             42      12         20      40      -4      --->     18.427            
+attack skill     38      13         40      20      -2               38.475
+defence skill    45      15         40      40      -4               37.689    
+\endverbatim
+
+There are a few things worth looking at. First of all, the base damage we get
+depends much on character attributes strength and dexterity. The formulas imply
+that the two attributes can take the same values as the weapon damage and armour
+rating. Otherwise one couldn't make full use of armour and weapons.
+
+Second, there are some problems with the formulas themselves:
+- Stronger armour has practically no benefit.
+- Equal opponents will cause less damage the stronger they are.
+- Part of the hit calculation is re-used.
+
+However, devising a set of formulas that fulfils all conditions is no easy
+task. So for now lets put down the requirement for the damage algorithm and
+leave the implementation for later:
+
+- Damage calculation should be independent from hit determination.
+- Both equipment and skill should influence the damage
+- The damage should (notably) increase with better weapons and decrease with
+better armour, given all other factors remain the same.
+- The stronger the opponents, the more damage they should cause
+
+*/
+
+/*! \page inventory Inventory
+
+\subsection inv1 The Basics
+
+The main purpose of the inventory is to provide easy and fast access to
+individual items to examine, equip, use, drop or sell them. The main
+problem is that items are usually distributed among the party members for
+several reasons:
+
+- A single character may only carry a limited amount of items
+- The items a character carries could have an impact on his attributes, so we
+need to know who is carrying how much
+- In case the party gets separated, we must be able to determine which items are
+with which character.
+
+However, in general, it makes little difference what character carries what
+item, as long as all of them are nearby. In that case, the computer can handle
+any necessary item exchange that might occur if character A wants to use an
+item from character B's inventory. So the default mode of the inventory would be
+to display the items of all party members that are "nearby". Whether they are
+nearby or not could be determined via the pathfinding code.
+
+Since there might be a lot of items in the inventory later in the game, a filter
+for certain item types would be nice, so that for example only weapons or
+armour or potions are displayed. Sometimes it might be also interesting to see
+what a character actually carries. Those filters could work accumulative: first
+you'd select a subset of characters whose inventory you want to examine, then
+you decide what item types you want to see. The normal behaviour would of course
+be to display all items of all characters.
+
+Simply presenting the available items isn't everything the inventory has to
+accomplish. For one it has to display which character has which items equipped.
+It should also indicate whether a certain item may be used or equipped by a
+certain character.
+
+The inventory is used in different situations too. During normal gameplay, the
+player might bring it up to equip his characters, to read scrolls and books and
+so on. In combat however, there should be some restrictions: changing one's
+armour would be equally impossible as acquiring items carried by a different
+character. So during combat, the filters could restrict the view to the current
+character and to those items that can be equipped or used during combat, such as
+weapons and potions. 
+
+All in all, basic inventory operations should impact the flow of the game as
+little as possible.
+
+
+\subsection inv2 A Suggestion
+
+Now that we know what the inventory has to do, lets see how this can be
+achieved. Consider we're on the normal mapview and want to access the inventory.
+Pressing a certain key (<i>i</i> for example) is all it takes to bring up the
+inventory. So how could it look like?
+
+
+<h4>The main inventory GUI</h4>
+I personally favour a minimalistic view floating on the screen without
+disturbing the mapview too much. Possibly a circle of item pictograms around the
+main character with a box marking the item in focus. Along the bottom of the
+screen could be a small window with the following content:
+
+- To the left might be some icons that indicate what can be done with the item
+in focus. Possible actions would be equip, unequip, use, examine, give and drop.
+- In the center is the pictogram of the focused item, it's name and possibly
+some basic informations about the item, depending on the context. 
+- On the right would be two rows of images. On the top are small portraits of
+all party members. Below are pictograms for the different item categories.
+
+The purpose of left and center of the info window should be obvious. The icons
+on the right side serve multiple purposes:
+
+- First of all, they indicate the active filters. Active characters and item
+categories are highlighted. At the same time, these are the controls to change
+the filter rules.
+- Second, the character portraits will indicate which character is carrying the
+item in focus, and which characters can use or equip it. If an item is
+equipped by a character, the left side would also show the unequip symbol.
+Different borders around a portrait might show whether that character just
+carries or wears the item, different backgrounds could indicate which characters
+can or cannot use it.
+- And finally, if an item is selected to be equipped or given to another party
+member, the focus switches to the <i>filter display</i>, so you can chose
+the destination. The same is true for items that must be used on a character.
+During combat, if the item is offensive, the character portraits could be
+replaced by portraits of the enemies. To make things clearer, the character
+selected in the <i>filter display</i> should also be highlighted on the mapview.
+
+
+<h4>The inventory controls</h4>
+The controls should be similar for every input device:
+
+For keyboard and gamepad, we'd only need five functions: LEFT and RIGHT, ACTION,
+FILTER and CANCEL. 
+
+- In item mode, LEFT and RIGHT rotate the item list to bring a certain item into
+focus. The ACTION key switches to <i>action mode</i>, the FILTER key to 
+<i>filter mode</i>. CANCEL closes the inventory.
+- In action mode LEFT and RIGHT would scroll through the different activities.
+The ACTION key would select an activity, CANCEL would return to <i>item mode</i>.
+- In filter mode LEFT and RIGHT scroll through the different filters, the ACTION
+key would toggle them on or off and CANCEL returns to <i>item mode</i>.
+
+For keyboard control, there could be shortcuts to individual actions and
+filters.
+
+Mouse control is a little more tricky. One solution could be that dragging with
+left button pressed rotates the item list in the direction the mouse is dragged.
+Clicking on a filter would toggle it on and off, and clicking on a activity icon
+would launch that activity with the item in focus. Right button could close the
+inventory.
+
+
+<h4>Shopping and Looting</h4>
+So far we only addressed situations where an item is already within the party's
+inventory. There are a few occasions where this won't be the case: in shops,
+after battle when collecting the possessions of the late enemy, when examining
+containers or a pile of items on the ground.
+
+In general, it should be possible to both pick up/buy items as well as drop/sell
+them. That means it must be possible to switch between the party and
+shop/corpse/container inventory. This could be achieved by an additional button
+in the <i>filter display</i> that is only visible in those cases.
+
+There are a few additional differences:
+- In shops, the <i>info display</i> would contain an item's price. Further,
+giving items to the shopkeeper would not sell them directly, but rather raise
+your credit. Taking items from the shop would on the other hand lower the
+credit. There would be an extra button to complete the transaction. That enables
+you to exchange goods for other goods as well as goods for money. There should
+also be the possibility to steal an item from the shop.
+- After combat, items taken or dropped will be placed on the ground and vanish
+after a while.
+- When examining a container, items dropped will be put into the container (if
+they fit). Containers are the only safe way to store items outside the party's
+inventory.
+
+
+<h4>Activities revisited</h4>
+What remains now is a more detailed descriptions of the different activities:
+equip, unequip, use, examine, give and drop, steal, buy, sell and trade.
+
+- Equipping is possible for items such as weapons, armour, amulets and rings. When
+selecting this action, you can select the character to wear that item from the
+target list. The computer will prevent you from choosing characters that cannot
+use the equipment. If the item is worn by another character, it will be
+automatically unequipped. If the character already has an item of that kind
+equipped, it is also automatically unequipped. During combat, only the character
+carrying the selected item will be able to equip it.  
+- Unequipping just removes the selected item from the character wearing it. It
+remains in his inventory though. This function is probably almost never needed.
+- Using an item will bring forth it's effect. If it requires a target that has
+to be selected first. Targets could either be party members, other items or
+enemies. A list of possible targets should appear in the <i>filter display</i>.
+Instead of selecting a target, the whole activity can still be cancelled. Uses
+without target could be turning on/off light sources, read scrolls and books,
+and others.
+- Examining an item will replace the <i>item view</i> with a window containing a
+detailed description of the item, it's attributes and uses. The CANCEL key
+closes this window, but it should be also possible to select another action
+without explicitly closing the window. That would be happen automatically after
+the new action was performed.
+- Giving can be used to move items between character's inventories. After
+selecting this action, the target list contains all party members that are
+nearby and have enough room for that item. When interacting with a container (a
+chest, cupboard or such), give can be used to put items into that container as
+well. In shops, give is replaced with a sell icon.  During combat, giving should
+probably be disabled. 
+- Dropping an item is the only way to get rid of it (apart from selling or
+putting it into a container). The item will be placed on the ground, where it
+will vanish after a while.
+- Stealing is only available in shops. When selecting that activity you can
+chose a character who should try and steal the focused item.
+- Buying will add the item in focus to the "shopping cart". Items selected for
+buying and selling are set off against each other. For items that are already in
+the cart, there would be a additional icon to remove them. Buying is only
+available when the shop inventory is displayed.
+- Selling is the opposite of buying and works in the same fashion. Selling is
+only available when the party inventory is displayed.
+- The trade button is used to complete the selling/buying transaction and will
+automatically close the inventory afterwards.
+
+*/

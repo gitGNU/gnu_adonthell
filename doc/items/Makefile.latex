@@ -1,0 +1,12 @@
+all: items.pdf
+
+items.pdf: items.tex items.sty
+	echo "Running latex..."
+	pdflatex items.tex 
+	echo "Running makeindex..."
+	makeindex items.idx
+	echo "Rerunning latex...."
+	pdflatex items.tex
+
+clean:
+	rm -f *.ps *.dvi *.aux *.toc *.idx *.ind *.ilg *.log *.out

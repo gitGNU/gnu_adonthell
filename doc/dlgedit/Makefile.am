@@ -13,6 +13,6 @@ all:
 	@cp dlgedit.sty latex/dlgedit.sty
 	@cp Makefile.latex latex/Makefile
 	@mv latex/refman.tex latex/dlgedit.tex    
-clean:
-	rm -Rf html latex
+
+CLEANFILES = -R html latex
 endif
