@@ -402,6 +402,7 @@ void mapcharacter::set_schedule(char * file)
 	  // If no errors occured update schedule code ...
 	  if (schedule) delete schedule;
 	  schedule = PyNode_Compile (n, file);
+      PyNode_Free (n);
 	}
       else
         {
@@ -433,6 +434,7 @@ void mapcharacter::set_action(char * file)
 	  // If no errors occured update schedule code ...
 	  if (action) delete action;
 	  action = PyNode_Compile (n, file);
+      PyNode_Free (n);
 	}
       else
         {

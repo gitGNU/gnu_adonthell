@@ -20,6 +20,7 @@
 #include "Python.h"
 #include "compile.h"
 #include "eval.h"
+#include "node.h"
 
 extern void insert_path( char * );
 extern void exec_string(char * s);

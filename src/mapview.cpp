@@ -223,6 +223,7 @@ void mapview::set_schedule(char * file)
 	  // If no errors occured update schedule code ...
 	  if (schedule) delete schedule;
 	  schedule = PyNode_Compile (n, file);
+      PyNode_Free (n);
 	}
       else
         {

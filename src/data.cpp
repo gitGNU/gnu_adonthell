@@ -26,17 +26,19 @@
 #endif
 
 #if defined(USE_PYTHON)
-PyObject *data::globals;            // Global namespace for the Python interpreter
+PyObject *data::globals = NULL;     // Global namespace for the Python interpreter
+PyObject *data::py_module = NULL;
 #endif
-gametime *data::time;               // The gametime
-character* data::the_player=NULL;   // The main character
-objects data::characters;           // All the NPC data
-objects data::quests;               // All the quest data (the state of the gameworld)
+
 #if defined(USE_MAP)
 mapengine * data::map_engine;
 #endif
 
-char *data::adonthell_dir=NULL;     // The user's private adonthell directory
+gametime *data::time;               // The gametime
+character* data::the_player = NULL; // The main character
+objects data::characters;           // All the NPC data
+objects data::quests;               // All the quest data (the state of the gameworld)
+char *data::adonthell_dir = NULL;   // The user's private adonthell directory
 vector<gamedata*> data::saves;      // The list of available savegames
 
 
@@ -118,8 +120,8 @@ void data::init (char* d)
 
     // Init the global namespace of the python interpreter
 #if defined(USE_PYTHON)
-    PyObject *m = import_module ("ins_modules");
- 	globals = PyModule_GetDict(m);
+    py_module = import_module ("ins_modules");
+ 	globals = PyModule_GetDict (py_module);
 #endif    
     // Read the user's saved games (if any) - they'll be located in
     // $HOME/.adonthell/ and called adonthell-save-xxx
@@ -148,6 +150,7 @@ void data::init (char* d)
                         gdata->set_directory (filepath);
                         saves.push_back (gdata);
                     }
+                    else delete gdata;
 
                     gzclose (in);
                 }
@@ -177,7 +180,9 @@ void data::cleanup ()
       delete *i;
 
 #if defined(USE_PYTHON)
-    Py_XDECREF (globals);
+    // Note that we don't have to DECREF globals, because they're a borrowed
+    // reference of py_module
+    Py_XDECREF (py_module);
 #endif
 }
 

@@ -71,6 +71,7 @@ public:
 
 #if defined(USE_PYTHON)
     static PyObject *globals;               // Global namespace to use in scripts
+    static PyObject *py_module;             // The Adonthell Python wrapper
 #endif
     static gametime *time;                  // The gametime object
     static objects characters;              // All the characters 

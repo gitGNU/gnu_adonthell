@@ -58,12 +58,14 @@ bool exec_file( char *filename )
 	if (!f)
 	{
 		cerr << "exec_module : " << fn << " load failed!" << endl;
+    	delete[] fn;
 		return false;
 	}
 
 	PyRun_File( f, fn, Py_file_input, data::globals, NULL);
 
 	fclose(f);
+	delete[] fn;
 	return true;
 }
 

@@ -18,8 +18,6 @@
 #include "fileops.h"
 #include "py_inc.h"
 #include "data.h"
-#include "compile.h"
-#include "eval.h"
 #include "event.h"
 #include "character.h"
 
@@ -111,6 +109,7 @@ void event_handler::register_event (event *e, char *file)
         {
             e->script = PyNode_Compile (n, file);       
             handlers[e->type].push_back (e);
+            PyNode_Free (n);
         }
         else
         {
