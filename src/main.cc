@@ -3,19 +3,6 @@
 #include "gametime.h"
 #include "input_manager.h"
 
-#include <algorithm>
-
-struct mipcmp
-{
-    bool operator () (const mapsquare_info * mi1,
-                      const mapsquare_info * mi2) 
-    {
-        return (*mi1) < (*mi2); 
-    }
-}; 
-
-mipcmp boah; 
-
 class game_client
 {
 public:
@@ -163,6 +150,7 @@ public:
         mchar->load("adontest/chrono.mdl");
         mchar->set_speed(1.0);
         mchar->set_position(6, 8);
+        mchar->set_limits(16,12);
 
         // Adding map objects
         map_object_with_gfx * mobj;

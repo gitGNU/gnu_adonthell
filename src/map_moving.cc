@@ -104,8 +104,7 @@ void map_moving::update_pos()
         }
         if (nX == Lx - 1) 
         {
-            nX--;
-            nfox = 39;
+            nfox = 0;
         }
 
         // Now check for walkability
@@ -120,7 +119,7 @@ void map_moving::update_pos()
                 u_int16 px = x() - state->base.x() + i - (vx() < 0 ? nbr_sqr : 0);
                 u_int16 py = y() - state->base.y() + j;
                 
-                u_int16 nbx = 1 + (ox() != 0) + (vx() > 0 ? nbr_sqr : 0);
+                u_int16 nbx = 1 + (nfox != 0) + (vx() > 0 ? nbr_sqr : 0);
                 u_int16 nby = 1 + (oy() != 0);
 
                 for (u_int16 l = 0; l < nby; l++)
@@ -180,8 +179,7 @@ void map_moving::update_pos()
         }
         if (nY == Ly - 1) 
         {
-            nY--;
-            nfoy = 39; 
+            nfoy = 0; 
         }
 
         // Now check for walkability
@@ -197,13 +195,13 @@ void map_moving::update_pos()
                 u_int16 py = y() - state->base.y() + j - (vy() < 0 ? nbr_sqr : 0);
                 
                 u_int16 nbx = 1 + (ox() != 0);
-                u_int16 nby = 1 + (oy() != 0) + (vy() > 0 ? nbr_sqr : 0);
+                u_int16 nby = 1 + (nfoy != 0) + (vy() > 0 ? nbr_sqr : 0);
 
                 for (u_int16 l = 0; l < nby; l++)
                     for (u_int16 k = 0; k < nbx; k++)
                     {
                         mapsquare * msqr = Mymap.get(px + k, py + l);
-                        for (mapsquare::iterator it = msqr->begin(); it != msqr->end(); it++)
+                        for (mapsquare::iterator it = msqr->begin(); it != msqr->end(); ++it)
                         {
                             if (it->obj->current_state()->get(px + k - it->x() + it->obj->current_state()->base.x(),
                                                                py + l - it->y() + it->obj->current_state()->base.y())
