@@ -19,7 +19,6 @@ class dialog;
 
 #include "../../types.h"
 #include "../../interpreter.h"
-#include "dlgnode.h"
 #include "main.h"
 #include "graph.h"
 #include "interface.h"
@@ -59,9 +58,6 @@ init_app (MainFrame * MainWnd)
 {
     MainWnd->mode = IDLE;
     MainWnd->number = 0;
-    MainWnd->nodes = (ptr_list *) g_malloc (sizeof (ptr_list));
-    MainWnd->nodes->size = 0;
-    MainWnd->nodes->head = NULL; 
     MainWnd->below_pointer = NULL;
     MainWnd->selected_node = NULL;
     MainWnd->dragged_node = NULL;
@@ -80,10 +76,9 @@ delete_dialogue (MainFrame * wnd)
 
     /* Delete all nodes */
     for (i = 0; i < wnd->number; i++)
-        delete ((DlgNode *) get_ptr_list_element (wnd->nodes, i));
+        delete wnd->nodes[i];
 
-    clear_ptr_list (wnd->nodes);
+    wnd->nodes.clear ();
     
-    g_free (wnd->nodes);
     g_free (wnd->file_name);
 }

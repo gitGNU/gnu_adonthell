@@ -13,8 +13,10 @@
  */
 
 #include <string>
+#include <vector>
+#include "dlgnode.h"
 
-/* Internal Editor Modes */
+// Internal Editor Modes
 enum
 {
     OBJECT_MARKED = 0,
@@ -22,7 +24,7 @@ enum
     IDLE = 2
 };
 
-/* Colors */
+// Colors
 enum
 {
     GC_RED = 0,
@@ -33,7 +35,7 @@ enum
     MAX_GC = 5
 };
 
-/* Dialogue Editor Data */
+// Dialogue Editor Data
 typedef struct
 {
     GtkWidget *wnd;             // Main Window
@@ -49,7 +51,7 @@ typedef struct
     GdkFont *font;              // Font for Textoutput
     GdkGC *color[MAX_GC];       // Custom Pens
 
-    ptr_list *nodes;            // Storage of all nodes
+    vector<DlgNode*> nodes;     // Storage of all nodes
 
     DlgNode *selected_node;     // Currently selected node
     DlgNode *below_pointer;     // Node under Mouse-pointer

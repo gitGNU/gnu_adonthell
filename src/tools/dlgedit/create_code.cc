@@ -17,9 +17,11 @@
 #include <vector>
 
 #include "../../commands.h"
+#include "../../generic_cmds.h"
+#include "../../interpreter.h"
 
-char* ops[] = { "", "", "", "", "", "", "Let", "Add", "Sub", "Mul", "Div",
-                "Eq", "Neq", "Lt", "Leq", "Gt", "Geq", "And", "Or" };
+// char* ops[] = { "", "", "", "", "", "", "Let", "Add", "Sub", "Mul", "Div",
+//                "Eq", "Neq", "Lt", "Leq", "Gt", "Geq", "And", "Or" };
 vector<string> vars;
 
 // Transform the scanned and parsed code into the ASM-like script understandable 
@@ -62,7 +64,7 @@ vector<string> vars;
 // let 0 z
 //
 // Ok, now we know what to do, so lets go :)
-void create_code (string &prog)
+void create_code (string &prog, vector<command*> &script)
 {
     int i, j = vars.size ();
     unsigned char opcode;
@@ -72,8 +74,10 @@ void create_code (string &prog)
     
     static int num_cmds[255];
     static int index = 0;
-    static int rec = 1;
-        
+
+    vector<command*> block;
+    command *cmd;
+    
     // Yeah, we're starting with the programs end first :)
     for (i = prog.size () - 1; i >= 0; i--)
     {
@@ -99,7 +103,10 @@ void create_code (string &prog)
                 // store result into a new register if both arguments are immediate ones
                 if (prog[i+1] != char(REG) && prog[i+2] != char(REG)) regs++;
 
-                cout << "[" << rec << "] " << ops[opcode] << " " << vars[j] << " "<< vars[j+1] << " local.reg" << regs << "\n";
+                cmd = new binary_cmd (opcode, "local.reg"+string(1, regs), vars[j], vars[j+1]);
+                block.push_back (cmd);
+                
+                // cout << "[" << rec << "] " << ops[opcode] << " " << vars[j] << " "<< vars[j+1] << " local.reg" << regs << "\n";
                 prog.replace (prog.begin () + i, prog.begin () + i + 3, 1, REG);
                 vars.erase (vars.begin () + j, vars.begin () + j + 2);
                 vars.insert (vars.begin () + j, ("local.reg"+string(1, regs)));
@@ -115,16 +122,18 @@ void create_code (string &prog)
 
             case LET:
             {
-                cout << "[" << rec << "] " << ops[opcode] << " " << vars[j] << " "<< vars[j+1] << "\n" << flush;
+                cmd = new  binary_cmd (opcode, vars[j+1], vars[j], "1");
+                block.push_back (cmd);
+
+                // cout << "[" << rec << "] " << ops[opcode] << " " << vars[j] << " "<< vars[j+1] << "\n" << flush;
                 prog.erase (prog.begin () + i, prog.begin () + i + 3);
                 vars.erase (vars.begin () + j, vars.begin () + j + 2);
 
                 num_cmds[index]++;
                 cur_cmds++;
-                rec++;
 
                 // recursion to bring the resulting script into the right order
-                create_code (prog);
+                create_code (prog, script);
 
                 i = prog.size ();
                 j = vars.size ();
@@ -144,7 +153,10 @@ void create_code (string &prog)
                 num_cmds[index]++;
                 cur_cmds++;
 
-                cout << "[" << rec << "] " << ops[opcode] << " " << vars[j] << " "<< vars[j+1] << " local.bool" << bools << "\n";
+                cmd = new  binary_cmd (opcode, "local.bool"+string(1, bools), vars[j], vars[j+1]);
+                block.push_back (cmd);
+
+                // cout << "[" << rec << "] " << ops[opcode] << " " << vars[j] << " "<< vars[j+1] << " local.bool" << bools << "\n";
                 
                 prog.replace (prog.begin () + i, prog.begin () + i + 3, 1, BOOL);
                 vars.erase (vars.begin () + j, vars.begin () + j + 2);
@@ -165,8 +177,11 @@ void create_code (string &prog)
                 // Logic operation on two bools results in on bool, which means the
                 // other is no longer needed and thus can be freed
                 bools--;
+
+                cmd = new  binary_cmd (opcode, "local.bool"+string(1, bools), vars[j], vars[j+1]);
+                block.push_back (cmd);
                 
-                cout << "[" << rec << "] " << ops[opcode] << " " << vars[j] << " " << vars[j+1] << " local.bool" << bools << "\n";
+                // cout << "[" << rec << "] " << ops[opcode] << " " << vars[j] << " " << vars[j+1] << " local.bool" << bools << "\n";
 
                 prog.replace (prog.begin () + i, prog.begin () + i + 3, 1, BOOL);
                 vars.erase (vars.begin () + j, vars.begin () + j + 2);
@@ -180,15 +195,17 @@ void create_code (string &prog)
 
             case JMP:
             {
-                cout << "[" << rec << "] Jmp " << num_cmds[index]+1 << "\n";
+                cmd = new jmp_cmd (num_cmds[index]+1);
+                block.push_back (cmd);
+                
+                // cout << "[" << rec << "] Jmp " << num_cmds[index]+1 << "\n";
 
                 prog.erase (prog.begin () + i, prog.begin () + i + 1);
                 
-                rec++;
                 num_cmds[index-1] += num_cmds[index];
                 num_cmds[index] = 1;
 
-                create_code (prog);
+                create_code (prog, script);
                 
                 i = prog.size ();
             
@@ -197,16 +214,18 @@ void create_code (string &prog)
             
             case BRANCH:
             {
-                cout << "[" << rec << "] Branch " << vars[j] << " " << num_cmds[index]+1-cur_cmds << "\n";
+                cmd = new branch_cmd (num_cmds[index]+1-cur_cmds, vars[j].c_str ());
+                block.push_back (cmd);
+                
+                // cout << "[" << rec << "] Branch " << vars[j] << " " << num_cmds[index]+1-cur_cmds << "\n";
 
                 prog.erase (prog.begin () + i, prog.begin () + i + 2);
                 vars.erase (vars.begin () + j, vars.begin () + j + 1);            
 
-                rec++;
                 num_cmds[index-1] += num_cmds[index] + 1;
                 index--;
                 
-                create_code (prog);
+                create_code (prog, script);
                 
                 i = prog.size ();
                 j = vars.size ();
@@ -229,5 +248,7 @@ void create_code (string &prog)
         }
     }
 
-    rec = 1;
+    // Insert the blocks into the complete script just before we return
+    // because of the recursion, this puts the result into the right order
+    script.insert (script.end(), block.begin(), block.end()); 
 }

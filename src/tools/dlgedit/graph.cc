@@ -51,7 +51,7 @@ new_circle (MainFrame * wnd, GdkPoint point, int type)
         wnd->number++;
 
         // Add to Array
-        add_ptr_list_element (wnd->nodes, circle);
+        wnd->nodes.push_back (circle);
 
         // Display Node
         draw_circle (wnd, circle, 0);
@@ -96,7 +96,7 @@ new_arrow (MainFrame * wnd, GdkPoint point)
     arrow = new Arrow (wnd->number, LINK);
 
     // Add to Array 
-    add_ptr_list_element (wnd->nodes, arrow);
+    wnd->nodes.push_back (arrow);
 
     wnd->number++;
 
@@ -109,7 +109,7 @@ new_arrow (MainFrame * wnd, GdkPoint point)
             type = NPC;
 
         while (!new_circle (wnd, point, type));
-        end = (DlgNode *) get_ptr_list_element (wnd->nodes, wnd->number - 1);
+        end = wnd->nodes[wnd->number - 1];
     }
 
     // Now,  wnd -> selected_node  contains start-circle and  end  contains end-circle 
@@ -264,7 +264,7 @@ delete_node (MainFrame * wnd)
             delete_arrow (wnd, wnd->selected_node->next[0]);
 
         // delete circle from nodes 
-        remove_ptr_list_pointer (wnd->nodes, wnd->selected_node);
+        remove_data (wnd->nodes, wnd->selected_node);
         delete wnd->selected_node;
 
         // rearange nodes 
@@ -297,7 +297,7 @@ delete_arrow (MainFrame * wnd, DlgNode * arrow)
     remove_data (circle->prev, arrow);
 
     // delete arrow from nodes 
-    remove_ptr_list_pointer (wnd->nodes, arrow);
+    remove_data (wnd->nodes, arrow);
 
     delete arrow;
 
@@ -315,7 +315,7 @@ delete_links (MainFrame * wnd, DlgNode * link)
     // try to delete node from all other nodes links 
     for (i = 0; i < wnd->number; i++)
     {
-        node = (DlgNode *) get_ptr_list_element (wnd->nodes, i);
+        node = wnd->nodes[i];
         remove_data (node->link, link);
 
         // unmark former link 
@@ -330,11 +330,11 @@ delete_links (MainFrame * wnd, DlgNode * link)
 void 
 sort_nodes (MainFrame * wnd)
 {
-    int i;
+    u_int32 i;
 
     // set correct index of nodes 
-    for (i = 0; i < wnd->nodes->size; i++)
-        ((DlgNode *) get_ptr_list_element (wnd->nodes, i))->number = i;
+    for (i = 0; i < wnd->nodes.size (); i++)
+        wnd->nodes[i]->number = i;
 
     // set correct number of nodes 
     wnd->number = i;
@@ -763,7 +763,7 @@ redraw_graph (MainFrame * wnd)
     // check for each node, wether it is visible 
     for (i = 0; i < wnd->number; i++)
     {
-        node = (DlgNode *) get_ptr_list_element (wnd->nodes, i);
+        node = wnd->nodes[i];
 
         if (rect_in_rect (t, node->position))
         {
@@ -846,7 +846,7 @@ load_dialogue (MainFrame * wnd, const char *file)
                 circle = new Circle;
                 circle->load (wnd->number++);
 
-                add_ptr_list_element (wnd->nodes, circle);
+                wnd->nodes.push_back (circle);
                 break;
             }
 
@@ -856,7 +856,7 @@ load_dialogue (MainFrame * wnd, const char *file)
                 arrow->load (wnd->number++, wnd->nodes);
                 redraw_arrow (wnd, arrow);
 
-                add_ptr_list_element (wnd->nodes, arrow);
+                wnd->nodes.push_back (arrow);
                 break;
             }
             
@@ -933,18 +933,18 @@ save_dialogue (MainFrame * wnd)
     
     // Save Circles and create position-table 
     for (i = 0; i < wnd->number; i++)
-        if (((DlgNode *) get_ptr_list_element (wnd->nodes, i))->type != LINK)
+        if (wnd->nodes[i]->type != LINK)
         {
-            ((Circle *) get_ptr_list_element (wnd->nodes, i))->save (out);
+            wnd->nodes[i]->save (out);
             table[i] = index;
             index++;
         }
 
     // Save Arrows 
     for (i = 0; i < wnd->number; i++)
-        if (((DlgNode *) get_ptr_list_element (wnd->nodes, i))->type == LINK)
+        if (wnd->nodes[i]->type == LINK)
         {
-            ((Arrow *) get_ptr_list_element (wnd->nodes, i))->save (out);
+            wnd->nodes[i]->save (out);
             index++;
         }
 
@@ -1067,7 +1067,7 @@ select_object_index (MainFrame * wnd, int index)
     u_int32 i;
 
     // set selected object 
-    wnd->selected_node = (DlgNode *) get_ptr_list_element (wnd->nodes, index);
+    wnd->selected_node = wnd->nodes[index];
 
     // highlite node and its links 
     switch (wnd->selected_node->type)
@@ -1207,7 +1207,7 @@ get_cur_selection (MainFrame * wnd, GdkPoint point)
     // Mousepointer over node? 
     for (i = 0; i < (int) wnd->number; i++)
     {
-        node = (DlgNode *) get_ptr_list_element (wnd->nodes, i);
+        node = wnd->nodes[i];
         rect = node->position;
 
         if (point_in_rect (rect, point))

@@ -166,7 +166,7 @@ void Arrow::save (ofstream &file)
 }
 
 // load an Arrow from file
-void Arrow::load (u_int32 num, ptr_list *nodes)
+void Arrow::load (u_int32 num, vector<DlgNode*> &nodes)
 {
     DlgNode *circle;
     string str;
@@ -197,7 +197,7 @@ void Arrow::load (u_int32 num, ptr_list *nodes)
             {
                 if (parse_dlgfile (str, n) == LOAD_NUM) 
                 {
-                    circle = (DlgNode *) get_ptr_list_element (nodes, n);
+                    circle = nodes[n];
 
                     circle->next.push_back (this);
                     prev.push_back (circle);
@@ -210,7 +210,7 @@ void Arrow::load (u_int32 num, ptr_list *nodes)
             {
                 if (parse_dlgfile (str, n) == LOAD_NUM) 
                 {
-                    circle = (DlgNode *) get_ptr_list_element (nodes, n);
+                    circle = nodes [n];
 
                     circle->prev.push_back (this);
                     next.push_back (circle);
@@ -223,7 +223,7 @@ void Arrow::load (u_int32 num, ptr_list *nodes)
             {
                 if (parse_dlgfile (str, n) == LOAD_NUM) 
                 {
-                    circle = (DlgNode *) get_ptr_list_element (nodes, n);
+                    circle = nodes[n];
 
                     circle->link.push_back (this);
                     link.push_back (circle);

@@ -57,6 +57,9 @@ create_dlg_node_window (Circle *circle, crcle_dlg *dlg)
     GdkColor dark_blue;
     GdkColor green;
 
+    GtkStyle *fstyle = gtk_style_copy (gtk_widget_get_default_style ());
+    fstyle->font = gdk_font_load ("-*-lucidatypewriter-medium-*-*-*-12-*-*-*-*-*-iso8859-1");
+
     dark_blue.red = 0;
     dark_blue.green = 0;
     dark_blue.blue = 35000;
@@ -211,6 +214,7 @@ create_dlg_node_window (Circle *circle, crcle_dlg *dlg)
     condition_entry = gtk_text_new (NULL, NULL);
     gtk_widget_ref (condition_entry);
     gtk_object_set_data_full (GTK_OBJECT (dlg_node_window), "condition_entry", condition_entry, (GtkDestroyNotify) gtk_widget_unref);
+    gtk_widget_set_style (condition_entry, fstyle);
     gtk_widget_show (condition_entry);
     gtk_container_add (GTK_CONTAINER (scrolledwindow6), condition_entry);
     GTK_WIDGET_SET_FLAGS (condition_entry, GTK_CAN_DEFAULT);
@@ -245,6 +249,7 @@ create_dlg_node_window (Circle *circle, crcle_dlg *dlg)
     variable_entry = gtk_text_new (NULL, NULL);
     gtk_widget_ref (variable_entry);
     gtk_object_set_data_full (GTK_OBJECT (dlg_node_window), "variable_entry", variable_entry, (GtkDestroyNotify) gtk_widget_unref);
+    gtk_widget_set_style (variable_entry, fstyle);
     gtk_widget_show (variable_entry);
     gtk_container_add (GTK_CONTAINER (scrolledwindow5), variable_entry);
     GTK_WIDGET_SET_FLAGS (variable_entry, GTK_CAN_DEFAULT);

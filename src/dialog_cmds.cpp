@@ -17,7 +17,7 @@
 #endif
 
 #include <stdio.h>
-#include <iostream.h>
+#include <fstream.h>
 
 #include "types.h"
 #include "interpreter.h"
@@ -78,7 +78,7 @@ void import_cmd::write (FILE *out)
 }
 
 // output command in human readable form
-void import_cmd::ascii (FILE *out)
+void import_cmd::ascii (ofstream &out)
 {
 }
 

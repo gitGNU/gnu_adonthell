@@ -32,12 +32,13 @@ extern int varslex();
 extern YY_BUFFER_STATE vars_scan_string (const char*);
 extern void vars_switch_to_buffer (YY_BUFFER_STATE);
 extern void vars_delete_buffer (YY_BUFFER_STATE);
-extern void create_code (string&);
+extern void create_code (string&, vector<command*>&);
 extern vector<string> vars;
 
 // some variables
 string v_err;
 int v_error;
+vector<command*> v_scrpt;
 %}
 
 %expect 1
@@ -62,7 +63,7 @@ int v_error;
 %%
 
 input:   /* empty */
-       | input stat                 { create_code ($2); vars.clear (); }
+       | input stat                 { create_code ($2, v_scrpt); vars.clear (); }
        | error                      { yyerrok; yyclearin; } 
 ;
 
@@ -119,7 +120,7 @@ assign_list: assign_list stat       { $$ = $1 + $2; }
 void varserror(char *s)
 {
     v_error = 1;
-    v_err += string(s) + string ("near token") + varslval + string ("\n");
+    v_err += string(s) + string (" near token ") + varslval + string ("\n");
 }
 
 int vars_compile (const char *str, string &errormsg, vector<command*> &script)
@@ -135,6 +136,7 @@ int vars_compile (const char *str, string &errormsg, vector<command*> &script)
     varsparse ();
 
     errormsg = v_err;
+    script = v_scrpt;
 
     // clean up
     vars_delete_buffer (buffer);

@@ -12,6 +12,8 @@
    See the COPYING file for more details
 */
 
+#ifndef __DIALOG_CMDS_H__
+#define __DIALOG_CMDS_H__
 
 // Reads the strings needed for the dialogue from the string file
 class import_cmd : public command
@@ -25,7 +27,7 @@ public:
     s_int32 run (u_int32&, void *);
 
     void write (FILE*);
-    void ascii (FILE*);
+    void ascii (ofstream&);
     
 private:
     u_int32 *text;
@@ -45,6 +47,24 @@ public:
 };
 
 
+// sets the speakers picture (and name)
+class speaker_cmd : public command
+{
+public:
+    speaker_cmd () { }
+    speaker_cmd (u_int32 s, u_int32 m) : speaker(s), mood(m) { }
+
+    void init (s_int32 *buffer, u_int32 &i, void *data) {}
+    s_int32 run (u_int32 &PC, void *data){}
+
+    void write (FILE*){}
+    void ascii (ofstream&){}   
+
+private:
+    u_int32 speaker;
+    u_int32 mood;
+};
+
 // adds a line to the text arrays
 class text_cmd : public command
 {
@@ -63,3 +83,5 @@ private:
     u_int32 pc_off;             // Program Counter offset - where to continue the dialogue
     u_int32 speaker;            // Who is speaking?
 };
+
+#endif // __DIALOG_CMDS_H__

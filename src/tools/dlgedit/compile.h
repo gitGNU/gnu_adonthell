@@ -1,5 +1,7 @@
 /*
-   Copyright (C) 1999 Kai Sterker <kaisterker@linuxgames.com>
+   $Id$
+   
+   Copyright (C) 1999,2000 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -10,28 +12,33 @@
    See the COPYING file for more details.
 */
 
-/* Dialogue Compiler Data */
-typedef struct
+#ifndef __COMPILE_H__
+#define __COMPILE_H__
+
+#include <vector>
+#include <string>
+
+#include "../../interpreter.h" 
+
+// Dialogue Compiler
+class dlg_compiler
 {
-    GPtrArray *next_circles;    /* Contains circles following node */
-    ptr_list *nodes;            /* Contains all dialogue nodes */
-    GPtrArray *compiled_blocks; /* Contains the compiled blocks */
+public:
+    dlg_compiler () { }
+    dlg_compiler (vector<DlgNode*>&, string);
 
-    s_int32 *link_table;        /* Contains link to already compiled nodes */
-    u_int32 *text_number;       /* contains the every strings position */
-    s_int32 *pc_lookup;         /* contains the Program Counter values */
-    s_int32 *pos_table;
+    void run ();                    // Start the compile-process
 
-    u_int32 dlg_length;         /* Number of 32bit values of compiled dialogue */
-}
-DlgCompiler;
+private:
+    vector<command*> code;          // The compiled script
+    vector<DlgNode*> dlg;           // The input dialogue
+    string filename;                // The base dialogue filename
 
-typedef struct
-{
-    s_int32 type;               /* Command´s type */
-    s_int32 text;               /* ID of string to load */
-    s_int32 new_pc;             /* New value of Program Counter */
-}
-dialog_cmd;
+    u_int32 *text_lookup;           // 
+
+    void write_text ();             // Write the Dialogues text
+};
 
 void make_dialogue (MainFrame *);
+
+#endif // __COMPILE_H__

@@ -24,15 +24,20 @@ binary_cmd::binary_cmd ()
     ptype = 0;
 }
 
-binary_cmd::binary_cmd (char *t, char *p1, char *p2)
+binary_cmd::binary_cmd (u_int32 tp, string st, string sp1, string sp2)
 {
     int i;
+    const char *t = st.c_str ();
+    const char *p1 = sp1.c_str ();
+    const char *p2 = sp2.c_str ();
     
     // First give all members a sane state
     c_param1 = c_param2 = target = NULL;
     param1_location = param2_location = target_location = NULL;
     i_param1 = i_param2 = 1;
     ptype = 0;
+
+    type = tp;
 
     // Now look at the parameters and see what we've got
     if (strchr (t, '.'))
@@ -57,16 +62,24 @@ binary_cmd::binary_cmd (char *t, char *p1, char *p2)
         strncpy (param1_location, p1, i);
         param1_location[i] = '\0';
 
-        if (!strcmp (param1_location, "local")) ptype = ptype | PARAM1_LOCAL;
+        if (!strcmp (param1_location, "locall")) ptype = ptype | PARAM1_LOCAL;
         c_param1 = strdup (p1 + strcspn (p1, ".") + 1);
     }
     else
     {
-        param1_location = strdup ("game_state");
-        c_param1 = strdup (p1);
-        ptype = ptype | PARAM1_GLOBAL;
+        if (isdigit (p1[0]) || p1[0] == '-')
+        {
+            i_param1 = atoi (p1);
+            ptype = ptype | PARAM1_NUMBER;
+        }
+        else
+        {
+            param1_location = strdup ("game_state");
+            c_param1 = strdup (p1);
+            ptype = ptype | PARAM1_GLOBAL;
+        }
     }
-
+    
     if (strchr (p2, '.'))
     {
         param2_location = new char[(i = strcspn (p2, "."))+1];
@@ -78,16 +91,24 @@ binary_cmd::binary_cmd (char *t, char *p1, char *p2)
     }
     else
     {
-        param2_location = strdup ("game_state");
-        c_param2 = strdup (p2);
-        ptype = ptype | PARAM2_GLOBAL;
+        if (isdigit (p2[0]) || p2[0] == '-')
+        {
+            i_param2 = atoi (p2);
+            ptype = ptype | PARAM2_NUMBER;
+        }
+        else
+        {
+            param2_location = strdup ("game_state");
+            c_param2 = strdup (p2);
+            ptype = ptype | PARAM2_GLOBAL;
+        }
     }
 }
 
 binary_cmd::~binary_cmd ()
 {
-    if (param1_location != NULL) delete param1_location;
-    if (param2_location != NULL) delete param2_location;
+    if (param1_location != NULL && !(ptype & PARAM1_LOCAL)) delete param1_location;
+    if (param2_location != NULL && !(ptype & PARAM2_LOCAL)) delete param2_location;
     if (target_location != NULL) delete target_location;
     if (c_param1 != NULL) delete c_param1;
     if (c_param2 != NULL) delete c_param2;
@@ -180,9 +201,23 @@ void binary_cmd::write (FILE *out)
 } 
 
 // write command in human readable form
-void binary_cmd::ascii (FILE *out)
+void binary_cmd::ascii (ofstream &out)
 {
+    char* ops[] = { "", "", "", "", "", "", "LET", "ADD", "SUB", "MUL", "DIV",
+                    "EQ ", "NEQ", "LT ", "LEQ", "GT ", "GEQ", "AND", "OR " };
+
+    out << "\n" << ops[type] << "     ";
+
+    if (c_param1 != NULL) out << param1_location << "." << c_param1 << ", ";
+    else out << i_param1 << ", ";
+
+    if (type != LET)
+    {
+        if (c_param2 != NULL) out << param2_location << "." << c_param2 << " ";
+        else out << i_param2 << ", ";
+    }
     
+    out << target_location << "." << target;
 }
 
 // if we have variable arguments, read their value
@@ -317,8 +352,9 @@ void jmp_cmd::write (FILE* out)
     fwrite (&offset, sizeof(offset), 1, out);
 }
 
-void jmp_cmd::ascii (FILE* out)
+void jmp_cmd::ascii (ofstream &out)
 {
+    out << "\nJMP  " << offset;
 }
 
 
@@ -332,7 +368,7 @@ void branch_cmd::init (s_int32 *buffer, u_int32 &i, void *data)
 // Branch to another line in the script
 s_int32 branch_cmd::run (u_int32 &PC, void *data)
 {
-    if (objects::get (interpreter)->get (condition)) PC += offset;
+    if (!objects::get (interpreter)->get (condition)) PC += offset;
 
     return 1;
 }
@@ -347,6 +383,7 @@ void branch_cmd::write (FILE* out)
     fwrite (condition, sizeof (condition[0]), l, out);
 }
 
-void branch_cmd::ascii (FILE* out)
+void branch_cmd::ascii (ofstream &out)
 {
+    out << "\nBRANCH  local." << condition << ", " << offset;
 }

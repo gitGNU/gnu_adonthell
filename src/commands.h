@@ -12,6 +12,9 @@
    See the COPYING file for more details.
 */
 
+#ifndef __COMMANDS_H__
+#define __COMMANDS_H__
+
 // command types (must not exceed 255 - at least those used with the dialogue compiler)
 // Add your own types to this list
 enum
@@ -58,3 +61,5 @@ enum
 };
 
 void init_interpreter ();
+
+#endif // __COMMANDS_H__

@@ -57,7 +57,7 @@
 // local functions
 int cond_compile (const char*, string&, vector<command*>&);
 void conderror(char *);
-void create_code (string&);
+void create_code (string&, vector<command*>&);
 
 // external functions
 typedef struct yy_buffer_state *YY_BUFFER_STATE;
@@ -71,6 +71,7 @@ extern vector<string> vars;
 // some variables
 string c_err;
 int c_error;
+vector<command*> c_scrpt;
 #ifndef YYSTYPE
 #define YYSTYPE int
 #endif
@@ -143,9 +144,9 @@ static const short yyrhs[] = {    -1,
 
 #if YYDEBUG != 0
 static const short yyrline[] = { 0,
-    57,    58,    60,    63,    64,    65,    66,    67,    68,    69,
-    70,    71,    74,    75,    76,    77,    78,    79,    82,    83,
-    84
+    58,    59,    61,    64,    65,    66,    67,    68,    69,    70,
+    71,    72,    75,    76,    77,    78,    79,    80,    83,    84,
+    85
 };
 #endif
 
@@ -724,84 +725,84 @@ yyreduce:
   switch (yyn) {
 
 case 2:
-#line 58 "condition.y"
+#line 59 "condition.y"
 { yyval = string (1,BRANCH) + yyvsp[-1] + string (1,ENDIF); 
-                                      create_code (yyval); vars.clear (); ;
+                                      create_code (yyval, c_scrpt); vars.clear (); ;
     break;}
 case 3:
-#line 60 "condition.y"
+#line 61 "condition.y"
 { yyerrok; yyclearin; ;
     break;}
 case 4:
-#line 63 "condition.y"
+#line 64 "condition.y"
 { yyval = string(1, AND) + yyvsp[-2] + yyvsp[0]; ;
     break;}
 case 5:
-#line 64 "condition.y"
+#line 65 "condition.y"
 { yyval = string(1, OR) + yyvsp[-2] + yyvsp[0]; ;
     break;}
 case 6:
-#line 65 "condition.y"
+#line 66 "condition.y"
 { yyval = yyvsp[-1]; ;
     break;}
 case 7:
-#line 66 "condition.y"
+#line 67 "condition.y"
 { yyval = string(1, EQ) + yyvsp[-2] + yyvsp[0]; ;
     break;}
 case 8:
-#line 67 "condition.y"
+#line 68 "condition.y"
 { yyval = string(1, NEQ) + yyvsp[-2] + yyvsp[0]; ;
     break;}
 case 9:
-#line 68 "condition.y"
+#line 69 "condition.y"
 { yyval = string(1, LT) + yyvsp[-2] + yyvsp[0]; ;
     break;}
 case 10:
-#line 69 "condition.y"
+#line 70 "condition.y"
 { yyval = string(1, LEQ) + yyvsp[-2] + yyvsp[0]; ;
     break;}
 case 11:
-#line 70 "condition.y"
+#line 71 "condition.y"
 { yyval = string(1, GT) + yyvsp[-2] + yyvsp[0]; ;
     break;}
 case 12:
-#line 71 "condition.y"
+#line 72 "condition.y"
 { yyval = string(1, GEQ) + yyvsp[-2] + yyvsp[0]; ;
     break;}
 case 13:
-#line 74 "condition.y"
+#line 75 "condition.y"
 { yyval = yyvsp[0]; ;
     break;}
 case 14:
-#line 75 "condition.y"
+#line 76 "condition.y"
 { yyval = string(1, ADD) + yyvsp[-2] + yyvsp[0]; ;
     break;}
 case 15:
-#line 76 "condition.y"
+#line 77 "condition.y"
 { yyval = string(1, SUB) + yyvsp[-2] + yyvsp[0]; ;
     break;}
 case 16:
-#line 77 "condition.y"
+#line 78 "condition.y"
 { yyval = string(1, MUL) + yyvsp[-2] + yyvsp[0]; ;
     break;}
 case 17:
-#line 78 "condition.y"
+#line 79 "condition.y"
 { yyval = string(1, DIV) + yyvsp[-2] + yyvsp[0]; ;
     break;}
 case 18:
-#line 79 "condition.y"
+#line 80 "condition.y"
 { yyval = yyvsp[-1]; ;
     break;}
 case 19:
-#line 82 "condition.y"
+#line 83 "condition.y"
 { yyval = NUM; vars.push_back (yyvsp[0]); ;
     break;}
 case 20:
-#line 83 "condition.y"
+#line 84 "condition.y"
 { yyval = ID; vars.push_back (yyvsp[0]); ;
     break;}
 case 21:
-#line 84 "condition.y"
+#line 85 "condition.y"
 { if (yyvsp[0][0] == char(ID)) {
                                         yyval = string(1, SUB) + string(1, NUM) + yyvsp[0]; vars.insert ((vars.begin () + vars.size () - 1), "0");
                                       } else {
@@ -1007,7 +1008,7 @@ yyerrhandle:
   yystate = yyn;
   goto yynewstate;
 }
-#line 92 "condition.y"
+#line 93 "condition.y"
 
 
 int cond_compile (const char *str, string &errormsg, vector<command*> &script)
@@ -1023,6 +1024,7 @@ int cond_compile (const char *str, string &errormsg, vector<command*> &script)
     condparse ();
 
     errormsg = c_err;
+    script = c_scrpt;
 
     // clean up
     cond_delete_buffer (buffer);

@@ -32,7 +32,9 @@ create_preset_dlg (preset_dlg *dlg)
     GtkWidget *preset_ok;
     GtkWidget *preset_cancel;
     GtkTooltips *tooltips;
-
+    GtkStyle *style = gtk_style_copy (gtk_widget_get_default_style ());
+    style->font = gdk_font_load ("-*-lucidatypewriter-medium-*-*-*-12-*-*-*-*-*-iso8859-1");
+   
     tooltips = gtk_tooltips_new ();
 
     preset_dlg = gtk_window_new (GTK_WINDOW_DIALOG);
@@ -60,6 +62,7 @@ create_preset_dlg (preset_dlg *dlg)
     preset_entry = gtk_text_new (NULL, NULL);
     gtk_widget_ref (preset_entry);
     gtk_object_set_data_full (GTK_OBJECT (preset_dlg), "preset_entry", preset_entry, (GtkDestroyNotify) gtk_widget_unref);
+    gtk_widget_set_style (preset_entry, style);
     gtk_widget_show (preset_entry);
     gtk_container_add (GTK_CONTAINER (scrolledwindow1), preset_entry);
     gtk_tooltips_set_tip (tooltips, preset_entry, "Here you can assign values to variables that will be available when testing the Dialogue.", NULL);

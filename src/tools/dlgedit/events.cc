@@ -227,13 +227,13 @@ key_press_notify_event (GtkWidget * widget, GdkEventKey * event, gpointer data)
         /* Cycle through nodes */
     case GDK_Tab:
         {
-            if (MainWnd->nodes->size == 0)
+            if (MainWnd->nodes.empty ())
                 break;
 
             /* nothing selected -> select first */
             if (MainWnd->selected_node == NULL)
             {
-                center_object (MainWnd, (DlgNode *) get_ptr_list_element (MainWnd->nodes, 0));
+                center_object (MainWnd, MainWnd->nodes[0]);
                 select_object_index (MainWnd, 0);
             }
             
@@ -243,7 +243,7 @@ key_press_notify_event (GtkWidget * widget, GdkEventKey * event, gpointer data)
                 index = (MainWnd->number == MainWnd->selected_node->number + 1) ? 0 : MainWnd->selected_node->number + 1;
 
                 deselect_object (MainWnd);
-                center_object (MainWnd, (DlgNode *) get_ptr_list_element (MainWnd->nodes, index));
+                center_object (MainWnd, MainWnd->nodes[index]);
                 select_object_index (MainWnd, index);
             }
 

@@ -16,6 +16,7 @@
 #define __INTERPRETER_H__
 
 #include <map>
+#include <fstream.h>
 
 #include "types.h"
 #include "storage.h"
@@ -35,7 +36,7 @@ public:
     virtual void write (FILE *f) { }
 
     // write the command to a human readable file
-    virtual void ascii (FILE *f) { }
+    virtual void ascii (ofstream &f) { }
     
     // type of your command
     u_int32 type;

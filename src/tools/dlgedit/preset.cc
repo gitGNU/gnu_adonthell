@@ -12,6 +12,8 @@
    See the COPYING file for more details.
 */
 
+#include <iostream.h>
+
 #include "preset.h"
 #include "pset_interface.h"
 #include "../../interpreter.h"
@@ -35,5 +37,13 @@ void preset_dlg::on_ok (char *v)
     {
         vars_compile (v, error, code);
     }
+
+    // test
+    ofstream out ("code.txt");
+    out << "\nError:\n" << error << "\n\nCode:";
+    for (u_int32 i = 0; i < code.size(); i++)
+        code[i]->ascii (out);
+
+    out.close ();
 }
 

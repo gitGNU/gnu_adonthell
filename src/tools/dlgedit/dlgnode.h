@@ -21,7 +21,6 @@
 #include <fstream.h>
 #include <gdk/gdktypes.h>
 #include "../../types.h"
-#include "linked_list.h"
 
 // Definitions needed for the dialogue source file parser
 extern int parse_dlgfile (string&, int&);
@@ -61,6 +60,7 @@ class DlgNode
 {
 public:
     DlgNode () { highlite = 0; }
+    virtual ~DlgNode () { }
     
     u_int32 number;                     // unique ID
     u_int8 type;                        // one of NPC, PLAYER, LINK
@@ -70,6 +70,8 @@ public:
     vector<DlgNode*> prev;              // precedessor(s)
     vector<DlgNode*> next;              // successor(s)
     vector<DlgNode*> link;              // indirect connection(s)
+
+    virtual void save (ofstream&) { }   // Save DlgNode
 };
 
 // Circle
@@ -78,6 +80,7 @@ class Circle : public DlgNode
 public:
     Circle ();
     Circle (u_int32, u_int8, s_int32, s_int32);
+    virtual ~Circle () { }
     
     u_int32 character;                  // Who's characters text is this?
     u_int32 mood;                       // This characters mood
@@ -97,12 +100,13 @@ class Arrow : public DlgNode
 public:
     Arrow () { }
     Arrow (u_int32, u_int8);
+    virtual ~Arrow () { }
 
     GdkPoint line[2];                   // Line of arrow
     GdkPoint tip[3];                    // tip of arrow
 
     void save (ofstream&);              // Save Arrow
-    void load (u_int32, ptr_list*);     // Load Arrow
+    void load (u_int32, vector<DlgNode*>&);// Load Arrow
 };
 
 #endif // __DLGNODE_H__

@@ -15,8 +15,12 @@
 #ifndef __GENERIC_CMDS_H__
 #define __GENERIC_CMDS_H__
 
+#include <string>
+#include <fstream.h>
+
 #include "types.h"
 #include "storage.h"
+#include "commands.h"
 #include "interpreter.h"
 
 
@@ -43,13 +47,13 @@ class jmp_cmd : public command
 {
 public:
     jmp_cmd () { }
-    jmp_cmd (s_int32 o) : offset (o) { }
+    jmp_cmd (s_int32 o) : offset (o) { type = JMP; }
     
     void init (s_int32*, u_int32&, void*);
     s_int32 run (u_int32&, void*);
 
     void write (FILE*);             // Write the command as script code to file
-    void ascii (FILE*);             // Write cmd as human readable test to file
+    void ascii (ofstream&);         // Write cmd as human readable test to file
 
 private:
     s_int32 offset;
@@ -61,9 +65,10 @@ class branch_cmd : public command
 {
 public:
     branch_cmd () { condition = NULL; }
-    branch_cmd (s_int32 o, char* c) : offset (o)
+    branch_cmd (s_int32 o, const char* c) : offset (o)
     {
-        condition = strdup(c);
+        type = BRANCH;
+        condition = strdup (c + strcspn (c, ".") + 1);
     }
     virtual ~branch_cmd () { if (condition) delete[] condition; }
 
@@ -71,7 +76,7 @@ public:
     s_int32 run (u_int32&, void*);
 
     void write (FILE*);             // Write the command as script code to file
-    void ascii (FILE*);             // Write cmd as human readable test to file
+    void ascii (ofstream&);         // Write cmd as human readable test to file
 
 private:
     s_int32 offset;
@@ -85,12 +90,13 @@ class binary_cmd : public command
 {
 public:
     binary_cmd ();
-    binary_cmd (char*, char*, char*);
+    binary_cmd (u_int32, string, string, string);
     virtual ~binary_cmd ();
-    
+
+    s_int32 run (u_int32&, void*) { return 1; }
     void init (s_int32*, u_int32&, void*);
     void write (FILE*);             // Write the command as script code to file
-    void ascii (FILE*);             // Write cmd as human readable test to file
+    void ascii (ofstream&);         // Write cmd as human readable test to file
 
 protected:
     char *target;                   // Operations target

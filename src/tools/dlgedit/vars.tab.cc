@@ -71,12 +71,13 @@ extern int varslex();
 extern YY_BUFFER_STATE vars_scan_string (const char*);
 extern void vars_switch_to_buffer (YY_BUFFER_STATE);
 extern void vars_delete_buffer (YY_BUFFER_STATE);
-extern void create_code (string&);
+extern void create_code (string&, vector<command*>&);
 extern vector<string> vars;
 
 // some variables
 string v_err;
 int v_error;
+vector<command*> v_scrpt;
 #ifndef YYSTYPE
 #define YYSTYPE int
 #endif
@@ -152,9 +153,9 @@ static const short yyrhs[] = {    -1,
 
 #if YYDEBUG != 0
 static const short yyrline[] = { 0,
-    64,    65,    66,    69,    70,    73,    76,    77,    78,    79,
-    80,    81,    84,    85,    86,    94,    95,    98,    99,   100,
-   101,   102,   103,   104,   105,   106,   109,   110,   113,   114
+    65,    66,    67,    70,    71,    74,    77,    78,    79,    80,
+    81,    82,    85,    86,    87,    95,    96,    99,   100,   101,
+   102,   103,   104,   105,   106,   107,   110,   111,   114,   115
 };
 #endif
 
@@ -740,59 +741,59 @@ yyreduce:
   switch (yyn) {
 
 case 2:
-#line 65 "variable.y"
-{ create_code (yyvsp[0]); vars.clear (); ;
+#line 66 "variable.y"
+{ create_code (yyvsp[0], v_scrpt); vars.clear (); ;
     break;}
 case 3:
-#line 66 "variable.y"
+#line 67 "variable.y"
 { yyerrok; yyclearin; ;
     break;}
 case 4:
-#line 69 "variable.y"
-{ yyval = yyvsp[0]; ;
-    break;}
-case 5:
 #line 70 "variable.y"
 { yyval = yyvsp[0]; ;
     break;}
+case 5:
+#line 71 "variable.y"
+{ yyval = yyvsp[0]; ;
+    break;}
 case 6:
-#line 73 "variable.y"
+#line 74 "variable.y"
 { yyval = string(1, LET) + yyvsp[-1] + string(1, ID); vars.push_back (yyvsp[-3]); ;
     break;}
 case 7:
-#line 76 "variable.y"
+#line 77 "variable.y"
 { yyval = yyvsp[0]; ;
     break;}
 case 8:
-#line 77 "variable.y"
+#line 78 "variable.y"
 { yyval = string(1, ADD) + yyvsp[-2] + yyvsp[0]; ;
     break;}
 case 9:
-#line 78 "variable.y"
+#line 79 "variable.y"
 { yyval = string(1, SUB) + yyvsp[-2] + yyvsp[0]; ;
     break;}
 case 10:
-#line 79 "variable.y"
+#line 80 "variable.y"
 { yyval = string(1, MUL) + yyvsp[-2] + yyvsp[0]; ;
     break;}
 case 11:
-#line 80 "variable.y"
+#line 81 "variable.y"
 { yyval = string(1, DIV) + yyvsp[-2] + yyvsp[0]; ;
     break;}
 case 12:
-#line 81 "variable.y"
+#line 82 "variable.y"
 { yyval = yyvsp[-1]; ;
     break;}
 case 13:
-#line 84 "variable.y"
+#line 85 "variable.y"
 { yyval = NUM; vars.push_back (yyvsp[0]); ;
     break;}
 case 14:
-#line 85 "variable.y"
+#line 86 "variable.y"
 { yyval = ID; vars.push_back (yyvsp[0]); ;
     break;}
 case 15:
-#line 86 "variable.y"
+#line 87 "variable.y"
 { if (yyvsp[0][0] == char(ID)) {
                                         yyval = string(1, SUB) + string(1, NUM) + yyvsp[0]; vars.insert ((vars.begin () + vars.size () - 1), "0");
                                       } else {
@@ -801,63 +802,63 @@ case 15:
                                     ;
     break;}
 case 16:
-#line 94 "variable.y"
+#line 95 "variable.y"
 { yyval = string (1,BRANCH) + yyvsp[-2] + yyvsp[0] + string (1,ENDIF); ;
     break;}
 case 17:
-#line 95 "variable.y"
+#line 96 "variable.y"
 { yyval = string (1,BRANCH) + yyvsp[-4] + yyvsp[-2] + string (1,JMP) + yyvsp[0] + string (1,ENDIF); ;
     break;}
 case 18:
-#line 98 "variable.y"
+#line 99 "variable.y"
 { yyval = string(1, AND) + yyvsp[-2] + yyvsp[0]; ;
     break;}
 case 19:
-#line 99 "variable.y"
+#line 100 "variable.y"
 { yyval = string(1, OR) + yyvsp[-2] + yyvsp[0]; ;
     break;}
 case 20:
-#line 100 "variable.y"
+#line 101 "variable.y"
 { yyval = yyvsp[-1]; ;
     break;}
 case 21:
-#line 101 "variable.y"
+#line 102 "variable.y"
 { yyval = string(1, EQ) + yyvsp[-2] + yyvsp[0]; ;
     break;}
 case 22:
-#line 102 "variable.y"
+#line 103 "variable.y"
 { yyval = string(1, NEQ) + yyvsp[-2] + yyvsp[0]; ;
     break;}
 case 23:
-#line 103 "variable.y"
+#line 104 "variable.y"
 { yyval = string(1, LT) + yyvsp[-2] + yyvsp[0]; ;
     break;}
 case 24:
-#line 104 "variable.y"
+#line 105 "variable.y"
 { yyval = string(1, LEQ) + yyvsp[-2] + yyvsp[0]; ;
     break;}
 case 25:
-#line 105 "variable.y"
+#line 106 "variable.y"
 { yyval = string(1, GT) + yyvsp[-2] + yyvsp[0]; ;
     break;}
 case 26:
-#line 106 "variable.y"
+#line 107 "variable.y"
 { yyval = string(1, GEQ) + yyvsp[-2] + yyvsp[0]; ;
     break;}
 case 27:
-#line 109 "variable.y"
+#line 110 "variable.y"
 { yyval = yyvsp[-1]; ;
     break;}
 case 28:
-#line 110 "variable.y"
+#line 111 "variable.y"
 { yyval = yyvsp[0]; ;
     break;}
 case 29:
-#line 113 "variable.y"
+#line 114 "variable.y"
 { yyval = yyvsp[-1] + yyvsp[0]; ;
     break;}
 case 30:
-#line 114 "variable.y"
+#line 115 "variable.y"
 { yyval = yyvsp[0]; ;
     break;}
 }
@@ -1058,7 +1059,7 @@ yyerrhandle:
   yystate = yyn;
   goto yynewstate;
 }
-#line 117 "variable.y"
+#line 118 "variable.y"
 
 
 void varserror(char *s)
@@ -1080,6 +1081,7 @@ int vars_compile (const char *str, string &errormsg, vector<command*> &script)
     varsparse ();
 
     errormsg = v_err;
+    script = v_scrpt;
 
     // clean up
     vars_delete_buffer (buffer);

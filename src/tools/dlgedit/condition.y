@@ -23,7 +23,7 @@
 // local functions
 int cond_compile (const char*, string&, vector<command*>&);
 void conderror(char *);
-void create_code (string&);
+void create_code (string&, vector<command*>&);
 
 // external functions
 typedef struct yy_buffer_state *YY_BUFFER_STATE;
@@ -37,6 +37,7 @@ extern vector<string> vars;
 // some variables
 string c_err;
 int c_error;
+vector<command*> c_scrpt;
 %}
 
 %token _ID
@@ -56,7 +57,7 @@ int c_error;
 
 input:   /* empty */
        | _IF _LPAREN comp _RPAREN   { $$ = string (1,BRANCH) + $3 + string (1,ENDIF); 
-                                      create_code ($$); vars.clear (); }
+                                      create_code ($$, c_scrpt); vars.clear (); }
        | error                      { yyerrok; yyclearin; } 
 ;
 
@@ -104,6 +105,7 @@ int cond_compile (const char *str, string &errormsg, vector<command*> &script)
     condparse ();
 
     errormsg = c_err;
+    script = c_scrpt;
 
     // clean up
     cond_delete_buffer (buffer);
@@ -114,5 +116,5 @@ int cond_compile (const char *str, string &errormsg, vector<command*> &script)
 void conderror(char *s)
 {
     c_error = 1;
-    c_err += string(s) + string ("near token") + condlval + string ("\n");
+    c_err += string(s) + string (" near token ") + condlval + string ("\n");
 }
