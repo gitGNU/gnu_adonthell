@@ -154,8 +154,13 @@ s_int8 animation::insert_image(image * im, u_int16 pos)
 #ifdef _DEBUG_
   cout << "Added image: " << nbr_of_images() << " total in animation.\n";
 #endif
-  must_upt_label_frame_nbr=true;
-  must_upt_label_frame_info=true;
+#ifdef _EDIT_
+  if(in_editor)
+    {
+      must_upt_label_frame_nbr=true;
+      must_upt_label_frame_info=true;
+    }
+#endif
   return 0;
 }
 
@@ -217,8 +222,8 @@ s_int8 animation::delete_frame(u_int16 pos)
   i=frame.begin();
   while(pos--) i++;
   frame.erase(i);
-
 #ifdef _EDIT_
+  if(currentframe>=nbr_of_frames()) currentframe=nbr_of_frames()-1;
   if(in_editor) 
     {
       must_upt_label_frame_nbr=true;
@@ -802,8 +807,14 @@ void animation::ed_add_frame()
 			    makeFunctor(*this,&animation::draw_editor));
       delete wi;
     }
-
   else insert_frame(af,nbr_of_frames());
+#ifdef _EDIT_
+  if(in_editor)
+    {
+      must_upt_label_frame_nbr=true;
+      must_upt_label_frame_info=true;
+    }
+#endif
 }
 
 u_int16 animation::increase_frame(u_int16 c)
@@ -934,7 +945,7 @@ void animation::update_label_status()
 void animation::update_editor_keys()
 {
   // Image mode
-  if(input::has_been_pushed(SDLK_i)) set_mode(IMAGE);
+  if(input::has_been_pushed(SDLK_g)) set_mode(IMAGE);
   // Frame mode
   if(input::has_been_pushed(SDLK_f)) set_mode(FRAME);
 

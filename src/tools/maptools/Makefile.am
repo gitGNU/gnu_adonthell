@@ -48,7 +48,7 @@ win_background.o win_scrollbar.o win_file.o win_image.o \
 win_label.o win_select.o win_write.o win_query.o win_info.o \
 win_file_select.o yarg.o $(SDL_LIBS)
 
-CPPFLAGS +=-I../.. -D_EDIT_ -DUSE_MAP $(SDL_CFLAGS)
+CPPFLAGS +=-I../.. -DREVERSE_ALPHA -D_EDIT_ -DUSE_MAP $(SDL_CFLAGS)
 
 %.o : ../../%.cpp
 	$(CXXCOMPILE) -c $< -o $@

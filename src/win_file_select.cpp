@@ -30,7 +30,6 @@ win_file_select::win_file_select(s_int16 tx,s_int16 ty,u_int16 tl,u_int16 th,win
       if(cur_dir_[strlen(base_dir_)-1]!='/') strcat(base_dir_,"/");
       strcat(base_dir_,bdir);
       strcpy(cur_dir_,base_dir_);
-      cout << cur_dir_ << endl;
     }
   strcpy(ext,fext);
 
@@ -120,6 +119,7 @@ void win_file_select::list_directory(char * ext)
 	      strcat(tmpfile,dirlist->d_name);
 	      tmplabel=new win_label(0,0,combo_file_->length()-space_between_border_-theme_->scrollbar->back->get_length(),font_->height(),theme_,font_);
 	      tmplabel->set_text(tmpfile);
+	      tmplabel->set_border_size(WIN_SIZE_MINI);
 	      combo_file_->add(tmplabel);
 	      tmplabel=NULL;
 	    }
