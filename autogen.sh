@@ -6,8 +6,8 @@ rm -f `find . -name 'Makefile.in'`
 rm -f `find . -name 'Makefile'`
 
 # Regenerate everything
-libtoolize --force --copy
 aclocal -I .
+libtoolize --force --copy
 automake --add-missing --gnu
 autoconf 
 

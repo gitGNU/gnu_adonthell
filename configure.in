@@ -16,7 +16,7 @@ AC_LANG_C
 AC_PROG_CXXCPP
 AM_PROG_LIBTOOL
 AC_PROG_MAKE_SET
-AC_PROG_RANLIB
+dnl AC_PROG_RANLIB
 
 dnl ********************
 dnl Additional arguments
