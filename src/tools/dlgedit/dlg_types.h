@@ -43,7 +43,8 @@ enum query_type
     FIRST           = 0,
     NEXT            = 1,
     PREV            = 2,
-    LAST            = 3
+    LAST            = 3,
+    CURRENT         = 4
 };
 
 /**

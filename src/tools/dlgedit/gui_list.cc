@@ -48,16 +48,13 @@ GuiList::GuiList (GtkWidget *paned)
 // (re)draw the list
 void GuiList::draw ()
 {
-    gtk_widget_hide (list);
-    gtk_list_clear_items (GTK_LIST (list), 0, -1);
-    gtk_list_append_items (GTK_LIST (list), items);
-    gtk_widget_show (list);
+    gtk_widget_queue_draw (list);
 } 
 
 void GuiList::clear ()
 {
     gtk_widget_hide (list);
-    gtk_list_clear_items (GTK_LIST (list), 0, -1);
+    gtk_list_remove_items (GTK_LIST (list), items);
     gtk_widget_show (list);
 
     items = NULL;
@@ -71,6 +68,9 @@ void GuiList::display (DlgNode *node)
     
     DlgCircle *circle, *c;
    
+    // clear the list
+    clear ();
+    
     // make sure the node is a circle
     if (node->type () == LINK) circle = (DlgCircle*) node->next (FIRST);
     else circle = (DlgCircle *) node;
@@ -97,7 +97,9 @@ void GuiList::display (DlgNode *node)
     }
     
     // draw the new list
-    draw ();
+    gtk_widget_hide (list);
+    gtk_list_append_items (GTK_LIST (list), items);
+    gtk_widget_show (list);
 }
 
 // add an item to the list

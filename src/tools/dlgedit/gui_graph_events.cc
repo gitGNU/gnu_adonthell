@@ -27,7 +27,7 @@
 gint configure_event (GtkWidget *widget, GdkEventConfigure *event, gpointer data)
 {
     GuiGraph *graph = (GuiGraph *) data;
-    
+
     // resize the drawing area
     graph->resizeSurface (widget);
 
@@ -262,6 +262,27 @@ guint key_press_notify_event (GtkWidget * widget, GdkEventKey * event, gpointer 
         case GDK_Up:
         {
             if (graph->selectParent ()) graph->centerNode ();
+            break;
+        }
+        
+        // select child node
+        case GDK_Down:
+        {
+            if (graph->selectChild ()) graph->centerNode ();
+            break;
+        }
+        
+        // select sibling to the left
+        case GDK_Left:
+        {
+            if (graph->selectSibling (PREV)) graph->centerNode ();
+            break;
+        }
+        
+        // select sibling to the right
+        case GDK_Right:
+        {
+            if (graph->selectSibling (NEXT)) graph->centerNode ();
             break;
         }
     }

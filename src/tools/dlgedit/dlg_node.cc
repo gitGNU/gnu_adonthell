@@ -66,6 +66,9 @@ DlgNode* DlgNode::getNode (list<DlgNode*>::iterator &it,
             // reverse searching
             offset = -offset;
             break;
+        case CURRENT:
+            if (it != lst.end ()) return *it;
+            else return NULL;
         default:
             return NULL;
     }

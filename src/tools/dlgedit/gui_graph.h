@@ -98,6 +98,21 @@ public:
      */
     bool selectParent ();
     /**
+     * Select the first child of the currently selected node (or the first 
+     * node in case no node is selected so far.
+     * @return <b>true</b> if the node exists and was selected successfully,
+     *         <b>false</b> otherwise.
+     */
+    bool selectChild ();
+    /**
+     * Select a sibling of the currently selected node (or the first 
+     * node in case no node is selected so far.
+     * @param pos Specifies whether to select the previous or the next sibling.
+     * @return <b>true</b> if the sibling exists and was selected successfully,
+     *         <b>false</b> otherwise.
+     */
+    bool selectSibling (query_type pos);
+    /**
      * Deselect the node currently selected.
      */
     void deselectNode ();

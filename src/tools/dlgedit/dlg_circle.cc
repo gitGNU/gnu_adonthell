@@ -57,19 +57,23 @@ DlgCircle *DlgCircle::sibling (query_type pos, int offset)
     
     // first, get the right parent circle
     if (pos == FIRST || pos == LAST) myParent = parent (pos, offset);
-    else myParent = parent (NEXT, 0);
-
+    else myParent = parent (FIRST);
+    
     if (myParent != NULL)
     {
+        // first, locate this circle
+        for (mySibling = myParent->child (FIRST);
+             mySibling != this; mySibling = myParent->child (NEXT));
+             
         // see if we can get a sibling in the direction we are searching
         mySibling = myParent->child (pos, offset);
         
         // if not, see if there is another parent in that direction
-        if (mySibling == NULL && (pos == NEXT || pos == PREV))
+        /*if (mySibling == NULL && (pos == NEXT || pos == PREV))
         {
             prev (pos, 1);
             mySibling = sibling (pos, offset);
-        }
+        }*/
     }
     
     return mySibling;
@@ -83,8 +87,8 @@ void DlgCircle::draw (GdkPixmap *surface, DlgPoint &os)
     
     // offset circle
     DlgPoint position = topLeft ().offset (os);
-    DlgRect area = DlgRect (position, CIRCLE_DIAMETER, CIRCLE_DIAMETER);
-
+    DlgRect area (position, CIRCLE_DIAMETER+1, CIRCLE_DIAMETER+1);
+    
     // draw everything to the surface
     gdk_draw_arc (surface, GuiDlgedit::window->getColor (GC_WHITE), TRUE, position.x (), position.y (), 20, 20, 0, 36000);
     gdk_draw_arc (surface, gc, FALSE, position.x (), position.y (), 20, 20, 0, 36000);
@@ -104,7 +108,7 @@ void DlgCircle::draw (GdkPixmap *surface, DlgPoint &os)
 
         g_string_free (code, TRUE);
     }
-
+    
     // Update the drawing area
     GuiDlgedit::window->graph ()->update (area);
 }

@@ -53,8 +53,8 @@ void DlgRect::init (DlgPoint &a, DlgPoint &b)
 // create a Rectangle from a point and width and height
 DlgRect::DlgRect (DlgPoint &p, int width, int height)
 {
-    DlgPoint q = DlgPoint (p.x () + width, p.y () + height);
-    DlgRect (p, q);
+    DlgPoint q (p.x () + width, p.y () + height);
+    init (p, q);
 }
 
 // Test whether point lies within this rectangle's boundaries

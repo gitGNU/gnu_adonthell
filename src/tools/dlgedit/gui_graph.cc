@@ -111,11 +111,91 @@ bool GuiGraph::selectParent ()
         DlgNode *parent = ((DlgCircle *) selected)->parent (FIRST);
 
         // if we have it, then select it
-        if (parent) return module->selectNode (parent);
+        if (parent)
+        {
+            deselectNode ();
+            return selectNode (parent);
+        }
     }
 
     // if no node is selected, we simply select the first one
-    if (module->selectRoot ())
+    else if (module->selectRoot ())
+    {
+        // update the instant preview
+        GuiDlgedit::window->list ()->display (module->selected ());
+
+        return true;
+    }
+
+    return false;
+}
+
+// select the child of a node
+bool GuiGraph::selectChild ()
+{
+    // if there is no module assigned to the view, there is nothing to select
+    if (module == NULL) return false;
+
+    // see if a node is currently selected
+    DlgNode *selected = module->selected ();
+
+    // if so ...
+    if (selected)
+    {
+        // ... try to retrieve it's child
+        DlgNode *child = ((DlgCircle *) selected)->child (FIRST);
+
+        // if we have it, then select it
+        if (child)
+        {
+            deselectNode ();
+            return selectNode (child);
+        }
+    }
+
+    // if no node is selected, we simply select the first one
+    else if (module->selectRoot ())
+    {
+        // update the instant preview
+        GuiDlgedit::window->list ()->display (module->selected ());
+
+        return true;
+    }
+
+    return false;
+}
+
+bool GuiGraph::selectSibling (query_type pos)
+{
+    // if there is no module assigned to the view, there is nothing to select
+    if (module == NULL) return false;
+
+    // see if a node is currently selected
+    DlgNode *selected = module->selected ();
+
+    // if so ...
+    if (selected)
+    {
+        // ... try to retrieve it's child
+        DlgNode *sibling = ((DlgCircle *) selected)->sibling (pos);
+
+        // if there is none in that direction, try to wrap around
+        if (!sibling)
+        {      
+            if (pos == PREV) sibling = ((DlgCircle *) selected)->sibling (LAST);
+            else sibling = ((DlgCircle *) selected)->sibling (FIRST);
+        }
+        
+        // if we have something now
+        if (sibling && sibling != selected)
+        {
+            deselectNode ();
+            return selectNode (sibling);
+        }
+    }
+
+    // if no node is selected, we simply select the first one
+    else if (module->selectRoot ())
     {
         // update the instant preview
         GuiDlgedit::window->list ()->display (module->selected ());
@@ -241,18 +321,18 @@ void GuiGraph::draw ()
     // Clear graph
     gdk_draw_rectangle (surface, GuiDlgedit::window->getColor (GC_WHITE), TRUE, 0, 0, t.width, t.height);
 
-    // check for each node, wether it is visible
-    for (i = nodes.rbegin (); i != nodes.rend (); i++)
-        // draw nodes and arrows
-        if ((*i)->contains (rect))
-            (*i)->draw (surface, *offset);
-
     // normalize rect
     t.x = 0;
     t.y = 0;
 
     // draw backing image to screen
     gtk_widget_draw (graph, &t);
+
+    // check for each node, wether it is visible
+    for (i = nodes.rbegin (); i != nodes.rend (); i++)
+        // draw nodes and arrows
+        if ((*i)->contains (rect))
+            (*i)->draw (surface, *offset);
 
     // Mark object below cursor if neccessary
     // if (wnd->mode != OBJECT_DRAGGED)
