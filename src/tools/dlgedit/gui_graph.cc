@@ -648,8 +648,8 @@ void GuiGraph::draw ()
     if (module == NULL) return;
             
     GdkRectangle t;
-    vector<DlgNode*>::reverse_iterator i;
-    vector<DlgNode*> nodes = module->getNodes ();
+    std::vector<DlgNode*>::reverse_iterator i;
+    std::vector<DlgNode*> nodes = module->getNodes ();
     
     // get visible part of graph
     t.x = -offset->x ();

@@ -39,7 +39,7 @@ DlgCircleEntry::DlgCircleEntry ()
 }
 
 // get the dialogue text
-string DlgCircleEntry::text ()
+std::string DlgCircleEntry::text ()
 {
     // usually, we just need to return the text
     if (GuiDlgedit::window->mode () != L10N_PREVIEW) return text_;
@@ -49,7 +49,7 @@ string DlgCircleEntry::text ()
 }
 
 // set the dialogue text
-void DlgCircleEntry::setText (string t)
+void DlgCircleEntry::setText (std::string t)
 {
     unsigned int pos = 0;
     text_ = t;
@@ -71,7 +71,7 @@ void DlgCircleEntry::setText (string t)
 }
 
 // set the node's condition
-void DlgCircleEntry::setCondition (string c)
+void DlgCircleEntry::setCondition (std::string c)
 {
     if (c == "") return;
     

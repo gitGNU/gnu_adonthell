@@ -359,7 +359,7 @@ void GuiDlgedit::newDialogue ()
 }
 
 // load a new dialogue
-void GuiDlgedit::loadDialogue (string file)
+void GuiDlgedit::loadDialogue (std::string file)
 {
     // first, open the file
     loadlgin = fopen (file.c_str (), "rb");
@@ -395,7 +395,7 @@ void GuiDlgedit::loadDialogue (string file)
 }
 
 // save a dialogue
-void GuiDlgedit::saveDialogue (string file)
+void GuiDlgedit::saveDialogue (std::string file)
 {
     DlgModule *module = graph_->dialogue ();
     if (module == NULL) return;
@@ -480,7 +480,7 @@ void GuiDlgedit::compileDialogue ()
 }
 
 // preview the translated dialogue
-void GuiDlgedit::previewTranslation (string catalogue)
+void GuiDlgedit::previewTranslation (std::string catalogue)
 {
     DlgModule *module = graph_->dialogue ();
     if (module == NULL) return;
@@ -590,7 +590,7 @@ void GuiDlgedit::exitPreview ()
     message->clear ();
 }
 
-DlgModule *GuiDlgedit::initDialogue (string name)
+DlgModule *GuiDlgedit::initDialogue (std::string name)
 {
     // the new dialogue
     DlgModule *dlg = new DlgModule (name, "New Dialogue");
@@ -637,7 +637,7 @@ void GuiDlgedit::initMenu ()
     if (dialogues_.size () == 0) return;
 
     int position = 0;   
-    vector<DlgModule*>::iterator i;
+    std::vector<DlgModule*>::iterator i;
     GtkAccelGroup *accel_group = gtk_accel_group_get_default ();
     GtkWidget *menuitem;
     gchar *name;
@@ -835,13 +835,13 @@ GdkGC *GuiDlgedit::getColor (mode_type mode, node_type type)
 }
 
 // get the full path/name of a dialogue
-string GuiDlgedit::filename ()
+std::string GuiDlgedit::filename ()
 {
     DlgModule *module = graph_->dialogue ();
     
     // if there is no module, return the current working directory
     if (module == NULL) return directory_;
-    string file = module->name ();
+    std::string file = module->name ();
     
     // remove the serial number from the name
     unsigned int pos = file.rfind ("-");

@@ -35,7 +35,7 @@
 class DlgModule : public DlgNode
 {
 public:
-    DlgModule (string n, string d);
+    DlgModule (std::string n, std::string d);
     
     /**
      * Draw this node to the given surface with the specified offset. 
@@ -113,7 +113,7 @@ public:
      * @return <b>true</b> if saving was successful, <b>false</b>
      *         otherwise.
      */
-    bool save (string &file);
+    bool save (std::string &file);
     
     /**
      * Save the Dialogue to a file
@@ -124,7 +124,7 @@ public:
      * Get the list of nodes in this dialogue.
      * @return a reference to the list of nodes.
      */
-    vector<DlgNode*> &getNodes ()   { return nodes; }
+    std::vector<DlgNode*> &getNodes ()   { return nodes; }
     
     /**
      * Get the current offset of this dialogue.
@@ -136,25 +136,25 @@ public:
      * Get the name of this dialogue.
      * @return a reference to the dialogue's name.
      */
-    string &name ()                 { return name_; }
+    std::string &name ()                 { return name_; }
     /**
      * Set the name of this dialogue.
      * @param the filename of the file the dialogue was loaded from.
      */
-    void setName (const string &filename);
+    void setName (const std::string &filename);
     bool changed ()                 { return changed_; }
     void setChanged (bool c = true) { changed_ = c; }
 
 protected:
-    vector<DlgNode*> nodes;     // all the nodes in this dialogue
+    std::vector<DlgNode*> nodes;// all the nodes in this dialogue
     DlgNode *selected_;         // the node currently selected
     DlgNode *highlighted_;      // the node currently under the cursor
     
     DlgPoint offset_;           // The current offset in the graph view
     bool changed_;              // Whether there were changes since saving
     
-    string name_;               // Short (file-) name of the dialogue 
-    string description_;        // Description of the dialogue
+    std::string name_;          // Short (file-) name of the dialogue 
+    std::string description_;   // Description of the dialogue
 
 private:
     void init ();               // initialize a newly constructed DlgModule

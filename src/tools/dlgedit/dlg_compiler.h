@@ -72,7 +72,7 @@ public:
     void run ();
     
 private:
-    void writeHeader (const string &theClass);
+    void writeHeader (const std::string &theClass);
     void writeText ();
     void writeCode ();
     void writeConditions ();
@@ -81,20 +81,20 @@ private:
     void writeFollower (DlgNode *node);
     
     void addStart (DlgNode *node);
-    void addCode (const string &cde, int index);
+    void addCode (const std::string &cde, int index);
     bool addCondition (DlgCircle *circle, int index);
     
     int checkFollowers (DlgCircle *node);
     bool checkConditions (DlgCircle* node);
     
-    keyword getKeyword (const string &statement);
+    keyword getKeyword (const std::string &statement);
     
     ofstream file;
     DlgModule *dialogue;            // The dialogue to be compiled    
     
-    vector<DlgNode*> start;         // Start nodes of the dialogue
-    vector<string> code;            // Temporary storage for all code
-    vector<string> conditions;      // Temporary storage for all conditions
+    std::vector<DlgNode*> start;    // Start nodes of the dialogue
+    std::vector<std::string> code;  // Temporary storage for all code
+    std::vector<std::string> conditions; // Temporary storage for all conditions
 
     int errors;                     // number of errors in dialogue
     

@@ -24,7 +24,7 @@
 #include "dlg_types.h"
 
 // create a new file selection window
-GuiFile::GuiFile (int type, const string &title, const string &file) : GuiModalDialog ()
+GuiFile::GuiFile (int type, const std::string &title, const std::string &file) : GuiModalDialog ()
 {
     GtkWidget *fs_cancel_button;
     GtkWidget *fs_ok_button;

@@ -26,7 +26,7 @@
 
 
 // ctor
-DlgModule::DlgModule (string n, string d)
+DlgModule::DlgModule (std::string n, std::string d)
 {
     description_ = d;
     setName (n);
@@ -44,7 +44,7 @@ void DlgModule::init ()
 }
 
 // assign a name to the module
-void DlgModule::setName (const string &filename)
+void DlgModule::setName (const std::string &filename)
 {
     name_ = filename;
     
@@ -58,7 +58,7 @@ void DlgModule::setName (const string &filename)
 bool DlgModule::selectNode (DlgNode *node)
 {
     // try to find the given node in our array of nodes
-    vector<DlgNode*>::iterator i = find (nodes.begin (), nodes.end (), node);
+    std::vector<DlgNode*>::iterator i = find (nodes.begin(), nodes.end(), node);
     
     // if it is not there, return
     if (i == nodes.end ()) return false;
@@ -90,7 +90,7 @@ DlgNode* DlgModule::highlightNode (DlgNode *node)
 // select the dialogue's root node.
 bool DlgModule::selectRoot ()
 {
-    for (vector<DlgNode*>::iterator i = nodes.begin(); i != nodes.end (); i++)
+    for (std::vector<DlgNode*>::iterator i=nodes.begin(); i != nodes.end(); i++)
         if ((*i)->type () != LINK)
             if ((*i)->prev (FIRST) == NULL)
                 return selectNode (*i);
@@ -102,7 +102,7 @@ bool DlgModule::selectRoot ()
 DlgNode* DlgModule::getNode (DlgPoint &position)
 {
     // find the node with the given pos in our array of nodes
-    vector<DlgNode*>::iterator i;
+    std::vector<DlgNode*>::iterator i;
     
     for (i = nodes.begin (); i != nodes.end (); i++)
         if (*(*i) == position) return *i;
@@ -178,7 +178,7 @@ bool DlgModule::load ()
     int i = 1, n, y_min = 0, x_min = 0, x_max = 0;
     DlgCircle *circle;
     DlgArrow *arrow;
-    string s;
+    std::string s;
 
     // load all nodes and toplevel items
     while (i)
@@ -277,7 +277,7 @@ bool DlgModule::load ()
 }
 
 // save dialogue to file
-bool DlgModule::save (string &file)
+bool DlgModule::save (std::string &file)
 {
     ofstream out (file.c_str ());
     int index = 0;
@@ -293,7 +293,7 @@ bool DlgModule::save (string &file)
         << "Note §" << description_ << "§\n\n";
 
     // Save Circles first, as arrows depend on them when loading later on
-    for (vector<DlgNode*>::iterator i = nodes.begin (); i != nodes.end (); i++)
+    for (std::vector<DlgNode*>::iterator i = nodes.begin (); i != nodes.end (); i++)
         if ((*i)->type () != LINK)
         {
             (*i)->setIndex (index++);
@@ -301,7 +301,7 @@ bool DlgModule::save (string &file)
         }
                 
     // Save Arrows
-    for (vector<DlgNode*>::iterator i = nodes.begin (); i != nodes.end (); i++)
+    for (std::vector<DlgNode*>::iterator i = nodes.begin (); i != nodes.end (); i++)
         if ((*i)->type () == LINK)
             (*i)->save (out);
 

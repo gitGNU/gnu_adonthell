@@ -31,7 +31,7 @@
 
 
 // Definitions needed for the dialogue source file parser
-extern int parse_dlgfile (string&, int&);
+extern int parse_dlgfile (std::string&, int&);
 extern FILE *loadlgin;
 
 
@@ -143,17 +143,17 @@ public:
     int index ()            { return index_; }
         
 protected:
-    node_type type_;                // type of the node
-    int index_;                     // position of node in file when saving
+    node_type type_;                    // type of the node
+    int index_;                         // position of node in file when saving
         
-    list<DlgNode*> prev_;           // list of node's parents
-    list<DlgNode*> next_;           // list of node's children
+    std::list<DlgNode*> prev_;          // list of node's parents
+    std::list<DlgNode*> next_;          // list of node's children
 
-    list<DlgNode*>::iterator p;     // iterator over parents
-    list<DlgNode*>::iterator n;     // iterator over children
+    std::list<DlgNode*>::iterator p;    // iterator over parents
+    std::list<DlgNode*>::iterator n;    // iterator over children
     
-    DlgNode* getNode (list<DlgNode*>::iterator &it, list<DlgNode*> &lst,
-            query_type &pos, int &offset);
+    DlgNode* getNode (std::list<DlgNode*>::iterator &it, 
+        std::list<DlgNode*> &lst, query_type &pos, int &offset);
 };
 
 #endif // DLG_NODE_H

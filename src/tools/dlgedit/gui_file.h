@@ -28,14 +28,14 @@
 class GuiFile : public GuiModalDialog
 {
 public:
-    GuiFile (int type, const string &file, const string &title);
+    GuiFile (int type, const std::string &file, const std::string &title);
     ~GuiFile ();
 
-    string getSelection ()              { return file_; }
-    void setSelection (string file)     { file_ = file; }
+    std::string getSelection ()           { return file_; }
+    void setSelection (std::string file)  { file_ = file; }
 
 private:
-    string file_;                   // the file the user has selected
+    std::string file_;              // the file the user has selected
 };
 
 

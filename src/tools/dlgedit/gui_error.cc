@@ -181,7 +181,7 @@ void GuiError::clear ()
 }
 
 // add an error message to the list
-void GuiError::add (string error, DlgNode *node)
+void GuiError::add (std::string error, DlgNode *node)
 {
     GtkWidget *label;
     GtkWidget *list_item;

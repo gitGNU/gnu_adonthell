@@ -118,12 +118,12 @@ public:
      * Load a dialogue from a file
      * @param file Filename (and path) of the dialogue to load.
      */
-    void loadDialogue (string file);
+    void loadDialogue (std::string file);
     /**
      * Save a dialogue to file
      * @param file Filename (and path) of the dialogue to load.
      */
-    void saveDialogue (string file);
+    void saveDialogue (std::string file);
     /**
      * Close a dialogue
      */
@@ -142,7 +142,7 @@ public:
      * @param catalogue full path to a gnu gettext compliant binary catalogue
      *        (.mo) file
      */
-    void previewTranslation (string catalogue);
+    void previewTranslation (std::string catalogue);
     /**
      * stop translation preview
      */
@@ -152,12 +152,12 @@ public:
      * Get the directory where the last fileselection took place.
      * @return Path to the directory last opened.
      */
-    string directory ()     { return directory_+"/"; }
+    std::string directory ()  { return directory_+"/"; }
     /**
      * Get the full path and name of the dialogue currently in the view.
      * @return Filename of the current dialogue.
      */
-    string filename ();
+    std::string filename ();
                         
 private:
     /**
@@ -176,7 +176,7 @@ private:
     /**
      * Add a dialogue to the GUI
      */
-    DlgModule *initDialogue (string);
+    DlgModule *initDialogue (std::string);
     /**
      * Set the GUI back to it's initial state.
      */
@@ -193,8 +193,8 @@ private:
     GtkWidget *status_mode;         // statusbar displaying the program state
     GdkFont *font_;                 // font for text-output
     GdkGC *color[MAX_GC];           // custom Pens
-    vector<DlgModule*> dialogues_;  // dialogues currently loaded
-    string directory_;              // directory used in last file-selection
+    std::vector<DlgModule*> dialogues_;// dialogues currently loaded
+    std::string directory_;            // directory used in last file-selection
     static char *progState[NUM_MODES]; // Textual program states
 };
 

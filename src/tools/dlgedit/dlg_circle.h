@@ -112,13 +112,13 @@ public:
      * @return a string of the form "<NPC>: <Text>" if a certain NPC is 
      *         attached to the node, otherwise returns only the text.
      */
-    string text ();
+    std::string text ();
     
     /**
      * Get the text of this circle for use with the GuiTooltip
      * @return a string of the form "<condition>\n<Text>\n<code>".
      */
-    string tooltip ();
+    std::string tooltip ();
 
     /**
      * Check whether any arbitrary Python code is assigned to this circle.

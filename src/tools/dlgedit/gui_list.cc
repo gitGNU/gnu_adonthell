@@ -110,7 +110,7 @@ void GuiList::add (int mode, DlgCircle *circle)
     GdkWindow *list_wnd;
     GdkColor color;
     GtkStyle *style = gtk_style_copy (gtk_widget_get_default_style ());
-    string label_text = circle->text ();
+    std::string label_text = circle->text ();
     int w, h;
     
     // see what sort of node we have

@@ -141,10 +141,10 @@ bool DlgArrow::operator== (DlgPoint &point)
 }
 
 // load an arrow
-bool DlgArrow::load (vector<DlgNode*> &nodes)
+bool DlgArrow::load (std::vector<DlgNode*> &nodes)
 {
     DlgNode *circle;
-    string str;
+    std::string str;
     int n;
 
     // as long as we haven't reached EOF or are finished with loading:

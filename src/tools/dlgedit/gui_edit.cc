@@ -52,17 +52,17 @@ GuiEdit::~GuiEdit ()
 }
 
 // set the entry's text
-void GuiEdit::setText (const string &text)
+void GuiEdit::setText (const std::string &text)
 {
     gtk_text_insert (GTK_TEXT (entry), entry->style->font, 
         &entry->style->black, &entry->style->white, text.c_str (), -1);
 }
 
 // return the entry's text
-string GuiEdit::getText ()
+std::string GuiEdit::getText ()
 {
     gchar *tmp = gtk_editable_get_chars (GTK_EDITABLE (entry), 0, -1);
-    string text (tmp);
+    std::string text (tmp);
     g_free (tmp);
 
     return text;

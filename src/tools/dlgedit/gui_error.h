@@ -48,7 +48,7 @@ public:
      * @param error the text to display
      * @param node the node where the error occured
      */
-    void add (string error, DlgNode *node);
+    void add (std::string error, DlgNode *node);
     /**
      * Show the error console and display all errors
      */

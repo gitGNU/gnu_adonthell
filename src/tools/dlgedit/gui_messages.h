@@ -51,9 +51,9 @@ public:
     void clear ();
     
 private:
-    map<int, const char*, ltint> messages;  // List of message strings
-    int current;                            // String currently displayed
-    GtkWidget *statusbar;                   // Target for the messages
+    std::map<int, const char*, ltint> messages;  // List of message strings
+    int current;                                 // String currently displayed
+    GtkWidget *statusbar;                        // Target for the messages
 };
 
 #endif // GUI_MESSAGES_H

@@ -103,7 +103,7 @@ DlgCircle *DlgCircle::sibling (query_type pos, int offset)
 // check whether the given node is a child of this circle
 bool DlgCircle::hasChild (DlgNode *child)
 {
-    list<DlgNode*>::iterator j;
+    std::list<DlgNode*>::iterator j;
     
     for (j = next_.begin (); j != next_.end (); j++)
         if (child == (*j)->next (FIRST))
@@ -150,7 +150,7 @@ void DlgCircle::draw (GdkPixmap *surface, DlgPoint &os)
 bool DlgCircle::load ()
 {
     entry_ = new DlgCircleEntry;
-    string str;
+    std::string str;
     int n;
 
     // as long as we haven't reached EOF or are finished with loading:
@@ -263,9 +263,9 @@ void DlgCircle::save (ofstream &file)
 }
 
 // get the text of a circle
-string DlgCircle::text ()
+std::string DlgCircle::text ()
 {
-    string text = "";
+    std::string text = "";
     
     // is there any text at all?
     if (entry_ == NULL) return text;
@@ -282,9 +282,9 @@ string DlgCircle::text ()
 }
 
 // get tooltip text of the circle
-string DlgCircle::tooltip ()
+std::string DlgCircle::tooltip ()
 {
-    string text = "";
+    std::string text = "";
     
     // is there any text at all?
     if (entry_ == NULL) return text;

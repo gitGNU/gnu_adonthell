@@ -42,43 +42,43 @@ public:
      * Get the text assigned to this circle.
      * @return the circle's text.
      */
-    string text ();
+    std::string text ();
     /**
      * Get the comment assigned to this circle.
      * @return the circle's comments.
      */
-    string annotation ()            { return annotation_; }
+    std::string annotation ()       { return annotation_; }
     /**
      * Get the character this circle is assigned to.
      * @return the circle's character.
      */
-    string npc ()                   { return npc_; }
+    std::string npc ()              { return npc_; }
     /**
      * Get the arbitrary code assigned to this circle.
      * @return the circle's code.
      */
-    string code ()                  { return code_; }
+    std::string code ()             { return code_; }
     /**
      * Get the condition this circle is based upon.
      * @return the circle's condition.
      */
-    string condition ()             { return condition_; }
+    std::string condition ()        { return condition_; }
     
-    void setText (string t);
-    void setAnnotation (string a)   { annotation_ = a; }
-    void setNpc (string n)          { npc_ = n; }
-    void setCondition (string c);
-    void setCode (string c)         { code_ = c; }
+    void setText (std::string t);
+    void setAnnotation (std::string a)   { annotation_ = a; }
+    void setNpc (std::string n)          { npc_ = n; }
+    void setCondition (std::string c);
+    void setCode (std::string c)         { code_ = c; }
     //@}
         
     bool hasCode ()                 { return code_ != "" || condition_ != ""; }
                 
 private:
-    string text_;           // the node's actual text
-    string annotation_;     // comments of the author
-    string npc_;            // name of the NPC this node is assigned to
-    string code_;           // arbitrary (Python) code
-    string condition_;      // condition(s) for this node
+    std::string text_;           // the node's actual text
+    std::string annotation_;     // comments of the author
+    std::string npc_;            // name of the NPC this node is assigned to
+    std::string code_;           // arbitrary (Python) code
+    std::string condition_;      // condition(s) for this node
 };
 
 #endif // DLG_CIRCLE_ENTRY_H

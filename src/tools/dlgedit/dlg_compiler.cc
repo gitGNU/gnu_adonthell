@@ -60,7 +60,7 @@ void DlgCompiler::run ()
         GuiError::console->clear ();
     
     // try to open the file
-    string fname = dialogue->name ();
+    std::string fname = dialogue->name ();
 
     // remove the serial number from the name
     unsigned int pos = fname.rfind ("-");
@@ -93,7 +93,7 @@ void DlgCompiler::run ()
         GuiError::console->display ();
 }
 
-void DlgCompiler::writeHeader (const string &theClass)
+void DlgCompiler::writeHeader (const std::string &theClass)
 {
     // imports
     file << "import dialogue\n\n"
@@ -109,8 +109,8 @@ void DlgCompiler::writeHeader (const string &theClass)
 // write array with the dialogue text and initialize some stuff
 void DlgCompiler::writeText ()
 {
-    vector<DlgNode*> nodes = dialogue->getNodes ();
-    vector<DlgNode*>::iterator i;
+    std::vector<DlgNode*> nodes = dialogue->getNodes ();
+    std::vector<DlgNode*>::iterator i;
     DlgCircleEntry *entry;
     unsigned int j = 0;
     
@@ -157,7 +157,7 @@ void DlgCompiler::writeConditions ()
     file << "\tcond = [\\";
 
     // write the individual conditions    
-    for (vector<string>::iterator i = conditions.begin (); i != conditions.end (); i++)
+    for (std::vector<std::string>::iterator i = conditions.begin (); i != conditions.end (); i++)
     {
         if (i != conditions.begin ()) file << ",\\";
         file << "\n\t\t\"" << (*i) << "\"";
@@ -176,7 +176,7 @@ void DlgCompiler::writeCode ()
     file << "\tcode = [\\";
 
     // write the individual conditions    
-    for (vector<string>::iterator i = code.begin (); i != code.end (); i++)
+    for (std::vector<std::string>::iterator i = code.begin (); i != code.end (); i++)
     {
         if (i != conditions.begin ()) file << ",\\";
         file << "\n\t\t\"" << (*i) << "\"";
@@ -197,7 +197,7 @@ void DlgCompiler::writeStart ()
     // write the "followers" (in this case the start nodes)
     if (!start.empty ())
     {
-        vector<DlgNode*>::iterator i;
+        std::vector<DlgNode*>::iterator i;
 
         for (i = start.begin (); i != start.end (); i++)
         {
@@ -210,8 +210,8 @@ void DlgCompiler::writeStart ()
 // write the actual dialogue data
 void DlgCompiler::writeDialogue ()
 {
-    vector<DlgNode*> nodes = dialogue->getNodes ();
-    vector<DlgNode*>::iterator i;
+    std::vector<DlgNode*> nodes = dialogue->getNodes ();
+    std::vector<DlgNode*>::iterator i;
     DlgCircle *circle, *child;
     DlgCircleEntry *entry;
     int index;
@@ -275,7 +275,7 @@ void DlgCompiler::writeFollower (DlgNode *node)
 // add node to the dialogue's start nodes
 void DlgCompiler::addStart (DlgNode *node)
 {
-    vector<DlgNode*>::iterator i = start.begin ();
+    std::vector<DlgNode*>::iterator i = start.begin ();
 
     // search the proper place for insertion
     if (!start.empty ()) 
@@ -288,7 +288,7 @@ void DlgCompiler::addStart (DlgNode *node)
 // add a condition to the list of conditions
 bool DlgCompiler::addCondition (DlgCircle *circle, int idx)
 {
-    string error, condition, cnd = circle->entry ()->condition ();
+    std::string error, condition, cnd = circle->entry ()->condition ();
     bool retval = true;
     
     // see what kind of statement the condition is and get rid of the keyword
@@ -346,7 +346,7 @@ bool DlgCompiler::addCondition (DlgCircle *circle, int idx)
     }
     
     // now the condition is ready for addition to the condition vector
-    for (vector<string>::iterator i = conditions.begin (); i != conditions.end (); i++)
+    for (std::vector<std::string>::iterator i = conditions.begin (); i != conditions.end (); i++)
         if (strcmp ((*i).c_str (), condition.c_str ()) == 0)
         {
             conditionTable[idx] = distance (conditions.begin (), i);
@@ -361,10 +361,10 @@ bool DlgCompiler::addCondition (DlgCircle *circle, int idx)
 }
 
 // add arbitrary code to the list of code
-void DlgCompiler::addCode (const string &cde, int idx)
+void DlgCompiler::addCode (const std::string &cde, int idx)
 {
     // see if code like this already exists
-    for (vector<string>::iterator i = code.begin (); i != code.end (); i++)
+    for (std::vector<std::string>::iterator i = code.begin (); i != code.end (); i++)
         if (strcmp ((*i).c_str (), cde.c_str ()) == 0)
         {
             codeTable[idx] = distance (code.begin (), i);
@@ -383,7 +383,7 @@ int DlgCompiler::checkFollowers (DlgCircle *circle)
     if (child == NULL) return 1;
     
     node_type type = child->type ();
-    string error;
+    std::string error;
     
     // make sure that the followers are consistent
     for (; child != NULL; child = circle->child (NEXT))
@@ -417,7 +417,7 @@ bool DlgCompiler::checkConditions (DlgCircle *circle)
     DlgCircle *child = circle->child (FIRST);
     if (child == NULL) return true;
     
-    string error = "";
+    std::string error = "";
     bool retval = true;
     
     // get keyword of first child
@@ -453,7 +453,7 @@ bool DlgCompiler::checkConditions (DlgCircle *circle)
 }
 
 // get the keyword the statement begins with
-keyword DlgCompiler::getKeyword (const string &statement)
+keyword DlgCompiler::getKeyword (const std::string &statement)
 {
     if (strncmp ("if ", statement.c_str (), 3) == 0)
         return IF;

@@ -45,8 +45,8 @@ DlgNode* DlgNode::prev (query_type pos, int offset)
 }
 
 // Get a node from the specified list
-DlgNode* DlgNode::getNode (list<DlgNode*>::iterator &it, 
-    list<DlgNode*> &lst, query_type &pos, int &offset)
+DlgNode* DlgNode::getNode (std::list<DlgNode*>::iterator &it, 
+        std::list<DlgNode*> &lst, query_type &pos, int &offset)
 { 
     switch (pos)
     {
@@ -96,7 +96,7 @@ DlgNode* DlgNode::getNode (list<DlgNode*>::iterator &it,
 // add node to list of followers
 void DlgNode::addNext (DlgNode *node)
 {
-    list<DlgNode*>::iterator i = next_.begin ();
+    std::list<DlgNode*>::iterator i = next_.begin ();
     DlgRect *cmp1, *cmp2 = node->type () == LINK ? node->next (FIRST) : node;
      
     // search the proper place for insertion
@@ -114,7 +114,7 @@ void DlgNode::addNext (DlgNode *node)
 // add node to list of precedessors
 void DlgNode::addPrev (DlgNode *node)
 {
-    list<DlgNode*>::iterator i = prev_.begin ();
+    std::list<DlgNode*>::iterator i = prev_.begin ();
     DlgRect *cmp1, *cmp2 = node->type () == LINK ? node->prev (FIRST) : node;
      
     // search the proper place for insertion

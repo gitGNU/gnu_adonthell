@@ -104,7 +104,7 @@ void GuiMessages::display (int id, const char* text)
 {
     if (id == current) return;
     
-    string message (messages[id]);
+    std::string message (messages[id]);
     unsigned int pos = message.find ("%s");
     
     // insert text into the message

@@ -65,7 +65,7 @@ public:
      * @return <b>true</b> if loading was successful, <b>false</b>
      *         otherwise.
      */
-    bool load (vector<DlgNode*> &nodes);
+    bool load (std::vector<DlgNode*> &nodes);
 
     /**
      * save an Arrow to a file

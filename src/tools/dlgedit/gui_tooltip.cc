@@ -28,7 +28,7 @@ GuiTooltip::GuiTooltip (DlgNode *n)
 {
     GtkWidget *frame;
     GtkWidget *tip;
-    string text;
+    std::string text;
 
     // the actual tooltip
     tooltip = gtk_window_new (GTK_WINDOW_POPUP);

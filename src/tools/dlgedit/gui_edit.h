@@ -47,13 +47,13 @@ public:
      * Set the text of the widget
      * @param text to display in the entry
      */
-    void setText (const string &text);
+    void setText (const std::string &text);
 
     /**
      * Retrieve the text of the widget
      * @return text contained in the widget.
      */
-    string getText ();
+    std::string getText ();
 
 private:
     GtkWidget *entry;          // The GtkText widget
