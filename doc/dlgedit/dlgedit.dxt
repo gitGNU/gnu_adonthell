@@ -12,12 +12,36 @@
    See the COPYING file for more details.
 */
 
+
+/*! \mainpage The Adonthell Dialogue Editor
+
+This document is a part of the Adonthell Developer's Reference. It
+describes the usage of the dialogue editor and gives a few hints
+for writing well designed dialogues.
+
+<h2>Contents</h2>
+
+-# \ref page1 
+-# \ref page2 
+    -# \ref sec21 
+    -# \ref sec22 
+    -# \ref sec23 
+-# \ref page3
+    -# \ref sec31
+    -# \ref sec32
+    -# \ref sec33
+    -# \ref sec34
+    -# \ref sec35
+-# \ref page4
+
+*/
+
 /*! \page page1 Understanding the Dialogue Engine
 
 Before we start designing our first dialogues, it might be
 wise to have a look at the concept of the dialogue engine.
 Once you understand the basic rules, it will help you to
-avoid errors.A dialogue consists of a number of Narrator,
+avoid errors. A dialogue consists of a number of Narrator,
 NPC and Player lines, arranged in a certain order. The rules
 for this are as follows:
 
@@ -49,6 +73,15 @@ These 11 points cover most of the Dialogue System's functionality
 and should give you an idea what you can do with it, and
 what you can't. To get you going now, it's time for a brief
 tutorial.
+
+\htmlonly
+<hr>
+<center>
+&lt;&lt; <a href="index.html">Main Page</a> &nbsp; 
+<a href="index.html">Contents</a> &nbsp;
+<a href="page2.html">An Example</a> &gt;&gt;
+</center>
+\endhtmlonly
 
 */
 
@@ -209,6 +242,15 @@ are doing, you can edit this file afterwards. But usually,
 you should do any editing in the editor only. For a description
 of the commands refer to the Python Documentation (http://www.python.org). 
 
+\htmlonly
+<hr>
+<center>
+&lt;&lt; <a href="page1.html">Understanding the Dialogue Engine</a> &nbsp; 
+<a href="index.html">Contents</a> &nbsp;
+<a href="page3.html">The Dialogue Editor</a> &gt;&gt;
+</center>
+\endhtmlonly
+
 */
 
 /*! \page page3 The Dialogue Editor
@@ -237,6 +279,7 @@ The actions taken when a mouse- or keypress occurs depend
 on the current selection (none, circle, arrow) and the position
 of the cursor. The table below shows all possible constellations:
 
+<center>
 <table>
   <tr>
     <td>\b Left-click </td>
@@ -262,10 +305,15 @@ of the cursor. The table below shows all possible constellations:
     <td>Add Arrow as indirect Link</td>
     <td>-</td>
   </tr>
-</table>
-<table>
+\htmlonly
+  <tr><td colspan="4"></td></tr>
+\endhtmlonly
   <tr>
-    <td>\b Middle-click </td>
+    <td>
+\latexonly
+\hline\hline
+\endlatexonly
+    \b Middle-click </td>
     <td>\e Nothing \e selected </td>
     <td>\e Circle \e selected </td>
     <td>\e Arrow \e selected </td>
@@ -288,10 +336,15 @@ of the cursor. The table below shows all possible constellations:
     <td>Edit selected Circle</td>
     <td>-</td>
   </tr>
-</table>
-<table>
+\htmlonly
+  <tr><td colspan="4"></td></tr>
+\endhtmlonly
   <tr>
-    <td>\b Right-click </td>
+    <td>
+\latexonly
+\hline\hline
+\endlatexonly
+    \b Right-click </td>
     <td>\e Nothing \e selected </td>
     <td>\e Circle \e selected </td>
     <td>\e Arrow \e selected </td>
@@ -314,10 +367,15 @@ of the cursor. The table below shows all possible constellations:
     <td>Deselect Arrow </td>
     <td>Deselect Arrow </td>
   </tr>
-</table>
-<table>
+\htmlonly
+  <tr><td colspan="4"></td></tr>
+\endhtmlonly
   <tr>
-    <td>\b Return </td>
+    <td>
+\latexonly
+\hline\hline
+\endlatexonly
+    \b Return </td>
     <td>\e Nothing \e selected </td>
     <td>\e Circle \e selected </td>
     <td>\e Arrow \e selected </td>
@@ -328,10 +386,15 @@ of the cursor. The table below shows all possible constellations:
     <td>Edit Circle</td>
     <td>-</td>
   </tr>
-</table>
-<table>
+\htmlonly
+  <tr><td colspan="4"></td></tr>
+\endhtmlonly
   <tr>
-    <td>\b Del </td>
+    <td>
+\latexonly
+\hline\hline
+\endlatexonly
+    \b Del </td>
     <td>\e Nothing \e selected </td>
     <td>\e Circle \e selected </td>
     <td>\e Arrow \e selected </td>
@@ -342,10 +405,15 @@ of the cursor. The table below shows all possible constellations:
     <td>Delete Circle and its Links</td>
     <td>Delete Arrow</td>
   </tr>
-</table>
-<table>
+\htmlonly
+  <tr><td colspan="4"></td></tr>
+\endhtmlonly
   <tr>
-    <td>\b Esc </td>
+    <td>
+\latexonly
+\hline\hline
+\endlatexonly
+    \b Esc </td>
     <td>\e Nothing \e selected </td>
     <td>\e Circle \e selected </td>
     <td>\e Arrow \e selected </td>
@@ -357,6 +425,7 @@ of the cursor. The table below shows all possible constellations:
     <td>Deselect Arrow</td>
   </tr>
 </table>
+</center>
 
 \par
 Further key-commands are c, which centers the view on the
@@ -696,6 +765,15 @@ the global variable the_player always points to the player
 character and the_npc to the npc the dialogue is assigned
 to.
 
+\htmlonly
+<hr>
+<center>
+&lt;&lt; <a href="page2.html">An Example</a> &nbsp; 
+<a href="index.html">Contents</a> &nbsp;
+<a href="page4.html">A Guideline for writing Dialogues</a> &gt;&gt;
+</center>
+\endhtmlonly
+
 */
 
 
@@ -755,9 +833,17 @@ situations.
 Since there is only limited space in the game's dialogue window,
 you should limit the amount of text displayed a time. NPC
 text should fit entirely into the window, meaning it should
-not exceed 4 lines in the \ref edit "edit window". Longer text 
+not exceed 4 lines in the \ref sec32 "edit window". Longer text 
 can be distributed over several nodes. Player text should
 take a single line, 2 at most, so that several choices
 fit into the dialogue window.
+
+\htmlonly
+<hr>
+<center>
+&lt;&lt; <a href="index.html">The Dialogue Editor</a> &nbsp; 
+<a href="index.html">Contents</a> &nbsp;
+</center>
+\endhtmlonly
 
 */

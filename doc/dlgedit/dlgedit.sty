@@ -48,6 +48,7 @@
 \newlength{\tmplength}
 \newenvironment{TabularC}[1]
 {
+\setlength{\arrayrulewidth}{0.1pt}
 \setlength{\tmplength}
      {\linewidth/(#1)-\tabcolsep*2-\arrayrulewidth*(#1+1)/(#1)}
       \par\begin{tabular*}{\linewidth}

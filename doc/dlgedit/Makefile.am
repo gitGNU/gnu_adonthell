@@ -5,7 +5,7 @@ EXTRA_DIST = dlgedit.tex dlgedit.cfg dlgedit.dxt dlgedit.sty \
 	dlgedit_edit.png dlgedit_main.eps dlgedit_main.png \
 	dlgedit_run.eps dlgedit_run.png step1.eps step1.png \
 	step2.eps step2.png step3.eps step3.png step4.eps \
-	step4.png
+	step4.png header.html footer.html
 
 if BUILD_DOC
 all:
