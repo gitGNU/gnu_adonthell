@@ -12,10 +12,10 @@
    See the COPYING file for more details.
 */
 
-#ifndef __GAMETIME_H__
-#define __GAMETIME_H__
+#ifndef GAMETIME_H_
+#define GAMETIME_H_
 
-#include "types.h"
+#include "event.h"
 
 
 /** The %game slow down if there are more than FTD_LIMIT numbers of frames
@@ -77,4 +77,25 @@ private:
 
 };
 
-#endif // __GAMETIME_H__
+// To notify at a certain time
+class time_event : public event
+{
+public:
+    time_event ();
+    void save (ogzstream&) const;                         // Save event data
+
+    u_int8 minute;                              // 0 - 59
+    u_int8 m_step;                              // 0, 1, 2, ...
+    u_int8 hour;                                // 0 - 23
+    u_int8 h_step;                              // 0, 1, 2, ...
+    u_int8 day;                                 // 0 - 27
+    u_int8 d_step;                              // 0, 1, 2, ...
+    u_int32 time;                               // the actual gametime in minutes
+
+protected:
+    void execute (event& e);                      // Run the event's script
+    bool equals (event&);                       // Compare two events
+    void load (igzstream&);                         // Load event data
+};
+
+#endif // GAMETIME_H_

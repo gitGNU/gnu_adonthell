@@ -59,6 +59,14 @@ public:
      */ 
     ~mapview ();
  
+    /**
+     * Attach/Detach a map
+     * 
+     */
+
+    //@{
+
+
     /** 
      * Sets which map this mapview will display.
      * 
@@ -71,7 +79,17 @@ public:
      * 
      */
     void detach_map ();
+ 
+    //@}
 
+
+    /**
+     * Position settings
+     * 
+     */
+
+    //@{
+    
     /** 
      * Sets the position of the top-left corner of the mapview on the map.
      *
@@ -101,6 +119,80 @@ public:
      */ 
     s_int8 center_on (u_int16 sm, u_int16 x, u_int16 y, s_int16 ox = 0, s_int16 oy = 0);
 
+    //@}
+
+
+    /**
+     * Position information
+     * 
+     */
+
+    //@{
+    
+    /** 
+     * Returns the submap this mapview is displaying.
+     * 
+     * 
+     * @return current submap this mapview is displaying.
+     */
+    u_int16 currentsubmap ()
+    {
+        return currentsubmap_;
+    }
+    
+    /** 
+     * Returns the X position of the mapview.
+     * 
+     * 
+     * @return X position of the mapview.
+     */
+    u_int16 posx () const
+    {
+        return posx_;
+    }
+    
+    /** 
+     * Returns the Y position of the mapview.
+     * 
+     * 
+     * @return Y position of the mapview.
+     */
+    u_int16 posy () const
+    {
+        return posy_;
+    }
+
+    /** 
+     * Returns the X offset of the mapview.
+     * 
+     * 
+     * @return X offset of the mapview.
+     */
+    u_int16 offx () const
+    {
+        return offx_;
+    }
+    
+    /** 
+     * Returns the Y offset of the mapview.
+     * 
+     * 
+     * @return Y offset of the mapview.
+     */
+    u_int16 offy () const
+    {
+        return offy_;
+    }
+
+    //@}
+    
+    /**
+     * Basic movment
+     * 
+     */
+
+    //@{
+    
     /** 
      * Returns whether it is possible to scroll to right. A scrolling is impossible
      * if the mapview is at the map limits.
@@ -175,69 +267,16 @@ public:
      */
     void scroll_up ();
 
-    /** 
-     * Returns the submap this mapview is displaying.
-     * 
-     * 
-     * @return current submap this mapview is displaying.
-     */
-    u_int16 currentsubmap ()
-    {
-        return currentsubmap_;
-    }
+    //@}
     
-    /** 
-     * Returns the X position of the mapview.
+
+    /**
+     * State saving/loading
      * 
-     * 
-     * @return X position of the mapview.
-     */
-    u_int16 posx () const
-    {
-        return posx_;
-    }
+     */ 
     
-    /** 
-     * Returns the Y position of the mapview.
-     * 
-     * 
-     * @return Y position of the mapview.
-     */
-    u_int16 posy () const
-    {
-        return posy_;
-    }
-
-    /** 
-     * Returns the X offset of the mapview.
-     * 
-     * 
-     * @return X offset of the mapview.
-     */
-    u_int16 offx () const
-    {
-        return offx_;
-    }
+    //@{
     
-    /** 
-     * Returns the Y offset of the mapview.
-     * 
-     * 
-     * @return Y offset of the mapview.
-     */
-    u_int16 offy () const
-    {
-        return offy_;
-    }
-
-    /** 
-     * Resize the mapview. The parameters are given in pixels.
-     * 
-     * @param l new length.
-     * @param h new height.
-     */
-    void resize (u_int16 l, u_int16 h);
-
     /** 
      * Restore the mapview's state from an opened file.
      * 
@@ -256,6 +295,15 @@ public:
      */ 
     s_int8 put_state (ogzstream& file);
 
+    //@}
+    
+    /** 
+     * Resize the mapview. The parameters are given in pixels.
+     * 
+     * @param l new length.
+     * @param h new height.
+     */
+    void resize (u_int16 l, u_int16 h); 
     
     /** 
      * Assign a schedule to the mapview.

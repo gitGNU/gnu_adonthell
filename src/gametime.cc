@@ -48,7 +48,7 @@ void gametime::tick (u_int32 val)
 
         time_event t;
         t.time = time;
-        event_handler::raise_event (&t);
+        event_handler::raise_event (t);
     }
 }
 
@@ -72,4 +72,95 @@ void gametime::update ()
     ftd = timer2 / CYCLE_LENGTH;
     if (ftd > FTD_LIMIT)
         ftd = FTD_LIMIT;
+}
+
+time_event::time_event ()
+{
+    time =minute = hour = day =  0;
+    m_step = h_step = d_step = 1;
+    type = TIME_EVENT;
+}
+
+// Save a time_event to file
+void time_event::save (ogzstream& out) const
+{
+    type >> out;
+    minute >> out;
+    m_step >> out;
+    hour >> out;
+    h_step >> out;
+    day >> out;
+    d_step >> out;
+    script_file () >> out;
+}
+
+// Load a time event from file
+void time_event::load (igzstream& f)
+{
+    string s; 
+    minute << f;
+    m_step << f;
+    hour << f;
+    h_step << f;
+    day << f;
+    d_step << f;
+    s << f;
+    set_script (s); 
+}
+
+// Execute time event's script
+void time_event::execute (event &e)
+{
+    time_event t = (time_event&) e; 
+    // Build the event script's local namespace
+    PyObject *locals = Py_BuildValue ("{s:i,s:i,s:i}", "minute", (int) t.minute, 
+        "hour", (int) t.hour, "day", (int) t.day);
+    script.set_locals (locals);
+    script.run ();
+    script.set_locals (NULL); 
+    // Cleanup
+    Py_DECREF (locals);
+#ifdef _DEBUG_
+    show_traceback ();
+#endif // _DEBUG_
+}
+
+// Check whether this time_even matches a given gametime
+bool time_event::equals (event &e)
+{
+    time_event t = (time_event &) e;
+    u_int32 time = t.time % 40320;
+    u_int32 d, h, m = time % 60;
+    
+    if (m_step != 0) {
+        if ((m - minute) % m_step != 0 || m < minute) return 0;
+    }
+    else
+        if (m != minute) return 0;
+
+    // this is the current hour
+    h = ((time - m) % 1440) / 60;
+
+    if (h_step != 0) {
+        if ((h - hour) % h_step != 0 || h < hour) return 0;
+    }
+    else
+        if (h != hour) return 0;
+         
+    // this is the current day
+    d = (time - (m + h * 60)) / 1440;
+    
+    if (d_step != 0) {
+        if ((d - day) % d_step != 0 || d < day) return 0; 
+    }
+    else
+        if (d != day) return 0;
+
+    // if the event matches, we set the actual minute, hour and day,
+    // in case it is needed in the script
+    t.minute = m;
+    t.hour = h;
+    t.day = d;
+    
+    return 1;
 }

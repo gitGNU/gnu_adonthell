@@ -38,8 +38,116 @@
 
 
 class mapview;
-class mapcharacter;
-class mapobject;
+
+
+/**
+ * Baseclass for map enter/leave events.
+ * The event will be launched if all the members data matches.
+ *
+ */ 
+class base_map_event : public event
+{
+public:
+    /**
+     * Default constructor.
+     * 
+     */ 
+    base_map_event ();
+
+    void save (ogzstream&) const;
+
+    void load (igzstream&);
+
+    /**
+     * Submap index (-1 for any).
+     * 
+     */
+    s_int32 submap;
+
+    /**
+     * X position (-1 for any).
+     * 
+     */
+    s_int32 x;
+
+    /**
+     * Y position (-1 for any).
+     * 
+     */
+    s_int32 y;
+
+    /**
+     * Direction where the character is looking (-1 for any).
+     * 
+     */ 
+    s_int8 dir;
+
+    /**
+     * Useless (for now).
+     * 
+     */ 
+    s_int32 map;
+
+    /**
+     * Pointer to the mapcharacter that can launch this event (-1 for any).
+     * 
+     */ 
+    mapcharacter *c;
+
+protected:
+
+    void execute (event& e);
+    bool equals (event& ev);
+
+#ifndef SWIG
+    friend class event_list;
+#endif
+};
+
+
+
+/**
+ * To notify when a character entered a mapsquare.
+ *
+ */ 
+class enter_event : public base_map_event
+{
+public:
+    /**
+     * Default constructor.
+     * 
+     */ 
+    enter_event ();
+};
+
+
+
+/**
+ * To notify when a mapcharacter entered a mapsquare.
+ *
+ */ 
+class leave_event : public base_map_event
+{
+public:
+    /**
+     * Default constructor.
+     * 
+     */ 
+    leave_event ();
+};
+
+
+
+/**
+ * event_list able to load and save map events.
+ * 
+ */ 
+class map_event_list : public event_list
+{
+public:
+    void save (ogzstream& out) const;
+    void load (igzstream& in);
+}; 
 
 
 /**
@@ -57,7 +165,7 @@ class mapobject;
  * when you don't need them anymore.
  *
  */
-class landmap : public event_list
+class landmap : public map_event_list
 {
  public: 
     /**
@@ -245,6 +353,33 @@ class landmap : public event_list
 
     //@}
     
+
+    /**
+     * @name State loading/saving methods.
+     * 
+     */
+
+    //@{
+
+    /** 
+     * Restore the landmap's state from an opened file.
+     * 
+     * @param file the opened file from which to load the state.
+     * 
+     * @return 0 in case of success, error code otherwise.
+     */
+    s_int8 get_state (igzstream& file);
+
+    /** 
+     * Saves the landmap's state into an opened file.
+     * 
+     * @param file the opened file where to the state.
+     * 
+     * @return 0 in case of success, error code otherwise.
+     */
+    s_int8 put_state (ogzstream& file) const;
+
+    //@}
 
     /**
      * @name Landmap modification

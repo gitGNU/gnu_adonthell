@@ -1,7 +1,7 @@
 /*
    $Id$
 
-   Copyright (C) 2000 Kai Sterker <kaisterker@linuxgames.com>
+   Copyright (C) 2000/2001 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -12,30 +12,37 @@
    See the COPYING file for more details.
 */
 
-#ifndef __EVENT_H__
-#define __EVENT_H__
 
+/**
+ * @file   event.h
+ * @author Kai Sterker <kaisterker@linuxgames.com>
+ * 
+ * @brief  Declares the event_list, event and event_handler class.
+ * 
+ * 
+ */
+ 
+
+#ifndef EVENT_H_
+#define EVENT_H_
+
+#include <vector> 
+#include "fileops.h" 
+#include "py_script.h"
+
+/**
+ * Directory where events scripts resides.
+ * 
+ */ 
 #define EVENTS_DIR "scripts/events/"
 
-#include "fileops.h"
-#include <vector>
-#include <zlib.h>
-
-#ifdef USE_PYTHON
-#include "Python.h"
-#include "compile.h"
-#endif
-
-#include "types.h"
-
-
-#ifndef SWIG
-using namespace std; 
-#endif
 
 class event_handler;
-class mapcharacter;
 
+/**
+ * Events types.
+ * 
+ */ 
 enum
 {
     ENTER_EVENT = 0,                            // Characters reach a new tile
@@ -44,120 +51,170 @@ enum
     MAX_EVENT = 3
 };
 
-// Baseclass for event data
+/**
+ * Base class for events. You can create your own events types that can
+ * be handled by the event handler by making them inherit from this class.
+ * 
+ */ 
 class event
 {
-friend class event_handler;
-
 public:
-    string script_file;                          // Filename of the event script
-    virtual void save (ogzstream&) = 0;             // save the event data
-    virtual ~event ();
+
+    /** 
+     * Destructor.
+     *  
+     */ 
+     virtual ~event ();
+
+    /** 
+     * Returns the file name of the event's script.
+     * 
+     * 
+     * @return file name of the script.
+     */
+    string script_file () const
+    {
+        return script.script_file ();
+    }
     
-// Don't grant direct access to these: only event_handler may set/modify
-// event type or script (for safety reasons)
+    /** 
+     * Save the event to a file.
+     * 
+     * @param out file where to save the event.
+     */ 
+    virtual void save (ogzstream& out) const = 0;
+    
+    /** 
+     * Loads an event from a file.
+     * 
+     * @param in file to load the event from.
+     */
+    virtual void load (igzstream& in) = 0;
+
+    /** 
+     * Sets the script for an event.
+     * 
+     * @param filename filename of the script to set.
+     */
+    void set_script (string filename);
+    
 protected:
-    u_int8 type;                                // event type -> see enum above
-    PyCodeObject *script;                       // precompiled script
+    /**
+     * Event type - see enum above.
+     * 
+     */ 
+    u_int8 type;
 
-    virtual void execute (event*) = 0;          // execute the script
-    virtual bool equals (event*) = 0;           // compare two events for equality
-    virtual void load (igzstream&) = 0;             // load the event data
-};
+    /**
+     * Script object.
+     * 
+     */
+    py_script script; 
 
-#if defined(USE_MAP)
-// Baseclass for enter/leave events
-class base_map_event : public event
-{
-public:
-    void save (ogzstream&);                         // Save event data
+    /**
+     * Execute the script.
+     * 
+     */ 
+    virtual void execute (event& e) = 0;
 
-    s_int32 submap;                              // submap
-    s_int32 x;                                  // x coordinate
-    s_int32 y;                                  // y coordinate
-    s_int8 dir;                                 // walking direction
-    s_int32 map;                                // map
-    mapcharacter *c;                            // character triggering the event
-    base_map_event ();
-
-protected:
-
-    void execute (event*);                      // Run the event's script
-    bool equals (event*);                       // Compare two events
-    void load (igzstream&);                         // Load event data
-
-    friend class event_list;
-};
-
-// To notify when a character entered a maptile
-class enter_event : public base_map_event
-{
-public:
-    enter_event ();
-};
-
-// To notify when a character entered a maptile
-class leave_event : public base_map_event
-{
-public:
-    leave_event ();
-};
+    /** 
+     * Compare two events for equality.
+     * 
+     * @param ev pointer to the event to compare with.
+     * 
+     * @return \e true if the events are equal, \e false otherwise.
+     */
+    virtual bool equals (event& ev) = 0;
+    
+#ifndef SWIG
+    friend class event_handler;
 #endif
-
-// To notify at a certain time
-class time_event : public event
-{
-public:
-    time_event ();
-    void save (ogzstream&);                         // Save event data
-
-    u_int8 minute;                              // 0 - 59
-    u_int8 m_step;                              // 0, 1, 2, ...
-    u_int8 hour;                                // 0 - 23
-    u_int8 h_step;                              // 0, 1, 2, ...
-    u_int8 day;                                 // 0 - 27
-    u_int8 d_step;                              // 0, 1, 2, ...
-    u_int32 time;                               // the actual gametime in minutes
-
-protected:
-    void execute (event*);                      // Run the event's script
-    bool equals (event*);                       // Compare two events
-    void load (igzstream&);                         // Load event data
+    
 };
 
-// Base class for objects that want to register events
+/**
+ *Base class for objects that want to register events
+ *
+ */ 
 class event_list
 {
 public:
-    ~event_list ();                             // Unregister all events
+    /**
+     * Destructor - unregisters and delete all event owned by this list.
+     * 
+     */ 
+    virtual ~event_list ();
 
+    /**
+     * Unregisters and delete all event owned by this list.
+     * 
+     */ 
+    void clear ();
+
+    /** 
+     * Adds an event to this list. The event will be
+     * registered into the event_handler and the list will then
+     * be responsible for it's deletion.
+     * 
+     * @param ev pointer to the event to add.
+     */
     void add_event (event* ev);
-#if defined(USE_MAP)
-    void add_map_event(string script, u_int16 type, s_int32 esubmap=-1,
-		       s_int32 ex=-1,s_int32 ey=-1, s_int16 edir=-1, 
-		       mapcharacter * ec=NULL);
-#endif
-    vector<event*> events;                      // List of registered events
+
+    /** 
+     * Save the event_list to a file.
+     * 
+     * @param out file where to save the event_list.
+     */ 
+    virtual void save (ogzstream& out) const = 0;
+    
+    /** 
+     * Loads the event_list from a file and registers all loaded events.
+     * 
+     * @param in file to load the event_list from.
+     */
+    virtual void load (igzstream& in) = 0;
+
 protected:
+    /**
+     * List of events.
+     * 
+     */ 
+    mutable vector<event*> events;
 };
 
-// Keeps track of registered scripts, recieves triggered events 
-// and executes scripts handling those events
+/**
+ * Keeps track of registered scripts, recieves triggered events 
+ * and executes scripts handling those events
+ *
+ */ 
 class event_handler
 {
 public:
-    static void register_event (event*, string); // register an event
-    static void remove_event (event*);          // unregister an event
-    static void raise_event (event*);           // event triggered
+    /** 
+     * Registers an event.
+     * 
+     * @param ev pointer to the event to register.
+     */
+    static void register_event (event* ev);
 
-    static s_int8 get_state(igzstream& file);         // Save and Load event handler state
-    static s_int8 put_state(ogzstream& file);
+    /** 
+     * Unregister an event.
+     * 
+     * @param event* pointer to the event to unregister.
+     */
+    static void remove_event (event* ev);
 
-#ifndef SWIG
-    static event* load_event (igzstream&, bool=true);// load an event
+    /** 
+     * Check if an event corresponding to ev exists, and execute it. 
+     * 
+     * @param ev event to raise.
+     */
+    static void raise_event (event& ev);
+    
 private:
+#ifndef SWIG
     static vector<event*> handlers[MAX_EVENT];  // registered events storage
 #endif
 };
 
-#endif // __EVENT__H_
+#endif // EVENT_H_

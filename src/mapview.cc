@@ -23,9 +23,7 @@
  */
 
 
-#include <iostream>
 #include "mapview.h"
-#include "landmap.h"
 
 
 mapview::mapview () : da () 

@@ -1,7 +1,7 @@
 /*
    $Id$
    
-   Copyright (C) 2000 Kai Sterker <kaisterker@linuxgames.com>
+   Copyright (C) 2000/2001 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -15,16 +15,17 @@
 #include "character.h"
 
 character::character()
+#ifdef USE_MAP
+ : mapcharacter ()
+#else
+ : character_base ()
+#endif
 {
-#if defined(USE_PYTHON)
   locals=PyDict_New();
   PyDict_SetItemString(locals,"myself",pass_instance(this,"character"));
-#endif
 }
 
 character::~character()
 {
-#if defined(USE_PYTHON)
   Py_DECREF(locals);
-#endif
 }

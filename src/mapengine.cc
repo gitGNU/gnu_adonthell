@@ -26,7 +26,6 @@ mapengine::mapengine ()
 
 mapengine::~mapengine ()
 {
-    lmap.clear (); 
     win_manager::destroy ();
 }
 
@@ -79,6 +78,9 @@ s_int8 mapengine::get_state (igzstream& file)
     t << file; 
     load_map (t);
 
+    // Load the map state (events)
+    lmap.get_state (file); 
+
     // Load the mapcharacters
     nbr_of << file; 
 
@@ -102,6 +104,9 @@ s_int8 mapengine::put_state (ogzstream& file)
     // Save the map filename
     string t = lmap.filename ();
     t >> file; 
+
+    // Save the map state (events)
+    lmap.put_state (file); 
 
     // Save the mapcharacters and their status
     nbr_of = lmap.nbr_of_mapcharacters ();

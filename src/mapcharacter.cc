@@ -698,7 +698,7 @@ void mapcharacter::update_move ()
                     evt.x = posx ();
                     evt.y = posy ();
                     evt.c = this;
-                    event_handler::raise_event (&evt);
+                    event_handler::raise_event (evt);
                 }
                 break;
             case WALK_SOUTH:
@@ -729,7 +729,7 @@ void mapcharacter::update_move ()
                         evt.x = posx ();
                         evt.y = posy ();
                         evt.c = this;
-                        event_handler::raise_event (&evt);
+                        event_handler::raise_event (evt);
                     }
                 }
                 break;
@@ -758,7 +758,7 @@ void mapcharacter::update_move ()
                     evt.x = posx ();
                     evt.y = posy ();
                     evt.c = this;
-                    event_handler::raise_event (&evt);
+                    event_handler::raise_event (evt);
                 }
                 break;
             case WALK_EAST:
@@ -788,7 +788,7 @@ void mapcharacter::update_move ()
                         evt.x = posx ();
                         evt.y = posy ();
                         evt.c = this;
-                        event_handler::raise_event (&evt);
+                        event_handler::raise_event (evt);
                     }
                 }
                 break;

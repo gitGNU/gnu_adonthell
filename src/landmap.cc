@@ -19,14 +19,140 @@
  */
 
 
-
 #include "landmap.h"
 
 
 using namespace std; 
 
 
-landmap::landmap () : event_list () 
+
+enter_event::enter_event () : base_map_event ()
+{
+    type = ENTER_EVENT; 
+}
+
+leave_event::leave_event () : base_map_event ()
+{
+    type = LEAVE_EVENT; 
+}
+
+base_map_event::base_map_event ()
+{
+    submap = x = y = dir = map = -1;
+    c = NULL;
+}
+
+// compare two enter events
+bool base_map_event::equals (event &e)
+{
+    // we know that we've got an enter_event :)
+    base_map_event tmp = (base_map_event &) e;
+
+    if (submap != -1 && tmp.submap != submap) return false;
+    if (x != -1 && tmp.x != x) return false;
+    if (y != -1 && tmp.y != y) return false;
+    if (dir != -1 && tmp.dir != dir) return false;
+    if (map != -1 && tmp.map != map) return false;
+    if (c && tmp.c != c) return false;
+
+    return true;
+}
+
+// Execute enter event's script
+void base_map_event::execute (event& e)
+{
+    base_map_event t = (base_map_event&) e; 
+    // Build the event script's local namespace
+    PyObject *locals = Py_BuildValue ("{s:i,s:i,s:i,s:i,s:s}", "posx", t.x, 
+        "posy", t.y, "dir", t.dir, "map", t.map, "name", t.c->get_name().c_str ());
+
+    // Execute script
+    script.set_locals (locals); 
+    script.run ();
+    script.set_locals (NULL);
+    
+    // Cleanup
+    Py_DECREF (locals);
+
+#ifdef _DEBUG_
+    show_traceback ();
+#endif
+}
+
+// Load a enter event from file
+void base_map_event::load (igzstream& f)
+{
+    string name;
+    string s; 
+    
+    x << f;
+    y << f;
+    dir << f;
+    map << f;
+
+    s << f;
+    if (s != "") 
+        c = (mapcharacter*) (character *) data::characters.get (s.c_str ());
+    else c = NULL; 
+    
+    s << f;
+    set_script (s); 
+}
+
+// Save enter_event to file
+void base_map_event::save (ogzstream& out) const
+{
+    type >> out;
+    x >> out;
+    y >> out;
+    dir >> out;
+    map >> out;
+    if (c)
+        c->get_name () >> out;
+    else 
+    {
+        string s = ""; 
+        s >> out;
+    }
+    
+    script_file () >> out; 
+}  
+
+void map_event_list::save (ogzstream& out) const
+{
+    vector <event *>::iterator i;
+    u_int32 nbr_events = events.size ();
+    nbr_events >> out; 
+    for (i = events.begin (); i != events.end (); i++)
+        (*i)->save (out); 
+}
+
+void map_event_list::load (igzstream& in)
+{
+    u_int32 nbr_events; 
+    nbr_events << in;
+    while (nbr_events) 
+    {
+        event * e; 
+        u_int8 t;
+        t << in;
+        switch (t) 
+        {
+            case ENTER_EVENT:
+                e = new enter_event;
+                e->load (in);
+                break;
+            case LEAVE_EVENT:
+                e = new leave_event;
+                e->load (in);
+                break;
+        }
+        add_event (e);
+        nbr_events--; 
+    }
+}
+
+landmap::landmap () : map_event_list () 
 {
 }
 
@@ -37,6 +163,9 @@ landmap::~landmap ()
 
 void landmap::clear () 
 {
+    // Clear all events
+    map_event_list::clear (); 
+    
     // Remove all mapcharacters from this map.
     vector <mapcharacter *>::iterator ic;
     for (ic = mapchar.begin (); ic != mapchar.end (); ic++)
@@ -201,6 +330,18 @@ s_int8 landmap::save (string fname)
     file.close (); 
     filename_ = fname;
     return retvalue;
+}
+
+s_int8 landmap::get_state (igzstream& file)
+{
+    map_event_list::load (file); 
+    return 0; 
+}
+
+s_int8 landmap::put_state (ogzstream& file) const
+{
+    map_event_list::save (file); 
+    return 0; 
 }
 
 s_int8 landmap::insert_mapobject (mapobject * an, u_int16 pos,
