@@ -96,7 +96,7 @@ class window
 #define WIN_VBORDER_HEIGHT 1
 #define WIN_BACK_LENGHT 70
 #define WIN_BACK_HEIGHT 70
-#define WIN_BACK_TRANS 180
+#define WIN_BACK_TRANS 75
 
 #define WIN_FONT_HEIGHT 8
 #define WIN_FONT_LENGHT 7
