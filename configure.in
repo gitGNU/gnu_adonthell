@@ -225,7 +225,7 @@ if test x$pylibs = xnone; then
 
    if test x$haveldd != x ; then
        changequote(<<, >>)
-       py_deps=`ldd $PYPACKAGE | sed 's/\( *lib\([^\/]*\)\.so.*=.*$\)/-l\2/p; d' | grep -v 'stdc++'`
+       py_deps=`ldd $PYPACKAGE | sed 's/\( *.*lib\([^\/]*\)\.so.*=.*$\)/-l\2/p; d' | grep -v 'stdc++'`
        for py_lib in $py_deps ; do
          if test "$py_lib" != "-lm" && test "$py_lib" != "-lc" ; then
             PY_DEPS="$PY_DEPS $py_lib"
@@ -453,7 +453,7 @@ echo "Building API doc .......... : $builddoc"
 if test x$memleaks = xyes; then
 echo "Test for Memory Leaks ..... : enabled"
 fi
-if text x$unixinst = xyes; then
+if test x$unixinst = xno; then
     echo "Single Directory install"
 else
     echo "Data directory ............ : $gamedatadir"
