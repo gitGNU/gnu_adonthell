@@ -152,7 +152,16 @@ void surface::put_pix_aux (u_int16 x, u_int16 y, u_int32 col)
             }
             break;
         }
-    }     
+        case 4:
+            *((Uint32 *)(offset)) = (Uint32) col;
+            if (screen::dblmode)
+            {
+                *((Uint32 *) (offset+vis->format->BytesPerPixel)) = (Uint32) col;
+                *((Uint32 *) (offset+vis->pitch)) = (Uint32) col;
+                *((Uint32 *) (offset+vis->pitch+vis->format->BytesPerPixel)) = (Uint32) col;
+            }
+            break;
+    }
     changed = true; 
 }
 
@@ -320,6 +329,15 @@ void surface::put_pix (u_int16 x, u_int16 y, u_int32 col)
             }
             break;
         }
+        case 4:
+            *((Uint32 *)(offset)) = (Uint32) col;
+            if (screen::dblmode)
+            {
+                *((Uint32 *) (offset+vis->format->BytesPerPixel)) = (Uint32) col;
+                *((Uint32 *) (offset+vis->pitch)) = (Uint32) col;
+                *((Uint32 *) (offset+vis->pitch+vis->format->BytesPerPixel)) = (Uint32) col;
+            }
+            break;
     }     
     changed = true; 
 }
@@ -358,6 +376,9 @@ void surface::get_pix (u_int16 x, u_int16 y, u_int32& col) const
             
             break;
         }
+        case 4:
+            col = *((Uint32 *)(offset));
+            break;
     }
 }
  

@@ -27,10 +27,10 @@
 #include "pnm.h"
 
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
-#define R_MASK 0xff000000
-#define G_MASK 0x00ff0000
-#define B_MASK 0x0000ff00
-#define A_MASK 0x000000ff
+#define R_MASK 0x00ff0000
+#define G_MASK 0x0000ff00
+#define B_MASK 0x000000ff
+#define A_MASK 0xff000000
 #else
 #define R_MASK 0x000000ff
 #define G_MASK 0x0000ff00

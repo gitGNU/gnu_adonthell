@@ -130,8 +130,9 @@ int main(int argc, char * argv[])
         myconfig.game_name, myconfig.quick_load); 
 
     // init video subsystem
-    screen::set_video_mode (320, 240, 0, myconfig.double_screen);
-    screen::set_fullscreen (myconfig.screen_mode); 
+    screen::set_video_mode (320, 240, 0, myconfig.double_screen, myconfig.screen_mode);
+
+    printf("%s\n", screen::info().c_str());
      
     // init audio subsystem
     if (myconfig.audio_volume > 0)

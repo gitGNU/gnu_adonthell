@@ -35,15 +35,21 @@ u_int32 screen::trans = 0;
 bool screen::fullscreen_ = false; 
 bool screen::dblmode;
 
-void screen::set_video_mode (u_int16 nl, u_int16 nh, u_int8 depth = 0, bool dbl = false)
+void screen::set_video_mode (u_int16 nl, u_int16 nh, u_int8 depth = 0, bool dbl = false, bool fscreen = false)
 {
     u_int8 bpp;
     u_int32 SDL_flags = SDL_HWSURFACE | SDL_DOUBLEBUF;
     u_int8 emulated = depth; 
     
+    if (fscreen) 
+    {
+        SDL_flags |= SDL_FULLSCREEN;
+        fullscreen_ = true;
+    }
+
     dblmode = dbl;
 
-    if (SDL_Init (SDL_INIT_VIDEO) < 0)
+    if (SDL_Init (SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0)
     {
         fprintf (stderr, "couldn't init display: %s\n", SDL_GetError ());
         exit (1);
@@ -55,7 +61,7 @@ void screen::set_video_mode (u_int16 nl, u_int16 nh, u_int8 depth = 0, bool dbl 
     bpp = SDL_VideoModeOK (nl, nh, depth, SDL_flags);
 
     if ((emulated) && (bpp) && (bpp != depth)) bpp = depth; 
-    
+
     switch (bpp)
     {
         case 0:
@@ -106,7 +112,12 @@ string screen::info ()
     const SDL_VideoInfo * vi = SDL_GetVideoInfo ();
     ostrstream temp; 
 
+    const int driver_name_length = 500;
+    char drv_name[driver_name_length];
+
     temp << "Video information: \n"
+         << "Video driver used:                   " << SDL_VideoDriverName(drv_name, driver_name_length) << endl
+         << "Internal game depth:                 " << bytes_per_pixel_ * 8 << endl
          << "Can create hardware surfaces:        " << (vi->hw_available ? "Yes" : "No") << endl
          << "Window manager available:            " << (vi->wm_available ? "Yes" : "No") << endl
          << "Hardware blits accelerated:          " << (vi->blit_hw ? "Yes" : "No") << endl
@@ -117,6 +128,8 @@ string screen::info ()
          << "Alpha software blits accelerated:    " << (vi->blit_sw_A ? "Yes" : "No") << endl
          << "Color fill blits accelerated:        " << (vi->blit_fill ? "Yes" : "No") << endl
          << "Total video memory available:        " << vi->video_mem << " Kb" << endl 
+         << "Using double size:                   " << (dblmode ? "Yes" : "No") << endl
+         << "Fullscreen:                          " << (fullscreen_ ? "Yes" : "No") << endl
          << ends;
 
     char *s = temp.str ();
