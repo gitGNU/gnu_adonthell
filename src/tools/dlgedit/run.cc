@@ -22,6 +22,7 @@
 
 run_dlg::run_dlg (string f, string v, player *p)
 {
+#if 0
     interpreter varset;
     vector<command*> c;
     string sf = f + ".str";
@@ -87,21 +88,25 @@ run_dlg::run_dlg (string f, string v, player *p)
 
     // Init Interpreter
     vm = new interpreter (strdup (df.c_str ()), dat);
+#endif
 }
 
 
 run_dlg::~run_dlg ()
 {
+#if 0
     delete[] dialog::offset;
     delete[] dialog::length;
 
     delete dat;
     delete vm;
+#endif
 }
 
 
 void run_dlg::run ()
 {
+#if 0
     s_int32 retval;
     tmp_list = NULL;
     s_int32 npc_answer;
@@ -192,4 +197,5 @@ void run_dlg::run ()
     gtk_adjustment_set_value (adj, adj->upper);
     
     return;
+#endif
 }

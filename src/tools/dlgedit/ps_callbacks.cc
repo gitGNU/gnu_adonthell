@@ -23,7 +23,7 @@
 void
 on_ps_ok_pressed (GtkButton * button, gpointer user_data)
 {
-    int i, race, gender;
+    int i, race = 0, gender = 0;
     ps_dlg* dlg = (ps_dlg *) user_data;
     GSList* group = gtk_radio_button_group (dlg->race);
 

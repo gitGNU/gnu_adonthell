@@ -382,7 +382,7 @@ void landmap::update_keyboard()
     heroe.set_movtype(DOWN);
 
   /* HACK -- Test for inventory */
-  if ( input::is_pushed(49))
+  if ( input::is_pushed('I') || input::is_pushed('i') )
 	  test_inventory(this);
 
 #ifdef SDL_MIXER

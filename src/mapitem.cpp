@@ -37,6 +37,9 @@ mapitem::mapitem()
 	status = 0;
 }
 
+/*
+ * Load the item set 'filename'.
+ */
 mapitem *loaditems( char *filename )
 {
 	// HACK

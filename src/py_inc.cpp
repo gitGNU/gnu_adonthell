@@ -30,6 +30,7 @@ extern "C"
 {
 	void initplayerc(void);
 	void initmapenginec(void);
+	void initbaseitemc(void);
 }
 
 /*
@@ -57,8 +58,11 @@ bool init_python(void)
 	insert_path("scripts");
 	//exec_file("scripts/init.py");
 
+	/* Initialise SWIG modules. This should go if we ever switch to dynamic 
+	   link */
 	initplayerc();
 	initmapenginec();
+	initbaseitemc();
 
 	return true;
 }
@@ -96,17 +100,25 @@ bool exec_file( char *filename )
 	return true;
 }
 
-/* Import a module, return TRUE if successful */
-bool import_module( char *filename )
+/*
+ * Dump any error information to stderr
+ */
+void show_traceback(void)
 {
-	PyObject *result = PyImport_ImportModule( filename );
-
 	if ( PyErr_Occurred() )
 		PyErr_Print();
+}
 
-	Py_XDECREF(result);
+/* Import a module, return module ptr */
+PyObject *import_module( char *filename )
+{
+	PyObject *result = PyImport_ImportModule( filename );
+	
+	show_traceback();
+	
+	//Py_XDECREF(result);
 
-	return true;
+	return result;
 }
 
 

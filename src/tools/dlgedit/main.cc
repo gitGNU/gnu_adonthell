@@ -37,7 +37,8 @@ main (int argc, char *argv[])
 
     /* Misc initialization */
     init_app (MainWnd);
-    init_interpreter ();
+
+    //init_interpreter ();
 
     MainWnd->wnd = NULL;
     MainWnd->text_dlg = NULL;

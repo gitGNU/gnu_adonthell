@@ -60,13 +60,13 @@ void mapengine::update_and_show(landmap * amap)
 
   input::update();
   for(i=0;i<screen::frames_to_do;i++)
-    {
-      //dlg->update_keyboard ();
+  {
+	  //dlg->update_keyboard ();
       amap->update_keyboard();
       amap->update_patterns();
       amap->update_all_characters();
       //    amap->win.update();
-    }
+  }
   //dlg->update(amap->win);
   amap->update_status();
   amap->draw_down();

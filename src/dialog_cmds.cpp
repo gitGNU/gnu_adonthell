@@ -28,6 +28,12 @@
 #include "character.h"
 
 
+dialog::dialog(void)
+{
+
+}
+
+#if 0
 // TOC of the dialogue string file
 s_int32 *dialog::offset = NULL;
 s_int32 *dialog::length = NULL;
@@ -341,3 +347,5 @@ void switch_dlg_cmd::ascii (ofstream &out)
 {
     out << "SWITCH  " << npc_id << " " << dlg;
 }
+
+#endif

@@ -9,24 +9,17 @@
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY.
 
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License.
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY.
+
    See the COPYING file for more details.
 */
 
-#include <iostream.h>
+#ifndef _py_dialogue_h
+#define _py_dialogue_h
 
-#include "types.h"
-#include "mapitem.h"
-#include "map.h"
-#include "inventory.h"
-#include "image.h"
-#include "mappattern.h"
+extern PyObject *start_dialogue(char *fpath, char *name);
 
-void test_inventory(landmap *lmap)
-{
-	//(lmap->pattern[241]).putbox(218, 96, NULL);
-
-}
-
-
-
-
+#endif

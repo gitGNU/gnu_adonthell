@@ -855,7 +855,7 @@ new_dialogue (MainFrame * wnd)
 void 
 load_dialogue (MainFrame * wnd, const char *file)
 {
-    int i, n;
+    int i = 1, n;
     string s;
     Circle *circle;
     Arrow *arrow;

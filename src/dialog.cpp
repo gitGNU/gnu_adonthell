@@ -18,61 +18,37 @@
 #include "types.h"
 #include "image.h"
 #include "array_tmpl.h"
-#include "interpreter.h"
-#include "commands.h"
-#include "window.h"
+
+//#include "window.h"
 #include "input.h"
 #include "dialog.h"
 
 // Init the dialogue engine
 dialog_engine::dialog_engine ()
 {
-/*
-    // Init interpreter
-    interpreter::callbacks.clear ();
-    init_interpreter ();
+	// For the test, the only dialogue is created here
+	dlg = new dialog;
+	dlg->answer = 0;
 
-    // Read strings
-    FILE *str = fopen ("dialog/tomas_hterin.str", "r");
-    u_int32 count;
-
-    fread (&count, sizeof(count), 1, str);
-
-    if (dialog::offset != NULL) delete[] dialog::offset;
-    if (dialog::length != NULL) delete[] dialog::length;
-    
-    dialog::offset = new s_int32[count];
-    dialog::length = new s_int32[count];
-
-    fread (dialog::offset, sizeof(dialog::offset[0]), count, str);
-    fread (dialog::length, sizeof(dialog::length[0]), count, str);
-
-    fclose (str);
-    
-    // For the test, the only dialogue is created here
-    dlg = new dialog;
-    dlg->answer = 0;
-    dlg->text_file = "dialog/tomas_hterin.str";
-
-    engine = new interpreter ("dialog/tomas_hterin.dat", dlg);
-*/
+	// Import module
+	dlg->class_object = import_module( "dialog/tomas_hterin.py" );
 }
 
 void dialog_engine::update_keyboard ()
 {
-/*
-  static u_int16 lastkeypressed=0;
-  if(input::is_pushed(lastkeypressed)) return;
-  lastkeypressed=0;
-  if (input::is_pushed (97)) 
-    {dlg->answer = 0; lastkeypressed=97;}
-  if (input::is_pushed (98)) 
-    {dlg->answer = 1; lastkeypressed=98;}
-  if (input::is_pushed (99)) 
-    {dlg->answer = 2; lastkeypressed=99;}
-  if (input::is_pushed (100)) 
-    {dlg->answer = 3; lastkeypressed=100;}
-*/
+	static u_int16 lastkeypressed=0;
+	
+	if(input::is_pushed(lastkeypressed)) return;
+	lastkeypressed=0;
+
+	if (input::is_pushed (97)) 
+	{dlg->answer = 0; lastkeypressed=97;}
+	if (input::is_pushed (98)) 
+	{dlg->answer = 1; lastkeypressed=98;}
+	if (input::is_pushed (99)) 
+	{dlg->answer = 2; lastkeypressed=99;}
+	if (input::is_pushed (100)) 
+	{dlg->answer = 3; lastkeypressed=100;}
 }
 
 void dialog_engine::update (window &win)

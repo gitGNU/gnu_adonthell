@@ -1,20 +1,20 @@
 #ifndef YYSTYPE
 #define YYSTYPE int
 #endif
-#define	_INC	258
-#define	_DEC	259
-#define	_ID	260
-#define	_IF	261
-#define	_ELSE	262
-#define	_NUM	263
-#define	_EQ	264
-#define	_NEQ	265
-#define	_LEQ	266
-#define	_GEQ	267
-#define	_NEG	268
-#define	_OR	269
-#define	_AND	270
-#define	_RAND	271
+#define	_INC	257
+#define	_DEC	258
+#define	_ID	259
+#define	_IF	260
+#define	_ELSE	261
+#define	_NUM	262
+#define	_EQ	263
+#define	_NEQ	264
+#define	_LEQ	265
+#define	_GEQ	266
+#define	_NEG	267
+#define	_OR	268
+#define	_AND	269
+#define	_RAND	270
 
 
 extern YYSTYPE varslval;

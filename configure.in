@@ -128,4 +128,6 @@ AC_SUBST(CXX) AC_SUBST(CXXFLAGS) AC_SUBST(LIBS) AC_SUBST(SUBDIRS)
 AC_OUTPUT([
 Makefile
 src/Makefile
+src/tools/Makefile
+src/tools/dlgedit/Makefile
 ])

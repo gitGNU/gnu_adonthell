@@ -15,6 +15,8 @@
 #ifndef __DIALOG_H__
 #define __DIALOG_H__
 
+#include "Python.h"
+
 #include <vector>
 
 
@@ -31,21 +33,17 @@ public:
 
 class dialog
 {
+  private:
+	dialog();
 public:
-    static s_int32 *offset;             // The dialogue string file's
-    static s_int32 *length;             // "table of contents"
+	PyObject *class_obj;                // Points to the instantiated dialogue class
+	char *module;
 
     u_int32 speaker;                    // The current speaker 
     u_int32 answer;                     // The text chosen by the player
     char *text_file;                    // The file with the dialogues strings
     char *player_name;                  // The players name
 
-    vector<dlg_text*> npc_text;         // NPC´s part
-    vector<dlg_text*> player_text;      // Player´s part
-    vector<u_int32> used_text;          // Text already spoken -> don´t display again
-    vector<u_int32> loop_text;          // Text may be displayed again
-
-    vector<char*> strings;              // Text data
 };
 
 #ifndef _DLGEDIT_                       // Don't need this for compiling dlgedit
@@ -61,7 +59,6 @@ private:
     void insert_plugin ();              // 'Merges' a dialogue with the loaded one
 
     dialog *dlg;
-    interpreter *engine;
 };
 #endif // _DLGEDIT_
 #endif // __DIALOG_H__

@@ -17,12 +17,14 @@
    See the COPYING file for more details.
 */
 
-#ifndef _python_h
-#define _python_h
+#ifndef _py_inc_h
+#define _py_inc_h
+
+#include "Python.h"
 
 extern void insert_path( char * );
 extern bool init_python( void );
 extern void kill_python( void );
 extern bool exec_file( char *filename );
-extern bool import_module( char *);
+extern PyObject *import_module( char *);
 #endif

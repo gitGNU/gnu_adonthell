@@ -1,0 +1,3 @@
+SUBDIRS=dlgedit
+
+all: dlgedit
