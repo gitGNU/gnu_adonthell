@@ -58,6 +58,7 @@ void mapengine::update_and_show(landmap * amap)
 {
   static u_int16 i;
 
+  input::update();
   for(i=0;i<screen::frames_to_do;i++)
     {
       //dlg->update_keyboard ();

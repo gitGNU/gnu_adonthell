@@ -7,28 +7,17 @@
 #include "win_base.h"
 #include "win_write.h"
 #include "win_label.h"
+#include "win_image.h"
 #include "win_border.h"
 #include "win_container.h"
 
-win_container::win_container():win_base()
-{
-  l_label.clear();
-  l_write.clear();
-  l_container.clear();
-  wc=NULL;
-  wb=NULL;
-  wback=NULL;
-  da=NULL;
-}
 
 win_container::~win_container()
 {
   l_label.clear();
   l_write.clear();
   l_container.clear();
-  delete wc;
-  delete wb;
-  delete wback;
+  l_image.clear();
   delete da;
 }
 
@@ -37,57 +26,52 @@ win_container::win_container(u_int16 x,u_int16 y,u_int16 l,u_int16 h):win_base(x
   l_label.clear();
   l_write.clear();
   l_container.clear();
-  wc=NULL;
-  wb=NULL;
-  wback=NULL;
-  da=new drawing_area(x,y,l,h);
+  l_image.clear();
+  da=new drawing_area(x,y,length,height);
 }
 
-win_container::win_container(u_int16 x,u_int16 y,u_int16 l,u_int16 h,win_container *tmpwc):win_base(tmpwc->getx()+x,tmpwc->gety()+y,l,h)
+
+win_container::win_container(u_int16 tx,u_int16 ty,u_int16 tl,u_int16 th,win_container *tmpwc):win_base(tmpwc->get_x()+tx,tmpwc->get_y()+ty,tl,th,tmpwc)
 {
   l_label.clear();
   l_write.clear();
   l_container.clear();
-  wc=tmpwc;
-  wb=NULL;
-  wback=NULL;
-  da=new drawing_area(wc->getx()+x,wc->gety()+y,l,h);
+  l_image.clear();
+  da=new drawing_area(wc->get_x()+x,wc->get_y()+y,length,height);
 }
 
 void win_container::move(u_int16 tx , u_int16 ty)
 {
-  if(wc)
+  /*if(wc)
     {
-      x=wc->getx()+tx;
-      y=wc->gety()+ty;
-      //move area
-      if(da)
-	{
-	  da->x=x;
-	  da->y=y;
-	}
+      x=wc->get_x()+tx;
+      y=wc->get_y()+ty;
     }
   else
     {
       x=tx;
       y=ty;
-      if(da)
+      }*/
+  
+  win_base::move(tx,ty);
+  if(da)
+    {
+      if(wc)
 	{
-	  da->x=x;
-	  da->y=y;
+	  da->x=tx+wc->get_x();
+	  da->y=ty+wc->get_y();
+	}
+      else
+	{
+	  da->x=tx;
+	  da->y=ty;
 	}
     }
 }
 
-void win_container::resize(u_int16 tl, u_int16 th)
-{
-  l=tl;
-  h=th;
-}
-
 win_label * win_container::add_label(u_int16 tx,u_int16 ty,u_int16 tl,u_int16 th,win_font *ft)
 {
-  win_label * tmp = new win_label(tx,ty,tl,th,ft,this,NULL);
+  win_label * tmp = new win_label(tx,ty,tl,th,ft,this);
   l_label.push_front(tmp);
   return (tmp);
 }
@@ -106,14 +90,22 @@ win_container * win_container::add_container(u_int16 tx,u_int16 ty,u_int16 tl,u_
   return (tmp);
 }
 
+win_image * win_container::add_image(u_int16 tx,u_int16 ty,image * tpic)
+{
+  win_image * tmp = new win_image(tx,ty,tpic,this);
+  l_image.push_front(tmp);
+  return (tmp);
+}
+
+/*
 win_border * win_container::set_border(char * rep)
 {
   if(wb) delete wb;
   // wb->assign_drawing_area(da);
   wb=new win_border(rep,this);
   return(wb);
-}
-
+}*/
+/*
 win_background * win_container::set_background(char * rep)
 {
   if(wback) delete wback;
@@ -121,8 +113,9 @@ win_background * win_container::set_background(char * rep)
   wback=new win_background(rep,this);
   return(wback);
 }
+*/
 
-void win_container::remove_label(win_label * tmp)
+void win_container::remove(win_label * tmp)
 {
   list<win_label *>::iterator i=l_label.begin();
   while(i!=l_label.end() && tmp!=(*i))
@@ -131,7 +124,7 @@ void win_container::remove_label(win_label * tmp)
     l_label.erase(i);
 }
 
-void win_container::remove_write(win_write * tmp)
+void win_container::remove(win_write * tmp)
 {
   list<win_write *>::iterator i=l_write.begin();
   while(i!=l_write.end() && tmp!=(*i))
@@ -140,7 +133,7 @@ void win_container::remove_write(win_write * tmp)
     l_write.erase(i);
 }
 
-void win_container::remove_container(win_container * tmp)
+void win_container::remove(win_container * tmp)
 {
   list<win_container *>::iterator i=l_container.begin();
   while(i!=l_container.end() && tmp!=(*i))
@@ -149,13 +142,20 @@ void win_container::remove_container(win_container * tmp)
     l_container.erase(i);
 }
 
+void win_container::remove(win_image * tmp)
+{
+  list<win_image *>::iterator i=l_image.begin();
+  while(i!=l_image.end() && tmp!=(*i))
+    i++;
+  if(i!=l_image.end())
+    l_image.erase(i);
+}
+
 void win_container::draw()
 {
   if(visible)
-    {
-      if(wback) wback->draw();
-      if(wb) wb->draw();
-      
+    { 
+      draw_background();
       list<win_container *>::iterator k=l_container.begin();
       while(k!=l_container.end())
 	{
@@ -168,7 +168,7 @@ void win_container::draw()
 	{
 	  (*i)->draw();
 	  i++;
-	  }
+	}
 
       list<win_write *>::iterator j=l_write.begin();
       while(j!=l_write.end())
@@ -176,6 +176,14 @@ void win_container::draw()
 	  (*j)->draw();
 	  j++;
 	}      
+      
+      list<win_image *>::iterator l=l_image.begin();
+      while(l!=l_image.end())
+	{
+	  (*l)->draw();
+	  l++;
+	}    
+      draw_border();
     }
 }
 
@@ -183,10 +191,6 @@ void win_container::update()
 {
   if(visible)
     {
-      if(wback) wback->update();
-      if(wb) wb->update();
-
-
       list<win_label *>::iterator i=l_label.begin();
       while(i!=l_label.end())
 	{
@@ -205,28 +209,19 @@ void win_container::update()
 	  (*k)->update();
 	  k++;
 	}
+      list<win_image *>::iterator l=l_image.begin();
+      while(l!=l_image.end())
+	{
+	  (*l)->update();
+	  l++;
+	}      
     }
-}
-
-
-void win_container::show()
-{
-  visible=true;
-}
-
-
-void win_container::hide()
-{
-  visible=false;
 }
 
 
 void win_container::show_all()
 {
   visible=true;
-  if(wb) wb->show();
-
-
   list<win_label *>::iterator i=l_label.begin();
   while(i!=l_label.end())
     {
@@ -245,6 +240,12 @@ void win_container::show_all()
       (*k)->show();
       k++;
     }
+   list<win_image *>::iterator l=l_image.begin();
+   while(l!=l_image.end())
+     {
+       (*l)->show();
+       l++;
+     }      
 }
 
 
@@ -269,11 +270,23 @@ void win_container::hide_all()
       (*k)->hide();
       k++;
     }
+  list<win_image *>::iterator l=l_image.begin();
+  while(l!=l_image.end())
+    {
+      (*l)->hide();
+      l++;
+    }      
 }
 
-
-drawing_area * win_container::get_da()
+void win_container::resize(u_int16 tl,u_int16 th)
 {
-  return(da);
+  win_base::resize(tl,th);
+  da->w=tl;
+  da->h=th;
 }
+
+
+
+
+
 

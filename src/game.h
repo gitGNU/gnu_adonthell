@@ -21,7 +21,6 @@
 
 class game
 {
-  static SDL_Thread *input_thread;
   static SDL_Thread *audio_thread;
   
  public:

@@ -374,6 +374,7 @@ void landmap::update_keyboard()
     heroe.set_movtype(DOWN);
 
 #ifdef SDL_MIXER
+  // REMOVEME
   // Sound effects tied to keyboard
 //  if(keyboard::is_pushed(49)) audio_in->play_wave(2,0); // '1' Key
 //  if(keyboard::is_pushed(50)) audio_in->play_wave(1,1); // '2' Key

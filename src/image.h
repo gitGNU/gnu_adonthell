@@ -16,28 +16,37 @@
 #define _image_h
 
 #include "screen.h"
+#include "pnm.h"
 
-class drawing_area
+class drawing_area : public SDL_Rect
 {
+  drawing_area * draw_to;
+  SDL_Rect get_rects();
  public:
-  u_int16 x;
-  u_int16 y;
-  u_int16 length;
-  u_int16 height;
 
   drawing_area(u_int16 px, u_int16 py, u_int16 pw, u_int16 ph);
+  drawing_area();
   bool is_x_in(s_int16 px);
   bool is_y_in(s_int16 py);
   bool is_point_in(s_int16 px, s_int16 py);
+  void assign_drawing_area(drawing_area * da);
+  void detach_drawing_area();
+  drawing_area &operator = (SDL_Rect & r);
+
   friend class image;
 };
 
 class image
 {
   static SDL_Rect sr,dr;
+#ifdef DEBUG
+  static u_int16 a_d_diff;
+#endif
  protected:
 
-  SDL_Surface * data;
+#ifdef _EDIT
+  void * simpledata;
+#endif
   drawing_area * draw_to;
 
   inline void get_rects(s_int16 x, s_int16 y);
@@ -45,11 +54,14 @@ class image
   inline void put_pix(u_int16 x, u_int16 y, u_int32 col);
 
  public:
+  SDL_Surface * data;
   u_int16 length, height;
   u_int8 bytes_per_pixel;
   bool mask_on;
-  bool trans_on;
-  
+  u_int8 alpha;
+
+  image &operator =(image &im);
+  void init();
   image();
   image (u_int16 l, u_int16 h);
   ~image();
@@ -58,20 +70,27 @@ class image
   s_int8 get(SDL_RWops * file);
   s_int8 get(char * file);
   s_int8 load(char * fname);
+#ifdef _EDIT
+  s_int8 put(SDL_RWops * file);
+  s_int8 save(char * fname);
+#endif
   void assign_drawing_area(drawing_area * da);
   void detach_drawing_area();
+  bool get_mask();
+  void set_mask(bool m);
+  u_int8 get_trans();
+  void set_trans(u_int8 t);
+  void draw(s_int16 x, s_int16 y, drawing_area * da_opt=NULL);
   void putbox (s_int16 x, s_int16 y, drawing_area * da_opt=NULL);
   void putbox_mask (s_int16 x, s_int16 y, drawing_area * da_opt=NULL);
-  void putbox_trans (s_int16 x, s_int16 y, u_int8 alpha, 
+  void putbox_trans (s_int16 x, s_int16 y, u_int8 a, 
 		     drawing_area * da_opt=NULL);
-  void putbox_mask_trans (s_int16 x, s_int16 y, u_int8 alpha, 
+  void putbox_mask_trans (s_int16 x, s_int16 y, u_int8 a, 
 			  drawing_area * da_opt=NULL);
-  image * zoom(u_int16 pixx, u_int16 pixy);
-  image * brightness(u_int16 cont);
+  void get_from_screen(s_int16 x, s_int16 y);
+  void zoom(image * src);
+  void brightness(image * src, u_int16 cont);
 
-
-
-  // Need to validate these ones!
   void putbox_tile_img(image * source);
   void putbox_img(image * source, u_int16 x, u_int16 y);
   void putbox_mask_img (image * source, u_int16 x, u_int16 y);

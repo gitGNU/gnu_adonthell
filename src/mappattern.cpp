@@ -46,17 +46,21 @@ void mappattern::update ()
 
 s_int8 mappattern::get (SDL_RWops * file)
 {
-    u_int16 i;
-    SDL_RWread (file,&nbr_of_frames, sizeof (nbr_of_frames), 1);
-    SDL_RWread (file,&counterlimit, sizeof (counterlimit), 1);
-    framecounter = 0;
-    currentframe = 0;
-    frame = new image[nbr_of_frames];
-    
-    for (i = 0; i < nbr_of_frames; i++)
-        if ((frame[i].get(file)))
-	  return (-1);
-    return (0);
+  u_int16 i;
+  s_int8 res;
+  SDL_RWread (file,&nbr_of_frames, sizeof (nbr_of_frames), 1);
+  SDL_RWread (file,&counterlimit, sizeof (counterlimit), 1);
+  framecounter = 0;
+  currentframe = 0;
+  frame = new image[nbr_of_frames];
+  
+  for (i = 0; i < nbr_of_frames; i++)
+    {
+      if ((res=frame[i].get(file))) return (res);
+      frame[i].set_mask(true);
+      frame[i].set_trans(0);
+    }
+  return (0);
 }
 
 s_int8 mappattern::load (char name[])

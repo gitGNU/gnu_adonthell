@@ -15,6 +15,9 @@
 #ifndef _animation_h
 #define _animation_h
 
+#include "types.h"
+#include "image.h"
+
 // An animation frame is an extension to the image class. It contains
 // a delay factor and a gap parameter so images of different sizes can be
 // used in the same animation.
@@ -28,10 +31,15 @@ class animation_frame : public image
   // the other frame
   u_int16 delay;
  public:
-  animation_frame();
   void init();
+  animation_frame();
+  ~animation_frame();
   s_int8 get(SDL_RWops * file);
   s_int8 load(char * fname);
+#ifdef _EDIT
+  s_int8 put(SDL_RWops * file);
+  s_int8 save(char * fname);
+#endif
   friend class animation;
 };
 
@@ -47,15 +55,12 @@ class animation
   u_int16 currentframe;
   u_int16 speedcounter;
   s_int8 factor;
-  animation_frame * frame;
-  void init_frame(u_int16 nbr);
+  //  void init_frame(u_int16 nbr);
 
  public:
+  animation_frame * frame;
   bool loop;              // Shall the animation loop?
   bool reverse;  // Shall the animation reverse when reaching the last frame?
-  bool alpha_on;
-  bool mask_on;
-  u_int8 alpha;
 
   animation();
   ~animation();
@@ -70,6 +75,10 @@ class animation
   s_int8 get_frame(SDL_RWops * file);
   s_int8 get(SDL_RWops * file);
   s_int8 load(char * fname);
+#ifdef _EDIT
+  s_int8 put(SDL_RWops * file);
+  s_int8 save(char * fname);
+#endif
   void set_delay(u_int16 framenbr, u_int16 delay);
   void set_mask(u_int16 framenbr, bool m);
   void set_alpha(u_int16 framenbr, bool a, u_int8 value);

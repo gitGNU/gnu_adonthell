@@ -15,14 +15,22 @@
 #include <iostream.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "types.h"
-#include "image.h"
 #include "animation.h"
 
-animation_frame::animation_frame() : image()
+void animation_frame::init()
 {
   gapx=0;
   gapy=0;
+  image::init();
+}
+
+animation_frame::animation_frame()
+{
+  init();
+}
+
+animation_frame::~animation_frame()
+{
 }
 
 s_int8 animation_frame::get(SDL_RWops * file)
@@ -45,13 +53,27 @@ s_int8 animation_frame::load(char * fname)
   return(retvalue);
 }
 
-void animation::init_frame(u_int16 nbr)
+#ifdef _EDIT
+s_int8 animation_frame::put(SDL_RWops * file)
 {
-  frame[nbr].mask_on=false;
-  frame[nbr].trans_on=false;
-  frame[nbr].gapx=0;
-  frame[nbr].gapy=0;
+  SDL_RWwrite(file,&gapx,sizeof(gapx),1);
+  SDL_RWwrite(file,&gapy,sizeof(gapy),1);
+  SDL_RWwrite(file,&delay,sizeof(delay),1);
+  image::put(file);
+  return(0);
 }
+
+s_int8 animation_frame::save(char * fname)
+{
+  SDL_RWops * file;
+  u_int8 retvalue;
+  file=SDL_RWFromFile(fname,"w"); 
+  if(!file) return(-1);
+  retvalue=put(file);
+  SDL_RWclose(file);
+  return(retvalue);
+}
+#endif
 
 animation::animation()
 {
@@ -59,9 +81,6 @@ animation::animation()
   nbr_of_frames=0;
   currentframe=0;
   speedcounter=0;
-  alpha_on=false;
-  mask_on=false;
-  alpha=0;
   loop=false;
   reverse=false;
   factor=1;
@@ -69,7 +88,7 @@ animation::animation()
 
 animation::~animation()
 {
-  free(frame);
+  delete[] frame;
 }
 
 void animation::update()
@@ -104,26 +123,40 @@ void animation::next_frame()
 
 void animation::draw(u_int16 x, u_int16 y)
 {
-  if(alpha_on && mask_on)
-    frame[currentframe].putbox_mask_trans(x,y,alpha);
-  else if(alpha_on)
-    frame[currentframe].putbox_trans(x,y,alpha);
-  else if(mask_on)
-    frame[currentframe].putbox_mask(x,y);
-  else frame[currentframe].putbox(x,y);
+  frame[currentframe].draw(x,y);
 }
 
 s_int8 animation::load_frame(char * fname)
 {
-  frame=(animation_frame*)realloc(frame,
-				  ++nbr_of_frames*sizeof(animation_frame));
-  init_frame(nbr_of_frames-1);
-  if(frame[nbr_of_frames-1].load(fname))
+  animation_frame * oldframe=frame;
+  int i;
+  cout << "ok\n";
+  frame=new animation_frame[++nbr_of_frames];
+  cout << "1\n";
+  memcpy(frame,oldframe,(nbr_of_frames-1)*sizeof(animation_frame));
+  cout << "ok2\n";
+  for (i=0;i<nbr_of_frames;i++)
     {
-      frame=(animation_frame*)realloc(frame,
-				      --nbr_of_frames*sizeof(animation_frame));
+      frame[i]=oldframe[i];
+    }
+  cout << "2\n";
+
+  //  frame=(animation_frame*)realloc(frame,
+  //			  ++nbr_of_frames*sizeof(animation_frame));
+  //  frame[nbr_of_frames-1].init();
+  //  init_frame(nbr_of_frames-1);
+  if(frame[nbr_of_frames-1].image::load(fname))
+    {
+      --nbr_of_frames;
+      delete[] frame;
+      frame=oldframe;
+      //      frame=(animation_frame*)realloc(frame,
+      //			      --nbr_of_frames*sizeof(animation_frame));
       return(-1);
     }
+  cout << "3\n";
+  delete[] oldframe;
+  cout << "4\n";
   return(0);
 }
 
@@ -146,8 +179,12 @@ s_int8 animation::get(SDL_RWops * file)
   SDL_RWread(file,&nbr_of_frames,sizeof(nbr_of_frames),1);
   SDL_RWread(file,&speedcounter,sizeof(speedcounter),1);
   SDL_RWread(file,&factor,sizeof(factor),1);
+  SDL_RWread(file,&loop,sizeof(loop),1);
+  SDL_RWread(file,&reverse,sizeof(reverse),1);
+  frame=new animation_frame[nbr_of_frames];
   for(i=0;i<nbr_of_frames;i++)
-    frame[i].get(file);
+      frame[i].get(file);
+  currentframe=0;
   return(0);
 }
 
@@ -161,6 +198,32 @@ s_int8 animation::load(char * fname)
   SDL_RWclose(file);
   return(retvalue);
 }
+
+#ifdef _EDIT
+s_int8 animation::put(SDL_RWops * file)
+{
+  u_int16 i;
+  SDL_RWwrite(file,&nbr_of_frames,sizeof(nbr_of_frames),1);
+  SDL_RWwrite(file,&speedcounter,sizeof(speedcounter),1);
+  SDL_RWwrite(file,&factor,sizeof(factor),1);
+  SDL_RWwrite(file,&loop,sizeof(loop),1);
+  SDL_RWwrite(file,&reverse,sizeof(reverse),1);
+  for(i=0;i<nbr_of_frames;i++)
+    frame[i].put(file);
+  return(0);
+}
+
+s_int8 animation::save(char * fname)
+{
+  SDL_RWops * file;
+  u_int8 retvalue;
+  file=SDL_RWFromFile(fname,"w"); 
+  if(!file) return(-1);
+  retvalue=put(file);
+  SDL_RWclose(file);
+  return(retvalue);
+}
+#endif
 
 void animation::set_delay(u_int16 framenbr, u_int16 delay)
 {

@@ -25,21 +25,12 @@
 #include "audio.h"
 #endif
 
-SDL_Thread *game::input_thread;
 SDL_Thread *game::audio_thread;
 
 void game::init(config &myconfig)
 {
   screen::init_display ();
-    
-  input_thread = SDL_CreateThread(input_update, NULL);
-  if ( input_thread != NULL) {
-    fprintf(stderr, "User input thread started.\n");
-  } else {
-    fprintf(stderr, "Couldn't create input thread: %s\n", SDL_GetError());
-    exit(1);
-  }
-  
+      
 #ifdef SDL_MIXER
   
   audio_init(myconfig);
@@ -53,8 +44,6 @@ void game::init(config &myconfig)
 
 void game::cleanup()
 {
-  fprintf(stderr, "Killing threads...\n");
-  if (input_thread != NULL) SDL_KillThread(input_thread);
   
 #ifdef SDL_MIXER
   if (audio_thread != NULL) {

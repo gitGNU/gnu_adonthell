@@ -56,13 +56,18 @@ mapcharacter::~mapcharacter()
 
 s_int8 mapcharacter::get(SDL_RWops * file)
 {
-  s_int8 i,retvalue=0;
+  u_int16 i;
+  s_int8 res;
   walkcounter=11;
   SDL_RWread(file,&nbr_of_frames,sizeof(nbr_of_frames),1);
   frame=new image[nbr_of_frames];
   for (i=0;i<nbr_of_frames;i++)
-    if (!(frame[i].get(file)))retvalue=-1;
-  return(retvalue);
+    {
+      if ((res=frame[i].get(file))) return res;
+      frame[i].set_mask(true);
+      frame[i].set_trans(0);
+    }
+  return 0;
 }
 
 s_int8 mapcharacter::load(char * fname)
@@ -176,7 +181,7 @@ void mapcharacter::init_moveframe()
 
 void mapcharacter::draw(u_int16 x, u_int16 y,drawing_area * da_opt)
 {
-  frame[currentframe].putbox_mask(x,y,da_opt);
+  frame[currentframe].draw(x,y,da_opt);
 }
 
 /*void mapcharacter::draw_part(u_int16 x, u_int16 y, u_int16 bw, u_int16 bh, 

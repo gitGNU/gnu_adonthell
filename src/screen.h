@@ -16,8 +16,6 @@
 #define _screen_h
 
 #include "types.h"
-#include <SDL/SDL.h>
-#include <SDL/SDL_image.h>
 
 class screen
 {

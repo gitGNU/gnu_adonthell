@@ -10,21 +10,8 @@
 #include "win_container.h"
 #include "win_write.h"
 
-win_write::win_write(win_font *fo,win_container * tmpwc):win_base()
-{
-  font=fo;
-  text.lenght=0;
-  text.pos=0;
-  text.pos_tmp=0;
-  text.end_win=false;
-  beg_select=0;
-  end_select=-2;
-  ok_text=false;
-  wc=tmpwc;
-  da=wc->get_da();
-}
 
-win_write::win_write(u_int16 x,u_int16 y,u_int16 l,u_int16 h,win_font *fo,win_container *tmpwc):win_base(x,y,l,h)
+win_write::win_write(u_int16 tx,u_int16 ty,u_int16 tl,u_int16 th,win_font *fo,win_container *tmpwc):win_base(tx,ty,tl,th,tmpwc,tmpwc->get_drawing_area())
 {
   font=fo;
   text.lenght=0;
@@ -34,8 +21,6 @@ win_write::win_write(u_int16 x,u_int16 y,u_int16 l,u_int16 h,win_font *fo,win_co
   beg_select=0;
   end_select=-2;
   ok_text=false;
-  wc=tmpwc;
-  da=wc->get_da();
 }
 
 bool win_write::is_text()
@@ -66,10 +51,12 @@ void win_write::set_font(win_font *fo)
 
 void win_write::draw()
 {
-  if(visible)
+  if(visible && wc)
     {
-      draw_text(wc->getx()+x,wc->gety()+y,wc->getx()+x+l,wc->gety()+y+h,font,text,da);  
+      draw_background();
+      draw_text(wc->get_x()+x,wc->get_y()+y,wc->get_x()+x+length,wc->get_y()+y+height,font,text,da);  
       //if text reach end window
+      draw_border();
       if(text.end_win) 
 	text.pos+=text.len_fl; 
     }
@@ -121,45 +108,6 @@ void win_write::write()
       alwayspush=false;
     }
   curletter=n;
-}
-
-
-void win_write::show()
-{
-  visible=true;
-}
-
-
-void win_write::hide()
-{
-  visible=false;
-}
-
-
-void win_write::set_drawing_area(drawing_area * da)
-{
-  win_write::da=da;
-}
-
-
-void win_write::move(u_int16 tx,u_int16 ty)
-{
-  if(wc)
-    {
-      x=wc->getx()+tx;
-      y=wc->gety()+ty;
-    }
-  else
-    {
-      x=tx;
-      y=ty;
-    }
-}
-
-void win_write::resize(u_int16 tl,u_int16 th)
-{
-  l=tl;
-  h=th;
 }
 
 

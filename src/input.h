@@ -19,7 +19,10 @@ int input_update(void *);
 
 class input
 {
+  static u_int8 charkeys_pushed[65536];
+  static u_int8 charkeys_released[65536];
  public:
+  static void update();
   static bool charkeys[65536];
   static u_int16 last_key;
   static u_int16 getkeypressed();
@@ -27,6 +30,10 @@ class input
 
   static u_int16 mouse_posx, mouse_posy;
   static bool mouse_button[3];
+  
+  static u_int8 get_nbr_pushed(u_int16 k);
+  static u_int8 get_nbr_released(u_int16 k);
+
 #define LEFT_BUTTON 0
 #define MIDDLE_BUTTON 1
 #define RIGHT_BUTTON 2
