@@ -242,11 +242,11 @@ string dlg_compiler::inflate (string code)
         for (i = 0; i < NUM_OPS; i++)
             // search for the leftmost operator from the current position
             if (!strncmp (code.substr (pos).c_str (), operators[i].c_str (),
-                operators[i].length ()) || pos == code.length()-1)
+                operators[i].length ()) || (i == NUM_OPS-1 && pos == code.length()-1))
             {
                 // takes care of the rare situation when the last token
                 // of the string is a variable in need of expanding
-                if (pos == code.length()-1) pos++;
+                if (pos == code.length()-1 && i == NUM_OPS-1) pos++;
 
                 token = code.substr (begin, pos-begin);
 

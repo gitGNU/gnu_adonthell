@@ -37,6 +37,7 @@ int
 main (int argc, char *argv[])
 {
     char tmp[256];
+    PyObject *pyref;
     
     // The Application Data
     MainFrame *MainWnd = new MainFrame;
@@ -106,9 +107,9 @@ main (int argc, char *argv[])
             mynpc->get_state (in);
 
             // Pass character over to Python interpreter
-            PyObject *charref = python::pass_instance (mynpc, "character");
-            PyDict_SetItemString (chars, (char *) mynpc->get_name().c_str (), charref);
-            Py_DECREF (charref);
+            pyref = python::pass_instance (mynpc, "character");
+            PyDict_SetItemString (chars, (char *) mynpc->get_name().c_str (), pyref);
+            Py_DECREF (pyref);
 
             // Make this character available to the engine
             data::characters[mynpc->get_name ().c_str ()] = (character*) mynpc;
@@ -153,10 +154,10 @@ main (int argc, char *argv[])
             myquest->load (in);
 
             // Pass quest over to Python interpreter
-            PyObject *questref = python::pass_instance (myquest, "quest");
+            pyref = python::pass_instance (myquest, "quest");
             PyDict_SetItemString (quests, (char *) myquest->name.c_str (),
-                questref);
-            Py_DECREF (questref);
+                pyref);
+            Py_DECREF (pyref);
 
             // Make this quest available to the engine
             data::quests[myquest->name.c_str ()] = myquest;
@@ -177,9 +178,9 @@ main (int argc, char *argv[])
     data::the_player = MainWnd->myplayer;
 
     // Make "the_player" available to the interpreter
-    PyObject *charref = python::pass_instance (MainWnd->myplayer, "character");
-    PyDict_SetItemString (data::globals, "the_player", charref);
-    Py_DECREF (charref);
+    pyref = python::pass_instance (MainWnd->myplayer, "character");
+    PyDict_SetItemString (data::globals, "the_player", pyref);
+    Py_DECREF (pyref);
 
     MainWnd->wnd = NULL;
     MainWnd->text_dlg = NULL;
