@@ -363,18 +363,6 @@ maintainer-clean-generic clean mostlyclean distclean maintainer-clean
 lex.loadlg.cc: loadlg.l
 	flex -olex.loadlg.cc loadlg.l
 
-lex.vars.cc: variable.l
-	flex -olex.vars.cc variable.l
-
-vars.tab.cc: variable.y
-	bison -d -p vars -o vars.tab.cc variable.y
-
-lex.cond.cc: condition.l
-	flex -olex.cond.cc condition.l
-
-cond.tab.cc: condition.y
-	bison -d -p cond -o cond.tab.cc condition.y
-
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:

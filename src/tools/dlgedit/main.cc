@@ -45,8 +45,6 @@ main (int argc, char *argv[])
     /* Misc initialization */
     init_app (MainWnd);
 
-    //init_interpreter ();
-
     MainWnd->wnd = NULL;
     MainWnd->text_dlg = NULL;
     MainWnd->pixmap = NULL;
@@ -57,13 +55,15 @@ main (int argc, char *argv[])
     storage *game_state = new storage ();
     objects::set ("game_state", game_state);
 
-    /* Create Top Level Window and Controls */
+    // Create Top Level Window and Controls
     create_mainframe (MainWnd);
 
-    /* Event - Loop */
+    // Event - Loop
     gtk_main ();
 
-    /* Clean up */
+    // Clean up
+    kill_python ();
+
     delete_dialogue (MainWnd);
     delete MainWnd->myplayer;
     delete game_state;

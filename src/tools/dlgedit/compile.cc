@@ -236,6 +236,9 @@ void dlg_compiler::write_answer ()
             script << "\n" << space << "self.cont.append (-1)";
     }
 
+    if (cur_nodes.empty ())
+        script << "\n" << space << "pass";
+    
     script << "\n";
 
     return;
