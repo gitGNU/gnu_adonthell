@@ -94,19 +94,22 @@ main (int argc, char *argv[])
     sprintf (tmp, "%s/character.data", myconf.datadir.c_str ());
 
     // load characters from character.data
-    gzFile in = gzopen (tmp, "r");
-    if (in)
+    igzstream in(tmp);
+    if (in.is_open ())
     {
         character *mynpc = NULL;
     
         if (!fileops::get_version (in, 2, 2, tmp))
             return 1;
 
-        while (gzgetc (in))
+        char tc;
+        tc << in; 
+        while (tc)
         {
             mynpc = new character;
             mynpc->load (in);
-            PyDict_SetItemString (chars, mynpc->get_name(), pass_instance (mynpc, "character"));
+            PyDict_SetItemString (chars, (char *) mynpc->get_name().c_str (), pass_instance (mynpc, "character"));
+            tc << in; 
         }
 
         if (mynpc == NULL)
@@ -119,7 +122,8 @@ main (int argc, char *argv[])
         PyDict_SetItemString (data::globals, "the_npc", pass_instance (mynpc, "character"));
         MainWnd->mynpc = mynpc;
 
-        gzclose (in);
+//         gzclose (in);
+        in.close (); 
     }
 
     // create quest array
@@ -128,9 +132,10 @@ main (int argc, char *argv[])
 
     // try to open quest.data
     sprintf (tmp, "%s/quest.data", myconf.datadir.c_str ());
-    in = gzopen (tmp, "r");
+    in.open (tmp); 
+//     in = gzopen (tmp, "r");
 
-    if (in)
+    if (in.is_open ())
     {
         quest *myquest;
         
@@ -138,25 +143,29 @@ main (int argc, char *argv[])
             return 1;
 
         // load quests
-        while (gzgetc (in))
+        char tc;
+        tc << in; 
+        while (tc)
         {
             myquest = new quest;
             myquest->load (in);
         
             // Pass quest over to Python interpreter
-            PyDict_SetItemString (quests, myquest->name, pass_instance (myquest, "quest"));
+            PyDict_SetItemString (quests, (char *) myquest->name.c_str (), pass_instance (myquest, "quest"));
 
             // Make this quest available to the engine
-            data::quests.set (myquest->name, myquest);
+            data::quests.set (myquest->name.c_str (), myquest);
+            tc << in; 
         }
         
-        gzclose (in);    
+//         gzclose (in);
+        in.close (); 
     }
     
     // Misc initialization
     init_app (MainWnd);
 
-    data::characters.set (MainWnd->myplayer->get_name(), MainWnd->myplayer);
+    data::characters.set (MainWnd->myplayer->get_name().c_str (), MainWnd->myplayer);
 
     MainWnd->wnd = NULL;
     MainWnd->text_dlg = NULL;

@@ -29,7 +29,7 @@
 objects data::characters;
 
 // read the character source file and append it to the character data file
-void process_character (char *input, gzFile output)
+void process_character (char *input, ogzstream& output)
 {
     ifstream in (input);
     gchar str[256], **vals;
@@ -190,7 +190,9 @@ void process_character (char *input, gzFile output)
     }
 
     // tell the character.data loader that another entry follows
-    gzputc (output, 1);
+    char tc = 1; 
+    tc >> output; 
+//     gzputc (output, 1);
 
     // append the character data
     mynpc.save (output);
@@ -203,7 +205,7 @@ int main (int argc, char* argv[])
 	struct dirent *dirent;
 	struct stat statbuf;
 	char *path = NULL, *cwd = NULL;
-    gzFile outfile;
+    ogzstream outfile;
 	DIR *dir;
 
     if (argc < 2 || argc > 3)
@@ -212,10 +214,12 @@ int main (int argc, char* argv[])
         return 1;
     }
 
-    if (argc == 2) outfile = gzopen ("character.data", "w6");
-    else outfile = gzopen (argv[2], "w6");
+//     if (argc == 2) outfile = gzopen ("character.data", "w6");
+    if (argc == 2) outfile.open ("character.data");
+//     else outfile = gzopen (argv[2], "w6");
+    else outfile.open(argv[2]);
 
-    if (!outfile)
+    if (!outfile.is_open ())
     {
         cout << "\ncannot open \"" << (argc == 3 ? argv[2] : "character.data") 
              << "\" for writing.\n\n";
@@ -261,8 +265,11 @@ int main (int argc, char* argv[])
     }
 
     // tell the character.data loader that the EOF has been reached
-    gzputc (outfile, 0);
-    gzclose (outfile);
+    char tc = 0;
+    tc >> outfile;
+    outfile.close (); 
+//     gzputc (outfile, 0);
+//     gzclose (outfile);
     
     return 0;
 }

@@ -147,7 +147,8 @@ void debug_dlg::update ()
 
     while ((mychar = (character *) data::characters.next ()) != NULL)
     {
-        parent = gtk_ctree_find_by_row_data_custom (tree, NULL, mychar->get_name(), (GCompareFunc) strcompare);
+        parent = gtk_ctree_find_by_row_data_custom (tree, NULL, (void *) mychar->get_name().c_str (),
+                                                    (GCompareFunc) strcompare);
 
         // See whether the current node's children have changed
         if (update_children (tree, parent, mychar))
@@ -166,7 +167,7 @@ void debug_dlg::update ()
 
     while ((myquest = (quest *) data::quests.next ()) != NULL)
     {
-        parent = gtk_ctree_find_by_row_data_custom (tree, NULL, myquest->name, (GCompareFunc) strcompare);
+        parent = gtk_ctree_find_by_row_data_custom (tree, NULL, (void *) myquest->name.c_str (), (GCompareFunc) strcompare);
 
         // See whether the current node's children have changed
         if (update_children (tree, parent, myquest))
@@ -381,7 +382,7 @@ void debug_dlg::init ()
     gtk_clist_freeze (GTK_CLIST (char_tree));
     while ((mychar = (character *) data::characters.next ()) != NULL)
     {
-        text[0] = mychar->get_name();
+        text[0] = (char *) mychar->get_name().c_str ();
         text[1] = "";
 
         data = new dbg_node_data (strdup (text[0]), 2);
@@ -406,7 +407,7 @@ void debug_dlg::init ()
     gtk_clist_freeze (GTK_CLIST (quest_tree));
     while ((myquest = (quest *) data::quests.next ()) != NULL)
     {
-        text[0] = myquest->name;
+        text[0] = (char *) myquest->name.c_str ();
         text[1] = "";
 
         data = new dbg_node_data (strdup (text[0]), 2);

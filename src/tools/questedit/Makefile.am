@@ -20,12 +20,12 @@ CPPFLAGS +=-I../.. $(GTK_CFLAGS)
 
 LDFLAGS=
 
-fileops.o : ../../fileops.cpp
+fileops.o : ../../fileops.cc
 	$(CXXCOMPILE) -c $< -o $@
 
-quest.o : ../../quest.cpp
+quest.o : ../../quest.cc
 	$(CXXCOMPILE) -c $< -o $@
 
-storage.o : ../../storage.cpp
+storage.o : ../../storage.cc
 	$(CXXCOMPILE) -c $< -o $@
 

@@ -1018,10 +1018,10 @@ load_dialogue (MainFrame * wnd, const char *file)
             {
                 if (parse_dlgfile (s, n) == LOAD_STR)
                 {
-                    data::characters.erase (wnd->myplayer->get_name());
-                    delete wnd->myplayer->get_name();
+                    data::characters.erase (wnd->myplayer->get_name().c_str ());
+                    delete wnd->myplayer->get_name().c_str ();
                     wnd->myplayer->set_name (s.c_str ());
-                    data::characters.set (wnd->myplayer->get_name(), wnd->myplayer);
+                    data::characters.set (wnd->myplayer->get_name().c_str (), wnd->myplayer);
                 }
                 break;             
             }
@@ -1171,7 +1171,7 @@ save_dialogue (MainFrame * wnd)
     if (wnd->cust_func != "") out << "\nFunc §" << wnd->cust_func << "§\n";
 
     // Players name, race and gender
-    if (strcmp ("Banec", wnd->myplayer->get_name()))
+    if (strcmp ("Banec", wnd->myplayer->get_name().c_str ()))
         out << "\nName §" << wnd->myplayer->get_name() << "§";
     if (wnd->myplayer->storage::get ("race") != 0)
         out << "\nRace " << wnd->myplayer->storage::get ("race");

@@ -8,17 +8,17 @@ EXTRA_DIST = Enter.txt Leave.txt attributes.txt
 
 charedit_SOURCES = main.cc interface.cc callbacks.cc dirbrowser.cc \
 callbacks.h dirbrowser.h interface.h main.h
-charedit_LDADD = -lm -lstdc++ $(GTK_LIBS)
+charedit_LDADD = -lm -lstdc++ $(GTK_LIBS) 
 
 mergechars_SOURCES = mergechars.cc
 mergechars_LDADD = character_base.o storage.o fileops.o $(GTK_LIBS)
 
 # Evil, but it works...
-CPPFLAGS +=-I../.. $(GTK_CFLAGS)
+CPPFLAGS +=-I../.. $(GTK_CFLAGS) $(PY_CFLAGS)
 
 %.o : %.cc
 	$(CXXCOMPILE) -c $< -o $@
 
-%.o : ../../%.cpp
+%.o : ../../%.cc
 	$(CXXCOMPILE) -c $< -o $@
 

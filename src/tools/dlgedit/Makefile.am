@@ -33,12 +33,12 @@ quest.o storage.o yarg.o character_base.o $(PY_LIBS) $(GTK_LIBS) -lm -lstdc++
 lex.loadlg.cc: loadlg.l
 	flex -olex.loadlg.cc loadlg.l
 
-py_%_wrap.cc : py_%.i
-	swig $(SWIGFLAGS) -python -shadow -c++ -make_default -o py_%_wrap.cc $<
+py_character_wrap.cc : py_character.i
+	swig $(SWIGFLAGS) -python -shadow -c++ -make_default -o py_character_wrap.cc $<
 
 py_quest_wrap.cc : py_quest.i
 	swig $(SWIGFLAGS) -python -shadow -c++ -make_default -o py_quest_wrap.cc $<
- 
+
 %.o : %.cc
 	$(CXXCOMPILE) -c $< -o $@
 

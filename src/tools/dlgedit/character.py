@@ -41,6 +41,15 @@ class character_base(storage):
     def get_color(*args):
         val = apply(characterc.character_base_get_color,args)
         return val
+    def set_color(*args):
+        val = apply(characterc.character_base_set_color,args)
+        return val
+    def get_dialogue(*args):
+        val = apply(characterc.character_base_get_dialogue,args)
+        return val
+    def set_dialogue(*args):
+        val = apply(characterc.character_base_set_dialogue,args)
+        return val
     def __repr__(self):
         return "<C character_base instance at %s>" % (self.this,)
 class character_basePtr(character_base):
@@ -87,6 +96,7 @@ WALK_WEST = characterc.WALK_WEST
 WALK_EAST = characterc.WALK_EAST
 NBR_MOVES = characterc.NBR_MOVES
 NO_MOVE = characterc.NO_MOVE
+DIALOG_DIR = characterc.DIALOG_DIR
 DWARF = characterc.DWARF
 ELF = characterc.ELF
 HALFELF = characterc.HALFELF

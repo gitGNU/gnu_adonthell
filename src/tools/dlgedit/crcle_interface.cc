@@ -288,10 +288,10 @@ create_dlg_node_window (Circle *circle, crcle_dlg *dlg)
     while ((mychar = (character *) data::characters.next ()) != NULL)
     {
         // don't add the player character to the list
-        if (!strcmp (mychar->get_name(), ((character *) data::the_player)->get_name())) continue;
+        if (!strcmp (mychar->get_name().c_str (), ((character *) data::the_player)->get_name().c_str ())) continue;
         
-        glade_menuitem = gtk_menu_item_new_with_label (mychar->get_name());
-        gtk_object_set_user_data (GTK_OBJECT (glade_menuitem), mychar->get_name());
+        glade_menuitem = gtk_menu_item_new_with_label (mychar->get_name().c_str ());
+        gtk_object_set_user_data (GTK_OBJECT (glade_menuitem), (void *) mychar->get_name().c_str ());
         gtk_widget_show (glade_menuitem);
         gtk_menu_append (GTK_MENU (npc_selection_menu), glade_menuitem);
         gtk_option_menu_set_menu (GTK_OPTION_MENU (npc_selection), npc_selection_menu);
