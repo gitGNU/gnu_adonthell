@@ -379,12 +379,6 @@ void image::putbox_mask (u_int16 x, u_int16 y)
   dr.h=height;
   if(data)
     {
-#ifdef _16BIT
-      SDL_SetColorKey(data, SDL_SRCCOLORKEY, 0xF81F);
-#endif
-#ifdef _24BIT
-      SDL_SetColorKey(data, SDL_SRCCOLORKEY, 0xFF00FF);
-#endif
       SDL_BlitSurface(data, NULL, screen::vis, &dr);
     }
 }
@@ -435,12 +429,6 @@ void image::putbox_mask_part (u_int16 x, u_int16 y, u_int16 bw, u_int16 bh,
   dr.y=y;
   dr.w=bw;
   dr.h=bh;
-#ifdef _16BIT
-      SDL_SetColorKey(data, SDL_SRCCOLORKEY, 0xF81F);
-#endif
-#ifdef _24BIT
-      SDL_SetColorKey(data, SDL_SRCCOLORKEY, 0xFF00FF);
-#endif
 
   SDL_BlitSurface(data, &sr, screen::vis, &dr);
 }
@@ -455,12 +443,6 @@ void image::putbox_mask_trans (u_int16 x, u_int16 y, u_int8 alpha)
   dr.h=height;
 
   SDL_SetAlpha(data, SDL_SRCALPHA, alpha);
-#ifdef _16BIT
-      SDL_SetColorKey(data, SDL_SRCCOLORKEY, 0xF81F);
-#endif
-#ifdef _24BIT
-      SDL_SetColorKey(data, SDL_SRCCOLORKEY, 0xFF00FF);
-#endif
   SDL_BlitSurface(data, NULL, screen::vis, &dr);
 }
 
@@ -499,12 +481,6 @@ void image::putbox_mask_part_trans (u_int16 x, u_int16 y, u_int16 bw,
   dr.w=bw;
   dr.h=bh;
   SDL_SetAlpha(data, SDL_SRCALPHA, alpha);
-#ifdef _16BIT
-      SDL_SetColorKey(data, SDL_SRCCOLORKEY, 0xF81F);
-#endif
-#ifdef _24BIT
-      SDL_SetColorKey(data, SDL_SRCCOLORKEY, 0xFF00FF);
-#endif
   SDL_BlitSurface(data, &sr, screen::vis, &dr);
  }
 
@@ -609,41 +585,47 @@ void image::putbox_font_img (void * source, u_int16 xo, u_int16 totlen)
   u_int16 i,j;
   SDL_Surface *tmp;
 
-#ifdef _24BIT
-  tmp=SDL_CreateRGBSurface(SDL_SWSURFACE,lenght,height,24,0,0,0,0);
-
-  tmp->format->Rmask=0x0000FF;
-  tmp->format->Bmask=0xFF0000;
-  tmp->format->Gmask=0x00FF00;
-
-  for(i=0;i<height;i++)
+  switch(screen::get_bytes_per_pixel())
     {
-      for(j=0;j<lenght;j++)
+    case 3:
+      tmp=SDL_CreateRGBSurface(SDL_SWSURFACE,lenght,height,24,0,0,0,0);
+      
+      tmp->format->Rmask=0x0000FF;
+      tmp->format->Bmask=0xFF0000;
+      tmp->format->Gmask=0x00FF00;
+      
+      for(i=0;i<height;i++)
 	{
-	  *((u_int8*)tmp->pixels+(i*tmp->pitch)+(j*3))=*((u_int8*)source+(j*3)+(totlen*3*i)+(xo*3));
-	  *((u_int8*)tmp->pixels+(i*tmp->pitch)+(j*3)+1)=*((u_int8*)source+(j*3)+(totlen*3*i)+(xo*3)+1);
-	  *((u_int8*)tmp->pixels+(i*tmp->pitch)+(j*3)+2)=*((u_int8*)source+(j*3)+(totlen*3*i)+(xo*3)+2);
+	  for(j=0;j<lenght;j++)
+	    {
+	      *((u_int8*)tmp->pixels+(i*tmp->pitch)+(j*3))=*((u_int8*)source+(j*3)+(totlen*3*i)+(xo*3));
+	      *((u_int8*)tmp->pixels+(i*tmp->pitch)+(j*3)+1)=*((u_int8*)source+(j*3)+(totlen*3*i)+(xo*3)+1);
+	      *((u_int8*)tmp->pixels+(i*tmp->pitch)+(j*3)+2)=*((u_int8*)source+(j*3)+(totlen*3*i)+(xo*3)+2);
+	    }
 	}
-    }
-#endif
+      data=SDL_ConvertSurface(tmp, tmp->format, SDL_SWSURFACE);
+      SDL_SetColorKey(data, SDL_SRCCOLORKEY, 0xFF00FF);
+      break;
+    case 2:
 
-#ifdef _16BIT
-  tmp=SDL_CreateRGBSurface(SDL_SWSURFACE,lenght,height,16,0,0,0,0);
+      tmp=SDL_CreateRGBSurface(SDL_SWSURFACE,lenght,height,16,0,0,0,0);
 
-  u_int8 R,G,B;
-  for(i=0;i<height;i++)
-    {
-      for(j=0;j<lenght;j++)
+      u_int8 R,G,B;
+      for(i=0;i<height;i++)
 	{
-	  R=*((u_int8*)source+(j*3)+(totlen*3*i)+(xo*3));
-	  G=*((u_int8*)source+(j*3)+(totlen*3*i)+1+(xo*3));
-	  B=*((u_int8*)source+(j*3)+(totlen*3*i)+2+(xo*3));
-	  *((u_int16 *)tmp->pixels+(i*tmp->pitch/2)+j) = SDL_MapRGB(tmp->format, R, G, B);
+	  for(j=0;j<lenght;j++)
+	    {
+	      R=*((u_int8*)source+(j*3)+(totlen*3*i)+(xo*3));
+	      G=*((u_int8*)source+(j*3)+(totlen*3*i)+1+(xo*3));
+	      B=*((u_int8*)source+(j*3)+(totlen*3*i)+2+(xo*3));
+	      *((u_int16 *)tmp->pixels+(i*tmp->pitch/2)+j) = SDL_MapRGB(tmp->format, R, G, B);
+	    }
 	}
+      data=SDL_ConvertSurface(tmp, tmp->format, SDL_SWSURFACE);
+      SDL_SetColorKey(data, SDL_SRCCOLORKEY, 0xF81F);
+      break;
     }
-#endif
  
-  data=SDL_ConvertSurface(tmp, tmp->format, SDL_SWSURFACE);
 }
 
 void image::putbox_trans_img (image * source, u_int16 x, u_int16 y, 
@@ -696,51 +678,52 @@ s_int8 image::get(FILE * file)
 s_int8 image::get(FILE * file)
 {
   if(DEBUG) fprintf(stderr, "Function: image::get\n");
-
   u_int16 i,j;
   void * tmp;
   SDL_Surface * tmp2;
 
   tmp=read_pnm(file,&lenght,&height);
 
-#ifdef _24BIT
-  tmp2=SDL_CreateRGBSurface(SDL_SWSURFACE,lenght,height,24,0,0,0,0);
-
-  tmp2->format->Rmask=0x0000FF;
-  tmp2->format->Bmask=0xFF0000;
-  tmp2->format->Gmask=0x00FF00;
-
-  for(i=0;i<height;i++)
+  switch(screen::get_bytes_per_pixel())
     {
-      for(j=0;j<lenght;j++)
+    case 3:
+      tmp2=SDL_CreateRGBSurface(SDL_SWSURFACE,lenght,height,24,0,0,0,0);
+      
+      tmp2->format->Rmask=0x0000FF;
+      tmp2->format->Bmask=0xFF0000;
+      tmp2->format->Gmask=0x00FF00;
+      
+      for(i=0;i<height;i++)
 	{
-	  *((u_int8*)tmp2->pixels+(i*tmp2->pitch)+(j*3))=*((u_int8*)tmp+(j*3)+(lenght*3*i));
-	  *((u_int8*)tmp2->pixels+(i*tmp2->pitch)+(j*3)+1)=*((u_int8*)tmp+(j*3)+(lenght*3*i)+1);
-	  *((u_int8*)tmp2->pixels+(i*tmp2->pitch)+(j*3)+2)=*((u_int8*)tmp+(j*3)+(lenght*3*i)+2);
+	  for(j=0;j<lenght;j++)
+	    {
+	      *((u_int8*)tmp2->pixels+(i*tmp2->pitch)+(j*3))=*((u_int8*)tmp+(j*3)+(lenght*3*i));
+	      *((u_int8*)tmp2->pixels+(i*tmp2->pitch)+(j*3)+1)=*((u_int8*)tmp+(j*3)+(lenght*3*i)+1);
+	      *((u_int8*)tmp2->pixels+(i*tmp2->pitch)+(j*3)+2)=*((u_int8*)tmp+(j*3)+(lenght*3*i)+2);
+	    }
 	}
-    }
-#endif
+      data=SDL_ConvertSurface(tmp2, tmp2->format, SDL_SWSURFACE);
+      SDL_SetColorKey(data, SDL_SRCCOLORKEY, 0xFF00FF);
+      break;
+    case 2:
+      tmp2=SDL_CreateRGBSurface(SDL_SWSURFACE,lenght,height,16,0,0,0,0);
 
-#ifdef _16BIT
-  tmp2=SDL_CreateRGBSurface(SDL_SWSURFACE,lenght,height,16,0,0,0,0);
-
-  //  tmp2->format->Rmask=0x0000FF;
-  //  tmp2->format->Bmask=0xFF0000;
-  //  tmp2->format->Gmask=0x00FF00;
-  u_int8 R,G,B;
-  for(i=0;i<height;i++)
-    {
-      for(j=0;j<lenght;j++)
-	{
-	  R=*((u_int8*)tmp+(j*3)+(lenght*3*i));
-	  G=*((u_int8*)tmp+(j*3)+(lenght*3*i)+1);
-	  B=*((u_int8*)tmp+(j*3)+(lenght*3*i)+2);
-	 *((u_int16 *)tmp2->pixels+(i*tmp2->pitch/2)+j) = SDL_MapRGB(tmp2->format, R, G, B);
+      u_int8 R,G,B;
+      for(i=0;i<height;i++)
+	{      
+	  for(j=0;j<lenght;j++)
+	    {
+	      R=*((u_int8*)tmp+(j*3)+(lenght*3*i));
+	      G=*((u_int8*)tmp+(j*3)+(lenght*3*i)+1);
+	      B=*((u_int8*)tmp+(j*3)+(lenght*3*i)+2);
+	      *((u_int16 *)tmp2->pixels+(i*tmp2->pitch/2)+j) = SDL_MapRGB(tmp2->format, R, G, B);
+	    }
 	}
+      data=SDL_ConvertSurface(tmp2, tmp2->format, SDL_SWSURFACE);
+      SDL_SetColorKey(data, SDL_SRCCOLORKEY, 0xF81F);
+      break;
     }
-#endif
 
-  data=SDL_ConvertSurface(tmp2, tmp2->format, SDL_SWSURFACE);
   free(tmp);
   
   if (!data) return(-1);
@@ -932,32 +915,8 @@ void screen::init_display(u_int8 vidmode = 0)
 
   atexit (SDL_Quit);
 
-#ifdef _24BIT
+
   bpp=SDL_VideoModeOK(screenwidth, screenheight, 24, SDL_HWSURFACE);
-
-  switch (bpp)
-    {
-    case 0:
-      fprintf(stderr, "Video mode %dx%d unavailable. Exiting.. \n",screenwidth, screenheight);
-      exit (1);
-      break;
-    case 24:
-      printf ("Using 24bpp depth.\n");
-      bytes_per_pixel = 3;
-      trans=0xFFFF00;  
-      break;
-    default:
-      printf ("Emulating 24bpp depth in %dbpp mode\n",bpp);
-      bpp=24;
-      bytes_per_pixel = 3;
-      trans=0xFFFF00;
-      break;
-    }
-#endif
-
-
-#ifdef _16BIT
-  bpp=SDL_VideoModeOK(screenwidth, screenheight, 16, SDL_HWSURFACE);
 
   switch (bpp)
     {
@@ -970,6 +929,11 @@ void screen::init_display(u_int8 vidmode = 0)
       bytes_per_pixel = 2;
       trans=0xF81F;  
       break;
+    case 24:
+      printf ("Using 24bpp depth.\n");
+      bytes_per_pixel = 3;
+      trans=0xFF00FF;  
+      break;
     default:
       printf ("Emulating 16bpp depth in %dbpp mode\n",bpp);
       bpp=16;
@@ -977,15 +941,17 @@ void screen::init_display(u_int8 vidmode = 0)
       trans=0xF81F;
       break;
     }
-#endif
-
-  vis = SDL_SetVideoMode (screenwidth, screenheight, bpp, SDL_HWSURFACE);
-  if (vis == NULL) 
+ 
+  if(sizefactor==1)
     {
-      fprintf (stderr, "error: %s\n", SDL_GetError ());
-      exit (1);
+      vis = SDL_SetVideoMode (screenwidth, screenheight, bpp, SDL_HWSURFACE);
+      if (vis == NULL) 
+	{
+	  fprintf (stderr, "error: %s\n", SDL_GetError ());
+	  exit (1);
+	}
     }
-
+  
   SDL_WM_SetCaption ("Adonthell", NULL);
 
   init_gfx_buffers();
@@ -1023,11 +989,6 @@ void screen::show()
 void screen::show()
 {
   if(DEBUG) fprintf(stderr, "Function: screen::show\n");
-  SDL_Rect dr;
-  dr.x=0;
-  dr.y=0;
-  dr.w=screenwidth;
-  dr.h=screenheight;
   static struct timeval timer1, timer2, timer3;
 #if 1
   do
@@ -1046,6 +1007,7 @@ void screen::show()
   timer1.tv_usec-=(timer3.tv_usec%14000);
 
   SDL_UpdateRect (vis, 0, 0, 0, 0);
+  
   frames_to_do=timer3.tv_usec/14000;
   if (frames_to_do>20) frames_to_do=20;
 }
