@@ -323,7 +323,7 @@ public:
     }
 
     /**
-     * Applies a "brightness" to a surace.
+     * Applies a "brightness" to a surface.
      * Lighten (or darken) the src surface and put the result into this image.
      * This image will be resized to the src surface's size. 
      * @param src the source surface to lighten/darken.

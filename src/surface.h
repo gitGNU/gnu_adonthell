@@ -149,7 +149,7 @@ public:
      * @param da_opt optional drawing_area to use during the drawing operation.
      * @param target pointer to the surface where to draw the drawable. If NULL, draw on the screen.
      *
-     * @attention Not accessible from Python. Use draw_part from Python instead.
+     * @attention Not accessible from Python. Use draw_part () from Python instead.
      * @sa draw_part () 
      *
      */
