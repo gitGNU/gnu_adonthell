@@ -32,7 +32,7 @@ mandir = @mandir@
 includedir = @includedir@
 oldincludedir = /usr/include
 
-DESTDIR =
+DESTDIR = ..
 
 pkgdatadir = $(datadir)/@PACKAGE@
 pkglibdir = $(libdir)/@PACKAGE@
@@ -74,6 +74,8 @@ bin_PROGRAMS = mapengine
 
 mapengine_SOURCES = array_tmpl.cc audio.cc audio_thread.cc commands.cc dialog_cmds.cc fileops.cc 	gfx.cc init.cc instruction.cc instruction_class.cc interpreter.cc keyboard.cc main.cc 	map.cc mapcharacter.cc mapengine.cc mapevent.cc mappattern.cc mapsquare.cc pnm.cc 	window.cc animation.cc dialog.cc
 
+
+mapengine_TARGET = ../mapengine
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = ../header.h
 CONFIG_CLEAN_FILES = 
@@ -92,7 +94,7 @@ mapengine_DEPENDENCIES =
 mapengine_LDFLAGS = 
 CXXCOMPILE = $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
 CXXLD = $(CXX)
-CXXLINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(LDFLAGS) -o $@
+CXXLINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(LDFLAGS) -o ../$@
 DIST_COMMON =  Makefile.am Makefile.in
 
 

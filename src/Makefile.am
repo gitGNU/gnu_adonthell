@@ -5,3 +5,5 @@ mapengine_SOURCES = array_tmpl.cc audio.cc audio_thread.cc commands.cc dialog_cm
 	map.cc mapcharacter.cc mapengine.cc mapevent.cc mappattern.cc mapsquare.cc pnm.cc \
 	window.cc animation.cc dialog.cc
 
+mapengine_TARGET = ../mapengine
+

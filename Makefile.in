@@ -18,8 +18,6 @@ top_srcdir = @top_srcdir@
 VPATH = @srcdir@
 prefix = @prefix@
 exec_prefix = @exec_prefix@
-
-bindir = @bindir@
 sbindir = @sbindir@
 libexecdir = @libexecdir@
 datadir = @datadir@
@@ -32,7 +30,7 @@ mandir = @mandir@
 includedir = @includedir@
 oldincludedir = /usr/include
 
-DESTDIR =
+DESTDIR = .
 
 pkgdatadir = $(datadir)/@PACKAGE@
 pkglibdir = $(libdir)/@PACKAGE@
@@ -70,6 +68,7 @@ SDL_LIBS = @SDL_LIBS@
 VERSION = @VERSION@
 
 SUBDIRS = src
+bindir = "."
 
 # M4 macro file for inclusion with autoconf
 m4datadir = $(datadir)/aclocal

@@ -1,4 +1,5 @@
 SUBDIRS = src
+bindir = "."
 
 # M4 macro file for inclusion with autoconf
 m4datadir = $(datadir)/aclocal
