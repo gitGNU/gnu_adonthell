@@ -229,6 +229,8 @@ void mapcharacter::jump_to (u_int16 smap, u_int16 x, u_int16 y,
 {
     leave_position (); 
     set_pos (smap, x, y);
+    set_offset (0, 0);
+
     switch (pos)
     {
         case NO_MOVE:
@@ -663,7 +665,7 @@ void mapcharacter::leave (u_int16 smap, u_int16 px, u_int16 py)
                 it++;
             if (it != e)
                 refmap->submap[smap]->area[px][py].mapchars.erase (it);
-        }     
+        }
 }
 
 void mapcharacter::leave_position () 
@@ -672,12 +674,17 @@ void mapcharacter::leave_position ()
     switch (current_move) 
     {
         case WALK_NORTH: 
+            leave (submap (), posx (), posy () + 1);
+            break;
         case WALK_SOUTH:
-            leave (submap (), posx (), posy () - 1); 
-            
-        case WALK_WEST: 
+            leave (submap (), posx (), posy () - 1);
+            break;
+        case WALK_WEST:
+            leave (submap (), posx () + 1, posy ());
+            break;
         case WALK_EAST:
-            leave (submap (), posx () - 1, posy ()); 
+            leave (submap (), posx () - 1, posy ());
+            break;
     }
 }
 
