@@ -312,6 +312,128 @@ Types.h only takes x86 architecture into account
 \end_inset 
 
 
+\layout Section
+
+Game dynamic
+\layout Standard
+
+As we display animated things, we must know 
+\emph on 
+when
+\emph default 
+ they must change.
+ A game that runs at a different speed on various machines has nearly no
+ interest, as only a few configurations can make it run at the good speed.
+ So it's very important to have a timing system built into the game engine.
+\layout Standard
+
+Adonthell uses it's own timing system.
+ The time unit is the 
+\emph on 
+game cycle
+\emph default 
+, which corresponds to approximatively 1/70 of second.
+ When the game runs, it performs a loop which looks like this:
+\layout Code
+
+while(<condition to quit the engine>)
+\layout Code
+
+{
+\layout Code
+
+  gametime::update();
+\layout Code
+
+  for(i=0;i<gametime::get_frames_to_do();i++)
+\layout Code
+
+   {
+\layout Code
+
+     <update the game status (character positions,...)>
+\layout Code
+
+   }
+\layout Code
+
+  <perform drawing operations>
+\layout Code
+
+}
+\layout Standard
+
+Explanations:
+\layout Standard
+
+This loop performs what is necessary to update the screen.
+ Depending on the speed of the CPU, this can take more or less time.
+ You've seen that a game cycle durate 1/70 of a second.
+ For some machines, this is not enough to perform the entire loop.
+\layout Standard
+
+As you've seen, there are two kinds of operations that are in the loop:
+\layout Itemize
+
+Update operations, which actually update the state of the game, according
+ to user input, previous game state, etc...
+ These operations are very fast to perform.
+\layout Itemize
+
+Drawing operations, that is, update the screen.
+ This is what may slow things down.
+ Some graphic boards simply can't redraw the entire screen 70 times per
+ second.
+\layout Standard
+
+So the solution to keep the game running at the same speed on every machine
+ is to draw less frames per second on slow machines (instead of drawing
+ 1 frame every game cycle, we'll draw one frame for 2 games cycles, for
+ example).
+ This is where gametime is usefull: The 
+\emph on 
+gametime::update()
+\emph default 
+ method calculates the delay between the last call and the current call.
+ It can then calculate if we've been late, and catch the time back by telling
+ to the other objects that we must perform 2 games cycles instead of 1 to
+ be sync (this is the result of the 
+\emph on 
+gametime::get_frames_to_do()
+\emph default 
+ method).
+ For example, if the last loop took 1/35 of a second to be completed, 
+\emph on 
+gametime::get_frames_to_do()
+\emph default 
+ will return 2, so the loop will perform 2 game updates before drawing the
+ screen.
+ On the contrary, if the machine is too fast (if it can draw 2 frames for
+ each game cycle, for example), it will 
+\emph on 
+usleep()
+\emph default 
+ to stay in sync.
+\layout Standard
+
+In a more general manner, 
+\emph on 
+every
+\emph default 
+ class that get's updated and draw something on the screen MUST have an
+ 
+\emph on 
+update()
+\emph default 
+ method, that updates it's state 
+\emph on 
+once
+\emph default 
+, and a 
+\emph on 
+draw()
+\emph default 
+ method to draw it on the screen.
 \layout Chapter
 
 
@@ -368,16 +490,37 @@ Methods
 \layout Standard
 
 They are rather self-explicit:
-\layout Code
+\layout SGML
 
-void init(int argc, char ** argv);
+<funcsynopsis>
+\layout SGML
+
+<funcdef>void <function>init</function></funcdef>
+\layout SGML
+
+<paramdef>int<parameter> argc </parameter> </paramdef>
+\layout SGML
+
+<paramdef>char **<parameter> argv</parameter></paramdef>
+\layout SGML
+
+</funcsynopsis>
 \layout Standard
 
 Read the configuration file, check the validity of the data directory and
  initialize the display, input, sound, data and Python systems.
-\layout Code
+\layout SGML
 
-void cleanup(void);
+<funcsynopsis>
+\layout SGML
+
+<funcdef>void <function>cleanup</function></funcdef>
+\layout SGML
+
+<paramdef>void</paramdef>
+\layout SGML
+
+</funcsynopsis>
 \layout Standard
 
 Write configuration file and shutdown the display, input, sound, data and
@@ -447,15 +590,42 @@ assign
 \end_inset 
 
 Methods
-\layout Code
+\layout SGML
 
-drawing_area();
+<funcsynopsis>
+\layout SGML
+
+<funcdef>void <function>drawing_area</function></funcdef>
+\layout SGML
+
+<paramdef>void</paramdef>
+\layout SGML
+
+</funcsynopsis>
 \layout Standard
 
 The default constructor.
-\layout Code
+\layout SGML
 
-drawing_area(u_int16 px, u_int16 py, u_int16 pw, u_int16 ph);
+<funcsynopsis>
+\layout SGML
+
+<funcdef>void <function>drawing_area</function></funcdef>
+\layout SGML
+
+<paramdef>u_int16 <parameter> px </parameter></paramdef>
+\layout SGML
+
+<paramdef>u_int16 <parameter> py </parameter></paramdef>
+\layout SGML
+
+<paramdef>u_int16 <parameter> pw </parameter></paramdef>
+\layout SGML
+
+<paramdef>u_int16 <parameter> ph </parameter></paramdef>
+\layout SGML
+
+</funcsynopsis>
 \layout Standard
 
 Constructor for creating a drawing area of size 
@@ -467,9 +637,21 @@ Constructor for creating a drawing area of size
 (px,py)
 \emph default 
 .
-\layout Code
+\layout SGML
 
-void resize(u_int16 dl, u_int16 dh);
+<funcsynopsis>
+\layout SGML
+
+<funcdef>void <function>resize</function></funcdef>
+\layout SGML
+
+<paramdef>u_int16 <parameter> dl </parameter></paramdef>
+\layout SGML
+
+<paramdef>u_int16 <parameter> dh </parameter></paramdef>
+\layout SGML
+
+</funcsynopsis>
 \layout Standard
 
 Resize the drawing area to 
@@ -477,9 +659,21 @@ Resize the drawing area to
 (dl,dh)
 \emph default 
 .
-\layout Code
+\layout SGML
 
-void move(u_int16 dx, u_int16 dy);
+<funcsynopsis>
+\layout SGML
+
+<funcdef>void <function>move</function></funcdef>
+\layout SGML
+
+<paramdef>u_int16 <parameter> dx </parameter></paramdef>
+\layout SGML
+
+<paramdef>u_int16 <parameter> dy </parameter></paramdef>
+\layout SGML
+
+</funcsynopsis>
 \layout Standard
 
 Move the drawing area to 
@@ -487,9 +681,18 @@ Move the drawing area to
 (dx,dy)
 \emph default 
 .
-\layout Code
+\layout SGML
 
-void assign_drawing_area(drawing_area * da);
+<funcsynopsis>
+\layout SGML
+
+<funcdef>void <function>assign_drawing_area</function></funcdef>
+\layout SGML
+
+<paramdef>drawing_area * <parameter> da </parameter></paramdef>
+\layout SGML
+
+</funcsynopsis>
 \layout Standard
 
 Assign the 
@@ -497,9 +700,18 @@ Assign the
 da
 \emph default 
  drawing area to this drawing area.
-\layout Code
+\layout SGML
 
-void detach_drawing_area();
+<funcsynopsis>
+\layout SGML
+
+<funcdef>void <function>detach_drawing_area</function></funcdef>
+\layout SGML
+
+<paramdef>void</paramdef>
+\layout SGML
+
+</funcsynopsis>
 \layout Standard
 
 Detach the drawing area (if any) previously assigned to this drawing area.
@@ -548,9 +760,21 @@ flush the frame buffer to the physical screen and make abstraction of the
 \end_inset 
 
 Methods
-\layout Code
+\layout SGML
 
-void set_video_mode(u_int16 nl, u_int16 nh);
+<funcsynopsis>
+\layout SGML
+
+<funcdef>void <function>set_video_mode</function></funcdef>
+\layout SGML
+
+<paramdef>u_int16 <parameter> nl </parameter></paramdef>
+\layout SGML
+
+<paramdef>u_int16 <parameter> nh </parameter></paramdef>
+\layout SGML
+
+</funcsynopsis>
 \layout Standard
 
 Sets the video mode at the right depth according to the 
@@ -570,32 +794,80 @@ nl: The desired screen resolution's length.
 
 u_int16\SpecialChar ~
 nh: The desired screen resolution's height.
-\layout Code
+\layout SGML
 
-void set_fullscreen(bool mode);
+<funcsynopsis>
+\layout SGML
+
+<funcdef>void <function>set_fullscreen</function></funcdef>
+\layout SGML
+
+<paramdef>bool <parameter> mode </parameter></paramdef>
+\layout SGML
+
+</funcsynopsis>
 \layout Standard
 
 Sets/unsets fullscreen mode.
-\layout Code
+\layout SGML
 
-bool get_fullscreen();
+<funcsynopsis>
+\layout SGML
+
+<funcdef>bool <function>get_fullscreen</function></funcdef>
+\layout SGML
+
+<paramdef>void</paramdef>
+\layout SGML
+
+</funcsynopsis>
 \layout Standard
 
 Returns whether fullscreen mode is on or not.
-\layout Code
+\layout SGML
 
-void show();
+<funcsynopsis>
+\layout SGML
+
+<funcdef>void <function>show</function></funcdef>
+\layout SGML
+
+<paramdef>void</paramdef>
+\layout SGML
+
+</funcsynopsis>
 \layout Standard
 
 Copies the screen buffer to the physical screen (actually displays the screen).
  This function must be called after all your graphical operations, when
  you want the changes made to be visibles.
-\layout Code
+\layout SGML
 
-void drawbox(u_int16 x, u_int16 y, u_int16 w, u_int16 h,
-\layout Code
+<funcsynopsis>
+\layout SGML
 
-u_int32 color, drawing_area * da_opt=NULL);
+<funcdef>void <function>drawbox</function></funcdef>
+\layout SGML
+
+<paramdef>u_int16 <parameter> x </parameter></paramdef>
+\layout SGML
+
+<paramdef>u_int16 <parameter> y </parameter></paramdef>
+\layout SGML
+
+<paramdef>u_int16 <parameter> w </parameter></paramdef>
+\layout SGML
+
+<paramdef>u_int16 <parameter> h </parameter></paramdef>
+\layout SGML
+
+<paramdef>u_int32 <parameter> color </parameter></paramdef>
+\layout SGML
+
+<paramdef>drawing_area * <parameter> da_opt=NULL </parameter></paramdef>
+\layout SGML
+
+</funcsynopsis>
 \layout Standard
 
 Draw a box at coordinates 
@@ -615,39 +887,93 @@ color
 da_opt
 \emph default 
 .
-\layout Code
+\layout SGML
 
-void clear();
+<funcsynopsis>
+\layout SGML
+
+<funcdef>void <function>clear</function></funcdef>
+\layout SGML
+
+<paramdef>void</paramdef>
+\layout SGML
+
+</funcsynopsis>
 \layout Standard
 
 Fills the screen with black.
-\layout Code
+\layout SGML
 
-void set_mouse_cursor_visible(bool b);
+<funcsynopsis>
+\layout SGML
+
+<funcdef>void <function>set_mouse_cursor_visible</function></funcdef>
+\layout SGML
+
+<paramdef>bool <parameter> b </parameter></paramdef>
+\layout SGML
+
+</funcsynopsis>
 \layout Standard
 
 Enable/disable mouse cursor.
-\layout Code
+\layout SGML
 
-bool mouse_cursor_visible();
+<funcsynopsis>
+\layout SGML
+
+<funcdef>bool <function>mouse_cursor_visible</function></funcdef>
+\layout SGML
+
+<paramdef>void</paramdef>
+\layout SGML
+
+</funcsynopsis>
 \layout Standard
 
 Returns whether the mouse cursor is visible or not.
-\layout Code
+\layout SGML
 
-u_int16 get_length();
+<funcsynopsis>
+\layout SGML
+
+<funcdef>u_int16 <function>get_length</function></funcdef>
+\layout SGML
+
+<paramdef>void</paramdef>
+\layout SGML
+
+</funcsynopsis>
 \layout Standard
 
 Returns the screen length, in pixels.
-\layout Code
+\layout SGML
 
-u_int16 get_height();
+<funcsynopsis>
+\layout SGML
+
+<funcdef>u_int16 <function>get_height</function></funcdef>
+\layout SGML
+
+<paramdef>void</paramdef>
+\layout SGML
+
+</funcsynopsis>
 \layout Standard
 
 Returns the screen height, in pixels.
-\layout Code
+\layout SGML
 
-u_int32 get_trans_col();
+<funcsynopsis>
+\layout SGML
+
+<funcdef>u_int32 <function>get_trans_col</function></funcdef>
+\layout SGML
+
+<paramdef>void</paramdef>
+\layout SGML
+
+</funcsynopsis>
 \layout Standard
 
 Returns the color that will appear as transparent.
@@ -710,16 +1036,37 @@ alpha
 \end_inset 
 
 Methods
-\layout Code
+\layout SGML
 
-void image();
+<funcsynopsis>
+\layout SGML
+
+<funcdef>void <function>image</function></funcdef>
+\layout SGML
+
+<paramdef>void</paramdef>
+\layout SGML
+
+</funcsynopsis>
 \layout Standard
 
 Default constructor, initialize the image so it can safely be used.
  The image's length and height are then 0.
-\layout Code
+\layout SGML
 
-void image(u_int16 l, u_int16 h);
+<funcsynopsis>
+\layout SGML
+
+<funcdef>void <function>image</function></funcdef>
+\layout SGML
+
+<paramdef>u_int16 <parameter> l </parameter></paramdef>
+\layout SGML
+
+<paramdef>u_int16 <parameter> h </parameter></paramdef>
+\layout SGML
+
+</funcsynopsis>
 \layout Standard
 
 Creates an image of size 
@@ -727,22 +1074,52 @@ Creates an image of size
 (l,h)
 \emph default 
 .
-\layout Code
+\layout SGML
 
-~image();
+<funcsynopsis>
+\layout SGML
+
+<funcdef><function>~image</function></funcdef>
+\layout SGML
+
+<paramdef></paramdef>
+\layout SGML
+
+</funcsynopsis>
 \layout Standard
 
 Destructor.
-\layout Code
+\layout SGML
 
-void clear();
+<funcsynopsis>
+\layout SGML
+
+<funcdef>void <function>clear</function></funcdef>
+\layout SGML
+
+<paramdef>void</paramdef>
+\layout SGML
+
+</funcsynopsis>
 \layout Standard
 
 Erase your image, making it exactly the same as a newly created, (0,0) sized
  image.
-\layout Code
+\layout SGML
 
-void resize(u_int16 l, u_int16 h);
+<funcsynopsis>
+\layout SGML
+
+<funcdef>void <function>resize</function></funcdef>
+\layout SGML
+
+<paramdef>u_int16 <parameter> l </parameter></paramdef>
+\layout SGML
+
+<paramdef>u_int16 <parameter> h </parameter></paramdef>
+\layout SGML
+
+</funcsynopsis>
 \layout Standard
 
 Resize the image to dimensions 
@@ -751,21 +1128,48 @@ Resize the image to dimensions
 \emph default 
 .
  All the content of the image is then lost.
-\layout Code
+\layout SGML
 
-u_int16 get_length();
+<funcsynopsis>
+\layout SGML
+
+<funcdef>u_int16 <function>get_length</function></funcdef>
+\layout SGML
+
+<paramdef>void</paramdef>
+\layout SGML
+
+</funcsynopsis>
 \layout Standard
 
 Returns the length of the image.
-\layout Code
+\layout SGML
 
-u_int16 get_height();
+<funcsynopsis>
+\layout SGML
+
+<funcdef>void <function>get_height</function></funcdef>
+\layout SGML
+
+<paramdef>void</paramdef>
+\layout SGML
+
+</funcsynopsis>
 \layout Standard
 
 Returns the height of the image.
-\layout Code
+\layout SGML
 
-s_int8 get(gzFile file);
+<funcsynopsis>
+\layout SGML
+
+<funcdef>s_int8 <function>get</function></funcdef>
+\layout SGML
+
+<paramdef>gzFile <parameter>file</parameter></paramdef>
+\layout SGML
+
+</funcsynopsis>
 \layout Standard
 
 Loads an image from an opened file, with it's transparency and alpha parameters.
@@ -781,9 +1185,18 @@ value:
 
 -1 in case of memory allocation error.
 \end_deeper 
-\layout Code
+\layout SGML
 
-s_int8 load(const char * fname);
+<funcsynopsis>
+\layout SGML
+
+<funcdef>s_int8 <function>load</function></funcdef>
+\layout SGML
+
+<paramdef>const char * <parameter>fname</parameter></paramdef>
+\layout SGML
+
+</funcsynopsis>
 \layout Standard
 
 Loads an image from a non-opened file, with it's transparency and alpha
@@ -800,9 +1213,18 @@ value:
 
 -1 in case of memory allocation error.
 \end_deeper 
-\layout Code
+\layout SGML
 
-s_int8 get_raw(gzFile file);
+<funcsynopsis>
+\layout SGML
+
+<funcdef>s_int8 <function>get_raw</function></funcdef>
+\layout SGML
+
+<paramdef>gzFile <parameter>file</parameter></paramdef>
+\layout SGML
+
+</funcsynopsis>
 \layout Standard
 
 Loads an image from an opened file, without it's transparency and alpha
@@ -819,9 +1241,18 @@ value:
 
 -1 in case of memory allocation error.
 \end_deeper 
-\layout Code
+\layout SGML
 
-s_int8 load_raw(const char * fname);
+<funcsynopsis>
+\layout SGML
+
+<funcdef>s_int8 <function>load_raw</function></funcdef>
+\layout SGML
+
+<paramdef>const char * <parameter>fname</parameter></paramdef>
+\layout SGML
+
+</funcsynopsis>
 \layout Standard
 
 Loads an image from a non-opened file, without it's transparency and alpha
@@ -838,9 +1269,18 @@ value:
 
 -1 in case of memory allocation error.
 \end_deeper 
-\layout Code
+\layout SGML
 
-s_int8 get_pnm(gzFile file);
+<funcsynopsis>
+\layout SGML
+
+<funcdef>s_int8 <function>get_pnm</function></funcdef>
+\layout SGML
+
+<paramdef>gzFile <parameter>file</parameter></paramdef>
+\layout SGML
+
+</funcsynopsis>
 \layout Standard
 
 Loads an image encoded in PNM raw format from an opened file, without it's
@@ -857,9 +1297,18 @@ value:
 
 -1 in case of memory allocation error.
 \end_deeper 
-\layout Code
+\layout SGML
 
-s_int8 load_pnm(const char * fname);
+<funcsynopsis>
+\layout SGML
+
+<funcdef>s_int8 <function>load_pnm</function></funcdef>
+\layout SGML
+
+<paramdef>const char * <parameter>fname</parameter></paramdef>
+\layout SGML
+
+</funcsynopsis>
 \layout Standard
 
 Loads an image encoded in PNM raw format from a non-opened file, without
@@ -876,54 +1325,129 @@ value:
 
 -1 in case of memory allocation error.
 \end_deeper 
-\layout Code
+\layout SGML
 
-void screen_shot();
+<funcsynopsis>
+\layout SGML
+
+<funcdef>void <function>screen_shot</function></funcdef>
+\layout SGML
+
+<paramdef>void</paramdef>
+\layout SGML
+
+</funcsynopsis>
 \layout Standard
 
 Takes a screenshot and put it in the image.
-\layout Code
+\layout SGML
 
-void assign_drawing_area(drawing_area * da);
+<funcsynopsis>
+\layout SGML
+
+<funcdef>void <function>assign_drawing_area</function></funcdef>
+\layout SGML
+
+<paramdef>drawing_area * <parameter>da</parameter></paramdef>
+\layout SGML
+
+</funcsynopsis>
 \layout Standard
 
 Assign a drawing area to the image.
-\layout Code
+\layout SGML
 
-void detach_drawing_area();
+<funcsynopsis>
+\layout SGML
+
+<funcdef>void <function>detach_drawing_area</function></funcdef>
+\layout SGML
+
+<paramdef>void</paramdef>
+\layout SGML
+
+</funcsynopsis>
 \layout Standard
 
 Detach the drawing area (if any) previously assigned to the image.
-\layout Code
+\layout SGML
 
-bool get_mask();
+<funcsynopsis>
+\layout SGML
+
+<funcdef>bool <function>get_mask</function></funcdef>
+\layout SGML
+
+<paramdef>void</paramdef>
+\layout SGML
+
+</funcsynopsis>
 \layout Standard
 
 Returns whether the image is masked or not.
-\layout Code
+\layout SGML
 
-void set_mask(bool m);
+<funcsynopsis>
+\layout SGML
+
+<funcdef>void <function>set_mask</function></funcdef>
+\layout SGML
+
+<paramdef>bool <parameter>m</parameter></paramdef>
+\layout SGML
+
+</funcsynopsis>
 \layout Standard
 
 Sets whether the image is masked or not.
-\layout Code
+\layout SGML
 
-u_int8 get_alpha();
+<funcsynopsis>
+\layout SGML
+
+<funcdef>u_int8 <function>get_alpha</function></funcdef>
+\layout SGML
+
+<paramdef>void</paramdef>
+\layout SGML
+
+</funcsynopsis>
 \layout Standard
 
 Returns the alpha parameter of the image.
-\layout Code
+\layout SGML
 
-void set_alpha(u_int8 t);
+<funcsynopsis>
+\layout SGML
+
+<funcdef>void <function>set_alpha</function></funcdef>
+\layout SGML
+
+<paramdef>u_int8 <parameter> t </parameter></paramdef>
+\layout SGML
+
+</funcsynopsis>
 \layout Standard
 
 Sets the alpha parameter of the image.
-\layout Code
+\layout SGML
 
-void draw(s_int16 x, s_int16 y, drawing_area * 
-\layout Code
+<funcsynopsis>
+\layout SGML
 
-da_opt=NULL);
+<funcdef>void <function>draw</function></funcdef>
+\layout SGML
+
+<paramdef>s_int16 <parameter> x </parameter></paramdef>
+\layout SGML
+
+<paramdef>s_int16 <parameter> y </parameter></paramdef>
+\layout SGML
+
+<paramdef>drawing_area * <parameter> da=NULL </parameter></paramdef>
+\layout SGML
+
+</funcsynopsis>
 \layout Standard
 
 Draw the image at position 
@@ -935,9 +1459,21 @@ Draw the image at position
 da_opt
 \emph default 
  optionnal drawing_area.
-\layout Code
+\layout SGML
 
-void get_from_screen(s_int16 x, s_int16 y);
+<funcsynopsis>
+\layout SGML
+
+<funcdef>void <function>get_from_screen</function></funcdef>
+\layout SGML
+
+<paramdef>s_int16 <parameter> x </parameter></paramdef>
+\layout SGML
+
+<paramdef>s_int16 <parameter> y </parameter></paramdef>
+\layout SGML
+
+</funcsynopsis>
 \layout Standard
 
 Gets from the screen a shot from coordinates 
@@ -945,9 +1481,23 @@ Gets from the screen a shot from coordinates
 (x,y)
 \emph default 
  which size is the current size of the image.
-\layout Code
+\begin_inset Info
+screen_shot should just call this function
+\end_inset 
 
-void zoom(image * src);
+
+\layout SGML
+
+<funcsynopsis>
+\layout SGML
+
+<funcdef>void <function>zoom</function></funcdef>
+\layout SGML
+
+<paramdef>image * <parameter> src </parameter></paramdef>
+\layout SGML
+
+</funcsynopsis>
 \layout Standard
 
 Zoom the 
@@ -955,9 +1505,18 @@ Zoom the
 src
 \emph default 
  image to the dimensions of the image.
-\layout Code
+\layout SGML
 
-void reverse_lr(image * src);
+<funcsynopsis>
+\layout SGML
+
+<funcdef>void <function>reserve_lr</function></funcdef>
+\layout SGML
+
+<paramdef>image * <parameter> src </parameter></paramdef>
+\layout SGML
+
+</funcsynopsis>
 \layout Standard
 
 Reverse the 
@@ -965,9 +1524,18 @@ Reverse the
 src 
 \emph default 
 image horizontally, and put it into the image.
-\layout Code
+\layout SGML
 
-void reverse_ud(image * src);
+<funcsynopsis>
+\layout SGML
+
+<funcdef>void <function>reverse_ud</function></funcdef>
+\layout SGML
+
+<paramdef>image * <parameter> src </parameter></paramdef>
+\layout SGML
+
+</funcsynopsis>
 \layout Standard
 
 Reverse the 
@@ -975,9 +1543,24 @@ Reverse the
 src 
 \emph default 
 image vertically, and put it into the image.
-\layout Code
+\layout SGML
 
-void brightness(image * src, u_int16 cont, bool proceed_mask=false);
+<funcsynopsis>
+\layout SGML
+
+<funcdef>void <function>brightness</function></funcdef>
+\layout SGML
+
+<paramdef>image * <parameter> src </parameter></paramdef>
+\layout SGML
+
+<paramdef>s_int16 <parameter> cont </parameter></paramdef>
+\layout SGML
+
+<paramdef>bool <parameter> proceed_mask=false </parameter></paramdef>
+\layout SGML
+
+</funcsynopsis>
 \layout Standard
 
 Brighten the image (actually, darken it if 
@@ -999,9 +1582,18 @@ proceed_mask
 \emph default 
  is set to true, the transparent color will be brightened too, otherwise
  it won't.
-\layout Code
+\layout SGML
 
-void putbox_tile_img(image * source);
+<funcsynopsis>
+\layout SGML
+
+<funcdef>void <function>putbox_tile_img</function></funcdef>
+\layout SGML
+
+<paramdef>image * <parameter> source </parameter></paramdef>
+\layout SGML
+
+</funcsynopsis>
 \layout Standard
 
 Tile the 
@@ -1009,9 +1601,24 @@ Tile the
 source
 \emph default 
  img to the img, until it is filled.
-\layout Code
+\layout SGML
 
-void draw_img(image * source, u_int16 x, u_int16 y);
+<funcsynopsis>
+\layout SGML
+
+<funcdef>void <function>draw_img</function></funcdef>
+\layout SGML
+
+<paramdef>image * <parameter> source </parameter></paramdef>
+\layout SGML
+
+<paramdef>u_int16 <parameter> x </parameter></paramdef>
+\layout SGML
+
+<paramdef>u_int16 <parameter> y </parameter></paramdef>
+\layout SGML
+
+</funcsynopsis>
 \layout Standard
 
 Does the same as draw(), but instead of drawing on the screen, draw the
@@ -1020,12 +1627,29 @@ Does the same as draw(), but instead of drawing on the screen, draw the
 source 
 \emph default 
 on the image.
-\layout Code
+\begin_inset Info
+Should take a drawing area argument to make *part* disappear.
+\end_inset 
 
-void draw_part_img (image * source, u_int16 x, u_int16 y, 
-\layout Code
 
-u_int16 bw, u_int16 bh, u_int16 xo, u_int16 yo);
+\layout SGML
+
+<funcsynopsis>
+\layout SGML
+
+<funcdef>void <function>draw_part_img</function></funcdef>
+\layout SGML
+
+<paramdef>image * <parameter> source </parameter></paramdef>
+\layout SGML
+
+<paramdef>u_int16 <parameter> x </parameter></paramdef>
+\layout SGML
+
+<paramdef>u_int16 <parameter> x </parameter></paramdef>
+\layout SGML
+
+</funcsynopsis>
 \layout Standard
 
 Draw the 
@@ -1041,9 +1665,21 @@ source
 (bw,bh)
 \emph default 
  sized.
-\layout Code
+\layout SGML
 
-u_int32 get_pix(u_int16 x, u_int16 y);
+<funcsynopsis>
+\layout SGML
+
+<funcdef>void <function>get_pix</function></funcdef>
+\layout SGML
+
+<paramdef>s_int16 <parameter> x </parameter></paramdef>
+\layout SGML
+
+<paramdef>s_int16 <parameter> y </parameter></paramdef>
+\layout SGML
+
+</funcsynopsis>
 \layout Standard
 
 Returns the pixel at position 
@@ -1051,9 +1687,21 @@ Returns the pixel at position
 (x,y)
 \emph default 
 .
-\layout Code
+\layout SGML
 
-void put_pix(u_int16 x, u_int16 y, u_int32 col);
+<funcsynopsis>
+\layout SGML
+
+<funcdef>void <function>put_pix</function></funcdef>
+\layout SGML
+
+<paramdef>s_int16 <parameter> x </parameter></paramdef>
+\layout SGML
+
+<paramdef>s_int16 <parameter> y </parameter></paramdef>
+\layout SGML
+
+</funcsynopsis>
 \layout Standard
 
 Put the 
@@ -1065,4 +1713,366 @@ col
 (x,y)
 \emph default 
 .
+\layout Section
+
+
+\begin_inset LatexCommand \label{SS-The-animation-class}
+
+\end_inset 
+
+The animation class
+\layout Subsection
+
+
+\begin_inset LatexCommand \label{SS-animation-Description}
+
+\end_inset 
+
+Description
+\layout Standard
+
+Most often, you won't use images directly.
+ You'll rather want a series of images being displayed one by one, with
+ a certain time delay between each image.
+ That's exactly what the animation class is designed for.
+ An animation contains:
+\layout Itemize
+
+A set of images arranged in an indexed array,
+\layout Itemize
+
+A set of frame information, also arranged in an indexed array, containing:
+\begin_deeper 
+\layout Itemize
+
+The number of the image to display when displaying this frame,
+\layout Itemize
+
+The 
+\emph on 
+alpha
+\emph default 
+ and 
+\emph on 
+mask
+\emph default 
+ values for the image,
+\layout Itemize
+
+An 
+\emph on 
+offset
+\emph default 
+, allowing the image to be accurately placed,
+\layout Itemize
+
+The delay (in game cycles) to wait before jumping to the next frame,
+\layout Itemize
+
+The number of the next frame to display.
+\end_deeper 
+\layout Standard
+
+It provides both a high-level and low-level interface.
+\layout Subsection
+
+
+\begin_inset LatexCommand \label{SS-animation-Methods}
+
+\end_inset 
+
+Methods
+\layout SGML
+
+<funcsynopsis>
+\layout SGML
+
+<funcdef>void <function>animation</function></funcdef>
+\layout SGML
+
+<paramdef>void</paramdef>
+\layout SGML
+
+</funcsynopsis>
+\layout Standard
+
+Default constructor, building a totally empty animation.
+\layout SGML
+
+<funcsynopsis>
+\layout SGML
+
+<funcdef><function>~animation</function></funcdef>
+\layout SGML
+
+<paramdef></paramdef>
+\layout SGML
+
+</funcsynopsis>
+\layout Standard
+
+Destructor.
+\layout SGML
+
+<funcsynopsis>
+\layout SGML
+
+<funcdef>void <function>clear</function></funcdef>
+\layout SGML
+
+<paramdef>void</paramdef>
+\layout SGML
+
+</funcsynopsis>
+\layout Standard
+
+Empty the animation.
+\layout SGML
+
+<funcsynopsis>
+\layout SGML
+
+<funcdef>void <function>get_length</function></funcdef>
+\layout SGML
+
+<paramdef>void</paramdef>
+\layout SGML
+
+</funcsynopsis>
+\layout Standard
+
+Returns the 
+\emph on 
+length
+\emph default 
+ of the animation.
+\layout SGML
+
+<funcsynopsis>
+\layout SGML
+
+<funcdef>void <function>get_height</function></funcdef>
+\layout SGML
+
+<paramdef>void</paramdef>
+\layout SGML
+
+</funcsynopsis>
+\layout Standard
+
+Returns the 
+\emph on 
+height
+\emph default 
+ of the animation.
+\layout SGML
+
+<funcsynopsis>
+\layout SGML
+
+<funcdef>void <function>update</function></funcdef>
+\layout SGML
+
+<paramdef>void</paramdef>
+\layout SGML
+
+</funcsynopsis>
+\layout Standard
+
+State updating function, which must be called for every active animation
+ at each game cycle.
+\layout SGML
+
+<funcsynopsis>
+\layout SGML
+
+<funcdef>void <function>set_active_frame</function></funcdef>
+\layout SGML
+
+<paramdef>u_int16 <parameter>framenbr</parameter></paramdef>
+\layout SGML
+
+</funcsynopsis>
+\layout Standard
+
+Directly jumps the the 
+\emph on 
+framenbr
+\emph default 
+ frame.
+\layout SGML
+
+<funcsynopsis>
+\layout SGML
+
+<funcdef>void <function>next_frame</function></funcdef>
+\layout SGML
+
+<paramdef>void</paramdef>
+\layout SGML
+
+</funcsynopsis>
+\layout Standard
+
+Directly jumps to the next frame.
+\layout SGML
+
+<funcsynopsis>
+\layout SGML
+
+<funcdef>void <function>play</function></funcdef>
+\layout SGML
+
+<paramdef>void</paramdef>
+\layout SGML
+
+</funcsynopsis>
+\layout Standard
+
+Start the playback of an animation (i.e.
+ the animation will play provided 
+\emph on 
+update()
+\emph default 
+ is appropriately called).
+\layout SGML
+
+<funcsynopsis>
+\layout SGML
+
+<funcdef>void <function>stop</function></funcdef>
+\layout SGML
+
+<paramdef>void</paramdef>
+\layout SGML
+
+</funcsynopsis>
+\layout Standard
+
+Stop the playback of an animation (i.e.
+ the animation won't play despite of 
+\emph on 
+update()
+\emph default 
+ being called).
+\layout SGML
+
+<funcsynopsis>
+\layout SGML
+
+<funcdef>void <function>rewind</function></funcdef>
+\layout SGML
+
+<paramdef>void</paramdef>
+\layout SGML
+
+</funcsynopsis>
+\layout Standard
+
+Rewind an animation to it's beginning.
+\layout SGML
+
+<funcsynopsis>
+\layout SGML
+
+<funcdef>void <function>draw</function></funcdef>
+\layout SGML
+
+<paramdef>s_int16 <parameter> x </parameter></paramdef>
+\layout SGML
+
+<paramdef>s_int16 <parameter> y </parameter></paramdef>
+\layout SGML
+
+<paramdef>drawing_area * <parameter> da_opt=NULL </parameter></paramdef>
+\layout SGML
+
+</funcsynopsis>
+\layout Standard
+
+Draw the animation at position 
+\emph on 
+(x,y)
+\emph default 
+, eventually temporarly assigning it the 
+\emph on 
+da_opt
+\emph default 
+.
+\layout SGML
+
+<funcsynopsis>
+\layout SGML
+
+<funcdef>void <function>get</function></funcdef>
+\layout SGML
+
+<paramdef>gzFile <parameter>file</parameter></paramdef>
+\layout SGML
+
+</funcsynopsis>
+\layout Standard
+
+Loads an animation from an opened file.
+\layout SGML
+
+<funcsynopsis>
+\layout SGML
+
+<funcdef>void <function>load</function></funcdef>
+\layout SGML
+
+<paramdef>char * <parameter>fname</parameter></paramdef>
+\layout SGML
+
+</funcsynopsis>
+\layout Standard
+
+Loads an animation from a non-opened file.
+\layout SGML
+
+<funcsynopsis>
+\layout SGML
+
+<funcdef>void <function>zoom</function></funcdef>
+\layout SGML
+
+<paramdef>u_int16 <parameter>sx</parameter></paramdef>
+\layout SGML
+
+<paramdef>u_int16 <parameter>sy</parameter></paramdef>
+\layout SGML
+
+<paramdef>animation * <parameter>src</parameter></paramdef>
+\layout SGML
+
+</funcsynopsis>
+\layout Standard
+
+Copy and zoom the 
+\emph on 
+src
+\emph default 
+ animation by a factor of 
+\emph on 
+(src->get_length()/sx,src->get_height()/sy)
+\emph default 
+.
+\layout Subsection
+
+Usage tips
+\layout Itemize
+
+You can easily build a looped animation.
+ Simply make the last frame points to a previous frame.
+\layout Itemize
+
+By setting the frame delay to 0 (infinite), the animation will go to the
+ next frame only if you call the 
+\emph on 
+next_frame()
+\emph default 
+ method.
+ This can be usefull if you want to animate something which duration isn't
+ exactly known and defined by events (for example, a jump).
 \the_end
