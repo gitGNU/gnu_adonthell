@@ -37,12 +37,15 @@ item_base::item_base (const std::string & item) : py_object ()
 // dtor
 item_base::~item_base ()
 {
-    // if the item is still inside an inventory, remove it
-    if (Slot) Slot->remove (this);
+    if (Mutable)
+    {
+        // if the item is still inside an inventory, remove it
+        if (Slot) Slot->remove (this);
     
-    // if we have a stack of items, delete the whole stack
-    if (Next) delete Next;
-    
+        // if we have a stack of items, delete the whole stack
+        if (Next) delete Next;
+    }
+        
     py_object::clear ();
 }
 

@@ -57,13 +57,20 @@ public:
      */
     //@{
     /**
-     * Retrieve pointer to the item kept in this %slot.
+     * Retrieve pointer to the item kept in this %slot. In case of an
+     * immutable item, it will also adjust item_base::Slot.
      * @return item in this %slot, or \c NULL in case it is empty.
      */
-    item_base *get_item ()
-    {
-        return Item;
-    }
+    item_base *get_item ();
+
+    /**
+     * Checks whether the given item is allowed to go into this %slot.
+     * This is the case when the %slot is empty, or if the items
+     * already in the %slot (roughly) equal the given item.
+     * @param item Item to test against.
+     * @return \b true if the item may go into the %slot, \b falso otherwise
+     */
+    bool accepts (item_base *item);
     
     /**
      * Add an item or stack of items to this %slot. If the %slot is not

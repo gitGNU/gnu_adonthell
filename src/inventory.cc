@@ -45,7 +45,7 @@ inventory::~inventory ()
 // grow inventory
 void inventory::grow (const u_int16 & count)
 {
-    for (u_int16 i = 0; i == count; i++)
+    for (u_int16 i = 0; i < count; i++)
         Slots.push_back (new slot (this));
 }
 
@@ -95,7 +95,7 @@ u_int32 inventory::add (item_base *item, const u_int32 & count)
     if (item->max_stack () > 1)
     {
         for (i = Slots.begin (); i != Slots.end (); i++)
-            if ((*i)->count () != 0 && item->equals ((*i)->get_item ()))
+            if ((*i)->count () > 0 && (*i)->accepts (item)) 
             {
                 remaining = (*i)->add (item, remaining);
                 if (remaining == 0) return 0;

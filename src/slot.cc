@@ -36,11 +36,26 @@ slot::slot (inventory *owner, const std::string & id)
 slot::~slot ()
 {
     // if the slot contains item(s), delete them
-    if (Item && Item->is_mutable ()) 
+    if (Item && Item->is_mutable ())
     {
         Item->set_slot (NULL);
         delete Item;
     }
+}
+
+// retrieve item(s) in slot
+item_base *slot::get_item ()
+{
+    // temporarily assign slot to immutable items
+    if (Item && !Item->is_mutable ()) Item->set_slot (this);
+    return Item;
+}
+
+// check whether slot accepts given item
+bool slot::accepts (item_base *item)
+{    
+    if (!Item) return true;
+    else return Item->equals (item);
 }
 
 // add item(s) to slot
@@ -55,6 +70,9 @@ u_int32 slot::add (item_base *item, const u_int32 & count)
     // otherwise check whether given items may go into this slot 
     else 
     {
+        // items from same slot?
+        if (this == item->get_slot ()) return 0;
+        
         // item stackable?
         if (Count >= Item->max_stack ()) return count;
         

@@ -91,6 +91,14 @@ public:
      * @return \b true if item has been used successfully, \b false otherwise. 
      */
     bool use (character_base *character);
+
+    /**
+     * Combine this item with another item. Returns the result of the
+     * combination, or NULL if the combination fails.
+     * @param item the item to combine with this one
+     * @return item resulting from combination, or \c NULL if combination fails.
+     */
+    // item_base *combine (item_base * item);
     //@}
             
     /**

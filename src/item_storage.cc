@@ -32,13 +32,10 @@ void item_storage::cleanup ()
 {
     std::hash_map<std::string, item_base*>::iterator i;
     
+    // just a precaution
     for (i = Items.begin (); i != Items.end (); i++)
-    {
-        // just a precaution
         (*i).second->set_slot (NULL);
-        delete (*i).second;
-    }
-    
+
     Items.clear ();
 }
 
