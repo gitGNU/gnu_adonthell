@@ -796,7 +796,7 @@ private:
     u_int16 pathindex; 
 
     u_int16 current_move;
-    u_int16 ask_move;
+    u_int16 previous_move;
     u_int16 submap_;
     u_int16 posx_, posy_;
     s_int8 offx_, offy_;

@@ -157,7 +157,7 @@ public:
      * 
      * @return size of the storage.
      */
-    u_int32 size ()
+    u_int32 size () const
     {
         return data.size (); 
     }

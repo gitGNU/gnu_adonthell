@@ -84,7 +84,7 @@ class character_base : public storage
      * 
      * @return the name of the %character.
      */
-    string get_name() { return name; }
+    string get_name() const { return name; }
 
     /** 
      * Sets the name of the %character.
@@ -99,7 +99,7 @@ class character_base : public storage
      * 
      * @return the color representing the %character.
      */
-    u_int32 get_color() { return color; } 
+    u_int32 get_color() const { return color; } 
 
     /** 
      * Sets the color representing the %character.
@@ -114,7 +114,7 @@ class character_base : public storage
      * 
      * @return file name of the dialog currently assigned to this %character.
      */
-    string get_dialogue () { return dialogue; }
+    string get_dialogue () const { return dialogue; }
 
     /** 
      * Sets the dialogue of the %character.

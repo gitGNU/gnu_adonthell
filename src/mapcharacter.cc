@@ -41,7 +41,7 @@ mapcharacter::mapcharacter () : mapsquare_walkable_area (), character_base ()
     for (u_int16 i = 0; i < NBR_MOVES; i++)
         anim[i] = new animation;
     current_move = STAND_NORTH;
-    ask_move = NO_MOVE;
+    previous_move = NO_MOVE;
 
     locals = PyDict_New ();
     PyObject * myself = python::pass_instance(this,"mapcharacter"); 
@@ -82,7 +82,7 @@ s_int8 mapcharacter::get (igzstream& file)
     for (i = 0; i < NBR_MOVES; i++)
     {
         anim[i]->get (file);
-        anim[i]->play ();
+        anim[i]->stop ();
     }
 
     mapsquare_walkable_area::get (file); 
@@ -156,7 +156,7 @@ s_int8 mapcharacter::get_state (igzstream& file)
 
     // Reads the data members
     current_move << file;
-    ask_move << file;
+    previous_move << file;
     submap_ << file;
     posx_ << file;
     posy_ << file;
@@ -181,7 +181,7 @@ s_int8 mapcharacter::put_state (ogzstream& file) const
 
     // Write the data members
     current_move >> file;
-    ask_move >> file;
+    previous_move >> file;
     submap_ >> file;
     posx_ >> file;
     posy_ >> file;
@@ -254,44 +254,33 @@ void mapcharacter::stand ()
 {
     if (current_move >= WALK_NORTH && current_move != NO_MOVE)
     {
-        anim[current_move]->stop ();
-        anim[current_move]->rewind ();
+        previous_move = current_move; 
         current_move -= WALK_NORTH;
-        anim[current_move]->play ();
     }
-    ask_move = NO_MOVE;
 }
 
 void mapcharacter::stand_north ()
 {
-    anim[current_move]->stop ();
-    anim[current_move]->rewind ();
+    previous_move = current_move; 
     current_move = STAND_NORTH;
-    anim[current_move]->play ();
 }
 
 void mapcharacter::stand_south ()
 {
-    anim[current_move]->stop ();
-    anim[current_move]->rewind ();
+    previous_move = current_move; 
     current_move = STAND_SOUTH;
-    anim[current_move]->play ();
 }
 
 void mapcharacter::stand_east ()
 {
-    anim[current_move]->stop ();
-    anim[current_move]->rewind ();
+    previous_move = current_move; 
     current_move = STAND_EAST;
-    anim[current_move]->play ();
 }
 
 void mapcharacter::stand_west ()
 {
-    anim[current_move]->stop ();
-    anim[current_move]->rewind ();
+    previous_move = current_move; 
     current_move = STAND_WEST;
-    anim[current_move]->play ();
 }
 
 bool mapcharacter::can_go_north () const
@@ -431,52 +420,36 @@ void mapcharacter::go_north ()
 {
     if (current_move < WALK_NORTH)
     {
-        anim[current_move]->stop ();
-        anim[current_move]->rewind ();
+        previous_move = current_move; 
         current_move = WALK_NORTH;
-        anim[current_move]->play ();
-        return;
     }
-    ask_move = WALK_NORTH;
 }
 
 void mapcharacter::go_south ()
 {
     if (current_move < WALK_NORTH)
     {
-        anim[current_move]->stop ();
-        anim[current_move]->rewind ();
+        previous_move = current_move; 
         current_move = WALK_SOUTH;
-        anim[current_move]->play ();
-        return;
     }
-    ask_move = WALK_SOUTH;
 }
 
 void mapcharacter::go_east ()
 {
     if (current_move < WALK_NORTH)
     {
-        anim[current_move]->stop ();
-        anim[current_move]->rewind ();
+        previous_move = current_move; 
         current_move = WALK_EAST;
-        anim[current_move]->play ();
-        return;
     }
-    ask_move = WALK_EAST;
 }
 
 void mapcharacter::go_west ()
 {
     if (current_move < WALK_NORTH)
     {
-        anim[current_move]->stop ();
-        anim[current_move]->rewind ();
+        previous_move = current_move; 
         current_move = WALK_WEST;
-        anim[current_move]->play ();
-        return;
     }
-    ask_move = WALK_WEST;
 }
 
 bool mapcharacter::set_goal (u_int16 x, u_int16 y, u_int16 dir = NO_MOVE)
@@ -496,13 +469,17 @@ bool mapcharacter::set_goal (u_int16 x, u_int16 y, u_int16 dir = NO_MOVE)
 bool mapcharacter::follow_path () 
 {
     //  If a movment is engaged, let it finish first.
-    if (offx () || offy ()) return false;
-
+    if (offx () || offy ()) 
+    {
+        
+        return false;
+    }
+    
     // If the goal isn't reached yet.
     if (pathindex < mypath.nbr_moves ())
     {
         u_int16 dir = mypath.get_move (pathindex);
-        u_int16 success = 0; 
+        u_int8 success = 0; 
 
         // Try to follow the direction
         switch (dir) 
@@ -643,9 +620,16 @@ void mapcharacter::set_action (string file)
  
 bool mapcharacter::update ()
 {
-    schedule.run (); 
     update_move ();
+    schedule.run (); 
 
+    if (previous_move != NO_MOVE && previous_move != current_move) 
+    {
+        anim[previous_move]->stop ();
+        anim[previous_move]->rewind ();
+        anim[current_move]->play (); 
+    }
+    
     return true; 
 }
 
@@ -795,7 +779,7 @@ void mapcharacter::set_pos (u_int16 smap, u_int16 x, u_int16 y)
 void mapcharacter::update_move ()
 {
     if (refmap)
-        switch (current_move)
+        switch (currentmove ())
         {
             case WALK_NORTH:
                 if (!offy ())
@@ -806,26 +790,28 @@ void mapcharacter::update_move ()
                         break;
                     }
                     leave_event evt;
-
+                    
                     evt.submap = submap ();
                     evt.x = posx ();
                     evt.y = posy ();
                     evt.c = this;
                     evt.dir = WALK_NORTH; 
                     event_handler::raise_event (evt);
-
+                    
                     occupy (submap (), posx (), posy () - 1);
-                 }
-                set_offset (offx (), offy () - 1);
+                    set_offset (offx (), offy () - 1);
+                }
                 
+                set_offset (offx (), offy () - 1);
+
                 if (offy () == -MAPSQUARE_SIZE)
                 {
                     leave (submap (), posx (), posy ());
                     leave (submap (), posx (), posy () - 1);
                     set_pos (submap (), posx (), posy () - 1);
                     set_offset (offx (), 0); 
-                    if (ask_move != WALK_NORTH)
-                        stand_north ();
+                    stand_north ();
+                    
                     enter_event evt;
 
                     evt.submap = submap ();
@@ -865,10 +851,9 @@ void mapcharacter::update_move ()
                     if (!offy ())
                     {
                         leave (submap (), posx (), posy () - 1);
-                        if (ask_move != WALK_SOUTH)
-                            stand_south ();
-                        enter_event evt;
+                        stand_south ();
 
+                        enter_event evt; 
                         evt.submap = submap ();
                         evt.x = posx ();
                         evt.y = posy ();
@@ -904,10 +889,9 @@ void mapcharacter::update_move ()
                     leave (submap (), posx () - 1, posy ());
                     set_pos (submap (), posx () - 1, posy ());
                     set_offset (0, offy ());  
-                    if (ask_move != WALK_WEST)
-                        stand_west ();
-                    enter_event evt;
-
+                    stand_west ();
+                    
+                    enter_event evt; 
                     evt.submap = submap ();
                     evt.x = posx ();
                     evt.y = posy ();
@@ -944,10 +928,9 @@ void mapcharacter::update_move ()
                     if (!offx ())
                     {
                         leave (submap (), posx () - 1, posy ());
-                        if (ask_move != WALK_EAST)
-                            stand_east ();
-                        enter_event evt;
-
+                        stand_east ();
+                        
+                        enter_event evt; 
                         evt.submap = submap ();
                         evt.x = posx ();
                         evt.y = posy ();
@@ -959,5 +942,4 @@ void mapcharacter::update_move ()
                 break;
         }
     anim[current_move]->update ();     
-    ask_move = NO_MOVE;
 }
