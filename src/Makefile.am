@@ -32,7 +32,7 @@ label.cc  label_input.cc win_event.cc yarg.cc \
 adonthell.h animation.h audio.h callback.h py_callback.h \
 character_base.h character.h gamedata.h data_screen.h dialog.h dialog_screen.h \
 drawable.h drawing_area.h event.h fileops.h game.h gametime.h image.h input.h inventory.h \
-item.h landmap.h mapsquare.h mapsquare_nls.h walkable.h mapcharacter.h mapobject.h mapview.h \
+item.h landmap.h mapsquare.h mapsquare_walkable.h nls.h mapcharacter.h mapobject.h mapview.h \
 path.h pnm.h prefs.h python_class.h py_object.h quest.h screen.h surface.h storage.h \
 types.h text_bubble.h win_background.h win_base.h win_border.h win_container.h \
 str_hash.h win_font.h win_image.h win_label.h win_mapview.h label.h label_input.h \

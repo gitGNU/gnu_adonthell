@@ -272,6 +272,20 @@ case "$os" in
 	echo "ja_JP.Shift_JIS SHIFT_JIS"
 	echo "ko_KR.EUC EUC-KR"
 	;;
+    netbsd*)
+	echo "646 ASCII"
+	echo "ISO8859-1 ISO-8859-1"
+	echo "ISO8859-2 ISO-8859-2"
+	echo "ISO8859-4 ISO-8859-4"
+	echo "ISO8859-5 ISO-8859-5"
+	echo "ISO8859-15 ISO-8859-15"
+	echo "eucCN GB2312"
+	echo "eucJP EUC-JP"
+	echo "eucKR EUC-KR"
+	echo "eucTW EUC-TW"
+	echo "BIG5 BIG5"
+	echo "SJIS SHIFT_JIS"
+	;;
     beos*)
 	# BeOS has a single locale, and it has UTF-8 encoding.
 	echo "* UTF-8"
@@ -396,8 +410,8 @@ case "$os" in
 	echo "bg_BG CP866" # not CP855 ??
 	echo "mk CP866"    # not CP855 ??
 	echo "mk_MK CP866" # not CP855 ??
-	echo "ru KOI8-R"    # not CP866 ??
-	echo "ru_RU KOI8-R" # not CP866 ??
+	echo "ru CP866"
+	echo "ru_RU CP866"
 	# ISO-8859-6 languages
 	echo "ar CP864"
 	echo "ar_AE CP864"
