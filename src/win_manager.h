@@ -25,7 +25,9 @@ class win_manager
   // static void update_keyboard();
   static void draw();
   static void set_focus(win_container*);
-  
+  static void destroy();
+
+
  private:
   static list<win_container *> lmanage;
   //static list<win_container *> ::iterator ilm;

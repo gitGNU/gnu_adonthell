@@ -39,6 +39,15 @@ void win_manager::remove(win_container * tmp)
   lmanage.remove(tmp);
 }
 
+
+void win_manager::destroy()
+{
+  for(list<win_container *>::iterator i=lmanage.begin();i!=lmanage.end();i++)
+    delete *i;
+  lmanage.clear();
+  wc=NULL;
+}
+
 void win_manager::draw()
 {
   for(list<win_container *>::iterator i=lmanage.begin();i!=lmanage.end();i++)
