@@ -25,6 +25,17 @@
 #include "dlg_types.h"
 #include "gui_error.h"
 
+// Operators that may appear in Python code
+std::string DlgCompiler::operators[NUM_OPS] = { "==", "!=", "<", "<=", ">", 
+    ">=", "=", ".", ":", "if", "elif", "else", "pass", "return", "and", "or", 
+    "not", "+", "-", "*", "/", "\"", "'", "(", ")", "[", "]", ",", "#", "%", 
+    "&", "|", "^"};
+
+// keywords that need no expansion
+std::string DlgCompiler::fixed[NUM_FXD] = { "self", "quests", "the_npc", 
+    "the_player", "characters"};
+
+
 DlgCompiler::DlgCompiler (DlgModule *module)
 {
     dialogue = module;
@@ -89,18 +100,26 @@ void DlgCompiler::run ()
     // write the rest of the dialogue
     writeDialogue ();
     
+    // write the custom code
+    writeCustomCode ();
+    
     // display errors if there were any
     if (errors > 0)
         GuiError::console->display ();
 }
 
+// write the topmost part of the dialogue 
 void DlgCompiler::writeHeader (const std::string &theClass)
 {
     // imports
-    file << "import dialogue\n\n"
+    file << "import dialogue\n";
+    
+    // custom imports
+    if (dialogue->entry ()->imports () != "")
+        file << dialogue->entry ()->imports () << "\n\n";
             
     // stuff needed for i18n
-         << "# -- pygettext support\n"
+    file << "# -- pygettext support\n"
          << "def _(message): return message\n\n"
     
     // the classname
@@ -161,7 +180,7 @@ void DlgCompiler::writeConditions ()
     for (std::vector<std::string>::iterator i = conditions.begin (); i != conditions.end (); i++)
     {
         if (i != conditions.begin ()) file << ",\\";
-        file << "\n\t\t\"" << escapeCode (*i) << "\\n\"";
+        file << "\n\t\t\"" << escapeCode (splitCode (*i)) << "\"";
     }
     
     // close array
@@ -173,25 +192,47 @@ void DlgCompiler::writeCode ()
 {
     // nothing to do if there are no conditions
     if (code.empty ()) return;
-    
+ 
     file << "\tcode = [\\";
 
     // write the individual conditions    
     for (std::vector<std::string>::iterator i = code.begin (); i != code.end (); i++)
     {
-        if (i != conditions.begin ()) file << ",\\";
-        file << "\n\t\t\"" << escapeCode (*i) << "\\n\"";
+        if (i != code.begin ()) file << ",\\";
+        file << "\n\t\t\"" << escapeCode (splitCode (*i)) << "\"";
     }
     
     // close array
     file << "]\n\n";
 }
 
+// write additional Python code
+void DlgCompiler::writeCustomCode ()
+{
+    // constructor
+    file << "\n\tdef __init__(self, p, n):"
+         << "\n\t\tself.the_player = p"
+         << "\n\t\tself.the_npc = n\n";
+
+    // custom constructor code
+    if (dialogue->entry ()->ctor () != "")
+        file << "\n" << splitCode (dialogue->entry ()->ctor (), 2) << "\n";
+    
+    // custom destructor code
+    if (dialogue->entry ()->dtor () != "")
+        file << "\n\tdef __del__(self):\n"
+             << splitCode (dialogue->entry ()->dtor (), 2) << "\n";
+
+    // custom methods
+    if (dialogue->entry ()->methods () != "")
+        file << "\n" << splitCode (dialogue->entry ()->methods (), 1) << "\n"; 
+}
+
 // replace '\n', '\t', '"' and the like with '\\n' '\\t' and '\"'
 std::string DlgCompiler::escapeCode (std::string code)
 {
     char c;
-
+    
     for (unsigned int i = 0; i < code.length (); i++)
     {
         c = code[i];
@@ -200,7 +241,185 @@ std::string DlgCompiler::escapeCode (std::string code)
         else if (c == '\n') code.replace (i, 1, "\\n");
         else if (c == '\t') code.replace (i, 1, "    ");
     }
+    
+    return code;
+}
 
+// splits python code into individual lines
+std::string DlgCompiler::splitCode (std::string code, int space)
+{
+    std::string new_code = "";
+    unsigned int i = 0, j;
+
+    code += '\n';
+
+    while ((j = code.find ('\n', i)) < code.size ())
+    {
+        new_code.append (space, '\t');
+        new_code += inflateCode (code.substr (i, j-i));
+        new_code += "\n";
+        i = ++j;
+    }
+
+    code.erase (code.end()-1);
+
+    return new_code;
+}
+
+std::string DlgCompiler::inflateCode (std::string code)
+{
+    unsigned int i, begin = 0, pos, prefix, suffix;
+    std::string token, stripped, last_op = "";
+    bool is_local = true;
+
+#ifdef _DEBUG_
+    cout << ">>> " << code << endl;
+#endif
+    // replace the_npc/the_player with self.the_npc/self.the_player
+    pos = code.find ("the_npc", 0);
+
+    while (pos != code.npos)
+    {
+        if (pos < 5 || strncmp (code.substr (pos-5, pos).c_str(), "self.", 5))
+        {
+            code.insert (pos, "self.");
+            pos += 5;
+        }
+
+        pos = code.find ("the_npc", pos+7);
+    }
+
+    pos = code.find ("the_player", 0);
+
+    while (pos != code.npos)
+    {
+        if (pos < 5 || strncmp (code.substr (pos-5, pos).c_str(), "self.", 5))
+        {
+            code.insert (pos, "self.");
+            pos += 5;
+        }
+
+        pos = code.find ("the_player", pos+10);
+    }
+
+    // scan the string from left to right
+    for (pos = 0; pos < code.length (); pos++)
+        for (i = 0; i < NUM_OPS; i++)
+            // search for the leftmost operator from the current position
+            if (!strncmp (code.substr (pos).c_str (), operators[i].c_str (),
+                operators[i].length ()) || (i == NUM_OPS-1 && pos == code.length()-1))
+            {
+                // takes care of the rare situation when the last token
+                // of the string is a variable in need of expanding
+                if (pos == code.length()-1 && i == NUM_OPS-1) pos++;
+
+                token = code.substr (begin, pos-begin);
+
+                // strip leading and trailing whitespace
+                for (prefix = 0; prefix < token.length() && token[prefix] == ' '; prefix++);
+                for (suffix = token.length()-1; suffix >= 0 && token[suffix] == ' '; suffix--);
+                stripped = token.substr (prefix, suffix-prefix+1);
+
+                // have to be careful with textual operators and keywords
+                if (i == BAND || i == BOR || i == NOT || i == RETURN ||
+                    i == PASS || i == IF || i == ELIF || i == ELSE)
+                {
+                    if (pos > 0 && isalpha (code[pos-1]))
+                        break;
+                    if (pos < code.length()-operators[i].length()-1 &&
+                        isalpha (code[pos+operators[i].length()]))
+                        break;
+                }
+
+#ifdef _DEBUG_
+                cout << "token = '" << stripped << "', operator = '" <<
+                    operators[i] << "'\n" << flush;
+#endif
+
+                // skip functions and arrays
+                if (i == LBRACKET || i == LBRACE)
+                {
+                    begin = pos + 1;
+                    break;
+                }
+
+                // see whether we've got a variable and act accordingly
+                if (getToken (stripped) == VARIABLE)
+                {
+                    // make sure we don't have a local variable
+                    if (!is_local)
+                    {
+                        // assignment
+                        if (i == ASSIGN)
+                        {
+                            code[pos] = ',';
+                            code.insert (begin+suffix+1, "\"");
+                            code.insert (begin+prefix, "set_val (\"");
+                            code.append (")");
+                            pos += 11;
+                        }
+                        else
+                        {
+                            code.insert (begin+suffix+1, "\")");
+                            code.insert (begin+prefix, "get_val (\"");
+                            pos += 12;
+                        }
+                    }
+
+                    // variable left of '.'
+                    if (i == ACCESS && last_op != ".")
+                    {
+                        // check whether we access the quest- or character array
+                        if (dialogue->entry ()->isQuest (stripped))
+                        {
+                            code.insert (begin+prefix+stripped.length(), "\")");
+                            code.insert (begin+prefix, "adonthell.gamedata_get_quest(\"");
+                            pos += 32;
+                            is_local = false;
+                        }
+
+                        if (dialogue->entry ()->isCharacter (stripped))
+                        {
+                            code.insert (begin+prefix+stripped.length(), "\")");
+                            code.insert (begin+prefix, "adonthell.gamedata_get_character(\"");
+                            pos += 36;
+                            is_local = false;
+                        }
+                    }
+                    else is_local = true;
+                }
+
+                // these are shortcuts for access to the character array, so
+                // we handle them similar
+                if (stripped == "the_npc" || stripped == "the_player")
+                    is_local = false;
+
+                // a trailing comma operator ends an expression
+                if (i == COMMA)
+                    is_local = true;
+
+                // skip strings
+                if (i == QUOT || i == SQUOT)
+                    pos = code.find (operators[i], pos+1) - 1;
+
+                // skip comments
+                if (i == COMMENT)
+                    pos = code.length ();
+
+                last_op = operators[i];
+                pos += operators[i].length ();
+                begin = pos;
+#ifdef _DEBUG_
+                cout << code << endl;
+                for (u_int32 j = 0; j < begin; j++) cout << " ";
+                cout << "^\n";
+#endif
+                break;
+            }
+
+#ifdef _DEBUG_
+    cout << "<<< " << code << "\n\n";
+#endif
     return code;
 }
 
@@ -439,7 +658,7 @@ bool DlgCompiler::checkConditions (DlgCircle *circle)
     bool retval = true;
     
     // get keyword of first child
-    keyword k2, k1 = getKeyword (child->entry ()->condition ());
+    token k2, k1 = getKeyword (child->entry ()->condition ());
     
     for (; child != NULL; child = circle->child (NEXT), k1 = k2)
     {
@@ -471,7 +690,7 @@ bool DlgCompiler::checkConditions (DlgCircle *circle)
 }
 
 // get the keyword the statement begins with
-keyword DlgCompiler::getKeyword (const std::string &statement)
+token DlgCompiler::getKeyword (const std::string &statement)
 {
     if (strncmp ("if ", statement.c_str (), 3) == 0)
         return IF;
@@ -481,4 +700,31 @@ keyword DlgCompiler::getKeyword (const std::string &statement)
         return ELSE;    
 
     return NONE;
+}
+
+// splits a string into tokens
+token DlgCompiler::getToken (const std::string &token)
+{
+    static unsigned int i;
+    
+    // No valid token
+    if (token == "")
+        return NONE;
+
+    // Operator
+    for (i = 0; i < NUM_OPS; i++)
+        if (token == operators[i])
+            return NONE;
+
+    // Fixed: (i.e. something that never needs expanding)
+    for (i = 0; i < NUM_FXD; i++)
+        if (token == fixed[i])
+            return FIXED;
+
+    // Constant:
+    if (isdigit (token[0]) || (token[0] == '-' && isdigit (token[token.length()-1])))
+        return CONSTANT;
+
+    // Variable:
+    return VARIABLE;
 }

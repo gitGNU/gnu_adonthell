@@ -74,3 +74,9 @@ class base:
             print "Error:\n  " + str (err_type) + ":\n  \"" + str (value) + "\""
 
         return 0
+
+
+    # -- Allow usage of undeclared variables
+    def __getattr__ (self, name):
+        return 0
+    

@@ -23,6 +23,7 @@
 #define DLG_MODULE_ENTRY_H
 
 #include <string>
+#include <vector>
 
 /**
  * The %DlgModuleeEntry keeps the custom Python code of a certain
@@ -62,6 +63,15 @@ public:
     void setCtor (std::string c)    { ctor_ = c; }
     void setDtor (std::string d)    { dtor_ = d; }
     void setMethods (std::string m) { methods_ = m; }
+    
+    void addCharacter (std::string c);
+    void addQuest (std::string q);
+    
+    bool isCharacter (const std::string &c);
+    bool isQuest (const std::string &q);
+    
+    std::string character ();
+    std::string quest ();
     //@}
         
 private:
@@ -69,6 +79,9 @@ private:
     std::string ctor_;              // constructor code
     std::string dtor_;              // destructor code
     std::string methods_;           // user defined methods
+    
+    std::vector<std::string> characters;
+    std::vector<std::string> quests;
 };
 
 #endif // DLG_MODULE_ENTRY_H

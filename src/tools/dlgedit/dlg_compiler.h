@@ -28,16 +28,52 @@
 #include "dlg_circle.h"
 
 /**
- * Python keywords
+ * Python tokens
  */ 
-enum keyword
-{
-    NONE    = 0,
-    IF      = 1,
-    ELIF    = 2,
-    ELSE    = 3
+enum token 
+{ 
+    EQ      = 0, 
+    NEQ     = 1, 
+    LT      = 2, 
+    LEQ     = 3, 
+    GT      = 4, 
+    GEQ     = 5, 
+    ASSIGN  = 6, 
+    ACCESS  = 7, 
+    COLON   = 8, 
+    IF      = 9, 
+    ELIF    = 10, 
+    ELSE    = 11, 
+    PASS    = 12, 
+    RETURN  = 13, 
+    BAND    = 14, 
+    BOR     = 15, 
+    NOT     = 16, 
+    ADD     = 17, 
+    SUB     = 18, 
+    MUL     = 19, 
+    DIV     = 20, 
+    QUOT    = 21, 
+    SQUOT   = 22, 
+    LBRACE  = 23, 
+    RBRACE  = 24, 
+    LBRACKET= 25, 
+    RBRACKET= 26, 
+    COMMA   = 27, 
+    COMMENT = 28, 
+    MOD     = 29, 
+    AND     = 30, 
+    OR      = 31, 
+    XOR     = 32,
+    FIXED   = 33,
+    VARIABLE= 34,
+    CONSTANT= 35,
+    NONE    = 36
 };
 
+#define NUM_OPS 33
+#define NUM_FXD 5
+    
 /**
  * It transforms the dialogue into the Python script needed by
  * the Dialogue Engine. 
@@ -79,6 +115,7 @@ private:
     void writeStart ();
     void writeDialogue ();
     void writeFollower (DlgNode *node);
+    void writeCustomCode ();
     
     void addStart (DlgNode *node);
     void addCode (const std::string &cde, int index);
@@ -88,7 +125,11 @@ private:
     bool checkConditions (DlgCircle* node);
 
     std::string escapeCode (std::string code);
-    keyword getKeyword (const std::string &statement);
+    std::string splitCode (std::string code, int space = 0);
+    std::string inflateCode (std::string code);
+    
+    token getKeyword (const std::string &statement);
+    token getToken (const std::string &statement);
     
     ofstream file;
     DlgModule *dialogue;            // The dialogue to be compiled    
@@ -102,6 +143,9 @@ private:
     int *codeTable;                 // Mapping between nodes and code
     int *conditionTable;            // Mapping between nodes and conditions
     int *operationTable;            // Mapping between nodes and condition type
+
+    static std::string operators[NUM_OPS];
+    static std::string fixed[NUM_FXD];
 };
 
 #endif // DLG_COMPILER_H
