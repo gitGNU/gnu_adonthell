@@ -43,9 +43,9 @@ bool label_input::input_update()
         if((c == SDLK_BACKSPACE || c == SDLK_DELETE) && my_text_.size () >0 && my_cursor_.idx > 0)
         {    
             my_text_.erase(--my_cursor_.idx, 1);
-            my_old_cursor_ = my_cursor_; 
             update_cursor ();
-            
+            my_old_cursor_ = my_cursor_; 
+
             lock (); 
             fillrect (my_cursor_.pos_x, my_cursor_.pos_y,
                       (*my_font_) [my_text_[my_cursor_.idx]].length (),
