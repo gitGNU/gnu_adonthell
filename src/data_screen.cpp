@@ -22,7 +22,7 @@
 #include "window.h"
 #include "data_screen.h"
 
-data_screen::data_screen (int m)
+data_screen::data_screen (int m) : win_container (30, 15, 260, 210, NULL)
 {
     mode = m;
     quit = false;
@@ -36,6 +36,7 @@ data_screen::data_screen (int m)
     // Create GUI
     font = new win_font (win_theme::theme);
     theme = new win_theme (win_theme::theme);
+    set_theme (theme);
 
     image_list = new win_select (10, 0, 250, 210, theme);
     image_list->set_select_mode (WIN_SELECT_MODE_BRIGHTNESS);
@@ -46,16 +47,15 @@ data_screen::data_screen (int m)
     image_list->set_signal_connect (makeFunctor (*this, &data_screen::on_select),
         WIN_SIG_ACTIVATE_KEY);
 
-    window = new win_container (30, 15, 260, 210, theme);
-    window->add (image_list);
+    add (image_list);
 
     // Add all the saved games to the list
     init ();
 
     // Show everything
-    window->set_background_visible (true);
-    window->set_border_visible (true);
-    window->set_visible_all (true);
+    set_background_visible (true);
+    set_border_visible (true);
+    set_visible_all (true);
 
     image_list->set_activate_keyboard (true);
     image_list->set_visible_all (true);
@@ -64,7 +64,6 @@ data_screen::data_screen (int m)
 data_screen::~data_screen ()
 {
     if (shot) delete shot;
-    delete window;
     delete theme;
     delete font;
 }

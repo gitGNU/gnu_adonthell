@@ -71,6 +71,11 @@ class mapcharacter : public maptpl, public character_base
   mapcharacter();
   ~mapcharacter();
 
+  // Actions
+#ifndef _EDIT_
+  void talk ();
+#endif
+
   // Loading
   s_int8 get(gzFile file);
   s_int8 load(const char * fname);

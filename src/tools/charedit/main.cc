@@ -210,11 +210,12 @@ main_wnd::write_character_source ()
         gtk_clist_get_text (GTK_CLIST (event_list), i++, 2, &str);
         if (str != NULL && str[0] != '\0') file << "parameters = " << str << "\n";
     }
+    */ 
 
     file << "\nactions:\n";
-    file << "schedule = " << schedule << "\n";
+    // file << "schedule = " << schedule << "\n";
     file << "dialogue = " << dialogue << "\n";
-    */ 
+
     // clean up
     file.close ();
     g_free (tmp);

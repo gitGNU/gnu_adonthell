@@ -17,10 +17,8 @@
 
 #include "screen.h"
 #include "input.h"
-#include "character.h"
 #include "landmap.h"
 #include "mapview.h"
-#include "dialog_engine.h"
 
 class mapengine
 {
@@ -31,7 +29,6 @@ class mapengine
   void set_mapview_schedule(char * s);
   void use_map(landmap * lm);
   landmap * get_landmap() { return lmap; }
-  void launch_dialog(character_base * whichcar, char * dlg_file);
   void run();
 
   void mainloop();
@@ -39,7 +36,6 @@ class mapengine
  protected:
   landmap * lmap;
   mapview mv;
-  win_theme * th;
   bool letsexit;
 };
 

@@ -15,20 +15,17 @@
 
 #include "mapengine.h"
 #include "win_manager.h"
-#include "dialog_engine.h"
 
 mapengine::mapengine()
 {
   lmap=NULL;
   mv.resize(320,240);
   letsexit=false;
-  th=new win_theme(win_theme::theme);
 }
 
 mapengine::~mapengine()
 {
   win_manager::destroy ();
-  delete th;
 }
 
 void mapengine::set_mapview_schedule(char * s)
@@ -40,14 +37,6 @@ void mapengine::use_map(landmap * lm)
 {
   lmap=lm;
   mv.attach_map(lmap);
-}
-
-void mapengine::launch_dialog(character_base * whichcar, char * dlg_file)
-{
-  dialog_engine *de = new dialog_engine (whichcar, dlg_file, th, 0);
-  win_manager::add (de);
-  win_manager::set_focus (de);
-  de->run ();
 }
 
 void mapengine::run()

@@ -12,7 +12,9 @@
    See the COPYING file for more details.
 */
 
+#include "dialog_engine.h"
 #include "mapcharacter.h"
+#include "win_manager.h"
 #include "mapview.h"
 
 void mapcharacter::init()
@@ -79,6 +81,16 @@ s_int8 mapcharacter::load(const char * fname)
   gzclose(file);
   return 0;
 }
+
+#ifndef _EDIT_
+void mapcharacter::talk ()
+{
+  dialog_engine *de = new dialog_engine (this, dialogue, 0);
+  win_manager::add (de);
+  win_manager::set_focus (de);
+  de->run ();  
+}
+#endif
 
 void mapcharacter::set_pos(u_int16 smap,u_int16 x,u_int16 y)
 {

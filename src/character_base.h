@@ -15,12 +15,15 @@
 #ifndef __CHARACTER_BASE_H__
 #define __CHARACTER_BASE_H__
 
+#define DIALOG_DIR "dialogues/"
+
+#include <zlib.h>
 #include "types.h"
 #include "storage.h"
-#include "py_inc.h"
-#include <zlib.h>
 
-struct PyCodeObject;
+#if defined(USE_PYTHON)
+#include "py_inc.h"
+#endif
 
 enum
 {
@@ -42,9 +45,11 @@ class character_base : public storage
   character_base();
   ~character_base();
   
-  char * get_name() { return name; }
-  void set_name(const char * newname);
-  u_int32 get_color() { return color; }
+  char * get_name() { return name; }        // Get the character's name
+  void set_name(const char * newname);      // Set the character's name
+  u_int32 get_color() { return color; }     // Return the character's text color 
+  char * get_dialogue () { return dialogue; }// Gets the character's active dialogue
+  void set_dialogue (const char * dialogue);// Set the active dialogue
 
 #ifndef SWIG
   void save (gzFile out);                   // Save the character to file
@@ -53,6 +58,7 @@ class character_base : public storage
 
  protected:
   char * name;
+  char * dialogue;
   u_int32 color;
 #if defined(USE_PYTHON)
   PyObject * locals;         // Locals that belong to that character

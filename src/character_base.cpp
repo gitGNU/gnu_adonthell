@@ -16,29 +16,41 @@
 #include <string.h>
 #include "fileops.h"
 #include "character_base.h"
-#include "eval.h"
 #include "data.h"
-#include "py_inc.h"
 
-character_base::character_base()
+character_base::character_base ()
 {
-  name=NULL;
-  color=0;
+  dialogue = NULL;
+  name = NULL;
+  color = 0;
 }
 
-character_base::~character_base()
+character_base::~character_base ()
 {
-  if(name) delete name;
+  if (dialogue) delete dialogue;
+  if (name) delete name;
 }
 
-void character_base::set_name(const char * newname)
+void character_base::set_name (const char * newname)
 {
-  if(name) delete name;
-  if(newname==NULL) name=NULL;
+  if (name) delete name;
+  if (newname==NULL) name=NULL;
   else
     {
-      name=new char[strlen(newname)+1];
-      strcpy(name,newname);
+      name = new char[strlen (newname)+1];
+      strcpy (name, newname);
+    }
+}
+
+void character_base::set_dialogue (const char *newdlg)
+{
+    if (dialogue) delete dialogue;
+    if (!newdlg) dialogue = NULL;
+    else
+    {
+        dialogue = new char[strlen (newdlg) + strlen (DIALOG_DIR) + 1];
+        strcpy (dialogue, DIALOG_DIR);
+        strcat (dialogue, newdlg);
     }
 }
 
@@ -62,6 +74,8 @@ void character_base::save(gzFile out)
       free (string);
       gzwrite (out, &(*i).second, sizeof (s_int32));
     }
+
+  put_string (out, dialogue);
 }
 
 void character_base::load (gzFile in)
@@ -86,4 +100,6 @@ void character_base::load (gzFile in)
         gzread (in, &value, sizeof (value));
         set (key, value);
     }
+
+    dialogue = get_string (in);
 }

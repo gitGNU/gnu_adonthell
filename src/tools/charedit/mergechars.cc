@@ -21,12 +21,12 @@
 #include <fstream.h>
 #include <unistd.h>
 
-#include "../../character.h"
+#include "../../character_base.h"
 #include "../../event.h"
 #include "../../data.h"
 
 objects data::characters;
-
+/*
 // Dump any error information to stderr (same as in ../../py_inc.cpp)
 void show_traceback (void)
 {
@@ -39,7 +39,7 @@ PyObject *pass_instance (void *instance, const char *class_name)
 {
     return NULL;
 }
-
+*/
 // read the character source file and append it to the character data file
 void process_character (char *input, gzFile output)
 {
@@ -187,8 +187,8 @@ void process_character (char *input, gzFile output)
                 // read schedule/dialogue script
                 case 4:
                 {
-		  /*
                     if (strcmp (vals[0], "dialogue") == 0) mynpc.set_dialogue (vals[1]);
+		  /*
                     else if (strcmp (vals[0], "schedule") == 0) mynpc.set_schedule (strdup (vals[1]), false);
 		  */       
                     break;

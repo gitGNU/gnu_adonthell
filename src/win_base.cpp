@@ -154,8 +154,13 @@ bool win_base::draw()
 void win_base::set_theme(win_theme * th)
 {
   //set the new theme ---> WARNING I think theme->UPDATE(THIS) IS NEEDED
-  if(th) *theme_=*th;
-  else theme_=NULL;// ----> WARNING test if theme is not null before to do a null !!!!
+  if (theme_ != NULL) 
+  {
+    if(th) *theme_=*th;
+    else theme_=NULL;// ----> WARNING test if theme is not null before to do a null !!!!
+  }
+  else if (th) theme_ = new win_theme (*th);
+  if (theme_) theme_->update (this);
 }
 
 void win_base::move(s_int16 tx,s_int16 ty)

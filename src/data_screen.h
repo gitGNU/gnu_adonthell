@@ -30,12 +30,11 @@ enum
 };
 
 // The gui for loading/saving games
-class data_screen
+class data_screen : public win_container
 {
 public:
-    data_screen (int mode);                 // open load/save window
+    data_screen (int);                      // open load/save window
     ~data_screen ();                        // destructor
-    void draw () { window->draw (); }       // draw the dialog
     bool update ();                         // react to input
 
 private:
@@ -48,7 +47,6 @@ private:
     win_theme *theme;                       // the theme
     win_write *entry;                       // for entering a description of the game
     win_select *image_list;                 // list of thumbnails
-    win_container *window;                  // main window
 
     vector<win_write*> entry_list;          // list of game descriptions
     image *shot;                            // a 72x54 screenshot 

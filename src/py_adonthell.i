@@ -33,6 +33,8 @@
 
 #define SDL_MIXER
 #define SDL_HAS_64BIT_TYPE int
+#define USE_MAP
+#define USE_PYTHON
 
 %include "types.h"
 %include "storage.h"

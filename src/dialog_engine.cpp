@@ -22,18 +22,13 @@
 #include "dialog_engine.h"
 
 // Init the dialogue engine
-
-dialog_engine::dialog_engine() : win_container (20, 20, 280, 100, NULL)
+dialog_engine::dialog_engine (character_base *mynpc, char * dlg_file, u_int8 size) :
+    win_container (20, 20, 280, 100, NULL)
 {
+  init (mynpc, dlg_file, size);
 }
 
-dialog_engine::dialog_engine (character_base *mynpc, char * dlg_file, win_theme *th, u_int8 size) :
-    win_container (20, 20, 280, 100, th)
-{
-  init(mynpc,dlg_file,th,size);
-}
-
-void dialog_engine::init(character_base *mynpc, char * dlg_file, win_theme *th, u_int8 size)
+void dialog_engine::init(character_base *mynpc, char * dlg_file, u_int8 size)
 {
     sel_start = 1;
     can_add = true;
@@ -41,7 +36,8 @@ void dialog_engine::init(character_base *mynpc, char * dlg_file, win_theme *th, 
     instance = NULL;
   
     font = new win_font (win_theme::theme);
-    theme = th;
+    theme = new win_theme (win_theme::theme);
+    set_theme (theme);
 
     // Full or half-sized window
     if (size)
@@ -100,12 +96,9 @@ void dialog_engine::init(character_base *mynpc, char * dlg_file, win_theme *th, 
     set_background_visible (true);
 
     // Load dialogue
-        char fdef[strlen(dlg_file)+strlen(DIALOG_DIR)+1];
-        strcpy(fdef,DIALOG_DIR);
-        strcat(fdef,dlg_file);
-	if (!dlg->init (fdef, strrchr (fdef, '/')+1))
+	if (!dlg->init (dlg_file, strrchr (dlg_file, '/')+1))
 	{
-        cout << "\n*** Error loading dialogue script " << strrchr (fdef, '/')+1 << "\n";
+        cout << "\n*** Error loading dialogue script " << strrchr (dlg_file, '/')+1 << "\n";
         show_traceback ();
         cout << flush;
         answer = -1;	
@@ -134,6 +127,7 @@ dialog_engine::~dialog_engine ()
     sel->set_activated (false);
 
     delete font;
+    delete theme;
 
     Py_XDECREF (instance);
 }

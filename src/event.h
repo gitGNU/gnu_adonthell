@@ -142,9 +142,7 @@ public:
     static void raise_event (event*);           // event triggered
 #ifndef SWIG
     static event* load_event (gzFile, bool=true);// load an event
-#endif
 private:
-#ifndef SWIG
     static vector<event*> handlers[MAX_EVENT];  // registered events storage
 #endif
 };
