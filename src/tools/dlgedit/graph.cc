@@ -39,6 +39,9 @@ int
 new_circle (MainFrame * wnd, GdkPoint point, int type)
 {
     Circle *circle = new Circle (wnd->number, type, point.x, point.y);
+
+    // disable autoscrolling before the modal dialog pops up
+    wnd->scroll = 0;
     
     // Create Dialog to edit Circle's attributes ...
     crcle_dlg dlg (circle);
@@ -215,6 +218,9 @@ edit_node (MainFrame * wnd)
     // circle selected 
     if (wnd->selected_node->type != LINK)
     {
+        // disable autoscrolling before the modal dialog pops up
+        wnd->scroll = 0;
+
         // Close Tooltip
         if (wnd->tooltip != NULL)
         {
@@ -230,9 +236,6 @@ edit_node (MainFrame * wnd)
 
         // In case  wnd -> selected_node -> type  has changed
         draw_circle (wnd, wnd->selected_node, wnd->selected_node->highlite);
-
-        // won´t work without, don´t ask me why!
-        // sort_nodes (wnd);
     }
 
     show_preview (wnd);
