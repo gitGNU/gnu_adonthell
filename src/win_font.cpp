@@ -60,7 +60,7 @@ void win_font::load(char * rep)
   strcat(path,WIN_FONT_DIRECTORY);
   strcat(path,rep);
   strcat(path,WIN_FONT_FILE_PIC);
-  font->load_raw(path);//new
+  font->load_pnm(path);//new
   //delete [] path;
   //create a table for each letter
   table=new image[WIN_NB_TABLE_CHAR];

@@ -68,17 +68,17 @@ void win_border::load(char * rep,char *size)
   h_border_template=new image();
   strcpy(tmp,path);
   strcat(tmp,WIN_H_BORDER_TEMPLATE_FILE);
-  h_border_template->load_raw(tmp);//new
+  h_border_template->load_pnm(tmp);//new
   
   v_border_template=new image();
   strcpy(tmp,path);
   strcat(tmp,WIN_V_BORDER_TEMPLATE_FILE);
-  v_border_template->load_raw(tmp);//new
+  v_border_template->load_pnm(tmp);//new
   
   corner=new image();
   strcpy(tmp,path);
   strcat(tmp,WIN_CORNER_FILE);
-  corner->load_raw(tmp);//new
+  corner->load_pnm(tmp);//new
 }
 /***********************************************************/
 /***************************WIN BACKGROUND******************/
@@ -106,7 +106,7 @@ void win_background::load(char *rep)
   strcat(path,rep);
   strcat(path,WIN_BACKGROUND_FILE);
   background_template=new image();
-  background_template->load_raw(path);//new
+  background_template->load_pnm(path);//new
 }
 
 
@@ -137,7 +137,7 @@ void win_cursor::load(char *rep)
   strcat(path,rep);
   strcat(path,WIN_CURSOR_FILE);
   cursor=new image();
-  cursor->load_raw(path);//new
+  cursor->load_pnm(path);//new
 }
 
 
@@ -169,22 +169,22 @@ void win_scrollbar::load(char * theme)
   bar=new image();
   strcpy(tmp,path);
   strcat(tmp,WIN_SCROLLBAR_BAR_FILE);
-  bar->load_raw(tmp);
+  bar->load_pnm(tmp);
     
   bottom=new image();
   strcpy(tmp,path);
   strcat(tmp,WIN_SCROLLBAR_BOTTOM_FILE);
-  bottom->load_raw(tmp);
+  bottom->load_pnm(tmp);
  
   middle=new image();
   strcpy(tmp,path);
   strcat(tmp,WIN_SCROLLBAR_MIDDLE_FILE);
-  middle->load_raw(tmp);
+  middle->load_pnm(tmp);
  
   top=new image();
   strcpy(tmp,path);
   strcat(tmp,WIN_SCROLLBAR_TOP_FILE);
-  top->load_raw(tmp);
+  top->load_pnm(tmp);
 }
 
 win_scrollbar::~win_scrollbar()

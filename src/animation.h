@@ -63,10 +63,10 @@ class animation_frame
   void set_delay(u_int16 d);
   u_int16 get_nextframe();
   void set_nextframe(u_int16 nf);
-  s_int8 get(SDL_RWops * file);
+  s_int8 get(gzFile file);
   s_int8 load(const char * fname);
 #ifdef _EDIT_
-  s_int8 put(SDL_RWops * file);
+  s_int8 put(gzFile file);
   s_int8 save(const char * fname);
 #endif
   friend class animation;
@@ -122,8 +122,10 @@ class animation
   void stop();
   void rewind();
   void draw(u_int16 x, u_int16 y, drawing_area * da_opt=NULL);
-  s_int8 get(SDL_RWops * file);
+  s_int8 get(gzFile file);
   s_int8 load(const char * fname);
+  s_int8 get_old(SDL_RWops * file);
+  s_int8 load_old(const char * fname);
 
   // Perform a zoom from the size of the currentframe of src to sx,sy.
   // All the other frame's sizes are adjusted from src->currentframe.
@@ -131,7 +133,7 @@ class animation
   void get_zoom_scale(u_int16 &max_x, u_int16 &max_y);
 
 #ifdef _EDIT_
-  s_int8 put(SDL_RWops * file);
+  s_int8 put(gzFile file);
   s_int8 save(const char * fname);
 #endif
   animation &operator =(animation &a);

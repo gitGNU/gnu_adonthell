@@ -368,7 +368,7 @@ dialog_engine::dialog_engine (const char *npc_name)
 
     // we'd also get the portrait to use from the npc data
     portrait = new image (64, 64);
-    portrait->load_raw ("gfxtree/portraits/lyanna.pnm");
+    portrait->load_pnm ("gfxtree/portraits/lyanna.pnm");
     portrait->set_mask (true);
 
     face = wnd->add_image (10, 10, portrait);

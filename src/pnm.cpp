@@ -16,6 +16,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <zlib.h>
 #include "types.h"
 #include "pnm.h"
 
@@ -66,7 +67,7 @@ void * read_pnm(SDL_RWops * file, u_int16 * length, u_int16 * height)
   pnm_gotonextline(file);
   /* Reading the image */
   image=calloc(l*h,3);
-  SDL_RWread(file,image,3,(l)*(h));
+  SDL_RWread(file,image,3,l*h);
   if(length) *length=l;
   if(height) *height=h;
   return(image);
@@ -83,7 +84,7 @@ void pnmput(SDL_RWops * file, void * image, u_int16 length, u_int16 height)
 int write_pnm(char * filename, void * image, u_int16 length, u_int16 height)
 {
   SDL_RWops * file;
-  file=SDL_RWFromFile(filename,"w"); 
+  file=SDL_RWFromFile(filename,"w");
   if(!file) return(1);
   else
     {

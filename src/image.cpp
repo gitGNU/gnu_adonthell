@@ -408,11 +408,11 @@ s_int8 image::get(char * file)
 }
 
 
-s_int8 image::get(SDL_RWops * file)
+s_int8 image::get(gzFile file)
 {
   s_int8 ret;
-  SDL_RWread(file,&mask_on,sizeof(mask_on),1);
-  SDL_RWread(file,&alpha,sizeof(alpha),1);   
+  gzread(file,&mask_on,sizeof(mask_on));
+  gzread(file,&alpha,sizeof(alpha));   
   ret=get_raw(file);
   if(!ret)
     if(mask_on)
@@ -422,15 +422,49 @@ s_int8 image::get(SDL_RWops * file)
 
 s_int8 image::load(const char * fname)
 {
-  SDL_RWops * file;
+  gzFile file;
   file=SDL_RWFromFile(fname,"r"); 
   if(!file) return(1);
   get(file);
-  SDL_RWclose(file);
+  gzclose(file);
   return(0);
 }
 
-s_int8 image::get_raw(SDL_RWops * file)
+s_int8 image::get_raw(gzFile file)
+{
+#ifndef _EDIT_
+  void * simpledata;
+#endif
+  SDL_Surface * tmp2;
+  gzread(file,&length,sizeof(length));
+  gzread(file,&height,sizeof(height));
+  simpledata=calloc(length*height,3);
+  gzread(file,simpledata,length*height*3);
+
+  tmp2=SDL_CreateRGBSurfaceFrom(simpledata,length,height,24,
+				length*3,0x0000FF,0x00FF00,0xFF0000,0);
+  data=SDL_DisplayFormat(tmp2);
+  bytes_per_pixel=screen::bytes_per_pixel;
+  SDL_FreeSurface(tmp2);
+
+#ifndef _EDIT_
+  free(simpledata);
+#endif
+  if (!data) return(-1);
+  return(0);
+}
+
+s_int8 image::load_raw(const char * fname)
+{
+  gzFile file;
+  file=gzopen(fname,"rb"); 
+  if(!file) return(1);
+  get_raw(file);
+  gzclose(file);
+  return(0);
+}
+
+s_int8 image::get_pnm(SDL_RWops * file)
 {
 #ifndef _EDIT_
   void * simpledata;
@@ -451,68 +485,66 @@ s_int8 image::get_raw(SDL_RWops * file)
   return(0);
 }
 
-s_int8 image::load_raw(const char * fname)
+s_int8 image::load_pnm(const char * fname)
 {
   SDL_RWops * file;
   file=SDL_RWFromFile(fname,"r"); 
   if(!file) return(1);
-  get_raw(file);
+  get_pnm(file);
   SDL_RWclose(file);
   return(0);
 }
 
-s_int8 image::get_pnm(SDL_RWops * file)
-{
-  return(get_raw(file));
-}
-
-s_int8 image::load_pnm(char * fname)
-{
-  return(load_raw(fname));
-}
-
 #ifdef _EDIT_
-s_int8 image::put(SDL_RWops * file)
+s_int8 image::put(gzFile file)
 {
-  SDL_RWwrite(file,&mask_on,sizeof(mask_on),1);
-  SDL_RWwrite(file,&alpha,sizeof(alpha),1);
+  gzwrite(file,&mask_on,sizeof(mask_on));
+  gzwrite(file,&alpha,sizeof(alpha));
   return(put_raw(file));
 }
 
 s_int8 image::save(char * fname)
 {
-  SDL_RWops * file;
-  file=SDL_RWFromFile(fname,"w"); 
+  gzFile file;
+  file=gzopen(fname,"wb6"); 
   if(!file) return(1);
   put(file);
-  SDL_RWclose(file);
+  gzclose(file);
   return(0);
 }
 
-s_int8 image::put_raw(SDL_RWops * file)
+s_int8 image::put_raw(gzFile file)
 {
-  pnmput(file,simpledata,length,height);
+  gzwrite(file,&length,sizeof(length));
+  gzwrite(file,&height,sizeof(height));
+  gzwrite(file,simpledata,length*height*3);
   return(0);
 }
 
 s_int8 image::save_raw(char * fname)
 {
-  SDL_RWops * file;
-  file=SDL_RWFromFile(fname,"w"); 
+  gzFile file;
+  file=gzopen(fname,"w6"); 
   if(!file) return(1);
   put_raw(file);
-  SDL_RWclose(file);
+  gzclose(file);
   return(0);
 }
 
 s_int8 image::put_pnm(SDL_RWops * file)
 {
-  return(put_raw(file));
+  pnmput(file,simpledata,length,height);
+  return(0);
 }
 
 s_int8 image::save_pnm(char * fname)
 {
-  return(save_raw(fname));
+  SDL_RWops * file;
+  file=SDL_RWFromFile(fname,"w"); 
+  if(!file) return(1);
+  put_pnm(file);
+  SDL_RWclose(file);
+  return(0);
 }
 
 #endif

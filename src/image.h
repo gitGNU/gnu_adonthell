@@ -16,6 +16,7 @@
 #define _image_h
 
 #include "screen.h"
+#include <zlib.h>
 #include "pnm.h"
 
 class drawing_area : public SDL_Rect
@@ -68,16 +69,16 @@ class image
   void resize(u_int16 l, u_int16 h);
   s_int8 get(char * file);
 
-  s_int8 get(SDL_RWops * file);
+  s_int8 get(gzFile file);
   s_int8 load(const char * fname);
-  s_int8 get_raw(SDL_RWops * file);
+  s_int8 get_raw(gzFile file);
   s_int8 load_raw(const char * fname);
   s_int8 get_pnm(SDL_RWops * file);
-  s_int8 load_pnm(char * fname);
+  s_int8 load_pnm(const char * fname);
 #ifdef _EDIT_
-  s_int8 put(SDL_RWops * file);
+  s_int8 put(gzFile file);
   s_int8 save(char * fname);
-  s_int8 put_raw(SDL_RWops * file);
+  s_int8 put_raw(gzFile file);
   s_int8 save_raw(char * fname);
   s_int8 put_pnm(SDL_RWops * file);
   s_int8 save_pnm(char * fname);

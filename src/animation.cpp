@@ -33,7 +33,11 @@ void animation_frame::init()
 {
   imagenbr=0;
   is_masked=false;
+#ifdef REVERSE_ALPHA
+  alpha=255;
+#else
   alpha=0;
+#endif
   gapx=0;
   gapy=0;
   delay=0;
@@ -99,50 +103,50 @@ void animation_frame::set_nextframe(u_int16 nf)
   nextframe=nf;
 }
 
-s_int8 animation_frame::get(SDL_RWops * file)
+s_int8 animation_frame::get(gzFile file)
 {
-  SDL_RWread(file,&imagenbr,sizeof(imagenbr),1);
-  SDL_RWread(file,&is_masked,sizeof(is_masked),1);
-  SDL_RWread(file,&alpha,sizeof(alpha),1);
-  SDL_RWread(file,&gapx,sizeof(gapx),1);
-  SDL_RWread(file,&gapy,sizeof(gapy),1);
-  SDL_RWread(file,&delay,sizeof(delay),1);
-  SDL_RWread(file,&nextframe,sizeof(nextframe),1);
+  gzread(file,&imagenbr,sizeof(imagenbr));
+  gzread(file,&is_masked,sizeof(is_masked));
+  gzread(file,&alpha,sizeof(alpha));
+  gzread(file,&gapx,sizeof(gapx));
+  gzread(file,&gapy,sizeof(gapy));
+  gzread(file,&delay,sizeof(delay));
+  gzread(file,&nextframe,sizeof(nextframe));
   return(0);
 }
 
 s_int8 animation_frame::load(const char * fname)
 {
-  SDL_RWops * file;
+  gzFile file;
   u_int8 retvalue;
-  file=SDL_RWFromFile(fname,"r"); 
+  file=gzopen(fname,"rb"); 
   if(!file) return(-1);
   retvalue=get(file);
-  SDL_RWclose(file);
+  gzclose(file);
   return(retvalue);
 }
 
 #ifdef _EDIT_
-s_int8 animation_frame::put(SDL_RWops * file)
+s_int8 animation_frame::put(gzFile file)
 {
-  SDL_RWwrite(file,&imagenbr,sizeof(imagenbr),1);
-  SDL_RWwrite(file,&is_masked,sizeof(is_masked),1);
-  SDL_RWwrite(file,&alpha,sizeof(alpha),1);
-  SDL_RWwrite(file,&gapx,sizeof(gapx),1);
-  SDL_RWwrite(file,&gapy,sizeof(gapy),1);
-  SDL_RWwrite(file,&delay,sizeof(delay),1);
-  SDL_RWwrite(file,&nextframe,sizeof(nextframe),1);
+  gzwrite(file,&imagenbr,sizeof(imagenbr));
+  gzwrite(file,&is_masked,sizeof(is_masked));
+  gzwrite(file,&alpha,sizeof(alpha));
+  gzwrite(file,&gapx,sizeof(gapx));
+  gzwrite(file,&gapy,sizeof(gapy));
+  gzwrite(file,&delay,sizeof(delay));
+  gzwrite(file,&nextframe,sizeof(nextframe));
   return(0);
 }
 
 s_int8 animation_frame::save(const char * fname)
 {
-  SDL_RWops * file;
+  gzFile file;
   u_int8 retvalue;
-  file=SDL_RWFromFile(fname,"w"); 
+  file=gzopen(fname,"wb6"); 
   if(!file) return(-1);
   retvalue=put(file);
-  SDL_RWclose(file);
+  gzclose(file);
   return(retvalue);
 }
 #endif
@@ -168,7 +172,7 @@ void animation::init()
   t+=WIN_BACKGROUND_FILE;
   if(!a_d_diff)
     {
-      temp.load_raw(t.data());
+      temp.load_pnm(t.data());
       bg=new image(320,240);
       bg->putbox_tile_img(&temp);
       font=new win_font(WIN_THEME_ORIGINAL);
@@ -271,15 +275,15 @@ void animation::draw(u_int16 x, u_int16 y, drawing_area * da_opt=NULL)
 					     da_opt);
 }
 
-s_int8 animation::get(SDL_RWops * file)
+s_int8 animation::get(gzFile file)
 {
   u_int16 i;
-  SDL_RWread(file,&nbr_of_images,sizeof(nbr_of_images),1);
+  gzread(file,&nbr_of_images,sizeof(nbr_of_images));
   delete[] t_frame;
   t_frame=new image[nbr_of_images];
   for(i=0;i<nbr_of_images;i++)
     t_frame[i].get_raw(file);
-  SDL_RWread(file,&nbr_of_frames,sizeof(nbr_of_frames),1);
+  gzread(file,&nbr_of_frames,sizeof(nbr_of_frames));
   delete[] frame;
   frame=new animation_frame[nbr_of_frames];
   for(i=0;i<nbr_of_frames;i++)
@@ -290,11 +294,39 @@ s_int8 animation::get(SDL_RWops * file)
 
 s_int8 animation::load(const char * fname)
 {
+  gzFile file;
+  u_int8 retvalue;
+  file=gzopen(fname,"rb"); 
+  if(!file) return(-1);
+  retvalue=get(file);
+  gzclose(file);
+  return(retvalue);
+}
+
+s_int8 animation::get_old(SDL_RWops * file)
+{
+  u_int16 i;
+  SDL_RWread(file,&nbr_of_images,sizeof(nbr_of_images),1);
+  delete[] t_frame;
+  t_frame=new image[nbr_of_images];
+  for(i=0;i<nbr_of_images;i++)
+    t_frame[i].get_pnm(file);
+  SDL_RWread(file,&nbr_of_frames,sizeof(nbr_of_frames),1);
+  delete[] frame;
+  frame=new animation_frame[nbr_of_frames];
+  for(i=0;i<nbr_of_frames;i++)
+      frame[i].get(file);
+  currentframe=0;
+  return(0);
+}
+
+s_int8 animation::load_old(const char * fname)
+{
   SDL_RWops * file;
   u_int8 retvalue;
   file=SDL_RWFromFile(fname,"r"); 
   if(!file) return(-1);
-  retvalue=get(file);
+  retvalue=get_old(file);
   SDL_RWclose(file);
   return(retvalue);
 }
@@ -328,13 +360,13 @@ void animation::get_zoom_scale(u_int16 &max_x, u_int16 &max_y)
 }
 
 #ifdef _EDIT_
-s_int8 animation::put(SDL_RWops * file)
+s_int8 animation::put(gzFile file)
 {
   u_int16 i;
-  SDL_RWwrite(file,&nbr_of_images,sizeof(nbr_of_images),1);
+  gzwrite(file,&nbr_of_images,sizeof(nbr_of_images));
   for(i=0;i<nbr_of_images;i++)
     t_frame[i].put_raw(file);
-  SDL_RWwrite(file,&nbr_of_frames,sizeof(nbr_of_frames),1);
+  gzwrite(file,&nbr_of_frames,sizeof(nbr_of_frames));
   for(i=0;i<nbr_of_frames;i++)
       frame[i].put(file);
   currentframe=0;
@@ -343,12 +375,12 @@ s_int8 animation::put(SDL_RWops * file)
 
 s_int8 animation::save(const char * fname)
 {
-  SDL_RWops * file;
+  gzFile file;
   u_int8 retvalue;
-  file=SDL_RWFromFile(fname,"w"); 
+  file=gzopen(fname,"wb6"); 
   if(!file) return(-1);
   retvalue=put(file);
-  SDL_RWclose(file);
+  gzclose(file);
   return(retvalue);
 }
 
@@ -522,7 +554,7 @@ void animation::add_image()
   u_int16 p;
   char * s=query_window("File to load:");
   if(!s) return;
-  if(!im.load_raw(s)) 
+  if(!im.load_pnm(s)) 
     {
       do
 	{
