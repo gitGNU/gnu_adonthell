@@ -74,6 +74,7 @@ bool dialog::setup ()
     {
         s = PyList_GetItem (list, i);
         if (s) strings[i] = PyString_AsString (s);
+        else strings[i] = "*** Error";
     }
 
     Py_DECREF (list);
@@ -107,16 +108,13 @@ void dialog::clear ()
 // iterate over the dialogue text
 string dialog::text ()
 {
-    string text = "";
-    
-    if (i_text != text_.end ())
+    if (i_text == text_.end ())
     {
-        text = *i_text;
-        i_text++;
+        i_text = text_.begin ();
+        return "";
     }
-    else i_text = text_.begin ();
     
-    return text;
+    return *i_text++;
 }
 
 // Gets the index of either the player or npc array
@@ -125,6 +123,10 @@ void dialog::run (u_int32 index)
     PyObject *arg, *result, *speaker, *speech;
     s_int32 s, answer = answers[index];
     u_int32 stop, size;
+    
+    // empty previous dialogue text
+    text_.clear ();
+    answers.clear ();
     
     // end of dialogue
     if (answer == -1)
@@ -135,10 +137,6 @@ void dialog::run (u_int32 index)
     {
         used.push_back (answer);
     }
-    
-    // empty previous dialogue text
-    text_.clear ();
-    answers.clear ();
     
     do
     {
@@ -184,7 +182,7 @@ void dialog::run (u_int32 index)
             // get the text
             answer = PyInt_AsLong (PyList_GetItem (speech, rnd));
             text_.push_back (scan_string (nls::translate (strings[answer])));
-            
+
             // get the NPC color, portrait and name
             char *npc = PyString_AsString (PyList_GetItem (speaker, rnd));
             if (npc != NULL)
@@ -201,6 +199,9 @@ void dialog::run (u_int32 index)
                 }
             }
             
+            cout << "NPC: " << npc << " says \"" << text_.back () << "\n\""
+                 << flush;
+                        
             // check whether we shall continue or not
             arg = Py_BuildValue ("(i)", answer);
             result = dialogue.call_method_ret ("stop", arg);

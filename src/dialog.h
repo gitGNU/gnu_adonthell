@@ -122,7 +122,7 @@ public:
      *
      * @return name of the image.
      */
-    string npc_portrait () { return npc_portrait_; }
+    const string & npc_portrait () { return npc_portrait_; }
 
     /**
      * Returns the name to be displayed under the NPC's portrait.
@@ -130,7 +130,7 @@ public:
      *
      * @return name of the NPC.
      */
-    string npc_name () { return npc_name_; }
+    const string & npc_name () { return npc_name_; }
 
     /** 
      * Returns the number of %text lines available at this point of 

@@ -4,7 +4,7 @@ moddata_DATA = *.pyc
 
 EXTRA_DIST = dialogue.py adonthell.py
 
-all:
+all: *.py
 	../adonthell -c
 
 *.pyc: *.py
