@@ -35,8 +35,9 @@
 #include "win_container.h"
 #include "win_select.h"
 
-#define IMAGE false
-#define FRAME true
+#ifdef _EDIT_
+typedef enum anim_editor_mode {IMAGE, FRAME};
+#endif
 
 #endif
 
@@ -94,6 +95,7 @@ class animation
   static image * clipboard;
   static animation_frame f_clipboard;
   bool mode;
+  char frame_txt[500];
   static win_font * font;
   static win_border * border;
   static image * bg;
@@ -102,11 +104,17 @@ class animation
   win_label * label_frame_nbr;
   win_label * label_frame_info;
   win_label * label_anim_info;
+  bool must_upt_label_mode;
+  bool must_upt_label_frame_nbr;
+  bool must_upt_label_frame_info;
+  bool must_upt_label_status;
 
   u_int16 currentimage;
+  bool in_editor;
 #endif
 
  protected:
+  u_int16 length, height;
   u_int16 nbr_of_images;
   u_int16 nbr_of_frames;
   u_int16 currentframe;
@@ -146,6 +154,15 @@ class animation
   animation &operator =(animation &a);
 
 #ifdef _EDIT_
+  void select_image(u_int16 nbr);
+  void select_frame(u_int16 nbr);
+  void set_frame_gapx(u_int16 nbr, u_int16 gx);
+  void set_frame_gapy(u_int16 nbr, u_int16 gy);
+  void set_frame_alpha(u_int16 nbr, u_int8 a);
+  void set_frame_delay(u_int16 nbr, u_int16 d);
+  void set_frame_nextframe(u_int16 nbr, u_int16 nf);
+  void set_frame_mask(u_int16 nbr, bool m);
+  void set_frame_imagenbr(u_int16 nbr, u_int16 imnbr);
   s_int8 insert_image(image &im, u_int16 pos);
   s_int8 insert_frame(animation_frame &af, u_int16 pos);
   u_int16 increase_frame(u_int16 c);
@@ -158,9 +175,13 @@ class animation
   void add_frame();
   void save();
   void load();
+  void set_mode(anim_editor_mode m);
+  void update_label_mode();
+  void update_label_frame_nbr();
+  void update_label_frame_info();
+  void update_label_status();
   void update_editor();
   void update_editor_keys();
-  void draw_editor();
   void update_and_draw();
   void editor();
   void info_window(char * t_label);

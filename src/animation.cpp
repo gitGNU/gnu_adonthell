@@ -183,11 +183,11 @@ void animation::init()
   currentframe=0;
   speedcounter=0;
   play_flag=false;
-
+  length=height=0;
 #ifdef _EDIT_
   image temp;
   string t;
-  mode=IMAGE;
+  in_editor=false;
   currentimage=0;
   t=WIN_DIRECTORY;
   t+=WIN_BACKGROUND_DIRECTORY;
@@ -268,16 +268,29 @@ void animation::next_frame()
 {
   currentframe=frame[currentframe].nextframe;
   speedcounter=0;
+#ifdef _EDIT_
+  if(in_editor)
+    {
+      must_upt_label_frame_nbr=true;
+      must_upt_label_frame_info=true;
+    }
+#endif
 }
 
 void animation::play()
 {
   play_flag=true;
+#ifdef _EDIT_
+  if(in_editor) must_upt_label_status=true;
+#endif
 }
 
 void animation::stop()
 {
   play_flag=false;
+#ifdef _EDIT_
+  if(in_editor) must_upt_label_status=true;
+#endif
 }
 
 void animation::rewind()
@@ -388,6 +401,8 @@ void animation::get_zoom_scale(u_int16 &max_x, u_int16 &max_y)
 s_int8 animation::put(gzFile file)
 {
   u_int16 i;
+  gzwrite(file,&length,sizeof(length));
+  gzwrite(file,&height,sizeof(height));
   gzwrite(file,&nbr_of_images,sizeof(nbr_of_images));
   for(i=0;i<nbr_of_images;i++)
     t_frame[i].put_raw(file);
@@ -450,7 +465,7 @@ void animation::info_window(char * t_label)
 
 char * animation::query_window(char * t_label)
 {
-  char * s;
+  char * s, *t;
   win_container * querycont;
   win_label * querylabel;
   win_write * querywrite;
@@ -483,10 +498,14 @@ char * animation::query_window(char * t_label)
     }
   input::set_key_repeat(0);
   input::clear_keys_queue();
-  s=strdup(querywrite->get_text());
+  t=querywrite->get_text();
+  if(t) s=strdup(t);
+  else s=NULL;
   delete querycont;
   delete queryback;
+#ifdef _DEBUG_
   cout << "Returning:" << s << endl;
+#endif
   return(s);
 }
 
@@ -508,6 +527,13 @@ void animation::load()
     }
   delete t;
   delete s;
+  if(in_editor) 
+    {
+      must_upt_label_mode=true;
+      must_upt_label_frame_nbr=true;
+      must_upt_label_frame_info=true;
+      must_upt_label_status=true;
+    }
 }
 
 
@@ -533,6 +559,64 @@ animation & animation::operator =(animation &a)
 }
 
 #ifdef _EDIT_
+
+void animation::select_image(u_int16 nbr)
+{
+  currentimage=nbr;
+  must_upt_label_frame_nbr=true;
+  must_upt_label_frame_info=true;
+}
+
+
+void animation::select_frame(u_int16 nbr)
+{
+  currentframe=nbr;
+  must_upt_label_frame_nbr=true;
+  must_upt_label_frame_info=true;
+}
+
+void animation::set_frame_gapx(u_int16 nbr, u_int16 gx)
+{
+  frame[nbr].gapx=gx;
+  must_upt_label_frame_info=true;
+}
+
+void animation::set_frame_gapy(u_int16 nbr, u_int16 gy)
+{
+  frame[nbr].gapy=gy;
+  must_upt_label_frame_info=true;
+}
+
+void animation::set_frame_alpha(u_int16 nbr, u_int8 a)
+{
+  frame[nbr].set_alpha(a);
+  must_upt_label_frame_info=true;
+}
+
+void animation::set_frame_delay(u_int16 nbr, u_int16 d)
+{
+  frame[nbr].set_delay(d);
+  must_upt_label_frame_info=true;
+}
+
+void animation::set_frame_nextframe(u_int16 nbr, u_int16 nf)
+{
+  frame[nbr].set_nextframe(nf);
+  must_upt_label_frame_info=true;
+}
+
+void animation::set_frame_mask(u_int16 nbr, bool m)
+{
+  frame[nbr].set_mask(m);
+  must_upt_label_frame_info=true;
+}
+
+void animation::set_frame_imagenbr(u_int16 nbr, u_int16 imnbr)
+{
+  frame[nbr].imagenbr=imnbr;
+  must_upt_label_frame_info=true;
+}
+
 s_int8 animation::insert_image(image &im, u_int16 pos)
 {
   image * oldt_frame=t_frame;
@@ -547,6 +631,11 @@ s_int8 animation::insert_image(image &im, u_int16 pos)
   for(i=0;i<nbr_of_frames;i++)
     if(frame[i].imagenbr>=pos) frame[i].imagenbr++;
   delete[] oldt_frame;
+  if(in_editor) 
+    {
+      must_upt_label_frame_nbr=true;
+      must_upt_label_frame_info=true;
+    }
 #ifdef _DEBUG_
   cout << "Added image: " << nbr_of_images << " total in animation.\n";
 #endif
@@ -567,6 +656,11 @@ s_int8 animation::insert_frame(animation_frame &af, u_int16 pos)
   for(i=0;i<nbr_of_frames;i++)
     if(frame[i].nextframe>=pos) frame[i].nextframe++; 
   delete[] oldframe;
+  if(in_editor) 
+    {
+      must_upt_label_frame_nbr=true;
+      must_upt_label_frame_info=true;
+    }
 #ifdef _DEBUG_
   cout << "Added frame: " << nbr_of_frames << " total in animation.\n";
 #endif
@@ -620,6 +714,11 @@ s_int8 animation::delete_image(u_int16 pos)
     }
   delete[] oldt_frame;
   if(currentimage>=nbr_of_images) currentimage=nbr_of_images-1;
+  if(in_editor) 
+    {
+      must_upt_label_frame_nbr=true;
+      must_upt_label_frame_info=true;
+    }
 #ifdef _DEBUG_
   cout << "Removed image: " << nbr_of_images << " total in animation.\n";
 #endif
@@ -649,6 +748,11 @@ s_int8 animation::delete_frame(u_int16 pos)
     if(frame[i].nextframe>=pos) frame[i].nextframe++; 
   delete[] oldframe;
   if(currentframe>=nbr_of_frames) currentframe=nbr_of_frames-1;
+  if(in_editor) 
+    {
+      must_upt_label_frame_nbr=true;
+      must_upt_label_frame_info=true;
+    }
 #ifdef _DEBUG_
   cout << "Removed frame: " << nbr_of_frames << " total in animation.\n";
 #endif
@@ -697,22 +801,117 @@ u_int16 animation::decrease_image(u_int16 c)
 
 inline bool testkey(SDLKey k)
 {
-  if(SDL_GetModState()&&KMOD_LCTRL)
+  if(SDL_GetModState()&KMOD_LCTRL)
     return((input::is_pushed(k)));
   else return ((input::has_been_pushed(k)));//&&(SDL_GetModState()&&KMOD_LCTRL)));
+}
+
+void animation::set_mode(anim_editor_mode m)
+{
+  mode=m;
+  must_upt_label_mode=true;
+  must_upt_label_frame_nbr=true;
+  must_upt_label_frame_info=true;
+  must_upt_label_status=true;
+}
+
+void animation::update_label_mode()
+{
+  sprintf(frame_txt,"%s mode",mode==IMAGE?"Image":"Frame");
+  label_mode->set_text(frame_txt);
+}
+
+void animation::update_label_frame_nbr()
+{
+  if(mode==FRAME)
+    {
+      if(nbr_of_frames>0)
+	sprintf(frame_txt,"Frame %d/%d",currentframe,
+		nbr_of_frames-1);
+      else sprintf(frame_txt,"No frame");
+    }
+  else
+    {
+      if(nbr_of_images>0)
+	sprintf(frame_txt,"Image %d/%d",currentimage,
+		nbr_of_images-1);
+      else sprintf(frame_txt,"No image");
+    }
+  label_frame_nbr->set_text(frame_txt);
+}
+
+void animation::update_label_frame_info()
+{
+  if(mode==FRAME)
+    {
+      if(nbr_of_frames>0)
+	{
+	  char s_delay[6];
+	  sprintf(s_delay,"%d",frame[currentframe].delay);
+	  sprintf(frame_txt,"Frame info :\nImage number: %d\nLength: %d\n"
+		  "Height: %d\nDelay: %s\nX Offset:%d\nY Offset:%d\n"
+		  "Next Frame: %d\n\nMasked: %s\nAlpha: %d",
+		  frame[currentframe].imagenbr,
+		  t_frame[frame[currentframe].imagenbr].length,
+		  t_frame[frame[currentframe].imagenbr].height,
+		  frame[currentframe].delay==0?"Infinite":s_delay,
+		  frame[currentframe].gapx,frame[currentframe].gapy,
+		  frame[currentframe].nextframe,
+		  frame[currentframe].get_mask()?"Yes":"No",
+		  frame[currentframe].get_alpha());
+	  label_frame_info->set_text(frame_txt);
+	}
+      else
+	{
+	  sprintf(frame_txt,"No frame, press \"a\" to add one.");
+	  label_frame_info->set_text(frame_txt);
+	}
+    }
+  else
+    {
+      if(nbr_of_images>0)
+	{
+	  sprintf(frame_txt,"Image info:\nLength: %d\nHeight:%d\n\nAnimation info:\nLength:%d\nHeight:%d",
+		  t_frame[currentimage].length,t_frame[currentimage].height,
+		  length,height);
+	  label_frame_info->set_text(frame_txt);
+	}
+      else
+	{
+	  sprintf(frame_txt,"No image, press \"a\" to add one.");
+	  label_frame_info->set_text(frame_txt);
+	}
+    }
+}
+
+void animation::update_label_status()
+{
+  if(mode==FRAME)
+    {
+      sprintf(frame_txt,"%s",play_flag?"Playing":"Stopped");
+      label_anim_info->set_text(frame_txt);
+    }
+  else label_anim_info->set_text("");
 }
 
 void animation::update_editor()
 {  
   update();
-  container->update();
+  if(nbr_of_frames>0)
+    {
+      length=t_frame[frame[currentframe].imagenbr].
+	get_length()+frame[currentframe].gapx;
+      height=t_frame[frame[currentframe].imagenbr].
+	get_height()+frame[currentframe].gapy;
+    }
+  //  container->update();
 }
 
 void animation::update_editor_keys()
 {
   // Mode switching
-  if(input::has_been_pushed(SDLK_F1)) mode=IMAGE;
-  if(input::has_been_pushed(SDLK_F2)) mode=FRAME;
+  if(input::has_been_pushed(SDLK_F1)) set_mode(IMAGE);
+  if(input::has_been_pushed(SDLK_F2)) set_mode(FRAME);
 
   // General functions
   if(input::has_been_pushed(SDLK_F5)) save();
@@ -722,20 +921,20 @@ void animation::update_editor_keys()
 
   if(testkey(SDLK_RIGHT)) 
     {
-      if(mode==IMAGE) currentimage=increase_image(currentimage);
-      if((mode==FRAME)&&(!play_flag)) 
-	if(!SDL_GetModState()&&KMOD_LSHIFT)
-	  {currentframe=increase_frame(currentframe);}
-      //      else frame[currentframe].gapx++;
+      if(mode==IMAGE) select_image(increase_image(currentimage));
+      if((mode==FRAME)&&(!play_flag))
+	if(!(SDL_GetModState()&KMOD_LSHIFT))
+	  {select_frame(increase_frame(currentframe));}
+	else set_frame_gapx(currentframe,frame[currentframe].gapx+1);	    
     }
-
+  
   if(testkey(SDLK_LEFT))
     {
-      if(mode==IMAGE) currentimage=decrease_image(currentimage);
+      if(mode==IMAGE) select_image(decrease_image(currentimage));
       if((mode==FRAME)&&(!play_flag))
-	if(!SDL_GetModState()&&KMOD_LSHIFT)
-	  {currentframe=decrease_frame(currentframe);}
-      //	else frame[currentframe].gapx--;
+	if(!(SDL_GetModState()&KMOD_LSHIFT))
+	  {select_frame(decrease_frame(currentframe));}
+     	else set_frame_gapx(currentframe,frame[currentframe].gapx-1);
     }
 
   if(input::has_been_pushed(SDLK_a))
@@ -816,119 +1015,67 @@ void animation::update_editor_keys()
   if(input::has_been_pushed(SDLK_i)) rewind();
 
   if(testkey(SDLK_KP_PLUS)&&mode==FRAME&&!play_flag)
-    frame[currentframe].imagenbr=increase_image(frame[currentframe].imagenbr);
-
+    set_frame_imagenbr(currentframe,
+		       increase_image(frame[currentframe].imagenbr));
+  
   if(testkey(SDLK_KP_MINUS)&&mode==FRAME&&!play_flag)
-    frame[currentframe].imagenbr=decrease_image(frame[currentframe].imagenbr);
+    set_frame_imagenbr(currentframe,
+		       decrease_image(frame[currentframe].imagenbr));
 
   if(testkey(SDLK_UP)&&mode==FRAME&&!play_flag) 
-    if(!SDL_GetModState()&&KMOD_LSHIFT)
-      {frame[currentframe].delay++;}
-  //    else frame[currentframe].gapy--;
+    if(!(SDL_GetModState()&KMOD_LSHIFT))
+      {set_frame_delay(currentframe,frame[currentframe].delay+1);}
+    else set_frame_gapy(currentframe,frame[currentframe].gapy-1);
 
   if(testkey(SDLK_DOWN)&&mode==FRAME&&!play_flag) 
-    if(!SDL_GetModState()&&KMOD_LSHIFT)
-      {frame[currentframe].delay--;}
-  //    else frame[currentframe].gapy++;
+    if(!(SDL_GetModState()&KMOD_LSHIFT))
+      {set_frame_delay(currentframe,frame[currentframe].delay-1);}
+    else set_frame_gapy(currentframe,frame[currentframe].gapy+1);
 
-  if(testkey(SDLK_PAGEUP)&&mode==FRAME&&!play_flag) 
-    frame[currentframe].set_alpha(frame[currentframe].get_alpha()+1);
+  if(testkey(SDLK_PAGEUP)&&mode==FRAME&&!play_flag)
+    set_frame_alpha(currentframe,frame[currentframe].get_alpha()+1);
   if(testkey(SDLK_PAGEDOWN)&&mode==FRAME&&!play_flag) 
-    frame[currentframe].set_alpha(frame[currentframe].get_alpha()-1);
+    set_frame_alpha(currentframe,frame[currentframe].get_alpha()-1);
+
   if(testkey(SDLK_HOME)&&mode==FRAME&&!play_flag)
-    frame[currentframe].nextframe=
-      increase_frame(frame[currentframe].nextframe);
+    set_frame_nextframe(currentframe,
+			increase_frame(frame[currentframe].nextframe));
   if(testkey(SDLK_END)&&mode==FRAME&&!play_flag) 
-    frame[currentframe].nextframe=
-      decrease_frame(frame[currentframe].nextframe);
+    set_frame_nextframe(currentframe,
+			decrease_frame(frame[currentframe].nextframe));
   
-  if(testkey(SDLK_INSERT)&&mode==FRAME&&!play_flag) 
-    frame[currentframe].is_masked=frame[currentframe].is_masked==true?
-      false:true;
-}
-
-void animation::draw_editor()
-{
-  static char frame_txt[500];
-  bg->draw(0,0);
-  sprintf(frame_txt,"%s mode",mode==IMAGE?"Image":"Frame");
-  label_mode->set_text(frame_txt);
-  if(mode==FRAME)
-    {
-      if(nbr_of_frames>0)
-	sprintf(frame_txt,"Frame %d/%d",currentframe,
-		nbr_of_frames-1);
-      else sprintf(frame_txt,"No frame");
-    }
-  else
-    {
-      if(nbr_of_images>0)
-	sprintf(frame_txt,"Image %d/%d",currentimage,
-		nbr_of_images-1);
-      else sprintf(frame_txt,"No image");
-    }
-  label_frame_nbr->set_text(frame_txt);
-
-  if(mode==FRAME)
-    {
-      if(nbr_of_frames>0)
-	{
-	  char s_delay[6];
-	  sprintf(s_delay,"%d",frame[currentframe].delay);
-	  draw(0,0);
-	  sprintf(frame_txt,"Frame info :\nImage number: %d\nLength: %d\n"
-		  "Height: %d\nDelay: %s\n"
-		  "Next Frame: %d\n\nMasked: %s\nAlpha: %d",
-		  frame[currentframe].imagenbr,
-		  t_frame[frame[currentframe].imagenbr].length,
-		  t_frame[frame[currentframe].imagenbr].height,
-		  frame[currentframe].delay==0?"Infinite":s_delay,
-		  frame[currentframe].nextframe,
-		  frame[currentframe].get_mask()?"Yes":"No",
-		  frame[currentframe].get_alpha());
-	  label_frame_info->set_text(frame_txt);
-	}
-      else
-	{
-	  sprintf(frame_txt,"No frame, press \"a\" to add one.");
-	  label_frame_info->set_text(frame_txt);
-	}
-    }
-  else
-    {
-      if(nbr_of_images>0)
-	{
-	  t_frame[currentimage].putbox(0,0);
-	  sprintf(frame_txt,"Image info:\nLength: %d\nHeight:%d",
-		  t_frame[currentimage].length,t_frame[currentimage].height);
-	  label_frame_info->set_text(frame_txt);
-	}
-      else
-	{
-	  sprintf(frame_txt,"No image, press \"a\" to add one.");
-	  label_frame_info->set_text(frame_txt);
-	}
-    }
-
-  if(mode==FRAME)
-    {
-      sprintf(frame_txt,"%s",play_flag?"Playing":"Stopped");
-      label_anim_info->set_text(frame_txt);
-    }
-  else label_anim_info->set_text("");
-  container->draw();
+  if(testkey(SDLK_INSERT)&&mode==FRAME&&!play_flag)
+    set_frame_mask(currentframe,frame[currentframe].is_masked==true?
+		   false:true);
 }
 
 void animation::update_and_draw()
 {
   static u_int16 i;
   for(i=0;i<screen::frames_to_do;i++) update_editor();
-  draw_editor();
+  bg->draw(0,0);
+  if(mode==FRAME) draw(0,0);
+  else if(nbr_of_images>0) t_frame[currentimage].putbox(0,0);
+  container->draw();
+  if(must_upt_label_mode) {update_label_mode(); must_upt_label_mode=false;}
+  if(must_upt_label_frame_nbr) {update_label_frame_nbr(); 
+  must_upt_label_frame_nbr=false;}
+  if(must_upt_label_frame_info) {update_label_frame_info(); 
+  must_upt_label_frame_info=false;}
+  if(must_upt_label_status) {update_label_status(); 
+  must_upt_label_status=false;}
+  cout << (u_int16)screen::frames_to_do << endl;
 }
 
 void animation::editor()
 {
   u_int16 i;
+  must_upt_label_mode=false;
+  must_upt_label_frame_nbr=false;
+  must_upt_label_frame_info=false;
+  must_upt_label_status=false;  
+  set_mode(IMAGE);
+  in_editor=true;
   while(!input::has_been_pushed(SDLK_ESCAPE))
     {
       input::update();
@@ -937,6 +1084,7 @@ void animation::editor()
       screen::show();
     }
   input::clear_keys_queue();
+  in_editor=false;
 }
 
 #endif
