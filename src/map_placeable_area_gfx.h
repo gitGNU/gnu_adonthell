@@ -24,10 +24,8 @@ class map_placeable_area_gfx : public drawable
 private:
     animation * anim;
 
-    map_placeable_area & Target;
-
 public:
-    map_placeable_area_gfx(map_placeable_area & target);
+    map_placeable_area_gfx();
 
     ~map_placeable_area_gfx();
 
@@ -69,6 +67,8 @@ public:
 
     void get(igzstream & file)
     {
+        if (anim) delete anim;
+        anim = new animation;
         anim->get(file);
     }
 }; 

@@ -49,7 +49,7 @@ CLEANFILES = $(moddata_SCRIPTS)
 
 libadonthell_a_SOURCES = animation.cc drawable.cc drawing_area.cc fileops.cc \
 	image.cc input.cc gametime.cc map_coordinates.cc map_placeable_area.cc \
-	map_placeable_area_gfx.cc map_placeable.cc map_placeable_model.cc map_placeable_gfx.cc \
+	map_placeable_area_gfx.cc map_placeable_model.cc map_placeable_model_gfx.cc map_placeable.cc map_placeable_gfx.cc \
 	map_moving.cc map_character.cc \
 	map_character_with_gfx.cc map_object.cc game.cc \
 	map_object_with_gfx.cc landmap.cc pnm.cc surface.cc screen.cc \
@@ -62,7 +62,7 @@ libadonthell_a_SOURCES = animation.cc drawable.cc drawing_area.cc fileops.cc \
 	joystick_event.cc mouse_event.cc control_event.cc \
 	types.h animation.h drawable.h drawing_area.h fileops.h image.h \
 	input.h gametime.h map_coordinates.h map_placeable_area.h \
-	map_placeable_area_gfx.h map_placeable.h map_placeable_model.h map_placeable_gfx.h \
+	map_placeable_area_gfx.h map_placeable.h map_placeable_gfx.h map_placeable_model.h map_placeable_model_gfx.h \
 	map_moving.h map_character.h \
 	map_character_with_gfx.h game.h \
 	map_object_with_gfx.h landmap.h pnm.h surface.h screen.h \

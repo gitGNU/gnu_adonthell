@@ -12,11 +12,5 @@
    See the COPYING file for more details.
 */
 
-#include "map_placeable.h"
-#include "landmap.h"
 
-map_placeable::map_placeable(landmap & mymap) : Mymap(mymap)
-{
-    Type = UNKNOWN;
-    State_changed = false;
-}
+#include "map_placeable_model_gfx.h"

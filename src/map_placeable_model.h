@@ -15,102 +15,104 @@
 #ifndef MAP_PLACEABLE_MODEL_H
 #define MAP_PLACEABLE_MODEL_H
 
-#include "map_placeable_area_gfx.h"
+#include "map_placeable_area.h"
 #include <map>
 #include "fileops.h"
 
-class map_placeable_model : public drawable
+class map_placeable_model
 {
 protected:
-    mutable map <const string, map_placeable_area_gfx> Gfxs;
-    map <const string, map_placeable_area_gfx>::iterator Current_gfx;
+    mutable map <string, map_placeable_area> States;
+    map <string, map_placeable_area>::iterator Current_state;
 
+    bool State_changed;
+    
 public:
-    map_placeable_model ()
+    map_placeable_model()
     {
-        Current_gfx = Gfxs.begin (); 
+        Current_state = States.begin (); 
+    }
+
+    map_placeable_area * current_state ()
+    {
+        if (Current_state != States.end ())
+            return &(Current_state->second);
+        else return NULL; 
+    }
+
+    map_placeable_area * get_state (const string & name) 
+    {
+        map <string, map_placeable_area>::iterator State;
+        State = States.find (name); 
+        if (State == States.end())
+            return NULL;
+        else return &(State->second);
     }
     
-    void set_gfx (const string & name) 
+    const string current_state_name ()
     {
-        if (Current_gfx != Gfxs.end() && Current_gfx->first == name)
+        if (Current_state != States.end ())
+            return Current_state->first;
+        else return string (); 
+    }
+    
+    map_placeable_area * add_state (const string & name) 
+    {
+        return &((States.insert(pair<const string, const map_placeable_area> (name, map_placeable_area()))).first->second);
+    }
+    
+    
+    void set_state (const string & name) 
+    {    
+        if (Current_state != States.end() && Current_state->first == name)
             return;
-
-        if (Current_gfx != Gfxs.end())
-        {
-            Current_gfx->second.stop();
-            Current_gfx->second.rewind();
-        }
-
-        map <const string, map_placeable_area_gfx>::iterator Previous_gfx;
-        Previous_gfx = Current_gfx;
-        Current_gfx = Gfxs.find (name); 
-
-        if (Current_gfx != Gfxs.end())
-            Current_gfx->second.play();
-        else Current_gfx = Previous_gfx;
-    }
-
-    map_placeable_area_gfx * get_gfx(const string & name)
-    {
-        map <const string, map_placeable_area_gfx>::iterator Gfx;
-        Gfx = Gfxs.find (name); 
-
-        if (Gfx != Gfxs.end())
-            return &(Gfx->second);
-        else return NULL;
-    }
-
-    map_placeable_area_gfx * add_gfx(const string & name, map_placeable_area & target)
-    {
-        return &((Gfxs.insert(pair<const string, const map_placeable_area_gfx> (name, map_placeable_area_gfx(target)))).first->second);
-    }
-
-    bool update () 
-    {
-        if (Current_gfx != Gfxs.end ())
-            Current_gfx->second.update ();
         
-        return true;
-        
-    }
-    
-    void draw (s_int16 x, s_int16 y, const drawing_area * da_opt = NULL,
-               surface * target = NULL) const
-    {
-        if (Current_gfx != Gfxs.end ())
-            Current_gfx->second.draw (x, y, da_opt, target); 
+        map <string, map_placeable_area>::iterator Previous_state;
+        Previous_state = Current_state;
+        Current_state = States.find (name); 
+        if (Current_state == States.end())
+            Current_state = Previous_state;
+        else State_changed = true;
     }
 
     void put(ogzstream & file) const
     {
-        Gfxs.size() >> file;
+        u_int32 s = States.size();
 
-        for (map <const string, map_placeable_area_gfx>::iterator i = Gfxs.begin();
-             i != Gfxs.end(); i++)
+        s >> file;
+        
+        for (map <string, map_placeable_area>::iterator i = States.begin();
+             i != States.end(); i++)
         {
             i->first >> file;
             i->second.put(file);
-        }
-
+        }        
     }
 
-    void get(igzstream & file, map_placeable_area & target)
+    void get(igzstream & file)
     {
-        int size;
-
+        u_int32 size;
+        
         size << file;
-
-        for (int i = 0; i < size; i++)
+        
+        for (u_int32 i = 0; i < size; i++)
         {
             string s;
             s << file;
 
-            map_placeable_area_gfx * mpa = add_gfx(s, target);
+            map_placeable_area * mpa = add_state(s);
             mpa->get(file);
             
         }
     }
+
+
+    /**
+     * This friendship is needed so map_placeable_model_gfx
+     * can modify the Has_changed member.
+     * 
+     */
+    friend class map_placeable_model_gfx;
 }; 
 
 #endif

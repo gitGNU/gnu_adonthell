@@ -15,7 +15,7 @@
 
 #include "map_placeable_area_gfx.h"
 
-map_placeable_area_gfx::map_placeable_area_gfx(map_placeable_area & target) : drawable(), Target(target)
+map_placeable_area_gfx::map_placeable_area_gfx() : drawable()
 {
     anim = NULL; 
 }
@@ -29,9 +29,7 @@ void map_placeable_area_gfx::draw(s_int16 x, s_int16 y, const drawing_area * da_
                                    surface * target = NULL) const
 {
     if(anim)
-        anim->draw (x - (Target.base.x () * mapsquare_size) - Target.base.ox (),
-                    y - (Target.base.y () * mapsquare_size) - Target.base.oy (),
-                    da_opt, target); 
+        anim->draw (x, y, da_opt, target); 
 }
 
 void map_placeable_area_gfx::set_area_size(u_int16 nx, u_int16 ny)

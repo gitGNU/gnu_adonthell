@@ -22,6 +22,43 @@ class map_character_with_gfx : public map_character, public map_placeable_gfx
 {
 public:
     map_character_with_gfx (landmap & mymap); 
+
+
+    void put(ogzstream & file)
+    {
+        map_placeable_model::put(file);
+        map_placeable_model_gfx::put(file);
+    }
+
+    void get(igzstream & file)
+    {
+        map_placeable_model::get(file);
+        map_placeable_model_gfx::get(file);
+    }
+
+    s_int8 save (string fname)
+    {
+        ogzstream file (fname);
+        s_int8 ret = 0; 
+        
+        if (!file.is_open ())
+            return 1;
+        put (file);
+        file.close (); 
+        return ret;
+    }
+
+    s_int8 load (string fname)
+    {
+        igzstream file (fname);
+        s_int8 ret = 0; 
+        
+        if (!file.is_open ())
+            return 1;
+        get (file);
+        file.close (); 
+        return ret;
+    }
 }; 
 
 #endif

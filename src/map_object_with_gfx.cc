@@ -25,7 +25,7 @@ map_object_with_gfx::map_object_with_gfx (landmap & mymap) : map_object (mymap),
     map_placeable_area_gfx * moag;
 
     animation * an = new animation();
-    moag = add_gfx ("default", *(get_state("default"))); 
+    moag = add_gfx ("default"); 
     an->load("adontest/house.anim");
     moag->set_animation (an);
     

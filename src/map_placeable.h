@@ -16,7 +16,7 @@
 #define MAP_PLACEABLE_H
 
 
-#include "map_placeable_area.h"
+#include "map_placeable_model.h"
 #include <string>
 #include <map>
 
@@ -30,15 +30,11 @@ typedef enum
     ITEM
 } placeable_type; 
 
-class map_placeable
+class map_placeable : public map_placeable_model
 {
 protected:
-    map <string, map_placeable_area> States;
-    map <string, map_placeable_area>::iterator Current_state;
 
     placeable_type Type; 
-
-    bool State_changed;
 
     landmap & Mymap;
     
@@ -51,23 +47,6 @@ public:
     {
         return Type; 
     }
-
-    map_placeable_area * current_state ();
-
-    map_placeable_area * get_state (const string & name);
-
-    const string current_state_name ();
-
-    map_placeable_area * add_state (const string & name);
-
-    void set_state (const string & name);
-
-    /**
-     * This friendship is needed so map_placeable_gfx
-     * can modify the Has_changed member.
-     * 
-     */
-    friend class map_placeable_gfx;
 };
 
 #endif
