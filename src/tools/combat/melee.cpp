@@ -110,9 +110,9 @@ void melee::calc_stats() {
 	b_attack_total_allotment = (b_attack_range + a_defense_range) / .9;
 	a_attack_luck_allotment = a_attack_total_allotment - (a_attack_range + b_defense_range);
 	b_attack_luck_allotment = b_attack_total_allotment - (b_attack_range + a_defense_range);
-	a_attack_a_real_luck = (a_attack_range / (a_attack_range + b_attack_range)) * a_attack_luck_allotment;
+	a_attack_a_real_luck = (a_luck / (a_luck + b_luck)) * a_attack_luck_allotment;
    a_attack_b_real_luck = a_attack_luck_allotment - a_attack_a_real_luck;
-	b_attack_a_real_luck = (a_attack_range / (a_attack_range + b_attack_range)) * b_attack_luck_allotment;
+	b_attack_a_real_luck = (a_luck / (a_luck + b_luck)) * b_attack_luck_allotment;
 	b_attack_b_real_luck = b_attack_luck_allotment - b_attack_a_real_luck;
 }
 
