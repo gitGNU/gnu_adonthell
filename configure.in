@@ -94,6 +94,24 @@ if test $PYTHON_VERSION -lt 15; then
 	AC_MSG_ERROR([Python 1.5 or better required])
 fi
 
+dnl Python 2.0+ requires some additional libraries
+
+if test $PYTHON_VERSION -ge 20; then
+	LIBS="$LIBS -ldb -lutil"
+fi
+
+dnl Some Python packages are broken
+
+AC_MSG_CHECKING(whether Python is sane) 
+PY_RANDVAL=`$PYPACKAGE -c 'import random; print random.randint (1,1);'`
+if test $PY_RANDVAL -eq 1; then
+	AC_MSG_RESULT(yes)
+else
+	echo "Seems like your Python package is buggy:"
+	echo $PY_RANDVAL
+	AC_MSG_ERROR(Please get an updated copy from www.python.org)
+fi
+
 dnl Find the Python.h header file
 
 AC_MSG_CHECKING(for Python header files)

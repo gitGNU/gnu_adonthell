@@ -1243,7 +1243,7 @@ else
 #line 1244 "configure"
 #include "confdefs.h"
 #ifdef __cplusplus
-extern "C" void exit(int);
+extern "C" void exit(int) throw();
 #endif
 
 #include <stdio.h>
@@ -1592,8 +1592,25 @@ if test $PYTHON_VERSION -lt 15; then
 fi
 
 
+if test $PYTHON_VERSION -ge 20; then
+	LIBS="$LIBS -ldb -lutil"
+fi
+
+
+echo $ac_n "checking whether Python is sane""... $ac_c" 1>&6
+echo "configure:1602: checking whether Python is sane" >&5 
+PY_RANDVAL=`$PYPACKAGE -c 'import random; print random.randint (1,1);'`
+if test $PY_RANDVAL -eq 1; then
+	echo "$ac_t""yes" 1>&6
+else
+	echo "Seems like your Python package is buggy:"
+	echo $PY_RANDVAL
+	{ echo "configure: error: Please get an updated copy from www.python.org" 1>&2; exit 1; }
+fi
+
+
 echo $ac_n "checking for Python header files""... $ac_c" 1>&6
-echo "configure:1597: checking for Python header files" >&5
+echo "configure:1614: checking for Python header files" >&5
 
 PYINCLUDE=`$PYPACKAGE -c 'import sys ; print "%s/include/python%s" % (sys.prefix, sys.version[:3])'`
 
@@ -1608,7 +1625,7 @@ echo "$ac_t""found" 1>&6
 
 
 echo $ac_n "checking for Python library""... $ac_c" 1>&6
-echo "configure:1612: checking for Python library" >&5
+echo "configure:1629: checking for Python library" >&5
 
 PYLIB=`$PYPACKAGE -c 'import sys; print "%s/lib/python%s/config" % (sys.prefix, sys.version[:3])'`
 PYLIBVER=`$PYPACKAGE -c 'import sys; print sys.version[:3]'`
@@ -1630,17 +1647,17 @@ for ac_hdr in pthread.h SDL/SDL.h
 do
 ac_safe=`echo "$ac_hdr" | sed 'y%./+-%__p_%'`
 echo $ac_n "checking for $ac_hdr""... $ac_c" 1>&6
-echo "configure:1634: checking for $ac_hdr" >&5
+echo "configure:1651: checking for $ac_hdr" >&5
 if eval "test \"`echo '$''{'ac_cv_header_$ac_safe'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 1639 "configure"
+#line 1656 "configure"
 #include "confdefs.h"
 #include <$ac_hdr>
 EOF
 ac_try="$ac_cpp conftest.$ac_ext >/dev/null 2>conftest.out"
-{ (eval echo configure:1644: \"$ac_try\") 1>&5; (eval $ac_try) 2>&5; }
+{ (eval echo configure:1661: \"$ac_try\") 1>&5; (eval $ac_try) 2>&5; }
 ac_err=`grep -v '^ *+' conftest.out | grep -v "^conftest.${ac_ext}\$"`
 if test -z "$ac_err"; then
   rm -rf conftest*
@@ -1672,17 +1689,17 @@ if test x$SDL_MIXER = xyes; then
 do
 ac_safe=`echo "$ac_hdr" | sed 'y%./+-%__p_%'`
 echo $ac_n "checking for $ac_hdr""... $ac_c" 1>&6
-echo "configure:1676: checking for $ac_hdr" >&5
+echo "configure:1693: checking for $ac_hdr" >&5
 if eval "test \"`echo '$''{'ac_cv_header_$ac_safe'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 1681 "configure"
+#line 1698 "configure"
 #include "confdefs.h"
 #include <$ac_hdr>
 EOF
 ac_try="$ac_cpp conftest.$ac_ext >/dev/null 2>conftest.out"
-{ (eval echo configure:1686: \"$ac_try\") 1>&5; (eval $ac_try) 2>&5; }
+{ (eval echo configure:1703: \"$ac_try\") 1>&5; (eval $ac_try) 2>&5; }
 ac_err=`grep -v '^ *+' conftest.out | grep -v "^conftest.${ac_ext}\$"`
 if test -z "$ac_err"; then
   rm -rf conftest*
@@ -1712,17 +1729,17 @@ fi
 
 ac_safe=`echo "SDL/SDL_image.h" | sed 'y%./+-%__p_%'`
 echo $ac_n "checking for SDL/SDL_image.h""... $ac_c" 1>&6
-echo "configure:1716: checking for SDL/SDL_image.h" >&5
+echo "configure:1733: checking for SDL/SDL_image.h" >&5
 if eval "test \"`echo '$''{'ac_cv_header_$ac_safe'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 1721 "configure"
+#line 1738 "configure"
 #include "confdefs.h"
 #include <SDL/SDL_image.h>
 EOF
 ac_try="$ac_cpp conftest.$ac_ext >/dev/null 2>conftest.out"
-{ (eval echo configure:1726: \"$ac_try\") 1>&5; (eval $ac_try) 2>&5; }
+{ (eval echo configure:1743: \"$ac_try\") 1>&5; (eval $ac_try) 2>&5; }
 ac_err=`grep -v '^ *+' conftest.out | grep -v "^conftest.${ac_ext}\$"`
 if test -z "$ac_err"; then
   rm -rf conftest*
