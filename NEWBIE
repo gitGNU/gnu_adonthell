@@ -3,10 +3,8 @@ Written by Andrew Henderson <hendersa@db.erau.edu>
 19 February 2000
 
 Last update by Kai Sterker <kaisterker@linuxgames.com>
-27 April 2001
+30 December 2001
 
-NOTE: The newest version of this guide can be viewed online at
-http://adonthell.linuxgames.com/en_frames/install.shtml.
 
 ****************************
 * 1.0 - GUIDE INTRODUCTION *
@@ -92,31 +90,30 @@ There are four libraries that Adonthell depends on. Two of these
 libraries are required, the rest is optional. The two REQUIRED
 libraries (and where they can be downloaded from) are:
 
-1. The Simple Directmedia Layer (SDL) library, version 1.0 or later.
+1. The Simple Directmedia Layer (SDL) library, version 1.2 or later.
 2. Python, version 1.5.2 or later.
 
 Sound support under Adonthell is optional (but highly recommended!!).
 We suggest building Adonthell with sound support if you have a sound
 card configured to run under Linux. To do that, you'll need to build
-and install two more libraries, SDL_mixer and OggVorbis.
+and install another library:
 
-3. The SDL_mixer library, Version 1.0 or later.
-4. OggVorbis, Version 1.0beta 3 or later
+3. OggVorbis, Version 1.0rc1 or later
 
 ********
 * NOTE *
 ********
 
 As of the writing of this guide, you can get the current
-version of SDL (1.2.0) at:
+version of SDL (1.2.3) at:
 
     http://www.libsdl.org/download-1.2/
 
-... the current version of SDL_mixer (1.2.0) at:
+... the current version of Python (2.2) at:
 
-    http://www.libsdl.org/projects/SDL_mixer/
+    http://www.python.org/
 
-... and the current version of OggVorbis (1.0 beta 4) at:
+... and the current version of OggVorbis (1.0rc2) at:
 
     http://www.xiph.org/ogg/vorbis/download/
 
@@ -127,8 +124,8 @@ It usually is safe to use newer versions if available.
 ***********
 
 The following steps show how to install the Python, SDL, SDL_mixer,
-and OggVorbis libraries. You must install Python and the  SDL library 
-FIRST, then OggVorbis and the SDL_mixer library last.
+and OggVorbis libraries. You must install Python and the SDL library 
+FIRST and OggVorbis last.
 
 OggVorbis itself consists of three libraries: libao, libogg and 
 libvorbis that have to be installed in this order.
@@ -143,15 +140,15 @@ Step #2: Decompress the tar.gz file. Do this by typing:
 
 	tar -xzf SDL-x.x.x.tar.gz   	(for SDL)
 		    or
-	tar -xzf SDL_mixer-x.x.x.tar.gz	(for SDL_mixer)
+	tar -xzf Python-x.x.tar.gz	    (for Python)
 		    or
-	tar -xzf libao-x.x.x.tar.gz	(for libao)
+	tar -xzf libao-x.x.x.tar.gz	    (for libao)
                     
         etc. 
 
 ... where the x's are the version numbers of the file you
 downloaded. A new directory will be created in the current directory
-with the same name as the tar file (minus the .tar extension).
+with the same name as the tar.gz file (minus the .tar.gz extension).
 
 Step #3: Build and install the library. Do this by changing into the
 newly created directory and typing:
@@ -169,8 +166,8 @@ installed library. Do this by typing:
 	ldconfig
 
 Repeat these 4 steps for each library you want to install. If all
-went well, you now at least have Python, SDL, SDL_mixer and 
-OggVorbis installed and configured in your system.
+went well, you now at least have Python, SDL, and OggVorbis 
+installed and configured in your system.
 
 ******************************************
 * 4.0 BUILDING THE ADONTHELL SOURCE CODE *
@@ -179,28 +176,26 @@ OggVorbis installed and configured in your system.
 Now that the required libraries are built and installed on your
 system, you need to build the Adonthell program itself. The
 latest version of Adonthell is 0.3. You can download it from the
-Adonthell website: http://adonthell.linuxgames.com.
-
-Usually, the data package is included in the source distribution,
-but if you get the source directly from the CVS you'll have to
-download the separate data package:
-http://adonthell.linuxgames.com/files/adonthell-data-0-3.tgz
+Adonthell website: http://adonthell.linuxgames.com/download-data/.
 
 
 The steps for installing Adonthell are similar to the steps for
-installing the SDL libraries:
+installing the libraries above:
 
-Step #1: Download the Adonthell tar file to a convient directory.
+Step #1: Download the Adonthell source and data tar.gz files to 
+a convenient directory.
 
-Step #2: Decompress the tar.gz file. Do this by typing:
+Step #2: Decompress the tar.gz files. Do this by typing:
 
-	tar -xzf adonthell-0.3.tar.gz   	
+	tar -xzf adonthell-0.3.tar.gz
+    tar -xzf adonthell-data-0.3.tar.gz	
 
-A new directory will be created in the current directory named
-"adonthell-0.3".
+Two new directories will be created in the current directory, named
+"adonthell-0.3" and adonthell-data-0.3. Complete step #3 and #4 for 
+both directories.
 
 Step #3: Build Adonthell. Do this by changing into the newly created 
-and typing:
+directory and typing:
 
 	./configure
 	make
@@ -209,17 +204,19 @@ A successful configure will produce an output like this:
 
 	Adonthell v0.3
 
-	SDL ................. : 1.1.8
-	Python .............. : 1.6
-	Audio system ........ : enabled
-	Ogg music ........... : enabled
-	Building editors .... : no
+    SDL ....................... : 1.2.0
+    Python .................... : 2.1
+    Python debugging .......... : no
+    Ogg music ................. : enabled
+    Building editors .......... : no
+    Building API doc .......... : no
+    Data directory ............ : /usr/local/share/adonthell
 
 If everything configured and built with no errors (which it should,
 if the SDL libraries were correctly installed), Adonthell will now
-be compiled and ready for use. If you installed OggVorbis and the 
-SDL_mixer library, the configure script will detect it and configure 
-the program to use sound automatically.
+be compiled and ready for use. If you installed OggVorbis the 
+configure script will detect it and configure the program to play 
+music automatically.
 
 Step #4: Install Adonthell. Finally, you can log in as root and type
 
@@ -233,17 +230,20 @@ to /usr/local/share/adonthell.
 *************************
 
 After building the Adonthell source, an executable named "adonthell"
-will be created in the "adonthell-0.3/src" directory. This is the main
-game executable. Unless you installed it in a directory such as /usr/bin
-or /usr/local/bin, You can run the game only from this directory. 
-Otherwise, you can start it from anywhere by typing:
+will be created and installed in /usr/local/bin. After installing the
+data package, a script called 'adonthell-wastesedge' will be placed
+there as well. You can launch Adonthell either by typing
 
-	adonthell
+	adonthell wastesedge
+
+or by running the script:
+
+    adonthell-wastesedge
 
 If the game engine and data have been correctly installed, you'll
-find yourself in the main menu. Here you can configure some aspects 
-of the engine, begin a new or continue an older game. The arrow
-keys let you move the cursor, and space selects an option.
+find yourself in the main menu. Here you can begin a new or continue
+an older game. The arrow keys let you move the cursor, and space 
+selects an option.
 
 **********************
 * 6.0 Questions/Help *
@@ -269,10 +269,10 @@ script to work correctly. Do this by typing './autogen.sh' inside
 the adonthell-0.3 directory.
 
 
-Q: While compiling the Adonthell source code or the SDL_mixer library,
-I get an error similar to the following:
+Q: While compiling the Adonthell source code I get an error similar
+to the following:
 
-adonthell: error in loading shared libraries: libSDL-1.0.so.0:
+adonthell: error in loading shared libraries: libSDL-1.2.so.0:
 cannot open shared object file: No such file or directory
 
 A: You either didn't install the library that the error message is
@@ -291,16 +291,16 @@ for any request of help.
 
 The mailing list addresses are:
 
-General topic list:	adonthell-general@
+General topic list:	adonthell-general@mail.freesoftware.fsf.org
 Developer list:		adonthell-devel@mail.freesoftware.fsf.org
 Artwork list:		adonthell-artwork@mail.freesoftware.fsf.org
 
 You can subscribe to these mailing lists by going to the URL:
-http://savannah.gnu.org/mail/?group_id=702
+http://adonthell.linuxgames.com/contact-data/mailinglist.shtml
 
 If you'd rather e-mail an Adonthell team member directly, you can get
 a list of contacts for the team from the Adonthell web page at:
-http://adonthell.linuxgames.com
+http://adonthell.linuxgames.com/development-data/team.shtml
 
 *********************************************************************
 * That's it! Enjoy the game engine and let us know what you think!! *

@@ -34,7 +34,6 @@ $HOME/.adonthell/adonthellrc. Edit it to customise the game to your
 convenience.
 
 The available options and what they do are:
-(Some of these options might be changeable from the main program)
 
 - Screen-mode
   Whether Adonthell should run fullscreen or in windowed mode 
@@ -59,13 +58,15 @@ The available options and what they do are:
 Running Adonthell:
 ==================
 
-Okay, now you're ready to launch the program:
-Type
-$> adonthell <gamename>
-to run the game named <gamename>.
+Okay, now you're ready to launch the program. Type
 
-To get a list of currently installed games you can play, type:
+$> adonthell <gamename>
+
+to run the game named <gamename>. To get a list of currently 
+installed games you can play, type:
+
 $> adonthell -l
+
 This will print a list of the installed games you can launch
 with above command.
 

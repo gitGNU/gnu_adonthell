@@ -82,7 +82,7 @@ those directories to /etc/ld.so.conf.
 
   Use this option to customise the location of the data directory.
 The default is /usr/local/share/adonthell. Once you have compiled
-Adonthell you can query the data directory with 'adonthell -g'.
+Adonthell you can query the data directory with 'adonthell -d'.
 
 
 --enable-tools
