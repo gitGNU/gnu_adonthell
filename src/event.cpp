@@ -235,3 +235,36 @@ void base_map_event::save (FILE *out)
     fwrite (&len, sizeof (len), 1, out);
     fwrite (script_file, len, 1, out);    
 }
+
+/*
+bool time_event::equals (u_int32 time)
+{
+    u_int32 i, d, h, m = time % 60;
+    
+    if (m_step != 0) {
+        if ((m - minute) % m_step != 0 || m < minute) return 0;
+    }
+    else
+        if (m != minute) return 0;
+
+    // this is the current hour
+    h = ((time - m) % 1440) / 60;
+
+    if (h_step != 0) {
+        if ((h - hour) % h_step != 0 || h < hour) return 0;
+    }
+    else
+        if (h != hour) return 0;
+         
+    // this is the current day
+    d = (time - (m + h * 60)) / 1440;
+    
+    if (d_step != 0) {
+        if ((d - day) % d_step != 0 || d < day) return 0; 
+    }
+    else
+        if (d != day) return 0;
+
+    return 1; 
+}
+*/
