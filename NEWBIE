@@ -139,7 +139,8 @@ For SDL you will need
     SDL-devel-1.2
 
 for python
-    python-2.2
+    python2-2.2
+    python2-devel-2.2
     
 and for Ogg Vorbis
     libogg-1.0
