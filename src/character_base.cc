@@ -97,7 +97,7 @@ void character_base::get_state (igzstream& in)
         /// @bug : We should be able to pass a string to objects
         /// instead of a char *, which memory isn't freed at exit.
         value << in;
-        set (key.c_str (), value);
+        set_val (key.c_str (), value);
     }
 
     dialogue << in; 

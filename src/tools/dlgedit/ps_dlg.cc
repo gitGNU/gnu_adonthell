@@ -23,8 +23,10 @@ ps_dlg::ps_dlg (character *p, character *n)
 
 void ps_dlg::run ()
 {
-    wnd = create_ps_window (this, myplayer->get_name().c_str (), myplayer->storage::get("race"),
-        myplayer->storage::get("gender"), mynpc->get_name().c_str ());
+    wnd = create_ps_window (this, myplayer->get_name().c_str (),
+        myplayer->storage::get_val ("race"),
+        myplayer->storage::get_val ("gender"),
+        mynpc->get_name().c_str ());
 }
 
 void ps_dlg::on_ok (char* n, int r, int g, char *the_npc)
@@ -32,8 +34,8 @@ void ps_dlg::on_ok (char* n, int r, int g, char *the_npc)
     data::characters.erase (myplayer->get_name().c_str ());
     
     myplayer->set_name(n);
-    myplayer->set("race", r);
-    myplayer->set("gender", g);
+    myplayer->set_val ("race", r);
+    myplayer->set_val ("gender", g);
 
     data::characters[myplayer->get_name().c_str ()] = myplayer;
     mynpc = (character *) data::characters[the_npc];

@@ -226,7 +226,8 @@ void dlg_compiler::write_custom_code (string code)
 }
 
 // Inflate short code like "a_quest.attribute = 4" to the proper
-// quests.get ("a_quest").set ("attribute", 4):
+// quests["a_quest"].set_val ("attribute", 4):
+// !!! It's a mess and needs some cleanup. Really !!!
 string dlg_compiler::inflate (string code)
 {
     u_int32 i, begin = 0, pos, prefix, suffix;
@@ -241,18 +242,19 @@ string dlg_compiler::inflate (string code)
         for (i = 0; i < NUM_OPS; i++)
             // search for the leftmost operator from the current position
             if (!strncmp (code.substr (pos).c_str (), operators[i].c_str (),
-                operators[i].length ()))
+                operators[i].length ()) || pos == code.length()-1)
             {
+                // takes care of the rare situation when the last token
+                // of the string is a variable in need of expanding
+                if (pos == code.length()-1) pos++;
+
                 token = code.substr (begin, pos-begin);
 
                 // strip leading and trailing whitespace
                 for (prefix = 0; prefix < token.length() && token[prefix] == ' '; prefix++);
                 for (suffix = token.length()-1; suffix >= 0 && token[suffix] == ' '; suffix--);
                 stripped = token.substr (prefix, suffix-prefix+1);
-#ifdef _DEBUG_                
-                cout << "token = '" << stripped << "', operator = '" << 
-                    operators[i] << "'\n" << flush;
-#endif
+
                 // have to be careful with textual operators and keywords
                 if (i == BAND || i == BOR || i == NOT || i == RETURN ||
                     i == PASS || i == IF || i == ELIF || i == ELSE)
@@ -263,7 +265,12 @@ string dlg_compiler::inflate (string code)
                         isalpha (code[pos+operators[i].length()]))
                         break;
                 }
-                
+
+#ifdef _DEBUG_
+                cout << "token = '" << stripped << "', operator = '" <<
+                    operators[i] << "'\n" << flush;
+#endif
+
                 // skip functions and arrays
                 if (i == LBRACKET || i == LBRACE)
                 {
@@ -274,27 +281,6 @@ string dlg_compiler::inflate (string code)
                 // see whether we've got a variable and act accordingly
                 if (token_type (stripped) == VARIABLE)
                 {
-                    // variable left of '.'
-                    if (i == ACCESS && last_op != ".")
-                    {
-                        // check whether we access the quest- or character array
-                        if (data::quests[stripped.c_str()] != NULL)
-                        {
-                            code.insert (begin+prefix, "quests.");
-                            begin += 7;
-                            pos += 7;
-                            is_local = false;
-                        }    
-
-                        if (data::characters[stripped.c_str()] != NULL)
-                        {
-                            code.insert (begin+prefix, "characters.");
-                            begin += 11;
-                            pos += 11;
-                            is_local = false;
-                        }
-                    }
-                    
                     // make sure we don't have a local variable
                     if (!is_local)
                     {
@@ -303,21 +289,50 @@ string dlg_compiler::inflate (string code)
                         {
                             code[pos] = ',';
                             code.insert (begin+suffix+1, "\"");
-                            code.insert (begin+prefix, "set (\"");
+                            code.insert (begin+prefix, "set_val (\"");
                             code.append (")");
-                            pos += 7;
+                            pos += 11;
                         }
                         else
                         {
                             code.insert (begin+suffix+1, "\")");
-                            code.insert (begin+prefix, "get (\"");
-                            pos += 8;
+                            code.insert (begin+prefix, "get_val (\"");
+                            pos += 12;
                         }
                     }
 
-                    if (i != ACCESS) is_local = true;
+                    // variable left of '.'
+                    if (i == ACCESS && last_op != ".")
+                    {
+                        // check whether we access the quest- or character array
+                        if (data::quests[stripped.c_str()] != NULL)
+                        {
+                            code.insert (begin+prefix+stripped.length(), "\"]");
+                            code.insert (begin+prefix, "quests[\"");
+                            pos += 10;
+                            is_local = false;
+                        }
+
+                        if (data::characters[stripped.c_str()] != NULL)
+                        {
+                            code.insert (begin+prefix+stripped.length(), "\"]");
+                            code.insert (begin+prefix, "characters[\"");
+                            pos += 14;
+                            is_local = false;
+                        }
+                    }
+                    else is_local = true;
                 }
-                
+
+                // these are shortcuts for access to the character array, so
+                // we handle them similar
+                if (stripped == "the_npc" || stripped == "the_player")
+                    is_local = false;
+
+                // a trailing comma operator ends an expression
+                if (i == COMMA)
+                    is_local = true;
+
                 // skip strings
                 if (i == QUOT || i == SQUOT)
                     pos = code.find (operators[i], pos+1) - 1;

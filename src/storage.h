@@ -69,7 +69,7 @@ public:
      * @param key key.
      * @param value value.
      */
-    void set (const char * key, s_int32 value);
+    void set_val (const char * key, s_int32 value);
 
     /** 
      * Returns the value of a key.
@@ -78,7 +78,7 @@ public:
      * 
      * @return value of key.
      */
-    s_int32 get (const char * key);
+    s_int32 get_val (const char * key);
 
     /** 
      * Returns the next (key, value) pair of the storage.
@@ -184,7 +184,7 @@ public:
      * @param key key.
      * @param val storage associated to key.
      */
-    void set (const char * key, storage* val);
+    void set_val (const char * key, storage* val);
 
     /** 
      * Returns a storage associated to a key.
@@ -193,7 +193,7 @@ public:
      * 
      * @return storage associated to key.
      */
-    storage* get (const char * key);
+    storage* get_val (const char * key);
 
     /** 
      * Erases a storage from it's key.

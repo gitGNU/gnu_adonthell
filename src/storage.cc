@@ -41,10 +41,10 @@ storage::~storage ()
 
 
 // Set a variable to a new value; delete key if value is zero to save space
-void storage::set (const char *key, s_int32 value)
+void storage::set_val (const char *key, s_int32 value)
 {
 #ifdef _DEBUG_
-    cout << "storage::set \"" << key << "\" = " << value << endl;
+    cout << "storage::set_val \"" << key << "\" = " << value << endl;
 #endif
     if (!value) data.erase (key);
     else
@@ -61,13 +61,13 @@ void storage::set (const char *key, s_int32 value)
 }
 
 // Get the value of a variable; if key not found then variable is zero
-s_int32 storage::get (const char *key)
+s_int32 storage::get_val (const char *key)
 {
 #ifdef _DEBUG_
     if (data.find (key) != data.end ())
-        cout << "storage::get \"" << key << "\" = " << data[key] << endl;
+        cout << "storage::get_val \"" << key << "\" = " << data[key] << endl;
     else
-        cout << "storage::get no such key \"" << key << "\"" << endl;
+        cout << "storage::get_val no such key \"" << key << "\"" << endl;
 #endif
     if (data.find (key) == data.end ()) return 0;
     else return data[key];
@@ -99,7 +99,7 @@ pair<const char*, s_int32> storage::next ()
 
 
 // Insert a new object for access from the interpreter
-void objects::set (const char* key, storage *val)
+void objects::set_val (const char* key, storage *val)
 {
     map<const char*, storage*, ltstr>::iterator j;
 
@@ -125,7 +125,7 @@ void objects::set (const char* key, storage *val)
 }
 
 // Retrieve a object from the map
-storage* objects::get (const char* key)
+storage* objects::get_val (const char* key)
 {
     map<const char*, storage*, ltstr>::iterator j;
 
@@ -144,8 +144,8 @@ storage* objects::get (const char* key)
     cout << "\n\n" << flush;
 #endif // _DEBUG_
 
-        // That probably causes a segfault, but if we can't get the
-        // required object, we are in trouble anyway.
+    // That probably causes a segfault, but if we can't get the
+    // required object, we are in trouble anyway.
     return NULL;
 }
 

@@ -202,7 +202,6 @@ public:
      */
     //@{
         
-
     /**
      * Loads a mapcharacter from an opened file.
      * @param file the opened file from which to load.
@@ -210,8 +209,8 @@ public:
      *
      */ 
     s_int8 get (igzstream& file);
- 
-    /** 
+
+    /**
      * Loads a mapcharacter from it's filename.
      * 
      * @param fname the name of the file to load.

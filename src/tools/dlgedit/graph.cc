@@ -1027,13 +1027,13 @@ load_dialogue (MainFrame * wnd, const char *file)
 
             case LOAD_RACE:
             {
-                if (parse_dlgfile (s, n) == LOAD_NUM) wnd->myplayer->set ("race", n);
+                if (parse_dlgfile (s, n) == LOAD_NUM) wnd->myplayer->set_val ("race", n);
                 break;
             }
 
             case LOAD_GENDER:
             {
-                if (parse_dlgfile (s, n) == LOAD_NUM) wnd->myplayer->set ("gender", n);
+                if (parse_dlgfile (s, n) == LOAD_NUM) wnd->myplayer->set_val ("gender", n);
                 break;
             }
 
@@ -1175,10 +1175,10 @@ save_dialogue (MainFrame * wnd)
     // Players name, race and gender
     if (strcmp ("Banec", wnd->myplayer->get_name().c_str ()))
         out << "\nName §" << wnd->myplayer->get_name() << "§";
-    if (wnd->myplayer->storage::get ("race") != 0)
-        out << "\nRace " << wnd->myplayer->storage::get ("race");
-    if (wnd->myplayer->storage::get ("gender") != 1)
-        out << "\nGender " << wnd->myplayer->storage::get ("gender");
+    if (wnd->myplayer->storage::get_val ("race") != 0)
+        out << "\nRace " << wnd->myplayer->storage::get_val ("race");
+    if (wnd->myplayer->storage::get_val ("gender") != 1)
+        out << "\nGender " << wnd->myplayer->storage::get_val ("gender");
 
     // NPC name
     out << "\nNPC §" << wnd->mynpc->get_name() << "§\n";

@@ -76,7 +76,7 @@ void process_character (char *input, ogzstream& output)
                 // read further attributes and flags
                 case 2:
                 {
-                    myquest.set (strdup (vals[0]), atoi (vals[1]));
+                    myquest.set_val (strdup (vals[0]), atoi (vals[1]));
 
                     break;
                 }

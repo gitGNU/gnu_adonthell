@@ -87,15 +87,15 @@ void process_character (char *input, ogzstream& output)
                     else if (strcmp (vals[0], "color") == 0) mynpc.set_color(atoi (vals[1]));
                     else if (strcmp (vals[0], "race") == 0)
                     {
-                        if (strcmp (vals[1], "Elf") == 0) mynpc.set ("race", ELF);
-                        else if (strcmp (vals[1], "Half-Elf") == 0) mynpc.set ("race", HALFELF);
-                        else if (strcmp (vals[1], "Human") == 0) mynpc.set ("race", HUMAN);
-                        else if (strcmp (vals[1], "Dwarf") == 0)  mynpc.set ("race", DWARF);
+                        if (strcmp (vals[1], "Elf") == 0) mynpc.set_val ("race", ELF);
+                        else if (strcmp (vals[1], "Half-Elf") == 0) mynpc.set_val ("race", HALFELF);
+                        else if (strcmp (vals[1], "Human") == 0) mynpc.set_val ("race", HUMAN);
+                        else if (strcmp (vals[1], "Dwarf") == 0)  mynpc.set_val ("race", DWARF);
                     }
                     else if (strcmp (vals[0], "gender") == 0)
                     {
-                        if (strcmp (vals[1], "Male") == 0) mynpc.set ("gender", MALE);
-                        else if (strcmp (vals[1], "Female") == 0) mynpc.set ("gender", FEMALE);
+                        if (strcmp (vals[1], "Male") == 0) mynpc.set_val ("gender", MALE);
+                        else if (strcmp (vals[1], "Female") == 0) mynpc.set_val ("gender", FEMALE);
                     }
                     break;
                 }
@@ -103,7 +103,7 @@ void process_character (char *input, ogzstream& output)
                 // read further attributes and flags
                 case 2:
                 {
-                    mynpc.set (strdup (vals[0]), atoi (vals[1]));
+                    mynpc.set_val (strdup (vals[0]), atoi (vals[1]));
 
                     break;
                 }

@@ -59,6 +59,6 @@ void quest::load (igzstream& in)
     {
         key << in; 
         value << in; 
-        set (key.c_str (), value);
+        set_val (key.c_str (), value);
     }
 }

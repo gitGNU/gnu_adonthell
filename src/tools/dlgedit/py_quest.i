@@ -13,8 +13,8 @@
 class storage
 {
 public:
-    void set (const char*, int);
-    int get (const char*);
+    void set_val (const char*, int);
+    int get_val (const char*);
 };
 
 #define STAND_NORTH 0

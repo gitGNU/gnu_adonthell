@@ -328,12 +328,12 @@ void debug_dlg::set (char *key, char *val)
     if (containerc != NULL)
     {
         object = (*containerc)[attribute];
-        object->set (key, ival);
+        object->set_val (key, ival);
     }
     else if (containerq != NULL)
     {
         object = (*containerq)[attribute];
-        object->set (key, ival);
+        object->set_val (key, ival);
     }
     else set_dlg_var (key, ival);
 }
@@ -465,14 +465,14 @@ objects *debug_dlg::get_dlg_vars ()
 
     size = PyList_Size (values);
     object = new storage;
-    container->set ("Local Variables", object);
+    container->set_val ("Local Variables", object);
 
     for (i = 0; i < size; i++)
     {
         k = PyList_GetItem (keys, i);
         v = PyList_GetItem (values, i);
 
-        object->set (strdup (PyString_AsString (k)), PyInt_AsLong (v));
+        object->set_val (strdup (PyString_AsString (k)), PyInt_AsLong (v));
     }
 
     Py_DECREF (keys);
