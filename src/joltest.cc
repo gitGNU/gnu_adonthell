@@ -54,10 +54,10 @@ int main (int argc, char * argv[])
 
   // define the label !
   label_input l;
-  l.resize (200, 200);
+  l.resize (300, 300);
   l.set_ttf (font);
- 
-  l.set_text (L"ι@άτ");
+
+  //  l.set_text (L"ι@άτ");
   
   while ( !input::is_pushed (SDLK_ESCAPE))
     {

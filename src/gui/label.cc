@@ -508,7 +508,10 @@ void label::draw_string (const bool at_cursor)
     {
       glyph = &((*my_font_) [my_text_[j]]);
       std::cout <<"First Line " <<  tx << " " << (s_int16)  (ty + glyph->my_yoffset) << " " << length() << " " << height () << std::endl;
-      glyph->my_glyph->draw ((s_int16) (tx + glyph->my_minx + 1) , (s_int16) (ty + glyph->my_yoffset),NULL, this);
+      
+      std::cout << "Image size: " << this->length () << " " << this->height () << std::endl;
+      std::cout << "Draw to x, y :" << (s_int16) (tx + glyph->my_minx + 10) << "  " << (s_int16) (ty + glyph->my_yoffset) << std::endl;
+      glyph->my_glyph->draw ((s_int16) (tx + glyph->my_minx + 10) , (s_int16) (ty + glyph->my_yoffset),NULL, this);
       std::cout << "NeXt\n";
       tx += glyph->my_advance; 
     }
