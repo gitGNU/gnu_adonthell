@@ -10,3 +10,5 @@ config.sub
 libtool
 ltconfig
 ltmain.sh
+stamp-h
+config.h
