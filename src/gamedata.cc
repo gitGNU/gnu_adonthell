@@ -550,7 +550,7 @@ void gamedata::unload ()
     
     // delete all characters
     dictionary <character *>::iterator itc;
-    for (itc = data::characters.begin (); itc != data::characters.end (); itc++) 
+    for (itc = data::characters.begin (); itc != data::characters.end (); itc++)
     {
         itc->second->remove_from_map (); 
         delete itc->second;

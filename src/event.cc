@@ -22,6 +22,7 @@
  */
 
 #include "event.h"
+#include "event_handler.h"
 
 // constructor
 event::event ()
@@ -36,6 +37,9 @@ event::event ()
 // destructor
 event::~event ()
 {
+    // automatically remove myself from the event_handler
+    event_handler::remove_event (this);
+    
     clear ();
 }
 

@@ -42,7 +42,6 @@ void event_list::clear ()
     {
         e = events.back ();
         events.pop_back ();
-        event_handler::remove_event (e);
         delete e;    
     }    
 }
