@@ -976,7 +976,7 @@ void mapcharacter::update_move ()
     anim[current_move]->update ();     
 }
 
-void mapcharacter::speak (string text)
+void mapcharacter::speak (const string & text)
 {
     if (saying) 
         delete saying;

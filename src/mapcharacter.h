@@ -471,7 +471,7 @@ public:
      */
     mapcharacter *whosnext () const;
 
-    void speak (string text);
+    void speak (const string & text);
 
     bool is_speaking ()
     {

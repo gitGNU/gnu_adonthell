@@ -75,12 +75,18 @@ enum {Python = 1, C = 0};
         return NULL;
     }
 }
+%typemap(python,in) string & = string;
+%typemap(python,in) const string = string;
+%typemap(python,in) const string & = string;
 
 %typemap(python,out) string
 {
     $target = PyString_FromString((const char *)$source->c_str()); 
     delete $source;
 }
+%typemap(python,out) string & = string;
+%typemap(python,out) const string = string;
+%typemap(python,out) const string & = string;
 
 %typemap (python, freearg) string
 {
@@ -89,6 +95,9 @@ enum {Python = 1, C = 0};
         delete $source;
     }
 }
+%typemap (python, freearg) string & = string;
+%typemap (python, freearg) const string = string;
+%typemap (python, freearg) const string & = string;
 
 %typemap (python,in) PyObject *pyfunc 
 { 
