@@ -30,19 +30,17 @@
 // Initialize NLS
 void nls::init (config &myconfig)
 {
-    setlocale (LC_MESSAGES, "");
-    
     if (myconfig.language != "en")
         set_language (myconfig.language);
     
     // open the message catalogue
-    std::string location = myconfig.gamedir + "/po";
+    std::string location = myconfig.gamedir + "/locale";
     bindtextdomain (myconfig.game_name.c_str (), location.c_str ());
     textdomain (myconfig.game_name.c_str ());
 }
 
 // Set the language to use
-void nls::set_language (const std::string &language)
+void nls::set_language (const string &language)
 {
     setenv ("LANGUAGE", language.c_str (), 1);
     
@@ -53,10 +51,12 @@ void nls::set_language (const std::string &language)
         ++_nl_msg_cat_cntr;
     }
 #endif
+    
+    setlocale (LC_MESSAGES, language.c_str ());
 }
 
 // Translate some text
-const char* nls::gettext (const std::string &text)
+const char* nls::translate (const string &text)
 {
-    return ::gettext (text.c_str ());
+    return gettext (text.c_str ());
 }

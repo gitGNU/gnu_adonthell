@@ -33,7 +33,9 @@
 #include <string>
 #include "types.h"
 
+#ifndef SWIG 
 using std::string; 
+#endif
 
 /**
  * Holds information about global settings.

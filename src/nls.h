@@ -24,6 +24,10 @@
 
 #include "prefs.h"
 
+#ifndef SWIG
+using std::string;
+#endif
+
 /** 
  * Provides various services for i18n and l10n.
  */
@@ -43,7 +47,7 @@ public:
      * the desired language will be actually used.
      * @param language The country code of the desired language.
      */
-    static void set_language (const std::string &language);
+    static void set_language (const string &language);
     
     /**
      * Translate the given string if it's found in the message
@@ -53,7 +57,7 @@ public:
      * @return either the translated text, or the given text if
      *      no translation was found.
      */
-    static const char* gettext (const std::string &text);
+    static const char* translate (const string &text);
 };
 
 #endif // __NLS_H__
