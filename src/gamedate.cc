@@ -93,7 +93,7 @@ u_int16 gamedate::minute ()
 }
 
 // convert the time string to gametime minutes
-u_int32 gamedate::parse_time (const string & time)
+u_int32 gamedate::parse_time (const std::string & time)
 {
     u_int32 minutes = 0, number = 0;
     char num[2] = "0";

@@ -1,13 +1,12 @@
-#include <iostream.h>
+#include <iostream>
 
-#include "python_class.h"
 #include "event_handler.h"
-#include "input_manager.h"
+#include "input/manager.h"
 #include "character.h"
 #include "gametime.h"
 #include "gamedate.h"
 #include "schedule.h"
-#include "screen.h"
+#include "gfx/screen.h"
 
 extern "C"
 {
@@ -35,19 +34,19 @@ void mainloop ()
         // run the schedule
         for (int i = 0; i < gametime::frames_to_skip (); i++)
         {
-            input_manager::update ();
+            input::manager::update ();
             myschedule.update ();
         }
     }
 }
 
 // catch escape key
-int escape_pushed (input_event *e)
+int escape_pushed (input::event *e)
 {
-    keyboard_event *ev = (keyboard_event *) e;
+    input::keyboard_event *ev = (input::keyboard_event *) e;
 
-    if (ev->type() == keyboard_event::KEY_PUSHED &&
-        ev->key () == keyboard_event::ESCAPE_KEY)
+    if (ev->type() == input::keyboard_event::KEY_PUSHED &&
+        ev->key () == input::keyboard_event::ESCAPE_KEY)
         quit = 1;
 
     return 0;
@@ -56,8 +55,8 @@ int escape_pushed (input_event *e)
 int main (int argc, char* argv[])
 {
     // gfx
-    screen::init ();
-    screen::set_video_mode (640, 480);
+    gfx::screen::init ();
+    gfx::screen::set_video_mode (640, 480);
 
     // python system
     python::init ();
@@ -67,13 +66,13 @@ int main (int argc, char* argv[])
     data::globals = PyModule_GetDict (module);
 
     // input system
-    input_manager::init ();
-    input_listener listener;
-    input_manager::add (&listener);
+    input::manager::init ();
+    input::listener listener;
+    input::manager::add (&listener);
 
-    Functor1wRet<input_event *, int> ftor;
+    Functor1wRet<input::event *, int> ftor;
     ftor = makeFunctor (&ftor, &escape_pushed);
-    listener.connect_function (input_event::KEYBOARD_EVENT, ftor);
+    listener.connect_function (input::event::KEYBOARD_EVENT, ftor);
 
     // event system
     event_handler::init ();
@@ -83,7 +82,7 @@ int main (int argc, char* argv[])
     gametime::init (2);
     gametime::start_action ();
 
-    cout << "A game minute takes " << gametime::minute () << " cycles" << endl;
+    std::cout << "A game minute takes " << gametime::minute () << " cycles" << std::endl;
 
     // a clock telling every hour
     time_event clock ("1h");
@@ -106,7 +105,7 @@ int main (int argc, char* argv[])
 
     // cleanup
     event_handler::cleanup ();
-    input_manager::cleanup ();
+    input::manager::cleanup ();
     python::cleanup ();
     // screen::cleanup ();
 

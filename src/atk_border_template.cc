@@ -13,6 +13,7 @@
 */
 
 
+#include <iostream>
 #include "atk_border_template.h"
 
 
@@ -33,7 +34,7 @@ void atk_border_template::load (igzstream & is)
     
     for (int i = 0; i < _LAST; i++)
     {
-        img_[i] = new image;
+        img_[i] = new gfx::image;
         img_[i]->get (is); 
     }
     
@@ -49,7 +50,7 @@ void atk_border_template::build()
   if( imgborder_[B_TOP] == NULL)
     for (int i = 0; i <C_TL; i++)
       {
-	imgborder_[i] = new image;
+	imgborder_[i] = new gfx::image;
 	imgborder_[i]->set_mask (true);
       }
   
@@ -77,14 +78,14 @@ void atk_border_template::save (ogzstream & os)
 }
 
 
-image * atk_border_template::get (u_int8 i)
+gfx::image * atk_border_template::get (u_int8 i)
 {
   if ( i>= _LAST) return NULL;
   return img_[i]; 
 }
 
 
-image * atk_border_template::get_border (u_int8 i)
+gfx::image * atk_border_template::get_border (u_int8 i)
 {
   /* WARNING this test can be removed to optimize more .... */
   if ( i>= C_TL) return NULL;
@@ -92,7 +93,7 @@ image * atk_border_template::get_border (u_int8 i)
   return imgborder_[i];
 }
 
-void atk_border_template::set (u_int8 type, image * img)
+void atk_border_template::set (u_int8 type, gfx::image * img)
 {
     if (img_[type]  != NULL) delete img_[type];
     img_[type] =  img; 
@@ -100,7 +101,7 @@ void atk_border_template::set (u_int8 type, image * img)
 
 void atk_border_template::set (u_int8 type, std::string filename)
 {
-  image * img = new image;
+  gfx::image * img = new gfx::image;
   if ( img->load_pnm (filename) != 0)
     std::cout << "Error on load image " << filename <<  " in atk_border_template::set \n"; 
   set (type, img); 

@@ -1,8 +1,8 @@
 #include <iostream>
 #include <stdio.h>
 
-#include "image.h"
-#include "screen.h"
+#include "gfx/image.h"
+#include "gfx/screen.h"
 #include "atk_font.h"
 
 #include "atk_widget.h"
@@ -21,9 +21,9 @@
 int main (int argc, char * argv[]) 
 {
 
-    screen::init ();
-    screen::set_video_mode (640, 480, 16); 
-    screen::clear (); 
+    gfx::screen::init ();
+    gfx::screen::set_video_mode (640, 480, 16); 
+    gfx::screen::clear (); 
     
     if (argc != 2) 
       {
@@ -151,21 +151,21 @@ int main (int argc, char * argv[])
     
     while (manager.update () )
       {
-	input_manager::update(); 
+	input::manager::update(); 
 	
 	gametime::update (); 
         
-	screen::display.fillrect (0, 0, 640, 480, 127, 127, 127);
+	gfx::screen::display.fillrect (0, 0, 640, 480, 127, 127, 127);
         
 
 	manager.draw (); 
         
-	screen::show ();
+	gfx::screen::show ();
         
-	screen::clear ();     
+	gfx::screen::clear ();     
       }
 
-    input_manager::cleanup();
+    input::manager::cleanup();
     
     /**
      * SAVE A THEME

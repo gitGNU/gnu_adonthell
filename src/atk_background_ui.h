@@ -43,7 +43,7 @@ class atk_background_ui : public atk_object_ui
   /**
    * draw the background
    */
-  void draw (drawing_area * da = NULL, surface * sf = NULL); 
+  void draw (gfx::drawing_area * da = NULL, gfx::surface * sf = NULL); 
   
   
   /**

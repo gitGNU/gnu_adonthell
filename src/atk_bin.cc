@@ -76,7 +76,7 @@ void atk_bin::set_size (u_int32 length, u_int32 height)
 }
 
 
-bool atk_bin::draw (drawing_area * da = NULL, surface * sf = NULL)
+bool atk_bin::draw (gfx::drawing_area * da, gfx::surface * sf)
 {
   if (atk_container::draw (da, sf))
     {
@@ -94,7 +94,7 @@ bool atk_bin::draw (drawing_area * da = NULL, surface * sf = NULL)
  * input update function
  * @return 1 if this object use the event,  else return 0
      */
-int atk_bin::input_update (input_event * ev)
+int atk_bin::input_update (input::event * ev)
 {
   if (child) return child->input_update (ev);
   return 0;

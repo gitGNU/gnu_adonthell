@@ -29,7 +29,7 @@ void atk_background_template::load( igzstream & is)
       b_ << is;
       break;
     case IMAGE:
-      imgback_ = new image();
+      imgback_ = new gfx::image();
       imgback_->get (is);
       break;
     }
@@ -61,7 +61,7 @@ void atk_background_template::set_name (const std::string & name)
   name_ = name;
 }
 
-image * atk_background_template::get_image()
+gfx::image * atk_background_template::get_image()
 {
   return imgback_;
 }
@@ -89,7 +89,7 @@ u_int8 atk_background_template::get_b()
 }
 
 
-void atk_background_template::set_image (image * tmp)
+void atk_background_template::set_image (gfx::image * tmp)
 {
   if ( imgback_) delete imgback_;
   imgback_ = tmp;

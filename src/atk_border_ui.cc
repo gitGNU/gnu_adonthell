@@ -24,7 +24,7 @@ atk_border_ui::atk_border_ui (atk_container * ac) : container_ (ac), btempl_ (NU
 }
 
 
-void atk_border_ui::draw (drawing_area* da = NULL, surface * sf = NULL)
+void atk_border_ui::draw (gfx::drawing_area* da, gfx::surface * sf)
 {
   if (!btempl_ || !container_) return;  
   
@@ -214,7 +214,7 @@ atk_border_template * atk_border_ui::get_template () const
 void atk_border_ui::alloc ()
 {
   for (int i = 0; i < atk_border_template::_LAST; i++)
-    img_[i] =  new drawing_area;  
+    img_[i] =  new gfx::drawing_area;  
 }
 
 

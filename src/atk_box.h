@@ -26,7 +26,7 @@
 #define ATK_BOX_H_
 
 #include <deque>  
-#include "input_event.h"
+#include "input/event.h"
 #include "atk_widget.h"
 #include "atk_container.h"
 
@@ -107,7 +107,7 @@ public :
 
     /**draw the widget
      */
-    virtual bool draw (drawing_area * da = NULL, surface * sf = NULL); 
+    virtual bool draw (gfx::drawing_area * da = NULL, gfx::surface * sf = NULL); 
 
 
     /**set_geometry
@@ -126,7 +126,7 @@ public :
      * input update function
      * @return 1 if this object use the event,  else return 0
      */
-    virtual int input_update (input_event *); 
+    virtual int input_update (input::event *); 
     
     
     ~atk_box (); 

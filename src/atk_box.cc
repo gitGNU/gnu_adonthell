@@ -79,7 +79,7 @@ void atk_box::clear ()
 }
     
     
-void atk_box::add_start (atk_widget * w, bool expand = true, bool fill = true, u_int16 padding = 0)
+void atk_box::add_start (atk_widget * w, bool expand, bool fill, u_int16 padding)
 {
     atk_box_struct * tmp =  new atk_box_struct;
 
@@ -114,7 +114,7 @@ void atk_box::realize_horizontal ()
     s_int32 y_tmp = 0; // border_width_;
 
     /* calcul the max length for each widget*/
-    s_int32 max_length = (get_length () - ((v_widget_.size () - 1)  * spacing_) - (border_width_ << 1) ) / v_widget_.size (); 
+    u_int32 max_length = (get_length () - ((v_widget_.size () - 1)  * spacing_) - (border_width_ << 1) ) / v_widget_.size (); 
     
     for (u_int16 i = 0;i < v_widget_.size (); i++)  
     {
@@ -170,7 +170,7 @@ void atk_box::realize_vertical ()
     s_int32 y_tmp = 0; // border_width_;
 
     /* calcul the max length for each widget*/
-    s_int32 max_height = (get_height () - ((v_widget_.size () - 1)  * spacing_) - (border_width_ << 1) ) / v_widget_.size (); 
+    u_int32 max_height = (get_height () - ((v_widget_.size () - 1)  * spacing_) - (border_width_ << 1) ) / v_widget_.size (); 
     
     for (u_int16 i = 0;i < v_widget_.size (); i++)  
     {
@@ -221,7 +221,7 @@ void atk_box::realize_vertical ()
 
 
 
-void atk_box::add_end (atk_widget * w, bool expand = true, bool fill = true, u_int16 padding = 0)
+void atk_box::add_end (atk_widget * w, bool expand, bool fill, u_int16 padding)
 {
     atk_box_struct * tmp =  new atk_box_struct;
 
@@ -268,7 +268,7 @@ void atk_box::update_homogene ()
 
 
 
-bool atk_box::draw (drawing_area * da = NULL, surface * sf = NULL)
+bool atk_box::draw (gfx::drawing_area * da, gfx::surface * sf)
 {    
   if (atk_container::draw (da, sf))
     {
@@ -298,9 +298,9 @@ void atk_box::update_position ()
 }
 
 
-int atk_box::input_update (input_event * ev)
+int atk_box::input_update (input::event * ev)
 {
-  int i =0;
+  u_int32 i =0;
   int ret = 0;
   while ( i < v_widget_.size() && ret == 0)
     ret = v_widget_[i++]->widget_->input_update(ev);

@@ -26,7 +26,7 @@
 #define ATK_BACKGROUND_TEMPLATE_H_
 
 #include "fileops.h"
-#include "image.h"
+#include "gfx/image.h"
 
 class atk_background_template
 {
@@ -66,7 +66,7 @@ class atk_background_template
   /**
    * @return the background image
    */
-  image * get_image();
+  gfx::image * get_image();
   
   
   /**
@@ -87,7 +87,7 @@ class atk_background_template
   /**
    * Set the image for the background
    */
-  void set_image (image * tmp);
+  void set_image (gfx::image * tmp);
   
   
   /**
@@ -106,7 +106,7 @@ class atk_background_template
   
  protected:
   
-  image * imgback_;
+  gfx::image * imgback_;
   
   //u_int32 colorback_;
   

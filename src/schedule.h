@@ -22,7 +22,7 @@
 #ifndef SCHEDULE_H__
 #define SCHEDULE_H__
 
-#include "py_object.h"
+#include "python/object.h"
 #include "time_event.h"
 #include "schedule_data.h"
 
@@ -206,10 +206,10 @@ private:
     bool Running;
     
     // the script describing a character's general behaviour.
-    py_object Manager;
+    python::object Manager;
     
     // the script describing a specific activity in detail.
-    py_object Schedule;
+    python::object Schedule;
     
     // set the alarm to execute the manager script at a certain time
     time_event *Alarm;

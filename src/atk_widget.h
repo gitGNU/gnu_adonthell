@@ -24,10 +24,10 @@
 #ifndef ATK_WIDGET_H_
 #define ATK_WIDGET_H_
 
-#include "input_event.h"
+#include "input/event.h"
 
-#include "drawing_area.h"
-#include "surface.h"
+#include "gfx/drawing_area.h"
+#include "gfx/surface.h"
 #include "callback_sig.h"
 
 
@@ -38,7 +38,7 @@ class atk_window;
 /**
  * It's the common class for all object in the Adonthell Tool Kit.
  */
-class atk_widget : protected drawing_area
+class atk_widget : protected gfx::drawing_area
 {
 public : 
     /**
@@ -65,7 +65,7 @@ public :
     /**
      * draw the widget
      */
-    virtual bool draw (drawing_area * da = NULL, surface * sf = NULL); 
+    virtual bool draw (gfx::drawing_area * da = NULL, gfx::surface * sf = NULL); 
     
 
     /** set position of this widget (but the layout can change this value) ,  position in his parent
@@ -110,7 +110,7 @@ public :
      * @param length
      * @param height
      */
-    virtual void set_size (s_int32 length, s_int32 height); 
+    virtual void set_size (u_int32 length, u_int32 height); 
 
     
     /** get length
@@ -203,7 +203,7 @@ public :
      * input update function
      * @return 1 if this object use the event,  else return 0
      */
-    virtual int input_update (input_event *); 
+    virtual int input_update (input::event *); 
 
 
     /** 

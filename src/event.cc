@@ -71,7 +71,7 @@ void event::clear ()
 }
 
 // set a script as event's action
-void event::set_script (string filename, PyObject * args)
+void event::set_script (std::string filename, PyObject * args)
 {
     // cleanup
     clear ();
@@ -94,7 +94,7 @@ void event::set_script (string filename, PyObject * args)
         PyTuple_SetItem (theargs, i, intref); 
     }
     
-    Script = new py_object;
+    Script = new python::object;
     Script->create_instance (EVENTS_DIR + filename, filename, theargs);
     Py_DECREF (theargs);
         
@@ -108,7 +108,7 @@ void event::set_callback (PyObject *callback, PyObject *args)
     clear ();
     
     // create the callback
-    PyFunc = new py_callback (callback, args);
+    PyFunc = new python::callback (callback, args);
     
     // tell the event what to do    
     Action = ACTION_PYFUNC;
@@ -146,7 +146,7 @@ void event::put_state (ogzstream & file) const
 // load the state of the script associated with the event 
 bool event::get_state (igzstream & file) 
 {
-    string name;
+    std::string name;
     bool has_args;
     PyObject * args = NULL;
 

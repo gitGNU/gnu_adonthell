@@ -13,7 +13,7 @@
 */
 
 
-#include "screen.h"
+#include "gfx/screen.h"
 #include "atk_manager.h"
 
 
@@ -36,20 +36,20 @@ void atk_manager::init ()
     
     
     // connect keyboard function callback
-    il_.connect_function (input_event::KEYBOARD_EVENT,
-                          MemberTranslator1wRet<input_event *,int,atk_manager,int (atk_manager::*)(input_event *)>
+    il_.connect_function (input::event::KEYBOARD_EVENT,
+                          MemberTranslator1wRet<input::event *,int,atk_manager,int (atk_manager::*)(input::event *)>
                           (*this, &atk_manager::input_update));  
     
 
     
     //connect mouse function callback 
-    il_.connect_function (input_event::MOUSE_EVENT,
-                          MemberTranslator1wRet<input_event *,int,atk_manager,int (atk_manager::*)(input_event *)>
+    il_.connect_function (input::event::MOUSE_EVENT,
+                          MemberTranslator1wRet<input::event *,int,atk_manager,int (atk_manager::*)(input::event *)>
                           (*this, &atk_manager::input_update));  
    
     
        
-    input_manager::add(&il_);
+    input::manager::add(&il_);
 }
 
 
@@ -89,10 +89,10 @@ void atk_manager::draw ()
 
     /* draw cursor */
     // WARNING IMPROVE IT !
-    if (mouse_x_ <=  0 || mouse_y_ <=  0 || mouse_x_ >=  screen::length () - 5 || mouse_y_ >=  screen::height () - 10  ) return; 
-    screen::display.draw_line (mouse_x_, mouse_y_, mouse_x_ + 5, mouse_y_, 0x000000); 
-    screen::display.draw_line (mouse_x_, mouse_y_, mouse_x_, mouse_y_ + 5, 0x000000);
-    screen::display.draw_line (mouse_x_, mouse_y_, mouse_x_ + 10, mouse_y_ + 10, 0x000000); 
+    if (mouse_x_ <=  0 || mouse_y_ <=  0 || mouse_x_ >=  gfx::screen::length () - 5 || mouse_y_ >=  gfx::screen::height () - 10  ) return; 
+    gfx::screen::display.draw_line (mouse_x_, mouse_y_, mouse_x_ + 5, mouse_y_, 0x000000); 
+    gfx::screen::display.draw_line (mouse_x_, mouse_y_, mouse_x_, mouse_y_ + 5, 0x000000);
+    gfx::screen::display.draw_line (mouse_x_, mouse_y_, mouse_x_ + 10, mouse_y_ + 10, 0x000000); 
     
 }
 
@@ -117,11 +117,11 @@ int atk_manager::mouse_event (input_event * ev)
 }
 */
 
-int atk_manager::input_update (input_event * ev)
+int atk_manager::input_update (input::event * ev)
 {
 
     // get mouse position for the cursor
-    mouse_event * mev = (mouse_event*) ev; 
+    input::mouse_event * mev = (input::mouse_event*) ev; 
     mouse_x_ = mev->x ();
     mouse_y_ = mev->y (); 
     

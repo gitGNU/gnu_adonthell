@@ -89,7 +89,7 @@ public:
      * @param time The time format string.
      * @return The time represented by the string in minutes.
      */
-    static u_int32 parse_time (const string & time);
+    static u_int32 parse_time (const std::string & time);
 
     /**
      * Load the state of the %gamedate class from disk

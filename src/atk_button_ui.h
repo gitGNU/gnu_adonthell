@@ -26,8 +26,8 @@
 #ifndef ATK_BUTTON_UI_H_
 #define ATK_BUTTON_UI_H_
 
-#include "drawing_area.h"
-#include "surface.h"
+#include "gfx/drawing_area.h"
+#include "gfx/surface.h"
 #include "fileops.h"
 #include "atk_background_ui.h"
 #include "atk_button_template.h"
@@ -49,7 +49,7 @@ class atk_button_ui : public atk_object_ui
   /**
    * draw the border
    */
-  void draw (drawing_area * da = NULL, surface * sf = NULL);
+  void draw (gfx::drawing_area * da = NULL, gfx::surface * sf = NULL);
 
   
   /**

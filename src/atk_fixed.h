@@ -69,7 +69,7 @@ public :
 
     /**draw the widget
      */
-    virtual bool draw (drawing_area * da = NULL, surface * sf = NULL);
+    virtual bool draw (gfx::drawing_area * da = NULL, gfx::surface * sf = NULL);
     
     /**
      * destructor

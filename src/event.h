@@ -25,8 +25,8 @@
 
 #include "fileops.h"
 #include "callback.h"
-#include "py_object.h"
-#include "py_callback.h"
+#include "python/object.h"
+#include "python/callback.h"
 
 /**
  * Directory where %event scripts reside.
@@ -148,7 +148,7 @@ public:
      * @param filename filename of the script to set.
      * @param args The arguments to pass to the script's constructor
      */
-    void set_script (string filename, PyObject * args = NULL);
+    void set_script (std::string filename, PyObject * args = NULL);
     
     /**
      * Sets a python function/method to be executed whenever the
@@ -228,7 +228,7 @@ protected:
      * The Python script accociated with this %event. It is executed
      * whenever the %event gets triggered.
      */
-    py_object *Script; 
+    python::object *Script; 
 
     /**
      * The arguments passed to the script. This needs to be a PyTuple
@@ -239,7 +239,7 @@ protected:
     /**
      * Python callback that may be executed instead of the script.
      */
-    py_callback *PyFunc;
+    python::callback *PyFunc;
     
     /**
      * C++ callback that may be executed when the %event gets triggered.

@@ -7,7 +7,7 @@ atk_button_ui::atk_button_ui( atk_button * but): pressed_border_ (NULL), release
 }
 
 
-void atk_button_ui::draw (drawing_area * da, surface * sf)
+void atk_button_ui::draw (gfx::drawing_area * da, gfx::surface * sf)
 {
   if (!btempl_ || !button_) return;
   

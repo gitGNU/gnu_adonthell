@@ -49,7 +49,7 @@ public :
     /** get text
      * @return text of this label
      */
-    string & get_text ();  
+    std::string & get_text ();  
 
 
     /** set font
@@ -76,7 +76,7 @@ public :
     /**
      * draw the label
      */
-    virtual bool draw (drawing_area * da = NULL, surface * sf = NULL); 
+    virtual bool draw (gfx::drawing_area * da = NULL, gfx::surface * sf = NULL); 
 
 protected : 
 

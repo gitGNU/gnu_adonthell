@@ -30,9 +30,9 @@
 #include <ft2build.h>
 #include FT_FREETYPE_H
 #include "types.h"
-#include "drawing_area.h"
-#include "surface.h"
-#include "image.h"
+#include "gfx/drawing_area.h"
+#include "gfx/surface.h"
+#include "gfx/image.h"
 
 
 /**
@@ -121,7 +121,7 @@ class atk_font
      * @param y : y position
      * @param target : draw on target,  if not target,  draw on the screen
      */
-    void draw (const std::string & text, s_int32 x, s_int32 y,drawing_area * da,  surface * target = NULL);  
+    void draw (const std::string & text, s_int32 x, s_int32 y, gfx::drawing_area * da, gfx::surface * target = NULL);  
 
 
     
@@ -153,7 +153,7 @@ private :
 
         s_int32 advance_x;
 
-        image * picture; 
+        gfx::image * picture; 
     }; 
     
     
@@ -161,7 +161,7 @@ private :
     void free_vector (); 
 
     /* copy bitmap to image */
-    void copy_bitmap_to_image (u_int8 * bitmap_data, image * dest); 
+    void copy_bitmap_to_image (u_int8 * bitmap_data, gfx::image * dest); 
 
     /* close the library and face */
     void close (); 

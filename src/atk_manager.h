@@ -29,7 +29,7 @@
 
 #include "atk_widget.h"
 #include "atk_window.h"
-#include "input_manager.h"
+#include "input/manager.h"
 
 /** This class is the window manager. it catch all event, keyboard, mouse ... It display all atk_window.
  */
@@ -89,7 +89,7 @@ public :
      */
     //     int mouse_event (input_event * ev);
 
-    int input_update (input_event *ev); 
+    int input_update (input::event *ev); 
     
 
     /**
@@ -115,7 +115,7 @@ public :
 private : 
 
     /* input listener */ 
-    input_listener il_; 
+    input::listener il_; 
     
 
     /**current selected window*/

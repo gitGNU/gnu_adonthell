@@ -117,7 +117,7 @@ public :
      * input update function
      * @return 1 if this object use the event,  else return 0
      */
-    int input_update (input_event *); 
+    int input_update (input::event *); 
     
 
     /**

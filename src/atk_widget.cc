@@ -12,7 +12,7 @@
    See the COPYING file for more details
 */
 
-#include "screen.h"
+#include "gfx/screen.h"
 
 #include "atk_container.h"
 #include "atk_widget.h"
@@ -67,7 +67,7 @@ s_int32 atk_widget::get_y_real () const
 }
 
 
-void atk_widget::set_size (s_int32 length, s_int32 height)
+void atk_widget::set_size (u_int32 length, u_int32 height)
 {
   if (length < 0 && height < 0 ) return;
 
@@ -179,13 +179,13 @@ atk_widget::~atk_widget ()
 
 
 
-bool atk_widget::draw (drawing_area * da = NULL, surface * sf = NULL)
+bool atk_widget::draw (gfx::drawing_area * da, gfx::surface * sf)
 {
   return visible_;
 }
 
 
-int atk_widget::input_update (input_event * ev)
+int atk_widget::input_update (input::event * ev)
 {
   return 0;
 }

@@ -12,7 +12,7 @@
    See the COPYING file for more details
 */
 
-#include "mouse_event.h"
+#include "input/mouse_event.h"
 
 #include "atk_border_ui.h"
 #include "atk_window.h"
@@ -62,23 +62,23 @@ void atk_window::set_modal (const bool m)
 
 
 
-int atk_window::input_update (input_event * ev)
+int atk_window::input_update (input::event * ev)
 {
   if (!is_sensible () ) return 0; 
   
     if (atk_bin::input_update (ev) == 1) return 1;
 
-    mouse_event * me = (mouse_event *) ev; 
+    input::mouse_event * me = (input::mouse_event *) ev; 
     
     /* we check if there is already a mouse actio in progress */
     if (mouse_action_ == ACTION_MOVE)
       {
-	if (me->type () == mouse_event::MOUSE_MOTION)
+	if (me->type () == input::mouse_event::MOUSE_MOTION)
 	  {
 	    set_position (me->x ()  - mouse_range_x_, me->y ()  - mouse_range_y_);
 	    return 1; 
 	  }
-	else if (me->type () == mouse_event::BUTTON_RELEASED)
+	else if (me->type () == input::mouse_event::BUTTON_RELEASED)
 	  {
 	    mouse_action_ = ACTION_NONE; 
 	    return 1; 
@@ -88,12 +88,12 @@ int atk_window::input_update (input_event * ev)
     
     if (mouse_action_ == ACTION_RESIZE)
       {
-        if (me->type () == mouse_event::MOUSE_MOTION)
+        if (me->type () == input::mouse_event::MOUSE_MOTION)
 	  {
 	    set_size (me->x ()  - get_x_real ()  , me->y ()  - get_y_real () );
 	    return 1; 
 	  }
-        else if (me->type () == mouse_event::BUTTON_RELEASED)
+        else if (me->type () == input::mouse_event::BUTTON_RELEASED)
 	  {
 	    mouse_action_ = ACTION_NONE; 
             return 1; 
@@ -107,7 +107,7 @@ int atk_window::input_update (input_event * ev)
         /* there are no action in progress we check if the cursor is on special border */
         if (deleted_)
 	  { 
-	    if (mouse_action_ == ACTION_NONE && me->type () == mouse_event::BUTTON_PUSHED 
+	    if (mouse_action_ == ACTION_NONE && me->type () == input::mouse_event::BUTTON_PUSHED 
 		&& object_ui_ && ((atk_border_ui*)object_ui_)->is_in_ctr (me->x(), me->y()))
 	      {
 		on_delete (); 
@@ -117,7 +117,7 @@ int atk_window::input_update (input_event * ev)
         
         if (moveable_)
 	  {
-	    if (mouse_action_ == ACTION_NONE && me->type () == mouse_event::BUTTON_PUSHED &&
+	    if (mouse_action_ == ACTION_NONE && me->type () == input::mouse_event::BUTTON_PUSHED &&
 	        object_ui_ && ((atk_border_ui*)object_ui_)->is_in_bt (me->x(), me->y()))
 	      {
 		mouse_action_ = ACTION_MOVE;
@@ -129,7 +129,7 @@ int atk_window::input_update (input_event * ev)
 	
         if (resizeable_)
 	  {
-            if (mouse_action_ == ACTION_NONE && me->type () == mouse_event::BUTTON_PUSHED &&
+            if (mouse_action_ == ACTION_NONE && me->type () == input::mouse_event::BUTTON_PUSHED &&
                 object_ui_ && ((atk_border_ui*)object_ui_)->is_in_cbr (me->x(), me->y ())) 
 	      {
 		mouse_action_ = ACTION_RESIZE;

@@ -29,7 +29,7 @@ void atk_label::set_text (const std::string & text)
 }
 
 
-string & atk_label::get_text ()
+std::string & atk_label::get_text ()
 {
     return text_; 
 }
@@ -100,7 +100,7 @@ void atk_label::realize ()
 
 
 
-bool atk_label::draw (drawing_area * da = NULL, surface * sf = NULL) 
+bool atk_label::draw (gfx::drawing_area * da, gfx::surface * sf) 
 {
   if (!atk_misc::draw (da, sf)) return false;
   if (!font_) return false; 

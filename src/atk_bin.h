@@ -76,14 +76,14 @@ public :
     /**
      * draw the window
      */
-    bool draw (drawing_area * da = NULL, surface * sf = NULL); 
+    bool draw (gfx::drawing_area * da = NULL, gfx::surface * sf = NULL); 
 
 
     /**
      * input update function
      * @return 1 if this object use the event,  else return 0
      */
-    virtual int input_update (input_event *); 
+    virtual int input_update (input::event *); 
     
     
 

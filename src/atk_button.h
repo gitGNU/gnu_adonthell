@@ -26,9 +26,9 @@
 #define ATK_BUTTON_H_
 #include <string>
 
-#include "input_event.h"
-#include "surface.h"
-#include "drawing_area.h"
+#include "input/event.h"
+#include "gfx/surface.h"
+#include "gfx/drawing_area.h"
 #include "atk_font.h"
 #include "atk_bin.h"
 #include "atk_button_template.h"
@@ -68,7 +68,7 @@ class atk_button : public atk_bin
    * input update function
    * @return 1 if this object use the event,  else return 0
    */
-  virtual int input_update (input_event *); 
+  virtual int input_update (input::event *); 
   
   
   /**

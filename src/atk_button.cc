@@ -1,4 +1,4 @@
-#include "mouse_event.h"
+#include "input/mouse_event.h"
 
 #include "atk_label.h"
 #include "atk_button_ui.h"
@@ -27,11 +27,11 @@ void atk_button::set_button_ui (atk_button_template * but)
 }
 
 
-int atk_button::input_update (input_event * ev)
+int atk_button::input_update (input::event * ev)
 {
   if (!is_sensible () ) return 0; 
   
-  mouse_event * me = (mouse_event *) ev; 
+  input::mouse_event * me = (input::mouse_event *) ev; 
   
 /* test if mouse position is inside this button */
   if (!point_belong (me->x (), me->y ())) 
@@ -41,12 +41,12 @@ int atk_button::input_update (input_event * ev)
     }
   
 /* the mouse is inside the button */
-  if (me->type () == mouse_event::BUTTON_PUSHED)
+  if (me->type () == input::mouse_event::BUTTON_PUSHED)
     {
       on_pressed();
       pressed_ = true;
     } 
-  else if (me->type () == mouse_event::BUTTON_RELEASED)
+  else if (me->type () == input::mouse_event::BUTTON_RELEASED)
     {
       on_released();
       if( pressed_ ) on_clicked();

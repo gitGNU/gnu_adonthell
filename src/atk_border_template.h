@@ -26,7 +26,7 @@
 #define ATK_BORDER_TEMPLATE_H_
 
 #include "fileops.h"
-#include "image.h"
+#include "gfx/image.h"
 
 
 class atk_border_template
@@ -77,21 +77,21 @@ class atk_border_template
      * @param image number
      * @return image
      */
-    image * get (u_int8);
+    gfx::image * get (u_int8);
 
 
     /**
      * get a border image
      * @param the image number {B_TOP,B_BOTTOM, B_LEFT, B_RIGHT }
      */
-    image * get_border(u_int8);
+    gfx::image * get_border(u_int8);
 
     /**
      * set a image
      * @param type of the image (corner,  border ...)
      * @param img :  the image
      */
-    void set (u_int8 type, image * img);  
+    void set (u_int8 type, gfx::image * img);  
 
     
     /**
@@ -130,11 +130,11 @@ class atk_border_template
  
  
     /* a tab with image */
-    image * img_[_LAST]; 
+    gfx::image * img_[_LAST]; 
 
 
     /* this tab is used to store big border, it is necessary to optimise  resize and to reduce memory use */
-    image * imgborder_[C_TL];
+    gfx::image * imgborder_[C_TL];
 
     /* name of the border */
     std::string name_; 

@@ -29,6 +29,7 @@
 
 using std::cerr;
 using std::endl;
+using std::string;
 
 gz_file::gz_file ()
 {

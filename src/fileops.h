@@ -32,8 +32,6 @@
 #include <string>
 #include "types.h"
 
-using std::string; 
-
 /**
  * Enumeration to know whether a file is read or write opened.
  * 
@@ -61,7 +59,7 @@ public:
      * @param fname name of the file to open.
      * @param t access (READ or WRITE).
      */
-    gz_file (string fname, gz_type t);
+    gz_file (std::string fname, gz_type t);
 #endif
 
     /** 
@@ -78,7 +76,7 @@ public:
      * 
      * @return true if succeed, false otherwise.
      */
-    bool open (string fname, gz_type t);
+    bool open (std::string fname, gz_type t);
 
     /** 
      * Close the file that was opened.
@@ -140,7 +138,7 @@ public:
      * @param fname name of the file to open.
      * 
      */ 
-    igzstream (string fname);
+    igzstream (std::string fname);
 #endif
     
     /**
@@ -156,7 +154,7 @@ public:
      * 
      * @return true if succeed, false otherwise.
      */
-    bool open (string fname);
+    bool open (std::string fname);
 
     /** 
      * Reads a block of bytes from the file.
@@ -192,7 +190,7 @@ public:
     friend s_int32& operator << (s_int32& n, igzstream& gfile);
 
     /// Reads a string.
-    friend string& operator << (string& s, igzstream& gfile);
+    friend std::string& operator << (std::string& s, igzstream& gfile);
 #endif
     
 private:
@@ -219,7 +217,7 @@ public:
      * @param fname name of the file to open.
      * 
      */ 
-    ogzstream (string fname);
+    ogzstream (std::string fname);
 #endif
     
     /**
@@ -235,7 +233,7 @@ public:
      * 
      * @return true if succeed, false otherwise.
      */
-    bool open (string fname);
+    bool open (std::string fname);
 
     /** 
      * Writes a block of bytes to the file.
@@ -271,7 +269,7 @@ public:
     friend const s_int32& operator >> (const s_int32& n, ogzstream& gfile);
 
     /// Writes a string.
-    friend string& operator >> (const string& s, ogzstream& gfile);
+    friend std::string& operator >> (const std::string& s, ogzstream& gfile);
 #endif
     
 private:
@@ -301,7 +299,7 @@ public:
      * 
      * @return true if 
      */
-    static bool get_version (igzstream& file, u_int16 min, u_int16 max, string name); // Check version
+    static bool get_version (igzstream& file, u_int16 min, u_int16 max, std::string name); // Check version
 };
 
 

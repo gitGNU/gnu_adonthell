@@ -31,7 +31,7 @@
 
 // #include "audio.h"
 #include "gamedata.h"
-#include "python_class.h"
+#include "python/base.h"
 
 // File format versions of the various data files
 // *** Increase when changing file format! ***

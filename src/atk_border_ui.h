@@ -26,7 +26,7 @@
 #ifndef ATK_BORDER_UI_H_
 #define ATK_BORDER_UI_H_
 
-#include "drawing_area.h"
+#include "gfx/drawing_area.h"
 #include "atk_border_template.h"
 #include "atk_container.h"
 #include "atk_object_ui.h"
@@ -46,7 +46,7 @@ public :
     /**
      * draw the border
      */
-    void draw (drawing_area * da = NULL, surface * sf = NULL); 
+    void draw (gfx::drawing_area * da = NULL, gfx::surface * sf = NULL); 
     
     
     /**
@@ -139,7 +139,7 @@ public :
     atk_border_template * btempl_; 
 
     /* image with no brightness */
-    drawing_area * img_[atk_border_template::_LAST];
+    gfx::drawing_area * img_[atk_border_template::_LAST];
 }; 
 
 #endif

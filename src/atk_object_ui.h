@@ -26,8 +26,8 @@
 #ifndef ATK_OBJECT_UI_H_
 #define ATK_OBJECT_UI_H_
 
-#include "surface.h"
-#include "drawing_area.h"
+#include "gfx/surface.h"
+#include "gfx/drawing_area.h"
 
 class atk_object_ui
 {
@@ -36,7 +36,7 @@ class atk_object_ui
   /**
    * draw the border
    */
-  virtual void draw (drawing_area * da = NULL, surface * sf = NULL) = 0;
+  virtual void draw (gfx::drawing_area * da = NULL, gfx::surface * sf = NULL) = 0;
 
   
   /**

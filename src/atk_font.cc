@@ -11,11 +11,11 @@
 
    See the COPYING file for more details
 */
-#include "surface.h"
-#include "image.h"
-#include "screen.h"
-#include "atk_font.h"
 
+#include <iostream>
+
+#include "gfx/image.h"
+#include "atk_font.h"
 
 atk_font::atk_font ()
 {
@@ -113,7 +113,7 @@ bool atk_font::build ()
         if (error) std::cout << "ATK_font : Load char error\n";  
 
         // create an image
-        tmp.picture = new image ();
+        tmp.picture = new gfx::image ();
 
         // size the image
         tmp.picture->resize (face->glyph->bitmap.width, face->glyph->bitmap.rows);  
@@ -144,21 +144,21 @@ void atk_font::close ()
 }
 
 
-void atk_font::copy_bitmap_to_image (u_int8 * bitmap_data, image * dest)
+void atk_font::copy_bitmap_to_image (u_int8 * bitmap_data, gfx::image * dest)
 {
     u_int8 * pbmp = bitmap_data; 
 
     
     dest->lock ();
 
-    u_int32 pixelcol = screen::display.map_color (r, g, b); 
+    u_int32 pixelcol = gfx::screen::display.map_color (r, g, b); 
     
     for (int j = 0; j < dest->height (); j++)
         for (int i = 0; i < dest->length () ; i++)
         {
             if (*pbmp > 128) 
                 dest->put_pix (i, j, pixelcol); 
-            else dest->put_pix (i, j, screen::trans_col ()); 
+            else dest->put_pix (i, j, gfx::screen::trans_col ()); 
             pbmp++; 
         } 
     dest->unlock ();  
@@ -172,7 +172,7 @@ void atk_font::info ()
     std::cout << "Fixed size : " << face->num_fixed_sizes << std::endl;  
 }
  
-void atk_font::draw (const std::string & text, s_int32 x, s_int32 y, drawing_area * da = NULL, surface * target = NULL)
+void atk_font::draw (const std::string & text, s_int32 x, s_int32 y, gfx::drawing_area * da, gfx::surface * target)
 {
     s_int32 tmp_x = x; 
     y+= size;

@@ -47,7 +47,7 @@ void atk_container::set_border_ui (atk_border_template * bd_tmp)
   ((atk_border_ui*)object_ui_)->set_border (bd_tmp); 
 }
 
-bool atk_container::draw (drawing_area * da = NULL, surface * sf = NULL)
+bool atk_container::draw (gfx::drawing_area * da, gfx::surface * sf)
 {
   if (atk_widget::draw (da, sf) )
     {

@@ -68,7 +68,7 @@ atk_fixed::~atk_fixed ()
 }
 
 
-bool atk_fixed::draw (drawing_area * da = NULL, surface * sf = NULL)
+bool atk_fixed::draw (gfx::drawing_area * da, gfx::surface * sf)
 {    
   if (atk_container::draw (da, sf))
     {

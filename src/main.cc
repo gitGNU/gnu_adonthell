@@ -1,14 +1,14 @@
-#include "landmap.h"
-#include "animation.h"
+#include "map/landmap.h"
+#include "gfx/animation.h"
 #include "gametime.h"
-#include "input_manager.h"
+#include "input/manager.h"
 
 class game_client
 {
 public:
-    landmap lmap;
-    map_character_with_gfx  * mchar;
-    map_character_with_gfx  * mchar2;
+    map::landmap lmap;
+    map::character_with_gfx  * mchar;
+    map::character_with_gfx  * mchar2;
     bool letsexit;
     bool draw_grid;
 
@@ -18,56 +18,56 @@ public:
         draw_grid = false;
     }
 
-    int control_func(input_event * ev)
+    int control_func(input::event * ev)
     {
-        control_event * cev = (control_event *)ev;
+        input::control_event * cev = (input::control_event *)ev;
 
-        if (cev->type() == control_event::BUTTON_PUSHED)
+        if (cev->type() == input::control_event::BUTTON_PUSHED)
         {
-            if (cev->button() == control_event::A_BUTTON)
+            if (cev->button() == input::control_event::A_BUTTON)
             {
                 mchar->run();
             }            
-            if (cev->button() == control_event::B_BUTTON)
+            if (cev->button() == input::control_event::B_BUTTON)
             {
                 mchar->jump();
             }            
-            if (cev->button() == control_event::LEFT_BUTTON)
+            if (cev->button() == input::control_event::LEFT_BUTTON)
             {
                 mchar->add_direction(mchar->WEST);
             }
-            if (cev->button() == control_event::RIGHT_BUTTON)
+            if (cev->button() == input::control_event::RIGHT_BUTTON)
             {
                 mchar->add_direction(mchar->EAST);
             }
-            if (cev->button() == control_event::UP_BUTTON)
+            if (cev->button() == input::control_event::UP_BUTTON)
             {
                 mchar->add_direction(mchar->NORTH);
             }
-            if (cev->button() == control_event::DOWN_BUTTON)
+            if (cev->button() == input::control_event::DOWN_BUTTON)
             {
                 mchar->add_direction(mchar->SOUTH);
             }            
         }
         else
         {
-            if (cev->button() == control_event::A_BUTTON)
+            if (cev->button() == input::control_event::A_BUTTON)
             {
                 mchar->walk();
             }            
-            if (cev->button() == control_event::LEFT_BUTTON)
+            if (cev->button() == input::control_event::LEFT_BUTTON)
             {
                 mchar->remove_direction(mchar->WEST);
             }
-            if (cev->button() == control_event::RIGHT_BUTTON)
+            if (cev->button() == input::control_event::RIGHT_BUTTON)
             {
                 mchar->remove_direction(mchar->EAST);
             }
-            if (cev->button() == control_event::UP_BUTTON)
+            if (cev->button() == input::control_event::UP_BUTTON)
             {
                 mchar->remove_direction(mchar->NORTH);
             }
-            if (cev->button() == control_event::DOWN_BUTTON)
+            if (cev->button() == input::control_event::DOWN_BUTTON)
             {
                 mchar->remove_direction(mchar->SOUTH);
             }            
@@ -77,62 +77,62 @@ public:
         return 1;
     }
     
-    int callback_func(input_event * ev)
+    int callback_func(input::event * ev)
     {
-        keyboard_event * kev = (keyboard_event *)ev;
+        input::keyboard_event * kev = (input::keyboard_event *)ev;
 
-        if (kev->type() == keyboard_event::KEY_PUSHED)
+        if (kev->type() == input::keyboard_event::KEY_PUSHED)
         {
-            if (kev->key() == keyboard_event::ESCAPE_KEY)
+            if (kev->key() == input::keyboard_event::ESCAPE_KEY)
             {
                 letsexit = true;
             }            
-            if (kev->key() == keyboard_event::G_KEY)
+            if (kev->key() == input::keyboard_event::G_KEY)
             {
                 draw_grid = !draw_grid;
             }            
-            if (kev->key() == keyboard_event::O_KEY)
+            if (kev->key() == input::keyboard_event::O_KEY)
             {
                 lmap.output_occupation();
             }            
 
-            if (kev->key() == keyboard_event::J_KEY)
+            if (kev->key() == input::keyboard_event::J_KEY)
             {
                 mchar2->add_direction(mchar2->SOUTH);
             }            
-            if (kev->key() == keyboard_event::U_KEY)
+            if (kev->key() == input::keyboard_event::U_KEY)
             {
                 mchar2->add_direction(mchar2->NORTH);
             }            
-            if (kev->key() == keyboard_event::H_KEY)
+            if (kev->key() == input::keyboard_event::H_KEY)
             {
                 mchar2->add_direction(mchar2->WEST);
             }            
-            if (kev->key() == keyboard_event::K_KEY)
+            if (kev->key() == input::keyboard_event::K_KEY)
             {
                 mchar2->add_direction(mchar2->EAST);
             }            
         }
         else
         {
-            if (kev->key() == keyboard_event::R_KEY)
+            if (kev->key() == input::keyboard_event::R_KEY)
             {
                 mchar->walk();
             }            
 
-            if (kev->key() == keyboard_event::J_KEY)
+            if (kev->key() == input::keyboard_event::J_KEY)
             {
                 mchar2->remove_direction(mchar2->SOUTH);
             }            
-            if (kev->key() == keyboard_event::U_KEY)
+            if (kev->key() == input::keyboard_event::U_KEY)
             {
                 mchar2->remove_direction(mchar2->NORTH);
             }            
-            if (kev->key() == keyboard_event::H_KEY)
+            if (kev->key() == input::keyboard_event::H_KEY)
             {
                 mchar2->remove_direction(mchar2->WEST);
             }            
-            if (kev->key() == keyboard_event::K_KEY)
+            if (kev->key() == input::keyboard_event::K_KEY)
             {
                 mchar2->remove_direction(mchar2->EAST);
             }            
@@ -146,138 +146,138 @@ public:
         lmap.resize (16, 12);
         
         // Adding the map characters
-        mchar = (map_character_with_gfx *)lmap.add_map_character();
+        mchar = (map::character_with_gfx *)lmap.add_character();
         mchar->load("adontest/chrono.mdl");
         mchar->set_speed(1.0);
         mchar->set_position(6, 8);
         mchar->set_limits(16,12);
 
         // Quick fix for the character size.
-        for (map_placeable::iterator it = mchar->begin(); it != mchar->end(); ++it)
+        for (map::placeable::iterator it = mchar->begin(); it != mchar->end(); ++it)
             it->second.zsize += 5;
 
         // Adding map objects
-        map_object_with_gfx * mobj;
+        map::object_with_gfx * mobj;
         
-        mobj = (map_object_with_gfx *)lmap.add_map_object();
+        mobj = (map::object_with_gfx *)lmap.add_object();
         mobj->load("adontest/tree.mobj");
         
-        mobj = (map_object_with_gfx *)lmap.add_map_object();
+        mobj = (map::object_with_gfx *)lmap.add_object();
         mobj->load("adontest/sandy.mobj");
 
-        mobj = (map_object_with_gfx *)lmap.add_map_object();
+        mobj = (map::object_with_gfx *)lmap.add_object();
         mobj->load("adontest/rug.mobj");
         
-        mobj = (map_object_with_gfx *)lmap.add_map_object();
+        mobj = (map::object_with_gfx *)lmap.add_object();
         mobj->load("adontest/platform.mobj");
         
-        mobj = (map_object_with_gfx *)lmap.add_map_object();
+        mobj = (map::object_with_gfx *)lmap.add_object();
         mobj->load("adontest/pillar_l.mobj");
         
-        mobj = (map_object_with_gfx *)lmap.add_map_object();
+        mobj = (map::object_with_gfx *)lmap.add_object();
         mobj->load("adontest/pillar_r.mobj");
         
         
-        map_coordinates mc;
+        map::coordinates mc;
         
         for (int i = 0; i < lmap.length(); i++)
             for (int j = 0; j < lmap.height(); j++)
             {
-                map_coordinates mc(i, j, 0, 0, 0);
-                lmap.put_map_object(1, mc); 
+                map::coordinates mc(i, j, 0, 0, 0);
+                lmap.put_object(1, mc); 
             }
         
         mc.set_position(10, 5);
-        lmap.put_map_object(4, mc); 
+        lmap.put_object(4, mc); 
         mc.set_position(11, 5);
-        lmap.put_map_object(5, mc); 
+        lmap.put_object(5, mc); 
         mc.set_position(10, 3);
-        lmap.put_map_object(4, mc); 
+        lmap.put_object(4, mc); 
         mc.set_position(11, 3);
-        lmap.put_map_object(5, mc); 
+        lmap.put_object(5, mc); 
 
         for (int i = 10; i < 12; i++)
             for (int j = 4; j < 6; j++)
             {
-                map_coordinates mc(i, j, 40);
-                lmap.put_map_object(3, mc); 
+                map::coordinates mc(i, j, 40);
+                lmap.put_object(3, mc); 
             }
         
         mc.set_position(7, 6);
-        lmap.put_map_object(4, mc); 
+        lmap.put_object(4, mc); 
         mc.set_altitude(40);
-        lmap.put_map_object(4, mc); 
+        lmap.put_object(4, mc); 
         mc.set_position(7, 3);
         mc.set_altitude(0);
-        lmap.put_map_object(4, mc); 
+        lmap.put_object(4, mc); 
         mc.set_altitude(40);
-        lmap.put_map_object(4, mc); 
+        lmap.put_object(4, mc); 
         
         mc.set_altitude(0);
         mc.set_position(8, 6);
-        lmap.put_map_object(5, mc); 
+        lmap.put_object(5, mc); 
         mc.set_altitude(40);
-        lmap.put_map_object(5, mc); 
+        lmap.put_object(5, mc); 
         mc.set_position(8, 3);
         mc.set_altitude(0);
-        lmap.put_map_object(5, mc); 
+        lmap.put_object(5, mc); 
         mc.set_altitude(40);
-        lmap.put_map_object(5, mc); 
+        lmap.put_object(5, mc); 
         
         for (int i = 7; i < 9; i++)
             for (int j = 4; j < 7; j++)
             {
-                map_coordinates mc(i, j, 80);
-                lmap.put_map_object(3, mc); 
+                map::coordinates mc(i, j, 80);
+                lmap.put_object(3, mc); 
             }
         
         for (int i = 0; i < 13; i++)
         {
-            map_coordinates mc(i + 1, 9, 5 * (i + 1));
-            lmap.put_map_object(3, mc); 
+            map::coordinates mc(i + 1, 9, 5 * (i + 1));
+            lmap.put_object(3, mc); 
         }        
     }
 };
 
 int main(int argc, char * argv[]) 
 {
-    screen::init (); 
-    screen::set_video_mode(640, 480);
+    gfx::screen::init (); 
+    gfx::screen::set_video_mode(640, 480);
 
-    input_manager::init();
+    input::manager::init();
 
-    input_listener il;
+    input::listener il;
 
-    input_manager::add(&il);
+    input::manager::add(&il);
 
     
-    control_event::map_keyboard_key(keyboard_event::LCTRL_KEY, control_event::A_BUTTON);
-    control_event::map_keyboard_key(keyboard_event::R_KEY, control_event::A_BUTTON);
-    control_event::map_joystick_button(0, joystick_event::BUTTON_0, control_event::A_BUTTON);
-    control_event::map_mouse_button(mouse_event::RIGHT_BUTTON, control_event::A_BUTTON);
+    input::control_event::map_keyboard_key(input::keyboard_event::LCTRL_KEY, input::control_event::A_BUTTON);
+    input::control_event::map_keyboard_key(input::keyboard_event::R_KEY, input::control_event::A_BUTTON);
+    input::control_event::map_joystick_button(0, input::joystick_event::BUTTON_0, input::control_event::A_BUTTON);
+    input::control_event::map_mouse_button(input::mouse_event::RIGHT_BUTTON, input::control_event::A_BUTTON);
 
-    control_event::map_keyboard_key(keyboard_event::E_KEY, control_event::B_BUTTON);
-    control_event::map_joystick_button(0, joystick_event::BUTTON_1, control_event::B_BUTTON);
+    input::control_event::map_keyboard_key(input::keyboard_event::E_KEY, input::control_event::B_BUTTON);
+    input::control_event::map_joystick_button(0, input::joystick_event::BUTTON_1, input::control_event::B_BUTTON);
 
-    control_event::map_keyboard_key(keyboard_event::UP_KEY, control_event::UP_BUTTON);
-    control_event::map_keyboard_key(keyboard_event::DOWN_KEY, control_event::DOWN_BUTTON);
-    control_event::map_keyboard_key(keyboard_event::LEFT_KEY, control_event::LEFT_BUTTON);
-    control_event::map_keyboard_key(keyboard_event::RIGHT_KEY, control_event::RIGHT_BUTTON);
+    input::control_event::map_keyboard_key(input::keyboard_event::UP_KEY, input::control_event::UP_BUTTON);
+    input::control_event::map_keyboard_key(input::keyboard_event::DOWN_KEY, input::control_event::DOWN_BUTTON);
+    input::control_event::map_keyboard_key(input::keyboard_event::LEFT_KEY, input::control_event::LEFT_BUTTON);
+    input::control_event::map_keyboard_key(input::keyboard_event::RIGHT_KEY, input::control_event::RIGHT_BUTTON);
 
-    control_event::map_joystick_button(0, joystick_event::AXIS1_FORE, control_event::UP_BUTTON);
-    control_event::map_joystick_button(0, joystick_event::AXIS1_BACK, control_event::DOWN_BUTTON);
-    control_event::map_joystick_button(0, joystick_event::AXIS0_FORE, control_event::LEFT_BUTTON);
-    control_event::map_joystick_button(0, joystick_event::AXIS0_BACK, control_event::RIGHT_BUTTON);
+    input::control_event::map_joystick_button(0, input::joystick_event::AXIS1_FORE, input::control_event::UP_BUTTON);
+    input::control_event::map_joystick_button(0, input::joystick_event::AXIS1_BACK, input::control_event::DOWN_BUTTON);
+    input::control_event::map_joystick_button(0, input::joystick_event::AXIS0_FORE, input::control_event::LEFT_BUTTON);
+    input::control_event::map_joystick_button(0, input::joystick_event::AXIS0_BACK, input::control_event::RIGHT_BUTTON);
 
     game_client gc;
 
-    Functor1wRet<input_event *, int> fwr;
+    Functor1wRet<input::event *, int> fwr;
     fwr = makeFunctor(&fwr, gc, &game_client::control_func);
-    il.connect_function(input_event::CONTROL_EVENT, 
+    il.connect_function(input::event::CONTROL_EVENT, 
                         fwr);
 
     fwr = makeFunctor(&fwr, gc, &game_client::callback_func);
-    il.connect_function(input_event::KEYBOARD_EVENT, 
+    il.connect_function(input::event::KEYBOARD_EVENT, 
                         fwr);
 
     gc.create_map();
@@ -288,11 +288,11 @@ int main(int argc, char * argv[])
         
         for (int i = 0; i < gametime::frames_to_skip (); i++) 
         {
-            input_manager::update();
+            input::manager::update();
             gc.lmap.update();
         }
 
-        list <mapsquare_info> drawqueue; 
+        std::list <map::square_info> drawqueue; 
 
         // Rendering phase        
         for (j = 0; j < gc.lmap.height (); j++)
@@ -300,8 +300,8 @@ int main(int argc, char * argv[])
 
             for (i = 0; i < gc.lmap.length (); i++) 
             {
-                mapsquare * sq = gc.lmap.get (i, j); 
-                mapsquare::iterator it = sq->end();
+                map::square * sq = gc.lmap.get (i, j); 
+                map::square::iterator it = sq->end();
                 while (it != sq->begin())
                 {
                     --it;
@@ -329,21 +329,21 @@ int main(int argc, char * argv[])
 
         drawqueue.sort();
             
-        for (list <mapsquare_info>::iterator it = drawqueue.begin ();
+        for (std::list <map::square_info>::iterator it = drawqueue.begin ();
              it != drawqueue.end (); it++)
         {
             switch ((*it).obj->type ()) 
             {
-                case CHARACTER:
-                    ((map_character_with_gfx *)
-                     (*it).obj)->draw ((*it).x () * mapsquare_size + (*it).ox (),
-                                       (*it).y () * mapsquare_size + (*it).oy ());
+                case map::CHARACTER:
+                    ((map::character_with_gfx *)
+                     (*it).obj)->draw ((*it).x () * map::square_size + (*it).ox (),
+                                       (*it).y () * map::square_size + (*it).oy ());
                     break; 
                     
-                case OBJECT:
-                    ((map_object_with_gfx *)
-                     (*it).obj)->draw ((*it).x () * mapsquare_size + (*it).ox (),
-                                       (*it).y () * mapsquare_size + (*it).oy () - (*it).z());
+                case map::OBJECT:
+                    ((map::object_with_gfx *)
+                     (*it).obj)->draw ((*it).x () * map::square_size + (*it).ox (),
+                                       (*it).y () * map::square_size + (*it).oy () - (*it).z());
                     break;
                     
                 default:
@@ -357,18 +357,18 @@ int main(int argc, char * argv[])
         
         if (gc.draw_grid)
         {
-            for (i = 0; i < screen::length (); i += mapsquare_size) 
-                screen::display.fillrect (i, 0, 1, screen::height (), 0xFFFF00); 
-            for (i = 0; i < screen::height (); i += mapsquare_size) 
-                screen::display.fillrect (0, i, screen::length (), 1, 0xFFFF00); 
+            for (i = 0; i < gfx::screen::length (); i += map::square_size) 
+                gfx::screen::display.fillrect (i, 0, 1, gfx::screen::height (), 0xFFFF00); 
+            for (i = 0; i < gfx::screen::height (); i += map::square_size) 
+                gfx::screen::display.fillrect (0, i, gfx::screen::length (), 1, 0xFFFF00); 
         }
 
         gametime::update (); 
-        screen::show ();
-        screen::clear (); 
+        gfx::screen::show ();
+        gfx::screen::clear (); 
     }
     
-    input_manager::cleanup();
+    input::manager::cleanup();
     
     return 0; 
 }
