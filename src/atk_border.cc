@@ -19,7 +19,7 @@
 atk_border::atk_border (atk_container * ac) : container_ (ac), btempl_ (NULL) 
 {    
     /*init tab */
-    for (int i = 0; i < 8; i++)
+    for (int i = 0; i < atk_border_template::_LAST; i++)
     {
         img_[i] = NULL; 
         imgbright_[i] = NULL; 
@@ -57,7 +57,7 @@ void atk_border::set_border (atk_border_template * bt)
 
 void atk_border::clear ()
 {
-    for (int i = 0; i < 8; i++)
+    for (int i = 0; i < atk_border_template::_LAST; i++)
     {
         delete img_[i];
         img_[i] = NULL;
@@ -72,6 +72,11 @@ atk_border_template * atk_border::get_template () const
 {
     return btempl_; 
 }
+
+
+
+
+
 
 
 

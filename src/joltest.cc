@@ -10,15 +10,18 @@
 #include "atk_fixed.h"
 #include "atk_manager.h"
 #include "atk_window.h"
+#include "atk_border_template.h"
+#include "atk_theme.h"
 #include "gametime.h"
 
 
 int main (int argc, char * argv[]) 
 {
+
     screen::init ();
     screen::set_video_mode (640, 480, 16); 
     screen::clear (); 
-    
+    /*
     
     atk_manager manager;  
     
@@ -90,6 +93,7 @@ int main (int argc, char * argv[])
 
     input_manager::cleanup();
     
+  */
     
     /* 
        atk_font font;     
@@ -177,7 +181,66 @@ int main (int argc, char * argv[])
     
     delete box; 
 */
+
+    /**
+     * SAVE A THEME
+     */
+    /*
+      atk_theme theme;
+    theme.set_name ("silverleaf");
+    
+    atk_border_template *  border;
+    border =  new atk_border_template; 
+    border->set_name ("mini"); 
+    border->set (atk_border_template::B_TOP, "silverleaf/mini/h_border.pnm");
+    border->set (atk_border_template::B_BOTTOM, "silverleaf/mini/h_border.pnm");
+    border->set (atk_border_template::B_LEFT, "silverleaf/mini/v_border.pnm");
+    border->set (atk_border_template::B_RIGHT, "silverleaf/mini/v_border.pnm");
+    border->set (atk_border_template::C_TL, "silverleaf/mini/corner_top_left.pnm");
+    border->set (atk_border_template::C_TR, "silverleaf/mini/corner_top_right.pnm");
+    border->set (atk_border_template::C_BL, "silverleaf/mini/corner_bottom_left.pnm");
+    border->set (atk_border_template::C_BR, "silverleaf/mini/corner_bottom_right.pnm");
+    border->set (atk_border_template::C_EXIT, "silverleaf/mini/corner_top_left.pnm");
+    border->set (atk_border_template::C_RESIZE, "silverleaf/mini/corner_bottom_right.pnm");
+    theme.add_border (border);
+    
+    border =  new atk_border_template; 
+    border->set_name ("normal"); 
+    border->set (atk_border_template::B_TOP, "silverleaf/normal/h_border.pnm");
+    border->set (atk_border_template::B_BOTTOM, "silverleaf/normal/h_border.pnm");
+    border->set (atk_border_template::B_LEFT, "silverleaf/normal/v_border.pnm");
+    border->set (atk_border_template::B_RIGHT, "silverleaf/normal/v_border.pnm");
+    border->set (atk_border_template::C_TL, "silverleaf/normal/corner_top_left.pnm");
+    border->set (atk_border_template::C_TR, "silverleaf/normal/corner_top_right.pnm");
+    border->set (atk_border_template::C_BL, "silverleaf/normal/corner_bottom_left.pnm");
+    border->set (atk_border_template::C_BR, "silverleaf/normal/corner_bottom_right.pnm");
+    border->set (atk_border_template::C_EXIT, "silverleaf/normal/corner_top_left.pnm");
+    border->set (atk_border_template::C_RESIZE, "silverleaf/normal/corner_bottom_right.pnm");
+    theme.add_border (border); 
+
+    
+    theme.save ("adontest/silverleaf.theme"); 
+
+    theme.display_info (); 
+    
+    */
+    
+    /**
+     * load a theme
+     **/
+    
+      atk_theme theme;
+
+      theme.load ("adontest/original.theme");  
+      theme.display_info (); 
+
+      std::cout << "\n\nLoad another theme\n\n"; 
+      
+      theme.load ("adontest/silverleaf.theme");
+      theme.display_info (); 
+
     return 0; 
+    
 }
 
 

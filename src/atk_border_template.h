@@ -42,14 +42,28 @@ public :
     /**
      * read a stream to load image
      */
-    void load (igzstream is);  
+    void load (igzstream & is);  
     
     
     /**
      * write image into the stream
      */
-    void save (ogzstream os); 
+    void save (ogzstream & os); 
 
+
+    
+    /**
+     * get name of the border
+     * @return name of the border
+     */
+    std::string get_name () const;
+
+
+    /**
+     * set name of the border
+     * @param name :  name of the border
+     */
+    void set_name (const std::string & name); 
     
     
     /**
@@ -59,6 +73,27 @@ public :
      */
     image * get (u_int8);
 
+
+    /**
+     * set a image
+     * @param type of the image (corner,  border ...)
+     * @param img :  the image
+     */
+    void set (u_int8 type, image * img);  
+
+    
+    /**
+     * set a image
+     * @param type of the image (corner,  border ...)
+     * @param filename : filename of the image (filename must be only a pnm file) 
+     */
+    void set (u_int8 type, std::string filename);  
+
+
+    /**
+     * write in standart ouput border information 
+     */
+    void display_info () const;
     
 
     /**
@@ -69,10 +104,10 @@ public :
     /** type enum of border possible */
     typedef enum
         {
-            BORDER_TOP = 0, BORDER_BOTTOM, BORDER_LEFT, BORDER_RIGHT,
-            CORNER_TL, CORNER_TR, CORNER_BL, CORNER_BR
+            B_TOP = 0, B_BOTTOM, B_LEFT, B_RIGHT,
+            C_TL, C_TR, C_BL, C_BR, C_EXIT,  C_RESIZE, _LAST
         } border_type;
-    
+   
 protected :
 
     
@@ -83,11 +118,18 @@ protected :
     
     
     /* a tab with image */
-    image * img_[8]; 
-    
+    image * img_[_LAST]; 
+
+
+    /* name of the border */
+    std::string name_; 
 private : 
     
 }; 
 
 
 #endif
+
+
+
+

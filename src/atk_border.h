@@ -84,10 +84,10 @@ private :
     atk_border_template * btempl_; 
 
     /* image with no brightness */
-    image * img_[8];
+    image * img_[atk_border_template::_LAST];
 
     /* image with brightness */
-    image * imgbright_[8];
+    image * imgbright_[atk_border_template::_LAST];
 
     /* image use to draw */
     image ** imguse_; 
