@@ -19,11 +19,13 @@
 #include <list>
 
 class image;
+class animation;
 class win_write;
 class win_label;
 class win_font;
 class win_border;
 class win_image;
+class win_anim;
 class drawing_area;
 class win_background;
 class win_scrollbar;
@@ -37,6 +39,7 @@ class win_container : public win_base
   list<win_write *> l_write; //write list
   list<win_container *> l_container; //container list
   list<win_image *> l_image; //image list
+  list<win_anim *> l_anim; //animation list
   
   // DATA TO SCROLLBAR
   s_int16 cur_pos_scrollbar;
@@ -79,12 +82,16 @@ class win_container : public win_base
   
   //it's to create an win_image (x,y, and pointer to image)
   win_image * add_image(s_int16,s_int16,image *);
+
+  //it's to create an win_anim (x,y, and pointer to animation)
+  win_anim * add_anim(s_int16,s_int16,animation *);
   
   //used to remove object like win_label,win_write,win_container,win_image
   void remove(win_label *);
   void remove(win_write *);
   void remove(win_container *);
   void remove(win_image *);
+  void remove(win_anim *);
   
   //used to draw all object of this container
   void draw();
@@ -125,13 +132,3 @@ class win_container : public win_base
 };
 
 #endif
-
-
-
-
-
-
-
-
-
-

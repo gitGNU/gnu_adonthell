@@ -19,6 +19,7 @@
 #include <list>
 
 class win_image;
+class win_anim;
 class win_label;
 class win_write;
 class win_container;
@@ -32,6 +33,7 @@ class Type_win_select{
 
  public:
   win_image * img;
+  win_anim * anm;
   win_label * lab;
   win_write * wri;
   win_container * con;
@@ -49,6 +51,7 @@ class Type_win_select{
   
   //constructor for each object
   Type_win_select(win_image * p,win_select *,u_int8 m);
+  Type_win_select(win_anim * p,win_select *,u_int8 m);
   Type_win_select(win_label * p,win_select *,u_int8 m);
   Type_win_select(win_write * p,win_select *,u_int8 m);
   Type_win_select(win_container * p,win_select *,u_int8 m);
@@ -103,12 +106,14 @@ class win_select
   void add(win_label *,u_int8 m=WIN_SELECT_MODE_BRIGHTNESS);
   void add(win_write *,u_int8 m=WIN_SELECT_MODE_BRIGHTNESS);
   void add(win_image *,u_int8 m=WIN_SELECT_MODE_BRIGHTNESS);
+  void add(win_anim *,u_int8 m=WIN_SELECT_MODE_BRIGHTNESS);
   void add(win_container *,u_int8 m=WIN_SELECT_MODE_BORDER);
   
   //Method used to remove object
   void remove(win_label *);
   void remove(win_write *);
   void remove(win_image *);
+  void remove(win_anim *);
   void remove(win_container*);
 
   //change position to next object and return this pointer 

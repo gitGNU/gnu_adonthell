@@ -31,6 +31,7 @@
 #include "win_write.h"
 #include "win_border.h"
 #include "win_image.h"
+#include "win_anim.h"
 #include "win_container.h"
 #include "win_select.h"
 
@@ -72,11 +73,15 @@ class animation_frame
 #ifdef _EDIT_
   friend class animedit;
 #endif
+
+  friend class win_anim;
 };
 
 class animation
 {
 #ifdef _DEBUG_
+  static u_int16 a_d_diff;
+#else ifdef _EDIT_
   static u_int16 a_d_diff;
 #endif
 
@@ -105,7 +110,9 @@ class animation
   image * t_frame;
   animation_frame * frame;
 
+  void init();
   animation();
+  void clear();
   ~animation();
 
   void update();
@@ -114,9 +121,14 @@ class animation
   void play();
   void stop();
   void rewind();
-  void draw(u_int16 x, u_int16 y);
+  void draw(u_int16 x, u_int16 y, drawing_area * da_opt=NULL);
   s_int8 get(SDL_RWops * file);
   s_int8 load(const char * fname);
+
+  // Perform a zoom from the size of the currentframe of src to sx,sy.
+  // All the other frame's sizes are adjusted from src->currentframe.
+  void zoom(u_int16 sx, u_int16 sy, animation * src);
+
 #ifdef _EDIT_
   s_int8 put(SDL_RWops * file);
   s_int8 save(const char * fname);
@@ -145,5 +157,7 @@ class animation
   char * query_window(char * t_label);
 #endif
 
+  friend class win_anim;
 };
+
 #endif

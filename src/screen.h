@@ -52,6 +52,8 @@ class screen
   static void mouse_cursor_on();
   // Mouse cursor display functions.
 
+  static u_int16 get_width();
+  static u_int16 get_height();
 };
 
 #endif

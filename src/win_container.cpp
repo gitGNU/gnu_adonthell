@@ -23,6 +23,7 @@
 #include "win_label.h"
 #include "win_write.h"
 #include "win_image.h"
+#include "win_anim.h"
 #include "win_select.h"
 #include "win_container.h"
 
@@ -41,6 +42,9 @@ win_container::~win_container()
 
   list<win_image *>::iterator n=l_image.begin();
   while(n!=l_image.end()) delete *n++;
+
+  list<win_anim *>::iterator o=l_anim.begin();
+  while(o!=l_anim.end()) delete *o++;
 
   da->detach_drawing_area();
   delete da;
@@ -184,6 +188,9 @@ void win_container::update_da()
 
       list<win_image *>::iterator n=l_image.begin();
       while(n!=l_image.end()) (*n++)->update_da();
+
+      list<win_anim *>::iterator o=l_anim.begin();
+      while(o!=l_anim.end()) (*o++)->update_da();
     }
 }
 
@@ -226,6 +233,14 @@ win_image * win_container::add_image(s_int16 tx,s_int16 ty,image * tpic)
   return (tmp);
 }
 
+win_anim * win_container::add_anim(s_int16 tx,s_int16 ty,animation * tpic)
+{
+  win_anim * tmp = new win_anim(tx,ty,tpic,this);
+  l_anim.push_front(tmp);
+  is_object_max_y(ty+tmp->height);//for scrollbar
+  return (tmp);
+}
+
 void win_container::remove(win_label * tmp)
 {
   list<win_label *>::iterator i=l_label.begin();
@@ -258,6 +273,14 @@ void win_container::remove(win_image * tmp)
   find_obj_max_y();//for scrollbar
 }
 
+void win_container::remove(win_anim * tmp)
+{
+  list<win_anim *>::iterator i=l_anim.begin();
+  while(i!=l_anim.end() && tmp!=(*i)) i++;
+  if(i!=l_anim.end()) l_anim.erase(i);
+  find_obj_max_y();//for scrollbar
+}
+
 void win_container::draw()
 {
   if(visible)
@@ -274,6 +297,9 @@ void win_container::draw()
 
       list<win_image *>::iterator l=l_image.begin();
       while(l!=l_image.end()) (*l++)->draw();
+
+      list<win_anim *>::iterator m=l_anim.begin();
+      while(m!=l_anim.end()) (*m++)->draw();
       
       draw_scrollbar();
       draw_border();
@@ -295,6 +321,9 @@ void win_container::update()
 
       list<win_image *>::iterator l=l_image.begin();
       while(l!=l_image.end()) (*l++)->update();
+
+      list<win_anim *>::iterator m=l_anim.begin();
+      while(m!=l_anim.end()) (*m++)->update();
     }
 }
 
@@ -313,6 +342,9 @@ void win_container::show_all()
   
   list<win_image *>::iterator l=l_image.begin();
   while(l!=l_image.end()) (*l++)->show();      
+
+  list<win_anim *>::iterator m=l_anim.begin();
+  while(m!=l_anim.end()) (*m++)->show();      
 }
 
 
@@ -330,6 +362,9 @@ void win_container::hide_all()
      
   list<win_image *>::iterator l=l_image.begin();
   while(l!=l_image.end()) (*l++)->hide(); 
+
+  list<win_anim *>::iterator m=l_anim.begin();
+  while(m!=l_anim.end()) (*m++)->hide(); 
 }
 
 void win_container::resize(u_int16 tl,u_int16 th)
@@ -373,6 +408,10 @@ void win_container::up_scrollbar()
 
       list<win_image *>::iterator l=l_image.begin();
       while(l!=l_image.end()) {(*l)->move((*l)->x,(*l)->y+tmp,true);*l++;}
+
+      list<win_anim *>::iterator m=l_anim.begin();
+      while(m!=l_anim.end()) {(*m)->move((*m)->x,(*m)->y+tmp,true);*m++;}
+
       update_scrollbar_index();
     }
 }
@@ -403,6 +442,10 @@ void win_container::down_scrollbar()
       
       list<win_image *>::iterator l=l_image.begin();
       while(l!=l_image.end()) {(*l)->move((*l)->x,(*l)->y-tmp,true);*l++;}
+
+      list<win_anim *>::iterator m=l_anim.begin();
+      while(m!=l_anim.end()) {(*m)->move((*m)->x,(*m)->y-tmp,true);*m++;}
+
       update_scrollbar_index();
     }
 }

@@ -23,6 +23,7 @@
 #include "win_label.h"
 #include "win_write.h"
 #include "win_image.h"
+#include "win_anim.h"
 #include "win_container.h"
 #include "win_select.h"
 
@@ -38,6 +39,21 @@ Type_win_select::Type_win_select(win_image * p,win_select * ws,u_int8 m)
   
   if(m==WIN_SELECT_MODE_BORDER)
     n_border=img->get_border();
+  else n_border=NULL;
+}
+
+
+Type_win_select::Type_win_select(win_anim * p,win_select * ws,u_int8 m)
+{
+  anm=p;
+  anm->attach_select(ws);
+  anm->set_select_mode(m);
+  anm->save_position();
+  wselect=ws;
+  id=WIN_OBJ_ANIMATION;
+  
+  if(m==WIN_SELECT_MODE_BORDER)
+    n_border=anm->get_border();
   else n_border=NULL;
 }
 
@@ -106,6 +122,10 @@ void Type_win_select::select()
       if(img->get_select_mode()==WIN_SELECT_MODE_BORDER) img->set_border(wselect->cur_border);
       img->select();
       break;
+    case WIN_OBJ_ANIMATION:
+      if(anm->get_select_mode()==WIN_SELECT_MODE_BORDER) anm->set_border(wselect->cur_border);
+      anm->select();
+      break;
     case WIN_OBJ_CONTAINER:
       if(con->get_select_mode()==WIN_SELECT_MODE_BORDER) con->set_border(wselect->cur_border); 
       con->select();
@@ -130,6 +150,10 @@ void Type_win_select::unselect()
       if(img->get_select_mode()==WIN_SELECT_MODE_BORDER) img->set_border(NULL);
       img->unselect();
       break;
+    case WIN_OBJ_ANIMATION:
+      if(anm->get_select_mode()==WIN_SELECT_MODE_BORDER) anm->set_border(NULL);
+      anm->unselect();
+      break;
     case WIN_OBJ_CONTAINER:
       if(con->get_select_mode()==WIN_SELECT_MODE_BORDER) con->set_border(NULL);
       con->unselect();
@@ -149,6 +173,9 @@ void * Type_win_select::get()
       break;
     case WIN_OBJ_IMAGE:
       return(img);
+      break;
+    case WIN_OBJ_ANIMATION:
+      return(anm);
       break;
     case WIN_OBJ_CONTAINER:
       return(con);
@@ -172,6 +199,10 @@ Type_win_select::~Type_win_select()
     case WIN_OBJ_IMAGE:
       img->dettach_select();
       img->set_border(n_border);
+      break;
+    case WIN_OBJ_ANIMATION:
+      anm->dettach_select();
+      anm->set_border(n_border);
       break;
     case WIN_OBJ_CONTAINER:
       con->dettach_select();
@@ -218,6 +249,17 @@ s_int16 Type_win_select::get_y_move(win_container * wc)
 	   return ((wc->real_y+wc->height) - (img->real_y+img->height));
 
      break;
+   case WIN_OBJ_ANIMATION:
+     if(anm->real_y == wc->real_y || (anm->real_y>=wc->real_y && anm->real_y+anm->height <= wc->real_y + wc->height))
+       return 0;
+     else
+       if(anm->real_y < wc->real_y) 
+	 return (wc->real_y - anm->real_y);
+       else
+	 if(anm->real_y > wc->real_y+wc->height || anm->real_y+anm->height > wc->real_y+wc->height) 
+	   return ((wc->real_y+wc->height) - (anm->real_y+anm->height));
+
+     break;
    case WIN_OBJ_CONTAINER:
      if(con->real_y == wc->real_y || (con->real_y>=wc->real_y && con->real_y+con->height <= wc->real_y + wc->height))
        return 0;
@@ -246,6 +288,9 @@ switch(id)
     case WIN_OBJ_IMAGE:
       img->activate();
       break;
+    case WIN_OBJ_ANIMATION:
+      anm->activate();
+      break;
     case WIN_OBJ_CONTAINER:
       con->activate();
       break;
@@ -264,6 +309,9 @@ switch(id)
       break;
     case WIN_OBJ_IMAGE:
       img->move(img->x,img->y+tmp);;
+      break;
+    case WIN_OBJ_ANIMATION:
+      anm->move(anm->x,anm->y+tmp);;
       break;
     case WIN_OBJ_CONTAINER:
       con->move(con->x,con->y+tmp);;
@@ -340,6 +388,14 @@ void win_select::add(win_image *p, u_int8 m=0)
   ite_list=l_list.begin();
 }
 
+void win_select::add(win_anim *p, u_int8 m=0)
+{
+  Type_win_select * tmp=new Type_win_select(p,this,m);
+  l_list.push_back(*tmp);
+  tmp=NULL;
+  ite_list=l_list.begin();
+}
+
 void win_select::add(win_container *p,u_int8 m=1)
 {
   Type_win_select * tmp=new Type_win_select(p,this,m);
@@ -363,6 +419,13 @@ void win_select::remove(win_write * tmp)
 }
 
 void win_select::remove(win_image * tmp)
+{
+  list<Type_win_select>::iterator i=l_list.begin();
+  while(i!=l_list.end() && tmp!=i->get()) i++;
+  if(i!=l_list.end()) l_list.erase(i);
+}
+
+void win_select::remove(win_anim * tmp)
 {
   list<Type_win_select>::iterator i=l_list.begin();
   while(i!=l_list.end() && tmp!=i->get()) i++;

@@ -19,6 +19,8 @@
 
 #ifdef _DEBUG_
 u_int16 animation::a_d_diff=0;
+#else ifdef _EDIT_
+u_int16 animation::a_d_diff=0;
 #endif
 
 #ifdef _EDIT_
@@ -145,7 +147,7 @@ s_int8 animation_frame::save(const char * fname)
 }
 #endif
 
-animation::animation()
+void animation::init()
 {
   t_frame=NULL;
   frame=NULL;
@@ -180,15 +182,20 @@ animation::animation()
   container->set_border(border);
   container->show_all();
 #endif
+}
+
+animation::animation()
+{
+  init();
 #ifdef _DEBUG_
   cout << "animation() called, "<< ++a_d_diff
        << " objects currently allocated\n";
 #endif
 }
 
-animation::~animation()
+void animation::clear()
 {
-
+  
 #ifdef _EDIT_
   delete container;
   if(a_d_diff==1)
@@ -201,6 +208,11 @@ animation::~animation()
 
   delete[] t_frame;
   delete[] frame;
+}
+
+animation::~animation()
+{
+  clear();
 #ifdef _DEBUG_
   cout << "~animation() called, "<< --a_d_diff
        << " objects currently allocated\n";
@@ -245,7 +257,7 @@ void animation::rewind()
   speedcounter=0;
 }
 
-void animation::draw(u_int16 x, u_int16 y)
+void animation::draw(u_int16 x, u_int16 y, drawing_area * da_opt=NULL)
 {
 #ifdef _EDIT_
   if(!nbr_of_frames) return;
@@ -254,7 +266,7 @@ void animation::draw(u_int16 x, u_int16 y)
   t_frame[frame[currentframe].imagenbr].set_mask(frame[currentframe].is_masked);
   t_frame[frame[currentframe].imagenbr].set_alpha(frame[currentframe].alpha);
   
-  t_frame[frame[currentframe].imagenbr].draw(x,y);
+  t_frame[frame[currentframe].imagenbr].draw(x,y,da_opt);
 }
 
 s_int8 animation::get(SDL_RWops * file)
@@ -281,6 +293,25 @@ s_int8 animation::load(const char * fname)
   retvalue=get(file);
   SDL_RWclose(file);
   return(retvalue);
+}
+
+void animation::zoom(u_int16 sx, u_int16 sy, animation * src)
+{
+  static u_int16 i;
+  clear();
+  init();
+  nbr_of_images=src->nbr_of_images;
+  t_frame=new image[nbr_of_images];
+  for(i=0;i<nbr_of_images;i++)
+    {
+      t_frame[i].resize((src->t_frame[i].length*sx)/src->t_frame[src->frame[src->currentframe].imagenbr].length, (src->t_frame[i].height*sy)/src->t_frame[src->frame[src->currentframe].imagenbr].height);
+      t_frame[i].zoom(&src->t_frame[i]);
+    }
+  
+  nbr_of_frames=src->nbr_of_frames;
+  frame=new animation_frame[nbr_of_frames];
+  for(i=0;i<nbr_of_frames;i++)
+    frame[i]=src->frame[i]; 
 }
 
 #ifdef _EDIT_
@@ -344,7 +375,6 @@ void animation::info_window(char * t_label)
   while(input::get_next_key()<0);
   delete querycont;
   delete queryback;
-  delete queryborder;
   input::clear_keys_queue();
 }
 
@@ -373,7 +403,6 @@ char * animation::query_window(char * t_label)
       {
 	delete querycont;
 	delete queryback;
-	delete queryborder;
 	s=NULL;
 	return(s);
       }
@@ -387,7 +416,6 @@ char * animation::query_window(char * t_label)
   s=strdup(querywrite->get_text());
   delete querycont;
   delete queryback;
-  delete queryborder;
   cout << "Returning:" << s << endl;
   return(s);
 }
@@ -516,8 +544,9 @@ s_int8 animation::delete_image(u_int16 pos)
     t_frame[i]=oldt_frame[i+1];
   for(i=0;i<nbr_of_frames;i++)
     {
-      if(frame[i].imagenbr>pos) frame[i].imagenbr--;
-      if(frame[i].nextframe>pos) frame[i].nextframe--;
+      if((frame[i].imagenbr>=pos)&&(frame[i].imagenbr>0)) frame[i].imagenbr--;
+      if((frame[i].nextframe>=pos)&&(frame[i].nextframe>0)) 
+	frame[i].nextframe--;
     }
   delete[] oldt_frame;
   if(currentimage>=nbr_of_images) currentimage=nbr_of_images-1;

@@ -58,12 +58,8 @@ void win_image::draw()
 
 void win_image::update()
 {
- 
+
 }
-
-
-
-
 
 void win_image::attach_select(win_select * tmp)
 {
@@ -79,10 +75,3 @@ void win_image::dettach_select()
       wselect=NULL;
     }
 }
-
-
-
-
-
-
-

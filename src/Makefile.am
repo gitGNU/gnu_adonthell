@@ -8,7 +8,7 @@ image.cpp init.cpp input.cpp inventory.cpp \
 lex.prefs.cpp main.cpp map.cpp mapcharacter.cpp mapengine.cpp mapevent.cpp \
 mappattern.cpp mapsquare.cpp pnm.cpp prefs.cpp screen.cpp storage.cpp win_label.cpp \
 win_write.cpp win_container.cpp win_select.cpp win_friend.cpp win_border.cpp \
-win_image.cpp win_base.cpp win_font.cpp mapitem.cpp py_inc.cpp py_player_wrap.cpp \
+win_image.cpp win_anim.cpp win_base.cpp win_font.cpp mapitem.cpp py_inc.cpp py_player_wrap.cpp \
 py_mapengine_wrap.cpp yarg.cc event.cpp 
 
 py_player_wrap.cpp : py_player.i

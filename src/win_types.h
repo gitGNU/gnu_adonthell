@@ -65,7 +65,8 @@
 #define WIN_OBJ_LABEL 0
 #define WIN_OBJ_WRITE 1
 #define WIN_OBJ_IMAGE 2
-#define WIN_OBJ_CONTAINER 3
+#define WIN_OBJ_ANIMATION 3
+#define WIN_OBJ_CONTAINER 4
 
 //win_select
 #define WIN_SELECT_MODE_BRIGHTNESS 0

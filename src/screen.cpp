@@ -170,3 +170,13 @@ void screen::mouse_cursor_on()
 {
   SDL_ShowCursor(1);
 }
+
+u_int16 screen::get_width()
+{
+  return width;
+}
+
+u_int16 screen::get_height()
+{
+  return height;
+}
