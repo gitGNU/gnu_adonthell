@@ -57,16 +57,19 @@ void game::init(config &myconfig)
   // Test:
     // Load module
     PyObject *m = import_module ("player");
-        
+    Py_INCREF(m);
+    
     // Create a player
     player *myplayer = new player;
+    myplayer->name = "Player";
 
     // Add the player to the game objects
     objects::set ("the_player", myplayer);
 
     // Make "myplayer" available to the interpreter 
 	globals = PyModule_GetDict(m);
-    PyDict_SetItemString (globals, "the_player", pass_instance (m, myplayer, "player"));
+
+    PyDict_SetItemString (globals, "the_player", pass_instance (myplayer, "player"));
 }
 
 void game::cleanup()

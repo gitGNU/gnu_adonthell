@@ -103,19 +103,24 @@ new_arrow (MainFrame * wnd, GdkPoint point)
 
     // Add to Array 
     wnd->nodes.push_back (arrow);
-
     wnd->number++;
 
     // Not clicked on circle -> first create new circle 
     if (end == NULL)
     {
-        if (wnd->selected_node->type == NPC)
-            type = PLAYER;
-        else
-            type = NPC;
+        if (wnd->selected_node->type == NPC) type = PLAYER;
+        else type = NPC;
 
-        while (!new_circle (wnd, point, type));
-        end = wnd->nodes[wnd->number - 1];
+        // Action cancelled?
+        if (!new_circle (wnd, point, type))
+        {
+            wnd->nodes.pop_back ();
+            wnd->number--;
+            delete arrow;
+
+            return 0;
+        }
+        else end = wnd->nodes[wnd->number - 1];
     }
 
     // Now,  wnd -> selected_node  contains start-circle and  end  contains end-circle 

@@ -85,11 +85,12 @@ void enter_event::execute (event *e)
 {
     enter_event *t = (enter_event *) e;
 
-    // PyObject *locals = Py_BuildValue ("{s:i,s:i,s:i,s:i,s:s}", "posx", t->x, 
-    //    "posy", t->y, "dir", t->dir, "map", t->map, "name", t->c->name);
     PyObject *locals = Py_BuildValue ("{s:i,s:i,s:i,s:i,s:s}", "posx", t->x, 
-        "posy", t->y, "dir", t->dir, "map", t->map, "name", "Kai");
+        "posy", t->y, "dir", t->dir, "map", t->map, "name", t->c->name);
+    // PyObject *locals = Py_BuildValue ("{s:i,s:i,s:i,s:i,s:s}", "posx", t->x, 
+    //    "posy", t->y, "dir", t->dir, "map", t->map, "name", "Kai");
     PyEval_EvalCode (script, game::globals, locals);
+    Py_DECREF (locals);
 #ifdef _DEBUG_
     show_traceback ();
 #endif // _DEBUG_

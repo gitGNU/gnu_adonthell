@@ -18,6 +18,7 @@
 #include "types.h"
 #include "storage.h"
 #include "inventory.h"
+#include "python/compile.h" // -> python/compile.h
 #include <vector>
 
 
@@ -26,21 +27,28 @@ class character : public storage
 {
 public:
     char *name;                     // The character's name (and ID)
-    
+    u_int16 posx;                   // The x position on the (current?) map
+    u_int16 posy;                   // The y position
+        
 protected:
-    s_int32 type;                   // The characters type
+    s_int32 type;                   // The characters type (needed at all?)
 };
 
 // Representation of a NPC
 class npc : public character
 {
 public:
+    npc ();                         // Constructor
+
+    void set_schedule (char*);      // Set / change the active schedule
     void set_dialogue (u_int32);    // Set / change the active dialogue
     const char* talk ();            // Returns the active dialogue
-    
+    u_int8 move (u_int8);           // Run the active schedule
+        
 protected:
     vector<char*> dialogues;        // All the dialogues available to that NPC
     u_int32 active_dialogue;        // Dialogue to initiate when speaking to the NPC
+    PyCodeObject *schedule;         // The NPC's "behaviour" script
 };
 
 // The Player's main character

@@ -13,7 +13,16 @@
 */
 
 #include "character.h"
+#include "eval.h"
+#include "game.h"
+#include "py_inc.h"
 
+
+// Init NPC
+npc::npc ()
+{
+    schedule = NULL;
+}
 
 // Returns the active dialogue
 const char* npc::talk ()
@@ -25,4 +34,38 @@ const char* npc::talk ()
 void npc::set_dialogue (u_int32 dlg)
 {
     active_dialogue = dlg;
+}
+
+// Set/change active schedule
+void npc::set_schedule (char* file)
+{
+    if (schedule) Py_DECREF (schedule);
+
+    FILE *f = fopen (file, "r");
+
+    // See whether the script exists at all
+    if (f)
+    {
+        // Compile the script into a PyCodeObject for quicker execution
+        _node *n = PyParser_SimpleParseFile (f, file, Py_file_input);
+        if (n) schedule = PyNode_Compile (n, file);       
+        else
+        {
+            cout << "\n*** Cannot set " << name << "'s schedule: Error in" << flush;
+            show_traceback ();
+        }
+        fclose (f);
+    }
+    else cout << "\n*** Cannot set " << name << "'s schedule: file \"" << file
+              << "\" not found!" << flush;
+}
+
+u_int8 npc::move (u_int8 dir)
+{
+    PyObject *locals = Py_BuildValue ("{s:i,s:s}", "the_dir", dir, "name", name);
+    PyEval_EvalCode (schedule, game::globals, locals);
+#ifdef _DEBUG_
+    show_traceback ();
+#endif // _DEBUG_
+    return PyInt_AsLong (PyDict_GetItemString (locals, "the_dir"));
 }

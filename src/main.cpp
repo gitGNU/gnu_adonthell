@@ -167,7 +167,7 @@ int main(int argc, char * argv[])
     }
 
     game::init (myconfig);
-    
+
     if (map1->load (myconfig.mapname.data ())) 
     {
         printf("Error loading map %s!\n", myconfig.mapname.data ());

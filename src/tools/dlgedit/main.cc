@@ -20,6 +20,7 @@ class dialog;
 #include "../../types.h"
 #include "../../py_inc.h"
 #include "../../prefs.h"
+#include "../../game.h"
 #include "main.h"
 #include "graph.h"
 #include "interface.h"
@@ -61,21 +62,20 @@ main (int argc, char *argv[])
     objects::set ("the_player", MainWnd->myplayer);
 
     // Make "myplayer" available to the interpreter 
-	PyObject *d = PyModule_GetDict(m);
-    PyDict_SetItemString (d, "the_player", pass_instance (m, MainWnd->myplayer, "player"));
+	game::globals = PyModule_GetDict(m);
+    PyDict_SetItemString (game::globals, "the_player", pass_instance (MainWnd->myplayer, "player"));
 
     // this is just a hack, have to do it proper in the future:
-    PyDict_SetItemString (d, "FEMALE", PyInt_FromLong (0));
-    PyDict_SetItemString (d, "MALE",  PyInt_FromLong (1));
-    PyDict_SetItemString (d, "HUMAN", PyInt_FromLong (3));
-    PyDict_SetItemString (d, "ELF", PyInt_FromLong (1));
-    PyDict_SetItemString (d, "HALFELF", PyInt_FromLong (2));
-    PyDict_SetItemString (d, "DWARF", PyInt_FromLong (0));
+    PyDict_SetItemString (game::globals, "FEMALE", PyInt_FromLong (0));
+    PyDict_SetItemString (game::globals, "MALE",  PyInt_FromLong (1));
+    PyDict_SetItemString (game::globals, "HUMAN", PyInt_FromLong (3));
+    PyDict_SetItemString (game::globals, "ELF", PyInt_FromLong (1));
+    PyDict_SetItemString (game::globals, "HALFELF", PyInt_FromLong (2));
+    PyDict_SetItemString (game::globals, "DWARF", PyInt_FromLong (0));
 
     // Misc initialization
     init_app (MainWnd);
 
-    MainWnd->dict = d;
     MainWnd->wnd = NULL;
     MainWnd->text_dlg = NULL;
     MainWnd->pixmap = NULL;

@@ -41,7 +41,7 @@ protected:
     PyCodeObject *script;               // precompiled script
 
     virtual void execute (event*) = 0;  // execute the script
-    virtual bool equals (event*) = 0;   // compare to events for equality
+    virtual bool equals (event*) = 0;   // compare two events for equality
 };
 
 // To notify when a character entered a maptile

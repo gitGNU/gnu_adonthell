@@ -15,7 +15,7 @@
 #include <iostream>
 
 #include "Python.h"
-
+#include "game.h"
 #include "py_inc.h"
 
 /*
@@ -117,7 +117,7 @@ PyObject *import_module( char *filename )
 }
 
 // Make a C++ instance available to Python
-PyObject *pass_instance (PyObject *module, void *instance, const char *class_name)
+PyObject *pass_instance (void *instance, const char *class_name)
 {
     char class_ptr[256];
     char class_addr[256] = "_";
@@ -131,13 +131,12 @@ PyObject *pass_instance (PyObject *module, void *instance, const char *class_nam
     strcat (class_addr, buffer+2);
 
     // Now create the Python object corresponding to "instance"
-    PyObject *cls = PyObject_GetAttrString(module, class_ptr);
+    PyObject *cls = PyDict_GetItemString(game::globals, class_ptr);
     PyObject *arg = Py_BuildValue ("(s)", class_addr);
     PyObject *res = PyEval_CallObject (cls, arg);
 
     // Clean up
     Py_DECREF (arg);
-    Py_DECREF (cls);
 
     // Voila: "res" is 'identical' to "instance" :)
     return res;

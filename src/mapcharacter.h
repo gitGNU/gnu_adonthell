@@ -16,12 +16,13 @@
 #define _mapcharacter_h
 
 #include "image.h"
+#include "character.h"
 
 class landmap;
 class mapcharacter
 {
-  u_int16 posx;
-  u_int16 posy;
+  // u_int16 posx;
+  // u_int16 posy;
   s_int8 addx;
   s_int8 addy;
   u_int8 prevmovtype;
@@ -40,6 +41,7 @@ class mapcharacter
  public:
   image * frame;
   u_int16 currentframe;
+  character *data;
 
   mapcharacter();
   ~mapcharacter();

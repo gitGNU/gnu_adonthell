@@ -18,6 +18,7 @@
 #include "run.h"
 #include "run_interface.h"
 #include "../../dialog.h"
+#include "../../game.h"
 #include "../../py_inc.h"
 
 run_dlg::run_dlg (MainFrame *wnd)
@@ -42,7 +43,7 @@ run_dlg::run_dlg (MainFrame *wnd)
     if (wnd->pset_vars != "")    
     {
         char *tmp = strdup (wnd->pset_vars.c_str ());
-        PyRun_String (tmp, Py_file_input, wnd->dict, wnd->dict);
+        PyRun_String (tmp, Py_file_input, game::globals, game::globals);
         delete tmp;
     }
     
