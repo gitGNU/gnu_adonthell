@@ -52,14 +52,9 @@ void mapengine::run ()
 {
     //     static u_int32 cpt = 0;  
     letsexit = false;
-    win_container * ct = new win_container;
-    ct->move (0, 0);
-    ct->resize (mv.drawable::length (), mv.drawable::height ());
-    ct->add (&mv); 
-    ct->set_visible_all (true);
-    ct->set_visible (true);
+    mv.set_visible (true); 
     mv.pack (); 
-    win_manager::add (ct); 
+    win_manager::add (&mv); 
     gametime::start_action (); 
     while (!letsexit)
     {
@@ -77,9 +72,7 @@ void mapengine::run ()
         screen::show ();
         gametime::update (); 
     }
-    win_manager::remove (ct);
-    ct->remove (&mv);
-    delete ct; 
+    win_manager::remove (&mv);
 }
 
 void mapengine::mainloop ()

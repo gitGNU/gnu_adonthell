@@ -693,11 +693,13 @@ public:
 class win_manager
 {
  public:
-  static void add(win_container *);
+  static void add(win_base *);
+
+  static void add_after (win_base *, win_base *);
+    
+  static bool exist(win_base *);
   
-  static bool exist(win_container *);
-  
-  static void remove(win_container *);
+  static void remove(win_base *);
   
   static void update();
   
@@ -705,16 +707,16 @@ class win_manager
   
   static void draw();
   
-  static void set_focus(win_container*);
+  static void set_focus(win_base*);
   
   static void destroy();
 
 
  private:
   
-  static list<win_container *> lmanage;
+  static list<win_base *> lmanage;
   //static list<win_container *> ::iterator ilm;
-  static win_container * wc;
+  static win_base * wc;
 };
 
 

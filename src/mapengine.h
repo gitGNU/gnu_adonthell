@@ -35,9 +35,9 @@ public:
         return &lmap;
     }
 
-    mapview *get_mapview ()
+    win_mapview *get_mapview ()
     {
-        return (mapview*) &mv;
+        return &mv;
     }
 
     void run (); 
