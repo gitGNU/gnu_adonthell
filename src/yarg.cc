@@ -41,10 +41,11 @@ void yarg::init (char *str, int mn, int mx)
 void yarg::randomize ()
 {
     long int clk = clock ();
+  
 	int	s = sizeof (clk);
 
 	for (int i = 0; i < 16; i++)
-   		schieberegister[i] = schieberegister[i]^(clk >> (8 * i%s));
+   		schieberegister[i] = schieberegister[i]^(clk >> (8+i)%s);
 }
 
 // Retrieve the next/nth random number
@@ -76,7 +77,9 @@ int yarg::zufallszahl ()
     unsigned int zahl = 0;
 
 	for (int i = 0; i < 16; i++)
-   	    zahl += schieberegister[i] << (i*2);
+   	    zahl += schieberegister[i] << (i*8)%(sizeof(zahl)*8);
+
+    zahl = zahl >> 1;
 
     if (max == min) return max;
     else return (zahl%(max - min + 1)) + min;
