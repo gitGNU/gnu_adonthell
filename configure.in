@@ -6,10 +6,10 @@ AC_INIT(README)
 
 AM_CONFIG_HEADER(header.h)
 AM_INIT_AUTOMAKE(adonthell, 0.3pre1)
-AC_PREFIX_PROGRAM(gcc)
 
 CFLAGS="-O6 -g -Wall"
 LIBS="-lz -ldl"
+DEFS=""
 
 dnl Checks for programs.
 AC_PROG_CC
@@ -23,11 +23,24 @@ dnl Additional arguments
 dnl ********************
 
 AC_ARG_ENABLE(tools,
-[  --disable-tools         Only build the game engine [default=yes]],
+[  --enable-tools         Build the Adonthell dev tools (disabled by default)],
 	tools=$enableval, tools=no)
-AC_ARG_WITH(ogg, [  --with-ogg=DIR          Set where the Ogg library is located]) 
-AC_ARG_WITH(vorbis, [  --with-vorbis=DIR        Set where the Vorbis library is located]) 
+AC_ARG_ENABLE(memleaks,
+[  --enable-memleaks      Enable check for memory leaks (disabled by default)],
+	memleaks=$enableval, memleaks=no)
+AC_ARG_WITH(ogg,
+[  --with-ogg=DIR         Set where the Ogg library is located]) 
+AC_ARG_WITH(vorbis,
+[  --with-vorbis=DIR      Set where the Vorbis library is located]) 
 
+
+dnl **********************
+dnl Check for memory leaks
+dnl **********************
+
+if test x$memleaks = xyes; then
+    DEFS="$DEFS -DMEMORY_LEAKS"
+fi
 
 dnl ********************
 dnl Check for libraries.
@@ -265,6 +278,9 @@ fi
 echo Audio system ........ : $audio
 echo Ogg music ........... : $ogg_music
 echo Building editors .... : $tools
+if test x$memleaks = xyes; then
+echo Test for Memory Leaks : enabled
+fi
 echo
 echo "Now type 'make' to build Adonthell"
 echo "Afterwards, 'make install' will install Adonthell in $prefix/bin"

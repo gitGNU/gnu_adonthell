@@ -12,12 +12,20 @@
    See the COPYING file for more details.
 */
 
+#ifdef MEMORY_LEAKS
+#include <mcheck.h>
+#endif
+
 #include "game.h"
 #include "data.h"
 #include "py_inc.h"
 
 int main(int argc, char * argv[])
 {
+#ifdef MEMORY_LEAKS
+    mtrace ();
+#endif
+
     game the_game (argc, argv);
 
     // Init the game engine
