@@ -19,7 +19,7 @@ preset.h ps_callbacks.h ps_dlg.h ps_interface.h pset_callbacks.h \
 pset_interface.h run.h run_callbacks.h run_interface.h
 
 # Evil, but it works...
-CPPFLAGS +=-I../.. -D_DLGEDIT_ -D_DEBUG_ -D_VERSION_=\"0.7\" `gtk-config --cflags`
+CPPFLAGS +=-I../.. -D_DLGEDIT_ -D_VERSION_=\"0.7\" `gtk-config --cflags`
 
 SWIGFLAGS = -D_DLGEDIT_ -D_DEBUG_
 
