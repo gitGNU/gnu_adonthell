@@ -135,8 +135,12 @@ After compiling you have to set the $MALLOC_TRACE environment
 variable to any file. Running Adonthell will record debugging
 information in this file. Use 'mtrace adonthell $MALLOC_TRACE'
 to finally display any occurrence of memory leaks.
+  
   A much more convenient way to check for memory leaks is the
 'memprof' tool: http://people.redhat.com/~otaylor/memprof
+  
+  Even better than memprof, but not as easy to use is valgrind:
+http://developer.kde.org/~sewardj/
 
 
 --with-included-gettext

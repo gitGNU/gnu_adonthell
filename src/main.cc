@@ -97,12 +97,12 @@ int main(int argc, char * argv[])
 {
 #ifdef MEMORY_LEAKS
     // to debug memory leaks with mtrace. It's better to use
-    // a tool like memprof or mpatrol though.
+    // a tool like memprof, mpatrol or valgrind though.
     mtrace ();
 #endif
 
     // init game environment
-#ifndef WIN32
+#if !defined (WIN32) && !defined (__BEOS__)
     game::init(DATA_DIR);
 #else
     char b[500];

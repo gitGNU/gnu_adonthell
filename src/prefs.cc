@@ -61,7 +61,7 @@ config::config ()
     language = "";                  // Let the user's environment decide
 
     // set the path to the adonthellrc file:
-#ifndef WIN32
+#if !defined (WIN32) && !defined (__BEOS__)
     adonthellrc = string (getenv ("HOME")) + "/.adonthell";
 #else
     adonthellrc = string (".");

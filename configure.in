@@ -75,8 +75,7 @@ if test x$gamedatadir = xnone; then
       gamedatadir=""
     ;;
     *-*-beos*)
-      gamedatadir="/boot/home/share/adonthell"
-      DEFS="$DEFS -DDATA_DIR=\"\\\"$gamedatadir\\\"\""
+      gamedatadir=""
     ;;
     *)
       gamedatadir="${datadir}/adonthell"
@@ -450,6 +449,9 @@ fi
 case "$target" in
   *-*-cygwin* | *-*-mingw32*)
     echo "Building for Windows target."
+  ;;
+  *-*-beos*)
+    echo "Building for BeOS target."
   ;;
   *)
     echo "Data directory ............ : $gamedatadir"

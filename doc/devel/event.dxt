@@ -34,11 +34,11 @@
  \section event_sec1 Event Handler
 
  The %event handler is the core component of the %event system.
- It provides a method to initilize the %event system and allows
+ It provides a method to initialize the %event system and allows
  global access to the specialized handlers for individual events.
  For that purpose, it stores a list of event_handler_base %objects,
  the virtual base class for the specialized handlers, and passes
- any %event it recieves to the right handler.
+ any %event it receives to the right handler.
  
  The %event_handler_base class provides three pure virtual methods
  that need to be implemented by each specialized handler:
@@ -198,7 +198,7 @@ filter->set_script ("a_script", args);
 Py_DECREF (args);
 \endcode
  
- The script constructor would then recieve two additional arguments. 
+ The script constructor would then receive two additional arguments. 
  This is useful to create generic scripts that can be customized at
  runtime. To return to our old trap example, the amount of damage the
  trap does could be specified for each trap in this way.
@@ -224,7 +224,7 @@ event_handler::raise_event (&message);
 \endcode
 
 The %event handler will then compare all %events of the given type with the
-message it recieved and execute the %event action of events that match.         
+message it received and execute the %event action of events that match.         
 
 
 \section event_sec5 The Different Event Types

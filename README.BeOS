@@ -29,7 +29,7 @@ patch from http://libsdl.org/faq/beos-sdl.diff and install by typing:
     $ (cd /; patch -p1 </path/to/patch/beos-sdl.diff) 
 
 This will add the /boot/develop/tools/gnupro/lib directory to the 
-systems library path (after a reboot). That is useful, as all the
+system library path (after a reboot). That is useful, as all the
 libraries we install go into that directory. 
 
 Python requires a little work. In the Python toplevel directory do a 
@@ -68,8 +68,16 @@ Building the various tools:
 
 The various editors that come with Adonthell are not really written
 with portability in mind. Some of them might compile, others might
-not. Espacially those depending on GTK+ might cause trouble. However,
+not. Especially those depending on GTK+ might cause trouble. However,
 for playing Adonthell, you won't need them, so it's no big loss.
+
+
+Known issues:
+=============
+
+If you want to run Adonthell in fullscreen mode, you'll have to switch
+manually to 640x480 before starting the game. This is a problem with
+SDL though. 
 
 
 Contact:
@@ -79,3 +87,9 @@ At the moment, the BeOS port is maintained (*cough*) by Kai Sterker
 (kaisterker@linuxgames.com). If you run into any troubles not listed
 here or want to contribute a patch please drop me a few lines.
 
+
+Credits:
+========
+
+Many thanks to Shard, who did a wonderful debugging job. Without his
+help, you wouldn't be able to play Adonthell on the BeOS.
