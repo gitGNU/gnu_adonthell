@@ -6,7 +6,7 @@ endif
 
 moddatadir = $(gamedatadir)/modules
 
-moddata_DATA = adonthell.pyc
+moddata_DATA = dialogue.pyc adonthell.pyc
 
 bin_PROGRAMS = adonthell
 
@@ -60,5 +60,8 @@ py_adonthell_wrap.cc : py_adonthell.i *.h
 lex.prefs.cc : prefs.l
 	flex -olex.prefs.cc $<
 
-adonthell.pyc : adonthell.py adonthell
+adonthell.pyc : dialogue.pyc adonthell.py adonthell
 	./adonthell -c
+
+dialogue.pyc : tools/dlgedit/dialogue.py
+	@cp $< .
