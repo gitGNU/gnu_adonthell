@@ -102,7 +102,7 @@ dialog::dialog ()
 dialog::~dialog ()
 {
     Py_XDECREF (instance);
-    if (strings) delete strings;
+    if (strings) delete[] strings;
 }
 
 PyObject* dialog::get_instance ()
@@ -240,8 +240,9 @@ char* dialog::scan_string (const char *s)
     u_int32 begin, end, len;
     PyObject *result;
     char *start, *mid, *string = NULL;
-    char *tmp, *newstr = strdup (s);
+    char *tmp, *newstr = new char[strlen (s)+1];
     character *the_player = (character*) data::the_player;
+    strcpy (newstr, s); 
 
     // replace $... shortcuts
     while (1)
@@ -259,7 +260,7 @@ char* dialog::scan_string (const char *s)
             tmp[begin] = 0;
             strcat (tmp, the_player->get_name());
             strcat (tmp, start+5);
-            delete newstr;
+            delete[] newstr;
             newstr = tmp;
 
             continue;
@@ -284,8 +285,8 @@ char* dialog::scan_string (const char *s)
             strcat (tmp, mid);
             strcat (tmp, start+end+1);
             
-            delete string;
-            delete newstr;
+            delete[] string;
+            delete[] newstr;
             newstr = tmp;
 
             continue;
@@ -333,12 +334,12 @@ char* dialog::scan_string (const char *s)
         strcat (tmp, start+end+1);
 
         // 3. Exchange strings
-        delete newstr;
+        delete[] newstr;
         newstr = tmp;
 
         // Cleanup
         Py_XDECREF (result);
-        delete string;
+        delete[] string;
     }
 
     return newstr;

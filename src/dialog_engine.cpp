@@ -126,6 +126,7 @@ dialog_engine::~dialog_engine ()
 {
     sel->set_activated (false);
 
+    delete dlg;
     delete font;
     delete theme;
 
@@ -262,6 +263,7 @@ void dialog_engine::set_portrait (char *new_portrait)
     portrait->set_mask (true);
 
     face->set_image (portrait);
+    delete portrait;
 }
 
 // Set / change the NPC-name
