@@ -14,12 +14,58 @@
 
 /*!
 
-\page 7 Using Python to control games elements
+\page page7 Using Python to control game elements
 
-Adonthell make use of the Python scripting language (http://www.python.org)
-as a scripting language. Small modules of Python code can be used into the game,
-for controlling game elements (mapcharacters, mapviews, events, ...) or performing
-some special task (game initialisation). The big advantage of using Python is that
-the whole Adonthell API and global objects is available through a scripting language.
-Moreover, Python has an Object Oriented approach, so the API is exactly the same,
-no matter what 
+Adonthell make use of Python (http://www.python.org) as a scripting
+language. Small modules of Python code can be used into the %game, for
+controlling %game elements (mapcharacters, mapviews, events, ...) or
+performing some special task (animated cutscenes, ...).
+
+\section whypython Why using a scripting language?
+There is an important difference between the %game engine and the %game
+%datas. The goal of Adonthell is to be able to run different %games
+without any modification to the %game engine. This requires that %games
+using the Adonthell engine can be created without writing a single
+line of C++.
+
+Most %game %data can be easily created with the help of a proper editor
+(maps, characters, etc...). But some elements needs to be controlled
+by a program. For example, Non-Player Characters or mapviews. Instead
+of having a limited set of behaviors in C++ and integrating them into
+the engine, it's better to be able to directly program them using a
+easy to use, platform independant interpreted language, and that's
+exactly what Python is for. Using Python, you can easily create your
+own behavior scripts (also called \e schedules) for the characters, as
+well as others %game's parts (cutscenes, etc...). Actually, the entire
+C++ API is available from Python - so when you create Python scripts
+you have exactly the same possibilities than if you were writting them
+in C++.
+
+\section usingpython Using Python with Adonthell
+ALL the Adonthell API is available through the \e adonthell
+module, which is imported at startup. There is a little customized
+Python interpreter in \e src/tools/pydonthell/ that you can use for testing
+purposes: go into a valid %game directory, run \e pydonthell from
+here and try this little example program:
+
+\verbatim
+>>> from adonthell import *
+>>> im = image ()
+>>> im.resize (100, 100)
+>>> im.fillrect_rgb (0, 0, im.length (), im.height (), 255, 0, 0)
+>>> im.draw (10, 10)
+>>> screen_show ()
+\endverbatim
+
+All the classes and methods used in this little script figures in the
+API reference. Looks at the image and screen classes references to be
+convinced.
+
+\section Running Python scripts
+The py_object class is designed to handle of the Python scripting
+stuff. It imports a Python module that should only contain Python
+classes. An instance of the selected class is then created and you can
+freely call it's methods. See the \link py_object py_object class
+reference page \endlink for more details about it's use.
+
+*/

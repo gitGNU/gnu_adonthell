@@ -255,7 +255,7 @@ void mapview::set_schedule (string file, PyObject * args = NULL)
             Py_INCREF (intref); 
             PyTuple_SetItem (theargs, i, intref); 
         }
-        schedule.set_instance ("schedules/" + file, file, theargs);
+        schedule.create_instance ("schedules/mapviews/" + file, file, theargs);
         Py_DECREF (theargs); 
     }
     schedule_file_ = file; 

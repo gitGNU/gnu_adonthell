@@ -49,7 +49,7 @@ void py_object::clear ()
 }
 
 // Pass a (new) Python module to be used
-bool py_object::set_instance (string file, string modname, PyObject * args = NULL)
+bool py_object::create_instance (string file, string classname, PyObject * args = NULL)
 {
     // Cleanup
     clear (); 
@@ -58,7 +58,7 @@ bool py_object::set_instance (string file, string modname, PyObject * args = NUL
     PyObject *module = python::import_module (file);
     if (!module) return false;
 
-    PyObject * classobj = PyObject_GetAttrString (module, (char *) modname.c_str ()); 
+    PyObject * classobj = PyObject_GetAttrString (module, (char *) classname.c_str ()); 
     Py_DECREF (module); 
     if (!classobj) return false; 
     

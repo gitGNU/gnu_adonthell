@@ -36,12 +36,12 @@ using namespace std;
 
 
 /**
- * Python instance class.
+ * Python object class.
  *
- * Use this class to give scripting - abilities to your
- * own class. The loaded script is byte-compiled for
- * faster execution, and can then be launched on a regular
- * basis.
+ * Use this class to create instances of Python classes
+ * contained in Python modules, then control their execution. You can pass
+ * arguments to the class constructor when the script is imported, then to
+ * any method you want to run.
  * 
  */ 
 class py_object
@@ -67,31 +67,38 @@ public:
     void clear (); 
  
     /** 
-     * Sets the object instance.
+     * Creates an instance of a Python class.
      * 
      * @param file file name of the module to use.
+     * @param classname name of the class to import.
+     * @param args Python tuple containing the arguments to pass to the
+     *             Python class constructor.
      */
-    bool set_instance (string file, string modname, PyObject * args = NULL);
+    bool create_instance (string file, string classname, PyObject * args = NULL);
 
     /**
-     * Returns the file name of this script.
+     * Returns the module name of this object.
      * 
-     * 
-     * @return file name of this script.
+     * @return module name of this object.
      */
-    string script_file () const
+    string object_file () const
     {
         return script_file_;
     }
      
+    /** 
+     * Call a method of this object.
+     * 
+     * @param name name of the method to call.
+     * @param args Python tuple containing the arguments to pass to the method.
+     */
     void call_method (const string & name, PyObject * args = NULL); 
     
     /** 
-     * Runs the script.
+     * Calls the run () method of this object.
+     * Equivalent to call_method ("run", args); 
      *
-     * The script will only be run if it exists (set_script has been called)
-     * and is activated.
-     * 
+     * @param args Python tuple containing the arguments to pass to the method.  
      */
     void run (PyObject * args = NULL)
     {

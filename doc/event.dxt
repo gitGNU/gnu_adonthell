@@ -47,21 +47,43 @@ filter->x = 20;
 filter->y = 20;
 filter->c = data::the_player;
 
+// Create our arguments list that will be passed to the script
+// constructor
+PyObject * args = PyTuple_New (2);
+PyTuple_SetItem (args, 0, PyInt_FromLong (10));
+PyTuple_SetItem (args, 0, PyString_FromString ("2nd argument"));
+
 // Set the script to be executed when the event occurs
-filter->set_script ("a_script.py");
+filter->set_script ("a_script", args);
+
+// We don't use our reference to the tuple anymore
+Py_DECREF (args);
+
  
 // Finally add the filter to the event list. This will register it with the event handler
 add_event (filter);
  \endcode
  
  For a list of available events with their corresponding parameters
- see the \link event API documentation \endlink .
+ see the \link event API documentation \endlink.
+
+ As you can see, you have the possibility to pass extra parameters
+(only integers or strings) to the script constructor. This list is
+customizable and you can define yourself which arguments should your
+event receive. Of course, when you set the arguments list from C++,
+you have to manually create a Python tuple, and don't forget to
+decrement it's reference count when you don't need it anymore. If you
+set your script from Python, things are of course much easier:
+
+\verbatim
+filter.set_script ("a_script", (10, "2nd_argument"))
+\endverbatim
 
  Now we have registered an %event with the %event handler. But that alone
  won't get the %event triggered. So depending on its type, you'll have to
  notify the %event handler of an %event's occurance. In case of the \link
  enter_event enter event \endlink , you'll want to send a message to the
- %event handler whenever a character reaches a new position on the map.
+ %event handler whenever a %character reaches a new position on the map.
          
  \code
 // Event structures are also used to pass messages to the event_handler
@@ -109,4 +131,30 @@ REGISTER_EVENT(type,evt)
 and %REGISTER_EVENT() will pass this function to the %event list. The only
 information the %event system needs to know apart from that is the numerical
 %event ID, i.e. its type. 
+
+\section event_types List of existing events and their specificities
+Various types of events are defined in the %game engine, all
+inheriting from the event class.
+
+\subsection mapevents Map events
+There are 3 types of map events:
+\li enter_event, which are triggered whenever a %character enter a
+square,
+\li leave_event, which are triggered whenever a %character leaves a
+square,
+\li action_event, which are triggered when the main %character "acts"
+on a given square.
+
+All these map events inherits from the base_map_event class, which
+contains all the parameters they need:
+\li x, the X coordinate of the square the %event happened on,
+\li y, the Y coordinate of the square the %event happened on,
+\li submap, the number of the submap where the %event happened on,
+\li c, a pointer to the mapcharacter that triggered the %event,
+\li dir, the direction the mapcharacter is looking at when the %event
+    is triggered.
+
+When a map %event is triggered, the run () method of the Python script
+is called, with the arguments \e submap, \e x, \e y and \e name, which
+is the name of the mapcharacter that triggered the %event.
 */

@@ -308,9 +308,14 @@ public:
     /** 
      * Assign a schedule to the mapview.
      * 
-     * The schedule's filename will be \e "scripts/schedules/<file>.py".
+     * The schedule's filename will be \e "scripts/schedules/mapviews/<file>.py".
      * 
      * @param file name of the schedule to use.
+     * @param args Python tuple containing extra arguments passed to the class constructor.
+     *
+     * @warning the args tuple argument MUST ONLY contain strings or integers, as it will
+     * be saved with the mapcharacter state by python::put_tuple ().
+     *
      */
     void set_schedule (string file, PyObject * args = NULL);
 

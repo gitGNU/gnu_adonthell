@@ -144,7 +144,7 @@ void event::set_script (string filename, PyObject * args = NULL)
             Py_INCREF (intref); 
             PyTuple_SetItem (theargs, i, intref); 
         }
-        script.set_instance (EVENTS_DIR + filename, filename, theargs);
+        script.create_instance (EVENTS_DIR + filename, filename, theargs);
         Py_DECREF (theargs); 
     }
     script_file_ = filename;

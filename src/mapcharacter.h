@@ -608,9 +608,14 @@ public:
     /** 
      * Assign a schedule to the mapcharacter.
      * 
-     * The schedule's filename will be \e "scripts/schedules/<file>.py".
+     * The schedule's filename will be \e "scripts/schedules/mapcharacters/<file>.py".
      * 
      * @param file name of the schedule to use.
+     * @param args Python tuple containing extra arguments passed to the class constructor.
+     *
+     * @warning the args tuple argument MUST ONLY contain strings or integers, as it will
+     * be saved with the mapcharacter state by python::put_tuple ().
+     *
      */
     void set_schedule (string file, PyObject * args = NULL);
 
@@ -660,9 +665,14 @@ public:
     /** 
      * Assign a action to the mapcharacter.
      * 
-     * The action's filename will be \e "scripts/schedules/<file>.py".
+     * The action's filename will be \e "scripts/actions/<file>.py".
      * 
      * @param file name of the action to use.
+     * @param args Python tuple containing extra arguments passed to the class constructor.
+     *
+     * @warning the args tuple argument MUST ONLY contain strings or integers, as it will
+     * be saved with the mapcharacter state by python::put_tuple ().
+     *
      */
     void set_action (string file, PyObject * args = NULL);
 
@@ -702,7 +712,8 @@ public:
      * Run the mapcharacter's action, passing requester as the "requester" parameter
      * for the action's Python script.
      * 
-     * @param requester pointer to the mapcharacter that requested the action.
+     * @param requester pointer to the mapcharacter that requested the action, which
+     * is passed to the Python run () method. 
      */
     void launch_action (mapcharacter * requester);
 

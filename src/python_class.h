@@ -37,7 +37,7 @@
 #include "fileops.h"
 
 /**
- * Grant direct access to the Python interpreter.
+ * Grant simplified access to the Python interpreter.
  * 
  */ 
 class python
@@ -115,7 +115,24 @@ public:
      */
     static PyCodeObject *get_function_code (PyObject *module, const char* func_name);
 
+    /** 
+     * Loads a Python tuple previously saved with put_tuple ().
+     * 
+     * @param file Opened file where to load the tuple from.
+     * 
+     * @return Restored Python tuple.
+     */
     static PyObject * get_tuple (igzstream & file); 
+
+    /** 
+     * Save a Python tuple into a file.
+     *
+     * @warning The Python tuple MUST ONLY be composed of Python strings
+     * or integers!
+     * 
+     * @param tuple Python tuple to save.
+     * @param file Opened file where to save the tuple to.
+     */
     static void put_tuple (PyObject * tuple, ogzstream & file);  
 };
 

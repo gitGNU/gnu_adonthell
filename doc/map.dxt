@@ -35,7 +35,7 @@ of the map and everything on it onto a surface. That way, it can be as easily
 displayed on %screen as it can be saved to disk.
 
 The %mapview itself is rather dumb and without further instructions it would
-render the same part of the map for the rest of eternity. A \link py_script python
+render the same part of the map for the rest of eternity. A \link py_object python
 script \endlink can be used to achieve a dynamic behaviour of the mapview, like
 following the player around the map. This script is called once every cycle of the
 %game and has access to practically all API functions and in-%game data, to permit

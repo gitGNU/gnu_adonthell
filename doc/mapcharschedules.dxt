@@ -1,0 +1,89 @@
+/*
+   $Id$
+
+   Copyright (C) 2001   Alexandre Courbot
+   Part of the Adonthell Project http://adonthell.linuxgames.com
+
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License.
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY.
+
+   See the COPYING file for more details.
+*/
+
+/*!
+
+\page page8 Writing mapcharacters schedules
+
+\section mcharsched0 Generalities
+A mapcharacter schedule file should always be placed into the \e
+script/schedules/mapcharacters directory in the %game hierarchy. It
+must contain a single class, which name is the same as the module
+name. A schedule is affected to a mapcharacter by using the
+mapcharacter::set_schedule () method. See it's documentation for more
+details, and be particularly carefull about the fact that the
+arguments list passed mapcharacter::set_schedule () \e must be a
+Python tuple containing ONLY Python strings or integers.
+
+\section mcharsched1 Arguments passed to __init__ ()
+When you call mapcharacter::set_schedule (), the first argument
+passed to the class constructor is a reference to the mapcharacter
+that called this method. This parameter should be saved as it will
+most likely be used during the run () method to control the
+mapcharacter. Then follows the arguments contained into the
+Python tuple that has (optionally) been passed to
+mapcharacter::set_schedule ().
+
+\section mcharsched2 Arguments passed to run ()
+No arguments are passed to the run () method.
+
+\section mcharsched3 Structure of a mapcharacter schedule file
+Here is what a mapcharacter schedule file should ideally look like:
+\verbatim
+#
+#  (C) Copyright <year> <your name>
+#  Part of the Adonthell Project http://adonthell.linuxgames.com
+#
+#  This program is free software; you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License.
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY.
+#
+#  See the COPYING file for more details
+#
+
+#
+#  <description of the schedule>
+#
+
+<do your imports here>
+
+class myschedule:
+    
+    # Parameters:
+    # Description of myparameter1
+    # Description of myparameter2
+    def __init__ (self, mapcharacterinstance, myparameter1, myparameter2):
+        self.myself = mapcharacterinstance
+        <do you other initialisation stuff here>
+
+    def run (self):
+        <mapcharacter control>
+
+    def __del__ (self)
+        <eventual cleanup>
+\endverbatim
+
+\section mcharsched4 Storing variables
+It is unsafe to store variables into the class instance others than
+those that are passed to the __init__ method. When a mapcharacter's
+schedule is state-saved, only the schedule filename and it's
+initialisation arguments (the Python tuple passed to
+mapcharacter::set_schedule ()) are saved. So, if you create variables
+in the \e self object, do not expect them to survive to %game
+saving/loading. A safe approach is to use the storage class methods,
+which mapcharacter inherits from, and which is saved with the
+mapcharacter's state, to store your persistant variables.
+
+*/
