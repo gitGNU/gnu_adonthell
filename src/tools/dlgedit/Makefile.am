@@ -12,7 +12,7 @@ pset_interface.cc run.cc run_callbacks.cc run_interface.cc \
 interface.cc 
 
 # Evil, but it works...
-CPPFLAGS += -Werror -D_DLGEDIT_ -D_DEBUG_ -D_VERSION_=\"0.6\" `gtk-config --cflags`
+CPPFLAGS += -D_DLGEDIT_ -D_DEBUG_ -D_VERSION_=\"0.6\" `gtk-config --cflags`
 
 LDADD = ../../inventory.o ../../py_mapengine_wrap.o \
 ../../animation.o ../../py_player_wrap.o \
