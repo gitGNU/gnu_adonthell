@@ -19,7 +19,6 @@
 #include "win_object.h"
 #include "image.h"
 
-typedef win_object <image> win_image;
-
+typedef win_object <image> win_image; 
 
 #endif

@@ -12,13 +12,14 @@
    See the COPYING file for more details
 */
 
-#ifndef WIN_LABEL_H_
-#define WIN_LABEL_H_
+#ifndef WIN_MAPVIEW_H_
+#define WIN_MAPVIEW_H_
+
 
 #include "win_object.h"
-#include "label.h"
+#include "mapview.h"
 
-typedef win_object<label> win_label;
+typedef win_object <mapview> win_mapview;
+
 
 #endif
-

@@ -675,6 +675,21 @@ public:
 }; 
 
 
+class win_mapview : public mapview, public win_base
+{
+public:
+  win_mapview(); 
+  ~win_mapview(); 
+  bool draw(); 
+  bool update(); 
+  bool input_update(); 
+  void set_brightness(bool b); 
+  void set_trans(bool b); 
+  void pack(); 
+  void set_auto_refresh(bool b);   
+}; 
+
+ 
 class win_manager
 {
  public:

@@ -1,4 +1,6 @@
 /*
+   $Id$
+
    (C) Copyright 2000, 2001 Joel Vennin
    Part of the Adonthell Project http://adonthell.linuxgames.com
 

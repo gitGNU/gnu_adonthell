@@ -25,7 +25,7 @@ mapengine * data::map_engine;
 
 mapengine::mapengine ()
 {
-    mv.resize (screen::length (), screen::height ());
+    mv.mapview::resize (screen::length (), screen::height ());
     letsexit = false;
 }
 
@@ -35,13 +35,13 @@ mapengine::~mapengine ()
 
 void mapengine::set_mapview_schedule (string s)
 {
-    mv.set_schedule (s);
+    mv.mapview::set_schedule (s);
 }
 
 void mapengine::load_map (string fname)
 {
     lmap.load (fname);
-    mv.attach_map (&lmap);
+    mv.mapview::attach_map (&lmap);
 }
 
 void mapengine::run ()
@@ -78,10 +78,10 @@ void mapengine::mainloop ()
         win_manager::input_update ();
         win_manager::update ();
         lmap.update ();
-        mv.update ();
+        mv.mapview::update ();
     }
     screen::clear (); 
-    mv.draw (0, 0);
+    mv.mapview::draw (0, 0);
     win_manager::draw ();
 }
 
@@ -110,7 +110,8 @@ s_int8 mapengine::get_state (igzstream& file)
         mc->get_state (file);
     }
     // Load the mapview state
-    mv.get_state (file);
+ 
+    mv.mapview::get_state (file);
     
     return true;
 }
@@ -139,6 +140,6 @@ s_int8 mapengine::put_state (ogzstream& file)
     }
 
     // Save the mapview state
-    mv.put_state (file);
+    mv.mapview::put_state (file);
     return 0;
 }

@@ -18,8 +18,8 @@
 #include "screen.h"
 #include "input.h"
 #include "fileops.h"
-#include "landmap.h"
-#include "mapview.h"
+#include "landmap.h" 
+#include "win_mapview.h"
 
 class mapengine
 {
@@ -49,12 +49,12 @@ public:
     void draw (s_int16 x, s_int16 y, drawing_area * da_opt = NULL,
                surface * target = NULL)
     {
-        mv.draw (x, y, da_opt, target); 
+        mv.mapview::draw (x, y, da_opt, target); 
     }
     
 protected:
     landmap lmap;
-    mapview mv;
+    win_mapview mv;
     bool letsexit;
 };
 

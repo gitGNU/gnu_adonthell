@@ -5,5 +5,6 @@
 #include "win_label.h"
 #include "win_write.h"
 #include "win_image.h"
+#include "win_mapview.h"
 #include "win_container.h"
 #include "win_border.h"

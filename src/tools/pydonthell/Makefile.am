@@ -16,7 +16,7 @@ pydonthell_LDADD = ../../animation.o ../../audio.o ../../drawable.o \
 ../../win_background.o ../../win_base.o ../../win_border.o \
 ../../win_container.o ../../win_font.o ../../win_keys.o\
 ../../win_manager.o ../../win_scrollbar.o ../../win_scroll.o ../../win_select.o ../../win_theme.o \
-../../label.o  ../../label_input.o ../../win_object.o ../../win_event.o ../../surface.o \
+../../label.o  ../../label_input.o ../../win_event.o ../../surface.o \
 ../../yarg.o ../../mixer.o ../../music.o ../../music_cmd.o ../../music_ogg.o ../../wavestream.o $(SDL_LIBS) $(OGG_LIBS) $(PY_LIBS)
 
 

@@ -25,14 +25,14 @@ py_callback.cc python.cc py_adonthell_wrap.cc py_script.cc quest.cc \
 screen.cc surface.cc storage.cc win_background.cc win_base.cc win_border.cc \
 win_container.cc win_font.cc win_keys.cc\
 win_manager.cc win_scrollbar.cc win_scroll.cc win_select.cc win_theme.cc \
-label.cc  label_input.cc win_event.cc win_object.cc yarg.cc \
+label.cc  label_input.cc win_event.cc yarg.cc \
 animation.h audio.h audio_loop.h callback.h py_callback.h \
 character_base.h character.h gamedata.h data_screen.h dialog.h dialog_engine.h \
 drawable.h drawing_area.h event.h fileops.h game.h gametime.h image.h input.h inventory.h \
 item.h landmap.h mapsquare.h mapsquare_walkable.h mapcharacter.h mapobject.h mapview.h \
 mapengine.h pnm.h prefs.h python.h py_script.h quest.h screen.h surface.h storage.h \
 types.h win_background.h win_base.h win_border.h win_container.h \
-win_font.h win_image.h win_label.h label.h label_input.h \
+win_font.h win_image.h win_label.h win_mapview.h label.h label_input.h \
 win_scrollbar.h win_scroll.h win_select.h win_theme.h win_keys.h win_event.h win_types.h \
 win_write.h win_manager.h win_object.h window.h win_wrappers.h yarg.h \
 mixer.c music.c music_cmd.c music_cmd.h music_ogg.c music_ogg.h wave.h \

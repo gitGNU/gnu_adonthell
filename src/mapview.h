@@ -333,9 +333,12 @@ public:
 
     void draw (s_int16 x, s_int16 y, const drawing_area * da_opt = NULL,
                surface *target = NULL) const;
- 
-
+  
 private:
+    /**
+     * Forbid value passing.
+     */
+    mapview (const mapview& src);  
     
 #ifndef SWIG
     void draw_tile (s_int16 x, s_int16 y, const drawing_area * da_opt, surface * target,
@@ -345,13 +348,14 @@ private:
                        surface * target, list<mapsquare_char>::iterator itc) const;  
 #endif
     
+    landmap *m_map;
+
     u_int16 d_length, d_height;	// size of the view in map squares
 
     u_int16 currentsubmap_;
     u_int16 posx_, posy_;
     u_int16 offx_, offy_;
     
-    landmap *m_map;
 
     mutable drawing_area da; 
     
