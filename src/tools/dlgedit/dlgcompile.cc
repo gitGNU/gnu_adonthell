@@ -704,7 +704,11 @@ u_int8 dlg_compiler::npc_follows (DlgNode *circle)
 
 u_int8 dlg_compiler::character_changed (Circle *circle)
 {
-    if (circle->prev.empty ()) return 0;
+    if (circle->prev.empty ())
+    {
+        if (circle->character == "") return 0;
+        else return 1;
+    }
 
     vector<Circle*> prevs;
     vector<Circle*>::iterator i;
