@@ -1,7 +1,7 @@
 /*
    $Id$
 
-   Copyright (C) 2001   Kai Sterker
+   Copyright (C) 2002   Alexandre Courbot
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -12,32 +12,148 @@
    See the COPYING file for more details.
 */
 
-/*! \page page4 The Map Engine
+/*! 
+\page page4 Map Engine Specification
 
-The map engine consists of several parts that work together to display the
-%game world on %screen.
+\section mobjs_repr Map Objects Representation
 
-\section map_data Map Data
+Every object, moveable or not, must have a shape that precisely
+describes its occupation. While this shape must allow easy and fast
+collision tests against moving %objects to be performed, it also has to
+allow complex forms to be described. The most appropriate
+representation that matches both requirements is the polygon-based
+representation 
+ 
+\subsection mobjs_repr_describe Describing the Shape of Objects with Polygons
 
-The landmap holds the %data of the map: the actual \link mapobject graphics
-\endlink used on that map, and the information how to place them. A single map
-can contain multiple, independent \link mapsquare_area terrains \endlink
-that share the same graphics though. All terrains (or submaps) of a map are
-kept in memory, so transition between them is fast. Therefore it is desirable
-to keep related areas, like different levels of a dungeon or the floors of a
-building, on the same map.
+A polygon, in the sense we hear it, can actually be understood the
+same way as the usual polygon drawing tool that can be found in every
+good vectorial drawing software. A polygon is made of a free number of
+points, every point being linked to the next one to make a line, and
+the last point being linked to the first to make a closed object:
 
-\section map_rendering The Renderer
+\image latex map_obj_shape.eps "A polygon made of 6 points (and therefore 6 lines)" width=10cm
+\image html map_obj_shape.png "A polygon made of 6 points (and therefore 6 lines)"
 
-The %data on its own is only of little use as long as there is no way of displaying
-it. This is the \link mapview mapview's \endlink task. It renders a certain area
-of the map and everything on it onto a surface. That way, it can be as easily
-displayed on %screen as it can be saved to disk.
+\subsection mobjs_repr_z_ax Making 3D Objects from 2D Polygons
 
-The %mapview itself is rather dumb and without further instructions it would
-render the same part of the map for the rest of eternity. A \link py_object python
-script \endlink can be used to achieve a dynamic behaviour of the mapview, like
-following the player around the map. This script is called once every cycle of the
-%game and has access to practically all API functions and in-%game data, to permit
-as much flexibility as possible.
+While the world of Adonthell uses 3D internally, we want to limit the
+amount of processing power necessary for each object, to allow as many
+of them as possible to live at the same time. For this reason, most of
+the arithmetic done by the engine will actually be on 2D shapes that
+are extrapolated to form 3D %objects. In addition to its polygonal
+shape, an object has a height property, which will make it
+extrapolated of as much on the Z axis:
+
+\image latex map_obj_shape.eps "The 2D shape of a map object..." width=10cm
+\image html map_obj_shape.png "The 2D shape of a map object..."
+\image latex map_obj_shape_extra.eps "...gets extrapolated on the Z axis to form a 3D object." width=10cm
+\image html map_obj_shape_extra.png "...gets extrapolated on the Z axis to form a 3D object."
+
+While making an easy way to represent %objects, this method isn't
+sufficient to make sloaps and smooth variations of altitude on an
+object. Such effect are obtained by considering the polygonal object
+itself is inside a square box. Every superior corner of the box can
+then be given an offset (either positive or negative), which will make
+a sloap from the top shape of the object:
+
+\image latex map_obj_sloap.eps "Sloaps can be created by playing with the height of the englobing box' corners" width=10cm
+\image html map_obj_sloap.png "Sloaps can be created by playing with the height of the englobing box' corners"
+
+In practice, this will make it very easy to determine the exact height
+of an %object at a given point, by doing a simple interpolation.
+
+\subsection mobjs_repr_collision Collision Detection
+
+A collision detection system is only worth in our case if we can take
+care of these two things:
+- Wether two polygonal %objects will collide given a displacement vector,
+- Where the collision exactly occured, to place the %objects correctly.
+
+The polygonal representation is excellent in that respect, in that it
+can solve both problems in a very reasonnable time.
+
+\subsection mobjs_collision_maths Some Maths Used by the Engine
+
+Of course, some geometry concepts have to be used and implemented in
+order to get these results. They will be summarized here, with the
+same terms that are used in the implementation:
+
+The most basic thing that will be used is the point. I won't make the
+offence to explain what is a point - we will simply
+describe them with their X, Y (and Z) positions in the space.
+
+The first real thing to deal with are vectors. Vectors are widely used
+in the map engine, as they represent every displacement of %objects,
+but also because every line of our polygons can be considered as a
+vector. The representation is nothing to be discussed during hours, a
+X, Y, (and Z) displacement values, and voila. The length of a vector
+(it's \e norm, noted \f$||u||\f$), is equal to
+
+\f$||u|| = \sqrt{ux^2 + uy^2 + uz^2}\f$
+  
+In most operations however, we don't need the exact norm of a vector
+but we want to know which vector is the longest from a set of vectors.
+In this case, we can get rid of the square root.
+
+Another thing we will often need to do is to determine the pointing 
+position of two vectors from each another, or the position of a point
+from a vector (which is roughly the same). During polygons collision
+detection for instance, we can eliminate lines that we don't need to
+test if we can determine wether they point in the same direction than
+the motion vector or not.
+
+\image latex vectors1.eps "Here, v2 and v3 are pointing in the same direction than v1 (the invert-clockwise angle between them in < 180°)" width=10cm
+\image html vectors1.png "Here, v2 and v3 are pointing in the same direction than v1 (the invert-clockwise angle between them in < 180°)"
+
+\image latex vectors1.eps "But here, v2 and v3 are pointing in the opposite direction of v1 (the invert-clockwise angle between them in >= 180°)" width=10cm
+\image html vectors1.png "But here, v2 and v3 are pointing in the opposite direction of v1 (the invert-clockwise angle between them in >= 180°)"
+
+
+
+Lines, as we hear them, are simply a vector which is given a starting
+point. One of the problems we'll have to solve is to know if two lines
+intersect, and where?
+
+A first method is to consider the 4 points A, B, C and D. We want to
+check wether AB and CD intersect. If they do, then:
+
+\f$Ax + r(Bx - Ax) = Cx + s(Dx - Cx)\f$, and
+
+\f$Ay + r(By - Ay) = Cy + s(Dy - Cy)\f$
+
+for \e r and \e s between 0 and 1.
+
+Finding \e r and \e s is as simple as solving:
+
+\f$r = \frac{(Ay - Cy)(Dx - Cx) - (Ax - Cx)(Dy - Cy)}{(Bx - Ax)(Dy - Cy) - (By - Ay)(Dx - Cx)}\f$ and
+
+\f$r = \frac{(Ay - Cy)(Bx - Ax) - (Ax - Cx)(By - Ay)}{(Bx - Ax)(Dy - Cy) - (By - Ay)(Dx - Cx)}\f$.
+
+Note that the denominator is the same - we can save one division by
+setting a variable to \f$frac{1}{denom}\f$ and using multiplications
+instead of divisions while calculating \e r and \e s. Moreover,
+pre-calculating it is mandatory anyway, as if it is egal to 0 the
+lines are parallel and therefore never intersect (and we avoid a
+division by 0).
+
+Once we have \e r and \e s, we can assume that if \f$0 <= r <= 1\f$
+and \f$0 <= s <= 1\f$, then there actually is an
+intersection. Otherwise the segments intersects, but not in the limits
+of our lines. We can get the exact coordinates of the intersection
+point \e P with:
+
+\f$Px = Ax + r(Bx - Ax)\f$
+\f$Py = Ay + r(By - Ay)\f$
+
+So if used as if, this algorithm will require one float division and four
+float multiplications. We can avoir working on floats all the time
+because we have a very small unit measure.
+
+<b>FIXME: Try to get rid of all floating operations (by doing some bits
+shifting and allowing r and s to be between 0 and 256 for instance)
+and of the division.</b>
+
+\subsection polygons_intersection Polygons Intersection
+
 */
