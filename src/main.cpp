@@ -35,6 +35,7 @@
 #endif
 #include "animation.h"
 #include "cutscene.h"
+#include "prefs.h"
 
 int do_cutscene(void) {
 
@@ -144,29 +145,37 @@ int do_cutscene(void) {
   return(1);
 }
 
+
 int main(int argc, char * argv[])
 {
-  map * map1 = new map;
-  string mapname;
+    map * map1 = new map;
+    config myconfig (argc > 1 ? argv[1] : "");
 
-  chdir(argv[1]);
-  mapname=argv[1];
-  mapname+=".map";
-  mapengine::init(argc,argv);
+    // try to read adonthellrc
+    myconfig.read_adonthellrc ();
+    
+    // change into data directory
+    chdir (myconfig.datadir.data ());
 
-  if(map1->load(mapname.data())) {printf("Error loading %s!\n",argv[1]);return(1);}
+    mapengine::init (myconfig);
 
-  // Flip flop between the mapengine and the cutscene
-  // The 'do_cutscene' returns 1 when you hit escape
-  // during the cutscene...
+    if (map1->load (myconfig.mapname.data ())) 
+    {
+        printf("Error loading %s!\n",argv[1]);
+        return 1;
+    }
 
-  // Removed because of a segfault - seems to occur when calling
-  //   scene->set_imagekey_anim(2,anim3);, line 79
-  // do_cutscene();
+    // Flip flop between the mapengine and the cutscene
+    // The 'do_cutscene' returns 1 when you hit escape
+    // during the cutscene...
 
-  mapengine::map_engine(map1);
+    // Removed because of a segfault - seems to occur when calling
+    //   scene->set_imagekey_anim(2,anim3);, line 79
+    // do_cutscene();
 
-  mapengine::cleanup();
+    mapengine::map_engine(map1);
+
+    mapengine::cleanup();
   
-  return(0);
+    return 0;
 }

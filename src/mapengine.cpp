@@ -24,6 +24,7 @@
 #include "mapevent.h"
 #include "window.h"
 #include "map.h"
+#include "prefs.h"
 #include "mapengine.h"
 #ifdef SDL_MIXER
 #include "audio_thread.h"
@@ -33,15 +34,9 @@
 SDL_Thread *mapengine::input_thread;
 SDL_Thread *mapengine::audio_thread;
 
-void mapengine::init(int argc, char * argv[])
+void mapengine::init(config &myconfig)
 {
-  if((argc!=2)&&(argc!=3)) {printf("Usage: %s mapname\n",argv[0]); exit(0);}
-  if(argc==3)
-    {
-      if(!strcmp(argv[2],"-m1")) screen::init_display(1);
-      if(!strcmp(argv[2],"-m0")) screen::init_display(0);
-    }
-  else screen::init_display(0);
+  screen::init_display (myconfig.screen_resolution);
     
   input_thread = SDL_CreateThread(input_update, NULL);
   if ( input_thread != NULL) {
@@ -53,7 +48,7 @@ void mapengine::init(int argc, char * argv[])
   
 #ifdef SDL_MIXER
   
-  audio_init();
+  audio_init(myconfig);
   audio_thread = SDL_CreateThread(audio_update, NULL);
   if ( audio_thread == NULL) {
     fprintf(stderr, "Couldn't create audio thread: %s\n", SDL_GetError());

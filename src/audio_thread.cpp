@@ -15,16 +15,17 @@
 #ifdef SDL_MIXER
 
 #include <stdlib.h>
+#include "prefs.h"
 #include "audio_thread.h"
 #include "audio.h"
 #include "SDL.h"
 #include "SDL_mixer.h"
 #include "SDL_thread.h"
 
-int audio_init() {
+int audio_init(config &myconfig) {
 
   // Open the audio device
-  audio_in = new audio;
+  audio_in = new audio (myconfig);
 
   // Load our background music and SFX in
   audio_in->load_background(0, "audio/at-1.it");

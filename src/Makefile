@@ -59,7 +59,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 CXX = c++
 CXXCPP = c++ -E
-MAKEINFO = /home/kai/adonthell/recent_adonthell/missing makeinfo
+MAKEINFO = /home/kai/adonthell/missing makeinfo
 PACKAGE = mapengine
 SDL_CFLAGS = -I/usr/local/include -I/usr/local/include/SDL -D_REENTRANT
 SDL_CONFIG = /usr/local/bin/sdl-config
@@ -68,7 +68,7 @@ VERSION = 0.1.1.7
 
 bin_PROGRAMS = mapengine
 
-mapengine_SOURCES = animation.cpp array_tmpl.cpp audio.cpp audio_thread.cpp commands.cpp cutscene.cpp dialog.cpp dialog_cmds.cpp fileops.cpp generic_cmds.cpp gfx.cpp init.cpp instruction.cpp instruction_class.cpp interpreter.cpp input.cpp main.cpp map.cpp mapcharacter.cpp mapengine.cpp mapevent.cpp mappattern.cpp mapsquare.cpp pnm.cpp storage.cpp window.cpp
+mapengine_SOURCES = animation.cpp array_tmpl.cpp audio.cpp audio_thread.cpp commands.cpp cutscene.cpp dialog.cpp dialog_cmds.cpp fileops.cpp generic_cmds.cpp gfx.cpp init.cpp instruction.cpp instruction_class.cpp interpreter.cpp input.cpp lex.prefs.cpp main.cpp map.cpp mapcharacter.cpp mapengine.cpp mapevent.cpp mappattern.cpp mapsquare.cpp pnm.cpp prefs.cpp storage.cpp window.cpp
 
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = ../header.h
@@ -83,8 +83,8 @@ LIBS = -L/usr/local/lib -lSDL -lpthread -lSDL_image -lSDL_mixer
 mapengine_OBJECTS =  animation.o array_tmpl.o audio.o audio_thread.o \
 commands.o cutscene.o dialog.o dialog_cmds.o fileops.o generic_cmds.o \
 gfx.o init.o instruction.o instruction_class.o interpreter.o input.o \
-main.o map.o mapcharacter.o mapengine.o mapevent.o mappattern.o \
-mapsquare.o pnm.o storage.o window.o
+lex.prefs.o main.o map.o mapcharacter.o mapengine.o mapevent.o \
+mappattern.o mapsquare.o pnm.o prefs.o storage.o window.o
 mapengine_LDADD = $(LDADD)
 mapengine_DEPENDENCIES = 
 mapengine_LDFLAGS = 
@@ -103,10 +103,10 @@ DEP_FILES =  .deps/animation.P .deps/array_tmpl.P .deps/audio.P \
 .deps/audio_thread.P .deps/commands.P .deps/cutscene.P .deps/dialog.P \
 .deps/dialog_cmds.P .deps/fileops.P .deps/generic_cmds.P .deps/gfx.P \
 .deps/init.P .deps/input.P .deps/instruction.P \
-.deps/instruction_class.P .deps/interpreter.P .deps/main.P .deps/map.P \
-.deps/mapcharacter.P .deps/mapengine.P .deps/mapevent.P \
-.deps/mappattern.P .deps/mapsquare.P .deps/pnm.P .deps/storage.P \
-.deps/window.P
+.deps/instruction_class.P .deps/interpreter.P .deps/lex.prefs.P \
+.deps/main.P .deps/map.P .deps/mapcharacter.P .deps/mapengine.P \
+.deps/mapevent.P .deps/mappattern.P .deps/mapsquare.P .deps/pnm.P \
+.deps/prefs.P .deps/storage.P .deps/window.P
 SOURCES = $(mapengine_SOURCES)
 OBJECTS = $(mapengine_OBJECTS)
 

@@ -14,18 +14,29 @@
 #ifdef SDL_MIXER
 
 #include <iostream.h>
+#include "prefs.h"
 #include "audio.h"
 #include "SDL.h"
 #include "SDL_mixer.h"
 
-audio::audio() {
+audio::audio (config &myconfig) {
 
   int i;  // Generic counter variable
 
-  audio_rate = 22050;        // Sample at 22050Hz
-  audio_format = AUDIO_S8;   // Output in signed 8-bit form
-  audio_channels = 1;        // 1 is mono, 2 is stereo
-  background_volume = 100;   // 100... scales to percentages ;>
+  // Sample rate: 11025, 22050 or 44100 Hz
+  if (myconfig.audio_sample_rate == 0) audio_rate = 11025;                         
+  else if (myconfig.audio_sample_rate == 1) audio_rate = 22050;
+  else audio_rate = 44100;
+  
+  // Output in signed 8/16-bit form
+  audio_format = myconfig.audio_resolution == 0 ? AUDIO_S8 : AUDIO_S16; 
+
+  // 1 is mono, 2 is stereo
+  audio_channels = myconfig.audio_channels == 0 ? 1 : 2;  
+
+  // 100... scales to percentages ;>
+  background_volume = myconfig.audio_volume;   
+
   buffer_size = 512;         // Audio buffer size
   effects_volume = 128;	     // Still figuring this one out...
   background_on = false;     // No background music is playing
@@ -59,6 +70,7 @@ audio::audio() {
 audio::~audio() {
   audio_cleanup();
 }
+
 
 void audio::audio_cleanup(void) {
   int i;

@@ -57,7 +57,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 CXX = c++
 CXXCPP = c++ -E
-MAKEINFO = /home/kai/adonthell/recent_adonthell/missing makeinfo
+MAKEINFO = /home/kai/adonthell/missing makeinfo
 PACKAGE = mapengine
 SDL_CFLAGS = -I/usr/local/include -I/usr/local/include/SDL -D_REENTRANT
 SDL_CONFIG = /usr/local/bin/sdl-config
@@ -83,7 +83,7 @@ configure.in header.h.in install-sh missing mkinstalldirs
 
 DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 
-TAR = gtar
+TAR = tar
 GZIP_ENV = --best
 all: all-redirect
 .SUFFIXES:

@@ -17,6 +17,7 @@
 
 #include "SDL.h"
 #include "SDL_thread.h"
+#include "prefs.h"
 
 class mapengine
 {
@@ -24,7 +25,7 @@ class mapengine
   static SDL_Thread *audio_thread;
   
  public:
-  static void init(int argc, char * argv[]);
+  static void init(config&);
   static void cleanup();
   static void map_engine(map * amap);
   static void update_and_show(map * amap);

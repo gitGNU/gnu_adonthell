@@ -17,7 +17,7 @@
 #include <string>
 #include "prefs.h"
 
-#define YY_DECL int parse_adonthellrc (string &mytext, int &mynum)
+#define YY_DECL int parse_adonthellrc (int &mynum, string &mytext)
 %}
 
 digit  [0-9]
@@ -34,6 +34,7 @@ Default             return PREFS_DEFAULT;
 Section             return PREFS_SECTION;
 End                 return PREFS_END;
 Data                return PREFS_DATA;
+Map                 return PREFS_MAP;
 Screen-resolution   return PREFS_SCREEN_RESOLUTION;
 Screen-mode         return PREFS_SCREEN_MODE;
 Audio-channels      return PREFS_AUDIO_CHANNELS;

@@ -16,6 +16,7 @@
 #ifdef SDL_MIXER
 
 #include "SDL_mixer.h"
+#include "prefs.h"
 
 // We'll only load two waves into memory
 #define NUM_WAVES 2
@@ -41,7 +42,8 @@ public:
   int audio_channels;
 
   // Use these to initialize/destroy sound connection
-  audio();
+  audio() { } 
+  audio(config&);
   ~audio();
   void audio_cleanup(void);
 
