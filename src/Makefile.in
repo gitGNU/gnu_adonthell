@@ -67,12 +67,13 @@ SDL_CONFIG = @SDL_CONFIG@
 SDL_LIBS = @SDL_LIBS@
 VERSION = @VERSION@
 
-bin_PROGRAMS = mapengine
+bin_PROGRAMS = mapengine cstest
 
 mapengine_SOURCES = array_tmpl.cc audio.cc audio_thread.cc commands.cc dialog_cmds.cc fileops.cc 	gfx.cc init.cc instruction.cc instruction_class.cc interpreter.cc keyboard.cc main.cc 	map.cc mapcharacter.cc mapengine.cc mapevent.cc mappattern.cc mapsquare.cc pnm.cc 	window.cc animation.cc dialog.cc
 
 
-mapengine_TARGET = ../mapengine
+cstest_SOURCES = cutscene.cc gfx.cc keyboard.cc pnm.cc animation.cc cstest.cc audio.cc 	audio_thread.cc
+
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = ../header.h
 CONFIG_CLEAN_FILES = 
@@ -90,6 +91,11 @@ mapevent.o mappattern.o mapsquare.o pnm.o window.o animation.o dialog.o
 mapengine_LDADD = $(LDADD)
 mapengine_DEPENDENCIES = 
 mapengine_LDFLAGS = 
+cstest_OBJECTS =  cutscene.o gfx.o keyboard.o pnm.o animation.o cstest.o \
+audio.o audio_thread.o
+cstest_LDADD = $(LDADD)
+cstest_DEPENDENCIES = 
+cstest_LDFLAGS = 
 CXXFLAGS = @CXXFLAGS@
 CXXCOMPILE = $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
 CXXLD = $(CXX)
@@ -102,14 +108,14 @@ DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 TAR = gtar
 GZIP_ENV = --best
 DEP_FILES =  .deps/animation.P .deps/array_tmpl.P .deps/audio.P \
-.deps/audio_thread.P .deps/commands.P .deps/dialog.P \
-.deps/dialog_cmds.P .deps/fileops.P .deps/gfx.P .deps/init.P \
-.deps/instruction.P .deps/instruction_class.P .deps/interpreter.P \
-.deps/keyboard.P .deps/main.P .deps/map.P .deps/mapcharacter.P \
-.deps/mapengine.P .deps/mapevent.P .deps/mappattern.P .deps/mapsquare.P \
-.deps/pnm.P .deps/window.P
-SOURCES = $(mapengine_SOURCES)
-OBJECTS = $(mapengine_OBJECTS)
+.deps/audio_thread.P .deps/commands.P .deps/cstest.P .deps/cutscene.P \
+.deps/dialog.P .deps/dialog_cmds.P .deps/fileops.P .deps/gfx.P \
+.deps/init.P .deps/instruction.P .deps/instruction_class.P \
+.deps/interpreter.P .deps/keyboard.P .deps/main.P .deps/map.P \
+.deps/mapcharacter.P .deps/mapengine.P .deps/mapevent.P \
+.deps/mappattern.P .deps/mapsquare.P .deps/pnm.P .deps/window.P
+SOURCES = $(mapengine_SOURCES) $(cstest_SOURCES)
+OBJECTS = $(mapengine_OBJECTS) $(cstest_OBJECTS)
 
 all: all-redirect
 .SUFFIXES:
@@ -166,6 +172,10 @@ maintainer-clean-compile:
 mapengine: $(mapengine_OBJECTS) $(mapengine_DEPENDENCIES)
 	@rm -f mapengine
 	$(CXXLINK) $(mapengine_LDFLAGS) $(mapengine_OBJECTS) $(mapengine_LDADD) $(LIBS)
+
+cstest: $(cstest_OBJECTS) $(cstest_DEPENDENCIES)
+	@rm -f cstest
+	$(CXXLINK) $(cstest_LDFLAGS) $(cstest_OBJECTS) $(cstest_LDADD) $(LIBS)
 .cc.o:
 	$(CXXCOMPILE) -c $<
 
