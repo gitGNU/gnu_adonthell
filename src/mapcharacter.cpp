@@ -259,8 +259,8 @@ void mapcharacter::update_NPC (landmap * amap)
 {
     // freeze characters too far from the player
     character *player = (character *) objects::get("the_player");
-    if (abs (data->posx - player->posx) > 20) return;
-    if (abs (data->posy - player->posy) > 16) return;
+    if (abs (data->posx - player->posx) > 15) return;
+    if (abs (data->posy - player->posy) > 15) return;
 
     if ((scridx == 0) && (is_ready ()))
     {

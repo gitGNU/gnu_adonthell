@@ -12,11 +12,28 @@
    See the COPYING file for more details.
 */
 
+#include <algorithm>
+
 #include "py_inc.h"
 #include "game.h"
 #include "compile.h"
 #include "eval.h"
 #include "event.h"
+#include "character.h"
+
+// "Automatic" unregistering of events no longer needed
+event_list::~event_list ()
+{
+    event *e;
+
+    while (!events.empty ())
+    {
+        e = events.back ();
+        events.pop_back ();
+        event_handler::remove_event (e);
+        delete e;    
+    }    
+}
 
 // Array with the registered events; each type of event is kept in
 // a vector of its own for faster access
@@ -33,6 +50,19 @@ void event_handler::raise_event (event *e)
     for (i = reg_evs.begin (); i != reg_evs.end (); i++)
         // Execute the script; pass recieved event on to get event data
         if (e->equals (*i)) (*i)->execute (e); 
+}
+
+// Unregister an event
+void event_handler::remove_event (event *e)
+{
+    vector<event*> reg_evs = handlers[e->type];
+    vector<event*>::iterator i;
+
+    // Search for the event we want to remove
+    i = find (reg_evs.begin (), reg_evs.end (), e);
+
+    // found? -> get rid of it :)
+    if (i != reg_evs.end ()) reg_evs.erase(i); 
 }
 
 // Register a event with it's script
@@ -59,6 +89,48 @@ void event_handler::register_event (event *e, char *file)
     else cout << "\n*** Cannot register event: file \"" << file << "\" not found!" << flush;
 }
 
+// Load (and register an event)
+event* event_handler::load_event (FILE* f, bool reg = true)
+{
+    u_int8 type;
+    u_int16 len;
+    char *file;
+    event *e = NULL;
+
+    fread (&type, sizeof (type), 1, f);
+
+    switch (type)
+    {
+        case ENTER_EVENT:
+        {
+            e = new enter_event ();
+            break;
+        }
+        
+        default:
+        {
+            cout << "\n*** Cannot load event. Unknown event tyoe!" << flush;
+            return e;
+        }
+    }
+    
+    e->load (f);
+
+    // should we register the event?
+    if (reg)
+    {
+        fread (&len, sizeof (len), 1, f);
+        file = new char[len];
+        fread (file, len, 1, f);
+        register_event (e, file);
+        delete file; 
+    }
+    
+    return e;
+}
+
+// =======================================================================
+// HERE COME ALL THE DIFFERENT EVENTS:
 
 enter_event::enter_event ()
 { 
@@ -95,4 +167,8 @@ void enter_event::execute (event *e)
 #ifdef _DEBUG_
     show_traceback ();
 #endif // _DEBUG_
+}
+
+void enter_event::load (FILE *f)
+{
 }
