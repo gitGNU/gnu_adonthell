@@ -51,6 +51,7 @@ public:
 
     void write_adonthellrc ();      // Writes a default adonthellrc
     int read_adonthellrc ();        // Reads the adonthellrc file
+    char *get_adonthellrc ();       // Return the user's private adontell directory
 
     string datadir;                 // Directory containing the gamedata
     string mapname;                 // Map to load on startup

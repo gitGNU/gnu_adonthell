@@ -12,78 +12,77 @@
    See the COPYING file for more details.
 */
 
+#include <stdio.h>
+
+#include "fileops.h"
 #include "character.h"
 #include "eval.h"
 #include "data.h"
 #include "py_inc.h"
 
-void character::save (FILE *out)
+void character::save (gzFile out)
 {
     hash_map<const char*, s_int32, hash<const char*>, equal_key>::iterator i;
     vector<event*>::iterator k;
-    int j;
+    char *string;
+    u_int32 j;
 
     // Save name
-    j = strlen (name) + 1;
-    fwrite (&j, sizeof (j), 1, out);
-    fwrite (name, j, 1, out);        
-
+    put_string (out, name);
+    
     // Save position
-    fwrite (&posx, sizeof(posx), 1, out);
-    fwrite (&posy, sizeof(posy), 1, out);
+    gzwrite (out, &posx, sizeof(posx));
+    gzwrite (out, &posy, sizeof(posy));
 
     // Save all attributes and flags
     j = data.size ();
-    fwrite (&j, sizeof (j), 1, out);
+    gzwrite (out, &j, sizeof (j));
     
     for (i = data.begin (); i != data.end (); i++)
     {
-        j = strlen ((*i).first) + 1;
-        fwrite (&j, sizeof (j), 1, out);
-        fwrite ((*i).first, j, 1, out);
-        fwrite (&(*i).second, sizeof (s_int32), 1, out);
+        string = strdup ((*i).first);
+        put_string (out, string);
+        free (string);
+        gzwrite (out, &(*i).second, sizeof (s_int32));
     }
 
     // save events
     j = events.size ();
-    fwrite (&j, sizeof (j), 1, out);
+    gzwrite (out, &j, sizeof (j));
     
     for (k = events.begin (); k != events.end (); k++)
         (*k)->save (out);
 }
 
-void character::load (FILE *in, bool reg_event)
+void character::load (gzFile in, bool reg_event)
 {
-    int i, j, size, value;
+    u_int32 i, size;
+    s_int32 value;
     event *e;
     char *key;
 
     // load name
-    fread (&size, sizeof(size), 1, in);
-    name = new char[size];
-    fread (name, size, 1, in);
+    name = get_string (in);
 
     // We have to insert the character here *before* loading it's events
     data::characters.set (name, this);
 
     // Load position
-    fread (&posx, sizeof(posx), 1, in);
-    fread (&posy, sizeof(posy), 1, in);
+    gzread (in, &posx, sizeof(posx));
+    gzread (in, &posy, sizeof(posy));
 
     // load all attributes and flags
-    fread (&size, sizeof(size), 1, in);
+    gzread (in, &size, sizeof(size));
     for (i = 0; i < size; i++)
     {
-        fread (&j, sizeof(j), 1, in);
-        key = new char[j];
-        fread (key, j, 1, in);
-        fread (&value, sizeof (value), 1, in);
+        key = get_string (in);
+        gzread (in, &value, sizeof (value));
 
         set (key, value);
     }
 
     // load all events
-    fread (&size, sizeof(size), 1, in);
+    gzread (in, &size, sizeof(size));
     for (i = 0; i < size; i++)
     {
         e = event_handler::load_event (in, reg_event);
@@ -188,38 +187,23 @@ u_int8 npc::move (u_int8 dir)
 }
 
 // save npc to disk
-void npc::save (FILE *out)
+void npc::save (gzFile out)
 {
-    int i;
-
     character::save (out);
 
-    if (!dialogue) dialogue = "";
-    i = strlen (dialogue) + 1;
-    fwrite (&i, sizeof (i), 1, out);
-    fwrite (dialogue, i, 1, out);
-    
-    if (!schedule_file) schedule_file = "";
-    i = strlen (schedule_file) + 1;
-    fwrite (&i, sizeof (i), 1, out);
-    fwrite (schedule_file, i, 1, out);
+    put_string (out, dialogue);
+    put_string (out, schedule_file);
 }
 
 // load npc from disk
-void npc::load (FILE *in, bool load_script)
+void npc::load (gzFile in, bool load_script)
 {
-    int i;
-
     character::load (in, load_script);
 
-    fread (&i, sizeof (i), 1, in);
     if (dialogue) free (dialogue);
-    dialogue = (char*) malloc (i);
-    fread (dialogue, i, 1, in);
-    
-    fread (&i, sizeof (i), 1, in);
+    dialogue = get_string (in);    
+
     if (schedule_file) free (schedule_file);
-    schedule_file = (char*) malloc (i);
-    fread (schedule_file, i, 1, in);
+    schedule_file = get_string (in);
     set_schedule (schedule_file, load_script);   
 }

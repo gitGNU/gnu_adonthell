@@ -15,20 +15,53 @@
 #ifndef __DATA_H__
 #define __DATA_H__
 
+#include <zlib.h>
+
 #include "storage.h"
 #include "gametime.h"
 #include "Python.h"
 
+// all the attributes related to a saved game
+class gamedata
+{
+public:
+    gamedata ();
+    gamedata (char *desc, char *dir);
+    ~gamedata ();
+    
+    void save (gzFile);                     // save a record to disk
+    void load (gzFile);                     // load a record from disk
+
+    // a bunch of methods to access the private attributes
+    char* get_directory () { return directory; }
+    char* get_description () { return description; }
+    char* get_location () { return location; }
+    char* get_time () { return time; }
+    
+private:
+    char *directory;                        // the game's location on the harddisk
+    char *description;                      // user supplied description of the game
+    char *location;                         // the map or area the player is on
+    char *time;                             // the gametime of the save
+};
+
+// that's most of the data needed by the game engine plus methods 
+// to load and save that data
 class data
 {
 public:
-    static bool load (const char*);         // Load a game
-    static void save (const char*);         // Save the game
+    static void init (char*);               // Data initialisation
+    static bool load (u_int32);             // Load a game
+    static bool save (u_int32, char*);      // Save the game
 
     static PyObject *globals;               // Global namespace to use in scripts
     static gametime *time;                  // The gametime object
     static objects characters;              // All the characters 
     static objects quests;                  // All the quests
+
+private:
+    static vector<gamedata*> saves;         // Keeps track of available save games 
+    static char *adonthell_dir;             // The $HOME/.adonthell/ directory
 };
 
 #endif // __DATA_H__

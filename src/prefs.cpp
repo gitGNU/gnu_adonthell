@@ -60,6 +60,12 @@ config& config::operator =(const config *c)
     return *this;
 }
 
+char *config::get_adonthellrc ()
+{
+    char *string = strdup (adonthellrc.c_str ());
+    return string;
+}
+
 // write a default configuration file
 void config::write_adonthellrc ()
 {

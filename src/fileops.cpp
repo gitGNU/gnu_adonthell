@@ -12,10 +12,9 @@
    See the COPYING file for more details.
 */
 
-#include <stdio.h>
 #include "types.h"
 #include "fileops.h"
-
+/*
 void getstringfromfile(char strg[],SDL_RWops * file)
 {
   char c;
@@ -39,4 +38,32 @@ void putstringtofile(char strg[],SDL_RWops * file)
     }
   while(strg[gc-1]!=0);
 }
+*/
+void put_string (gzFile file, char *string)
+{
+    u_int16 length = 0;
 
+    if (string != NULL)
+    {
+        length = strlen (string);
+        gzwrite (file, &length, sizeof (length));    
+        gzwrite (file, string, length);
+    } 
+    else gzwrite (file, &length, sizeof (length));   
+}
+
+char *get_string (gzFile file)
+{
+    char *string = NULL;
+    u_int16 length;
+
+    gzread (file, &length, sizeof (length));
+    if (length != 0)
+    {
+        string = new char[length+1];
+        gzread (file, string, length);
+        string[length] = 0;
+    }
+
+    return string;
+}

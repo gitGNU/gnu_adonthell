@@ -13,7 +13,9 @@
 */
 
 #include <algorithm>
+#include <stdio.h>
 
+#include "fileops.h"
 #include "py_inc.h"
 #include "data.h"
 #include "compile.h"
@@ -96,13 +98,13 @@ void event_handler::register_event (event *e, char *file)
 }
 
 // Load (and register an event)
-event* event_handler::load_event (FILE* f, bool reg)
+event* event_handler::load_event (gzFile f, bool reg)
 {
     u_int8 type;
     char *script_file;
     event *e = NULL;
 
-    fread (&type, sizeof (type), 1, f);
+    gzread (f, &type, sizeof (type));
 
     switch (type)
     {
@@ -196,44 +198,33 @@ void base_map_event::execute (event *e)
 }
 
 // Load a enter event from file
-void base_map_event::load (FILE *f)
+void base_map_event::load (gzFile f)
 {
-    u_int16 len;
     char* name;
         
-    fread (&x, sizeof (x), 1, f);
-    fread (&y, sizeof (y), 1, f);
-    fread (&dir, sizeof (dir), 1, f);
-    fread (&map, sizeof (map), 1, f);
+    gzread (f, &x, sizeof (x));
+    gzread (f, &y, sizeof (y));
+    gzread (f, &dir, sizeof (dir));
+    gzread (f, &map, sizeof (map));
 
-    fread (&len, sizeof (len), 1, f);
-    name = new char[len];
-    fread (name, len, 1, f);
+    name = get_string (f);
     c = (character*) data::characters.get (name);
-
-    fread (&len, sizeof (len), 1, f);
-    script_file = new char[len];
-    fread (script_file, len, 1, f);
-
     delete name;
+
+    script_file = get_string (f);
 }
 
 // Save enter_event to file
-void base_map_event::save (FILE *out)
+void base_map_event::save (gzFile out)
 {
-    u_int16 len = strlen (c->name) + 1;
+    gzwrite (out, &type, sizeof (type));
+    gzwrite (out, &x, sizeof (x));
+    gzwrite (out, &y, sizeof (y));
+    gzwrite (out, &dir, sizeof (dir));
+    gzwrite (out, &map, sizeof (map));    
 
-    fwrite (&type, sizeof (type), 1, out);
-    fwrite (&x, sizeof (x), 1, out);
-    fwrite (&y, sizeof (y), 1, out);
-    fwrite (&dir, sizeof (dir), 1, out);
-    fwrite (&map, sizeof (map), 1, out);    
-    fwrite (&len, sizeof (len), 1, out);
-    fwrite (c->name, len, 1, out);    
-
-    len = strlen (script_file) + 1;
-    fwrite (&len, sizeof (len), 1, out);
-    fwrite (script_file, len, 1, out);    
+    put_string (out, c->name);
+    put_string (out, script_file);    
 }
 
 time_event::time_event ()
@@ -246,38 +237,30 @@ time_event::time_event ()
 }
 
 // Save a time_event to file
-void time_event::save (FILE *out)
+void time_event::save (gzFile out)
 {
-    u_int16 len;
+    gzwrite (out, &type, sizeof (type));
+    gzwrite (out, &minute, sizeof (minute));
+    gzwrite (out, &m_step, sizeof (m_step));
+    gzwrite (out, &hour, sizeof (hour));
+    gzwrite (out, &h_step, sizeof (h_step));
+    gzwrite (out, &day, sizeof (day));
+    gzwrite (out, &d_step, sizeof (d_step));
 
-    fwrite (&type, sizeof (type), 1, out);
-    fwrite (&minute, sizeof (minute), 1, out);
-    fwrite (&m_step, sizeof (m_step), 1, out);
-    fwrite (&hour, sizeof (hour), 1, out);
-    fwrite (&h_step, sizeof (h_step), 1, out);
-    fwrite (&day, sizeof (day), 1, out);
-    fwrite (&d_step, sizeof (d_step), 1, out);
-
-    len = strlen (script_file) + 1;
-    fwrite (&len, sizeof (len), 1, out);
-    fwrite (script_file, len, 1, out);    
+    put_string (out, script_file);    
 }
 
 // Load a time event from file
-void time_event::load (FILE *f)
+void time_event::load (gzFile f)
 {
-    u_int16 len;
-        
-    fread (&minute, sizeof (minute), 1, f);
-    fread (&m_step, sizeof (m_step), 1, f);
-    fread (&hour, sizeof (hour), 1, f);
-    fread (&h_step, sizeof (h_step), 1, f);
-    fread (&day, sizeof (day), 1, f);
-    fread (&d_step, sizeof (d_step), 1, f);
+    gzread (f, &minute, sizeof (minute));
+    gzread (f, &m_step, sizeof (m_step));
+    gzread (f, &hour, sizeof (hour));
+    gzread (f, &h_step, sizeof (h_step));
+    gzread (f, &day, sizeof (day));
+    gzread (f, &d_step, sizeof (d_step));
 
-    fread (&len, sizeof (len), 1, f);
-    script_file = new char[len];
-    fread (script_file, len, 1, f);
+    script_file = get_string (f);
 }
 
 // Execute time event's script

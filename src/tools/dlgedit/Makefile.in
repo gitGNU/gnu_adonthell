@@ -75,7 +75,7 @@ dlgedit_SOURCES = callbacks.cc circle.cc crcle_callbacks.cc crcle_interface.cc d
 # Evil, but it works...
 CPPFLAGS =  -I../.. -D_DLGEDIT_ -D_DEBUG_ -D_VERSION_=\"0.7\" `gtk-config --cflags`
 
-LDADD = ../../character.o ../../data.o ../../dialog.o ../../event.o  ../../lex.prefs.o ../../prefs.o ../../py_inc.o  ../../py_quest_wrap.o  ../../quest.o  ../../storage.o ../../yarg.o
+LDADD = ../../character.o ../../data.o ../../dialog.o ../../event.o ../../fileops.o ../../lex.prefs.o ../../prefs.o ../../py_inc.o  ../../py_quest_wrap.o  ../../quest.o  ../../storage.o ../../yarg.o
 
 
 LDFLAGS = -lm -lstdc++ `gtk-config --libs`
@@ -95,8 +95,9 @@ pset_callbacks.o pset_interface.o py_character_wrap.o run.o \
 run_callbacks.o run_interface.o
 dlgedit_LDADD = $(LDADD)
 dlgedit_DEPENDENCIES =  ../../character.o ../../data.o ../../dialog.o \
-../../event.o ../../lex.prefs.o ../../prefs.o ../../py_inc.o \
-../../py_quest_wrap.o ../../quest.o ../../storage.o ../../yarg.o
+../../event.o ../../fileops.o ../../lex.prefs.o ../../prefs.o \
+../../py_inc.o ../../py_quest_wrap.o ../../quest.o ../../storage.o \
+../../yarg.o
 dlgedit_LDFLAGS = 
 CXXFLAGS = @CXXFLAGS@
 CXXCOMPILE = $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
@@ -107,7 +108,7 @@ DIST_COMMON =  Makefile.am Makefile.in
 
 DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 
-TAR = gtar
+TAR = tar
 GZIP_ENV = --best
 DEP_FILES =  .deps/callbacks.P .deps/circle.P .deps/crcle_callbacks.P \
 .deps/crcle_interface.P .deps/dbg_callbacks.P .deps/dbg_interface.P \

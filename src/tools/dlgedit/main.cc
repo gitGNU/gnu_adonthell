@@ -20,7 +20,7 @@ extern "C"
 	void initquestc(void);
 }
 
-#include <stdio.h>
+#include <zlib.h>
 #include <unistd.h>
 #include <gtk/gtk.h>
 
@@ -84,12 +84,12 @@ main (int argc, char *argv[])
     sprintf (tmp, "%s/character.data", myconf.datadir.c_str ());
 
     // load characters from character.data
-    FILE *in = fopen (tmp, "r");
+    gzFile in = gzopen (tmp, "r");
     if (in)
     {
         npc *mynpc = NULL;
     
-        while (fgetc (in))
+        while (gzgetc (in))
         {
             mynpc = new npc;
             mynpc->load (in, false);
@@ -99,7 +99,7 @@ main (int argc, char *argv[])
         // set a shortcut to one of the NPC's
         PyDict_SetItemString (data::globals, "the_npc", pass_instance (mynpc, "npc"));
     
-        fclose (in);
+        gzclose (in);
     }
 
     // create quest array
@@ -108,14 +108,14 @@ main (int argc, char *argv[])
 
     // try to open quest.data
     sprintf (tmp, "%s/quest.data", myconf.datadir.c_str ());
-    in = fopen (tmp, "r");
+    in = gzopen (tmp, "r");
 
     if (in)
     {
         quest *myquest;
         
         // load quests
-        while (fgetc (in))
+        while (gzgetc (in))
         {
             myquest = new quest;
             myquest->load (in);
@@ -127,7 +127,7 @@ main (int argc, char *argv[])
             data::quests.set (myquest->name, myquest);
         }
         
-        fclose (in);    
+        gzclose (in);    
     }
     
     // Misc initialization

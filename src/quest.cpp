@@ -12,51 +12,48 @@
    See the COPYING file for more details.
 */
 
+#include "fileops.h"
 #include "quest.h"
 
 // Save a quest object
-void quest::save (FILE *out)
+void quest::save (gzFile out)
 {
     hash_map<const char*, s_int32, hash<const char*>, equal_key>::iterator i;
-    int j;
-
+    char *string;
+    u_int32 j;
+    
     // Save name
-    j = strlen (name) + 1;
-    fwrite (&j, sizeof (j), 1, out);
-    fwrite (name, j, 1, out);        
-
+    put_string (out, name);
+    
     // Save all variables and flags
     j = data.size ();
-    fwrite (&j, sizeof (j), 1, out);
+    gzwrite (out, &j, sizeof (j));
     
     for (i = data.begin (); i != data.end (); i++)
     {
-        j = strlen ((*i).first) + 1;
-        fwrite (&j, sizeof (j), 1, out);
-        fwrite ((*i).first, j, 1, out);
-        fwrite (&(*i).second, sizeof (s_int32), 1, out);
+        string = strdup ((*i).first);
+        put_string (out, string);
+        free (string);
+        gzwrite (out, &(*i).second, sizeof (s_int32));
     }
 }
 
 // Load a quest object and add it to the quest-arrays
-void quest::load (FILE *in)
+void quest::load (gzFile in)
 {
-    int i, j, size, value;
+    u_int32 i, size;
+    s_int32 value;
     char *key;
 
     // load name
-    fread (&size, sizeof(size), 1, in);
-    name = new char[size];
-    fread (name, size, 1, in);
-
+    name = get_string (in);
+    
     // load all variables and flags
-    fread (&size, sizeof(size), 1, in);
+    gzread (in, &size, sizeof (size));
     for (i = 0; i < size; i++)
     {
-        fread (&j, sizeof(j), 1, in);
-        key = new char[j];
-        fread (key, j, 1, in);
-        fread (&value, sizeof (value), 1, in);
+        key = get_string (in);
+        gzread (in, &value, sizeof (value));
 
         set (key, value);
     }

@@ -21,6 +21,7 @@
 #ifndef _EDIT_
 #include "Python.h"
 #include "py_modules.h"
+#include "data.h"
 #endif
 
 #ifdef SDL_MIXER
@@ -74,6 +75,9 @@ bool game::init ()
     // init python interpreter
 #ifndef _EDIT_
 	init_python ();
+
+    // init the data subsystem
+    data::init (configuration->get_adonthellrc ());
 #endif
 
     // voila :)

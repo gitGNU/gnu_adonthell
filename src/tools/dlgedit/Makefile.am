@@ -12,7 +12,7 @@ run_interface.cc
 CPPFLAGS +=-I../.. -D_DLGEDIT_ -D_DEBUG_ -D_VERSION_=\"0.7\" `gtk-config --cflags`
 
 LDADD = ../../character.o ../../data.o ../../dialog.o \
-../../event.o  ../../lex.prefs.o ../../prefs.o ../../py_inc.o \
+../../event.o ../../fileops.o ../../lex.prefs.o ../../prefs.o ../../py_inc.o \
  ../../py_quest_wrap.o  ../../quest.o  ../../storage.o ../../yarg.o
  
 

@@ -15,7 +15,14 @@
 #ifndef _fileops_h
 #define _fileops_h
 
-void getstringfromfile(char strg[],SDL_RWops * file);
-void putstringtofile(char strg[],SDL_RWops * file);
+#include <zlib.h>
+
+// void getstringfromfile(char strg[],SDL_RWops * file);
+// void putstringtofile(char strg[],SDL_RWops * file);
+
+// Save a string
+void put_string (gzFile, char*);
+// Load a string
+char* get_string (gzFile);
 
 #endif

@@ -20,7 +20,7 @@
 #include "inventory.h"
 #include "event.h"
 
-#include <stdio.h>
+#include <zlib.h>
 
 struct PyCodeObject;
 
@@ -52,8 +52,8 @@ public:
     u_int32 color;                          // Color of dialogue text
 
 #ifndef SWIG
-    void save (FILE*);                      // Save the character to file
-    void load (FILE*, bool b=true);         // Load the character from file
+    void save (gzFile);                     // Save the character to file
+    void load (gzFile, bool b=true);        // Load the character from file
 #endif
 };
 
@@ -71,8 +71,8 @@ public:
 
 #ifndef SWIG
     char* get_dialogue ();                  // Returns the character's dialogue
-    void save (FILE*);                      // Save the character to file
-    void load (FILE*, bool b=true);         // Load the character from file
+    void save (gzFile);                     // Save the character to file
+    void load (gzFile, bool b=true);        // Load the character from file
 
 protected:
     char* dialogue;                         // The NPC's dialogue

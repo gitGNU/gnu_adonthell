@@ -13,6 +13,7 @@
 */
 
 #include <sys/stat.h>
+#include <zlib.h>
 #include <glib.h>
 #include <dirent.h>
 #include <string.h>
@@ -23,7 +24,7 @@
 #include "../../quest.h"
 
 // read the quest source file and append it to the quest data file
-void process_character (char *input, FILE *output)
+void process_character (char *input, gzFile output)
 {
     ifstream in (input);
     gchar str[256], **vals;
@@ -85,7 +86,7 @@ void process_character (char *input, FILE *output)
     }
 
     // tell the quest.data loader that another entry follows
-    fputc (1, output);
+    gzputc (output, 1);
 
     // append the character data
     myquest.save (output);
@@ -98,7 +99,7 @@ int main (int argc, char* argv[])
 	struct dirent *dirent;
 	struct stat statbuf;
 	char *path = NULL, *cwd = NULL;
-    FILE *outfile;
+    gzFile outfile;
 	DIR *dir;
 
     if (argc < 2 || argc > 3)
@@ -107,8 +108,8 @@ int main (int argc, char* argv[])
         return 1;
     }
 
-    if (argc == 2) outfile = fopen ("quest.data", "w");
-    else outfile = fopen (argv[2], "w");
+    if (argc == 2) outfile = gzopen ("quest.data", "w6");
+    else outfile = gzopen (argv[2], "w6");
 
     if (!outfile)
     {
@@ -153,8 +154,8 @@ int main (int argc, char* argv[])
     }
 
     // tell the quest.data loader that the EOF has been reached
-    fputc (0, outfile);
-    fclose (outfile);
+    gzputc (outfile, 0);
+    gzclose (outfile);
     
    return 0;
 }

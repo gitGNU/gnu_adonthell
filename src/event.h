@@ -16,10 +16,10 @@
 #define __EVENT_H__
 
 #include <vector>
-#include <stdio.h>
-#include <Python.h>
-#include "compile.h"
+#include <zlib.h>
 
+#include "Python.h"
+#include "compile.h"
 #include "types.h"
 
 class event_handler;
@@ -40,7 +40,7 @@ friend event_handler;
 
 public:
     char* script_file;                          // Filename of the event script
-    virtual void save (FILE*) = 0;              // save the event data
+    virtual void save (gzFile) = 0;             // save the event data
     virtual ~event ();
     
 // Don't grant direct access to these: only event_handler may set/modify
@@ -51,14 +51,14 @@ protected:
 
     virtual void execute (event*) = 0;          // execute the script
     virtual bool equals (event*) = 0;           // compare two events for equality
-    virtual void load (FILE*) = 0;              // load the event data
+    virtual void load (gzFile) = 0;             // load the event data
 };
 
 // Baseclass for enter/leave events
 class base_map_event : public event
 {
 public:
-    void save (FILE*);                          // Save event data
+    void save (gzFile);                         // Save event data
 
     s_int32 x;                                  // x coordinate
     s_int32 y;                                  // y coordinate
@@ -71,7 +71,7 @@ protected:
 
     void execute (event*);                      // Run the event's script
     bool equals (event*);                       // Compare two events
-    void load (FILE*);                          // Load event data
+    void load (gzFile);                         // Load event data
 };
 
 // To notify when a character entered a maptile
@@ -93,7 +93,7 @@ class time_event : public event
 {
 public:
     time_event ();
-    void save (FILE*);                          // Save event data
+    void save (gzFile);                         // Save event data
 
     u_int8 minute;                              // 0 - 59
     u_int8 m_step;                              // 0, 1, 2, ...
@@ -106,7 +106,7 @@ public:
 protected:
     void execute (event*);                      // Run the event's script
     bool equals (event*);                       // Compare two events
-    void load (FILE*);                          // Load event data
+    void load (gzFile);                         // Load event data
 };
 
 // Base class for objects that want to register events
@@ -125,7 +125,7 @@ public:
     static void register_event (event*, char*); // register an event
     static void remove_event (event*);          // unregister an event
     static void raise_event (event*);           // event triggered
-    static event* load_event (FILE*, bool=true);// load an event
+    static event* load_event (gzFile, bool=true);// load an event
     
 private:
     static vector<event*> handlers[MAX_EVENT];  // registered events storage
