@@ -216,6 +216,20 @@ void event::set_list (event_list *l)
     List = l;
 }
 
+// disable the event temporarily
+void event::pause ()
+{
+    event_handler::remove_event (this);
+    Paused = true;
+}
+
+// resume a disabled event
+void event::resume ()
+{
+    event_handler::register_event (this);
+    Paused = false;
+}
+
 // repeat an event
 s_int32 event::do_repeat ()
 {

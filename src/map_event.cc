@@ -1,7 +1,7 @@
 /*
    $Id$
 
-   Copyright (C) 2002 Kai Sterker <kaisterker@linuxgames.com>
+   Copyright (C) 2002/2003 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -31,9 +31,6 @@ map_event::map_event () : event ()
 // compare two map events
 bool map_event::equals (const event* e)
 {
-    // if our event is paused, this will prevent it from getting executed
-    if (Paused) return false;
-    
     // we know that we've got a map_event :)
     map_event *t = (map_event *) e;
 

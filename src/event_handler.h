@@ -1,7 +1,7 @@
 /*
    $Id$
 
-   Copyright (C) 2000/2001/2002 Kai Sterker <kaisterker@linuxgames.com>
+   Copyright (C) 2000/2001/2002/2003 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -84,6 +84,11 @@ protected:
      */
     friend void event_list::add_event (event* ev);
 
+    /**
+     * As is event::resume.
+     */
+    friend void event::resume ();
+    
 private:
     /**
      * A list of the actual %event handlers

@@ -1,7 +1,7 @@
 /*
    $Id$
 
-   Copyright (C) 2002 Kai Sterker <kaisterker@linuxgames.com>
+   Copyright (C) 2002/2003 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -102,7 +102,7 @@ public:
     bool equals (const event * evnt)
     {
         time_event *e = (time_event *) evnt;
-        return Time <= e->time () && !Paused;
+        return Time <= e->time ();
     }
     
     /**

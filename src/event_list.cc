@@ -1,7 +1,7 @@
 /*
    $Id$
 
-   Copyright (C) 2000/2001/2002 Kai Sterker <kaisterker@linuxgames.com>
+   Copyright (C) 2000/2001/2002/2003 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -59,8 +59,12 @@ void event_list::add_event (event* ev)
 {
     ev->set_list (this);
     Events.push_back (ev);
+
+    // if the event list is paused, also pause new events
     if (Paused) ev->pause ();
-    event_handler::register_event (ev); 
+
+    // only register event if not paused
+    else if (ev->is_paused ()) event_handler::register_event (ev); 
 }
 
 // Remove an event from the list

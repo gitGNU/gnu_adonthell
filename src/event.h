@@ -1,7 +1,7 @@
 /*
    $Id$
 
-   Copyright (C) 2000/2001/2002 Kai Sterker <kaisterker@linuxgames.com>
+   Copyright (C) 2000/2001/2002/2003 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -214,20 +214,25 @@ public:
     /**
      * Disable the %event temporarily. As long as it in this state, the
      * event will neither be executed, nor will its repeat-count change.
+     * As long as the %event is paused, it will be removed from its
+     * %event handler.
      */
-    virtual void pause ()
-    {
-        Paused = true;
-    }
+    virtual void pause ();
     
     /**
-     * Re-enable an %event that has been paused. 
+     * Re-enable an %event that has been paused. Re-registers it with
+     * its %event handler.
      */
-    virtual void resume ()
+    virtual void resume ();
+
+    /**
+     * Check whether the %event is temporarily disabled or not.
+     * @return \b true if it is paused, \b false otherwise.                                                       
+     */
+    bool is_paused () const
     {
-        Paused = false;
+        return Paused;
     }
-    
     //@}
 
     /**

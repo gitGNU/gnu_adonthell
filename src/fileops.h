@@ -202,15 +202,15 @@ public:
     friend float& operator << (float& s, igzstream& gfile);
 #endif
 
-    bool get_bool (igzstream& gfile);
-    u_int8 get_uint8 (igzstream& gfile);
-    s_int8 get_sint8 (igzstream& gfile);
-    u_int16 get_uint16 (igzstream& gfile);
-    s_int16 get_sint16 (igzstream& gfile);
-    u_int32 get_uint32 (igzstream& gfile);
-    s_int32 get_sint32 (igzstream& gfile);
-    string get_string (igzstream& gfile);
-    float get_float (igzstream& gfile);
+    bool get_bool ();
+    u_int8 get_uint8 ();
+    s_int8 get_sint8 ();
+    u_int16 get_uint16 ();
+    s_int16 get_sint16 ();
+    u_int32 get_uint32 ();
+    s_int32 get_sint32 ();
+    string get_string ();
+    float get_float ();
 
 private:
     /// NEVER pass this by value.
@@ -294,15 +294,15 @@ public:
     friend const float& operator >> (const float& s, ogzstream& gfile);
 #endif
 
-    void put_bool (const bool &n, ogzstream& gfile)         { n >> gfile; }
-    void put_uint8 (const u_int8 &n, ogzstream& gfile)      { n >> gfile; }
-    void put_sint8 (const s_int8 &n, ogzstream& gfile)      { n >> gfile; }
-    void put_uint16 (const u_int16 &n, ogzstream& gfile)    { n >> gfile; }
-    void put_sint16 (const s_int16 &n, ogzstream& gfile)    { n >> gfile; }
-    void put_uint32 (const u_int32 &n, ogzstream& gfile)    { n >> gfile; }
-    void put_sint32 (const s_int32 &n, ogzstream& gfile)    { n >> gfile; }
-    void put_string (const string& s, ogzstream& gfile)     { s >> gfile; }
-    void put_float (const float &n, ogzstream& gfile)       { n >> gfile; }
+    void put_bool (const bool &n)         { n >> *this; }
+    void put_uint8 (const u_int8 &n)      { n >> *this; }
+    void put_sint8 (const s_int8 &n)      { n >> *this; }
+    void put_uint16 (const u_int16 &n)    { n >> *this; }
+    void put_sint16 (const s_int16 &n)    { n >> *this; }
+    void put_uint32 (const u_int32 &n)    { n >> *this; }
+    void put_sint32 (const s_int32 &n)    { n >> *this; }
+    void put_string (const string& s)     { s >> *this; }
+    void put_float (const float &n)       { n >> *this; }
     
 private:
     /// NEVER pass this by value.

@@ -1,7 +1,7 @@
 /*
    $Id$
 
-   Copyright (C) 2002 Kai Sterker <kaisterker@linuxgames.com>
+   Copyright (C) 2002/2003 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -76,19 +76,19 @@ s_int32 time_event::execute (const event * evnt)
 // disable the event temporarily
 void time_event::pause ()
 {
-    event::pause ();
-    
     // save time 'til relative event is raised
     if (!Absolute) Time -= gamedate::time ();
+
+    event::pause ();
 }
 
 // enable a previously paused event
 void time_event::resume ()
 {
-    event::resume ();
-    
     // restore alarm time for relative event
     if (!Absolute) Time += gamedate::time ();
+
+    event::resume ();
 }
 
 // Save time event to file

@@ -1,7 +1,7 @@
 /*
   $Id$
   
-  Copyright (C) 1999/2000/2001   Kai Sterker
+  Copyright (C) 1999/2000/2001/2003   Kai Sterker
   Copyright (C) 2001    Alexandre Courbot
   Part of the Adonthell Project http://adonthell.linuxgames.com
   
