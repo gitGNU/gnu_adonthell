@@ -19,7 +19,7 @@
  * @brief Methods to parse the dlgedit commandline.
  */
  
-#include <iostream> 
+#include <iostream.h> 
 #include <dirent.h>
 #include <getopt.h>
 #include "dlg_cmdline.h"
@@ -48,13 +48,13 @@ bool DlgCmdline::parse (int argc, char* argv[])
         {
             case 'd':
             {
-                cout << datadir << endl;
+                cout << datadir << std::endl;
                 return false;
             }
                 
             case 'v':
             {
-                cout << _VERSION_ << endl;
+                cout << _VERSION_ << std::endl;
                 return false; 
             }
                 

@@ -21,6 +21,7 @@
 
 #include <gtk/gtk.h>
 #include <sys/stat.h>
+#include <iostream.h>
 #include "dlg_types.h"
 #include "gui_file.h"
 #include "gui_dlgedit.h"

@@ -27,7 +27,7 @@
 #define YY_FLEX_MINOR_VERSION 5
 
 #include <stdio.h>
-
+#include <errno.h>
 
 /* cfront 1.2 defines "c_plusplus" instead of "__cplusplus" */
 #ifdef c_plusplus
@@ -40,7 +40,15 @@
 #ifdef __cplusplus
 
 #include <stdlib.h>
+#ifndef _WIN32
 #include <unistd.h>
+#else
+#ifndef YY_ALWAYS_INTERACTIVE
+#ifndef YY_NEVER_INTERACTIVE
+extern int isatty YY_PROTO(( int ));
+#endif
+#endif
+#endif
 
 /* Use prototypes in function declarations. */
 #define YY_USE_PROTOS
@@ -466,12 +474,12 @@ char *yytext;
 #include <string>
 #include "dlg_types.h"
 
-#define YY_DECL int parse_dlgfile (string &mytext, int &mynum)
+#define YY_DECL int parse_dlgfile (std::string &mytext, int &mynum)
 #define text 1
 
 #define YY_NO_UNPUT 1
 #define YY_NEVER_INTERACTIVE 1
-#line 475 "lex.loadlg.cc"
+#line 483 "lex.loadlg.cc"
 
 /* Macros after this point can all be overridden by user definitions in
  * section 1.
@@ -571,9 +579,20 @@ YY_MALLOC_DECL
 			YY_FATAL_ERROR( "input in flex scanner failed" ); \
 		result = n; \
 		} \
-	else if ( ((result = fread( buf, 1, max_size, yyin )) == 0) \
-		  && ferror( yyin ) ) \
-		YY_FATAL_ERROR( "input in flex scanner failed" );
+	else \
+		{ \
+		errno=0; \
+		while ( (result = fread(buf, 1, max_size, yyin))==0 && ferror(yyin)) \
+			{ \
+			if( errno != EINTR) \
+				{ \
+				YY_FATAL_ERROR( "input in flex scanner failed" ); \
+				break; \
+				} \
+			errno=0; \
+			clearerr(yyin); \
+			} \
+		}
 #endif
 
 /* No semi-colon after return; correct usage is to write "yyterminate();" -
@@ -625,7 +644,7 @@ YY_DECL
 #line 29 "loadlg.l"
 
 
-#line 629 "lex.loadlg.cc"
+#line 648 "lex.loadlg.cc"
 
 	if ( yy_init )
 		{
@@ -853,7 +872,7 @@ YY_RULE_SETUP
 #line 63 "loadlg.l"
 ECHO;
 	YY_BREAK
-#line 857 "lex.loadlg.cc"
+#line 876 "lex.loadlg.cc"
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(text):
 	yyterminate();
@@ -1418,9 +1437,13 @@ YY_BUFFER_STATE b;
 	}
 
 
+#ifndef _WIN32
+#include <unistd.h>
+#else
 #ifndef YY_ALWAYS_INTERACTIVE
 #ifndef YY_NEVER_INTERACTIVE
-#include<unistd.h>
+extern int isatty YY_PROTO(( int ));
+#endif
 #endif
 #endif
 

@@ -17,7 +17,7 @@
 #include <string>
 #include "dlg_types.h"
 
-#define YY_DECL int parse_dlgfile (string &mytext, int &mynum)
+#define YY_DECL int parse_dlgfile (std::string &mytext, int &mynum)
 %}
 
 digit  [0-9]

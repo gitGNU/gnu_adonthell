@@ -24,6 +24,7 @@
 #endif
 
 #include <gtk/gtk.h>
+#include <iostream.h>
 #include <locale.h>
 #include "gettext.h"
 #include "game.h"
