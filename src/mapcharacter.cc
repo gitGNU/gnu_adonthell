@@ -720,6 +720,7 @@ void mapcharacter::set_action (string file, PyObject * args = NULL)
 bool mapcharacter::update ()
 {
     update_move ();
+    if (is_schedule_activated ()) schedule.run ();
 
     if (previous_move != NO_MOVE && previous_move != current_move) 
     {
@@ -733,9 +734,7 @@ bool mapcharacter::update ()
         delete saying;
         saying = NULL; 
     }
-    
-    if (is_schedule_activated ()) schedule.run ();
-
+     
     return true;
 }
 
