@@ -31,7 +31,7 @@ dnl ****
 dnl i18n
 dnl ****
 
-AM_GNU_GETTEXT
+AM_GNU_GETTEXT(use-libtool)
 ALL_LINGUAS=""
 
 dnl ********************
