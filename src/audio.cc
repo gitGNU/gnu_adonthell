@@ -240,7 +240,7 @@ void audio::play_background(int slot) {
   if (music[slot] != NULL) {
     current_background = slot;
     background_on = true;
-    Mix_PlayMusic(music[current_background], 2);
+    Mix_PlayMusic(music[current_background], 0);
   }
 }
 

@@ -23,6 +23,7 @@
 
 
 #include "prefs.h"
+#include "python_class.h"
 
 config::config () 
 {
@@ -51,7 +52,9 @@ void print_help_message (char * argv[])
     cout << "-d         print the data directory and exit" << endl; 
     cout << "-v         print version and exit" << endl; 
     cout << "-l         list installed games and exit" << endl;
-    cout << "-g dir     play the game contained in dir (for development only) " << endl; 
+    cout << "-g dir     play the game contained in dir (for development only)" << endl;
+    cout << "-c         byte-compile all Python scripts in this directory (for " << endl;
+    cout << "           development only)" << endl; 
 }
 
 /**
@@ -96,7 +99,7 @@ void config::parse_arguments (int argc, char * argv[])
     // Check for options
     while (1)
     {
-        c = getopt (argc, argv, "ldhvg:");
+        c = getopt (argc, argv, "lcdhvg:");
         if (c == -1)
             break;
         
@@ -117,6 +120,15 @@ void config::parse_arguments (int argc, char * argv[])
                 exit (0); 
                 break;
                 
+            case 'c':
+            {
+                python::init (); 
+                python::exec_string ("import compileall; compileall.compile_dir (\".\", 0);");  
+                python::cleanup (); 
+                exit (0); 
+                break;
+            }
+
             case 'g':
             {
                 gamedir = optarg;
@@ -135,7 +147,7 @@ void config::parse_arguments (int argc, char * argv[])
                 
                 break;
             }
-              
+            
             case '?':
             case 'h':
                 print_help_message (argv);
