@@ -5,7 +5,7 @@ EXTRA_DIST = config.rpath ABOUT-NLS NEWBIE autogen.sh README.BeOS \
         debian/rules adonthell.spec.in adonthell.spec README.MacOSX
 
 install-data-local:
-	if test ! -d $(gamedatadir)/games ; then \
-	mkdir $(gamedatadir)/games; \
+	if test ! -d $(DESTDIR)$(gamedatadir)/games ; then \
+	mkdir $(DESTDIR)$(gamedatadir)/games; \
 	fi
 
