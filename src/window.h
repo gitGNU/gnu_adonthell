@@ -89,7 +89,7 @@ class window
 #define WIN_L_R 2
 
 #define NB_TABLE_CHAR 130
-#define WIN_SPACE_LENGHT 7
+#define WIN_SPACE_LENGHT 5
 
 #define WIN_CORNER_LENGHT 16
 #define WIN_CORNER_HEIGHT 16

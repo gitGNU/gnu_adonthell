@@ -131,16 +131,16 @@ int do_cutscene(void) {
   scene->set_imagekey_visible(3,2,true);
   scene->set_imagekey_visible(3,3,true);
 
-//  scene->set_cycles(0,130);
-//  scene->set_cycles(1,980);
-//  scene->set_cycles(2,600);
-//  scene->set_cycles(3,600);
+  scene->set_cycles(0,130);
+  scene->set_cycles(1,980);
+  scene->set_cycles(2,600);
+  scene->set_cycles(3,600);
 
   // Slowed down animation to 50% original speed
-  scene->set_cycles(0,260);
-  scene->set_cycles(1,1960);
-  scene->set_cycles(2, 1200);
-  scene->set_cycles(3, 1200);
+//  scene->set_cycles(0,260);
+//  scene->set_cycles(1,1960);
+//  scene->set_cycles(2, 1200);
+//  scene->set_cycles(3, 1200);
 
   // Layer #1 coordinates
   scene->set_coordinates(0,0,0,0);
@@ -179,7 +179,7 @@ int do_cutscene(void) {
 
   wnd->init(40, 20, 240, 160, WIN_NORMAL);
   wnd->show ();
-  wnd->set_text ("                                            Adonthell");
+  wnd->set_text ("             Welcome to Adonthell!                                                           A lot has happened since the last release and yet it was not easy to get this one on the way. The biggest problem is the constant development going on. At each given point in time there had been halfway completed features, and we always said: \"Let's just finish that one first\", but when it was done, other things worth adding were already in progress ...            Now that the mapengine codebase is reaching its final state and 'role playing'-aspects are rolled in, we should be able to provide previews on a more frequent basis and with more interactive content.                               'til that happens, enjoy this release!                                                     The Adonthell Team");
   wnd->update ();
   wnd->draw ();
   screen::show ();
