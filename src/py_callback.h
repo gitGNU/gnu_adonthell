@@ -58,20 +58,20 @@ public:
     /**
      * Calls the python function and returns bool.
      * 
+     * @return the result of the callback function.
      */
-
     bool callback_func0ret (); 
 
     /**
      * Calls the python function with an integer.
      * 
+     * @param arg Integer argument to pass to the callback. 
      */ 
-    void callback_func1 (int);
+    void callback_func1 (int arg);
 
 private:
-
     /**
-     * TThe actual function call
+     * The actual function call
      *
      */
     PyObject *make_call (PyObject*);

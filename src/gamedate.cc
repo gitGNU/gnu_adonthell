@@ -19,6 +19,7 @@
  * @brief Implements the gamedate class.
  */
 
+#include <stdlib.h>
 #include "gamedate.h"
 #include "gametime.h"
 #include "time_event.h"

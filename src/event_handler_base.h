@@ -30,6 +30,8 @@
 class event_handler_base
 {
 public:
+    virtual ~event_handler_base () { }
+
     /**
      */
     virtual void register_event (event *evnt) = 0;

@@ -19,12 +19,11 @@
  * @brief Implements the time_event class.
  */
 
-#include "stdlib.h"
 #include "time_event.h"
 #include "gamedate.h"
 
 // create a new time event
-time_event::time_event (const string & time, bool absolute)
+time_event::time_event (const string & time, bool absolute) : event ()
 {
     Repeat = 0;
     Type = TIME_EVENT;
@@ -44,7 +43,22 @@ void time_event::execute (const event & evnt)
 {
     // nothing needs be passed to the script; it can get the
     // current time from the gametime class if it is needed.
-    Script.run ();
+    switch (Action)
+    {
+        case ACTION_SCRIPT:
+        {
+            Script->run ();
+            break;
+        }
+        
+        case ACTION_PYFUNC:
+        {
+            PyFunc->callback_func0 ();
+            break;
+        }
+    
+        default: return;
+    }
     
     // when the script needs be repeated, do so.
     if (Repeat != 0) Time += Interval;

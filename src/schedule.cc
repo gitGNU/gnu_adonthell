@@ -78,7 +78,7 @@ void schedule::set_manager (string file, PyObject *args)
     Manager.create_instance (SCHEDULE_DIR + file, file, args);
     
     // update the alarm with the new manager script
-    if (Alarm) Alarm->set_shared_script (Manager);
+    if (Alarm) Alarm->set_shared_script (&Manager);
 }
 
 // set the alarm
@@ -108,8 +108,7 @@ void schedule::set_alarm (string time, bool absolute)
 
     // create and register the new alarm
     Alarm = new time_event (time, absolute);
-    Alarm->event::set_repeat (0);
-    Alarm->set_shared_script (Manager);
+    Alarm->set_shared_script (&Manager);
     event_handler::register_event (Alarm);
 }
 
@@ -165,7 +164,7 @@ bool schedule::get_state (igzstream &file)
     {
         Alarm = new time_event;
         Alarm->get_state (file);
-        Alarm->set_shared_script (Manager);
+        Alarm->set_shared_script (&Manager);
         
         // don't forget to register the alarm!
         event_handler::register_event (Alarm);

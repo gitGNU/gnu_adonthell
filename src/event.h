@@ -16,7 +16,7 @@
  * @file   event.h
  * @author Kai Sterker <kaisterker@linuxgames.com>
  * 
- * @brief  Declares the event class.
+ * @brief  Declares the %event class.
  * 
  */
 
@@ -25,14 +25,16 @@
 
 #include "fileops.h" 
 #include "py_object.h"
+#include "py_callback.h"
 
 /**
- * Directory where event scripts reside.
+ * Directory where %event scripts reside.
  */ 
 #define EVENTS_DIR "events."
 
+#ifndef SWIG
 /**
- * Available Event types.
+ * Available %event types.
  */ 
 enum
 {
@@ -44,15 +46,30 @@ enum
 };
 
 /**
- * Base class for events. You can create your own event types that can
- * be handled by the event list and event handler by inheriting them from
+ * Available 'actions', i.e. what happens when the event occurs
+ */
+enum
+{
+    ACTION_NOTHING  = 0,
+    ACTION_SCRIPT   = 1,
+    ACTION_PYFUNC   = 2
+};
+#endif // SWIG
+    
+/**
+ * Base class for events. You can create your own %event types that can
+ * be handled by the event_list and event_handler by inheriting from
  * this class.
+ *
+ * Events are used to notify when certain things happen during the game.
+ * They may either execute the "run" method of an exclusive python script
+ * or a simple python callback defined elsewhere.
  */ 
 class event
 {
 public:
     /**
-     * Constructor
+     * Constructor. Needs to be called by any derived class!
      */
     event ();
 
@@ -107,16 +124,16 @@ public:
     //@{
     
     /**
-     * Execute the associated python script.
+     * Execute the associated python script or callback.
      * 
-     * @param evnt The event that triggered the execution.
+     * @param evnt The %event that triggered the execution.
      */ 
     virtual void execute (const event& evnt) = 0;
 
     /** 
      * Compare two events for equality.
      * 
-     * @param evnt pointer to the event to compare with.
+     * @param evnt pointer to the %event to compare with.
      * @return \e true if the events are equal, \e false otherwise.
      */
     virtual bool equals (const event& evnt) = 0;
@@ -124,7 +141,7 @@ public:
     //@}
     
     /** 
-     * Sets the script to be executed whenever the event occurs.
+     * Sets a script to be executed whenever the event occurs.
      * 
      * @param filename filename of the script to set.
      * @param args The arguments to pass to the script's constructor
@@ -132,7 +149,7 @@ public:
     void set_script (string filename, PyObject * args = NULL);
     
     /**
-     * Sets the script to be executed whenever the event occurs.
+     * Sets a script to be executed whenever the event occurs.
      * This method allows to specify a script that is already
      * in use elsewhere.
      *
@@ -141,10 +158,22 @@ public:
      * event will <b>not</b> save the script. When loading a game,
      * the original owner has to supply the event with the script.
      *
-     * @param script reference to a script initialized elsewhere.
+     * @param script pointer to a script initialized elsewhere.
      */
-    void set_shared_script (py_object & script);
+    void set_shared_script (py_object * script);
     
+    /**
+     * Sets a python function/method to be executed whenever the
+     * event occurs.
+     *
+     * @warning the callback won't be saved with the %event. It
+     * must be restored by the event's owner.
+     *
+     * @param callback The function or method to call.
+     * @param args Additional arguments to pass to the callback.
+     */
+    void set_callback (PyObject *callback, PyObject *args = NULL);
+     
     /**
      * @name Loading / Saving
      */
@@ -182,6 +211,11 @@ protected:
     u_int8 Type;
 
     /**
+     * What happens if the event occurs - see enum above.
+     */
+    u_int8 Action;
+    
+    /**
      * For events that share their script with another class, Shared
      * has to be set <b>true</b>. This prevents the script from getting
      * saved to file.
@@ -199,7 +233,7 @@ protected:
      * The Python script accociated with this %event. It is executed
      * whenever the %event gets triggered.
      */
-    py_object Script; 
+    py_object *Script; 
 
     /**
      * The arguments passed to the script. This needs to be a PyTuple
@@ -207,6 +241,10 @@ protected:
      */
     PyObject *Args;
     
+    /**
+     * Python Callback that may be executed instead of the script.
+     */
+    py_callback *PyFunc;
     //@}
 #endif // SWIG
 };

@@ -68,7 +68,7 @@ public:
      *
      * @param time The "alarm" time in %gametime minutes.
      */
-    time_event (const u_int32 & time)
+    time_event (const u_int32 & time) : event ()
     {
         Type = TIME_EVENT;
         Time = time;
