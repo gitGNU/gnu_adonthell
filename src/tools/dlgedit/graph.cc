@@ -1473,7 +1473,7 @@ int scroll_graph (gpointer data)
 // Removes data from a vector and reports success or failure
 template <class T> u_int8 remove_data (vector<T> &array, T data)
 {
-    vector<T, allocator<T> >::iterator i;
+    vector<T>::iterator i;
 
     if ((i = find (array.begin (), array.end (), data)) == array.end ()) return 0;
     else array.erase (i);
