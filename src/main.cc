@@ -150,14 +150,14 @@ int do_cutscene(void) {
   // Layer #3: Coordinates of left portion
   scene->set_coordinates(0,2,0,0);
   scene->set_coordinates(1,2,0,0);
-  scene->set_coordinates(2,2,-494,0);
-  scene->set_coordinates(3,2,-494,0);
+  scene->set_coordinates(2,2,-994,0);
+  scene->set_coordinates(3,2,-994,0);
 
   // Layer #4: Coordinates of right portion
   scene->set_coordinates(0,3,240,137);
   scene->set_coordinates(1,3,240,137);
-  scene->set_coordinates(2,3,(-494 + 240),137);
-  scene->set_coordinates(3,3,(-494 + 240),137);
+  scene->set_coordinates(2,3,(-994 + 240),137);
+  scene->set_coordinates(3,3,(-994 + 240),137);
 
 
   // Fade in our intro background music
