@@ -1,6 +1,6 @@
 ## Process this file with automake to produce Makefile.in
 
-MODULES_SUBDIRS = gfx input audio python lmap gui
+MODULES_SUBDIRS = gfx input audio python lmap
 
 if BUILD_TOOLS
 SUBDIRS = $(MODULES_SUBDIRS) . tools
@@ -88,13 +88,14 @@ libpython_LDADD = $(PY_LIBS)
 
 libgui_LDADD = $(FT2_LIBS)
 
-#liboldwin_a_SOURCES = win_background.cc win_base.cc win_border.cc \
+##liboldwin_SOURCES = win_background.cc win_base.cc win_border.cc \
 #	win_container.cc win_font.cc win_keys.cc \
 #	win_manager.cc win_scrollbar.cc win_scroll.cc win_select.cc win_theme.cc \
 #	label.cc label_input.cc win_event.cc \
 #	win_font.h win_image.h win_label.h label.h label_input.h \
 #	win_scrollbar.h win_scroll.h win_select.h win_theme.h win_keys.h win_event.h win_types.h \
 #	win_write.h win_manager.h win_object.h window.h  
+#liboldwin_LDADD = $(FT2_LIBS)
 
 #libadonthell_a_SOURCES = input.cc \
 #	input.h 
@@ -108,7 +109,7 @@ pytest_SOURCES = pytest.cc
 schedtest_SOURCES = schedtest.cc
 
 
-joltest_LDADD = gui/libgui.a gfx/libgfx.a input/libinput.a python/libpython.a libbase.a $(libbase_LDADD) $(libgui_LDADD) $(libpython_LDADD) -lstdc++
+joltest_LDADD =  gui/libgui.a input/libinput.a python/libpython.a libbase.a $(libbase_LDADD) $(libgui_LDADD) $(libpython_LDADD) -lstdc++
 
 alextest_LDADD = lmap/libmap.a gfx/libgfx.a input/libinput.a python/libpython.a libbase.a $(libbase_LDADD) $(libpython_LDADD)
 

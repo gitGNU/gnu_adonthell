@@ -26,12 +26,12 @@
 #ifndef DRAWING_AREA_H_
 #define DRAWING_AREA_H_
 
-#include "types.h"
+#include "../types.h"
 
 namespace gfx
 {
 
-    /**
+   /**
      * Implements "drawing zones" for drawing operations.
      * An object which is drawn into a drawing_area will only appear in
      * the rectangular zone it covers.
