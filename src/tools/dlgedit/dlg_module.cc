@@ -23,7 +23,7 @@
 #include "dlg_module.h"
 #include "dlg_circle.h"
 #include "dlg_arrow.h"
-
+#include "dlg_cmdline.h"
 
 // ctor
 DlgModule::DlgModule (std::string n, std::string d)
@@ -187,6 +187,10 @@ bool DlgModule::load ()
     DlgArrow *arrow;
     std::string s;
 
+    // load the default project if there is one
+    if (DlgCmdline::project != "")
+        entry_.setProject (DlgCmdline::project);
+    
     // load all nodes and toplevel items
     while (i)
     {

@@ -1,7 +1,7 @@
 /*
    $Id$
 
-   (C) Copyright 2000/2001 Kai Sterker <kaisterker@linuxgames.com>
+   (C) Copyright 2000/2001/2002 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -23,8 +23,11 @@
  * 
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
 
-
+#include <gettext.h>
 #include <iostream>
 #include <string>
 #include <algorithm>
@@ -32,14 +35,11 @@
 #include "yarg.h"
 #include "character.h"
 #include "dialog.h"
-#include "objimpl.h"
-
 
 // Constructor
 dialog::dialog ()
 {
     strings = NULL;
-    _text = NULL;
 }
 
 // Destructor
@@ -66,7 +66,7 @@ bool dialog::init (string fpath, string name, PyObject *args)
 bool dialog::setup ()
 {
     // Extract the dialogue's strings
-    PyObject *list = dialogue.get_attribute ("strings");
+    PyObject *list = dialogue.get_attribute ("text");
     if (!list) return false;
 
     PyObject *s;
@@ -74,7 +74,7 @@ bool dialog::setup ()
 
     strings = new char*[index];
 
-    for (i = 0; i < index; i++)
+    for (i = 1; i < index; i++)
     {
         s = PyList_GetItem (list, i);
         if (s) strings[i] = PyString_AsString (s);
@@ -105,136 +105,132 @@ bool dialog::reload (string fpath, string name, PyObject *args)
 // Clean up
 void dialog::clear ()
 {
-    dialogue.call_method ("clear", NULL);
     if (strings) delete[] strings;
+}
+
+// iterate over the dialogue text
+string dialog::text ()
+{
+    string text = "";
+    
+    if (i_text != text_.end ())
+    {
+        text = *i_text;
+        i_text++;
+    }
+    else i_text = text_.begin ();
+    
+    return text;
 }
 
 // Gets the index of either the player or npc array
 void dialog::run (u_int32 index)
 {
-    u_int32 nsz, psz, i, j = 0, k = 0, l = 1;
-    yarg randgen;
-    s_int32 s;
-
-    PyObject *npc, *player, *cont;
-
-    // (Re)Init dialog::text
-    if (_text)
-    {
-        for (i = 0; i < _text_size; i++) delete _text[i];
-        delete _text;
-
-        _text_size = 0;
-        _text = NULL;
-    }
-
-    // End of dialogue:
-    if (answers[index] == -1)
+    PyObject *arg, *result, *speaker, *speech;
+    s_int32 s, answer = answers[index];
+    u_int32 stop, size;
+    
+    // end of dialogue
+    if (answer == -1)
         return;
     
-    // Execute the next part of the dialogue
-    PyObject *arg = Py_BuildValue ("(i)", answers[index]);
-    dialogue.run (arg);
-    Py_XDECREF (arg);
-
-#ifdef PY_DEBUG
-    python::show_traceback ();
-#endif
-
     // Mark the Player's text (if any) as used unless loops allowed
-    if (index != 0)
+    if (index > 0)
     {
-        s = choices[index-1];
-        PyObject * loopattr = dialogue.get_attribute ("loop");
-        if (!PySequence_In (loopattr, PyInt_FromLong (s)))
-            used.push_back (s);
-        Py_DECREF (loopattr); 
+        used.push_back (answer);
     }
     
-    // Empty helper arrays
+    // empty previous dialogue text
+    text_.clear ();
     answers.clear ();
-    choices.clear ();
-
-    // Now fill in the NPC's and Player's responses:
-    // 1. Get the neccesary attributes of the dialogue class
-    npc = dialogue.get_attribute ("npc");
-    player = dialogue.get_attribute ("player");
-    cont = dialogue.get_attribute ("cont");
-    PyObject *attrcolor = dialogue.get_attribute ("color");
-    _npc_color = PyInt_AsLong (attrcolor);
-    Py_XDECREF (attrcolor); 
-
-    // 2. Search the NPC part for used text
-    for (i = 0; (int)i < PyList_Size (npc); i++)
+    
+    do
     {
-        s = PyInt_AsLong (PyList_GetItem (npc, i));
+        // Execute the next part of the dialogue
+        arg = Py_BuildValue ("(i)", answer);
+        dialogue.run (arg);
+#ifdef PY_DEBUG
+        python::show_traceback ();
+#endif
+        Py_XDECREF (arg);
+    
+        // Now fill in the NPC's and Player's responses:
+        // 1. Get the neccesary attributes of the dialogue class
+        speaker = dialogue.get_attribute ("speaker");
+        speech = dialogue.get_attribute ("speech");
 
-        // Remove NPC text that was already used and isn't allowed to loop
-        if (find (used.begin (), used.end (), s) != used.end ())
-            PySequence_DelItem (npc, i--);
-    }
-
-    nsz = PyList_Size (npc);
-    psz = PyList_Size (player);
-
-    if (nsz != 0)
-    {
-        _text = new char*[nsz+psz];
-        // 3. Randomly chose between possible NPC replies
-        randgen.init (" ", 0, nsz-1);
-    }
-    // End of dialogue
-    else return;
-
-    randgen.randomize ();
-    i = randgen.get (5);
-
-    // The first value of text is the NPC Part
-    s = PyInt_AsLong (PyList_GetItem (npc, i));
-
-    // scan the string for { python code }
-    _text[0] = scan_string (strings[s]);
-    answers.push_back (-1);
-
-    // 4. Mark the NPC text as used unless it's allowed to loop
-    PyObject * loopattr = dialogue.get_attribute ("loop");
-    if (!PySequence_In (loopattr, PyInt_FromLong (s)))
-        used.push_back (s);
-    Py_XDECREF (loopattr); 
-
-    // 5. Extract the matching player strings
-    while (j <= i)
-    {
-        s = PyInt_AsLong (PyList_GetItem (player, k));
-        
-        if (s == -1) j++;
-        
-        // These are the strings belonging to the chosen NPC text
-        if (j == i && s != -1)
+        // 2. Search the NPC part for used text
+        for (int i = 0; i < PyList_Size (speech); i++)
         {
-            // Only display unused text
-            if (find (used.begin (), used.end (), s) == used.end ())
+            s = PyInt_AsLong (PyList_GetItem (speech, i));
+
+            // Remove text that was already used and isn't allowed to loop
+            if (find (used.begin (), used.end (), s) != used.end ())
             {
-                // add string to current text list
-                _text[l++] = scan_string (strings[s]);
-                
-                // Remember Player's possible replies to avoid loops
-                choices.push_back (s);               
-                answers.push_back (PyInt_AsLong (PyList_GetItem (cont, k+1)));
+                PySequence_DelItem (speaker, i);
+                PySequence_DelItem (speech, i--);
             }
         }
-        
-        k++;
+
+        // check if some text is left at all
+        size = PyList_Size (speech);
+        if (size == 0) return;
+
+        // prepare the random number generator        
+        yarg::range (0, size - 1);
+
+        // check type of speaker
+        if (PyList_GetItem (speaker, 0) != Py_None)
+        {
+            // got NPC text, so let the engine decide
+            int rnd = yarg::get ();
+            
+            // get the text
+            answer = PyInt_AsLong (PyList_GetItem (speech, rnd));
+            text_.push_back (gettext (scan_string (strings[answer])));
+            
+            // get the NPC color
+            char *npc = PyString_AsString (PyList_GetItem (speaker, rnd));
+            if (npc != NULL)
+            {
+                if (strcmp ("Narrator", npc) == 0) npc_color_ = 0;
+                else npc_color_ = data::characters[npc]->get_color ();
+            }
+            
+            // check whether we shall continue or not
+            arg = Py_BuildValue ("(i)", answer);
+            result = dialogue.call_method_ret ("stop", arg);
+            stop = PyInt_AsLong (result);
+            Py_XDECREF (result);
+            Py_XDECREF (arg);
+            
+            // make sure this NPC text can't be used any more
+            used.push_back (answer);
+            answers.push_back (answer);
+        }
+        else
+        {
+            // got Player text, so let the player decide
+            for (u_int32 i = 0; i < size; i++)
+            {
+                // simply add all text to let the player select an answer
+                answer = PyInt_AsLong (PyList_GetItem (speech, i));
+                text_.push_back (gettext (scan_string (strings[answer])));
+                answers.push_back (answer);
+            }
+            
+            // let the player make his decision
+            stop = true;
+        }
     }
+    while (!stop);            
 
-    // Insert the target of the NPC text
-    answers[0] = PyInt_AsLong (PyList_GetItem (cont, k-1));
-    _text_size = l;
-
-    // Free the three lists
-    Py_XDECREF (npc);
-    Py_XDECREF (player);
-    Py_XDECREF (cont);
+    // init the iterator for dialogue text retrieval
+    i_text = text_.begin ();
+    
+    // cleanup
+    Py_XDECREF (speaker);
+    Py_XDECREF (speech);
 }
 
 // execute embedded functions and replace shortcuts
@@ -328,7 +324,7 @@ char* dialog::scan_string (const char *s)
 
         if (result)
             if (PyString_Check (result))
-                mid = PyString_AS_STRING (result);    
+                mid = (char*) gettext (PyString_AS_STRING (result));    
         
         // Replace existing with new, changed string
         // 1. Calculate string's length

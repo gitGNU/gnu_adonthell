@@ -1,7 +1,7 @@
 /*
    $Id$
 
-   (C) Copyright 2000/2001 Kai Sterker <kaisterker@linuxgames.com>
+   (C) Copyright 2000/2001/2002 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -114,7 +114,7 @@ public:
      * 
      * @return the npc color.
      */
-    u_int32 npc_color () { return _npc_color; }
+    u_int32 npc_color () { return npc_color_; }
 
     /** 
      * Returns the number of %text lines available at this point of 
@@ -125,29 +125,28 @@ public:
      *
      * @sa text()
      */
-    u_int32 text_size () { return _text_size; }
+    u_int32 text_size () { return text_.size (); }
 
     /** 
-     * Returns the dialogue's %text. Depending on the current state
+     * Iterates over the dialogue's %text. Depending on the current state
      * of the dialogue, there can be multiple alternatives. The first
      * string is always the NPC's speech. Any following strings are
-     * the player's possible reactions. The value passed to the run()
+     * the player's possible reactions. The value passed to the run ()
      * method is the (zero-based) index of the alternative chosen by
      * the player.
      *
-     * 
-     * @return array of strings containing the %text of the dialog or
-     *         \e NULL when the dialogue is finished.
+     * @return the next string in the list of text, or the empty string ""
+     *      when the end of the array of strings has been reached.
      * @sa text_size()
      */
-    char** text () { return _text; }
+    string text ();
     
 private:
     py_object dialogue;             // Points to the instantiated dialogue class
     char **strings;                 // The dialogue text
-    char **_text;                   // NPC's speech and according Player responses
-    u_int32 _npc_color;             // The color of the NPC's text
-    u_int32 _text_size;             // Number of strings in text
+    vector<string> text_;           // NPC's speech and according Player responses
+    vector<string>::iterator i_text;// Iterator for the text_ vector
+    u_int32 npc_color_;             // The color of the NPC's text
 
     vector<s_int32> answers;        // The indices with which to call instance.run () 
     vector<s_int32> choices;        // Strings player can chose from

@@ -21,7 +21,13 @@
  * 
  * 
  */
+ 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
 
+#include <locale.h>
+#include "gettext.h"
 #include "audio.h"
 #include "character.h"
 #include "game.h"
@@ -29,6 +35,7 @@
 #include "input.h"
 #include "python_class.h"
 #include "screen.h"
+#include "yarg.h"
 #include "win_manager.h"
 #include "win_theme.h"
 
@@ -104,6 +111,13 @@ int main(int argc, char * argv[])
     // init game environment
     game::init (myconfig.gamedir);
     
+    // Init i18n
+    setlocale (LC_MESSAGES, "");
+    
+    // open the catalogue
+    bindtextdomain (myconfig.game_name.c_str (), "/usr/local/share/locale");
+    textdomain (myconfig.game_name.c_str ());
+
     // init game loading/saving system
     gamedata::init (myconfig.get_adonthellrc (), myconfig.gamedir, myconfig.game_name); 
     
@@ -120,8 +134,8 @@ int main(int argc, char * argv[])
     
     // init python interpreter
     python::init (); 
-
     init_python();
+
     // init the game data
     data::engine = new adonthell;
     data::the_player = NULL;
@@ -129,6 +143,10 @@ int main(int argc, char * argv[])
     // init window manager
     win_manager::init (); 
 
+    // init random number generator
+    yarg::init (myconfig.game_name);
+    yarg::randomize ();
+    
     // It's up to the game what happens here
     python::exec_file ("init");
 

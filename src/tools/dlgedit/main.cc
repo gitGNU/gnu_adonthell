@@ -25,7 +25,6 @@
 
 #include <gtk/gtk.h>
 #include <locale.h>
-#include <getopt.h>
 #include "gettext.h"
 #include "game.h"
 #include "dlg_cmdline.h"
@@ -87,7 +86,7 @@ int main (int argc, char *argv[])
                 continue;
             }
             
-            module = new DlgModule (dialogue, "");
+            module = new DlgModule (dialogue + "-1", "");
             
             // try to load from file
             if (!module->load ())

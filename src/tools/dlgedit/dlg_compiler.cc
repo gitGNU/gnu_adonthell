@@ -215,6 +215,7 @@ void DlgCompiler::writeCustomCode ()
 {
     // constructor
     file << "\n\tdef __init__(self, p, n):"
+         << "\n\t\tself.namespace = globals ()"
          << "\n\t\tself.the_player = p"
          << "\n\t\tself.the_npc = n\n";
 
@@ -433,7 +434,7 @@ void DlgCompiler::writeStart ()
     // begin dialogue array
     file << "\t# -- (speaker, code, stop, (text, operation, condition, ...))"
          << "\n\tdlg = [\\\n"
-         << "\t\t(None, -1, 1, (";
+         << "\t\t(None, -1, (";
     
     // write the "followers" (in this case the start nodes)
     if (!start.empty ())
@@ -441,10 +442,7 @@ void DlgCompiler::writeStart ()
         std::vector<DlgNode*>::iterator i;
 
         for (i = start.begin (); i != start.end (); i++)
-        {
-            if (i != start.begin ()) file << ", ";
             writeFollower (*i);
-        }
     }
 }
 
@@ -455,7 +453,6 @@ void DlgCompiler::writeDialogue ()
     std::vector<DlgNode*>::iterator i;
     DlgCircle *circle, *child;
     DlgCircleEntry *entry;
-    int index;
         
     for (i = nodes.begin (); i != nodes.end (); i++)
     {
@@ -488,18 +485,14 @@ void DlgCompiler::writeDialogue ()
         }
         
         // write code
-        file << ", " << codeTable[circle->index ()] << ", "
+        file << ", " << codeTable[circle->index ()] << ", (";
                 
-        // write action
-             << checkFollowers (circle) << ", (";
+        // check whether the followers are valid
+        checkFollowers (circle);
         
         // write all followers
-        index = 0;
-        for (child = circle->child (FIRST); child != NULL; child = circle->child (NEXT), index++)
-        {
-            if (index != 0) file << ", ";
+        for (child = circle->child (FIRST); child != NULL; child = circle->child (NEXT))
             writeFollower (child);
-        }
     }
     
     // end of array
@@ -509,8 +502,8 @@ void DlgCompiler::writeDialogue ()
 // write a single follower
 void DlgCompiler::writeFollower (DlgNode *node)
 {
-    file << node->index () << ", " << operationTable[node->index ()] 
-         << ", " << conditionTable[node->index ()];
+    file << "(" << node->index () << ", " << operationTable[node->index ()] 
+         << ", " << conditionTable[node->index ()] << "), ";
 }
 
 // add node to the dialogue's start nodes
@@ -519,8 +512,11 @@ void DlgCompiler::addStart (DlgNode *node)
     std::vector<DlgNode*>::iterator i = start.begin ();
 
     // search the proper place for insertion
-    if (!start.empty ()) 
-        while (i != start.end () && *node < *(*i)) i++;
+    while (i != start.end ())
+    {
+        if (*node < *(*i)) break;
+        i++;
+    }
     
     // insert
     start.insert (i, node);
@@ -623,7 +619,7 @@ void DlgCompiler::addCode (const std::string &cde, int idx)
 int DlgCompiler::checkFollowers (DlgCircle *circle)
 {
     DlgNode *child = circle->child (FIRST);
-    if (child == NULL) return 1;
+    if (child == NULL) return 0;
     
     node_type type = child->type ();
     std::string error;
@@ -650,9 +646,8 @@ int DlgCompiler::checkFollowers (DlgCircle *circle)
             break;
         }
     }
-    
-    if (type == PLAYER) return 0;
-    else return 1;
+
+    return 1;
 }
 
 // check whether the children of given node have proper conditions

@@ -147,28 +147,7 @@ void dialog_screen::init(character_base *mynpc, char * dlg_file, u_int8 size)
         cout << flush;
         answer = -1;	
     }
-    else
-    {
-        // Make the set_portrait/name/npc functions available to the dialogue script
-        PyObject *instance = python::pass_instance (this, "dialog_screen");
-
-        PyObject *setname = PyObject_GetAttrString (instance, "set_name");
-        PyObject *setportrait = PyObject_GetAttrString (instance, "set_portrait");
-        PyObject *setnpc = PyObject_GetAttrString (instance, "set_npc");
-
-        PyObject *dlg_instance = dlg->get_instance ();
-
-        PyObject_SetAttrString (dlg_instance, "set_name", setname);
-        PyObject_SetAttrString (dlg_instance, "set_portrait", setportrait);
-        PyObject_SetAttrString (dlg_instance, "set_npc", setnpc);
-
-        Py_DECREF (setname);
-        Py_DECREF (setportrait);
-        Py_DECREF (setnpc);
-        Py_DECREF (instance);
-
-        answer = 0;
-    }
+    else answer = 0;
 
     // Clean up
     Py_DECREF (args);
@@ -186,7 +165,7 @@ dialog_screen::~dialog_screen ()
 
 void dialog_screen::run ()
 {
-    u_int32 i;
+    u_int32 i = 0;
     win_label *l;
 
     // Possibly error
@@ -200,21 +179,21 @@ void dialog_screen::run ()
     dlg->run (answer);
 
     // End of dialogue
-    if (!dlg->text ())
+    if (dlg->text_size () == 0)
     {
         is_running = false;
         return;
     }
 
     // Add NPC text and all player reactions to container
-    for (i = 0; i < dlg->text_size (); i++)
+    for (string txt = dlg->text (); txt != ""; txt = dlg->text (), i++)
     {
         l = new win_label();
-        l->set_font (i == 0 ? *fonts[dlg->npc_color()] : *fonts[1]);
+        l->set_font (i == 0 ? *fonts[dlg->npc_color ()] : *fonts[1]);
         l->move(0,0);
         ((label*)l)->resize(180,0);
         l->set_form(label::AUTO_HEIGHT);
-        l->set_text (dlg->text()[i]);
+        l->set_text (txt);
         l->set_visible (true);
         l->pack();
         cur_answers.push_back (l);
@@ -222,7 +201,7 @@ void dialog_screen::run ()
     }
 
     // Either select the single NPC speech ...
-    if (dlg->text_size() == 1)
+    if (dlg->text_size () == 1)
         sel->set_default_object (cur_answers.front ());
 
     // ... or the player's first answer

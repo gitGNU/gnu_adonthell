@@ -30,6 +30,9 @@ bool DlgCmdline::compile = false;
 // the directory to look for project files
 std::string DlgCmdline::datadir = DATA_DIR"/games";
 
+// the default project
+std::string DlgCmdline::project = "";
+
 // index of the first dialgoue source in argv[]
 int DlgCmdline::sources;
 
@@ -39,7 +42,7 @@ bool DlgCmdline::parse (int argc, char* argv[])
     int c;
     
     // Check for options
-    while ((c = getopt (argc, argv, "cdhvg:")) != -1)
+    while ((c = getopt (argc, argv, "cdhvg:j:")) != -1)
     {
         switch (c)
         {
@@ -60,7 +63,13 @@ bool DlgCmdline::parse (int argc, char* argv[])
                 compile = true;
                 break;
             }
-
+            
+            case 'j':
+            {
+                project = optarg;
+                break;
+            }
+            
             case 'g':
             {
                 datadir = optarg;
@@ -104,5 +113,6 @@ void DlgCmdline::help (const std::string &program)
     cout << "-d         print the project directory and exit" << endl; 
     cout << "-v         print version and exit" << endl; 
     cout << "-c         compile all SOURCES and exit" << endl;
-    cout << "-p dir     specify a custom project directory" << endl;         
+    cout << "-p dir     specify a custom project directory" << endl;
+    cout << "-j project specify a default project" << endl;   
 }

@@ -1,7 +1,7 @@
 /*
    $Id$
 
-   (C) Copyright 1998 Kai Sterker <kaisterker@linuxgames.com>
+   (C) Copyright 1998/2002 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -12,26 +12,30 @@
    See the COPYING file for more details
 */
 
-// yet another random generator :)
+/**
+ * @file   yarg.h
+ * @author Kai Sterker <kaisterker@linuxgames.com>
+ * 
+ * @brief  Yet Another Random Number Genarator.
+ * 
+ * 
+ */
 
-#include <string.h>
+#include <string>
 
 class yarg
 {
 public:
-    ~yarg () { }
-    yarg ();
-    yarg (char *s, int a, int e);          // Random seed and number range
-   		
-    int get (int = 1);                     // Return next (nth) random number
-    void randomize ();                     // Mix with current time
-    void init (char*, int, int);           // Like the constructor
-
+    static int get (int = 1);                // Return next (nth) random number
+    static void randomize ();                // Mix with current time
+    static void init (std::string, int = 0, int = 100);// Seed the generator
+    static void range (int, int);            // Change the range
+    
 private:
-    void folgezustand ();                  // Calculate next state of register
-    int	zufallszahl ();                    // Calculate the number from the register
+    static void folgezustand ();             // Calculate next state of register
+    static int	zufallszahl ();              // Calculate the number from the register
 
-    unsigned char schieberegister[16];     // Here the random numbers are created
-    int min;                               // Smallest possible numbe
-    int max;                               // Largest possible number
+    static unsigned char schieberegister[16];// Here the random numbers are created
+    static int min;                          // Smallest possible numbe
+    static int max;                          // Largest possible number
 };

@@ -93,23 +93,26 @@ bool py_object::instanciate (PyObject *module, string file, string classname, Py
     return true;
 }
 
-// Execute the body of the script
-void py_object::call_method (const string & name, PyObject * args = NULL)
+// Execute a method of the script
+PyObject* py_object::call_method_ret (const string & name, PyObject * args = NULL)
 {
+    PyObject *result = NULL;
+     
     if (instance)
     {
         PyObject *tocall = PyObject_GetAttrString (instance, (char *) name.c_str ());
 
         if (PyCallable_Check (tocall) == 1)
         {    
-            PyObject *res = PyObject_CallObject (tocall, args);
-            Py_XDECREF (res); 
+            result = PyObject_CallObject (tocall, args);
             Py_DECREF (tocall); 
         }
 #ifdef PY_DEBUG
         python::show_traceback ();
 #endif
     }
+    
+    return result;
 }
 
 // Get an attribute of the instance

@@ -496,8 +496,11 @@ void label::draw_string (const bool at_cursor)
          j < my_vect_[tmp_start_line].idx_end + 1 ;
          j++)
     {
-        (*my_font_) [my_text_[j]].draw (tx, ty, NULL, this);
-        tx += (*my_font_) [my_text_[j]].length (); 
+        if (my_font_->in_table (my_text_[j]))
+        {
+            (*my_font_) [my_text_[j]].draw (tx, ty, NULL, this);
+            tx += (*my_font_) [my_text_[j]].length (); 
+        }
     }
     ty += my_font_->height ();
     tmp_start_line++; 
@@ -511,8 +514,11 @@ void label::draw_string (const bool at_cursor)
              j <  my_vect_[tmp_start_line].idx_end + 1 ;
              j++)
         {
-            (*my_font_) [my_text_[j]].draw (tx, ty, NULL, this);
-            tx += (*my_font_) [my_text_[j]].length (); 
+            if (my_font_->in_table (my_text_[j]))
+            {
+                (*my_font_) [my_text_[j]].draw (tx, ty, NULL, this);
+                tx += (*my_font_) [my_text_[j]].length (); 
+            }
         }
         ty += my_font_->height ();
         tmp_start_line++; 

@@ -1,7 +1,7 @@
 /*
    $Id$
 
-   (C) Copyright 1998 Kai Sterker <kaisterker@linuxgames.com>
+   (C) Copyright 1998/2002 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -12,28 +12,36 @@
    See the COPYING file for more details
 */
 
-#include <string.h>
+/**
+ * @file   yarg.cc
+ * @author Kai Sterker <kaisterker@linuxgames.com>
+ * 
+ * @brief  Yet Another Random Number Genarator.
+ * 
+ * 
+ */
+
 #include <time.h>
 #include "yarg.h"
 
-yarg::yarg ()
-{ 
-   init(" ", 0, 100); 
-}
-
-yarg::yarg (char *s, int a, int e) 
-{ 
-   init(s, a, e);   
-}
+unsigned char yarg::schieberegister[16];// Here the random numbers are created
+int yarg::min;                          // Smallest possible numbe
+int yarg::max;                          // Largest possible number
 
 // Init the generator with a seed and a range 
-void yarg::init (char *str, int mn, int mx)
+void yarg::init (std::string str, int mn, int mx)
 {
-	int s = strlen (str);
+	int s = str.length ();
 
 	for (int i = 0; i < 16; i++)
    		schieberegister[i] = str[i%s];
 
+    range (mn, mx);
+}
+
+// change the range of the generator
+void yarg::range (int mn, int mx)
+{
 	min = (mx < mn ? mx : mn);
 	max = (mn > mx ? mn : mx);
 }
@@ -84,4 +92,3 @@ int yarg::zufallszahl ()
 
     return (zahl%(max - min + 1)) + min;
 }
-
