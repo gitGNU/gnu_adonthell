@@ -44,6 +44,10 @@ class win_select : public win_scroll
 
   void set_default_position(const u_int16 pos);
 
+  void set_pos( const u_int8 pos) {win_scroll::set_pos(pos);finish_scroll_ = true;}
+
+  bool update();
+
   win_base * get_selected_object();
   
   u_int16 get_selected_position();
@@ -51,6 +55,10 @@ class win_select : public win_scroll
   static const u_int8 MODE_BORDER = 0;
   
   static const u_int8 MODE_BRIGHTNESS = 1;
+
+
+
+
   
  protected:
   
@@ -67,6 +75,8 @@ class win_select : public win_scroll
   u_int8 mode_;
   
   bool circle_;
+
+  bool finish_scroll_;
 
   win_border * border_select_;
 

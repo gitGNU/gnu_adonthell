@@ -26,6 +26,7 @@ win_select::win_select()
 
   set_circle(false);
 
+  finish_scroll_ = true;
   //set_visible_scrollbar(false);
 }
 
@@ -42,7 +43,7 @@ void win_select::add(win_base * w)
     
     set_default();
     
-    update_cur_select_position();
+    //update_cur_select_position();
 }
 
 
@@ -102,7 +103,9 @@ void win_select::next()
   
   on_next();
 
-  update_cur_select_position();
+  finish_scroll_ =false;
+
+  //update_cur_select_position();
 }
 
 
@@ -148,7 +151,8 @@ void win_select::previous()
   //update_position();
   on_previous();
 
-  update_cur_select_position();
+  finish_scroll_ =false;
+  //update_cur_select_position();
 }
 
 
@@ -213,6 +217,8 @@ void win_select::set_default()
   while(cur_select_ != list_wb_.end() && !(*cur_select_)->is_can_be_selected()) cur_select_++;
   
   if(cur_select_ != list_wb_.end()) rules(true,*cur_select_);
+
+  finish_scroll_ =false;
 }
 
 void win_select::set_default_object(const win_base * wb)
@@ -227,7 +233,8 @@ void win_select::set_default_object(const win_base * wb)
 
   if(cur_select_ != list_wb_.end()) rules(true,*cur_select_);
 
-  update_cur_select_position();
+  finish_scroll_ =false;
+  //update_cur_select_position();
 }
 
 
@@ -245,7 +252,8 @@ void win_select::set_default_position(const u_int16 pos)
 
   if(cur_select_ != list_wb_.end()) rules(true,*cur_select_);
 
-  update_cur_select_position();
+  finish_scroll_ =false;
+  //update_cur_select_position();
 }
 
 
@@ -269,6 +277,7 @@ u_int16 win_select::get_selected_position()
 }
 
 
+
 void win_select::update_cur_select_position()
 {
   if(!max_amplitude_) return;
@@ -281,9 +290,26 @@ void win_select::update_cur_select_position()
       else if((*cur_select_)->y() + (*cur_select_)->pad_y() < space_with_border_ ) up();
       else if((*cur_select_)->y() + (*cur_select_)->pad_y() + (*cur_select_)->height() > height() - space_with_border_) down();
       else break;
-    }
+        }
 }
 
+
+bool win_select::update()
+{
+  if(win_scroll::update())
+    {
+      if(!finish_scroll_)
+	{
+	  if(!max_amplitude_) {finish_scroll_=true;return true;}
+	  if((*cur_select_)->height() + (space_with_border_ << 1) > height()) {finish_scroll_ = true; return true;}
+	  else if((*cur_select_)->y() + (*cur_select_)->pad_y() < space_with_border_ ) up();
+	  else if((*cur_select_)->y() + (*cur_select_)->pad_y() + (*cur_select_)->height() > height() - space_with_border_) down();
+	  else finish_scroll_ = true;
+	}
+       return true;
+    }
+  return false;
+}
 
 
 
