@@ -293,7 +293,7 @@ bool fileops::get_version (igzstream& file, u_int16 min, u_int16 max, string nam
             cerr << "You should get an up-to-date version of this program.\n\n";
         // file is older than code
         else
-            cerr << "You should propably get a more recent data package.\n";
+            cerr << "You should probably get a more recent data package.\n";
 
         return false;
     } 
