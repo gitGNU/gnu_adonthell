@@ -87,7 +87,7 @@ SDL_Rect drawing_area::get_rects()
   else return *this;
 }
 
-drawing_area &drawing_area::operator = (SDL_Rect & r)
+drawing_area &drawing_area::operator = (const SDL_Rect & r)
 {
   x=r.x;
   y=r.y;
@@ -107,7 +107,7 @@ drawing_area drawing_area::operator + (drawing_area & da)
   return ret;
 }
 
-image &image::operator =(image &im)
+image &image::operator =(const image &im)
 {
   length=im.length;
   height=im.height;
@@ -143,7 +143,7 @@ void image::init()
 image::image ()
 {
 #ifdef _DEBUG_
-  cout << "image() called, "<< ++a_d_diff
+  cout << "image() called, " << ++a_d_diff
        << " objects currently allocated\n";
 #endif
   init();
@@ -170,7 +170,7 @@ image::~image()
 {
   clear();
 #ifdef _DEBUG_
-  cout << "~image() called, "<< --a_d_diff
+  cout << "~image() called, " << --a_d_diff
        << " objects currently allocated\n";
 #endif
 }

@@ -32,7 +32,7 @@ class drawing_area : public SDL_Rect
   bool is_point_in(s_int16 px, s_int16 py);
   void assign_drawing_area(drawing_area * da);
   void detach_drawing_area();
-  drawing_area &operator = (SDL_Rect & r);
+  drawing_area &operator = (const SDL_Rect & r);
   drawing_area operator + (drawing_area & da);
 
   friend class image;
@@ -60,7 +60,7 @@ class image
   bool mask_on;
   u_int8 alpha;
 
-  image &operator =(image &im);
+  image &operator =(const image &im);
   void init();
   image();
   image (u_int16 l, u_int16 h);

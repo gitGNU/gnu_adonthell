@@ -185,16 +185,16 @@ void animation::init()
   play_flag=false;
   length=height=0;
 #ifdef _EDIT_
-  image temp;
-  string t;
   in_editor=false;
   currentimage=0;
-  t=WIN_DIRECTORY;
-  t+=WIN_BACKGROUND_DIRECTORY;
-  t+=WIN_THEME_ORIGINAL;
-  t+=WIN_BACKGROUND_FILE;
   if(!a_d_diff)
     {
+      image temp;
+      string t;
+      t=WIN_DIRECTORY;
+      t+=WIN_BACKGROUND_DIRECTORY;
+      t+=WIN_THEME_ORIGINAL;
+      t+=WIN_BACKGROUND_FILE;
       clipboard=new image;
       temp.load_pnm(t.data());
       bg=new image(320,240);
@@ -202,13 +202,6 @@ void animation::init()
       font=new win_font(WIN_THEME_ORIGINAL);
       border=new win_border(WIN_THEME_ORIGINAL);
     }
-  container=new win_container(200,12,110,216);
-  label_mode=container->add_label(5,5,100,30,font);
-  label_frame_nbr=container->add_label(5,35,100,30,font);
-  label_anim_info=container->add_label(5,65,100,65,font);
-  label_frame_info=container->add_label(5,100,100,100,font);
-  container->set_border(border);
-  container->show_all();
 #endif
 }
 
@@ -225,7 +218,6 @@ void animation::clear()
 {
   
 #ifdef _EDIT_
-  delete container;
   if(a_d_diff==1)
     {
       delete bg;
@@ -1071,6 +1063,13 @@ void animation::update_and_draw()
 void animation::editor()
 {
   u_int16 i;
+  container=new win_container(200,12,110,216);
+  label_mode=container->add_label(5,5,100,30,font);
+  label_frame_nbr=container->add_label(5,35,100,30,font);
+  label_anim_info=container->add_label(5,65,100,65,font);
+  label_frame_info=container->add_label(5,100,100,100,font);
+  container->set_border(border);
+  container->show_all();
   must_upt_label_mode=false;
   must_upt_label_frame_nbr=false;
   must_upt_label_frame_info=false;
@@ -1088,6 +1087,7 @@ void animation::editor()
     }
   input::clear_keys_queue();
   in_editor=false;
+  delete container;
 }
 
 #endif
