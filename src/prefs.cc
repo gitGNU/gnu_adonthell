@@ -12,6 +12,9 @@
    See the COPYING file for more details.
 */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
 #include <iostream> 
 #include <fstream> 
 #include <sys/stat.h>
@@ -20,10 +23,10 @@
 #include <fstream.h>
 #include <unistd.h>
 
-#ifdef HAVE_GETOPT_H
-#include <getopt.h>
-#else
+#ifdef HAVE__GETOPT_H
 #include <_getopt.h>
+#else
+#include <getopt.h>
 #endif
 
 #include "prefs.h"

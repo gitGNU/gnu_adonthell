@@ -2,6 +2,7 @@
    $Id$
 
    Copyright (C) 1999/2000/2001 Kai Sterker <kaisterker@linuxgames.com>
+   Copyright (C) 2002 Alexandre Courbot <alexandrecourbot@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -16,6 +17,7 @@
 /**
  * @file   game.h
  * @author Kai Sterker <kaisterker@linuxgames.com>
+ * @author Alexandre Courbot <alexandrecourbot@linuxgames.com>
  * 
  * @brief  Declares the game class.
  * 
@@ -28,106 +30,102 @@
 #define GAME_H__
 
 
-#include "prefs.h"
-#include "gamedata.h"
-#include "python_class.h"
+#include <string>
+#include "types.h"
+
+using std::string; 
 
 /**
- * Flags that can be passed to game::init () in order to select
- * which subsystems should be initialized.
+ * Holds information about global settings.
+ *
+ * This static class should be the first to be initialised in your application,
+ * because many others depends on it's correct settings.
  * 
- */ 
-typedef
-enum
-{ INIT_NONE = 0, INIT_VIDEO = 1, INIT_AUDIO = 2, INIT_PYTHON = 4, INIT_DATA = 8, 
-  INIT_SAVES = 16, INIT_INPUT = 32, INIT_WIN =  64, INIT_ALL = 255 } initflags; 
-
-/** Responsible for game initialisation and finalisation.
- *  It has only a few methods, however they are critical as they
- *  are responsible for all the game initialisation and cleanup - so they must
- *  ABSOLUTELY be called as the first and last functions called in the main
- *  program.
- */ 
+ */
 class game
 {
 public:
-    /**
-     * %Game initialisation function.
-     * Reads the configuration file,  
-     * check the validity of the data directory and
-     * initialize the display, input, sound, data and Python systems.
-     * It MUST be called before ANY other function in the game.
+    static string User_data_dir;
+    static string Global_data_dir;
+    static string Game_data_dir; 
+
+
+    /** 
+     * Initialise the game parameters. If you are in need to use data contained
+     * in a certain directory (most often, a game), you can pass it as a
+     * parameter.
+     * 
+     * @param game_dir optional game data directory.
+     */
+    static void init (string game_dir = ""); 
+    
+    /** 
+     * Returns the absolute path to the user data directory (usually ~/.adonthell).
+     * 
+     * 
+     * @return user data directory
+     */
+    static string user_data_dir ()
+    {
+        return User_data_dir; 
+    }
+
+    /** 
+     * Returns the absolute path to the global data directory.
+     * 
+     * 
+     * @return global data directory
+     */
+    static string global_data_dir ()
+    {
+        return Global_data_dir; 
+    }
+
+    /** 
+     * Returns the absolute path to the current game's directory (if any).
+     * 
+     * 
+     * @return current game data directory, or empty string if none set.
+     */
+    static string game_data_dir ()
+    {
+        return Game_data_dir; 
+    }
+
+    /** 
+     * Finds a file in the directories hierarchy, starting searching from
+     * game_data_dir(), then global_data_dir() and finally user_data_dir().
      *
-     * @param argc The argc that has been passed to the main program.
-     * @param argv The argv that has been passed to the main program.
-     * @return
-     *     - true Initialisation sucessfull.
-     *     - false Initialisation failure - don't go any further and
-     *             quit.
-     */ 
-    static bool init (config & configuration, initflags to_init = INIT_ALL);
+     * If a matching file is found, the full absolute path is returned, else
+     * an empty string "" is returned. If the path was already absolute, it is
+     * returned immediatly.
+     * 
+     * @param fname name of the find to search for.
+     * 
+     * @return complete absolute path to the file if found, passed string if the given
+     *         path was already absolute, or "" if the file wasn't found.
+     */
+    static string find_file (const string & fname);
 
-    /** Cleanup everything and quit.
-     *  Performs the following:
-     *         -# Destroy the window manager (win_manager).
-     *         -# Write the %configuration file.
-     *         -# Cleanup data.
-     *         -# Shutdown audio.
-     *         -# Shutdown Python.
-     *         -# Shutdown SDL and video.
-     */ 
-    static void cleanup (); 
-
+    /** 
+     * Finds a directory in the directories hierarchy, starting searching from
+     * game_data_dir(), then global_data_dir() and finally user_data_dir().
+     *
+     * If a matching directory is found, the full absolute path is returned, else
+     * an empty string "" is returned. If the path was already absolute, it is
+     * returned immediatly.
+     * 
+     * @param fname name of the find to search for.
+     * 
+     * @return complete absolute path to the directory if found, passed string if the given
+     *         path was already absolute, or "" if the directory wasn't found.
+     */
+    static string find_directory (const string & dirname); 
+    
 private:
-    static string game_name_;
-
-    /**
-     * Keep trace of initiated subsystems.
-     * 
-     */ 
-    static initflags initiated;
-         
-    /**
-     * Initialise the game's data.
-     * 
-     */ 
-    static void init_data (); 
-
-    /**
-     * Cleanup the game's data.
-     * 
-     */ 
-    static void cleanup_data (); 
-
-    /**
-     * Initialise Python's import paths, globals and game module.
-     *
-     * @ bug memory leak in initadonthellc, seems to come from SWIG.
-     * @ bug memory leak in module import.
-     */
-
-    static bool init_python ();
-
-    /**
-     * Free the globals.
-     * 
-     */
-
-    static void cleanup_python (); 
-
-    /**
-     * The Adonthell Python wrapper.
-     * 
-     */ 
-    static PyObject *py_module;
+    static bool directory_exist (const string & dirname); 
+    static bool file_exist (const string & fname); 
 };
-
-
-/**
- * @namespace data
- * Namespace that holds game data that are publicly available.
- * 
- */
 
 
 #endif // GAME_H__

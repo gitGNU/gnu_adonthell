@@ -20,7 +20,7 @@
  */
 
 /*! 
-\page page10 Specifications for the new mapengine.
+\page newmap Specifications for the new mapengine.
 
 This document will precisely describe the specifications/internals of
 the new map engine implementation that is supposed to be shipped with
@@ -64,6 +64,31 @@ viable. Such demanding specifications implies that the proposed
 solution remains simple in it's parts, even if complex in it's
 whole. That's why this section is highly hierarchised. We'll try to
 describe the implementation from the higher layer to the lowest one.
+
+\subsection mapcoord_class The mapcoordinates class
+Not much to say about this one. It represents the position of any
+object on the map, with the tile it is on and an offset from this tile:
+
+\verbatim
+class mapcoordinates
+{
+public:
+    u_int16 x, y;
+    u_int16 ox, oy;
+
+    bool operator < (const mapcoords & mc); 
+    bool operator <= (const mapcoords & mc); 
+    bool operator > (const mapcoords & mc); 
+    bool operator >= (const mapcoords & mc); 
+}; 
+\endverbatim
+
+The operators let you easily compare two coordinates. A coordinate is
+superior to another if it's \e y is superior, \b or it's \e x, \b or
+it's \e oy, \b or it's \e ox (in this order). They should be mostly
+used when you need to sort lists of objects - rendering, for example,
+will need the objects to be sorted by coordinates in order to have a
+good and fast result.
 
 \subsection p10landmap The landmap class
 This class contains the entire map, as well as the elements

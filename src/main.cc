@@ -22,13 +22,19 @@
  * 
  */
 
-
+#include "audio.h"
+#include "character.h"
+#include "game.h"
+#include "gamedata.h"
+#include "input.h"
+#include "python_class.h"
+#include "screen.h"
+#include "win_manager.h"
+#include "win_theme.h"
 
 #ifdef MEMORY_LEAKS
 #include <mcheck.h>
 #endif
-
-#include "game.h"
 
 using namespace std; 
 
@@ -60,15 +66,59 @@ int main(int argc, char * argv[])
     myconfig.read_adonthellrc ();
     myconfig.parse_arguments (argc, argv);
 
-    // initialise the different parts of the engine
-    // (video, audio, python ...)
-    if (!game::init (myconfig)) return 1;
+    // init game environment
+    game::init (myconfig.gamedir);
+    
+    // init game loading/saving system
+    gamedata::init (myconfig.get_adonthellrc (), myconfig.gamedir, myconfig.game_name); 
+    
+    // init video subsystem
+    screen::set_video_mode (320, 240);
+    screen::set_fullscreen (myconfig.screen_mode); 
+     
+    // init audio subsystem
+    if (myconfig.audio_volume > 0)
+        audio::init (&myconfig);
+    
+    // init input subsystem
+    input::init ();
+    
+    // init python interpreter
+    python::init (); 
+
+    // init the game data
+    data::engine = new adonthell;
+    data::the_player = NULL;
+
+    // init window manager
+    win_manager::init (); 
 
     // It's up to the game what happens here
     python::exec_file ("init");
 
-    // shut down the different parts of the engine
-    game::cleanup ();
+    // close all windows
+    // delete all themes and fonts
+    win_manager::cleanup (); 
+    
+    // shutdown input subsystem
+    input::shutdown ();
+
+    // shutdown audio
+    audio::cleanup ();
+
+    // cleanup the saves
+    gamedata::cleanup (); 
+    
+    // cleanup data
+    delete data::engine;
+    if (data::the_player)
+        delete data::the_player;
+
+    // shutdown python
+    python::cleanup ();     
+
+    // shutdown video and SDL
+    SDL_Quit ();
 
     return 0;
 }

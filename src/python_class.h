@@ -49,7 +49,7 @@ public:
      * 
      * @return true in case of success, false otherwise.
      */
-    static void init (void);
+    static bool init ();
 
     /**
      * Cleanup Python.
@@ -105,16 +105,6 @@ public:
      */
     static PyObject *pass_instance (void* instance, const char* class_name);
 
-    /**
-     * Return a function defined in the module as a code %object!
-     *
-     * @param pointer to the module.
-     * @param func_name name of the function to grab.
-     *
-     * @return pointer to the code %object, or NULL if the function does not exist.
-     */
-    static PyCodeObject *get_function_code (PyObject *module, const char* func_name);
-
     /** 
      * Loads a Python tuple previously saved with put_tuple ().
      * 
@@ -137,10 +127,12 @@ public:
 
 private:
     /**
-     * Convert a Pointer to a String, like SWIG 1.3.7 does
+     * Convert a Pointer to a String, like SWIG 1.3.7+ does
      *
      */
     static char *python::ptr_to_string (char *c, void *ptr, int sz);
+
+    static PyObject *module;
 };
 
 #ifndef SWIG

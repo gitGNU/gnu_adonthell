@@ -23,22 +23,62 @@
  */
 
 #include "python_class.h"
+#include "game.h"
 #include <iostream> 
 
 PyObject * data::globals;
+PyObject * python::module;
 
 using namespace std;
 
 /*
+ * SWIG init prototypes. Should we use dynamic linking??? 
+ */
+extern "C"
+{
+    /** 
+     * SWIG init prototype.
+     * 
+     */
+    void initadonthellc (void);
+}
+
+/*
  * Start Python
  */
-void python::init (void)
+bool python::init ()
 {
-    Py_Initialize();
+    Py_Initialize ();
+    
+    // Initialise the import path.
+    // Shared modules path 
+    insert_path (DATA_DIR"/modules"); 
+
+    // Game specific path
+    string t = game::game_data_dir () + "/scripts/modules"; 
+    insert_path ((char *) t.c_str ());
+    t = game::game_data_dir () + "/scripts"; 
+    insert_path ((char *) t.c_str ());
+
+    // Initialise SWIG module. This should go if we ever switch 
+    // to dynamic linking
+    initadonthellc ();
+        
+    module = import_module ("adonthell"); 
+    if (!module) return false;     
+    
+    data::globals = PyModule_GetDict (module);
+
+    return true; 
 }
 
 void python::cleanup () 
 {     
+    // Cleanup the global namespace of python interpreter
+    // Note that we don't have to DECREF data::globals, because they're a
+    // borrowed reference of py_module.
+    Py_DECREF (module); 
+
     Py_Finalize ();
 }
 
@@ -74,24 +114,16 @@ bool python::exec_file (string filename)
  
     if (!mod)
     {
-        cerr << "exec_file: " << filename << " load failed!" << endl;
+        cerr << "exec_file: " << filename << " load failed: " << endl;
+#ifdef PY_DEBUG
+        show_traceback ();
+#endif
         return false;
     }
 
     Py_DECREF (mod); 
 
     return true; 
-//     result = PyRun_SimpleFile (f, (char*) fn.c_str ());
-//     if (result != 0)
-//     {
-//          cerr << "exec_file: " << fn << " execution failed: " << endl;
-#ifdef PY_DEBUG
-         show_traceback ();
-#endif
-//     }
-    
-//     fclose (f);
-//     return result == 0;
 }
 
 /*
@@ -165,42 +197,6 @@ char *python::ptr_to_string (char *c, void *ptr, int sz)
     }
 
     return c;
-}
-
-
-// Grab a function's code object from a Python module
-PyCodeObject *python::get_function_code (PyObject *module, const char* func_name)
-{
-    PyCodeObject *code = NULL;
-
-    // Try to grab the function object
-    if (PyObject_HasAttrString (module, (char*) func_name))
-    {
-        PyObject *function = PyObject_GetAttrString (module, (char*) func_name);
-
-        // If the function exists, get it's code object
-        if (function && PyCallable_Check (function))
-        {
-            code = (PyCodeObject *) PyObject_GetAttrString (function, "func_code");
-/*
-            cout << "code->co_flags   " << code->co_flags << endl;
-            cout << "code->co_nlocals " << code->co_nlocals << endl;
-            cout << "code->co_names ";
-            PyObject_Print (code->co_names, stdout, 0);	
-            cout << endl << "code->co_varnames ";
-            PyObject_Print (code->co_varnames, stdout, 0);
-            cout << endl << endl;
-*/
-            //if (code->co_flags & CO_NEWLOCALS)
-            //    code->co_flags -= CO_NEWLOCALS;
-            // code->co_flags = 0;
-        }
-
-        // Clean up
-        Py_XDECREF (function);
-    }
-
-    return code;
 }
 
 PyObject * python::get_tuple (igzstream & file)

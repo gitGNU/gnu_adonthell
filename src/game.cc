@@ -2,6 +2,7 @@
    $Id$
 
    Copyright (C) 1999/2000/2001/2002 Kai Sterker <kaisterker@linuxgames.com>
+   Copyright (C) 2002 Alexandre Courbot <alexandrecourbot@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -12,23 +13,10 @@
    See the COPYING file for more details.
 */
 
-#include <iostream>
-#include "win_manager.h"
-#include "win_theme.h"
-#include "input.h"
-#include "screen.h"
-#include "game.h"
-#include "character.h"
-#include "quest.h"
-
-#include "python_class.h"
- 
-#include "audio.h"
-
-
 /**
  * @file   game.cc
  * @author Kai Sterker <kaisterker@linuxgames.com>
+ * @author Alexandre Courbot <alexandrecourbot@linuxgames.com>
  * 
  * @brief  Defines the game class.
  * 
@@ -36,165 +24,91 @@
  */
 
 
+#include "game.h"
+#include <stdlib.h>
+#include <sys/types.h>
+#include <dirent.h>
 
-initflags game::initiated = INIT_NONE;
-PyObject * game::py_module = NULL;
 
-/*
- * SWIG init prototypes. Should we use dynamic linking??? 
- */
-extern "C"
+string game::User_data_dir; 
+string game::Global_data_dir; 
+string game::Game_data_dir; 
+
+
+void game::init (string game_dir = "") 
 {
-    /** 
-     * SWIG init prototype.
-     * 
-     */
-    void initadonthellc (void);
+    Global_data_dir = DATA_DIR;
+    User_data_dir = getenv ("HOME");
+    User_data_dir += "/.adonthell";
+    Game_data_dir = game_dir; 
 }
 
-
-// Initialize all parts of the game engine
-bool game::init (config & configuration, initflags to_init = INIT_ALL)
+bool game::directory_exist (const string & dirname)
 {
-    // init game loading/saving system
-    if (to_init & INIT_SAVES) 
-    { 
-        gamedata::init (configuration.get_adonthellrc (), configuration.gamedir, configuration.game_name); 
-    }
-    
-    // init video subsystem
-    if (to_init & INIT_VIDEO) 
-    { 
-        screen::set_video_mode (320, 240);
-        screen::set_fullscreen (configuration.screen_mode); 
-    }
-     
-    // init audio subsystem
-    if (to_init & INIT_AUDIO)
+    DIR * dir = opendir (dirname.c_str ());
+
+    if (dir) 
     {
-        if (configuration.audio_volume > 0)
-            audio::init (&configuration);
-    }
-    
-    // init input subsystem
-    if (to_init & INIT_INPUT) 
-    { 
-        input::init ();
-    }
-    
-    // init python interpreter
-    if (to_init & INIT_PYTHON)
-    { 
-        python::init (); 
-        
-        // initialise python import paths, SWIG module and globals
-        init_python (); 
-        // init the game data
-        init_data (); 
+        closedir (dir);
+        return true; 
     }
 
-    // init window manager
-    if (to_init & INIT_WIN) 
-    {
-        win_manager::init (); 
-    }
-    
-    initiated = to_init;
-    
-    // voila :)
-    return true;
+    return false; 
 }
 
-// Cleanup everything
-void game::cleanup () 
+bool game::file_exist (const string & fname) 
 {
-    // close all windows
-    // delete all themes and fonts
-    if (initiated & INIT_WIN)
-    { 
-        win_manager::cleanup (); 
+    FILE * file = fopen (fname.c_str (), "r");
+
+    if (file) 
+    {
+        fclose (file);
+        return true; 
     }
+
+    return false; 
+}
+
+string game::find_file (const string & fname) 
+{
+    string ret;
+
+    // If the name is already absolute, no need to search...
+    if (fname[0] == '/') return fname; 
     
-    // shutdown input subsystem
-    if (initiated & INIT_INPUT) 
-    { 
-        input::shutdown ();
-    }
+    // First check in the current game directory
+    if ((ret = game_data_dir () + "/") != "/" && file_exist (ret + fname))
+        ret += fname; 
+    // Then check the global data directory
+    else if (file_exist ((ret = global_data_dir () + "/") + fname)) 
+        ret += fname;
+    // Finally, try the user data directory
+    else if (file_exist ((ret = user_data_dir () + "/") + fname))
+        ret += fname;
+    // Nothing found! So bad...
+    else ret = "";
 
-    // shutdown audio
-    if (initiated & INIT_AUDIO)
-    {
-        audio::cleanup ();
-    }
-
-    // cleanup the saves
-    if (initiated & INIT_SAVES) 
-    {
-        gamedata::cleanup (); 
-    }
-    
-    // shutdown python
-    if (initiated & INIT_PYTHON) 
-    {
-        cleanup_data ();
-        cleanup_python (); 
-        python::cleanup ();     
-    }
-
-    // shutdown video and SDL
-    if (initiated & INIT_VIDEO)
-    {
-        SDL_Quit ();
-    }     
+    return ret; 
 }
 
-void game::init_data ()
+string game::find_directory (const string & dirname) 
 {
-    data::engine = new adonthell;
-    data::the_player = NULL;
-}
+    string ret;
 
-void game::cleanup_data () 
-{
-    delete data::engine;
-    data::engine = NULL;
+    // If the name is already absolute, no need to search...
+    if (dirname[0] == '/') return dirname; 
 
-    if (data::the_player)
-    { 
-        delete data::the_player;
-        data::the_player = NULL;
-    }
-}
+    // First check in the current game directory
+    if ((ret = game_data_dir () + "/") != "/" && directory_exist (ret + dirname))
+        ret += dirname; 
+    // Then check the global data directory
+    else if (directory_exist ((ret = global_data_dir () + "/") + dirname)) 
+        ret += dirname;
+    // Finally, try the user data directory
+    else if (directory_exist ((ret = user_data_dir () + "/") + dirname))
+        ret += dirname;
+    // Nothing found! So bad...
+    else ret = "";
 
-bool game::init_python () 
-{
-    // Initialise the import path.
-    // Shared modules path 
-    python::insert_path (DATA_DIR"/modules"); 
-
-    // Game specific path
-    string t = gamedata::game_data_dir () + "/scripts/modules"; 
-    python::insert_path((char *) t.c_str ());
-    t = gamedata::game_data_dir () + "/scripts"; 
-    python::insert_path((char *) t.c_str ());
-
-    /* Initialise SWIG module. This should go if we ever switch to dynamic 
-       link */
-    initadonthellc();
-        
-    py_module = python::import_module ("adonthell"); 
-    if (!py_module)
-        return false;     
-    
-    data::globals = PyModule_GetDict (py_module);
-
-    return true; 
-}
-
-void game::cleanup_python () 
-{
-    // Cleanup the global namespace of python interpreter
-    // Note that we don't have to DECREF data::globals, because they're a
-    // borrowed reference of py_module.
-    Py_DECREF (py_module); 
+    return ret; 
 }
