@@ -577,10 +577,10 @@ create_main_wnd (main_wnd &wnd)
     gtk_signal_connect (GTK_OBJECT (attribute_list), "select_row", GTK_SIGNAL_FUNC (on_attribute_list_select_row), &wnd);
     gtk_signal_connect (GTK_OBJECT (attribute_list), "unselect_row", GTK_SIGNAL_FUNC (on_attribute_list_unselect_row), &wnd);
     gtk_signal_connect (GTK_OBJECT (event_add), "clicked", GTK_SIGNAL_FUNC (on_event_add_clicked), &wnd);
-    gtk_signal_connect (GTK_OBJECT (event_remove), "clicked", GTK_SIGNAL_FUNC (on_event_remove_clicked), NULL);
-    gtk_signal_connect (GTK_OBJECT (event_update), "clicked", GTK_SIGNAL_FUNC (on_event_update_clicked), NULL);
-    gtk_signal_connect (GTK_OBJECT (event_list), "select_row", GTK_SIGNAL_FUNC (on_event_list_select_row), NULL);
-    gtk_signal_connect (GTK_OBJECT (event_list), "unselect_row", GTK_SIGNAL_FUNC (on_event_list_unselect_row), NULL);
+    gtk_signal_connect (GTK_OBJECT (event_remove), "clicked", GTK_SIGNAL_FUNC (on_event_remove_clicked), &wnd);
+    gtk_signal_connect (GTK_OBJECT (event_update), "clicked", GTK_SIGNAL_FUNC (on_event_update_clicked), &wnd);
+    gtk_signal_connect (GTK_OBJECT (event_list), "select_row", GTK_SIGNAL_FUNC (on_event_list_select_row), &wnd);
+    gtk_signal_connect (GTK_OBJECT (event_list), "unselect_row", GTK_SIGNAL_FUNC (on_event_list_unselect_row), &wnd);
     gtk_signal_connect (GTK_OBJECT (dlg_add), "clicked", GTK_SIGNAL_FUNC (on_dlg_add_clicked), NULL);
     gtk_signal_connect (GTK_OBJECT (dlg_remove), "clicked", GTK_SIGNAL_FUNC (on_dlg_remove_clicked), NULL);
     gtk_signal_connect (GTK_OBJECT (dlg_default), "clicked", GTK_SIGNAL_FUNC (on_dlg_default_clicked), NULL);
@@ -595,7 +595,7 @@ create_main_wnd (main_wnd &wnd)
 }
 
 GtkWidget *
-create_event_enter (void)
+create_event_enter (main_wnd *wnd)
 {
     GtkWidget *event_enter;
     GtkWidget *vbox5;
@@ -789,8 +789,8 @@ create_event_enter (void)
     gtk_signal_connect (GTK_OBJECT (event_enter), "delete_event", GTK_SIGNAL_FUNC (on_widget_destroy), NULL);
     gtk_signal_connect (GTK_OBJECT (enter_script_entry), "changed", GTK_SIGNAL_FUNC (on_enter_script_entry_changed), NULL);
     gtk_signal_connect (GTK_OBJECT (enter_browse), "clicked", GTK_SIGNAL_FUNC (on_enter_browse_clicked), NULL);
-    gtk_signal_connect (GTK_OBJECT (enter_ok), "clicked", GTK_SIGNAL_FUNC (on_enter_ok_clicked), NULL);
-    gtk_signal_connect (GTK_OBJECT (enter_cancel), "clicked", GTK_SIGNAL_FUNC (on_enter_cancel_clicked), NULL);
+    gtk_signal_connect (GTK_OBJECT (enter_ok), "clicked", GTK_SIGNAL_FUNC (on_enter_ok_clicked), wnd);
+    gtk_signal_connect (GTK_OBJECT (enter_cancel), "clicked", GTK_SIGNAL_FUNC (on_widget_destroy), NULL);
 
     return event_enter;
 }

@@ -65,10 +65,11 @@ private:
 
     win_font *font;
     win_container *wnd;
+    win_container *txt;
     win_image *face;
     win_label *name;
-    win_label *prev;
-    win_select *sel;
+    // win_label *prev;
+    // win_select *sel;
     win_border *border;
     win_background *back;
     

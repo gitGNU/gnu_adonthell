@@ -167,7 +167,7 @@ on_event_add_clicked (GtkButton * button, gpointer user_data)
     gchar *event = wnd->get_option (GTK_OPTION_MENU (wnd->event_choice));
 
     // Enter-event
-    if (!strcmp (event, "Enter")) event_dlg = create_event_enter ();
+    if (!strcmp (event, "Enter")) event_dlg = create_event_enter (wnd);
 
     if (event_dlg != NULL)
     {
@@ -188,6 +188,17 @@ on_event_add_clicked (GtkButton * button, gpointer user_data)
 void
 on_event_remove_clicked (GtkButton * button, gpointer user_data)
 {
+    main_wnd *wnd = (main_wnd *) user_data;
+
+    // is row selected?
+    if (wnd->event_list_sel != -1)
+    {
+        // Delete row
+        gtk_clist_remove (GTK_CLIST (wnd->event_list), wnd->event_list_sel);
+        wnd->colorify_list (GTK_CLIST (wnd->event_list));
+        
+        return;
+    }
 
 }
 

@@ -359,11 +359,10 @@ dialog_engine::dialog_engine (mapcharacter *c)
     wnd = new win_container (40, 20, 240, 160);
 
     face = wnd->add_image (5, 5, c->portrait);
-    name = wnd->add_label (80, 5, 155, 10, font);
+    name = wnd->add_label (5, 75, 64, 10, font);
     name->set_text (mynpc->name);
 
-    prev = wnd->add_label (80, 20, 155, 60, font);
-    // sel = wnd->add_select (5, 80, 230, 75, font);
+    txt = wnd->add_container (80, 5, 155, 150);
 
     wnd->set_border (border);
     wnd->set_background (back);
@@ -377,6 +376,28 @@ dialog_engine::dialog_engine (mapcharacter *c)
         answer = -1;	
 	}
 	else answer = 0;
+
+	run ();
+}
+
+void dialog_engine::run ()
+{
+    u_int32 i;
+    win_label *l;
+    
+    // Error occured:
+    if (answer < 0) return;
+
+    dlg->run (answer);
+
+    for (i = 0; i < dlg->text_size; i++)
+    {
+        l = txt->add_label (0, 0, 155, 20, font);
+        l->set_text (dlg->text[i]);  
+    }
+
+    txt->show_all ();
+    txt->draw ();
 }
 
 void dialog_engine::update_keyboard ()
@@ -408,12 +429,6 @@ void dialog_engine::update ()
     run (win);
     dlg->answer = 0xFFFF;
 */
-}
-
-void dialog_engine::run ()
-{
-    // Error occured:
-    if (answer < 0) return;
 }
 
 void dialog_engine::insert_plugin ()

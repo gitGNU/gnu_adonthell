@@ -1243,7 +1243,7 @@ else
 #line 1244 "configure"
 #include "confdefs.h"
 #ifdef __cplusplus
-extern "C" void exit(int);
+extern "C" void exit(int) throw();
 #endif
 
 #include <stdio.h>
