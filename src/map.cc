@@ -17,7 +17,7 @@
 #include <stdlib.h>
 #include "types.h"
 #include "fileops.h"
-#include "keyboard.h"
+#include "input.h"
 #include "gfx.h"
 #include "mappattern.h"
 #include "mapevent.h"
@@ -25,7 +25,9 @@
 #include "mapsquare.h"
 #include "window.h"
 #include "map.h"
-#include "globals.h"
+#ifdef SDL_MIXER
+#include "audio.h"
+#endif
 using namespace std;
 
 map::map()
@@ -118,8 +120,9 @@ u_int16 map::load_patternset_to_map(lstr fname, u_int16 startpos)
   return(retvalue);
 }
 
-
 s_int8 map::get(FILE * file)
+  // FIXME: add a revision number to check compatibility between mapengine
+  // and maps
 {
   s_int8 retvalue=0;
   u_int16 i=0,j;
@@ -148,8 +151,8 @@ s_int8 map::get(FILE * file)
   for(j=0;j<maphaut;j++)
     for(i=0;i<maplong;i++)
       themap[i][j].get(file);
-  if(heroe.load("heroe.car")) retvalue=-2;
   heroe.get_heroe_stat(file);
+  if(heroe.load("heroe.car")) retvalue=-2;
 
   fread(&nbr_of_mapcharacters,sizeof(nbr_of_mapcharacters),1,file);
   othermapchar=(mapcharacter*)calloc(sizeof(mapcharacter),
@@ -158,8 +161,8 @@ s_int8 map::get(FILE * file)
   for(i=0;i<nbr_of_mapcharacters;i++)
     {
       getstringfromfile(mapcharname[i],file);
-      if(othermapchar[i].load(mapcharname[i])) retvalue=-3;
       othermapchar[i].get_NPC_stat(file,i+1);
+      if(othermapchar[i].load(mapcharname[i])) retvalue=-3;
       
       themap[othermapchar[i].get_posx()][othermapchar[i].get_posy()].put_character(&othermapchar[i]);
     }
@@ -293,10 +296,9 @@ void map::update_all_characters()
 void map::update_keyboard()
 {
   if(status==MAP_STATUS_FADE) return;
-  keyboard::update_keyboard();
-
-  if (keyboard::is_pushed(Escape_Key)) {
+  if (input::is_pushed(Escape_Key)) {
     status=MAP_STATUS_QUIT;
+
 #ifdef SDL_MIXER
     audio_in->fade_out_background(500);
 #endif
@@ -304,18 +306,18 @@ void map::update_keyboard()
 
   if (heroe.get_scridx()) return;
 
-  if((heroe.get_movtype()==RIGHT&&!keyboard::is_pushed(275))||
-     (heroe.get_movtype()==LEFT&&!keyboard::is_pushed(276))||
-     (heroe.get_movtype()==UP&&!keyboard::is_pushed(273))||
-     (heroe.get_movtype()==DOWN&&!keyboard::is_pushed(274)))
+  if((heroe.get_movtype()==RIGHT&&!input::is_pushed(275))||
+     (heroe.get_movtype()==LEFT&&!input::is_pushed(276))||
+     (heroe.get_movtype()==UP&&!input::is_pushed(273))||
+     (heroe.get_movtype()==DOWN&&!input::is_pushed(274)))
     heroe.set_movtype(0);
-  if(keyboard::is_pushed(275)&&heroe.get_movtype()==0)
+  if(input::is_pushed(275)&&heroe.get_movtype()==0)
     heroe.set_movtype(RIGHT);
-  if(keyboard::is_pushed(276)&&heroe.get_movtype()==0)
+  if(input::is_pushed(276)&&heroe.get_movtype()==0)
     heroe.set_movtype(LEFT);
-  if(keyboard::is_pushed(273)&&heroe.get_movtype()==0)
+  if(input::is_pushed(273)&&heroe.get_movtype()==0)
     heroe.set_movtype(UP);
-  if(keyboard::is_pushed(274)&&heroe.get_movtype()==0)
+  if(input::is_pushed(274)&&heroe.get_movtype()==0)
     heroe.set_movtype(DOWN);
 
 #ifdef SDL_MIXER

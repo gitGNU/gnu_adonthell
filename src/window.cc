@@ -18,7 +18,7 @@
 #include "types.h"
 #include "gfx.h"
 #include "window.h"
-#include "keyboard.h"
+#include "input.h"
 #include "pnm.h"
 
 void window::init(u_int16 x, u_int16 y, u_int16 l, u_int16 h,u_int8 style)
@@ -179,7 +179,7 @@ window::~window()
 
 bool window::keyboard()
 {
-  if(keyboard::is_pushed(Enter_Key))
+  if(input::is_pushed(Enter_Key))
         {if(enterkey_push) return false;
 	    else return(enterkey_push=true);       
          }

@@ -74,5 +74,7 @@ public:
     void change_background(int slot, int time);
 };
 
+extern audio *audio_in;
+
 #endif
 #endif

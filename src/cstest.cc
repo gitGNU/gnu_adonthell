@@ -14,13 +14,13 @@
 #include <iostream.h>
 #include <stdio.h>
 #include "types.h"
-#include "keyboard.h"
+#include "input.h"
 #include "gfx.h"
 #include "globals.h"
 
 #include "SDL.h"
 #include "SDL_thread.h"
-#include "keyboard.h"
+#include "input.h"
 
 #ifdef SDL_MIXER
 #include "SDL_mixer.h"
@@ -44,7 +44,7 @@ int main(int argc, char * argv[])
 
   SDL_Thread *input_thread;
 
-  input_thread = SDL_CreateThread(keyboard_init, NULL);
+  input_thread = SDL_CreateThread(input::init, NULL);
   if ( input_thread != NULL) {
      fprintf(stderr, "User input thread started.\n");
   } else {
@@ -196,7 +196,7 @@ int main(int argc, char * argv[])
 
   while(scene->render_scene()!=1)
     {
-      if(keyboard::is_pushed(Escape_Key)) break;
+      if(input::is_pushed(Escape_Key)) break;
       // Clear the screen (why hendersa?)
       // screen::drawbox(0,0,320,200,0xFFFFFF);
       screen::show();
@@ -210,7 +210,7 @@ int main(int argc, char * argv[])
   wnd->draw ();
   screen::show ();
 
-  while (!keyboard::is_pushed(Escape_Key));
+  while (!input::is_pushed(Escape_Key));
   // -- end window code
   
   // Clean up SDL :>

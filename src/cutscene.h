@@ -15,7 +15,7 @@
 #include <stdlib.h>
 #include <sys/time.h>
 #include "types.h"
-#include "keyboard.h"
+#include "input.h"
 #include "gfx.h"
 #include "animation.h"
 

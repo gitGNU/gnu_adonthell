@@ -19,8 +19,6 @@
 #include <SDL/SDL.h>
 #include <SDL/SDL_image.h>
 
-#define DEBUG 0
-
 class screen
 {
   static u_int16 screenwidth;

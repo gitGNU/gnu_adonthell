@@ -20,7 +20,6 @@
 #include "SDL.h"
 #include "SDL_mixer.h"
 #include "SDL_thread.h"
-#include "globals.h"
 
 int audio_init() {
 

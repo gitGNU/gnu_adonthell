@@ -21,7 +21,7 @@
 #include "interpreter.h"
 #include "commands.h"
 #include "window.h"
-#include "keyboard.h"
+#include "input.h"
 #include "dialog.h"
 
 // Init the dialogue engine
@@ -59,15 +59,15 @@ dialog_engine::dialog_engine ()
 void dialog_engine::update_keyboard ()
 {
   static u_int16 lastkeypressed=0;
-  if(keyboard::is_pushed(lastkeypressed)) return;
+  if(input::is_pushed(lastkeypressed)) return;
   lastkeypressed=0;
-  if (keyboard::is_pushed (97)) 
+  if (input::is_pushed (97)) 
     {dlg->answer = 0; lastkeypressed=97;}
-  if (keyboard::is_pushed (98)) 
+  if (input::is_pushed (98)) 
     {dlg->answer = 1; lastkeypressed=98;}
-  if (keyboard::is_pushed (99)) 
+  if (input::is_pushed (99)) 
     {dlg->answer = 2; lastkeypressed=99;}
-  if (keyboard::is_pushed (100)) 
+  if (input::is_pushed (100)) 
     {dlg->answer = 3; lastkeypressed=100;}
 }
 

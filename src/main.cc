@@ -15,7 +15,7 @@
 #include <iostream.h>
 #include <stdio.h>
 #include "types.h"
-#include "keyboard.h"
+#include "input.h"
 #include "gfx.h"
 #include "mappattern.h"
 #include "mapcharacter.h"
@@ -24,13 +24,12 @@
 #include "window.h"
 #include "map.h"
 #include "mapengine.h"
-#include "globals.h"
 #include "SDL.h"
 #include "SDL_thread.h"
-#include "keyboard.h"
 #ifdef SDL_MIXER
 #include "SDL_mixer.h"
 #include "audio_thread.h"
+#include "audio.h"
 #endif
 #include "animation.h"
 #include "cutscene.h"
@@ -89,7 +88,7 @@ int do_cutscene(void) {
 
   while(scene->render_scene()!=1)
   {
-    if(keyboard::is_pushed(Escape_Key)) {
+    if(input::is_pushed(Escape_Key)) {
 #ifdef SDL_MIXER
       if (audio_in != NULL) audio_in->fade_out_background(500);
 #endif
@@ -101,7 +100,7 @@ int do_cutscene(void) {
       free(wnd);
       return(1);
     }
-    if(keyboard::is_pushed(Enter_Key)) {
+    if(input::is_pushed(Enter_Key)) {
 #ifdef SDL_MIXER
       if (audio_in != NULL) audio_in->fade_out_background(500);
 #endif
@@ -124,8 +123,8 @@ int do_cutscene(void) {
   wnd->draw ();
   screen::show ();
 
-  while (!keyboard::is_pushed(Escape_Key)) {
-    if (keyboard::is_pushed(Enter_Key)) {
+  while (!input::is_pushed(Escape_Key)) {
+    if (input::is_pushed(Enter_Key)) {
       // Clear all stuff out of the screen buffer
       screen::drawbox(0,0,320,200,0x000000);
 #ifdef SDL_MIXER
@@ -146,62 +145,22 @@ int do_cutscene(void) {
 int main(int argc, char * argv[])
 {
   map * map1 = new map;
-  if((argc!=2)&&(argc!=3)) {printf("Usage: %s mapname\n",argv[0]); exit(0);}
-  if(argc==3)
-    {
-      if(!strcmp(argv[2],"-m1")) screen::init_display(1);
-      if(!strcmp(argv[2],"-m0")) screen::init_display(0);
-  }
-  else screen::init_display(0);
+
+  mapengine::init(argc,argv);
+
   if(map1->load(argv[1])) {printf("Error loading %s!\n",argv[1]);return(1);}
-
-  SDL_Thread *input_thread;
-
-  input_thread = SDL_CreateThread(keyboard_init, NULL);
-  if ( input_thread != NULL) {
-     fprintf(stderr, "User input thread started.\n");
-  } else {
-     fprintf(stderr, "Couldn't create input thread: %s\n", SDL_GetError());
-     return(0);
-  }
-
-#ifdef SDL_MIXER
-  SDL_Thread *audio_thread;
-
-  audio_init();
-  audio_thread = SDL_CreateThread(audio_update, NULL);
-  if ( audio_thread == NULL) {
-     fprintf(stderr, "Couldn't create audio thread: %s\n", SDL_GetError());
-     fprintf(stderr, "Audio will not be used\n");
-  }
-#endif
 
   // Flip flop between the mapengine and the cutscene
   // The 'do_cutscene' returns 1 when you hit escape
   // during the cutscene...
-  while (do_cutscene() != 1) {
-    if (map1 == NULL) {
-      map1 = new map();
-      map1->load(argv[1]);
-    }
-#ifdef SDL_MIXER
-    if (audio_in != NULL) audio_in->fade_in_background(1,500);
-#endif
-    mapengine::map_engine(map1);
-    free(map1);
-    map1 = NULL;
-  }
 
-  fprintf(stderr, "Killing threads...\n");
-  if (input_thread != NULL) SDL_KillThread(input_thread);
+  // Removed because of a segfault - seems to occur when calling
+  //   scene->set_imagekey_anim(2,anim3);, line 79
+  // do_cutscene();
 
-#ifdef SDL_MIXER
-  if (audio_thread != NULL) {
-    SDL_KillThread(audio_thread);
-    audio_cleanup();
-  }
-#endif
-  //  delete map1;
-  SDL_Quit();
-return(0);
+  mapengine::map_engine(map1);
+
+  mapengine::cleanup();
+  
+  return(0);
 }

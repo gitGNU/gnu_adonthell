@@ -27,6 +27,7 @@ typedef char lstr[100];
 
 class map
 {
+ protected:
   mapsquare ** themap;
   u_int16 maplong,maphaut;
   u_int16 mapx,mapy;
@@ -73,7 +74,7 @@ class map
   static const u_int8 depy=12;
   //  static u_int8 (*stdevent[256])(mapevent * ev,mapcharacter * aguy,map * amap,
   //				 u_int16 x, u_int16 y);
-
+  
   map();
   // ~map();
   u_int16 get_patternset_to_map(FILE * file, u_int16 startpos);

@@ -12,12 +12,24 @@
    See the COPYING file for more details.
 */
 
+#ifndef _mapengine_h
+#define _mapengine_h
+
+#include "SDL.h"
+#include "SDL_thread.h"
+
 class mapengine
 {
-  
+  static SDL_Thread *input_thread;
+  static SDL_Thread *audio_thread;
+
  public:
+  static void init(int argc, char * argv[]);
+  static void cleanup();
   static void map_engine(map*amap);
   static void update_and_show(map * amap);
   static void fade_out(map*amap); 
   static void fade_in(map*amap); 
 };
+
+#endif
