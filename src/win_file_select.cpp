@@ -117,9 +117,8 @@ void win_file_select::list_directory(char * ext)
 	      else strcpy(tmpfile,"<D>");
 	      strcat(tmpfile," ");
 	      strcat(tmpfile,dirlist->d_name);
-	      tmplabel=new win_label(0,0,combo_file_->length()-space_between_border_-theme_->scrollbar->back->length(),font_->height(),theme_,font_);
+	      tmplabel=new win_label(0,0,combo_file_->length()-space_between_border_-theme_->scrollbar->back->get_length(),font_->height(),theme_,font_);
 	      tmplabel->set_text(tmpfile);
-	      tmplabel->set_border_size(WIN_SIZE_MINI);
 	      combo_file_->add(tmplabel);
 	      tmplabel=NULL;
 	    }
@@ -208,7 +207,7 @@ char * win_file_select::wait_for_select(const Functor0 & updatefunc,
 	    return s;
 	  }
       }
-      for(i=0;i<screen::frames_to_do();i++) update();
+      for(i=0;i<screen::get_frames_to_do();i++) update();
       draw();
       screen::show();
     }

@@ -47,6 +47,10 @@ win_select::win_select(s_int16 tx,s_int16 ty,u_int16 tl,u_int16 th,win_theme * w
   visible_scrollbar_=false;
   //if when you select you change the first to the last
   select_circle_=false;
+
+  //type of the select
+  type_selected_=WIN_SELECT_TYPE_NORMAL;
+
 }
 
 
@@ -70,8 +74,10 @@ void win_select::add(win_base * wb)
   //prevent the new object is in select
   wb->set_in_select(true);
   
+  //set the parameters for this object
+  set_select_object(wb,false);
+
   //when you add an object, automatically the index become the first element of the list
-  //index_list=list_obj.begin();
   set_default();
 
   //a select can have just one mode to select each object in the list
@@ -145,15 +151,25 @@ bool win_select::update()
 }
 
 //if b is true, cur object take parameters to an selected object
-void win_select::set_select_cur_object(bool b)
+void win_select::set_select_object(win_base * wb,bool b)
 {
   switch(mode_selected_)
     {
     case WIN_SELECT_MODE_BRIGHTNESS:
-      (*index_list)->set_draw_brightness(!b);
+      wb->set_draw_brightness(!b);
       break;
     case WIN_SELECT_MODE_BORDER:
-      (*index_list)->set_border_visible(b);
+      wb->set_border_visible(b);
+    }
+
+  switch(type_selected_)
+    {
+    case WIN_SELECT_TYPE_NORMAL:
+      wb->set_visible(true);
+      break;
+    case WIN_SELECT_TYPE_SCROLL:
+      wb->set_visible(b);
+      break;
     }
 }
 
@@ -167,7 +183,7 @@ void win_select::next_()
   //unselect cur element
   (*index_list)->on_unselect();
 
-  set_select_cur_object(false);
+  set_select_object(*index_list,false);
 
   //create a temporary index
   list<win_base*>::iterator cur_i=index_list;
@@ -190,7 +206,7 @@ void win_select::next_()
 	}
     }else index_list=cur_i;
   
-  set_select_cur_object(true);
+  set_select_object(*index_list,true);
   
   (*index_list)->on_select();
 
@@ -206,8 +222,7 @@ void win_select::previous_()
   (*index_list)->on_unselect();
   
   //set to unselect object
-  set_select_cur_object(false);
-  
+  set_select_object(*index_list,false);
   
   list<win_base*>::iterator cur_i=index_list;
   if(cur_i==list_obj.begin()) cur_i=list_obj.end();
@@ -231,7 +246,7 @@ void win_select::previous_()
   (*index_list)->on_select();
   
   //set to select object
-  set_select_cur_object(true);
+  set_select_object(*index_list,true);
  
   update_position();
   
@@ -249,32 +264,62 @@ void win_select::set_default()
 {
   if(list_obj.size()==0) return;
 
-  if(index_list!=list_obj.end()) set_select_cur_object(false);
+  if(index_list!=list_obj.end()) set_select_object(*index_list,false);
 
   index_list=list_obj.begin();
 
   while(index_list!=list_obj.end() && !(*index_list)->is_can_be_selected()) index_list++;
   
-  if(index_list!=list_obj.end()) set_select_cur_object(true);
+  if(index_list!=list_obj.end()) set_select_object(*index_list,true);
 }
 
 
 void win_select::update_position()
 {
+
   //this function is used to see the cur object which is selected
   static bool tmp_is_visible_;
-  tmp_is_visible_=false;
-  //if not amplitude --> all object in the list is visible
-  if(!max_amplitude_) {tmp_is_visible_=true;return;}
-  while(!tmp_is_visible_)
+
+  switch(type_selected_)
     {
-      if(((*index_list)->y()+(*index_list)->pady()>space_between_border_) && 
-	 ((*index_list)->y()+(*index_list)->height()<height_-space_between_border_)) tmp_is_visible_=true;
-      else if((*index_list)->y()+(*index_list)->pady()<space_between_border_) up();
-      else if((*index_list)->y()+(*index_list)->pady()+(*index_list)->height()>height_-space_between_border_) down();
-      else tmp_is_visible_=true;
+    case WIN_SELECT_TYPE_NORMAL:
+      tmp_is_visible_=false;
+      //if not amplitude --> all object in the list is visible
+      if(!max_amplitude_) {tmp_is_visible_=true;return;}
+      while(!tmp_is_visible_)
+	{
+	  if(((*index_list)->y()+(*index_list)->pady()>space_between_border_) && 
+	     ((*index_list)->y()+(*index_list)->height()<height_-space_between_border_)) tmp_is_visible_=true;
+	  else if((*index_list)->y()+(*index_list)->pady()<space_between_border_) up();
+	  else if((*index_list)->y()+(*index_list)->pady()+(*index_list)->height()>height_-space_between_border_) down();
+	  else tmp_is_visible_=true;
+	}
+      break;
+
+    case WIN_SELECT_TYPE_SCROLL:
+      //set position of the cur select object
+      
+      (*index_list)->move(space_between_border_,space_between_border_);
+      
+      break;
+    default:
+      break;
     }
 }
+
+
+void win_select::set_type(u_int8 t)
+{
+  type_selected_=t;
+  //set all object to the new type set
+  for(list<win_base*>::iterator i=list_obj.begin();i!=list_obj.end();i++)
+    set_select_object(*i,false);
+  
+  //select the first object
+  set_default();
+}
+
+
 
 //return the cur object which is selected
 win_base * win_select::get()
@@ -414,6 +459,10 @@ void win_select::init()
   if(curselect_) curselect_->set_activated(false);
   curselect_=NULL;
 }
+
+
+
+
 
 
 

@@ -70,7 +70,7 @@ s_int16 win_label::word_size(u_int16 begin,u_int16 & length)
   while(begin+length<texte_size_ && texte_[begin+length]!='\n' && texte_[begin+length]!=' ')
     {
       if(font_->in_table(texte_[begin+length])) 
-	//size+=font_->table[texte_[begin+length]].get_length();
+	//size+=font_->table[texte_[begin+length]].length();
 	size+=(*font_)[texte_[begin+length]].length();
 
 	length++;

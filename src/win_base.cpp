@@ -12,6 +12,7 @@
 
 #include <iostream.h>
 #include <string.h>
+#include <list>
 #include "types.h"
 #include "image.h"
 #include "input.h"
@@ -20,6 +21,7 @@
 #include "win_border.h"
 #include "win_background.h"
 #include "win_base.h"
+#include "win_container.h"
 
 #ifdef _DEBUG_WIN
 long win_base::cptw=0;
@@ -57,7 +59,7 @@ win_base::win_base(s_int16 tx,s_int16 ty,u_int16 tl,u_int16 th,win_theme * wth)
   draw_brightness_=false;
   
   //by default an onbject can be selected
-  can_be_selected_=true;
+   can_be_selected_=true;
   
   //not have a father, -> window in(depend on) another window.
   wb_father_=NULL;
@@ -73,6 +75,9 @@ win_base::win_base(s_int16 tx,s_int16 ty,u_int16 tl,u_int16 th,win_theme * wth)
   
   //by default border size used is normal size
   border_size_=WIN_SIZE_NORMAL;
+
+  //set align object
+  align_=WIN_ALIGN_NONE;
   
   //padding X,Y
   padx_=0;
@@ -89,10 +94,7 @@ win_base::win_base(s_int16 tx,s_int16 ty,u_int16 tl,u_int16 th,win_theme * wth)
   da_=new drawing_area();
   
   //create a theme for this object
-  
   theme_=(wth?new win_theme(*wth):NULL);
-  //  theme_=wth;
-
 
   //resize the object
   resize(tl,th);
@@ -127,6 +129,9 @@ void win_base::resize(u_int16 tl,u_int16 th)
   
   //modify the theme object --> in theme object there are the border, background size  and another .....
   if(theme_) theme_->update(this);  
+
+  //update position
+  update_align();
 }
 
 
@@ -134,11 +139,6 @@ bool win_base::update()
 {
   if(focus_ && activated_ && callback_[WIN_SIG_KEYBOARD])(callback_[WIN_SIG_KEYBOARD])();
 
-  //on update is called
-  /*  bool b=true;
-  if(callback_destroy_) b=callback_destroy_(); 
-  if(b) {on_update();return true;}
-  return false;*/
   if(callback_destroy_ && !callback_destroy_()) return false;
   on_update();
   return true;
@@ -147,8 +147,10 @@ bool win_base::update()
 
 bool win_base::draw()
 {
-  on_draw();  
+  on_draw();
+  
   if(visible_) on_draw_visible();
+
   return visible_;
 }
 
@@ -245,7 +247,6 @@ void win_base::on_unselect()
   if(callback_[WIN_SIG_UNSELECT]) (callback_[WIN_SIG_UNSELECT])();
 }
  
-//this function is called when you push the activate key ---> WARNING i don't know the real use
 void win_base::on_activate_key()
 {
   if(callback_[WIN_SIG_ACTIVATE_KEY]) (callback_[WIN_SIG_ACTIVATE_KEY])();
@@ -256,13 +257,33 @@ void win_base::set_focus(bool b)
   if(focus_=b) input::clear_keys_queue();  
 }
 
-
 void win_base::set_select_mode_(u_int8 mode)
 {
   mode_select_=mode;
   if(mode==WIN_SELECT_MODE_BRIGHTNESS) set_draw_brightness(true);
   else if(mode==WIN_SELECT_MODE_BORDER) set_border_visible(false);
 } 
+
+
+void win_base::update_align()
+{
+ 
+  switch(align_)
+    {
+    case WIN_ALIGN_LEFT:
+      move((wb_father_)?((win_container*)wb_father_)->space_between_border():0,y());
+      break;
+    case WIN_ALIGN_RIGHT:
+      move(((wb_father_)?wb_father_->length():screen::length())-((wb_father_)?((win_container*)wb_father_)->space_between_border():0)-length_,y());
+      break;
+    case WIN_ALIGN_CENTER:
+      if(((wb_father_)?wb_father_->length():screen::length())>length()) 
+	move((((wb_father_)?wb_father_->length():screen::length()) - length()) >>1,y());
+      break;
+    }
+}
+
+
 
 
 /*******************************************************/
@@ -342,6 +363,18 @@ void win_base::draw_background()
   //draw the background
   else if(visible_background_)theme_->background->background->putbox_trans(realx_,realy_,level_trans_back_,da_);
 }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

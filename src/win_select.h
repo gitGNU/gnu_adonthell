@@ -29,6 +29,11 @@ class win_select : public win_scrolled
   void update_position();
   //mode to select
   u_int8 mode_selected_;
+  
+  //type of the select method
+  u_int8 type_selected_;
+  
+
   //if this select has a father
   win_select * fatherselect_;
  
@@ -48,10 +53,10 @@ class win_select : public win_scrolled
   void on_activate();
   
   bool activate___();
-
- 
-  void set_select_cur_object(bool b);
- 
+  
+  
+  void set_select_object(win_base*,bool b);
+  
  public:
   win_select(s_int16 tx,s_int16 ty,u_int16 tl,u_int16 th,win_theme * wth);
   ~win_select();
@@ -76,6 +81,8 @@ class win_select : public win_scrolled
   void set_can_be_selected_all(bool);//set to b all the element which are in the select
 
  
+  void set_type(u_int8); //set type of the select, WIN_SELECT_TYPE_NORMAL,WIN_SELECT_TYPE_SCROLL, default is normal
+  u_int8 type() {return type_selected_;}
 
 
   //set the mode of the selection WIN_SELECT_MODE_BRIGHTNESS, WIN_SELECT_MODE_BORDER, cursor not implemented

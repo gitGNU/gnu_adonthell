@@ -22,7 +22,7 @@ class win_container : public win_base
   list<win_base *> list_obj;
   u_int16 space_between_border_;
   u_int16 space_between_object_;
-  u_int8 justify_;
+  // u_int8 justify_;
   u_int8 layout_;
   void update_layout();
 
@@ -50,14 +50,17 @@ class win_container : public win_base
   
   void move(s_int16 tx,s_int16 ty);
 
+  void resize(u_int16,u_int16);
+  
+
   //set the space between object and the border, work if you use layout or justify
   virtual void set_space_between_border(u_int16);
   
   //set the space between object and the border, work if you use layout
   virtual void set_space_between_object(u_int16);
 
-  u_int16 get_space_between_border(){return space_between_border_;}
-  u_int16 get_space_between_object(){return space_between_object_;}
+  u_int16 space_between_border(){return space_between_border_;}
+  u_int16 space_between_object(){return space_between_object_;}
 
   //if true all of this object is in brightness mode
   void set_draw_brightness(bool b);
@@ -65,12 +68,19 @@ class win_container : public win_base
   //bugs in this functions.
   void set_visible_all(bool);
 
+  /*
+
   //justify all object : WIN_JUSTIFY_LEFT, WIN_JUSTIFY_RIGHT, WIN_JUSTIFY_CENTER
   void set_justify(u_int8);
-  
+ 
   //justify an win_base object in this object
   void set_justify(win_base * wb,u_int8);
-  
+  */  
+
+  //align all object
+  void set_align_all(u_int8);
+
+
   //set the layout (like in java i think) Now 2 sort of layout but i can add several if you suggest me. WIN_LAYOUT_NO (no layout: you put your object where you want)
   //and WIN_LAYOUT_LIST( all object show like a listbox)
   void set_layout(u_int8 lay);
@@ -78,7 +88,7 @@ class win_container : public win_base
   //IMPORTANT: You can use set_justify and layout to do good window
 
   void update_real_position();
-
+  
   void set_focus(bool b);
   bool is_focus(){return focus_;}  
 };

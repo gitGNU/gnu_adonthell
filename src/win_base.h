@@ -52,10 +52,13 @@ class win_base
 
   //two choice: WIN_SIZE_MINI , WIN_SIZE_NORMAL
   void set_border_size(u_int8 siz) {border_size_=siz;}
+ 
+  //justify object : WIN_ALIGN_LEFT, WIN_ALIGN_RIGHT, WIN_ALIGN_CENTER
+  void set_align(u_int8 a){align_=a;update_align();}
+  u_int8 align(){return align_;}
   
 
 
-  
   /*******************************************************************/
   //VISIBLE
   /*******************************************************************/
@@ -182,6 +185,8 @@ class win_base
   u_int8 mode_select_;//mode used for selection
   u_int8 border_size_;//size of border
   u_int8 level_brightness_;//level of brightness
+  u_int8 align_;
+
 
   
   void update_drawing_area_position();
@@ -193,6 +198,8 @@ class win_base
   void set_in_select(bool b){in_select_=b;}
   void set_select(bool b){(selected_=b)?on_select():on_unselect();}
   void set_select_mode_(u_int8 mode); 
+
+  void update_align();
    
   
   //execute the callback function

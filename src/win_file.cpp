@@ -27,6 +27,7 @@ win_file::win_file(s_int16 tx,s_int16 ty,u_int16 tl,u_int16 th,win_theme * theme
   title_=new win_label(0,0,0,0,theme_,font_);
   title_->set_text("Select file or directory");
   title_->set_border_size(WIN_SIZE_MINI);
+  title_->set_align(WIN_ALIGN_CENTER);
 
   button_ok_=new win_label(0,0,0,0,theme_,font_);
   button_ok_->set_text("Ok");
@@ -41,12 +42,13 @@ win_file::win_file(s_int16 tx,s_int16 ty,u_int16 tl,u_int16 th,win_theme * theme
   entry_=new win_write(0,0,0,0,theme_,font_);
   entry_->set_border_visible(true);
   entry_->set_border_size(WIN_SIZE_MINI);
+  entry_->set_align(WIN_ALIGN_CENTER);
   
   combo_file_=new win_select(0,0,0,0,theme_);
   combo_file_->set_border_visible(true);
   combo_file_->set_border_size(WIN_SIZE_MINI);
   combo_file_->set_space_between_border(5);
-  combo_file_->set_justify(WIN_JUSTIFY_LEFT);
+  //combo_file_->set_justify(WIN_JUSTIFY_LEFT);
   combo_file_->set_layout(WIN_LAYOUT_LIST);
   combo_file_->set_scrollbar_visible(true);
   
@@ -147,14 +149,14 @@ void win_file::resize(u_int16 tl,u_int16 th)
   win_container::resize(tl,th);
   title_->set_auto_size(true);
   title_->move(0,space_between_border_);
-  set_justify(title_,WIN_JUSTIFY_CENTER);
+  //set_justify(title_,WIN_JUSTIFY_CENTER);
   
   combo_->resize(length_,height_-space_between_border_-title_->height());
   combo_->move(0,height_-combo_->height());
  
   entry_->resize(combo_->length()-(space_between_border_<<1),font_->height());
   entry_->move(0,combo_->height()-space_between_border_-entry_->height());
-  set_justify(entry_,WIN_JUSTIFY_CENTER);
+  //set_justify(entry_,WIN_JUSTIFY_CENTER);
   
   combo_file_->resize(((combo_->length()*3)>>2)-space_between_border_-(space_between_object_>>1),
 		      combo_->height()-entry_->height()-space_between_border_-(space_between_object_<<1));

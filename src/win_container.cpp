@@ -31,8 +31,11 @@ win_container::win_container(s_int16 tx,s_int16 ty,u_int16 tl,u_int16 th,win_the
   //set space between object and another object
   space_between_object_=WIN_SPACE_BETWEEN_OBJECT;
 
+  /*
   //set justify ----> WARNING MAYBE IN WIN_BASE ????
   justify_=WIN_JUSTIFY_NO;
+
+  */
 
   //set layout equals no
   layout_=WIN_LAYOUT_NO;
@@ -66,8 +69,10 @@ void win_container::add(win_base * tmp)
   //set the new object
   tmp->wb_father_=this;
   tmp->update_real_position();
-  //set justify this object
-  set_justify(tmp,justify_);
+  
+  
+  tmp->update_align();
+
   //update layout
   update_layout();
   //if the win_container is brightness set the new object in brightness mode
@@ -100,6 +105,13 @@ void win_container::destroy()
   for(list<win_base *>::iterator i=list_obj.begin();i!=list_obj.end();i++)
     delete *i;
   list_obj.clear(); 
+}
+
+void win_container::resize(u_int16 tl,u_int16 th)
+{
+  win_base::resize(tl,th);
+  for(list<win_base *>::iterator i=list_obj.begin();i!=list_obj.end();i++)
+    (*i)->update_align();  
 }
 
 bool win_container::update()
@@ -158,6 +170,8 @@ void win_container::set_draw_brightness(bool b)
     (*i)->set_draw_brightness(b);
 }
 
+/*
+
 //set justify an object in this container
 void win_container::set_justify(win_base * wb, u_int8 just)
 {
@@ -177,12 +191,16 @@ void win_container::set_justify(win_base * wb, u_int8 just)
 } 
 
 //justify all the element
-void win_container::set_justify(u_int8  just)
+
+*/
+void win_container::set_align_all(u_int8 a)
 {
-  justify_=just;
   for(list<win_base *>::iterator i=list_obj.begin();i!=list_obj.end();i++)
-    set_justify((*i),just);
+    (*i)->set_align(a);
 }
+
+
+
 
 //sezt the layout and update
 void win_container::set_layout(u_int8 lay)
@@ -209,16 +227,41 @@ void win_container::move(s_int16 tx,s_int16 ty)
 //just one layout actually but i whish add another --> grid layout
 void win_container::update_layout()
 {
-  u_int16 indice=space_between_border_;
+  u_int16 old_h=0;
+  u_int16 indice_h=space_between_border_;
+  u_int16 indice_l=space_between_border_;  
   switch(layout_)
     {
     case WIN_LAYOUT_LIST:
+      //u_int16 indice=space_between_border_;
       for(list<win_base *>::iterator i=list_obj.begin();i!=list_obj.end();i++)
 	{
-	  (*i)->move((*i)->x(),indice);
-	  indice+=(*i)->height()+space_between_object_;
+	  (*i)->move((*i)->x(),indice_h);
+	  indice_h+=(*i)->height()+space_between_object_;
 	}
       break;
+      
+    case WIN_LAYOUT_AUTO:
+     
+      for(list<win_base *>::iterator i=list_obj.begin();i!=list_obj.end();i++)
+	{
+	  
+	  if(indice_l+(*i)->length()>length_)
+	    {
+	      indice_l=space_between_border_;
+	      indice_h+=old_h+space_between_object_;
+	      (*i)->move(indice_l,indice_h);
+	    }
+	  
+	  (*i)->move(indice_l,indice_h);
+	  indice_l+=(*i)->length()+space_between_object_;
+	  old_h=(*i)->height();
+	}
+      break;
+
+      
+
+
     default:
       break;
     }
@@ -231,6 +274,11 @@ void win_container::set_focus(bool b)
     (*i)->set_focus(b);
   focus_=b;
 }
+
+
+
+
+
 
 
 

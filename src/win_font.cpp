@@ -12,7 +12,6 @@
 */
 #include <iostream.h>
 #include <string.h>
-#include <stdlib.h>
 #include "types.h"
 #include "image.h"
 #include "win_types.h"
@@ -98,9 +97,8 @@ void win_font::load_font(char * rep)
       gzread(f,&i,sizeof(i));
       gzread(f,&pos,sizeof(pos));
       gzread(f,&tl,sizeof(tl));
-      //      if(i>0 && i<WIN_NB_TABLE_CHAR)
-      if(i>0)
-      	{
+      if(i>0 && i<WIN_NB_TABLE_CHAR)
+	{
 	  table_core[i]=true;
 	  table[i].resize(tl,font->height()-1);
 	  table[i].putbox_part_img(font,0,0,tl,font->height()-1,pos,0);

@@ -29,7 +29,6 @@ win_query::win_query(u_int16 x, u_int16 y, win_theme * th, win_font * font,
   set_visible_all(true);
   entry->set_activated(true);
   entry->set_activate_keyboard(true);
-  entry->set_focus(true);
 }
 
 char * win_query::wait_for_text(const Functor0 & updatefunc,
@@ -50,7 +49,7 @@ char * win_query::wait_for_text(const Functor0 & updatefunc,
 	s=NULL;
 	return s;
       }
-      for(i=0;i<screen::frames_to_do();i++) update();
+      for(i=0;i<screen::get_frames_to_do();i++) update();
       draw();
       screen::show();
     }

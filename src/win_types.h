@@ -24,15 +24,15 @@
 #define WIN_SPACE_LENGHT 8
 
 //justify
-#define WIN_JUSTIFY_LEFT 0
-#define WIN_JUSTIFY_RIGHT 1
-#define WIN_JUSTIFY_CENTER 2
-#define WIN_JUSTIFY_NO 3
+#define WIN_ALIGN_LEFT 0
+#define WIN_ALIGN_RIGHT 1
+#define WIN_ALIGN_CENTER 2
+#define WIN_ALIGN_NONE 3
 
 //layout
 #define WIN_LAYOUT_NO 0
 #define WIN_LAYOUT_LIST 1
-
+#define WIN_LAYOUT_AUTO 2
 
 //directory
 #define WIN_DIRECTORY "gfx/window/"
@@ -123,6 +123,11 @@
 
 #define WIN_SIZE_NORMAL 0
 #define WIN_SIZE_MINI 1
+
+#define WIN_SELECT_TYPE_NORMAL 0
+#define WIN_SELECT_TYPE_SCROLL 1
+
+
 
 //WIN SCROLL BAR
 #define WIN_SCROLLBAR_PAD_DEFAULT 10;
