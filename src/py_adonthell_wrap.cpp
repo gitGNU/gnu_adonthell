@@ -522,22 +522,21 @@ SWIG_InstallConstants(PyObject *d, swig_const_info constants[]) {
 #define  SWIGTYPE_p_event swig_types[32] 
 #define  SWIGTYPE_p_base_map_event swig_types[33] 
 #define  SWIGTYPE_p_enter_event swig_types[34] 
-#define  SWIGTYPE_p_unsigned_short swig_types[35] 
-#define  SWIGTYPE_p_short swig_types[36] 
-#define  SWIGTYPE_p_objects swig_types[37] 
-#define  SWIGTYPE_p_input swig_types[38] 
-#define  SWIGTYPE_p_equal_key swig_types[39] 
-#define  SWIGTYPE_p_Functor0 swig_types[40] 
-#define  SWIGTYPE_p_win_label swig_types[41] 
-#define  SWIGTYPE_p_animationframe swig_types[42] 
-#define  SWIGTYPE_p_mapsquare swig_types[43] 
-#define  SWIGTYPE_p_SDL_RWops swig_types[44] 
-#define  SWIGTYPE_p_mapengine swig_types[45] 
-#define  SWIGTYPE_p_win_border swig_types[46] 
-#define  SWIGTYPE_p_win_base swig_types[47] 
-#define  SWIGTYPE_p_win_font swig_types[48] 
-#define  SWIGTYPE_p_win_manager swig_types[49] 
-static swig_type_info *swig_types[51];
+#define  SWIGTYPE_p_short swig_types[35] 
+#define  SWIGTYPE_p_objects swig_types[36] 
+#define  SWIGTYPE_p_input swig_types[37] 
+#define  SWIGTYPE_p_equal_key swig_types[38] 
+#define  SWIGTYPE_p_Functor0 swig_types[39] 
+#define  SWIGTYPE_p_win_label swig_types[40] 
+#define  SWIGTYPE_p_animationframe swig_types[41] 
+#define  SWIGTYPE_p_mapsquare swig_types[42] 
+#define  SWIGTYPE_p_SDL_RWops swig_types[43] 
+#define  SWIGTYPE_p_mapengine swig_types[44] 
+#define  SWIGTYPE_p_win_border swig_types[45] 
+#define  SWIGTYPE_p_win_base swig_types[46] 
+#define  SWIGTYPE_p_win_font swig_types[47] 
+#define  SWIGTYPE_p_win_manager swig_types[48] 
+static swig_type_info *swig_types[50];
 
 /* -------- TYPES TABLE (END) -------- */
 
@@ -2231,6 +2230,17 @@ static PyObject *_wrap_screen_get_trans_col(PyObject *self, PyObject *args) {
 }
 
 
+static PyObject *_wrap_screen_get_trans_col_rgb(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    unsigned int result ;
+    
+    if(!PyArg_ParseTuple(args,":screen_get_trans_col_rgb")) return NULL;
+    result = (unsigned int )screen::get_trans_col_rgb();
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+}
+
+
 static PyObject *_wrap_screen_get_frames_to_do(PyObject *self, PyObject *args) {
     PyObject *resultobj;
     unsigned char result ;
@@ -2830,6 +2840,22 @@ static PyObject *_wrap_image_get_pix(PyObject *self, PyObject *args) {
 }
 
 
+static PyObject *_wrap_image_get_rgb_pix(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    image *arg0 ;
+    unsigned short arg1 ;
+    unsigned short arg2 ;
+    PyObject * argo0 =0 ;
+    unsigned int result ;
+    
+    if(!PyArg_ParseTuple(args,"Ohh:image_get_rgb_pix",&argo0,&arg1,&arg2)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_image,1)) == -1) return NULL;
+    result = (unsigned int )arg0->get_rgb_pix(arg1,arg2);
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+}
+
+
 static PyObject *_wrap_image_put_pix(PyObject *self, PyObject *args) {
     PyObject *resultobj;
     image *arg0 ;
@@ -2847,14 +2873,17 @@ static PyObject *_wrap_image_put_pix(PyObject *self, PyObject *args) {
 }
 
 
-static PyObject *_wrap_animationframe_init(PyObject *self, PyObject *args) {
+static PyObject *_wrap_image_put_rgb_pix(PyObject *self, PyObject *args) {
     PyObject *resultobj;
-    animationframe *arg0 ;
+    image *arg0 ;
+    unsigned short arg1 ;
+    unsigned short arg2 ;
+    unsigned int arg3 ;
     PyObject * argo0 =0 ;
     
-    if(!PyArg_ParseTuple(args,"O:animationframe_init",&argo0)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_animationframe,1)) == -1) return NULL;
-    arg0->init();
+    if(!PyArg_ParseTuple(args,"Ohhi:image_put_rgb_pix",&argo0,&arg1,&arg2,&arg3)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_image,1)) == -1) return NULL;
+    arg0->put_rgb_pix(arg1,arg2,arg3);
     Py_INCREF(Py_None);
     resultobj = Py_None;
     return resultobj;
@@ -2868,6 +2897,20 @@ static PyObject *_wrap_new_animationframe(PyObject *self, PyObject *args) {
     if(!PyArg_ParseTuple(args,":new_animationframe")) return NULL;
     result = (animationframe *)new animationframe();
     resultobj = SWIG_NewPointerObj((void *) result, SWIGTYPE_p_animationframe);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_animationframe_clear(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    animationframe *arg0 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"O:animationframe_clear",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_animationframe,1)) == -1) return NULL;
+    arg0->clear();
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
     return resultobj;
 }
 
@@ -3065,82 +3108,6 @@ static PyObject *_wrap_animationframe_load(PyObject *self, PyObject *args) {
 }
 
 
-static PyObject *_wrap_animation_t_frame_set(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    animation *arg0 ;
-    image *arg1 ;
-    PyObject * argo0 =0 ;
-    PyObject * argo1 =0 ;
-    
-    if(!PyArg_ParseTuple(args,"OO:animation_t_frame_set",&argo0,&argo1)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_animation,1)) == -1) return NULL;
-    if ((SWIG_ConvertPtr(argo1,(void **) &arg1,SWIGTYPE_p_image,1)) == -1) return NULL;
-    arg0->t_frame = arg1;
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
-static PyObject *_wrap_animation_t_frame_get(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    animation *arg0 ;
-    PyObject * argo0 =0 ;
-    image *result ;
-    
-    if(!PyArg_ParseTuple(args,"O:animation_t_frame_get",&argo0)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_animation,1)) == -1) return NULL;
-    result = (image *) (arg0->t_frame);
-    resultobj = SWIG_NewPointerObj((void *) result, SWIGTYPE_p_image);
-    return resultobj;
-}
-
-
-static PyObject *_wrap_animation_frame_set(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    animation *arg0 ;
-    animationframe *arg1 ;
-    PyObject * argo0 =0 ;
-    PyObject * argo1 =0 ;
-    
-    if(!PyArg_ParseTuple(args,"OO:animation_frame_set",&argo0,&argo1)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_animation,1)) == -1) return NULL;
-    if ((SWIG_ConvertPtr(argo1,(void **) &arg1,SWIGTYPE_p_animationframe,1)) == -1) return NULL;
-    arg0->frame = arg1;
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
-static PyObject *_wrap_animation_frame_get(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    animation *arg0 ;
-    PyObject * argo0 =0 ;
-    animationframe *result ;
-    
-    if(!PyArg_ParseTuple(args,"O:animation_frame_get",&argo0)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_animation,1)) == -1) return NULL;
-    result = (animationframe *) (arg0->frame);
-    resultobj = SWIG_NewPointerObj((void *) result, SWIGTYPE_p_animationframe);
-    return resultobj;
-}
-
-
-static PyObject *_wrap_animation_init(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    animation *arg0 ;
-    PyObject * argo0 =0 ;
-    
-    if(!PyArg_ParseTuple(args,"O:animation_init",&argo0)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_animation,1)) == -1) return NULL;
-    arg0->init();
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
 static PyObject *_wrap_new_animation(PyObject *self, PyObject *args) {
     PyObject *resultobj;
     animation *result ;
@@ -3307,6 +3274,20 @@ static PyObject *_wrap_animation_rewind(PyObject *self, PyObject *args) {
 }
 
 
+static PyObject *_wrap_animation_get_currentframe(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    animation *arg0 ;
+    PyObject * argo0 =0 ;
+    unsigned short result ;
+    
+    if(!PyArg_ParseTuple(args,"O:animation_get_currentframe",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_animation,1)) == -1) return NULL;
+    result = (unsigned short )arg0->get_currentframe();
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+}
+
+
 static PyObject *_wrap_animation_draw(PyObject *self, PyObject *args) {
     PyObject *resultobj;
     animation *arg0 ;
@@ -3358,6 +3339,34 @@ static PyObject *_wrap_animation_load(PyObject *self, PyObject *args) {
 }
 
 
+static PyObject *_wrap_animation_nbr_of_frames(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    animation *arg0 ;
+    PyObject * argo0 =0 ;
+    unsigned short result ;
+    
+    if(!PyArg_ParseTuple(args,"O:animation_nbr_of_frames",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_animation,1)) == -1) return NULL;
+    result = (unsigned short )arg0->nbr_of_frames();
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_animation_nbr_of_images(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    animation *arg0 ;
+    PyObject * argo0 =0 ;
+    unsigned short result ;
+    
+    if(!PyArg_ParseTuple(args,"O:animation_nbr_of_images",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_animation,1)) == -1) return NULL;
+    result = (unsigned short )arg0->nbr_of_images();
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+}
+
+
 static PyObject *_wrap_animation_zoom(PyObject *self, PyObject *args) {
     PyObject *resultobj;
     animation *arg0 ;
@@ -3377,22 +3386,66 @@ static PyObject *_wrap_animation_zoom(PyObject *self, PyObject *args) {
 }
 
 
-static PyObject *_wrap_animation_get_zoom_scale(PyObject *self, PyObject *args) {
+static PyObject *_wrap_animation_get_frame(PyObject *self, PyObject *args) {
     PyObject *resultobj;
     animation *arg0 ;
-    unsigned short *arg1 ;
-    unsigned short *arg2 ;
+    unsigned short arg1 ;
+    PyObject * argo0 =0 ;
+    animationframe *result ;
+    
+    if(!PyArg_ParseTuple(args,"Oh:animation_get_frame",&argo0,&arg1)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_animation,1)) == -1) return NULL;
+    result = (animationframe *)arg0->get_frame(arg1);
+    resultobj = SWIG_NewPointerObj((void *) result, SWIGTYPE_p_animationframe);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_animation_get_image(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    animation *arg0 ;
+    unsigned short arg1 ;
+    PyObject * argo0 =0 ;
+    image *result ;
+    
+    if(!PyArg_ParseTuple(args,"Oh:animation_get_image",&argo0,&arg1)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_animation,1)) == -1) return NULL;
+    result = (image *)arg0->get_image(arg1);
+    resultobj = SWIG_NewPointerObj((void *) result, SWIGTYPE_p_image);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_animation_add_image(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    animation *arg0 ;
+    image *arg1 ;
     PyObject * argo0 =0 ;
     PyObject * argo1 =0 ;
-    PyObject * argo2 =0 ;
+    unsigned short result ;
     
-    if(!PyArg_ParseTuple(args,"OOO:animation_get_zoom_scale",&argo0,&argo1,&argo2)) return NULL;
+    if(!PyArg_ParseTuple(args,"OO:animation_add_image",&argo0,&argo1)) return NULL;
     if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_animation,1)) == -1) return NULL;
-    if ((SWIG_ConvertPtr(argo1,(void **) &arg1,SWIGTYPE_p_unsigned_short,1)) == -1) return NULL;
-    if ((SWIG_ConvertPtr(argo2,(void **) &arg2,SWIGTYPE_p_unsigned_short,1)) == -1) return NULL;
-    arg0->get_zoom_scale(*arg1,*arg2);
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
+    if ((SWIG_ConvertPtr(argo1,(void **) &arg1,SWIGTYPE_p_image,1)) == -1) return NULL;
+    result = (unsigned short )arg0->add_image(arg1);
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_animation_add_frame(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    animation *arg0 ;
+    animationframe *arg1 ;
+    PyObject * argo0 =0 ;
+    PyObject * argo1 =0 ;
+    unsigned short result ;
+    
+    if(!PyArg_ParseTuple(args,"OO:animation_add_frame",&argo0,&argo1)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_animation,1)) == -1) return NULL;
+    if ((SWIG_ConvertPtr(argo1,(void **) &arg1,SWIGTYPE_p_animationframe,1)) == -1) return NULL;
+    result = (unsigned short )arg0->add_frame(*arg1);
+    resultobj = PyInt_FromLong((long)result);
     return resultobj;
 }
 
@@ -7349,6 +7402,7 @@ static PyMethodDef adonthellcMethods[] = {
 	 { "screen_get_length", _wrap_screen_get_length, METH_VARARGS },
 	 { "screen_get_height", _wrap_screen_get_height, METH_VARARGS },
 	 { "screen_get_trans_col", _wrap_screen_get_trans_col, METH_VARARGS },
+	 { "screen_get_trans_col_rgb", _wrap_screen_get_trans_col_rgb, METH_VARARGS },
 	 { "screen_get_frames_to_do", _wrap_screen_get_frames_to_do, METH_VARARGS },
 	 { "new_screen", _wrap_new_screen, METH_VARARGS },
 	 { "delete_screen", _wrap_delete_screen, METH_VARARGS },
@@ -7386,9 +7440,11 @@ static PyMethodDef adonthellcMethods[] = {
 	 { "image_putbox_mask_img", _wrap_image_putbox_mask_img, METH_VARARGS },
 	 { "image_putbox_part_img", _wrap_image_putbox_part_img, METH_VARARGS },
 	 { "image_get_pix", _wrap_image_get_pix, METH_VARARGS },
+	 { "image_get_rgb_pix", _wrap_image_get_rgb_pix, METH_VARARGS },
 	 { "image_put_pix", _wrap_image_put_pix, METH_VARARGS },
-	 { "animationframe_init", _wrap_animationframe_init, METH_VARARGS },
+	 { "image_put_rgb_pix", _wrap_image_put_rgb_pix, METH_VARARGS },
 	 { "new_animationframe", _wrap_new_animationframe, METH_VARARGS },
+	 { "animationframe_clear", _wrap_animationframe_clear, METH_VARARGS },
 	 { "delete_animationframe", _wrap_delete_animationframe, METH_VARARGS },
 	 { "animationframe_get_alpha", _wrap_animationframe_get_alpha, METH_VARARGS },
 	 { "animationframe_set_alpha", _wrap_animationframe_set_alpha, METH_VARARGS },
@@ -7402,11 +7458,6 @@ static PyMethodDef adonthellcMethods[] = {
 	 { "animationframe_set_nextframe", _wrap_animationframe_set_nextframe, METH_VARARGS },
 	 { "animationframe_get", _wrap_animationframe_get, METH_VARARGS },
 	 { "animationframe_load", _wrap_animationframe_load, METH_VARARGS },
-	 { "animation_t_frame_set", _wrap_animation_t_frame_set, METH_VARARGS },
-	 { "animation_t_frame_get", _wrap_animation_t_frame_get, METH_VARARGS },
-	 { "animation_frame_set", _wrap_animation_frame_set, METH_VARARGS },
-	 { "animation_frame_get", _wrap_animation_frame_get, METH_VARARGS },
-	 { "animation_init", _wrap_animation_init, METH_VARARGS },
 	 { "new_animation", _wrap_new_animation, METH_VARARGS },
 	 { "animation_clear", _wrap_animation_clear, METH_VARARGS },
 	 { "delete_animation", _wrap_delete_animation, METH_VARARGS },
@@ -7419,11 +7470,17 @@ static PyMethodDef adonthellcMethods[] = {
 	 { "animation_play", _wrap_animation_play, METH_VARARGS },
 	 { "animation_stop", _wrap_animation_stop, METH_VARARGS },
 	 { "animation_rewind", _wrap_animation_rewind, METH_VARARGS },
+	 { "animation_get_currentframe", _wrap_animation_get_currentframe, METH_VARARGS },
 	 { "animation_draw", _wrap_animation_draw, METH_VARARGS },
 	 { "animation_get", _wrap_animation_get, METH_VARARGS },
 	 { "animation_load", _wrap_animation_load, METH_VARARGS },
+	 { "animation_nbr_of_frames", _wrap_animation_nbr_of_frames, METH_VARARGS },
+	 { "animation_nbr_of_images", _wrap_animation_nbr_of_images, METH_VARARGS },
 	 { "animation_zoom", _wrap_animation_zoom, METH_VARARGS },
-	 { "animation_get_zoom_scale", _wrap_animation_get_zoom_scale, METH_VARARGS },
+	 { "animation_get_frame", _wrap_animation_get_frame, METH_VARARGS },
+	 { "animation_get_image", _wrap_animation_get_image, METH_VARARGS },
+	 { "animation_add_image", _wrap_animation_add_image, METH_VARARGS },
+	 { "animation_add_frame", _wrap_animation_add_frame, METH_VARARGS },
 	 { "new_animation_off", _wrap_new_animation_off, METH_VARARGS },
 	 { "delete_animation_off", _wrap_delete_animation_off, METH_VARARGS },
 	 { "animation_off_get", _wrap_animation_off_get, METH_VARARGS },
@@ -7431,10 +7488,6 @@ static PyMethodDef adonthellcMethods[] = {
 	 { "animation_off_set_offset", _wrap_animation_off_set_offset, METH_VARARGS },
 	 { "animation_off_draw", _wrap_animation_off_draw, METH_VARARGS },
 	 { "animation_off_draw_border", _wrap_animation_off_draw_border, METH_VARARGS },
-	 { "animation_off_t_frame_set", _wrap_animation_t_frame_set, METH_VARARGS },
-	 { "animation_off_t_frame_get", _wrap_animation_t_frame_get, METH_VARARGS },
-	 { "animation_off_frame_set", _wrap_animation_frame_set, METH_VARARGS },
-	 { "animation_off_frame_get", _wrap_animation_frame_get, METH_VARARGS },
 	 { "mapobject_init", _wrap_mapobject_init, METH_VARARGS },
 	 { "mapobject_clear", _wrap_mapobject_clear, METH_VARARGS },
 	 { "new_mapobject", _wrap_new_mapobject, METH_VARARGS },
@@ -7793,7 +7846,6 @@ static swig_type_info _swigt__p_mapobject[] = {{"_p_mapobject", 0, "mapobject *"
 static swig_type_info _swigt__p_event[] = {{"_p_event", 0, "event *"},{"_p_time_event", _p_time_eventTo_p_event},{"_p_leave_event", _p_leave_eventTo_p_event},{"_p_event"},{"_p_base_map_event", _p_base_map_eventTo_p_event},{"_p_enter_event", _p_enter_eventTo_p_event},{0}};
 static swig_type_info _swigt__p_base_map_event[] = {{"_p_base_map_event", 0, "base_map_event *"},{"_p_leave_event", _p_leave_eventTo_p_base_map_event},{"_p_base_map_event"},{"_p_enter_event", _p_enter_eventTo_p_base_map_event},{0}};
 static swig_type_info _swigt__p_enter_event[] = {{"_p_enter_event", 0, "enter_event *"},{"_p_enter_event"},{0}};
-static swig_type_info _swigt__p_unsigned_short[] = {{"_p_unsigned_short", 0, "unsigned short *"},{"_p_unsigned_short"},{0}};
 static swig_type_info _swigt__p_short[] = {{"_p_short", 0, "short *"},{"_p_short"},{0}};
 static swig_type_info _swigt__p_objects[] = {{"_p_objects", 0, "objects *"},{"_p_objects"},{0}};
 static swig_type_info _swigt__p_input[] = {{"_p_input", 0, "input *"},{"_p_input"},{0}};
@@ -7845,7 +7897,6 @@ _swigt__p_mapobject,
 _swigt__p_event, 
 _swigt__p_base_map_event, 
 _swigt__p_enter_event, 
-_swigt__p_unsigned_short, 
 _swigt__p_short, 
 _swigt__p_objects, 
 _swigt__p_input, 

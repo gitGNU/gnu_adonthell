@@ -67,7 +67,9 @@ class image
   void putbox_part_img (image * source, u_int16 x, u_int16 y, u_int16 bw, 
 			u_int16 bh, u_int16 xo, u_int16 yo);
   u_int32 get_pix(u_int16 x, u_int16 y);
+  u_int32 get_rgb_pix(u_int16 x, u_int16 y);
   void put_pix(u_int16 x, u_int16 y, u_int32 col);
+  void put_rgb_pix(u_int16 x, u_int16 y, u_int32 col);
 
  protected:
 #ifdef _EDIT_

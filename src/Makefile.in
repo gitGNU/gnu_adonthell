@@ -125,7 +125,7 @@ DIST_COMMON =  Makefile.am Makefile.in
 
 DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 
-TAR = tar
+TAR = gtar
 GZIP_ENV = --best
 DIST_SUBDIRS =  . tools
 DEP_FILES =  .deps/animation.P .deps/animation_off.P .deps/audio.P \
@@ -474,7 +474,7 @@ distclean-generic clean-generic maintainer-clean-generic clean \
 mostlyclean distclean maintainer-clean
 
 
-py_adonthell_wrap.cpp : py_adonthell.i
+py_adonthell_wrap.cpp : py_adonthell.i *.h
 	swig -python -shadow -I/tmp/gnu/include/SDL -I/usr/local/include/SDL -I/usr/include/SDL -c++ -make_default -o $*.cpp $< 
 	@mv adonthell.py ../scripts
 

@@ -519,23 +519,33 @@ u_int32 image::get_pix(u_int16 x, u_int16 y)
 #endif
 }
 
+u_int32 image::get_rgb_pix(u_int16 x, u_int16 y)
+{
+  u_int32 retvalue;
+#ifdef _EDIT_
+  memcpy(&retvalue,(char*)simpledata+((x+(y*length))*3),3);
+  return(retvalue);
+#else
+  const u_int32 offset=((y*((length%2?length+1:length)))+x);
+  switch (bytes_per_pixel)
+    {
+    case 1: return *((u_int8*)data->pixels+offset);
+      break;
+    case 2: return *((u_int16*)data->pixels+offset);
+      break;
+    case 4: return *((u_int32*)data->pixels+offset);
+      break;
+    default: memcpy(&retvalue,(char*)data->pixels+(offset*bytes_per_pixel),
+		    bytes_per_pixel);
+      return retvalue;
+      break;
+    }
+#endif
+}
+
 void image::put_pix(u_int16 x, u_int16 y, u_int32 col)
 {
   const u_int32 offset=((y*((length%2?length+1:length)))+x);
-
-#ifdef _EDIT_
-  u_int8 r,g,b; 
-  char * c;
-  c=(char*)&col;
-  memcpy(&r,c,1);
-  memcpy(&g,c+1,1);
-  memcpy(&b,c+2,1);
-  memcpy((char*)simpledata+((x+(y*length))*3),&col,3);
-  /*  col=SDL_MapRGB(data->format,*(char*)(&col+2),
-		 *(char*)(&col+2),
-		 *(char*)(&col+2));*/
-  col=SDL_MapRGB(data->format,r,g,b);
-#endif
 
   switch (bytes_per_pixel)
     {
@@ -549,6 +559,23 @@ void image::put_pix(u_int16 x, u_int16 y, u_int32 col)
 		    bytes_per_pixel);
       break;
     }
+}
+
+void image::put_rgb_pix(u_int16 x, u_int16 y, u_int32 col)
+{
+  u_int8 r,g,b;
+  u_int8 * c=(u_int8 *)col;
+  
+  r=*c;
+  g=*(c+1);
+  b=*(c+2);
+  col=SDL_MapRGB(data->format,r,g,b);
+  
+  put_pix(x,y,col);
+
+#ifdef _EDIT_
+  memcpy((u_int8*)simpledata+((x+(y*length))*3),&col,3);
+#endif
 }
 
 void image::zoom(image * src)
@@ -602,7 +629,7 @@ void image::brightness(image * src, u_int16 cont, bool proceed_mask=false)
     for(i=0;i<length;i++)
       {
 	temp=src->get_pix(i,j);
-	if((proceed_mask) || temp!=screen::trans_pix)
+	if((proceed_mask) || temp!=screen::get_trans_col())
 	  {
 	    SDL_GetRGB(temp,src->data->format,&ir,&ig,&ib);
 	    ir=(ir*cont)>>8;

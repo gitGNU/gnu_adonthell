@@ -1026,8 +1026,15 @@ mask
 alpha
 \emph default 
  parameter that define the opacity of the image.
- It's a 8 bits long unsigned integer, so correct values for it go from 0
- (invisible) to 255 (totally opaque).
+ It's a 8 bits large unsigned integer, so correct values for it go from
+ 0 (invisible) to 255 (totally opaque).
+\layout Standard
+
+When compiled with the 
+\emph on 
+_EDIT_
+\emph default 
+ flag, image provides lots of other methods for image editing and saving.
 \layout Subsection
 
 
@@ -1670,7 +1677,7 @@ source
 <funcsynopsis>
 \layout SGML
 
-<funcdef>void <function>get_pix</function></funcdef>
+<funcdef>u_int32 <function>get_pix</function></funcdef>
 \layout SGML
 
 <paramdef>s_int16 <parameter> x </parameter></paramdef>
@@ -1686,7 +1693,7 @@ Returns the pixel at position
 \emph on 
 (x,y)
 \emph default 
-.
+, in screen format.
 \layout SGML
 
 <funcsynopsis>
@@ -1701,6 +1708,9 @@ Returns the pixel at position
 <paramdef>s_int16 <parameter> y </parameter></paramdef>
 \layout SGML
 
+<paramdef>u_int32 <parameter> col </parameter></paramdef>
+\layout SGML
+
 </funcsynopsis>
 \layout Standard
 
@@ -1708,11 +1718,102 @@ Put the
 \emph on 
 col
 \emph default 
- pixel at position 
+ pixel (in screen format) at position 
 \emph on 
 (x,y)
 \emph default 
 .
+ 
+\emph on 
+col
+\emph default 
+ values should ONLY come from returns value of 
+\emph on 
+image::get_pix()
+\emph default 
+ and 
+\emph on 
+screen::get_trans_col()
+\emph default 
+.
+ 
+\emph on 
+put_pix
+\emph default 
+ and 
+\emph on 
+get_pix
+\emph default 
+ are designed to be very fast - however they only allow you to work blindly
+ with return values from compatible functions.
+\layout SGML
+
+<funcsynopsis>
+\layout SGML
+
+<funcdef>u_int32 <function>get_pix_rgb</function></funcdef>
+\layout SGML
+
+<paramdef>s_int16 <parameter> x </parameter></paramdef>
+\layout SGML
+
+<paramdef>s_int16 <parameter> y </parameter></paramdef>
+\layout SGML
+
+</funcsynopsis>
+\layout Standard
+
+Returns the pixel at position 
+\emph on 
+(x,y)
+\emph default 
+, in RGB format.
+\layout SGML
+
+<funcsynopsis>
+\layout SGML
+
+<funcdef>void <function>put_pix_rgb</function></funcdef>
+\layout SGML
+
+<paramdef>s_int16 <parameter> x </parameter></paramdef>
+\layout SGML
+
+<paramdef>s_int16 <parameter> y </parameter></paramdef>
+\layout SGML
+
+<paramdef>u_int32 <parameter> col </parameter></paramdef>
+\layout SGML
+
+</funcsynopsis>
+\layout Standard
+
+Put the 
+\emph on 
+col
+\emph default 
+ pixel (in RGB format) at position 
+\emph on 
+(x,y)
+\emph default 
+.
+ 
+\emph on 
+col
+\emph default 
+ can be built as a 
+\emph on 
+u_int32
+\emph default 
+ where the first byte is the red value, the second the green, and the third
+ the blue.
+ It can be used to accurately modify images - however, it is slower than
+ 
+\emph on 
+put_pix 
+\emph default 
+and should be avoided if possible, excepted if you work with the _EDIT_
+ flag enabled and want to save the modified image.
 \layout Section
 
 
@@ -1975,6 +2076,21 @@ Rewind an animation to it's beginning.
 <funcsynopsis>
 \layout SGML
 
+<funcdef>u_int16 <function>get_currentframe</function></funcdef>
+\layout SGML
+
+<paramdef>void</paramdef>
+\layout SGML
+
+</funcsynopsis>
+\layout Standard
+
+Returns the index of the frame currently being displayed.
+\layout SGML
+
+<funcsynopsis>
+\layout SGML
+
 <funcdef>void <function>draw</function></funcdef>
 \layout SGML
 
@@ -2058,6 +2174,82 @@ src
 (src->get_length()/sx,src->get_height()/sy)
 \emph default 
 .
+\layout SGML
+
+<funcsynopsis>
+\layout SGML
+
+<funcdef>animationframe * <function>get_frame</function></funcdef>
+\layout SGML
+
+<paramdef>u_int16 <parameter>nbr</parameter></paramdef>
+\layout SGML
+
+</funcsynopsys>
+\layout Standard
+
+Returns a pointer to the 
+\emph on 
+nbr
+\emph default 
+ frame, usefull for modifying the frame.
+\layout SGML
+
+<funcsynopsis>
+\layout SGML
+
+<funcdef>image * <function>get_image</function></funcdef>
+\layout SGML
+
+<paramdef>u_int16 <parameter>nbr</parameter></paramdef>
+\layout SGML
+
+</funcsynopsys>
+\layout Standard
+
+Returns a pointer to the 
+\emph on 
+nbr
+\emph default 
+ image, usefull for modifying the image.
+\layout SGML
+
+<funcsynopsis>
+\layout SGML
+
+<funcdef>u_int16 <function>add_image</function></funcdef>
+\layout SGML
+
+<paramdef>image * <parameter>im</parameter></paramdef>
+\layout SGML
+
+</funcsynopsis>
+\layout Standard
+
+Adds the 
+\emph on 
+im
+\emph default 
+ image to the animation's images and returns it's index number.
+\layout SGML
+
+<funcsynopsis>
+\layout SGML
+
+<funcdef>u_int16 <function>add_frame</function></funcdef>
+\layout SGML
+
+<paramdef>animationframe <parameter>af</parameter></paramdef>
+\layout SGML
+
+</funcsynopsis>
+\layout Standard
+
+Adds the 
+\emph on 
+af
+\emph default 
+ frame to the animation's frames and returns it's index number.
 \layout Subsection
 
 Usage tips

@@ -1,15 +1,15 @@
 // $Id$
 
 /*
-    Copyright (C) 2000 Alexandre Courbot.
+  Copyright (C) 1999/2000/2001   The Adonthell Project
+  Part of the Adonthell Project http://adonthell.linuxgames.com
+  
+  This program is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Public License.
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY.
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License.
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY.
-    See the COPYING file for more details.
-
-    This file is a part of the Adonthell project.
+  See the COPYING file for more details.
 */
 
 #ifndef _animation_h
@@ -17,6 +17,7 @@
 
 #include "types.h"
 #include "image.h"
+#include <vector>
 
 #ifdef _EDIT_
 #include <list>
@@ -47,20 +48,9 @@ typedef enum anim_editor_mode {IMAGE, FRAME};
 
 class animationframe
 {
-  u_int16 imagenbr;
-  bool is_masked;
-  u_int8 alpha;
-  s_int16 gapx;
-  s_int16 gapy;
-  u_int16 delay;
-  u_int16 nextframe;
-
  public:
-#ifdef _DEBUG_
-  static u_int16 a_d_diff;
-#endif
-  void init();
   animationframe();
+  void clear();
   ~animationframe();
   u_int8 get_alpha();
   void set_alpha(u_int8 a);
@@ -74,21 +64,78 @@ class animationframe
   void set_nextframe(u_int16 nf);
   s_int8 get(gzFile file);
   s_int8 load(const char * fname);
+
+ private:
+  u_int16 imagenbr;
+  bool is_masked;
+  u_int8 alpha;
+  s_int16 gapx;
+  s_int16 gapy;
+  u_int16 delay;
+  u_int16 nextframe;
+#ifdef _DEBUG_
+  static u_int16 a_d_diff;
+#endif
+
+  void init();
+
+ public:
 #ifdef _EDIT_
   s_int8 put(gzFile file);
   s_int8 save(const char * fname);
 #endif
-  friend class animation;
-#ifdef _EDIT_
-  friend class animedit;
-#endif
 
+#ifndef SWIG
+  friend class animation;
+#endif
+#ifndef SWIG
   friend class win_anim;
   friend class animation_off;
+#endif
 };
 
 class animation
 {
+ public:
+  animation();
+  void clear();
+  ~animation();
+  bool is_empty();
+  u_int16 get_length();
+  u_int16 get_height();
+
+  void update();
+  void set_active_frame(u_int16 framenbr);
+  void next_frame();
+  void play();
+  void stop();
+  void rewind();
+  u_int16 get_currentframe() { return currentframe; };
+  void draw(s_int16 x, s_int16 y, drawing_area * da_opt=NULL);
+  s_int8 get(gzFile file);
+  s_int8 load(const char * fname);
+
+  u_int16 nbr_of_frames() { return frame.size(); }
+  u_int16 nbr_of_images() { return t_frame.size(); }
+
+  void zoom(u_int16 sx, u_int16 sy, animation * src);
+
+  animationframe * get_frame(u_int16 nbr)
+    {
+      if(nbr>=nbr_of_frames()) return NULL;
+      return &(frame[nbr]);
+    }
+
+  image * get_image(u_int16 nbr)
+    {
+      if(nbr>=nbr_of_images()) return NULL;
+      return t_frame[nbr];
+    }
+
+  u_int16 add_image(image * im) { insert_image(im, nbr_of_images()); return nbr_of_images()-1;}
+  u_int16 add_frame(animationframe af) { insert_frame(af, nbr_of_frames()); return nbr_of_frames()-1;}
+
+ private:
 #ifdef _EDIT_
   char file_name[500];
   win_label * info_win_label;
@@ -116,49 +163,28 @@ class animation
   bool in_editor;
 #endif
 
+  void init();
+
  protected:
-  u_int16 length, height;
-  u_int16 nbr_of_images;
-  u_int16 nbr_of_frames;
-  u_int16 currentframe;
-  u_int16 speedcounter;
-  bool play_flag;
- public:
 #ifdef _DEBUG_
   static u_int16 a_d_diff;
 #endif
+  vector<image *> t_frame;
+  vector<animationframe> frame;
+  u_int16 length, height;
+  u_int16 currentframe;
+  u_int16 speedcounter;
+  bool play_flag;
 
-  image * t_frame;
-  animationframe * frame;
+  s_int8 insert_image(image * im, u_int16 pos);
+  s_int8 insert_frame(animationframe af, u_int16 pos);
+  s_int8 delete_image(u_int16 pos);
+  s_int8 delete_frame(u_int16 pos);
 
-  void init();
-  animation();
-  void clear();
-  ~animation();
-  bool is_empty();
-  u_int16 get_length();
-  u_int16 get_height();
-
-  void update();
-  void set_active_frame(u_int16 framenbr);
-  void next_frame();
-  void play();
-  void stop();
-  void rewind();
-  void draw(s_int16 x, s_int16 y, drawing_area * da_opt=NULL);
-  s_int8 get(gzFile file);
-  s_int8 load(const char * fname);
-
-  void zoom(u_int16 sx, u_int16 sy, animation * src);
-  void get_zoom_scale(u_int16 &max_x, u_int16 &max_y);
-
+ public:
 #ifdef _EDIT_
   s_int8 put(gzFile file);
   s_int8 save(const char * fname);
-#endif
-  animation &operator =(animation &a);
-
-#ifdef _EDIT_
   void select_image(u_int16 nbr);
   void select_frame(u_int16 nbr);
   void set_frame_gapx(u_int16 nbr, s_int16 gx);
@@ -168,16 +194,12 @@ class animation
   void set_frame_nextframe(u_int16 nbr, u_int16 nf);
   void set_frame_mask(u_int16 nbr, bool m);
   void set_frame_imagenbr(u_int16 nbr, u_int16 imnbr);
-  s_int8 insert_image(image &im, u_int16 pos);
-  s_int8 insert_frame(animationframe &af, u_int16 pos);
   u_int16 increase_frame(u_int16 c);
   u_int16 decrease_frame(u_int16 c);
   u_int16 increase_image(u_int16 c);
   u_int16 decrease_image(u_int16 c);
   void add_image();
   void add_raw_image();
-  s_int8 delete_image(u_int16 pos);
-  s_int8 delete_frame(u_int16 pos);
   void add_frame();
   void quick_save();
   void quick_load();
@@ -198,8 +220,11 @@ class animation
   void editor();
 #endif
 
+#ifndef SWIG
   friend class win_anim;
   friend class animation_off;
+  animation &operator =(animation &a);
+#endif
 };
 
 #endif

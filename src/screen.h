@@ -49,6 +49,7 @@ class screen
   static u_int16 get_height() { return h;}
 
   static u_int32 get_trans_col() {return trans;}
+  static u_int32 get_trans_col_rgb() {return trans_rgb;}
 
   static u_int8 get_frames_to_do() { return ftd; }
 
@@ -63,7 +64,7 @@ class screen
 
   static u_int8 bytes_per_pixel;
   static u_int32 trans;
-  static u_int32 trans_pix;
+  static u_int32 trans_rgb;
   
   static SDL_Surface * vis;
   

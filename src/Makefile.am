@@ -35,7 +35,7 @@ win_scrolled.h win_select.h win_theme.h win_types.h win_write.h \
 win_manager.h window.h \
 yarg.h
 
-py_adonthell_wrap.cpp : py_adonthell.i
+py_adonthell_wrap.cpp : py_adonthell.i *.h
 	swig -python -shadow -I/tmp/gnu/include/SDL -I/usr/local/include/SDL -I/usr/include/SDL -c++ -make_default -o $*.cpp $< 
 	@mv adonthell.py ../scripts
 

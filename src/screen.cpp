@@ -22,7 +22,7 @@ u_int32 screen::SDL_flags=0;
 u_int8 screen::ftd;
 u_int8 screen::bytes_per_pixel;
 u_int32 screen::trans;
-u_int32 screen::trans_pix;
+u_int32 screen::trans_rgb;
 SDL_Surface * screen::vis;
 u_int32 screen::timer1, screen::timer2;
 bool screen::cur_visible=false;
@@ -53,18 +53,15 @@ void screen::set_video_mode(u_int16 nl, u_int16 nh)
     case 16:
       printf ("Using 16bpp depth: %dx%d.\n",nl,nh);
       bytes_per_pixel = 2;
-      trans=0xF81F;  
       break;
     case 24:
       printf ("Using 24bpp depth: %dx%d.\n",nl,nh);
       bytes_per_pixel = 3;
-      trans=0xFF00FF;  
       break;
     default:
       printf ("Emulating 16bpp depth in %dbpp mode: %dx%d.\n",bpp,nl,nh);
       bpp=16;
       bytes_per_pixel = 2;
-      trans=0xF81F;
       break;
     }
   l=nl;
@@ -81,14 +78,14 @@ void screen::set_video_mode(u_int16 nl, u_int16 nh)
   // Turning off mouse cursor
   set_mouse_cursor_visible(false);
 
+  // Setting up the window title
   SDL_WM_SetCaption ("Adonthell", NULL);
   
+  // Setting up transparency colors
   trans=SDL_MapRGB(vis->format,0xFF,0x00,0xFF);
-#ifdef _EDIT_
-  trans_pix=0xFF00FF;
-#else
-  trans_pix=SDL_MapRGB(vis->format,0xFF,0x00,0xFF);
-#endif
+  trans_rgb=0xFF00FF;
+
+  // Global initialisations
   ftd=1;
   init_frame_counter();
 }
