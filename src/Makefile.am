@@ -33,7 +33,7 @@ win_query.h win_scrollbar.h win_scrolled.h win_select.h win_theme.h win_types.h 
 win_write.h win_manager.h window.h yarg.h
 
 py_adonthell_wrap.cc : py_adonthell.i *.h
-	swig -python -shadow -I/usr/local/include/SDL -I/usr/include/SDL -I./ -I../ -c++ -make_default -o $*.cc $< 
+	swig -python -shadow -I/usr/local/include/SDL -I/usr/include/SDL -I./ -I../ -c++ -make_default -o $*.cc py_adonthell.i
 	@datapath=`grep '^ *Data' ~/.adonthell/adonthellrc | sed 's/^ *Data *\[\(.*\)\] *$$/\1/'` ;\
 	for subdir in $$datapath ; do \
 	  if test -d "$$subdir" ; then \

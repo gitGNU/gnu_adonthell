@@ -26,6 +26,7 @@
 #include <iostream>
 #include <cstdio>
 #include <cstdlib>
+#include <string.h>
 #include "input.h"
 #include "SDL.h"
 
@@ -36,7 +37,6 @@ s_int32 input::keystatelength;
 
 u_int16 input::mouse_posx, input::mouse_posy;
 bool input::mouse_button[3];
-
 
 int input::filterevents(const SDL_Event *event)
 {
