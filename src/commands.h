@@ -23,10 +23,11 @@ enum
     RETURN = 0,     // RETURN <retval>              Stop interpreter
 
     // Dialogue (those five will change in future versions!!!)
-    IMPORT = 1,     // IMPORT <id>                  Load Text
-    TEXT = 2,       // TEXT <id> <offset> <speaker> Line of text
+    IMPORT = 1,     // IMPORT <id-list>             Load Text
+    TEXT = 2,       // TEXT <id> <offset>           Line of text
     CLEAR = 3,      // CLEAR                        Reset Text buffers
-
+    SPEAKER = 4,    // SPEAKER <speaker> <mood>     Sets the Speaker
+    
     // Arithmetic
     LET = 6,        // LET <id1> <id2>              id2 = id1
     ADD = 7,        // ADD <id1> <id2> <id3>        id3 = id1 + id2

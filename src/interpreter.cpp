@@ -95,8 +95,10 @@ u_int8 interpreter::load (const char *file)
     if (!dat) return 0;
     
     // read program length and reserve temporary space
-    fread (&length, sizeof (length), 1, dat);
+    fseek (dat, 0, SEEK_END);
+    length = ftell (dat) - 4;
     buffer = new s_int32[length];
+    rewind (dat);
 
     // Get number of commands in program
     fread (&cmd_num, sizeof (cmd_num), 1, dat);
@@ -116,6 +118,8 @@ u_int8 interpreter::load (const char *file)
     {
         // Call the registered function to create a instance
         // of the Command with type = buffer[j]
+        cout << "\nLoading Command " << buffer[j] << flush;
+
         cmd = (*callbacks[buffer[j]])();
 
         // Tell the command to which interpreter it belongs

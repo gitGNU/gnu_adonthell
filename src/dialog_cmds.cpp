@@ -36,6 +36,9 @@ void import_cmd::init (s_int32 *buffer, u_int32 &i, void *data)
     u_int32 j;
 
     sz = buffer[i++];
+
+    cout << ": " << sz << " Strings";
+    
     text = new u_int32[sz];
 
     for (j = 0; j < sz; j++)
@@ -46,15 +49,17 @@ void import_cmd::init (s_int32 *buffer, u_int32 &i, void *data)
 s_int32 import_cmd::run (u_int32 &pc, void *data)
 {
     u_int32 i;
+    char *str;
     dialog *dlg = (dialog *) data;
     FILE *txt = fopen (dlg->text_file, "r");
 
     for (i = 0; i < sz; i++)
     {
-        char *str = new char[dialog::length[text[i]] + 1];
+        str = new char[dialog::length[text[i]] + 1];
 
         fseek (txt, dialog::offset[text[i]], SEEK_SET);
-        fgets (str, dialog::length[text[i]] + 1, txt);
+        fgets (str, dialog::length[text[i]], txt);
+        str[dialog::length[text[i]]] = '\0';
 
         dlg->strings.push_back (str);
     }
@@ -96,14 +101,14 @@ s_int32 clear_cmd::run (u_int32 &pc, void *data)
     dialog *dlg = (dialog *) data;
 
     // Memorize what parts of the dialogue where already used, to avoid loops
-    dlg->used_text.push_back (pc);
+    dlg->used_text.push_back (dlg->player_text[dlg->answer]->offset);
 
-    // ksterker: be careful, cause pc is already incremented by one here
-    pc += dlg->player_text[dlg->answer]->offset;
+    // Continue the dialogue according to the players choice
+    pc = dlg->player_text[dlg->answer]->offset;
 
     // have to  delete  the contents of the 2 vector's first
     for (i = 0; i < dlg->player_text.size (); i++)
-        delete dlg->player_text[i];
+        if (dlg->player_text[i] != NULL) delete dlg->player_text[i];
 
     for (i = 0; i < dlg->npc_text.size (); i++)
         delete dlg->npc_text[i];
@@ -141,13 +146,19 @@ s_int32 text_cmd::run (u_int32 &pc, void *data)
     dlg_text *t;
 
     // Look if that part of the conversation was already in use     
-    if (find (dlg->used_text.begin(), dlg->used_text.end(), pc + pc_off) != dlg->used_text.end ())
+    if (find (dlg->used_text.begin(), dlg->used_text.end(), pc + pc_off) == dlg->used_text.end ())
     {
-        t = new dlg_text (text, pc_off);
+        // The offset given with the TEXT command is relative to the current line
+        // That is:  current_line + pc_off + 1  gives the line where the dialogue
+        // will continue when this text is chosen. Note that pc == current_line + 1
+        // at this point!
+        t = new dlg_text (text, pc + pc_off);
 
-        // Assign this line of dialogue either to player or NPC
-        // if (speaker == 0) dlg->player_text.push_back (t);
-        // else dlg->npc_text.push_back (t);
+        // Assign this line of dialogue to the current speaker (who has been set
+        // by the SPEAKER command). We only have to distinguish between player and
+        // npc here, different npc's are dealt with by the SPEAKER command.
+        if (dlg->speaker == 0) dlg->player_text.push_back (t);
+        else dlg->npc_text.push_back (t);
     }
 
     return 1;
@@ -173,6 +184,7 @@ void text_cmd::ascii (ofstream &out)
 
 speaker_cmd::speaker_cmd (u_int32 s, u_int32 m) : speaker(s), mood(m)
 {
+    type = SPEAKER;
 }
 
 // Initializes the command from the buffer
@@ -185,6 +197,18 @@ void speaker_cmd::init (s_int32 *buffer, u_int32 &i, void *data)
 // adds a line to the text arrays
 s_int32 speaker_cmd::run (u_int32 &pc, void *data)
 {
+    dialog *dlg = (dialog *) data;
+
+    // have to deal with different NPCs and stuff later
+    // (like changing their portraits if their mood changes and so on ...)
+    dlg->speaker = speaker;
+
+    // if the NPC has multiple lines of text, we have to add a dummy element to
+    // the player_text - list, so we know what Player-text belongs to what
+    // NPC text later
+    if (!dlg->npc_text.empty () && speaker != 0)
+        dlg->player_text.push_back (NULL);
+    
     return 1;
 }
 

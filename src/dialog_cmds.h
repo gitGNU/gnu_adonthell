@@ -16,14 +16,15 @@
 #define __DIALOG_CMDS_H__
 
 #include <fstream>
+#include "commands.h"
 #include "interpreter.h"
 
 // Reads the strings needed for the dialogue from the string file
 class import_cmd : public command
 {
 public:
-    import_cmd () { }
-    import_cmd (u_int32 *t, u_int32 s) : text(t), sz(s)  { }
+    import_cmd () { type = IMPORT; }
+    import_cmd (u_int32 *t, u_int32 s) : text(t), sz(s)  { type = IMPORT; }
     virtual ~import_cmd () { delete[] text; }
     
     void init (s_int32*, u_int32&, void *);
@@ -42,6 +43,8 @@ private:
 class clear_cmd : public command
 {
 public:
+    clear_cmd () { type = CLEAR; }
+
     void init (s_int32 *buffer, u_int32 &i, void *data) { }
     s_int32 run (u_int32 &PC, void *data);
 
@@ -54,7 +57,7 @@ public:
 class speaker_cmd : public command
 {
 public:
-    speaker_cmd () { }
+    speaker_cmd () { type = SPEAKER; }
     speaker_cmd (u_int32 s, u_int32 m);
 
     void init (s_int32 *buffer, u_int32 &i, void *data);
@@ -72,8 +75,8 @@ private:
 class text_cmd : public command
 {
 public:
-    text_cmd () { }
-    text_cmd (u_int32 t, u_int32 p) : text(t), pc_off(p) { }
+    text_cmd () { type = TEXT; }
+    text_cmd (u_int32 t, u_int32 p) : text(t), pc_off(p) { type = TEXT; }
     
     void init (s_int32*, u_int32&, void*);
     s_int32 run (u_int32&, void*);
@@ -84,7 +87,7 @@ public:
 
 private:
     u_int32 text;               // Id of the dialogue text
-    u_int32 pc_off;             // Program Counter offset - where to continue the dialogue
+    s_int32 pc_off;             // Program Counter offset - where to continue the dialogue
 };
 
 #endif // __DIALOG_CMDS_H__

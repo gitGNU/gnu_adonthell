@@ -28,8 +28,8 @@
 class return_cmd : public command
 {
 public:
-    return_cmd () { }
-    return_cmd (s_int32 r) : retval (r) { }
+    return_cmd () { type = RETURN; }
+    return_cmd (s_int32 r) : retval (r) { type = RETURN; }
     
     void init (s_int32 *buffer, u_int32 &i, void *data)
     {
@@ -40,6 +40,11 @@ public:
         return retval;
     }
 
+    void write (FILE *out)
+    {
+        fwrite (&type, sizeof(type), 1, out);
+        fwrite (&retval, sizeof(retval), 1, out);
+    }
     void ascii (ofstream &out)
     {
         out << "RETURN  " << retval;

@@ -31,10 +31,10 @@ public:
 class dialog
 {
 public:
-
     static s_int32 *offset;
     static s_int32 *length;
 
+    u_int32 speaker;                    // The current speaker 
     u_int32 answer;                     // The text chosen by the player
     char *text_file;                    // The file with the dialogues strings
 
