@@ -1,0 +1,16 @@
+Source: adonthell
+Section: games
+Priority: optional
+Maintainer: Alexandre Courbot <alexandrecourbot@linuxgames.com>
+Standards-Version: 3.1.1
+
+Package: adonthell
+Architecture: any
+Depends: ${shlibs:Depends}
+Suggests: adonthell-wastesedge
+Description: A free single player Role Playing Game.
+ Adonthell is a single role playing game that combines the best features of 
+ the Final Fantasy and Ultima series with an epic plot inspired by JRR Tolkien.
+ .
+ This package contains Adonthell game engine. You'll probably want to install 
+ one of the games available (packages adonthell-*) in order to play something.

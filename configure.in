@@ -310,8 +310,8 @@ src/tools/Makefile
 src/tools/charedit/Makefile
 src/tools/dlgedit/Makefile
 src/tools/dlgedit/examples/Makefile
-src/tools/fontedit/Makefile
-src/tools/maptools/Makefile
+dnl src/tools/fontedit/Makefile
+dnl src/tools/maptools/Makefile
 src/tools/questedit/Makefile
 src/tools/oggloop/Makefile
 src/tools/pydonthell/Makefile

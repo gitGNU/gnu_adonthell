@@ -1,6 +1,4 @@
 SUBDIRS = src doc
-EXTRA_DIST = NEWBIE OBSOLETE
-
-# M4 macro file for inclusion with autoconf
-m4datadir = $(datadir)/aclocal
-m4data_DATA = acinclude.m4
+EXTRA_DIST = NEWBIE OBSOLETE debian/README.Debian debian/changelog debian/control debian/copyright \
+	debian/dirs debian/docs debian/manpage.1 debian/manpage.sgml debian/menu debian/postinst \
+	debian/postrm debian/rules

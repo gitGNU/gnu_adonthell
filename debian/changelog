@@ -1,0 +1,9 @@
+adonthell (0.3pre1-1) unstable; urgency=low
+
+  * Initial Release.
+
+ -- Alexandre Courbot <alexandrecourbot@linuxgames.com>  Fri, 20 Jul 2001 18:39:07 +0200
+
+Local variables:
+mode: debian-changelog
+End:
