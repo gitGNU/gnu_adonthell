@@ -19,6 +19,7 @@ class dialog;
 
 #include "../../types.h"
 #include "../../interpreter.h"
+#include "../../commands.h"
 #include "main.h"
 #include "graph.h"
 #include "interface.h"
@@ -33,6 +34,7 @@ main (int argc, char *argv[])
 
     /* Misc initialization */
     init_app (MainWnd);
+    init_interpreter ();
 
     MainWnd->wnd = NULL;
     MainWnd->text_dlg = NULL;

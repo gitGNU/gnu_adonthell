@@ -16,16 +16,29 @@
 #define __RUN_H__
 
 #include <gtk/gtkstyle.h>
+#include <string>
+
+#include "../../interpreter.h"
+#include "../../dialog.h"
+#include "../../yarg.h"
 
 // Wrapper class for the Run Dialogue dialog
 class run_dlg
 {
 public:
-    run_dlg ();
+    run_dlg (string);
+    ~run_dlg ();
 
     GtkWidget *dlg;             // The actual Dialogue Window
     GtkWidget *list;            // The List widget that holds the dialogue text
+    dialog *dat;                // Data to be used throughout the dialogue
+
+    void run ();                // Run the dialogue
+    
 private:
+    interpreter *vm;            // The Virtual Machine ;)    
+    GList *tmp_list;            // Container for the Text to diaplay
+    yarg randgen;               // Random number generator
 };
 
 #endif // __RUN_H__

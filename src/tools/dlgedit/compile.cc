@@ -36,13 +36,14 @@ void dlg_compiler::run ()
     // Write the Dialogue's text
     write_import ();
 
+    get_cur_nodes ();
+
     // Write the rest
-    do
+    while (!cur_nodes.empty ())
     {
-        get_cur_nodes ();
-        write_npc ();
+       write_npc ();
+       get_cur_nodes ();
     }
-    while (!cur_nodes.empty ());
 
     // output everything
     output_script ();
@@ -143,8 +144,6 @@ void dlg_compiler::write_npc ()
     // Look wether multiple NPC nodes with multiple parents exist
     // --> handle differently
 
-    cout << "\ncur_nodes.size () = " << cur_nodes.size () << flush;
-
     // All possible NPC-texts of this block are stored in cur_nodes
     for (i = 0; i < cur_nodes.size (); i++)
     {
@@ -155,7 +154,7 @@ void dlg_compiler::write_npc ()
         write_speaker ();
 
         // Here's the line of the script that preceeding nodes must link to
-        data = new cmp_data (cur_crcle, code.back (), code.size ());
+        data = new cmp_data (cur_crcle, NULL, code.size ());
 
         // write the condition and memorize the command so we can set the
         // branch target later in this function
@@ -169,6 +168,9 @@ void dlg_compiler::write_npc ()
         // Write the text that will be spoken by the NPC
         write_text ();
 
+        // Here is the command whose target we have to set later on
+        data->cmd = code.back ();
+        
         // Do any operation on (gamestate) variables before we display the
         // players text, because player-conditions may depend on those 
         // new values already
@@ -181,11 +183,21 @@ void dlg_compiler::write_npc ()
 
             // furtermore we're done with that NPC node
             done_nodes.push_back (data);
+
+            // Have to reinit cur_crcle as it was changed in write_player ()
+            cur_crcle = (Circle *) cur_nodes[i];
         }
-        
+        // Else if dialogue ends afterwards        
+        else if (end_follows())
+        {
+            // Node is done already ...
+            done_nodes.push_back (data);
+            // ... but we also have to write the end
+            todo_nodes.push_back (data);
+        }
         // Else we add this one to todo_nodes to have it handled later
         else todo_nodes.push_back (data);
-            
+
         // if there was a condition, this is the line we have to jump to is it
         // isn't met 
         if (cur_crcle->conditions != "") cmd->setjmp (code.size () - pos);
@@ -194,6 +206,9 @@ void dlg_compiler::write_npc ()
     // That tells the dialoge engine to update the conversation with the
     // new text of NPC and player
     write_display ();
+
+    // Reinit the dialogue engine for the next block
+    write_clear ();
 }
 
 // Write the "Player Part" of the current block:
@@ -220,10 +235,6 @@ void dlg_compiler::write_player ()
     {
         cur_crcle = (Circle *) npc->next[i]->next[0];
 
-        // Here's the line of the script that preceeding nodes must link to
-        data = new cmp_data (cur_crcle, code.back (), code.size ());
-        todo_nodes.push_back (data);
-
         // write the condition and branch after the text command
         if (cur_crcle->conditions != "") 
         {
@@ -233,6 +244,10 @@ void dlg_compiler::write_player ()
         }
 
         write_text ();
+
+        // Here's the line of the script that preceeding nodes must link to
+        data = new cmp_data (cur_crcle, code.back (), code.size ()-1);
+        todo_nodes.push_back (data);
     }
 
     // Now the same with the links
@@ -240,17 +255,17 @@ void dlg_compiler::write_player ()
     {
         cur_crcle = (Circle *) npc->link[i]->next[0];
 
-        data = new cmp_data (cur_crcle, code.back (), code.size ());
-        todo_nodes.push_back (data);
-
         if (cur_crcle->conditions != "") 
         {
             write_condition ();
             cmd = (branch_cmd *) code.back ();
-            cmd->setjmp (2);
+            cmd->setjmp (1);
         }
 
         write_text ();
+
+        data = new cmp_data (cur_crcle, code.back (), code.size ()-1);
+        todo_nodes.push_back (data);
     }
 }
 
@@ -288,6 +303,12 @@ void dlg_compiler::write_display ()
     code.push_back (cmd);    
 }
 
+void dlg_compiler::write_clear ()
+{
+    clear_cmd *cmd = new clear_cmd;
+    code.push_back (cmd);
+}
+
 void dlg_compiler::write_end ()
 {
     return_cmd *cmd = new return_cmd (0);
@@ -297,18 +318,30 @@ void dlg_compiler::write_end ()
 void dlg_compiler::output_script ()
 {
     u_int32 i;
-    string tf = filename + ".txt";
-    ofstream out (tf.c_str ());
+    string af = filename + ".txt";
+    string sf = filename + ".dlg";
+    
+    ofstream ascii (af.c_str ());
+    FILE* script = fopen (sf.c_str (), "wb");
+
+    i = code.size ();
+    fwrite (&i, sizeof (i), 1, script);
 
     for (i = 0; i < code.size (); i++)
     {
-        out.width (3);
-        out << i << "  ";
-        code[i]->ascii (out);
-        out << "\n";
+        if (code[i]->type == CLEAR) ascii << "\n";
+        
+        ascii.width (3);
+        ascii << i << "  ";
+
+        code[i]->write (script);
+        code[i]->ascii (ascii);
+
+        ascii << "\n";
     }
 
-    out.close ();
+    fclose (script);
+    ascii.close ();
 }
 
 // Fill the cur_nodes array with the NPC-nodes which will be used to create
@@ -334,8 +367,6 @@ void dlg_compiler::get_cur_nodes ()
     // In case only todo_nodes is empty, we're finished
     if (todo_nodes.empty ()) return;
 
-    cout << "\ntodo_nodes.size () = " << todo_nodes.size () << flush;
-
     // Here we can take one of the todo_nodes and continue with it
     data = todo_nodes[0];
 
@@ -343,6 +374,9 @@ void dlg_compiler::get_cur_nodes ()
     // have already been compiled. If so, we can update the command with
     // the proper jump target. (That's done in the isdone(...) function)
     // Else we can safely add the child to the cur_nodes 
+
+    // The chosen command continues in the next line
+    ((text_cmd *) data->cmd)->setjmp (code.size () - data->line);
 
     // For all following direct links (arrows) ...
     for (i = 0; i < data->node->next.size (); i++)
@@ -356,12 +390,12 @@ void dlg_compiler::get_cur_nodes ()
         if (!isdone (data->node->link[i]->next[0], data))
             cur_nodes.push_back (data->node->link[i]->next[0]);
 
+    // What followa here isn't too good -> correct
     // The End of dialogue follows:
     if (cur_nodes.empty ())
     {
-        write_end ();
-
-        ((text_cmd *) data->cmd)->setjmp (code.size () - data->line);
+        cur_crcle = (Circle *) data->node;
+        if (end_follows ()) write_end ();
         
         done_nodes.push_back (data);
         if (todo_nodes.size () > 1) todo_nodes.erase (todo_nodes.begin ());
@@ -386,7 +420,7 @@ u_int8 dlg_compiler::isdone (DlgNode *node, cmp_data *data)
     for (i = 0; i < done_nodes.size (); i++)
         if (done_nodes[i]->node == node)
         {
-            ((text_cmd *) data->cmd)->setjmp (done_nodes[i]->line - data->line);
+            ((text_cmd *) data->cmd)->setjmp (done_nodes[i]->line - data->line - 1);
             return 1;
         }
 
@@ -402,9 +436,14 @@ u_int8 dlg_compiler::ptext_follows ()
             return 1;
 
     // Check linked followers
-    if (cur_crcle->next.size () > 0)
-        if (cur_crcle->next[0]->next[0]->type == PLAYER)
+    if (cur_crcle->link.size () > 0)
+        if (cur_crcle->link[0]->next[0]->type == PLAYER)
             return 1;
 
     return 0;
+}
+
+u_int8 dlg_compiler::end_follows ()
+{
+    return (cur_crcle->next.empty () && cur_crcle->link.empty ());
 }

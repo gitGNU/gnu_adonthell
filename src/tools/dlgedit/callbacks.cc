@@ -129,10 +129,10 @@ on_dialogue_compile_activate (GtkMenuItem * menuitem, gpointer user_data)
 void 
 on_dialogue_run_activate (GtkMenuItem * menuitem, gpointer user_data)
 {
-    run_dlg dlg;
+    run_dlg dlg (((MainFrame *) user_data)->file_name);
+    dlg.run ();
+
     gtk_main ();
-    
-    if (!&dlg) return;
 }
 
 /* Dialogue Menu: Variables */

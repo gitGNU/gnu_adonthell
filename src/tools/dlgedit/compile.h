@@ -54,7 +54,7 @@ private:
     string filename;                // The base dialogue filename
 
     u_int32 *text_lookup;           // tells Text ID when given node-number
-
+    
     Circle *cur_crcle;              // Circle all the write... functions work on
 
     void write_npc ();              // Write NPC part of a script block
@@ -66,12 +66,14 @@ private:
     void write_text ();             // Writes a node's text
     void write_display ();          // Tells the interpreter to show the new text
     void write_end ();              // Tells the interpreter to quit
+    void write_clear ();            // Continues the interpreter after players choice
     
     void output_script ();          // Write the compiled script to disk
     void get_cur_nodes ();          // Get the nodes to create the next block from
 
     u_int8 isdone (DlgNode*, cmp_data*); // Was DlgNode already compiled?
-    u_int8 ptext_follows ();
+    u_int8 ptext_follows ();        // TRUE if player nodes follow cur_crcle
+    u_int8 end_follows ();          // TRUE if dialogue's end follows cur_crcle
 };
 
 #endif // __COMPILE_H__

@@ -95,7 +95,7 @@ create_run_dlg_wnd (run_dlg *dlg)
     GTK_WIDGET_SET_FLAGS (dialogue_close, GTK_CAN_DEFAULT);
     gtk_tooltips_set_tip (tooltips, dialogue_close, "Close this window", (char*)NULL);
 
-    gtk_signal_connect (GTK_OBJECT (dialogue_list), "select_child", GTK_SIGNAL_FUNC (on_dialogue_list_select_child), NULL);
+    gtk_signal_connect (GTK_OBJECT (dialogue_list), "select_child", GTK_SIGNAL_FUNC (on_dialogue_list_select_child), dlg);
     gtk_signal_connect (GTK_OBJECT (dialogue_export), "pressed", GTK_SIGNAL_FUNC (on_dialogue_export_pressed), NULL);
     gtk_signal_connect (GTK_OBJECT (dialogue_close), "pressed", GTK_SIGNAL_FUNC (on_dialogue_close_pressed), run_dlg_wnd);
     gtk_signal_connect (GTK_OBJECT (run_dlg_wnd), "delete_event", GTK_SIGNAL_FUNC (on_widget_destroy), NULL);
@@ -120,6 +120,13 @@ create_dlg_list_item (const char *text, int mode, int num)
     GdkColor color;
     GtkStyle *style = gtk_style_copy (gtk_widget_get_default_style ());
 
+    // Modes:
+    // 1 = Blue (Player) Text, insensitive
+    // 2 = Black (NPC) Text, insensitive
+    // 3 = Black (Player) Text, sensitive
+    // 4 = Red (NPC) Text, insensitive
+    // 5 = Red (NPC) Text, sensitive
+
     switch (mode)
     {
         // Player Text
@@ -142,6 +149,7 @@ create_dlg_list_item (const char *text, int mode, int num)
         }
         // Active NPC text
         case 4:
+        case 5:
         {
             color.red = 65535;
             color.green = 0;
@@ -170,7 +178,7 @@ create_dlg_list_item (const char *text, int mode, int num)
     gtk_container_add (GTK_CONTAINER(list_item), label);
     gtk_object_set_user_data (GTK_OBJECT (list_item), GINT_TO_POINTER(num));
     GTK_WIDGET_UNSET_FLAGS (list_item, GTK_CAN_FOCUS);
-    if (mode != 3) gtk_widget_set_sensitive (list_item, FALSE);
+    if (mode != 3 && mode != 5) gtk_widget_set_sensitive (list_item, FALSE);
     gtk_widget_show (list_item);
     
     return list_item;
