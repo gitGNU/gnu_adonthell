@@ -23,7 +23,7 @@ class dlg_compiler
 {
 public:
     dlg_compiler () : text_lookup (NULL), jump_lookup (NULL) {  }
-    dlg_compiler (vector<DlgNode*>&, string, string, u_int8);
+    dlg_compiler (vector<DlgNode*>&, string, string, string, u_int8);
     ~dlg_compiler ();
     
     void run ();                    // Start the compile-process
@@ -36,6 +36,7 @@ private:
     
     string filename;                // The base dialogue filename
     string cust_func;               // The dialogue's custom functions
+    string cust_init;               // Custom code to add to the __init__ method
     string space;                   // For formatting the python output
     ofstream script;                // The script file
 
@@ -48,7 +49,7 @@ private:
     void write_player (Circle*);    // Write Player part of a block
     void write_strings ();          // Write the string-file and creates import cmd
     void write_entry_func ();       // Write the class' entry function run()
-    void write_custom_func ();      // Write the dialogue's user defined functions
+    void write_custom_code (string);// Write user defined code
     void get_cur_nodes ();          // Get the nodes to create the next block from
     void write_answer ();           // Write the answer function's NPC part
     void write_player_answer (DlgNode*);// Write the answer function's Player part

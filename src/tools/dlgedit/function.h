@@ -16,7 +16,6 @@
 #define __FUNCTION_H__
 
 #include <gtk/gtkstyle.h>
-#include <string>
 #include "main.h"
 
 // Add custom functions to the Dialogue

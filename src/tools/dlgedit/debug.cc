@@ -411,7 +411,7 @@ void debug_dlg::init ()
         parent = gtk_ctree_insert_node (GTK_CTREE (quest_tree), NULL, NULL, text, 0, NULL, NULL, NULL, NULL, FALSE, FALSE);
         gtk_ctree_node_set_row_data_full (GTK_CTREE (quest_tree), parent, data, destroy_data);
 
-        while ((mypair = mychar->next ()).first != NULL)
+        while ((mypair = myquest->next ()).first != NULL)
         {
             sprintf (str, "%i", mypair.second);
 
@@ -434,7 +434,9 @@ objects *debug_dlg::get_dlg_vars ()
     int size, i;
 
     if (wnd->test_dlg == NULL) return container;
+
     instance = wnd->test_dlg->get_instance ();
+    if (instance == NULL) return container;
 
     vars = PyObject_GetAttrString (instance, "debug_info");
     if (vars == NULL) return container;

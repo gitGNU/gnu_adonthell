@@ -151,6 +151,7 @@ create_debug_wnd (debug_dlg * dlg)
 
     gtk_signal_connect (GTK_OBJECT (character_tree), "select_row", GTK_SIGNAL_FUNC (on_character_tree_select), dlg);
     gtk_signal_connect (GTK_OBJECT (dlg_tree), "select_row", GTK_SIGNAL_FUNC (on_character_tree_select), dlg);
+    gtk_signal_connect (GTK_OBJECT (quest_tree), "select_row", GTK_SIGNAL_FUNC (on_character_tree_select), dlg);
     gtk_signal_connect (GTK_OBJECT (update_debug), "clicked", GTK_SIGNAL_FUNC (on_run_debug_clicked), dlg);
     gtk_signal_connect (GTK_OBJECT (close_debug), "clicked", GTK_SIGNAL_FUNC (on_close_debug_clicked), dlg);
     gtk_signal_connect (GTK_OBJECT (debug_wnd), "destroy", GTK_SIGNAL_FUNC (on_debug_destroy), dlg);

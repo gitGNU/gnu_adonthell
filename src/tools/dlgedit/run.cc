@@ -13,7 +13,6 @@
 */
 
 #include <gtk/gtk.h>
-#include <fstream.h>
 
 #include "run.h"
 #include "run_interface.h"
@@ -53,21 +52,15 @@ void run_dlg::start ()
     insert_path (path);
     if (!dat->init (file, file))
     {
-        cout << "\n*** Error loading dialogue script!" << flush;
+        cout << "\n*** Error loading dialogue script! ";
+        show_traceback ();
+        cout << flush;
         answer = -1;
     }
 
     // The start of the dialogue
     else answer = 0;
 
-    // Execute custom code before the actual dialoge
-    if (wnd->pset_vars != "")    
-    {
-        char *tmp = strdup (wnd->pset_vars.c_str ());
-        PyRun_String (tmp, Py_file_input, game::globals, game::globals);
-        delete tmp;
-    }
-    
     free (path);
 }
 

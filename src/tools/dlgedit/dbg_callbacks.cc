@@ -107,7 +107,7 @@ void
 on_dbg_edit_ok_clicked (GtkButton * button, gpointer user_data)
 {
     debug_dlg *dlg = (debug_dlg *) user_data;
-    char *key = gtk_entry_get_text (GTK_ENTRY (dlg->attrib_entry));
+    char *key = strdup (gtk_entry_get_text (GTK_ENTRY (dlg->attrib_entry)));
     char *val = gtk_entry_get_text (GTK_ENTRY (dlg->val_entry));
 
     if (key[0] == 0 || val[0] == 0) return; 

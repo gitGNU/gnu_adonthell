@@ -19,12 +19,13 @@
 #include "dlgnode.h"
 #include "dlgcompile.h"
 
-dlg_compiler::dlg_compiler (vector<DlgNode*> &d, string f, string c, u_int8 dbg)
+dlg_compiler::dlg_compiler (vector<DlgNode*> &d, string f, string c, string i, u_int8 dbg)
 {
     dlg = d;
     debug = dbg;
     filename = f;
     cust_func = c;
+    cust_init = i;
 
     text_lookup = new u_int32[dlg.size ()];
     jump_lookup = new s_int32[dlg.size ()];
@@ -47,9 +48,6 @@ void dlg_compiler::run ()
     // write the dialogue functions
     write_dialogue ();
 
-    // write dialogue's custom functions
-    write_custom_func ();
-    
     // this creates the script's "entry function"
     write_entry_func ();
 
@@ -135,8 +133,24 @@ void dlg_compiler::write_dialogue ()
         else jump_lookup[(*i)->number] = -1;
 
     // with a last, empty string we don't have to care about the final comma
-    script << "None]\n";
+    script << "None]";
 
+    // write user-supplied __init__ code if any
+    if (cust_init != "")
+    {
+        space = "        ";
+        write_custom_code (cust_init);
+        script << "\n";
+    }
+    
+    // write user-supplied methods if any
+    if (cust_func != "") 
+    {
+        space = "    ";
+        write_custom_code (cust_func);
+        script << "\n";
+    }
+    
     return;
 }
 
@@ -168,22 +182,19 @@ void dlg_compiler::write_entry_func ()
 }
 
 // write additional user defined functions (if any)
-void dlg_compiler::write_custom_func ()
+void dlg_compiler::write_custom_code (string code)
 {
     u_int32 i = 0, j;
 
-    if (cust_func != "")
-    {
-        cust_func += '\n';
+    code += '\n';
         
-        while ((j = cust_func.find ('\n', i)) < cust_func.size ())
-        {
-            script << "\n    " << cust_func.substr (i,j-i);
-            i = ++j;
-        }
-
-        cust_func.erase (cust_func.end()-1);
+    while ((j = code.find ('\n', i)) < code.size ())
+    {
+        script << "\n" << space << code.substr (i,j-i);
+        i = ++j;
     }
+
+    code.erase (code.end()-1);
 
     script << "\n";
 }
@@ -191,7 +202,7 @@ void dlg_compiler::write_custom_func ()
 // Write a NPC part 
 void dlg_compiler::write_npc (Circle *circle)
 {
-    u_int32 i = 0, j, changed = 0;
+    u_int32 changed = 0;
 
     // set NPC if changed
     if (character_changed (circle))
@@ -223,17 +234,7 @@ void dlg_compiler::write_npc (Circle *circle)
 
     // write circle's additional code (if any)
     if (circle->variables != "")
-    {
-        circle->variables += '\n';
-        
-        while ((j = circle->variables.find ('\n', i)) < circle->variables.size ())
-        {
-            script << "\n" << space << circle->variables.substr (i,j-i);
-            i = ++j;  
-        }
-
-        circle->variables.erase (circle->variables.end()-1);
-    }
+        write_custom_code (circle->variables);
 
     // allow loops
     if (circle->actions[0] == '1')
@@ -371,8 +372,6 @@ void dlg_compiler::get_cur_nodes ()
 {
     vector<DlgNode*>::iterator i;
     Circle *circle = (Circle *) todo_nodes.back ();
-    char *space = "        ";
-    u_int32 j = 0, k;
 
     cur_nodes.clear ();
     todo_nodes.pop_back ();
@@ -392,17 +391,10 @@ void dlg_compiler::get_cur_nodes ()
     // write player's additional code
     if (circle->type == PLAYER && circle->variables != "")
     {
-        circle->variables += '\n';
-    
-        while ((k = circle->variables.find ('\n', j)) < circle->variables.size ())
-        {
-            script << "\n" << space << circle->variables.substr (j, k-j);
-            j = ++k;  
-        }
-
-        circle->variables.erase (circle->variables.end()-1);
+        space = "        ";
+        write_custom_code (circle->variables);
     }
-
+    
     return;
 }
 
