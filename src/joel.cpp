@@ -21,10 +21,16 @@
 #include "win_select.h"
 #include "win_file.h"
 
-void toto()
+class A
 {
-  cout << "Ca marche\n";
-}
+public:
+  
+  bool count()
+  {
+    static u_int16 cpt=0;
+    return(cpt++<400);
+  }
+};
 
 int main(int argc,char **argv)
 {
@@ -41,21 +47,32 @@ int main(int argc,char **argv)
   win_theme th(WIN_THEME_ORIGINAL);
   win_font font(WIN_THEME_ORIGINAL);
   
-  win_file * wf=new win_file(10,10,200,200,&th,&font);
-  wf->set_visible(true);
-  wf->set_activated(true);
-  
-  
 
+  win_label * test=new win_label(10,10,0,0,&th,&font);
+  test->set_text("I wait the death !!!!");
+  test->set_auto_size(true);
+  A a;
+  Functor0wRet<bool> tmp;
+  test->set_callback_destroy(makeFunctor(&tmp,a,&A::count));
+
+  win_container * wc = new win_container(20,20,170,170,&th);  
+  wc->add(test);
+  wc->set_visible_all(true);
+  wc->set_border_visible(true);
+  
   while(!(input::has_been_pushed(SDLK_ESCAPE)))
     {    
-      wf->update();
+      wc->update();
       input::update();
-      if((input::has_been_pushed(SDLK_m))) wf->move(wf->x()+10,wf->y()+10);
       screen::drawbox(0,0,640,480,0x00A100);	
-      wf->draw();
+      wc->draw();
       screen::show();
     }
   
-  delete wf;
+  delete wc;
 }
+
+
+
+
+

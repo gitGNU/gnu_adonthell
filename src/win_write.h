@@ -31,7 +31,7 @@ class win_write : public win_label
   
  public:
   win_write(s_int16,s_int16,u_int16,u_int16,win_theme *,win_font * fo);
-  void update();
+  bool update();
  
   bool is_text(){return ok_text_;}
   void set_activate_keyboard(bool b){activate_keyboard_=b;}

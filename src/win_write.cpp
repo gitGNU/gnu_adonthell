@@ -13,7 +13,6 @@ win_write::win_write(s_int16 tx,s_int16 ty,u_int16 tl,u_int16 th,win_theme * wth
 {
   ok_text_=false; 
   activate_keyboard_=true;
-  type_obj_=WIN_OBJ_WRITE;
 }
 
 void win_write::set_activated(bool b)
@@ -67,10 +66,14 @@ void win_write::write()
     } 
 }
 
-void win_write::update()
+bool win_write::update()
 {
-  win_label::update();
-  write();  
+  if(win_label::update())
+    {
+      write();
+      return true;
+    }  
+  return false;
 }
 
 

@@ -1,6 +1,4 @@
-/* 
-   $Id$
-
+/*   
    (C) Copyright 2000 Joel Vennin
    Part of the Adonthell Project http://adonthell.linuxgames.com
    
@@ -22,9 +20,15 @@
 #include "win_background.h"
 #include "win_base.h"
 
+#ifdef _DEBUG_WIN
+long win_base::cptw=0;
+#endif
+
 win_base::win_base(s_int16 tx,s_int16 ty,u_int16 tl,u_int16 th,win_theme * wth)
 {
-
+#ifdef _DEBUG_WIN
+  cout << "Number win object:" <<++cptw<< endl;
+#endif
   //by default window is desactivated
   activated_=false;
   //by default window is not selected
@@ -39,12 +43,10 @@ win_base::win_base(s_int16 tx,s_int16 ty,u_int16 tl,u_int16 th,win_theme * wth)
   visible_background_=false;
   //by default window is draw in brigthness
   draw_brightness_=false;
-  //type of the object --->   WARNING I'must remove, find another solution, used to container....
-  type_obj_=WIN_OBJ_BASE;
   //not have a father, -> window in(depend on) another window.
   wb_father_=NULL;
   //value used to transluency
-  level_trans_back_=170;
+  level_trans_back_=128;
   //value used to brightness
   level_brightness_=200;
   //by default the current object is selected by the border
@@ -77,6 +79,9 @@ win_base::~win_base()
   delete da_;
   //delete theme
   delete theme_;
+#ifdef _DEBUG_WIN
+  cout << "Number win object:" << --cptw << endl;
+#endif
 }
 
 void win_base::resize(u_int16 tl,u_int16 th)
@@ -92,17 +97,22 @@ void win_base::resize(u_int16 tl,u_int16 th)
 }
 
 
-void win_base::update()
+bool win_base::update()
 {
   //on update is called
-  on_update();
+  bool b=true;
+  if(callback_destroy_) b=callback_destroy_(); 
+  if(b) {on_update();return true;}
+  return false;
 }
 
-void win_base::draw()
+bool win_base::draw()
 {
-  //WARNING: i need create another signal to draw before
   on_draw();
-  if(!visible_) return;
+  //WARNING: i need create another signal to draw before
+  //if(visible_) //new signal on_draw_visible_
+  if(visible_) on_draw_visible();
+  return visible_;
   //on draw is called is the object is visible
   ///on_draw();
 }
@@ -184,6 +194,11 @@ void win_base::on_draw()
   if(callback_[WIN_SIG_DRAW]) (callback_[WIN_SIG_DRAW])();
 }
 
+void win_base::on_draw_visible()
+{
+  if(callback_[WIN_SIG_DRAW_ONLY_VISIBLE]) (callback_[WIN_SIG_DRAW_ONLY_VISIBLE])();
+}
+
 void win_base::on_select()
 {
   selected_=true;
@@ -228,11 +243,7 @@ void win_base::draw_border()
       if(!selected_)
 	{
 	  //if curmode of the select is win_border so draw nothing
-	  if(mode_select_==WIN_SELECT_MODE_BORDER)
-	  {
-	    visible_border_=false;
-	    return;
-      }
+	  if(mode_select_==WIN_SELECT_MODE_BORDER) return;
 	  //if mode is brightness draw the border on brigthness mode
 	  else if(mode_select_==WIN_SELECT_MODE_BRIGHTNESS) draw_brightness_=true;
 	}
@@ -240,20 +251,15 @@ void win_base::draw_border()
 	{
 	  //if the object is in select and the object is selected
 	  //if selection is border ----> WARNING  I MUST CHECK WHY theme_->mini, why not use the cur size of border ????
-	  if(mode_select_==WIN_SELECT_MODE_BORDER)
-	  { 
-        visible_border_=true;
-	    border=theme_->mini;
-      }
+	  if(mode_select_==WIN_SELECT_MODE_BORDER) border=theme_->mini;
 	  //if mode is brightness this object must not drawing with brightness
 	  else if(mode_select_==WIN_SELECT_MODE_BRIGHTNESS) 
 	    {draw_brightness_=false;	    
 	    }   
 	}
     }
-
   //if the is not in win_select and i not visible return 
-  if(!visible_border_) return;
+  else if(!visible_border_) return;
 
   //create a static image to draw border
   static image imgbright;

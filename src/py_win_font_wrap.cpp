@@ -738,6 +738,7 @@ static swig_const_info swig_const_table[] = {
     { SWIG_PY_INT,     "WIN_SIG_UNACTIVATE", (long) 1, 0, 0, 0},
     { SWIG_PY_INT,     "WIN_SIG_UPDATE", (long) 2, 0, 0, 0},
     { SWIG_PY_INT,     "WIN_SIG_DRAW", (long) 3, 0, 0, 0},
+    { SWIG_PY_INT,     "WIN_SIG_DRAW_ONLY_VISIBLE", (long) 11, 0, 0, 0},
     { SWIG_PY_INT,     "WIN_SIG_ACTIVATE_KEY", (long) 4, 0, 0, 0},
     { SWIG_PY_INT,     "WIN_SIG_NEXT_KEY", (long) 5, 0, 0, 0},
     { SWIG_PY_INT,     "WIN_SIG_PREVIOUS_KEY", (long) 6, 0, 0, 0},

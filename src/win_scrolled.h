@@ -49,8 +49,8 @@ class win_scrolled : public win_container
   virtual void remove_all();
   void resize(u_int16 tl,u_int16 th);
   void destroy();
-  void draw();
-  void update();
+  bool draw();
+  bool update();
   void set_space_between_border(u_int16 );
   void set_space_between_object(u_int16 );
   //if you want to show the scroll bar set to true

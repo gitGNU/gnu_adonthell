@@ -1,6 +1,4 @@
 /*
-   $Id$
- 
    (C) Copyright 2000 Joel Vennin
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
@@ -37,8 +35,6 @@ SDLKey win_select::back_key=WIN_SELECT_DEFAULT_KEY_BACK;
 
 win_select::win_select(s_int16 tx,s_int16 ty,u_int16 tl,u_int16 th,win_theme * wth):win_scrolled(tx,ty,tl,th,wth)
 {
-
-  type_obj_=WIN_OBJ_SELECT;//WARNING 
   //father select is the father of this object 
   fatherselect_=NULL;
   //if there are no select object attached to the static curselet, this object become the curselect
@@ -128,16 +124,20 @@ void win_select::on_previous()
   if(callback_[WIN_SIG_PREVIOUS_KEY]) (callback_[WIN_SIG_PREVIOUS_KEY])();
 }
 
-void win_select::update()
+bool win_select::update()
 {
-  win_scrolled::update();
-  if(activate_keyboard_ && activated_)
+  if(win_scrolled::update())
     {
-      if(input::has_been_pushed(next_key)) next_();
-      if(input::has_been_pushed(previous_key)) previous_();
-      if(input::has_been_pushed(back_key)) back();
-      if(input::has_been_pushed(activate_key)) activate___();
-    } 
+      if(activate_keyboard_ && activated_)
+	{
+	  if(input::has_been_pushed(next_key)) next_();
+	  if(input::has_been_pushed(previous_key)) previous_();
+	  if(input::has_been_pushed(back_key)) back();
+	  if(input::has_been_pushed(activate_key)) activate___();
+	} 
+      return true;
+    }
+  return false;
 }
 
 
@@ -150,8 +150,7 @@ void win_select::next_()
   if(mode_selected_==WIN_SELECT_MODE_BRIGHTNESS)
     (*index_list)->set_draw_brightness(true);
   index_list++;
-  
-  //if(index_list==list_obj.end()) index_list--;
+ 
   if(index_list==list_obj.end()) 
     if(select_circle_) index_list=list_obj.begin();
     else index_list--;
@@ -168,7 +167,6 @@ void win_select::previous_()
   (*index_list)->on_unselect();
   if(mode_selected_==WIN_SELECT_MODE_BRIGHTNESS)
     (*index_list)->set_draw_brightness(true);
-  //if(index_list!=list_obj.begin()) index_list--;
   if(index_list!=list_obj.begin()) index_list--;
   else if(select_circle_) 
     {
@@ -225,7 +223,7 @@ void win_select::set_default(u_int16 nb)
   if(mode_selected_==WIN_SELECT_MODE_BRIGHTNESS)
     (*index_list)->set_draw_brightness(true);
   index_list=list_obj.begin();
-  while(index_list!=list_obj.end() && j++<nb) index_list++;
+  while(index_list!=list_obj.end() && j<nb) index_list++;
   if(index_list!=list_obj.end()) 
     {
       (*index_list)->set_select(true);
@@ -249,7 +247,6 @@ void win_select::set_default(win_base * wb)
 	(*index_list)->set_draw_brightness(false);
     }
 }
-
 
 void win_select::set_select_mode(u_int8 mode)
 {
@@ -281,14 +278,12 @@ bool win_select::activate___()
 {
   if(index_list!=list_obj.end()) 
     {
-      //(*index_list)->on_activate();
       (*index_list)->set_activated(true);
       on_activate_key();
       return true;
     }
   return false;
 }
-
 
 void win_select::on_activate()
 {
@@ -302,7 +297,7 @@ void win_select::on_activate()
 
 bool win_select::back()
 {
-  //if we can go to the father
+  //if true we can go to the father
   if(curselect_)
     {
       if(curselect_->fatherselect_)
@@ -310,7 +305,7 @@ bool win_select::back()
 	  if(curselect_->index_list!=curselect_->list_obj.end())
 	    {
 	      curselect_->on_unactivate();
-	      curselect_=curselect_->fatherselect_;//(win_select*)(*(curselect_->index_list));
+	      curselect_=curselect_->fatherselect_;
 	      curselect_->on_activate();
 	      return true;
 	    }
@@ -319,46 +314,15 @@ bool win_select::back()
   return false;
 }
 
-
-
-
-/*
-void win_select::on_activate()
-{
-  win_scrolled::on_activate();
-  if(curselect_ && curselect_!=this)
-    {
-      curselect_->on_unactivate();
-      curselect_=(win_select*)(*(curselect_->index_list));
-      curselect_->on_activate();
-    } 
-  else curselect_=this;
-}
-*/
-/*
-void win_select::back()
-{
-  if(curselect_)
-    {
-      if(curselect_->fatherselect_)
-	{
-	  curselect_->on_unactivate();
-	  curselect_=curselect_->fatherselect_;
-	  curselect_->on_activate();
-	}
-      else curselect_=NULL;
-    }  
-}
-*/
-
 void win_select::set_cur_select(win_select * ws)
 {
-  //WARNING if cur select is not null
+  if(curselect_ && curselect_!=ws) curselect_->set_activated(false);
   curselect_=ws;
 }
 
 void win_select::init()
 {
+  if(curselect_) curselect_->set_activated(false);
   curselect_=NULL;
 }
 

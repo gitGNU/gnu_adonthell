@@ -47,21 +47,31 @@ void win_anim::set_anim(animation * tpic)
     }
 }
 
-void win_anim::draw()
+bool win_anim::draw()
 {
-  if(visible && wc && picture)
+  if(win_base::draw())
     {
-       picture->draw(real_x,real_y,wc->get_drawing_area());
-       draw_border();
+      if(wc && picture)
+	{
+	  picture->draw(real_x,real_y,wc->get_drawing_area());
+	  draw_border();
+	}
+      return true;
     }
+  return false;
 }
 
-void win_anim::update()
+bool win_anim::update()
 {
-  if(picture)
+  if(win_base::update())
     {
-      picture->update();
-      height=picture->t_frame[picture->frame[picture->currentframe].imagenbr].height;
-      length=picture->t_frame[picture->frame[picture->currentframe].imagenbr].length;
-    } 
+      if(picture)
+	{
+	  picture->update();
+	  height=picture->t_frame[picture->frame[picture->currentframe].imagenbr].height;
+	  length=picture->t_frame[picture->frame[picture->currentframe].imagenbr].length;
+	}
+      return true;
+    }
+  return false;
 }

@@ -33,7 +33,6 @@ win_label::win_label(s_int16 tx ,s_int16 ty ,u_int16 tl,u_int16 th,win_theme * w
   template_ = new image();
   template_->resize(tl,th);
   set_text("");
-  type_obj_=WIN_OBJ_LABEL;
 }
 
 win_label::~win_label()
@@ -258,22 +257,25 @@ void win_label::init_draw()
     }
 }
 
-void win_label::draw()
+bool win_label::draw()
 {
-  if(!visible_) return;
-  win_base::draw();
-  assign_drawing_area();
-  draw_background();
-  if(template_)
-    if(draw_brightness_)
-      {
-	static image imgbright;
-      	imgbright.brightness(template_,level_brightness_);
-	imgbright.putbox_mask(realx_,realy_,da_);
-      }
-      else template_->putbox_mask(realx_,realy_,da_);
-  draw_border();
-  detach_drawing_area();
+  if(win_base::draw())
+    {
+      assign_drawing_area();
+      draw_background();
+      if(template_)
+	if(draw_brightness_)
+	  {
+	    static image imgbright;
+	    imgbright.brightness(template_,level_brightness_);
+	    imgbright.putbox_mask(realx_,realy_,da_);
+	  }
+	else template_->putbox_mask(realx_,realy_,da_);
+      draw_border();
+      detach_drawing_area();
+      return true;
+    }
+  return false;
 }
 
 void win_label::set_text(const char * tmp)
@@ -308,17 +310,20 @@ void win_label::set_auto_height(bool b)
   init_draw();
 }
 
-void win_label::update()
+bool win_label::update()
 {
-  bool old=blinkcursortimetodraw_;
-  win_base::update();
-  if(!visible_) return;
-  if(blinkcursor_)
+  if(win_base::update())
     {
-      if(blinkinc_++>blinkingspeed_) blinkinc_=0;
-      blinkcursortimetodraw_=(blinkinc_>(blinkingspeed_>>1));
-      if(old!=blinkcursortimetodraw_) init_draw();
+      bool old=blinkcursortimetodraw_;
+      if(visible_ &&blinkcursor_)
+	{
+	  if(blinkinc_++>blinkingspeed_) blinkinc_=0;
+	  blinkcursortimetodraw_=(blinkinc_>(blinkingspeed_>>1));
+	  if(old!=blinkcursortimetodraw_) init_draw();
+	}
+      return true;
     }
+  return false;
 }
 
 

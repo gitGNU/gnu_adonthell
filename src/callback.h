@@ -49,6 +49,7 @@ class FunctorBase
   const char *getMemFunc() const {return memFunc;}
 };
 
+
 class Functor0:public FunctorBase
 {
  private:
@@ -63,6 +64,7 @@ class Functor0:public FunctorBase
       thunk(*this);
     }
 };
+
 
 template <class Callee, class MemFunc>
 class MemberTranslator0:public Functor0{
@@ -110,7 +112,82 @@ makeFunctor(TRT (*f)())
 {
   return FunctionTranslator0<TRT (*)()>(f);
 }
+
+
+//NO ARG WITH RETURN
+
+template <class RT>
+class Functor0wRet:public FunctorBase{
+public:
+  Functor0wRet(){}
+	RT operator()()const
+		{
+		return thunk(*this);
+		}
+protected:
+	typedef RT (*Thunk)(const FunctorBase &);
+	Functor0wRet(Thunk t,const void *c,PFunc f,const void *mf,size_t sz):
+		FunctorBase(c,f,mf,sz),thunk(t){}
+private:
+	Thunk thunk;
+};
+
+
+template <class RT,class Callee, class MemFunc>
+class MemberTranslator0wRet:public Functor0wRet<RT>{
+public:
+	MemberTranslator0wRet(Callee &c,const MemFunc &m):
+		Functor0wRet<RT>(thunk,&c,0,&m,sizeof(MemFunc)){}
+	static RT thunk(const FunctorBase &ftor)
+		{
+		Callee *callee = (Callee *)ftor.getCallee();
+		MemFunc &memFunc = (*(MemFunc*)(void *)(ftor.getMemFunc()));
+		return ((callee->*memFunc)());
+		}
+};
+
+
+template <class RT,class Func>
+class FunctionTranslator0wRet:public Functor0wRet<RT>{
+public:
+	FunctionTranslator0wRet(Func f):Functor0wRet<RT>(thunk,0,(PFunc)f,0,0){}
+	static RT thunk(const FunctorBase &ftor)
+		{
+		return (Func(ftor.getFunc()))();
+		}
+};
+
+
+
+template <class RT,class Callee,class TRT,class CallType>
+inline MemberTranslator0wRet<RT,Callee,TRT (CallType::*)()>
+makeFunctor(Functor0wRet<RT>*,Callee &c,TRT (CallType::* f)())
+{
+  typedef TRT (CallType::*MemFunc)();
+  return MemberTranslator0wRet<RT,Callee,MemFunc>(c,f);
+}
+
+
+
+template <class RT,class Callee,class TRT,class CallType>
+inline MemberTranslator0wRet<RT,const Callee,TRT (CallType::*)()const>
+makeFunctor(Functor0wRet<RT>*,const Callee &c,
+	    TRT (CallType::* f)()const)
+{
+  typedef TRT (CallType::*MemFunc)()const;
+  return MemberTranslator0wRet<RT,const Callee,MemFunc>(c,f);
+}
+
+
+template <class RT,class TRT>
+inline FunctionTranslator0wRet<RT,TRT (*)()>
+makeFunctor(Functor0wRet<RT>*,TRT (*f)())
+{
+  return FunctionTranslator0wRet<RT,TRT (*)()>(f);
+}
+
 #endif
+
 
 
 

@@ -22,7 +22,6 @@ win_image::win_image(s_int16 tx,s_int16 ty,image * tpic,win_theme* them):win_bas
   picture=new image();
   src=tpic;
   *picture=*src; //copy image into *src
-  type_obj_=WIN_OBJ_IMAGE;
 }
 
 win_image::win_image(s_int16 tx,s_int16 ty,u_int16 tl,u_int16 th,win_theme* them):win_base(tx,ty,tl,th,them)
@@ -67,20 +66,29 @@ void win_image::update_image()
   else *picture=*src;
 }
 
-void win_image::draw()
+bool win_image::draw()
 {
-  if(!visible_) return;
-  win_base::draw();
-  assign_drawing_area();
-  draw_background();
-  if(picture)
-    if(draw_brightness_)
-      {
-	static image imgbright;
-	imgbright.brightness(picture,level_brightness_);
-	imgbright.draw(realx_,realy_,da_);
-      }
-      else picture->draw(realx_,realy_,da_);
-  draw_border();
-  detach_drawing_area();
+  if(win_base::draw())
+    {
+      assign_drawing_area();
+      draw_background();
+      if(picture)
+	if(draw_brightness_)
+	  {
+	    static image imgbright;
+	    imgbright.brightness(picture,level_brightness_);
+	    imgbright.draw(realx_,realy_,da_);
+	  }
+	else picture->draw(realx_,realy_,da_);
+      draw_border();
+      detach_drawing_area();
+      return true;
+    }
+  return false;
 }
+
+
+
+
+
+

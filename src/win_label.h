@@ -42,7 +42,7 @@ class win_label : public win_base
   void init_draw_surface();
  public:
   win_label(s_int16,s_int16,u_int16,u_int16,win_theme *, win_font * fo);
-  void draw();
+  bool draw();
   void set_text(const char * tmp);
   void add_text(const char * tmp);
   bool is_auto_size(){return auto_size_;}
@@ -50,7 +50,7 @@ class win_label : public win_base
   void set_auto_size(bool );
   void set_auto_height(bool );
   void resize(u_int16 tl,u_int16 th);
-  void update();
+  bool update();
   void set_cursor_blinking(bool b){
     blinkcursor_=b;
     if(!b){init_draw_surface();init_draw();}

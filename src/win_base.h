@@ -22,18 +22,23 @@ class win_select;
 
 class win_base
 {
- private:
-  int level_trans_back_;
+#ifdef _DEBUG_WIN
+  static long cptw;
+#endif
 
  protected:
+  int level_trans_back_;
+  
   s_int16 x_,realx_;
   s_int16 y_,realy_;
   u_int16 length_;
   u_int16 height_;
   s_int16 padx_;
   s_int16 pady_;
-
+  
   Functor0 callback_[20];
+  Functor0wRet<bool> callback_destroy_;
+
 
   drawing_area * da_;
   drawing_area * pda_;
@@ -53,7 +58,7 @@ class win_base
   u_int8 mode_select_;
   u_int8 border_size_;
   u_int8 level_brightness_;
-  u_int8 type_obj_;
+  //u_int8 type_obj_;
   void update_drawing_area_position();
   void draw_border();
   void draw_background();
@@ -62,16 +67,20 @@ class win_base
   
   void set_in_select(bool b){in_select_=b;}
   void set_select(bool b){if(b) on_select(); else on_unselect();}
-  void set_select_mode_(u_int8 mode) {mode_select_=mode;set_draw_brightness(mode==WIN_SELECT_MODE_BRIGHTNESS);}  
+  void set_select_mode_(u_int8 mode) {mode_select_=mode;set_draw_brightness(mode==WIN_SELECT_MODE_BRIGHTNESS);}
+  
 
   //execute the callback function
   virtual void on_activate();
   virtual void on_unactivate();
   virtual void on_update();
+  virtual void on_draw_visible();
   virtual void on_draw();
   virtual void on_activate_key();
   virtual void on_select();
   virtual void on_unselect();
+  
+  
 
  public:
   //constructor, parameter x,y,length,height, and a win_theme
@@ -102,6 +111,10 @@ class win_base
   
   //Use this function to set a callback function
   void set_signal_connect(const Functor0 &func,u_int8 signal);
+
+  void set_callback_destroy(const Functor0wRet<bool> & func)
+  {callback_destroy_=func;}
+
   
   //if true you can use function of this object like up and down to win_scrolled or write to win_write ....
   virtual void set_activated(bool b){if(b) on_activate();else on_unactivate();}
@@ -116,7 +129,7 @@ class win_base
   bool is_select(){return selected_;}
   
   //return type of object 
-  u_int8 type_obj(){return type_obj_;}
+  //u_int8 type_obj(){return type_obj_;}
   
   //if true the object draw with brightness 
   virtual void set_draw_brightness(bool b){draw_brightness_=b;}
@@ -132,11 +145,11 @@ class win_base
   drawing_area * get_drawing_area(){return da_;}
   
   //update the object, now not optimized i must change some thing
-  virtual void update();
+  virtual bool update();
   virtual void update_real_position();
   
-  //draw the object
-  virtual void draw();
+  //draw the object, return true if object is visible
+  virtual bool draw();
   
   friend class win_container;
   friend class win_select;

@@ -1,6 +1,4 @@
 /*
-   $Id$
-   
    (C) Copyright 2000 Joel Vennin
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
@@ -11,7 +9,6 @@
 
    See the COPYING file for more details
 */
-
 #include <list>
 #include "types.h"
 #include "image.h"
@@ -35,8 +32,6 @@ win_container::win_container(s_int16 tx,s_int16 ty,u_int16 tl,u_int16 th,win_the
   justify_=WIN_JUSTIFY_NO;
   //set layout equals no
   layout_=WIN_LAYOUT_NO;
-  //type of object is modify to win object ---> WARNING : Must find another solution
-  type_obj_=WIN_OBJ_CONTAINER;
 }
 
 
@@ -78,15 +73,15 @@ void win_container::add(win_base * tmp)
 
 void win_container::remove(win_base * tmp)
 {
-  // list<win_base *>::iterator i=list_obj.begin();
-  //while(i!=list_obj.end() && tmp!=(*i)) i++;
-  //if(i!=list_obj.end()) 
-  //{
-  list_obj.remove(tmp);
-  tmp->wb_father_=NULL;
-  //list_obj.erase(i);
-  update_layout();
-      // }
+  list<win_base *>::iterator i=list_obj.begin();
+  while(i!=list_obj.end() && tmp!=(*i)) i++;
+  if(i!=list_obj.end()) 
+  {
+    //list_obj.remove(tmp);
+    tmp->wb_father_=NULL;
+    list_obj.erase(i);
+    update_layout();
+  }
 }
 
 void win_container::remove_all()
@@ -103,33 +98,43 @@ void win_container::destroy()
   list_obj.clear(); 
 }
 
-void win_container::update()
+bool win_container::update()
 {
   //call the win update ---> on update()
-  win_base::update();
-  //update all the elemnt in the list
-  for(list<win_base *>::iterator i=list_obj.begin();i!=list_obj.end();i++)
-    (*i)->update();
+  if(win_base::update())
+    {
+      //update all the element in the list
+      for(list<win_base *>::iterator i=list_obj.begin();i!=list_obj.end();i++)
+	{
+	  if(!(*i)->update())
+	    {
+	      remove(*i);
+	      delete *i--;
+	    }
+	}
+      return true;
+    }
+  return false;
 }
 
-void win_container::draw()
-{
-  win_base::draw(); //WARNING: add maybe a bool if is need to draw
-  
-  //is not visible return
-  if(!visible_)return;
 
-  
-  assign_drawing_area(); //assign drawing area
-  //draw the background
-  draw_background();
-  //next draw all the element
-  for(list<win_base *>::iterator i=list_obj.begin();i!=list_obj.end();i++)
-    (*i)->draw();
-  //draw the border
-  draw_border();
-  //detach the drawing area
-  detach_drawing_area();
+bool win_container::draw()
+{
+  if(win_base::draw()) 
+    {
+      assign_drawing_area(); //assign drawing area
+      //draw the background
+      draw_background();
+      //next draw all the element
+      for(list<win_base *>::iterator i=list_obj.begin();i!=list_obj.end();i++)
+	(*i)->draw();
+      //draw the border
+      draw_border();
+      //detach the drawing area
+      detach_drawing_area();
+      return true;
+    }
+  return false;
 }
 
 

@@ -32,8 +32,6 @@ win_scrolled::win_scrolled(s_int16 tx,s_int16 ty,u_int16 tl,u_int16 th,win_theme
   cur_amplitude_=0;
   //index pad is the value to move the cursor
   index_pad_=WIN_SCROLLBAR_PAD_DEFAULT;
-  //typ of object --> WARNING REMOVE THIS
-  type_obj_=WIN_OBJ_SCROLLED;
 }
 
 win_scrolled::~win_scrolled()
@@ -146,32 +144,34 @@ void win_scrolled::destroy()
   theme_->scrollbar->update_scroll_bar(this);
 }
 
-void win_scrolled::draw()
+bool win_scrolled::draw()
 {
-  win_container::draw(); //WARNING !!!!
-
-  if(!visible_)return;
- 
-  //return if scrollbar not visible 
-  if(!visible_scrollbar_) return;
-  if((in_select_ && !selected_) || draw_brightness_)
+  if(win_container::draw())
     {
-      image img;
-      img.brightness(theme_->scrollbar->back,level_brightness_);
-      img.putbox_mask(realx_ + length_ - theme_->scrollbar->back->length,realy_,da_);
-      img.brightness(theme_->scrollbar->bar,level_brightness_);
-      img.putbox_mask(1 + realx_ + length_ - theme_->scrollbar->back->length,realy_+cursory_,da_);
+      //return if scrollbar not visible 
+      if(visible_scrollbar_)
+	if((in_select_ && !selected_) || draw_brightness_)
+	  {
+	    image img;
+	    img.brightness(theme_->scrollbar->back,level_brightness_);
+	    img.putbox_mask(realx_ + length_ - theme_->scrollbar->back->length,realy_,da_);
+	    img.brightness(theme_->scrollbar->bar,level_brightness_);
+	    img.putbox_mask(1 + realx_ + length_ - theme_->scrollbar->back->length,realy_+cursory_,da_);
+	  }
+	else
+	  {
+	    theme_->scrollbar->back->putbox_mask(realx_ + length_ - theme_->scrollbar->back->length,realy_,da_);
+	    theme_->scrollbar->bar->putbox_mask(1 + realx_ + length_ - theme_->scrollbar->back->length,realy_+cursory_,da_);
+	  }
+      return true;
     }
-  else
-    {
-      theme_->scrollbar->back->putbox_mask(realx_ + length_ - theme_->scrollbar->back->length,realy_,da_);
-      theme_->scrollbar->bar->putbox_mask(1 + realx_ + length_ - theme_->scrollbar->back->length,realy_+cursory_,da_);
-    }
+  return false;
 }
 
-void win_scrolled::update()
+bool win_scrolled::update()
 {
-  win_container::update();
+  if(win_container::update()) return true;
+  return false;
 }
 
 void win_scrolled::find_amplitude()

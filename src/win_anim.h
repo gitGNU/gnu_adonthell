@@ -30,8 +30,8 @@ class win_anim : public win_base
   
   win_anim(s_int16,s_int16,animation * tpic,win_container * wc);
   void set_anim(animation *);
-  void draw();
-  void update();
+  bool draw();
+  bool update();
   ~win_anim();
  
  

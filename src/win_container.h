@@ -43,10 +43,10 @@ class win_container : public win_base
   virtual void destroy();
 
   //update function(not optimized actually)
-  virtual void update();
+  virtual bool update();
 
   //draw on the screen
-  virtual void draw();
+  virtual bool draw();
   
   void move(s_int16 tx,s_int16 ty);
 
@@ -63,13 +63,13 @@ class win_container : public win_base
   void set_draw_brightness(bool b);
 
   void set_visible_all(bool);
+
+  //justify all object : WIN_JUSTIFY_LEFT, WIN_JUSTIFY_RIGHT, WIN_JUSTIFY_CENTER
+  void set_justify(u_int8);
   
   //justify an win_base object in this object
   void set_justify(win_base * wb,u_int8);
   
-  //justify all object : WIN_JUSTIFY_LEFT, WIN_JUSTIFY_RIGHT, WIN_JUSTIFY_CENTER
-  void set_justify(u_int8);
-
   //set the layout (like in java i think) Now 2 sort of layout but i can add several if you suggest me. WIN_LAYOUT_NO (no layout: you put your object where you want)
   //and WIN_LAYOUT_LIST( all object show like a listbox)
   void set_layout(u_int8 lay);

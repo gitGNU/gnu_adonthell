@@ -31,7 +31,7 @@ class win_image : public win_base
   ~win_image();
   void resize(u_int16,u_int16);
   void set_image(image *);
-  void draw();
+  bool draw();
   void set_stretch(bool b);
   bool is_stretch(){return stretch_;}
 };

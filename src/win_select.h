@@ -59,7 +59,7 @@ class win_select : public win_scrolled
   void remove(win_base *);
   void remove_all();
   void destroy();
-  void update();
+  bool update();
   //get the pointer of the object which is selected
   win_base * get();
   //get the position of the object which is selected

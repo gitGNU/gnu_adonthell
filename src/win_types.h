@@ -73,10 +73,10 @@
 #define WIN_SCROLLBAR_BACK_BOT "scroll_back_bot.pnm"
 
 //default key For the selection
-#define WIN_SELECT_DEFAULT_KEY_NEXT SDLK_DOWN
-#define WIN_SELECT_DEFAULT_KEY_PREVIOUS SDLK_UP
-#define WIN_SELECT_DEFAULT_KEY_ACTIVATE SDLK_RETURN
-#define WIN_SELECT_DEFAULT_KEY_BACK SDLK_ESCAPE
+#define WIN_SELECT_DEFAULT_KEY_NEXT SDLK_n
+#define WIN_SELECT_DEFAULT_KEY_PREVIOUS SDLK_p
+#define WIN_SELECT_DEFAULT_KEY_ACTIVATE SDLK_a
+#define WIN_SELECT_DEFAULT_KEY_BACK SDLK_b
 
 //cursor filename
 #define WIN_CURSOR_FILE "cursor.pnm"
@@ -103,6 +103,8 @@
 #define WIN_SIG_UNACTIVATE 1
 #define WIN_SIG_UPDATE 2
 #define WIN_SIG_DRAW 3
+//this signal is call only is objet is visible
+#define WIN_SIG_DRAW_ONLY_VISIBLE 11 
 #define WIN_SIG_ACTIVATE_KEY 4
 #define WIN_SIG_NEXT_KEY 5
 #define WIN_SIG_PREVIOUS_KEY 6
