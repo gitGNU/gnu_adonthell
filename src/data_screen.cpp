@@ -45,6 +45,7 @@ data_screen::data_screen (int m) : win_container (30, 15, 260, 210, NULL)
     image_list = new win_select (10, 0, 250, 210, theme);
     image_list->set_select_mode (WIN_SELECT_MODE_BRIGHTNESS);
     image_list->set_layout (WIN_LAYOUT_LIST);
+    image_list->set_select_circle (true);
     image_list->set_space_between_border (9);
     image_list->set_space_between_object (9);
     image_list->set_activated (true);
@@ -98,7 +99,7 @@ void data_screen::init ()
         entry->set_text (gdata->get_description ());
         entry_list.push_back (entry);
 
-        box = new win_container (0, 0, 210, 58, theme);
+        box = new win_container (0, 0, 230, 58, theme);
         box->add (shot);
         box->add (entry);
         box->set_visible_all (true);
@@ -122,7 +123,7 @@ void data_screen::init ()
         entry->set_text ("Empty Slot");
         entry_list.push_back (entry);
         
-        box = new win_container (0, 0, 210, 58, theme);
+        box = new win_container (0, 0, 230, 58, theme);
         box->add (shot);
         box->add (entry);
         box->set_visible_all (true);

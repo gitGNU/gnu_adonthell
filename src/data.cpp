@@ -312,6 +312,11 @@ void data::unload ()
 #if defined (USE_MAP)
         map_engine->get_landmap ()->remove_mapchar (mychar, 
             mychar->get_submap (), mychar->get_posx (), mychar->get_posy ());
+        // This might be needed to catch moving characters (???)
+        map_engine->get_landmap ()->remove_mapchar (mychar, 
+            mychar->get_submap (), mychar->get_posx ()-1, mychar->get_posy ());
+        map_engine->get_landmap ()->remove_mapchar (mychar, 
+            mychar->get_submap (), mychar->get_posx (), mychar->get_posy ()-1);
 #endif
         delete mychar;
     }
