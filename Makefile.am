@@ -5,6 +5,6 @@ EXTRA_DIST = NEWBIE autogen.sh README.BeOS README.FreeBSD autogen.sh \
 	adonthell.spec
 
 install-data-local:
-	if test ! -e $(gamedatadir)/games ; then \
+	if test ! -d $(gamedatadir)/games ; then \
 	mkdir $(gamedatadir)/games; \
 	fi
