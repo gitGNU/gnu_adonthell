@@ -17,6 +17,7 @@
 
 #include "mapobject.h"
 #include "landmap.h"
+#include "py_inc.h"
 #include <list>
 class mapsquare_tile;
 class mapsquare_char;
@@ -109,6 +110,8 @@ class mapview
   void resize(u_int16 l, u_int16 h);
   void update();
   void draw(u_int16 x, u_int16 y, drawing_area * da_opt=NULL);
+
+  void set_schedule(char * file);
 
 #ifdef _EDIT_
   void move_cursor_left();

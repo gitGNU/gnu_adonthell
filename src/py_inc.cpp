@@ -80,7 +80,6 @@ PyObject *import_module( char *filename )
 	PyObject *result = PyImport_ImportModule( filename );
 	
 	show_traceback();
-	
 	return result;
 }
 

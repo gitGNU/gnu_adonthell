@@ -1,45 +1,24 @@
-/*
-   $Id$
-   Copyright (C) 2000 Andrew Henderson <hendersa@db.erau.edu>
-   Part of the Adonthell Project http://adonthell.linuxgames.com
+%module audio
 
-   This program is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License.
-   This program is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY.
+%{
 
-   See the COPYING file for more details.
-*/
-#ifndef __AUDIO_H__
-#define __AUDIO_H__
+#include "types.h"
+#include "prefs.h"
+#include "audio.h"
+
+%}
+
+#define u_int8 unsigned char
+#define s_int8 signed char
+#define u_int16 unsigned short
+#define s_int16 short
+#define u_int32 unsigned long
+#define s_int32 signed long
 
 #ifdef SDL_MIXER
 
-#include "SDL_mixer.h"
-#include "prefs.h"
-
-// We'll only load two waves into memory
-#define NUM_WAVES 2
-// We'll only load two .it files into memory
-#define NUM_MUSIC 2
-// We can play four SFX at once
-#define NUM_CHANNELS 4
-
 class audio
 {
-  static int background_volume;
-  static int effects_volume;
-  static Mix_Music *music[NUM_MUSIC];
-  static Mix_Chunk *sounds[NUM_WAVES];
-  static bool background_on;
-  static int current_background;
-  static bool background_paused;
-  static bool audio_initialized;
-  static int audio_rate;
-  static Uint16 buffer_size;
-  static Uint16 audio_format;
-  static int audio_channels;
-
 public:
 
   static void init(config*);
@@ -79,5 +58,4 @@ public:
     static bool is_initialized() { return audio_initialized; }
 };
 
-#endif
 #endif

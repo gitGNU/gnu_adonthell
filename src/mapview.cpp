@@ -375,6 +375,11 @@ void mapview::draw(u_int16 x, u_int16 y, drawing_area * da_opt=NULL)
   characters_draw.clear();
 }
 
+void mapview::set_schedule(char * file)
+{
+  
+}
+
 #ifdef _EDIT_
 
 void mapview::update_label_pos()

@@ -21,7 +21,20 @@
 
 extern unsigned short md_mode; // This is declared in MikMod
 
-audio::audio (config *myconfig) {
+int audio::background_volume;
+int audio::effects_volume;
+Mix_Music *audio::music[NUM_MUSIC];
+Mix_Chunk *audio::sounds[NUM_WAVES];
+bool audio::background_on;
+int audio::current_background;
+bool audio::background_paused;
+bool audio::audio_initialized=false;
+int audio::audio_rate;
+Uint16 audio::buffer_size;
+Uint16 audio::audio_format;
+int audio::audio_channels;
+
+void audio::init (config *myconfig) {
 
   int i;  // Generic counter variable
 
@@ -76,18 +89,13 @@ audio::audio (config *myconfig) {
   } else {
     audio_initialized = true;
     Mix_QuerySpec(&audio_rate, &audio_format, &audio_channels);
-    fprintf(stderr, "Audio thread started in %d Hz %d bit %s format.\n ", audio_rate,
+    fprintf(stderr, "Audio started in %d Hz %d bit %s format.\n ", audio_rate,
      (audio_format&0xFF), (audio_channels > 1) ? "stereo" : "mono");
     set_background_volume (background_volume);
   }
 }
 
-audio::~audio() {
-  audio_cleanup();
-}
-
-
-void audio::audio_cleanup(void) {
+void audio::cleanup(void) {
   int i;
   background_on = false;    // no music is playing
   current_background = -1;  // No music is queued to play
@@ -210,6 +218,7 @@ void audio::play_background(int slot) {
   if (music[slot] != NULL) {
     current_background = slot;
     background_on = true;
+    Mix_PlayMusic(music[current_background], 2);
   }
 }
 
@@ -233,6 +242,19 @@ void audio::fade_in_background(int slot, int time) {
 void audio::change_background(int slot, int time) {
   fade_out_background(time);
   fade_in_background(slot, time);
+}
+
+int audio::update(void * data)
+{
+  // Keep audio up-to-date
+  while (1) {
+
+    // Once the audio is connected, keep updating the audio stream
+    if (background_on == true &&  ! Mix_PlayingMusic()) {
+      Mix_PlayMusic(music[current_background], 2);
+    }
+    SDL_Delay(1000);
+  }
 }
 
 // This is our audio 'hook'. In order to use audio,

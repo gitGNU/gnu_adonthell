@@ -2,7 +2,7 @@ bin_PROGRAMS = pydonthell
 
 pydonthell_SOURCES = pydonthell.cpp
 
-LDADD = ../../animation.o ../../animation_off.o ../../audio.o ../../audio_thread.o \
+LDADD = ../../animation.o ../../animation_off.o ../../audio.o \
 ../../character.o ../../data.o ../../data_screen.o ../../dialog.o ../../dialog_engine.o \
 ../../drawing_area.o ../../event.o ../../fileops.o ../../game.o ../../gametime.o \
 ../../image.o ../../input.o ../../lex.prefs.o \
@@ -13,10 +13,14 @@ LDADD = ../../animation.o ../../animation_off.o ../../audio.o ../../audio_thread
 ../../py_screen_wrap.o ../../py_image_wrap.o ../../quest.o ../../screen.o ../../storage.o \
 ../../win_base.o ../../win_border.o ../../win_container.o ../../win_font.o ../../win_theme.o ../../win_scrolled.o ../../win_background.o ../../win_scrollbar.o \
 ../../win_file.o ../../win_image.o ../../win_label.o ../../win_select.o ../../win_write.o ../../yarg.cc \
-../../py_win_font_wrap.o ../../py_win_theme_wrap.o ../../py_win_base_wrap.o ../../py_win_label_wrap.o ../../py_win_container_wrap.o
+../../py_win_font_wrap.o ../../py_win_theme_wrap.o ../../py_win_base_wrap.o ../../py_win_label_wrap.o ../../py_win_image_wrap.o ../../py_win_container_wrap.o ../../py_audio_wrap.o
 
 # Evil, but it works...
 CPPFLAGS +=-I../..
+
+py_audio_wrap.cpp : py_audio.i
+	swig -python -shadow -c++ -make_default -o $*.cpp $< 
+	@mv audio.py ../scripts
 
 py_input_wrap.cpp : py_input.i
 	swig -python -shadow -c++ -make_default -o $*.cpp $< 

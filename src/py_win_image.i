@@ -1,8 +1,7 @@
-%module win_container
+%module win_image
 
 %{
 
-#include <list>
 #include "types.h"
 #include "image.h"
 #include "win_types.h"
@@ -11,9 +10,7 @@
 #include "win_border.h"
 #include "win_background.h"
 #include "win_base.h"
-#include "win_label.h"
 #include "win_image.h"
-#include "win_container.h"
 
 %}
 
@@ -26,6 +23,4 @@
 
 %include "win_types.h"
 %include "win_base.h"
-%include "win_label.h"
 %include "win_image.h"
-%include "win_container.h"

@@ -167,6 +167,6 @@ AC_OUTPUT([
 Makefile
 src/Makefile
 src/tools/Makefile
-src/tools/dlgedit/Makefile
 src/tools/pydonthell/Makefile
+src/tools/dlgedit/Makefile
 ])

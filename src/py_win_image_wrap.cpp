@@ -487,31 +487,27 @@ SWIG_InstallConstants(PyObject *d, swig_const_info constants[]) {
 
 /* -------- TYPES TABLE (BEGIN) -------- */
 
-#define  SWIGTYPE_p_win_font swig_types[0] 
-#define  SWIGTYPE_p_win_base swig_types[1] 
-#define  SWIGTYPE_p_drawing_area swig_types[2] 
-#define  SWIGTYPE_p_image swig_types[3] 
-#define  SWIGTYPE_p_win_image swig_types[4] 
-#define  SWIGTYPE_p_win_theme swig_types[5] 
-#define  SWIGTYPE_p_win_label swig_types[6] 
-#define  SWIGTYPE_p_Functor0wRet_bool_ swig_types[7] 
-#define  SWIGTYPE_p_win_container swig_types[8] 
-#define  SWIGTYPE_p_short swig_types[9] 
-#define  SWIGTYPE_p_Functor0 swig_types[10] 
-static swig_type_info *swig_types[12];
+#define  SWIGTYPE_p_win_base swig_types[0] 
+#define  SWIGTYPE_p_drawing_area swig_types[1] 
+#define  SWIGTYPE_p_image swig_types[2] 
+#define  SWIGTYPE_p_win_image swig_types[3] 
+#define  SWIGTYPE_p_win_theme swig_types[4] 
+#define  SWIGTYPE_p_Functor0wRet_bool_ swig_types[5] 
+#define  SWIGTYPE_p_short swig_types[6] 
+#define  SWIGTYPE_p_Functor0 swig_types[7] 
+static swig_type_info *swig_types[9];
 
 /* -------- TYPES TABLE (END) -------- */
 
 
 /*-----------------------------------------------
-              @(target):= win_containerc.so
+              @(target):= win_imagec.so
   ------------------------------------------------*/
-#define SWIG_init    initwin_containerc
+#define SWIG_init    initwin_imagec
 
-#define SWIG_name    "win_containerc"
+#define SWIG_name    "win_imagec"
 
 
-#include <list>
 #include "types.h"
 #include "image.h"
 #include "win_types.h"
@@ -520,9 +516,7 @@ static swig_type_info *swig_types[12];
 #include "win_border.h"
 #include "win_background.h"
 #include "win_base.h"
-#include "win_label.h"
 #include "win_image.h"
-#include "win_container.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -1027,237 +1021,6 @@ static PyObject *_wrap_win_base_draw(PyObject *self, PyObject *args) {
 }
 
 
-static PyObject *_wrap_new_win_label(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    short arg0 ;
-    short arg1 ;
-    unsigned short arg2 ;
-    unsigned short arg3 ;
-    win_theme *arg4 ;
-    win_font *arg5 ;
-    PyObject * argo4 =0 ;
-    PyObject * argo5 =0 ;
-    win_label *result ;
-    
-    if(!PyArg_ParseTuple(args,"hhhhOO:new_win_label",&arg0,&arg1,&arg2,&arg3,&argo4,&argo5)) return NULL;
-    if ((SWIG_ConvertPtr(argo4,(void **) &arg4,SWIGTYPE_p_win_theme,1)) == -1) return NULL;
-    if ((SWIG_ConvertPtr(argo5,(void **) &arg5,SWIGTYPE_p_win_font,1)) == -1) return NULL;
-    result = (win_label *)new win_label(arg0,arg1,arg2,arg3,arg4,arg5);
-    resultobj = SWIG_NewPointerObj((void *) result, SWIGTYPE_p_win_label);
-    return resultobj;
-}
-
-
-static PyObject *_wrap_win_label_draw(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    win_label *arg0 ;
-    PyObject * argo0 =0 ;
-    bool result ;
-    
-    if(!PyArg_ParseTuple(args,"O:win_label_draw",&argo0)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_label,1)) == -1) return NULL;
-    result = (bool )arg0->draw();
-    resultobj = PyInt_FromLong((long)result);
-    return resultobj;
-}
-
-
-static PyObject *_wrap_win_label_set_text(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    win_label *arg0 ;
-    char *arg1 ;
-    PyObject * argo0 =0 ;
-    
-    if(!PyArg_ParseTuple(args,"Os:win_label_set_text",&argo0,&arg1)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_label,1)) == -1) return NULL;
-    arg0->set_text((char const *)arg1);
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
-static PyObject *_wrap_win_label_add_text(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    win_label *arg0 ;
-    char *arg1 ;
-    PyObject * argo0 =0 ;
-    
-    if(!PyArg_ParseTuple(args,"Os:win_label_add_text",&argo0,&arg1)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_label,1)) == -1) return NULL;
-    arg0->add_text((char const *)arg1);
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
-static PyObject *_wrap_win_label_is_auto_size(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    win_label *arg0 ;
-    PyObject * argo0 =0 ;
-    bool result ;
-    
-    if(!PyArg_ParseTuple(args,"O:win_label_is_auto_size",&argo0)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_label,1)) == -1) return NULL;
-    result = (bool )arg0->is_auto_size();
-    resultobj = PyInt_FromLong((long)result);
-    return resultobj;
-}
-
-
-static PyObject *_wrap_win_label_is_auto_height(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    win_label *arg0 ;
-    PyObject * argo0 =0 ;
-    bool result ;
-    
-    if(!PyArg_ParseTuple(args,"O:win_label_is_auto_height",&argo0)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_label,1)) == -1) return NULL;
-    result = (bool )arg0->is_auto_height();
-    resultobj = PyInt_FromLong((long)result);
-    return resultobj;
-}
-
-
-static PyObject *_wrap_win_label_set_auto_size(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    win_label *arg0 ;
-    bool arg1 ;
-    PyObject * argo0 =0 ;
-    int tempbool1 ;
-    
-    if(!PyArg_ParseTuple(args,"Oi:win_label_set_auto_size",&argo0,&tempbool1)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_label,1)) == -1) return NULL;
-    arg1 = (bool ) tempbool1;
-    arg0->set_auto_size(arg1);
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
-static PyObject *_wrap_win_label_set_auto_height(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    win_label *arg0 ;
-    bool arg1 ;
-    PyObject * argo0 =0 ;
-    int tempbool1 ;
-    
-    if(!PyArg_ParseTuple(args,"Oi:win_label_set_auto_height",&argo0,&tempbool1)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_label,1)) == -1) return NULL;
-    arg1 = (bool ) tempbool1;
-    arg0->set_auto_height(arg1);
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
-static PyObject *_wrap_win_label_resize(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    win_label *arg0 ;
-    unsigned short arg1 ;
-    unsigned short arg2 ;
-    PyObject * argo0 =0 ;
-    
-    if(!PyArg_ParseTuple(args,"Ohh:win_label_resize",&argo0,&arg1,&arg2)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_label,1)) == -1) return NULL;
-    arg0->resize(arg1,arg2);
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
-static PyObject *_wrap_win_label_update(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    win_label *arg0 ;
-    PyObject * argo0 =0 ;
-    bool result ;
-    
-    if(!PyArg_ParseTuple(args,"O:win_label_update",&argo0)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_label,1)) == -1) return NULL;
-    result = (bool )arg0->update();
-    resultobj = PyInt_FromLong((long)result);
-    return resultobj;
-}
-
-
-static PyObject *_wrap_win_label_set_cursor_blinking(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    win_label *arg0 ;
-    bool arg1 ;
-    PyObject * argo0 =0 ;
-    int tempbool1 ;
-    
-    if(!PyArg_ParseTuple(args,"Oi:win_label_set_cursor_blinking",&argo0,&tempbool1)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_label,1)) == -1) return NULL;
-    arg1 = (bool ) tempbool1;
-    arg0->set_cursor_blinking(arg1);
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
-static PyObject *_wrap_win_label_is_cursor_blinking(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    win_label *arg0 ;
-    PyObject * argo0 =0 ;
-    bool result ;
-    
-    if(!PyArg_ParseTuple(args,"O:win_label_is_cursor_blinking",&argo0)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_label,1)) == -1) return NULL;
-    result = (bool )arg0->is_cursor_blinking();
-    resultobj = PyInt_FromLong((long)result);
-    return resultobj;
-}
-
-
-static PyObject *_wrap_win_label_set_cursor_blinking_speed(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    win_label *arg0 ;
-    unsigned char arg1 ;
-    PyObject * argo0 =0 ;
-    
-    if(!PyArg_ParseTuple(args,"Ob:win_label_set_cursor_blinking_speed",&argo0,&arg1)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_label,1)) == -1) return NULL;
-    arg0->set_cursor_blinking_speed(arg1);
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
-static PyObject *_wrap_win_label_get_text(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    win_label *arg0 ;
-    PyObject * argo0 =0 ;
-    char *result ;
-    
-    if(!PyArg_ParseTuple(args,"O:win_label_get_text",&argo0)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_label,1)) == -1) return NULL;
-    result = (char *)arg0->get_text();
-    resultobj = PyString_FromString(result);
-    return resultobj;
-}
-
-
-static PyObject *_wrap_delete_win_label(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    win_label *arg0 ;
-    PyObject * argo0 =0 ;
-    
-    if(!PyArg_ParseTuple(args,"O:delete_win_label",&argo0)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_label,1)) == -1) return NULL;
-    delete arg0;
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
 static PyObject *_wrap_new_win_image(PyObject *self, PyObject *args) {
     PyObject *resultobj;
     short arg0 ;
@@ -1369,281 +1132,7 @@ static PyObject *_wrap_win_image_is_stretch(PyObject *self, PyObject *args) {
 }
 
 
-static PyObject *_wrap_new_win_container(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    short arg0 ;
-    short arg1 ;
-    unsigned short arg2 ;
-    unsigned short arg3 ;
-    win_theme *arg4 ;
-    PyObject * argo4 =0 ;
-    win_container *result ;
-    
-    if(!PyArg_ParseTuple(args,"hhhhO:new_win_container",&arg0,&arg1,&arg2,&arg3,&argo4)) return NULL;
-    if ((SWIG_ConvertPtr(argo4,(void **) &arg4,SWIGTYPE_p_win_theme,1)) == -1) return NULL;
-    result = (win_container *)new win_container(arg0,arg1,arg2,arg3,arg4);
-    resultobj = SWIG_NewPointerObj((void *) result, SWIGTYPE_p_win_container);
-    return resultobj;
-}
-
-
-static PyObject *_wrap_delete_win_container(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    win_container *arg0 ;
-    PyObject * argo0 =0 ;
-    
-    if(!PyArg_ParseTuple(args,"O:delete_win_container",&argo0)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_container,1)) == -1) return NULL;
-    delete arg0;
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
-static PyObject *_wrap_win_container_add(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    win_container *arg0 ;
-    win_base *arg1 ;
-    PyObject * argo0 =0 ;
-    PyObject * argo1 =0 ;
-    
-    if(!PyArg_ParseTuple(args,"OO:win_container_add",&argo0,&argo1)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_container,1)) == -1) return NULL;
-    if ((SWIG_ConvertPtr(argo1,(void **) &arg1,SWIGTYPE_p_win_base,1)) == -1) return NULL;
-    arg0->add(arg1);
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
-static PyObject *_wrap_win_container_remove(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    win_container *arg0 ;
-    win_base *arg1 ;
-    PyObject * argo0 =0 ;
-    PyObject * argo1 =0 ;
-    
-    if(!PyArg_ParseTuple(args,"OO:win_container_remove",&argo0,&argo1)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_container,1)) == -1) return NULL;
-    if ((SWIG_ConvertPtr(argo1,(void **) &arg1,SWIGTYPE_p_win_base,1)) == -1) return NULL;
-    arg0->remove(arg1);
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
-static PyObject *_wrap_win_container_remove_all(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    win_container *arg0 ;
-    PyObject * argo0 =0 ;
-    
-    if(!PyArg_ParseTuple(args,"O:win_container_remove_all",&argo0)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_container,1)) == -1) return NULL;
-    arg0->remove_all();
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
-static PyObject *_wrap_win_container_destroy(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    win_container *arg0 ;
-    PyObject * argo0 =0 ;
-    
-    if(!PyArg_ParseTuple(args,"O:win_container_destroy",&argo0)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_container,1)) == -1) return NULL;
-    arg0->destroy();
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
-static PyObject *_wrap_win_container_update(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    win_container *arg0 ;
-    PyObject * argo0 =0 ;
-    bool result ;
-    
-    if(!PyArg_ParseTuple(args,"O:win_container_update",&argo0)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_container,1)) == -1) return NULL;
-    result = (bool )arg0->update();
-    resultobj = PyInt_FromLong((long)result);
-    return resultobj;
-}
-
-
-static PyObject *_wrap_win_container_draw(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    win_container *arg0 ;
-    PyObject * argo0 =0 ;
-    bool result ;
-    
-    if(!PyArg_ParseTuple(args,"O:win_container_draw",&argo0)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_container,1)) == -1) return NULL;
-    result = (bool )arg0->draw();
-    resultobj = PyInt_FromLong((long)result);
-    return resultobj;
-}
-
-
-static PyObject *_wrap_win_container_move(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    win_container *arg0 ;
-    short arg1 ;
-    short arg2 ;
-    PyObject * argo0 =0 ;
-    
-    if(!PyArg_ParseTuple(args,"Ohh:win_container_move",&argo0,&arg1,&arg2)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_container,1)) == -1) return NULL;
-    arg0->move(arg1,arg2);
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
-static PyObject *_wrap_win_container_set_space_between_border(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    win_container *arg0 ;
-    unsigned short arg1 ;
-    PyObject * argo0 =0 ;
-    
-    if(!PyArg_ParseTuple(args,"Oh:win_container_set_space_between_border",&argo0,&arg1)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_container,1)) == -1) return NULL;
-    arg0->set_space_between_border(arg1);
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
-static PyObject *_wrap_win_container_set_space_between_object(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    win_container *arg0 ;
-    unsigned short arg1 ;
-    PyObject * argo0 =0 ;
-    
-    if(!PyArg_ParseTuple(args,"Oh:win_container_set_space_between_object",&argo0,&arg1)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_container,1)) == -1) return NULL;
-    arg0->set_space_between_object(arg1);
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
-static PyObject *_wrap_win_container_get_space_between_border(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    win_container *arg0 ;
-    PyObject * argo0 =0 ;
-    unsigned short result ;
-    
-    if(!PyArg_ParseTuple(args,"O:win_container_get_space_between_border",&argo0)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_container,1)) == -1) return NULL;
-    result = (unsigned short )arg0->get_space_between_border();
-    resultobj = PyInt_FromLong((long)result);
-    return resultobj;
-}
-
-
-static PyObject *_wrap_win_container_get_space_between_object(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    win_container *arg0 ;
-    PyObject * argo0 =0 ;
-    unsigned short result ;
-    
-    if(!PyArg_ParseTuple(args,"O:win_container_get_space_between_object",&argo0)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_container,1)) == -1) return NULL;
-    result = (unsigned short )arg0->get_space_between_object();
-    resultobj = PyInt_FromLong((long)result);
-    return resultobj;
-}
-
-
-static PyObject *_wrap_win_container_set_draw_brightness(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    win_container *arg0 ;
-    bool arg1 ;
-    PyObject * argo0 =0 ;
-    int tempbool1 ;
-    
-    if(!PyArg_ParseTuple(args,"Oi:win_container_set_draw_brightness",&argo0,&tempbool1)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_container,1)) == -1) return NULL;
-    arg1 = (bool ) tempbool1;
-    arg0->set_draw_brightness(arg1);
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
-static PyObject *_wrap_win_container_set_visible_all(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    win_container *arg0 ;
-    bool arg1 ;
-    PyObject * argo0 =0 ;
-    int tempbool1 ;
-    
-    if(!PyArg_ParseTuple(args,"Oi:win_container_set_visible_all",&argo0,&tempbool1)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_container,1)) == -1) return NULL;
-    arg1 = (bool ) tempbool1;
-    arg0->set_visible_all(arg1);
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
-static PyObject *_wrap_win_container_set_justify(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    win_container *arg0 ;
-    unsigned char arg1 ;
-    PyObject * argo0 =0 ;
-    
-    if(!PyArg_ParseTuple(args,"Ob:win_container_set_justify",&argo0,&arg1)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_container,1)) == -1) return NULL;
-    arg0->set_justify(arg1);
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
-static PyObject *_wrap_win_container_set_layout(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    win_container *arg0 ;
-    unsigned char arg1 ;
-    PyObject * argo0 =0 ;
-    
-    if(!PyArg_ParseTuple(args,"Ob:win_container_set_layout",&argo0,&arg1)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_container,1)) == -1) return NULL;
-    arg0->set_layout(arg1);
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
-static PyObject *_wrap_win_container_update_real_position(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    win_container *arg0 ;
-    PyObject * argo0 =0 ;
-    
-    if(!PyArg_ParseTuple(args,"O:win_container_update_real_position",&argo0)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_container,1)) == -1) return NULL;
-    arg0->update_real_position();
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
-static PyMethodDef win_containercMethods[] = {
+static PyMethodDef win_imagecMethods[] = {
 	 { "new_win_base", _wrap_new_win_base, METH_VARARGS },
 	 { "delete_win_base", _wrap_delete_win_base, METH_VARARGS },
 	 { "win_base_x", _wrap_win_base_x, METH_VARARGS },
@@ -1677,21 +1166,6 @@ static PyMethodDef win_containercMethods[] = {
 	 { "win_base_update", _wrap_win_base_update, METH_VARARGS },
 	 { "win_base_update_real_position", _wrap_win_base_update_real_position, METH_VARARGS },
 	 { "win_base_draw", _wrap_win_base_draw, METH_VARARGS },
-	 { "new_win_label", _wrap_new_win_label, METH_VARARGS },
-	 { "win_label_draw", _wrap_win_label_draw, METH_VARARGS },
-	 { "win_label_set_text", _wrap_win_label_set_text, METH_VARARGS },
-	 { "win_label_add_text", _wrap_win_label_add_text, METH_VARARGS },
-	 { "win_label_is_auto_size", _wrap_win_label_is_auto_size, METH_VARARGS },
-	 { "win_label_is_auto_height", _wrap_win_label_is_auto_height, METH_VARARGS },
-	 { "win_label_set_auto_size", _wrap_win_label_set_auto_size, METH_VARARGS },
-	 { "win_label_set_auto_height", _wrap_win_label_set_auto_height, METH_VARARGS },
-	 { "win_label_resize", _wrap_win_label_resize, METH_VARARGS },
-	 { "win_label_update", _wrap_win_label_update, METH_VARARGS },
-	 { "win_label_set_cursor_blinking", _wrap_win_label_set_cursor_blinking, METH_VARARGS },
-	 { "win_label_is_cursor_blinking", _wrap_win_label_is_cursor_blinking, METH_VARARGS },
-	 { "win_label_set_cursor_blinking_speed", _wrap_win_label_set_cursor_blinking_speed, METH_VARARGS },
-	 { "win_label_get_text", _wrap_win_label_get_text, METH_VARARGS },
-	 { "delete_win_label", _wrap_delete_win_label, METH_VARARGS },
 	 { "new_win_image", _wrap_new_win_image, METH_VARARGS },
 	 { "delete_win_image", _wrap_delete_win_image, METH_VARARGS },
 	 { "win_image_resize", _wrap_win_image_resize, METH_VARARGS },
@@ -1699,24 +1173,6 @@ static PyMethodDef win_containercMethods[] = {
 	 { "win_image_draw", _wrap_win_image_draw, METH_VARARGS },
 	 { "win_image_set_stretch", _wrap_win_image_set_stretch, METH_VARARGS },
 	 { "win_image_is_stretch", _wrap_win_image_is_stretch, METH_VARARGS },
-	 { "new_win_container", _wrap_new_win_container, METH_VARARGS },
-	 { "delete_win_container", _wrap_delete_win_container, METH_VARARGS },
-	 { "win_container_add", _wrap_win_container_add, METH_VARARGS },
-	 { "win_container_remove", _wrap_win_container_remove, METH_VARARGS },
-	 { "win_container_remove_all", _wrap_win_container_remove_all, METH_VARARGS },
-	 { "win_container_destroy", _wrap_win_container_destroy, METH_VARARGS },
-	 { "win_container_update", _wrap_win_container_update, METH_VARARGS },
-	 { "win_container_draw", _wrap_win_container_draw, METH_VARARGS },
-	 { "win_container_move", _wrap_win_container_move, METH_VARARGS },
-	 { "win_container_set_space_between_border", _wrap_win_container_set_space_between_border, METH_VARARGS },
-	 { "win_container_set_space_between_object", _wrap_win_container_set_space_between_object, METH_VARARGS },
-	 { "win_container_get_space_between_border", _wrap_win_container_get_space_between_border, METH_VARARGS },
-	 { "win_container_get_space_between_object", _wrap_win_container_get_space_between_object, METH_VARARGS },
-	 { "win_container_set_draw_brightness", _wrap_win_container_set_draw_brightness, METH_VARARGS },
-	 { "win_container_set_visible_all", _wrap_win_container_set_visible_all, METH_VARARGS },
-	 { "win_container_set_justify", _wrap_win_container_set_justify, METH_VARARGS },
-	 { "win_container_set_layout", _wrap_win_container_set_layout, METH_VARARGS },
-	 { "win_container_update_real_position", _wrap_win_container_update_real_position, METH_VARARGS },
 	 { NULL, NULL }
 };
 
@@ -1729,34 +1185,22 @@ static PyMethodDef win_containercMethods[] = {
 static void *_p_win_imageTo_p_win_base(void *x) {
     return (void *)((win_base *) ((win_image *) x));
 }
-static void *_p_win_labelTo_p_win_base(void *x) {
-    return (void *)((win_base *) ((win_label *) x));
-}
-static void *_p_win_containerTo_p_win_base(void *x) {
-    return (void *)((win_base *) ((win_container *) x));
-}
-static swig_type_info _swigt__p_win_font[] = {{"_p_win_font", 0, "win_font *"},{"_p_win_font"},{0}};
-static swig_type_info _swigt__p_win_base[] = {{"_p_win_base", 0, "win_base *"},{"_p_win_base"},{"_p_win_image", _p_win_imageTo_p_win_base},{"_p_win_label", _p_win_labelTo_p_win_base},{"_p_win_container", _p_win_containerTo_p_win_base},{0}};
+static swig_type_info _swigt__p_win_base[] = {{"_p_win_base", 0, "win_base *"},{"_p_win_base"},{"_p_win_image", _p_win_imageTo_p_win_base},{0}};
 static swig_type_info _swigt__p_drawing_area[] = {{"_p_drawing_area", 0, "drawing_area *"},{"_p_drawing_area"},{0}};
 static swig_type_info _swigt__p_image[] = {{"_p_image", 0, "image *"},{"_p_image"},{0}};
 static swig_type_info _swigt__p_win_image[] = {{"_p_win_image", 0, "win_image *"},{"_p_win_image"},{0}};
 static swig_type_info _swigt__p_win_theme[] = {{"_p_win_theme", 0, "win_theme *"},{"_p_win_theme"},{0}};
-static swig_type_info _swigt__p_win_label[] = {{"_p_win_label", 0, "win_label *"},{"_p_win_label"},{0}};
 static swig_type_info _swigt__p_Functor0wRet_bool_[] = {{"_p_Functor0wRet_bool_", 0, "Functor0wRet<bool> *"},{"_p_Functor0wRet_bool_"},{0}};
-static swig_type_info _swigt__p_win_container[] = {{"_p_win_container", 0, "win_container *"},{"_p_win_container"},{0}};
 static swig_type_info _swigt__p_short[] = {{"_p_short", 0, "short *"},{"_p_short"},{0}};
 static swig_type_info _swigt__p_Functor0[] = {{"_p_Functor0", 0, "Functor0 *"},{"_p_Functor0"},{0}};
 
 static swig_type_info *swig_types_initial[] = {
-_swigt__p_win_font, 
 _swigt__p_win_base, 
 _swigt__p_drawing_area, 
 _swigt__p_image, 
 _swigt__p_win_image, 
 _swigt__p_win_theme, 
-_swigt__p_win_label, 
 _swigt__p_Functor0wRet_bool_, 
-_swigt__p_win_container, 
 _swigt__p_short, 
 _swigt__p_Functor0, 
 0
@@ -1838,11 +1282,11 @@ static PyObject *SWIG_globals;
 #ifdef __cplusplus
 extern "C" 
 #endif
-SWIGEXPORT(void) initwin_containerc(void) {
+SWIGEXPORT(void) initwin_imagec(void) {
     PyObject *m, *d;
     int i;
     SWIG_globals = SWIG_newvarlink();
-    m = Py_InitModule("win_containerc", win_containercMethods);
+    m = Py_InitModule("win_imagec", win_imagecMethods);
     d = PyModule_GetDict(m);
     for (i = 0; swig_types_initial[i]; i++) {
         swig_types[i] = SWIG_TypeRegister(swig_types_initial[i]);
