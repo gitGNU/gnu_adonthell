@@ -45,8 +45,8 @@ py_callback::~py_callback ()
 void py_callback::callback_func0 ()
 {
     PyObject *py_arg = arguments ? Py_BuildValue ("(O)",arguments) : NULL;
-    PyObject_CallObject (function, py_arg);
-    Py_XDECREF (py_arg);
+    PyObject* val = make_call (py_arg);
+    Py_XDECREF (val);
 }
 
 // calls the python function returning a boolean
@@ -55,12 +55,10 @@ bool py_callback::callback_func0ret ()
     int retval = 1;
     
     PyObject *py_arg = arguments ? Py_BuildValue ("(O)",arguments) : NULL;
-    PyObject* val = PyObject_CallObject (function, py_arg);
+    PyObject* val = make_call (py_arg);
 
     if (val) retval = PyInt_AsLong (val);
-
     Py_XDECREF (val);
-    Py_XDECREF (py_arg);
 
     return retval != 0;
 }
@@ -73,7 +71,18 @@ void py_callback::callback_func1 (int arg)
     if (arguments) py_arg = Py_BuildValue ("(i,O)", arg, arguments);
     else py_arg = Py_BuildValue ("(i)", arg);
 
-    PyObject * res = PyObject_CallObject (function, py_arg);
-    Py_XDECREF (py_arg);
-    Py_XDECREF (res); 
+    PyObject * val = make_call (py_arg);
+    Py_XDECREF (val);
+}
+
+PyObject *py_callback::make_call (PyObject *arg)
+{
+    PyObject * val = PyObject_CallObject (function, arg);
+    Py_XDECREF (arg);
+
+#ifdef PY_DEBUG
+    python::show_traceback ();
+#endif
+
+    return val;
 }

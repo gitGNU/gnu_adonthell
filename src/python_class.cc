@@ -68,32 +68,29 @@ void python::exec_string(char * s)
 /*
  * Execute the file given by 'filename'
  */
-bool python::exec_file( char *filename )
+bool python::exec_file (string filename)
 {
-    FILE *f;
-    char *fn = new char[strlen("scripts/")+strlen(filename)+1];
-    strcpy (fn, "scripts/");
-    strcat (fn, filename);
-    f = fopen (fn, "r");
+    int result;
+    string fn = "scripts/" + filename;
+    FILE *f = fopen (fn.c_str (), "r");
     
     if (!f)
     {
         cerr << "exec_file: " << fn << " load failed!" << endl;
-    	delete[] fn;
         return false;
     }
-    
-    PyRun_SimpleFile (f, fn);
-//     if (res) Py_DECREF (res);
-//     else
-//     {
-//         cout << "exec_file: " << fn << " execution failed!" << endl; 
-//         show_traceback (); 
-//     }
+
+    result = PyRun_SimpleFile (f, (char*) fn.c_str ());
+    if (result != 0)
+    {
+         cerr << "exec_file: " << fn << " execution failed: " << endl;
+#ifdef PY_DEBUG
+         show_traceback ();
+#endif
+    }
     
     fclose (f);
-    delete[] fn;
-    return true;
+    return result == 0;
 }
 
 /*
@@ -113,7 +110,9 @@ PyObject *python::import_module (string filename)
 {
     PyObject *result = PyImport_ImportModule ((char *) filename.c_str ());
     
+#ifdef PY_DEBUG
     show_traceback ();
+#endif
     return result;
 }
 
@@ -138,8 +137,10 @@ PyObject *python::pass_instance (void *instance, const char *class_name)
     PyObject *arg = Py_BuildValue ("(s)", class_addr);
     PyObject *res = PyObject_CallObject (cls, arg);
     
+#ifdef PY_DEBUG
     show_traceback ();
-    
+#endif
+
     // Clean up
     Py_DECREF (arg);
     

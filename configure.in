@@ -31,6 +31,9 @@ AC_ARG_ENABLE(memleaks,
 AC_ARG_ENABLE(doc,
 [  --enable-doc           Build the Adonthell developer documentation (disabled by default)],
 	builddoc=$enableval, builddoc=no)
+AC_ARG_ENABLE(py-debug,
+[  --enable-py-debug      Enable debugging of Python scripts (disabled by default)],
+	pydebug=$enableval, pydebug=no)
 AC_ARG_WITH(ogg,
 [  --with-ogg=DIR         Set where the Ogg library is located]) 
 AC_ARG_WITH(vorbis,
@@ -165,6 +168,18 @@ AC_MSG_RESULT($PY_DEPS)
 PY_LIBS="-Wl,-E $PY_LIBS $PY_DEPS"
 
 
+dnl See whether we should enable python debugging
+
+AC_MSG_CHECKING(whether to enable Python debugging)
+if test x$pydebug = xno; then
+	AC_MSG_RESULT(no)
+else
+    PY_CFLAGS="$PY_CFLAGS -DPY_DEBUG"
+	AC_MSG_RESULT(yes)
+fi
+
+
+
 dnl ********************************
 dnl Check whether to build our tools
 dnl ********************************
@@ -288,6 +303,7 @@ echo Adonthell v$VERSION
 echo
 echo SDL ....................... : `$SDL_CONFIG --version`
 echo Python .................... : $PY_VERSION
+echo Python debugging .......... : $pydebug
 if test x$havegtk = xyes; then
 echo GTK+ ...................... : `gtk-config --version`
 fi

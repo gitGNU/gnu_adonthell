@@ -105,7 +105,7 @@ void py_object::call_method (const string & name, PyObject * args = NULL)
         res = PyObject_CallObject (tocall, args);
         if (res) Py_DECREF (res); 
         Py_DECREF (tocall); 
-#ifdef _DEBUG_
+#ifdef PY_DEBUG
         python::show_traceback ();
 #endif
     }

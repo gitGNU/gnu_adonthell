@@ -36,8 +36,9 @@ using namespace std;
 
 /**
  * Game's main function.
- * It simply initialise the game and run the "init.py" file of the chosen game's
- * directory. Once the execution is finished, it cleanups everything, and exits.
+ * It simply initialises the game and runs the "init.py" file in the game
+ * directory given as first argument. Once the execution is finished,
+ * it cleans everything up, and exits.
  *
  * @param argc Number of arguments to the program.
  * @param argv Array of strings containing the program's arguments.
@@ -49,25 +50,27 @@ using namespace std;
 int main(int argc, char * argv[])
 {
 #ifdef MEMORY_LEAKS
+    // to debug memory leaks with mtrace. It's better to use
+    // a tool like memprof or mpatrol though.
     mtrace ();
 #endif
-     
-     config myconfig;
-     myconfig.read_adonthellrc ();
-     myconfig.parse_arguments (argc, argv); 
-    
-     if (!game::init (myconfig)) return 1;
 
-     
-     python::exec_file("init.py");
+    config myconfig;
 
-//      mapview * myview = new mapview ();
-//      myview->set_schedule ("center_player"); 
-//      cout << myview << endl;
-//      myview->update (); 
-//      delete myview; 
-     
-     game::cleanup (); 
+    // read the $HOME/.adonthell/adonthellrc file
+    // and check the arguments we recieved.
+    myconfig.read_adonthellrc ();
+    myconfig.parse_arguments (argc, argv);
+
+    // initialise the different parts of the engine
+    // (video, audio, python ...)
+    if (!game::init (myconfig)) return 1;
+
+    // It's up to the game what happens here
+    python::exec_file ("init.py");
+
+    // shut down the different parts of the engine
+    game::cleanup ();
     
-     return 0;
+    return 0;
 }

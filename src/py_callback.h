@@ -69,7 +69,13 @@ public:
     void callback_func1 (int);
 
 private:
-    
+
+    /**
+     * TThe actual function call
+     *
+     */
+    PyObject *make_call (PyObject*);
+
     /**
      * The function to be called.
      * 

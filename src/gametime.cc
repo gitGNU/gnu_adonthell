@@ -134,9 +134,9 @@ void time_event::execute (event &e)
     
     // Cleanup
     Py_DECREF (locals);
-#ifdef _DEBUG_
+#ifdef PY_DEBUG
     python::show_traceback ();
-#endif // _DEBUG_
+#endif // PY_DEBUG
 }
 
 // Check whether this time_even matches a given gametime

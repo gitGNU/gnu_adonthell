@@ -136,8 +136,10 @@ void dialog::run (u_int32 index)
     PyObject *arg = Py_BuildValue ("(i)", answers[index]);
     dialogue.run (arg);
     Py_XDECREF (arg);
-    
+
+#ifdef PY_DEBUG
     python::show_traceback ();
+#endif
 
     // Mark the Player's text (if any) as used unless loops allowed
     if (index != 0)
@@ -319,7 +321,9 @@ char* dialog::scan_string (const char *s)
 
         // run the string
         result = PyObject_CallMethod (dialogue.get_instance (), string, NULL);
-
+#ifdef PY_DEBUG
+        python::show_traceback ();
+#endif
         mid = NULL;
 
         if (result)

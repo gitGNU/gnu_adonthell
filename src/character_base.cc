@@ -42,7 +42,7 @@ character_base::~character_base ()
 
 void character_base::set_name (string newname)
 {
-    name = newname; 
+    name = newname;
 }
 
 void character_base::set_dialogue (string newdlg)

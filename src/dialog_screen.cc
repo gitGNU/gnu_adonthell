@@ -141,7 +141,9 @@ void dialog_screen::init(character_base *mynpc, char * dlg_file, u_int8 size)
     if (!dlg->init (path, file, args))
     {
         cout << "\n*** Error loading dialogue script " << file << "\n";
+#ifdef PY_DEBUG
         python::show_traceback ();
+#endif
         cout << flush;
         answer = -1;	
     }

@@ -44,7 +44,7 @@ class python
 {  
 public:
     /** 
-     * Initialise Python and inserts the Adonthell include paths.
+     * Initialise Python and insert the Adonthell include paths.
      * 
      * 
      * @return true in case of success, false otherwise.
@@ -72,13 +72,13 @@ public:
     static void exec_string(char * s);
     
     /** 
-     * Executes a Python file.
+     * Executes a Python script.
      * 
      * @param filename name of the file to execute.
      * 
      * @return true in case of success, false otherwise.
      */ 
-    static bool exec_file( char *filename );
+    static bool exec_file (string filename);
     
     /** 
      * Imports a Python module.
