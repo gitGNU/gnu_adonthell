@@ -12,6 +12,7 @@
 */
 
 #include "types.h"
+#include "mapevent.h"
 
 class mapitem
 {
@@ -56,6 +57,6 @@ class mapitem
 #define KEYWORD_PLACE_ITEM '6'
 
 /* functions prototypes */
-void loaditems(char*, mapitem**, mapevent**, u_int16*);
+int loaditems(char*, mapitem**, mapevent**, u_int16*);
 void linesep(char*,char**,int*);
 int test_line(char* string, char **word, int*wordc);

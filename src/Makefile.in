@@ -1,4 +1,4 @@
-# Makefile.in generated automatically by automake 1.4 from Makefile.am
+# Makefile.in generated automatically by automake 1.4a from Makefile.am
 
 # Copyright (C) 1994, 1995-8, 1999 Free Software Foundation, Inc.
 # This Makefile.in is free software; the Free Software Foundation
@@ -46,9 +46,10 @@ AUTOMAKE = @AUTOMAKE@
 AUTOHEADER = @AUTOHEADER@
 
 INSTALL = @INSTALL@
-INSTALL_PROGRAM = @INSTALL_PROGRAM@ $(AM_INSTALL_PROGRAM_FLAGS)
+INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
+INSTALL_STRIP_FLAG =
 transform = @program_transform_name@
 
 NORMAL_INSTALL = :
@@ -68,10 +69,10 @@ VERSION = @VERSION@
 
 bin_PROGRAMS = mapengine joltest
 
-mapengine_SOURCES = animation.cpp audio.cpp audio_thread.cpp character.cpp commands.cpp cutscene.cpp dialog_cmds.cpp fileops.cpp game.cpp generic_cmds.cpp image.cpp init.cpp interpreter.cpp input.cpp lex.prefs.cpp main.cpp map.cpp mapcharacter.cpp mapengine.cpp mapevent.cpp mappattern.cpp mapsquare.cpp pnm.cpp prefs.cpp screen.cpp storage.cpp win_label.cpp win_write.cpp win_container.cpp win_select.cpp win_friend.cpp win_border.cpp win_base.cpp win_font.cpp
+mapengine_SOURCES = animation.cpp audio.cpp audio_thread.cpp character.cpp commands.cpp cutscene.cpp dialog_cmds.cpp fileops.cpp game.cpp generic_cmds.cpp image.cpp init.cpp interpreter.cpp input.cpp inventory.cpp lex.prefs.cpp main.cpp map.cpp mapcharacter.cpp mapengine.cpp mapevent.cpp mappattern.cpp mapsquare.cpp pnm.cpp prefs.cpp screen.cpp storage.cpp win_label.cpp win_write.cpp win_container.cpp win_select.cpp win_friend.cpp win_border.cpp win_base.cpp win_font.cpp
 
 
-joltest_SOURCES = animation.cpp audio.cpp audio_thread.cpp character.cpp commands.cpp cutscene.cpp dialog_cmds.cpp fileops.cpp game.cpp generic_cmds.cpp image.cpp init.cpp interpreter.cpp input.cpp lex.prefs.cpp pnm.cpp prefs.cpp screen.cpp storage.cpp win_label.cpp win_write.cpp win_container.cpp win_select.cpp win_friend.cpp win_border.cpp win_base.cpp win_font.cpp joel.cpp
+joltest_SOURCES = animation.cpp audio.cpp audio_thread.cpp character.cpp commands.cpp cutscene.cpp dialog_cmds.cpp fileops.cpp game.cpp generic_cmds.cpp image.cpp init.cpp interpreter.cpp input.cpp inventory.cpp lex.prefs.cpp pnm.cpp prefs.cpp screen.cpp storage.cpp win_label.cpp win_write.cpp win_container.cpp win_select.cpp win_friend.cpp win_border.cpp win_base.cpp win_font.cpp joel.cpp
 
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = ../header.h
@@ -85,42 +86,43 @@ LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
 mapengine_OBJECTS =  animation.o audio.o audio_thread.o character.o \
 commands.o cutscene.o dialog_cmds.o fileops.o game.o generic_cmds.o \
-image.o init.o interpreter.o input.o lex.prefs.o main.o map.o \
-mapcharacter.o mapengine.o mapevent.o mappattern.o mapsquare.o pnm.o \
-prefs.o screen.o storage.o win_label.o win_write.o win_container.o \
-win_select.o win_friend.o win_border.o win_base.o win_font.o
+image.o init.o interpreter.o input.o inventory.o lex.prefs.o main.o \
+map.o mapcharacter.o mapengine.o mapevent.o mappattern.o mapsquare.o \
+pnm.o prefs.o screen.o storage.o win_label.o win_write.o \
+win_container.o win_select.o win_friend.o win_border.o win_base.o \
+win_font.o
 mapengine_LDADD = $(LDADD)
 mapengine_DEPENDENCIES = 
 mapengine_LDFLAGS = 
 joltest_OBJECTS =  animation.o audio.o audio_thread.o character.o \
 commands.o cutscene.o dialog_cmds.o fileops.o game.o generic_cmds.o \
-image.o init.o interpreter.o input.o lex.prefs.o pnm.o prefs.o screen.o \
-storage.o win_label.o win_write.o win_container.o win_select.o \
-win_friend.o win_border.o win_base.o win_font.o joel.o
+image.o init.o interpreter.o input.o inventory.o lex.prefs.o pnm.o \
+prefs.o screen.o storage.o win_label.o win_write.o win_container.o \
+win_select.o win_friend.o win_border.o win_base.o win_font.o joel.o
 joltest_LDADD = $(LDADD)
 joltest_DEPENDENCIES = 
 joltest_LDFLAGS = 
 CXXFLAGS = @CXXFLAGS@
 CXXCOMPILE = $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
 CXXLD = $(CXX)
-CXXLINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(LDFLAGS) -o ../$@
+CXXLINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(LDFLAGS) -o $@
 DIST_COMMON =  Makefile.am Makefile.in
 
 
 DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 
-TAR = tar
+TAR = gtar
 GZIP_ENV = --best
 DEP_FILES =  .deps/animation.P .deps/audio.P .deps/audio_thread.P \
 .deps/character.P .deps/commands.P .deps/cutscene.P .deps/dialog_cmds.P \
 .deps/fileops.P .deps/game.P .deps/generic_cmds.P .deps/image.P \
-.deps/init.P .deps/input.P .deps/interpreter.P .deps/joel.P \
-.deps/lex.prefs.P .deps/main.P .deps/map.P .deps/mapcharacter.P \
-.deps/mapengine.P .deps/mapevent.P .deps/mappattern.P .deps/mapsquare.P \
-.deps/pnm.P .deps/prefs.P .deps/screen.P .deps/storage.P \
-.deps/win_base.P .deps/win_border.P .deps/win_container.P \
-.deps/win_font.P .deps/win_friend.P .deps/win_label.P \
-.deps/win_select.P .deps/win_write.P
+.deps/init.P .deps/input.P .deps/interpreter.P .deps/inventory.P \
+.deps/joel.P .deps/lex.prefs.P .deps/main.P .deps/map.P \
+.deps/mapcharacter.P .deps/mapengine.P .deps/mapevent.P \
+.deps/mappattern.P .deps/mapsquare.P .deps/pnm.P .deps/prefs.P \
+.deps/screen.P .deps/storage.P .deps/win_base.P .deps/win_border.P \
+.deps/win_container.P .deps/win_font.P .deps/win_friend.P \
+.deps/win_label.P .deps/win_select.P .deps/win_write.P
 SOURCES = $(mapengine_SOURCES) $(joltest_SOURCES)
 OBJECTS = $(mapengine_OBJECTS) $(joltest_OBJECTS)
 
@@ -149,8 +151,8 @@ install-binPROGRAMS: $(bin_PROGRAMS)
 	$(mkinstalldirs) $(DESTDIR)$(bindir)
 	@list='$(bin_PROGRAMS)'; for p in $$list; do \
 	  if test -f $$p; then \
-	    echo "  $(INSTALL_PROGRAM) $$p $(DESTDIR)$(bindir)/`echo $$p|sed 's/$(EXEEXT)$$//'|sed '$(transform)'|sed 's/$$/$(EXEEXT)/'`"; \
-	     $(INSTALL_PROGRAM) $$p $(DESTDIR)$(bindir)/`echo $$p|sed 's/$(EXEEXT)$$//'|sed '$(transform)'|sed 's/$$/$(EXEEXT)/'`; \
+	    echo "  $(INSTALL_PROGRAM) $(INSTALL_STRIP_FLAG) $$p $(DESTDIR)$(bindir)/`echo $$p|sed 's/$(EXEEXT)$$//'|sed '$(transform)'|sed 's/$$/$(EXEEXT)/'`"; \
+	     $(INSTALL_PROGRAM) $(INSTALL_STRIP_FLAG) $$p $(DESTDIR)$(bindir)/`echo $$p|sed 's/$(EXEEXT)$$//'|sed '$(transform)'|sed 's/$$/$(EXEEXT)/'`; \
 	  else :; fi; \
 	done
 
@@ -308,7 +310,7 @@ uninstall: uninstall-am
 all-am: Makefile $(PROGRAMS)
 all-redirect: all-am
 install-strip:
-	$(MAKE) $(AM_MAKEFLAGS) AM_INSTALL_PROGRAM_FLAGS=-s install
+	$(MAKE) $(AM_MAKEFLAGS) INSTALL_STRIP_FLAG=-s install
 installdirs:
 	$(mkinstalldirs)  $(DESTDIR)$(bindir)
 
