@@ -36,6 +36,12 @@ NEW_EVENT(enter_event);
  */ 
 NEW_EVENT(leave_event); 
 
+/** 
+ * Returns a newly allocated action_event.
+ *  
+ */ 
+NEW_EVENT(action_event); 
+
 enter_event::enter_event () : base_map_event ()
 {
     type = ENTER_EVENT; 
@@ -44,6 +50,11 @@ enter_event::enter_event () : base_map_event ()
 leave_event::leave_event () : base_map_event ()
 {
     type = LEAVE_EVENT; 
+}
+
+action_event::action_event () : base_map_event ()
+{
+    type = ACTION_EVENT; 
 }
 
 base_map_event::base_map_event ()
@@ -139,6 +150,7 @@ landmap::landmap () : event_list ()
     // its save and we don't have additional dependencies.
     REGISTER_EVENT (ENTER_EVENT, enter_event)
     REGISTER_EVENT (LEAVE_EVENT, leave_event) 
+    REGISTER_EVENT (ACTION_EVENT, action_event) 
 }
 
 landmap::~landmap ()

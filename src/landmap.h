@@ -41,7 +41,7 @@ class mapview;
 
 
 /**
- * Baseclass for map enter/leave events.
+ * Baseclass for map enter/leave/action events.
  * The event will be launched if all the member's data matches.
  *
  */ 
@@ -134,6 +134,20 @@ public:
      * 
      */ 
     leave_event ();
+};
+
+/**
+ * To notify when a mapcharacter "act" on a square.
+ *
+ */ 
+class action_event : public base_map_event
+{
+public:
+    /**
+     * Default constructor.
+     * 
+     */ 
+    action_event ();
 };
 
 

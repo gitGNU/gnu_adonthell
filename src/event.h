@@ -48,7 +48,8 @@ enum
     ENTER_EVENT = 0,                            // Characters reach a new tile
     LEAVE_EVENT = 1,                            // Characters leave a tile
     TIME_EVENT = 2,                             // A minute of gametime passed
-    MAX_EVENT = 3
+    ACTION_EVENT = 3,                           // Character "acts" on a square 
+    MAX_EVENT = 4
 };
 
 /**

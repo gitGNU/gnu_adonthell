@@ -289,7 +289,7 @@
   *
   * @bug Uh, I still have to write the members.
   *
- */
+  */
  class my_very_cool_class
  {
      .....
