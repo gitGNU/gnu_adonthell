@@ -12,29 +12,97 @@
    See the COPYING file for more details.
 */
 
-class DlgNode;
+
+#ifndef __DLGNODE_H__
+#define __DLGNODE_H__
 
 #include <vector>
-#include "function.h"
+#include <string>
+#include <fstream.h>
+#include <gdk/gdktypes.h>
+#include "../../types.h"
+#include "linked_list.h"
 
-/* Node */
+// Definitions needed for the dialogue source file parser
+extern int parse_dlgfile (string&, int&);
+extern FILE* loadlgin;
+
+// For loading Dialogue Files
+enum
+{
+    LOAD_CIRCLE = 1,
+    LOAD_ARROW = 2,
+    LOAD_END = 3,
+    LOAD_TYPE = 4,
+    LOAD_PREV = 5,
+    LOAD_NEXT = 6,
+    LOAD_LINK = 7,
+    LOAD_POS = 8,
+    LOAD_NOTE = 9,
+    LOAD_TEXT = 10,
+    LOAD_COND = 11,
+    LOAD_VARS = 12,
+    LOAD_STR = 13,
+    LOAD_NUM = 14,
+    LOAD_UNKNOWN = 15
+};
+
+// Node Types
+enum
+{
+    PLAYER = 1,
+    NPC = 2,
+    LINK = 3,
+    MOVER = 4
+};
+
+// Base class for the Dialogue Nodes
 class DlgNode
 {
 public:
-    u_int32 number;             /* unique ID */
-    u_int8 type;                /* one of NPC, PLAYER, LINK */
-    u_int8 highlite;            /* color of node */
+    DlgNode () { highlite = 0; }
+    
+    u_int32 number;                     // unique ID
+    u_int8 type;                        // one of NPC, PLAYER, LINK
+    u_int8 highlite;                    // color of node
 
-    gchar *text;                /* text of node */
-    GdkRectangle position;      /* coordinates */
-    GPtrArray *prev;            /* precedor(s) */
-    GPtrArray *next;            /* successor(s) */
-    GPtrArray *link;            /* indirect connection(s) */
-
-    vector<function_data*> fctn;// assigned functions
-
-    GdkPoint line[2];           /* Line of arrow */
-    GdkPoint tip[3];            /* tip of arrow */
+    GdkRectangle position;              // coordinates
+    vector<DlgNode*> prev;              // precedessor(s)
+    vector<DlgNode*> next;              // successor(s)
+    vector<DlgNode*> link;              // indirect connection(s)
 };
 
+// Circle
+class Circle : public DlgNode
+{
+public:
+    Circle ();
+    Circle (u_int32, u_int8, s_int32, s_int32);
+    
+    u_int32 character;                  // Who's characters text is this?
+    u_int32 mood;                       // This characters mood
+                        
+    string text;                        // text of node
+    string comment;                     // User's annotation
+    string conditions;                  // Condition script
+    string variables;                   // Variable script
 
+    void save (ofstream&);              // Save Circle
+    void load (u_int32);                // Load Circle
+}; 
+
+// Arrow
+class Arrow : public DlgNode
+{
+public:
+    Arrow () { }
+    Arrow (u_int32, u_int8);
+
+    GdkPoint line[2];                   // Line of arrow
+    GdkPoint tip[3];                    // tip of arrow
+
+    void save (ofstream&);              // Save Arrow
+    void load (u_int32, ptr_list*);     // Load Arrow
+};
+
+#endif // __DLGNODE_H__

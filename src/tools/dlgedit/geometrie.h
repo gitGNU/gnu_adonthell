@@ -11,6 +11,7 @@
 */
 
 u_int8 point_in_rect (GdkRectangle, GdkPoint);
+u_int8 rect_in_rect (GdkRectangle a, GdkRectangle b);
 GdkPoint offset_point (GdkPoint, s_int32, s_int32);
 GdkPoint center_point (GdkRectangle);
 GdkRectangle create_rectangle (GdkPoint, GdkPoint);

@@ -19,11 +19,9 @@ class dialog;
 
 #include "../../types.h"
 #include "../../interpreter.h"
-#include "linked_list.h"
 #include "dlgnode.h"
 #include "main.h"
 #include "graph.h"
-#include "dlgrun.h"
 #include "interface.h"
 
 int 
@@ -81,7 +79,7 @@ delete_dialogue (MainFrame * wnd)
 
     /* Delete all nodes */
     for (i = 0; i < wnd->number; i++)
-        free_node ((DlgNode *) get_ptr_list_element (wnd->nodes, i));
+        delete ((DlgNode *) get_ptr_list_element (wnd->nodes, i));
 
     clear_ptr_list (wnd->nodes);
     

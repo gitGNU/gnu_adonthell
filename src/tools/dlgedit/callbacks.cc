@@ -18,18 +18,15 @@ class dialog;
 #include <stdio.h>
 
 #include "../../types.h"
-#include "linked_list.h"
 #include "dlgnode.h"
 #include "main.h"
 #include "graph.h"
 #include "compile.h"
 #include "../../interpreter.h"
-#include "../../array_tmpl.h"
 #include "../../dialog.h"
-#include "dlgrun.h"
 #include "geometrie.h"
 #include "pjt_interface.h"
-#include "function.h"
+#include "run.h"
 #include "interface.h"
 
 /* Main Window: on_widget_destroy App */
@@ -37,104 +34,9 @@ void
 on_widget_destroy (GtkWidget * widget, gpointer data)
 {
     gtk_main_quit ();
+    gtk_widget_destroy (widget);
 }
 
-/* Text Dialog: Player - Part */
-void 
-on_button_player_toggled (GtkToggleButton * togglebutton, gpointer user_data)
-{
-    NodeData *cbd = (NodeData *) user_data;
-    GtkText *text_box = (GtkText *) cbd->edit_box;
-    GdkColor white, dark_blue;
-    gchar *text;
-
-    /* Text-Box contains text of player */
-    if (gtk_toggle_button_get_active (togglebutton))
-    {
-        cbd->node->type = PLAYER;
-
-        dark_blue.red = 0;
-        dark_blue.green = 0;
-        dark_blue.blue = 35000;
-
-        white.red = 65535;
-        white.green = 65535;
-        white.blue = 65535;
-
-        /* Set Text-color to blue (Have to assure that text is inserted) */
-        gtk_text_freeze (text_box);
-        text = gtk_editable_get_chars (cbd->edit_box, 0, -1);
-        gtk_editable_delete_text (cbd->edit_box, 0, -1);
-        gtk_text_insert (text_box, (GTK_WIDGET (cbd->edit_box))->style->font, &dark_blue, &white, "a", -1);
-        gtk_text_insert (text_box, (GTK_WIDGET (cbd->edit_box))->style->font, &dark_blue, &white, text, -1);
-        gtk_editable_delete_text (cbd->edit_box, 0, 1);
-        g_free (text);
-        gtk_text_thaw (text_box);
-    }
-}
-
-/* Text Dialog: NPC - Part */
-void 
-on_button_npc_toggled (GtkToggleButton * togglebutton, gpointer user_data)
-{
-    NodeData *cbd = (NodeData *) user_data;
-    GtkText *text_box = (GtkText *) cbd->edit_box;
-    GdkColor white, black;
-    gchar *text;
-
-    /* Text-Box contains text of player */
-    if (gtk_toggle_button_get_active (togglebutton))
-    {
-        cbd->node->type = NPC;
-
-        black.red = 0;
-        black.green = 0;
-        black.blue = 0;
-
-        white.red = 65535;
-        white.green = 65535;
-        white.blue = 65535;
-
-        /* Set Text-color to black (Have to assure that text != NULL) */
-        gtk_text_freeze (text_box);
-        text = gtk_editable_get_chars (cbd->edit_box, 0, -1);
-        gtk_editable_delete_text (cbd->edit_box, 0, -1);
-        gtk_text_insert (text_box, (GTK_WIDGET (cbd->edit_box))->style->font, &black, &white, "a", -1);
-        gtk_text_insert (text_box, (GTK_WIDGET (cbd->edit_box))->style->font, &black, &white, text, -1);
-        gtk_editable_delete_text (cbd->edit_box, 0, 1);
-        g_free (text);
-        gtk_text_thaw (text_box);
-    }
-}
-
-/* Text Dialog: Abort -> throw everything away */
-void 
-on_cancel_button_pressed (GtkButton * button, gpointer user_data)
-{
-    NodeData *cbd = (NodeData *) user_data;
-
-    /* close dialog */
-    gtk_widget_destroy (cbd->wnd->text_dlg);
-    gtk_main_quit ();
-}
-
-/* Text Dialog: Accept -> preserve everything */
-void 
-on_ok_button_pressed (GtkButton * button, gpointer user_data)
-{
-    NodeData *cbd = (NodeData *) user_data;
-
-    /* Set Nodes Text */
-    if (cbd->node->text)
-        g_free (cbd->node->text);
-    cbd->node->text = g_strdelimit (gtk_editable_get_chars (cbd->edit_box, 0, -1), "\n\t", ' ');
-
-    /* close dialog */
-    gtk_widget_destroy (cbd->wnd->text_dlg);
-    gtk_main_quit ();
-
-    cbd->retval = 1;
-}
 
 /* File-Selection: ok -> get file name */
 void 
@@ -215,23 +117,17 @@ void
 on_dialogue_compile_activate (GtkMenuItem * menuitem, gpointer user_data)
 {
     make_dialogue ((MainFrame *) user_data);
+    gtk_widget_set_sensitive (((MainFrame *) user_data)->dialogue_run, TRUE);
 }
 
 /* Dialogue Menu: Run */
 void 
 on_dialogue_run_activate (GtkMenuItem * menuitem, gpointer user_data)
 {
-    run_dialogue ((MainFrame *) user_data);
-}
-
-/* Continue Dialogue */
-void 
-on_player_txt_select_row (GtkList * list, GtkWidget *widget, gpointer user_data)
-{
-    RunData *rd = (RunData *) user_data;
-
-    rd->data->answer = GPOINTER_TO_INT(gtk_object_get_user_data (GTK_OBJECT(widget)));
-    ShowDialogue (rd);
+    run_dlg dlg;
+    gtk_main ();
+    
+    if (!&dlg) return;
 }
 
 /* Node selected in preview */
@@ -245,58 +141,4 @@ on_list_select (GtkList *list, GtkWidget *widget, gpointer user_data)
     deselect_object (wnd);
     center_object (wnd, node);
     select_object (wnd, point);
-}
-
-// function changed -> set available operators
-void on_function_released (GtkButton *button, gpointer user_data)
-{
-    ((function *) user_data)->set_function ();
-}
-
-// operation changed -> set available operators
-void on_operation_released (GtkButton *button, gpointer user_data)
-{
-    ((function *) user_data)->set_operation ();    
-}
-
-// Add function to the list
-void on_add_button_clicked (GtkButton * button, gpointer user_data)
-{
-    ((function *) user_data)->add ();
-}
-
-// Remove funcxtion from list
-void on_remove_button_clicked (GtkButton * button, gpointer user_data)
-{
-    ((function *) user_data)->remove ();
-}
-
-// Element of function-list selected
-void on_fct_select_row (GtkWidget *clist, gint row, gint column, GdkEventButton *event, gpointer data)
-{
-    ((function *) data)->select (row);
-}
-
-// Element of function-list selected
-void on_fct_unselect_row (GtkWidget *clist, gint row, gint column, GdkEventButton *event, gpointer data)
-{
-    ((function *) data)->select (-1);
-}
-
-// Move function up in list
-void on_up_button_clicked (GtkButton * button, gpointer user_data)
-{
-    ((function *) user_data)->up ();
-}
-
-// Move function down in list
-void on_down_button_clicked (GtkButton * button, gpointer user_data)
-{
-    ((function *) user_data)->down ();
-}
-
-// Accept the changes
-void on_fct_ok_buttpn_clicked (GtkButton * button, gpointer user_data)
-{
-    ((function *) user_data)->ok ();
 }
