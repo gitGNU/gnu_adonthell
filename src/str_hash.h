@@ -30,7 +30,7 @@
 #endif
 #include <string>
 
-namespace std; 
+namespace std 
 {
 	
 template<> struct hash<string> {
