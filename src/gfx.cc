@@ -28,6 +28,8 @@ image::image ()
 {
   data = NULL;
   lenght=height=0;
+  mask_on=false;
+  trans_on=false;
 }
 
 image::~image()
@@ -59,6 +61,8 @@ void image::putbox (u_int16 x, u_int16 y)
   dr.y=y;
   dr.w=lenght;
   dr.h=height;
+  if(mask_on) { SDL_SetColorKey(data,0,0); mask_on=false; }
+  if(trans_on) { SDL_SetAlpha(data,0,0); trans_on=false; }
   SDL_BlitSurface(data, NULL, screen::vis, &dr);
 }
 
@@ -70,7 +74,12 @@ void image::putbox_mask (u_int16 x, u_int16 y)
   dr.y=y;
   dr.w=lenght;
   dr.h=height;
-  SDL_SetColorKey(data, SDL_SRCCOLORKEY, screen::get_trans());
+  if(trans_on) { SDL_SetAlpha(data,0,0); trans_on=false; }
+  if(!mask_on) 
+    {
+      SDL_SetColorKey(data, SDL_SRCCOLORKEY|SDL_RLEACCEL, screen::get_trans());
+      mask_on=true;
+    }
   SDL_BlitSurface(data, NULL, screen::vis, &dr);
 }
 
@@ -106,9 +115,10 @@ void image::putbox_trans (u_int16 x, u_int16 y, u_int8 alpha)
   dr.w=lenght;
   dr.h=height;
 
+  if(mask_on) { SDL_SetColorKey(data,0,0); mask_on=false; }
   SDL_SetAlpha(data, SDL_SRCALPHA, alpha);
-  SDL_BlitSurface(data, NULL, screen::vis, &dr);
-  
+  trans_on=true;
+  SDL_BlitSurface(data, NULL, screen::vis, &dr);  
 }
 
 void image::putbox_mask_part (u_int16 x, u_int16 y, u_int16 bw, u_int16 bh,
@@ -131,7 +141,16 @@ void image::putbox_mask_part (u_int16 x, u_int16 y, u_int16 bw, u_int16 bh,
   dr.y=y;
   dr.w=bw;
   dr.h=bh;
-  SDL_SetColorKey(data, SDL_SRCCOLORKEY, screen::get_trans());
+  if(trans_on)
+    {
+      SDL_SetAlpha(data,0,0);
+      trans_on=false;
+    }
+  if(!mask_on)
+    {
+      SDL_SetColorKey(data, SDL_SRCCOLORKEY|SDL_RLEACCEL, screen::get_trans());
+      mask_on=true;
+    }
   SDL_BlitSurface(data, &sr, screen::vis, &dr);
 }
 
@@ -143,8 +162,13 @@ void image::putbox_mask_trans (u_int16 x, u_int16 y, u_int8 alpha)
   dr.y=y;
   dr.w=lenght;
   dr.h=height;
-  SDL_SetColorKey(data, SDL_SRCCOLORKEY, screen::get_trans());
+  if(!mask_on)
+    {
+      SDL_SetColorKey(data, SDL_SRCCOLORKEY|SDL_RLEACCEL, screen::get_trans());
+      mask_on=true;
+    }
   SDL_SetAlpha(data, SDL_SRCALPHA, alpha);
+  trans_on=true;
   SDL_BlitSurface(data, NULL, screen::vis, &dr);
 }
 
@@ -171,6 +195,7 @@ void image::putbox_part_trans (u_int16 x, u_int16 y, u_int16 bw,
   dr.h=bh;
 
   SDL_SetAlpha(data, SDL_SRCALPHA, alpha);
+  trans_on=true;
   SDL_BlitSurface(data, &sr, screen::vis, &dr);
 }
 
@@ -196,10 +221,15 @@ void image::putbox_mask_part_trans (u_int16 x, u_int16 y, u_int16 bw,
   dr.y=y;
   dr.w=bw;
   dr.h=bh;
-  SDL_SetColorKey(data, SDL_SRCCOLORKEY, screen::get_trans());
+  if(!mask_on)
+    {
+      SDL_SetColorKey(data, SDL_SRCCOLORKEY|SDL_RLEACCEL, screen::get_trans());
+      mask_on=true;
+     }
   SDL_SetAlpha(data, SDL_SRCALPHA, alpha);
+  trans_on=true;
   SDL_BlitSurface(data, &sr, screen::vis, &dr);
- }
+}
 
 void image::gfxrealloc(u_int32 l)
 {
@@ -620,7 +650,8 @@ void screen::init_display(u_int8 vidmode = 0)
       fprintf (stderr, "error: %s\n", SDL_GetError ());
       exit (1);
     }
-  
+  // Turning off mouse cursor
+  SDL_ShowCursor(0);
   
   SDL_WM_SetCaption ("Adonthell", NULL);
 
