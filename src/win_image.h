@@ -27,7 +27,9 @@ class win_image : public win_base
   void update_image();
  public:
   win_image(s_int16 tx,s_int16 ty,image * tpic,win_theme*);
+#ifndef SWIG
   win_image(s_int16 tx,s_int16 ty,u_int16 tl,u_int16 th,win_theme*);
+#endif
   ~win_image();
   void resize(u_int16,u_int16);
   void set_image(image *);

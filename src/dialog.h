@@ -31,6 +31,7 @@ public:
     PyObject *get_instance ();      // Get the Python dialogue instance
 
     char **text;                    // NPC's speech and according Player responses
+    u_int32 npc_color;              // The color of the NPC's text
     u_int32 text_size;              // Number of strings in text
 
 private:

@@ -487,9 +487,8 @@ SWIG_InstallConstants(PyObject *d, swig_const_info constants[]) {
 
 /* -------- TYPES TABLE (BEGIN) -------- */
 
-#define  SWIGTYPE_p_npc swig_types[0] 
-#define  SWIGTYPE_p_dialog_engine swig_types[1] 
-static swig_type_info *swig_types[3];
+#define  SWIGTYPE_p_dialog_engine swig_types[0] 
+static swig_type_info *swig_types[2];
 
 /* -------- TYPES TABLE (END) -------- */
 
@@ -505,6 +504,7 @@ static swig_type_info *swig_types[3];
 #include "types.h"
 #include "character.h"
 #include "dialog_engine.h"
+#include "win_container.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -539,21 +539,6 @@ static PyObject *_wrap_dialog_engine_set_name(PyObject *self, PyObject *args) {
 }
 
 
-static PyObject *_wrap_dialog_engine_set_color(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    dialog_engine *arg0 ;
-    unsigned long arg1 ;
-    PyObject * argo0 =0 ;
-    
-    if(!PyArg_ParseTuple(args,"Ol:dialog_engine_set_color",&argo0,&arg1)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_dialog_engine,1)) == -1) return NULL;
-    arg0->set_color(arg1);
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
 static PyObject *_wrap_dialog_engine_set_npc(PyObject *self, PyObject *args) {
     PyObject *resultobj;
     dialog_engine *arg0 ;
@@ -569,56 +554,10 @@ static PyObject *_wrap_dialog_engine_set_npc(PyObject *self, PyObject *args) {
 }
 
 
-static PyObject *_wrap_new_dialog_engine(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    npc *arg0 ;
-    PyObject * argo0 =0 ;
-    dialog_engine *result ;
-    
-    if(!PyArg_ParseTuple(args,"O:new_dialog_engine",&argo0)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_npc,1)) == -1) return NULL;
-    result = (dialog_engine *)new dialog_engine(arg0);
-    resultobj = SWIG_NewPointerObj((void *) result, SWIGTYPE_p_dialog_engine);
-    return resultobj;
-}
-
-
-static PyObject *_wrap_dialog_engine_run(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    dialog_engine *arg0 ;
-    PyObject * argo0 =0 ;
-    
-    if(!PyArg_ParseTuple(args,"O:dialog_engine_run",&argo0)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_dialog_engine,1)) == -1) return NULL;
-    arg0->run();
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
-static PyObject *_wrap_delete_dialog_engine(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    dialog_engine *arg0 ;
-    PyObject * argo0 =0 ;
-    
-    if(!PyArg_ParseTuple(args,"O:delete_dialog_engine",&argo0)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_dialog_engine,1)) == -1) return NULL;
-    delete arg0;
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
 static PyMethodDef dialog_enginecMethods[] = {
 	 { "dialog_engine_set_portrait", _wrap_dialog_engine_set_portrait, METH_VARARGS },
 	 { "dialog_engine_set_name", _wrap_dialog_engine_set_name, METH_VARARGS },
-	 { "dialog_engine_set_color", _wrap_dialog_engine_set_color, METH_VARARGS },
 	 { "dialog_engine_set_npc", _wrap_dialog_engine_set_npc, METH_VARARGS },
-	 { "new_dialog_engine", _wrap_new_dialog_engine, METH_VARARGS },
-	 { "dialog_engine_run", _wrap_dialog_engine_run, METH_VARARGS },
-	 { "delete_dialog_engine", _wrap_delete_dialog_engine, METH_VARARGS },
 	 { NULL, NULL }
 };
 
@@ -628,11 +567,9 @@ static PyMethodDef dialog_enginecMethods[] = {
 
 /* -------- TYPE CONVERSION AND EQUIVALENCE RULES (BEGIN) -------- */
 
-static swig_type_info _swigt__p_npc[] = {{"_p_npc", 0, "npc *"},{"_p_npc"},{0}};
 static swig_type_info _swigt__p_dialog_engine[] = {{"_p_dialog_engine", 0, "dialog_engine *"},{"_p_dialog_engine"},{0}};
 
 static swig_type_info *swig_types_initial[] = {
-_swigt__p_npc, 
 _swigt__p_dialog_engine, 
 0
 };

@@ -508,6 +508,7 @@ static swig_type_info *swig_types[5];
 #include "character.h"
 #include "storage.h"
 #include "dialog_engine.h"
+#include "win_theme.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -784,7 +785,7 @@ static PyObject *_wrap_npc_move(PyObject *self, PyObject *args) {
 
 void  npc_talk(npc *self) {
     {
-        dialog_engine *de = new dialog_engine (self);
+        dialog_engine *de = new dialog_engine (self, new win_theme (win_theme::theme));
         de->run ();
     }
 }

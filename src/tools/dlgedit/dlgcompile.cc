@@ -91,9 +91,7 @@ void dlg_compiler::write_strings ()
 
     // these are dummies for the dialog editor; they're overwritten by
     // the game's dialogue engine
-    script << "    def set_color (self, new_color):\n"
-           << "        pass\n\n"
-           << "    def set_name (self, new_name):\n"
+    script << "    def set_name (self, new_name):\n"
            << "        pass\n\n"
            << "    def set_npc (self, new_npc):\n"
            << "        pass\n\n"
@@ -214,16 +212,16 @@ void dlg_compiler::write_npc (Circle *circle)
         else script << "\"" << circle->character << "\")";
     }
 
-    // set/unset Narrator
+    // set the text color
     if (circle->type == NARRATOR)
     {
-        script << "\n" << space << "self.set_color (0)";
+        script << "\n" << space << "self.color = 0";
     }
-    else if (!changed && narrator_before (circle))
+    else
     {
-        script << "\n" << space << "self.set_color (";
-        if (circle->character == "") script << "the_npc.color)";
-        else script << "characters[\"" << circle->character << "\"].color)";
+        script << "\n" << space << "self.color = ";
+        if (circle->character == "") script << "the_npc.color";
+        else script << "characters[\"" << circle->character << "\"].color";
     }
 
     if (debug) script << "\n\n" << space << "# " << circle->text.c_str (); 
@@ -309,7 +307,6 @@ void dlg_compiler::write_answer ()
         }   
 
         // Write NPC stuff
-        // script << "\n" << space << "self.npc" << (*i)->number << " ()";
         write_npc ((Circle*)*i);
 
         // write following player nodes (if any)

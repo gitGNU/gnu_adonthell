@@ -287,8 +287,8 @@ create_dlg_node_window (Circle *circle, crcle_dlg *dlg)
 
     while ((mychar = (character *) data::characters.next ()) != NULL)
     {
-        // don't add plyer to the list
-        if (!strcmp (mychar->name, ((character *) data::characters.get ("the_player"))->name)) continue;
+        // don't add the player character to the list
+        if (!strcmp (mychar->name, ((character *) data::the_player)->name)) continue;
         
         glade_menuitem = gtk_menu_item_new_with_label (mychar->name);
         gtk_object_set_user_data (GTK_OBJECT (glade_menuitem), mychar->name);

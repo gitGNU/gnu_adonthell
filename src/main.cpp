@@ -14,6 +14,7 @@
 
 #include "input.h"
 #include "game.h"
+#include "data.h"
 #include "landmap.h"
 #include "mapview.h"
 #include "py_inc.h"
@@ -32,6 +33,7 @@
 #include "win_theme.h"
 #include "win_background.h"
 #include "data_screen.h"
+#include "dialog_engine.h"
 
 int main(int argc, char * argv[])
 {
@@ -49,7 +51,9 @@ int main(int argc, char * argv[])
     // We need a map, and a map view or we won't see anything!
     landmap mymap;
     mapview mview;
+    data::load (0);
     data_screen *ds = NULL;
+    dialog_engine *de = NULL;
     
     // Trying to load the map
     if(mymap.load("smallmap.map"))
@@ -78,7 +82,7 @@ int main(int argc, char * argv[])
 	if(input::has_been_pushed(SDLK_ESCAPE)) break;
 	for(int i=0;i<screen::frames_to_do();i++)
 	  {
-	    if (!ds) 
+	    if (!ds && !de) 
 	      {
 		if(input::is_pushed(SDLK_RIGHT)) mview.scroll_right();
 		if(input::is_pushed(SDLK_LEFT)) mview.scroll_left();
@@ -92,8 +96,19 @@ int main(int argc, char * argv[])
 		
 		if (input::is_pushed(SDLK_l)) ds = new data_screen (LOAD_SCREEN);
 		if (input::is_pushed(SDLK_s)) ds = new data_screen (SAVE_SCREEN);
+
+		if (input::is_pushed(SDLK_t)) 
+		{
+		  de = new dialog_engine ((npc*)data::characters.next(), new win_theme (win_theme::theme));
+            de->run ();
+         }
 	      }
 	    mymap.update();
+        if (de && !de->update ())
+        {
+            delete de;
+            de = NULL;
+        }
 	    if (ds && ds->update ())
 	      {
 		delete ds;
@@ -103,6 +118,7 @@ int main(int argc, char * argv[])
 	//      	screen::clear();
 	mview.draw(0,0);
 	if (ds) ds->draw ();
+	if (de) de->draw ();
 	screen::show();
       }
 

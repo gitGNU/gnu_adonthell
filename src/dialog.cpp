@@ -157,7 +157,8 @@ void dialog::run (u_int32 index)
     npc = PyObject_GetAttrString (instance, "npc");
     player = PyObject_GetAttrString (instance, "player");
     cont = PyObject_GetAttrString (instance, "cont");
-
+    npc_color = PyInt_AsLong (PyObject_GetAttrString (instance, "color"));
+    
     // 2. Search the NPC part for used text
     for (i = 0; (int)i < PyList_Size (npc); i++)
     {
@@ -238,7 +239,7 @@ char* dialog::scan_string (const char *s)
     PyObject *result;
     char *start, *mid, *string = NULL;
     char *tmp, *newstr = strdup (s);
-    player *the_player = (player*) data::characters.get("the_player");
+    player *the_player = (player*) data::the_player;
 
     // replace $... shortcuts
     while (1)

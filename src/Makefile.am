@@ -9,7 +9,7 @@ image.cpp input.cpp lex.prefs.cpp main.cpp \
 mapselect.cpp maptpl.cpp mapobject.cpp mapcharacter.cpp landmap.cpp mapview.cpp \
 pnm.cpp prefs.cpp py_character_wrap.cpp py_landmap_wrap.cpp py_input_wrap.cpp \
 py_mapview_wrap.cpp \
-py_dialog_engine_wrap.cpp py_inc.cpp py_modules.cpp py_quest_wrap.cpp \
+py_inc.cpp py_modules.cpp py_quest_wrap.cpp py_dialog_engine_wrap.cpp \
 py_screen_wrap.cpp py_image_wrap.cpp quest.cpp screen.cpp storage.cpp \
 win_base.cpp win_border.cpp win_container.cpp win_font.cpp win_theme.cpp win_scrolled.cpp win_background.cpp win_scrollbar.cpp \
 win_file.cpp win_image.cpp win_label.cpp win_select.cpp win_write.cpp yarg.cc \
@@ -64,7 +64,7 @@ py_win_container_wrap.cpp : py_win_container.i
 	@mv win_container.py ../scripts
 
 py_dialog_engine_wrap.cpp : py_dialog_engine.i
-	swig -python -shadow -c++ -make_default -o $*.cpp $< 
+	swig -python -shadow -c++ -o $*.cpp $< 
 	@mv dialog_engine.py ../scripts
 
 py_character_wrap.cpp : py_character.i

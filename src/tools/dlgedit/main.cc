@@ -79,7 +79,7 @@ main (int argc, char *argv[])
     MainWnd->myplayer = new player;
 
     // Add the player to the character array
-    data::characters.set ("the_player", MainWnd->myplayer);
+    data::the_player = MainWnd->myplayer;
 
     // Make "the_player" available to the interpreter 
 	data::globals = PyModule_GetDict(m);
@@ -147,6 +147,8 @@ main (int argc, char *argv[])
     
     // Misc initialization
     init_app (MainWnd);
+
+    data::characters.set (MainWnd->myplayer->name, MainWnd->myplayer);
 
     MainWnd->wnd = NULL;
     MainWnd->text_dlg = NULL;

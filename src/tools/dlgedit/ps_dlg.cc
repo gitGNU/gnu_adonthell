@@ -30,11 +30,14 @@ void ps_dlg::run ()
 
 void ps_dlg::on_ok (char* n, int r, int g, char *the_npc)
 {
+    data::characters.erase (myplayer->name);
+    
     delete myplayer->name;  
     myplayer->name = strdup (n);
     myplayer->set("race", r);
     myplayer->set("gender", g);
 
+    data::characters.set (myplayer->name, myplayer);
     mynpc = (npc *) data::characters.get (the_npc);
 }
 

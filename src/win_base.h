@@ -150,9 +150,11 @@ class win_base
   
   //draw the object, return true if object is visible
   virtual bool draw();
-  
+
+#ifndef SWIG
   friend class win_container;
   friend class win_select;
+#endif
 };
 #endif
 

@@ -6,6 +6,7 @@
 #include "character.h"
 #include "storage.h"
 #include "dialog_engine.h"
+#include "win_theme.h"
 
 %}
 
@@ -26,7 +27,7 @@ public:
     // Start conversation with the NPC
     void talk ()
     {
-        dialog_engine *de = new dialog_engine (self);
+        dialog_engine *de = new dialog_engine (self, new win_theme (win_theme::theme));
         de->run ();
     }
 }

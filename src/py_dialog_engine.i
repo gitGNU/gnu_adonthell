@@ -5,6 +5,7 @@
 #include "types.h"
 #include "character.h"
 #include "dialog_engine.h"
+#include "win_container.h"
 
 %}
 
