@@ -13,7 +13,7 @@
 #include "win_theme.h"
 #include "win_base.h"
 #include "win_border.h"
-
+#include "game.h"
 
 win_border::win_border()
 {
@@ -161,57 +161,52 @@ void win_border::load(char * rep,char *size)
 {
   destroy();
   
-  char path[255];char tmp[255];
-  strcpy(path,WIN_DIRECTORY);
-  strcat(path,WIN_BORDER_DIRECTORY);
-  strcat(path,rep);
-  strcat(path,size);
-  
-  h_border_template_=new image();
-  strcpy(tmp,path);
-  strcat(tmp,WIN_H_BORDER_TEMPLATE_FILE);
-  h_border_template_->load_pnm(tmp);//new
-  
- 
-  v_border_template_=new image();
-  strcpy(tmp,path);
-  strcat(tmp,WIN_V_BORDER_TEMPLATE_FILE);
-  v_border_template_->load_pnm(tmp);//new
+  string fullpath;
+  string basepath = WIN_DIRECTORY;
+  basepath += WIN_BORDER_DIRECTORY;
+  basepath += rep;
+  basepath += size; 
 
+  basepath = game::find_directory (basepath);
+  cout << basepath << endl;
   
+  fullpath = basepath + WIN_H_BORDER_TEMPLATE_FILE; 
+  h_border_template_=new image();
+  h_border_template_->load_pnm(fullpath.c_str ());//new
+  
+  fullpath = basepath + WIN_V_BORDER_TEMPLATE_FILE;  
+  v_border_template_=new image();
+  v_border_template_->load_pnm(fullpath.c_str ());//new
+  
+  fullpath = basepath + WIN_CORNER_TOP_LEFT_FILE;  
   border_[0]=new image();
-  strcpy(tmp,path);
-  strcat(tmp,WIN_CORNER_TOP_LEFT_FILE);
-  border_[0]->load_pnm(tmp);
+  border_[0]->load_pnm(fullpath.c_str ());
   border_brightness_[0]=new image();
   border_brightness_[0]->brightness(*(border_[0]),WIN_BRIGHTNESS_LEVEL);
   border_[0]->set_mask(true);
   border_brightness_[0]->set_mask(true);
 
+  fullpath = basepath + WIN_CORNER_TOP_RIGHT_FILE;  
   border_[1]=new image();
-  strcpy(tmp,path);
-  strcat(tmp,WIN_CORNER_TOP_RIGHT_FILE);
-  border_[1]->load_pnm(tmp);
+  border_[1]->load_pnm(fullpath.c_str ());
   border_brightness_[1]=new image();
   border_brightness_[1]->brightness(*(border_[1]),WIN_BRIGHTNESS_LEVEL);
   border_[1]->set_mask(true);
   border_brightness_[1]->set_mask(true);
 
 
+  fullpath = basepath + WIN_CORNER_BOTTOM_LEFT_FILE;  
   border_[2]=new image();
-  strcpy(tmp,path);
-  strcat(tmp,WIN_CORNER_BOTTOM_LEFT_FILE);
-  border_[2]->load_pnm(tmp);
+  border_[2]->load_pnm(fullpath.c_str ());
   border_brightness_[2]=new image();
   border_brightness_[2]->brightness(*(border_[2]),WIN_BRIGHTNESS_LEVEL);
   border_[2]->set_mask(true);
   border_brightness_[2]->set_mask(true);
   
 
+  fullpath = basepath + WIN_CORNER_BOTTOM_RIGHT_FILE;  
   border_[3]=new image();
-  strcpy(tmp,path);
-  strcat(tmp,WIN_CORNER_BOTTOM_RIGHT_FILE);
-  border_[3]->load_pnm(tmp);
+  border_[3]->load_pnm(fullpath.c_str ());
   border_brightness_[3]=new image();
   border_brightness_[3]->brightness(*(border_[3]),WIN_BRIGHTNESS_LEVEL);
   border_[3]->set_mask(true);

@@ -14,7 +14,7 @@ EXTRA_DIST = .indent.pro prefs.l py_adonthell.i adonthell.py
 
 CPPFLAGS += $(SDL_DEFS) $(OGG_DEFS) $(SDL_CFLAGS) $(OGG_CFLAGS) $(PY_CFLAGS)
 
-#noinst_LIBRARIES = libadonthell.a
+noinst_LIBRARIES = libadonthell.a
 
 CLEANFILES = $(moddata_SCRIPTS)
 
@@ -47,20 +47,31 @@ CLEANFILES = $(moddata_SCRIPTS)
 
 #adonthell_SOURCES = main.cc
 
-alextest_SOURCES = animation.cc drawable.cc drawing_area.cc fileops.cc \
+libadonthell_a_SOURCES = animation.cc drawable.cc drawing_area.cc fileops.cc \
 	image.cc input.cc gametime.cc map_coordinates.cc mapsquare_obj_area.cc \
 	mapsquare_obj_area_gfx.cc map_placeable.cc map_placeable_gfx.cc \
 	map_moving.cc map_moving_gfx.cc map_character.cc map_character_gfx.cc \
-	map_character_with_gfx.cc map_object.cc map_object_gfx.cc \
-	map_object_with_gfx.cc landmap.cc pnm.cc surface.cc screen.cc main.cc \
+	map_character_with_gfx.cc map_object.cc map_object_gfx.cc game.cc \
+	map_object_with_gfx.cc landmap.cc pnm.cc surface.cc screen.cc \
+	py_callback.cc python_class.cc py_object.cc \
+	win_background.cc win_base.cc win_border.cc \
+	win_container.cc win_font.cc win_keys.cc\
+	win_manager.cc win_scrollbar.cc win_scroll.cc win_select.cc win_theme.cc \
+	label.cc  label_input.cc win_event.cc yarg.cc \
 	types.h animation.h drawable.h drawing_area.h fileops.h image.h \
 	input.h gametime.h map_coordinates.h mapsquare_obj_area.h \
 	mapsquare_obj_area_gfx.h map_placeable.h map_placeable_gfx.h \
 	map_moving.h map_moving_gfx.h map_character.h map_character_gfx.h \
-	map_character_with_gfx.h map_object.h map_object_gfx.h \
-	map_object_with_gfx.h landmap.h pnm.h surface.h screen.h
+	map_character_with_gfx.h map_object.h map_object_gfx.h game.h \
+	map_object_with_gfx.h landmap.h pnm.h surface.h screen.h \
+	callback.h py_callback.h python_class.h py_object.h \
+	str_hash.h win_font.h win_image.h win_label.h win_mapview.h label.h label_input.h \
+	win_scrollbar.h win_scroll.h win_select.h win_theme.h win_keys.h win_event.h win_types.h \
+	win_write.h win_manager.h win_object.h window.h
 
-alextest_LDADD = $(SDL_LIBS)
+alextest_SOURCES = main.cc
+
+alextest_LDADD = libadonthell.a $(SDL_LIBS)
 
 # Note: adonthell.py is also built by this target. 
 py_adonthell_wrap.cc : py_adonthell.i *.h

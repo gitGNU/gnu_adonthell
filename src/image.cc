@@ -287,6 +287,8 @@ void image::tile (const surface& src, u_int16 l, u_int16 h, u_int16 x = 0, u_int
     u_int16 posx;
     u_int16 posy;
 
+    if (!l || !h) return; 
+    
     drawing_area da (x, y, l, h); 
     
     for (posy = 0; posy < h; posy += src.height ())
