@@ -1,5 +1,5 @@
 /*
-   $Id:
+   $Id$
 
    Copyright (C) 2002   Alexandre Courbot <alexandrecourbot@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
@@ -16,15 +16,12 @@
 #define MAP_OBJECT_WITH_GFX
 
 #include "map_object.h"
-#include "map_object_gfx.h"
+#include "map_placeable_gfx.h"
 
-class map_object_with_gfx : public map_object, public map_object_gfx
+class map_object_with_gfx : public map_object, public map_placeable_gfx
 {
 public:
     map_object_with_gfx (); 
-
-    bool update ();
-    void set_state (const string & st);
 }; 
 
 #endif

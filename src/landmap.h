@@ -1,5 +1,5 @@
 /*
-   $Id:
+   $Id$
 
    Copyright (C) 2002   Alexandre Courbot <alexandrecourbot@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
@@ -29,7 +29,24 @@ public:
 
     bool operator < (const mapsquare_info & mi) const
     {
-        return ((map_coordinates) *this < (map_coordinates) mi); 
+        if (y() < mi.y()) return true;
+        if (y() != mi.y()) return false;
+        if (oy() < mi.oy()) return true;
+        if (oy() != mi.oy()) return false;
+        // If the objects are at the same y position, we better
+        // make an arbitrary test to make sure a moving object
+        // won't go from behind to before another object when
+        // their y coordinates are the same and the x coordinate
+        // of the moving object become greater than the other object.
+        if (obj < mi.obj) return true;
+        return false;
+    }
+
+    bool operator == (const mapsquare_info & mi) const
+    {
+        // We call map_coordinates::operator == here
+        return ((map_coordinates)*this == (map_coordinates)mi && 
+                obj == mi.obj);
     }
 }; 
 

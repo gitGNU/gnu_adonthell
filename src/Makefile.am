@@ -50,8 +50,8 @@ CLEANFILES = $(moddata_SCRIPTS)
 libadonthell_a_SOURCES = animation.cc drawable.cc drawing_area.cc fileops.cc \
 	image.cc input.cc gametime.cc map_coordinates.cc mapsquare_obj_area.cc \
 	mapsquare_obj_area_gfx.cc map_placeable.cc map_placeable_gfx.cc \
-	map_moving.cc map_moving_gfx.cc map_character.cc map_character_gfx.cc \
-	map_character_with_gfx.cc map_object.cc map_object_gfx.cc game.cc \
+	map_moving.cc map_character.cc \
+	map_character_with_gfx.cc map_object.cc game.cc \
 	map_object_with_gfx.cc landmap.cc pnm.cc surface.cc screen.cc \
 	py_callback.cc python_class.cc py_object.cc \
 	win_background.cc win_base.cc win_border.cc \
@@ -63,8 +63,8 @@ libadonthell_a_SOURCES = animation.cc drawable.cc drawing_area.cc fileops.cc \
 	types.h animation.h drawable.h drawing_area.h fileops.h image.h \
 	input.h gametime.h map_coordinates.h mapsquare_obj_area.h \
 	mapsquare_obj_area_gfx.h map_placeable.h map_placeable_gfx.h \
-	map_moving.h map_moving_gfx.h map_character.h map_character_gfx.h \
-	map_character_with_gfx.h map_object.h map_object_gfx.h game.h \
+	map_moving.h map_character.h \
+	map_character_with_gfx.h game.h \
 	map_object_with_gfx.h landmap.h pnm.h surface.h screen.h \
 	callback.h py_callback.h python_class.h py_object.h \
 	str_hash.h win_font.h win_image.h win_label.h win_mapview.h label.h label_input.h \

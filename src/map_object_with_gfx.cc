@@ -1,5 +1,5 @@
 /*
-   $Id:
+   $Id$
 
    Copyright (C) 2002   Alexandre Courbot <alexandrecourbot@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
@@ -30,7 +30,7 @@ static animation * make_anim (const string & s)
 }
 
 
-map_object_with_gfx::map_object_with_gfx () : map_object (), map_object_gfx () 
+map_object_with_gfx::map_object_with_gfx () : map_object (), map_placeable_gfx ((map_placeable &) *this) 
 {
     mapsquare_obj_area moa;
     moa.resize (4, 5);
@@ -43,17 +43,4 @@ map_object_with_gfx::map_object_with_gfx () : map_object (), map_object_gfx ()
     add_gfx ("default", moag); 
     
     set_state ("default"); 
-}
-
-bool map_object_with_gfx::update () 
-{
-    map_object_gfx::update ();
-
-    return true; 
-}
-
-void map_object_with_gfx::set_state (const string & st) 
-{
-    map_object::set_state (st);
-    map_object_gfx::set_state (st); 
 }

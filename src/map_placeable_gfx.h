@@ -1,5 +1,5 @@
 /*
-   $Id:
+   $Id$
 
    Copyright (C) 2002   Alexandre Courbot <alexandrecourbot@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
@@ -25,8 +25,10 @@ private:
     map <string, mapsquare_obj_area_gfx> Gfxs;
     map <string, mapsquare_obj_area_gfx>::iterator Current_gfx;
 
+    map_placeable & Target;
+
 public:
-    map_placeable_gfx () 
+    map_placeable_gfx (map_placeable & target) : Target(target)
     {
         Current_gfx = Gfxs.begin (); 
     }
@@ -36,7 +38,7 @@ public:
         Gfxs.insert (pair<const string, mapsquare_obj_area_gfx> (name, gfx)); 
     }
 
-    void set_state (const string & name) 
+    void set_gfx (const string & name) 
     {
         if (Current_gfx != Gfxs.end() && Current_gfx->first == name)
             return;
@@ -46,17 +48,30 @@ public:
             Current_gfx->second.stop();
             Current_gfx->second.rewind();
         }
+
+        map <string, mapsquare_obj_area_gfx>::iterator Previous_gfx;
+        Previous_gfx = Current_gfx;
         Current_gfx = Gfxs.find (name); 
 
         if (Current_gfx != Gfxs.end())
             Current_gfx->second.play();
+        else Current_gfx = Previous_gfx;
     }
 
     bool update () 
     {
+        if (Target.State_changed)
+        {
+            Target.State_changed = false;
+            map_placeable_gfx::set_gfx (Target.current_state_name()); 
+        }
+        
+        
         if (Current_gfx != Gfxs.end ())
             Current_gfx->second.update ();
-        return true; 
+
+        return true;
+
     }
 
     void draw (s_int16 x, s_int16 y, const drawing_area * da_opt = NULL,

@@ -1,5 +1,5 @@
 /*
-   $Id:
+   $Id$
 
    Copyright (C) 2002   Alexandre Courbot <alexandrecourbot@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
@@ -15,7 +15,7 @@
 #include "map_character_with_gfx.h"
 
 map_character_with_gfx::map_character_with_gfx () : map_character (),
-                                                    map_character_gfx () 
+                                                    map_placeable_gfx((map_placeable &)*this) 
 {
     mapsquare_obj_area moa;
     moa.resize (1, 2);

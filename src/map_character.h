@@ -1,5 +1,5 @@
 /*
-   $Id:
+   $Id$
 
    Copyright (C) 2002   Alexandre Courbot <alexandrecourbot@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
@@ -76,29 +76,7 @@ public:
 
     void set_direction(int ndir);
 
-    void add_direction(direction ndir)
-    {
-        int tstdir = current_dir();
-        switch (ndir)
-        {
-            case WEST:
-                if (tstdir && EAST) tstdir &= ~EAST;
-                break;
-            case EAST:
-                if (tstdir && WEST) tstdir &= ~WEST;
-                break;
-            case SOUTH:
-                if (tstdir && NORTH) tstdir &= ~NORTH;
-                break;
-            case NORTH:
-                if (tstdir && SOUTH) tstdir &= ~SOUTH;
-                break;
-            default:
-                break;
-        }
-
-        set_direction(tstdir | ndir);
-    }
+    void add_direction(direction ndir);
 
     void remove_direction(direction ndir)
     {

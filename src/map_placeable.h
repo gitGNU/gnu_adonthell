@@ -1,5 +1,5 @@
 /*
-   $Id:
+   $Id$
 
    Copyright (C) 2002   Alexandre Courbot <alexandrecourbot@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
@@ -80,12 +80,19 @@ public:
     }
 
     void set_state (const string & name) 
-    {
+    {    
         if (Current_state != States.end() && Current_state->first == name)
             return;
+
+        map <string, mapsquare_obj_area>::iterator Previous_state;
+        Previous_state = Current_state;
         Current_state = States.find (name); 
-        State_changed = true;
+        if (Current_state == States.end())
+            Current_state = Previous_state;
+        else State_changed = true;
     }
+
+    friend class map_placeable_gfx;
 };
 
 #endif

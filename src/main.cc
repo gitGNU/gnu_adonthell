@@ -79,8 +79,6 @@ public:
 
         }
 
-        mchar.update_state();
-
         return 1;
     }
     
@@ -173,9 +171,13 @@ int main (int argc, char * argv[])
         input_manager::update();
         
         lmap.remove (&gc.mchar); 
-        for (int i = 0; i < gametime::frames_to_skip (); i++) gc.mchar.update ();  
+        for (int i = 0; i < gametime::frames_to_skip (); i++) 
+        {
+            gc.mchar.map_character::update ();  
+            gc.mchar.map_placeable_gfx::update ();  
+            mobj.update();
+        }
         lmap.put (&gc.mchar); 
-        
         
         // Rendering phase
         
