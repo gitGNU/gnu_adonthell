@@ -24,7 +24,7 @@
 
 \layout Title
 
-The Adonthell Dialogue Editor v0.6
+The Adonthell Dialogue Editor v0.7
 \layout Author
 
 Kai Sterker
@@ -38,21 +38,21 @@ Before we start designing our first dialogues, it might be wise to have
  Once you understand the basic rules, it will help you to avoid errors.
 \layout Standard
 
-A dialogue consists of a number of NPC and Player lines, arranged in a certain
- order.
+A dialogue consists of a number of Narrator, NPC and Player lines, arranged
+ in a certain order.
  The rules for this are as follows:
 \layout Enumerate
 
-The dialogue starts with, at least, either one NPC or Player line.
+The dialogue starts with, at least, either one NPC or Narrator line.
 \layout Enumerate
 
-NPC lines may be followed by 0 or more Player lines.
+Narrator lines may be followed by 0 or more of either lines.
 \layout Enumerate
 
-NPC lines may be followed by 0 or more NPC lines.
+NPC lines may be followed by 0 or more of either lines.
 \layout Enumerate
 
-Player lines may be followed by 0 or more NPC lines.
+Player lines may be followed by 0 or more NPC or Narrator lines.
 \layout Enumerate
 
 The dialogue ends when no more lines follow.
@@ -65,7 +65,7 @@ This results in a directed graph which later on is traversed by the dialogue
 Start with those lines that have no predecessor.
 \layout Enumerate
 
-Chose randomly between multiple NPC lines.
+Chose randomly between multiple NPC or Narrator lines.
 \layout Enumerate
 
 Let the player chose if there are multiple Player lines.
@@ -78,13 +78,12 @@ Apart from that, there are a number of additional features that influence
  how the dialogue appears to the player:
 \layout Enumerate
 
-NPC and Player lines may be based on conditions, meaning they are only available
- if a certain condition is met.
+Each line may be based on conditions, meaning they are only available if
+ a certain condition is met.
 \layout Enumerate
 
 NPC lines can be attached to different characters, making conversations
  with/between multiple NPC's possible.
- (available soon)
 \layout Standard
 
 These 11 points cover most of the Dialogue System's functionality and should
@@ -1165,7 +1164,7 @@ The Main Window
 \layout Standard
 \added_space_top 0.3cm \added_space_bottom 0.3cm \align left 
 
-\begin_inset Figure size 503 402
+\begin_inset Figure size 504 403
 file dlgedit_main.ps
 subcaption The Main Interface
 flags 3
@@ -1614,10 +1613,10 @@ The Edit Window
 \layout Standard
 \added_space_top 0.3cm \added_space_bottom 0.3cm \align left 
 
-\begin_inset Figure size 388 333
+\begin_inset Figure size 405 348
 file dlgedit_edit.ps
 subcaption The Edit Node dialog
-flags 11
+flags 3
 subfigure
 
 \end_inset 
@@ -1632,7 +1631,8 @@ subfigure
 When you create a new Circle, you should attach some text to it.
  This is done on this page.
  Simply type the text into the entry.
- Player text will be displayed blue, NPC text black.
+ Player text will be displayed blue, NPC text black and Narrator text in
+ green.
  You can switch between both with (5).
 \layout Paragraph
 
@@ -1672,12 +1672,12 @@ Here you can enter a variety of Python code.
  (in case of NPC text) or selected as response (in case of Player text).
  Use the code you enter here to change quest objects, NPC or Player attributes,
  etc.
- How this works in detail, will be described in section 3.4 on page 
+ How this works in detail, will be described in section 3.5 on page 
 \begin_inset LatexCommand \pageref{code}
 
 \end_inset 
 
- as soon as these features are available.
+.
 \layout Standard
 
 The green page label tells you at a glance that this Circle contains some
@@ -1686,7 +1686,7 @@ The green page label tells you at a glance that this Circle contains some
 \layout Paragraph
 
 4.
- Miscellanous Commands
+ Actions
 \layout Standard
 
 Here are just a few shortcuts that create code as you can enter in (3).
@@ -1697,17 +1697,14 @@ Loop
 command works.
  When activated, the Node will not be marked as used once it appears in
  the conversation, and thus may be spoken several times.
-\layout Standard
-
-None of them are implemented yet, but they will contain commands to start
- combat, change a NPC's active dialogue or plugin-dialogue and similar things.
 \layout Paragraph
 
 5.
- Assign text to Player or NPC
+ Assign text to Narrator, NPC or Player
 \layout Standard
 
-Use the Radiobuttons to assign the Circle either to the Player or to a NPC.
+Use the Radiobuttons to assign the Circle either to the Player, the Narrator
+ or to a NPC.
  The Editor tries its best to guess to whom this line of text shall belong,
  but as long as it can't read your thoughts, you'll have to correct it sometimes.
 \layout Paragraph
@@ -1724,7 +1721,9 @@ default
 , this will be the NPC this dialogue is assigned to.
  In case of a conversation between multiple NPC's, you might want to chose
  somebody else though.
- Note that this has not been implemented yet.
+ Note that only those NPC's are available that are currently in the character.dat
+a file in your adonthell-data directory.
+ Use charedit to change this file.
 \layout Paragraph
 
 7.
@@ -1750,7 +1749,7 @@ The Run Window
 \layout Standard
 \added_space_top 0.3cm \added_space_bottom 0.3cm \align left 
 
-\begin_inset Figure size 388 333
+\begin_inset Figure size 389 334
 file dlgedit_run.ps
 subcaption Testing the Dialogue
 flags 11
@@ -1789,13 +1788,86 @@ Usually, a line of NPC text will be followed by one or more responses, the
 \layout Paragraph
 
 4.
- Export this conversation
+ Restart this conversation
 \layout Standard
 
-The idea is that you might be able to find flaws of, and make improvements
- to your dialogue when having it available as an ASCII file.
- This feature is not implemented yet, and maybe it will completely vanish
- in later versions of the editor.
+Runs the dialogue from the beginning.
+ This will also reload the dialogue in case it has changed on disk.
+\layout Paragraph
+
+5.
+ Debug this dialogue
+\layout Standard
+
+Opens the debug window if it is not already open.
+\layout Subsection
+
+The Debug window
+\layout Standard
+\added_space_top 0.3cm \added_space_bottom 0.3cm \align left 
+
+\begin_inset Figure size 405 348
+file dlgedit_debug.ps
+subcaption The debug window
+flags 3
+subfigure
+
+\end_inset 
+
+
+\layout Paragraph
+
+1.
+ Display local variables
+\layout Standard
+
+This tab shows the current dialogue's local variables, if that dialogue
+ was compiled with debugging enabled and is currently running.
+ Local variables are only available as long as the Run window is open.
+ Further they are reinitialized when restarting the dialogue.
+\layout Paragraph
+
+2.
+ Display character attributes
+\layout Standard
+
+Here you can browse through all characters (and their attributes) in the
+ character.data file in your adonthell-data directory.
+ Unlike local variables, character attributes remain valid as long as the
+ dialogue editor is running.
+ Changes made to them will survive until the end of the editing session.
+ In a future version of dlgedit, it should be possible to revert the attribute
+ to those of the character.data.
+\layout Paragraph
+
+3.
+ Display quest attributes
+\layout Standard
+
+This tab shows all quests available in the quest.data file of you adonthell-data
+ directory.
+ The same rules as for the character attributes apply here.
+\layout Paragraph
+
+4.
+ The debug tree
+\layout Standard
+
+The actual attributes are shown in a tree.
+ Unchanged attributes are displayed black, changed ones in green and deleted
+ ones in red color.
+ You can change an attributes value by leftclicking on the attribute's name.
+ To delete an attribute, assign a value of zero to it.
+ To add a new attribute, simply click on the parent you want to add the
+ attribute to.
+\layout Paragraph
+
+5.
+ Run dialogue
+\layout Standard
+
+Click here to run the current dialogue.
+ This opens the Run Dialogue window in case it isn't open already.
 \layout Subsection
 
 
@@ -1806,7 +1878,15 @@ The idea is that you might be able to find flaws of, and make improvements
 Additional Python code
 \layout Standard
 
-As you have learned above, you can enter additional Python code at various
+From the tutorial you might have seen that each dialogue get's compiled
+ into a python class which then is fed into Adonthell's Python interpreter
+ to execute it step by step.
+ Given the flexibility of Python, it is only sensible to use it to achieve
+ more than simple static dialogues.
+ In brief, Python makes it possible to reflect the gameworlds current state
+ in a dialogue, and also to change that state depending on the player's
+ behaviour throughout the dialogue.
+ As you have learned above, you can enter additional Python code at various
  places of the dialogue:
 \layout Itemize
 
@@ -1822,75 +1902,214 @@ and finally you can add code that is executed after a piece of dialogue
  has been displayed.
 \layout Standard
 
-Especially about the latter case, you will find more information in this
- section.
-\layout Paragraph
+This section tries to give an overview of the possibilities additional Python
+ code offers for the conversation with NPC's.
+ One day, there'll be some document discussing the general Python scripting
+ available in Adonthell.
+\layout Subsubsection
 
-1.
- Controlling the Dialogue flow
+Embedded code
 \layout Standard
 
-What for is that then? Isn't that already achieved by linking Circles with
- arrows? Well, it partly is, but there are cases that cannot be handled
- that way.
- Imagine you want to give the player some special reply that is only available
- if the NPC gave him some hint earlier in the dialogue.
- With the dialogue being not linear at all, there may be numerous ways to
- reach the point where the player may have that optional response.
- But how do you know what exactly the NPC has told the player?
-\layout Standard
+The dialogue engine allows to embed a function call into a line of text
+ and will insert whatever string this function returns in place of the function.
+ This only works for methods defined in the custom function window (
+\emph on 
+Dialogue
+\emph default 
+->
+\emph on 
+Functions
+\emph default 
+ or
+\emph on 
+ Ctrl+F
+\emph default 
+).
+ It mustn't take any arguments and should return a string.
+ For example, the method
+\layout LyX-Code
 
-Here you'll have to employ additional Python code.
- So if you want to check later whether a special piece of dialogue has been
- spoken, you should set a flag in this special node:
-\layout Standard
+def hello_world (self):
+\layout LyX-Code
 
 
 \protected_separator 
-
-\layout Standard
-
-
-\family typewriter 
-self.special_text_spoken = 1
-\newline 
-
-\layout Standard
-
-And later on, you can add a condition to the special response that shall
- become available:
-\layout Standard
-
-
+ 
 \protected_separator 
+ return 
+\begin_inset Quotes eld
+\end_inset 
+
+Hello world!
+\begin_inset Quotes erd
+\end_inset 
+
 
 \layout Standard
 
+can be used in the text 
+\begin_inset Quotes eld
+\end_inset 
 
-\family typewriter 
-if self.special_text_spoken == 1:
-\newline 
+This will print: {hello_world}
+\begin_inset Quotes erd
+\end_inset 
 
+ to produce 
+\begin_inset Quotes eld
+\end_inset 
+
+This will print: Hello world!
+\begin_inset Quotes erd
+\end_inset 
+
+.
+ Of course for this to make sense, such a method should return one of several
+ strings according to the current situation.
 \layout Standard
 
-That's it.
- With this method, you can easily control what pieces of the dialogues the
- player traversed, and what pieces he didn't see.
- Note that the 
+Apart from that, there are the 
+\series bold 
+$name
+\series default 
+ and 
+\series bold 
+$fm{text_a/text_b}
+\series default 
+ macros.
+ $name will be replaced with the player's name at runtime, whereas $fm{/}
+ will cause text_a to be displayed if the player is female or text_b in
+ case the player is male.
+\layout Subsubsection
+
+Local variables
+\layout Standard
+
+For more advanced dialogues it might be necessary to define local variables.
+ They belong to the dialogue class and are addressed as 
 \family typewriter 
-self
+self.variable
 \family default 
- keyword means that those flags are stored with the dialogue, and thus are
- lost once the dialogue ends.
- If you want them to be static, you'll have to set them inside an appropriate
+.
+ Local variables are only accessible from within the dialogue itself and
+ thus are only available as long as the dialogue is running.
+ They won't remember their value between two runs of the dialogue.
+\layout Standard
+
+What for are they then? Basically they can be used to track the player's
+ path through the dialogue.
+ Information he may or may not have recieved could enable or disable additional
+ choices at a later point in the same dialogue, but how does the dialogue
+ engine learn about that.
+ The solution is to use local variables.
+ So when the player recieves the special information you'd add the following
  
 \emph on 
-quest object
+variable 
 \emph default 
-, or within the 
+code
+\layout LyX-Code
+
+self.special_info_gained = 1
+\layout Standard
+
+and later on, you base the special choice on following 
 \emph on 
-gamestate
+condition
 \emph default 
- array.
- More on those later, when they are implemented.
+:
+\layout LyX-Code
+
+if self.special_info_gained == 1:
+\layout Standard
+
+Note that you need not define a variable before you use it.
+ Undefined variables are assumed to have the value 0, so in above example
+ you needn't do anything about the case where the player doesn't get that
+ special information.
+\layout Standard
+
+But what would happen if the information gained and the enabled option aren't
+ part of the same dialogue? That is where persistant variables come into
+ play:
+\layout Subsubsection
+
+Persistent variables
+\layout Standard
+
+The state of the gameworld, of each NPC and the player are also accessible
+ from a dialogue script.
+ The full details should be discussed in a general scripting doc, but unless
+ this has happened, here are the bits relevant for the dialogue engine.
+ 
+\layout Standard
+
+The state of the gameworld is conserved in the various 
+\emph on 
+quests
+\emph default 
+.
+ On Python side, all quests are stored in the global 
+\family typewriter 
+quests
+\family default 
+ dictionary.
+ A special quest is retrieved by
+\layout LyX-Code
+
+myquest = quests[
+\begin_inset Quotes eld
+\end_inset 
+
+quest_name
+\begin_inset Quotes erd
+\end_inset 
+
+]
+\layout Standard
+
+and particular attributes of myquest are retrieved via
+\layout LyX-Code
+
+myattribute = myquest.get (
+\begin_inset Quotes eld
+\end_inset 
+
+attribute_name
+\begin_inset Quotes erd
+\end_inset 
+
+)
+\layout Standard
+
+and set with
+\layout LyX-Code
+
+myquest.set (
+\begin_inset Quotes eld
+\end_inset 
+
+attribute_name
+\begin_inset Quotes erd
+\end_inset 
+
+, myattribute)
+\layout Standard
+
+Characters are treated in a similar way, except that they are stored in
+ a dictionary called 
+\family typewriter 
+characters
+\family default 
+.
+ As an addition, the global variable 
+\family typewriter 
+the_player
+\family default 
+ always points to the player character and 
+\family typewriter 
+the_npc
+\family default 
+ to the npc the dialogue is assigned to.
 \the_end
