@@ -26,9 +26,17 @@ audio::audio (config &myconfig) {
   int i;  // Generic counter variable
 
   // Sample rate: 11025, 22050 or 44100 Hz
-  if (myconfig.audio_sample_rate == 0) audio_rate = 11025;                         
-  else if (myconfig.audio_sample_rate == 1) audio_rate = 22050;
-  else audio_rate = 44100;
+  switch( myconfig.audio_sample_rate ) {
+    case 0: {
+      audio_rate = 11025;
+      break; }
+    case 1: {
+      audio_rate = 22050;
+      break; }
+    default: {
+      audio_rate = 44100;
+      break; }
+  }
   
   // Output in signed 8/16-bit form
   audio_format = myconfig.audio_resolution == 0 ? AUDIO_S8 : AUDIO_S16; 

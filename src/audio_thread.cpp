@@ -39,16 +39,14 @@ int audio_init(config &myconfig) {
 int audio_update(void *data)
 {
   // Keep audio up-to-date
-  while (1==1) {
+  while (1) {
 
     // Keep busy until the audio device is connected
     while (audio_in == NULL) SDL_Delay(100);
 
     // Once the audio is connected, keep updating the audio stream
-    if (audio_in->background_on == true) {
-      if ( ! Mix_PlayingMusic() ) {
-        Mix_PlayMusic(audio_in->music[audio_in->current_background], 2);
-      }
+    if (audio_in->background_on == true &&  ! Mix_PlayingMusic()) {
+      Mix_PlayMusic(audio_in->music[audio_in->current_background], 2);
     }
     SDL_Delay(1000);
   }
