@@ -170,7 +170,14 @@ s_int8 mapcharacter::get_state (igzstream& file)
     action.set_active (activated); 
 
     jump_to (submap (), posx (), posy ()); 
+
+    // Get the path state
+    mypath.get_state (file);
+    // The map must be attached manually for now! :(
+    mypath.refmap = refmap; 
     
+    pathindex << file; 
+
     return 0;
 }
 
@@ -192,6 +199,10 @@ s_int8 mapcharacter::put_state (ogzstream& file) const
     schedule.is_activated () >> file;
     action.is_activated () >> file; 
 
+    // Save the path state
+    mypath.put_state (file);
+    pathindex >> file; 
+    
     return 0;
 }
 

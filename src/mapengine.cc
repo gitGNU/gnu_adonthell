@@ -83,13 +83,16 @@ s_int8 mapengine::get_state (igzstream& file)
     u_int16 nbr_of, i;
     string t;
 
-    // Load the map from the filename 
+    // Get the map filename 
     t << file; 
-    load_map (t);
 
+    // Load the map from the file
+    lmap.get (file); 
     // Load the map state (events)
     if (!lmap.get_state (file))
         return false; 
+
+    mv.mapview::attach_map (&lmap);
 
     // Load the mapcharacters
     nbr_of << file; 
@@ -117,6 +120,8 @@ s_int8 mapengine::put_state (ogzstream& file)
     string t = lmap.filename ();
     t >> file; 
 
+    // Save the map itself
+    lmap.put (file); 
     // Save the map state (events)
     lmap.put_state (file); 
 

@@ -86,18 +86,13 @@ void gamedata::set_directory (string dir)
 }
 
 
-
-bool gamedata::load (u_int32 pos)
+bool gamedata::load_characters (u_int32 pos) 
 {
     igzstream in;
     
     string filepath;
     character *mynpc;
-    quest *myquest;
-    
-    // First, unload the current game
-    unload ();
-    
+
     // try to open character.data
     filepath = saves[pos]->directory ();
     filepath += "/character.data";     
@@ -132,7 +127,17 @@ bool gamedata::load (u_int32 pos)
         // Make this character available to the engine
         data::characters[mynpc->get_name ().c_str ()] = mynpc;
     }
-    in.close (); 
+    in.close ();
+
+    return true; 
+}
+
+bool gamedata::load_quests (u_int32 pos) 
+{
+    igzstream in;
+    
+    string filepath;
+    quest *myquest;
     
     // retrieve quest array
     PyObject *quests = PyDict_GetItemString (data::globals, "quests");
@@ -152,6 +157,7 @@ bool gamedata::load (u_int32 pos)
         return false;
     
     // load quests
+    char ctemp;
     while (ctemp << in) 
     {
         myquest = new quest;
@@ -167,8 +173,17 @@ bool gamedata::load (u_int32 pos)
         data::quests[myquest->name.c_str ()] = myquest;
     }
 
-    in.close (); 
+    in.close ();
     
+    return true; 
+}
+
+bool gamedata::load_mapengine (u_int32 pos) 
+{
+    igzstream in;
+    
+    string filepath;
+
     // Load mapengine state
     filepath = saves[pos]->directory(); 
     filepath += "/mapengine.data";
@@ -190,6 +205,19 @@ bool gamedata::load (u_int32 pos)
     }
     
     in.close (); 
+
+    return true; 
+}
+
+bool gamedata::load (u_int32 pos)
+{
+    // First, unload the current game
+    unload ();
+    
+    if (!load_characters (pos)) return false;
+    if (!load_quests (pos)) return false;
+    if (!load_mapengine (pos)) return false; 
+    
 
     return true; 
 }

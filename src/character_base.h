@@ -142,9 +142,6 @@ class character_base : public storage
      * Loads the state (attributes) of the %character from an opened file.
      * 
      * @param in file from which to read.
-     
-     * @bug : We should be able to pass a string to objects
-     * instead of a char *, which memory isn't freed at exit.
      */
     
     void get_state (igzstream& in);

@@ -208,7 +208,7 @@ s_int8 landmap::get (igzstream& file)
     clear ();
 
     // Load mapobjects
-    i << file;
+    i << file; 
     for (; i; i--) 
     {
         mapobject * tobj = new mapobject; 
@@ -218,7 +218,7 @@ s_int8 landmap::get (igzstream& file)
     }
 
     // Load submaps
-    i << file; 
+    i << file;  
     for (j = 0; j < i; j++) 
     { 
         insert_submap (nbr_of_submaps ());
@@ -269,9 +269,7 @@ s_int8 landmap::load (string fname)
 s_int8 landmap::put (ogzstream& file) const
 {
     u_int16 i;
-
-    fileops::put_version (file, 1);
-    
+     
     // Save mapobjects
     nbr_of_mapobjects () >> file; 
     for (i = 0; i < nbr_of_mapobjects (); i++) 
@@ -324,6 +322,7 @@ s_int8 landmap::save (string fname)
 
     if (!file.is_open ())
         return -1;
+    fileops::put_version (file, 1);
     retvalue = put (file);
     file.close (); 
     filename_ = fname;

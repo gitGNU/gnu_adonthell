@@ -40,9 +40,13 @@ class win_select;
 
 
 /**
- * Common properties for each win_base's object 
- */
-
+ * Common properties for each win_base's object
+ *
+ * @bug It's currently impossible to render a windowed object
+ *      anywhere else than the screen. Windows should be capable
+ *      of being assigned a target parameter, which is a pointer
+ *      to the surface they should be drawn.
+ */ 
 class win_base: public win_event, public win_border, public drawing_area, public win_background
 {
  public:

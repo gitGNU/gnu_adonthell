@@ -147,7 +147,35 @@ public:
      * 
      */
     static void cleanup (); 
-    
+
+    /** 
+     * Load the characters state from a saved game.
+     * 
+     * @param pos Slot number to load.
+     * 
+     * @return \e true in case of success, \e false otherwise.
+     */
+    static bool load_characters (u_int32 pos); 
+ 
+    /** 
+     * Load the quests state from a saved game.
+     * 
+     * @param pos Slot number to load.
+     * 
+     * @return \e true in case of success, \e false otherwise.
+     */
+    static bool load_quests (u_int32 pos); 
+
+    /** 
+     * Load the mapengine state from a saved game. 
+     * 
+     * @param pos Slot number to load.
+     * 
+     * @return \e true in case of success, \e false otherwise.
+     */
+    static bool load_mapengine (u_int32 pos); 
+
+
     /** 
      * Loads a previously saved game.
      * 

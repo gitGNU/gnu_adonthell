@@ -108,7 +108,16 @@ public:
      * 
      */ 
     area_coord goal;
-  
+
+    /** 
+     * Totally clears the path.
+     * 
+     */
+    void clear () 
+    {
+        moves_to_goal.clear (); 
+    } 
+
     /** 
      * Tries to find the shortest path possible between the
      * \e start point and the \e goal point. 
@@ -123,7 +132,7 @@ public:
      * 
      * @return Number of moves between \e start and \e goal.
      */
-    u_int16 nbr_moves () 
+    u_int16 nbr_moves () const
     {
         return moves_to_goal.size ();
     }
@@ -135,11 +144,33 @@ public:
      * 
      * @return Direction (move) at index \e nbr.
      */
-    u_int16 get_move (u_int16 nbr) 
+    u_int16 get_move (u_int16 nbr) const
     {
         return moves_to_goal[nbr_moves () - (nbr + 1)]; 
     }
-    
+
+    /** 
+     * Restore the path's state from an opened file.
+     * 
+     * @param file the opened file from which to load the state.
+     * 
+     * @return 0 in case of success, error code otherwise.
+     *
+     * @bug the landmap this path belongs to must be restored manually!
+     */
+    s_int8 get_state (igzstream & file); 
+
+    /** 
+     * Saves the path's state into an opened file.
+     * 
+     * @param file the opened file where to the state.
+     * 
+     * @return 0 in case of success, error code otherwise.
+     *
+     * @bug the landmap this path belongs to can't be saved (as it's a pointer)! 
+     */
+    s_int8 put_state (ogzstream & file) const; 
+  
 private: 
     vector <u_int16> moves_to_goal;
     u_int16 goal_estimate (u_int16 x, u_int16 y); 

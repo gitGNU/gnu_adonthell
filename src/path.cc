@@ -257,3 +257,43 @@ bool path::calculate ()
     }     
     return false; 
 }
+
+s_int8 path::get_state (igzstream & file) 
+{
+    u_int16 nb_moves;
+
+    clear (); 
+    
+    submap << file;
+    dir << file;
+    start.x << file; 
+    start.y << file; 
+    goal.x << file;
+    goal.y << file;
+
+    nb_moves << file; 
+    for (u_int16 i = 0; i < nb_moves; i++)
+    {
+        u_int16 t;
+        t << file;
+        moves_to_goal.push_back (t); 
+    }
+    return 0; 
+}
+
+s_int8 path::put_state (ogzstream & file) const
+{
+    submap >> file;
+    dir >> file;
+    start.x >> file; 
+    start.y >> file; 
+    goal.x >> file;
+    goal.y >> file;
+
+    nbr_moves () >> file; 
+    for (u_int16 i = 0; i < nbr_moves (); i++)
+    {
+        get_move (i) >> file; 
+    }
+    return 0; 
+}

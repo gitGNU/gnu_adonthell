@@ -2,7 +2,8 @@
 
 EXTRA_DIST = charedit.lyx dlgedit.lyx dlgedit_debug.ps dlgedit_edit.ps dlgedit_main.ps dlgedit_run.ps \
 event.lyx interpreter.lyx items.txt \
-step1.ps step2.ps step3.ps step4.ps reference.cfg
+step1.ps step2.ps step3.ps step4.ps reference.cfg \
+mainpage.dxt intro.dxt prog_rules.dxt event.dxt map.dxt dialog.dxt
 
 if BUILD_DOC
 all:
