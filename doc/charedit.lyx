@@ -244,4 +244,31 @@ For use in the game, all character files of a specific directory are merged
  into a single, binary file that will be loaded at startup of the game.
  So make sure to store all characters belonging to the same project in the
  same directory.
+\layout Section
+
+Creating the character.data
+\layout Standard
+
+To merge all characters to the file that is read by the game engine, you
+ can use the 
+\emph on 
+mergechars
+\emph default 
+ command line tool (which will later be integrated with charedit).
+ Its usage is
+\layout LyX-Code
+
+mergechars <character directory> [outfile]
+\layout Standard
+
+It will add all characters in the 
+\emph on 
+character directory
+\emph default 
+ either to the optional 
+\emph on 
+outfile
+\emph default 
+, or to a file called character.data it creates in the current working directory.
+ If the file already exists, it will be overwritten.
 \the_end

@@ -1724,6 +1724,7 @@ default
 , this will be the NPC this dialogue is assigned to.
  In case of a conversation between multiple NPC's, you might want to chose
  somebody else though.
+ Note that this has not been implemented yet.
 \layout Paragraph
 
 7.
