@@ -36,8 +36,19 @@
 #include "mapengine.h"
 
 /**
- * Contains all the attributes related to a saved %game.
- * 
+ * Contains all the attributes related to a saved %game and the
+ * high level methods for loading/saving the %game.
+ *
+ * A word about saved games: all games are stored inside
+ * $HOME/.adonthell/ into a individual subdirectory, consisting
+ * of the %game's name (e.g. wastesedge) with the appendix "-save-xxx"
+ * where "xxx" is a number between 001 and 999. All %data that belongs
+ * to a saved %game is contained in that directory, thus allowing
+ * to copy individual games to another machine and/or user.
+ *
+ * The numbering of the %game directories has no special meaning. Saved
+ * games are recognized by the first part of their name, and saving a
+ * new %game will never overwrite an existing.
  */ 
 class gamedata
 {
@@ -54,8 +65,8 @@ public:
      *
      * @attention not available from %Python!
      * 
-     * @param desc description of the saved game.
-     * @param dir directory of the saved game.
+     * @param desc description of the saved %game.
+     * @param dir directory of the saved %game.
      */
     gamedata (string desc, string dir); 
 #endif
@@ -89,67 +100,73 @@ public:
     //@{
     
     /** 
-     * Returns the directory where the saved game lies.
+     * Returns the directory where the saved %game lies.
      * 
      * 
-     * @return Directory where the saved game lies.
+     * @return Directory where the saved %game lies.
      */
     const char* directory () { return directory_.c_str (); }
 
     /**
-     * Returns the description of the saved game.
+     * Returns the description of the saved %game.
      * 
      *
-     * @return Description of the saved game.
+     * @return Description of the saved %game.
      */ 
     const char* description () { return description_.c_str (); }
 
     /** 
-     * Returns the location of the saved game.
+     * Returns the location of the saved %game.
      * 
      * 
-     * @return Location of the saved game.
+     * @return Location of the saved %game.
      */
     const char* location () { return location_.c_str (); }
 
     /** 
-     * Returns the time of the saved game.
+     * Returns the time of the saved %game.
      * 
      * 
-     * @return Time of the saved game.
+     * @return Time of the saved %game.
      */
     const char* time () { return time_.c_str (); }
 
     /** 
-     * Sets the description for this game.
+     * Sets the description for this %game.
      * 
-     * @param string New description for this game.
+     * @param string New description for this %game.
      */
     void set_description (string);
 
     /** 
-     * Sets the directory for this game.
+     * Sets the directory for this %game.
      * 
-     * @param string New directory for this game.
+     * @param string New directory for this %game.
      */
     void set_directory (string);
 
     //@}
 
     /** 
-     * Initialise the saved games array.
-     * 
+     * Initialise the saved games array. Searches the user directory
+     * for available save games and loads their description.
+     *
+     * @param udir The user directory, usually $HOME/.adonthell
+     * @param gdir The %game data directory, usually /usr/local/share/adonthell
+     * @param gname The name of the %game we are running, e.g. wastesedge
+     *
+     * @return \e true in case of success, false otherwise.
      */
     static bool init (string udir, string gdir, string gname); 
     
     /** 
-     * Cleanup the saved games array.
+     * Cleanup the saved %game array.
      * 
      */
     static void cleanup (); 
 
     /** 
-     * Load the characters state from a saved game.
+     * Load the characters state from a saved %game.
      * 
      * @param pos Slot number to load.
      * 
@@ -158,7 +175,7 @@ public:
     static bool load_characters (u_int32 pos); 
  
     /** 
-     * Load the quests state from a saved game.
+     * Load the quests state from a saved %game.
      * 
      * @param pos Slot number to load.
      * 
@@ -167,7 +184,7 @@ public:
     static bool load_quests (u_int32 pos); 
 
     /** 
-     * Load the mapengine state from a saved game. 
+     * Load the mapengine state from a saved %game.
      * 
      * @param pos Slot number to load.
      * 
@@ -177,7 +194,9 @@ public:
 
 
     /** 
-     * Loads a previously saved game.
+     * Loads a previously saved %game. Slot 0 points to the
+     * initial %game %data and needs to be loaded when starting
+     * a fresh %game.
      * 
      * @param pos Slot number to load.
      * 
@@ -186,26 +205,31 @@ public:
     static bool load (u_int32 pos); 
     
     /** 
-     * Save a game.
+     * Save a %game. When given a slot number in the range of
+     * the available saved games, the according %game will be
+     * overwritten, otherwise a new saved %game is created.
+     * Saving to slot 0 is not possible, as it contains the
+     * initial %game %data.
      * 
      * @param pos Slot number where to save to.
-     * @param desc Description of the game to be saved.
+     * @param desc Description of the %game to be saved.
      * 
      * @return \e true in case of success, false otherwise.
      */
     static bool save (u_int32 pos, string desc);
     
     /**
-     * Unloads the current game.
+     * Unloads the current %game, resetting the engine to it's
+     * initial state.
      * 
      */ 
     static void unload (); 
 
     /** 
-     * Returns a pointer to the next saved game.
+     * Returns a pointer to the next saved %game.
      * 
      * 
-     * @return Next saved game.
+     * @return Next saved %game.
      */
     static gamedata* next_save ();
     
@@ -232,11 +256,11 @@ public:
     }
 
     /** 
-     * Returns a pointer to a saved game.
+     * Returns a pointer to a saved %game.
      * 
      * @param pos Slot number to return.
      * 
-     * @return Pointer to the saved game at position \pos.
+     * @return Pointer to the saved %game at position \pos.
      */
     static gamedata * get_saved_game (u_int32 pos) 
     {
@@ -255,21 +279,36 @@ public:
     }
 
     /** 
-     * Returns the player character.
+     * Returns the player %character.
      * 
      * 
-     * @return Player character.
+     * @return Player %character.
      */
     static character* player ()
     {
         return data::the_player;
     }
  
-    static character* get_character (string name) 
+    /**
+     * Returns a certain NPC when given the name. Use player () to get
+     * the player %character, as his/her name will be set at runtime.
+     *
+     * @param name The name of the %character to return
+     *
+     * @return a %character.
+     */
+    static character* get_character (string name)
     {
         return data::characters [name]; 
     }
 
+    /**
+     * Returns a certain quest when given the name.
+     *
+     * @param name The name of the %quest to return
+     *
+     * @return a %quest
+     */
     static quest* get_quest (string name)
     {
         return data::quests [name];
@@ -307,7 +346,7 @@ private:
     static string game_name; 
     
     /** 
-     * Keeps track of available save games.
+     * Keeps track of available saved games.
      * 
      */
     static vector<gamedata*> saves; 
