@@ -1,7 +1,7 @@
 /*
    $Id$
 
-   Copyright (C) 1999/2000/2001 Kai Sterker <kaisterker@linuxgames.com>
+   Copyright (C) 1999/2000/2001/2002 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -20,7 +20,6 @@
 #include "game.h"
 #include "character.h"
 #include "quest.h"
-// #include "mapengine.h"
 
 #include "python_class.h"
  
@@ -75,8 +74,6 @@ bool game::init (config & configuration, initflags to_init = INIT_ALL)
     {
         if (configuration.audio_volume > 0)
             audio::init (&configuration);
-        else
-            to_init = (enum initflags) (to_init ^ INIT_AUDIO);
     }
     
     // init input subsystem

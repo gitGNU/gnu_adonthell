@@ -2,6 +2,7 @@
    $Id$
 
    Copyright (C) 2000 Andrew Henderson <hendersa@db.erau.edu>
+   Copyright (C) 2002 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -103,26 +104,35 @@ void audio::init (config *myconfig) {
   }
 }
 
-void audio::cleanup(void) {
-  int i;
-  current_background = -1;  // No music is queued to play
+void audio::cleanup(void) 
+{
+    int i;
+    // No music is queued to play
+    current_background = -1;
 
-  // Null out those tunes and sound effects
-  for (i = 0; i < NUM_WAVES; i++) {
-    unload_wave(i);
-    sounds[i] = NULL;
-  }
-  for (i = 0; i < NUM_MUSIC; i++) {
-    unload_background(i);
-    music[i] = NULL;
-    music_file[i] = "";
-  }
+    // Null out those tunes and sound effects
+    for (i = 0; i < NUM_WAVES; i++) 
+    {
+        unload_wave(i);
+        sounds[i] = NULL;
+    }
+    
+    for (i = 0; i < NUM_MUSIC; i++) 
+    {
+        unload_background(i);
+        music[i] = NULL;
+        music_file[i] = "";
+    }
 
-  schedule.clear ();
+    // Clean audio schedule
+    schedule.clear ();
   
-  // Close out audio connection
-  Mix_CloseAudio();
-  audio_initialized = false;
+    // Close out audio connection
+    if (audio_initialized == true)
+    {
+        Mix_CloseAudio();
+        audio_initialized = false;
+    }
 }
 
 int audio::load_background(int slot, char *filename) {

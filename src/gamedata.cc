@@ -1,7 +1,7 @@
 /*
    $Id$
 
-   Copyright (C) 2001 by Kai Sterker <kaisterker@linuxgames.com>
+   Copyright (C) 2001/2002 by Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -34,7 +34,7 @@
 #include "python_class.h"
 
 // File format versions of the various data files
-// *** Increase when changine file format! ***
+// *** Increase when changing file format! ***
 #define ENGINE_DAT_VER  1
 #define AUDIO_DAT_VER   2
 #define CHAR_DAT_VER    3

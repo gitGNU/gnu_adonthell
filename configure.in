@@ -3,8 +3,7 @@ dnl Process this file with autoconf to produce a configure script.
 dnl **************************************************************
 
 AC_INIT(README)
-
-AM_INIT_AUTOMAKE(adonthell, 0.3pre1)
+AM_INIT_AUTOMAKE(adonthell, 0.3)
 
 CFLAGS="-g -Wall -fno-exceptions -fno-rtti"
 DEFS=""
@@ -334,7 +333,7 @@ echo Building API doc .......... : $builddoc
 if test x$memleaks = xyes; then
 echo Test for Memory Leaks ..... : enabled
 fi
-echo Data directory ............ : $gamedatadir
+echo "Data directory ............ : ${!gamedatadir}"
 
 echo
 echo "Now type 'make' to build Adonthell"
