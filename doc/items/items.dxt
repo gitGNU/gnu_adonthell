@@ -1,3 +1,40 @@
+/*
+   $Id$
+
+   Copyright (C) 1999/2000/2001 Kai Sterker <kaisterker@linuxgames.com>
+   Part of the Adonthell Project http://adonthell.linuxgames.com
+
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License.
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY.
+
+   See the COPYING file for more details.
+*/
+
+
+/*! \mainpage Item System Draft
+
+The purpose of this draft is to create a basis for discussion that will finally 
+be turned into a specification for the low-level item, combat and inventory
+system.
+
+<h2>Contents</h2>
+
+-# \ref abstract 
+-# \ref item 
+    -# \ref items1 
+    -# \ref items2 
+    -# \ref items3 
+-# \ref combat
+    -# \ref combat1
+    -# \ref combat2
+-# \ref inventory
+    -# \ref inv1
+    -# \ref inv2
+
+*/
+
 /*! \page abstract Abstract
 
 This document tries to explore what type of items are required for Adonthell and
@@ -11,6 +48,15 @@ latter is just an exercise for the programmer.
 
 The goal is to create an item system that is both realistic and easy to use.
 More important, it should add new and interesting aspects to gameplay.
+
+\htmlonly
+<hr>
+<center>
+&lt;&lt; <a href="index.html">Main Page</a> &nbsp; 
+<a href="index.html">Contents</a> &nbsp;
+<a href="item.html">Items</a> &gt;&gt;
+</center>
+\endhtmlonly
 
 */
 
@@ -180,6 +226,15 @@ Later I'll present some ideas for the implementation of those classes and their
 interaction with each other and the character. Right now it's more important
 to see what purpose they fulfil: they give us an easy way to create item 
 templates that can be turned into individual items by filling in the attributes.
+
+\htmlonly
+<hr>
+<center>
+&lt;&lt; <a href="abstract.html">Abstract</a> &nbsp; 
+<a href="index.html">Contents</a> &nbsp;
+<a href="combat.html">Combat</a> &gt;&gt;
+</center>
+\endhtmlonly
 
 */
 
@@ -373,6 +428,15 @@ leave the implementation for later:
 better armour, given all other factors remain the same.
 - The stronger the opponents, the more damage they should cause
 
+\htmlonly
+<hr>
+<center>
+&lt;&lt; <a href="item.html">Items</a> &nbsp; 
+<a href="index.html">Contents</a> &nbsp;
+<a href="inventory.html">Inventory</a> &gt;&gt;
+</center>
+\endhtmlonly
+
 */
 
 /*! \page inventory Inventory
@@ -555,5 +619,14 @@ available when the shop inventory is displayed.
 only available when the party inventory is displayed.
 - The trade button is used to complete the selling/buying transaction and will
 automatically close the inventory afterwards.
+
+\htmlonly
+<hr>
+<center>
+&lt;&lt; <a href="combat.html">Combat</a> &nbsp; 
+<a href="index.html">Contents</a> &nbsp;
+<!--<a href="inventory.html">Inventory</a> &gt;&gt;-->
+</center>
+\endhtmlonly
 
 */
