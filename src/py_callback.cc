@@ -73,6 +73,7 @@ void py_callback::callback_func1 (int arg)
     if (arguments) py_arg = Py_BuildValue ("(i,O)", arg, arguments);
     else py_arg = Py_BuildValue ("(i)", arg);
 
-    PyObject_CallObject (function, py_arg);
+    PyObject * res = PyObject_CallObject (function, py_arg);
     Py_XDECREF (py_arg);
+    Py_XDECREF (res); 
 }

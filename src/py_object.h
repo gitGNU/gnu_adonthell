@@ -47,7 +47,6 @@ using namespace std;
 class py_object
 {
 public:
-    
     /** 
      * Default constructor.
      * 

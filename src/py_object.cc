@@ -42,7 +42,7 @@ py_object::~py_object ()
 void py_object::clear ()
 {
     // Delete our instance
-    Py_XDECREF (instance); 
+    Py_XDECREF (instance);
     instance = NULL;
     
     script_file_ = "";
