@@ -1145,7 +1145,7 @@ void animation::set_info_win(char * text)
 {
   info_win_label->set_text(text);
   info_win_label->set_auto_size(true);
-  info_win->set_justify(info_win_label,WIN_JUSTIFY_CENTER);
+  info_win->set_align_all(WIN_ALIGN_CENTER);
   info_win_count=1;
 }
 
