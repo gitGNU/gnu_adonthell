@@ -14,6 +14,28 @@
 
 
 #include "map_character.h"
+#include <math.h>
+
+void map_character::set_direction(int ndir)
+{
+  float vx = 0.0, vy = 0.0;
+  
+  Current_dir = ndir;
+  
+  if (current_dir() & WEST) vx = -speed() * (1 + is_running());
+  if (current_dir() & EAST) vx = speed() * (1 + is_running());
+  if (current_dir() & NORTH) vy = -speed() * (1 + is_running());
+  if (current_dir() & SOUTH) vy = speed() * (1 + is_running());
+  
+  if (vx && vy)
+    {
+      float s = sqrt (vx*vx + vy*vy);
+      vx = (vx * fabs (vx))/s;
+      vy = (vy * fabs (vy))/s;
+    }
+  
+  set_velocity(vx, vy);
+}
 
 void map_character::update_state()
 {

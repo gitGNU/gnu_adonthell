@@ -13,7 +13,6 @@
 */
 
 
-#include <math.h>
 #include "map_moving.h"
 
 map_moving::map_moving ()
