@@ -271,6 +271,8 @@ private:
 #endif
 };
 
+#ifndef SWIG
+
 /**
  * A function that returns a new instance of an event.
  */
@@ -283,4 +285,5 @@ private:
 #define REGISTER_EVENT(type,evt)\
     event_list::register_event (type, (new_event) &new_ ## evt);
 
+#endif // SWIG
 #endif // EVENT_H_

@@ -63,6 +63,8 @@ mapcharacter::~mapcharacter ()
 
 void mapcharacter::clear ()
 {
+    if (saying) delete saying;
+
     for (u_int16 i = 0; i < anim.size (); i++)
         anim[i]->clear ();
     
@@ -1067,7 +1069,7 @@ void mapcharacter::update_move ()
 
 void mapcharacter::speak (const string & text)
 {
-    if (saying) 
+    if (saying)
         delete saying;
 
     string col; 

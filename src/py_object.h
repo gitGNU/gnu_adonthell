@@ -3,7 +3,7 @@
 
    Copyright (C) 1999/2000/2001    Kai Sterker
    Copyright (C) 2001    Alexandre Courbot
-Part of the Adonthell Project http://adonthell.linuxgames.com
+   Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License.
@@ -77,6 +77,16 @@ public:
     bool create_instance (string file, string classname, PyObject * args = NULL);
 
     /**
+     * Direct access to the instance object
+     *
+     * @return the Python class instance
+     */
+    PyObject *get_instance ()
+    {
+        return instance;
+    }
+
+    /**
      * Returns the module name of this object.
      * 
      * @return module name of this object.
@@ -104,6 +114,14 @@ public:
     {
         call_method ("run", args); 
     }
+
+    /**
+     * Returns a new reference to an attribute of this object.
+     *
+     * @param name Name of the attribute to access
+     * @return New reference to the attribute or NULL on error
+     */
+    PyObject* get_attribute (const string & name);
 
 private:
     string script_file_;

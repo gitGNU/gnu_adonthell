@@ -88,3 +88,11 @@ void py_object::call_method (const string & name, PyObject * args = NULL)
 #endif
     }
 }
+
+// Get an attribute of the instance
+PyObject *py_object::get_attribute (const string &name)
+{
+    if (!instance) return NULL;
+
+    return PyObject_GetAttrString (instance, (char *) name.c_str ());
+}

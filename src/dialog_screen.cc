@@ -1,7 +1,7 @@
 /*
    $Id$
 
-   (C) Copyright 2000 Kai Sterker <kaisterker@linuxgames.com>
+   (C) Copyright 2000/2001 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -14,46 +14,44 @@
 
 
 /**
- * @file   dialog_engine.cc
+ * @file   dialog_screen.cc
  * @author Kai Sterker <kaisterker@linuxgames.com>
- * 
- * @brief  Defines the dialog_engine class.
- * 
- * 
- */ 
+ *
+ * @brief  Defines the dialog_screen class.
+ *
+ *
+ */
 
 
 #include <iostream.h>
 #include <string.h>
-#include "character.h"
+#include "gamedata.h"
 #include "input.h"
 #include "image.h"
 #include "python_class.h"
 #include "input.h"
-#include "dialog_engine.h"
+#include "dialog_screen.h"
 #include "win_manager.h"
 
 #include "audio.h"
 
 // Init the dialogue engine
-dialog_engine::dialog_engine (character_base *mynpc, char * dlg_file, u_int8 size) 
+dialog_screen::dialog_screen (character_base *mynpc, char * dlg_file, u_int8 size)
 {
     init (mynpc, dlg_file, size);
 }
 
-void dialog_engine::init(character_base *mynpc, char * dlg_file, u_int8 size)
+void dialog_screen::init(character_base *mynpc, char * dlg_file, u_int8 size)
 {
     string path = dlg_file;
     string file = strrchr (dlg_file, '/') ? strrchr (dlg_file, '/') + 1 : dlg_file;
 
     audio::play_wave (-1, 0);
     is_running = true;
-    instance = NULL;
 
-    //Init position & size
+    // Init position & size
     win_container::move(20,20);
     win_container::resize(280,105);
-    
 
     // Load the different fonts
     fonts[0] = win_manager::get_font ("white");
@@ -62,14 +60,12 @@ void dialog_engine::init(character_base *mynpc, char * dlg_file, u_int8 size)
     fonts[3] = win_manager::get_font ("violet");
     fonts[4] = win_manager::get_font ("blue");
     fonts[5] = win_manager::get_font ("green");
-    
+
     theme = win_manager::get_theme ("original");
-    
-    //set_theme (theme);
+
     set_border(*theme);
     set_background(*theme);
     set_trans_background(true);
-
 
     // Full or half-sized window
     if (size)
@@ -77,12 +73,7 @@ void dialog_engine::init(character_base *mynpc, char * dlg_file, u_int8 size)
         move (20, 15);
         resize (280, 210);
     }
-    
-    // Make the npc available to the dialogue engine
-    PyObject *the_npcref = python::pass_instance (mynpc, "character_base"); 
-    PyDict_SetItemString (data::globals, "the_npc", the_npcref);
-    Py_DECREF (the_npcref); 
-    
+
     // Init the low level dialogue stuff
     dlg = new dialog;
 
@@ -92,16 +83,16 @@ void dialog_engine::init(character_base *mynpc, char * dlg_file, u_int8 size)
     face->move(5,5);
     ((image*)face)->resize(64,64);
     face->pack();
-    face->set_visible (true); 
-    
+    face->set_visible (true);
+
     // The NPC's name
     name = new win_label();
     name->set_font(*(fonts[0]));
     name->move(5,74);
     ((label*)name)->resize(64,0);
     name->set_form (label::AUTO_HEIGHT);
-    name->set_visible (true); 
-    
+    name->set_visible (true);
+
     // The list with the dialogue
     sel = new win_select();
     sel->set_scrollbar(*theme);
@@ -115,35 +106,37 @@ void dialog_engine::init(character_base *mynpc, char * dlg_file, u_int8 size)
     sel->set_visible_scrollbar (true);
     sel->set_activate (true);
 
-    // sel->set_auto_scrollbar (true); 
-
-    sel->set_visible (true); 
+    sel->set_visible (true);
     sel->set_focus(true); //due an error from window system
-    
+
     // Notification when a dialogue item get's selected
-    sel->set_signal_connect (makeFunctor (*this,  &dialog_engine::on_select),
+    sel->set_signal_connect (makeFunctor (*this,  &dialog_screen::on_select),
                              win_event::ACTIVATE_KEY);
 
     // set the NPC's portrait
     set_portrait (mynpc->get_portrait ());
     // ... and name
-    set_name ((char *) mynpc->get_name().c_str ());
-    
+    set_name (mynpc->get_name());
+
     // add everything to our container
     add (face);
     add (name);
     add (sel);
-    set_focus_object(sel);
+    set_focus_object (sel);
 
-    //set_visible_all (true);
     set_visible_border (true);
     set_visible_background (true);
 
-    set_visible (true); 
+    set_visible (true);
     set_activate (true);
 
+    // Make the npc and player available to the dialogue engine
+    PyObject *args = PyTuple_New (2);
+    PyTuple_SetItem (args, 0, python::pass_instance (data::the_player, "character"));
+    PyTuple_SetItem (args, 1, python::pass_instance (mynpc, "character_base"));
+
     // Load dialogue
-    if (!dlg->init ((char *) path.c_str(), (char *) file.c_str()))
+    if (!dlg->init (path, file, args))
     {
         cout << "\n*** Error loading dialogue script " << file << "\n";
         python::show_traceback ();
@@ -153,31 +146,33 @@ void dialog_engine::init(character_base *mynpc, char * dlg_file, u_int8 size)
     else
     {
         // Make the set_portrait/name/npc functions available to the dialogue script
-        instance = python::pass_instance (this, "dialog_engine");
-        
+        PyObject *instance = python::pass_instance (this, "dialog_screen");
+
         PyObject *setname = PyObject_GetAttrString (instance, "set_name");
         PyObject *setportrait = PyObject_GetAttrString (instance, "set_portrait");
         PyObject *setnpc = PyObject_GetAttrString (instance, "set_npc");
-        
+
         PyObject *dlg_instance = dlg->get_instance ();
-        
+
         PyObject_SetAttrString (dlg_instance, "set_name", setname);
         PyObject_SetAttrString (dlg_instance, "set_portrait", setportrait);
         PyObject_SetAttrString (dlg_instance, "set_npc", setnpc);
-        
-        Py_DECREF (setname); 
-        Py_DECREF (setportrait); 
-        Py_DECREF (setnpc); 
-        
+
+        Py_DECREF (setname);
+        Py_DECREF (setportrait);
+        Py_DECREF (setnpc);
+        Py_DECREF (instance);
+
         answer = 0;
     }
+
+    // Clean up
+    Py_DECREF (args);
 }
 
-dialog_engine::~dialog_engine ()
+dialog_screen::~dialog_screen ()
 {
     sel->set_activate (false);
-
-    Py_XDECREF (instance);
 
     delete dlg;
 
@@ -185,7 +180,7 @@ dialog_engine::~dialog_engine ()
     input::clear_keys_queue ();
 }
 
-void dialog_engine::run ()
+void dialog_screen::run ()
 {
     u_int32 i;
     win_label *l;
@@ -197,9 +192,9 @@ void dialog_engine::run ()
         return;
     }
 
-    // Continue dialogue with selected answer 
+    // Continue dialogue with selected answer
     dlg->run (answer);
-    
+
     // End of dialogue
     if (!dlg->text ())
     {
@@ -211,7 +206,7 @@ void dialog_engine::run ()
     for (i = 0; i < dlg->text_size (); i++)
     {
         l = new win_label();
-        l->set_font (i == 0 ? *fonts[dlg->npc_color()] : *fonts[1]); 
+        l->set_font (i == 0 ? *fonts[dlg->npc_color()] : *fonts[1]);
         l->move(0,0);
         ((label*)l)->resize(180,0);
         l->set_form(label::AUTO_HEIGHT);
@@ -227,25 +222,25 @@ void dialog_engine::run ()
         sel->set_default_object (cur_answers.front ());
 
     // ... or the player's first answer
-    else 
+    else
     {
         cur_answers[0]->set_can_be_selected (false);
         sel->set_default_object (cur_answers[1]);
     }
 
     // Center on the NPC answer
-    sel->set_pos (0); 
+    sel->set_pos (0);
 }
 
-bool dialog_engine::update ()
+bool dialog_screen::update ()
 {
     return (win_container::update() && is_running);
 }
 
-void dialog_engine::on_select ()
+void dialog_screen::on_select ()
 {
     vector<win_label*>::iterator i;
-  
+
     // remember choice
     answer = sel->get_selected_position () - 1;
 
@@ -255,18 +250,18 @@ void dialog_engine::on_select ()
         sel->remove (*i);
         delete *i;
     }
-    sel->destroy (); 
-    
+    sel->destroy ();
+
     cur_answers.clear ();
     run ();
 }
 
-void dialog_engine::insert_plugin ()
+void dialog_screen::insert_plugin ()
 {
 }
 
 // Set / change the NPC-portrait
-void dialog_engine::set_portrait (const string & new_portrait)
+void dialog_screen::set_portrait (const string & new_portrait)
 {
     if (new_portrait == "")
     {
@@ -280,17 +275,17 @@ void dialog_engine::set_portrait (const string & new_portrait)
 }
 
 // Set / change the NPC-name
-void dialog_engine::set_name (char *new_name)
+void dialog_screen::set_name (const string & new_name)
 {
     name->set_text (new_name);
     name->pack ();
 }
 
 // Set a different NPC
-void dialog_engine::set_npc (char* new_npc)
+void dialog_screen::set_npc (const string & new_npc)
 {
-    character_base *mynpc = (character_base *) data::characters[new_npc];
+    character_base *mynpc = (character_base *) data::characters[new_npc.c_str ()];
     
-    set_name ((char *) mynpc->get_name().c_str ());
+    set_name (mynpc->get_name());
     set_portrait (mynpc->get_portrait ());
 }

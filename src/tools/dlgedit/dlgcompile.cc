@@ -88,12 +88,13 @@ void dlg_compiler::write_strings ()
     vector<DlgNode*>::iterator i;
     u_int32 j = 0;
 
-    if (debug) script << "from types import *\n\n";
+    if (debug) script << "from types import *\n";
 
     // write the class name
-    script << "class " << strrchr (filename.c_str (), '/') + 1 << ":\n"
-           << "    loop = []\n"
-           << "    strings = [";
+    script << "import adonthell\n\n"
+           << "class " << strrchr (filename.c_str (), '/') + 1 << ":\n"
+           << "\tloop = []\n"
+           << "\tstrings = [";
 
     // write all strings and build lookup table to get index when given
     // the number of the node
@@ -109,20 +110,20 @@ void dlg_compiler::write_strings ()
 
     // these are dummies for the dialog editor; they're overwritten by
     // the game's dialogue engine
-    script << "    def set_name (self, new_name):\n"
-           << "        pass\n\n"
-           << "    def set_npc (self, new_npc):\n"
-           << "        pass\n\n"
-           << "    def set_portrait (self, new_portrait):\n"
-           << "        pass\n";
+    script << "\tdef set_name (self, new_name):\n"
+           << "\t\tpass\n\n"
+           << "\tdef set_npc (self, new_npc):\n"
+           << "\t\tpass\n\n"
+           << "\tdef set_portrait (self, new_portrait):\n"
+           << "\t\tpass\n";
 
     // This holds debug info
     if (debug)
     {
-        script << "\n    debug_info = {}\n\n"
-               << "    def set_var (self, name, val):\n"
-               << "        self.__dict__[name] = val\n"
-               << "        self.debug_info[name] = val\n";
+        script << "\n\tdebug_info = {}\n\n"
+               << "\tdef set_var (self, name, val):\n"
+               << "\t\tself.__dict__[name] = val\n"
+               << "\t\tself.debug_info[name] = val\n";
     }
     
     return;
@@ -135,8 +136,10 @@ void dlg_compiler::write_dialogue ()
     u_int32 j = 0;
 
     // write the dialogue functions
-    script << "\n    def __init__(self):";
-    script << "\n        self.dialogue = [self.start, ";
+    script << "\n\tdef __init__(self, p, n):"
+           << "\n\t\tself.the_player = p"
+           << "\n\t\tself.the_npc = n\n"
+           << "\n\t\tself.dialogue = [self.start, ";
     
     // write answer-function-array and build lookup table to get index when given
     // the number of the node
@@ -153,25 +156,25 @@ void dlg_compiler::write_dialogue ()
 
     // Write the clean method
     script << "\n";
-    script << "\n    def clear (self):";
-    script << "\n        del self.dialogue";
+    script << "\n\tdef clear (self):";
+    script << "\n\t\tdel self.dialogue";
     script << "\n";
 
     // write user-supplied __init__ code if any
     if (cust_init != "")
     {
-        space = "        ";
+        space = "\t\t";
         write_custom_code (cust_init);
         script << "\n";
     }
     
     // debugging
-    if (debug) script << "\n        self.__debug__ = 1\n";
+    if (debug) script << "\n\t\tself.__debug__ = 1\n";
     
     // write user-supplied methods if any
     if (cust_func != "") 
     {
-        space = "    ";
+        space = "\t";
         write_custom_code (cust_func);
         script << "\n";
     }
@@ -183,28 +186,28 @@ void dlg_compiler::write_entry_func ()
 {
     // overwrite __getattr__, so that member variables need not be
     // defined before using them
-    script << "\n    def __getattr__ (self, name):";
-    if (debug) script << "\n        print \"*** Warning: \\\"\" + name + \"\\\" not defined!\"";
-    script << "\n        return 0\n";
+    script << "\n\tdef __getattr__ (self, name):";
+    if (debug) script << "\n\t\tprint \"*** Warning: \\\"\" + name + \"\\\" not defined!\"";
+    script << "\n\t\treturn 0\n";
 
     // For debugging, also overwrite __setattr__, so we always know which variables
     // are defined
     if (debug)
     {
-        script << "\n    def __setattr__ (self, name, value):"
-               << "\n        self.__dict__[name] = value"
-               << "\n        if type (value) is IntType:"
-               << "\n            self.debug_info[name] = value\n"
-               << "\n    def __del__ (self, name):"
-               << "\n        delitem (self.__dict__, name)\n";
+        script << "\n\tdef __setattr__ (self, name, value):"
+               << "\n\t\tself.__dict__[name] = value"
+               << "\n\t\tif type (value) is IntType:"
+               << "\n\t\t\tself.debug_info[name] = value\n"
+               << "\n\tdef __del__ (self, name):"
+               << "\n\t\tdelitem (self.__dict__, name)\n";
     }
     
     // Write the function to start/continue the dialogue
-    script << "\n    def run (self, answer):"
-           << "\n        self.npc = []"
-           << "\n        self.player = []"
-           << "\n        self.cont = []"
-           << "\n        self.dialogue[answer]()\n";
+    script << "\n\tdef run (self, answer):"
+           << "\n\t\tself.npc = []"
+           << "\n\t\tself.player = []"
+           << "\n\t\tself.cont = []"
+           << "\n\t\tself.dialogue[answer]()\n";
 }
 
 // write additional user defined functions (if any)
@@ -213,7 +216,7 @@ void dlg_compiler::write_custom_code (string code)
     u_int32 i = 0, j;
 
     code += '\n';
-        
+
     while ((j = code.find ('\n', i)) < code.size ())
     {
         script << "\n" << space << inflate (code.substr (i,j-i));
@@ -237,6 +240,33 @@ string dlg_compiler::inflate (string code)
 #ifdef _DEBUG_
     cout << ">>> " << code << endl;
 #endif
+    // replace the_npc/the_player with self.the_npc/self.the_player
+    pos = code.find ("the_npc", 0);
+
+    while (pos != code.npos)
+    {
+        if (pos < 5 || strncmp (code.substr (pos-5, pos).c_str(), "self.", 5))
+        {
+            code.insert (pos, "self.");
+            pos += 5;
+        }
+
+        pos = code.find ("the_npc", pos+7);
+    }
+
+    pos = code.find ("the_player", 0);
+
+    while (pos != code.npos)
+    {
+        if (pos > 4 && strncmp (code.substr (pos-5, pos).c_str(), "self.", 5))
+        {
+            code.insert (pos, "self.");
+            pos += 5;
+        }
+
+        pos = code.find ("the_player", pos+10);
+    }
+
     // scan the string from left to right
     for (pos = 0; pos < code.length (); pos++)
         for (i = 0; i < NUM_OPS; i++)
@@ -307,17 +337,17 @@ string dlg_compiler::inflate (string code)
                         // check whether we access the quest- or character array
                         if (data::quests[stripped.c_str()] != NULL)
                         {
-                            code.insert (begin+prefix+stripped.length(), "\"]");
-                            code.insert (begin+prefix, "quests[\"");
-                            pos += 10;
+                            code.insert (begin+prefix+stripped.length(), "\")");
+                            code.insert (begin+prefix, "adonthell.gamedata_get_quest(\"");
+                            pos += 32;
                             is_local = false;
                         }
 
                         if (data::characters[stripped.c_str()] != NULL)
                         {
-                            code.insert (begin+prefix+stripped.length(), "\"]");
-                            code.insert (begin+prefix, "characters[\"");
-                            pos += 14;
+                            code.insert (begin+prefix+stripped.length(), "\")");
+                            code.insert (begin+prefix, "adonthell.gamedata_get_character(\"");
+                            pos += 36;
                             is_local = false;
                         }
                     }
@@ -395,7 +425,7 @@ void dlg_compiler::write_npc (Circle *circle)
         changed = 1;
         
         script << "\n" << space << "self.set_npc (";
-        if (circle->character == "") script << "the_npc.get_name())";
+        if (circle->character == "") script << "self.the_npc.get_name())";
         else script << "\"" << circle->character << "\")";
     }
 
@@ -407,8 +437,8 @@ void dlg_compiler::write_npc (Circle *circle)
     else
     {
         script << "\n" << space << "self.color = ";
-        if (circle->character == "") script << "the_npc.get_color()";
-        else script << "characters[\"" << circle->character << "\"].get_color()";
+        if (circle->character == "") script << "self.the_npc.get_color()";
+        else script << "adonthell.gamedata_get_character(\"" << circle->character << "\").get_color()";
     }
 
     if (debug) script << "\n\n" << space << "# " << circle->text.c_str (); 
@@ -433,7 +463,7 @@ void dlg_compiler::write_player (Circle *circle)
     if (circle->conditions != "") 
     {
         write_custom_code (circle->conditions);
-        space += "    ";
+        space += "\t";
     }
 
     if (debug) script << "\n\n" << space << "# " << circle->text.c_str (); 
@@ -446,7 +476,7 @@ void dlg_compiler::write_player (Circle *circle)
     if (circle->actions[0] == '1')
         script << "\n" << space << "self.loop.append (" << circle->number << ")";
 
-    if (circle->conditions != "") space.erase (space.end()-4,space.end()); 
+    if (circle->conditions != "") space.erase (space.end()-1,space.end());
 }
 
 // Write the first bit of the dialogue
@@ -462,7 +492,7 @@ void dlg_compiler::write_start ()
 
     sort (cur_nodes);
     
-    script << "\n    def start (self):";
+    script << "\n\tdef start (self):";
     write_answer ();
 
     return;
@@ -473,7 +503,7 @@ void dlg_compiler::write_start ()
 void dlg_compiler::write_answer ()
 {
     vector<DlgNode*>::iterator i, j;
-    space = "        ";
+    space = "\t\t";
 
     // write npc node & followers (if any)
     for (i = cur_nodes.begin (); i != cur_nodes.end (); i++)
@@ -506,9 +536,9 @@ void dlg_compiler::write_answer ()
         // write circle's condition (if any)
         if (((Circle*)(*i))->conditions != "") 
         {
-            space = "        ";
+            space = "\t\t";
             write_custom_code (((Circle*)(*i))->conditions);
-            space = "            ";
+            space = "\t\t\t";
         }
 
         // Write NPC stuff
@@ -588,12 +618,12 @@ void dlg_compiler::get_cur_nodes ()
 
     if (cur_nodes.size () > 1) sort (cur_nodes);
     
-    script << "\n    def answer" << circle->number << " (self):";
+    script << "\n\tdef answer" << circle->number << " (self):";
 
     // write player's additional code
     if (circle->type == PLAYER && circle->variables != "")
     {
-        space = "        ";
+        space = "\t\t";
         write_custom_code (circle->variables);
     }
     

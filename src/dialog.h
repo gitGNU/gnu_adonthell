@@ -1,7 +1,7 @@
 /*
    $Id$
 
-   (C) Copyright 2000 Kai Sterker <kaisterker@linuxgames.com>
+   (C) Copyright 2000/2001 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -27,6 +27,7 @@
 
 
 #include "python_class.h"
+#include "py_object.h"
 #include "types.h"
 #include <vector>
  
@@ -64,11 +65,12 @@ public:
      *
      * @param fpath full path to the dialogue.
      * @param name name of the dialogue class.
+     * @param args arguments to pass to the dialogue class
      *
      * @return \e true in case of success, \e false otherwise.
      * @sa reload()
      */ 
-    bool init (char* fpath, char* name);
+    bool init (string fpath, string name, PyObject *args);
     
     /**
      * This method is similar to init. But unlike init, it will
@@ -100,8 +102,11 @@ public:
      * 
      * @return the Python dialog instance.
      */
-    PyObject *get_instance ();
-    
+    PyObject *get_instance ()
+    {
+        return dialogue.get_instance ();
+    }
+
     /** 
      * Returns the color to be used for displaying the NPC's speech.
      * 
@@ -137,7 +142,7 @@ public:
     char** text () { return _text; }
     
 private:
-    PyObject *instance;             // Points to the instantiated dialogue class
+    py_object dialogue;             // Points to the instantiated dialogue class
     char **strings;                 // The dialogue text
     char **_text;                   // NPC's speech and according Player responses
     u_int32 _npc_color;             // The color of the NPC's text
@@ -148,8 +153,7 @@ private:
     vector<s_int32> used;           // Dialogue parts that are already spoken
 
     void clear ();                  // Cleanup
-    void extract_strings ();        // Gets the dialogues text from 'instance'
-    bool setup (PyObject*, char*);  // Further dialogue initialisation
+    bool setup ();                  // Further dialogue initialisation
     char* scan_string (const char*);// Look for enclosed code and execute it
     char* get_substr (const char*, char*, char*); 
 };

@@ -1,7 +1,7 @@
 /*
    $Id$
 
-   (C) Copyright 2000 Kai Sterker <kaisterker@linuxgames.com>
+   (C) Copyright 2000/2001 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -38,7 +38,6 @@
 // Constructor
 dialog::dialog ()
 {
-    instance = NULL;
     strings = NULL;
     _text = NULL;
 }
@@ -49,55 +48,40 @@ dialog::~dialog ()
     clear ();
 }
 
-// Load and instanciate the dialogue object
-bool dialog::init (char *fpath, char *name)
+// Prepare the dialogue for execution
+bool dialog::init (string fpath, string name, PyObject *args)
 {
-    PyObject *module;
-    
-    // Try to import module
-    module = python::import_module (fpath);
-    
-    if (!module || !setup (module, name)) 
-    {
-        python::show_traceback ();
+    // Load and instanciate the dialogue object
+    if (!dialogue.create_instance (fpath, name, args))
         return false;
-    }
+
+    // Remaining setup tasks
+    if (!setup ())
+        return false;
 
     return true;
 }
 
-bool dialog::setup (PyObject *module, char* name)
+// Misc. initialisation
+bool dialog::setup ()
 {
-    // Extract the class from the dialogue module
-    PyObject *globals = PyModule_GetDict (module);
-    PyObject *classobj = PyObject_GetAttrString (module, name);
-    
-    Py_DECREF (module);
+    // Extract the dialogue's strings
+    PyObject *list = dialogue.get_attribute ("strings");
+    if (!list) return false;
 
-    if (!classobj)
-        return false;
+    PyObject *s;
+    u_int32 i, index = PyList_Size (list);
 
-    PyDict_SetItemString (globals, "characters",
-                          PyDict_GetItemString (data::globals, "characters"));
-    PyDict_SetItemString (globals, "quests",
-                          PyDict_GetItemString (data::globals, "quests"));
-    PyDict_SetItemString (globals, "the_npc",
-                          PyDict_GetItemString (data::globals, "the_npc"));
-    PyDict_SetItemString (globals, "the_player",
-                          PyDict_GetItemString (data::globals, "the_player"));
+    strings = new char*[index];
 
-    // Instantiate! Will we ever need to pass args to class
-    // constructor here?
-    instance = PyObject_CallObject (classobj, NULL);
+    for (i = 0; i < index; i++)
+    {
+        s = PyList_GetItem (list, i);
+        if (s) strings[i] = PyString_AsString (s);
+    }
 
-    Py_DECREF (classobj);
+    Py_DECREF (list);
 
-    if (!instance)
-        return false;
-    
-    // extract the dialogue's strings
-    extract_strings ();
-    
     // Init the first answer
     answers.push_back (0);
         
@@ -119,45 +103,18 @@ bool dialog::reload (char *fpath, char *name)
     if (module && PyImport_ReloadModule (module)) 
     {
         Py_DECREF (module);
-        return setup (module, name);
+        return setup ();
     }
     
     python::show_traceback ();
     return false;
 }
 
-// extract the dialogue's strings
-void dialog::extract_strings ()
-{
-    PyObject *list = PyObject_GetAttrString (instance, "strings");
-    PyObject *s;
-    u_int32 i, index = PyList_Size (list);
-
-    strings = new char*[index];
-
-    for (i = 0; i < index; i++)
-    {
-        s = PyList_GetItem (list, i);
-        if (s) strings[i] = PyString_AsString (s);
-    }
-    
-    Py_DECREF (list); 
-}
-
+// Clean up
 void dialog::clear ()
 {
-    if (instance) 
-    {
-        PyObject * callres = PyObject_CallMethod (instance, "clear", NULL);
-        Py_XDECREF (callres);  
-        Py_DECREF (instance);
-    }
+    dialogue.call_method ("clear", NULL);
     if (strings) delete[] strings;
-}
-
-PyObject* dialog::get_instance ()
-{
-    return instance;
 }
 
 // Gets the index of either the player or npc array
@@ -167,7 +124,6 @@ void dialog::run (u_int32 index)
     yarg randgen;
     s_int32 s;
 
-    // Is it sufficient to get those objects only once???
     PyObject *npc, *player, *cont;
 
     // (Re)Init dialog::text
@@ -185,8 +141,9 @@ void dialog::run (u_int32 index)
         return;
     
     // Execute the next part of the dialogue
-    PyObject * callres = PyObject_CallMethod (instance, "run", "i", answers[index]);
-    Py_XDECREF (callres); 
+    PyObject *arg = Py_BuildValue ("(i)", answers[index]);
+    dialogue.run (arg);
+    Py_XDECREF (arg);
     
     python::show_traceback ();
 
@@ -194,7 +151,7 @@ void dialog::run (u_int32 index)
     if (index != 0)
     {
         s = choices[index-1];
-        PyObject * loopattr = PyObject_GetAttrString (instance, "loop"); 
+        PyObject * loopattr = dialogue.get_attribute ("loop");
         if (!PySequence_In (loopattr, PyInt_FromLong (s)))
             used.push_back (s);
         Py_DECREF (loopattr); 
@@ -206,10 +163,10 @@ void dialog::run (u_int32 index)
 
     // Now fill in the NPC's and Player's responses:
     // 1. Get the neccesary attributes of the dialogue class
-    npc = PyObject_GetAttrString (instance, "npc");
-    player = PyObject_GetAttrString (instance, "player");
-    cont = PyObject_GetAttrString (instance, "cont");
-    PyObject *attrcolor = PyObject_GetAttrString (instance, "color"); 
+    npc = dialogue.get_attribute ("npc");
+    player = dialogue.get_attribute ("player");
+    cont = dialogue.get_attribute ("cont");
+    PyObject *attrcolor = dialogue.get_attribute ("color");
     _npc_color = PyInt_AsLong (attrcolor);
     Py_XDECREF (attrcolor); 
 
@@ -246,7 +203,7 @@ void dialog::run (u_int32 index)
     answers.push_back (-1);
 
     // 4. Mark the NPC text as used unless it's allowed to loop
-    PyObject * loopattr = PyObject_GetAttrString (instance, "loop"); 
+    PyObject * loopattr = dialogue.get_attribute ("loop");
     if (!PySequence_In (loopattr, PyInt_FromLong (s)))
         used.push_back (s);
     Py_XDECREF (loopattr); 
@@ -369,7 +326,7 @@ char* dialog::scan_string (const char *s)
         strncpy (string, start+1, end-1);
 
         // run the string
-        result = PyObject_CallMethod (instance, string, NULL);
+        result = PyObject_CallMethod (dialogue.get_instance (), string, NULL);
 
         mid = NULL;
 

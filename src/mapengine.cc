@@ -51,9 +51,9 @@ void mapengine::load_map (string fname)
 void mapengine::run ()
 {
     letsexit = false;
-    mv.set_visible (true); 
-    mv.pack (); 
-    win_manager::add (&mv); 
+    mv.set_visible (true);
+    mv.pack ();
+    win_manager::add (&mv);
     gametime::start_action (); 
 
     while (1) 

@@ -269,7 +269,12 @@ public:
     {
         return data::characters [name]; 
     }
-    
+
+    static quest* get_quest (string name)
+    {
+        return data::quests [name];
+    }
+
     /** 
      * Returns the characters dictionary
      * 

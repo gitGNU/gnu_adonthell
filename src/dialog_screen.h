@@ -14,13 +14,13 @@
 
 
 /**
- * @file   dialog_engine.h
+ * @file   dialog_screen.h
  * @author Kai Sterker <kaisterker@linuxgames.com>
- * 
- * @brief  Declares the dialog_engine class.
- * 
- * 
- */ 
+ *
+ * @brief  Declares the dialog_screen class.
+ *
+ *
+ */
 
 
 #ifndef DLG_ENGINE_H__
@@ -34,33 +34,33 @@
 
 /**
  * Maximum number of colors used during a dialog.
- * 
+ *
  */
 #define MAX_COLOR 6
 
 /**
  * Allows the running of dialogues through a nice interface.
- * 
- */ 
-class dialog_engine : public win_container
+ *
+ */
+class dialog_screen : public win_container
 {
 public:
 
-    /** 
+    /**
      * Constructor.
-     * 
+     *
      * @param mynpc npc the player is talking with.
      * @param dlg_file dialogue file to use.
      * @param size if 1, use a large window, else a small one.
-     * 
+     *
      */
-    dialog_engine (character_base * mynpc, char * dlg_file, u_int8 size=1);
+    dialog_screen (character_base * mynpc, char * dlg_file, u_int8 size=1);
 
     /**
      * Destructor.
-     * 
-     */ 
-    ~dialog_engine ();
+     *
+     */
+    ~dialog_screen ();
 
     /** 
      * Inits the dialogue engine (similar to a constructor call).
@@ -84,19 +84,18 @@ public:
      * 
      * @param char* new name of the npc.
      */
-    void set_name (char* new_name);
+    void set_name (const string & new_name);
 
     /** 
      * Changes the whole NPC.
      * 
      * @param char* the name of the new npc to use.
      */
-    void set_npc (char* new_npc);
+    void set_npc (const string & new_npc);
 
     /** 
      * React to (keyboard) input.
-     * 
-     * 
+     *
      * @return true if the dialog is still running, false otherwise.
      */
     bool update ();
@@ -157,12 +156,6 @@ private:
      * 
      */
     vector <win_label*> cur_answers;
-
-    /**
-     * Dialogue Engine Python wrapper class.
-     * 
-     */
-    PyObject* instance;
 
     /**
      * The Python/C interface for the dialogue.
