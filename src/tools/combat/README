@@ -5,4 +5,4 @@
 
 Building:
 
-g++ combat-test.cpp melee.cpp yarg.cpp -o combat-test
+g++ combat-test.cpp melee.cpp yarg.cc -o combat-test

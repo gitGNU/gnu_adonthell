@@ -4,7 +4,8 @@
     begin                : Fri Feb 11 2000
     copyright            : (C) 2000 by Adonthell Development team
     email                : adonthell@onelist.com
- ***************************************************************************/
+    $Id$ 
+***************************************************************************/
 
 /***************************************************************************
  *                                                                         *
@@ -28,12 +29,14 @@ float get_dice(int);
 class yarg roler;
 class melee test;
 
-
+int a_hit = 0;
+int b_hit = 0;
 
 //Main test loop
 
 int main (void) {
-	
+
+	int rounds = 0;	
 	char seed;
    //Initialize roller for first 1000 random numbers
 	srandom((unsigned int)time((time_t *)NULL));
@@ -42,16 +45,24 @@ int main (void) {
 	roler.randomize();
 
 	char garbage;
-	int foo = 1;
-	
-	while (foo > 0) {
-		//create 2 random characters, crunch players stats, show results.
+		
+	while (1) {
+        	//create 2 random characters, crunch players stats, show results.
 		test.create_characters();
 		test.calc_stats();
-		show_results(foo);
-		printf("\n\npaused...");
+		
+		do {
+			show_results(++rounds);
+			printf("\npaused...");
+			garbage = getc(stdin);
+		} while (a_hit < 20 && b_hit < 20); 
+	
+		printf ("%s has won after %i rounds", (a_hit < b_hit ? "A" : "B"), rounds/2);
+		printf("\npaused...");
 		garbage = getc(stdin);
-	   	foo++;
+		rounds = 0;
+		a_hit = 0;
+		b_hit = 0;
 	}
 }
 
@@ -113,14 +124,17 @@ void show_results(int parity) {
 	   printf("Total Allotment: %4.4f\n", test.a_attack_total_allotment);
 	   printf("Chance for A to hit (not including luck): %4.2f\%\n", test.a_attack_range / (test.a_attack_total_allotment - test.a_attack_luck_allotment) * 100);
 	   printf("Number Rolled: %4.4f\n", dice);
-	   if(dice <= test.a_attack_range)
+	   if(dice <= test.a_attack_range) {
 	  		printf("HIT!\n\n");
+			b_hit += 1; }
 	  	if(dice > test.a_attack_range && (dice < (test.a_attack_total_allotment - test.a_attack_luck_allotment)))
 	  		printf("MISS!\n\n");
-	  	if(dice > (test.a_attack_range + test.b_defense_range) && (dice < test.a_attack_total_allotment - test.a_attack_b_real_luck))
+	  	if(dice > (test.a_attack_range + test.b_defense_range) && (dice < test.a_attack_total_allotment - test.a_attack_b_real_luck)) {
 	  		printf("CTITICAL HIT!!\n\n");
-	  	if(dice	> (test.a_attack_total_allotment - test.a_attack_b_real_luck))
+			b_hit += 3; }
+	  	if(dice	> (test.a_attack_total_allotment - test.a_attack_b_real_luck)) {
 	  		printf("CRITICAL MISS!!\n\n");
+			a_hit += 1; }
 	} else {
 	 	printf("***************\n* B attacks A *\n***************\n\n");
 		printf("Character B Attack Range: 0-->%4.4f\n",test.b_attack_range);
@@ -131,15 +145,19 @@ void show_results(int parity) {
 	  	printf("Total Allotment: %4.4f\n", test.b_attack_total_allotment);
 	  	printf("Chance for B to hit (not including luck): %4.2f\%\n", test.b_attack_range / (test.b_attack_total_allotment - test.b_attack_luck_allotment) * 100);
 	  	printf("Number Rolled: %4.4f\n", dice);
-	  	if(dice <= test.b_attack_range)
+	  	if(dice <= test.b_attack_range) {
 	  		printf("HIT!\n\n");
+			a_hit += 1; }
 	  	if(dice > test.b_attack_range && (dice < (test.b_attack_total_allotment - test.b_attack_luck_allotment)))
 	  		printf("MISS!\n\n");
-	  	if(dice > (test.b_attack_range + test.a_defense_range) && (dice < test.b_attack_total_allotment - test.b_attack_b_real_luck))
+	  	if(dice > (test.b_attack_range + test.a_defense_range) && (dice < test.b_attack_total_allotment - test.b_attack_b_real_luck)) {
 	  		printf("CTITICAL HIT!!\n\n");
-	  	if(dice	> (test.b_attack_total_allotment - test.b_attack_b_real_luck))
+			a_hit += 3; }
+	  	if(dice	> (test.b_attack_total_allotment - test.b_attack_b_real_luck)) {
 	  		printf("CRITICAL MISS!!\n\n");
+			b_hit += 1; }
 	}
 
+	printf("A IS HIT: %i\nB IS HIT: %i\n\n", a_hit, b_hit);
 }	
 
