@@ -21,7 +21,6 @@
 #define TYPES_H__
 
 #include "SDL.h"
-#include "inttypes.h"
 
 // We should put ifdefs here to put the correct int values accordingly to the system type
 
