@@ -243,7 +243,7 @@ void win_label::init_draw()
   
  
   //insert the blink cursor
-  if(blinkcursortimetodraw_ && blinkcursor_ && template_->length!=0)
+  if(focus_ && blinkcursortimetodraw_ && blinkcursor_ && template_->length!=0)
     {
       //modify because error if not autosize
       if(auto_size_) template_->putbox_img(font_->cursor,curligne_,tmpheight_);

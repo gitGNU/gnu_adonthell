@@ -14,6 +14,7 @@
 #include <string.h>
 #include "types.h"
 #include "image.h"
+#include "input.h"
 #include "win_types.h"
 #include "win_theme.h"
 #include "win_border.h"
@@ -24,50 +25,77 @@
 long win_base::cptw=0;
 #endif
 
+
+
 win_base::win_base(s_int16 tx,s_int16 ty,u_int16 tl,u_int16 th,win_theme * wth)
 {
 #ifdef _DEBUG_WIN
   cout << "Number win object:" <<++cptw<< endl;
 #endif
+  //by default focus is off for all object
+  focus_=false;
+  
   //by default window is desactivated
   activated_=false;
+  
   //by default window is not selected
   selected_=false;
+  
   //by default windows is not in select object
   in_select_=false;
+  
   //by default window is not visible
   visible_=false;
-  //by default border is no tvisible
+  
+  //by default border is no visible
   visible_border_=false;
+  
   //by default backgroud is not visible
   visible_background_=false;
-  //by default window is draw in brigthness
+  
+  //by default window isn't draw in brigthness
   draw_brightness_=false;
+  
+  //by default an onbject can be selected
+  can_be_selected_=true;
+  
   //not have a father, -> window in(depend on) another window.
   wb_father_=NULL;
+  
   //value used to transluency
   level_trans_back_=128;
+  
   //value used to brightness
   level_brightness_=200;
+  
   //by default the current object is selected by the border
   mode_select_=WIN_SELECT_MODE_BORDER;
+  
   //by default border size used is normal size
   border_size_=WIN_SIZE_NORMAL;
+  
   //padding X,Y
   padx_=0;
   pady_=0;
+  
   //position of the windows, not real position, position in win_* into another win_container*
   x_=tx;
   y_=ty;
+  
   //drawing area of the father object
   pda_=NULL;
+  
   //drawing area of this object
   da_=new drawing_area();
+  
   //create a theme for this object
-  if(wth) theme_=new win_theme(*wth);
-  else theme_=NULL;
+  //if(wth) theme_=new win_theme(*wth);
+  //else theme_=NULL;
+  theme_=(wth?new win_theme(*wth):NULL);
+
   //resize the object
   resize(tl,th);
+
   //update the real position
   update_real_position();
 }
@@ -77,8 +105,10 @@ win_base::~win_base()
 {
   //delete cur drawing area
   delete da_;
+
   //delete theme
   delete theme_;
+
 #ifdef _DEBUG_WIN
   cout << "Number win object:" << --cptw << endl;
 #endif
@@ -89,9 +119,11 @@ void win_base::resize(u_int16 tl,u_int16 th)
   //resize
   length_=tl;
   height_=th;
+
   //resize drawing area too.
   da_->w=tl;
   da_->h=th;
+  
   //modify the theme object --> in theme object there are the border, background size  and another .....
   if(theme_)theme_->update(this);  
 }
@@ -99,22 +131,24 @@ void win_base::resize(u_int16 tl,u_int16 th)
 
 bool win_base::update()
 {
+  if(focus_ && activated_ && callback_[WIN_SIG_KEYBOARD])(callback_[WIN_SIG_KEYBOARD])();
+
   //on update is called
-  bool b=true;
+  /*  bool b=true;
   if(callback_destroy_) b=callback_destroy_(); 
   if(b) {on_update();return true;}
-  return false;
+  return false;*/
+  if(callback_destroy_ && !callback_destroy_()) return false;
+  on_update();
+  return true;
 }
+
 
 bool win_base::draw()
 {
-  on_draw();
-  //WARNING: i need create another signal to draw before
-  //if(visible_) //new signal on_draw_visible_
+  on_draw();  
   if(visible_) on_draw_visible();
   return visible_;
-  //on draw is called is the object is visible
-  ///on_draw();
 }
 
 void win_base::set_theme(win_theme * th)
@@ -170,17 +204,11 @@ void win_base::set_signal_connect(const Functor0 & func,u_int8 signal)
 //on activate 
 void win_base::on_activate()
 {
-  //activated become true 
-  activated_=true;
-  //if the activated signal is define execute the function
   if(callback_[WIN_SIG_ACTIVATE]) (callback_[WIN_SIG_ACTIVATE])();
 }
  
 void win_base::on_unactivate()
 {
-  //activated become false
-  activated_=false;
-  //call,if define the unactivate function
   if(callback_[WIN_SIG_UNACTIVATE]) (callback_[WIN_SIG_UNACTIVATE])();
 }
 
@@ -201,13 +229,11 @@ void win_base::on_draw_visible()
 
 void win_base::on_select()
 {
-  selected_=true;
   if(callback_[WIN_SIG_SELECT]) (callback_[WIN_SIG_SELECT])();
 }
 
 void win_base::on_unselect()
 {
-  selected_=false;
   if(callback_[WIN_SIG_UNSELECT]) (callback_[WIN_SIG_UNSELECT])();
 }
  
@@ -217,10 +243,18 @@ void win_base::on_activate_key()
   if(callback_[WIN_SIG_ACTIVATE_KEY]) (callback_[WIN_SIG_ACTIVATE_KEY])();
 }
 
+
+
+void win_base::set_focus(bool b)
+{
+  if(focus_=b) input::clear_keys_queue();  
+}
+
+
+
 /*******************************************************/
 /************************ DRAW *************************/
 /*******************************************************/
-
 void win_base::draw_border()
 {
 #define WB_CORNER_MIDX (border->corner_top_left->length>>1)

@@ -35,7 +35,7 @@ char * win_write::get_text_entry()
 void win_write::write()
 {
   static s_int32 c;
-  if(!activate_keyboard_ || !activated_) return;
+  if(!focus_ || !activate_keyboard_ || !activated_) return;
   while((c=input::get_next_unicode())>0)
     {
       if(font_->in_table(c) || c==SDLK_BACKSPACE || c==SDLK_RETURN || c==SDLK_SPACE)

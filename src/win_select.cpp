@@ -64,7 +64,7 @@ win_select::~win_select()
 
 void win_select::add(win_base * wb)
 {
-  //call the add of wni_scrolled
+  //call the add of win_scrolled
   win_scrolled::add(wb);
   //prevent the new object is in select
   wb->set_in_select(true);
@@ -101,6 +101,7 @@ void win_select::remove_all()
     }
   list_obj.clear(); 
   index_list=list_obj.begin();
+  
   //win scrolled part
   max_amplitude_=0;
   cur_amplitude_=0;
@@ -128,7 +129,7 @@ bool win_select::update()
 {
   if(win_scrolled::update())
     {
-      if(activate_keyboard_ && activated_)
+      if(focus_ && activate_keyboard_ && activated_)
 	{
 	  if(input::has_been_pushed(next_key)) next_();
 	  if(input::has_been_pushed(previous_key)) previous_();
@@ -147,16 +148,72 @@ void win_select::next_()
 {
   if(index_list==list_obj.end() || !activated_) return;
   (*index_list)->on_unselect();
-  if(mode_selected_==WIN_SELECT_MODE_BRIGHTNESS)
-    (*index_list)->set_draw_brightness(true);
-  index_list++;
+     if(mode_selected_==WIN_SELECT_MODE_BRIGHTNESS)
+     (*index_list)->set_draw_brightness(true);
+     index_list++;
  
-  if(index_list==list_obj.end()) 
-    if(select_circle_) index_list=list_obj.begin();
-    else index_list--;
+     if(index_list==list_obj.end()) 
+     if(select_circle_) index_list=list_obj.begin();
+     else index_list--;
+     
+     (*index_list)->on_select();
+     (*index_list)->set_draw_brightness(false);
+     /*
 
-  (*index_list)->on_select();
-  (*index_list)->set_draw_brightness(false);
+  list<win_base*>::iterator old=index_list;
+  if(select_circle_)
+    {
+      cout << "1\n";
+      //WARNING if old is yet at the end of the list
+      if(old!=list_obj.end()) {old++;cout << "2\n";}
+      
+      while(old!=list_obj.end() && *old!=*index_list && !(*old)->is_can_be_selected()) {old++;cout << "3\n";}
+      if(old==list_obj.end()) 
+	{
+	  cout << "4\n"; 
+	  old=list_obj.begin();
+	  while(old!=list_obj.end() && *old!=*index_list && !(*old)->is_can_be_selected()) {old++;cout << "5\n";}
+	  if(old!=list_obj.end() && old!=index_list)
+	    {
+	      cout << "6\n";
+	      (*index_list)->on_unselect();
+	      if(mode_selected_==WIN_SELECT_MODE_BRIGHTNESS)
+		(*index_list)->set_draw_brightness(true);
+	      index_list=old;
+	      (*index_list)->on_select();
+	      (*index_list)->set_draw_brightness(false); 
+	    }
+	}
+      else
+	{
+	  cout << "7\n";
+	  if(old!=index_list)
+	    {
+	      cout << "8\n";
+	      (*index_list)->on_unselect();
+	      if(mode_selected_==WIN_SELECT_MODE_BRIGHTNESS)
+		(*index_list)->set_draw_brightness(true);
+	      index_list=old;
+	      (*index_list)->on_select();
+	      (*index_list)->set_draw_brightness(false);
+	    }
+	}
+    }
+  else
+    {
+      while(old!=list_obj.end() && !(*old)->is_can_be_selected())
+	old++;
+      
+      if(old!=list_obj.end())
+	{
+	  (*index_list)->on_unselect();
+	  if(mode_selected_==WIN_SELECT_MODE_BRIGHTNESS)
+	    (*index_list)->set_draw_brightness(true);
+	  index_list=old;
+	  (*index_list)->on_select();
+	  (*index_list)->set_draw_brightness(false);
+	}
+    }*/
   update_position();
   on_next();
 }
@@ -167,6 +224,7 @@ void win_select::previous_()
   (*index_list)->on_unselect();
   if(mode_selected_==WIN_SELECT_MODE_BRIGHTNESS)
     (*index_list)->set_draw_brightness(true);
+
   if(index_list!=list_obj.begin()) index_list--;
   else if(select_circle_) 
     {

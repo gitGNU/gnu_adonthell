@@ -112,6 +112,8 @@
 #define WIN_SIG_SCROLL_DOWN 8
 #define WIN_SIG_SELECT 9
 #define WIN_SIG_UNSELECT 10
+#define WIN_SIG_KEYBOARD 12
+
 
 
 //win_select

@@ -24,12 +24,16 @@ win_container::win_container(s_int16 tx,s_int16 ty,u_int16 tl,u_int16 th,win_the
 {
   //clear the list og object
   list_obj.clear();
+
   //set the space between border and object
   space_between_border_=WIN_SPACE_BETWEEN_BORDER;
+
   //set space between object and another object
   space_between_object_=WIN_SPACE_BETWEEN_OBJECT;
+
   //set justify ----> WARNING MAYBE IN WIN_BASE ????
   justify_=WIN_JUSTIFY_NO;
+
   //set layout equals no
   layout_=WIN_LAYOUT_NO;
 }
@@ -220,6 +224,13 @@ void win_container::update_layout()
     }
 }
 
+
+void win_container::set_focus(bool b)
+{
+  for(list<win_base *>::iterator i=list_obj.begin();i!=list_obj.end();i++)
+    (*i)->set_focus(b);
+  focus_=b;
+}
 
 
 

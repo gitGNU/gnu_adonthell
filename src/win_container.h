@@ -42,11 +42,11 @@ class win_container : public win_base
   //destroy all object of the list and in memory
   virtual void destroy();
 
-  //update function(not optimized actually)
-  virtual bool update();
+  //update function
+  bool update();
 
   //draw on the screen
-  virtual bool draw();
+  bool draw();
   
   void move(s_int16 tx,s_int16 ty);
 
@@ -62,6 +62,7 @@ class win_container : public win_base
   //if true all of this object is in brightness mode
   void set_draw_brightness(bool b);
 
+  //bugs in this functions.
   void set_visible_all(bool);
 
   //justify all object : WIN_JUSTIFY_LEFT, WIN_JUSTIFY_RIGHT, WIN_JUSTIFY_CENTER
@@ -77,6 +78,9 @@ class win_container : public win_base
   //IMPORTANT: You can use set_justify and layout to do good window
 
   void update_real_position();
+
+  void set_focus(bool b);
+  bool is_focus(){return focus_;}  
 };
 #endif
 
