@@ -96,13 +96,14 @@ s_int8 image::get_raw (igzstream& file)
     
     rawdata = new char[l * h * 3];
     file.get_block (rawdata, l * h * 3); 
-//     gzread (file.file, rawdata, l * h * 3);
     
     raw2display (rawdata, l, h); 
 
     delete[] (char *) rawdata;
     
     if (!vis) return -1;
+
+    changed = true; 
     return 0;
 }
 
@@ -134,6 +135,8 @@ s_int8 image::get_pnm (SDL_RWops * file)
     free (rawdata);
 
     if (!vis) return -1;
+
+    changed = true; 
     return 0;
 }
 

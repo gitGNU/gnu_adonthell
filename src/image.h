@@ -57,7 +57,7 @@ public:
     image (u_int16 l, u_int16 h);
 #endif
     
-    /** Destructor
+    /** Destructor.
      */ 
     ~image (); 
 
