@@ -171,12 +171,6 @@ PYLIBVER=`$PYPACKAGE -c 'import sys; print sys.version[:3]'`
 changequote([, ])
 
 
-dnl Python 2.0+ requires some additional libraries
-
-if test $PYTHON_VERSION -ge 20; then
-	PY_LIBS="$PY_LIBS -lutil"
-fi
-
 dnl Try for specific version first, then the generic version, then panic
 
 if test -r "$PYLIB/libpython$PYLIBVER.a"; then
@@ -189,9 +183,22 @@ fi
 AC_MSG_RESULT(found)
 
 
-dnl Versions of python that load modules dynamically need this too
+dnl Get the libraries that python depends on
 
-PY_LIBS="-Wl,-E $PY_LIBS"
+AC_MSG_CHECKING(for Python's dependencies)
+
+changequote(<<, >>)
+py_deps=`ldd $PYPACKAGE | sed 's/\( *lib\([^\/]*\)\.so.*=.*$\)/-l\2/p; d'`
+for py_lib in $py_deps ; do
+    if test "$py_lib" != "-lm" && test "$py_lib" != "-lc" ; then
+        PY_DEPS="$PY_DEPS $py_lib"
+    fi
+done
+changequote([, ])
+
+AC_MSG_RESULT($PY_DEPS)
+
+PY_LIBS="-Wl,-E $PY_LIBS $PY_DEPS"
 
 
 dnl ********************************
@@ -318,15 +325,15 @@ dnl ****************
 echo
 echo Adonthell v$VERSION
 echo
-echo SDL ............................... : `$SDL_CONFIG --version`
-echo Python ............................ : $PY_VERSION
+echo SDL ....................... : `$SDL_CONFIG --version`
+echo Python .................... : $PY_VERSION
 if test x$havegtk = xyes; then
-echo GTK+ .............................. : `gtk-config --version`
+echo GTK+ ...................... : `gtk-config --version`
 fi
-echo Audio system ...................... : $audio
-echo Ogg music ......................... : $ogg_music
-echo Building editors .................. : $tools
-echo Building developer documentation ...: $builddoc
+echo Audio system .............. : $audio
+echo Ogg music ................. : $ogg_music
+echo Building editors .......... : $tools
+echo Building API doc .......... : $builddoc
 if test x$memleaks = xyes; then
 echo Test for Memory Leaks : enabled
 fi
