@@ -12,6 +12,9 @@
    See the COPYING file for more details.
 */
 
+#ifndef _instruction_h
+#define _instruction_h
+
 #include "types.h"
 #include <vector>
 #include <string.h>
@@ -41,8 +44,7 @@ class instruction
 
   friend istream& operator>> (istream&, instruction&);
   friend ostream& operator<< (ostream&, instruction&);
-  friend int loaditems (char*, 
-          mapitem **, 
-          mapevent **,
-          u_int16*);
 };
+
+#endif
+

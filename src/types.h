@@ -22,6 +22,8 @@
 #define s_int16 Sint16
 #define s_int32 Sint32
 
+typedef const char *cptr;
+
 //#define u_int8 unsigned char
 //#define u_int16 unsigned short int
 //#define u_int32 unsigned long int

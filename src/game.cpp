@@ -20,6 +20,8 @@
 #include "input.h"
 #include "prefs.h"
 #include "game.h"
+#include "py_inc.h"
+
 #ifdef SDL_MIXER
 #include "audio_thread.h"
 #include "audio.h"
@@ -40,16 +42,26 @@ void game::init(config &myconfig)
     fprintf(stderr, "Audio will not be used\n");
   }
 #endif  
+
+  // Initialise Python
+  if (!init_python())
+  {
+	  // This is unlikely to happen
+	  fprintf(stderr, "Couldn't initialise Python - stopping\n");
+	  SDL_Quit();
+  }
 }
 
 void game::cleanup()
 {
-  
 #ifdef SDL_MIXER
   if (audio_thread != NULL) {
     SDL_KillThread(audio_thread);
     audio_cleanup();
   }
 #endif
+
+  kill_python();
+
   SDL_Quit();
 }

@@ -17,6 +17,7 @@
 
 #include "types.h"
 #include "storage.h"
+#include "inventory.h"
 #include <vector>
 
 

@@ -51,6 +51,59 @@ if test x$SDL_MIXER = xno; then
     DEFS="$DEFS -DSDL_MIXER",)
 fi
 
+dnl ********************
+dnl Check for Python. 
+dnl ********************
+
+dnl Find Python executable
+AC_PATH_PROGS(PYPACKAGE, python)
+
+dnl Extract the version using Python, check against 1.5+
+
+changequote(<<, >>)
+PYTHON_VERSION=`$PYPACKAGE -c 'import sys ; print (int(sys.version[0]) * 10 + int(sys.version[2]))'`
+changequote([, ])
+
+if test $PYTHON_VERSION -lt 15; then
+	echo "Sorry, you need to have Python 1.5+ installed - update your version!"
+	AC_MSG_ERROR([Python 1.5 or better required])
+fi
+
+dnl Find the Python.h header file
+
+AC_MSG_CHECKING(for Python header files)
+changequote(<<, >>)
+PYINCLUDE=`$PYPACKAGE -c 'import sys ; print "%s/include/python%s" % (sys.prefix, sys.version[:3])'`
+changequote([, ])
+
+if test -r "$PYINCLUDE/Python.h"; then
+   CFLAGS="$CFLAGS -I$PYINCLUDE"
+else
+   AC_MSG_ERROR([Could not find Python.h in $PYINCLUDE])
+fi
+AC_MSG_RESULT(found)
+
+
+dnl Find the Python library
+
+AC_MSG_CHECKING(for Python library)
+changequote(<<, >>)
+PYLIB=`$PYPACKAGE -c 'import sys; print "%s/lib/python%s/config" % (sys.prefix, sys.version[:3])'`
+PYLIBVER=`$PYPACKAGE -c 'import sys; print sys.version[:3]'`
+changequote([, ])
+
+
+dnl Try for specific version first, then the generic version, then panic
+
+if test -r "$PYLIB/libpython$PYLIBVER.a"; then
+    LIBS="$LIBS -L$PYLIB -lpython$PYLIBVER"
+elif test -r "$PYLIB/libpython.a"; then
+    LIBS="$LIBS -L$PYLIB -lpython"
+else
+    AC_MSG_ERROR([Python library not found in $PYLIB])
+fi
+AC_MSG_RESULT(found)
+
 dnl  **************************
 dnl  Check for required headers
 dnl  **************************
@@ -70,6 +123,7 @@ dnl ********************************
 
 CXXFLAGS="$CFLAGS $DEFS $INCLUDES"
 
+LIBS="$LIBS -ltcl -ltk -lreadline -lncurses"
 AC_SUBST(CXX) AC_SUBST(CXXFLAGS) AC_SUBST(LIBS) AC_SUBST(SUBDIRS)
   
 AC_OUTPUT([

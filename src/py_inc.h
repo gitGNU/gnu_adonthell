@@ -17,35 +17,12 @@
    See the COPYING file for more details.
 */
 
-#include <iostream>
+#ifndef _python_h
+#define _python_h
 
-#include "mapevent.h"
-#include "mapitem.h"
-#include "types.h"
-
-#include "py_inc.h"
-
-// CONSTRUCTOR
-mapitem::mapitem()
-{
-	number = 0;
-	pattern = 0;
-
-	event_walk = 0;
-	event_action = 0;
-	name = '\0';
-	status = 0;
-}
-
-mapitem *loaditems( char *filename )
-{
-	// HACK
-	insert_path( "scripts" );
-
-	exec_file( filename );
-
-	cout << filename << endl;
-	return NULL;
-}
-
-
+extern void insert_path( char * );
+extern bool init_python( void );
+extern void kill_python( void );
+extern bool exec_file( char *filename );
+extern bool import_module( char *);
+#endif

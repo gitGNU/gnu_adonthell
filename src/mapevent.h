@@ -15,6 +15,8 @@
 #ifndef _mapevent_h
 #define _mapevent_h
 
+#include "types.h"
+
 class landmap;
 class mapcharacter;
 class mapengine;

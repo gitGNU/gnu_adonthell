@@ -31,7 +31,8 @@ class mappattern
     s_int8 get (SDL_RWops * file);
     //    s_int8 put (SDL_RWops * file);
     s_int8 load (char name[]);
-    void putbox (u_int16 x, u_int16 y, drawing_area * da_opt=NULL);
+	// NULL!
+    void putbox (u_int16 x, u_int16 y, drawing_area * da_opt);
     void putbox_mask (u_int16 x, u_int16 y, drawing_area * da_opt=NULL);
     //    void putbox_part (u_int16 x, u_int16 y, u_int16 bw, u_int16 bh,
     //		      u_int16 xo, u_int16 yo);

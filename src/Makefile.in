@@ -1,4 +1,4 @@
-# Makefile.in generated automatically by automake 1.4 from Makefile.am
+# Makefile.in generated automatically by automake 1.4a from Makefile.am
 
 # Copyright (C) 1994, 1995-8, 1999 Free Software Foundation, Inc.
 # This Makefile.in is free software; the Free Software Foundation
@@ -9,6 +9,9 @@
 # but WITHOUT ANY WARRANTY, to the extent permitted by law; without
 # even the implied warranty of MERCHANTABILITY or FITNESS FOR A
 # PARTICULAR PURPOSE.
+
+# Temporarily disabled joltest in order to play with map functions in
+# inventory code. Can probably enable this now!
 
 
 SHELL = @SHELL@
@@ -46,9 +49,10 @@ AUTOMAKE = @AUTOMAKE@
 AUTOHEADER = @AUTOHEADER@
 
 INSTALL = @INSTALL@
-INSTALL_PROGRAM = @INSTALL_PROGRAM@ $(AM_INSTALL_PROGRAM_FLAGS)
+INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
+INSTALL_STRIP_FLAG =
 transform = @program_transform_name@
 
 NORMAL_INSTALL = :
@@ -61,14 +65,15 @@ CXX = @CXX@
 CXXCPP = @CXXCPP@
 MAKEINFO = @MAKEINFO@
 PACKAGE = @PACKAGE@
+PYPACKAGE = @PYPACKAGE@
 SDL_CFLAGS = @SDL_CFLAGS@
 SDL_CONFIG = @SDL_CONFIG@
 SDL_LIBS = @SDL_LIBS@
 VERSION = @VERSION@
 
-bin_PROGRAMS = mapengine joltest alextest
+bin_PROGRAMS = mapengine alextest joltest
 
-mapengine_SOURCES = animation.cpp audio.cpp audio_thread.cpp character.cpp commands.cpp cutscene.cpp dialog_cmds.cpp fileops.cpp game.cpp generic_cmds.cpp image.cpp init.cpp interpreter.cpp input.cpp inventory.cpp lex.prefs.cpp main.cpp map.cpp mapcharacter.cpp mapengine.cpp mapevent.cpp mappattern.cpp mapsquare.cpp pnm.cpp prefs.cpp screen.cpp storage.cpp win_label.cpp win_write.cpp win_container.cpp win_select.cpp win_friend.cpp win_border.cpp win_base.cpp win_font.cpp win_image.cpp yarg.cc
+mapengine_SOURCES = animation.cpp audio.cpp audio_thread.cpp character.cpp commands.cpp cutscene.cpp dialog_cmds.cpp fileops.cpp game.cpp generic_cmds.cpp image.cpp init.cpp interpreter.cpp input.cpp inventory.cpp lex.prefs.cpp main.cpp map.cpp mapcharacter.cpp mapengine.cpp mapevent.cpp mappattern.cpp mapsquare.cpp pnm.cpp prefs.cpp screen.cpp storage.cpp win_label.cpp win_write.cpp win_container.cpp win_select.cpp win_friend.cpp win_border.cpp win_image.cpp win_base.cpp win_font.cpp mapitem.cpp py_inc.cpp py_player_wrap.cpp py_mapengine_wrap.cpp yarg.cc
 
 
 joltest_SOURCES = animation.cpp audio.cpp audio_thread.cpp character.cpp commands.cpp cutscene.cpp dialog_cmds.cpp fileops.cpp game.cpp generic_cmds.cpp image.cpp init.cpp interpreter.cpp input.cpp inventory.cpp lex.prefs.cpp pnm.cpp prefs.cpp screen.cpp storage.cpp win_label.cpp win_write.cpp win_container.cpp win_select.cpp win_friend.cpp win_border.cpp win_base.cpp win_font.cpp win_image.cpp joel.cpp yarg.cc
@@ -91,11 +96,19 @@ commands.o cutscene.o dialog_cmds.o fileops.o game.o generic_cmds.o \
 image.o init.o interpreter.o input.o inventory.o lex.prefs.o main.o \
 map.o mapcharacter.o mapengine.o mapevent.o mappattern.o mapsquare.o \
 pnm.o prefs.o screen.o storage.o win_label.o win_write.o \
-win_container.o win_select.o win_friend.o win_border.o win_base.o \
-win_font.o win_image.o yarg.o
+win_container.o win_select.o win_friend.o win_border.o win_image.o \
+win_base.o win_font.o mapitem.o py_inc.o py_player_wrap.o \
+py_mapengine_wrap.o yarg.o
 mapengine_LDADD = $(LDADD)
 mapengine_DEPENDENCIES = 
 mapengine_LDFLAGS = 
+alextest_OBJECTS =  fileops.o pnm.o screen.o image.o animation.o \
+lex.prefs.o prefs.o alextest.o input.o win_label.o win_write.o \
+win_container.o win_select.o win_friend.o win_border.o win_base.o \
+win_font.o win_image.o
+alextest_LDADD = $(LDADD)
+alextest_DEPENDENCIES = 
+alextest_LDFLAGS = 
 joltest_OBJECTS =  animation.o audio.o audio_thread.o character.o \
 commands.o cutscene.o dialog_cmds.o fileops.o game.o generic_cmds.o \
 image.o init.o interpreter.o input.o inventory.o lex.prefs.o pnm.o \
@@ -105,23 +118,16 @@ win_image.o joel.o yarg.o
 joltest_LDADD = $(LDADD)
 joltest_DEPENDENCIES = 
 joltest_LDFLAGS = 
-alextest_OBJECTS =  fileops.o pnm.o screen.o image.o animation.o \
-lex.prefs.o prefs.o alextest.o input.o win_label.o win_write.o \
-win_container.o win_select.o win_friend.o win_border.o win_base.o \
-win_font.o win_image.o
-alextest_LDADD = $(LDADD)
-alextest_DEPENDENCIES = 
-alextest_LDFLAGS = 
 CXXFLAGS = @CXXFLAGS@
 CXXCOMPILE = $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
 CXXLD = $(CXX)
-CXXLINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(LDFLAGS) -o ../$@
+CXXLINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(LDFLAGS) -o $@
 DIST_COMMON =  Makefile.am Makefile.in
 
 
 DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 
-TAR = tar
+TAR = gtar
 GZIP_ENV = --best
 DEP_FILES =  .deps/alextest.P .deps/animation.P .deps/audio.P \
 .deps/audio_thread.P .deps/character.P .deps/commands.P \
@@ -129,13 +135,14 @@ DEP_FILES =  .deps/alextest.P .deps/animation.P .deps/audio.P \
 .deps/generic_cmds.P .deps/image.P .deps/init.P .deps/input.P \
 .deps/interpreter.P .deps/inventory.P .deps/joel.P .deps/lex.prefs.P \
 .deps/main.P .deps/map.P .deps/mapcharacter.P .deps/mapengine.P \
-.deps/mapevent.P .deps/mappattern.P .deps/mapsquare.P .deps/pnm.P \
-.deps/prefs.P .deps/screen.P .deps/storage.P .deps/win_base.P \
+.deps/mapevent.P .deps/mapitem.P .deps/mappattern.P .deps/mapsquare.P \
+.deps/pnm.P .deps/prefs.P .deps/py_inc.P .deps/py_mapengine_wrap.P \
+.deps/py_player_wrap.P .deps/screen.P .deps/storage.P .deps/win_base.P \
 .deps/win_border.P .deps/win_container.P .deps/win_font.P \
 .deps/win_friend.P .deps/win_image.P .deps/win_label.P \
 .deps/win_select.P .deps/win_write.P .deps/yarg.P
-SOURCES = $(mapengine_SOURCES) $(joltest_SOURCES) $(alextest_SOURCES)
-OBJECTS = $(mapengine_OBJECTS) $(joltest_OBJECTS) $(alextest_OBJECTS)
+SOURCES = $(mapengine_SOURCES) $(alextest_SOURCES) $(joltest_SOURCES)
+OBJECTS = $(mapengine_OBJECTS) $(alextest_OBJECTS) $(joltest_OBJECTS)
 
 all: all-redirect
 .SUFFIXES:
@@ -162,8 +169,8 @@ install-binPROGRAMS: $(bin_PROGRAMS)
 	$(mkinstalldirs) $(DESTDIR)$(bindir)
 	@list='$(bin_PROGRAMS)'; for p in $$list; do \
 	  if test -f $$p; then \
-	    echo "  $(INSTALL_PROGRAM) $$p $(DESTDIR)$(bindir)/`echo $$p|sed 's/$(EXEEXT)$$//'|sed '$(transform)'|sed 's/$$/$(EXEEXT)/'`"; \
-	     $(INSTALL_PROGRAM) $$p $(DESTDIR)$(bindir)/`echo $$p|sed 's/$(EXEEXT)$$//'|sed '$(transform)'|sed 's/$$/$(EXEEXT)/'`; \
+	    echo "  $(INSTALL_PROGRAM) $(INSTALL_STRIP_FLAG) $$p $(DESTDIR)$(bindir)/`echo $$p|sed 's/$(EXEEXT)$$//'|sed '$(transform)'|sed 's/$$/$(EXEEXT)/'`"; \
+	     $(INSTALL_PROGRAM) $(INSTALL_STRIP_FLAG) $$p $(DESTDIR)$(bindir)/`echo $$p|sed 's/$(EXEEXT)$$//'|sed '$(transform)'|sed 's/$$/$(EXEEXT)/'`; \
 	  else :; fi; \
 	done
 
@@ -193,13 +200,13 @@ mapengine: $(mapengine_OBJECTS) $(mapengine_DEPENDENCIES)
 	@rm -f mapengine
 	$(CXXLINK) $(mapengine_LDFLAGS) $(mapengine_OBJECTS) $(mapengine_LDADD) $(LIBS)
 
-joltest: $(joltest_OBJECTS) $(joltest_DEPENDENCIES)
-	@rm -f joltest
-	$(CXXLINK) $(joltest_LDFLAGS) $(joltest_OBJECTS) $(joltest_LDADD) $(LIBS)
-
 alextest: $(alextest_OBJECTS) $(alextest_DEPENDENCIES)
 	@rm -f alextest
 	$(CXXLINK) $(alextest_LDFLAGS) $(alextest_OBJECTS) $(alextest_LDADD) $(LIBS)
+
+joltest: $(joltest_OBJECTS) $(joltest_DEPENDENCIES)
+	@rm -f joltest
+	$(CXXLINK) $(joltest_LDFLAGS) $(joltest_OBJECTS) $(joltest_LDADD) $(LIBS)
 .cc.o:
 	$(CXXCOMPILE) -c $<
 .cpp.o:
@@ -346,7 +353,7 @@ uninstall: uninstall-am
 all-am: Makefile $(PROGRAMS)
 all-redirect: all-am
 install-strip:
-	$(MAKE) $(AM_MAKEFLAGS) AM_INSTALL_PROGRAM_FLAGS=-s install
+	$(MAKE) $(AM_MAKEFLAGS) INSTALL_STRIP_FLAG=-s install
 installdirs:
 	$(mkinstalldirs)  $(DESTDIR)$(bindir)
 
@@ -396,6 +403,14 @@ uninstall-am uninstall all-redirect all-am all installdirs \
 mostlyclean-generic distclean-generic clean-generic \
 maintainer-clean-generic clean mostlyclean distclean maintainer-clean
 
+
+py_player_wrap.cpp : py_player.i
+	swig -python -shadow -c++ -o $*.cpp $< 
+	@mv player.py ../scripts
+
+py_mapengine_wrap.cpp : py_mapengine.i
+	swig -python -shadow -c++ -o $*.cpp $< 
+	@mv mapengine.py ../scripts
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

@@ -18,7 +18,9 @@
 #include "types.h"
 #include "fileops.h"
 #include "input.h"
+#include "inventory.h"
 #include "image.h"
+#include "mapitem.h"
 #include "mappattern.h"
 #include "mapevent.h"
 #include "mapcharacter.h"
@@ -28,6 +30,7 @@
 #ifdef SDL_MIXER
 #include "audio.h"
 #endif
+
 using namespace std;
 
 landmap::landmap()
@@ -152,11 +155,15 @@ s_int8 landmap::get(SDL_RWops * file)
   mapcharname=(lstr*)calloc(sizeof(lstr),nbr_of_mapcharacters);
   othermapchar=(mapcharacter*)calloc(sizeof(mapcharacter),
 				     nbr_of_mapcharacters);
+
   for(i=0;i<nbr_of_mapcharacters;i++)
     {
       getstringfromfile(mapcharname[i],file);
       othermapchar[i].get_NPC_stat(file,i+1);
     }
+
+  /* Read objects  */
+  items = loaditems("scripts/items.py");
 
   SDL_RWread(file,&nbr_of_events,sizeof(nbr_of_events),1);
   event=(mapevent*)calloc(sizeof(mapevent),nbr_of_events+1);
@@ -359,6 +366,7 @@ void landmap::update_keyboard()
 
   if (heroe.get_scridx()) return;
 
+  /* Process our hero */
   if((heroe.get_movtype()==RIGHT&&!input::is_pushed(275))||
      (heroe.get_movtype()==LEFT&&!input::is_pushed(276))||
      (heroe.get_movtype()==UP&&!input::is_pushed(273))||
@@ -372,6 +380,10 @@ void landmap::update_keyboard()
     heroe.set_movtype(UP);
   if(input::is_pushed(274)&&heroe.get_movtype()==0)
     heroe.set_movtype(DOWN);
+
+  /* HACK -- Test for inventory */
+  if ( input::is_pushed(49))
+	  test_inventory(this);
 
 #ifdef SDL_MIXER
   // REMOVEME

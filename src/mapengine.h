@@ -18,6 +18,7 @@
 #include "SDL.h"
 #include "SDL_thread.h"
 #include "prefs.h"
+#include "map.h"
 
 class mapengine
 {

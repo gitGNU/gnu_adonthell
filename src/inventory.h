@@ -12,8 +12,21 @@
    See the COPYING file for more details.
 */
 
+#ifndef _inventory_h
+#define _inventory_h
+
 #include "types.h"
 #include "mapitem.h"
 
-/* Will fill this in later ; dummy for now */
+/*
+ * Inventory class ; holds a list of items for a character.
+ */
+class inventory
+{
+  private:
+};
 
+/* Prototypes */
+void test_inventory(landmap *map);
+
+#endif

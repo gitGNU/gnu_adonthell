@@ -5,19 +5,35 @@ install process, here it is.
 
 INSTALLING:
 
-There are three libraries that Adonthell depends on. Two of these
-libraries are required, but one is optional. The two REQUIRED
+There are four libraries that Adonthell depends on. Three of these
+libraries are required, the other is optional. The three REQUIRED
 libraries (and where they can be downloaded from) are:
 
-1. The Simple Directmedia Layer (SDL) library, version 1.0 or later.
-2. The SDL_image library, version 1.0 or later.
+1. Python, version 1.5.2 or later. 
+   
+   Many Linux distributions (RedHat, SuSE, etc) include Python, but a few
+are still using Python 1.5 (or, worse, 1.4!). You will need to have 1.5.2 or
+1.6 installed, so please check your version of Python by entering the command:
+
+       python -c 'import sys ; print sys.version'
+
+   You can download Python directly from http://www.python.org.
+
+
+
+2. The Simple Directmedia Layer (SDL) library, version 1.0 or later.
+
+   See http://www.devolution.com/~slouken/SDL/
+
+
+3. The SDL_image library, version 1.0 or later.
 
 Sound support under Adonthell is optional (but highly recommended!!).
 We suggest building Adonthell with sound support if you have a sound
 card configured to run under Linux. To do that, you'll need to build
 and install a third library, SDL_mixer.
 
-3. The SDL_mixer library, Version 1.0 or later.
+4. The SDL_mixer library, Version 1.0 or later.
 
 In the top level "adonthell-0.2" directory, type the following:
 

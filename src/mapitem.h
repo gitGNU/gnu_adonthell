@@ -14,22 +14,27 @@
 #ifndef _mapitem_h
 #define _mapitem_h
 
+#include <string>
+
 #include "types.h"
 #include "mapevent.h"
 
+#include "Python.h"
+
 class mapitem
 {
+  private:
+	PyObject *python;
+
 	u_int16 number;
 	u_int16 pattern;
 	u_int16 event_walk;
 	u_int16 event_action;
-        char name[30];
-        u_int8 status;
+	string name;
+	u_int8 status;
 
-	public:
+  public:
 	mapitem();
-
-	friend int loaditems(char*, mapitem**, mapevent**, u_int16*);
 };
 
 #define EVENT_ITEM 100
@@ -59,9 +64,7 @@ class mapitem
 #define KEYWORD_OPEN '5'
 #define KEYWORD_PLACE_ITEM '6'
 
-/* functions prototypes */
-int loaditems(char*, mapitem**, mapevent**, u_int16*);
-void linesep(char*,char**,int*);
-int test_line(char* string, char **word, int*wordc);
+/* Function prototypes */
+extern mapitem *loaditems(char *);
 
 #endif

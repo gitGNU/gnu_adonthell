@@ -16,9 +16,10 @@
 #define _map_h
 
 #include "types.h"
-#include "mapsquare.h"
-#include "mappattern.h"
+#include "mapcharacter.h"
 #include "mapevent.h"
+#include "mappattern.h"
+#include "mapsquare.h"
 
 class mapitem;
 
@@ -36,7 +37,7 @@ class landmap
   u_int8 scridx;
   u_int8 speeddelay,speedcounter;
   u_int8 ATTACKABLE;
-  mappattern * pattern;
+
   u_int16 nbr_of_patternsets;
   u_int16 nbr_of_patterns;
   int nbr_of_mapcharacters;       // u_int16!!!
@@ -67,6 +68,7 @@ class landmap
   u_int8 status; /* Quitting? */
   
  public:
+  mappattern * pattern;
   //  window win;          /* status window */
   drawing_area * draw_zone;
   mapcharacter heroe;
