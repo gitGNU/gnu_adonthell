@@ -394,8 +394,8 @@ create_list_item (MainFrame *wnd, DlgNode *node, int mode)
         {
             color.red = 65535;
             
-            if (node->type == NPC) color.green = 0;
-            else if (node->type == NARRATOR) color.green = 32700;
+            if (node->type == NODE_NPC) color.green = 0;
+            else if (node->type == NODE_NARRATOR) color.green = 32700;
             else color.green = 16350;
 
             color.blue = 0;
@@ -406,10 +406,10 @@ create_list_item (MainFrame *wnd, DlgNode *node, int mode)
         {
             color.red = 30000;
 
-            if (node->type == NARRATOR) color.green = 47300;
+            if (node->type == NODE_NARRATOR) color.green = 47300;
             else color.green = 30000;
 
-            if (node->type == PLAYER) color.blue = 45000;
+            if (node->type == NODE_PLAYER) color.blue = 45000;
             else color.blue = 30000;
             break;
         }
@@ -417,11 +417,11 @@ create_list_item (MainFrame *wnd, DlgNode *node, int mode)
         default:
         {
             color.red = 0;
-            if (node->type == NARRATOR) color.green = 27300;
+            if (node->type == NODE_NARRATOR) color.green = 27300;
             else color.green = 0;
-            
-            if (node->type == NPC) color.blue = 0;
-            else if (node->type == NARRATOR) color.blue = 15600;
+
+            if (node->type == NODE_NPC) color.blue = 0;
+            else if (node->type == NODE_NARRATOR) color.blue = 15600;
             else color.blue = 35000;
             break;
         }

@@ -258,7 +258,7 @@ void Arrow::load (u_int32 num, vector<DlgNode*> &nodes)
             {
                 if (parse_dlgfile (str, n) == LOAD_NUM) 
                 {
-                    Arrow *gfx = new Arrow (0, LINK);
+                    Arrow *gfx = new Arrow (0, NODE_LINK);
                     circle = nodes[n];
 
                     gfx->prev.push_back (circle);

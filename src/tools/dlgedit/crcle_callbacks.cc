@@ -72,7 +72,7 @@ on_player_button_pressed (GtkButton * button, gpointer user_data)
     g_free (text);
     gtk_text_thaw ((GtkText *) entry);
 
-    ((crcle_dlg *) user_data)->on_type (PLAYER);
+    ((crcle_dlg *) user_data)->on_type (NODE_PLAYER);
 }
 
 void
@@ -95,7 +95,7 @@ on_narrator_button_pressed (GtkButton * button, gpointer user_data)
     g_free (text);
     gtk_text_thaw ((GtkText *) entry);
 
-    ((crcle_dlg *) user_data)->on_type (NARRATOR);
+    ((crcle_dlg *) user_data)->on_type (NODE_NARRATOR);
 }
 
 void
@@ -113,7 +113,7 @@ on_npc_button_pressed (GtkButton * button, gpointer user_data)
     g_free (text);
     gtk_text_thaw ((GtkText *) entry);
 
-    ((crcle_dlg *) user_data)->on_type (NPC);
+    ((crcle_dlg *) user_data)->on_type (NODE_NPC);
 }
 
 

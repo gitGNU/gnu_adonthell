@@ -99,7 +99,7 @@ void dlg_compiler::write_strings ()
     // write all strings and build lookup table to get index when given
     // the number of the node
     for (i = dlg.begin (); i != dlg.end (); i++)
-        if ((*i)->type != LINK)
+        if ((*i)->type != NODE_LINK)
         {
             script << "\""<< ((Circle *)(*i))->text.c_str () << "\", ";
             text_lookup[(*i)->number] = j++;
@@ -125,7 +125,7 @@ void dlg_compiler::write_strings ()
                << "\t\tself.__dict__[name] = val\n"
                << "\t\tself.debug_info[name] = val\n";
     }
-    
+
     return;
 }
 
@@ -140,11 +140,11 @@ void dlg_compiler::write_dialogue ()
            << "\n\t\tself.the_player = p"
            << "\n\t\tself.the_npc = n\n"
            << "\n\t\tself.dialogue = [self.start, ";
-    
+
     // write answer-function-array and build lookup table to get index when given
     // the number of the node
     for (i = dlg.begin (); i != dlg.end (); i++)
-        if ((*i)->type != LINK && npc_follows ((Circle*)*i))
+        if ((*i)->type != NODE_LINK && npc_follows ((Circle*)*i))
         {
             script << "self.answer" << (*i)->number << ", ";
             jump_lookup[(*i)->number] = ++j;
@@ -167,12 +167,12 @@ void dlg_compiler::write_dialogue ()
         write_custom_code (cust_init);
         script << "\n";
     }
-    
+
     // debugging
     if (debug) script << "\n\t\tself.__debug__ = 1\n";
-    
+
     // write user-supplied methods if any
-    if (cust_func != "") 
+    if (cust_func != "")
     {
         space = "\t";
         write_custom_code (cust_func);
@@ -201,7 +201,7 @@ void dlg_compiler::write_entry_func ()
                << "\n\tdef __del__ (self, name):"
                << "\n\t\tdelitem (self.__dict__, name)\n";
     }
-    
+
     // Write the function to start/continue the dialogue
     script << "\n\tdef run (self, answer):"
            << "\n\t\tself.npc = []"
@@ -291,7 +291,7 @@ string dlg_compiler::inflate (string code)
                 {
                     if (pos > 0 && isalpha (code[pos-1]))
                         break;
-                    if (pos < code.length()-operators[i].length()-1 && 
+                    if (pos < code.length()-operators[i].length()-1 &&
                         isalpha (code[pos+operators[i].length()]))
                         break;
                 }
@@ -307,7 +307,7 @@ string dlg_compiler::inflate (string code)
                     begin = pos + 1;
                     break;
                 }
-                
+
                 // see whether we've got a variable and act accordingly
                 if (token_type (stripped) == VARIABLE)
                 {
@@ -412,25 +412,25 @@ u_int32 dlg_compiler::token_type (string &token)
 
     // Variable:
     return VARIABLE;
-}      
+}
 
-// Write a NPC part 
+// Write a NODE_NPC part
 void dlg_compiler::write_npc (Circle *circle)
 {
     u_int32 changed = 0;
 
-    // set NPC if changed
+    // set NODE_NPC if changed
     if (character_changed (circle))
     {
         changed = 1;
-        
+
         script << "\n" << space << "self.set_npc (";
         if (circle->character == "") script << "self.the_npc.get_id())";
         else script << "\"" << circle->character << "\")";
     }
 
     // set the text color
-    if (circle->type == NARRATOR)
+    if (circle->type == NODE_NARRATOR)
     {
         script << "\n" << space << "self.color = 0";
     }
@@ -441,7 +441,7 @@ void dlg_compiler::write_npc (Circle *circle)
         else script << "adonthell.gamedata_get_character(\"" << circle->character << "\").get_color()";
     }
 
-    if (debug) script << "\n\n" << space << "# " << circle->text.c_str (); 
+    if (debug) script << "\n\n" << space << "# " << circle->text.c_str ();
 
     // write circle's text and "jump target"
     script << "\n" << space << "self.npc.append (" << text_lookup[circle->number] << ")"
@@ -460,13 +460,13 @@ void dlg_compiler::write_npc (Circle *circle)
 void dlg_compiler::write_player (Circle *circle)
 {
     // write circle's condition (if any)
-    if (circle->conditions != "") 
+    if (circle->conditions != "")
     {
         write_custom_code (circle->conditions);
         space += "\t";
     }
 
-    if (debug) script << "\n\n" << space << "# " << circle->text.c_str (); 
+    if (debug) script << "\n\n" << space << "# " << circle->text.c_str ();
 
     // write circle's text and "jump target"
     script << "\n" << space << "self.player.append (" << text_lookup[circle->number] << ")"
@@ -486,12 +486,12 @@ void dlg_compiler::write_start ()
 
     // find the start of the dialogue (all nodes without parent)
     for (i = dlg.begin(); i != dlg.end (); i++)
-        if ((*i)->type != LINK)
+        if ((*i)->type != NODE_LINK)
             if ((*i)->prev.empty ())
                 cur_nodes.push_back (*i);
 
     sort (cur_nodes);
-    
+
     script << "\n\tdef start (self):";
     write_answer ();
 
@@ -509,13 +509,13 @@ void dlg_compiler::write_answer ()
     for (i = cur_nodes.begin (); i != cur_nodes.end (); i++)
     {
         // If we find a PLAYER node here, there is something wrong
-        if ((*i)->type == PLAYER)
+        if ((*i)->type == NODE_PLAYER)
         {
-            int type = PLAYER;
+            int type = NODE_PLAYER;
 
             // Find out which of the two possible errors (below) we have here
             for (j = cur_nodes.begin (); j != cur_nodes.end (); j++)
-                if ((*j)->type != PLAYER)
+                if ((*j)->type != NODE_PLAYER)
                 {
                     type = (*j)->type;
                     break;
@@ -525,16 +525,16 @@ void dlg_compiler::write_answer ()
                  << "\"" << ((Circle *) (*i))->text << "\"\n";
 
             // A node's siblings have to be of the same kind
-            if (type != PLAYER)
+            if (type != NODE_PLAYER)
                  cout << "A node can't have different types of siblings." << flush;
 
             // Two Player nodes following each other isn't allowed
-            else 
+            else
                 cout << "A PLAYER node may not follow another PLAYER node." << flush;
         }
-        
+
         // write circle's condition (if any)
-        if (((Circle*)(*i))->conditions != "") 
+        if (((Circle*)(*i))->conditions != "")
         {
             space = "\t\t";
             write_custom_code (((Circle*)(*i))->conditions);
@@ -547,7 +547,7 @@ void dlg_compiler::write_answer ()
         // write following player nodes (if any)
         if (player_follows (*i))
             write_player_answer (*i);
-            
+
         // if npc node(s) follow instead, add node for further actions
         if (npc_follows (*i))
             if (find (todo_nodes.begin(), todo_nodes.end (), *i) == todo_nodes.end () &&
@@ -561,7 +561,7 @@ void dlg_compiler::write_answer ()
 
     if (cur_nodes.empty ())
         script << "\n" << space << "pass";
-    
+
     script << "\n";
 
     return;
@@ -586,7 +586,7 @@ void dlg_compiler::write_player_answer (DlgNode *npc)
     for (i = answers.begin (); i != answers.end (); i++)
     {
         write_player ((Circle*) *i);
-        
+
         // if node isn't already handled or queued for handling,
         // add it to todo_nodes to have it handled later
         if (find (todo_nodes.begin(), todo_nodes.end (), *i) == todo_nodes.end () &&
@@ -611,26 +611,26 @@ void dlg_compiler::get_cur_nodes ()
     for (i = circle->next.begin (); i != circle->next.end (); i++)
         // Add the NPC-node to the nodes to compile next
         cur_nodes.push_back ((*i)->next[0]);
-        
+
     // Now the same for the indirect followers
     for (i = circle->link.begin (); i != circle->link.end (); i++)
         cur_nodes.push_back ((*i)->next[0]);
 
     if (cur_nodes.size () > 1) sort (cur_nodes);
-    
+
     script << "\n\tdef answer" << circle->number << " (self):";
 
     // write player's additional code
-    if (circle->type == PLAYER && circle->variables != "")
+    if (circle->type == NODE_PLAYER && circle->variables != "")
     {
         space = "\t\t";
         write_custom_code (circle->variables);
     }
-    
+
     return;
 }
 
-// Get if - [elif ...] - else statements in the right order 
+// Get if - [elif ...] - else statements in the right order
 void dlg_compiler::sort (vector<DlgNode*> &v)
 {
     u_int32 i, if_pos = 0;
@@ -661,7 +661,7 @@ void dlg_compiler::sort (vector<DlgNode*> &v)
                 i--;
             }
 
-            // insert "if" after those nodes without condition 
+            // insert "if" after those nodes without condition
             if (if_pos != i && !strncmp (((Circle *) node)->conditions.c_str (), "if", 2))
             {
                 v.erase (remove (v.begin (), v.end (), node), v.end ());
@@ -671,17 +671,17 @@ void dlg_compiler::sort (vector<DlgNode*> &v)
     }
 }
 
-// Check wether player text follows after that NPC node
+// Check wether player text follows after that NODE_NPC node
 u_int8 dlg_compiler::player_follows (DlgNode *circle)
 {
     // Check immediate followers
     if (circle->next.size () > 0)
-        if (circle->next[0]->next[0]->type == PLAYER)
+        if (circle->next[0]->next[0]->type == NODE_PLAYER)
             return 1;
 
     // Check linked followers
     if (circle->link.size () > 0)
-        if (circle->link[0]->next[0]->type == PLAYER)
+        if (circle->link[0]->next[0]->type == NODE_PLAYER)
             return 1;
 
     return 0;
@@ -691,12 +691,12 @@ u_int8 dlg_compiler::npc_follows (DlgNode *circle)
 {
     // Check immediate followers
     if (circle->next.size () > 0)
-        if (circle->next[0]->next[0]->type != PLAYER)
+        if (circle->next[0]->next[0]->type != NODE_PLAYER)
             return 1;
 
     // Check linked followers
     if (circle->link.size () > 0)
-        if (circle->link[0]->next[0]->type != PLAYER)
+        if (circle->link[0]->next[0]->type != NODE_PLAYER)
             return 1;
 
     return 0;
@@ -736,7 +736,7 @@ u_int8 dlg_compiler::narrator_before (Circle *circle)
     get_prev_npc_links (circle, prevs);
 
     for (i = prevs.begin (); i != prevs.end (); i++)
-        if ((*i)->type == NARRATOR)
+        if ((*i)->type == NODE_NARRATOR)
             return 1;
 
     return 0;
@@ -753,7 +753,7 @@ void dlg_compiler::get_prev_npc_nodes (Circle* circle, vector<Circle*> &prevs)
         node = (*i)->prev[0];
 
         // ... add all NPC nodes to prevs
-        if (node->type == PLAYER)
+        if (node->type == NODE_PLAYER)
         {
             // We have to check both immediate and linked nodes
             get_prev_npc_nodes ((Circle *) node, prevs);
@@ -770,7 +770,7 @@ void dlg_compiler::get_prev_npc_links (Circle* circle, vector<Circle*> &prevs)
     for (i = circle->prev.begin (); i != circle->prev.end (); i++)
         for (j = (*i)->link.begin (); j != (*i)->link.end (); j++)
         {
-            if ((*j)->type == PLAYER) 
+            if ((*j)->type == NODE_PLAYER)
             {
                 get_prev_npc_nodes ((Circle *) (*j), prevs);
                 get_prev_npc_links ((Circle *) (*j), prevs);

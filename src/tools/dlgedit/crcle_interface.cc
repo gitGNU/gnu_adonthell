@@ -183,11 +183,11 @@ create_dlg_node_window (Circle *circle, crcle_dlg *dlg)
     gtk_tooltips_set_tip (tooltips, text_entry, "Enter the Text to appear within the conversation", NULL);
     gtk_text_set_editable (GTK_TEXT (text_entry), TRUE);
     gtk_text_set_word_wrap (GTK_TEXT (text_entry), TRUE);
-    if (circle->type == NPC)
+    if (circle->type == NODE_NPC)
         gtk_text_insert (GTK_TEXT (text_entry), text_entry->style->font,
             &text_entry->style->black, &text_entry->style->white,
             circle->text.c_str (), -1);
-    else if (circle->type == NARRATOR)
+    else if (circle->type == NODE_NARRATOR)
     {
         gtk_text_insert ((GtkText *) text_entry, text_entry->style->font,
             &dark_green, &text_entry->style->white, " ", -1);
@@ -225,7 +225,7 @@ create_dlg_node_window (Circle *circle, crcle_dlg *dlg)
     gtk_object_set_data_full (GTK_OBJECT (dlg_node_window), "narrator_button", narrator_button, (GtkDestroyNotify) gtk_widget_unref);
     gtk_widget_show (narrator_button);
     gtk_box_pack_start (GTK_BOX (vbox2), narrator_button, FALSE, FALSE, 0);
-    if (circle->type == NARRATOR)
+    if (circle->type == NODE_NARRATOR)
         gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (narrator_button), TRUE);
     GTK_WIDGET_UNSET_FLAGS (narrator_button, GTK_CAN_FOCUS);
 
@@ -249,7 +249,7 @@ create_dlg_node_window (Circle *circle, crcle_dlg *dlg)
     gtk_object_set_data_full (GTK_OBJECT (dlg_node_window), "player_button", player_button, (GtkDestroyNotify) gtk_widget_unref);
     gtk_widget_show (player_button);
     gtk_box_pack_start (GTK_BOX (vbox2), player_button, FALSE, FALSE, 0);
-    if (circle->type == PLAYER)
+    if (circle->type == NODE_PLAYER)
         gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (player_button), TRUE);
     GTK_WIDGET_UNSET_FLAGS (player_button, GTK_CAN_FOCUS);
 
@@ -265,7 +265,7 @@ create_dlg_node_window (Circle *circle, crcle_dlg *dlg)
     gtk_object_set_data_full (GTK_OBJECT (dlg_node_window), "npc_button", npc_button, (GtkDestroyNotify) gtk_widget_unref);
     gtk_widget_show (npc_button);
     gtk_box_pack_start (GTK_BOX (hbox1), npc_button, FALSE, FALSE, 0);
-    if (circle->type == NPC)
+    if (circle->type == NODE_NPC)
         gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (npc_button), TRUE);
     GTK_WIDGET_UNSET_FLAGS (npc_button, GTK_CAN_FOCUS);
 

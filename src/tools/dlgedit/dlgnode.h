@@ -59,11 +59,11 @@ enum
 // Node Types
 enum
 {
-    PLAYER = 1,
-    NPC = 2,
-    LINK = 3,
-    MOVER = 4,
-    NARRATOR = 5
+    NODE_PLAYER = 1,
+    NODE_NPC = 2,
+    NODE_LINK = 3,
+    NODE_MOVER = 4,
+    NODE_NARRATOR = 5,
 };
 
 // Base class for the Dialogue Nodes

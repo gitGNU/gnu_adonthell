@@ -197,7 +197,7 @@ button_release_event (GtkWidget * widget, GdkEventButton * event, gpointer data)
             case IDLE:
             {
                 if (!select_object (MainWnd, point))
-                    new_circle (MainWnd, point, NPC);
+                    new_circle (MainWnd, point, NODE_NPC);
                 break;
             }
 
@@ -329,7 +329,7 @@ key_press_notify_event (GtkWidget * widget, GdkEventKey * event, gpointer data)
             }
 
             // Skip Arrows
-            while (MainWnd->nodes[index]->type == LINK)
+            while (MainWnd->nodes[index]->type == NODE_LINK)
                 index = (MainWnd->number == index + 1) ? 0 : index + 1;
             
             center_object (MainWnd, MainWnd->nodes[index]);
