@@ -116,7 +116,7 @@ void win_label::init_draw_surface()
 	      break;
 	    }
 	}
-      if(auto_height_ && height_!=tmpheight_)
+      if(auto_height_ && height_!=tmpheight_+font_->height())
 	{
 	  win_base::resize(length_,tmpheight_+font_->height()); 
 	  template_->init();
@@ -140,7 +140,7 @@ void win_label::init_draw_surface()
 	      i++;
 	    }
 	  if(curligne_>tmplength_) tmplength_=curligne_;
-	  if(tmpheight_!=height_ || tmplength_!=length_) 
+	  if(tmpheight_!=height_+font_->height() || tmplength_!=length_) 
 	    {
 	      win_base::resize(tmplength_,tmpheight_+font_->height()); 
 	      template_->init();

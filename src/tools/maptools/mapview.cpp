@@ -230,6 +230,49 @@ void mapview::add_mapobject()
   must_upt_label_object=true;
 }
 
+void mapview::load_map()
+{
+  win_query * qw=new win_query(70,40,th,font,"Load map: (Type \"new\" for editing a new one)");
+  char * s=qw->wait_for_text(makeFunctor(*this,&mapview::update_editor),
+			     makeFunctor(*this,&mapview::draw_editor));
+  if(!s) return;
+  if(strcmp(s,"new"))
+    if(m_map->load(s))
+      {
+	win_info * wi=new win_info(70,40,th,font,"Error loading!");
+	wi->wait_for_keypress(makeFunctor(*this,&mapview::update_editor),
+			      makeFunctor(*this,&mapview::draw_editor));
+	delete wi;
+	delete qw;
+	return;
+      }
+  delete qw;
+  must_upt_label_pos=true;
+  must_upt_label_object=true;
+  must_upt_label_square=true;
+}
+
+void mapview::save_map()
+{
+  win_query * qw=new win_query(70,40,th,font,"Save map as:");
+  char * s=qw->wait_for_text(makeFunctor(*this,&mapview::update_editor),
+			     makeFunctor(*this,&mapview::draw_editor));
+  if(!s) return;
+  if(m_map->save(s))
+    {
+      win_info * wi=new win_info(70,40,th,font,"Error loading!");
+      wi->wait_for_keypress(makeFunctor(*this,&mapview::update_editor),
+			    makeFunctor(*this,&mapview::draw_editor));
+      delete wi;
+      delete qw;
+      return;
+    }
+  delete qw;
+  must_upt_label_pos=true;
+  must_upt_label_object=true;
+  must_upt_label_square=true;
+}
+
 void mapview::update_current_tile(mapsquare_tile t)
 {
   if(!m_map) return;
@@ -584,6 +627,12 @@ void mapview::update_editor_keys()
   
     if(input::has_been_pushed(SDLK_a))
       add_mapobject();
+
+    if(input::has_been_pushed(SDLK_F5))
+      save_map();
+
+    if(input::has_been_pushed(SDLK_F6))
+      load_map();
 
     if(input::has_been_pushed(SDLK_s))
       {

@@ -140,7 +140,7 @@ void win_select::previous_()
   if(index_list!=list_obj.begin()) index_list--;
   (*index_list)->on_select();
   (*index_list)->set_draw_brightness(false);
-  //  update_position();
+  update_position();
   on_previous();
 }
 
@@ -148,6 +148,7 @@ void win_select::update_position()
 {
   static bool tmp_is_visible_;
   tmp_is_visible_=false;
+  if(!max_amplitude_) tmp_is_visible_=true;
   while(!tmp_is_visible_)
     {
       if(((*index_list)->y()+(*index_list)->pady()>space_between_border_) && 

@@ -259,7 +259,7 @@ void mapobject::init()
 
 void mapobject::clear()
 {
-  if(part) delete[] part;
+  if(nbr_of_parts) delete[] part;
 }
 
 mapobject::mapobject() : maptpl(0,0,1,1,9,9)

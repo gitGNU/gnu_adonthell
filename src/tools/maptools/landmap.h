@@ -16,6 +16,8 @@
 #define _LANDMAP_H
 
 #include "mapobject.h"
+#include <string>
+#include <vector>
 #include <list>
 #include "mapview.h"
 
@@ -129,7 +131,7 @@ class landmap
 
 #ifdef _EDIT_
   mapobject * mini_pattern;
-
+  
   void update_current_tile();
 
   void increase_obj_here();
@@ -145,15 +147,25 @@ class landmap
  public:
   mapobject * pattern;
   u_int16 nbr_of_patterns;
-  
+
+  vector<string> objsrc;
+
   landsubmap ** submap;
   u_int16 nbr_of_submaps;
 
  public:
   landmap();
+  void clear();
   ~landmap();
 
   landmap& operator =(const landmap& lm);
+
+  s_int8 get(gzFile file);
+  s_int8 load(const char * fname);
+#ifdef _EDIT_
+  s_int8 put(gzFile file);
+  s_int8 save(const char * fname);
+#endif
 
   // Adds a submap to the map. Returns 0 if ok (in this case, the submap
   // number is nbr_of_submaps-1)
@@ -164,8 +176,6 @@ class landmap
   // an error code.
   s_int8 remove_submap(u_int16 nbr);
 
-  s_int8 add_object(mapobject& an);  
-
   s_int8 set_square_pattern(u_int16 smap, u_int16 px, u_int16 py, 
 			    u_int16 patnbr);
 
@@ -173,7 +183,8 @@ class landmap
 			      list<mapsquare_tile>::iterator obj);  
   void update();
 
-  s_int8 insert_mapobject(mapobject &an, u_int16 pos);
+  s_int8 insert_mapobject(mapobject &an, u_int16 pos,
+			  string srcfile="");
   s_int8 delete_mapobject(u_int16 pos);
 
   void draw_square(u_int16 smap, u_int16 x, u_int16 y, u_int16 px, u_int16 py,

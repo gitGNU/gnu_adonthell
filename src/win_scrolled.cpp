@@ -67,7 +67,7 @@ void win_scrolled::resize(u_int16 tl,u_int16 th)
 
 void win_scrolled::up()
 {
-  
+  cout << max_amplitude_ << endl;
   if(max_amplitude_==0 || !activated_) return;
   if(cur_amplitude_-index_pad_<0)
     cur_amplitude_=0;

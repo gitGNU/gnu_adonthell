@@ -95,6 +95,9 @@ class mapview
   void resize_map();
   void add_mapobject();
 
+  void load_map();
+  void save_map();
+
   void update_current_tile(mapsquare_tile t);
 
   void update_editor();
