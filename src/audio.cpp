@@ -109,6 +109,8 @@ void audio::audio_cleanup(void) {
 
 int audio::load_background(int slot, char *filename) {
 
+  if (!audio_initialized) return(1);
+
   // Check for bad input
   if ((slot >= NUM_MUSIC) || (slot < 0)) {
     fprintf(stderr, "Error: Tried to put music in invalid slot.\n");
@@ -179,6 +181,8 @@ void audio::set_background_volume(int volume) {
 // This should be done better, but I'll wait until
 // I have enough sound effects to play with ;>
 int audio::load_wave(int slot, char *filename) {
+
+  if (!audio_initialized) return(1);
 
   // Check for bad input
   if ((slot >= NUM_WAVES) || (slot < 0)) {

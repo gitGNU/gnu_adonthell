@@ -60,7 +60,9 @@ bool game::init ()
     // init audio subsystem
 #ifdef SDL_MIXER
     audio_init (configuration);
-    audio_thread = SDL_CreateThread (audio_update, NULL);
+
+    if (audio_in->audio_initialized)
+        audio_thread = SDL_CreateThread (audio_update, NULL);
 
     if (audio_thread == NULL) 
     {
