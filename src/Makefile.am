@@ -6,7 +6,7 @@ endif
 
 moddatadir = $(gamedatadir)/modules
 
-moddata_SCRIPTS = adonthell.pyc
+moddata_DATA = adonthell.pyc
 
 bin_PROGRAMS = adonthell
 
