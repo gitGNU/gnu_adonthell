@@ -3,7 +3,7 @@ dnl Process this file with autoconf to produce a configure script.
 dnl **************************************************************
 
 AC_INIT(README)
-AM_INIT_AUTOMAKE(adonthell, 0.3.1)
+AM_INIT_AUTOMAKE(adonthell, 0.4alpha1)
 
 CFLAGS="-g -Wall -fno-exceptions -fno-rtti"
 DEFS=""
@@ -209,9 +209,32 @@ else
 fi
 
 
+dnl **************
 dnl Check for SWIG
-AC_PATH_PROG(P_SWIG,swig)
+dnl **************
 
+haveswig=no
+AC_PATH_PROG(P_SWIG,swig,no)
+if test "$SDL_CONFIG" != "no" ; then
+    $P_SWIG -version &> swig.ver
+
+    changequote(<<, >>)
+    swig_major_ver=`more swig.ver | sed 's/.* \([0-9]*\)\.[0-9]*\.[0-9]*.*/\1/p; d'`
+    swig_minor_ver=`more swig.ver | sed 's/.* [0-9]*\.\([0-9]*\)\.[0-9]*.*/\1/p; d'`
+    swig_micro_ver=`more swig.ver | sed 's/.* [0-9]*\.[0-9]*\.\([0-9]*\).*/\1/p; d'`
+    changequote([, ])
+
+    rm -f swig.ver
+
+    SWIG_VERSION="$swig_major_ver.$swig_minor_ver.$swig_micro_ver"
+
+    if test $swig_major_ver -gt 1 -o \
+            $swig_major_ver -eq 1 -a $swig_minor_ver -gt 3 -o \
+            $swig_major_ver -eq 1 -a $swig_minor_ver -eq 3 -a $swig_micro_ver -gt 9 ;
+    then
+        haveswig=yes
+    fi
+fi
 
 dnl ********************************
 dnl Check whether to build our tools
@@ -347,6 +370,9 @@ echo "SDL ....................... : `$SDL_CONFIG --version`"
 echo "Python .................... : $PY_VERSION"
 echo "Python debugging .......... : $pydebug"
 echo "Freetype .................. : `freetype-config --version`"
+if test x$haveswig = xyes; then
+echo "SWIG ...................... : $SWIG_VERSION"
+fi
 if test x$havegtk = xyes; then
 echo "GTK+ ...................... : `gtk-config --version`"
 fi
