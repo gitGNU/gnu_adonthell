@@ -32,6 +32,8 @@
 #include "input.h"
 #include "dialog_engine.h"
 
+#include "audio.h"
+
 // Init the dialogue engine
 dialog_engine::dialog_engine (character_base *mynpc, char * dlg_file, u_int8 size) 
 {
@@ -40,6 +42,7 @@ dialog_engine::dialog_engine (character_base *mynpc, char * dlg_file, u_int8 siz
 
 void dialog_engine::init(character_base *mynpc, char * dlg_file, u_int8 size)
 {
+    audio::play_wave (-1, 0); 
     is_running = true;
     instance = NULL;
 

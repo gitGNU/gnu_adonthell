@@ -14,6 +14,7 @@
 
 #include "win_select.h"
 
+#include "audio.h"
 
 win_select::win_select()
 {
@@ -66,7 +67,8 @@ void win_select::next()
 {
   //test if next possible
   if(cur_select_ == list_wb_.end() || list_wb_.size() == 0) return;
-  
+
+  audio::play_wave (-1, 1); 
   (*cur_select_)->on_unselect();
 
   //unselect cur element
@@ -108,6 +110,7 @@ void win_select::previous()
 {
   if(cur_select_==list_wb_.end() || list_wb_.size() == 0) return;
   
+  audio::play_wave (-1, 1); 
   (*cur_select_)->on_unselect();
   
   //set to unselect object
@@ -152,6 +155,8 @@ void win_select::previous()
 void win_select::activate()
 {
   if(cur_select_ == list_wb_.end()) return;
+  
+  audio::play_wave (-1, 0); 
   
   //set_activate(false);  
   
