@@ -1,7 +1,7 @@
 /*
    $Id$
 
-   Copyright (C) 1999/2000   The Adonthell Project
+   Copyright (C) 1999 - 2001   The Adonthell Project
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -14,6 +14,7 @@
 
 #include "landmap.h"
 #include "mapview.h"
+#include "fileops.h"
 
 #if defined _DEBUG_ || defined _EDIT_
 u_int16 mapsquare::a_d_diff=0;
@@ -478,13 +479,14 @@ s_int8 landmap::get(gzFile file)
 s_int8 landmap::load(const char * fname)
 {
   gzFile file;
-  u_int8 retvalue;
+  s_int8 retvalue = -1;
   char fdef[strlen(fname)+strlen(MAPS_DIR)+1];
   strcpy(fdef,MAPS_DIR);
   strcat(fdef,fname);
   file=gzopen(fdef,"rb"); 
   if(!file) return -1;
-  retvalue=get(file);
+  if(fileops::get_version (file, 1, 1, fdef))
+    retvalue=get(file);
   gzclose(file);
   return retvalue;
 }
@@ -493,6 +495,10 @@ s_int8 landmap::load(const char * fname)
 s_int8 landmap::put(gzFile file)
 {
   u_int16 i;
+  
+  // version information 
+  fileops::put_version (file, 1);
+
   // Putting all mapobjects
   gzwrite(file,&nbr_of_patterns,sizeof(nbr_of_patterns));
   for(i=0;i<nbr_of_patterns;i++)

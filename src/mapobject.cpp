@@ -1,7 +1,7 @@
 /*
    $Id$
 
-   Copyright (C) 1999/2000   The Adonthell Project
+   Copyright (C) 1999 - 2001   The Adonthell Project
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -13,6 +13,7 @@
 */
 
 #include "mapobject.h"
+#include "fileops.h"
 
 #ifdef _DEBUG_
 u_int16 mapobject::a_d_diff;
@@ -157,7 +158,7 @@ void mapobject::calculate_dimensions()
 s_int8 mapobject::get(gzFile file)
 {
   u_int16 i;
-  if(part) delete[] part; 
+  if(part) delete[] part;
   gzread(file,&nbr_of_parts,sizeof(nbr_of_parts));
 #ifdef _EDIT_
   currentpart=0;
@@ -177,13 +178,14 @@ s_int8 mapobject::get(gzFile file)
 s_int8 mapobject::load(const char * fname)
 {
   gzFile file;
-  u_int8 retvalue;
+  s_int8 retvalue = -1;
   char fdef[strlen(fname)+strlen(MAPOBJECTS_DIR)+1];
   strcpy(fdef,MAPOBJECTS_DIR);
   strcat(fdef,fname);
   file=gzopen(fdef,"rb"); 
   if(!file) return -1;
-  retvalue=get(file);
+  if(fileops::get_version (file, 1, 1, fdef))
+    retvalue=get(file);
   gzclose(file);
   return retvalue;
 }
@@ -202,6 +204,10 @@ u_int16 mapobject::get_height()
 s_int8 mapobject::put(gzFile file)
 {
   u_int16 i;
+
+  // version information 
+  fileops::put_version (file, 1);
+
   gzwrite(file,&nbr_of_parts,sizeof(nbr_of_parts));
   for(i=0;i<nbr_of_parts;i++)
     part[i].put(file);
@@ -570,7 +576,7 @@ void mapobject::resize_grid()
 
 inline bool testkey(SDLKey k)
 {
-  if(SDL_GetModState()&KMOD_LCTRL)
+  if(SDL_GetModState()&KMOD_CTRL)
     return((input::is_pushed(k)));
   else return ((input::has_been_pushed(k)));
 }
@@ -590,13 +596,13 @@ void mapobject::update_editor_keys()
 
   if(input::has_been_pushed(SDLK_F5))
     { 
-      if(SDL_GetModState()&KMOD_LSHIFT)
+      if(SDL_GetModState()&KMOD_SHIFT)
 	quick_save();
       else save(); 
     }
   if(input::has_been_pushed(SDLK_F6))
     { 
-      if(SDL_GetModState()&KMOD_LSHIFT)
+      if(SDL_GetModState()&KMOD_SHIFT)
 	quick_load();
       else load(); 
     }
@@ -610,7 +616,7 @@ void mapobject::update_editor_keys()
   if(!nbr_of_parts) return;
 
   if(testkey(SDLK_KP_PLUS))
-    if(SDL_GetModState()&KMOD_LSHIFT)
+    if(SDL_GetModState()&KMOD_SHIFT)
       {
 	if(currentpart<nbr_of_parts-1)
 	  {
@@ -625,7 +631,7 @@ void mapobject::update_editor_keys()
     else set_currentpart(increase_part(currentpart));
   
   if(testkey(SDLK_KP_MINUS))
-    if(SDL_GetModState()&KMOD_LSHIFT)
+    if(SDL_GetModState()&KMOD_SHIFT)
       {
 	if(currentpart>0)
 	  {

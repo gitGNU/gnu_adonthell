@@ -1,7 +1,7 @@
 /*
    $Id$
 
-   Copyright (C) 1999/2000   The Adonthell Project
+   Copyright (C) 1999 - 2001   The Adonthell Project
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -16,6 +16,7 @@
 #include "win_manager.h"
 #include "mapview.h"
 #include "mapengine.h"
+#include "fileops.h"
 
 #ifndef _EDIT_
 #include "dialog_engine.h"
@@ -75,13 +76,14 @@ s_int8 mapcharacter::get(gzFile file)
 s_int8 mapcharacter::load(const char * fname)
 {
   gzFile file;
-  u_int8 retvalue;
+  s_int8 retvalue = -1;
   char fdef[strlen(fname)+strlen(MAPCHAR_DIR)+1];
   strcpy(fdef,MAPCHAR_DIR);
   strcat(fdef,fname);
   file=gzopen(fdef,"rb");
   if(!file) return(-1);
-  retvalue=get(file);
+  if(fileops::get_version (file, 1, 1, fdef))
+    retvalue=get(file);
   gzclose(file);
   return 0;
 }
@@ -671,6 +673,10 @@ void mapcharacter::calculate_dimensions()
 s_int8 mapcharacter::put(gzFile file)
 {
   int i;
+  
+  // version information 
+  fileops::put_version (file, 1);
+
   for(i=0;i<NBR_MOVES;i++)
     {
       anim[i]->put(file);
@@ -840,7 +846,7 @@ void mapcharacter::update_and_draw()
 
 inline bool testkey(SDLKey k)
 {
-  if(SDL_GetModState()&KMOD_LCTRL)
+  if(SDL_GetModState()&KMOD_CTRL)
     return((input::is_pushed(k)));
   else return ((input::has_been_pushed(k)));
 }
