@@ -38,12 +38,13 @@
 
 #include "prefs.h"
 #include "python_class.h"
+#include "game.h"
 
 config::config () 
 {
     // set some default values where possible
-    datadir = DATA_DIR;             // Directory containing the gamedata
     screen_mode = 0;                // Fullscreen
+    double_screen = 1;              // Double screen
     audio_channels = 1;             // Stereo
     audio_resolution = 1;           // 16 bit
     audio_sample_rate = 2;          // 11025, 22050 or 44100 Hz
@@ -83,12 +84,12 @@ void print_help_message (char * argv[])
 void print_available_games () 
 {
     struct dirent * d;
-    DIR * mydir = opendir (DATA_DIR"/games"); 
+    DIR * mydir = opendir ((game::global_data_dir() + "/games").c_str()); 
     bool nogames = true; 
  
     if (!mydir) 
     {
-        cerr << "Cannot open directory " << DATA_DIR"/games!" << endl;
+        cerr << "Cannot open directory " << game::global_data_dir() + "/games!" << endl;
         exit (1); 
     }
 
@@ -130,7 +131,7 @@ void config::parse_arguments (int argc, char * argv[])
                 break;
                 
             case 'd':
-                cout << DATA_DIR << endl;
+                cout << game::global_data_dir() << endl;
                 exit (0); 
                 break;
                 
@@ -187,12 +188,12 @@ void config::parse_arguments (int argc, char * argv[])
         
         // Check whether the requested game exists
         struct dirent * d;
-        DIR * mydir = opendir (DATA_DIR"/games"); 
+        DIR * mydir = opendir ((game::global_data_dir() + "/games").c_str()); 
         bool found = false; 
         
         if (!mydir) 
         {
-            cerr << "Cannot open directory " << DATA_DIR"/games!" << endl;
+            cerr << "Cannot open directory " << game::global_data_dir() + "/games!" << endl;
             exit (1); 
         }
         
@@ -211,7 +212,7 @@ void config::parse_arguments (int argc, char * argv[])
         }
         
         // The game exists, so let the show continue...
-        gamedir = DATA_DIR"/games/"; 
+        gamedir = game::global_data_dir() + "/games/"; 
         gamedir += argv[1];
     }
 
@@ -234,7 +235,6 @@ void config::parse_arguments (int argc, char * argv[])
 // That's more or less a move operator, as the source is destroyed
 config& config::operator =(const config *c)
 {
-    datadir = c->datadir;
     screen_mode = c->screen_mode;
     audio_channels = c->audio_channels; 
     audio_resolution = c->audio_resolution;
@@ -268,6 +268,8 @@ void config::write_adonthellrc ()
        << "# edit to your needs!\n\n"
        << "# Screen-mode num\n#   0  Windowed mode\n"
        << "#   1  Fullscreen mode\n    Screen-mode " << (int) screen_mode << "\n\n"
+       << "# Double-screen num\n#   0  320x240 mode\n"
+       << "#   1  640x480 (double) mode\n    Double-screen " << (int) double_screen << "\n\n"
        << "# Language [locale]\n# Where locale has the form fr_FR or de_DE, etc.\n    Language [" << language << "]\n\n"
        << "# Audio-channels num\n#   0  Mono\n#   1  Stereo\n"
        << "    Audio-channels " << (int) audio_channels << "\n\n"
@@ -331,6 +333,12 @@ bool config::read_adonthellrc ()
             case PREFS_SCREEN_MODE:
             {
                 if (parse_adonthellrc (n, s) == PREFS_NUM) screen_mode = n;
+                break;
+            }
+
+            case PREFS_DOUBLE_SCREEN:
+            {
+                if (parse_adonthellrc (n, s) == PREFS_NUM) double_screen = n;
                 break;
             }
 

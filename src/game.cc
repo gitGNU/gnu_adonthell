@@ -35,16 +35,20 @@ string game::Global_data_dir;
 string game::Game_data_dir; 
 
 
-void game::init (string game_dir = "") 
+void game::init (string game_dir) 
 {
-    Global_data_dir = DATA_DIR;
+    Global_data_dir = game_dir;
 #ifndef WIN32
     User_data_dir = getenv ("HOME");
     User_data_dir += "/.adonthell";
 #else
-    User_data_dir = ".";
+    User_data_dir = Global_data_dir;
 #endif
-    Game_data_dir = game_dir; 
+}
+
+void game::set_game_data_dir(string game_dir)
+{
+    Game_data_dir = game_dir;
 }
 
 bool game::directory_exist (const string & dirname)

@@ -188,9 +188,23 @@ s_int8 image::put_raw (ogzstream& file) const
     SDL_Surface *tmp2 = SDL_CreateRGBSurface (0, 1, 1, 24, 
                                               0x0000FF, 0x00FF00,
                                               0xFF0000, 0);
-    
-    SDL_Surface * temp = SDL_ConvertSurface (vis, tmp2->format, 0);
 
+    image * imt;
+    SDL_Surface * toconvert;
+    
+    if (screen::dblmode)
+    {
+        imt = new image();
+        imt->double_size(*this);
+        toconvert = imt->vis;
+    }
+    else
+    {
+        toconvert = vis;
+    }
+
+    SDL_Surface * temp = SDL_ConvertSurface (toconvert, tmp2->format, 0);
+    
     SDL_LockSurface (temp); 
     
     // The pitch is ALWAYS a multiple of 4, no matter the length of the image.
@@ -204,6 +218,7 @@ s_int8 image::put_raw (ogzstream& file) const
 
     SDL_FreeSurface (temp);
     SDL_FreeSurface (tmp2); 
+    if (screen::dblmode) delete imt;
     return 0;
 }
 
@@ -221,12 +236,23 @@ s_int8 image::save_raw (string fname) const
 
 s_int8 image::put_pnm (SDL_RWops * file) const
 {
-    SDL_Surface *tmp2 = SDL_CreateRGBSurface (0, length (),
-                                              height (), 24, 
+    SDL_Surface *tmp2 = SDL_CreateRGBSurface (0, 1, 1, 24, 
                                               0x0000FF, 0x00FF00,
                                               0xFF0000, 0);
     
-    SDL_Surface * temp = SDL_ConvertSurface (vis, tmp2->format, 0);
+    SDL_Surface * temp;
+
+    if (screen::dblmode)
+    {
+        image imt;
+        imt.half_size(*this);
+        temp = SDL_ConvertSurface (imt.vis, tmp2->format, 0);
+    }
+    else
+    {
+        temp = SDL_ConvertSurface (vis, tmp2->format, 0);
+    }
+
     pnm::put (file, temp->pixels, length (), height ()); 
 
     SDL_FreeSurface (temp);
@@ -240,7 +266,7 @@ s_int8 image::save_pnm (string fname) const
     SDL_RWops *file;
     s_int8 ret = 0; 
 
-    file = SDL_RWFromFile (fname.c_str (), "w"); 
+    file = SDL_RWFromFile (fname.c_str (), "wb"); 
     if (!file)
         return 1;
     ret = put_pnm (file);
@@ -315,7 +341,7 @@ void image::brightness (const surface& src, u_int8 cont, bool proceed_mask = fal
                 ib = (ib * cont) >> 8;
                 put_pix (i, j, ir, ig, ib);
             }
-            else put_pix (i, j, temp); 
+            else put_pix (i, j, temp);
         }
     src.unlock ();
     unlock ();
@@ -348,5 +374,11 @@ void image::raw2display (void * rawdata, u_int16 l, u_int16 h)
                                                   0x0000FF, 0x00FF00,
                                                   0xFF0000, 0);
     vis = SDL_DisplayFormat (tmp2);
+    if (screen::dblmode)
+    {
+        image imt;
+        imt.double_size(*this);
+        *this = imt;
+    }
     SDL_FreeSurface (tmp2);
 }

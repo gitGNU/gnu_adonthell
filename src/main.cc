@@ -98,24 +98,39 @@ int main(int argc, char * argv[])
     mtrace ();
 #endif
 
+    // init game environment
+#ifndef WIN32
+    game::init(DATA_DIR);
+#else
+    char b[500];
+    getcwd(b, sizeof(b));
+    int ti = 0;
+    while (b[ti])
+    {
+        if (b[ti] == '\\') b[ti] = '/';
+        ti++;
+    }
+    cout << b << endl;
+    game::init(b);
+#endif
+
     config myconfig;
 
     // read the $HOME/.adonthell/adonthellrc file
     // and check the arguments we recieved.
     myconfig.read_adonthellrc ();
     myconfig.parse_arguments (argc, argv);
-
-    // init game environment
-    game::init (myconfig.gamedir);
     
     // init national language support
     nls::init (myconfig);
     
-    // init game loading/saving system
-    gamedata::init (myconfig.get_adonthellrc (), myconfig.gamedir, myconfig.game_name); 
+    game::set_game_data_dir(myconfig.gamedir);
     
+    // init game loading/saving system
+    gamedata::init (game::user_data_dir(), game::game_data_dir(), myconfig.game_name); 
+
     // init video subsystem
-    screen::set_video_mode (320, 240);
+    screen::set_video_mode (320, 240, 0, myconfig.double_screen);
     screen::set_fullscreen (myconfig.screen_mode); 
      
     // init audio subsystem

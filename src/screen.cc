@@ -33,13 +33,16 @@ surface screen::display;
 u_int8 screen::bytes_per_pixel_ = 0;
 u_int32 screen::trans = 0;
 bool screen::fullscreen_ = false; 
-  
-void screen::set_video_mode (u_int16 nl, u_int16 nh, u_int8 depth = 0)
+bool screen::dblmode;
+
+void screen::set_video_mode (u_int16 nl, u_int16 nh, u_int8 depth = 0, bool dbl = false)
 {
     u_int8 bpp;
     u_int32 SDL_flags = SDL_HWSURFACE | SDL_DOUBLEBUF;
     u_int8 emulated = depth; 
     
+    dblmode = dbl;
+
     if (SDL_Init (SDL_INIT_VIDEO) < 0)
     {
         fprintf (stderr, "couldn't init display: %s\n", SDL_GetError ());
@@ -69,6 +72,12 @@ void screen::set_video_mode (u_int16 nl, u_int16 nh, u_int8 depth = 0)
     
     // surface destructor musn't free the screen surface
     display.not_screen = false; 
+
+    if (dblmode) 
+    {
+        nl = nl << 1;
+        nh = nh << 1;
+    }
 
     display.vis = SDL_SetVideoMode (nl, nh, bpp, SDL_flags);
     if (display.vis == NULL)

@@ -29,6 +29,134 @@ using namespace std;
 SDL_Rect surface::srcrect; 
 SDL_Rect surface::dstrect; 
 
+void surface::resize_aux (u_int16 l, u_int16 h)
+{
+    if (l == length () && h == height ()) return;
+    
+    if (vis) SDL_FreeSurface (vis); 
+
+    set_length (l);
+    set_height (h); 
+
+    vis = SDL_CreateRGBSurface (SDL_HWSURFACE | SDL_SRCCOLORKEY | SDL_SRCALPHA | SDL_ASYNCBLIT,
+                                l, h,
+                                screen::bytes_per_pixel () * 8,
+                                screen::display.vis->format->Rmask,
+                                screen::display.vis->format->Gmask,
+                                screen::display.vis->format->Bmask,
+                                screen::display.vis->format->Amask); 
+    changed = true; 
+}
+
+void surface::double_size(const surface & src)
+{
+    u_int32 col;
+
+    resize(src.length(), src.height());
+    for (u_int16 j = 0; j < height(); j++)
+        for (u_int16 i = 0; i < length(); i++)
+        {
+            src.get_pix_aux(i, j, col);
+            put_pix(i, j, col);
+        }
+}
+
+void surface::half_size(const surface & src)
+{
+    u_int32 col;
+
+    resize_aux(src.length(), src.height());
+    for (u_int16 j = 0; j < src.height() - 1; j++)
+        for (u_int16 i = 0; i < src.length() - 1; i++)
+        {
+            src.get_pix(i, j, col);
+            put_pix_aux(i, j, col);
+        }
+}
+
+void surface::get_pix_aux (u_int16 x, u_int16 y, u_int32& col) const
+{
+    u_int8 * offset = ((Uint8 *) vis->pixels) + y * vis->pitch
+        + x * vis->format->BytesPerPixel;
+    
+    switch (vis->format->BytesPerPixel) 
+    {
+        case 1:
+            col = *((Uint8 *)(offset));
+            break;
+        case 2:
+            col = *((Uint16 *)(offset));
+            break;
+        case 3:
+        {
+            u_int8 r, g, b;
+            col = 0;
+            u_int32 t;
+            
+            r = *((offset) + (vis->format->Rshift >> 3)); 
+            g = *((offset) + (vis->format->Gshift >> 3));
+            b = *((offset) + (vis->format->Bshift >> 3));
+
+            t = r << vis->format->Rshift;
+            col |= t; 
+            t = g << vis->format->Gshift;
+            col |= t; 
+            t = b << vis->format->Bshift;
+            col |= t; 
+            
+            break;
+        }
+        case 4:
+            col = *((Uint32 *)(offset));
+            break;
+    }
+}
+
+void surface::put_pix_aux (u_int16 x, u_int16 y, u_int32 col) 
+{
+    u_int8 * offset = ((Uint8 *) vis->pixels) + y * vis->pitch
+        + x*vis->format->BytesPerPixel;
+     
+    switch (vis->format->BytesPerPixel) 
+    {
+        case 2:
+            *((Uint16 *) (offset)) = (Uint16) col;
+            if (screen::dblmode)
+            {
+                *((Uint16 *) (offset+vis->format->BytesPerPixel)) = (Uint16) col;
+                *((Uint16 *) (offset+vis->pitch)) = (Uint16) col;
+                *((Uint16 *) (offset+vis->pitch+vis->format->BytesPerPixel)) = (Uint16) col;
+            }
+            break;
+        case 3:
+        {
+            u_int8 r, g, b;
+            
+            r = (col >> vis->format->Rshift);
+            g = (col >> vis->format->Gshift);
+            b = (col >> vis->format->Bshift);
+            *((offset) + (vis->format->Rshift >> 3)) = r; 
+            *((offset) + (vis->format->Gshift >> 3)) = g;
+            *((offset) + (vis->format->Bshift >> 3)) = b;
+            if (screen::dblmode)
+            {
+                *((offset+vis->format->BytesPerPixel) + (vis->format->Rshift >> 3)) = r; 
+                *((offset+vis->format->BytesPerPixel) + (vis->format->Gshift >> 3)) = g;
+                *((offset+vis->format->BytesPerPixel) + (vis->format->Bshift >> 3)) = b;
+                *((offset+vis->pitch) + (vis->format->Rshift >> 3)) = r; 
+                *((offset+vis->pitch) + (vis->format->Gshift >> 3)) = g;
+                *((offset+vis->pitch) + (vis->format->Bshift >> 3)) = b;
+                *((offset+vis->pitch+vis->format->BytesPerPixel) + (vis->format->Rshift >> 3)) = r; 
+                *((offset+vis->pitch+vis->format->BytesPerPixel) + (vis->format->Gshift >> 3)) = g;
+                *((offset+vis->pitch+vis->format->BytesPerPixel) + (vis->format->Bshift >> 3)) = b;
+            }
+            break;
+        }
+    }     
+    changed = true; 
+}
+
+
 surface::surface () : drawable () 
 { 
     vis = NULL;
@@ -67,6 +195,24 @@ void surface::draw (s_int16 x, s_int16 y, s_int16 sx, s_int16 sy, u_int16 sl,
     if (target == NULL) target = &screen::display; 
 
     setup_rects (x, y, sx, sy, sl, sh, da_opt); 
+
+    if (screen::dblmode)
+    {
+        x <<= 1;
+        y <<= 1;
+        sx <<= 1;
+        sy <<= 1;
+        sl <<= 1;
+        sh <<= 1;
+        srcrect.x <<= 1;
+        srcrect.y <<= 1;
+        srcrect.w <<= 1;
+        srcrect.h <<= 1;
+        dstrect.x <<= 1;
+        dstrect.y <<= 1;
+        dstrect.w <<= 1;
+        dstrect.h <<= 1;
+    }
     
     if (!dstrect.w || !dstrect.h)
         return;
@@ -101,7 +247,15 @@ void surface::fillrect (s_int16 x, s_int16 y, u_int16 l, u_int16 h, u_int32 col,
         dstrect.w = l;
         dstrect.h = h;
     }
-    
+
+    if (screen::dblmode)
+    {
+        dstrect.x <<= 1;
+        dstrect.y <<= 1;
+        dstrect.w <<= 1;
+        dstrect.h <<= 1;
+    }
+
     SDL_FillRect (vis, &dstrect, col);
     changed = true; 
 }
@@ -122,16 +276,25 @@ void surface::unlock () const
 
 void surface::put_pix (u_int16 x, u_int16 y, u_int32 col) 
 {
+    if (screen::dblmode)
+    {
+        x <<= 1;
+        y <<= 1;
+    }
+
     u_int8 * offset = ((Uint8 *) vis->pixels) + y * vis->pitch
         + x*vis->format->BytesPerPixel;
      
     switch (vis->format->BytesPerPixel) 
     {
-        case 1:
-            *((Uint8 *) (offset)) = (Uint8) col;
-            break;
         case 2:
             *((Uint16 *) (offset)) = (Uint16) col;
+            if (screen::dblmode)
+            {
+                *((Uint16 *) (offset+vis->format->BytesPerPixel)) = (Uint16) col;
+                *((Uint16 *) (offset+vis->pitch)) = (Uint16) col;
+                *((Uint16 *) (offset+vis->pitch+vis->format->BytesPerPixel)) = (Uint16) col;
+            }
             break;
         case 3:
         {
@@ -143,25 +306,36 @@ void surface::put_pix (u_int16 x, u_int16 y, u_int32 col)
             *((offset) + (vis->format->Rshift >> 3)) = r; 
             *((offset) + (vis->format->Gshift >> 3)) = g;
             *((offset) + (vis->format->Bshift >> 3)) = b;
+            if (screen::dblmode)
+            {
+                *((offset+vis->format->BytesPerPixel) + (vis->format->Rshift >> 3)) = r; 
+                *((offset+vis->format->BytesPerPixel) + (vis->format->Gshift >> 3)) = g;
+                *((offset+vis->format->BytesPerPixel) + (vis->format->Bshift >> 3)) = b;
+                *((offset+vis->pitch) + (vis->format->Rshift >> 3)) = r; 
+                *((offset+vis->pitch) + (vis->format->Gshift >> 3)) = g;
+                *((offset+vis->pitch) + (vis->format->Bshift >> 3)) = b;
+                *((offset+vis->pitch+vis->format->BytesPerPixel) + (vis->format->Rshift >> 3)) = r; 
+                *((offset+vis->pitch+vis->format->BytesPerPixel) + (vis->format->Gshift >> 3)) = g;
+                *((offset+vis->pitch+vis->format->BytesPerPixel) + (vis->format->Bshift >> 3)) = b;
+            }
             break;
         }
-        case 4:
-            *((Uint32 *) (offset)) = (Uint32) col;
-            break;
     }     
     changed = true; 
 }
 
 void surface::get_pix (u_int16 x, u_int16 y, u_int32& col) const
 {
+    if (screen::dblmode)
+    {
+        x <<= 1;
+        y <<= 1;
+    }
     u_int8 * offset = ((Uint8 *) vis->pixels) + y * vis->pitch
         + x * vis->format->BytesPerPixel;
     
     switch (vis->format->BytesPerPixel) 
     {
-        case 1:
-            col = *((Uint8 *)(offset));
-            break;
         case 2:
             col = *((Uint16 *)(offset));
             break;
@@ -184,11 +358,7 @@ void surface::get_pix (u_int16 x, u_int16 y, u_int32& col) const
             
             break;
         }
-        case 4:
-            col = *((Uint32 *)(offset));
-            break;
     }
-    
 }
  
 surface& surface::operator = (surface& src)
@@ -221,8 +391,14 @@ void surface::resize (u_int16 l, u_int16 h)
     set_length (l);
     set_height (h); 
 
+    if (screen::dblmode)
+    {
+        l <<= 1;
+        h <<= 1;
+    }
+
     vis = SDL_CreateRGBSurface (SDL_HWSURFACE | SDL_SRCCOLORKEY | SDL_SRCALPHA | SDL_ASYNCBLIT,
-                                length (), height (),
+                                l, h,
                                 screen::bytes_per_pixel () * 8,
                                 screen::display.vis->format->Rmask,
                                 screen::display.vis->format->Gmask,

@@ -2,6 +2,8 @@
 
 if BUILD_TOOLS
 SUBDIRS = . modules tools
+else
+SUBDIRS = . modules
 endif
 
 bin_PROGRAMS = adonthell

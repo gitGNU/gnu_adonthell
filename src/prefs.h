@@ -57,6 +57,7 @@ enum
     PREFS_VERSION = 7,
     PREFS_NUM = 8,
     PREFS_STR = 9,
+    PREFS_DOUBLE_SCREEN = 10,
 };
 
 
@@ -129,13 +130,10 @@ public:
      */
     string gamedir;
     /**
-     * Path to the %data directory.
-     */
-    string datadir;
-    /**
      * Whether the engine shall run in window (0) or fullscreen (1) mode.
      */
     u_int8 screen_mode;
+    u_int8 double_screen;
     /**
      * The number of channels: mono (0) or stereo (1).
      */

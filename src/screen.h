@@ -42,6 +42,8 @@ class screen
 {
 public:
 
+    static bool dblmode;
+
     /**
      * The actual screen surface.
      * It is publicly available so you can do fast operations on the screen.
@@ -55,7 +57,7 @@ public:
      *  @param nh Y screen resolution.
      *  @param depth desired screen depth.
      */ 
-    static void set_video_mode (u_int16 nl, u_int16 nh, u_int8 depth = 0);
+    static void set_video_mode (u_int16 nl, u_int16 nh, u_int8 depth = 0, bool dbl = false);
 
     /** Returns the length of the screen.
      *  @return length of the screen.

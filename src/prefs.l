@@ -31,6 +31,7 @@ num    {digit}+
 "#".*[\n]? ;        /* Eat up comments */
 
 Screen-mode         return PREFS_SCREEN_MODE;
+Double-screen       return PREFS_DOUBLE_SCREEN;
 Language            return PREFS_LANGUAGE;
 Audio-channels      return PREFS_AUDIO_CHANNELS;
 Audio-resolution    return PREFS_AUDIO_RESOLUTION;

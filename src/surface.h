@@ -398,6 +398,14 @@ protected:
      * 
      */ 
     mutable bool changed; 
+
+#ifndef SWIG
+    void resize_aux (u_int16 l, u_int16 h);
+    void double_size(const surface & src);
+    void half_size(const surface & src);
+    void get_pix_aux (u_int16 x, u_int16 y, u_int32& col) const; 
+    void put_pix_aux (u_int16 x, u_int16 y, u_int32 col); 
+#endif
      
 private:
 

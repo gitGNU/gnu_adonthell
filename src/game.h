@@ -53,13 +53,18 @@ public:
 
 
     /** 
-     * Initialise the game parameters. If you are in need to use data contained
-     * in a certain directory (most often, a game), you can pass it as a
-     * parameter.
+     * Initialise the game framework.
      * 
-     * @param game_dir optional game data directory.
+     * @param game_dir Global data directory.
      */
-    static void init (string game_dir = ""); 
+    static void init (string game_dir); 
+
+    /** 
+     * Specify an additional data directory containing game data.
+     * 
+     * @param game_dir Game data directory.
+     */
+    static void set_game_data_dir (string game_dir); 
     
     /** 
      * Returns the absolute path to the user data directory (usually ~/.adonthell).
