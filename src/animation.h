@@ -18,9 +18,26 @@
 #include "types.h"
 #include "image.h"
 
-// An animation frame is an extension to the image class. It contains
-// a delay factor and a gap parameter so images of different sizes can be
-// used in the same animation.
+#ifdef _EDIT
+#include <list>
+#include <string>
+#include "input.h"
+#include "prefs.h"
+#include "game.h"
+#include "win_types.h"
+#include "win_base.h"
+#include "win_font.h"
+#include "win_label.h"
+#include "win_write.h"
+#include "win_border.h"
+#include "win_image.h"
+#include "win_container.h"
+#include "win_select.h"
+
+#define IMAGE false
+#define FRAME true
+
+#endif
 
 class animation_frame
 {
@@ -29,11 +46,7 @@ class animation_frame
   u_int8 alpha;
   s_int16 gapx;
   s_int16 gapy;
-  // If delay is 0, the delay factor is not taken in account
-  // Otherwise the animation will wait "delay" game cycles to switch to
-  // the other frame
   u_int16 delay;
-  bool lastframe;
   u_int16 nextframe;
  public:
   void init();
@@ -48,7 +61,7 @@ class animation_frame
   u_int16 get_delay();
   void set_delay(u_int16 d);
   u_int16 get_nextframe();
-  void set_nextframe(u_int16 nf, bool last_frame=false);
+  void set_nextframe(u_int16 nf);
   s_int8 get(SDL_RWops * file);
   s_int8 load(const char * fname);
 #ifdef _EDIT
@@ -61,36 +74,39 @@ class animation_frame
 #endif
 };
 
-// An animation is mainly a dynamic array of animation_frames. 
-// The animation can be controlled by 2 ways: by setting a delay to a frame
-// or (in case animation_frame::delay==0) by calling next_frame();
-// alpha_on, alpha and mask_on can be modified to control the animation
-// parameters.
-
 class animation
 {
 #ifdef DEBUG
   static u_int16 a_d_diff;
 #endif
+
+#ifdef _EDIT
+  bool mode;
+  win_font * font;
+  win_border * border;
+  win_container * container;
+  win_label * label_mode;
+  win_label * label_frame_nbr;
+  win_label * label_frame_info;
+  win_label * label_anim_info;
+  image * bg;
+  u_int16 currentimage;
+#endif
+
  protected:
   u_int16 nbr_of_images;
   u_int16 nbr_of_frames;
   u_int16 currentframe;
   u_int16 speedcounter;
-  //  s_int8 factor;
   bool play_flag;
-  //  void init_frame(u_int16 nbr);
 
  public:
   image * t_frame;
   animation_frame * frame;
-  //  bool loop;              // Shall the animation loop?
-  //  bool reverse;  // Shall the animation reverse when reaching the last frame?
 
   animation();
   ~animation();
 
-  // Check if it's time to switch to the next frame
   void update();
   void set_active_frame(u_int16 framenbr);
   void next_frame();
@@ -98,21 +114,31 @@ class animation
   void stop();
   void rewind();
   void draw(u_int16 x, u_int16 y);
-  // Increase nbr_of_frames and load the frame to the last position
-  //  s_int8 load_frame(const char * fname, u_int16 pos);
-  //  s_int8 get_frame(SDL_RWops * file, u_int16 pos);
-  //  s_int8 delete_frame(u_int16 pos);
   s_int8 get(SDL_RWops * file);
   s_int8 load(const char * fname);
 #ifdef _EDIT
   s_int8 put(SDL_RWops * file);
   s_int8 save(const char * fname);
 #endif
-  //  void set_delay(u_int16 framenbr, u_int16 delay);
-  //  void set_next_frame(u_int16 framenbr, u_int16 next_frame);
-  //  void set_mask(u_int16 framenbr, bool m);
-  //  void set_alpha(u_int16 framenbr, bool a, u_int8 value);
-
   animation &operator =(animation &a);
+
+#ifdef _EDIT
+  s_int8 insert_image(image &im, u_int16 pos);
+  s_int8 insert_frame(animation_frame &af, u_int16 pos);
+  u_int16 increase_frame(u_int16 c);
+  u_int16 decrease_frame(u_int16 c);
+  u_int16 increase_image(u_int16 c);
+  u_int16 decrease_image(u_int16 c);
+  void add_image();
+  s_int8 delete_image(u_int16 pos);
+  s_int8 delete_frame(u_int16 pos);
+  void add_frame();
+  void save();
+  void load();
+  void update_editor();
+  void draw_editor();
+  void editor();
+#endif
+
 };
 #endif

@@ -163,7 +163,8 @@ s_int8 landmap::get(SDL_RWops * file)
     }
 
   /* Read objects  */
-  items = loaditems("scripts/items.py");
+  // Commented 'cause seems it doesn't exist anymore??
+  //  items = loaditems("scripts/items.py");
 
   SDL_RWread(file,&nbr_of_events,sizeof(nbr_of_events),1);
   event=(mapevent*)calloc(sizeof(mapevent),nbr_of_events+1);
