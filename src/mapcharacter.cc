@@ -29,9 +29,6 @@
 #include "landmap.h"
 #include "data.h"
 #include "mapengine.h"
-#include "win_manager.h"
-#include "dialog_engine.h"
-
 
 
 using namespace std; 
@@ -186,20 +183,6 @@ void mapcharacter::remove_from_map ()
     PyDict_DelItemString (locals, "mymap");
 }
 
-void mapcharacter::talk ()
-{
-    dialog_engine *de = new dialog_engine (this, (char *) get_dialogue ().c_str (), 0);
-
-    win_manager::add (de);
-    win_manager::set_focus (de);
-    de->run ();
-    while (win_manager::exist (de))
-    {
-        data::map_engine->mainloop ();
-        screen::show ();
-    }
-}
- 
 void mapcharacter::remove_from_pos ()
 {
     leave_position (); 

@@ -13,41 +13,76 @@
 */
 
 
+/*! \mainpage
+ \section intro Welcome to the Adonthell Programmer's documentation
+ Writing a Role Playing Game from scratch is a huge undertaking and requires the
+ active help of quite a few people. But the further we progress in coding, the
+ harder it will be for new programmers to join in, simply because of the large
+ amount of code that has accumulated over the years. This is the point where 
+ this manual comes in: its purpose is to show you the way around Adonthell's 
+ code base and some of the important underlying concepts.
+ 
+ In case you are not so much interested in programming for Adonthell but rather in
+ creating game content you should take a look at the Designer's documentation
+ instead.
+ 
+ \section overview Overview
+ Apart from the pure API documentation, which contains the interface description
+ of the different classes and shows how they interact, there are a few chapters
+ about general issues.
+ 
+ The \ref page1 gives an overview about the engine's foundamentals. Programming
+ languages, source code organization and such. Before you dive into the code,
+ have a look at this for the basics.
+ 
+ Of similar importance -- if you want to lend a hand to the coding -- are the 
+ \ref page2 . They include indentation rules, naming conventions and a few 
+ other odds and ends that shall help to give the code of different programmers
+ a similar shape to make it easier to read.
+
+ Once you understand the basics, you might want to explore specific parts of the
+ engine in more detail. This chapter explains how the \ref page3 works, and how
+ new events can be defined.
+*/
+
 /**
  * @page page1 Introduction for new programmers
  * @section cpp C++
  *
- * Adonthell makes intensive use of C++ advantages, when they can make the code
- * clear and easier and do not slow things down too much. Adonthell tries to
- * respect as much as possible the Object Oriented Programming concepts. In
- * Adonthell, everything are %objects, inheritance and templates are used where usefull.
+ * Adonthell makes intense use of the features of C++ whenever they make the code
+ * clearer and easier and do not slow things down too much. Adonthell tries to
+ * respect the concepts of Object Oriented Programming as much as possible. In
+ * Adonthell, everything is an %object and inheritance and templates are used 
+ * where appropriate. Attributes are usually hidden and may only be accessed
+ * through an %object's methods.
  *
- * Also, Adonthell heavily uses some templates from the STL Library
- * (http://www.sgi.com/tech/stl/) , especially strings and containers like lists and
- * hash maps, so you'll certainly want to give it a look.
+ * Further, Adonthell makes heavy use of the Standard Template Library (STL)
+ * (http://www.sgi.com/tech/stl/), especially of strings and containers 
+ * like lists and hash maps. So you'll certainly want to give it a look.
  *
  * @section python Python 
- * In many kind of games, including RPGs, a script language is necessary to command
+ * In many kinds of computer games, including RPGs, a script language is necessary to command
  * characters, build complex actions, cutscenes, etc... As we want modularity and
- * reusability, in-game actions must be real-time interpreted and executed from a
- * script language, which interacts with the C++ interface and can of course share
- * variables with it. Python (http://www.python.org) has proven it was very
- * efficient at this - moreover it's a fully object-oriented language which takes
- * into account things like inheritance, and there is a great utility, SWIG
- * (http://www.swig.org), which can automate the process of building Python include
- * files from C++ ones. Thanks to the great design of Python, everything in this
- * document that applies to the C++ interface also applies to the Python one,
- * making script building much easier. The only difference is that from Python you
- * can only use one constructor - the one that is listed first in the class methods
- * listing. Also, operator redefinition isn't supported.
+ * reusability, in-game actions must be real-time interpreted. Scripts need to
+ * interact with the C++ interface and of course they have to share variables with it.
+ * Python (http://www.python.org) has proven to be very efficient at both - 
+ * moreover it is an object-oriented language and therefore fits well with C++.
+ * And with SWIG (http://www.swig.org), a great tool is available to automate the 
+ * process of building the Python interface to our C++ classes.
+ * Basically, each class and method described in this document is also available
+ * from Python scripts, with only a few exceptions:
+ * Python allows no method and operator overloading, so only the first of 
+ * overloaded methods or constructors and no operators are accessible from
+ * Python.
  *
  * @section scorg Source code organisation 
- * Adonthell make use of autoconf and automake to be built. Each subdirectory has
- * a Makefile.am file that describes building rules. Running "automake" in the root
- * directory build Makefile.in files from Makefile.am in each subdirectory.
- * "autoconf" builds the configure script from configure.in. Finally, running
- * "./configure" generates all the Makefiles from Makefile.ins, making the package
- * ready for a "make".
+ * Adonthell makes use of autoconf and automake to be built. In each subdirectory  
+ * resides a Makefile.am file that containes the building rules for the files inside
+ * that directory as well as its subdirectories. Running "automake" in the root
+ * directory creates a Makefile.in from each Makefile.am. "autoconf" builds the 
+ * configure script from configure.in. Finally, running "./configure" generates
+ * all the Makefiles from the Makefile.ins, making the package ready for 
+ * compilation via "make".
  *
  * Here is what the source tree does look like:
  *
@@ -61,26 +96,26 @@
  *      - pydonthell A custom Python interpreter with Adonthell Python modules inside
  *      - oggloop Ogg music looping utility
  *
- * Each class that is documented here is generally implemented by classname.h and
- * classname.cpp.
+ * Each class that is documented here is usually defined by classname.h and
+ * implemented by classname.cc.
  *
  * @section datatypes Data types 
  * Adonthell can run on several platforms, which all have different characteristics.
  * One of these differences can reside in the way the basic C types (char, ints, ...)
- * are encoded. A 32 bits operating system will code it's ints with 32 bits, while a
+ * are encoded. A 32 bit operating system will code it's ints with 32 bits, while a
  * 64 bits operating system will use 64 bits for ints. For several operations (like
  * reading an int from a file) this can result in different behavior, and catastrophic
- * consequences (most likely protection fault). That's why some of the most basic
+ * consequences (most likely a protection fault). That's why some of the most basic
  * types have been redifined according to the architecture in types.h:
- * - u_int8: unsigned 8 bits integer
- * - s_int8: signed 8 bits integer
- * - u_int16: unsigned 16 bits integer
- * - s_int16: signed 16 bits integer
- * - u_int32: unsigned 32 bits integer
- * - s_int32: signed 32 bits integer
+ * - u_int8: unsigned 8 bit integer
+ * - s_int8: signed 8 bit integer
+ * - u_int16: unsigned 16 bit integer
+ * - s_int16: signed 16 bit integer
+ * - u_int32: unsigned 32 bit integer
+ * - s_int32: signed 32 bit integer
  *
  * @section gamedyn Game dynamic
- * As we display animated things, we must know when they must change. A game that
+ * As we display animated things, we need to know when they have to change. A game that
  * runs at a different speed on various machines has nearly no interest, as only
  * a few configurations can make it run at the right speed. So it's very important
  * to have a timing system built into the game engine.
@@ -140,7 +175,7 @@
 /** 
  * @page page2 Programming rules
  *
- * @section indent Indenting
+ * @section indent Indentation
  *
  * @section names Methods naming
  * @subsection namgen General naming conventions
@@ -220,7 +255,106 @@
  *     myclass (myclass & src);
  * };
  * @endcode
- * This will cause a compilation error if someone ever try to pass an object of
- * your class by value.
+ * This will cause a compilation error if someone ever tries to pass an object 
+ * of your class by value.
  *
  */
+
+/*! \page page3 Event System
+ 
+ The %event system is divided into three parts. The %event handler
+ keeps track of all registered %event scripts. Whenever an
+ %event occurs, the %event handler is notified and executes
+ all scripts registered for that particular %event. The %event
+ list keeps track of the %events registered by a certain %object,
+ (e.g. a NPC, a maptile or item) and automatically unregisters
+ these %events when this %object is deleted. Finally, there
+ are the %events themself, used both as message sent to the
+ %event handler whenever an %event occurs and to register an
+ %event script. Each %event has its own data structure with
+ parameters corresponding to its type. These parameters are
+ passed to the %event script, so all infomation regarding
+ an %event is available from within the script as well. The
+ parameters can further be used to specialize the script so it
+ reacts to a smaller range of %events.
+
+ \section event_usage Using the Event System
+ 
+ The %event handler is implemented in the event_handler class.
+ It totally consists of static members and methods, to make it
+ easily accessible from any part of the code. Just include
+ the event.h file. To register a script with the handler that,
+ for example, is executed whenever the player arrives at the
+ coordinates (20, 20) of a map, you'd write:
+
+ \code
+// Create the filter and set it's parameters
+event *filter = new enter_event;
+ 
+filter->x = 20;
+filter->y = 20;
+filter->c = data::the_player;
+
+// Set the script to be executed when the event occurs
+filter->set_script ("a_script.py");
+ 
+// Finally add the filter to the event list. This will register it with the event handler
+add_event (filter);
+ \endcode
+ 
+ For a list of available events with their corresponding parameters
+ see the \link event API documentation \endlink .
+
+ Now we have registered an %event with the %event handler. But that alone
+ won't get the %event triggered. So depending on its type, you'll have to
+ notify the %event handler of an %event's occurance. In case of the \link
+ enter_event enter event \endlink , you'll want to send a message to the
+ %event handler whenever a character reaches a new position on the map.
+         
+ \code
+// Event structures are also used to pass messages to the event_handler
+enter_event message;
+
+// Fill in the parameters
+message.x = mapcharacter::posx ();
+message.y = mapcharacter::posy ();
+message.submap = mapcharacter::submap ();
+message.c = this;
+
+// Notify the event handler
+event_handler::raise_event (message);
+\endcode
+
+The %event handler will then compare all %events of the given type with the
+message it recieved and execute the %event script of the matching %events.         
+
+\section event_new Defining new Events        
+Now that you know how events principly work, you might want to define your own.
+Doing so is quite easy. Take event as the base class, override it's methods with
+your own, and you're nearly done.
+
+There is only one problem remaining: loading your %event from a file. The %event
+list is taking care of that. But to avoid additional dependencies between the
+%event system and your code, the %event list cannot know about your %event at
+compile time. Otherwise, each part of the engine using the %event system had to
+#include every other part doing so, which we'd like to avoid. Basically, this is
+no restriction, since the %event list knows the base class and, thanks to virtual
+methods, can handle any derived %event without problem. The only situation where
+this fails is when a serialized %event list needs to be loaded from disk again.
+To do so, the \link event_list::load loader \endlink needs to be able to
+instanciate every possible %event. The way to go is pretty clear now: we need
+a function that returns a newly allocated %event structure, and we have to
+pass that function to the %event list at runtime, before loading an %event of
+that type. Since these steps are the same for each %event, two macros have been
+defined:
+
+\code
+NEW_EVENT(evt)
+REGISTER_EVENT(type,evt)
+\endcode
+
+%NEW_EVENT() provides the function that will return a newly allocated %event,
+and %REGISTER_EVENT() will pass this function to the %event list. The only
+information the %event system needs to know apart from that is the numerical
+%event ID, i.e. its type. 
+*/

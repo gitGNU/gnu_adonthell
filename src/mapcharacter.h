@@ -442,13 +442,6 @@ public:
      * @return pointer to the mapcharacter next to this mapcharacter.
      */
     mapcharacter *whosnext () const;
-
-    /** 
-     * Runs the mapcharacter's dialog.
-     * 
-     */
-    void talk ();
-
     //@}
       
 
