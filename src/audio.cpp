@@ -174,7 +174,9 @@ void audio::unload_background(int slot) {
   if (music[slot] != NULL) {
     Mix_FreeMusic(music[slot]);
     music[slot] = NULL;
+#ifdef OGG_VORBIS
     delete loop[slot];
+#endif
   }
 #endif
 }

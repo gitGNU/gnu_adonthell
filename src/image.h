@@ -29,8 +29,8 @@ class image
   ~image();
   void clear();
   void resize(u_int16 l, u_int16 h);
-  u_int16 length() {return _length;}
-  u_int16 height() {return _height;}
+  u_int16 length() {return length_;}
+  u_int16 height() {return height_;}
 
   s_int8 get(gzFile file);
   s_int8 load(const char * fname);
@@ -49,9 +49,9 @@ class image
   u_int8 alpha()
     {
 #ifdef REVERSE_ALPHA
-      return _alpha;
+      return alpha_;
 #else
-      return 255-_alpha;
+      return 255-alpha_;
 #endif
     }
   void set_alpha(u_int8 t);
@@ -90,10 +90,10 @@ class image
   static u_int16 a_d_diff;
 #endif
   SDL_Surface * data;
-  u_int16 _length, _height;
+  u_int16 length_, height_;
   u_int8 bytes_per_pixel;
   bool mask_on;
-  u_int8 _alpha;
+  u_int8 alpha_;
 
   void init();
 

@@ -633,8 +633,8 @@ mapcharacter& mapcharacter::operator =(mapcharacter &m)
   for(i=0;i<maptpl::length();i++)
     delete[] placetpl[i];
   delete[] placetpl;
-  maptpl::set_length(m.maptpl::_length);
-  maptpl::set_height(m.maptpl::_height);
+  maptpl::set_length(m.maptpl::length_);
+  maptpl::set_height(m.maptpl::height_);
   maptpl::basex=m.maptpl::basex;
   maptpl::basey=m.maptpl::basey;
   placetpl=new (mapsquaretpl*)[maptpl::length()];

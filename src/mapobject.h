@@ -36,8 +36,8 @@ class mapobject : public maptpl
   void clear();
   ~mapobject();
 
-  u_int16 length() { return _length; }
-  u_int16 height() { return _height; }
+  u_int16 length() { return length_; }
+  u_int16 height() { return height_; }
 
   void play();
   void stop();
@@ -82,7 +82,7 @@ class mapobject : public maptpl
   PyCodeObject * schedule;
 #endif
   bool schedule_activated;
-  u_int16 _length, _height;
+  u_int16 length_, height_;
   vector<animation*> anim;
 
   void init();

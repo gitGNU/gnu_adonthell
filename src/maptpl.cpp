@@ -88,8 +88,8 @@ s_int8 maptpl::get(gzFile file)
   for(i=0;i<length();i++)
     delete[] placetpl[i];
   delete[] placetpl;
-  gzread(file,&_length,sizeof(_length));
-  gzread(file,&_height,sizeof(_height));
+  gzread(file,&length_,sizeof(length_));
+  gzread(file,&height_,sizeof(height_));
   placetpl=new (mapsquaretpl*)[length()];
   for(i=0;i<length();i++)
     {
@@ -105,8 +105,8 @@ s_int8 maptpl::get(gzFile file)
 s_int8 maptpl::put(gzFile file)
 {
   u_int16 i,j;
-  gzwrite(file,&_length,sizeof(_length));
-  gzwrite(file,&_height,sizeof(_height));
+  gzwrite(file,&length_,sizeof(length_));
+  gzwrite(file,&height_,sizeof(height_));
   for(i=0;i<length();i++)
     for(j=0;j<height();j++)
       placetpl[i][j].put(file);

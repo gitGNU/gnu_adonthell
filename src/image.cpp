@@ -26,12 +26,12 @@ u_int16 image::a_d_diff=0;
 
 image &image::operator =(const image &im)
 {
-  _length=im._length;
-  _height=im._height;
+  length_=im.length_;
+  height_=im.height_;
   draw_to=im.draw_to;
   bytes_per_pixel=im.bytes_per_pixel;
   mask_on=im.mask_on;
-  _alpha=im._alpha;
+  alpha_=im.alpha_;
   if(data) SDL_FreeSurface(data);
 #ifdef _EDIT_
   if(simpledata) free(simpledata);
@@ -48,7 +48,7 @@ void image::init()
 {
   bytes_per_pixel=0;
   data = NULL;
-  _length=_height=0;
+  length_=height_=0;
   mask_on=false;
   set_alpha(255);
   draw_to=NULL;
@@ -73,8 +73,8 @@ image::image (u_int16 l, u_int16 h)
        << " objects currently allocated\n";
 #endif
   init();
-  _length=l;
-  _height=h;
+  length_=l;
+  height_=h;
   bytes_per_pixel=screen::bytes_per_pixel;
   data=SDL_CreateRGBSurface(SDL_SWSURFACE,length(), height(),
 			    bytes_per_pixel*8,0,0,0,0);
@@ -105,11 +105,11 @@ void image::resize(u_int16 l, u_int16 h)
 {
   set_mask(false);
   set_alpha(255);
-  if ((_length==l)&&(_height==h)) return;
+  if ((length_==l)&&(height_==h)) return;
   if (data) SDL_FreeSurface(data);
   bytes_per_pixel=screen::bytes_per_pixel;
-  _length=l;
-  _height=h;
+  length_=l;
+  height_=h;
   data=SDL_CreateRGBSurface(SDL_SWSURFACE,length(), height(),
 			    bytes_per_pixel*8,0,0,0,0);
 #ifdef _EDIT_
@@ -177,11 +177,11 @@ void image::set_mask(bool m)
 void image::set_alpha(u_int8 t)
 {
 #ifdef REVERSE_ALPHA
-  if((t==255)&&(_alpha!=255)&&data) SDL_SetAlpha(data,0,0);
-  _alpha=t;
+  if((t==255)&&(alpha_!=255)&&data) SDL_SetAlpha(data,0,0);
+  alpha_=t;
 #else
-  if((t==0)&&(_alpha!=0)&&data) SDL_SetAlpha(data,0,0);
-  _alpha=255-t;
+  if((t==0)&&(alpha_!=0)&&data) SDL_SetAlpha(data,0,0);
+  alpha_=255-t;
 #endif
 }
 
@@ -198,7 +198,7 @@ void image::draw(s_int16 x, s_int16 y, drawing_area * da_opt=NULL)
 
   get_rects(x,y);
   if(!dr.w||!dr.h) return;
-  if(alpha()!=255) SDL_SetAlpha(data, SDL_SRCALPHA, _alpha);
+  if(alpha()!=255) SDL_SetAlpha(data, SDL_SRCALPHA, alpha_);
   SDL_BlitSurface(data, &sr, screen::vis, &dr);
   if(da_opt) draw_to=oldda;  
 }
@@ -304,8 +304,8 @@ void image::get_from_screen(s_int16 x, s_int16 y)
   sr.h=height();
   dr.x=0;
   dr.y=0;
-  dr.w=_length;
-  dr.h=_height;
+  dr.w=length_;
+  dr.h=height_;
   SDL_BlitSurface(screen::vis,&sr,data,&dr);
 }
 
@@ -313,13 +313,13 @@ s_int8 image::get(gzFile file)
 {
   s_int8 ret;
   gzread(file,&mask_on,sizeof(mask_on));
-  gzread(file,&_alpha,sizeof(_alpha));   
+  gzread(file,&alpha_,sizeof(alpha_));   
   ret=get_raw(file);
   if(!ret)
     {
       if(mask_on)
 	SDL_SetColorKey(data, SDL_SRCCOLORKEY, screen::trans_col());
-      set_alpha(_alpha);
+      set_alpha(alpha_);
     }
   return ret;
 }
@@ -340,8 +340,8 @@ s_int8 image::get_raw(gzFile file)
   void * simpledata;
 #endif
   SDL_Surface * tmp2;
-  gzread(file,&_length,sizeof(_length));
-  gzread(file,&_height,sizeof(_height));
+  gzread(file,&length_,sizeof(length_));
+  gzread(file,&height_,sizeof(height_));
   simpledata=calloc(length()*height(),3);
   gzread(file,simpledata,length()*height()*3);
 
@@ -374,7 +374,7 @@ s_int8 image::get_pnm(SDL_RWops * file)
   void * simpledata;
 #endif
   SDL_Surface * tmp2;
-  simpledata=read_pnm(file,&_length,&_height);
+  simpledata=read_pnm(file,&length_,&height_);
 
   tmp2=SDL_CreateRGBSurfaceFrom(simpledata,length(),height(),24,
 				length()*3,0x0000FF,0x00FF00,0xFF0000,0);
@@ -404,8 +404,8 @@ void image::screen_shot ()
     clear();
     init();
     bytes_per_pixel = 3;
-    _length = screen::length();
-    _height = screen::height();
+    length_ = screen::length();
+    height_ = screen::height();
     
 
     // We need a 24bpp image to save it as PNM afterwards
@@ -433,9 +433,9 @@ void image::screen_shot ()
 s_int8 image::put(gzFile file)
 {
   gzwrite(file,&mask_on,sizeof(mask_on));
-  set_alpha(_alpha);
-  gzwrite(file,&_alpha,sizeof(_alpha));
-  set_alpha(_alpha);
+  set_alpha(alpha_);
+  gzwrite(file,&alpha_,sizeof(alpha_));
+  set_alpha(alpha_);
   return(put_raw(file));
 }
 
@@ -451,8 +451,8 @@ s_int8 image::save(char * fname)
 
 s_int8 image::put_raw(gzFile file)
 {
-  gzwrite(file,&_length,sizeof(_length));
-  gzwrite(file,&_height,sizeof(_height));
+  gzwrite(file,&length_,sizeof(length_));
+  gzwrite(file,&height_,sizeof(height_));
   gzwrite(file,simpledata,length()*height()*3);
   return(0);
 }

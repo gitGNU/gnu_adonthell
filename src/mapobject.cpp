@@ -21,7 +21,7 @@ u_int16 mapobject::a_d_diff;
 
 void mapobject::init()
 {
-  _length=_height=0;
+  length_=height_=0;
 #ifdef _EDIT_
   in_editor=false;
   strcpy(file_name,"");
@@ -85,8 +85,8 @@ mapobject &mapobject::operator =(const mapobject &mo)
   u_int16 i,j;
   posx=mo.posx;
   posy=mo.posy;
-  _length=mo._length;
-  _height=mo._height;
+  length_=mo.length_;
+  height_=mo.height_;
   basex=mo.basex;
   basey=mo.basey;
 #ifdef _EDIT_
@@ -95,8 +95,8 @@ mapobject &mapobject::operator =(const mapobject &mo)
   for(i=0;i<maptpl::length();i++)
     delete[] placetpl[i];
   delete[] placetpl;
-  maptpl::set_length(mo.maptpl::_length);
-  maptpl::set_height(mo.maptpl::_height);
+  maptpl::set_length(mo.maptpl::length_);
+  maptpl::set_height(mo.maptpl::height_);
   placetpl=new (mapsquaretpl*)[maptpl::length()];
   for(i=0;i<maptpl::length();i++)
    { 
@@ -157,16 +157,16 @@ void mapobject::draw_border(u_int16 x, u_int16 y, drawing_area * da_opt=NULL)
 void mapobject::calculate_dimensions()
 {
   u_int16 i;
-  _length=0;
-  _height=0;
+  length_=0;
+  height_=0;
   for(i=0;i<nbr_of_animations();i++)
     {
       u_int16 tl,th;
       if((tl=anim[i]->length()+anim[i]->xoffset())>length())
-	_length=tl;
+	length_=tl;
       
       if((th=anim[i]->height()+anim[i]->yoffset())>height())
-	_height=th;
+	height_=th;
     }
 }
 
@@ -506,7 +506,7 @@ void mapobject::load()
 
 void mapobject::new_animation()
 {
-  animation * anim=new animation;
+  animation * a=new animation;
   u_int16 p;
   do
     {
@@ -522,7 +522,7 @@ void mapobject::new_animation()
       if(!s2)
 	{ 
 	  delete qw2;
-	  delete anim;
+	  delete a;
 	  return;
 	}
       if(!s2[0]) p=nbr_of_animations();
@@ -530,26 +530,26 @@ void mapobject::new_animation()
       delete qw2;
     }
   while(p>nbr_of_animations());
-  insert_animation(anim,p);
-  anim[p].editor();
+  insert_animation(a,p);
+  anim[p]->editor();
   init_parts();
   must_upt_label_part=true;
 }
 
 void mapobject::add_animation()
 {
-  animation * anim=new animation;
+  animation * a=new animation;
   u_int16 p;
   win_file_select * wf=new win_file_select(60,20,200,200,th,font,".anim");
   char * s=wf->wait_for_select(makeFunctor(*this,&mapobject::update_editor),
 			       makeFunctor(*this,&mapobject::draw_editor));
   if(!s) return;
   char st[500];
-  if(anim->load(s))
+  if(a->load(s))
     {
       sprintf(st,"Error loading %s!",s);
       delete wf;
-      delete anim;
+      delete a;
       return;
     }
   sprintf(st,"%s loaded successfully!",s);
@@ -568,7 +568,7 @@ void mapobject::add_animation()
 	{ 
 	  delete qw2;
 	  delete wf;
-	  delete anim;
+	  delete a;
 	  return;
 	}
       if(!s2[0]) p=nbr_of_animations();
@@ -576,8 +576,7 @@ void mapobject::add_animation()
       delete qw2;
     }
   while(p>nbr_of_animations());
-  insert_animation(anim,p);
-  if(!strcmp(s,"new")) anim[p].editor();
+  insert_animation(a,p);
   delete wf;
   init_parts();
   must_upt_label_part=true;
@@ -622,67 +621,82 @@ inline void move_part(u_int16 p)
 
 void mapobject::update_editor_keys()
 {
-
+  // Switch grid mode on/off
   if(input::has_been_pushed(SDLK_g))
     {show_grid=show_grid==true?false:true; must_upt_label_part=true;}
 
+  // Save
   if(input::has_been_pushed(SDLK_F5))
     { 
       if(SDL_GetModState()&KMOD_SHIFT)
 	quick_save();
       else save(); 
     }
+  // Load
   if(input::has_been_pushed(SDLK_F6))
     { 
       if(SDL_GetModState()&KMOD_SHIFT)
 	quick_load();
       else load(); 
     }
+  
+  // Add an animation to the mapobject
   if(input::has_been_pushed(SDLK_F1))
     { add_animation(); }
+  // Delete selected animation
   if(input::has_been_pushed(SDLK_F2))
     { delete_animation(currentpart); }
+  // Creates a new animation and let you edit it
   if(input::has_been_pushed(SDLK_F3))
     { new_animation(); }
 
   if(!nbr_of_animations()) return;
 
+  // Navigate through animations
+  // + Shift: change the position of the selected animation
   if(testkey(SDLK_KP_PLUS))
     if(SDL_GetModState()&KMOD_SHIFT)
       {
 	if(currentpart<nbr_of_animations()-1)
 	  {
-	    animation tmp;
-	    tmp=*(anim[currentpart]);
+	    animation * tmp;
+	    tmp=anim[currentpart];
 	    anim[currentpart]=anim[currentpart+1];
-	    *(anim[currentpart+1])=tmp;
+	    anim[currentpart+1]=tmp;
 	    currentpart++;
 	    must_upt_label_part=true;
 	  }
       }
     else set_currentpart(increase_part(currentpart));
   
+  // Navigate through animations
+  // + Shift: change the position of the selected animation
   if(testkey(SDLK_KP_MINUS))
     if(SDL_GetModState()&KMOD_SHIFT)
       {
 	if(currentpart>0)
 	  {
-	    animation tmp;
-	    tmp=*(anim[currentpart]);
+	    animation * tmp;
+	    tmp=anim[currentpart];
 	    anim[currentpart]=anim[currentpart-1];
-	    *(anim[currentpart-1])=tmp;
+	    anim[currentpart-1]=tmp;
 	    currentpart--;
 	    must_upt_label_part=true;
 	  }
       }
     else set_currentpart(decrease_part(currentpart));
   
+  // Edit selected animation
   if(input::has_been_pushed(SDLK_RETURN))
     {
       anim[currentpart]->editor();
       init_parts();
     }
 
+  // If grid on:
+  // changes the selected square
+  // + Shift: sets the current animation's offset
+  // + Alt: Resize the grid
   if(testkey(SDLK_LEFT) && show_grid)
     {
       if(SDL_GetModState()&KMOD_SHIFT)
@@ -699,6 +713,11 @@ void mapobject::update_editor_keys()
       else
 	{ move_cursor_left(); must_upt_label_part=true;}
     }
+
+  // If grid on:
+  // changes the selected square
+  // + Shift: sets the current animation's offset
+  // + Alt: Resize the grid
   if(testkey(SDLK_RIGHT) && show_grid)
     {
       if(SDL_GetModState()&KMOD_SHIFT)
@@ -712,6 +731,11 @@ void mapobject::update_editor_keys()
       else
 	{ move_cursor_right(); must_upt_label_part=true;}
     }
+
+  // If grid on:
+  // changes the selected square
+  // + Shift: sets the current animation's offset
+  // + Alt: Resize the grid
   if(testkey(SDLK_UP) && show_grid)
     {
       if(SDL_GetModState()&KMOD_SHIFT)
@@ -728,6 +752,11 @@ void mapobject::update_editor_keys()
       else
 	{ move_cursor_up(); must_upt_label_part=true;}
     }
+
+  // If grid on:
+  // changes the selected square
+  // + Shift: sets the current animation's offset
+  // + Alt: Resize the grid
   if(testkey(SDLK_DOWN) && show_grid)
     {
       if(SDL_GetModState()&KMOD_SHIFT)
@@ -741,27 +770,34 @@ void mapobject::update_editor_keys()
       else
 	{ move_cursor_down(); must_upt_label_part=true;}
     }
-  /*  if(input::has_been_pushed(SDLK_SPACE))
-    if(show_grid)
-    toggle_walkable();*/
 
+  // If grid on:
+  // Sets whether a square is walkable from left or not.
   if(input::has_been_pushed(SDLK_x))
     if(show_grid)
       placetpl[posx][posy].set_walkable_west
 	(placetpl[posx][posy].is_walkable_west()?false:true);
+  // If grid on:
+  // Sets whether a square is walkable from right or not.
   if(input::has_been_pushed(SDLK_v))
     if(show_grid)
       placetpl[posx][posy].set_walkable_east
 	(placetpl[posx][posy].is_walkable_east()?false:true);
+  // If grid on:
+  // Sets whether a square is walkable from south or not.
   if(input::has_been_pushed(SDLK_c))
     if(show_grid)
       placetpl[posx][posy].set_walkable_south
 	(placetpl[posx][posy].is_walkable_south()?false:true);
+  // If grid on:
+  // Sets whether a square is walkable from north or not.
   if(input::has_been_pushed(SDLK_d))
     if(show_grid)
       placetpl[posx][posy].set_walkable_north
 	(placetpl[posx][posy].is_walkable_north()?false:true);
 
+  // If grid on:
+  // Sets the current square as the base square.
   if(input::has_been_pushed(SDLK_b))
     if(show_grid)
       set_base_tile(posx,posy);

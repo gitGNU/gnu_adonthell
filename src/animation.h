@@ -55,28 +55,28 @@ class animationframe
   u_int8 alpha()
     {
 #ifdef REVERSE_ALPHA
-      return _alpha;
+      return alpha_;
 #else
-      return 255-_alpha;
+      return 255-alpha_;
 #endif
       
     }
   void set_alpha(u_int8 a)
     {
 #ifdef REVERSE_ALPHA
-  _alpha=a;
+  alpha_=a;
 #else
-  _alpha=255-a;
+  alpha_=255-a;
 #endif
     }
-  bool is_masked() { return _is_masked; }
-  void set_mask(bool mask) { _is_masked=mask; }
+  bool is_masked() { return is_masked_; }
+  void set_mask(bool mask) { is_masked_=mask; }
   u_int16 image_nbr() { return imagenbr; }
   void set_image_nbr(u_int16 imnbr) { imagenbr=imnbr; }
-  u_int16 delay() { return _delay; }
-  void set_delay(u_int16 d) { _delay=d; }
-  u_int16 nextframe() { return _nextframe; }
-  void set_nextframe(u_int16 nf) { _nextframe=nf; }
+  u_int16 delay() { return delay_; }
+  void set_delay(u_int16 d) { delay_=d; }
+  u_int16 nextframe() { return nextframe_; }
+  void set_nextframe(u_int16 nf) { nextframe_=nf; }
   s_int8 get(gzFile file);
   s_int8 load(const char * fname);
 
@@ -86,12 +86,12 @@ class animationframe
   void set_offy(u_int16 oy) { gapy=oy;}
  private:
   u_int16 imagenbr;
-  bool _is_masked;
-  u_int8 _alpha;
+  bool is_masked_;
+  u_int8 alpha_;
   s_int16 gapx;
   s_int16 gapy;
-  u_int16 _delay;
-  u_int16 _nextframe;
+  u_int16 delay_;
+  u_int16 nextframe_;
 #ifdef _DEBUG_
   static u_int16 a_d_diff;
 #endif
@@ -117,8 +117,8 @@ class animation
   void clear();
   ~animation();
   bool is_empty();
-  u_int16 length() { return _length; }
-  u_int16 height() { return _height; }
+  u_int16 length() { return length_; }
+  u_int16 height() { return height_; }
 
   void play();
   void stop();
@@ -136,16 +136,16 @@ class animation
   u_int16 nbr_of_frames() { return frame.size(); }
   u_int16 nbr_of_images() { return t_frame.size(); }
 
-  u_int16 currentframe() { return _currentframe; };
-  void set_currentframe(u_int16 framenbr) { _currentframe=framenbr; }
+  u_int16 currentframe() { return currentframe_; };
+  void set_currentframe(u_int16 framenbr) { currentframe_=framenbr; }
 
-  s_int16 xoffset() { return _xoffset; }
-  s_int16 yoffset() { return _yoffset; }
+  s_int16 xoffset() { return xoffset_; }
+  s_int16 yoffset() { return yoffset_; }
 
   void set_offset(s_int16 x, s_int16 y)
     {
-      _xoffset=x;
-      _yoffset=y;
+      xoffset_=x;
+      yoffset_=y;
     }
 
   void next_frame();
@@ -195,11 +195,11 @@ class animation
 #endif
   vector<image *> t_frame;
   vector<animationframe> frame;
-  u_int16 _length, _height;
-  u_int16 _currentframe;
+  u_int16 length_, height_;
+  u_int16 currentframe_;
   u_int16 speedcounter;
   bool play_flag;
-  s_int16 _xoffset, _yoffset;
+  s_int16 xoffset_, yoffset_;
 
   s_int8 insert_image(image * im, u_int16 pos);
   s_int8 insert_frame(animationframe af, u_int16 pos);

@@ -29,12 +29,12 @@ u_int16 animation::a_d_diff=0;
 void animationframe::init()
 {
   imagenbr=0;
-  _is_masked=false;
+  is_masked_=false;
   set_alpha(255);
   gapx=0;
   gapy=0;
-  _delay=0;
-  _nextframe=0;
+  delay_=0;
+  nextframe_=0;
 }
 
 void animationframe::clear()
@@ -62,13 +62,13 @@ animationframe::~animationframe()
 s_int8 animationframe::get(gzFile file)
 {
   gzread(file,&imagenbr,sizeof(imagenbr));
-  gzread(file,&_is_masked,sizeof(_is_masked));
-  gzread(file,&_alpha,sizeof(_alpha));
-  set_alpha(_alpha);
+  gzread(file,&is_masked_,sizeof(is_masked_));
+  gzread(file,&alpha_,sizeof(alpha_));
+  set_alpha(alpha_);
   gzread(file,&gapx,sizeof(gapx));
   gzread(file,&gapy,sizeof(gapy));
-  gzread(file,&_delay,sizeof(_delay));
-  gzread(file,&_nextframe,sizeof(_nextframe));
+  gzread(file,&delay_,sizeof(delay_));
+  gzread(file,&nextframe_,sizeof(nextframe_));
   return(0);
 }
 
@@ -133,7 +133,7 @@ s_int8 animation::delete_image(u_int16 pos)
     {
       currentimage=0;
       frame.clear();
-      _currentframe=0;
+      currentframe_=0;
     }
 #endif
   return 0;
@@ -165,7 +165,7 @@ s_int8 animation::delete_frame(u_int16 pos)
   while(pos--) i++;
   frame.erase(i);
 #ifdef _EDIT_
-  if(_currentframe>=nbr_of_frames()) _currentframe=nbr_of_frames()-1;
+  if(currentframe_>=nbr_of_frames()) currentframe_=nbr_of_frames()-1;
   if(in_editor) 
     {
       must_upt_label_frame_nbr=true;
@@ -176,7 +176,7 @@ s_int8 animation::delete_frame(u_int16 pos)
   cout << "Removed frame: " << nbr_of_frames() << " total in animation.\n";
 #endif
   if(!nbr_of_frames()) 
-    _currentframe=0;
+    currentframe_=0;
   return 0;
 }
 
@@ -184,14 +184,14 @@ s_int8 animation::delete_frame(u_int16 pos)
 s_int8 animationframe::put(gzFile file)
 {
   gzwrite(file,&imagenbr,sizeof(imagenbr));
-  gzwrite(file,&_is_masked,sizeof(_is_masked));
-  set_alpha(_alpha);
-  gzwrite(file,&_alpha,sizeof(_alpha));
-  set_alpha(_alpha);
+  gzwrite(file,&is_masked_,sizeof(is_masked_));
+  set_alpha(alpha_);
+  gzwrite(file,&alpha_,sizeof(alpha_));
+  set_alpha(alpha_);
   gzwrite(file,&gapx,sizeof(gapx));
   gzwrite(file,&gapy,sizeof(gapy));
-  gzwrite(file,&_delay,sizeof(_delay));
-  gzwrite(file,&_nextframe,sizeof(_nextframe));
+  gzwrite(file,&delay_,sizeof(delay_));
+  gzwrite(file,&nextframe_,sizeof(nextframe_));
   return(0);
 }
 
@@ -211,12 +211,12 @@ void animation::init()
 {
   frame.clear();
   t_frame.clear();
-  _currentframe=0;
+  currentframe_=0;
   speedcounter=0;
   play_flag=false;
-  _length=_height=0;
-  _xoffset=0;
-  _yoffset=0;
+  length_=height_=0;
+  xoffset_=0;
+  yoffset_=0;
 #ifdef _EDIT_
   in_editor=false;
   currentimage=0;
@@ -259,17 +259,17 @@ bool animation::is_empty()
 void animation::update()
 {
   if((!play_flag)||(!nbr_of_frames())) return;
-  if(frame[currentframe()]._delay==0) return;
+  if(frame[currentframe()].delay_==0) return;
   if(nbr_of_frames()<=1) return;
     
   speedcounter++;
-  if (speedcounter>=frame[currentframe()]._delay)
+  if (speedcounter>=frame[currentframe()].delay_)
     next_frame();
 }
 
 void animation::next_frame()
 {
-  _currentframe=frame[currentframe()]._nextframe;
+  currentframe_=frame[currentframe()].nextframe_;
   speedcounter=0;
 #ifdef _EDIT_
   if(in_editor)
@@ -298,7 +298,7 @@ void animation::stop()
 
 void animation::rewind()
 {
-  _currentframe=0;
+  currentframe_=0;
   speedcounter=0;
 }
 
@@ -332,8 +332,8 @@ s_int8 animation::get(gzFile file)
   u_int16 nbr_frames;
   clear();
   // TODO: Remove this! (length and height are calculated later)
-  gzread(file,&_length,sizeof(_length));
-  gzread(file,&_height,sizeof(_height));
+  gzread(file,&length_,sizeof(length_));
+  gzread(file,&height_,sizeof(height_));
   // Read images
   gzread(file,&nbr_images,sizeof(nbr_images));
   for(i=0;i<nbr_images;i++)
@@ -356,12 +356,12 @@ s_int8 animation::get(gzFile file)
     {
       u_int16 tl,th;
       if((tl=t_frame[frame[i].imagenbr]->length()+frame[i].gapx)>length())
-	_length=tl;
+	length_=tl;
       
       if((th=t_frame[frame[i].imagenbr]->height()+frame[i].gapy)>height())
-	_height=th;
+	height_=th;
     }
-  _currentframe=0;
+  currentframe_=0;
   return(0);
 }
 
@@ -424,8 +424,8 @@ s_int8 animation::put(gzFile file)
   u_int16 i;
   u_int16 nbr_images=(u_int16)nbr_of_images();
   u_int16 nbr_frames=(u_int16)nbr_of_frames();
-  gzwrite(file,&_length,sizeof(_length));
-  gzwrite(file,&_height,sizeof(_height));
+  gzwrite(file,&length_,sizeof(length_));
+  gzwrite(file,&height_,sizeof(height_));
   gzwrite(file,&nbr_images,sizeof(nbr_images));
   for(i=0;i<nbr_images;i++)
     t_frame[i]->put_raw(file);
@@ -449,8 +449,8 @@ s_int8 animation::save(const char * fname)
 
 s_int8 animation::put_off(gzFile file)
 {
-  gzwrite(file,&_xoffset,sizeof(_xoffset));
-  gzwrite(file,&_yoffset,sizeof(_yoffset));
+  gzwrite(file,&xoffset_,sizeof(xoffset_));
+  gzwrite(file,&yoffset_,sizeof(yoffset_));
   put(file);
   return 0;
 }
@@ -564,9 +564,9 @@ animation & animation::operator =(animation &a)
   for(i=0;i<nbr_of_images();i++)
     delete t_frame[i];
   t_frame.clear();
-  _length=a._length;
-  _height=a._height;
-  _currentframe=a._currentframe;
+  length_=a.length_;
+  height_=a.height_;
+  currentframe_=a.currentframe_;
   speedcounter=a.speedcounter;
   play_flag=a.play_flag;
   for(i=0;i<a.nbr_of_images();i++)
@@ -1069,8 +1069,8 @@ void animation::update_editor_keys()
 	    *(t_frame[currentimage])=*clipboard;
 	  if(mode==FRAME)
 	    {
-	      frame[currentframe()]._is_masked=f_clipboard.is_masked();
-	      frame[currentframe()]._alpha=f_clipboard.alpha();
+	      frame[currentframe()].is_masked_=f_clipboard.is_masked();
+	      frame[currentframe()].alpha_=f_clipboard.alpha();
 	    }
 	}
     }
@@ -1089,8 +1089,8 @@ void animation::update_editor_keys()
 	  if(mode==FRAME)
 	    {
 	      animationframe af;
-	      af._is_masked=f_clipboard.is_masked();
-	      af._alpha=f_clipboard.alpha();
+	      af.is_masked_=f_clipboard.is_masked();
+	      af.alpha_=f_clipboard.alpha();
 	      insert_frame(af,nbr_of_frames());
 	    }
 	}
@@ -1131,16 +1131,16 @@ void animation::update_editor()
 {  
   update();
   u_int16 i;
-  _length=0;
-  _height=0;
+  length_=0;
+  height_=0;
   for(i=0;i<nbr_of_frames();i++)
     {
       u_int16 tl,th;
       if((tl=t_frame[frame[i].imagenbr]->length()+frame[i].gapx)>length())
-	_length=tl;
+	length_=tl;
 
       if((th=t_frame[frame[i].imagenbr]->height()+frame[i].gapy)>height())
-	_height=th;
+	height_=th;
     }
   if(info_win_count)
     {

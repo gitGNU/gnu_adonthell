@@ -24,8 +24,8 @@ class mapselect
  protected:
   u_int16 s_posx;
   u_int16 s_posy;
-  u_int16 _length;
-  u_int16 _height;
+  u_int16 length_;
+  u_int16 height_;
 
   u_int16 d_posx;
   u_int16 d_posy;
@@ -44,10 +44,10 @@ class mapselect
 	    u_int16 d_l, u_int16 d_h);
   ~mapselect();
 
-  u_int16 length() { return _length; }
-  u_int16 height() { return _height; }
-  void set_length(u_int16 l) { _length=l; }
-  void set_height(u_int16 h) { _height=h; }
+  u_int16 length() { return length_; }
+  u_int16 height() { return height_; }
+  void set_length(u_int16 l) { length_=l; }
+  void set_height(u_int16 h) { height_=h; }
   void check_if_fits();
   void move(u_int16 x, u_int16 y);
   void resize(u_int16 l, u_int16 h);
