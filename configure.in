@@ -185,7 +185,6 @@ if test x$pylibs = xnone; then
 
 
    dnl Find the Python library
-
    AC_MSG_CHECKING(for Python library)
    PYLIB=""
    changequote(<<, >>)
@@ -193,31 +192,41 @@ if test x$pylibs = xnone; then
    PYLIBVER=`$PYPACKAGE -c 'import sys; print sys.version[:3]'`
    changequote([, ])
 
-   py_paths="$PYPREFIX/lib/python$PYLIBVER/config $PYPREFIX/lib"
-   py_suffix="$PYLIBVER.so $PYLIBVER.a .so .a"
-   
-   dnl Try for specific version first, then the generic version, then panic
-
-   for ppath in $py_paths ; do
-     if test -r "$ppath/libpython$PYLIBVER.so" -o \
-	     -r "$ppath/libpython$PYLIBVER.a"; then
-        PYLIB="-L$ppath -lpython$PYLIBVER"
-        break
-     fi
-     if test -r "$ppath/libpython.so" -o \
-             -r "$ppath/libpython.a"; then
-        PYLIB="-L$ppath -lpython"
-        break
-     fi
-   done
-
-   if test "x$PYLIB" != x ; then
-      PY_LIBS="$PYLIB $PY_LIBS"
-      AC_MSG_RESULT(found)
+   dnl look for a framework build of python first
+   fw=`echo "$PYPREFIX" | sed 's/.*\(Python\.framework\).*/\1/;'`
+   if test "x$fw" != x; then
+       PY_LIBS="-framework Python"
+       PY_FWDIR="$PYPREFIX/lib/python$PYLIBVER/site-packages"
+       PY_SPDIR="$libdir/python$PYLIBVER/site-packages"
+       AC_SUBST(PY_FWDIR)
+       AC_SUBST(PY_SPDIR)
+       AC_MSG_RESULT(found)
    else
-      AC_MSG_ERROR([*** Python library not found])
-   fi
+     py_paths="$PYPREFIX/lib/python$PYLIBVER/config $PYPREFIX/lib"
+     py_suffix="$PYLIBVER.so $PYLIBVER.a .so .a"
+   
+     dnl Try for specific version first, then the generic version, then panic
 
+     for ppath in $py_paths ; do
+       if test -r "$ppath/libpython$PYLIBVER.so" -o \
+	       -r "$ppath/libpython$PYLIBVER.a"; then
+         PYLIB="-L$ppath -lpython$PYLIBVER"
+         break
+       fi
+       if test -r "$ppath/libpython.so" -o \
+               -r "$ppath/libpython.a"; then
+         PYLIB="-L$ppath -lpython"
+         break
+       fi
+     done
+
+     if test "x$PYLIB" != x ; then
+       PY_LIBS="$PYLIB $PY_LIBS"
+       AC_MSG_RESULT(found)
+     else
+       AC_MSG_ERROR([*** Python library not found])
+     fi
+   fi
    dnl Get the libraries that python depends on
 
    AC_PATH_PROG(haveldd, ldd)
