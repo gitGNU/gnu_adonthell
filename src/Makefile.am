@@ -47,7 +47,7 @@ adonthell_SOURCES = main.cc
 
 
 # Note: adonthell.py is also built by this target. 
-py_adonthell_wrap.cc : py_adonthell.i
+py_adonthell_wrap.cc : py_adonthell.i *.h
 	@if test "${P_SWIG}"; then \
 	   ${P_SWIG} -python -shadow ${SDL_CFLAGS} -I./ -I../ -c++ -make_default -o $*.cc py_adonthell.i; \
            mv adonthell.py modules/adonthell.py; \

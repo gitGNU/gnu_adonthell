@@ -25,6 +25,7 @@
 
 #include <iostream> 
 #include <cstdio>
+#include <time.h>
 #include <unistd.h>
 #include <dirent.h>
 #include <sys/stat.h>
@@ -39,13 +40,13 @@
 #define AUDIO_DAT_VER   2
 #define CHAR_DAT_VER    4
 #define QUEST_DAT_VER   1
-#define SAVE_DAT_VER    2
+#define SAVE_DAT_VER    3
 
-vector<gamedata*> gamedata::saves;       // The list of available savegames
-string gamedata::user_data_dir_;         // The user's private adonthell directory
-string gamedata::game_data_dir_;         // The adonthell data directory
-string gamedata::game_name;              // The adonthell data directory
-
+vector<gamedata*> gamedata::saves;      // The list of available savegames
+string gamedata::user_data_dir_;        // The user's private adonthell directory
+string gamedata::game_data_dir_;        // The adonthell data directory
+string gamedata::game_name;             // The adonthell data directory
+u_int8 gamedata::quick_load;            // Whether Quick-load is active or not
 
 using namespace std; 
 
@@ -56,8 +57,9 @@ gamedata::gamedata ()
 
 gamedata::gamedata (string dir, string desc)
 {
-    directory_ = dir;
-    description_ = desc; 
+    Timestamp = 0;
+    Directory = dir;
+    Description = desc; 
 }
 
 gamedata::~gamedata ()
@@ -68,30 +70,36 @@ bool gamedata::get (igzstream& file)
 {
     if (!fileops::get_version (file, SAVE_DAT_VER, SAVE_DAT_VER, "save.data"))
         return false;
-    directory_ << file; 
-    description_ << file;
-    location_ << file;
-    time_ << file; 
+    
+    Timestamp << file; 
+    Description << file;
+    Location << file;
+    Gametime << file; 
+    
     return true;
 }
 
 void gamedata::put (ogzstream& file)
 {
     fileops::put_version (file, SAVE_DAT_VER);
-    directory_ >> file;
-    description_ >> file;
-    location_ >> file;
-    time_ >> file; 
+    
+    // get current time for Quick-Loading
+    Timestamp = time (NULL);
+    
+    Timestamp >> file;
+    Description >> file;
+    Location >> file;
+    Gametime >> file; 
 }
 
 void gamedata::set_description (string desc)
 {
-    description_ = desc; 
+    Description = desc; 
 }
 
 void gamedata::set_directory (string dir)
 {
-    directory_ = dir;
+    Directory = dir;
 }
 
 bool gamedata::load_characters (u_int32 pos)
@@ -248,6 +256,29 @@ bool gamedata::load (u_int32 pos)
     return true; 
 }
 
+bool gamedata::load_newest ()
+{
+    // Quick-load off / no save game available
+    if (!quick_load || saves.size () <= 1) return false;
+    
+    u_int32 timestamp = 0;
+    u_int32 index = 0;
+    u_int32 newest;
+    
+    for (vector<gamedata*>::iterator i = saves.begin (); i != saves.end (); i++)
+    {
+        if ((*i)->timestamp () > timestamp)
+        {
+            timestamp = (*i)->timestamp ();
+            newest = index;
+        }
+        
+        index++; 
+    }
+    
+    return load (newest);
+}
+
 bool gamedata::save (u_int32 pos, string desc)
 {
     gamedata *gdata;
@@ -268,7 +299,7 @@ bool gamedata::save (u_int32 pos, string desc)
         while (success)
         {
             // that's the directory we're going to save to
-            sprintf(t,"%03i",pos++);
+            sprintf(t, "%03i", pos++);
             filepath = user_data_dir ();
             filepath += "/" + game_name + "-save-";
             filepath += t;
@@ -435,7 +466,7 @@ gamedata* gamedata::next_save ()
 }
 
 
-bool gamedata::init (string udir, string gdir, string gname)
+bool gamedata::init (string udir, string gdir, string gname, u_int8 qload)
 {
     DIR *dir;
     igzstream in;
@@ -446,6 +477,7 @@ bool gamedata::init (string udir, string gdir, string gname)
     user_data_dir_ = udir; 
     game_data_dir_ = gdir; 
     game_name = gname; 
+    quick_load = qload;
     
     // try to change into data directory
     if (chdir (game_data_dir ().c_str ()))

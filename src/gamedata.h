@@ -1,7 +1,7 @@
 /*
    $Id$
 
-   Copyright (C) 2001 by Kai Sterker <kaisterker@linuxgames.com>
+   Copyright (C) 2001/2002 by Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -102,35 +102,38 @@ public:
     /** 
      * Returns the directory where the saved %game lies.
      * 
-     * 
      * @return Directory where the saved %game lies.
      */
-    const char* directory () { return directory_.c_str (); }
+    const char* directory () { return Directory.c_str (); }
 
     /**
      * Returns the description of the saved %game.
-     * 
      *
      * @return Description of the saved %game.
      */ 
-    const char* description () { return description_.c_str (); }
+    const char* description () { return Description.c_str (); }
 
     /** 
      * Returns the location of the saved %game.
      * 
-     * 
      * @return Location of the saved %game.
      */
-    const char* location () { return location_.c_str (); }
+    const char* location () { return Location.c_str (); }
 
     /** 
-     * Returns the time of the saved %game.
+     * Returns the in-game time of the saved %game.
      * 
-     * 
-     * @return Time of the saved %game.
+     * @return In-game time of the saved %game.
      */
-    const char* time () { return time_.c_str (); }
+    const char* gametime () { return Gametime.c_str (); }
 
+    /**
+     * Returns the (real) time when this game has been saved
+     *
+     * @return (Real) time when this game has been saved
+     */
+    u_int32 timestamp () { return Timestamp; }
+    
     /** 
      * Sets the description for this %game.
      * 
@@ -154,10 +157,11 @@ public:
      * @param udir The user directory, usually $HOME/.adonthell
      * @param gdir The %game data directory, usually /usr/local/share/adonthell
      * @param gname The name of the %game we are running, e.g. wastesedge
+     * @param qload Whether quick-loading should be enabled or disabled
      *
      * @return \e true in case of success, false otherwise.
      */
-    static bool init (string udir, string gdir, string gname); 
+    static bool init (string udir, string gdir, string gname, u_int8 qload); 
     
     /** 
      * Cleanup the saved %game array.
@@ -212,6 +216,15 @@ public:
      */
     static bool load (u_int32 pos); 
     
+    /** 
+     * Loads the most recent saved %game. This method only takes
+     * games created by the player into account, not the initial
+     * saved %game.
+     * 
+     * @return \e true in case of success, \e false otherwise.
+     */
+    static bool load_newest (); 
+
     /** 
      * Save a %game. When given a slot number in the range of
      * the available saved games, the according %game will be
@@ -346,12 +359,14 @@ public:
 
 private:
 #ifndef SWIG
-    string directory_;                        // the game's location on the harddisk
-    string description_;                      // user supplied description of the game
-    string location_;                         // the map or area the player is on
-    string time_;                             // the gametime of the save
+    string Directory;               // the game's location on the harddisk
+    string Description;             // user supplied description of the game
+    string Location;                // the map or area the player is on
+    string Gametime;                // the gametime of the saved game
+    u_int32 Timestamp;              // time of last save to this file
     
     static string game_name; 
+    static u_int8 quick_load;
     
     /** 
      * Keeps track of available saved games.
@@ -369,7 +384,7 @@ private:
      * Game data directory.
      * 
      */ 
-    static string game_data_dir_; 
+    static string game_data_dir_;
 #endif
 };
 

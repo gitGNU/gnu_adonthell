@@ -67,7 +67,7 @@ class adonthell
      * @param wnd The window to display initially
      * @param name A name for that window (currently unused)
      */
-    void main (win_base *wnd, const string name);
+    void main (win_base *wnd = NULL, const string name = "");
     
     /**
      * The actual main loop. First, any user %input is processed,

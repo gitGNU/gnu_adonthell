@@ -44,8 +44,18 @@ adonthell::adonthell ()
 void adonthell::main (win_base *wnd, const string name)
 {
     win_manager mgr;
-    mgr.add (wnd /*, name */);
-    mgr.set_focus (wnd);       
+    
+    if (wnd != NULL)
+    {
+        mgr.add (wnd /*, name */);
+        mgr.set_focus (wnd);       
+    }
+    else
+    {
+        mapview_start ();
+        set_control_active (true);
+        fade_in ();
+    }
 
     while (letsexit == false)
     {

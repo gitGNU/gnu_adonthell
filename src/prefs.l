@@ -33,6 +33,7 @@ num    {digit}+
 Screen-mode         return PREFS_SCREEN_MODE;
 Double-size         return PREFS_DOUBLE_SCREEN;
 Language            return PREFS_LANGUAGE;
+Quick-load          return PREFS_QUICK_LOAD;
 Audio-channels      return PREFS_AUDIO_CHANNELS;
 Audio-resolution    return PREFS_AUDIO_RESOLUTION;
 Audio-sample-rate   return PREFS_AUDIO_SAMPLE_RATE;

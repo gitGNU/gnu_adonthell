@@ -50,14 +50,15 @@ enum
     PREFS_UNKNOWN = 0,
     PREFS_SCREEN_MODE = 1,
     PREFS_LANGUAGE = 2,
-    PREFS_AUDIO_CHANNELS = 3,
-    PREFS_AUDIO_RESOLUTION = 4,
-    PREFS_AUDIO_SAMPLE_RATE = 5,
-    PREFS_AUDIO_VOLUME = 6,
-    PREFS_VERSION = 7,
-    PREFS_NUM = 8,
-    PREFS_STR = 9,
-    PREFS_DOUBLE_SCREEN = 10,
+    PREFS_QUICK_LOAD = 3,
+    PREFS_AUDIO_CHANNELS = 4,
+    PREFS_AUDIO_RESOLUTION = 5,
+    PREFS_AUDIO_SAMPLE_RATE = 6,
+    PREFS_AUDIO_VOLUME = 7,
+    PREFS_VERSION = 8,
+    PREFS_NUM = 9,
+    PREFS_STR = 10,
+    PREFS_DOUBLE_SCREEN = 11,
 };
 
 
@@ -72,7 +73,8 @@ public:
      * Constructor. Initializes all configuration options with default
      * values.
      * - Language: English
-     * - Screen mode: Windowed
+     * - Screen mode: windowed
+     * - Quick load: enabled
      * - Audio: High quality (44.1kHz, 16 bit, stereo)
      * - Volume: 100%
      * - Config file: $HOME/.adonthell/adonthellrc
@@ -134,6 +136,10 @@ public:
      */
     u_int8 screen_mode;
     u_int8 double_screen;
+    /**
+     * Whether the quick-load feature is enabled (1) or not (0)
+     */
+    u_int8 quick_load;
     /**
      * The number of channels: mono (0) or stereo (1).
      */

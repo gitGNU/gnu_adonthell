@@ -1,7 +1,7 @@
 /*
    $Id$
  
-   Copyright (C) 1999/2000/2001 Kai Sterker <kaisterker@linuxgames.com>
+   Copyright (C) 1999/2000/2001/2002 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -126,7 +126,8 @@ int main(int argc, char * argv[])
     game::set_game_data_dir(myconfig.gamedir);
     
     // init game loading/saving system
-    gamedata::init (game::user_data_dir(), game::game_data_dir(), myconfig.game_name); 
+    gamedata::init (game::user_data_dir(), game::game_data_dir(),
+        myconfig.game_name, myconfig.quick_load); 
 
     // init video subsystem
     screen::set_video_mode (320, 240, 0, myconfig.double_screen);

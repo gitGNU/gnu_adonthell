@@ -45,6 +45,7 @@ config::config ()
     // set some default values where possible
     screen_mode = 0;                // Fullscreen
     double_screen = 1;              // Double screen
+    quick_load = 1;                 // Quick-load enabled
     audio_channels = 1;             // Stereo
     audio_resolution = 1;           // 16 bit
     audio_sample_rate = 2;          // 11025, 22050 or 44100 Hz
@@ -267,10 +268,13 @@ void config::write_adonthellrc ()
     rc << "# Sample Adonthell configuration file;\n"
        << "# edit to your needs!\n\n"
        << "# Screen-mode num\n#   0  Windowed mode\n"
-       << "#   1  Fullscreen mode\n    Screen-mode " << (int) screen_mode << "\n\n"
-       << "# Double-size num\n#   0  320x240 mode\n"
-       << "#   1  640x480 (double) mode\n    Double-size " << (int) double_screen << "\n\n"
+       << "#   1  Fullscreen mode\n    Screen-mode " << (int) screen_mode 
+       << "\n\n" << "# Double-size num\n#   0  320x240 mode\n"
+       << "#   1  640x480 (double) mode\n    Double-size " 
+       << (int) double_screen << "\n\n"
        << "# Language [locale]\n# Where locale has the form fr_FR or de_DE, etc.\n    Language [" << language << "]\n\n"
+       << "# Quick-load num\n#   0  off\n#   1  on\n    Quick-load "
+       << (int) quick_load << "\n\n"
        << "# Audio-channels num\n#   0  Mono\n#   1  Stereo\n"
        << "    Audio-channels " << (int) audio_channels << "\n\n"
        << "# Audio-resolution num\n#   0  8 bit\n#   1  16 bit\n"
@@ -279,7 +283,7 @@ void config::write_adonthellrc ()
        << "    Audio-sample-rate " << (int) audio_sample_rate << "\n\n"
        << "# Audio-volume num\n#   0 - 100 %\n"
        << "    Audio-volume " << (int) audio_volume << "\n\n"
-       << "# Version of this file. Don't Edit\n    Version [" << VERSION << "]\n";
+       << "# Version number of this file. Please don't edit\n    Version [" << VERSION << "]\n";
 
     rc.close ();
 }
@@ -339,6 +343,12 @@ bool config::read_adonthellrc ()
             case PREFS_DOUBLE_SCREEN:
             {
                 if (parse_adonthellrc (n, s) == PREFS_NUM) double_screen = n;
+                break;
+            }
+
+            case PREFS_QUICK_LOAD:
+            {
+                if (parse_adonthellrc (n, s) == PREFS_NUM) quick_load = n;
                 break;
             }
 

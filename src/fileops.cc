@@ -1,7 +1,7 @@
 /*
    $Id$
 
-   Copyright (C) 1999 - 2001 The Adonthell Team
+   Copyright (C) 1999/2000/2001/2002 Alexandre Courbot
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify

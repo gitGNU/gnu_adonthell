@@ -1,7 +1,7 @@
 /*
    $Id$
 
-   Copyright (C) 1999/2000/2001   Alexandre Courbot
+   Copyright (C) 1999/2000/2001/2002 Alexandre Courbot
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -21,10 +21,22 @@
  * 
  * 
  */
- 
+
+#include <SDL/SDL_endian.h>
 #include "image.h"
 #include "pnm.h"
 
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+#define R_MASK 0xff000000
+#define G_MASK 0x00ff0000
+#define B_MASK 0x0000ff00
+#define A_MASK 0x000000ff
+#else
+#define R_MASK 0x000000ff
+#define G_MASK 0x0000ff00
+#define B_MASK 0x00ff0000
+#define A_MASK 0xff000000
+#endif
 
 using namespace std; 
 
@@ -186,8 +198,8 @@ s_int8 image::put_raw (ogzstream& file) const
     if (!length () || !height ()) return 0; 
 
     SDL_Surface *tmp2 = SDL_CreateRGBSurface (0, 1, 1, 24, 
-                                              0x0000FF, 0x00FF00,
-                                              0xFF0000, 0);
+                                              R_MASK, G_MASK,
+                                              B_MASK, 0);
 
     image * imt;
     SDL_Surface * toconvert;
@@ -237,8 +249,8 @@ s_int8 image::save_raw (string fname) const
 s_int8 image::put_pnm (SDL_RWops * file) const
 {
     SDL_Surface *tmp2 = SDL_CreateRGBSurface (0, 1, 1, 24, 
-                                              0x0000FF, 0x00FF00,
-                                              0xFF0000, 0);
+                                              R_MASK, G_MASK,
+                                              B_MASK, 0);
     
     SDL_Surface * temp;
 
@@ -371,8 +383,8 @@ void image::raw2display (void * rawdata, u_int16 l, u_int16 h)
     SDL_Surface *tmp2 = SDL_CreateRGBSurfaceFrom (rawdata, length (),
                                                   height (), 24,
                                                   length () * 3,
-                                                  0x0000FF, 0x00FF00,
-                                                  0xFF0000, 0);
+                                                  R_MASK, G_MASK,
+                                                  B_MASK, 0);
     vis = SDL_DisplayFormat (tmp2);
     if (screen::dblmode)
     {

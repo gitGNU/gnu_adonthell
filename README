@@ -61,6 +61,11 @@ The available options and what they do are:
   Of course, the game you run has to provide the translation you 
   chose here, otherwise you'll get the default (i.e. English) text.
 
+- Quick-load
+  Whether the last game should be automatically continued at
+  startup. Only works if at least one saved game exists.
+  0 = disable, 1 = enable
+
 - Audio-channels
   Whether sound should be mono or stereo
   0 = Mono, 1 = Stereo
