@@ -40,8 +40,10 @@ GuiEdit::GuiEdit (GtkWidget *container)
     gtk_text_set_word_wrap (GTK_TEXT (entry), TRUE);
     gtk_widget_show (entry);
 
-    // define the font to use
-    font = gdk_font_load ("-*-lucidatypewriter-medium-*-*-*-12-*-*-*-*-*-*");
+    // use a fixed size font
+    GtkStyle *style = gtk_style_copy (gtk_widget_get_default_style ());
+    style->font = gdk_font_load ("-*-lucidatypewriter-medium-*-*-*-12-*-*-*-*-*-iso8859-1");
+    gtk_widget_set_style (entry, style);
 }
 
 // dtor
@@ -52,8 +54,8 @@ GuiEdit::~GuiEdit ()
 // set the entry's text
 void GuiEdit::setText (const string &text)
 {
-    gtk_text_insert (GTK_TEXT (entry), font, &entry->style->black,
-        &entry->style->white, text.c_str (), -1);
+    gtk_text_insert (GTK_TEXT (entry), entry->style->font, 
+        &entry->style->black, &entry->style->white, text.c_str (), -1);
 }
 
 // return the entry's text

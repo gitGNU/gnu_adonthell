@@ -52,7 +52,7 @@ enum query_type
  */
 enum mode_type
 {
-    NONE            = 0,
+    IDLE            = 0,
     NODE_SELECTED   = 1,
     NODE_HILIGHTED  = 2
 };

@@ -65,6 +65,9 @@ void GuiGraph::attachModule (DlgModule *m)
     // if a node is selected, update the instant preview
     GuiDlgedit::window->list ()->display (module->selected ());
         
+    // update the program state
+    GuiDlgedit::window->setMode (module->mode ());
+
     // set the size of the dialogue
     module->resize (graph->allocation.width, graph->allocation.height);
     
@@ -79,6 +82,9 @@ void GuiGraph::detachModule ()
     
     // clear the instant preview
     GuiDlgedit::window->list ()->clear ();
+
+    // update the program state
+    GuiDlgedit::window->setMode (IDLE);
 }
 
 // select a node
@@ -105,6 +111,23 @@ bool GuiGraph::selectNode (DlgNode *node)
     return false;
 }
 
+// select the node at the given position
+bool GuiGraph::selectNode (DlgPoint &point)
+{
+    // if there is no module assigned to the view, there is nothing to select
+    if (module == NULL) return false;
+
+    // calculate absolute position of the point
+    point.move (-offset->x (), -offset->y ());
+    
+    // see if we're over a node
+    DlgNode *node = module->getNode (point);
+    
+    // no node at that position
+    if (node == NULL) return false;
+    else return selectNode (node);
+}
+
 // select parent
 bool GuiGraph::selectParent ()
 {
@@ -129,14 +152,8 @@ bool GuiGraph::selectParent ()
     }
 
     // if no node is selected, we simply select the first one
-    else if (module->selectRoot ())
-    {
-        // update the instant preview
-        GuiDlgedit::window->list ()->display (module->selected ());
-
-        return true;
-    }
-
+    else return selectRoot ();
+    
     return false;
 }
 
@@ -164,17 +181,12 @@ bool GuiGraph::selectChild ()
     }
 
     // if no node is selected, we simply select the first one
-    else if (module->selectRoot ())
-    {
-        // update the instant preview
-        GuiDlgedit::window->list ()->display (module->selected ());
-
-        return true;
-    }
-
+    else return selectRoot ();
+    
     return false;
 }
 
+// select a sibling of the currently selected node
 bool GuiGraph::selectSibling (query_type pos)
 {
     // if there is no module assigned to the view, there is nothing to select
@@ -205,10 +217,21 @@ bool GuiGraph::selectSibling (query_type pos)
     }
 
     // if no node is selected, we simply select the first one
-    else if (module->selectRoot ())
+    else return selectRoot ();
+    
+    return false;
+}
+
+// select the first node in the dialogue
+bool GuiGraph::selectRoot ()
+{
+    if (module->selectRoot ())
     {
         // update the instant preview
         GuiDlgedit::window->list ()->display (module->selected ());
+
+        // update the program state
+        GuiDlgedit::window->setMode (module->mode ());
 
         return true;
     }
@@ -227,7 +250,7 @@ void GuiGraph::deselectNode ()
     if (deselected)
     {
         // update the program state
-        GuiDlgedit::window->setMode (NONE);
+        GuiDlgedit::window->setMode (IDLE);
         
         // update the instant preview
         GuiDlgedit::window->list ()->clear ();

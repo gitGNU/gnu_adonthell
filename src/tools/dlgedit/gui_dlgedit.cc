@@ -217,7 +217,7 @@ GuiDlgedit::GuiDlgedit ()
     gtk_widget_show (wnd);
 
     // set the programm mode
-    setMode (NONE);
+    setMode (IDLE);
 
     // font to use on the drawing area
     font_ = gdk_font_load ("-*-*-medium-r-normal-sans-12-*-*-*-*-*-iso8859-1");
@@ -498,8 +498,8 @@ void GuiDlgedit::setMode (mode_type mode)
     // get the string to use
     switch (mode)
     {
-        case NONE:
-            text = " NONE";
+        case IDLE:
+            text = " IDLE";
             break;
         case NODE_SELECTED:
             text = " SELECTED";
@@ -536,7 +536,7 @@ GdkGC *GuiDlgedit::getColor (mode_type mode, node_type type)
     switch (mode)
     {
         // not selected    
-        case NONE:
+        case IDLE:
         {
             if (type == NPC || type == LINK) return color[GC_BLACK];
             else if (type == NARRATOR) return color[GC_DARK_GREEN];

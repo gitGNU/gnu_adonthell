@@ -37,7 +37,7 @@
 class DlgCircle : public DlgNode
 {
 public:
-    DlgCircle () { mode_ = NONE; last_parent = NULL; }
+    DlgCircle () { mode_ = IDLE; last_parent = NULL; }
     DlgCircle (node_type t, DlgCircleEntry *e, DlgPoint &p);
 
     /** 

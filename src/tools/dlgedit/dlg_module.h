@@ -138,10 +138,12 @@ protected:
     
     DlgPoint offset_;           // The current offset in the graph view
     bool changed_;              // Whether there were changes since saving
-    mode_type mode_;            // Current state of this dialogue
     
     string name_;               // Short (file-) name of the dialogue 
     string description_;        // Description of the dialogue
+
+private:
+    void init ();               // initialize a newly constructed DlgModule
 };
 
 #endif // DLG_MODULE_H

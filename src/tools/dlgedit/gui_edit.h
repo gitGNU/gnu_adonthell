@@ -57,5 +57,4 @@ public:
 
 private:
     GtkWidget *entry;          // The GtkText widget
-    GdkFont *font;             // The font to use for the text
 };

@@ -28,7 +28,7 @@
 DlgArrow::DlgArrow (DlgNode *start, DlgNode *end)
 {
     type_ = LINK;
-    mode_ = NONE;
+    mode_ = IDLE;
     
     // add the start and end to this arrow
     prev_.push_back (start);

@@ -32,7 +32,7 @@
 class DlgArrow : public DlgNode
 {
 public:
-    DlgArrow () { mode_ = NONE; }
+    DlgArrow () { mode_ = IDLE; }
     /**
      * Create a new link between two nodes.
      * @param s The node where the link starts.

@@ -77,71 +77,39 @@ gint expose_event (GtkWidget * widget, GdkEventExpose * event, gpointer data)
     return FALSE;
 }
 
-/* Mouse-button pressed on Drawing Area */
-gint 
-button_press_event (GtkWidget * widget, GdkEventButton * event, gpointer data)
+// Mouse-button pressed on Drawing Area/
+gint button_press_event (GtkWidget *widget, GdkEventButton *event, gpointer data)
 {
-    /*
-    MainFrame *MainWnd = (MainFrame *) data;
-    GdkPoint point;
-    u_int32 i;
+    GuiGraph *graph = (GuiGraph *) data;
+    DlgPoint point ((int) event->x, (int) event->y);
 
-    point.x = (s_int32) event->x - MainWnd->x_offset;
-    point.y = (s_int32) event->y - MainWnd->y_offset;
-
-    // Left Button down
     switch (event->button)
     {
-        // Middle Button
+        // Middle button pressed
         case 2:
         {
             // If nothing selected, see if we're over a node
-            if (MainWnd->mode == IDLE)
-                select_object (MainWnd, point);
-
+            if (graph->mode () == IDLE)
+                graph->selectNode (point);
+            
             // Edit node
-            if (MainWnd->mode == OBJECT_MARKED)
-                edit_node (MainWnd);
-                
+            if (graph->mode () == NODE_SELECTED)
+                graph->editNode ();
+            
             break;
         }
-
-        // Right Button
+        
+        // Right button pressed
         case 3:
         {
-            switch (MainWnd->mode)
-            {
-                // circle              -> remove link
-                // Unoccupied location -> deselect object
-                case OBJECT_MARKED:
-                {
-                    if (!remove_link (MainWnd, point))
-                        deselect_object (MainWnd);
-                    break;
-                }
-
-                // More then one object marked: deselect all of 'em
-                case MULTI_MARKED:
-                {
-                    for (i = 0; i < MainWnd->multsel.size (); i++)
-                    {
-                        MainWnd->selected_node = MainWnd->multsel[i];
-                        deselect_object (MainWnd);                      
-                    }
-
-                    MainWnd->multsel.clear ();
-                    break;
-                }
-                
-                default: break;
-            }
-
-            break;
+            // if something selected -> deselect
+            if (graph->mode () == NODE_SELECTED)
+                graph->deselectNode ();
         }
 
         default: break;
     }
-*/
+    
     return TRUE;
 }
 
@@ -190,10 +158,27 @@ gint motion_notify_event (GtkWidget *widget, GdkEventMotion *event, gpointer dat
 */
 }
 
-/* Mouse-button released on Drawing Area */
-gint 
-button_release_event (GtkWidget * widget, GdkEventButton * event, gpointer data)
+// Mouse-button released on Drawing Area
+gint button_release_event (GtkWidget *widget, GdkEventButton *event, gpointer data)
 {
+    GuiGraph *graph = (GuiGraph *) data;
+    DlgPoint point ((int) event->x, (int) event->y);
+    
+    // Left button released
+    if (event->button == 1)
+    {
+        switch (graph->mode ())
+        {
+            // nothing selected
+            case IDLE:
+            {
+                // select the node under the cursor, if any
+                graph->selectNode (point);
+            }
+            
+            default: break;
+        }
+    }
 /*    
     MainFrame *MainWnd = (MainFrame *) data;
     GdkPoint point;

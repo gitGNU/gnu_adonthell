@@ -24,17 +24,26 @@
 #include "dlg_circle.h"
 #include "dlg_arrow.h"
 
+
+// ctor
 DlgModule::DlgModule (string n, string d)
 {
-    type_ = MODULE;
-    selected_ = NULL;
-    highlighted_ = NULL;
     description_ = d;
-    changed_ = false;
-    mode_ = NONE;
     setName (n);
+    init ();
 }
 
+// initialize a newly constructed DlgModule
+void DlgModule::init ()
+{
+    type_ = MODULE;
+    mode_ = IDLE;
+    selected_ = NULL;
+    highlighted_ = NULL;
+    changed_ = false;
+}
+
+// assign a name to the module
 void DlgModule::setName (const string &filename)
 {
     name_ = filename;
@@ -110,8 +119,8 @@ DlgNode* DlgModule::deselectNode ()
     if (selected_ == NULL) return NULL;
 
     // unselect node
-    mode_ = NONE;
-    selected_->setMode (NONE);
+    mode_ = IDLE;
+    selected_->setMode (IDLE);
     
     // nothing selected
     selected_ = NULL;

@@ -92,6 +92,13 @@ public:
      */
     bool selectNode (DlgNode *node);
     /**
+     * Select the node at the given position.
+     * @param point the coordinates of the DlgNode to be selected
+     * @return <b>true</b> if the node exists and was selected successfully,
+     *         <b>false</b> otherwise.
+     */
+    bool selectNode (DlgPoint &point);
+    /**
      * Select the parent of the currently selected node (or the first node
      * in case no node is selected so far.
      * @return <b>true</b> if the node exists and was selected successfully,
@@ -113,6 +120,11 @@ public:
      *         <b>false</b> otherwise.
      */
     bool selectSibling (query_type pos);
+    /**
+     * Select the first node in the dialogue.
+     * @return <b>true</b> on success, <b>false</b> otherwise.
+     */
+    bool selectRoot ();
     /**
      * Deselect the node currently selected.
      */
@@ -182,6 +194,11 @@ public:
      * @return the DlgModule currently attached to the view 
      */
     DlgModule *dialogue ()      { return module; }
+    /**
+     * Get the state of the attached module.
+     * @return the attached DlgModule's state. 
+     */
+    mode_type mode ()           { return module ? module->mode () : IDLE; }
     //@}
     
 private:
