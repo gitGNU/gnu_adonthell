@@ -32,7 +32,7 @@ protected:
     char *label;                // Label of the entry
     char *file;                 // The actual npc or dlg represented by the item
     u_int32 id;                 // A unique id used throughout the project
-    Array<u_int32> attached;    // The Dlgs attached to a NPC and vice versa
+    vector<u_int32> attached;   // The Dlgs attached to a NPC and vice versa
 };
 
 // All Information needed for the project management
@@ -47,6 +47,8 @@ public:
     void show_note ();          // Display an items note
     void show_npc ();           // Display NPC info of item
     void show_dlg ();           // Display Dialogue info of item
+
+    void make ();               // Creates the data files usable by the dlg system 
 
     GtkWidget *tree;            // Project Tree
     GtkWidget *note;            // "Personal note" edit box

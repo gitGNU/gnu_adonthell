@@ -13,20 +13,26 @@
 */
 
 #include <stdio.h>
+#include <string.h>
 #include <gtk/gtk.h>
+#include <vector>
 
 #include "../../types.h"
-#include "../../array_tmpl.h"           // replace by STL vector one day
 #include "project.h"
 
 // Project Item stuff follows
 // Save an item
 void project_item::save (FILE *file)
 {
+    u_int32 i;
+
     fwrite (&type, sizeof (type), 1, file);
     fwrite (&id, sizeof (id), 1, file);
-    fwrite ((void*)attached.length (), sizeof (u_int32), 1, file);
-    fwrite (attached.get_array (), sizeof (u_int32), attached.length (), file);
+    fwrite ((void*)attached.size (), sizeof (u_int32), 1, file);
+
+    for (i = 0; i < attached.size (); i++)
+        fwrite (&attached[i], sizeof (u_int32), 1, file);
+
     fwrite ((void*)strlen (label), sizeof (u_int32), 1, file);
     fwrite (label, sizeof (char), strlen (label), file);
     fwrite ((void*)(strlen (this->file)+1), sizeof (u_int32), 1, file);
@@ -42,12 +48,14 @@ void project_item::load (FILE *file)
     
     fread (&type, sizeof (type), 1, file);
     fread (&id, sizeof (id), 1, file);
-    fread (&i, sizeof (i), 1, file);
+    fread (&len, sizeof (len), 1, file);
+
+    attached.reserve (len);
 
     for (i = 0; i < len; i++)
     {
         fread (&val, sizeof (val), 1, file);
-        attached.add_element (val);
+        attached.push_back (val);
     }
     
     fread (&len, sizeof (len), 1, file);
@@ -68,7 +76,7 @@ void project_item::load (FILE *file)
 // Save the project
 void project::save (const char *name)
 {
-    iterator it;
+    vector<project_item*>::iterator it;
     FILE *file = fopen (name, "w");
 
     if (!file) return;
@@ -77,19 +85,47 @@ void project::save (const char *name)
     fputs ("ADP1", file);
 
     // save number of items
-    fwrite (items.size (), sizeof (int), 1, file);
+    fwrite ((void *) items.size (), sizeof (int), 1, file);
     
     // Save all items
-    for (it = items.begin (); it != items.end (); it++)
-        it->save (file);
+    for (it = items.begin (); it < items.end (); it++)
+        (*it)->save (file);
 }
 
 // Load a project
 void project::load (const char *name)
 {
     FILE *file = fopen (name, "r");
+    project_item *pi;    
+    char str[5];
+    u_int32 size, i;
 
+    // Was file opend correctly?
     if (!file) return;
 
-    // ...
+    // Check if its a correct file
+    fgets (str, 5, file);
+
+    if (g_strcasecmp ("ADP1", str))
+    {
+        g_message ("%s is no valid project file", name);
+        return;
+    }
+
+    // Load number of items
+    fread (&size, sizeof (size), 1, file);
+
+    // Set size of the vector 
+    items.reserve (size);
+
+    // and load all items
+    for (i = 0; i < size; i++)
+    {
+        pi = new project_item;
+        pi->load (file); 
+        items.push_back (pi);
+    }
+
+    // Clean up
+    fclose (file);
 }

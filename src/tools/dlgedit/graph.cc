@@ -858,7 +858,7 @@ load_dialogue (MainFrame * wnd, const char *file)
 {
     int i;
     u_int8 type;
-    gchar str[31];
+    gchar str[5];
     FILE *in;
 
     /* Was load cancelled? */
