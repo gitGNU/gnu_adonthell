@@ -219,10 +219,16 @@ void event::set_list (event_list *l)
 // repeat an event
 s_int32 event::do_repeat ()
 {
-    s_int32 count = -1;
+    if (Repeat >= 0) 
+    {
+        Repeat--;
+        
+        if (Repeat <= 0) 
+        {
+            delete this;
+            return 0;
+        }
+    }
     
-    if (Repeat > 0) count = --Repeat;
-    if (count == 0) delete this;
-    
-    return count;
+    return Repeat;
 }

@@ -10,7 +10,7 @@ bin_PROGRAMS = adonthell
 
 EXTRA_DIST = .indent.pro prefs.l py_adonthell.i
 
-CPPFLAGS += $(SDL_DEFS) $(OGG_DEFS) $(SDL_CFLAGS) $(OGG_CFLAGS) $(PY_CFLAGS)
+CPPFLAGS =$(SDL_DEFS) $(OGG_DEFS) $(SDL_CFLAGS) $(OGG_CFLAGS) $(PY_CFLAGS)
 
 noinst_LIBRARIES = libadonthell.a
 

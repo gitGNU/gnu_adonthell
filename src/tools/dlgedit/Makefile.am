@@ -69,9 +69,9 @@ dlgedit_SOURCES = \
     gui_tooltip.h
 
 # Evil, but it works...
-CPPFLAGS +=-I../.. -D_VERSION_=\"0.8pre1\" $(PY_CFLAGS) $(GTK_CFLAGS) $(SDL_CFLAGS)
+CPPFLAGS =-I../.. -D_VERSION_=\"0.8\" $(GTK_CFLAGS) $(SDL_CFLAGS)
 
-SWIGFLAGS = -D_DLGEDIT_ -D_DEBUG_
+# SWIGFLAGS = -D_DLGEDIT_ -D_DEBUG_
 
 # dlgedit_LDADD = ../../libadonthell.a \
 # $(SDL_LIBS) $(PY_LIBS) $(GTK_LIBS)
@@ -82,8 +82,8 @@ dlgedit_LDADD = $(GTK_LIBS) ../../libadonthell.a
 lex.loadlg.cc: loadlg.l
 	flex -olex.loadlg.cc loadlg.l
 
-py_character_wrap.cc : py_character.i ../../character.h ../../character_base.h
-	swig $(SWIGFLAGS) -python -shadow -c++ -make_default -o py_character_wrap.cc $<
+# py_character_wrap.cc : py_character.i ../../character.h ../../character_base.h
+#	swig $(SWIGFLAGS) -python -shadow -c++ -make_default -o py_character_wrap.cc $<
 
-py_quest_wrap.cc : py_quest.i ../../quest.h
-	swig $(SWIGFLAGS) -python -shadow -c++ -make_default -o py_quest_wrap.cc $<
+# py_quest_wrap.cc : py_quest.i ../../quest.h
+#	swig $(SWIGFLAGS) -python -shadow -c++ -make_default -o py_quest_wrap.cc $<

@@ -329,7 +329,7 @@ if test x$tools = xyes; then
 	fi
 fi
 
-AM_CONDITIONAL(HAVE_GTK, test x$havegtk = xtrue)
+AM_CONDITIONAL(HAVE_GTK, test x$havegtk = xyes)
 
 dnl ****************************************
 dnl Check whether to build the documentation
