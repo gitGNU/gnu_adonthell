@@ -103,17 +103,30 @@ int main(int argc, char * argv[])
 
     // init game environment
 #if !defined (WIN32) 
-    game::init(DATA_DIR);
+    game::init (DATA_DIR);
 #else
-    char b[500];
-    getcwd(b, sizeof(b));
-    int ti = 0;
-    while (b[ti])
+    // change working directory to the application's location.
+    if (argc && argv[0])
     {
-        if (b[ti] == '\\') b[ti] = '/';
-        ti++;
+        char *str = argv[0];
+        do if (*str == '\\') *str = '/'; 
+        while (*(str++));
+        
+        str = strrchr (argv[0], '/');
+        *(str + 1) = 0;
+        chdir (argv[0]);
+        *(str + 1) = '/';
     }
-    game::init(b);
+    
+    // get absolute path to current working directory
+    char buf[500];
+    getcwd (buf, sizeof (buf));
+    
+    char *str = buf;
+    do if (*str == '\\') *str = '/'; 
+    while (*(str++));
+    
+    game::init (buf);
 #endif
 
     config myconfig;

@@ -500,7 +500,7 @@ bool gamedata::init (string udir, string gdir, string gname, u_int8 qload)
     saves.push_back (gdata);
 
     // Read the user's saved games (if any) - they'll be located in
-    // $HOME/.adonthell/ and called adonthell-save-xxx
+    // $HOME/.adonthell/ and called <game_name>-save-<xxx>
     if ((dir = opendir (user_data_dir ().c_str ())) != NULL)
     {
         while ((dirent = readdir (dir)) != NULL)

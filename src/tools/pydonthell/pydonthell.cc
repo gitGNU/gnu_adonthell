@@ -20,6 +20,7 @@
 #include <getopt.h>
 
 #include "game.h"
+#include "prefs.h"
 #include "python_class.h"
 
 using namespace std; 
@@ -34,7 +35,7 @@ extern "C"
      * SWIG init prototype.
      * 
      */
-    void initadonthellc (void);
+    void init_adonthell (void);
 }
 
 int main(int argc, char * argv[])
@@ -61,31 +62,20 @@ int main(int argc, char * argv[])
             }
     }
     
-    if (!game::init (myconfig)) 
-        return 1;
+    game::init (DATA_DIR); 
+    game::set_game_data_dir (myconfig.gamedir);
     
-    // add the working directory to python's path (otherwise, scripts
-    // without absolute path cannot be executed)
-    string path = dirname (argv[0]);
-    if (path[0] != '/') 
-    {
-        string tmp = getcwd (NULL, 0);
-        path = tmp + path;
-    }
+    python::init ();
+    python::insert_path (".");
+    python::insert_path (DATA_DIR"/modules");
+    
+    init_adonthell ();
+    
+    python::module = python::import_module ("adonthell"); 
+    if (!python::module) return false;     
+    
+    data::globals = PyModule_GetDict (python::module);
 
-    // the only way to pass that path to python seems to be the
-    // PYTHONPATH environment variable
-    string pythonpath = path;
-    char *env = getenv ("PYTHONPATH");
-    
-    if (env)
-    {
-        pythonpath += ":";
-        pythonpath += env;
-    }
-    
-    setenv ("PYTHONPATH", pythonpath.c_str (), 1);
-    
     Py_Main (argc, argv);
-    game::cleanup (); 
+    python::cleanup ();
 }

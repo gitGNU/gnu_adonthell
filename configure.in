@@ -417,8 +417,7 @@ src/tools/Makefile
 src/tools/charedit/Makefile
 src/tools/dlgedit/Makefile
 src/tools/dlgedit/examples/Makefile
-src/tools/questedit/Makefile
-src/tools/oggloop/Makefile
+src/tools/pydonthell/Makefile
 ])
 
 

@@ -157,6 +157,12 @@ public:
      */
     bool has_attribute (const std::string & name);
 
+protected:
+    /**
+     * The python class instance wrapped by %py_object
+     */    
+    PyObject *instance;
+
 private:
     /**
      * Helper for create_instance and reload_instance
@@ -165,8 +171,6 @@ private:
     bool instanciate (PyObject*, string, string, PyObject*);
 
     string script_file_;
-
-    PyObject *instance;
 };
 
 
