@@ -333,7 +333,7 @@ echo Building API doc .......... : $builddoc
 if test x$memleaks = xyes; then
 echo Test for Memory Leaks ..... : enabled
 fi
-echo "Data directory ............ : ${!gamedatadir}"
+echo Data directory ............ : $gamedatadir
 
 echo
 echo "Now type 'make' to build Adonthell"
