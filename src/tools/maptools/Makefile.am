@@ -11,7 +11,7 @@ screen.o storage.o quest.o win_base.o win_border.o \
 win_container.o win_font.o win_theme.o win_scrolled.o \
 win_background.o win_scrollbar.o win_file.o win_image.o \
 win_label.o win_select.o win_write.o win_query.o win_info.o \
-win_file_select.o yarg.o $(SDL_LIBS)
+win_file_select.o win_manager.o yarg.o $(SDL_LIBS)
 
 mapobjedit_SOURCES = mapobjedit.cpp
 
@@ -22,7 +22,7 @@ mapobject.o character_base.o screen.o storage.o quest.o \
 win_base.o win_border.o win_container.o win_font.o win_theme.o \
 win_scrolled.o win_background.o win_scrollbar.o win_file.o \
 win_image.o win_label.o win_select.o win_write.o win_query.o \
-win_info.o win_file_select.o yarg.o $(SDL_LIBS)
+win_info.o win_file_select.o win_manager.o yarg.o $(SDL_LIBS)
 
 mapcharedit_SOURCES = mapcharedit.cpp
 
@@ -34,7 +34,7 @@ win_container.o win_font.o win_theme.o win_scrolled.o \
 mapcharacter.o character_base.o mapobject.o landmap.o mapview.o \
 win_background.o win_scrollbar.o win_file.o win_image.o \
 win_label.o win_select.o win_write.o win_query.o win_info.o \
-win_file_select.o yarg.o $(SDL_LIBS)
+win_file_select.o win_manager.o yarg.o $(SDL_LIBS)
 
 mapedit_SOURCES = mapedit.cpp
 
@@ -46,7 +46,7 @@ screen.o storage.o quest.o win_base.o win_border.o \
 win_container.o win_font.o win_theme.o win_scrolled.o \
 win_background.o win_scrollbar.o win_file.o win_image.o \
 win_label.o win_select.o win_write.o win_query.o win_info.o \
-win_file_select.o yarg.o $(SDL_LIBS)
+win_file_select.o win_manager.o yarg.o $(SDL_LIBS)
 
 CPPFLAGS +=-I../.. -D_EDIT_ -DUSE_MAP $(SDL_CFLAGS)
 

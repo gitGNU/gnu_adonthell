@@ -88,22 +88,22 @@ bin_PROGRAMS = animedit mapobjedit mapcharedit mapedit
 
 animedit_SOURCES = animedit.cpp
 
-animedit_LDADD = animation.o animation_off.o drawing_area.o fileops.o game.o image.o input.o lex.prefs.o pnm.o prefs.o screen.o storage.o quest.o win_base.o win_border.o win_container.o win_font.o win_theme.o win_scrolled.o win_background.o win_scrollbar.o win_file.o win_image.o win_label.o win_select.o win_write.o win_query.o win_info.o win_file_select.o yarg.o $(SDL_LIBS)
+animedit_LDADD = animation.o animation_off.o drawing_area.o fileops.o game.o image.o input.o lex.prefs.o pnm.o prefs.o screen.o storage.o quest.o win_base.o win_border.o win_container.o win_font.o win_theme.o win_scrolled.o win_background.o win_scrollbar.o win_file.o win_image.o win_label.o win_select.o win_write.o win_query.o win_info.o win_file_select.o win_manager.o yarg.o $(SDL_LIBS)
 
 
 mapobjedit_SOURCES = mapobjedit.cpp
 
-mapobjedit_LDADD = animation.o animation_off.o drawing_area.o fileops.o game.o image.o input.o lex.prefs.o pnm.o prefs.o mapselect.o maptpl.o mapobject.o character_base.o screen.o storage.o quest.o win_base.o win_border.o win_container.o win_font.o win_theme.o win_scrolled.o win_background.o win_scrollbar.o win_file.o win_image.o win_label.o win_select.o win_write.o win_query.o win_info.o win_file_select.o yarg.o $(SDL_LIBS)
+mapobjedit_LDADD = animation.o animation_off.o drawing_area.o fileops.o game.o image.o input.o lex.prefs.o pnm.o prefs.o mapselect.o maptpl.o mapobject.o character_base.o screen.o storage.o quest.o win_base.o win_border.o win_container.o win_font.o win_theme.o win_scrolled.o win_background.o win_scrollbar.o win_file.o win_image.o win_label.o win_select.o win_write.o win_query.o win_info.o win_file_select.o win_manager.o yarg.o $(SDL_LIBS)
 
 
 mapcharedit_SOURCES = mapcharedit.cpp
 
-mapcharedit_LDADD = animation.o animation_off.o drawing_area.o fileops.o game.o image.o input.o lex.prefs.o pnm.o prefs.o mapselect.o maptpl.o screen.o storage.o quest.o win_base.o win_border.o win_container.o win_font.o win_theme.o win_scrolled.o mapcharacter.o character_base.o mapobject.o landmap.o mapview.o win_background.o win_scrollbar.o win_file.o win_image.o win_label.o win_select.o win_write.o win_query.o win_info.o win_file_select.o yarg.o $(SDL_LIBS)
+mapcharedit_LDADD = animation.o animation_off.o drawing_area.o fileops.o game.o image.o input.o lex.prefs.o pnm.o prefs.o mapselect.o maptpl.o screen.o storage.o quest.o win_base.o win_border.o win_container.o win_font.o win_theme.o win_scrolled.o mapcharacter.o character_base.o mapobject.o landmap.o mapview.o win_background.o win_scrollbar.o win_file.o win_image.o win_label.o win_select.o win_write.o win_query.o win_info.o win_file_select.o win_manager.o yarg.o $(SDL_LIBS)
 
 
 mapedit_SOURCES = mapedit.cpp
 
-mapedit_LDADD = animation.o animation_off.o drawing_area.o fileops.o game.o image.o input.o lex.prefs.o mapselect.o maptpl.o mapobject.o mapcharacter.o landmap.o character_base.o mapview.o pnm.o prefs.o screen.o storage.o quest.o win_base.o win_border.o win_container.o win_font.o win_theme.o win_scrolled.o win_background.o win_scrollbar.o win_file.o win_image.o win_label.o win_select.o win_write.o win_query.o win_info.o win_file_select.o yarg.o $(SDL_LIBS)
+mapedit_LDADD = animation.o animation_off.o drawing_area.o fileops.o game.o image.o input.o lex.prefs.o mapselect.o maptpl.o mapobject.o mapcharacter.o landmap.o character_base.o mapview.o pnm.o prefs.o screen.o storage.o quest.o win_base.o win_border.o win_container.o win_font.o win_theme.o win_scrolled.o win_background.o win_scrollbar.o win_file.o win_image.o win_label.o win_select.o win_write.o win_query.o win_info.o win_file_select.o win_manager.o yarg.o $(SDL_LIBS)
 
 
 CPPFLAGS =  -I../.. -D_EDIT_ -DUSE_MAP $(SDL_CFLAGS)
@@ -121,7 +121,7 @@ fileops.o game.o image.o input.o lex.prefs.o pnm.o prefs.o screen.o \
 storage.o quest.o win_base.o win_border.o win_container.o win_font.o \
 win_theme.o win_scrolled.o win_background.o win_scrollbar.o win_file.o \
 win_image.o win_label.o win_select.o win_write.o win_query.o win_info.o \
-win_file_select.o yarg.o
+win_file_select.o win_manager.o yarg.o
 animedit_LDFLAGS = 
 mapobjedit_OBJECTS =  mapobjedit.o
 mapobjedit_DEPENDENCIES =  animation.o animation_off.o drawing_area.o \
@@ -130,7 +130,7 @@ maptpl.o mapobject.o character_base.o screen.o storage.o quest.o \
 win_base.o win_border.o win_container.o win_font.o win_theme.o \
 win_scrolled.o win_background.o win_scrollbar.o win_file.o win_image.o \
 win_label.o win_select.o win_write.o win_query.o win_info.o \
-win_file_select.o yarg.o
+win_file_select.o win_manager.o yarg.o
 mapobjedit_LDFLAGS = 
 mapcharedit_OBJECTS =  mapcharedit.o
 mapcharedit_DEPENDENCIES =  animation.o animation_off.o drawing_area.o \
@@ -139,7 +139,8 @@ maptpl.o screen.o storage.o quest.o win_base.o win_border.o \
 win_container.o win_font.o win_theme.o win_scrolled.o mapcharacter.o \
 character_base.o mapobject.o landmap.o mapview.o win_background.o \
 win_scrollbar.o win_file.o win_image.o win_label.o win_select.o \
-win_write.o win_query.o win_info.o win_file_select.o yarg.o
+win_write.o win_query.o win_info.o win_file_select.o win_manager.o \
+yarg.o
 mapcharedit_LDFLAGS = 
 mapedit_OBJECTS =  mapedit.o
 mapedit_DEPENDENCIES =  animation.o animation_off.o drawing_area.o \
@@ -148,7 +149,8 @@ mapobject.o mapcharacter.o landmap.o character_base.o mapview.o pnm.o \
 prefs.o screen.o storage.o quest.o win_base.o win_border.o \
 win_container.o win_font.o win_theme.o win_scrolled.o win_background.o \
 win_scrollbar.o win_file.o win_image.o win_label.o win_select.o \
-win_write.o win_query.o win_info.o win_file_select.o yarg.o
+win_write.o win_query.o win_info.o win_file_select.o win_manager.o \
+yarg.o
 mapedit_LDFLAGS = 
 CXXCOMPILE = $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
 CXXLD = $(CXX)
@@ -337,7 +339,7 @@ distdir: $(DISTFILES)
 	@for file in $(DISTFILES); do \
 	  d=$(srcdir); \
 	  if test -d $$d/$$file; then \
-	    cp -pr $$d/$$file $(distdir)/$$file; \
+	    cp -pr $$/$$file $(distdir)/$$file; \
 	  else \
 	    test -f $(distdir)/$$file \
 	    || ln $$d/$$file $(distdir)/$$file 2> /dev/null \
