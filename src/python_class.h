@@ -34,6 +34,7 @@
 #include "compile.h"
 #include "eval.h"
 #include "node.h"
+#include "fileops.h"
 
 /**
  * Grant direct access to the Python interpreter.
@@ -113,8 +114,10 @@ public:
      * @return pointer to the code %object, or NULL if the function does not exist.
      */
     static PyCodeObject *get_function_code (PyObject *module, const char* func_name);
-};
 
+    static PyObject * get_tuple (igzstream & file); 
+    static void put_tuple (PyObject * tuple, ogzstream & file);  
+};
 
 #ifndef SWIG
 namespace data

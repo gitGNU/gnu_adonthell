@@ -197,7 +197,7 @@ void game::cleanup_data ()
 bool game::init_python () 
 {
     // Initialise the import path.
-    // Shared modules path
+    // Shared modules path 
     python::insert_path (DATA_DIR"/modules"); 
 
     // Game specific path
@@ -209,12 +209,13 @@ bool game::init_python ()
     /* Initialise SWIG module. This should go if we ever switch to dynamic 
        link */
     initadonthellc();
-    
-    // Init the global namespace of the python interpreter 
-    py_module = python::import_module ("ins_modules");
+        
+    py_module = python::import_module ("adonthell"); 
     if (!py_module)
-        return false;
+        return false;     
+    
     data::globals = PyModule_GetDict (py_module);
+
     return true; 
 }
 

@@ -58,41 +58,15 @@ int main(int argc, char * argv[])
     
      if (!game::init (myconfig)) return 1;
 
-//      landmap lmap;
-//      lmap.load ("test.map");
-
-//      path mypath;
-//      mypath.refmap = &lmap;
-//      mypath.submap = 0;
-//      mypath.start.x = 27; 
-//      mypath.start.y = 21; 
-//      mypath.goal.x = 27; 
-//      mypath.goal.y = 15;
-
-//      mypath.calculate (); 
-
-//      u_int16 i;
-//      for (i = 0; i < mypath.nbr_moves (); i++) 
-//      {
-//          switch (mypath.get_move (i)) 
-//          {
-//              case WALK_NORTH:
-//                  cout << "WALK_NORTH" << endl;
-//                  break; 
-//              case WALK_SOUTH:
-//                  cout << "WALK_SOUTH" << endl;
-//                  break; 
-//              case WALK_WEST:
-//                  cout << "WALK_WEST" << endl;
-//                  break; 
-//              case WALK_EAST:
-//                  cout << "WALK_EAST" << endl;
-//                  break; 
-//          }
-//      }
      
      python::exec_file("init.py");
-    
+
+//      mapview * myview = new mapview ();
+//      myview->set_schedule ("center_player"); 
+//      cout << myview << endl;
+//      myview->update (); 
+//      delete myview; 
+     
      game::cleanup (); 
     
      return 0;

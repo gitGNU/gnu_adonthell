@@ -44,11 +44,13 @@ mapcharacter::mapcharacter () : mapsquare_walkable_area (), character_base ()
     current_move = STAND_NORTH;
     previous_move = NO_MOVE;
 
-    locals = PyDict_New ();
-    PyObject * myself = python::pass_instance(this,"mapcharacter"); 
-    PyDict_SetItemString (locals,"myself", myself);
-    Py_DECREF (myself);
-    saying = NULL; 
+    saying = NULL;
+
+    schedule_activated = true;
+    action_activated = true; 
+
+    schedule_args = NULL;
+    action_args = NULL; 
 }
  
 mapcharacter::~mapcharacter ()
@@ -57,7 +59,6 @@ mapcharacter::~mapcharacter ()
     for (u_int16 i = 0; i < anim.size (); i++)
         delete anim[i];
     anim.clear (); 
-    Py_DECREF (locals); 
 }
 
 void mapcharacter::clear ()
@@ -69,12 +70,16 @@ void mapcharacter::clear ()
     
     schedule.clear (); 
     action.clear (); 
-    action_file_ = "";
-    schedule_file_ = "";
     
     filename_ = "";
+
+    Py_XDECREF (schedule_args);
+    schedule_args = NULL;
     
-    PyDict_Clear (locals); 
+    Py_XDECREF (action_args);
+    action_args = NULL; 
+    schedule_file_ = "";
+    action_file_ = ""; 
 }
 
 s_int8 mapcharacter::get (igzstream& file)
@@ -143,50 +148,65 @@ s_int8 mapcharacter::save (string fname) const
 
 s_int8 mapcharacter::get_state (igzstream& file)
 {
-    // Load the schedule's and graphical data
     string t; 
-    bool activated; 
+    bool b;
+    u_int16 current_move__; 
+    s_int8 offx__, offy__; 
     
     remove_from_pos (); 
     
     t << file; 
     load (t);
-    t << file;
-    set_schedule (t);
-    t << file; 
-    set_action (t);
 
     // Reads the data members
-    current_move << file;
+    current_move__ << file;
     previous_move << file;
     submap_ << file;
     posx_ << file;
     posy_ << file;
-    offx_ << file;
-    offy_ << file;
-    activated << file;
-    schedule.set_active (activated);
-    activated << file; 
-    action.set_active (activated); 
+    offx__ << file;
+    offy__ << file;
 
-    jump_to (submap (), posx (), posy ()); 
-
+    jump_to (submap (), posx (), posy ());
+    set_offset (offx__, offy__); 
+    
+    current_move = current_move__; 
+    
     // Get the path state
     mypath.get_state (file);
     // The map must be attached manually for now! :(
     mypath.refmap = refmap; 
     
     pathindex << file; 
+    
+    // Schedule state
+    PyObject * args; 
+    t << file;
+    b << file;
+    args = NULL; 
+    if (b) args = python::get_tuple (file); 
+    set_schedule (t, args);      
+    Py_XDECREF (args); 
+    b << file;
+    set_schedule_active (b);
+
+    // Action state
+    t << file;
+    b << file; 
+    args = NULL; 
+    if (b) args = python::get_tuple (file); 
+    set_action (t, args);      
+    Py_XDECREF (args); 
+    b << file;
+    set_action_active (b);
 
     return 0;
 }
 
 s_int8 mapcharacter::put_state (ogzstream& file) const
 {
-    // Write the schedule's and data file name
+    // Write the mapcharacter's file name
     filename_ >> file;
-    schedule_file_ >> file;
-    action_file_ >> file; 
 
     // Write the data members
     current_move >> file;
@@ -196,12 +216,30 @@ s_int8 mapcharacter::put_state (ogzstream& file) const
     posy_ >> file;
     offx_ >> file;
     offy_ >> file;
-    schedule.is_activated () >> file;
-    action.is_activated () >> file; 
 
     // Save the path state
     mypath.put_state (file);
     pathindex >> file; 
+
+    // Save the schedule script state
+    schedule_file () >> file;
+    if (schedule_args) 
+    {
+        true >> file; 
+        python::put_tuple (schedule_args, file);
+    }
+    else false >> file; 
+    is_schedule_activated () >> file;
+    
+    // Save the action script state
+    action_file () >> file;
+    if (action_args) 
+    {
+        true >> file; 
+        python::put_tuple (action_args, file);
+    }
+    else false >> file; 
+    is_action_activated () >> file; 
     
     return 0;
 }
@@ -213,9 +251,6 @@ void mapcharacter::set_map (landmap * m)
     m->mapchar.push_back (this);
     
     refmap = m;
-    PyObject *mymap = python::pass_instance (refmap,"landmap"); 
-    PyDict_SetItemString (locals, "mymap", mymap);
-    Py_DECREF (mymap); 
 }
 
 void mapcharacter::remove_from_map ()
@@ -229,7 +264,6 @@ void mapcharacter::remove_from_map ()
     mymap ()->mapchar.erase (i); 
     
     refmap = NULL;
-    PyDict_DelItemString (locals, "mymap");
 }
 
 void mapcharacter::remove_from_pos ()
@@ -504,10 +538,7 @@ bool mapcharacter::follow_path ()
 {
     //  If a movment is engaged, let it finish first.
     if (offx () || offy ()) 
-    {
-        
         return false;
-    }
     
     // If the goal isn't reached yet.
     if (pathindex < mypath.nbr_moves ())
@@ -620,27 +651,77 @@ mapcharacter *mapcharacter::whosnext () const
     return NULL;
 }
 
-void mapcharacter::set_schedule (string file)
-{
-    schedule.set_locals (locals); 
-    if (file == "") schedule.set_script (file);
-    else schedule.set_script ("scripts/schedules/" + file + ".py");
-    schedule_file_ = file; 
+void mapcharacter::set_schedule (string file, PyObject * args = NULL)
+{     
+    // Clears the schedule
+    if (file == "") 
+    {
+        schedule.clear ();
+        Py_XDECREF (schedule_args); 
+        schedule_args = NULL;
+    }
+    else 
+    {
+        Py_XINCREF (args); 
+        schedule_args = args; 
+        u_int16 argssize = args == NULL ? 1 : PyTuple_Size (args) + 1; 
+        PyObject * theargs;
+        
+        theargs = PyTuple_New (argssize);
+        
+        // We can pass_instance directly 'cause PyTuple_SetItem steals a
+        // reference to the result of pass_instance.
+        PyTuple_SetItem (theargs, 0, python::pass_instance (this, "mapcharacter"));
+        for (u_int16 i = 1; i < argssize; i++)
+        {
+            PyObject * intref = PyTuple_GetItem (args, i - 1);
+            Py_INCREF (intref); 
+            PyTuple_SetItem (theargs, i, intref); 
+        }
+        schedule.set_instance ("schedules/" + file, file, theargs);
+        Py_DECREF (theargs); 
+    }
+    schedule_file_ = file;
 }
 
-void mapcharacter::set_action (string file)
-{
-    action.set_locals (locals); 
-    if (file == "") action.set_script (file);
-    else action.set_script ("scripts/schedules/" + file + ".py");
-    action_file_ = file; 
+void mapcharacter::set_action (string file, PyObject * args = NULL)
+{     
+    // Clears the action script
+    if (file == "") 
+    {
+        action.clear ();
+        Py_XDECREF (action_args);
+        action_args = NULL; 
+    }
+    else 
+    {
+        Py_XINCREF (args); 
+        action_args = args; 
+        u_int16 argssize = args == NULL ? 1 : PyTuple_Size (args) + 1; 
+        PyObject * theargs;
+        
+        theargs = PyTuple_New (argssize);
+        
+        // We can pass_instance directly 'cause PyTuple_SetItem steals a
+        // reference to the result of pass_instance.
+        PyTuple_SetItem (theargs, 0, python::pass_instance (this, "mapcharacter"));
+        for (u_int16 i = 1; i < argssize; i++)
+        {
+            PyObject * intref = PyTuple_GetItem (args, i - 1);
+            Py_INCREF (intref); 
+            PyTuple_SetItem (theargs, i, intref); 
+        }
+        action.set_instance ("actions/" + file, file, theargs);
+        Py_DECREF (theargs); 
+    }
+    action_file_ = file;
 }
  
 bool mapcharacter::update ()
 {
     update_move ();
-    schedule.run (); 
-    
+    if (is_schedule_activated ()) schedule.run (); 
+
     if (previous_move != NO_MOVE && previous_move != current_move) 
     {
         anim[previous_move]->stop ();
@@ -659,11 +740,10 @@ bool mapcharacter::update ()
 
 void mapcharacter::launch_action (mapcharacter * requester)
 {
-    PyObject *req = python::pass_instance (requester, "mapcharacter"); 
-    PyDict_SetItemString (locals, "requester", req);
-    Py_DECREF (req); 
-    action.run (); 
-    PyDict_DelItemString (locals, "requester");
+    PyObject *args = PyTuple_New (1);
+    PyTuple_SetItem (args, 0, python::pass_instance (requester, "mapcharacter"));      
+    if (is_action_activated ()) action.run (args); 
+    Py_DECREF (args);
 }
 
 void mapcharacter::draw (s_int16 x, s_int16 y, const drawing_area * da_opt = NULL, surface * target = NULL) const
@@ -703,10 +783,8 @@ mapcharacter & mapcharacter::operator = (const mapcharacter & src)
         (*anim[i]) = (*src.anim[i]);
 
     schedule = src.schedule;
-    schedule_file_ = src.schedule_file_; 
 
     action = src.action;
-    action_file_ = src.action_file_; 
 
     current_move = src.currentmove ();
     if (src.mymap ())

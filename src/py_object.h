@@ -15,29 +15,28 @@ Part of the Adonthell Project http://adonthell.linuxgames.com
 
 
 /**
- * @file   py_script.h
+ * @file   py_object.h
  * @author Kai Sterker <kaisterker@linuxgames.com>
  * @author Alexandre Courbot <alexandrecourbot@linuxgames.com>
  * 
- * @brief  Declares the py_script class.
+ * @brief  Declares the py_object class.
  * 
  * 
  */
 
 
-#ifndef PY_SCRIPT_H_
-#define PY_SCRIPT_H_
+#ifndef PY_OBJECT_H_
+#define PY_OBJECT_H_
 
 
 #include <string>
 #include "python_class.h"
 
-
 using namespace std; 
 
 
 /**
- * Python compiled script class.
+ * Python instance class.
  *
  * Use this class to give scripting - abilities to your
  * own class. The loaded script is byte-compiled for
@@ -45,7 +44,7 @@ using namespace std;
  * basis.
  * 
  */ 
-class py_script
+class py_object
 {
 public:
     
@@ -53,39 +52,26 @@ public:
      * Default constructor.
      * 
      */
-    py_script ();
+    py_object ();
     
     /** 
      * Destructor.
      * 
      */
-    ~py_script (); 
+    ~py_object (); 
 
     /** 
      * Resets the script to it's post-constructor state.
      * 
      */
     void clear (); 
-
+ 
     /** 
-     * Sets the local to use for this script.
-     *
-     * @note You have to set a script first, before you can add any locals.
-     * @param l locals to use for this script.
-     * @todo Since the locals given are just copied over to py_script's locals,
-     *       it might be faster to pass the plain values instead
-     */
-    void set_locals (PyObject * l = NULL)
-    {
-        locals = l;
-    }
-
-    /** 
-     * Sets the script.
+     * Sets the object instance.
      * 
-     * @param file file name of the script to use.
+     * @param file file name of the module to use.
      */
-    void set_script (string file);
+    bool set_instance (string file, string modname, PyObject * args = NULL);
 
     /**
      * Returns the file name of this script.
@@ -97,28 +83,9 @@ public:
     {
         return script_file_;
     }
+     
+    void call_method (const string & name, PyObject * args = NULL); 
     
-    /** 
-     * Returns whether this script is activated of not.
-     * 
-     * 
-     * @return \c true if the script is activated, \c false otherwise.
-     */
-    bool is_activated () const
-    {
-        return script_activated;
-    }
-    
-    /** 
-     * Sets whether the script should be activated or not.
-     * 
-     * @param a \c true if the script should be activated, \c false otherwise.
-     */
-    void set_active (bool a)
-    {
-        script_activated = a;
-    }
-
     /** 
      * Runs the script.
      *
@@ -126,15 +93,15 @@ public:
      * and is activated.
      * 
      */
-    void run (); 
-    
+    void run (PyObject * args = NULL)
+    {
+        call_method ("run", args); 
+    }
+
 private:
-    bool script_activated;
     string script_file_;
 
-    PyCodeObject *script;
-    PyCodeObject *cleanup;
-    PyObject * locals;
+    PyObject *instance;
 };
 
 

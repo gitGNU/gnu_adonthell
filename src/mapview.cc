@@ -33,25 +33,19 @@ mapview::mapview () : da ()
     d_length = d_height = currentsubmap_ = posx_ = posy_ = 0;
     m_map = NULL;
     offx_ = offy_ = 0;
-    locals = PyDict_New ();
-    PyObject *myself = python::pass_instance (this, "mapview"); 
-    PyDict_SetItemString (locals, "myself", myself);
-    Py_DECREF (myself); 
+
+    schedule_args = NULL; 
 }
 
 mapview::~mapview ()
 {
-    detach_map (); 
-    Py_DECREF (locals);
+    detach_map ();
+    Py_XDECREF (schedule_args); 
 }
 
 void mapview::attach_map (landmap * m)
 {
     m_map = m;
-
-    PyObject * mymap = python::pass_instance (m_map, "landmap"); 
-    PyDict_SetItemString (locals, "mymap", mymap);
-    Py_DECREF (mymap); 
 
     set_pos (0, 0, 0);
 }
@@ -61,7 +55,6 @@ void mapview::detach_map ()
     if (!m_map) return;
     
     m_map = NULL;
-    PyDict_DelItemString (locals, "mymap");
 }
 
 s_int8 mapview::set_pos (u_int16 sm, u_int16 px, u_int16 py, s_int16 ox = 0, s_int16 oy = 0)
@@ -174,14 +167,11 @@ void mapview::resize (u_int16 l, u_int16 h)
 }
 
 s_int8 mapview::get_state (igzstream& file)
-{
-    // Read the mapview's schedule
-    string t;
-    t << file;
-    set_schedule (t);
-
+{ 
     u_int16 a, b, c, d, sm;
-
+    string t;
+    bool bo; 
+    
     // Read the mapview's dimensions
     // Length and height
     a << file;
@@ -198,16 +188,21 @@ s_int8 mapview::get_state (igzstream& file)
     d << file; 
     set_pos (sm, a, b, c, d);
 
+    // Schedule state
+    PyObject * args = NULL; 
+    t << file;
+    bo << file; 
+    if (bo) args = python::get_tuple (file); 
+    set_schedule (t, args);      
+    Py_XDECREF (args); 
+
     return 0;
 }
 
 s_int8 mapview::put_state (ogzstream& file)
 {
     u_int16 b;
-
-    // Write the mapview's schedule
-    schedule_file_ >> file; 
-
+ 
     // Write the mapview's dimensions
     b = length (); 
     b >> file;
@@ -220,16 +215,50 @@ s_int8 mapview::put_state (ogzstream& file)
     posy_ >> file;
     offx_ >> file;
     offy_ >> file; 
-    
+
+    // Write the mapview's schedule state
+    schedule_file () >> file;
+    if (schedule_args) 
+    {
+        true >> file; 
+        python::put_tuple (schedule_args, file);
+    }
+    else false >> file; 
+
     return 0;
 }
 
-void mapview::set_schedule (string file)
+void mapview::set_schedule (string file, PyObject * args = NULL)
 {
-    schedule.set_locals (locals);
-    if (file == "") schedule.set_script (file);
-    else schedule.set_script ("schedules/" + file);
-    schedule_file_ = file;
+    if (file == "") 
+    {
+        schedule.clear ();
+        Py_XDECREF (schedule_args);
+        schedule_args = NULL; 
+    }
+    else 
+    {
+        Py_XINCREF (args);
+        schedule_args = args;
+        
+        u_int16 argssize = args == NULL ? 1 : PyTuple_Size (args) + 1; 
+        PyObject * theargs;
+        
+        theargs = PyTuple_New (argssize);
+        
+        // We can pass_instance directly 'cause PyTuple_SetItem steals a
+        // reference to the result of pass_instance.
+        PyTuple_SetItem (theargs, 0, python::pass_instance (this, "mapview"));
+        for (u_int16 i = 1; i < argssize; i++)
+        {
+            PyObject * intref = PyTuple_GetItem (args, i - 1);
+            Py_INCREF (intref); 
+            PyTuple_SetItem (theargs, i, intref); 
+        }
+        schedule.set_instance ("schedules/" + file, file, theargs);
+        Py_DECREF (theargs); 
+    }
+    schedule_file_ = file; 
 }
 
 bool mapview::update ()

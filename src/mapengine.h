@@ -27,7 +27,7 @@ public:
     mapengine ();
     ~mapengine ();
     
-    void set_mapview_schedule (string s);
+    void set_mapview_schedule (string s, PyObject * args = NULL);
     void load_map (string fname);
 
     landmap *get_landmap ()

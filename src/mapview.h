@@ -312,7 +312,7 @@ public:
      * 
      * @param file name of the schedule to use.
      */
-    void set_schedule (string file);
+    void set_schedule (string file, PyObject * args = NULL);
 
     /** 
      * Returns the name of the mapview's current schedule.
@@ -361,10 +361,11 @@ private:
 
     mutable drawing_area da; 
      
-    PyObject *locals;			// Locals that belong to that mapview
-    py_script schedule;
-    string schedule_file_; 
+    py_object schedule;
 
+    PyObject * schedule_args; 
+
+    string schedule_file_; 
 };
 
 #endif

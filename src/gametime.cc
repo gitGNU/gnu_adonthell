@@ -127,9 +127,9 @@ void time_event::execute (event &e)
     // Build the event script's local namespace
     PyObject *locals = Py_BuildValue ("{s:i,s:i,s:i}", "minute", (int) t.minute, 
         "hour", (int) t.hour, "day", (int) t.day);
-    script.set_locals (locals);
+//     script.set_locals (locals);
     script.run ();
-    script.set_locals (NULL); 
+//     script.set_locals (NULL); 
     
     // Cleanup
     Py_DECREF (locals);
