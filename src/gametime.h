@@ -33,6 +33,15 @@
  */ 
 #define CYCLE_LENGTH 13
 
+/**
+ * Number of maximum displayed frames per second. This value only affect
+ * the renderer, and not the speed of the game itself. The choice has been
+ * made to allow this option so Adonthell doesn't eat all the CPU of the
+ * machine it runs on.
+ * 
+ */ 
+#define FRAME_RATE 50
+
 /** 
  * Defines the maximum number of frames to skip in order to keep the %game's
  * speed constant on slow machines. If updating the %game state and

@@ -67,13 +67,19 @@ void gametime::tick (u_int32 val)
 // Synchronize the game's speed to the machine it's running on.
 void gametime::update () 
 {
+    // We declare this variable as static to avoid having to
+    // perform the division every time.
+    // This value correspond to the minimum delay before between
+    // Two displayed frames (see FRAME_RATE).
+    static u_int16 gfx_cycle_length = 1000 / FRAME_RATE;
+    
     while (1)
     {
         timer2 = SDL_GetTicks () - timer1;
         
         // if the mainloop was performed faster than one frame
         // should take, we sleep for the time remaining
-        if (timer2 >= CYCLE_LENGTH) break;
+        if (timer2 >= gfx_cycle_length) break;
         else SDL_Delay (3);
     }
     
