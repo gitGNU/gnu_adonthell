@@ -104,12 +104,12 @@ bool atk_font::build ()
     free_vector (); 
     
     // set the size
-    FT_Set_Char_Size(face,size<<6,size<<6,dpi,dpi);
+    FT_Set_Char_Size(face,size << 6,size << 6,dpi,dpi);
     
     // copy all characters in the vector
     for (int i = 0;i < face->num_glyphs; i++)
     {
-        error = FT_Load_Char( face, i, FT_LOAD_RENDER);
+        error = FT_Load_Char( face, i, FT_LOAD_RENDER); 
         if (error) std::cout << "ATK_font : Load char error\n";  
 
         // create an image
@@ -147,12 +147,17 @@ void atk_font::close ()
 void atk_font::copy_bitmap_to_image (u_int8 * bitmap_data, image * dest)
 {
     u_int8 * pbmp = bitmap_data; 
+
     
     dest->lock ();
+
+    u_int32 pixelcol = screen::display.map_color (r, g, b); 
+    
     for (int j = 0; j < dest->height (); j++)
         for (int i = 0; i < dest->length () ; i++)
         {
-            if (*pbmp) dest->put_pix (i, j, (*pbmp) & r ,(*pbmp) & g , (*pbmp) & b); 
+            if (*pbmp > 128) 
+                dest->put_pix (i, j, pixelcol); 
             else dest->put_pix (i, j, screen::trans_col ()); 
             pbmp++; 
         } 

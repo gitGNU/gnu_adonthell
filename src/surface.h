@@ -29,8 +29,6 @@
 
 #include "drawable.h"
 
-
-
 /**
  * Class where drawables can actually be drawn to.
  * Another name for a surface could eventually be "pixmap". A surface
@@ -355,6 +353,12 @@ public:
 
     //@}
     
+
+    u_int32 map_color (u_int8 r, u_int8 g, u_int8 b) 
+    {
+        return SDL_MapRGB (vis->format, r, g, b); 
+    }
+
     
 #ifndef SWIG
     /**

@@ -337,7 +337,6 @@ public:
  
     //@} 
 
-
 #ifndef SWIG
     /**
      * Image copy (similar to copy ()).
