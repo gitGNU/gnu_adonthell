@@ -226,6 +226,12 @@ public:
         fillrect (x, y, l, h, r, g, b, da_opt); 
     }
 
+    /**
+     * Draw a line of color col between coordinates (sx, sy) and (ex, ey).
+     *
+     */ 
+    void draw_line (s_int16 sx, s_int16 sy, s_int16 ex, s_int16 ey, u_int32 col); 
+    
 
     //@}
 

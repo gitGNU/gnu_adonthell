@@ -132,7 +132,7 @@ int main (int argc, char * argv[])
             screen::display.fillrect (i, 0, 1, screen::height (), 0xFFFF00); 
         for (i = 0; i < screen::height (); i += mapsquare_size) 
             screen::display.fillrect (0, i, screen::length (), 1, 0xFFFF00); 
-            
+
         input::update (); 
         gametime::update (); 
         screen::show ();

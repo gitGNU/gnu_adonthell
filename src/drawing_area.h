@@ -167,6 +167,17 @@ public:
      * all the drawing areas assigned to it.
      */
     SDL_Rect setup_rects () const; 
+
+    /**
+     * Returns whether a given point belongs to this drawing area.
+     *
+     * @param x X position of the point to test
+     * @param y X position of the point to test
+     *
+     * @return true if the point is in this drawing area, false otherwise.
+     *
+     */ 
+    bool point_belong (s_int16 px, s_int16 py); 
     
 private:
     /// drawing_area location and size.

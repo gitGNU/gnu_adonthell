@@ -77,3 +77,9 @@ SDL_Rect drawing_area::setup_rects () const
     else return rect;
 
 }
+
+bool drawing_area::point_belong (s_int16 px, s_int16 py)
+{
+    return (px >= x () && px <= x () + length () &&
+            py >= y () && py <= y () + height ()); 
+}

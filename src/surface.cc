@@ -106,6 +106,87 @@ void surface::fillrect (s_int16 x, s_int16 y, u_int16 l, u_int16 h, u_int32 col,
     changed = true; 
 }
 
+void surface::draw_line (s_int16 x1, s_int16 y1, s_int16 x2, s_int16 y2, u_int32 color)
+{
+   int i;
+   int x,y;
+   int IncX,IncY;
+   int Dx,Dy;
+   int Err;
+   int inc1,inc2;
+   int offset;
+
+   x=x1;
+   y=y1;
+
+   if(x1<=x2)
+   {
+      IncX=1;
+      Dx=x2-x1;
+   }
+   else
+   {
+      IncX=-1;
+      Dx=x1-x2;
+   }
+
+   if(y1<=y2)
+   {
+      IncY=1;
+      Dy=y2-y1;
+   }
+   else
+   {
+      IncY=-1;
+      Dy=y1-y2;
+   }
+
+   lock ();
+   if(Dy<Dx)
+   {
+      inc1=(Dy-Dx)<<1;
+      inc2=Dy<<1;
+      Err=inc2-Dx;
+      
+      for(i=0;i<Dx;i++)
+      {
+	put_pix (x, y, color);
+
+         if(Err>0)
+         {
+            y+=IncY;
+            Err+=inc1;
+         }
+         else
+            Err+=inc2;
+
+         x+=IncX;
+         offset+=IncX;
+      }
+   }else
+   {
+      inc1=(Dx-Dy)<<1;
+      inc2=Dx<<1;
+      Err=inc2-Dy;
+
+      for(i=0;i<Dy;i++)
+      {
+	put_pix(x, y, color);
+
+         if(Err>0)
+         {
+            x+=IncX;
+            Err+=inc1;
+         }
+         else
+            Err+=inc2;
+
+         y+=IncY;
+      }
+   }
+   unlock();
+}
+
 void surface::lock () const
 {
     if (!length () || !height ()) return;   
