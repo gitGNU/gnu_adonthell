@@ -300,6 +300,7 @@ AC_SUBST(P_SWIG)
 AC_SUBST(gamedatadir)
   
 AC_OUTPUT([
+adonthell.spec
 Makefile
 doc/Makefile
 doc/devel/Makefile
