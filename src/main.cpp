@@ -67,21 +67,18 @@ int main(int argc, char * argv[])
 
     map1->load_map_data();
     //    map1->save("okidoki.map");
-    // Flip flop between the mapengine and the cutscene
-    // The 'do_cutscene' returns 1 when you hit escape
-    // during the cutscene...
-
-    // Removed because of a segfault - seems to occur when calling
-    //   scene->set_imagekey_anim(2,anim3);, line 79
-    //    do_cutscene();
 
     // Set focus to the map
     game::engine = map1;
 
-    // test:
+    /* test:
     enter_event *e = new enter_event;
     event_handler::register_event (e, "scripts/events/event_test.py");
 
+    time_event *t = new time_event;
+    event_handler::register_event (t, "scripts/events/timer_test.py");
+    */
+    
     mapengine::map_engine(map1);
     
     // save the config file

@@ -65,7 +65,7 @@ void game::init(config &myconfig)
     theme = strdup ((myconfig.window_theme + "/").c_str ());
 
     // Init gametime
-    time = new gametime (0, 0.5);
+    time = new gametime (0, 0.1);
 
     // load the game (later: continue with the last saved game?!)
     load (myconfig.datadir.c_str (), myconfig.datadir.c_str ());    

@@ -12,7 +12,7 @@
    See the COPYING file for more details.
 */
 
-#include <iostream.h>
+#include "event.h"
 #include "gametime.h"
 
 gametime::gametime (u_int32 start, float ratio)
@@ -29,12 +29,14 @@ void gametime::tick (u_int32 val)
 {
     ticks += val;
 
+    // notify the eventhandler whenever a minute has passed
     if (ticks >= minute)
     {
         ticks -= minute;
         time++;
 
-        // Test
-        cout << "Gametime: " << time << ":00 minute(s)\n" << flush;
+        time_event t;
+        t.time = time;
+        event_handler::raise_event (&t);
     }
 }

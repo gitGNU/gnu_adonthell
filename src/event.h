@@ -29,7 +29,8 @@ enum
 {
     ENTER_EVENT = 0,                            // Characters reach a new tile
     LEAVE_EVENT = 1,                            // Characters leave a tile
-    MAX_EVENT = 2
+    TIME_EVENT = 2,                             // A minute of gametime passed
+    MAX_EVENT = 3
 };
 
 // Baseclass for event data
@@ -85,6 +86,27 @@ class leave_event : public base_map_event
 {
 public:
     leave_event ();
+};
+
+// To notify at a certain time
+class time_event : public event
+{
+public:
+    time_event ();
+    void save (FILE*);                          // Save event data
+
+    u_int8 minute;                              // 0 - 59
+    u_int8 m_step;                              // 0, 1, 2, ...
+    u_int8 hour;                                // 0 - 23
+    u_int8 h_step;                              // 0, 1, 2, ...
+    u_int8 day;                                 // 0 - 27
+    u_int8 d_step;                              // 0, 1, 2, ...
+    u_int32 time;                               // the actual gametime in minutes
+
+protected:
+    void execute (event*);                      // Run the event's script
+    bool equals (event*);                       // Compare two events
+    void load (FILE*);                          // Load event data
 };
 
 // Base class for objects that want to register events

@@ -55,7 +55,7 @@ void event_handler::raise_event (event *e)
     // Search through all registered events with the type of the raised event
     for (i = reg_evs.begin (); i != reg_evs.end (); i++)
         // Execute the script; pass recieved event on to get event data
-        if (e->equals (*i)) (*i)->execute (e); 
+        if ((*i)->equals (e)) (*i)->execute (e); 
 }
 
 // Unregister an event
@@ -169,11 +169,11 @@ bool base_map_event::equals (event *e)
     // we know that we've got an enter_event :)
     base_map_event *tmp = (base_map_event *) e;
 
-    if (tmp->x != -1 && tmp->x != x) return false;
-    if (tmp->y != -1 && tmp->y != y) return false;
-    if (tmp->dir != -1 && tmp->dir != dir) return false;
-    if (tmp->map != -1 && tmp->map != map) return false;
-    if (tmp->c && tmp->c != c) return false;
+    if (x != -1 && tmp->x != x) return false;
+    if (y != -1 && tmp->y != y) return false;
+    if (dir != -1 && tmp->dir != dir) return false;
+    if (map != -1 && tmp->map != map) return false;
+    if (c && tmp->c != c) return false;
 
     return true;
 }
@@ -236,10 +236,73 @@ void base_map_event::save (FILE *out)
     fwrite (script_file, len, 1, out);    
 }
 
-/*
-bool time_event::equals (u_int32 time)
+time_event::time_event ()
 {
-    u_int32 i, d, h, m = time % 60;
+    time =minute = hour = day =  0;
+    m_step = h_step = d_step = 1;
+    script_file = NULL;
+    type = TIME_EVENT;
+    script = NULL;
+}
+
+// Save a time_event to file
+void time_event::save (FILE *out)
+{
+    u_int16 len;
+
+    fwrite (&type, sizeof (type), 1, out);
+    fwrite (&minute, sizeof (minute), 1, out);
+    fwrite (&m_step, sizeof (m_step), 1, out);
+    fwrite (&hour, sizeof (hour), 1, out);
+    fwrite (&h_step, sizeof (h_step), 1, out);
+    fwrite (&day, sizeof (day), 1, out);
+    fwrite (&d_step, sizeof (d_step), 1, out);
+
+    len = strlen (script_file) + 1;
+    fwrite (&len, sizeof (len), 1, out);
+    fwrite (script_file, len, 1, out);    
+}
+
+// Load a time event from file
+void time_event::load (FILE *f)
+{
+    u_int16 len;
+        
+    fread (&minute, sizeof (minute), 1, f);
+    fread (&m_step, sizeof (m_step), 1, f);
+    fread (&hour, sizeof (hour), 1, f);
+    fread (&h_step, sizeof (h_step), 1, f);
+    fread (&day, sizeof (day), 1, f);
+    fread (&d_step, sizeof (d_step), 1, f);
+
+    fread (&len, sizeof (len), 1, f);
+    script_file = new char[len];
+    fread (script_file, len, 1, f);
+}
+
+// Execute time event's script
+void time_event::execute (event *e)
+{
+    time_event *t = (time_event *) e;
+
+    // Build the event script's local namespace
+    PyObject *locals = Py_BuildValue ("{s:i,s:i,s:i}", "minute", (int) t->minute, 
+        "hour", (int) t->hour, "day", (int) t->day);
+    // Execute script
+    PyEval_EvalCode (script, game::globals, locals);
+    // Cleanup
+    Py_DECREF (locals);
+#ifdef _DEBUG_
+    show_traceback ();
+#endif // _DEBUG_
+}
+
+// Check whether this time_even matches a given gametime
+bool time_event::equals (event *e)
+{
+    time_event *t = (time_event *) e;
+    u_int32 time = t->time % 40320;
+    u_int32 d, h, m = time % 60;
     
     if (m_step != 0) {
         if ((m - minute) % m_step != 0 || m < minute) return 0;
@@ -265,6 +328,11 @@ bool time_event::equals (u_int32 time)
     else
         if (d != day) return 0;
 
-    return 1; 
+    // if the event matches, we set the actual minute, hour and day,
+    // in case it is needed in the script
+    t->minute = m;
+    t->hour = h;
+    t->day = d;
+    
+    return 1;
 }
-*/
