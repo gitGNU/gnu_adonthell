@@ -17,11 +17,11 @@
 #include "keyboard.h"
 #include "gfx.h"
 #include "globals.h"
-#ifdef SDL
+
 #include "SDL.h"
 #include "SDL_thread.h"
 #include "keyboard.h"
-#endif
+
 #ifdef SDL_MIXER
 #include "SDL_mixer.h"
 #include "audio_thread.h"
@@ -32,13 +32,11 @@
 int main(int argc, char * argv[])
 {
   cutscene scene;
-  animation anim;
-  animation anim2;
+  animation anim,anim2,anim3;
   u_int8 ret=0;
 
   screen::init_display(0);
 
-#ifdef SDL
   SDL_Thread *input_thread;
 
    input_thread = SDL_CreateThread((void*)keyboard_init, NULL);
@@ -48,53 +46,84 @@ int main(int argc, char * argv[])
      fprintf(stderr, "Couldn't create input thread: %s\n", SDL_GetError());
      return(0);
   }
-#endif
 
-  anim.load_frame("test1.pnm");
-  anim.load_frame("test2.pnm");
-  anim.load_frame("test3.pnm");
-  anim.loop=false;
-  anim.reverse=true;
-  anim.mask_on=true;
+  anim.load_frame("layer1.png");
+  anim.loop=true;
+  anim.reverse=false;
+  anim.mask_on=false;
   anim.alpha_on=false;
   anim.alpha=0;
 
-  anim2.load_frame("bg1.pnm");
-  anim2.load_frame("bg2.pnm");
-  anim2.load_frame("bg3.pnm");
-  anim2.loop=false;
-  anim2.reverse=true;
+  anim2.load_frame("layer2.png");
+  anim2.loop=true;
+  anim2.reverse=false;
   anim2.mask_on=true;
   anim2.alpha_on=false;
   anim2.alpha=0;
 
-  scene.insert_keyframe(1);
+  anim3.load_frame("layer3.png");
+  anim3.loop=true;
+  anim3.reverse=false;
+  anim3.mask_on=true;
+  anim3.alpha_on=false;
+  anim3.alpha=0;
+
+  scene.insert_keyframe(0);
+  scene.insert_keyframe(0);
+
+  scene.insert_imagekey(0);
   scene.insert_imagekey(0);
 
-  scene.set_imagekey_anim(0,&anim2);
-  scene.set_imagekey_anim(1,&anim);
+  scene.set_imagekey_anim(0,&anim);
+  scene.set_imagekey_anim(1,&anim2);
+  scene.set_imagekey_anim(2,&anim3);
 
-  scene.set_imagekey_animspeed(0,1,10);
-  scene.set_imagekey_animspeed(1,1,30);
-  scene.set_imagekey_animspeed(0,0,60);
-  scene.set_imagekey_animspeed(1,0,20);
+  scene.set_imagekey_animspeed(0,0,100); // There's no animation
+  scene.set_imagekey_animspeed(1,0,100); // So these are irrelevant
+  scene.set_imagekey_animspeed(2,0,100);
+  scene.set_imagekey_animspeed(3,0,100);
+
+  scene.set_imagekey_animspeed(0,1,100); // There's no animation
+  scene.set_imagekey_animspeed(1,1,100); // So these are irrelevant
+  scene.set_imagekey_animspeed(2,1,100);
+  scene.set_imagekey_animspeed(3,1,100);
+
+  scene.set_imagekey_animspeed(0,2,100); // There's no animation
+  scene.set_imagekey_animspeed(1,2,100); // So these are irrelevant
+  scene.set_imagekey_animspeed(2,2,100);
+  scene.set_imagekey_animspeed(3,2,100);
 
   scene.set_imagekey_visible(0,0,1);
-  scene.set_imagekey_visible(1,0,1);
   scene.set_imagekey_visible(0,1,1);
+  scene.set_imagekey_visible(0,2,1);
+
+  scene.set_imagekey_visible(1,0,1);
   scene.set_imagekey_visible(1,1,1);
+  scene.set_imagekey_visible(1,2,1);
 
-  scene.set_cycles(0,200);
-  scene.set_cycles(1,300);
+  scene.set_imagekey_visible(2,0,1);
+  scene.set_imagekey_visible(2,1,1);
+  scene.set_imagekey_visible(2,2,1);
 
-  scene.set_coordinates(0,0,1,1);
-  scene.set_coordinates(1,0,1,1);
-  scene.set_coordinates(2,0,1,1);
+  scene.set_cycles(0,130);
+  scene.set_cycles(1,980);
+  scene.set_cycles(2,600);
 
-  scene.set_coordinates(0,1,0,100);
-  scene.set_coordinates(1,1,200,20);
-  scene.set_coordinates(2,1,100,100);
+  scene.set_coordinates(0,0,0,0);
+  scene.set_coordinates(1,0,0,0);
+  scene.set_coordinates(2,0,-580,0);
+  scene.set_coordinates(3,0,-580,0);
 
+  scene.set_coordinates(0,1,0,0);
+  scene.set_coordinates(1,1,0,0);
+  scene.set_coordinates(2,1,-780,0);
+  scene.set_coordinates(3,1,-780,0);
+
+  scene.set_coordinates(0,2,0,0);
+  scene.set_coordinates(1,2,0,0);
+  scene.set_coordinates(2,2,-494,0);
+  scene.set_coordinates(3,2,-494,0);
+  
   while(ret!=1)
     {
       if(keyboard::is_pushed(Escape_Key)) break;
