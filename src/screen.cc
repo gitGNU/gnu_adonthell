@@ -25,9 +25,10 @@
 #include <iostream>
 #include <strstream> 
 
-
-using namespace std; 
-
+using std::cout;
+using std::ostrstream;
+using std::endl;
+using std::ends;
 
 surface screen::display; 
 u_int8 screen::bytes_per_pixel_ = 0;

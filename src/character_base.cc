@@ -26,9 +26,6 @@
 #include "character_base.h"
 #include <iostream.h>
 
-using namespace std; 
-
-
 character_base::character_base ()
 {
     color = 1;
