@@ -3,31 +3,40 @@ step guide to building and using the Adonthell software, please look
 at the NEWBIE file. If you just want the quick-start version of the
 install process, here it is.
 
-INSTALLING:
 
-There are three libraries that Adonthell depends on:
+Requirements:
+=============
+
+There are two libraries that Adonthell depends on:
 
 1. Python, version 1.5.2 or later. 
    
-   Many Linux distributions (RedHat, SuSE, etc) include Python, but a few
-are still using Python 1.5 (or, worse, 1.4!). You will need to have 1.5.2 or
-1.6 installed, so please check your version of Python by entering the command:
+   Many Linux distributions (Debian, RedHat, SuSE, etc) include Python, but
+a few are still using Python 1.5 (or, worse, 1.4!). You can ckeck your 
+version of Python by entering the command:
 
        python -c 'import sys ; print sys.version'
 
    You can download Python directly from http://www.python.org.
 
 
-
 2. The Simple Directmedia Layer (SDL) library, version 1.0 or later.
 
-   See http://www.devolution.com/~slouken/SDL/
+   See http://www.libsdl.org/
+
+
+For sound support, you'll also need the SDL_mixer library, Version 1.0 
+or later and OggVorbis.
+
+   See http://www.libsdl.org/projects/SDL_image/
+   and http://www.xiph.org/ogg/vorbis/download/
 
 
 
-3. The SDL_mixer library, Version 1.0 or later.
+Installing:
+===========
 
-In the top level "adonthell-0.3" directory, type the following:
+In the toplevel adonthell-0.3 directory type
 
 ./configure
 make
@@ -38,17 +47,13 @@ $HOME/.adonthell/adonthellrc. For now you'll have to add the full
 path to the data directory and the map to load at startup manually.
 You can also configure various other aspects of the game.
 
-Then, type the following to have the Adonthell mapengine run
-a demo map:
-
-./mapengine
-
-For more information, see the README or file. Problems? Don't have
+For more information, see the README file. Problems? Don't have
 the right libraries? Please look at the NEWBIE file or our website
 for answers:
 
 http://adonthell.linuxgames.com
- 
+
+
 *********************************************************************
 * That's it! Enjoy the game engine and let us know what you think!! *
 *********************************************************************

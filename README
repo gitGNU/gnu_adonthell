@@ -1,4 +1,8 @@
-Adonthell Map Engine
+
+
+                               Adonthell 
+                            - Waste's Edge -
+
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -9,33 +13,34 @@ Adonthell Map Engine
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     COPYING file for more details.
 
-Release Note:
+
+
+Installation:
 =============
 
-Compilation:
-============
-
-See the INSTALL file for details 
+See the INSTALL and NEWBIE files for details 
 
 
-Playing with the map engine:
-============================
+Configuring Adonthell:
+======================
 
 The first time you run Adonthell, a configuration file is created:
-$HOME/.adonthell/adonthellrc. For now you'll have to add the full
-path to the data directory and the map to load at startup manually.
+$HOME/.adonthell/adonthellrc. Unless you install the data file in
+/usr/local/share/adonthell-data, you'll have to add the full path to
+the data directory yourself.
 
 The available options and what they do are:
+(Some of these options might be changable from the main program)
+
 - Data
   The full path to the Adonthell data directory, 
   e.g. Data [/home/me/adonthell-data]
 
 - Map
-  Filename of the map to load at startup, e.g. 
-  Map [maptest.map]
+  Obsolete
 
 - Screen-resolution
-  That option is obsolete
+  Obsolete
   
 - Screen-mode
   Whether Adonthell should run fullscreen or in windowed mode 
@@ -53,9 +58,7 @@ The available options and what they do are:
   0 = 11025 Hz, 1 = 22050 Hz,  2 = 44100 Hz
 
 - Audio-interpolation
-  Whether to interpolate between samples, improves the quality
-  of the music enormously :)
-  0 = Off, 1 = On
+  Obsolete
 
 - Audio-volume
   The mixer setting, 0 - 100 %
@@ -69,31 +72,70 @@ The configuration file can have a number of such sections with
 different ID's. At the beginning you can use "Default [id]" to specify
 the section that is used by default.
 
-Running the mapengine with a section id as parameter, this special
+When running the mapengine with a section id as parameter, this special
 configuration is loaded.
 
 
-Okay, now you're ready to launch the mapengine:
-./mapengine 
-or
-./mapengine id
+Running Adonthell:
+==================
 
-Use the cursor keys to walk around and ESC to quit.
+Okay, now you're ready to launch the program:
+Type
+$> adonthell 
+or
+$> adonthell <id>
+where <id> is a section in your configuration file
+
 
 Directories:
 ============
+- $HOME/.adonthell 
+  contains the configuration file and your saved games.
+
+- /usr/local/share/adonthell
+  contains the data files: graphics, music, etc.
+  You can install these in a different location, but you'll have
+  to update your configuration file in that case.
+  (see 'Configuring Adonthell' in this document)
 
 
-Note:
-=====
+Release Notes:
+==============
 
-Actually the engine is only a GRAPHICAL engine, with some event related to
-scrolling or position change. Actually it is NOT AT ALL an RPG engine. You just
-can walk through maps. That's all. Please report bugs or map problems to
-adonthell@linuxgames.com
+Adonthell - Waste's Edge -, or v0.3 for short is no complete RPG.
+It can be considered a technology demo, to show what our current 
+engine can do.  This also helps us to locate problems with the engine
+and our development tools.
 
-Adonthell web site: http://adonthell.linuxgames.com
-Adonthell mailing list: adonthell-general@lists.sourceforge.com
+As the v0.3 implies, the engine is not complete, although it should
+be free of severe bugs.  Missing features include combat, items and 
+magic.  But you can interact with NPC's and the game world, and the
+internals enable us to create a basic plot, so v0.3 is actually
+playable!
+
+
+Contact:
+========
+
+You can reach us in various ways:
+
+Email:         adonthell@linuxgames.com
+Message Board: http://www.3dforums.com/?action=forumpage&loc=49&forum_id=158
+Mailing list:  adonthell-general@lists.sourceforge.net
+Web site:      http://adonthell.linuxgames.com
+
+
+Reporting Bugs:
+===============
+
+We hope you'll never have to, but if you discover a problem, we
+would like to hear about it.  The prefered way is to use the
+Sourceforge Bugtracker at 
+  http://sourceforge.net/tracker/?atid=101051&group_id=1051&func=browse
+
+Please make sure that your problem isn't already listed. As an
+alternative  you may also write an email or post to the mailing list.
+
 
 Thank you for trying this software.
-The Adonthell team.
+- The Adonthell team.

@@ -2,8 +2,11 @@ The Beginner's Guide to Adonthell
 Written by Andrew Henderson <hendersa@db.erau.edu>
 19 February 2000
 
+Last update by Kai Sterker <kaisterker@linuxgames.com>
+21 April 2001
+
 NOTE: The newest version of this guide can be viewed online at
-http://adonthell.linuxgames.com.
+http://adonthell.linuxgames.com/en_frames/install.shtml.
 
 ****************************
 * 1.0 - GUIDE INTRODUCTION *
@@ -73,8 +76,9 @@ Adonthell:
   - Configuring your system to use the libraries
 
 * Building the Adonthell source code
-  - Downloading the Adonthell source package
+  - Downloading the Adonthell source package and data
   - Building the source package
+  - Installing Adonthell
 
 * Running Adonthell
 
@@ -84,92 +88,89 @@ Adonthell:
 * 3.0 - INSTALLING THE REQUIRED LIBRARIES *
 *******************************************
 
-There are three libraries that Adonthell depends on. Two of these
-libraries are required, but one is optional. The two REQUIRED
+There are four libraries that Adonthell depends on. Two of these
+libraries are required, the rest is optional. The two REQUIRED
 libraries (and where they can be downloaded from) are:
 
 1. The Simple Directmedia Layer (SDL) library, version 1.0 or later.
-2. The SDL_image library, version 1.0 or later.
+2. Python, version 1.5.2 or later.
 
 Sound support under Adonthell is optional (but highly recommended!!).
 We suggest building Adonthell with sound support if you have a sound
 card configured to run under Linux. To do that, you'll need to build
-and install a third library, SDL_mixer.
+and install two more libraries, SDL_mixer and OggVorbis.
 
 3. The SDL_mixer library, Version 1.0 or later.
+4. OggVorbis, Version 1.0beta 3 or later
 
 ********
 * NOTE *
 ********
 
 As of the writing of this guide, you can get the current
-version of SDL (1.0.4) at:
+version of SDL (1.2.0) at:
 
-http://www.devolution.com/~slouken/SDL/release/SDL-1.0.4.tar.gz
+    http://www.libsdl.org/download-1.2/
 
-... and the current version of SDL_image (1.0.4) at:
+... the current version of SDL_mixer (1.2.0) at:
 
-http://www.devolution.com/~slouken/SDL/projects/SDL_image/src/SDL_image-1.0.4.tar.gz
+    http://www.libsdl.org/projects/SDL_mixer/
 
-... and the current version of SDL_mixer (1.0.4) at:
+... and the current version of OggVorbis (1.0 beta 4) at:
 
-http://www.devolution.com/~slouken/SDL/projects/SDL_mixer/src/SDL_mixer-1.0.4.tar.gz
+    http://www.xiph.org/ogg/vorbis/download/
+
+It usually is safe to use newer versions if available.
 
 ***********
 * INSTALL *
 ***********
 
-The following steps show how to install the SDL, SDL_image, and
-SDL_mixer libraries. You must install the SDL library FIRST, then
-install the SDL_image library (and SDL_mixer library if you want
-sound), since the other libraries depend on SDL.
+The following steps show how to install the Python, SDL, SDL_mixer,
+and OggVorbis libraries. You must install Python and the  SDL library 
+FIRST, then OggVorbis and the SDL_mixer library last.
+
+OggVorbis itself consists of three libraries: libao, libogg and 
+libvorbis that have to be installed in this order.
+
 
 Step #1: Download the tar file of the library to a convient
 directory. We suggest downloading to /usr/local/src (if you want to
-keep the library source around after you'd built it) or /var (if
+keep the library source around after you'd built it) or /tmp (if
 you don't).
 
-Step #2: Decompress the tar file. Do this by typing:
+Step #2: Decompress the tar.gz file. Do this by typing:
 
-	gzip -d SDL-x.x.x.tar.gz   	(for SDL)
+	tar -xzf SDL-x.x.x.tar.gz   	(for SDL)
 		    or
-	gzip -d SDL_image-x.x.x.tar.gz	(for SDL_image)
+	tar -xzf SDL_mixer-x.x.x.tar.gz	(for SDL_mixer)
 		    or
-	gzip -d SDL_mixer-x.x.x.tar.gz	(for SDL_mixer)
-
-... where the x's are the version numbers of the file you
-downloaded. You'll notice that the file has now dropped the .gz
-extension from the end of the filename and is now much bigger
-than it was when the file was originally downloaded.
-
-Step #3: Untar the tar file. Do this by typing:
-
-	tar -xvf SDL-x.x.x.tar 		(for SDL)
-		   or
-	tar -xvf SDL_image-x.x.x.tar	(for SDL_image)
-		   or
-	tar -xvf SDL_mixer-x.x.x.tar	(for SDL_mixer)
+	tar -xzf libao-x.x.x.tar.gz	(for libao)
+                    
+        etc. 
 
 ... where the x's are the version numbers of the file you
 downloaded. A new directory will be created in the current directory
 with the same name as the tar file (minus the .tar extension).
 
-Step #4: Build and install the library. Do this by changing into the
+Step #3: Build and install the library. Do this by changing into the
 newly created directory and typing:
 
 	./configure
 	make
 	make install
 
-Step #5: While logged in to a superuser account (i.e. root),
+For 'make install' you have to be logged in as superuser (i.e. root).
+
+Step #4: While logged in to a superuser account (i.e. root),
 configure the system linker configuration files to find the newly
 installed library. Do this by typing:
 
 	ldconfig
 
-Repeat these 5 steps for each library you want to install. If all
-went well, you now at least have SDL and SDL_image (and SDL_mixer
-if you chose to build it) installed and configured in your system.
+Repeat these 4 steps for each library you want to install. If all
+went well, you now at least have Python, SDL, SDL_mixer and 
+OggVorbis installed and configured in your system.
 
 ******************************************
 * 4.0 BUILDING THE ADONTHELL SOURCE CODE *
@@ -177,65 +178,72 @@ if you chose to build it) installed and configured in your system.
 
 Now that the required libraries are built and installed on your
 system, you need to build the Adonthell program itself. The
-latest version of Adonthell is 0.2. You can download it from the
+latest version of Adonthell is 0.3. You can download it from the
 Adonthell website: http://adonthell.linuxgames.com.
+
+Usually, the data package is included in the source distribution,
+but if you get the source directly from the CVS you'll have to
+download the separate data package:
+http://adonthell.linuxgames.com/files/adonthell-data-0-3.tgz
+
 
 The steps for installing Adonthell are similar to the steps for
 installing the SDL libraries:
 
 Step #1: Download the Adonthell tar file to a convient directory.
-We suggest downloading to /usr/local/games.
 
-Step #2: Decompress the tar file. Do this by typing:
+Step #2: Decompress the tar.gz file. Do this by typing:
 
-	gzip -d adonthell-0.2.tar.gz   	
-
-You'll notice that the file has now dropped the .gz extension
-from the end of the filename and is now much bigger than it was
-when the file was originally downloaded.
-
-Step #3: Untar the tar file. Do this by typing:
-
-	tar -xvf adonthell-0.2.tar
+	tar -xzf adonthell-0.3.tar.gz   	
 
 A new directory will be created in the current directory named
-"adonthell-0.2".
+"adonthell-0.3".
 
-Step #4: Build and install the library. Do this by changing into the
-newly created directory and typing:
+Step #3: Build Adonthell. Do this by changing into the newly created 
+and typing:
 
 	./configure
 	make
 
+A successful configure will produce an output like this:
+
+	Adonthell v0.3
+
+	SDL ................. : 1.1.8
+	Python .............. : 1.6
+	Audio system ........ : enabled
+	Ogg music ........... : enabled
+	Building editors .... : no
+
 If everything configured and built with no errors (which it should,
 if the SDL libraries were correctly installed), Adonthell will now
-be compiled and ready for use. If you installed the SDL_mixer
-library, the configure script will detect it and configure the
-program to use sound automatically.
+be compiled and ready for use. If you installed OggVorbis and the 
+SDL_mixer library, the configure script will detect it and configure 
+the program to use sound automatically.
+
+Step #4: Install Adonthell. Finally, you can log in as root and type
+
+	make install
+
+to copy the Adonthell binary to /usr/local/bin and the game data 
+to /usr/local/share/adonthell-data.
 
 *************************
 * 5.0 RUNNING ADONTHELL *
 *************************
 
-After building the Adonthell source, an executable named "mapengine"
-will be created in the "adonthell-0.2" directory. This is the main
-game executable. You can run the game by entering the Adonthell
-directory and typing:
+After building the Adonthell source, an executable named "adonthell"
+will be created in the "adonthell-0.3/src" directory. This is the main
+game executable. Unless you installed it in a directory such as /usr/bin
+or /usr/local/bin, You can run the game only from this directory. 
+Otherwise, you can start it from anywhere by typing:
 
-	./mapengine forest.map
+	./adonthell
 
-This will run the game engine with a demo map that was created by
-the Adonthell team. If have a fast computer, you might want to try
-running the map engine at 640x400 pixels, rather than at the default
-320x200 pixels. You can do this by typing:
-
-	./mapengine forest.map -m1
-
-Once the map engine has been run, the introductory cut scene will
-begin. Press enter to start the game. You'll be able to use the
-arrow keys to wander around the map. Pressing escape while on the map
-will bring you back to the introductory cutscene. Pressing escape
-during the cutscene will end the program.
+If the game engine and data have been correctly installed, you'll
+find yourself in the main menu. Here you can configure some aspects 
+of the engine, begin a new or continue an older game. The arrow
+keys let you move the cursor, and space selects an option.
 
 **********************
 * 6.0 Questions/Help *
@@ -248,27 +256,15 @@ are even loaded into memory when the game is executed. Currently, no
 events trigger sound effects, so you won't hear any.
 
 
-Q: While compiling the Adonthell source code, the SDL_image library,
-or the SDL_mixer library, I get an error similar to the following:
+Q: While compiling the Adonthell source code or the SDL_mixer library,
+I get an error similar to the following:
 
-mapengine: error in loading shared libraries: libSDL-1.0.so.0:
+adonthell: error in loading shared libraries: libSDL-1.0.so.0:
 cannot open shared object file: No such file or directory
 
 A: You either didn't install the library that the error message is
 complaining about or you forgot to type the command 'ldconfig'
 as a superuser account (i.e. root) after you installed the library.
-
-
-Q: While building the SDL_image library, the configure script fails
-on the "libPNG" library. What do I do?
-
-A: It's one of two things: you either don't have the PNG graphics
-library installed or you have an incompatible version installed.
-Either way, you'll need to download and build the PNG graphics
-library. It's a default library that comes on most Linux systems, but
-you'll need a recent version for libPNG. You can find the latest
-version of libPNG at:
-http://www.cdrom.com/pub/png/pngcode.html
 
 
 Q: I have a problem that isn't listed above. Where can I go for
