@@ -1,5 +1,6 @@
-// $Id
 /*
+   $Id
+ 
    Copyright (C) 1999   The Adonthell Project
    Part of the Adonthell Project http://adonthell.linuxgames.com
 

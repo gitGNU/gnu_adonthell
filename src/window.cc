@@ -116,28 +116,30 @@ void window::update_background()
 void window::update()
 {   
   if(visible)
-    {
-      if(finish_open)
+  {
+    if(finish_open)
 	{
-           if(continue_text)
-              continue_text=false;  
-            else if(end_text())
-	          {if(keyboard()) 
-                        hide();
-	           } 
-                  else
-	            {if(keyboard()) 
-                       {continue_text=true;
-		        text_window_pos=text_window_pos_tmp;
-                       }
-                    }
+      if(continue_text) continue_text=false;  
+      else 
+        if(end_text())
+	    {
+	      if(keyboard()) hide();
+	    } 
+        else
+	    {
+	      if(keyboard()) 
+          {
+            continue_text=true;
+		    text_window_pos=text_window_pos_tmp;
           }
-       else
-	 {
+        }
+    }
+    else
+	{
 	   if(open_close)open();
-	      else close();
-	 }	               
-     }  
+	   else close();
+	}	               
+  }  
 }
 
 void window::draw()
@@ -191,10 +193,11 @@ bool window::end_text()
 
 void window::set_text(char  *string)
 { 
-  delete [] text_window;
+  delete[] text_window;
+  text_window = NULL;
   text_window_pos=0;
   text_window_lenght=strlen(string);
-  text_window=new char[text_window_lenght];
+  text_window=new char [text_window_lenght];
   strcpy(text_window,string);
   continue_text=true;
 }

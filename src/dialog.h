@@ -15,6 +15,7 @@
 class dialog
 {
 public:
+
     static s_int32 *offset;
     static s_int32 *length;
 
@@ -26,3 +27,19 @@ public:
     Array<u_int32> used_text;           // Text already spoken -> don´t display again
     Array<char*> strings;               // Text data
 };
+
+#ifdef _DLGENGINE_
+class dialog_engine
+{
+public:
+    dialog_engine ();
+    void update (window*);
+    void update_keyboard ();
+    char * run ();
+
+private:
+    dialog *dlg;
+    interpreter *engine;
+};
+#endif
+
