@@ -32,14 +32,16 @@ int audio_init() {
     fprintf(stderr, "Background music couldn't be loaded: %s\n", SDL_GetError());
     return(1);
   }
+  return(0);
+}
 
+void audio_update()
+{
   // Keep looping music
   while (1==1) {
     if ( ! Mix_PlayingMusic() ) Mix_PlayMusic(music, 0);
     sleep(100);
   }
-
-  return(0);
 }
 
 void audio_cleanup() {

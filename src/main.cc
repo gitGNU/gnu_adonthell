@@ -55,8 +55,8 @@ int main(int argc, char * argv[])
   }
 
   init_display(0);
-
-  audio_thread = SDL_CreateThread((void*)audio_init, NULL);
+  audio_init();
+  audio_thread = SDL_CreateThread((void*)audio_update, NULL);
   if ( audio_thread != NULL) {
      fprintf(stderr, "Audio thread started.\n");
   } else {
