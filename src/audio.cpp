@@ -70,6 +70,7 @@ audio::audio (config &myconfig) {
     Mix_QuerySpec(&audio_rate, &audio_format, &audio_channels);
     fprintf(stderr, "Audio thread started in %d Hz %d bit %s format.\n ", audio_rate,
      (audio_format&0xFF), (audio_channels > 1) ? "stereo" : "mono");
+    set_background_volume (background_volume);
   }
 }
 
