@@ -311,12 +311,11 @@ dnl ********************************
 AC_MSG_CHECKING(whether to build the various editors)
 if test x$tools = xno; then
 	AC_MSG_RESULT(no)
-	AM_CONDITIONAL(BUILD_TOOLS, false)
 else
-	AM_CONDITIONAL(BUILD_TOOLS, true)
 	AC_MSG_RESULT(yes)
 fi
 
+AM_CONDITIONAL(BUILD_TOOLS, test x$tools = xyes)
 
 dnl ***************************
 dnl For some tools we need GTK+
@@ -325,13 +324,12 @@ dnl ***************************
 if test x$tools = xyes; then
 	AM_PATH_GTK(1.2.5, havegtk=yes, havegtk=no)
 
-	if test "$havegtk" = yes; then
-		AM_CONDITIONAL(HAVE_GTK, true)
-	else
+	if test "$havegtk" = no; then
 		AC_MSG_RESULT(disabling tools that need GTK+)
-		AM_CONDITIONAL(HAVE_GTK, false)
 	fi
 fi
+
+AM_CONDITIONAL(HAVE_GTK, test x$havegtk = xtrue)
 
 dnl ****************************************
 dnl Check whether to build the documentation
@@ -340,11 +338,11 @@ dnl ****************************************
 AC_MSG_CHECKING(whether to build the developer documentation)
 if test x$builddoc = xno; then
 	AC_MSG_RESULT(no)
-	AM_CONDITIONAL(BUILD_DOC, false)
 else
-	AM_CONDITIONAL(BUILD_DOC, true)
 	AC_MSG_RESULT(yes)
 fi
+
+AM_CONDITIONAL(BUILD_DOC, test x$builddoc = xyes)
 
 dnl *****************************************************
 dnl Doxygen and dot are needed to build the documentation
@@ -361,7 +359,7 @@ if test x$builddoc = xyes; then
                 echo "Adonthell documentation requires dot. Exiting..."
                 exit 1
         fi
-fi        
+fi
 
 dnl  **************************
 dnl  Check for required headers
@@ -376,11 +374,9 @@ fi
 
 if test x$OGG_VORBIS = xyes; then
    AC_CHECK_HEADERS([vorbis/vorbisfile.h]) 
-   AM_CONDITIONAL(HAVE_OGG_VORBIS, true)
-else
-   AM_CONDITIONAL(HAVE_OGG_VORBIS, false)
 fi 
 
+AM_CONDITIONAL(HAVE_OGG_VORBIS, test x$OGG_VORBIS = xyes)
 
 dnl ********************************
 dnl Generate our compiler arguements
