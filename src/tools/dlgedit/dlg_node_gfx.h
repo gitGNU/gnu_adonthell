@@ -61,6 +61,12 @@ public:
      * @param mode the new mode of the node
      */
     virtual void draw (GdkPixmap *surface, DlgPoint &offset, mode_type mode) = 0;
+       
+    /**
+     * Check whether the node is located at the given point.
+     * @return <b>true</b> if this is the case, <b>false</b> otherwise.
+     */
+    virtual bool operator== (DlgPoint &point) { return contains (point); }
     
 protected:
     mode_type mode_;        // This nodes mode (NONE, HILIGHTED, SELECTED)

@@ -99,6 +99,26 @@ void DlgArrow::draw (GdkPixmap *surface, DlgPoint &point)
     // update drawing area
     GuiDlgedit::window->graph ()->update (area);
 }
+    
+bool DlgArrow::operator== (DlgPoint &point)
+{
+    // is the point anywhere near the arrow?
+    if (contains (point))
+    {
+        int x, dx, dy;
+
+        // straight g: ax + by + c = 0 through 2 points p(x, y) und q(x, y): 
+        // with a = (p.y - q.y), b = (q.x - p.x), c = (-(p.x * a + p.y * b)) 
+
+        // insert point in above function; values |x| < 500 are close to the arrow 
+        dx = line[1].x - line[0].x;
+        dy = line[0].y - line[1].y;
+
+        x = (dy * point.x () + dx * point.y ()) - (line[0].x * dy + line[0].y * dx);
+        if (x < 500 && x > -500) return true;
+    }
+    return false;  
+}
 
 // load an arrow
 bool DlgArrow::load (vector<DlgNode*> &nodes)
@@ -136,8 +156,8 @@ bool DlgArrow::load (vector<DlgNode*> &nodes)
                 if (parse_dlgfile (str, n) == LOAD_NUM)
                 {
                     circle = nodes[n];
-                    circle->addNext (this);
                     prev_.push_back (circle);
+                    circle->addNext (this);
                 }
                 break;
             }
@@ -148,8 +168,8 @@ bool DlgArrow::load (vector<DlgNode*> &nodes)
                 if (parse_dlgfile (str, n) == LOAD_NUM)
                 {
                     circle = nodes[n];
-                    circle->addPrev (this);
                     next_.push_back (circle);
+                    circle->addPrev (this);
                 }
                 break;
             }

@@ -54,6 +54,14 @@ public:
     bool selectNode (DlgNode *node);
 
     /**
+     * Mark the given node as highlighted, to show that is under the cursor.
+     * @param node the DlgNode to be highlighted
+     * @return the the previously highlighted node, or <i>NULL</i> if no 
+     *         node has been highlighted
+     */
+    DlgNode* highlightNode (DlgNode *node);
+    
+    /**
      * Select the root node of the dialogue.
      * @return <b>true</b> if the node has been selected, <b>false</b>
      *         otherwise.
@@ -67,6 +75,12 @@ public:
      */
     DlgNode* deselectNode ();
 
+    /**
+     * Get the node at the given position.
+     * @return the DlgNode at the positon, or NULL if there is none
+     */
+    DlgNode* getNode (DlgPoint &point);
+    
     /**
      * Get the node that is currently selected.
      * @return the DlgNode currently selected
@@ -101,6 +115,7 @@ public:
 protected:
     vector<DlgNode*> nodes;     // all the nodes in this dialogue
     DlgNode *selected_;         // the node currently selected
+    DlgNode *highlighted_;      // the node currently under the cursor
     
     DlgPoint offset_;           // The current offset in the graph view
     bool changed_;              // Whether there were changes since saving

@@ -125,7 +125,9 @@ public:
      */
     bool centerNode (DlgNode *node = NULL);
     //@}
-    
+
+    void mouseMoved (DlgPoint &point);
+        
     /**
      * @name Member access methods.
      */
@@ -139,7 +141,7 @@ public:
      * Return a pointer to the drawing area
      * @return the GtkDrawingArea widget
      */
-     GtkWidget *drawingArea ()  { return graph; }
+    GtkWidget *drawingArea ()   { return graph; }
     /**
      * Return the attached dialogue module.
      * @return the DlgModule currently attached to the view 

@@ -29,6 +29,7 @@ DlgModule::DlgModule (string n, string d)
     type_ = MODULE;
     name_ = n;
     selected_ = NULL;
+    highlighted_ = NULL;
     description_ = d;
     changed_ = false;
     mode_ = NONE;
@@ -56,6 +57,17 @@ bool DlgModule::selectNode (DlgNode *node)
     return true;
 }
 
+// highlight the given node
+DlgNode* DlgModule::highlightNode (DlgNode *node)
+{
+    // mark the new node as highlighted ...
+    DlgNode *prev = highlighted_;
+    highlighted_ = node;
+
+    // ... and return the node highlighted before
+    return prev;
+}
+
 // select the dialogue's root node.
 bool DlgModule::selectRoot ()
 {
@@ -65,6 +77,18 @@ bool DlgModule::selectRoot ()
                 return selectNode (*i);
     
     return false;
+}
+
+// get the node at the given postion
+DlgNode* DlgModule::getNode (DlgPoint &position)
+{
+    // find the node with the given pos in our array of nodes
+    vector<DlgNode*>::iterator i;
+    
+    for (i = nodes.begin (); i != nodes.end (); i++)
+        if (*(*i) == position) return *i;
+    
+    return NULL;
 }
 
 // deselect the selected node

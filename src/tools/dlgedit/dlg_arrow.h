@@ -62,6 +62,12 @@ public:
      */
     bool load (vector<DlgNode*> &nodes);
 
+    /**
+     * Check whether the arrow is located at the given point.
+     * @return <b>true</b> if this is the case, <b>false</b> otherwise.
+     */
+    bool operator== (DlgPoint &point);
+    
 private:
     GdkPoint line[2];       // the arrow's line
     GdkPoint tip[3];        // the arrow's tip

@@ -108,7 +108,7 @@ bool GuiGraph::selectParent ()
     if (selected)
     {
         // ... try to retrieve it's parent
-        DlgNode *parent = ((DlgCircle *) selected)->parent (FIRST);
+        DlgNode *parent = ((DlgCircle *) selected)->parent (CURRENT);
 
         // if we have it, then select it
         if (parent)
@@ -340,4 +340,32 @@ void GuiGraph::draw ()
     //     wnd->below_pointer = NULL;
     //     mouse_over (wnd, point);
     // }
+}
+
+// the mouse has been moved
+void GuiGraph::mouseMoved (DlgPoint &point)
+{
+    // if there is no module assigned to the view, there is nothing to select
+    if (module == NULL) return;
+
+    // calculate absolute position of the point
+    point.move (-offset->x (), -offset->y ());
+    
+    // see if we're under a node
+    DlgNode *node = module->getNode (point);
+    
+    // get the node that was highlighted before (if any)
+    DlgNode *prev = module->highlightNode (node);
+    
+    // there's no need for action unless old and new highlight differs
+    if (prev != node)
+    {
+        // clear old if necessary
+        if (prev != NULL) prev->draw (surface, *offset);
+            
+        // then highlight the new one
+        if (node != NULL) node->draw (surface, *offset, NODE_HILIGHTED);
+    }
+    
+    return;
 }

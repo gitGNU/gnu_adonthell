@@ -28,6 +28,7 @@ DlgCircle::DlgCircle (node_type t, DlgCircleEntry *e, DlgPoint &p)
 {
     type_ = t;
     entry_ = e;
+    last_parent = NULL;
     
     // Align Circle to the (imaginary) grid
     top_left = DlgPoint (p.x () - (p.x () % CIRCLE_DIAMETER), p.y () - (p.y () % CIRCLE_DIAMETER));
@@ -37,17 +38,31 @@ DlgCircle::DlgCircle (node_type t, DlgCircleEntry *e, DlgPoint &p)
 // get a certain parent-circle of this circle
 DlgCircle *DlgCircle::parent (query_type pos, int offset)
 {
+    // go back the way we came
+    if (pos == CURRENT && last_parent != NULL) 
+    {
+        DlgCircle *parent = last_parent;
+        last_parent = NULL;
+        return parent;
+    }
+    
     DlgNode *arrow = prev (pos, offset);
     if (arrow != NULL) return (DlgCircle *) arrow->prev (FIRST);
     else return NULL;
 }
 
-// get a certain child-circle of this circle
+// get a certain child-circle of this circle and remember the parent circle
 DlgCircle *DlgCircle::child (query_type pos, int offset)
 {
     DlgNode *arrow = next (pos, offset);
-    if (arrow != NULL) return (DlgCircle *) arrow->next (FIRST);
-    else return NULL;
+    if (arrow == NULL) return NULL;
+        
+    DlgCircle *child = (DlgCircle *) arrow->next (FIRST);
+
+    // set the parent
+    child->setLastParent (this);
+    
+    return child;
 }
 
 // get a certain sibling-circle of this circle
@@ -57,7 +72,7 @@ DlgCircle *DlgCircle::sibling (query_type pos, int offset)
     
     // first, get the right parent circle
     if (pos == FIRST || pos == LAST) myParent = parent (pos, offset);
-    else myParent = parent (FIRST);
+    else myParent = parent (CURRENT);
     
     if (myParent != NULL)
     {

@@ -60,6 +60,12 @@ public:
      * @param y the offset in y direction
      */
     void move (DlgPoint &p)         { x_ += p.x (); y_ += p.y (); }
+    /**
+     * Offsets this point by the given values.
+     * @param x the offset in x direction
+     * @param y the offset in y direction
+     */
+    void move (int x, int y)        { x_ += x; y_ += y; }
 
     /**
      * Convert a DlgPoint into a GdkPoint.

@@ -37,7 +37,7 @@
 class DlgCircle : public DlgNode
 {
 public:
-    DlgCircle () { mode_ = NONE; }
+    DlgCircle () { mode_ = NONE; last_parent = NULL; }
     DlgCircle (node_type t, DlgCircleEntry *e, DlgPoint &p);
 
     /** 
@@ -93,7 +93,7 @@ public:
      * Get the contents of this node.
      * @return a DlgCircleEntry with the circle's text, code, conditions, etc.
      */
-    DlgCircleEntry *entry ()    { return entry_; }
+    DlgCircleEntry *entry ()            { return entry_; }
     
     /**
      * Get the text of this circle
@@ -104,11 +104,14 @@ public:
     
     /**
      * Check whether any arbitrary Python code is assigned to this circle.
-     * @return <b>true</b> if the is the case, <b>false</b> otherwise.
+     * @return <b>true</b> if this is the case, <b>false</b> otherwise.
      */
-    bool hasCode ()             { return entry_->hasCode (); }
+    bool hasCode ()                     { return entry_->hasCode (); }
     
+    DlgCircle *lastParent ()            { return last_parent; }
+    void setLastParent (DlgCircle *p)   { last_parent = p; }
 private:
+    DlgCircle *last_parent;
     DlgCircleEntry *entry_;
 };
 

@@ -68,7 +68,8 @@ DlgNode* DlgNode::getNode (list<DlgNode*>::iterator &it,
             break;
         case CURRENT:
             if (it != lst.end ()) return *it;
-            else return NULL;
+            else return *(lst.begin ());
+            break;
         default:
             return NULL;
     }
@@ -95,9 +96,11 @@ DlgNode* DlgNode::getNode (list<DlgNode*>::iterator &it,
 void DlgNode::addNext (DlgNode *node)
 {
     list<DlgNode*>::iterator i = next_.begin ();
-    
+    DlgRect *cmp = node->type () == LINK ? node->prev (FIRST) : node;
+
     // search the proper place for insertion
-    while (*i < node && i != next_.end ()) i++;
+    if (cmp != NULL && !next_.empty ()) 
+        while (i != next_.end () && *(*i) < *cmp) i++;
     
     // insert
     next_.insert (i, node);
@@ -107,9 +110,11 @@ void DlgNode::addNext (DlgNode *node)
 void DlgNode::addPrev (DlgNode *node)
 {
     list<DlgNode*>::iterator i = prev_.begin ();
+    DlgRect *cmp = node->type () == LINK ? node->next (FIRST) : node;
     
     // search the proper place for insertion
-    while (*i < node && i != prev_.end ()) i++;
+    if (cmp != NULL && !prev_.empty ()) 
+        while (i != prev_.end () && *(*i) < *cmp) i++;
     
     // insert
     prev_.insert (i, node);

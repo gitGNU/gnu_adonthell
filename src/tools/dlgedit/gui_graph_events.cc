@@ -146,9 +146,14 @@ button_press_event (GtkWidget * widget, GdkEventButton * event, gpointer data)
 }
 
 // Mouse moved over drawing area
-gint 
-motion_notify_event (GtkWidget * widget, GdkEventMotion * event, gpointer data)
+gint motion_notify_event (GtkWidget *widget, GdkEventMotion *event, gpointer data)
 {
+    GuiGraph *graph = (GuiGraph *) data;
+    DlgPoint point ((int) event->x, (int) event->y);
+
+    graph->mouseMoved (point);
+    
+    return FALSE;
 /*    
     MainFrame *MainWnd = (MainFrame *) data;
     GdkPoint point;
@@ -178,7 +183,6 @@ motion_notify_event (GtkWidget * widget, GdkEventMotion * event, gpointer data)
     // Highlighting dialogue nodes
     else mouse_over (MainWnd, point);
 */
-    return FALSE;
 }
 
 /* Mouse-button released on Drawing Area */
