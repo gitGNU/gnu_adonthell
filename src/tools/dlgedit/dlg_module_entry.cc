@@ -33,6 +33,9 @@ DlgModuleEntry::DlgModuleEntry ()
     ctor_ = "";
     dtor_ = "";
     methods_ = "";
+    
+    itc = characters.end ();
+    itq = quests.end ();
 }
 
 // set the project
@@ -89,7 +92,9 @@ bool DlgModuleEntry::loadCharacters ()
     
     // close file
     in.close ();
-
+    
+    itc = characters.begin ();
+    
     return true; 
 }
 
@@ -120,7 +125,9 @@ bool DlgModuleEntry::loadQuests ()
     
     // close file
     in.close ();
-
+    
+    itq = quests.begin ();
+    
     return true; 
 }
 
@@ -167,15 +174,14 @@ bool DlgModuleEntry::isQuest (const std::string &quest)
 // iterate over the existing characters
 std::string DlgModuleEntry::character ()
 {
-    static std::vector<std::string>::iterator i = characters.begin ();
     std::string character = "";
     
-    if (i != characters.end ())
+    if (itc != characters.end ())
     {
-        character = *i;
-        i++;
+        character = *itc;
+        itc++;
     }
-    else i = characters.begin ();
+    else itc = characters.begin ();
     
     return character;
 }
@@ -183,15 +189,14 @@ std::string DlgModuleEntry::character ()
 // iterate over the existing quests
 std::string DlgModuleEntry::quest ()
 {
-    static std::vector<std::string>::iterator i = quests.begin ();
     std::string quest = "";
     
-    if (i != quests.end ())
+    if (itq != quests.end ())
     {
-        quest = *i;
-        i++;
+        quest = *itq;
+        itq++;
     }
-    else i = quests.begin ();
+    else itq = quests.begin ();
     
     return quest;
 }

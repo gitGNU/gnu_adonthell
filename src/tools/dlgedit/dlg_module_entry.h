@@ -71,16 +71,52 @@ public:
      *         <b>false</b> otherwise.
      */
     bool setProject (std::string p);
-    
+
+    /**
+     * Set the import statements assigned to this module.
+     * @param i the module's additional imports.
+     */
     void setImports (std::string i) { imports_ = i; }
+    /**
+     * Set the constructor code assigned to this module.
+     * @param c the module's constructor code.
+     */
     void setCtor (std::string c)    { ctor_ = c; }
+    /**
+     * Set the destructor code assigned to this module.
+     * @param d the module's destructor code.
+     */
     void setDtor (std::string d)    { dtor_ = d; }
+    /**
+     * Set the user defined methods of this module.
+     * @param m the module's user defined methods.
+     */
     void setMethods (std::string m) { methods_ = m; }
     
+    /**
+     * Test whether the given string represents an available character.
+     * @param c name of the character to check for.
+     * @retorn <b>true</b> if the character exists, <b>false</b> otherwise.
+     */
     bool isCharacter (const std::string &c);
+    /**
+     * Test whether the given string represents an available quest.
+     * @param q name of the quest to check for.
+     * @retorn <b>true</b> if the quest exists, <b>false</b> otherwise.
+     */
     bool isQuest (const std::string &q);
     
+    /**
+     * Iterate over the available characters.
+     * @return the character name or the empty string ("") when the 
+     *      end of the list is reached.
+     */
     std::string character ();
+    /**
+     * Iterate over the available quests.
+     * @return the quest name or the empty string ("") when the 
+     *      end of the list is reached.
+     */
     std::string quest ();
     //@}
         
@@ -99,6 +135,8 @@ private:
     
     std::vector<std::string> characters;
     std::vector<std::string> quests;
+    std::vector<std::string>::iterator itc;
+    std::vector<std::string>::iterator itq;
 };
 
 #endif // DLG_MODULE_ENTRY_H
