@@ -20,12 +20,10 @@ class dialog;
 
 #include "../../types.h"
 #include "../../interpreter.h"
-#include "linked_list.h"
 #include "dlgnode.h"
 #include "main.h"
 #include "callbacks.h"
 #include "events.h"
-#include "dlgrun.h"
 #include "interface.h"
 
 /* Create Top Level Window and Controls */
@@ -228,145 +226,10 @@ void create_mainframe (MainFrame * MainWnd)
     return;
 }
 
-/* "Add text to node" - dialog */
-GtkWidget *
-create_text_dialog (NodeData * cbd)
-{
-    GtkWidget *text_dialog;
-
-    GtkWidget *vbox1;
-    GtkWidget *scrolled_text_box;
-    GtkWidget *text_box;
-    GtkWidget *button_player;
-    GtkWidget *button_npc;
-    GtkWidget *hseparator1;
-    GtkWidget *hbuttonbox1;
-    GtkWidget *cancel_button;
-    GtkWidget *ok_button;
-
-    GSList *vbox1_group = NULL;
-
-    /* The Dialog - Window */
-    text_dialog = gtk_window_new (GTK_WINDOW_DIALOG);
-    gtk_widget_set_name (text_dialog, "text_dialog");
-    gtk_object_set_data (GTK_OBJECT (text_dialog), "text_dialog", text_dialog);
-    gtk_widget_set_usize (text_dialog, 450, 200);
-    gtk_window_set_title (GTK_WINDOW (text_dialog), "Text");
-    gtk_window_set_position (GTK_WINDOW (text_dialog), GTK_WIN_POS_MOUSE);
-    gtk_window_set_default_size (GTK_WINDOW (text_dialog), 450, 200);
-    gtk_window_set_policy (GTK_WINDOW (text_dialog), FALSE, FALSE, FALSE);
-
-    /* The container for all following widgets */
-    vbox1 = gtk_vbox_new (FALSE, 0);
-    gtk_widget_set_name (vbox1, "vbox1");
-    gtk_widget_ref (vbox1);
-    gtk_object_set_data_full (GTK_OBJECT (text_dialog), "vbox1", vbox1, (GtkDestroyNotify) gtk_widget_unref);
-    gtk_widget_show (vbox1);
-    gtk_container_add (GTK_CONTAINER (text_dialog), vbox1);
-    gtk_container_set_border_width (GTK_CONTAINER (vbox1), 5);
-
-    /* A Multi-line edit-Box */
-    scrolled_text_box = gtk_scrolled_window_new (NULL, NULL);
-    gtk_widget_set_name (scrolled_text_box, "scrolled_text_box");
-    gtk_widget_ref (scrolled_text_box);
-    gtk_object_set_data_full (GTK_OBJECT (text_dialog), "scrolled_text_box", scrolled_text_box, (GtkDestroyNotify) gtk_widget_unref);
-    gtk_widget_show (scrolled_text_box);
-    gtk_box_pack_start (GTK_BOX (vbox1), scrolled_text_box, TRUE, TRUE, 0);
-    gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled_text_box), GTK_POLICY_NEVER, GTK_POLICY_ALWAYS);
-
-    /* The actual text-box */
-    text_box = gtk_text_new (NULL, NULL);
-    gtk_widget_set_name (text_box, "text_box");
-    gtk_widget_ref (text_box);
-    gtk_object_set_data_full (GTK_OBJECT (text_dialog), "text_box", text_box, (GtkDestroyNotify) gtk_widget_unref);
-    gtk_widget_show (text_box);
-    gtk_container_add (GTK_CONTAINER (scrolled_text_box), text_box);
-    gtk_text_set_editable (GTK_TEXT (text_box), TRUE);
-    gtk_text_set_word_wrap (GTK_TEXT (text_box), TRUE);
-    if (cbd->node->text != NULL)
-        gtk_text_insert (GTK_TEXT (text_box), text_box->style->font, &text_box->style->black, &text_box->style->white, cbd->node->text, -1);
-    cbd->edit_box = GTK_EDITABLE (text_box);
-
-    /* A Toggle - Button */
-    button_player = gtk_radio_button_new_with_label (vbox1_group, "Player");
-    vbox1_group = gtk_radio_button_group (GTK_RADIO_BUTTON (button_player));
-    gtk_widget_set_name (button_player, "button_player");
-    gtk_widget_ref (button_player);
-    gtk_object_set_data_full (GTK_OBJECT (text_dialog), "button_player", button_player, (GtkDestroyNotify) gtk_widget_unref);
-    gtk_widget_show (button_player);
-    gtk_box_pack_start (GTK_BOX (vbox1), button_player, FALSE, FALSE, 0);
-    GTK_WIDGET_UNSET_FLAGS (button_player, GTK_CAN_FOCUS);
-
-    /* Another Toggle - Button */
-    button_npc = gtk_radio_button_new_with_label (vbox1_group, "NPC");
-    vbox1_group = gtk_radio_button_group (GTK_RADIO_BUTTON (button_npc));
-    gtk_widget_set_name (button_npc, "button_npc");
-    gtk_widget_ref (button_npc);
-    gtk_object_set_data_full (GTK_OBJECT (text_dialog), "button_npc", button_npc, (GtkDestroyNotify) gtk_widget_unref);
-    gtk_widget_show (button_npc);
-    gtk_box_pack_start (GTK_BOX (vbox1), button_npc, FALSE, FALSE, 0);
-    GTK_WIDGET_UNSET_FLAGS (button_npc, GTK_CAN_FOCUS);
-
-    /* And a seperator */
-    hseparator1 = gtk_hseparator_new ();
-    gtk_widget_set_name (hseparator1, "hseparator1");
-    gtk_widget_ref (hseparator1);
-    gtk_object_set_data_full (GTK_OBJECT (text_dialog), "hseparator1", hseparator1, (GtkDestroyNotify) gtk_widget_unref);
-    gtk_widget_show (hseparator1);
-    gtk_box_pack_start (GTK_BOX (vbox1), hseparator1, FALSE, TRUE, 0);
-
-    /* Just a Button -Box */
-    hbuttonbox1 = gtk_hbutton_box_new ();
-    gtk_widget_set_name (hbuttonbox1, "hbuttonbox1");
-    gtk_widget_ref (hbuttonbox1);
-    gtk_object_set_data_full (GTK_OBJECT (text_dialog), "hbuttonbox1", hbuttonbox1, (GtkDestroyNotify) gtk_widget_unref);
-    gtk_widget_show (hbuttonbox1);
-    gtk_box_pack_start (GTK_BOX (vbox1), hbuttonbox1, FALSE, FALSE, 0);
-    gtk_button_box_set_layout (GTK_BUTTON_BOX (hbuttonbox1), GTK_BUTTONBOX_END);
-    gtk_button_box_set_spacing (GTK_BUTTON_BOX (hbuttonbox1), 5);
-    gtk_button_box_set_child_size (GTK_BUTTON_BOX (hbuttonbox1), 80, 10);
-    gtk_button_box_set_child_ipadding (GTK_BUTTON_BOX (hbuttonbox1), 0, 0);
-
-    /* OK - Button */
-    ok_button = gtk_button_new_with_label ("OK");
-    gtk_widget_set_name (ok_button, "ok_button");
-    gtk_widget_ref (ok_button);
-    gtk_object_set_data_full (GTK_OBJECT (text_dialog), "ok_button", ok_button, (GtkDestroyNotify) gtk_widget_unref);
-    gtk_widget_show (ok_button);
-    gtk_container_add (GTK_CONTAINER (hbuttonbox1), ok_button);
-    GTK_WIDGET_SET_FLAGS (ok_button, GTK_CAN_DEFAULT);
-
-    /* Cancel - Button */
-    cancel_button = gtk_button_new_with_label ("Cancel");
-    gtk_widget_set_name (cancel_button, "cancel_button");
-    gtk_widget_ref (cancel_button);
-    gtk_object_set_data_full (GTK_OBJECT (text_dialog), "cancel_button", cancel_button, (GtkDestroyNotify) gtk_widget_unref);
-    gtk_widget_show (cancel_button);
-    gtk_container_add (GTK_CONTAINER (hbuttonbox1), cancel_button);
-    GTK_WIDGET_SET_FLAGS (cancel_button, GTK_CAN_DEFAULT);
-
-    /* Callback handlers (or whatever you call them in gtk) */
-    gtk_signal_connect (GTK_OBJECT (text_dialog), "delete_event", GTK_SIGNAL_FUNC (on_widget_destroy), NULL);
-    gtk_signal_connect (GTK_OBJECT (button_player), "toggled", GTK_SIGNAL_FUNC (on_button_player_toggled), cbd);
-    gtk_signal_connect (GTK_OBJECT (button_npc), "toggled", GTK_SIGNAL_FUNC (on_button_npc_toggled), cbd);
-    gtk_signal_connect (GTK_OBJECT (cancel_button), "pressed", GTK_SIGNAL_FUNC (on_cancel_button_pressed), cbd);
-    gtk_signal_connect (GTK_OBJECT (ok_button), "pressed", GTK_SIGNAL_FUNC (on_ok_button_pressed), cbd);
-
-    /* various inits */
-    if (cbd->node->type == PLAYER)
-        on_button_player_toggled (GTK_TOGGLE_BUTTON (button_player), cbd);
-    else
-        gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (button_npc), TRUE);
-
-    gtk_widget_grab_focus (text_box);
-    gtk_widget_grab_default (ok_button);
-
-    return text_dialog;
-}
 
 /* Tooltip - like widget */
 GtkWidget *
-create_tooltip (gchar * text, s_int32 x, s_int32 y)
+create_tooltip (const gchar * text, s_int32 x, s_int32 y)
 {
     GtkWidget *tip_window;
     GtkWidget *frame;
@@ -391,6 +254,7 @@ create_tooltip (gchar * text, s_int32 x, s_int32 y)
     gtk_container_add (GTK_CONTAINER (frame), tip);
     gtk_label_set_justify (GTK_LABEL (tip), GTK_JUSTIFY_LEFT);
     gtk_label_set_line_wrap (GTK_LABEL (tip), TRUE);
+    gtk_misc_set_padding (GTK_MISC (tip), 4, 1);
 
     return tip_window;
 }
@@ -431,80 +295,7 @@ create_fileselection (GString * file, u_int8 type)
     return fileselection1;
 }
 
-GtkWidget *
-create_run_dialogue (RunData * rd)
-{
-    GtkWidget *run_dialogue;
-    GtkWidget *vbox1;
-    GtkWidget *scrolledwindow1;
-    GtkWidget *npc_text;
-    GtkWidget *hseparator1;
-    GtkWidget *scrolledwindow2;
-    GtkWidget *player_txt;
-
-    run_dialogue = gtk_window_new (GTK_WINDOW_DIALOG);
-    gtk_widget_set_name (run_dialogue, "run_dialogue");
-    gtk_object_set_data (GTK_OBJECT (run_dialogue), "run_dialogue", run_dialogue);
-    gtk_widget_set_usize (run_dialogue, 400, 300);
-    gtk_window_set_title (GTK_WINDOW (run_dialogue), "Run Dialogue");
-    gtk_window_set_modal (GTK_WINDOW (run_dialogue), TRUE);
-    gtk_window_set_policy (GTK_WINDOW (run_dialogue), FALSE, FALSE, FALSE);
-
-    vbox1 = gtk_vbox_new (FALSE, 0);
-    gtk_widget_set_name (vbox1, "vbox1");
-    gtk_widget_ref (vbox1);
-    gtk_object_set_data_full (GTK_OBJECT (run_dialogue), "vbox1", vbox1, (GtkDestroyNotify) gtk_widget_unref);
-    gtk_widget_show (vbox1);
-    gtk_container_add (GTK_CONTAINER (run_dialogue), vbox1);
-    gtk_container_set_border_width (GTK_CONTAINER (vbox1), 5);
-
-    scrolledwindow1 = gtk_scrolled_window_new (NULL, NULL);
-    gtk_widget_set_name (scrolledwindow1, "scrolledwindow1");
-    gtk_widget_ref (scrolledwindow1);
-    gtk_object_set_data_full (GTK_OBJECT (run_dialogue), "scrolledwindow1", scrolledwindow1, (GtkDestroyNotify) gtk_widget_unref);
-    gtk_widget_show (scrolledwindow1);
-    gtk_box_pack_start (GTK_BOX (vbox1), scrolledwindow1, TRUE, TRUE, 0);
-    gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolledwindow1), GTK_POLICY_NEVER, GTK_POLICY_ALWAYS);
-
-    npc_text = gtk_text_new (NULL, NULL);
-    gtk_widget_set_name (npc_text, "npc_text");
-    gtk_widget_ref (npc_text);
-    gtk_object_set_data_full (GTK_OBJECT (run_dialogue), "npc_text", npc_text, (GtkDestroyNotify) gtk_widget_unref);
-    gtk_widget_show (npc_text);
-    gtk_text_set_word_wrap (GTK_TEXT (npc_text), TRUE);
-    gtk_container_add (GTK_CONTAINER (scrolledwindow1), npc_text);
-    GTK_WIDGET_UNSET_FLAGS (npc_text, GTK_CAN_FOCUS);
-    rd->npc = npc_text;
-
-    hseparator1 = gtk_hseparator_new ();
-    gtk_widget_set_name (hseparator1, "hseparator1");
-    gtk_widget_ref (hseparator1);
-    gtk_object_set_data_full (GTK_OBJECT (run_dialogue), "hseparator1", hseparator1, (GtkDestroyNotify) gtk_widget_unref);
-    gtk_widget_show (hseparator1);
-    gtk_box_pack_start (GTK_BOX (vbox1), hseparator1, FALSE, FALSE, 5);
-
-    scrolledwindow2 = gtk_scrolled_window_new (NULL, NULL);
-    gtk_widget_set_name (scrolledwindow2, "scrolledwindow2");
-    gtk_widget_ref (scrolledwindow2);
-    gtk_object_set_data_full (GTK_OBJECT (run_dialogue), "scrolledwindow2", scrolledwindow2, (GtkDestroyNotify) gtk_widget_unref);
-    gtk_widget_show (scrolledwindow2);
-    gtk_box_pack_start (GTK_BOX (vbox1), scrolledwindow2, TRUE, TRUE, 0);
-    gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolledwindow2), GTK_POLICY_NEVER, GTK_POLICY_ALWAYS);
-
-    player_txt = gtk_list_new ();
-    gtk_widget_set_name (player_txt, "player_txt");
-    gtk_widget_ref (player_txt);
-    gtk_object_set_data_full (GTK_OBJECT (run_dialogue), "player_txt", player_txt, (GtkDestroyNotify) gtk_widget_unref);
-    gtk_widget_show (player_txt);
-    gtk_scrolled_window_add_with_viewport (GTK_SCROLLED_WINDOW (scrolledwindow2), player_txt);
-    rd->player = player_txt;
-
-    gtk_signal_connect (GTK_OBJECT (run_dialogue), "delete_event", GTK_SIGNAL_FUNC (on_widget_destroy), NULL);
-    gtk_signal_connect (GTK_OBJECT (player_txt), "select_child", GTK_SIGNAL_FUNC (on_player_txt_select_row), rd);
-
-    return run_dialogue;
-}
-
+// List entry for the instant preview
 GtkWidget* 
 create_list_item (MainFrame *wnd, DlgNode *node, int mode)
 {
@@ -555,7 +346,7 @@ create_list_item (MainFrame *wnd, DlgNode *node, int mode)
     gdk_window_get_size (list, &w, &h);
 
     /* create label */    
-    label = gtk_label_new (node->text);
+    label = gtk_label_new (((Circle *) node)->text.c_str ());
     gtk_widget_set_style (label, style);
     gtk_widget_set_usize (label, w - 10, 0);
     gtk_label_set_justify ((GtkLabel *) label, GTK_JUSTIFY_LEFT);

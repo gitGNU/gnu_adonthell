@@ -26,7 +26,7 @@ CPPFLAGS =
 
 # C compiler
 
-CC     := gcc
+CC     := g++
 CFLAGS  = ${DEPENDFLAGS}
 
 %.o : %.c
@@ -56,7 +56,7 @@ LDFLAGS    =
 LOADLIBES := -lm -lstdc++ `gtk-config --libs`
 
 
-OBJECTS := ./callbacks.o ./compile.o ./dlgrun.o ./events.o ./function.o ./geometrie.o ./graph.o ./interface.o ./main.o ./linked_list.o ../../interpreter.o ../../commands.o ../../dialog_cmds.o ../../array_tmpl.o ./pjt_interface.o ./pjt_callbacks.o ./project.o ../../storage.o
+OBJECTS := ../../array_tmpl.o ./callbacks.o ../../commands.o ./circle.o ./compile.o ./crcle_callbacks.o ./crcle_interface.o ./dlgnode.o ./events.o ./geometrie.o ./graph.o ./interface.o ../../interpreter.o  ../../dialog_cmds.o ./lex.loadlg.o ./linked_list.o ./main.o ./pjt_interface.o ./pjt_callbacks.o ./project.o ./run.o ./run_callbacks.o ./run_interface.o ../../storage.o
 
 # dlgedit
 

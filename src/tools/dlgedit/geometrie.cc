@@ -25,6 +25,31 @@ point_in_rect (GdkRectangle rect, GdkPoint point)
     return 1;
 }
 
+/* do those rects overlap somehow? */
+u_int8
+rect_in_rect (GdkRectangle a, GdkRectangle b)
+{
+    if (a.x <= b.x) {
+        if (a.x + a.width >= b.x) {
+            if (a.y <= b.y) {
+                if (a.y + a.height >= b.y) return 1;
+            } else {
+                if (b.y + b.height >= a.y) return 1;
+            }    
+        }
+    } else {
+        if (b.x + b.width >= a.x) {
+            if (a.y <= b.y) {
+                if (a.y + a.height >= b.y) return 1;
+            } else {
+                if (b.y + b.height >= a.y) return 1;
+            }
+        } 
+    }
+
+    return 0;
+}
+
  /* return rectangles center */
 GdkPoint 
 center_point (GdkRectangle rect)

@@ -20,91 +20,66 @@ class dialog;
 #include <string.h>
 #include <string>
 #include <gtk/gtk.h>
+#include <vector>
 
 #include "../../types.h"
 #include "../../interpreter.h"
-#include "linked_list.h"
 #include "dlgnode.h"
 #include "main.h"
 #include "geometrie.h"
 #include "compile.h"
-#include "dlgrun.h"
 #include "interface.h"
-#include "function.h"
+#include "circle.h"
 #include "graph.h"
 
-/* Create a new circle */
+// Create a new circle
 int 
 new_circle (MainFrame * wnd, GdkPoint point, int type)
 {
-    NodeData *cbd = (NodeData *) g_malloc (sizeof (NodeData));
-    DlgNode *circle = new DlgNode;
-    int retval;
+    Circle *circle = new Circle (wnd->number, type, point.x, point.y);
+    
+    // Create Dialog to edit Circle's attributes ...
+    crcle_dlg dlg (circle);
 
-    /* Init Circle */
-    circle->number = wnd->number;
-    circle->position.x = point.x - 10;
-    circle->position.y = point.y - 10;
-    circle->position.width = 21;
-    circle->position.height = 21;
-    circle->text = NULL;
-    circle->type = type;
-
-    /* Init Dialog-Callback-Data */
-    cbd->wnd = wnd;
-    cbd->node = circle;
-    cbd->retval = 0;
-
-    /* Create and display dialog for user-input */
-    wnd->text_dlg = create_text_dialog (cbd);
-    gtk_widget_show (wnd->text_dlg);
-    gtk_window_set_modal ((GTK_WINDOW (wnd->text_dlg)), TRUE);
-
-    /* Enter Dialog - Event - Loop */
+    // ... and enter it's event loop
     gtk_main ();
 
-    retval = cbd->retval;
-
-    /* Circle created */
-    if (retval == 1)
+    // Circle created
+    if (dlg.retval == 1)
     {
-        /* Further initialization */
-        circle->prev = g_ptr_array_new ();
-        circle->next = g_ptr_array_new ();
-        circle->link = g_ptr_array_new ();
-
-        /* One Node more */
+        // One Node more
         wnd->number++;
 
-        /* Add to Array */
+        // Add to Array
         add_ptr_list_element (wnd->nodes, circle);
 
-        /* Display Node */
+        // Display Node
         draw_circle (wnd, circle, 0);
     }
     else
-        g_free (circle);
-
-    g_free (cbd);
-
-    return retval;
+    {
+        delete circle;
+        return 0;
+    }
+    
+    return 1;
 }
 
-/* create new arrow */
+// create new arrow
 int 
 new_arrow (MainFrame * wnd, GdkPoint point)
 {
-    DlgNode *arrow;
+    Arrow *arrow;
     DlgNode *end = get_cur_selection (wnd, point);
     int type;
     u_int32 i;
 
-    /* Exit function if  
-       - no node is marked
-       - the marked node is no circle
-       - the clicked node is no circle
-       - the clicked node is the marked node 
-       - a connection already existe */
+    // Exit function if  
+    //   - no node is marked
+    //   - the marked node is no circle
+    //   - the clicked node is no circle
+    //   - the clicked node is the marked node 
+    //   - a connection already existe 
     if (wnd->selected_node == NULL)
         return 0;
     if (wnd->selected_node->type == LINK)
@@ -114,26 +89,18 @@ new_arrow (MainFrame * wnd, GdkPoint point)
     if (wnd->selected_node == end)
         return 0;
     if (end != NULL)
-        for (i = 0; i < wnd->selected_node->next->len; i++)
-            if (end == g_ptr_array_index (((DlgNode *) g_ptr_array_index (wnd->selected_node->next, i))->next, 0))
+        for (i = 0; i < wnd->selected_node->next.size (); i++)
+            if (end == wnd->selected_node->next[i]->next[0])
                 return 0;
 
-    arrow = new DlgNode;
+    arrow = new Arrow (wnd->number, LINK);
 
-    /* Init arrow */
-    arrow->prev = g_ptr_array_new ();
-    arrow->next = g_ptr_array_new ();
-    arrow->link = g_ptr_array_new ();
-    arrow->number = wnd->number;
-    arrow->text = NULL;
-    arrow->type = LINK;
-
-    /* Add to Array */
+    // Add to Array 
     add_ptr_list_element (wnd->nodes, arrow);
 
     wnd->number++;
 
-    /* Not clicked on circle -> first create new circle */
+    // Not clicked on circle -> first create new circle 
     if (end == NULL)
     {
         if (wnd->selected_node->type == NPC)
@@ -145,17 +112,17 @@ new_arrow (MainFrame * wnd, GdkPoint point)
         end = (DlgNode *) get_ptr_list_element (wnd->nodes, wnd->number - 1);
     }
 
-    /* Now,  wnd -> selected_node  contains start-circle and  end  contains end-circle */
+    // Now,  wnd -> selected_node  contains start-circle and  end  contains end-circle 
 
-    /* Insert arrow into start- and end-circle */
-    g_ptr_array_add (wnd->selected_node->next, arrow);
-    g_ptr_array_add (end->prev, arrow);
+    // Insert arrow into start- and end-circle 
+    wnd->selected_node->next.push_back (arrow);
+    end->prev.push_back (arrow);
 
-    /* Insert start- & end-circle into arrow */
-    g_ptr_array_add (arrow->prev, wnd->selected_node);
-    g_ptr_array_add (arrow->next, end);
+    // Insert start- & end-circle into arrow 
+    arrow->prev.push_back (wnd->selected_node);
+    arrow->next.push_back (end);
 
-    /* draw arrow */
+    // draw arrow 
     redraw_arrow (wnd, arrow);
     draw_arrow (wnd, arrow, 0);
     show_preview (wnd);
@@ -163,19 +130,19 @@ new_arrow (MainFrame * wnd, GdkPoint point)
     return 1;
 }
 
-/* add new link */
+// add new link 
 int 
 new_link (MainFrame * wnd, GdkPoint point)
 {
     DlgNode *arrow = get_cur_selection (wnd, point);
     u_int32 i;
 
-    /* exit function, if
-       - marked node is no circle 
-       - no node has been selected
-       - selected node is no arrow
-       - selected node is PLAYER and node following link too
-       - selected node is already a link */
+    // exit function, if
+    //   - marked node is no circle 
+    //   - no node has been selected
+    //   - selected node is no arrow
+    //   - selected node is PLAYER and node following link too
+    //   - selected node is already a link 
     if (wnd->selected_node->type == LINK)
         return 0;
     if (arrow == NULL)
@@ -183,142 +150,128 @@ new_link (MainFrame * wnd, GdkPoint point)
     if (arrow->type != LINK)
         return 0;
 
-    if (wnd->selected_node->type == PLAYER &&
-        ((DlgNode *) g_ptr_array_index (arrow->next, 0))->type == PLAYER)
+    if (wnd->selected_node->type == PLAYER && arrow->next[0]->type == PLAYER)
         return 0;
 
-    for (i = 0; i < wnd->selected_node->link->len; i++)
-        if (arrow == g_ptr_array_index (wnd->selected_node->link, i))
+    for (i = 0; i < wnd->selected_node->link.size (); i++)
+        if (arrow == wnd->selected_node->link[i])
             return 0;
 
-    /* Add arrow to circles links */
-    g_ptr_array_add (wnd->selected_node->link, arrow);
+    // Add arrow to circles links 
+    wnd->selected_node->link.push_back (arrow);
 
-    /* Add circle to arrows links */
-    g_ptr_array_add (arrow->link, wnd->selected_node);
+    // Add circle to arrows links 
+    arrow->link.push_back (wnd->selected_node);
 
-    /* update graph */
+    // update graph 
     draw_circle (wnd, wnd->selected_node, 1);
-    draw_arrow (wnd, arrow, 2);
+    draw_arrow (wnd, (Arrow *) arrow, 2);
     show_preview (wnd);
 
     return 1;
 }
 
-/* remove link */
+// remove link 
 int 
 remove_link (MainFrame * wnd, GdkPoint point)
 {
     DlgNode *arrow = get_cur_selection (wnd, point);
 
-    /* exit function, if
-       - marked node is no circle 
-       - no node has been selected
-       - selected node is no arrow
-       - selected node is link of circle */
+    // exit function, if
+    //   - marked node is no circle 
+    //   - no node has been selected
+    //   - selected node is no arrow
+    //   - selected node is link of circle 
     if (wnd->selected_node->type == LINK)
         return 0;
     if (arrow == NULL)
         return 0;
     if (arrow->type != LINK)
         return 0;
-    if (!g_ptr_array_remove (wnd->selected_node->link, arrow))
+    if (!remove_data (wnd->selected_node->link, arrow))
         return 0;
 
-    /* remove circle from arrows links */
-    g_ptr_array_remove (arrow->link, wnd->selected_node);
+    // remove circle from arrows links 
+    remove_data (arrow->link, wnd->selected_node);
 
-    /* update graph */
+    // update graph 
     draw_circle (wnd, wnd->selected_node, 1);
-    draw_arrow (wnd, arrow, 0);
+    draw_arrow (wnd, (Arrow *) arrow, 0);
     show_preview (wnd);
     
     return 1;
 }
 
-/* change nodes text */
+// change nodes text 
 void 
 edit_node (MainFrame * wnd)
 {
-    NodeData *cbd = (NodeData *) g_malloc (sizeof (NodeData));
-
-    /* return, if no node is selected */
+    // return, if no node is selected 
     if (wnd->selected_node == NULL)
         return;
 
-    /* Init Dialog-Callback-Data */
-    cbd->wnd = wnd;
-    cbd->node = wnd->selected_node;
-    cbd->retval = 0;
-
-    /* circle selected */
+    // circle selected 
     if (wnd->selected_node->type != LINK)
     {
-        /* Create and display dialog for user-input */
-        wnd->text_dlg = create_text_dialog (cbd);
-        gtk_widget_show (wnd->text_dlg);
-        gtk_window_set_modal ((GTK_WINDOW (wnd->text_dlg)), TRUE);
+        // Close Tooltip
+        if (wnd->tooltip != NULL)
+        {
+            gtk_widget_destroy (wnd->tooltip);
+            wnd->tooltip = NULL;
+        }
+        
+        // Create and display dialog for user-input 
+        crcle_dlg dlg ((Circle *) wnd->selected_node);
 
-        /* Enter Dialog - Event - Loop */
+        // Enter Dialog - Event - Loop 
         gtk_main ();
 
-        /* In case  wnd -> selected_node -> type  has changed */
+        // In case  wnd -> selected_node -> type  has changed
         draw_circle (wnd, wnd->selected_node, wnd->selected_node->highlite);
 
-        /* won´t work without, don´t ask me why! */
-        sort_nodes (wnd);
-    }
-
-    /* arrow selected */
-    else
-    {
-        // Create and show dialog for user input
-        function fct (wnd->selected_node);
-        
-        gtk_main ();
+        // won´t work without, don´t ask me why!
+        // sort_nodes (wnd);
     }
 
     show_preview (wnd);
-    
-    g_free (cbd);
 }
 
-/* delete a node */
+// delete a node 
 void 
 delete_node (MainFrame * wnd)
 {
-    /* return if no node selected */
+    // return if no node selected 
     if (wnd->selected_node == NULL)
         return;
 
-    /* Else
-       - if selected_node is arrow, then remove it from start- and end-circle
-       amd delete it
-       - if its a circle, then remove attached arrows first */
+    // Else
+    //   - if selected_node is arrow, then remove it from start- and end-circle
+    //     and delete it
+    //   - if its a circle, then remove attached arrows first 
     if (wnd->selected_node->type == LINK)
         delete_arrow (wnd, wnd->selected_node);
     else
     {
-        /* delete all links */
+        // delete all links 
         delete_links (wnd, wnd->selected_node);
 
-        /* delete all preceding arrows */
-        while (wnd->selected_node->prev->len > 0)
-            delete_arrow (wnd, (DlgNode *) g_ptr_array_index (wnd->selected_node->prev, 0));
+        // delete all preceding arrows 
+        while (wnd->selected_node->prev.size () > 0)
+            delete_arrow (wnd, wnd->selected_node->prev[0]);
 
-        /* delete all following arrows */
-        while (wnd->selected_node->next->len > 0)
-            delete_arrow (wnd, (DlgNode *) g_ptr_array_index (wnd->selected_node->next, 0));
+        // delete all following arrows 
+        while (wnd->selected_node->next.size () > 0)
+            delete_arrow (wnd, wnd->selected_node->next[0]);
 
-        /* delete circle from nodes */
+        // delete circle from nodes 
         remove_ptr_list_pointer (wnd->nodes, wnd->selected_node);
-        free_node (wnd -> selected_node);
+        delete wnd->selected_node;
 
-        /* rearange nodes */
+        // rearange nodes 
         sort_nodes (wnd);
     }
 
-    /* Set programs state to idle, since nothing is selected now */
+    // Set programs state to idle, since nothing is selected now 
     wnd->selected_node = NULL;
     wnd->mode = IDLE;
 
@@ -326,139 +279,121 @@ delete_node (MainFrame * wnd)
     show_preview (wnd);
 }
 
-/* remove arrow from start- and end-circle */
+// remove arrow from start- and end-circle 
 void 
 delete_arrow (MainFrame * wnd, DlgNode * arrow)
 {
     DlgNode *circle;
 
-    /* Links entfernen */
+    // Links entfernen 
     delete_links (wnd, arrow);
 
-    /* remove arrow from previous circle */
-    circle = (DlgNode *) g_ptr_array_index (arrow->prev, 0);
-    g_ptr_array_remove (circle->next, arrow);
+    // remove arrow from previous circle 
+    circle = arrow->prev[0];
+    remove_data (circle->next, arrow);
 
-    /* remove arrow from following circle */
-    circle = (DlgNode *) g_ptr_array_index (arrow->next, 0);
-    g_ptr_array_remove (circle->prev, arrow);
+    // remove arrow from following circle 
+    circle = arrow->next[0];
+    remove_data (circle->prev, arrow);
 
-    /* delete arrow from nodes */
+    // delete arrow from nodes 
     remove_ptr_list_pointer (wnd->nodes, arrow);
 
-    free_node (arrow);
+    delete arrow;
 
-    /* rearange nodes */
+    // rearange nodes 
     sort_nodes (wnd);
 }
 
-/* removes node from other nodes links */
+// removes node from other nodes links 
 void 
 delete_links (MainFrame * wnd, DlgNode * link)
 {
     DlgNode *node;
     u_int32 i;
 
-    /* try to delete node from all other nodes links */
+    // try to delete node from all other nodes links 
     for (i = 0; i < wnd->number; i++)
     {
         node = (DlgNode *) get_ptr_list_element (wnd->nodes, i);
-        g_ptr_array_remove (node->link, link);
+        remove_data (node->link, link);
 
-        /* unmark former link */
+        // unmark former link 
         if (node->type == LINK)
-            draw_arrow (wnd, node, 0);
+            draw_arrow (wnd, (Arrow *) node, 0);
         else
             draw_circle (wnd, node, 0);
     }
 }
 
-/* free memory allocated for a dialogue node */
-void 
-free_node (DlgNode * node)
-{
-    if (node->text)
-        g_free (node->text);
-
-    g_ptr_array_free (node->prev, FALSE);
-    g_ptr_array_free (node->next, FALSE);
-    g_ptr_array_free (node->link, FALSE);
-
-    delete node;
-}
-
-/* fills gaps created by removal of nodes */
+// fills gaps created by removal of nodes 
 void 
 sort_nodes (MainFrame * wnd)
 {
     int i;
 
-    /* set correct index of nodes */
+    // set correct index of nodes 
     for (i = 0; i < wnd->nodes->size; i++)
         ((DlgNode *) get_ptr_list_element (wnd->nodes, i))->number = i;
 
-    /* set correct number of nodes */
+    // set correct number of nodes 
     wnd->number = i;
 }
 
-/* Select node to be dragged */
+// Select node to be dragged 
 void 
 new_mover (MainFrame * wnd, GdkPoint point)
 {
     DlgNode *node;
     GdkRectangle t;
 
-    /* return if no node is selected */
+    // return if no node is selected 
     if (wnd->selected_node == NULL)
         return;
 
-    /* set apps new mode */
+    // set apps new mode 
     wnd->mode = OBJECT_DRAGGED;
 
-    /* Is dragged node circle or arrow? */
+    // Is dragged node circle or arrow? 
     if (wnd->selected_node->type != LINK)
         wnd->dragged_node = wnd->selected_node;
     else
     {
         wnd->dragged_node = new DlgNode;
         wnd->dragged_node->type = MOVER;
-        wnd->dragged_node->text = NULL;
-        wnd->dragged_node->prev = g_ptr_array_new ();
-        wnd->dragged_node->next = g_ptr_array_new ();
-        wnd->dragged_node->link = g_ptr_array_new ();
 
-        g_ptr_array_add (wnd->dragged_node->next, wnd->selected_node);
+        wnd->dragged_node->next.push_back (wnd->selected_node);
 
         t.x = point.x - 15;
         t.y = point.y - 15;
         t.width = t.height = 30;
 
-        /* Is arrow dragged by its tip? */
-        if (point_in_rect (t, wnd->selected_node->line[1]))
+        // Is arrow dragged by its tip? 
+        if (point_in_rect (t, ((Arrow *) wnd->selected_node)->line[1]))
         {
-            node = (DlgNode *) g_ptr_array_index (wnd->selected_node->next, 0);
-            g_ptr_array_add (wnd->dragged_node->next, node);
+            node = wnd->selected_node->next[0];
+            wnd->dragged_node->next.push_back (node);
 
             wnd->dragged_node->position = node->position;
             wnd->dragged_node->number = 1;
 
-            g_ptr_array_remove_index (wnd->selected_node->next, 0);
-            g_ptr_array_add (wnd->selected_node->next, wnd->dragged_node);
+            wnd->selected_node->next.pop_back ();
+            wnd->selected_node->next.push_back (wnd->dragged_node);
 
             return;
         }
 
-        /* arrow dragged by its tail? */
-        if (point_in_rect (t, wnd->selected_node->line[0]))
+        // arrow dragged by its tail? 
+        if (point_in_rect (t, ((Arrow *) wnd->selected_node)->line[0]))
         {
-            node = (DlgNode *) g_ptr_array_index (wnd->selected_node->prev, 0);
-            g_ptr_array_add (wnd->dragged_node->next, node);
+            node = wnd->selected_node->prev [0];
+            wnd->dragged_node->next.push_back (node);
 
             wnd->dragged_node->position = node->position;
             wnd->dragged_node->number = 0;
 
-            g_ptr_array_remove_index (wnd->selected_node->prev, 0);
-            g_ptr_array_add (wnd->selected_node->prev, wnd->dragged_node);
+            wnd->selected_node->prev.pop_back ();
+            wnd->selected_node->prev.push_back (wnd->dragged_node);
 
             return;
         }
@@ -472,85 +407,85 @@ new_mover (MainFrame * wnd, GdkPoint point)
     return;
 }
 
-/* move node and attached arrows */
+// move node and attached arrows 
 void 
 move_node (MainFrame * wnd, GdkPoint point)
 {
     u_int32 i;
 
-    /* move node */
+    // move node 
     wnd->dragged_node->position.x = point.x;
     wnd->dragged_node->position.y = point.y;
 
-    /* update arrows */
-    for (i = 0; i < wnd->dragged_node->prev->len; i++)
-        redraw_arrow (wnd, (DlgNode *) g_ptr_array_index (wnd->dragged_node->prev, i));
+    // update arrows 
+    for (i = 0; i < wnd->dragged_node->prev.size (); i++)
+        redraw_arrow (wnd, (Arrow *) wnd->dragged_node->prev[i]);
 
-    for (i = 0; i < wnd->dragged_node->next->len; i++)
-        redraw_arrow (wnd, (DlgNode *) g_ptr_array_index (wnd->dragged_node->next, i));
+    for (i = 0; i < wnd->dragged_node->next.size (); i++)
+        redraw_arrow (wnd, (Arrow *) wnd->dragged_node->next[i]);
 
     return;
 }
 
-/* dragging ended */
+// dragging ended 
 void 
 end_moving (MainFrame * wnd, GdkPoint point)
 {
     DlgNode *node = get_cur_selection (wnd, point);
     DlgNode *arrow, *circle, *old_circle;
 
-    /* was arrow moved -> then:
-       - assure that cursor is above circle
-       - assure that arros start and end are different
-       - update attachment
-       - delete the temporary MOVER */
+    // was arrow moved -> then:
+    //   - assure that cursor is above circle
+    //   - assure that arros start and end are different
+    //   - update attachment
+    //   - delete the temporary MOVER 
     if (wnd->dragged_node->type == MOVER)
     {
-        /* retrieve the moved arrow */
-        arrow = (DlgNode *) g_ptr_array_index (wnd->dragged_node->next, 0);
-        old_circle = (DlgNode *) g_ptr_array_index (wnd->dragged_node->next, 1);
+        // retrieve the moved arrow 
+        arrow = wnd->dragged_node->next[0];
+        old_circle = wnd->dragged_node->next[1];
 
-        /* if something´s wrong, restore old graph */
-        if (node == NULL || node == (DlgNode *) g_ptr_array_index (arrow->next, 0) ||
-            node == (DlgNode *) g_ptr_array_index (arrow->prev, 0) || node->type == LINK)
+        // if something´s wrong, restore old graph 
+        if (node == NULL || node == arrow->next[0] || node == arrow->prev[0] ||
+            node->type == LINK)
             circle = old_circle;
 
-        /* everything allright */
+        // everything allright 
         else
             circle = node;
 
-        /* arrows tail was moved */
+        // arrows tail was moved 
         if (wnd->dragged_node->number == 0)
         {
-            /* remove arrow from old circle */
-            g_ptr_array_remove (old_circle->next, arrow);
+            // remove arrow from old circle 
+            remove_data (old_circle->next, arrow);
 
-            /* add arrow to new circle */
-            g_ptr_array_add (circle->next, arrow);
-            g_ptr_array_remove_index (arrow->prev, 0);
-            g_ptr_array_add (arrow->prev, circle);
+            // add arrow to new circle 
+            circle->next.push_back (arrow);
+            arrow->prev.erase (arrow->prev.begin ());
+            arrow->prev.push_back (circle);
         }
 
-        /* arrows tip was moved */
+        // arrows tip was moved 
         else
         {
-            /* remove arrow from old circle */
-            g_ptr_array_remove (old_circle->prev, arrow);
+            // remove arrow from old circle 
+            remove_data (old_circle->prev, arrow);
 
-            /* add arrow to new circle */
-            g_ptr_array_add (circle->prev, arrow);
-            g_ptr_array_remove_index (arrow->next, 0);
-            g_ptr_array_add (arrow->next, circle);
+            // add arrow to new circle 
+            circle->prev.push_back (arrow);
+            arrow->next.erase (arrow->next.begin ());
+            arrow->next.push_back (circle);
         }
 
-        /* redraw arrow */
-        redraw_arrow (wnd, arrow);
+        // redraw arrow 
+        redraw_arrow (wnd, (Arrow *) arrow);
 
-        /* delete temporary circle */
+        // delete temporary circle 
         delete wnd->dragged_node;
     }
 
-    /* was circle moved, there is not much to do ;-) */
+    // was circle moved, there is not much to do ;-) 
     wnd->dragged_node = NULL;
     wnd->mode = OBJECT_MARKED;
 
@@ -558,7 +493,7 @@ end_moving (MainFrame * wnd, GdkPoint point)
     show_preview (wnd);
 }
 
-/* Shows Preview of Dialogue */
+// Shows Preview of Dialogue 
 void
 show_preview (MainFrame * wnd)
 {
@@ -566,48 +501,48 @@ show_preview (MainFrame * wnd)
     GList *tmp_list = NULL;
     DlgNode *circle, *node;
 
-    /* empty list */
+    // empty list 
     gtk_list_clear_items (GTK_LIST (wnd->list), 0, -1);
 
     if (wnd->selected_node == NULL)
         return;
 
     if (wnd->selected_node->type == LINK)
-        circle = (DlgNode *) g_ptr_array_index (wnd->selected_node->next, 0);
+        circle = wnd->selected_node->next[0];
     else
         circle = wnd->selected_node;
             
-    /* Insert prev links */
-    for (i = 0; i < circle->prev->len; i++)
+    // Insert prev links 
+    for (i = 0; i < circle->prev.size (); i++)
     {
-        node = (DlgNode *) g_ptr_array_index (circle->prev, i);
+        node = circle->prev[i];
 
-        for (j = 0; j < node->link->len; j++)
-            tmp_list = g_list_append (tmp_list, create_list_item (wnd, (DlgNode *) g_ptr_array_index (node->link, j), 2));
+        for (j = 0; j < node->link.size (); j++)
+            tmp_list = g_list_append (tmp_list, create_list_item (wnd, node->link[j], 2));
     }
     
-    /* Insert prev nodes */
-    for (i = 0; i < circle->prev->len; i++)
+    // Insert prev nodes 
+    for (i = 0; i < circle->prev.size (); i++)
     {
-        node = (DlgNode *) g_ptr_array_index (circle->prev, i);
-        tmp_list = g_list_append (tmp_list, create_list_item (wnd, (DlgNode *) g_ptr_array_index (node->prev, 0), 0));
+        node = circle->prev[i];
+        tmp_list = g_list_append (tmp_list, create_list_item (wnd, node->prev[0], 0));
     }
     
-    /* Insert selected node */
+    // Insert selected node 
     tmp_list = g_list_append (tmp_list, create_list_item (wnd, circle, 1));
     
-    /* Insert following nodes */   
-    for (i = 0; i < circle->next->len; i++)
+    // Insert following nodes    
+    for (i = 0; i < circle->next.size (); i++)
     {
-        node = (DlgNode *) g_ptr_array_index (circle->next, i);
-        tmp_list = g_list_append (tmp_list, create_list_item (wnd, (DlgNode *) g_ptr_array_index (node->next, 0), 0));
+        node = circle->next[i];
+        tmp_list = g_list_append (tmp_list, create_list_item (wnd, node->next[0], 0));
     }
 
-    /* Insert following links */
-    for (i = 0; i < circle->link->len; i++)
+    // Insert following links 
+    for (i = 0; i < circle->link.size (); i++)
     {
-        node = (DlgNode *) g_ptr_array_index (circle->link, i);
-        tmp_list = g_list_append (tmp_list, create_list_item (wnd, (DlgNode *) g_ptr_array_index (node->next, 0), 2));
+        node = circle->link[i];
+        tmp_list = g_list_append (tmp_list, create_list_item (wnd, node->next[0], 2));
     }
 
     gtk_widget_hide (wnd->list);
@@ -615,7 +550,7 @@ show_preview (MainFrame * wnd)
     gtk_widget_show (wnd->list);
 }
 
-/* Draws a Circle */
+// Draws a Circle 
 void 
 draw_circle (MainFrame * wnd, DlgNode * circle, int highlite)
 {
@@ -623,14 +558,14 @@ draw_circle (MainFrame * wnd, DlgNode * circle, int highlite)
     GString *links = g_string_new ("");
     int x, y;
 
-    /* assure that we only redraw circles */
+    // assure that we only redraw circles 
     if (circle->type == LINK)
         return;
 
-    /* select color for drawing circle */
+    // select color for drawing circle 
     switch (highlite)
     {
-    case 0:                    /* not selected */
+    case 0:                    // not selected 
         {
             if (circle->type == NPC)
                 gc = wnd->graph->style->black_gc;
@@ -641,7 +576,7 @@ draw_circle (MainFrame * wnd, DlgNode * circle, int highlite)
             break;
         }
 
-    case 1:                    /* selected */
+    case 1:                    // selected 
         {
             if (circle->type == NPC)
                 gc = wnd->color[GC_DARK_RED];
@@ -652,7 +587,7 @@ draw_circle (MainFrame * wnd, DlgNode * circle, int highlite)
             break;
         }
 
-    case 2:                    /* Has link */
+    case 2:                    // Has link 
         {
             gc = wnd->color[GC_PURPLE];
 
@@ -660,7 +595,7 @@ draw_circle (MainFrame * wnd, DlgNode * circle, int highlite)
             break;
         }
 
-    case 3:                    /* mouse over */
+    case 3:                    // mouse over 
         {
             gc = wnd->color[GC_GREEN];
             break;
@@ -673,14 +608,18 @@ draw_circle (MainFrame * wnd, DlgNode * circle, int highlite)
     circle->position.x += wnd->x_offset;
     circle->position.y += wnd->y_offset;
 
-    /* Insert number of links */
-    g_string_sprintf (links, "%i", circle->link->len);
+    // Insert number of links 
+    g_string_sprintf (links, "%i", circle->link.size ());
 
-    /* place text in circles center */
+    // Indicate wether node contains additional code
+    if (((Circle *) circle)->variables != "" || ((Circle *) circle)->conditions != "")
+        g_string_append_c (links, '!');
+
+    // place text in circles center 
     x = circle->position.x + (20 - gdk_string_width (wnd->font, links->str)) / 2;
     y = circle->position.y + (21 + gdk_string_height (wnd->font, links->str)) / 2;
 
-    /* draw everything */
+    // draw everything 
     gdk_draw_arc (wnd->pixmap, wnd->graph->style->white_gc, TRUE, circle->position.x, circle->position.y, 20, 20, 0, 36000);
     gdk_draw_arc (wnd->pixmap, gc, FALSE, circle->position.x, circle->position.y, 20, 20, 0, 36000);
     gdk_draw_string (wnd->pixmap, wnd->font, gc, x, y, links->str);
@@ -692,26 +631,26 @@ draw_circle (MainFrame * wnd, DlgNode * circle, int highlite)
     g_string_free (links, TRUE);
 }
 
-/* Init arrow-shape */
+// Init arrow-shape 
 void 
-redraw_arrow (MainFrame * wnd, DlgNode * arrow)
+redraw_arrow (MainFrame * wnd, Arrow * arrow)
 {
     DlgNode *node;
     GdkPoint start, end;
     float a, b, x, y;
 
-    /* assure that we only redraw arrows */
+    // assure that we only redraw arrows 
     if (arrow->type != LINK)
         return;
 
-    /* start- and end-point of arrow */
-    node = (DlgNode *) g_ptr_array_index (arrow->prev, 0);
+    // start- and end-point of arrow 
+    node = arrow->prev[0];
     start = center_point (node->position);
 
-    node = (DlgNode *) g_ptr_array_index (arrow->next, 0);
+    node = arrow->next[0];
     end = center_point (node->position);
 
-    /* gradient of line */
+    // gradient of line 
     x = start.x - end.x;
     y = start.y - end.y;
 
@@ -726,59 +665,58 @@ redraw_arrow (MainFrame * wnd, DlgNode * arrow)
         b = y < 0 ? -1.0f : 1.0f;
     }
 
-    /* line from start- to end-circle */
+    // line from start- to end-circle 
     arrow->line[0] = offset_point (start, (int)(-10.0f * a), (int)(-10.0f * b));
     arrow->line[1] = offset_point (end, (int)(10.0f * a), (int)(10.0f * b));
 
-    /* arrows tip */
+    // arrows tip 
     arrow->tip[0] = arrow->line[1];
     arrow->tip[1] = offset_point (arrow->line[1], (int)(a * 10.0f + b * 5.0f), (int)(b * 10.0f - a * 5.0f));
     arrow->tip[2] = offset_point (arrow->line[1], (int)(a * 10.0f - b * 5.0f), (int)(b * 10.0f + a * 5.0f));
 
-    /* calculate arrows new position */
+    // calculate arrows new position 
     arrow->position = create_rectangle (arrow->line[0], arrow->line[1]);
     arrow->position = inflate_rectangle (arrow->position, 2, 2);
 }
 
-/* Draws an arrow */
+// Draws an arrow 
 void 
-draw_arrow (MainFrame * wnd, DlgNode * arrow, int highlite)
+draw_arrow (MainFrame * wnd, Arrow * arrow, int highlite)
 {
     GdkGC *gc;
     GdkPoint line[2];
     GdkPoint tip[3];
     GdkRectangle rect = inflate_rectangle (arrow->position, 10, 10);
-    u_int8 fill = arrow->text == NULL ? FALSE : TRUE;
 
-    /* assure that we only redraw arrows */
+    // assure that we only redraw arrows 
     if (arrow->type != LINK)
         return;
 
-    /* select color for drawing arrow */
+    // select color for drawing arrow 
     switch (highlite)
     {
-    case 0:                    /* not selected */
+    case 0:                    // not selected 
         {
             gc = wnd->graph->style->black_gc;
             arrow->highlite = 0;
             break;
         }
 
-    case 1:                    /* selected */
+    case 1:                    // selected 
         {
             gc = wnd->color[GC_DARK_RED];
             arrow->highlite = 1;
             break;
         }
 
-    case 2:                    /* link */
+    case 2:                    // link 
         {
             gc = wnd->color[GC_PURPLE];
             arrow->highlite = 2;
             break;
         }
 
-    case 3:                    /* Mouse over */
+    case 3:                    // Mouse over 
         {
             gc = wnd->color[GC_GREEN];
             break;
@@ -788,7 +726,7 @@ draw_arrow (MainFrame * wnd, DlgNode * arrow, int highlite)
         return;
     }
     
-    /* Current position */
+    // Current position 
     line[0] = offset_point (arrow->line[0], wnd->x_offset, wnd->y_offset);
     line[1] = offset_point (arrow->line[1], wnd->x_offset, wnd->y_offset);
     tip[0] = offset_point (arrow->tip[0], wnd->x_offset, wnd->y_offset);
@@ -798,14 +736,14 @@ draw_arrow (MainFrame * wnd, DlgNode * arrow, int highlite)
     rect.x += wnd->x_offset;
     rect.y += wnd->y_offset;
     
-    /* draw everything */
+    // draw everything 
     gdk_draw_polygon (wnd->pixmap, gc, FALSE, line, 2);
     gdk_draw_polygon (wnd->pixmap, wnd->graph->style->white_gc, TRUE, tip, 3);
-    gdk_draw_polygon (wnd->pixmap, gc, fill, tip, 3);
+    gdk_draw_polygon (wnd->pixmap, gc, FALSE, tip, 3);
     gtk_widget_draw (wnd->graph, &rect);
 }
 
-/* redraw graph */
+// redraw graph 
 void 
 redraw_graph (MainFrame * wnd)
 {
@@ -813,37 +751,37 @@ redraw_graph (MainFrame * wnd)
     DlgNode *node;
     GdkRectangle t;
 
-    /* get visible part of graph */
+    // get visible part of graph 
     t.x = -wnd->x_offset;
     t.y = -wnd->y_offset;
     t.width = wnd->graph->allocation.width;
     t.height = wnd->graph->allocation.height;
 
-    /* Clear graph */
+    // Clear graph 
     gdk_draw_rectangle (wnd->pixmap, wnd->graph->style->white_gc, TRUE, 0, 0, t.width, t.height);
 
-    /* check for each node, wether it is visible */
+    // check for each node, wether it is visible 
     for (i = 0; i < wnd->number; i++)
     {
         node = (DlgNode *) get_ptr_list_element (wnd->nodes, i);
 
-        if (point_in_rect (t, center_point (node->position)))
+        if (rect_in_rect (t, node->position))
         {
             if (node->type == LINK)
-                draw_arrow (wnd, node, node->highlite);
+                draw_arrow (wnd, (Arrow *) node, node->highlite);
             else
                 draw_circle (wnd, node, node->highlite);
         }
     }
 
-    /* normalize rect */
+    // normalize rect 
     t.x = 0;
     t.y = 0;
 
-    /* draw backing image to screen */
+    // draw backing image to screen 
     gtk_widget_draw (wnd->graph, &t);
 
-    /* Mark object below cursor if neccessary */
+    // Mark object below cursor if neccessary 
     // if (wnd->mode != OBJECT_DRAGGED)
     // {
     //     wnd->below_pointer = NULL;
@@ -851,249 +789,117 @@ redraw_graph (MainFrame * wnd)
     // }
 }
 
-/* create new dialogue */
+// create new dialogue 
 void
 new_dialogue (MainFrame * wnd)
 {
-    /* first, clear current dialogue and set app back ... */
+    // first, clear current dialogue and set app back ... 
     delete_dialogue (wnd);
     init_app (wnd);
 
-    /* ... then update display */
+    // ... then update display 
     gtk_window_set_title (GTK_WINDOW (wnd->wnd), "Adonthell Dialogue Editor v0.2 - [new_dialogue]");
     redraw_graph (wnd);
     show_preview (wnd);
 }
 
-/* load a dialogue from disk */
+// load a dialogue from disk 
 void 
 load_dialogue (MainFrame * wnd, const char *file)
 {
-    int i;
-    u_int8 type;
-    gchar str[5];
-    FILE *in;
-
-    /* Was load cancelled? */
+    int i, n;
+    string s;
+    Circle *circle;
+    Arrow *arrow;
+ 
+    // Was load cancelled? 
     if (file == NULL)
         return;
 
-    /* open File */
-    in = fopen (file, "rb");
+    // open File 
+    loadlgin = fopen (file, "rb");
 
-    if (!in)
+    if (!loadlgin)
     {
         g_message ("could not open file %s", file);
         return;
     }
 
-    /* Check if its a correct file */
-    fgets (str, 5, in);
-
-    if (g_strcasecmp ("ADS1", str))
-    {
-        g_message ("%s is no valid dialogue file", file);
-        return;
-    }
-
-    /* first, clear current dialogue and set app back ... */
+    // first, clear current dialogue and set app back ... 
     delete_dialogue (wnd);
     init_app (wnd);
 
-    /* ... then load all nodes ... */
-    fread (&wnd->number, sizeof (wnd->number), 1, in);
+    // ... then load all nodes ... 
 
-    for (i = 0; i < (int) wnd->number; i++)
+    while (i)
     {
-        fread (&type, sizeof (type), 1, in);
+        switch (i = parse_dlgfile (s, n))
+        {
+            case LOAD_CIRCLE:
+            {
+                circle = new Circle;
+                circle->load (wnd->number++);
 
-        if (type != LINK)
-            load_circle (wnd, in, type);
-        else
-            load_arrow (wnd, in);
+                add_ptr_list_element (wnd->nodes, circle);
+                break;
+            }
+
+            case LOAD_ARROW:
+            {
+                arrow = new Arrow;
+                arrow->load (wnd->number++, wnd->nodes);
+                redraw_arrow (wnd, arrow);
+
+                add_ptr_list_element (wnd->nodes, arrow);
+                break;
+            }
+            
+            default: break;
+        }
     }
 
-    /* ... and redraw them */
+    // ... and redraw them 
     redraw_graph (wnd);
 
-    /* set new window - title */
+    // set new window - title 
     wnd->file_name = g_strdup (file);
     gtk_window_set_title (GTK_WINDOW (wnd->wnd), g_strjoin (NULL, "Adonthell Dialogue Editor v0.2 - [", strrchr (wnd->file_name, '/') + 1, "]", NULL));
 
-    /* look wether compiled dlg exists and set Run - Menuitem accordingly
-     * (Currently we simply set it to FALSE, since that is faster (to code)) */
+    // look wether compiled dlg exists and set Run - Menuitem accordingly
+    // (Currently we simply set it to FALSE, since that is faster (to code)) 
     gtk_widget_set_sensitive (wnd->dialogue_run, FALSE);
 
-    /* clean up */
-    fclose (in);
+    // clean up 
+    fclose (loadlgin);
 }
 
-/* load circle from a file */
-void 
-load_circle (MainFrame * wnd, FILE * in, int type)
-{
-    DlgNode *circle = new DlgNode;
-    u_int32 size;
-    char *str;
-
-    /* init arrow */
-    circle->prev = g_ptr_array_new ();
-    circle->next = g_ptr_array_new ();
-    circle->link = g_ptr_array_new ();
-    circle->highlite = 0;
-
-    /* assign type and load number */
-    circle->type = type;
-    fread (&circle->number, sizeof (circle->number), 1, in);
-
-    /* load position */
-    fread (&circle->position.x, sizeof (circle->position.x), 1, in);
-    fread (&circle->position.y, sizeof (circle->position.y), 1, in);
-    fread (&circle->position.height, sizeof (circle->position.height), 1, in);
-    fread (&circle->position.width, sizeof (circle->position.width), 1, in);
-
-    /* load text */
-    fread (&size, sizeof (size), 1, in);
-
-    str = new char[size + 1];
-    fread (str, sizeof (str[0]), size, in);
-    str[size] = '\0';
-
-    circle->text = str;
-    
-    /* add to array of nodes */
-    add_ptr_list_element (wnd->nodes, circle);
-}
-
-/* load an arrow from file */
-void 
-load_arrow (MainFrame * wnd, FILE * in)
-{
-    u_int32 num, i, idx;
-    u_int16 size;
-    char *str;
-    function_data *data;
-    string text ("");
-    DlgNode *arrow = new DlgNode;
-    DlgNode *circle;
-
-    /* init arrow */
-    arrow->prev = g_ptr_array_new ();
-    arrow->next = g_ptr_array_new ();
-    arrow->link = g_ptr_array_new ();
-    arrow->highlite = 0;
-    
-    /* assign type and load number */
-    arrow->type = LINK;
-    fread (&arrow->number, sizeof (arrow->number), 1, in);
-
-    /* load and assign start-circle */
-    fread (&idx, sizeof (idx), 1, in);
-    circle = (DlgNode *) get_ptr_list_element (wnd->nodes, idx);
-
-    g_ptr_array_add (circle->next, arrow);
-    g_ptr_array_add (arrow->prev, circle);
-
-    /* load and assign end-circle */
-    fread (&idx, sizeof (idx), 1, in);
-    circle = (DlgNode *) get_ptr_list_element (wnd->nodes, idx);
-
-    g_ptr_array_add (circle->prev, arrow);
-    g_ptr_array_add (arrow->next, circle);
-
-    // load function data
-    fread (&size, sizeof (size), 1, in);
-
-    for (i = 0; i < size; i++)
-    {
-        data = new function_data;
-        
-        // function
-        fread (&data->function, sizeof (data->function), 1, in);
-        
-        // variable
-        fread (&idx, sizeof (idx), 1, in);
-        str = new char[idx + 1];
-        fread (str, sizeof (str[0]), idx, in);
-        str[idx] = '\0';
-        data->variable = str;
-
-        // operation
-        fread (&data->operation, sizeof (data->operation), 1, in);
-
-        // value
-        fread (&idx, sizeof (idx), 1, in);
-        str = new char[idx + 1];
-        fread (str, sizeof (str[0]), idx, in);
-        str[idx] = '\0';
-        data->value = str;
-
-        // set arrow-text
-        text += function::fct_string[data->function];
-        text += " ";
-        text += data->variable;
-        text += " ";
-        text += function::op_string[data->operation];
-        text += " ";
-        text += data->value;
-        text += "\n";
-
-        arrow->fctn.push_back (data);
-
-        // add variable to list of variables
-        if (function::vars.find (data->variable) != function::vars.end ())
-            function::vars[data->variable]++;
-        else
-            function::vars[data->variable] = 1;
-    }
-    
-    if (size > 0) arrow->text = g_strdup (text.c_str ());
-    else arrow->text = NULL;
-    
-    /* load  links */
-    fread (&num, sizeof (num), 1, in);
-    for (i = 0; i < num; i++)
-    {
-        fread (&idx, sizeof (idx), 1, in);
-        circle = (DlgNode *) get_ptr_list_element (wnd->nodes, idx);
-
-        g_ptr_array_add (circle->link, arrow);
-        g_ptr_array_add (arrow->link, circle);
-    }
-
-    /* recalculate arrows shape */
-    redraw_arrow (wnd, arrow);
-
-    /* Add to Array of nodes */
-    add_ptr_list_element (wnd->nodes, arrow);
-}
-
-/* save a dialogue to disk */
+// save a dialogue to disk 
 void 
 save_dialogue (MainFrame * wnd)
 {
+    time_t tm;
     u_int32 i;
     int index = 0;
     int *table = (int *)malloc (sizeof (int) * wnd->number);
     GString *file = g_string_new (NULL);
-    FILE *out;
+    ofstream out;
     GtkWidget *fs = create_fileselection (file, 0);
 
     gtk_file_selection_set_filename ((GtkFileSelection *) fs, wnd->file_name);
 
-    /* chose file */
+    // chose file 
     gtk_widget_show (fs);
     gtk_main ();
 
-    /* Was save cancelled? */
+    // Was save cancelled? 
     if (file->str == NULL)
     {
         g_string_free (file, TRUE);
         return;
     }
 
-    /* open File */
-    out = fopen (file->str, "wb");
+    // open File 
+    out.open (file->str);
 
     if (!out)
     {
@@ -1102,126 +908,63 @@ save_dialogue (MainFrame * wnd)
         return;
     }
 
-    /* Be on the safe side */
+    // Be on the safe side 
     sort_nodes (wnd);
 
-    /* Write Header: Adonthell Dialogue System file version 1 */
-    fputs ("ADS1", out);
-    
-    /* Number of nodes */
-    fwrite (&wnd->number, sizeof(wnd->number), 1, out);
+    // Write Header: Adonthell Dialogue System file version 1 
+    out << "# Adonthell Dialogue System source file\n";
+    out << "# Generated by Dialogue Editor v0.4, (C) 2000 Kai Sterker\n\n";
 
-    /* Save Circles and create position-table */
+    out << "# Last saved by " << g_get_user_name () << " on ";
+    time (&tm);
+    out << asctime (gmtime (&tm)) << "\n";
+    
+    // Number of nodes 
+    out << "# " << wnd->number << " Nodes in Dialogue\n";
+    
+    // Save Circles and create position-table 
     for (i = 0; i < wnd->number; i++)
         if (((DlgNode *) get_ptr_list_element (wnd->nodes, i))->type != LINK)
         {
-            save_circle ((DlgNode *) get_ptr_list_element (wnd->nodes, i), out, index);
+            ((Circle *) get_ptr_list_element (wnd->nodes, i))->save (out);
             table[i] = index;
             index++;
         }
 
-    /* Save Arrows */
+    // Save Arrows 
     for (i = 0; i < wnd->number; i++)
         if (((DlgNode *) get_ptr_list_element (wnd->nodes, i))->type == LINK)
         {
-            save_arrow ((DlgNode *) get_ptr_list_element (wnd->nodes, i), out, index, table);
+            ((Arrow *) get_ptr_list_element (wnd->nodes, i))->save (out);
             index++;
         }
 
-    /* set new window - title */
+    // set new window - title 
     wnd->file_name = g_strdup (file->str);
     gtk_window_set_title (GTK_WINDOW (wnd->wnd), g_strjoin (NULL, "Adonthell Dialogue Editor v0.2 - [", strrchr (wnd->file_name, '/') + 1, "]", NULL));
 
-    /* clean up */
+    // clean up 
     g_string_free (file, TRUE);
     free (table);
 
-    fclose (out);
+    out.close ();
 }
 
-void 
-save_circle (DlgNode * circle, FILE * out, int number)
-{
-    u_int32 len = 0;
-    
-    /* save type and number */
-    fwrite (&circle->type, sizeof (circle->type), 1, out);
-    fwrite (&number, sizeof (number), 1, out);
-
-    /* save position */
-    fwrite (&circle->position.x, sizeof (circle->position.x), 1, out);
-    fwrite (&circle->position.y, sizeof (circle->position.y), 1, out);
-    fwrite (&circle->position.height, sizeof (circle->position.height), 1, out);
-    fwrite (&circle->position.width, sizeof (circle->position.width), 1, out);
-
-    /* save text */
-    if (circle->text != NULL)
-    {
-        len = strlen (circle->text);
-        fwrite (&len, sizeof (len), 1, out);
-        fwrite (circle->text, sizeof (circle->text[0]), len, out);
-    }
-    else
-        fwrite (&len, sizeof (len), 1, out);
-}
-
-void 
-save_arrow (DlgNode * arrow, FILE * out, int number, int *table)
-{
-    u_int32 i, len = 0;
-    u_int16 size;
-
-    /* save type and number */
-    fwrite (&arrow->type, sizeof (arrow->type), 1, out);
-    fwrite (&number, sizeof (number), 1, out);
-
-    /* start- and end-circle */
-    fwrite (&table[((DlgNode *) g_ptr_array_index (arrow->prev, 0))->number], sizeof(table[0]), 1, out);
-    fwrite (&table[((DlgNode *) g_ptr_array_index (arrow->next, 0))->number], sizeof(table[0]), 1, out);
-
-    // save function data
-    size = arrow->fctn.size ();
-    fwrite (&size, sizeof (size), 1, out);
-
-    for (i = 0; i < size; i++)
-    {
-        // function
-        fwrite (&arrow->fctn[i]->function, sizeof (arrow->fctn[i]->function), 1, out);
-        
-        // variable
-        len = strlen (arrow->fctn[i]->variable);
-        fwrite (&len, sizeof (len), 1, out);
-        fwrite (arrow->fctn[i]->variable, sizeof (arrow->fctn[i]->variable[0]), len, out);
-
-        // operation
-        fwrite (&arrow->fctn[i]->operation, sizeof (arrow->fctn[i]->operation), 1, out);
-
-        // value
-        len = strlen (arrow->fctn[i]->value);
-        fwrite (&len, sizeof (len), 1, out);
-        fwrite (arrow->fctn[i]->value, sizeof (arrow->fctn[i]->value[0]), len, out);
-    }
-    
-    /* links */
-    fwrite (&arrow->link->len, sizeof (arrow->link->len), 1, out);
-    for (i = 0; i < arrow->link->len; i++)
-        fwrite (&table[((DlgNode *) g_ptr_array_index (arrow->link, i))->number], sizeof (table[0]), 1, out);
-}
 
 void 
 mouse_over (MainFrame * wnd, GdkPoint point)
 {
     DlgNode *node = get_cur_selection (wnd, point);
 
-    /* Exit function if  
-       - node below pointer is unchanged
-       - no node below cursor */
+    // Exit function if  
+    //   - node below pointer is unchanged
+    //   - no node below cursor 
     if (node == wnd->below_pointer)
         return;
     if (node == NULL)
     {
         if (wnd->below_pointer->type == LINK)
-            draw_arrow (wnd, wnd->below_pointer, wnd->below_pointer->highlite);
+            draw_arrow (wnd, (Arrow *) wnd->below_pointer, wnd->below_pointer->highlite);
         else
             draw_circle (wnd, wnd->below_pointer, wnd->below_pointer->highlite);
 
@@ -1237,11 +980,11 @@ mouse_over (MainFrame * wnd, GdkPoint point)
         return;
     }
 
-    /* remove highlite */
+    // remove highlite 
     if (wnd->below_pointer != NULL)
     {
         if (wnd->below_pointer->type == LINK)
-            draw_arrow (wnd, wnd->below_pointer, wnd->below_pointer->highlite);
+            draw_arrow (wnd, (Arrow *) wnd->below_pointer, wnd->below_pointer->highlite);
         else
             draw_circle (wnd, wnd->below_pointer, wnd->below_pointer->highlite);
 
@@ -1256,26 +999,26 @@ mouse_over (MainFrame * wnd, GdkPoint point)
 
     wnd->below_pointer = node;
 
-    /* Draw border and objects text */
+    // Draw border and objects text 
     show_sel (wnd, node);
     show_tooltip (wnd, node);
 }
 
-/* Select a Node */
+// Select a Node 
 int 
 select_object (MainFrame * wnd, GdkPoint point)
 {
     DlgNode *node = get_cur_selection (wnd, point);
     u_int32 i;
 
-    /* No object selected */
+    // No object selected 
     if (node == NULL)
         return 0;
 
-    /* set selected object */
+    // set selected object 
     wnd->selected_node = node;
 
-    /* highlite node and its links */
+    // highlite node and its links 
     switch (node->type)
     {
     case NPC:
@@ -1283,24 +1026,24 @@ select_object (MainFrame * wnd, GdkPoint point)
         {
             draw_circle (wnd, node, 1);
 
-            for (i = 0; i < wnd->selected_node->link->len; i++)
-                draw_arrow (wnd, (DlgNode *) g_ptr_array_index (wnd->selected_node->link, i), 2);
+            for (i = 0; i < wnd->selected_node->link.size (); i++)
+                draw_arrow (wnd, (Arrow *) wnd->selected_node->link[i], 2);
 
             break;
         }
 
     case LINK:
         {
-            draw_arrow (wnd, node, 1);
+            draw_arrow (wnd, (Arrow *) node, 1);
 
-            for (i = 0; i < wnd->selected_node->link->len; i++)
-                draw_circle (wnd, (DlgNode *) g_ptr_array_index (wnd->selected_node->link, i), 2);
+            for (i = 0; i < wnd->selected_node->link.size (); i++)
+                draw_circle (wnd, wnd->selected_node->link[i], 2);
 
             break;
         }
     }
 
-    /* Set new Program-Mode */
+    // Set new Program-Mode 
     wnd->mode = OBJECT_MARKED;
 
     show_preview (wnd);
@@ -1308,16 +1051,16 @@ select_object (MainFrame * wnd, GdkPoint point)
     return 1;
 }
 
-/* Select a Node */
+// Select a Node 
 void 
 select_object_index (MainFrame * wnd, int index)
 {
     u_int32 i;
 
-    /* set selected object */
+    // set selected object 
     wnd->selected_node = (DlgNode *) get_ptr_list_element (wnd->nodes, index);
 
-    /* highlite node and its links */
+    // highlite node and its links 
     switch (wnd->selected_node->type)
     {
     case NPC:
@@ -1325,40 +1068,40 @@ select_object_index (MainFrame * wnd, int index)
         {
             draw_circle (wnd, wnd->selected_node, 1);
 
-            for (i = 0; i < wnd->selected_node->link->len; i++)
-                draw_arrow (wnd, (DlgNode *) g_ptr_array_index (wnd->selected_node->link, i), 2);
+            for (i = 0; i < wnd->selected_node->link.size (); i++)
+                draw_arrow (wnd, (Arrow *) wnd->selected_node->link[i], 2);
 
             break;
         }
 
     case LINK:
         {
-            draw_arrow (wnd, wnd->selected_node, 1);
+            draw_arrow (wnd, (Arrow *) wnd->selected_node, 1);
 
-            for (i = 0; i < wnd->selected_node->link->len; i++)
-                draw_circle (wnd, (DlgNode *) g_ptr_array_index (wnd->selected_node->link, i), 2);
+            for (i = 0; i < wnd->selected_node->link.size (); i++)
+                draw_circle (wnd, wnd->selected_node->link[i], 2);
 
             break;
         }
     }
 
-    /* Set new Program-Mode */
+    // Set new Program-Mode 
     wnd->mode = OBJECT_MARKED;
 
     show_preview (wnd);
 }
 
-/* Deselect a Node */
+// Deselect a Node 
 int 
 deselect_object (MainFrame * wnd)
 {
     u_int32 i;
 
-    /* No object selected */
+    // No object selected 
     if (wnd->selected_node == NULL)
         return 0;
 
-    /* unhighlite node and its links */
+    // unhighlite node and its links 
     switch (wnd->selected_node->type)
     {
     case NPC:
@@ -1366,27 +1109,27 @@ deselect_object (MainFrame * wnd)
         {
             draw_circle (wnd, wnd->selected_node, 0);
 
-            for (i = 0; i < wnd->selected_node->link->len; i++)
-                draw_arrow (wnd, (DlgNode *) g_ptr_array_index (wnd->selected_node->link, i), 0);
+            for (i = 0; i < wnd->selected_node->link.size (); i++)
+                draw_arrow (wnd, (Arrow *) wnd->selected_node->link[i], 0);
 
             break;
         }
 
     case LINK:
         {
-            draw_arrow (wnd, wnd->selected_node, 0);
+            draw_arrow (wnd, (Arrow *) wnd->selected_node, 0);
 
-            for (i = 0; i < wnd->selected_node->link->len; i++)
-                draw_circle (wnd, (DlgNode *) g_ptr_array_index (wnd->selected_node->link, i), 0);
+            for (i = 0; i < wnd->selected_node->link.size (); i++)
+                draw_circle (wnd, wnd->selected_node->link[i], 0);
 
             break;
         }
     }
 
-    /* set selected object */
+    // set selected object 
     wnd->selected_node = NULL;
 
-    /* Set new Program-Mode */
+    // Set new Program-Mode 
     wnd->mode = IDLE;
 
     show_preview (wnd);
@@ -1398,32 +1141,53 @@ void
 show_tooltip (MainFrame * wnd, DlgNode * node)
 {
     int x, y;
+    GString *str;
+    Circle *circle;
+
+    if (node->type == LINK) return;
 
     if (wnd->tooltip == NULL)
     {
+        circle = (Circle *) node;
+        str = g_string_new (circle->text.c_str ());
+
+        if (circle->conditions != "")
+        {
+            str = g_string_prepend (str, "\n\n");
+            str = g_string_prepend (str, circle->conditions.c_str ());
+        }
+
+        if (circle->variables != "")
+        {
+            str = g_string_append (str, "\n\n");
+            str = g_string_append (str, circle->variables.c_str ());
+        }
+        
         gdk_window_get_origin (gtk_widget_get_parent_window (wnd->graph), &x, &y);
 
         x = x + node->position.x + node->position.width + wnd->x_offset;
         y = y + node->position.y + node->position.height + wnd->y_offset;
 
-        wnd->tooltip = create_tooltip (node->text, x, y);
+        wnd->tooltip = create_tooltip (str->str, x, y);
         gtk_widget_show (wnd->tooltip);
+
+        g_string_free (str, TRUE);
     }
 }
 
-/* Highlight node below cursor */
+// Highlight node below cursor 
 void 
 show_sel (MainFrame * wnd, DlgNode * node)
 {
     if (node->type == LINK)
-        draw_arrow (wnd, node, 3);
+        draw_arrow (wnd, (Arrow *) node, 3);
     else
         draw_circle (wnd, node, 3);
 
     gtk_widget_draw (wnd->graph, &wnd->below_pointer->position);
 }
 
-/* Check if a node is below cursor */
+// Check if a node is below cursor 
 DlgNode *
 get_cur_selection (MainFrame * wnd, GdkPoint point)
 {
@@ -1431,7 +1195,7 @@ get_cur_selection (MainFrame * wnd, GdkPoint point)
     DlgNode *node;
     GdkRectangle rect;
 
-    /* Mousepointer over node? */
+    // Mousepointer over node? 
     for (i = 0; i < (int) wnd->number; i++)
     {
         node = (DlgNode *) get_ptr_list_element (wnd->nodes, i);
@@ -1439,21 +1203,23 @@ get_cur_selection (MainFrame * wnd, GdkPoint point)
 
         if (point_in_rect (rect, point))
         {
-            /* node == circle? -> return */
+            // node == circle? -> return 
             if (node->type != LINK)
                 return node;
 
-            /* node == arrow? -> just a bit geometry ;-) */
-            /* straight g: ax + by + c = 0 through 2 points p(x, y) und q(x, y): */
-            /* with a = (p.y - q.y), b = (q.x - p.x), c = (-(p.x * a + p.y * b)) */
+            // node == arrow? -> just a bit geometry ;-) 
+            // straight g: ax + by + c = 0 through 2 points p(x, y) und q(x, y): 
+            // with a = (p.y - q.y), b = (q.x - p.x), c = (-(p.x * a + p.y * b)) 
 
-            /* insert point in above function; values |x| < 500 are close to the arrow */
+            // insert point in above function; values |x| < 500 are close to the arrow 
             else
             {
-                dx = node->line[1].x - node->line[0].x;
-                dy = node->line[0].y - node->line[1].y;
+                Arrow *arrow = (Arrow *) node;
+                
+                dx = arrow->line[1].x - arrow->line[0].x;
+                dy = arrow->line[0].y - arrow->line[1].y;
 
-                x = (dy * point.x + dx * point.y) - (node->line[0].x * dy + node->line[0].y * dx);
+                x = (dy * point.x + dx * point.y) - (arrow->line[0].x * dy + arrow->line[0].y * dx);
 
                 if (x < 500 && x > -500)
                     return node;
@@ -1464,7 +1230,7 @@ get_cur_selection (MainFrame * wnd, GdkPoint point)
     return NULL;
 }
 
-/* center the view on node */
+// center the view on node 
 void
 center_object (MainFrame * wnd, DlgNode * node)
 {
@@ -1480,7 +1246,7 @@ center_object (MainFrame * wnd, DlgNode * node)
     x = -view.width / 5;
     y = -view.height / 5;
 
-    /* is node outside the views inner 60% ? */
+    // is node outside the views inner 60% ? 
     if (!point_in_rect (inflate_rectangle (view, x, y), pos))
     {
         wnd->x_offset -= pos.x - wnd->graph->allocation.width / 2;
@@ -1488,4 +1254,15 @@ center_object (MainFrame * wnd, DlgNode * node)
 
         redraw_graph (wnd);
     }
+}
+
+// Removes data from a vector and reports success or failure
+template <class T> u_int8 remove_data (vector<T, allocator<T> > &array, T data)
+{
+    vector<T, allocator<T> >::iterator i;
+
+    if ((i = find (array.begin (), array.end (), data)) == array.end ()) return 0;
+    else array.erase (i);
+
+    return 1;
 }

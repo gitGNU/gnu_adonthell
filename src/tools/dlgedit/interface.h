@@ -12,19 +12,7 @@
    See the COPYING file for more details.
 */
 
-/* Callback Data for editing a node */
-typedef struct
-{
-    MainFrame *wnd;
-    DlgNode *node;
-    GtkEditable *edit_box;
-    u_int8 retval;
-}
-NodeData;
-
 void create_mainframe (MainFrame *);
-GtkWidget *create_text_dialog (NodeData *);
-GtkWidget *create_tooltip (gchar *, s_int32, s_int32);
+GtkWidget *create_tooltip (const gchar *, s_int32, s_int32);
 GtkWidget *create_fileselection (GString *, u_int8);
-GtkWidget *create_run_dialogue (RunData *);
 GtkWidget *create_list_item (MainFrame *, DlgNode *, int);

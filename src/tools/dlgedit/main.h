@@ -12,15 +12,6 @@
    See the COPYING file for more details.
  */
 
-/* Node Types */
-enum
-{
-    PLAYER = 1,
-    NPC = 2,
-    LINK = 3,
-    MOVER = 4
-};
-
 /* Internal Editor Modes */
 enum
 {
