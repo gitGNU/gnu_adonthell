@@ -32,7 +32,6 @@ or later and OggVorbis.
    and http://www.xiph.org/ogg/vorbis/download/
 
 
-
 Installing:
 ===========
 
@@ -43,15 +42,55 @@ make
 
 
 The first time you run Adonthell, a configuration file is created:
-$HOME/.adonthell/adonthellrc. For now you'll have to add the full
-path to the data directory and the map to load at startup manually.
-You can also configure various other aspects of the game.
+$HOME/.adonthell/adonthellrc. Unless you install the data package in
+/usr/local/share/adonthell-data/ you'll have to add the full path
+to the data directory manually. You can also configure various other 
+aspects of the game.
 
 For more information, see the README file. Problems? Don't have
 the right libraries? Please look at the NEWBIE file or our website
 for answers:
 
-http://adonthell.linuxgames.com
+    http://adonthell.linuxgames.com
+
+
+Advanced configure options:
+===========================
+
+There are a number of options to 'configure' that might be useful
+for you. For a complete list, run 'configure --help'.
+
+--disable-sdltest
+--disable-vorbistest
+--disable-gtktest
+
+  If configure claims to not find the SDL library, OggVorbis or
+GTK+ although they are there, you can try disable the test. 
+Chances are good that you can compile Adonthell afterwards, but
+it's usually an indication that those libraries are not correctly
+installed.
+
+--with-<x>-prefix=PFX
+
+  This allows you to specify the path to various libraries. (replace
+the <x> with the name of the library. This is useful if you have 
+installed those libraries in unusual locations, although it might be
+better to set the $LD_LIBRARY_PATH environment variable, or to add
+those directories to /etc/ld.so.conf.
+
+--enable-tools
+
+  Use this to build the Adonthell development tools. This include
+editors for our graphic objects, characters, maps dialogues and a
+few other tools.
+
+--enable-memleaks
+
+  This enables support for mtrace, a tool to find memory leaks.
+After compiling you have to set the $MALLOC_TRACE environment 
+variable to any file. Running Adonthell will record debugging
+information in this file. Use 'mtrace adonthell $MALLOC_TRACE'
+to finally display any occurrence of memory leaks.
 
 
 *********************************************************************
