@@ -43,8 +43,14 @@ public:
     /**
      * Show the dialog and display the contents of the given module.
      * @param entry the custom code of a certain DlgModule to be edited.
+     * @param name name of the dialogue whose code is being edited.
      */
-    void display (DlgModuleEntry *entry);
+    void display (DlgModuleEntry *entry, std::string &name);
+    
+    /**
+     * Store the user's entries once the OK button has been pressed.
+     */
+    void applyChanges ();
     
 private:
     DlgModuleEntry *entry;  // The module being edited

@@ -115,7 +115,10 @@ enum
     LOAD_NPC = 18,
     LOAD_STR = 19,
     LOAD_NUM = 20,
-    LOAD_UNKNOWN = 21
+    LOAD_IMPORTS = 21,
+    LOAD_CTOR = 22,
+    LOAD_DTOR = 23,
+    LOAD_UNKNOWN = 24
 };
 
 /**

@@ -457,6 +457,10 @@ void GuiDlgedit::showDialogue (DlgModule *module)
     // attach the dialogue to the view
     graph_->attachModule (module);
     
+    // update the custom code entry if neccessary
+    if (GuiCode::dialog != NULL)
+        GuiCode::dialog->display (module->entry (), module->name ());
+    
     // update the window title
     initTitle ();
 }
@@ -491,7 +495,7 @@ void GuiDlgedit::customCode ()
         GuiCode::dialog = new GuiCode ();
     
     // otherwise just show it
-    GuiCode::dialog->display (module->entry ());
+    GuiCode::dialog->display (module->entry (), module->name ());
 }
 
 // preview the translated dialogue

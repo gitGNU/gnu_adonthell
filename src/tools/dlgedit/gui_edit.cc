@@ -54,6 +54,9 @@ GuiEdit::~GuiEdit ()
 // set the entry's text
 void GuiEdit::setText (const std::string &text)
 {
+    if (gtk_text_get_length (GTK_TEXT (entry)) > 0)
+        gtk_editable_delete_text (GTK_EDITABLE (entry), 0, -1);
+    
     gtk_text_insert (GTK_TEXT (entry), entry->style->font, 
         &entry->style->black, &entry->style->white, text.c_str (), -1);
 }

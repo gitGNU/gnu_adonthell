@@ -15,7 +15,7 @@
 
 #include <math.h>
 #include <string>
-#include "dlgnode.h"
+#include "dlg_types.h"
 
 #define YY_DECL int parse_dlgfile (string &mytext, int &mynum)
 %}
@@ -47,6 +47,9 @@ NPC             return LOAD_NPC;
 Name            return LOAD_NAME;
 Race            return LOAD_RACE;
 Gender          return LOAD_GENDER;
+Inc             return LOAD_IMPORTS;
+Dtor            return LOAD_DTOR;
+Ctor            return LOAD_CTOR;
 
 §               mytext = ""; BEGIN(text);
 <text>§         BEGIN(INITIAL); return LOAD_STR;

@@ -191,12 +191,6 @@ bool DlgModule::load ()
                 break;
             }
 
-            case LOAD_FUNC:
-            {
-                if (parse_dlgfile (s, n) == LOAD_STR);
-                break;
-            }
-
             case LOAD_NAME:
             {
                 if (parse_dlgfile (s, n) == LOAD_STR)
@@ -212,6 +206,30 @@ bool DlgModule::load ()
             case LOAD_NOTE:
             {
                 if (parse_dlgfile (s, n) == LOAD_STR) description_ = s;
+                break;
+            }
+
+            case LOAD_FUNC:
+            {
+                if (parse_dlgfile (s, n) == LOAD_STR) entry_.setMethods (s);
+                break;
+            }
+            
+            case LOAD_CTOR:
+            {
+                if (parse_dlgfile (s, n) == LOAD_STR) entry_.setCtor (s);
+                break;
+            }
+            
+            case LOAD_DTOR:
+            {
+                if (parse_dlgfile (s, n) == LOAD_STR) entry_.setDtor (s);
+                break;
+            }
+            
+            case LOAD_IMPORTS:
+            {
+                if (parse_dlgfile (s, n) == LOAD_STR) entry_.setImports (s);
                 break;
             }
 
@@ -287,11 +305,24 @@ bool DlgModule::save (std::string &file)
 
     // Write Header: Adonthell Dialogue System file version 1
     out << "# Dlgedit File Format 1\n#\n"
-        << "# Written by Adonthell Dlgedit v" << _VERSION_ << "\n"
+        << "# Produced by Adonthell Dlgedit v" << _VERSION_ << "\n"
         << "# (C) 2000/2001/2002 Kai Sterker\n#\n"
         << "# $I" << "d$\n\n"
         << "Note §" << description_ << "§\n\n";
 
+    // Save settings and stuff
+    if (entry_.imports () != "")
+        out << "Inc  §" << entry_.imports () << "§\n";
+    
+    if (entry_.ctor () != "")
+        out << "Ctor §" << entry_.ctor () << "§\n";
+
+    if (entry_.dtor () != "")
+        out << "Dtor §" << entry_.dtor () << "§\n";
+    
+    if (entry_.methods () != "")
+        out << "Func §" << entry_.methods () << "§\n";
+    
     // Save Circles first, as arrows depend on them when loading later on
     for (std::vector<DlgNode*>::iterator i = nodes.begin (); i != nodes.end (); i++)
         if ((*i)->type () != LINK)

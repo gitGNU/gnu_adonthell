@@ -14,6 +14,7 @@
 
 #include <gtk/gtk.h>
 #include "gui_code.h"
+#include "gui_dlgedit.h"
 
 /**
  * @file gui_code.h
@@ -28,6 +29,8 @@ extern void on_switch_page (GtkNotebook*, GtkNotebookPage *, gint, gpointer);
 // OK button pressed
 void on_button_ok_clicked (GtkButton *button, gpointer user_data)
 {
+    GuiCode::dialog->applyChanges ();
+    delete GuiCode::dialog;
 }
 
 // callback for closing the window
@@ -54,7 +57,6 @@ GuiCode::GuiCode ()
     window = gtk_window_new (GTK_WINDOW_DIALOG);
     gtk_object_set_data (GTK_OBJECT (window), "window", window);
     gtk_widget_set_usize (window, 400, 320);
-    gtk_window_set_title (GTK_WINDOW (window), "Custom Python Code");
     gtk_window_set_policy (GTK_WINDOW (window), FALSE, FALSE, FALSE);
 
     vbox = gtk_vbox_new (FALSE, 2);
@@ -144,6 +146,9 @@ GuiCode::GuiCode ()
     gtk_signal_connect (GTK_OBJECT (window), "delete_event", GTK_SIGNAL_FUNC (on_close_window), window);
 
     gtk_object_set_data (GTK_OBJECT (window), "tooltips", tooltips);
+
+    // set transient for dialogue editor main window
+    gtk_window_set_transient_for (GTK_WINDOW (window), GTK_WINDOW (GuiDlgedit::window->getWindow ()));    
     
     dialog = this;
     entry = NULL;
@@ -157,7 +162,7 @@ GuiCode::~GuiCode ()
 }
 
 // display the dialog
-void GuiCode::display (DlgModuleEntry *e)
+void GuiCode::display (DlgModuleEntry *e, std::string &name)
 {
     if (entry != e)
     {
@@ -170,6 +175,20 @@ void GuiCode::display (DlgModuleEntry *e)
         methods->setText (entry->methods ());
     }
     
+    // set the title
+    gchar *title = g_strjoin (NULL, "Custom Python Code - [", 
+        g_basename (name.c_str ()), "]", NULL);
+    gtk_window_set_title (GTK_WINDOW (window), title);
+
     // now show the window
     gtk_widget_show (window);
+}
+
+// store the user's entries
+void GuiCode::applyChanges ()
+{
+    entry->setImports (imports->getText ());
+    entry->setCtor (ctor->getText ());
+    entry->setDtor (dtor->getText ());
+    entry->setMethods (methods->getText ());
 }
