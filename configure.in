@@ -157,16 +157,16 @@ if test x$pylibs = xnone; then
    dnl Find Python executable
    AC_PATH_PROGS(PYPACKAGE, python)
 
-   dnl Extract the version using Python, check against 1.5+
+   dnl Extract the version using Python, check against 2.2+
 
    changequote(<<, >>)
    PYTHON_VERSION=`$PYPACKAGE -c 'import sys ; print (int(sys.version[0]) * 10 + int(sys.version[2]))'`
    PY_VERSION=`$PYPACKAGE -c 'import sys ; print sys.version[0:3]'`
    changequote([, ])
 
-   if test $PYTHON_VERSION -lt 15; then
-	echo "Sorry, you need to have Python 1.5+ installed - update your version!"
-	AC_MSG_ERROR([*** Python 1.5 or better required])
+   if test $PYTHON_VERSION -lt 22; then
+	echo "Sorry, you need to have Python 2.2+ installed - update your version!"
+	AC_MSG_ERROR([*** Python 2.2 or better required])
    fi
 
    dnl Find the Python.h header file
@@ -282,7 +282,7 @@ dnl **************
 dnl Check for SWIG
 dnl **************
 
-SWIG_MINVER=1.3.14
+SWIG_MINVER=1.3.20
 haveswig=no
 
 AC_PATH_PROG(P_SWIG,swig,no)
