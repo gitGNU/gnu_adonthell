@@ -36,7 +36,7 @@ int pnm_checkforcomment(SDL_RWops * file)
   else {SDL_RWseek(file,-1,SEEK_CUR);return(0);}
 }
 
-void * read_pnm(SDL_RWops * file, u_int16 * lenght, u_int16 * height)
+void * read_pnm(SDL_RWops * file, u_int16 * length, u_int16 * height)
 {
   void * image;
   char sign[10];
@@ -45,7 +45,7 @@ void * read_pnm(SDL_RWops * file, u_int16 * lenght, u_int16 * height)
   SDL_RWread(file,sign,2,1);
   if ((sign[0]!='P')||(sign[1]!='6')) {printf("Invalid format.\n");return(NULL);}
   pnm_gotonextline(file);
-  /* Getting height and lenght */
+  /* Getting height and length */
   while(pnm_checkforcomment(file));
   do
     {
@@ -67,27 +67,27 @@ void * read_pnm(SDL_RWops * file, u_int16 * lenght, u_int16 * height)
   /* Reading the image */
   image=calloc(l*h,3);
   SDL_RWread(file,image,3,(l)*(h));
-  if(lenght) *lenght=l;
+  if(length) *length=l;
   if(height) *height=h;
   return(image);
 }
 
-void pnmput(SDL_RWops * file, void * image, u_int16 lenght, u_int16 height)
+void pnmput(SDL_RWops * file, void * image, u_int16 length, u_int16 height)
 {
   char s[30];
-  sprintf(s,"P6\n%d %d\n255\n",lenght,height);
+  sprintf(s,"P6\n%d %d\n255\n",length,height);
   SDL_RWwrite(file,s,sizeof(char),strlen(s));
-  SDL_RWwrite(file,image,3,lenght*height);
+  SDL_RWwrite(file,image,3,length*height);
 }
  
-int write_pnm(char * filename, void * image, u_int16 lenght, u_int16 height)
+int write_pnm(char * filename, void * image, u_int16 length, u_int16 height)
 {
   SDL_RWops * file;
   file=SDL_RWFromFile(filename,"w"); 
   if(!file) return(1);
   else
     {
-      pnmput(file,image,lenght,height);
+      pnmput(file,image,length,height);
       SDL_RWclose(file);
       return(0);
     }

@@ -139,6 +139,7 @@ enter_event::enter_event ()
     c = NULL;
 }
 
+// compare two enter events
 bool enter_event::equals (event *e)
 {
     // we know that we've got an enter_event :)
@@ -153,6 +154,7 @@ bool enter_event::equals (event *e)
     return true;
 }
 
+// Execute enter event's script
 void enter_event::execute (event *e)
 {
     enter_event *t = (enter_event *) e;
@@ -169,6 +171,19 @@ void enter_event::execute (event *e)
 #endif // _DEBUG_
 }
 
+// Load a enter event from file
 void enter_event::load (FILE *f)
 {
+    u_int16 len;
+    char *name;
+    
+    fread (&x, sizeof (x), 1, f);
+    fread (&y, sizeof (y), 1, f);
+    fread (&dir, sizeof (dir), 1, f);
+    fread (&map, sizeof (map), 1, f);
+    fread (&len, sizeof (len), 1, f);
+    name = new char[len];
+    fread (name, len, 1, f);
+    c = (character*) objects::get (name);
+    delete name;
 }

@@ -19,9 +19,9 @@
 #include "storage.h"
 #include "inventory.h"
 #include "event.h"
-#include <python/compile.h> // conflict with tools/dlgedit/compile.h :(
 #include <vector>
 
+struct PyCodeObject;
 
 // Base class for all sort of characters, like the player, NPC's, etc.
 #ifdef SWIG

@@ -63,7 +63,7 @@ void win_font::load(char * rep)
       j++;
     }
   height=font->height;
-  lenght=table['A'].length;
+  length=table['A'].length;
   fclose(f);
 }
 

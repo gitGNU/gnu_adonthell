@@ -14,13 +14,13 @@ void draw_text(u_int16 sx,u_int16 sy,u_int16 ex,u_int16 ey,win_font *font,text_w
   txt.len_fl=0;
   txt.pos_tmp=txt.pos;
   txt.end_win=false;
-  while( (sy+i*(font->height)<ey) &&  (txt.pos_tmp < txt.lenght ) ) { 
+  while( (sy+i*(font->height)<ey) &&  (txt.pos_tmp < txt.length ) ) { 
     j=0;
     b=true;
-    while((b) && ((sx+j)<ex) && (txt.pos_tmp<txt.lenght)) {
+    while((b) && ((sx+j)<ex) && (txt.pos_tmp<txt.length)) {
       k=txt.text[txt.pos_tmp];
       if(k==' ') 
-	j+=font->lenght;
+	j+=font->length;
       else { 
 	if(k=='\n') b=false;
 	else { 
@@ -33,7 +33,7 @@ void draw_text(u_int16 sx,u_int16 sy,u_int16 ex,u_int16 ey,win_font *font,text_w
     }
     i++;
   }
-  txt.end_win=(txt.pos_tmp<txt.lenght);
+  txt.end_win=(txt.pos_tmp<txt.length);
 }
 
 

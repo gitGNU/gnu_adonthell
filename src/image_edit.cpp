@@ -2,17 +2,17 @@ s_int8 image::simpleget(SDL_RWops * file)
 {
   void * tmp;
 
-  tmp=read_pnm(file,&lenght,&height);
+  tmp=read_pnm(file,&length,&height);
   // Pitch value= Surface length * bytes_per_pixel
-  data=SDL_CreateRGBSurfaceFrom(tmp,lenght,height,24,
-				lenght*3,0x0000FF,0x00FF00,0xFF0000,0);
+  data=SDL_CreateRGBSurfaceFrom(tmp,length,height,24,
+				length*3,0x0000FF,0x00FF00,0xFF0000,0);
   if (!data) return(-1);
   return(0);
 }
 
 s_int8 image::simpleput(SDL_RWops * file)
 {
-  put_pnm(file,data->pixels,lenght,height);
+  put_pnm(file,data->pixels,length,height);
   return(0);
 }
 

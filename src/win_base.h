@@ -28,7 +28,7 @@ class win_base
 
   u_int16 x;
   u_int16 y;
-  u_int16 length; //lenght
+  u_int16 length; //length
   u_int16 height; //height
 
   bool selected;

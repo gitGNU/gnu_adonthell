@@ -246,7 +246,7 @@ void window::draw_choice()
 
 void window::draw_text()
 {
-  if(text_window.lenght>0) draw_text_screen(sxtext,sytext,text_window);
+  if(text_window.length>0) draw_text_screen(sxtext,sytext,text_window);
   if(text_action==TEXT_WRITE)
     { 
       if(text_write.endwindow)
@@ -277,11 +277,11 @@ void window::draw_text_screen(u_int16 sx,u_int16 sy,text_w & txt)
   u_int8 k;
   bool b;
   txt.pos_tmp=txt.pos;
-  while(((sy+i*WIN_FONT_HEIGHT)<eytext) && (txt.pos_tmp<txt.lenght))
+  while(((sy+i*WIN_FONT_HEIGHT)<eytext) && (txt.pos_tmp<txt.length))
     { 
       j=0;
       b=true;
-      while((b) && ((sx+j)<extext) && (txt.pos_tmp<txt.lenght))
+      while((b) && ((sx+j)<extext) && (txt.pos_tmp<txt.length))
 	{
 	  k=txt.text[txt.pos_tmp];
 	  if(k==' ') 
@@ -301,14 +301,14 @@ void window::draw_text_screen(u_int16 sx,u_int16 sy,text_w & txt)
 	}
       i++;
     }
-  txt.endwindow=(txt.pos_tmp<txt.lenght && txt.pos_tmp!=0);
+  txt.endwindow=(txt.pos_tmp<txt.length && txt.pos_tmp!=0);
   txt.nbline=i;
 }
 
 
 bool window::end_text(text_w a)
 {
-  return(a.pos_tmp==a.lenght);
+  return(a.pos_tmp==a.length);
 }
 
 
@@ -349,25 +349,25 @@ void window::init(u_int16 x, u_int16 y, u_int16 l, u_int16 h,u_int8 style)
   tmph=h;
   xpos=x;
   ypos=y;
-  lenght=l;
+  length=l;
   height=h; 
   
   //text_window=new char[TEXT_MAX];
   text_window.pos=0;
   text_window.pos_tmp=0;
-  text_window.lenght=0;
+  text_window.length=0;
   text_window.nbline=0;
 
   //text_write=new char[TEXT_MAX];
   
   text_write.pos=0;
-  text_write.lenght=0;
+  text_write.length=0;
   text_write.pos_tmp=0;
   text_write.nbline=0;
   text_write.endwindow=false;
 
   text_write_tmp.pos=0;
-  text_write_tmp.lenght=0;
+  text_write_tmp.length=0;
   text_write_tmp.pos_tmp=0;
   text_write_tmp.nbline=0;
   text_action = TEXT_READ;//action;
@@ -422,7 +422,7 @@ void window::init_normal()
 {
  tmpx=xpos;
  tmpy=ypos;
- tmpl=lenght;
+ tmpl=length;
  tmph=height;
  update_background(); 
 }
@@ -439,7 +439,7 @@ void window::init_l_r()
 
 void window::init_explode()
 {
-  tmpx=xpos + (lenght>>1);
+  tmpx=xpos + (length>>1);
   tmpy=ypos + (height>>1);
   tmpl=0;
   tmph=0;
@@ -452,7 +452,7 @@ void window::init_u_l()
   tmpx=xpos;
   tmpy=ypos;
   tmph=0;
-  tmpl=lenght;
+  tmpl=length;
   update_background();
 }
 
@@ -464,7 +464,7 @@ bool window::is_get_text()
 
 bool window::is_end_text()
 {
-  return(text_window.pos==text_window.lenght);
+  return(text_window.pos==text_window.length);
 }
 
 
@@ -536,7 +536,7 @@ void window::open_explode()
 
 void window::open_l_r()
 {
-  if(tmpl<lenght) 
+  if(tmpl<length) 
      {tmpl++;
       update_background(); 
      }
@@ -553,7 +553,7 @@ void window::open_u_l()
 
 void window::resize(u_int16 l, u_int16 h)
 {
-  lenght=tmpl=l;
+  length=tmpl=l;
   height=tmph=h;
   update_background();
   update_text();
@@ -575,7 +575,7 @@ void window::set_choice(char ch[][TEXT_CHOICE_LENGHT],int nbc,int cho)
       strcpy(tabchoice[i].text,ch[i]);
       tabchoice[i].pos=0;
       tabchoice[i].pos_tmp=0;
-      tabchoice[i].lenght=strlen(ch[i]);
+      tabchoice[i].length=strlen(ch[i]);
     }
 }
 
@@ -584,7 +584,7 @@ void window::set_text(const char *string)
   
   text_window.pos=0;
   text_window.pos_tmp=0;
-  text_window.lenght=strlen(string);
+  text_window.length=strlen(string);
   strcpy(text_window.text,string);
   continue_text=false;
 }
@@ -658,7 +658,7 @@ void window::update_text()
 {
   sxtext=xpos+WIN_VBORDER_LENGHT;
   sytext=ypos+WIN_HBORDER_HEIGHT;
-  extext=xpos+lenght-WIN_VBORDER_LENGHT-WIN_FONT_LENGHT;
+  extext=xpos+length-WIN_VBORDER_LENGHT-WIN_FONT_LENGHT;
   eytext=ypos+height-WIN_HBORDER_HEIGHT-WIN_FONT_HEIGHT;
 }
 
@@ -709,16 +709,16 @@ void window::write()
     {
       if(!alwayspush)     
 	{
-	  if(text_write.lenght<TEXT_MAX)
+	  if(text_write.length<TEXT_MAX)
 	    {
 	      if(n==Enter_Key)
 		{
-		  text_write.text[text_write.lenght++]='\n';
-		  text_write.text[text_write.lenght]='\0';
+		  text_write.text[text_write.length++]='\n';
+		  text_write.text[text_write.length]='\0';
 		  gettext=true;
 		  strcpy(text_write_tmp.text,text_write.text);
 		  
-		  text_write.lenght=0;
+		  text_write.length=0;
 		  text_write.pos_tmp=0;
 		  text_write.pos=0;
 		  text_write.nbline=0;
@@ -726,8 +726,8 @@ void window::write()
 		  
 	      else   
 		{
-		  if(n==Backspace_Key && text_write.lenght>0) text_write.lenght--;
-		  else text_write.text[text_write.lenght++]=n;	    
+		  if(n==Backspace_Key && text_write.length>0) text_write.length--;
+		  else text_write.text[text_write.length++]=n;	    
 		}
 	    }
 	  alwayspush=true;

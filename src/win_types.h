@@ -32,7 +32,7 @@
 typedef struct 
 {
   char text[TEXT_MAX];
-  u_int16 lenght;
+  u_int16 length;
   u_int16 pos;
   u_int16 pos_tmp;
   u_int16 len_fl;

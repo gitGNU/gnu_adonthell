@@ -120,7 +120,8 @@ void mapcharacter::get_NPC_stat (SDL_RWops * file, u_int16 nbr)
     if (nbr%2) ((npc*) data)->set_schedule ("scripts/follow_player.py");
     else ((npc*) data)->set_schedule ("scripts/random_walk.py");
     objects::set (data->name, data);
-    PyDict_SetItemString (game::globals, data->name, pass_instance (data, "npc"));
+    PyObject *chars = PyDict_GetItemString (game::globals, "characters");
+    PyDict_SetItemString (chars, data->name, pass_instance (data, "npc"));
     
     SDL_RWread (file, &data->posx, sizeof (data->posx), 1);
     SDL_RWread (file, &data->posy, sizeof (data->posy), 1);

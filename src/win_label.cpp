@@ -13,7 +13,7 @@
 win_label::win_label(u_int16 x,u_int16 y,u_int16 l,u_int16 h,win_font *fo,win_container * tmpwc):win_base(x,y,l,h,tmpwc,tmpwc->get_drawing_area())
 {
   font=fo;
-  text.lenght=0;
+  text.length=0;
   text.pos=0;
   text.pos_tmp=0;
   ch_page=false;
@@ -27,14 +27,14 @@ void win_label::set_font(win_font * fo)
 void win_label::set_text(char t[])
 {
   strcpy(text.text,t);
-  text.lenght=strlen(text.text);
+  text.length=strlen(text.text);
   text.pos=0;
   text.pos_tmp=0;
 }
 
 void win_label::erase_text()
 {
-  text.lenght=0;
+  text.length=0;
   text.pos_tmp=0;
 }
 
@@ -60,7 +60,7 @@ void win_label::next_page()
 
 bool win_label::end_text()
 {
-  return(text.pos==text.lenght);
+  return(text.pos==text.length);
 }
 
 

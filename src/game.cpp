@@ -70,6 +70,10 @@ void game::init(config &myconfig)
 	globals = PyModule_GetDict(m);
 
     PyDict_SetItemString (globals, "the_player", pass_instance (myplayer, "player"));
+
+    // create character array
+    PyObject *chars = PyDict_New ();
+    PyDict_SetItemString (globals, "characters", chars);    
 }
 
 void game::cleanup()

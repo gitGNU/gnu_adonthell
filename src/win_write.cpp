@@ -14,7 +14,7 @@
 win_write::win_write(u_int16 tx,u_int16 ty,u_int16 tl,u_int16 th,win_font *fo,win_container *tmpwc):win_base(tx,ty,tl,th,tmpwc,tmpwc->get_drawing_area())
 {
   font=fo;
-  text.lenght=0;
+  text.length=0;
   text.pos=0;
   text.pos_tmp=0;
   text.end_win=false;
@@ -78,26 +78,26 @@ void win_write::write()
     {
       if(!alwayspush)     
 	{
-	  if(text.lenght<TEXT_MAX)
+	  if(text.length<TEXT_MAX)
 	    { 
 	      if(n==Enter_Key)
 		{
 		  beg_select=end_select+2;
-		  end_select=(text.lenght-1);
+		  end_select=(text.length-1);
 		  ok_text=true;
-		  text.text[text.lenght++]='\n';
+		  text.text[text.length++]='\n';
 		}      
 	      else   
 		{
-		  if(n==Backspace_Key && text.lenght>0) 
-		    {text.lenght--;
+		  if(n==Backspace_Key && text.length>0) 
+		    {text.length--;
 		    if(text.pos>0) text.pos--;
 		    }
 		  else 
 		    //ERROR TO SEE UPPERCASE
 		    if(input::is_pushed(Shift_Key))
-		      text.text[text.lenght++]=n-30;
-		    else text.text[text.lenght++]=n;
+		      text.text[text.length++]=n-30;
+		    else text.text[text.length++]=n;
 		}
 	    }
 	  alwayspush=true;
