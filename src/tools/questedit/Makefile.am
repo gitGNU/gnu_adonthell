@@ -29,3 +29,5 @@ quest.o : ../../quest.cc
 storage.o : ../../storage.cc
 	$(CXXCOMPILE) -c $< -o $@
 
+
+install:

@@ -48,6 +48,8 @@ class win_scroll : public win_container, public win_scrollbar
   
   void set_space_between_object(u_int16 );
  
+  void set_pos (const u_int8 pos);
+    
   u_int16 cursor_y(){return cursor_y_;}
   
   void set_auto_scrollbar(bool b){auto_scrollbar_=b;}

@@ -55,15 +55,9 @@ void surface::set_mask (bool m)
 
 void surface::set_alpha (u_int8 t)
 {
-#ifdef REVERSE_ALPHA
     if ((t == 255) && (alpha_ != 255) && vis)
         SDL_SetAlpha (vis, 0, 0);
     alpha_ = t;
-#else
-    if ((t == 0) && (alpha_ != 0) && vis)
-        SDL_SetAlpha (vis, 0, 0);
-    alpha_ = 255 - t;
-#endif
 }
  
 void surface::draw (s_int16 x, s_int16 y, s_int16 sx, s_int16 sy, u_int16 sl,

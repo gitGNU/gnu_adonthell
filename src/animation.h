@@ -103,11 +103,7 @@ class animationframe
      */
     u_int8 alpha () const
     {
-#ifdef REVERSE_ALPHA
         return alpha_;
-#else
-        return 255 - alpha_;
-#endif   
     }     
 
     /** 
@@ -117,11 +113,7 @@ class animationframe
      */
     void set_alpha (u_int8 a)
     {
-#ifdef REVERSE_ALPHA
         alpha_ = a;
-#else
-        alpha_ = 255 - a;
-#endif
     }
 
     //@}

@@ -140,7 +140,7 @@ void data_screen::init ()
 	    box->set_focus_object(entry);
 
         image_list->add (box);
-        
+
         num++;
     }
     
@@ -179,8 +179,7 @@ void data_screen::init ()
 	
         num++;
     }
-    else image_list->set_default_position (0);
-    
+    else image_list->set_default_position (0);     
 }
 
 bool data_screen::update ()

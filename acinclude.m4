@@ -203,7 +203,7 @@ AC_ARG_ENABLE(vorbistest, [  --disable-vorbistest       Do not try to compile an
   VORBISFILE_LIBS="-lvorbisfile"
   VORBISENC_LIBS="-lvorbisenc"
 
-  AC_MSG_CHECKING(for Vorbis)
+  AC_MSG_CHECKING(for Vorbis >= 1.0.0rc1)
   no_vorbis=""
 
 
@@ -221,10 +221,14 @@ dnl
 #include <stdlib.h>
 #include <string.h>
 #include <vorbis/codec.h>
-
+#include <vorbis/vorbisfile.h>
 int main ()
 {
+  OggVorbis_File of;
+  if (of.ready_state);
+
   system("touch conf.vorbistest");
+  
   return 0;
 }
 
@@ -256,10 +260,14 @@ int main ()
        echo "*** is required on your system"
        echo "***"
        echo "*** If you have an old version installed, it is best to remove it, although"
-       echo "*** you may also be able to get things to work by modifying LD_LIBRARY_PATH"],
+       echo "*** you may also be able to get things to work by modifying LD_LIBRARY_PATH"
+       echo ""
+       echo "*** Note that Adonthell requires Vorbis >= 1.0.0rc1."],
        [ echo "*** The test program failed to compile or link. See the file config.log for the"
        echo "*** exact error that occured. This usually means Vorbis was incorrectly installed"
-       echo "*** or that you have moved Vorbis since it was installed." ])
+       echo "*** or that you have moved Vorbis since it was installed."
+       echo ""
+       echo "*** Note that Adonthell requires Vorbis >= 1.0.0rc1." ])
        CFLAGS="$ac_save_CFLAGS"
        LIBS="$ac_save_LIBS"
      fi

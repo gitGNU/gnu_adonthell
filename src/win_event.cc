@@ -1,12 +1,9 @@
 #include "win_event.h"
 
 
-#if defined (USE_PYTHON)
 #include "py_callback.h"
-#endif
 
 
-#if defined (USE_PYTHON)
 void win_event::py_signal_connect (PyObject *pyfunc, int signal, PyObject *args = NULL) 
     {
       // create the callback
@@ -35,7 +32,6 @@ void win_event::py_signal_connect (PyObject *pyfunc, int signal, PyObject *args 
 	  }
 	}
     }
-#endif
   
 
 bool win_event::update()
@@ -50,11 +46,9 @@ win_event::~win_event()
   //notify that window is closing 
   if (callback_quit_) (callback_quit_) (return_code_);
   
-#if defined (USE_PYTHON)
   //delete any python callbacks
   for (vector<py_callback *>::iterator i = py_callbacks.begin (); i != py_callbacks.end (); i++)
     delete *i;
-#endif 
 }
 
 

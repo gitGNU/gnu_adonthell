@@ -13,13 +13,10 @@
 #ifndef _WIN_EVENT_H_
 #define _WIN_EVENT_H_
 
-#if defined (USE_PYTHON)
-
 #include "Python.h"
 #include <vector>
 
 class py_callback;
-#endif
 
 
 #include "types.h"
@@ -70,10 +67,8 @@ class win_event
   virtual ~win_event();
   
  protected:
-#if defined (USE_PYTHON)
   // the python callbacks connected to the window
   vector<py_callback *> py_callbacks;   
-#endif // USE_PYTHON
   
   
   Functor0 callback_[20];

@@ -74,6 +74,11 @@ bool win_scroll::up()
   return true;
 }
 
+void win_scroll::set_pos (const u_int8 pos) 
+{
+    cur_amplitude_ = (u_int16)((((float) max_amplitude_) / 255) * pos); 
+    update_amplitude();
+}
 
 void win_scroll::update_amplitude()
 {

@@ -22,3 +22,5 @@ CPPFLAGS +=-I../.. $(GTK_CFLAGS) $(PY_CFLAGS)
 %.o : ../../%.cc
 	$(CXXCOMPILE) -c $< -o $@
 
+
+install:

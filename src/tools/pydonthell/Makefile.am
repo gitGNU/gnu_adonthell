@@ -4,7 +4,7 @@ bin_PROGRAMS = pydonthell
 
 pydonthell_SOURCES = pydonthell.cc
 
-CPPFLAGS +=-I../.. -DUSE_PYTHON -DUSE_MAP $(SDL_CFLAGS) $(OGG_CFLAGS) $(PY_CFLAGS) 
+CPPFLAGS +=-I../.. -DUSE_MAP $(SDL_CFLAGS) $(OGG_CFLAGS) $(PY_CFLAGS) 
 
 pydonthell_LDADD = ../../animation.o ../../audio.o ../../drawable.o \
 ../../audio_loop.o ../../py_callback.o \
@@ -25,3 +25,5 @@ lex.prefs.cc : prefs.l
 
 %.o: %.cc
 	$(CXXCOMPILE) -c $< -o $@
+
+install:

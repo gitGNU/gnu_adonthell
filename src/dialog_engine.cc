@@ -235,6 +235,8 @@ void dialog_engine::run ()
       sel->set_default_object (cur_answers [1]);
     }
 
+    // Center on the NPC answer
+    sel->set_pos (0); 
 }
 
 bool dialog_engine::update ()
