@@ -37,12 +37,15 @@ class animation_frame : public image
   animation_frame();
   ~animation_frame();
   s_int8 get(SDL_RWops * file);
-  s_int8 load(char * fname);
+  s_int8 load(const char * fname);
 #ifdef _EDIT
   s_int8 put(SDL_RWops * file);
-  s_int8 save(char * fname);
+  s_int8 save(const char * fname);
 #endif
   friend class animation;
+#ifdef _EDIT
+  friend class animedit;
+#endif
 };
 
 // An animation is mainly a dynamic array of animation_frames. 
@@ -56,10 +59,12 @@ class animation
 #ifdef DEBUG
   static u_int16 a_d_diff;
 #endif
+ protected:
   u_int16 nbr_of_frames;
   u_int16 currentframe;
   u_int16 speedcounter;
   s_int8 factor;
+  bool play_flag;
   //  void init_frame(u_int16 nbr);
 
  public:
@@ -74,15 +79,21 @@ class animation
   void update();
   void draw(u_int16 x, u_int16 y);
   void set_active_frame(u_int16 framenbr);
+  void increase_frame();
+  void decrease_frame();
   void next_frame();
+  void play();
+  void stop();
+  void rewind();
   // Increase nbr_of_frames and load the frame to the last position
-  s_int8 load_frame(char * fname);
-  s_int8 get_frame(SDL_RWops * file);
+  s_int8 load_frame(const char * fname, u_int16 pos);
+  s_int8 get_frame(SDL_RWops * file, u_int16 pos);
+  s_int8 delete_frame(u_int16 pos);
   s_int8 get(SDL_RWops * file);
-  s_int8 load(char * fname);
+  s_int8 load(const char * fname);
 #ifdef _EDIT
   s_int8 put(SDL_RWops * file);
-  s_int8 save(char * fname);
+  s_int8 save(const char * fname);
 #endif
   void set_delay(u_int16 framenbr, u_int16 delay);
   void set_next_frame(u_int16 framenbr, u_int16 next_frame);

@@ -319,7 +319,7 @@ void image::putbox_tile_img(image * source)
   u_int16 posy;
   for(posy=0; posy<height; posy+=source->height)
     for(posx=0; posx<length; posx+=source->length)
-      putbox_img(source,posx,posy);
+	putbox_img(source,posx,posy);
 }
 
 void image::putbox_img(image * source, u_int16 x, u_int16 y)
@@ -409,7 +409,7 @@ s_int8 image::get(SDL_RWops * file)
   return ret;
 }
 
-s_int8 image::load(char * fname)
+s_int8 image::load(const char * fname)
 {
   SDL_RWops * file;
   file=SDL_RWFromFile(fname,"r"); 
@@ -440,7 +440,7 @@ s_int8 image::get_raw(SDL_RWops * file)
   return(0);
 }
 
-s_int8 image::load_raw(char * fname)
+s_int8 image::load_raw(const char * fname)
 {
   SDL_RWops * file;
   file=SDL_RWFromFile(fname,"r"); 

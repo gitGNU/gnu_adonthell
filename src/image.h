@@ -70,9 +70,9 @@ class image
   s_int8 get(char * file);
 
   s_int8 get(SDL_RWops * file);
-  s_int8 load(char * fname);
+  s_int8 load(const char * fname);
   s_int8 get_raw(SDL_RWops * file);
-  s_int8 load_raw(char * fname);
+  s_int8 load_raw(const char * fname);
   s_int8 get_pnm(SDL_RWops * file);
   s_int8 load_pnm(char * fname);
 #ifdef _EDIT

@@ -25,6 +25,7 @@ void animation_frame::init()
 {
   gapx=0;
   gapy=0;
+  delay=0;
   next_nostd=false;
   nextframe=0;
   image::init();
@@ -50,7 +51,7 @@ s_int8 animation_frame::get(SDL_RWops * file)
   return(0);
 }
 
-s_int8 animation_frame::load(char * fname)
+s_int8 animation_frame::load(const char * fname)
 {
   SDL_RWops * file;
   u_int8 retvalue;
@@ -73,7 +74,7 @@ s_int8 animation_frame::put(SDL_RWops * file)
   return(0);
 }
 
-s_int8 animation_frame::save(char * fname)
+s_int8 animation_frame::save(const char * fname)
 {
   SDL_RWops * file;
   u_int8 retvalue;
@@ -98,6 +99,7 @@ animation::animation()
   loop=false;
   reverse=false;
   factor=1;
+  play_flag=false;
 }
 
 animation::~animation()
@@ -111,17 +113,30 @@ animation::~animation()
 
 void animation::update()
 {
+  if(!play_flag) return;
   if(frame[currentframe].delay==0) return;
-  if (nbr_of_frames <= 1) return;
+  if (nbr_of_frames<=1) return;
     
   speedcounter++;
-  if (speedcounter == frame[currentframe].delay)
+  if (speedcounter>=frame[currentframe].delay)
     next_frame();
 }
 
 void animation::set_active_frame(u_int16 framenbr)
 {
   if(framenbr<nbr_of_frames) currentframe=framenbr;
+}
+
+void animation::increase_frame()
+{
+  currentframe++;
+  if(currentframe==nbr_of_frames) currentframe=0;
+}
+
+void animation::decrease_frame()
+{
+  if(currentframe==0) currentframe=nbr_of_frames-1;
+  else currentframe--;
 }
 
 void animation::next_frame()
@@ -144,22 +159,66 @@ void animation::next_frame()
   speedcounter = 0;
 }
 
+void animation::play()
+{
+  play_flag=true;
+}
+
+void animation::stop()
+{
+  play_flag=false;
+}
+
+void animation::rewind()
+{
+  currentframe=0;
+  speedcounter=0;
+}
+
 void animation::draw(u_int16 x, u_int16 y)
 {
   frame[currentframe].draw(x,y);
 }
 
-s_int8 animation::load_frame(char * fname)
+s_int8 animation::load_frame(const char * fname, u_int16 pos)
 {
   animation_frame * oldframe=frame;
-  int i;
+  u_int16 i;
+  if(pos>nbr_of_frames) return -2;
+  frame=new animation_frame[++nbr_of_frames];
+  for (i=0;i<pos;i++)
+    {
+      frame[i]=oldframe[i];
+    }
+
+  if(frame[pos].image::load_raw(fname))
+    {
+      --nbr_of_frames;
+      delete[] frame;
+      frame=oldframe;
+      return(-1);
+    }
+  for (i=pos+1;i<nbr_of_frames;i++)
+    {
+      frame[i]=oldframe[i-1];
+      if(frame[i].next_nostd) frame[i].nextframe++;
+    }
+
+  delete[] oldframe;
+  return 0;
+}
+
+s_int8 animation::get_frame(SDL_RWops * file, u_int16 pos)
+{
+  animation_frame * oldframe=frame;
+  u_int16 i;
   frame=new animation_frame[++nbr_of_frames];
   for (i=0;i<nbr_of_frames-1;i++)
     {
       frame[i]=oldframe[i];
     }
 
-  if(frame[nbr_of_frames-1].image::load_raw(fname))
+  if(frame[nbr_of_frames-1].image::get_raw(file))
     {
       --nbr_of_frames;
       delete[] frame;
@@ -167,27 +226,29 @@ s_int8 animation::load_frame(char * fname)
       return(-1);
     }
   delete[] oldframe;
-  return(0);
+  return 0;
 }
 
-s_int8 animation::get_frame(SDL_RWops * file)
+s_int8 animation::delete_frame(u_int16 pos)
 {
-  frame=(animation_frame*)realloc(frame,
-				  ++nbr_of_frames*sizeof(animation_frame));
-  if(frame[nbr_of_frames-1].get(file))
-    {
-      frame=(animation_frame*)realloc(frame,
-				      --nbr_of_frames*sizeof(animation_frame));
-      return(-1);
-    }
-  return(0);
+  animation_frame * oldframe=frame;
+  u_int16 i;
+  if(pos>nbr_of_frames-1) return -2;
+  frame=new animation_frame[--nbr_of_frames];
+  for(i=0;i<pos;i++)
+    frame[i]=oldframe[i];
+  for(i=pos;i<nbr_of_frames;i++)
+    frame[i]=oldframe[i+1];
+  if(currentframe>=nbr_of_frames) currentframe=nbr_of_frames-1;
+  delete[] oldframe;
+  return 0;
 }
 
 s_int8 animation::get(SDL_RWops * file)
 {
   u_int16 i;
   SDL_RWread(file,&nbr_of_frames,sizeof(nbr_of_frames),1);
-  SDL_RWread(file,&speedcounter,sizeof(speedcounter),1);
+  //  SDL_RWread(file,&speedcounter,sizeof(speedcounter),1);
   SDL_RWread(file,&factor,sizeof(factor),1);
   SDL_RWread(file,&loop,sizeof(loop),1);
   SDL_RWread(file,&reverse,sizeof(reverse),1);
@@ -198,7 +259,7 @@ s_int8 animation::get(SDL_RWops * file)
   return(0);
 }
 
-s_int8 animation::load(char * fname)
+s_int8 animation::load(const char * fname)
 {
   SDL_RWops * file;
   u_int8 retvalue;
@@ -214,7 +275,7 @@ s_int8 animation::put(SDL_RWops * file)
 {
   u_int16 i;
   SDL_RWwrite(file,&nbr_of_frames,sizeof(nbr_of_frames),1);
-  SDL_RWwrite(file,&speedcounter,sizeof(speedcounter),1);
+  //  SDL_RWwrite(file,&speedcounter,sizeof(speedcounter),1);
   SDL_RWwrite(file,&factor,sizeof(factor),1);
   SDL_RWwrite(file,&loop,sizeof(loop),1);
   SDL_RWwrite(file,&reverse,sizeof(reverse),1);
@@ -223,7 +284,7 @@ s_int8 animation::put(SDL_RWops * file)
   return(0);
 }
 
-s_int8 animation::save(char * fname)
+s_int8 animation::save(const char * fname)
 {
   SDL_RWops * file;
   u_int8 retvalue;
