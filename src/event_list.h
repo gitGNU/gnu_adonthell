@@ -96,6 +96,13 @@ public:
     void resume ();
 
     /**
+     * Check whether this %event list is paused.
+     * @return \b true if it is paused, \b false otherwise.
+     */
+    bool is_paused () { return Paused; }
+
+#ifndef SWIG    
+    /**
      * Register an %event for loading. Before the %event_list can load
      * an %event from file, it needs a callback function that returns
      * a new instance of the %event of the given type.
@@ -107,6 +114,7 @@ public:
      * @sa get_state ()
      */
     static void register_event (u_int8 type, new_event e);
+#endif // SWIG
     
     /** 
      * Save the %event_list to a file.
