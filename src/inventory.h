@@ -33,6 +33,7 @@
 #include <stdlib.h>
 #include <iostream.h>
 #include <math.h>
+#include "item.h"
 
 class inventory
 {
