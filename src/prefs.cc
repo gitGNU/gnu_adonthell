@@ -49,7 +49,7 @@ config::config ()
     audio_sample_rate = 2;          // 11025, 22050 or 44100 Hz
     audio_volume = 100;             // 0 - 100%
     language = "";                  // Let the user's environment decide
-    
+
     // set the path to the adonthellrc file:
     adonthellrc = string (getenv ("HOME")) + "/.adonthell";
 }
@@ -266,7 +266,8 @@ void config::write_adonthellrc ()
        << "# Audio-sample-rate num\n#   0  11025 Hz\n#   1  22050 Hz\n#   2  44100 Hz\n"
        << "    Audio-sample-rate " << (int) audio_sample_rate << "\n\n"
        << "# Audio-volume num\n#   0 - 100 %\n"
-       << "    Audio-volume " << (int) audio_volume << "\n\n"; 
+       << "    Audio-volume " << (int) audio_volume << "\n\n"
+       << "# Version of this file. Don't Edit\n    Version [" << VERSION << "]\n";
 
     rc.close ();
 }
@@ -274,7 +275,7 @@ void config::write_adonthellrc ()
 bool config::read_adonthellrc ()
 {
     int n, i = 1;
-    string s, fname = adonthellrc + "/adonthellrc";
+    string s, fname = adonthellrc + "/adonthellrc", version = "0";
 
     // try to create that directory in case it dosn't exist
 #ifdef WIN32
@@ -339,11 +340,23 @@ bool config::read_adonthellrc ()
                 break;
             }
 
+            case PREFS_VERSION:
+            {
+                if (parse_adonthellrc (n, s) == PREFS_STR) version = s;
+                break;
+            }
             default: break;
         }
     }    
 
     fclose (prefsin);
-         
+
+    // compare version of config file and engine
+    if (version < VERSION)
+    {
+        // update config file
+        write_adonthellrc ();
+    }
+
     return true;
 }

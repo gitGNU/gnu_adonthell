@@ -54,8 +54,9 @@ enum
     PREFS_AUDIO_RESOLUTION = 4,
     PREFS_AUDIO_SAMPLE_RATE = 5,
     PREFS_AUDIO_VOLUME = 6,
-    PREFS_NUM = 7,
-    PREFS_STR = 8,
+    PREFS_VERSION = 7,
+    PREFS_NUM = 8,
+    PREFS_STR = 9,
 };
 
 

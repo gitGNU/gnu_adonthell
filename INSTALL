@@ -10,7 +10,7 @@ http://savannah.gnu.org/support/?group_id=702 .
 Requirements:
 =============
 
-There are two libraries that Adonthell depends on:
+There are three libraries that Adonthell depends on:
 
 1. Python, version 1.5.2 or later. 
    
@@ -28,9 +28,14 @@ version of Python by entering the command:
    See http://www.libsdl.org/
 
 
+3. Freetype version 2
+
+   See http://www.freetype.org
+
+
 For convenience, the SDL_mixer library is included with the source code;
 it will be replaced by a custom mixer anyway. However, you'll need OggVorbis
-1.0rc1 to enjoy the music.
+1.0rc1 or later to enjoy the music.
 
    See http://www.xiph.org/ogg/vorbis/download/
 
@@ -72,6 +77,21 @@ Advanced configure options:
 
 There are a number of options to 'configure' that might be useful
 for you. For a complete list, run 'configure --help'.
+
+
+--with-included-gettext
+
+  If you want to build Adonthell with national language support (NLS),
+you'll have to use this option on systems that do not provide the
+required services themselves.
+
+
+--disable-nls
+
+  Use this option to disable NLS completely. For more information
+regarding this and the previous option, read the ABOUT-NLS file in
+this directory.
+  
 
 --disable-sdltest
 --disable-vorbistest

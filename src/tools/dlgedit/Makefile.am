@@ -6,7 +6,7 @@ endif
 
 SUBDIRS = examples
 
-# EXTRA_DIST = loadlg.l ins_dlgedit_modules.py py_character.i py_quest.i character.py quest.py
+EXTRA_DIST = loadlg.l dialogue.py
 
 dlgedit_SOURCES = \
     dlg_arrow.cc \

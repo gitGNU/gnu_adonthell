@@ -45,12 +45,16 @@ rm -rf $RPM_BUILD_ROOT
 make prefix=$RPM_BUILD_ROOT%{prefix} bindir=$RPM_BUILD_ROOT%{bindir} gamedatadir=$RPM_BUILD_ROOT%{gamedatadir} install
 strip $RPM_BUILD_ROOT%{bindir}/adonthell
 install -m 644 src/adonthell.py $RPM_BUILD_ROOT%{gamedatadir}/modules/adonthell.py
+install -m 644 src/tools/dlgedit/dialogue.py $RPM_BUILD_ROOT%{gamedatadir}/modules/dialogue.py
+
+
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root)
-%doc ChangeLog COPYING NEWS NEWBIE README README.BeOS README.FreeBSD
+%doc ABOUT-NLS ChangeLog COPYING NEWS NEWBIE README
 %{bindir}/adonthell
 %{gamedatadir}/modules/adonthell.py
+%{gamedatadir}/modules/dialogue.py
