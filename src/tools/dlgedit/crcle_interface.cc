@@ -148,9 +148,14 @@ create_dlg_node_window (Circle *circle, crcle_dlg *dlg)
             &text_entry->style->black, &text_entry->style->white,
             circle->text.c_str (), -1);
     else
+    {
+        gtk_text_insert ((GtkText *) text_entry, text_entry->style->font,
+            &dark_blue, &text_entry->style->white, " ", -1);
         gtk_text_insert (GTK_TEXT (text_entry), text_entry->style->font,
             &dark_blue, &text_entry->style->white, circle->text.c_str (), -1);
-
+        gtk_editable_delete_text ((GtkEditable *) text_entry, 0, 1);
+    }
+    
     dlg->text_entry = text_entry;
 
     GtkStyle *style = gtk_style_copy (gtk_widget_get_default_style ());

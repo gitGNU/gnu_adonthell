@@ -66,7 +66,7 @@ public:
     ~interpreter ();
 
     // Load a program
-    u_int8 load (const char*);
+    command **load (const char*);
 
     // Continue with program execution
     s_int32 run (); 

@@ -99,7 +99,7 @@ void import_cmd::ascii (ofstream &out)
 
 // === CLEAR ===
 
-// continues dialogue according to players selection
+// continues dialogue according to player's selection
 s_int32 clear_cmd::run (u_int32 &pc, void *data)
 {
     u_int32 i;
@@ -107,7 +107,7 @@ s_int32 clear_cmd::run (u_int32 &pc, void *data)
 
     // Memorize what parts of the dialogue where already used, to avoid loops
     if (find (dlg->loop_text.begin (), dlg->loop_text.end (), dlg->player_text[dlg->answer]->id) == dlg->loop_text.end ())
-    dlg->used_text.push_back (dlg->player_text[dlg->answer]->id);
+        dlg->used_text.push_back (dlg->player_text[dlg->answer]->id);
 
     // Continue the dialogue according to the players choice
     pc = dlg->player_text[dlg->answer]->offset;

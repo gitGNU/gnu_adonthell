@@ -104,6 +104,8 @@ clean:: tidy
 
 ./circle.o: ../../interpreter.h ../../types.h ./circle.h ./crcle_interface.h ./dlgnode.h /usr/include/gdk/gdktypes.h /usr/include/gtk/gtk.h /usr/include/gtk/gtkstyle.h
 
+../../commands.o: ../../commands.h ../../dialog_cmds.h ../../generic_cmds.h ../../interpreter.h
+
 ./compile.o: ../../commands.h ../../dialog_cmds.h ../../generic_cmds.h ../../interpreter.h ../../types.h ./compile.h ./dlgnode.h /usr/include/gdk/gdktypes.h /usr/include/stdio.h /usr/include/stdlib.h
 
 ./cond.tab.o: ../../commands.h ../../interpreter.h /usr/include/alloca.h /usr/include/malloc.h /usr/include/stdio.h

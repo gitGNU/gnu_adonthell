@@ -151,7 +151,7 @@ void binary_cmd::init (s_int32 *buffer, u_int32 &i, void *data)
 // write the commands code to file
 void binary_cmd::write (FILE *out)
 {
-    u_int32 l, i;
+    u_int32 l;
 
     fwrite (&type, sizeof(type), 1, out);
     fwrite (&ptype, sizeof(ptype), 1, out);
@@ -160,14 +160,14 @@ void binary_cmd::write (FILE *out)
     l = strlen (target);
     fwrite (&l, sizeof (l), 1, out);
     fwrite (target, l, 1, out);
-    for (i = 4; i > l%4; i--) fputc (0, out);
+    for (; l%4; l++) fputc (0, out);
     
     if (!(ptype & TARGET_LOCAL) && !(ptype & TARGET_GLOBAL)) 
     {
         l = strlen (target_location);
         fwrite (&l, sizeof (l), 1, out);
         fwrite (target_location, l, 1, out);
-        for (i = 4; i > l%4; i--) fputc (0, out);
+        for (; l%4; l++) fputc (0, out);
     }
     
     // Param 1
@@ -177,14 +177,14 @@ void binary_cmd::write (FILE *out)
         l = strlen (c_param1);
         fwrite (&l, sizeof (l), 1, out);
         fwrite (c_param1, l, 1, out);
-        for (i = 4; i > l%4; i--) fputc (0, out);
+        for (; l%4; l++) fputc (0, out);
 
         if (!(ptype & PARAM1_LOCAL) && !(ptype & PARAM1_GLOBAL))
         {
             l = strlen (param1_location);
             fwrite (&l, sizeof (l), 1, out);
             fwrite (param1_location, l, 1, out);    
-            for (i = 4; i > l%4; i--) fputc (0, out);
+            for (; l%4; l++) fputc (0, out);
         }
     }
 
@@ -192,17 +192,17 @@ void binary_cmd::write (FILE *out)
     if (ptype & PARAM2_NUMBER) fwrite (&i_param2, sizeof(i_param2), 1, out);
     else
     {
-        l = strlen (c_param2) + 1;
+        l = strlen (c_param2);
         fwrite (&l, sizeof (l), 1, out);
         fwrite (c_param2, l, 1, out);
-        for (i = 4; i > l%4; i--) fputc (0, out);
+        for (; l%4; l++) fputc (0, out);
 
         if (!(ptype & PARAM2_LOCAL) && !(ptype & PARAM2_GLOBAL))
         {
-            l = strlen (param2_location) + 1;
+            l = strlen (param2_location);
             fwrite (&l, sizeof (l), 1, out);
             fwrite (param2_location, l, 1, out);    
-            for (i = 4; i > l%4; i--) fputc (0, out);
+            for (; l%4; l++) fputc (0, out);
         } 
     }
 } 
@@ -382,13 +382,13 @@ s_int32 branch_cmd::run (u_int32 &PC, void *data)
 
 void branch_cmd::write (FILE* out)
 {
-    int i, l = strlen (condition);
+    int l = strlen (condition);
     
     fwrite (&type, sizeof(type), 1, out);
     fwrite (&offset, sizeof(offset), 1, out);
     fwrite (&l, sizeof (l), 1, out);
     fwrite (condition, sizeof (condition[0]), l, out);
-    for (i = 4; i > l%4; i--) fputc (0, out);
+    for (; l%4; l++) fputc (0, out);
 }
 
 void branch_cmd::ascii (ofstream &out)

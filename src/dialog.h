@@ -58,6 +58,7 @@ public:
 
 private:
     void run (window&);
+    void insert_plugin ();              // 'Merges' a dialogue with the loaded one
 
     dialog *dlg;
     interpreter *engine;

@@ -27,7 +27,7 @@
 The Adonthell Dialogue Editor v0.4
 \layout Author
 
-by Kai Sterker
+Kai Sterker
 \layout Section
 
 Understanding the Dialogue Engine
@@ -1138,6 +1138,29 @@ When you create a new Circle, you should attach some text to it.
  Simply type the text into the entry.
  Player text will be displayed blue, NPC text black.
  You can switch between both with (5).
+\layout Standard
+
+Apart from plain text, there are a few macros available that get replaced
+ at runtime:
+\layout Description
+
+$name Gets replaced with the players name.
+\layout Description
+
+$fm{
+\series medium 
+\emph on 
+female_text
+\series default 
+\emph default 
+/
+\series medium 
+\emph on 
+male_text
+\series default 
+\emph default 
+} Displays text depending on the players gender.
+ 
 \layout Paragraph
 
 2.
@@ -1797,8 +1820,8 @@ Game_state
 \emph on 
 Local
 \emph default 
- is the storage of the interpreter running this dialogue.
- Everything you write into this storage will be destroyed at when the dialogue
+ is the memory of the interpreter running the dialogue.
+ Everything you write into this storage will be destroyed when the dialogue
  ends, so make sure only temporary variables are stored there.
 \layout Standard
 
@@ -2124,7 +2147,9 @@ Z0
 \family typewriter 
 9_
 \family default 
-]*
+]
+\family typewriter 
+*
 \layout Standard
 \added_space_top 0.3cm \added_space_bottom 0.3cm \align left \LyXTable
 multicol5

@@ -32,7 +32,7 @@ char* command::strread (s_int32 *buffer, u_int32 &i)
     tmp[buffer[i]] = 0;
 
     // let i point after the string
-    i += 2 + strlen (tmp)/4; //  + strlen (tmp)%4;
+    i += 2 + (strlen (tmp)-1)/4; //  + strlen (tmp)%4;
 
     return tmp;
 }
@@ -80,8 +80,8 @@ interpreter::~interpreter ()
 }
 
 // Load a Program
-// returns 1 on success, 0 on failure
-u_int8 interpreter::load (const char *file)
+// returns the program on success, NULL on failure
+command** interpreter::load (const char *file)
 {
     u_int32 i, j = 0;
     s_int32 *buffer;
@@ -90,7 +90,7 @@ u_int8 interpreter::load (const char *file)
 
     // open File for reading
     FILE *dat = fopen (file, "r");
-    if (!dat) return 0;
+    if (!dat) return NULL;
 
     // delete old script
     if (code)
@@ -99,6 +99,9 @@ u_int8 interpreter::load (const char *file)
             delete code[i];
 
         delete[] code;
+
+        // reset the program counter
+        PC = 0;
     }
     
     // read program length and reserve temporary space
@@ -148,7 +151,7 @@ u_int8 interpreter::load (const char *file)
     // Clean up
     delete[] buffer;
     
-    return 1;
+    return code;
 }
 
 // Executes your program until it reaches a RETURN command
@@ -169,7 +172,7 @@ s_int32 interpreter::run ()
         code[PC++]->run (PC, user_data);
 
 #ifdef _DEBUG_
-        if (PC >= cmd_num) return -1;        
+        if (PC >= cmd_num) return -1;
 #endif
     }
 

@@ -135,3 +135,17 @@ void dialog_engine::run (window &win)
     win.set_text (str.c_str ());   
 */
 }
+
+void dialog_engine::insert_plugin ()
+{
+    // We have to do the following:
+    // - Add the plugin to the end of the main dialogue
+    // - Insert a JMP <length_of_main_dlg - 2> after the main dlg's IMPORT
+    //   (That means, the plugged in subjects appear before the main ones,
+    //   but else, we'd have to check the main dlg for JMP's to the first
+    //   block)
+    // - Offset the TEXT's string_id to point after the main strings
+    // - Remove the RETURN 1 of the first plugin block (fpb)
+    // - Replace the CLEAR of the fpb with JMP <-length_of_main_dlg + 2>
+    // - Replace all RETURN 0's of the plugin with JMP's to the first main block
+}

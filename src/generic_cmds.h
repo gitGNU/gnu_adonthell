@@ -78,7 +78,7 @@ public:
 class branch_cmd : public command, public offset_cmd
 {
 public:
-    branch_cmd () { condition = NULL; }
+    branch_cmd () { condition = NULL; type = BRANCH; }
     branch_cmd (s_int32 o, const char* c)
     {
         type = BRANCH;
