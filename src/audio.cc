@@ -1,4 +1,6 @@
 /*
+   $Id$
+
    Copyright (C) 2000 Andrew Henderson <hendersa@db.erau.edu>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
@@ -17,6 +19,7 @@
 
 audio::audio() {
 
+  music = NULL;
   background_volume = 128;
   background_on = false;
   current_background = 0;
