@@ -1,0 +1,17 @@
+Source: adonthell
+Section: games
+Priority: extra
+Maintainer: Alexandre Courbot <alexandrecourbot@linuxgames.com>
+Standards-Version: 3.2.1
+
+Package: adonthell
+Architecture: any
+Depends: ${shlibs:Depends}
+Recommends: wastesedge
+Description: A 2D graphical RPG game.
+ A 2D graphical RPG game inspired by good old console RPGs like the
+ ones on the SNES. 
+ .
+ This package contains the Adonthell engine. You'll also need a game
+ to be able to play. For this release, the official game is Waste's
+ Edge.

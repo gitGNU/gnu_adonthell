@@ -1,0 +1,13 @@
+adonthell (0.3.1-1) unstable; urgency=low
+
+  * using 0.3.1 source code base.
+
+ -- Alexandre Courbot <alexandrecourbot@linuxgames.com>  Tue,  5 Feb 2002 13:28:29 +0100
+
+adonthell (0.3-1) unstable; urgency=low
+
+  * Initial release.
+
+ -- Alexandre Courbot <alexandrecourbot@linuxgames.com>  Sat,  2 Feb 2002 17:08:37 +0100
+
+
