@@ -25,6 +25,7 @@
 #include "window.h"
 #include "map.h"
 #include "prefs.h"
+#include "game.h"
 #include "mapengine.h"
 #ifdef SDL_MIXER
 #include "audio_thread.h"
@@ -35,9 +36,6 @@ void mapengine::map_engine(landmap * amap)
 {
   amap->set_status(0);
   amap->init_for_scrolling();
-  //  amap->win.init(70,20,180,60,WIN_NORMAL);
-  //  amap->win.set_action(TEXT_WRITE);
-  //  amap->win.show();
 #ifdef SDL_MIXER
   audio_in->fade_in_background(1,500);
 #endif
@@ -61,21 +59,22 @@ void mapengine::update_and_show(landmap * amap)
   input::update();
   for(i=0;i<screen::frames_to_do;i++)
   {
-	  //dlg->update_keyboard ();
+      game::engine->realtime_tasks ();
+      /*
       amap->update_keyboard();
       amap->update_patterns();
       amap->update_all_characters();
-      //    amap->win.update();
+      */
   }
-  //dlg->update(amap->win);
+
+  game::engine->gametime_tasks ();
+  /*
   amap->update_status();
   //  screen::drawbox(0,0,320,240,0);
   amap->draw_down();
   amap->draw_all_characters();
   amap->draw_up();
-  if (amap->de) amap->de->update ();
-
-  //  amap->win.draw();
+  */
 }
 
 void mapengine::fade_out(landmap * amap, u_int16 depx=56, u_int16 depy=12) 

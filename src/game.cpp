@@ -32,6 +32,7 @@
 SDL_Thread *game::audio_thread;
 PyObject *game::globals;
 char *game::theme;
+game_engine *game::engine;
 
 void game::init(config &myconfig)
 {

@@ -274,6 +274,7 @@ void mapcharacter::update_NPC (landmap * amap)
         // update_dir ();
         // just a quick hack
         waitcounter++;
+        // shouldn't 16 be replaced with screen::frames_to_do???
         if (waitcounter == (16 * speeddelay)) waitcounter = 0;
         if (waitcounter == 0) movtype = ((npc*)data)->move (movtype);
         else movtype = 0;

@@ -37,7 +37,6 @@ using namespace std;
 landmap::landmap()
 {
   maparea=NULL;
-  de = NULL;
   length=0;
   height=0;
   posx=6;
@@ -390,31 +389,9 @@ void landmap::update_keyboard()
 
     if (input::is_pushed(SDLK_SPACE))
     {
-        if (!de)
-        {
-            de = new dialog_engine (&othermapchar[0]);
-            de->update ();
-        }
-        else
-        {
-            delete de;
-            de = NULL;
-        }
+        // when starting a dialogue
+        game::engine = new dialog_engine (&othermapchar[0], this);
     }
-#ifdef SDL_MIXER
-  // REMOVEME
-  // Sound effects tied to keyboard
-//  if(keyboard::is_pushed(49)) audio_in->play_wave(2,0); // '1' Key
-//  if(keyboard::is_pushed(50)) audio_in->play_wave(1,1); // '2' Key
-
-  // Change background music (500 ms fade in/out, slot of new music)
-//  if (keyboard::is_pushed(51)) audio_in->change_background(1, 500); // '3' Key
-//  if (keyboard::is_pushed(52)) audio_in->change_background(0, 500);  // '4' Key
-
-  // Change background music volume
-//  if (keyboard::is_pushed(53)) audio_in->set_background_volume(audio_in->background_volume - 10); // '5' Key
-//  if (keyboard::is_pushed(54)) audio_in->set_background_volume(audio_in->background_volume + 10); // '6' Key
-#endif
 }
 
 bool landmap::is_ready()
@@ -658,6 +635,21 @@ void landmap::draw_character(mapcharacter * aguy, u_int16 depx=56, u_int16 depy=
 				       adepx,adepy);
 	}
 	}*/
+}
+
+void landmap::realtime_tasks ()
+{
+    update_keyboard();
+    update_patterns();
+    update_all_characters();
+}
+
+void landmap::gametime_tasks ()
+{
+    update_status();
+    draw_down();
+    draw_all_characters();
+    draw_up();
 }
 
 void landmap::draw_all_characters(u_int16 depx=56, u_int16 depy=12)

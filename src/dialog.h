@@ -23,6 +23,7 @@
 #include "win_select.h"
 #include "win_image.h"
 #include "mapcharacter.h"
+#include "game.h"
 #include <vector>
 
 // This is the lowlevel dialogue class 
@@ -52,10 +53,15 @@ private:
     char* get_substr (const char*, char*, char*);
 };
 
-class dialog_engine
+class dialog_engine : public game_engine
 {
 public:
-    dialog_engine (mapcharacter *);
+    dialog_engine (mapcharacter *, game_engine *);
+    ~dialog_engine ();
+    
+    void realtime_tasks ();
+    void gametime_tasks ();
+    
     void update_keyboard ();
     void update ();
 
@@ -68,13 +74,13 @@ private:
     win_container *txt;
     win_image *face;
     win_label *name;
-    // win_label *prev;
-    // win_select *sel;
     win_border *border;
     win_background *back;
     
     dialog *dlg;
+    game_engine *engine;
     int answer;
+    u_int8 keyboard_mode;
 };
 #endif // __DIALOG_H__
 

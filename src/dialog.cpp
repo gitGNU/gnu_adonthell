@@ -21,6 +21,7 @@
 #include "game.h"
 #include "py_inc.h"
 #include "yarg.h"
+#include "input.h"
 #include "dialog.h"
 
 
@@ -345,9 +346,15 @@ char *dialog::get_substr (const char* string, char* begin, char* end)
 }
 
 // Init the dialogue engine
-dialog_engine::dialog_engine (mapcharacter *c)
+dialog_engine::dialog_engine (mapcharacter *c, game_engine *e) : engine (e)
 {
+    cout << "+" << flush;
+
     npc *mynpc = (npc *) c->data;
+
+    // save old keyboard mode
+    keyboard_mode = input::get_keyboard_mode ();
+    input::set_keyboard_mode (MODE_PUSHED);
 
     // Init the low level dialogue stuff
     dlg = new dialog;
@@ -380,14 +387,30 @@ dialog_engine::dialog_engine (mapcharacter *c)
 	run ();
 }
 
+dialog_engine::~dialog_engine ()
+{
+    cout << " - " << flush;
+    delete wnd;
+    delete border;
+    delete face;
+    delete name;
+    delete txt;
+    delete font;
+}
+
 void dialog_engine::run ()
 {
     u_int32 i;
     win_label *l;
     
     // Error occured:
-    if (answer < 0) return;
-
+    if (answer < 0)
+    {
+        input::set_keyboard_mode (keyboard_mode);
+        game::engine = engine;
+        delete this;
+    }
+    
     dlg->run (answer);
 
     for (i = 0; i < dlg->text_size; i++)
@@ -400,23 +423,27 @@ void dialog_engine::run ()
     txt->draw ();
 }
 
+void dialog_engine::realtime_tasks ()
+{
+    update_keyboard ();
+}
+
 void dialog_engine::update_keyboard ()
 {
-/*
-	static u_int16 lastkeypressed=0;
-	
-	if(input::is_pushed(lastkeypressed)) return;
-	lastkeypressed=0;
+    if (input::is_pushed (SDLK_SPACE))
+    {
+        input::set_keyboard_mode (keyboard_mode);
+        // wait until SPACE is released
+        // while (input::is_pushed (SDLK_SPACE));
+        game::engine = engine;
+        delete this;
+    }
+}
 
-	if (input::is_pushed (97)) 
-	{dlg->answer = 0; lastkeypressed=97;}
-	if (input::is_pushed (98)) 
-	{dlg->answer = 1; lastkeypressed=98;}
-	if (input::is_pushed (99)) 
-	{dlg->answer = 2; lastkeypressed=99;}
-	if (input::is_pushed (100)) 
-	{dlg->answer = 3; lastkeypressed=100;}
-*/
+void dialog_engine::gametime_tasks ()
+{
+    engine->gametime_tasks ();
+    update ();
 }
 
 void dialog_engine::update ()

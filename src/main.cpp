@@ -184,6 +184,9 @@ int main(int argc, char * argv[])
     //   scene->set_imagekey_anim(2,anim3);, line 79
     //    do_cutscene();
 
+    // Set focus to the map
+    game::engine = map1;
+
     // test:
     enter_event *e = new enter_event;
     event_handler::register_event (e, "scripts/event_test.py");

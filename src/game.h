@@ -20,6 +20,15 @@
 #include "prefs.h"
 #include "Python.h"
 
+class game_engine
+{
+public:
+    virtual void realtime_tasks () = 0;
+    virtual void gametime_tasks () = 0;
+    
+    virtual ~game_engine () { }
+};
+
 class game
 {
   static SDL_Thread *audio_thread;
@@ -30,6 +39,7 @@ class game
 
   static PyObject *globals;
   static char *theme;
+  static game_engine *engine;
 };
 
 #endif

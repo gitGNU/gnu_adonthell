@@ -20,13 +20,13 @@
 #include "mapevent.h"
 #include "mappattern.h"
 #include "mapsquare.h"
-#include "dialog.h"
+#include "game.h"
 
 class mapitem;
 
 typedef char lstr[100];
 
-class landmap
+class landmap : public game_engine
 {
  protected:
   mapsquare ** maparea;
@@ -73,9 +73,6 @@ class landmap
   //  window win;          /* status window */
   drawing_area * draw_zone;
   mapcharacter heroe;
-
-  // This probably shouldn't be here - just testing
-    dialog_engine *de;
 
   landmap();
   // ~landmap();
@@ -134,6 +131,8 @@ class landmap
   u_int16 get_square_eventleavenbr(u_int16 x, u_int16 y);
   void launch_event(mapcharacter * aguy, u_int16 nbr);
   void run_event(u_int16 nbr, mapcharacter * aguy, u_int16 x, u_int16 y);
+  void realtime_tasks ();
+  void gametime_tasks ();
 };
 
 //#define TOP_LAYER_ACTIVE 128 /* Is the top layer drawn actually? */
