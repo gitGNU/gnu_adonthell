@@ -156,7 +156,7 @@ create_debug_wnd (debug_dlg * dlg)
     gtk_signal_connect (GTK_OBJECT (update_debug), "clicked", GTK_SIGNAL_FUNC (on_update_debug_clicked), NULL);
     gtk_signal_connect (GTK_OBJECT (close_debug), "clicked", GTK_SIGNAL_FUNC (on_close_debug_clicked), dlg);
     gtk_signal_connect (GTK_OBJECT (debug_wnd), "destroy", GTK_SIGNAL_FUNC (on_debug_destroy), dlg);
-
+    gtk_signal_connect (GTK_OBJECT (notebook1), "switch_page", GTK_SIGNAL_FUNC (on_debug_page_switched), dlg);
     gtk_widget_show (debug_wnd);
 
     return debug_wnd;
@@ -266,11 +266,12 @@ create_dbg_edit_wnd (debug_dlg * dlg, char *title, char *attribute, char *value)
     gtk_container_add (GTK_CONTAINER (hbuttonbox1), dbg_edit_cancel);
     GTK_WIDGET_SET_FLAGS (dbg_edit_cancel, GTK_CAN_DEFAULT);
 
-    gtk_signal_connect (GTK_OBJECT (dbg_edit_ok), "clicked", GTK_SIGNAL_FUNC (on_dbg_edit_ok_clicked), NULL);
+    gtk_signal_connect (GTK_OBJECT (dbg_edit_ok), "clicked", GTK_SIGNAL_FUNC (on_dbg_edit_ok_clicked), dlg);
     gtk_signal_connect (GTK_OBJECT (dbg_edit_cancel), "clicked", GTK_SIGNAL_FUNC (on_dbg_edit_cancel_clicked), dbg_edit_wnd);
     gtk_signal_connect (GTK_OBJECT (dbg_edit_wnd), "destroy", GTK_SIGNAL_FUNC (on_widget_destroy), NULL);
 
+    gtk_window_set_transient_for (GTK_WINDOW (dbg_edit_wnd), GTK_WINDOW (dlg->dlg));
     gtk_widget_show (dbg_edit_wnd);
-    
+
     return dbg_edit_wnd;
 }

@@ -104,7 +104,7 @@ void create_mainframe (MainFrame * MainWnd)
     /* Player Settings */
     menuitem = gtk_menu_item_new_with_label ("Player");
     gtk_container_add (GTK_CONTAINER (menu), menuitem);
-    gtk_widget_add_accelerator (menuitem, "activate", accel_group, GDK_l, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
+    gtk_widget_add_accelerator (menuitem, "activate", accel_group, GDK_p, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
     gtk_signal_connect (GTK_OBJECT (menuitem), "activate", GTK_SIGNAL_FUNC (on_dialogue_player_activate), (gpointer) MainWnd);
     gtk_widget_show (menuitem);
 
@@ -214,10 +214,18 @@ void create_mainframe (MainFrame * MainWnd)
     gtk_widget_show (MainWnd->wnd);
 
     /* Colors */
-    /* Red */
-    MainWnd->color[GC_RED] = gdk_gc_new (gtk_widget_get_parent_window (MainWnd->graph));
+    /* Yellow */
+    MainWnd->color[GC_YELLOW] = gdk_gc_new (gtk_widget_get_parent_window (MainWnd->graph));
     color.red = 65535;
     color.green = 32700;
+    color.blue = 0;
+    gdk_colormap_alloc_color (gtk_widget_get_colormap (MainWnd->wnd), &color, TRUE, TRUE);
+    gdk_gc_set_foreground (MainWnd->color[GC_YELLOW], &color);
+
+    /* Orange */
+    MainWnd->color[GC_RED] = gdk_gc_new (gtk_widget_get_parent_window (MainWnd->graph));
+    color.red = 65535;
+    color.green = 16350;
     color.blue = 0;
     gdk_colormap_alloc_color (gtk_widget_get_colormap (MainWnd->graph), &color, TRUE, TRUE);
     gdk_gc_set_foreground (MainWnd->color[GC_RED], &color);
@@ -240,13 +248,21 @@ void create_mainframe (MainFrame * MainWnd)
 
     /* Green */
     MainWnd->color[GC_GREEN] = gdk_gc_new (gtk_widget_get_parent_window (MainWnd->graph));
-    color.red = 0;
-    color.green = 35000;
-    color.blue = 0;
+    color.red = 16000;
+    color.green = 50000;
+    color.blue = 5000;
     gdk_colormap_alloc_color (gtk_widget_get_colormap (MainWnd->wnd), &color, TRUE, TRUE);
     gdk_gc_set_foreground (MainWnd->color[GC_GREEN], &color);
 
-    /* Green */
+    /* Dark Green */
+    MainWnd->color[GC_DARK_GREEN] = gdk_gc_new (gtk_widget_get_parent_window (MainWnd->graph));
+    color.red = 0;
+    color.green = 27300;
+    color.blue = 15600;
+    gdk_colormap_alloc_color (gtk_widget_get_colormap (MainWnd->wnd), &color, TRUE, TRUE);
+    gdk_gc_set_foreground (MainWnd->color[GC_DARK_GREEN], &color);
+
+    /* Purple */
     MainWnd->color[GC_PURPLE] = gdk_gc_new (gtk_widget_get_parent_window (MainWnd->graph));
     color.red = 35000;
     color.green = 0;
@@ -350,12 +366,15 @@ create_list_item (MainFrame *wnd, DlgNode *node, int mode)
     
     switch (mode)
     {
-        // Selcted node's text
+        // Selected node's text
         case 1:
         {
             color.red = 65535;
+            
             if (node->type == NPC) color.green = 0;
-            else color.green = 32700;
+            else if (node->type == NARRATOR) color.green = 32700;
+            else color.green = 16350;
+
             color.blue = 0;
             break;
         }
@@ -363,17 +382,23 @@ create_list_item (MainFrame *wnd, DlgNode *node, int mode)
         case 2:
         {
             color.red = 30000;
-            color.green = 30000;
-            if (node->type == NPC) color.blue = 30000;
-            else color.blue = 45000;
+
+            if (node->type == NARRATOR) color.green = 47300;
+            else color.green = 30000;
+
+            if (node->type == PLAYER) color.blue = 45000;
+            else color.blue = 30000;
             break;
         }
         // Directly attached node's text
         default:
         {
             color.red = 0;
-            color.green = 0;
+            if (node->type == NARRATOR) color.green = 27300;
+            else color.green = 0;
+            
             if (node->type == NPC) color.blue = 0;
+            else if (node->type == NARRATOR) color.blue = 15600;
             else color.blue = 35000;
             break;
         }

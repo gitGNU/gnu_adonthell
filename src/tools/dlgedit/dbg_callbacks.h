@@ -23,6 +23,7 @@ void on_character_tree_select (GtkWidget *, gint, gint, GdkEventButton *, gpoint
 void on_quest_tree_expand (GtkCTree *, GList *, gpointer);
 void on_update_debug_clicked (GtkButton *, gpointer);
 void on_close_debug_clicked (GtkButton *, gpointer);
+void on_debug_page_switched (GtkNotebook *, GtkNotebookPage *, gint, gpointer);
 void on_dbg_edit_ok_clicked (GtkButton *, gpointer);
 void on_dbg_edit_cancel_clicked (GtkButton *, gpointer);
 

@@ -172,14 +172,28 @@ void dlg_compiler::write_custom_func ()
 // Write a NPC part 
 void dlg_compiler::write_npc (Circle *circle)
 {
-    u_int32 i = 0, j;
+    u_int32 i = 0, j, changed = 0;
 
     // set NPC if changed
     if (character_changed (circle))
     {
+        changed = 1;
+        
         script << "\n" << space << "self.set_npc (";
         if (circle->character == "") script << "the_npc.name)";
         else script << "\"" << circle->character << "\")";
+    }
+
+    // set/unset Narrator
+    if (circle->type == NARRATOR)
+    {
+        script << "\n" << space << "self.set_color (0)";
+    }
+    else if (!changed && narrator_before (circle))
+    {
+        script << "\n" << space << "self.set_color (";
+        if (circle->character == "") script << "the_npc.color)";
+        else script << "characters[\"" << circle->character << "\"].color)";
     }
 
 #ifdef _DEBUG_
@@ -261,7 +275,8 @@ void dlg_compiler::write_answer ()
     for (i = cur_nodes.begin (); i != cur_nodes.end (); i++)
     {
 #ifdef _DEBUG_
-        if ((*i)->type != NPC) cout << "\n*** Compile error: NPC node expected!"; 
+        if ((*i)->type != NPC && (*i)->type != NARRATOR)
+            cout << "\n*** Compile error: NPC node expected!"; 
 #endif _DEBUG_
 
         // write circle's condition (if any)
@@ -395,12 +410,12 @@ u_int8 dlg_compiler::npc_follows (DlgNode *circle)
 {
     // Check immediate followers
     if (circle->next.size () > 0)
-        if (circle->next[0]->next[0]->type == NPC)
+        if (circle->next[0]->next[0]->type != PLAYER)
             return 1;
 
     // Check linked followers
     if (circle->link.size () > 0)
-        if (circle->link[0]->next[0]->type == NPC)
+        if (circle->link[0]->next[0]->type != PLAYER)
             return 1;
 
     return 0;
@@ -408,7 +423,7 @@ u_int8 dlg_compiler::npc_follows (DlgNode *circle)
 
 u_int8 dlg_compiler::character_changed (Circle *circle)
 {
-    if (circle->prev.empty ()) return 1;
+    if (circle->prev.empty ()) return 0;
 
     vector<Circle*> prevs;
     vector<Circle*>::iterator i;
@@ -421,6 +436,26 @@ u_int8 dlg_compiler::character_changed (Circle *circle)
 
     for (i = prevs.begin (); i != prevs.end (); i++)
         if ((*i)->character != circle->character)
+            return 1;
+
+    return 0;
+}
+
+u_int8 dlg_compiler::narrator_before (Circle *circle)
+{
+    if (circle->prev.empty ()) return 0;
+
+    vector<Circle*> prevs;
+    vector<Circle*>::iterator i;
+
+    // get all direct precedessors
+    get_prev_npc_nodes (circle, prevs);
+
+    // get all indirect precedessors
+    get_prev_npc_links (circle, prevs);
+
+    for (i = prevs.begin (); i != prevs.end (); i++)
+        if ((*i)->type == NARRATOR)
             return 1;
 
     return 0;

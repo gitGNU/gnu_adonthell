@@ -654,6 +654,35 @@ static PyObject *_wrap_character_posy_get(PyObject *self, PyObject *args) {
 }
 
 
+static PyObject *_wrap_character_color_set(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    character *arg0 ;
+    unsigned long arg1 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"Ol:character_color_set",&argo0,&arg1)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_character,1)) == -1) return NULL;
+    arg0->color = arg1;
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_character_color_get(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    character *arg0 ;
+    PyObject * argo0 =0 ;
+    unsigned long result ;
+    
+    if(!PyArg_ParseTuple(args,"O:character_color_get",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_character,1)) == -1) return NULL;
+    result = (unsigned long ) (arg0->color);
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+}
+
+
 static PyObject *_wrap_new_character(PyObject *self, PyObject *args) {
     PyObject *resultobj;
     character *result ;
@@ -802,6 +831,8 @@ static PyMethodDef charactercMethods[] = {
 	 { "character_posx_get", _wrap_character_posx_get, METH_VARARGS },
 	 { "character_posy_set", _wrap_character_posy_set, METH_VARARGS },
 	 { "character_posy_get", _wrap_character_posy_get, METH_VARARGS },
+	 { "character_color_set", _wrap_character_color_set, METH_VARARGS },
+	 { "character_color_get", _wrap_character_color_get, METH_VARARGS },
 	 { "new_character", _wrap_new_character, METH_VARARGS },
 	 { "delete_character", _wrap_delete_character, METH_VARARGS },
 	 { "new_npc", _wrap_new_npc, METH_VARARGS },
@@ -816,6 +847,8 @@ static PyMethodDef charactercMethods[] = {
 	 { "npc_posx_get", _wrap_character_posx_get, METH_VARARGS },
 	 { "npc_posy_set", _wrap_character_posy_set, METH_VARARGS },
 	 { "npc_posy_get", _wrap_character_posy_get, METH_VARARGS },
+	 { "npc_color_set", _wrap_character_color_set, METH_VARARGS },
+	 { "npc_color_get", _wrap_character_color_get, METH_VARARGS },
 	 { "new_player", _wrap_new_player, METH_VARARGS },
 	 { "delete_player", _wrap_delete_player, METH_VARARGS },
 	 { "player_name_set", _wrap_character_name_set, METH_VARARGS },
@@ -824,6 +857,8 @@ static PyMethodDef charactercMethods[] = {
 	 { "player_posx_get", _wrap_character_posx_get, METH_VARARGS },
 	 { "player_posy_set", _wrap_character_posy_set, METH_VARARGS },
 	 { "player_posy_get", _wrap_character_posy_get, METH_VARARGS },
+	 { "player_color_set", _wrap_character_color_set, METH_VARARGS },
+	 { "player_color_get", _wrap_character_color_get, METH_VARARGS },
 	 { NULL, NULL }
 };
 

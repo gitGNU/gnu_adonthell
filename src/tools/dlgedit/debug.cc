@@ -15,7 +15,6 @@
 #include <gtk/gtk.h>
 #include <hash_map>
 
-// #include "../../types.h"
 #include "../../character.h"
 #include "../../game.h"
 #include "debug.h"
@@ -28,6 +27,8 @@ int debug_dlg::destroy = 0;
 debug_dlg::debug_dlg ()
 {
     destroy = 1;
+    active_page = 0;
+    selected_row = -1;
     dlg = create_debug_wnd (this);
     init ();
 }
@@ -41,9 +42,59 @@ void debug_dlg::update ()
 {
 }
 
+void debug_dlg::set (char *key, char *val)
+{
+    int ival = atoi (val);
+    storage *object;
+    objects *container;
+    GtkCTreeRow *tree_row;
+	GtkCTreeNode *node;
+    GtkCTree *tree;
+    char *obj;
+    
+    switch (active_page)
+    {
+        case 0:
+        {
+            tree = GTK_CTREE (char_tree);
+            container = &game::characters;
+            break;
+        }
+        case 1:
+        {
+            tree = GTK_CTREE (quest_tree);
+            container = &game::quests;
+            break;
+        }
+        default: return;
+    }
+
+    node = gtk_ctree_node_nth (tree, selected_row);
+    tree_row = GTK_CTREE_ROW (node);
+
+    // Change attribute
+    if (tree_row->parent)
+    {
+	    obj = (char *) gtk_ctree_node_get_row_data (tree, tree_row->parent);
+        gtk_ctree_node_set_text (tree, node, 1, val);
+    }
+    // add new attribute
+    else
+    {
+        char *text[2] = { key, val };
+       
+	    obj = (char *) gtk_ctree_node_get_row_data (tree, node);
+        node = gtk_ctree_insert_node (tree, node, NULL, text, 0, NULL, NULL, NULL, NULL, TRUE, FALSE);
+        gtk_ctree_node_set_row_data (tree, node, strdup (key));
+    }
+    
+    object = container->get (obj);
+    object->set (key, ival);
+}
+
 void debug_dlg::init ()
 {
-    GtkCTreeNode *parent = NULL;
+    GtkCTreeNode *parent = NULL, *node;
     pair<const char*, s_int32> mypair;
     character *mychar;
     char *text[2], str[32];
@@ -56,6 +107,7 @@ void debug_dlg::init ()
         text[1] = "";
 
         parent = gtk_ctree_insert_node (GTK_CTREE (char_tree), NULL, NULL, text, 0, NULL, NULL, NULL, NULL, FALSE, FALSE);
+        gtk_ctree_node_set_row_data (GTK_CTREE (char_tree), parent, text[0]);
 
         while ((mypair = mychar->next ()).first != NULL)
         {
@@ -64,7 +116,8 @@ void debug_dlg::init ()
             text[0] = strdup (mypair.first);
             text[1] = str;
 
-            gtk_ctree_insert_node (GTK_CTREE (char_tree), parent, NULL, text, 0, NULL, NULL, NULL, NULL, TRUE, FALSE);
+            node = gtk_ctree_insert_node (GTK_CTREE (char_tree), parent, NULL, text, 0, NULL, NULL, NULL, NULL, TRUE, FALSE);
+            gtk_ctree_node_set_row_data (GTK_CTREE (char_tree), node, text[0]);
         }
     }
 

@@ -58,7 +58,8 @@ enum
     PLAYER = 1,
     NPC = 2,
     LINK = 3,
-    MOVER = 4
+    MOVER = 4,
+    NARRATOR = 5
 };
 
 // Base class for the Dialogue Nodes

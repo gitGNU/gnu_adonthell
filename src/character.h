@@ -49,6 +49,7 @@ public:
     char *name;                             // The character's name (and ID)
     u_int16 posx;                           // The x position on the (current?) map
     u_int16 posy;                           // The y position
+    u_int32 color;                          // Color of dialogue text
 
 #ifndef SWIG
     void save (FILE*);                      // Save the character to file

@@ -48,9 +48,10 @@ on_character_tree_select (GtkWidget * widget, gint row, gint column, GdkEventBut
 	{
 		if (bevent->button == 1)
 		{
+            dlg->selected_row = row;
+		
 			node = gtk_ctree_node_nth (GTK_CTREE (widget), row);
-            gtk_clist_get_text (GTK_CLIST (widget), row, 0, &attribute);
-            // gtk_ctree_node_get_text (GTK_CTREE (widget), node, 0, &attribute);
+			attribute = (char *) gtk_ctree_node_get_row_data (GTK_CTREE (widget), node);
             gtk_ctree_node_get_text (GTK_CTREE (widget), node, 1, &value);
 
             // Top-Level node:
@@ -64,12 +65,14 @@ on_character_tree_select (GtkWidget * widget, gint row, gint column, GdkEventBut
             else
             {
                 GtkCTreeRow *tree_row = GTK_CTREE_ROW (node);
-                gtk_clist_get_text (GTK_CLIST (widget), row, 0, &title);
-                // gtk_ctree_node_get_text (GTK_CTREE (tree_row->parent), node, 0, &title);
+			    title = (char *) gtk_ctree_node_get_row_data (GTK_CTREE (widget), tree_row->parent);
             }
             
             create_dbg_edit_wnd (dlg, title, attribute, value);
             gtk_main ();
+
+            dlg->selected_row = -1;
+            gtk_clist_unselect_row (GTK_CLIST (widget), row, column);
 		}
 	}
 }
@@ -96,12 +99,25 @@ on_close_debug_clicked (GtkButton * button, gpointer user_data)
     on_debug_destroy (dlg->dlg, user_data);
 }
 
+void 
+on_debug_page_switched (GtkNotebook *notebook, GtkNotebookPage *page, gint num, gpointer user_data)
+{
+    debug_dlg *dlg = (debug_dlg *) user_data;
+    dlg->active_page = num;
+}
+
 void
 on_dbg_edit_ok_clicked (GtkButton * button, gpointer user_data)
 {
+    debug_dlg *dlg = (debug_dlg *) user_data;
+    char *key = gtk_entry_get_text (GTK_ENTRY (dlg->attrib_entry));
+    char *val = gtk_entry_get_text (GTK_ENTRY (dlg->val_entry));
 
+    if (key[0] == 0 || val[0] == 0) return; 
+
+    dlg->set (key, val);
+    on_dbg_edit_cancel_clicked (button, gtk_widget_get_toplevel (GTK_WIDGET (button)));
 }
-
 
 void
 on_dbg_edit_cancel_clicked (GtkButton * button, gpointer user_data)

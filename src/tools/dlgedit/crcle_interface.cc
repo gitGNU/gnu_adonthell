@@ -55,6 +55,7 @@ create_dlg_node_window (Circle *circle, crcle_dlg *dlg)
     GtkWidget *text_entry;
     GSList *character_group = NULL;
     GtkWidget *player_button;
+    GtkWidget *narrator_button;
     GtkWidget *hbox1;
     GtkWidget *npc_button;
     GtkWidget *npc_selection;
@@ -107,6 +108,7 @@ create_dlg_node_window (Circle *circle, crcle_dlg *dlg)
     GtkTooltips *tooltips;
     GdkColor dark_blue;
     GdkColor green;
+    GdkColor dark_green;
     character *mychar;
 
     GtkStyle *fstyle = gtk_style_copy (gtk_widget_get_default_style ());
@@ -115,6 +117,10 @@ create_dlg_node_window (Circle *circle, crcle_dlg *dlg)
     dark_blue.red = 0;
     dark_blue.green = 0;
     dark_blue.blue = 35000;
+
+    dark_green.red = 0;
+    dark_green.green = 27300;
+    dark_green.blue = 15600;
 
     green.red = 0;
     green.green = 27500;
@@ -146,7 +152,7 @@ create_dlg_node_window (Circle *circle, crcle_dlg *dlg)
     gtk_notebook_set_tab_hborder (GTK_NOTEBOOK (notebook1), 6);
     GTK_WIDGET_UNSET_FLAGS (notebook1, GTK_CAN_FOCUS);
 
-    vbox2 = gtk_vbox_new (FALSE, 4);
+    vbox2 = gtk_vbox_new (FALSE, 0);
     gtk_widget_ref (vbox2);
     gtk_object_set_data_full (GTK_OBJECT (dlg_node_window), "vbox2", vbox2, (GtkDestroyNotify) gtk_widget_unref);
     gtk_widget_show (vbox2);
@@ -169,10 +175,18 @@ create_dlg_node_window (Circle *circle, crcle_dlg *dlg)
     gtk_tooltips_set_tip (tooltips, text_entry, "Enter the Text to appear within the conversation", NULL);
     gtk_text_set_editable (GTK_TEXT (text_entry), TRUE);
     gtk_text_set_word_wrap (GTK_TEXT (text_entry), TRUE);
-    if (circle->type == NPC) 
+    if (circle->type == NPC)
         gtk_text_insert (GTK_TEXT (text_entry), text_entry->style->font,
             &text_entry->style->black, &text_entry->style->white,
             circle->text.c_str (), -1);
+    else if (circle->type == NARRATOR)
+    {
+        gtk_text_insert ((GtkText *) text_entry, text_entry->style->font,
+            &dark_green, &text_entry->style->white, " ", -1);
+        gtk_text_insert (GTK_TEXT (text_entry), text_entry->style->font,
+            &dark_green, &text_entry->style->white, circle->text.c_str (), -1);
+        gtk_editable_delete_text ((GtkEditable *) text_entry, 0, 1);
+    }
     else
     {
         gtk_text_insert ((GtkText *) text_entry, text_entry->style->font,
@@ -185,12 +199,36 @@ create_dlg_node_window (Circle *circle, crcle_dlg *dlg)
     dlg->text_entry = text_entry;
 
     GtkStyle *style = gtk_style_copy (gtk_widget_get_default_style ());
+    style->fg[GTK_STATE_NORMAL] = dark_green;
+    style->fg[GTK_STATE_ACTIVE] = dark_green;
+    style->fg[GTK_STATE_PRELIGHT] = dark_green;
+    style->fg[GTK_STATE_SELECTED] = dark_green;
+
+    GtkWidget *label = gtk_label_new ("Narrator");
+    gtk_widget_set_style (label, style);
+    gtk_label_set_justify ((GtkLabel *) label, GTK_JUSTIFY_LEFT);
+    gtk_misc_set_alignment (GTK_MISC (label), 0.0, 0.5);
+    gtk_widget_show (label);
+
+    narrator_button = gtk_radio_button_new (character_group);
+    gtk_container_add (GTK_CONTAINER(narrator_button), label);
+    character_group = gtk_radio_button_group (GTK_RADIO_BUTTON (narrator_button));
+    gtk_widget_ref (narrator_button);
+    gtk_object_set_data_full (GTK_OBJECT (dlg_node_window), "narrator_button", narrator_button, (GtkDestroyNotify) gtk_widget_unref);
+    gtk_widget_show (narrator_button);
+    gtk_box_pack_start (GTK_BOX (vbox2), narrator_button, FALSE, FALSE, 0);
+    if (circle->type == NARRATOR)
+        gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (narrator_button), TRUE);
+    GTK_WIDGET_UNSET_FLAGS (narrator_button, GTK_CAN_FOCUS);
+
+
+    style = gtk_style_copy (gtk_widget_get_default_style ());
     style->fg[GTK_STATE_NORMAL] = dark_blue;
     style->fg[GTK_STATE_ACTIVE] = dark_blue;
     style->fg[GTK_STATE_PRELIGHT] = dark_blue;
     style->fg[GTK_STATE_SELECTED] = dark_blue;
 
-    GtkWidget *label = gtk_label_new ("Player");
+    label = gtk_label_new ("Player");
     gtk_widget_set_style (label, style);
     gtk_label_set_justify ((GtkLabel *) label, GTK_JUSTIFY_LEFT);
     gtk_misc_set_alignment (GTK_MISC (label), 0.0, 0.5);
@@ -628,6 +666,7 @@ create_dlg_node_window (Circle *circle, crcle_dlg *dlg)
     gtk_signal_connect (GTK_OBJECT (text_entry), "changed", GTK_SIGNAL_FUNC (on_text_entry_changed), dlg);
     gtk_signal_connect (GTK_OBJECT (player_button), "clicked", GTK_SIGNAL_FUNC (on_player_button_pressed), dlg);
     gtk_signal_connect (GTK_OBJECT (npc_button), "clicked", GTK_SIGNAL_FUNC (on_npc_button_pressed), dlg);
+    gtk_signal_connect (GTK_OBJECT (narrator_button), "clicked", GTK_SIGNAL_FUNC (on_narrator_button_pressed), dlg);
     gtk_signal_connect (GTK_OBJECT (condition_entry), "changed", GTK_SIGNAL_FUNC (on_condition_entry_changed), dlg);
     gtk_signal_connect (GTK_OBJECT (variable_entry), "changed", GTK_SIGNAL_FUNC (on_variable_entry_changed), dlg);
     gtk_signal_connect (GTK_OBJECT (annotation_entry), "changed", GTK_SIGNAL_FUNC (on_annotation_entry_changed), dlg);
@@ -638,18 +677,6 @@ create_dlg_node_window (Circle *circle, crcle_dlg *dlg)
 		      GTK_SIGNAL_FUNC (on_loop_clicked), dlg);
     gtk_signal_connect (GTK_OBJECT (start_combat), "clicked",
 		      GTK_SIGNAL_FUNC (on_start_combat_clicked), dlg);
-    gtk_signal_connect (GTK_OBJECT (set_dlg), "clicked",
-		      GTK_SIGNAL_FUNC (on_set_dlg_clicked), dlg);
-    gtk_signal_connect (GTK_OBJECT (add_plugin), "clicked",
-		      GTK_SIGNAL_FUNC (on_add_plugin_clicked), dlg);
-    gtk_signal_connect (GTK_OBJECT (remove_plugin), "clicked",
-		      GTK_SIGNAL_FUNC (on_remove_plugin_clicked), dlg);
-    gtk_signal_connect (GTK_OBJECT (add_dlg_button), "clicked",
-		      GTK_SIGNAL_FUNC (on_add_dlg_button_clicked), dlg);
-    gtk_signal_connect (GTK_OBJECT (remove_dlg_button), "clicked",
-		      GTK_SIGNAL_FUNC (on_remove_dlg_button_clicked), dlg);
-    gtk_signal_connect (GTK_OBJECT (dlg_list), "start_selection",
-		      GTK_SIGNAL_FUNC (on_dlg_list_start_selection), dlg);
 		      
     gtk_widget_grab_focus (text_entry);
     gtk_widget_grab_default (text_entry);

@@ -16,6 +16,7 @@
 
 void on_text_entry_changed (GtkEditable * editable, gpointer user_data);
 void on_player_button_pressed (GtkButton * button, gpointer user_data);
+void on_narrator_button_pressed (GtkButton * button, gpointer user_data);
 void on_npc_button_pressed (GtkButton * button, gpointer user_data);
 void on_condition_entry_changed (GtkEditable * editable, gpointer user_data);
 void on_variable_entry_changed (GtkEditable * editable, gpointer user_data);

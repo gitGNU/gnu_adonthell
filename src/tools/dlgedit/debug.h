@@ -26,6 +26,7 @@ public:
     ~debug_dlg ();
     void init ();
     void update ();
+    void set (char*, char*);
 
     GtkWidget *quest_tree;
     GtkWidget *char_tree;
@@ -35,6 +36,8 @@ public:
     MainFrame *wnd;
 
     static int destroy;
+    int active_page;
+    int selected_row;
 };
 
 #endif // __DEBUG_H__

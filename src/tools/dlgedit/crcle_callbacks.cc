@@ -75,6 +75,28 @@ on_player_button_pressed (GtkButton * button, gpointer user_data)
     ((crcle_dlg *) user_data)->on_type (PLAYER);
 }
 
+void
+on_narrator_button_pressed (GtkButton * button, gpointer user_data)
+{
+    GtkWidget *entry = ((crcle_dlg *) user_data)->text_entry;
+    GdkColor dark_green;
+
+    dark_green.red = 0;
+    dark_green.green = 27300;
+    dark_green.blue = 15600;
+
+    // Set Text-color to dark green
+    gtk_text_freeze ((GtkText *) entry);
+    gchar *text = gtk_editable_get_chars ((GtkEditable *) entry, 0, -1);
+    gtk_editable_delete_text ((GtkEditable *) entry, 0, -1);
+    gtk_text_insert ((GtkText *) entry, entry->style->font, &dark_green, &entry->style->white, " ", -1);
+    gtk_text_insert ((GtkText *) entry, entry->style->font, &dark_green, &entry->style->white, text, -1);
+    gtk_editable_delete_text ((GtkEditable *) entry, 0, 1);
+    g_free (text);
+    gtk_text_thaw ((GtkText *) entry);
+
+    ((crcle_dlg *) user_data)->on_type (NARRATOR);
+}
 
 void
 on_npc_button_pressed (GtkButton * button, gpointer user_data)

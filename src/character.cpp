@@ -90,6 +90,8 @@ void character::load (FILE *in, bool reg_event)
         e = event_handler::load_event (in, reg_event);
         if (e) events.push_back (e);
     }
+
+    color = 0;
 }
 
 // Init NPC

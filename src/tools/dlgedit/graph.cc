@@ -609,10 +609,9 @@ draw_circle (MainFrame * wnd, DlgNode * circle, int highlite)
     {
     case 0:                    // not selected 
         {
-            if (circle->type == NPC)
-                gc = wnd->graph->style->black_gc;
-            else
-                gc = wnd->color[GC_DARK_BLUE];
+            if (circle->type == NPC) gc = wnd->graph->style->black_gc;
+            else if (circle->type == NARRATOR) gc = wnd->color[GC_DARK_GREEN];
+            else gc = wnd->color[GC_DARK_BLUE];
 
             circle->highlite = 0;
             break;
@@ -620,10 +619,9 @@ draw_circle (MainFrame * wnd, DlgNode * circle, int highlite)
 
     case 1:                    // selected 
         {
-            if (circle->type == NPC)
-                gc = wnd->color[GC_DARK_RED];
-            else
-                gc = wnd->color[GC_RED];
+            if (circle->type == NPC) gc = wnd->color[GC_DARK_RED];
+            else if (circle->type == NARRATOR) gc = wnd->color[GC_YELLOW];
+            else gc = wnd->color[GC_RED];
 
             circle->highlite = 1;
             break;
@@ -1169,6 +1167,7 @@ select_object (MainFrame * wnd, GdkPoint point)
     {
     case NPC:
     case PLAYER:
+    case NARRATOR:
         {
             draw_circle (wnd, node, 1);
 
@@ -1211,6 +1210,7 @@ select_object_index (MainFrame * wnd, int index)
     {
     case NPC:
     case PLAYER:
+    case NARRATOR:
         {
             draw_circle (wnd, wnd->selected_node, 1);
 
@@ -1255,6 +1255,7 @@ deselect_object (MainFrame * wnd)
     {
         case NPC:
         case PLAYER:
+        case NARRATOR:
         {
             draw_circle (wnd, wnd->selected_node, 0);
 
