@@ -38,6 +38,8 @@ class mapview
 
   u_int16 draw_offx, draw_offy;
 
+  string schedule_file;
+
   landmap * m_map;
 
   //  u_int16 ctrx,ctry;
@@ -113,6 +115,10 @@ class mapview
   u_int16 get_posx() { return posx; }
   u_int16 get_posy() { return posy; }
   void resize(u_int16 l, u_int16 h);
+
+  s_int8 get_state(gzFile file);
+  s_int8 put_state(gzFile file);
+  
 #ifndef _EDIT_
   void set_schedule(char * file);
 #endif

@@ -143,6 +143,10 @@ public:
     static void register_event (event*, char*); // register an event
     static void remove_event (event*);          // unregister an event
     static void raise_event (event*);           // event triggered
+
+    static s_int8 get_state(gzFile file);         // Save and Load event handler state
+    static s_int8 put_state(gzFile file);
+
 #ifndef SWIG
     static event* load_event (gzFile, bool=true);// load an event
 private:

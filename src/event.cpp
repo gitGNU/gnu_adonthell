@@ -176,6 +176,36 @@ event* event_handler::load_event (gzFile f, bool reg)
     return e;
 }
 
+s_int8 event_handler::get_state(gzFile file)
+{
+  u_int32 nbr_of_events,i;
+  gzread(file,&nbr_of_events,sizeof(nbr_of_events));
+  for(i=0;i<nbr_of_events;i++)
+    {
+      load_event(file,true);
+    }
+  return 0;
+}
+
+s_int8 event_handler::put_state(gzFile file)
+{
+  u_int32 nbr_of_events=0;
+  u_int32 j;
+  
+  for(j=0;j<MAX_EVENT;j++)
+    {
+      nbr_of_events+=handlers[j].size();
+    }
+  
+  for(j=0;j<MAX_EVENT;j++)
+    {
+      vector<event*>::iterator i;
+      for(i = handlers[j].begin(); i != handlers[j].end(); i++)
+	(*i)->save(file);
+    }
+  return 0;
+}
+
 // =======================================================================
 // HERE COME ALL THE DIFFERENT EVENTS:
 

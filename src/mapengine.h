@@ -27,15 +27,18 @@ class mapengine
   ~mapengine();
   
   void set_mapview_schedule(char * s);
-  void use_map(landmap * lm);
-  landmap * get_landmap() { return lmap; }
+  void load_map(const char * fname);
+  landmap * get_landmap() { return &lmap; }
   void run();
   void quit() { letsexit = true; }
+
+  s_int8 get_state(gzFile file);
+  s_int8 put_state(gzFile file);
 
   void mainloop();
 
  protected:
-  landmap * lmap;
+  landmap lmap;
   mapview mv;
   bool letsexit;
 };

@@ -36,14 +36,14 @@ class gamedata
 {
 public:
     gamedata ();
-    gamedata (char *desc, char *dir);
+    gamedata (const char *desc, const char *dir);
     ~gamedata ();
     
     void save (gzFile);                     // save a record to disk
     bool load (gzFile);                     // load a record from disk
 
     // a bunch of methods to access the private attributes
-    char* get_directory () { return directory; }
+    const char* get_directory () { return directory; }
     char* get_description () { return description; }
     char* get_location () { return location; }
     char* get_time () { return time; }
@@ -68,7 +68,8 @@ public:
     static bool load (u_int32);             // Load a game
     static gamedata* save (u_int32, char*); // Save the game
     static gamedata* next_save ();          // Iterate over saved game descriptions
-    static char* get_adonthell_dir ();      // Return the user's adonthell directory
+    static const char* get_adonthell_dir () // Return the user's adonthell directory
+      { return (const char*) adonthell_dir; }
 
 #if defined(USE_PYTHON)
     static PyObject *globals;               // Global namespace to use in scripts

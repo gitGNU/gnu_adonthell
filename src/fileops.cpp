@@ -16,7 +16,7 @@
 #include "fileops.h"
 
 // write a string to a file
-void fileops::put_string (gzFile file, char *string)
+void fileops::put_string (gzFile file, const char *string)
 {
     u_int16 length = 0;
 
@@ -24,7 +24,7 @@ void fileops::put_string (gzFile file, char *string)
     {
         length = strlen (string);
         gzwrite (file, &length, sizeof (length));    
-        gzwrite (file, string, length);
+        gzwrite (file, (void*)string, length);
     } 
     else gzwrite (file, &length, sizeof (length));   
 }
@@ -54,7 +54,7 @@ void fileops::put_version (gzFile file, u_int16 version)
 }
 
 // read version info from file and check whether we can handle it
-bool fileops::get_version (gzFile file, u_int16 min, u_int16 max, char *name = NULL)
+bool fileops::get_version (gzFile file, u_int16 min, u_int16 max, const char *name = NULL)
 {
     char vinfo = gzgetc (file);
     u_int16 version;

@@ -36,9 +36,6 @@ void mapcharacter::init()
   action=NULL;
   schedule_activated=true;
   action_activated=true;
-  schedule_file=NULL;
-  action_file=NULL;
-  anim_file=NULL;
 #endif
 }
 
@@ -50,9 +47,9 @@ void mapcharacter::clear()
 #if defined(USE_PYTHON)
   if (schedule) free (schedule);
   if (action) free (action);
-  if (anim_file) delete[] anim_file;
-  if (action_file) delete[] action_file;
-  if (schedule_file) delete[] schedule_file;
+  filename_="";
+  action_file="";
+  schedule_file="";
 #endif
 }
 
@@ -91,13 +88,60 @@ s_int8 mapcharacter::load(const char * fname)
   if(fileops::get_version (file, 1, 1, fdef))
     retvalue=get(file);
   gzclose(file);
+  filename_=fname;
 
-#if defined(USE_PYTHON)
-  if (anim_file) delete[] anim_file;
-  anim_file = new char[strlen(fname)+1];
-  strcpy (anim_file, fname);
-#endif
+  return 0;
+}
 
+s_int8 mapcharacter::get_state(gzFile file)
+{
+  // Load the schedule's and graphical data
+  char * t;
+  t=fileops::get_string(file); load(t); if(t) delete[] t;
+
+  cout << "Mapchar file is " << filename() << endl;
+
+  t=fileops::get_string(file); set_schedule(t); if(t) delete[] t;
+
+  cout << "Schedule is " << schedule_file << endl;
+
+  t=fileops::get_string(file); set_action(t); if(t) delete[] t;
+
+  cout << "Action is " << action_file << endl;
+
+  // Reads the data members
+  gzread(file,&current_move,sizeof(current_move));
+  gzread(file,&ask_move,sizeof(ask_move));
+  gzread(file,&submap,sizeof(submap));
+  gzread(file,&posx,sizeof(posx));
+  gzread(file,&posy,sizeof(posy));
+  gzread(file,&offx,sizeof(offx));
+  gzread(file,&offy,sizeof(offy));
+  gzread(file,&schedule_activated,sizeof(schedule_activated));
+  gzread(file,&action_activated,sizeof(action_activated));
+
+  cout << "Mapchar finished!\n";
+
+  return 0;
+}
+
+s_int8 mapcharacter::put_state(gzFile file)
+{
+  // Write the schedule's and data file name
+  fileops::put_string(file,filename_.c_str());
+  fileops::put_string(file,schedule_file.c_str());
+  fileops::put_string(file,action_file.c_str());
+
+  // Write the data members
+  gzwrite(file,&current_move,sizeof(current_move));
+  gzwrite(file,&ask_move,sizeof(ask_move));
+  gzwrite(file,&submap,sizeof(submap));
+  gzwrite(file,&posx,sizeof(posx));
+  gzwrite(file,&posy,sizeof(posy));
+  gzwrite(file,&offx,sizeof(offx));
+  gzwrite(file,&offy,sizeof(offy));
+  gzwrite(file,&schedule_activated,sizeof(schedule_activated));
+  gzwrite(file,&action_activated,sizeof(action_activated));
   return 0;
 }
 
@@ -398,6 +442,13 @@ mapcharacter * mapcharacter::whosnext()
 #ifndef _EDIT_
 void mapcharacter::set_schedule(char * file)
 {
+  if(!file || !strcmp(file,""))
+    {
+      schedule_file="";
+      if(schedule) delete schedule;
+      schedule=NULL;
+      return;
+    }
   char script[255];
   strcpy (script, "scripts/schedules/");
   strcat (script, file);
@@ -415,11 +466,9 @@ void mapcharacter::set_schedule(char * file)
 	  // If no errors occured update schedule code ...
 	  if (schedule) delete schedule;
 	  schedule = PyNode_Compile (n, file);
-      PyNode_Free (n);
-
-      if (schedule_file) delete[] schedule_file;
-      schedule_file = new char[strlen (file)+1];
-      strcpy (schedule_file, file);
+	  PyNode_Free (n);
+	  
+	  schedule_file=file;
 	}
       else
         {
@@ -434,6 +483,13 @@ void mapcharacter::set_schedule(char * file)
 
 void mapcharacter::set_action(char * file)
 {
+  if(!file || !strcmp(file,""))
+    {
+      action_file="";
+      if(action) delete action;
+      action=NULL;
+      return;
+    }
   char script[255];
   strcpy (script, "scripts/schedules/");
   strcat (script, file);
@@ -453,9 +509,7 @@ void mapcharacter::set_action(char * file)
 	  action = PyNode_Compile (n, file);
       PyNode_Free (n);
 
-      if (action_file) delete[] action_file;
-      action_file = new char[strlen (file)+1];
-      strcpy (action_file, file);
+      action_file=file;
 	}
       else
         {
@@ -720,6 +774,7 @@ s_int8 mapcharacter::save(const char * fname)
   if(!file) return(-1);
   retvalue=put(file);
   gzclose(file);
+  filename_=fname;
   return 0;
 }
 

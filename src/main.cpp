@@ -19,6 +19,7 @@
 #include "game.h"
 #include "data.h"
 #include "py_inc.h"
+#include "mapengine.h"
 
 #ifdef _DEBUG_
 #include "landmap.h"
@@ -58,7 +59,6 @@ int main(int argc, char * argv[])
     //    return 2;
   
     exec_file("init.py");
-    show_traceback ();
     
     return 0;
 }

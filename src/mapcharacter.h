@@ -18,6 +18,7 @@
 
 #define MAPCHAR_DIR "gfx/mapcharacters/"
 
+#include <string>
 #include <vector>
 #include "animation.h"
 #include "maptpl.h"
@@ -81,6 +82,10 @@ class mapcharacter : public maptpl, public character_base
   s_int8 get(gzFile file);
   s_int8 load(const char * fname);
 
+  // State saving/loading
+  s_int8 get_state(gzFile file);
+  s_int8 put_state(gzFile file);
+
   // Positioning
   u_int16 get_submap() { return submap; }
   u_int16 get_posx() { return posx; }
@@ -115,17 +120,17 @@ class mapcharacter : public maptpl, public character_base
   
 #ifndef _EDIT_
   void set_schedule(char * file);
-  char *get_schedule() { return schedule_file; }
+  string get_schedule() { return schedule_file; }
   bool is_schedule_activated() { return schedule_activated; }
   void set_schedule_active(bool a) { schedule_activated=a; }
 
   void set_action(char * file);
-  char *get_action() { return action_file; }
+  string get_action() { return action_file; }
   bool is_action_activated() { return action_activated; }
   void set_action_active(bool a) { action_activated=a; }
   void update_move();
 
-  char *get_anim() { return anim_file; }
+  string filename() { return filename_; }
 #endif
   void update();
   void launch_action(mapcharacter * requester);
@@ -158,6 +163,7 @@ class mapcharacter : public maptpl, public character_base
 #endif // SWIG
 
  protected:
+  string filename_;
   u_int16 current_move;
   u_int16 ask_move;
   u_int16 submap;
@@ -173,9 +179,8 @@ class mapcharacter : public maptpl, public character_base
 #ifndef _EDIT_
   PyCodeObject * schedule;   // The character's schedule
   PyCodeObject * action;     // The character's action
-  char * schedule_file;
-  char * action_file;
-  char * anim_file;
+  string schedule_file;
+  string action_file;
 #endif
 
 #ifdef _EDIT_

@@ -52,7 +52,7 @@ gamedata::gamedata ()
     time = NULL;
 }
 
-gamedata::gamedata (char *dir, char *desc)
+gamedata::gamedata (const char *dir, const char *desc)
 {
     directory = new char[strlen (dir)+1];
     strcpy (directory, dir);
@@ -203,6 +203,7 @@ bool data::load (u_int32 pos)
 {
     gzFile in = NULL;
     char filepath[256];
+    string s_filepath;
     character *mynpc;
     quest *myquest;
 
@@ -226,16 +227,18 @@ bool data::load (u_int32 pos)
     PyDict_SetItemString (chars, the_player->get_name(), pass_instance (the_player, "character"));
 #endif
     // try to open character.data
-    sprintf (filepath, "%s/character.data", saves[pos]->get_directory ());
-    in = gzopen (filepath, "r");
+    s_filepath = saves[pos]->get_directory ();
+    s_filepath += "/character.data";
+    //    sprintf (filepath, "%s/character.data", saves[pos]->get_directory ());
+    in = gzopen (s_filepath.c_str(), "r");
 
     if (!in)
     {
-        fprintf (stderr, "Couldn't open \"%s\" - stopping\n", filepath);
+        fprintf (stderr, "Couldn't open \"%s\" - stopping\n", s_filepath.c_str());
         return false;
     }
 
-    if (!fileops::get_version (in, 2, 2, filepath))
+    if (!fileops::get_version (in, 2, 2, s_filepath.c_str()))
         return false;
 
     // load characters     
@@ -286,6 +289,15 @@ bool data::load (u_int32 pos)
 
     gzclose (in);
 
+    
+    // Load mapengine state
+    s_filepath = saves[pos]->get_directory(); 
+    s_filepath += "/mapengine.data";
+    in=gzopen(s_filepath.c_str(),"r");
+    map_engine->get_state(in);
+    gzclose(in);
+
+    /*
     // load mapcharacter
 #if defined (USE_PYTHON)
     sprintf (filepath, "%s/mapchar.py", saves[pos]->get_directory ());
@@ -301,7 +313,7 @@ bool data::load (u_int32 pos)
 	PyRun_File (f, filepath, Py_file_input, data::globals, NULL);
     fclose (f);
 #endif
-
+    */    
     return true;
 }
 
@@ -356,6 +368,7 @@ gamedata* data::save (u_int32 pos, char *desc)
 {
     gamedata *gdata;
     char filepath[256];
+    string s_filepath;
     character *mychar;
     quest *myquest;
 
@@ -371,8 +384,12 @@ gamedata* data::save (u_int32 pos, char *desc)
         while (success)
         {
             // that's the directory we're going to save to
-            sprintf (filepath, "%s/adonthell-save-%03i", adonthell_dir, pos++);
-            success = mkdir (filepath, 0700);
+            sprintf(filepath,"%03i",pos++);
+            s_filepath = get_adonthell_dir();
+	    s_filepath += "/adonthell-save-";
+	    s_filepath += filepath;
+	    //           sprintf (filepath, "%s/adonthell-save-%03i", adonthell_dir, pos++);
+            success = mkdir (s_filepath.c_str(), 0700);
 
             // prevent infinite loop if we can't write to the directory
             if (pos >= 1000) 
@@ -383,7 +400,7 @@ gamedata* data::save (u_int32 pos, char *desc)
         }
         
         // we'll need a new gamedata record
-        gdata = new gamedata (filepath, desc);
+        gdata = new gamedata (s_filepath.c_str(), desc);
     }
     else
     {
@@ -455,6 +472,14 @@ gamedata* data::save (u_int32 pos, char *desc)
     gdata->save (file);
     gzclose (file);
 
+    // Save mapengine state
+    s_filepath = gdata->get_directory(); 
+    s_filepath += "/mapengine.data";
+    file=gzopen(s_filepath.c_str(),"wb6");
+    map_engine->put_state(file);
+    gzclose(file);
+
+    /*
     // save mapcharacter
     sprintf (filepath, "%s/mapchar.py", gdata->get_directory ());
     if (!save_mapcharacter (filepath))
@@ -462,6 +487,7 @@ gamedata* data::save (u_int32 pos, char *desc)
         fprintf (stderr, "Couldn't create \"%s\" - save failed\n", filepath);
         return NULL;
     }
+    */
 
     // only now it is safe to add the new record to the array
     if (pos >= saves.size ()) saves.push_back (gdata);
@@ -478,13 +504,13 @@ bool data::save_mapcharacter (char *file)
 
 #if defined (USE_MAP)
     character *mychar;
-    char *fname;
+    const char *fname;
 
      f << "map = map_engine.get_landmap ()\n\n";
 
     while ((mychar = (character *) characters.next ()) != NULL)
     {
-        if ((fname = mychar->get_anim ()) == NULL) continue;
+        if ((fname = mychar->filename ().c_str()) == NULL) continue;
 
         if (mychar == the_player)
             f << "the_player = characters['" << mychar->get_name () << "']\n";
@@ -528,12 +554,12 @@ bool data::save_mapcharacter (char *file)
             }
         }
 
-        if ((fname = mychar->get_schedule ()) != NULL)
+        if ((fname = mychar->get_schedule ().c_str()) != NULL)
             f << "chrctr.set_schedule ('" << fname << "')\n"
               << "chrctr.set_schedule_active (" 
               << (int) mychar->is_schedule_activated () << ")\n";
               
-        if ((fname = mychar->get_action ()) != NULL)
+        if ((fname = mychar->get_action ().c_str()) != NULL)
             f << "chrctr.set_action ('" << fname << "')\n"
               << "chrctr.set_action_active (" 
               << (int) mychar->is_action_activated () << ")\n";
@@ -568,10 +594,4 @@ gamedata* data::next_save ()
     }
     
     return *i;
-}
-
-// Return the user's adonthell directory
-char* data::get_adonthell_dir ()
-{
-    return adonthell_dir;
 }

@@ -503,6 +503,7 @@ s_int8 landmap::load(const char * fname)
   if(fileops::get_version (file, 1, 1, fdef))
     retvalue=get(file);
   gzclose(file);
+  filename_=fname;
   return retvalue;
 }
 
@@ -547,6 +548,7 @@ s_int8 landmap::save(const char * fname)
   if(!file) return -1;
   retvalue=put(file);
   gzclose(file);
+  filename_=fname;
   return retvalue;
 }
 
@@ -664,9 +666,7 @@ void landmap::update()
 #endif
     }
   for(i=0;i<mapchar.size();i++)
-    {
-      mapchar[i]->update();
-    }
+    mapchar[i]->update();
 }
 
 s_int8 landmap::put_mapobject(u_int16 smap, u_int16 px, u_int16 py, 

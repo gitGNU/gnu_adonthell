@@ -23,11 +23,11 @@
 class fileops
 {
 public:
-    static void put_string (gzFile, char*);     // Save a string
+    static void put_string (gzFile, const char*);     // Save a string
     static char* get_string (gzFile);           // Load a string
 
     static void put_version (gzFile, u_int16);  // Set version of a file
-    static bool get_version (gzFile, u_int16, u_int16, char*); // Check version
+    static bool get_version (gzFile, u_int16, u_int16, const char*); // Check version
 };
 
 #endif // __FILEOPS_H__

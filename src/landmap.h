@@ -231,6 +231,7 @@ class landmap
   static u_int16 a_d_diff;
 #endif // _DEBUG_
 #ifndef SWIG
+  string filename_;
   vector<mapcharacter*> mapchar;
   mapobject ** pattern;
   vector<string> objsrc;
@@ -251,6 +252,8 @@ class landmap
 
   u_int16 get_nbr_of_patterns() { return nbr_of_patterns; }
   u_int16 get_nbr_of_submaps() { return nbr_of_submaps; }
+
+  string filename() { return filename_; }
 
   s_int8 get(gzFile file);
   s_int8 load(const char * fname);
@@ -289,6 +292,7 @@ class landmap
 
   friend class mapview;
   friend class mapcharacter;
+  friend class mapengine;
 #endif // SWIG
 
 #ifdef _EDIT_

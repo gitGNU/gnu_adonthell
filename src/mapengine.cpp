@@ -13,12 +13,12 @@
 */
 
 
+#include "fileops.h"
 #include "mapengine.h"
 #include "win_manager.h"
 
 mapengine::mapengine()
 {
-  lmap=NULL;
   mv.resize(320,240);
   letsexit=false;
 }
@@ -33,10 +33,11 @@ void mapengine::set_mapview_schedule(char * s)
   mv.set_schedule(s);
 }
 
-void mapengine::use_map(landmap * lm)
+void mapengine::load_map(const char * fname)
 {
-  lmap=lm;
-  mv.attach_map(lmap);
+  lmap.load(fname);
+  //  mv.detach_map();
+  mv.attach_map(&lmap);
 }
 
 void mapengine::run()
@@ -56,9 +57,63 @@ void mapengine::mainloop()
   for(int i=0;i<screen::frames_to_do();i++)
     {
       win_manager::update ();
-      lmap->update();
+      lmap.update();
       mv.update();
     }
  mv.draw(0,0);
  win_manager::draw ();
+}
+
+s_int8 mapengine::get_state(gzFile file)
+{
+  char * t;
+  u_int16 nbr_of,i;
+
+  // Load the map from the filename
+  t=fileops::get_string(file);
+
+  cout << "Loading map: " << t << endl;
+
+  load_map(t);
+  delete[] t;
+
+  // Load the mapcharacters
+  gzread(file,&nbr_of,sizeof(nbr_of));
+
+  cout << "Loading " << nbr_of << " mapcharacters\n";
+
+  for(i=0;i<nbr_of;i++)
+    {
+      char * t=fileops::get_string(file);
+      mapcharacter * mc=(mapcharacter*)(data::characters.get(t));
+      cout << "Loading " << t << endl;
+      delete[] t;
+      lmap.add_mapcharacter(mc);
+      mc->get_state(file);
+      mc->set_on_map(&lmap);
+      mc->set_pos(mc->get_submap(),mc->get_posx(),mc->get_posy());
+    }
+  // Load the mapview state
+  mv.get_state(file);
+  return 0;
+}
+
+s_int8 mapengine::put_state(gzFile file)
+{
+  u_int16 nbr_of,i;
+  // Save the map filename
+  fileops::put_string(file, lmap.filename().c_str());
+
+  // Save the mapcharacters and their status
+  nbr_of=lmap.mapchar.size();
+  gzwrite(file,&nbr_of,sizeof(nbr_of));
+  for(i=0;i<nbr_of;i++)
+    {
+      fileops::put_string(file,lmap.mapchar[i]->get_name());
+      lmap.mapchar[i]->put_state(file);
+    }
+
+  // Save the mapview state
+  mv.put_state(file);
+  return 0;
 }

@@ -12,6 +12,7 @@
    See the COPYING file for more details.
 */
 
+#include "fileops.h"
 #include "mapview.h"
 #include "landmap.h"
 
@@ -58,10 +59,21 @@ mapview::~mapview()
 
 void mapview::attach_map(landmap * m)
 {
+  cout << "Attaching " << m << " to instance " << this << endl;
   m_map=m;
   currentsubmap=0;
 #ifndef _EDIT_
+  // Pass the mapview (succeed)
+  PyDict_SetItemString(locals,"test",pass_instance(this,"mapview"));
+  // Pass a mapcharacter of the map instance we want to pass (succeed)
+  cout << "Passing the map object...\n";
+  PyDict_SetItemString(locals,"testgain",pass_instance(m_map->pattern[0],"mapobject"));
+  cout << "Done!\n";
+  cout << "Is the map correctly allocated and loaded? " << m_map->nbr_of_submaps << " Yes!" << endl;
+  // Pass the map instance (FAILURE!)
+  cout << "Trying to pass the map...\n";
   PyDict_SetItemString(locals,"mymap",pass_instance(m_map,"landmap"));
+  cout << "Succeed! Champagne!\n";
 #endif
 #ifdef _EDIT_
   currentobj=0;
@@ -84,6 +96,7 @@ void mapview::attach_map(landmap * m)
 
 void mapview::detach_map()
 {
+  cout << "Detaching instance " << this << endl;
   m_map=NULL;
 #ifndef _EDIT_
   PyDict_DelItemString(locals,"mymap");
@@ -157,7 +170,7 @@ s_int8 mapview::center_on(u_int16 px, u_int16 py, s_int16 ox=0, s_int16 oy=0)
   if(npy>m_map->submap[currentsubmap]->height-d_height ||
      (npy==m_map->submap[currentsubmap]->height-d_height && oy))
     { npy=m_map->submap[currentsubmap]->height-d_height; oy=0; }
-
+  
   return set_pos(npx,npy,ox,oy);
 }
 
@@ -203,9 +216,71 @@ void mapview::resize(u_int16 l, u_int16 h)
 #endif
 }
 
+s_int8 mapview::get_state(gzFile file)
+{
+  cout << "Getting mapview state!\n";
+  // Read the mapview's schedule
+  char *t=fileops::get_string(file); set_schedule(t); if(t) delete[] t;
+
+  cout << "Schedule set is " << schedule_file << endl;
+
+  u_int16 a,b,c,d;
+  // Read the mapview's dimensions
+  // Length and height
+  gzread(file,&a,sizeof(a));
+  gzread(file,&b,sizeof(b));
+
+  cout << "Mapview size: " << a << " " << b << endl;
+
+  resize(a,b);
+  // Currentsubmap
+  gzread(file,&a,sizeof(a));
+  set_current_submap(a);
+  // Screen position (FIXME: obsolete!)
+  gzread(file,&a,sizeof(a));
+  gzread(file,&b,sizeof(b));
+  set_screen_pos(a,b);
+  // Position on map
+  gzread(file,&a,sizeof(a));
+  gzread(file,&b,sizeof(b));
+  gzread(file,&c,sizeof(c));
+  gzread(file,&d,sizeof(d));
+  set_pos(a,b,c,d);
+
+  cout << "Mapview finished!\n";
+
+  return 0;
+}
+
+s_int8 mapview::put_state(gzFile file)
+{
+  // Write the mapview's schedule
+  fileops::put_string(file,schedule_file.c_str());
+
+  // Write the mapview's dimensions
+  gzwrite(file,&length,sizeof(length));
+  gzwrite(file,&height,sizeof(height));
+  gzwrite(file,&currentsubmap,sizeof(currentsubmap));
+  gzwrite(file,&x,sizeof(x));
+  gzwrite(file,&y,sizeof(y));
+  gzwrite(file,&posx,sizeof(posx));
+  gzwrite(file,&posy,sizeof(posy));
+  gzwrite(file,&offx,sizeof(offx));
+  gzwrite(file,&offy,sizeof(offy));
+  return 0;
+}
+
+
 #ifndef _EDIT_
 void mapview::set_schedule(char * file)
 {
+  if(!file || !strcmp(file,""))
+    {
+      schedule_file="";
+      if(schedule) delete schedule;
+      schedule=NULL;
+      return;
+    } 
   char script[255];
   strcpy (script, "scripts/schedules/");
   strcat (script, file);
@@ -224,6 +299,7 @@ void mapview::set_schedule(char * file)
 	  if (schedule) delete schedule;
 	  schedule = PyNode_Compile (n, file);
       PyNode_Free (n);
+      schedule_file=file;
 	}
       else
         {

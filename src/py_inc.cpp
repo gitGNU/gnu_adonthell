@@ -105,8 +105,13 @@ PyObject *pass_instance (void *instance, const char *class_name)
 
     // Now create the Python object corresponding to "instance"
     PyObject *cls = PyDict_GetItemString (data::globals, class_ptr);
+    cout << "pass_instance!\n"; 
+    cout << class_addr << endl;
+    cout << cls << endl;
     PyObject *arg = Py_BuildValue ("(s)", class_addr);
+    cout << arg << endl;
     PyObject *res = PyEval_CallObject (cls, arg);
+    cout << res << endl;
 
     // Clean up
     Py_DECREF (arg);
