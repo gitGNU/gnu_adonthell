@@ -32,6 +32,7 @@ int main(int argc, char * argv[])
     // All this map-loading should go somewhere else and the mapname should
     // come from the dynamic gamedata instead of the configuration file!
     // - Kai
+    /*
     landmap * map1 = new landmap;
     if (map1->load ("maptest.map"))
     {
@@ -45,6 +46,6 @@ int main(int argc, char * argv[])
     // game::engine = map1;
     
     mapengine::map_engine(map1);
-    
+    */
     return 0;
 }

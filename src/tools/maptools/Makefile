@@ -1,6 +1,6 @@
 CPP = g++
-CPPFLAGS = -D_EDIT_ -DREVERSE_ALPHA -g -Wall -I../../ -I/usr/local/include/SDL -I../mapcharedit `sdl-config --cflags`
-LIBS = -lz -g `sdl-config --cflags` `sdl-config --libs`
+CPPFLAGS = -D_EDIT_ -DREVERSE_ALPHA -g -Wall -I../../ -I/usr/local/include/SDL -I../mapcharedit `sdl-config --cflags` -I/home/maitrise/MAITRISE/include
+LIBS = -lz -g `sdl-config --cflags` `sdl-config --libs` -L/home/maitrise/MAITRISE/lib
 OBJECTS = pnm.o drawing_area.o image.o screen.o animation.o game.o \
 	prefs.o lex.prefs.o input.o mapselect.o win_label.o win_write.o win_query.o \
 	win_info.o win_container.o win_select.o win_file.o \
