@@ -1,4 +1,6 @@
 /*
+   $Id$
+
    Copyright (C) 1999 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
    
