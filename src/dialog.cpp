@@ -251,7 +251,7 @@ char* dialog::scan_string (const char *s)
         if (strncmp (start, "$name", 5) == 0)
         {
             begin = strlen (newstr) - strlen (start);
-            tmp = new char[strlen (newstr) - 5 + strlen (the_player->name)];
+            tmp = new char[strlen (newstr) - 4 + strlen (the_player->name)];
             strncpy (tmp, newstr, begin);
             tmp[begin] = 0;
             strcat (tmp, the_player->name);
