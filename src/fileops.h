@@ -1,7 +1,7 @@
 /*
    $Id$
 
-   Copyright (C) 2001 Alexandre Courbot
+   Copyright (C) 2001/2003 Alexandre Courbot
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -65,14 +65,14 @@ public:
      * @param fname name of the file to open.
      * @param t access (READ or WRITE).
      */
-    gz_file (string fname, gz_type t);
+    gz_file (const string & fname, gz_type t);
 #endif
 
     /** 
      * Destructor.
      * 
      */
-    ~gz_file ();
+    virtual ~gz_file ();
     
     /** 
      * Opens a file.
@@ -82,7 +82,7 @@ public:
      * 
      * @return true if succeed, false otherwise.
      */
-    bool open (string fname, gz_type t);
+    bool open (const string & fname, gz_type t);
 
     /** 
      * Close the file that was opened.
@@ -144,7 +144,7 @@ public:
      * @param fname name of the file to open.
      * 
      */ 
-    igzstream (string fname);
+    igzstream (const string & fname);
 #endif
     
     /**
@@ -160,7 +160,7 @@ public:
      * 
      * @return true if succeed, false otherwise.
      */
-    bool open (string fname);
+    bool open (const string & fname);
 
     /** 
      * Reads a block of bytes from the file.
@@ -223,7 +223,7 @@ public:
      * @param fname name of the file to open.
      * 
      */ 
-    ogzstream (string fname);
+    ogzstream (const string & fname);
 #endif
     
     /**
@@ -239,7 +239,7 @@ public:
      * 
      * @return true if succeed, false otherwise.
      */
-    bool open (string fname);
+    bool open (const string & fname);
 
     /** 
      * Writes a block of bytes to the file.

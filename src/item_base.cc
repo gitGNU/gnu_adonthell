@@ -20,16 +20,17 @@
  * @brief  Superclass for all items.
  */
 
+#include <stdio.h>
 #include <iostream>
 #include <algorithm>
 #include "item_base.h"
 
 // ctor
-item_base::item_base (const std::string & item)
+item_base::item_base (const std::string & item) : py_object ()
 {
-    std::cout << "Item instance of '" << item << "' created" << endl;
-    
-    create_instance (item, item);
+    std::cout << "Item instance of '" << item << "' created" << std::endl;
+
+    get_state (item);    
 }
 
 // dtor
@@ -40,24 +41,10 @@ item_base::~item_base ()
     py_object::clear ();
 }
 
-// init item
-void item_base::init (PyObject *item)
-{
-    std::cout << "Item instance initialized" << endl;
-    
-    // set derived item instance
-    Py_XDECREF (Instance);
-    Instance = item;
-    
-    // init basic attributes
-    Charge = 0;
-    MaxCharge = 0;
-}
-
 // trigger item's main functionality
 bool item_base::use (character_base *character)
 {
-    std::cout << "Item instance used" << endl;
+    std::cout << "Item '" << name () << "' used" << std::endl;
     
     // can't be used
     if (!has_attribute ("use")) return false;
@@ -81,49 +68,83 @@ bool item_base::use (character_base *character)
     return (result != 0);
 }        
 
-// make the item member of the given category.
-void item_base::add_type (const std::string &type)
+// save a single item to file
+bool item_base::put_state (const std::string & file) const
 {
-    // only add if item does not already belong to that category
-    if (find (Types.begin (), Types.end (), type) != Types.end ())
-        Types.push_back (type);
-}
-
-// remove the given category from the item.
-void item_base::remove_type (const std::string &type)
-{
-    Types.erase (remove (Types.begin (), Types.end (), type), Types.end ());
-}
-
-// save state
-void item_base::put_state (ogzstream& file) const
-{
-    /** Move to inventory for efficiency! Means we need to pass_instance
-        'file' only once and can use if for all items of the inventory.
-     
-    // save derived item class' state
-    if (has_attribute ("put_state"))
-    {
-        // pass file
-        PyObject *args = PyTuple_New (1);
-        PyTuple_SetItem (args, 0, python::pass_instance (file, "ogzstream"));
+    ogzstream out (file);
     
-        // call method
-        call_method ("put_state", args);
-        
-        // cleanup
-        Py_XDECREF (args); 
+    // has file been opened?
+    if (!out.is_open ())
+    {
+        fprintf (stderr, "*** item_base::save: cannot write '%s'\n", file.c_str ());
+        return false;
     }
     
-    **/
+    return put_state (out);
 }
 
-// load state
-bool item_base::get_state (igzstream& file)
+// save item to stream
+bool item_base::put_state (ogzstream & file) const
 {
+    // do we have a valid item?
+    if (!Instance) return false;
+    
+    // save the template this item uses
+    class_name () >> file;
+    
+    // pass file
+    PyObject *args = PyTuple_New (1);
+    PyTuple_SetItem (args, 0, python::pass_instance (&file, "ogzstream"));
+    
+    // save the actual item data
+    call_method ("put_state", args);
+    Py_DECREF (args);    
+    
     return true;
 }
 
+// load a single item from file
+bool item_base::get_state (const std::string & file)
+{
+    igzstream in (file);
+    
+    // has file been opened?
+    if (!in.is_open ()) 
+    {
+        fprintf (stderr, "*** item_base::load: cannot read '%s'\n", file.c_str ());
+        return false;
+    }
+    
+    // load item
+    return get_state (in);
+}
+
+// load item from stream
+bool item_base::get_state (igzstream & file)
+{
+    std::string tmpl;
+    
+    // clean up, if neccessary
+    if (Instance) clear ();
+    
+    // get template to use for item
+    tmpl << file;
+    
+    // instanciate
+    if (!create_instance (tmpl, tmpl)) return false;
+
+    // pass file
+    PyObject *args = PyTuple_New (1);
+    PyTuple_SetItem (args, 0, python::pass_instance (&file, "igzstream"));
+    
+    // load actual item data
+    call_method ("get_state", args);
+    Py_DECREF (args);
+    
+    return true;  
+}
+
+/*
 // recharge item
 u_int16 item_base::recharge (u_int16 &charge)
 {
@@ -138,3 +159,4 @@ u_int16 item_base::recharge (u_int16 &charge)
     
     return charge;
 }
+*/

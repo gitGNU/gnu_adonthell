@@ -1,7 +1,7 @@
 /*
    $Id$
 
-   Copyright (C) 1999/2000/2001/2002 Alexandre Courbot
+   Copyright (C) 1999/2000/2001/2002/2003 Alexandre Courbot
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -36,8 +36,9 @@ gz_file::gz_file ()
     opened = false;
 }
 
-gz_file::gz_file (string fname, gz_type t)
+gz_file::gz_file (const string & fname, gz_type t)
 {
+    opened = false;
     open (fname, t);
 }
 
@@ -46,7 +47,7 @@ gz_file::~gz_file ()
     if (is_open ()) gzclose (file);
 }
 
-bool gz_file::open (string fname, gz_type t)
+bool gz_file::open (const string & fname, gz_type t)
 {
     if (t == READ) file = gzopen (fname.c_str (),"rb6");
     else file = gzopen (fname.c_str (),"wb6");
@@ -65,7 +66,7 @@ igzstream::igzstream () : gz_file ()
 {
 }
 
-igzstream::igzstream (string fname) : gz_file (fname, READ)
+igzstream::igzstream (const string & fname) : gz_file (fname, READ)
 {
 }
 
@@ -73,7 +74,7 @@ igzstream::~igzstream ()
 {
 }
 
-bool igzstream::open (string fname)
+bool igzstream::open (const string & fname)
 {
     return gz_file::open (fname, READ);
 }
@@ -164,7 +165,7 @@ ogzstream::ogzstream () : gz_file ()
 {
 }
 
-ogzstream::ogzstream (string fname) : gz_file (fname, WRITE)
+ogzstream::ogzstream (const string & fname) : gz_file (fname, WRITE)
 {
 }
 
@@ -172,7 +173,7 @@ ogzstream::~ogzstream ()
 {
 }
 
-bool ogzstream::open (string fname)
+bool ogzstream::open (const string & fname)
 {
     return gz_file::open (fname, WRITE);
 }

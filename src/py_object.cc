@@ -105,7 +105,7 @@ bool py_object::instanciate (PyObject *module, string file, string classname, Py
 }
 
 // Execute a method of the script
-PyObject* py_object::call_method_ret (const string & name, PyObject * args)
+PyObject* py_object::call_method_ret (const string &name, PyObject *args) const
 {
     PyObject *result = NULL;
 

@@ -31,7 +31,16 @@
 using std::string;
 
 /**
+ * It is a wrapper for item_base.py, which is the actual item superclass.
+ * For flexibility, items are implemented on python side. But since they
+ * are often used on C++ side, this class provides methods to the most
+ * basic item attributes and all possible actions an item might support.
  *
+ * So while each item does have the wrapped attributes, an item may only
+ * implement a subset of the available actions ("pick_up", "drop", "equip",
+ * "unequip", "combine" and "use"). Further, an item may have additional
+ * attributes. If required, they can be accessed via methods provided by
+ * the py_object class.
  */
 class item_base : public py_object 
 {
@@ -46,18 +55,12 @@ public:
      * Create a new item from the given item data. 
      * @param item Name of the item data file defining the desired item.
      */
-    item_base (const string &item);
+    item_base (const string & item);
     
     /**
      * Destructor.
      */
     ~item_base ();
-    
-    /**
-     * Initialize the basic item attributes from python side.
-     * @param item Derived item instance.
-     */
-    void init (PyObject *item);
     
     /**
      * @name Item Actions
@@ -76,87 +79,142 @@ public:
      */
     //@{
     /**
-     * Make the item member of the given category.
-     * @param type the category this item should belong to.
+     * Get the item's name.
+     * @return name of the item.
      */
-    void add_type (const string &type);
+    string name ()
+    {
+        return get_attribute_string ("Name");
+    }
+
+    /**
+     * Set the item's name.
+     * @param name the item's new name.
+     */
+    void set_name (const string & name)  
+    {
+        set_attribute_string ("Name", name); 
+    }
+    
+    /**
+     * Make the item member of the given category.
+     * @param category the category this item should belong to.
+     */
+    void add_category (const string & category)
+    {
+        PyObject *args = Py_BuildValue ("(s)", (char *) category.c_str ());
+        call_method ("add_category", args);
+    }
     
     /**
      * Take a category away from the item.
-     * @param type category to remove from the item. 
+     * @param category the category to remove from the item. 
      */
-    void remove_type (const string &type);
+    void remove_category (const string & category)
+    {
+        PyObject *args = Py_BuildValue ("(s)", (char *) category.c_str ());
+        call_method ("remove_category", args);
+    }
 
+    /**
+     * Check whether item belongs to a certain category.
+     * @param category the category to test against.
+     * @return \b true if item belongs to given category, \b false otherwise.
+     */
+    bool is_a (const string & category)
+    {
+        int result = 0;
+        PyObject *args = Py_BuildValue ("(s)", (char *) category.c_str ());
+        PyObject *retval = call_method_ret ("is_a", args);
+        
+        if (retval && PyInt_Check (retval)) result = PyInt_AS_LONG (retval);
+        Py_XDECREF (retval);
+        
+        return (result != 0);
+    }
+    
     /**
      * Get the charge the item has left.
      * @return number of charges the item has.
      */
-    u_int16 charge ()                       { return Charge; }
+    u_int16 charge ()
+    {
+        return (u_int16) get_attribute_int ("Charge");
+    }
 
     /**
-     * Add charges to the item. Recharges the item up to MaxCharge.
-     * @param charge number of charges to add.
-     * @return number of charges not added to the item
+     * Set the number of charges the item may hold.
+     * @param charge item's number of charges.
      */
-    u_int16 recharge (u_int16 & charge);
-
+    void set_charge (u_int16 charge)  
+    {
+        set_attribute_int ("Charge", charge); 
+    }
+    
     /**
      * Get the maximum number of charges the item may hold.
      * @return item's maximum number of charges.
      */
-    u_int16 max_charge ()                   { return MaxCharge; }
+    u_int16 max_charge ()
+    {
+        return (u_int16) get_attribute_int ("MaxCharge");
+    }
 
     /**
      * Set the maximum number of charges the item may hold.
-     * @param item's maximum number of charges.
+     * @param max_charge item's maximum number of charges.
      */
-    void set_max_charge (u_int max_charge)  { MaxCharge = max_charge; }
+    void set_max_charge (u_int16 max_charge)
+    { 
+        set_attribute_int ("MaxCharge", max_charge); 
+    }
     //@}
     
-protected:
     /**
      * @name Loading/Saving
      */
     //@{
     /**
-     * Load item state from file. This method has to be called from the
-     * derived class before loading itself. Calling it from C++ side will 
-     * fail to load the complete item.
+     * Load item from named file. This will first load the item template
+     * to instanciate the underlying Python item class. Then it will
+     * restore the actual item data. If an item is already instanciated,
+     * it will be replaced.
      *
-     * @param file stream to load item from
-     * @return \b true if loading successful, \b false otherwise
+     * @param file name of the file to load item from.
+     * @return \b true if loading successful, \b false otherwise.
      */
-    bool get_state (igzstream& file);
+    bool get_state (const string & file);
     
     /**
-     * Save item state to file. This method has to be called from the
-     * derived class before saving itself. Calling it from C++ side will 
-     * fail to save the complete item.
+     * Save item to named file. This will save both the item template
+     * plus the actual data to the given file. The file will be replaced
+     * if it already exists.
      *
-     * @param file stream to save item to
+     * @param file name of the file to save item to.
+     * @return \b true if saving successful, \b false otherwise.
      */
-    void put_state (ogzstream &file) const;
-    //@}
-
-private:
-    /**
-     * @name Basic Item Attributes
-     */
-    //@{
-    /**
-     * List of categories this item belongs to.
-     */
-    std::vector<std::string> Types;
+    bool put_state (const string & file) const;
     
     /**
-     * Fuel or number of uses an item has.
+     * Load item from stream. This will first load the item template
+     * to instanciate the underlying Python item class. Then it will
+     * restore the actual item data. If an item is already instanciated,
+     * it will be replaced.
+     *
+     * @param file stream to load item from.
+     * @return \b true if loading successful, \b false otherwise.
      */
-    u_int16 Charge;
-
+    bool get_state (igzstream & file);
+    
     /**
-     * Maximum amount of charge the item may have.
+     * Save item to stream. This will save both the item template
+     * plus the actual data to the given file. The file will be replaced
+     * if it already exists.
+     *
+     * @param file stream to save item to.
+     * @return \b true if saving successful, \b false otherwise.
      */
-    u_int16 MaxCharge;
+    bool put_state (ogzstream & file) const;
     //@}
 };
 

@@ -101,7 +101,7 @@ public:
      * @return the return value of the method as PyObject. Needs to be 
      *     Py_DECREF'd when no longer needed.
      */
-    PyObject *call_method_ret (const string & name, PyObject * args = NULL);
+    PyObject *call_method_ret (const string &name, PyObject *args = NULL) const;
      
     /** 
      * Call a method of this object.
@@ -109,7 +109,7 @@ public:
      * @param name name of the method to call.
      * @param args Python tuple containing the arguments to pass to the method.
      */
-    void call_method (const string & name, PyObject * args = NULL)
+    void call_method (const string & name, PyObject * args = NULL) const
     {
         PyObject *result = call_method_ret (name, args);
         Py_XDECREF (result);
