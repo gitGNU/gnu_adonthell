@@ -16,7 +16,7 @@
 /*! \mainpage The Adonthell Dialogue Editor
 
 This document is a part of the Adonthell Developer's Reference. It
-describes the usage of the dialogue editor (<tt>dlgedit</tt> and 
+describes the usage of the dialogue editor (<tt>dlgedit</tt>) and 
 gives a few hints for writing well designed dialogues.
 
 <h2>Contents</h2>
@@ -370,19 +370,19 @@ of the cursor. The table below shows all possible constellations:
   <tr>
     <td>\e on \e empty \e space </td>
     <td>-</td>
-    <td>-</td>
-    <td>-</td>
+    <td>Deselect Circle </td>
+    <td>Deselect Arrow </td>
   </tr>
   <tr>
     <td>\e on \e Circle </td>
+    <td>-</td>
     <td>Deselect Circle</td>
-    <td>Deselect Circle</td>
-    <td-</td>
+    <td>Deselect Arrow</td>
   </tr>
   <tr>
     <td>\e on \e Arrow </td>
-    <td>Deselect Arrow </td>
-    <td>Deselect Arrow </td>
+    <td>-</td>
+    <td>Deselect Circle </td>
     <td>Deselect Arrow </td>
   </tr>
 \htmlonly
@@ -399,7 +399,7 @@ of the cursor. The table below shows all possible constellations:
     <td>\e Arrow \e selected </td>
   </tr>
   <tr>
-    <td>\e on \e empty \e space </td>
+    <td>\e wherever </td>
     <td>-</td>
     <td>Edit Circle</td>
     <td>-</td>
@@ -418,7 +418,7 @@ of the cursor. The table below shows all possible constellations:
     <td>\e Arrow \e selected </td>
   </tr>
   <tr>
-    <td>\e on \e empty \e space </td>
+    <td>\e wherever </td>
     <td>-</td>
     <td>Delete Circle and its Links</td>
     <td>Delete Arrow</td>
@@ -437,7 +437,7 @@ of the cursor. The table below shows all possible constellations:
     <td>\e Arrow \e selected </td>
   </tr>
   <tr>
-    <td>\e on \e empty \e space </td>
+    <td>\e wherever </td>
     <td>-</td>
     <td>Deselect Circle</td>
     <td>Deselect Arrow</td>
