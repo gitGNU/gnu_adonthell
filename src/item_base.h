@@ -32,6 +32,13 @@ using std::string;
 class character_base;
 
 /**
+ * The Python package containing %item scripts.
+ */
+#ifndef SWIG
+#   define ITEM_PACKAGE "item."
+#endif
+
+/**
  * It is a wrapper for item.py, which is the actual item superclass.
  * For flexibility, items are implemented on python side. But since they
  * are often used on C++ side, this class provides methods to the most
@@ -98,6 +105,20 @@ public:
      * @name Item Actions
      */
     //@{
+    /**
+     * This method is invoked when the given character equips this item.
+     * It can be used to apply item effects to the character if desired.
+     * @param character The character equipping this item.
+     */
+    void equip (character_base *character);
+    
+    /**
+     * This method is invoked when the given character unequips this item.
+     * It can be used to remove item effects from the character if neccessary.
+     * @param character The character equipping this item.
+     */
+    void unequip (character_base *character);
+    
     /**
      * Use an item. Triggers its main functionality if it can be used at all.
      * @param character The character using this item.

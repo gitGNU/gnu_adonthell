@@ -33,7 +33,6 @@
 #include "screen.h"
 #include "yarg.h"
 #include "win_manager.h"
-#include "win_theme.h"
 
 #ifdef MEMORY_LEAKS
 #include <mcheck.h>

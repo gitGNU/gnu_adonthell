@@ -25,7 +25,6 @@
 
 #include <string.h>
 
-#include "types.h"
 #include "pnm.h"
 #include "gamedata.h"
 #include "gamedate.h"

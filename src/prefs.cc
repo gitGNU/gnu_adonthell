@@ -24,9 +24,7 @@
 #endif
 #include <stdio.h>
 #include <iostream> 
-#include <fstream> 
 #include <sys/stat.h>
-#include <sys/types.h>
 #include <dirent.h>
 #include <unistd.h>
 #include "prefs.h"

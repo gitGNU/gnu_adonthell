@@ -15,11 +15,9 @@
 #ifndef __AUDIO_H__
 #define __AUDIO_H__
 
-#include "types.h"
 #include "SDL_mixer.h"
 #include "prefs.h"
 #include "py_object.h"
-#include <string>
 // #include "audio_loop.h"
 
 // We'll only load five waves into memory

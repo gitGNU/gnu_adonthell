@@ -28,7 +28,6 @@
 #include <cstdlib>
 #include <string.h>
 #include "input.h"
-#include "SDL.h"
 
 u_int8 * input::keystate=NULL;
 u_int8 * input::p_keystate=NULL;

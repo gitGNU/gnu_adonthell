@@ -24,7 +24,7 @@
 #include "item_base.h"
 
 // ctor
-inventory::inventory (const bool & limited, const u_int16 & size)
+inventory::inventory (const u_int16 & size, const bool & limited)
 {
     QueryType = 0;
     QueryKey = "";

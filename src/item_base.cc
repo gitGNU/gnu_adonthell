@@ -55,6 +55,40 @@ item_base::~item_base ()
     py_object::clear ();
 }
 
+// apply item effects
+void item_base::equip (character_base *character)
+{
+    // no effect
+    if (!has_attribute ("equip")) return;
+    
+    // pass character
+    PyObject *args = PyTuple_New (1);
+    PyTuple_SetItem (args, 0, python::pass_instance (character, "character_base"));
+    
+    // call method
+    call_method ("equip", args);
+    
+    // cleanzp
+    Py_DECREF (args);
+}
+
+// remove item effects
+void item_base::unequip (character_base *character)
+{
+    // no effect
+    if (!has_attribute ("unequip")) return;
+    
+    // pass character
+    PyObject *args = PyTuple_New (1);
+    PyTuple_SetItem (args, 0, python::pass_instance (character, "character_base"));
+    
+    // call method
+    call_method ("unequip", args);
+    
+    // cleanzp
+    Py_DECREF (args);
+}
+
 // trigger item's main functionality
 bool item_base::use (character_base *character)
 {
@@ -186,7 +220,7 @@ bool item_base::get_state (igzstream & file)
     tmpl << file;
     
     // instanciate
-    if (!create_instance (tmpl, tmpl)) return false;
+    if (!create_instance (ITEM_PACKAGE + tmpl, tmpl)) return false;
 
     // pass file
     PyObject *args = PyTuple_New (1);

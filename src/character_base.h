@@ -81,13 +81,13 @@ class character_base : public storage
      * Default constructor.
      * 
      */ 
-    character_base();
+    character_base ();
 
     /**
      * Destructor.
      * 
      */ 
-    ~character_base();
+    ~character_base ();
 
     /** 
      * Returns the name of the %character.

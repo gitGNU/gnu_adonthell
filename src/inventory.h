@@ -39,10 +39,10 @@ class inventory
 public:
     /**
      * Create an %inventory with 'count' anonymous slots.
-     * @param limited Whether %inventory has fixed size or not.
      * @param size Initial size of the %inventory.
+     * @param limited Whether %inventory has fixed size or not.
      */
-    inventory (const bool & limited = true, const u_int16 & size = 0);
+    inventory (const u_int16 & size = 0, const bool & limited = true);
         
     /**
      * Destroy inventory and its contents.

@@ -24,7 +24,7 @@
 
 
 #include <iostream>
-#include <string>
+
 #include "gamedata.h"
 #include "input.h"
 #include "image.h"
