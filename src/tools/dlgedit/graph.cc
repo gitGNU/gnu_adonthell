@@ -797,13 +797,13 @@ void
 new_dialogue (MainFrame * wnd)
 {
     // first, clear current dialogue and set app back ... 
+    deselect_object (wnd);
     delete_dialogue (wnd);
     init_app (wnd);
 
     // ... then update display 
     gtk_window_set_title (GTK_WINDOW (wnd->wnd), "Adonthell Dialogue Editor v0.4 - [new_dialogue]");
     redraw_graph (wnd);
-    show_preview (wnd);
 }
 
 // load a dialogue from disk 
@@ -829,6 +829,7 @@ load_dialogue (MainFrame * wnd, const char *file)
     }
 
     // first, clear current dialogue and set app back ... 
+    deselect_object (wnd);
     delete_dialogue (wnd);
     init_app (wnd);
 

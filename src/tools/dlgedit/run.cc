@@ -55,7 +55,7 @@ run_dlg::run_dlg (string f, string v, player *p)
         for (num = 0; num < c.size (); num++)
         {   
             out.width (3);
-            out << num << " ";
+            out << num << "  ";
             c[num]->ascii (out);
             out << "\n";
             c[num]->write (tmp);
