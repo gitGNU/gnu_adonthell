@@ -196,6 +196,9 @@ public:
     
 private:
 #ifndef SWIG
+    // callback for alarm event
+    void on_alarm () { set_running (false); }
+
     // whether the schedule should be executed 
     bool Active;
 

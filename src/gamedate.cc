@@ -138,7 +138,7 @@ u_int32 gamedate::parse_time (const string & time)
                 // error
                 default:
                 {
-                    fprintf (stderr, "*** time_event::parse_date: Unknown time specifier '%c'\n", time[i]);
+                    fprintf (stderr, "*** gamedate::parse_time: Unknown time specifier '%c'\n", time[i]);
                     break;
                 }
             }

@@ -56,7 +56,13 @@ void time_event::execute (const event & evnt)
             PyFunc->callback_func0 ();
             break;
         }
-    
+        
+        case ACTION_CPPFUNC:
+        {
+            Callback ();
+            break;
+        }
+        
         default: return;
     }
     

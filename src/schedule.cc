@@ -55,14 +55,20 @@ void schedule::update ()
     if (!Running) 
     {
         // if no schedule queued, let the manager script decide
-        if (!Queue) 
+        if (!Queue)
+        {
+            // clearing the schedule before the manager runs
+            // allows the manager to access the most recent data
+            Schedule.clear ();
             Manager.run ();
+        }
         
         // otherwise use the queued script
         else
         {
             set_schedule (Queue->file, Queue->args);
-            set_alarm (Queue->time, Queue->absolute);
+            if (Queue->time != "") 
+                set_alarm (Queue->time, Queue->absolute);
             
             delete Queue;
             Queue = NULL;
@@ -76,6 +82,12 @@ void schedule::update ()
 // assign a (new) schedule
 void schedule::set_schedule (string file, PyObject *args)
 {
+    if (Running)
+    {
+        fprintf (stderr, "*** schedule::set_schedule: stop current schedule first!\n");
+        return;
+    }
+    
     // no need to clear anything, as py_object takes care of that
     Schedule.create_instance (SCHEDULE_DIR + file, file, args);
     
@@ -95,7 +107,7 @@ void schedule::set_schedule (string file, PyObject *args)
 void schedule::queue_schedule (string file, PyObject *args)
 {
     if (Queue) delete Queue;
-    
+
     Queue = new schedule_data (file, args);
 }
 
@@ -103,9 +115,6 @@ void schedule::queue_schedule (string file, PyObject *args)
 void schedule::set_manager (string file, PyObject *args)
 {
     Manager.create_instance (SCHEDULE_DIR + file, file, args);
-    
-    // update the alarm with the new manager script
-    if (Alarm) Alarm->set_shared_script (&Manager);
 }
 
 // set the alarm
@@ -135,7 +144,7 @@ void schedule::set_alarm (string time, bool absolute)
 
     // create and register the new alarm
     Alarm = new time_event (time, absolute);
-    Alarm->set_shared_script (&Manager);
+    Alarm->set_callback (makeFunctor (*this, &schedule::on_alarm));
     event_handler::register_event (Alarm);
 }
 
@@ -215,7 +224,7 @@ bool schedule::get_state (igzstream &file)
     {
         Alarm = new time_event;
         Alarm->get_state (file);
-        Alarm->set_shared_script (&Manager);
+        Alarm->set_callback (makeFunctor (*this, &schedule::on_alarm));
         
         // don't forget to register the alarm!
         event_handler::register_event (Alarm);

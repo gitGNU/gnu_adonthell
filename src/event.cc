@@ -27,7 +27,6 @@
 event::event ()
 {
     Repeat = -1;
-    Shared = false;
     Script = NULL;
     PyFunc = NULL;
     Args = NULL;
@@ -48,13 +47,10 @@ void event::clear ()
         // script attached
         case ACTION_SCRIPT:
         {
-            if (!Shared)
-            {
-                delete Script;
-                Py_XDECREF (Args);
-                Args = NULL;
-            }
-            else Script = NULL;
+            delete Script;
+            Py_XDECREF (Args);
+            Args = NULL;
+            Script = NULL;
             
             break;
         }
@@ -84,7 +80,6 @@ void event::set_script (string filename, PyObject * args = NULL)
     
     Py_XINCREF (args);
     Args = args; 
-    Shared = false;
        
     u_int16 argssize = args == NULL ? 1 : PyTuple_Size (args) + 1; 
     PyObject *theargs = PyTuple_New (argssize);
@@ -106,23 +101,7 @@ void event::set_script (string filename, PyObject * args = NULL)
     Action = ACTION_SCRIPT;
 }
 
-// make the event script a pointer to an existing script
-void event::set_shared_script (py_object * script)
-{
-    // cleanup
-    clear ();
-
-    // attach the given script
-    Script = script;
-    
-    // tell the script not to save any arguments
-    Shared = true;
-
-    // tell the event what to do    
-    Action = ACTION_SCRIPT;
-}
-
-// set a callback as event's action
+// set a python callback as event's action
 void event::set_callback (PyObject *callback, PyObject *args)
 {
     // cleanup
@@ -135,6 +114,16 @@ void event::set_callback (PyObject *callback, PyObject *args)
     Action = ACTION_PYFUNC;
 }
 
+// set a C/C++ callback as event's action
+void event::set_callback (const Functor0 & callback)
+{
+    // cleanup
+    clear ();
+
+    Callback = callback;
+    Action = ACTION_CPPFUNC;
+}
+
 // save the state of the script associated with the event
 void event::put_state (ogzstream & file) const
 {
@@ -143,11 +132,7 @@ void event::put_state (ogzstream & file) const
     Action >> file;
     
     if (Action != ACTION_SCRIPT) return;
-    
-    Shared >> file;
-    
-    if (Shared) return;
-    
+        
     Script->class_name () >> file;
     
     if (Args)
@@ -171,12 +156,7 @@ bool event::get_state (igzstream & file)
     Action << file;
     
     if (Action != ACTION_SCRIPT) return true;
-    
-    Shared << file;
-    
-    // shared scripts have to be restored by the event's owner
-    if (Shared) return true;
-    
+        
     name << file;
     has_args << file;
     

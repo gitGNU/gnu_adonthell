@@ -23,7 +23,8 @@
 #ifndef EVENT_H__
 #define EVENT_H__
 
-#include "fileops.h" 
+#include "fileops.h"
+#include "callback.h"
 #include "py_object.h"
 #include "py_callback.h"
 
@@ -52,7 +53,8 @@ enum
 {
     ACTION_NOTHING  = 0,
     ACTION_SCRIPT   = 1,
-    ACTION_PYFUNC   = 2
+    ACTION_PYFUNC   = 2,
+    ACTION_CPPFUNC  = 3
 };
 #endif // SWIG
     
@@ -149,22 +151,8 @@ public:
     void set_script (string filename, PyObject * args = NULL);
     
     /**
-     * Sets a script to be executed whenever the event occurs.
-     * This method allows to specify a script that is already
-     * in use elsewhere.
-     *
-     * @warning After calling this method, both the event and the 
-     * original owner share the same script instance. Therefore, the 
-     * event will <b>not</b> save the script. When loading a game,
-     * the original owner has to supply the event with the script.
-     *
-     * @param script pointer to a script initialized elsewhere.
-     */
-    void set_shared_script (py_object * script);
-    
-    /**
      * Sets a python function/method to be executed whenever the
-     * event occurs.
+     * %event occurs.
      *
      * @warning the callback won't be saved with the %event. It
      * must be restored by the event's owner.
@@ -174,6 +162,20 @@ public:
      */
     void set_callback (PyObject *callback, PyObject *args = NULL);
      
+#ifndef SWIG
+    /**
+     * Sets a C function/C++ method to be executed whenever the
+     * %event occurs.
+     *
+     * @warning the callback won't be saved with the %event. It
+     * must be restored by the event's owner.
+     *
+     * @param callback The callback, a function with no arguments
+     *      returning void
+     */
+    void set_callback (const Functor0 & callback);
+#endif // SWIG
+
     /**
      * @name Loading / Saving
      */
@@ -216,13 +218,6 @@ protected:
     u_int8 Action;
     
     /**
-     * For events that share their script with another class, Shared
-     * has to be set <b>true</b>. This prevents the script from getting
-     * saved to file.
-     */
-    bool Shared;
-    
-    /**
      * Defines how often the %event should be repeated. <b>0</b> means
      * never, <b>-1</b> means infinitely and <b>n</b> (n > 0) means 
      * exactly n times.
@@ -242,9 +237,14 @@ protected:
     PyObject *Args;
     
     /**
-     * Python Callback that may be executed instead of the script.
+     * Python callback that may be executed instead of the script.
      */
     py_callback *PyFunc;
+    
+    /**
+     * C++ callback that may be executed when the %event gets triggered.
+     */
+    Functor0 Callback;
     //@}
 #endif // SWIG
 };
