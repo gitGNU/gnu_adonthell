@@ -410,6 +410,7 @@ dialog_engine::~dialog_engine ()
     delete cursor;
     delete portrait;
     delete font;
+    delete back;
 }
 
 void dialog_engine::run ()
