@@ -12,11 +12,12 @@
 
 #include <iostream.h>
 #include <string.h>
+#include <stdlib.h>
 #include "types.h"
 #include "gfx.h"
 #include "window.h"
 #include "keyboard.h"
-#include "ggi.h"
+#include "pnm.h"
 
 void window::init(u_int16 x, u_int16 y, u_int16 l, u_int16 h,u_int8 style)
 {
@@ -49,22 +50,31 @@ void window::init(u_int16 x, u_int16 y, u_int16 l, u_int16 h,u_int8 style)
 void window::init_table_char()
 { char i;int j=0;
   u_int16 pos,tl;
-  image font;
+
+  void * font;
+  u_int16 lenght,height;
+
   FILE *f;
   if((f=fopen("gfxtree/window/font.idx","rb"))==NULL)
                   {printf("font.idx not found\n");exit(1);}    
-  font.load("gfxtree/window/font.pnm"); 
+  FILE * f2=fopen("gfxtree/window/font.pnm","r");
+  //  font.load("gfxtree/window/font.pnm"); 
+  font=read_pnm(f2,&lenght,&height); 
   tablechar=new image[NB_TABLE_CHAR];
   while(j<NB_TABLE_CHAR && !feof(f) )
     {
      fread(&i,sizeof(i),1,f);
      fread(&pos,sizeof(pos),1,f);
      fread(&tl,sizeof(tl),1,f);
-     tablechar[i].resize(tl,WIN_FONT_HEIGHT);
-     tablechar[i].putbox_part_img(&font,0,0,tl,WIN_FONT_HEIGHT,pos,0);
+     //     tablechar[i].resize(tl,WIN_FONT_HEIGHT);
+     //     tablechar[i].putbox_part_img(&font,0,0,tl,WIN_FONT_HEIGHT,pos,0);
+     tablechar[i].size(tl,WIN_FONT_HEIGHT);
+     tablechar[i].putbox_font_img(font,pos,lenght);
      j++;
     }
   fclose(f);
+  fclose(f2);
+  free(font);
 }
 
 

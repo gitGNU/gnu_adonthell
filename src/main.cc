@@ -53,7 +53,6 @@ int main(int argc, char * argv[])
      exit(1);
   }
 
-  init_display(0);
   audio_init();
   audio_thread = SDL_CreateThread((void*)audio_update, NULL);
   if ( audio_thread != NULL) {
