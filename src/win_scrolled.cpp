@@ -142,12 +142,12 @@ void win_scrolled::draw()
       img.brightness(theme_->scrollbar->back,level_brightness_);
       img.putbox_mask(realx_ + length_ - theme_->scrollbar->back->length,realy_,da_);
       img.brightness(theme_->scrollbar->bar,level_brightness_);
-      img.putbox_mask(realx_ + length_ - theme_->scrollbar->back->length,realy_+cursory_,da_);
+      img.putbox_mask(1 + realx_ + length_ - theme_->scrollbar->back->length,realy_+cursory_,da_);
     }
   else
     {
       theme_->scrollbar->back->putbox_mask(realx_ + length_ - theme_->scrollbar->back->length,realy_,da_);
-      theme_->scrollbar->bar->putbox_mask(realx_ + length_ - theme_->scrollbar->back->length,realy_+cursory_,da_);
+      theme_->scrollbar->bar->putbox_mask(1 + realx_ + length_ - theme_->scrollbar->back->length,realy_+cursory_,da_);
     }
 }
 
