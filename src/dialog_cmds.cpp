@@ -80,6 +80,12 @@ void import_cmd::write (FILE *out)
 // output command in human readable form
 void import_cmd::ascii (ofstream &out)
 {
+    u_int32 i;
+
+    out << "IMPORT  ";
+
+    for (i = 0; i < sz; i++)
+        out << text[i] << " ";
 }
 
 
@@ -115,8 +121,9 @@ void clear_cmd::write (FILE *out)
     fwrite (&type, sizeof (type), 1, out);
 }
 
-void clear_cmd::ascii (FILE *out)
+void clear_cmd::ascii (ofstream &out)
 {
+    out << "CLEAR";
 }
 
 
@@ -125,7 +132,6 @@ void text_cmd::init (s_int32 *buffer, u_int32 &i, void *data)
 {
     text = buffer[i++];
     pc_off = buffer[i++];
-    speaker = buffer[i++];
 }
 
 // adds a line to the text arrays
@@ -140,8 +146,8 @@ s_int32 text_cmd::run (u_int32 &pc, void *data)
         t = new dlg_text (text, pc_off);
 
         // Assign this line of dialogue either to player or NPC
-        if (speaker == 0) dlg->player_text.push_back (t);
-        else dlg->npc_text.push_back (t);
+        // if (speaker == 0) dlg->player_text.push_back (t);
+        // else dlg->npc_text.push_back (t);
     }
 
     return 1;
@@ -157,11 +163,41 @@ void text_cmd::write (FILE *out)
 
     // write offset
     fwrite (&pc_off, sizeof (pc_off), 1, out);
-
-    // write speaker
-    fwrite (&speaker, sizeof (speaker), 1, out);
 }
 
-void text_cmd::ascii (FILE *out)
+void text_cmd::ascii (ofstream &out)
 {
+    out << "TEXT    " << text << " " << pc_off;
+}
+
+
+speaker_cmd::speaker_cmd (u_int32 s, u_int32 m) : speaker(s), mood(m)
+{
+}
+
+// Initializes the command from the buffer
+void speaker_cmd::init (s_int32 *buffer, u_int32 &i, void *data)
+{
+    speaker = buffer[i++];
+    mood = buffer[i++];
+}
+
+// adds a line to the text arrays
+s_int32 speaker_cmd::run (u_int32 &pc, void *data)
+{
+    return 1;
+}
+
+void speaker_cmd::write (FILE *out)
+{
+    // write cmds type
+    fwrite (&type, sizeof (type), 1, out);
+    
+    fwrite (&speaker, sizeof (speaker), 1, out);
+    fwrite (&mood, sizeof (mood), 1, out);
+}
+
+void speaker_cmd::ascii (ofstream &out)
+{
+    out << "SPEAKER " << speaker << " " << mood;
 }

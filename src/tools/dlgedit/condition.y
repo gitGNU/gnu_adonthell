@@ -94,6 +94,7 @@ val:      _NUM                      { $$ = NUM; vars.push_back ($1); }
 
 int cond_compile (const char *str, string &errormsg, vector<command*> &script)
 {
+    c_scrpt.clear ();
     c_error = 0;
     c_err = "";
 
@@ -105,7 +106,7 @@ int cond_compile (const char *str, string &errormsg, vector<command*> &script)
     condparse ();
 
     errormsg = c_err;
-    script = c_scrpt;
+    script.insert (script.end(), c_scrpt.begin(), c_scrpt.end()); 
 
     // clean up
     cond_delete_buffer (buffer);

@@ -61,6 +61,9 @@ void crcle_dlg::on_ok ()
     circle->comment = note;
     circle->conditions = cond;
     circle->variables = vars;
+
+    if (type == PLAYER) circle->character = 0;
+    else circle->character = 1; // update this line once multiple NPCs are supported
 }
 
 // Text has changed

@@ -71,7 +71,7 @@ public:
     vector<DlgNode*> next;              // successor(s)
     vector<DlgNode*> link;              // indirect connection(s)
 
-    virtual void save (ofstream&) { }   // Save DlgNode
+    virtual void save (ofstream&, u_int32*) { }   // Save DlgNode
 };
 
 // Circle
@@ -90,7 +90,7 @@ public:
     string conditions;                  // Condition script
     string variables;                   // Variable script
 
-    void save (ofstream&);              // Save Circle
+    void save (ofstream&, u_int32*);    // Save Circle
     void load (u_int32);                // Load Circle
 }; 
 
@@ -105,7 +105,7 @@ public:
     GdkPoint line[2];                   // Line of arrow
     GdkPoint tip[3];                    // tip of arrow
 
-    void save (ofstream&);              // Save Arrow
+    void save (ofstream&, u_int32*);    // Save Arrow
     void load (u_int32, vector<DlgNode*>&);// Load Arrow
 };
 

@@ -28,6 +28,9 @@
 class return_cmd : public command
 {
 public:
+    return_cmd () { }
+    return_cmd (s_int32 r) : retval (r) { }
+    
     void init (s_int32 *buffer, u_int32 &i, void *data)
     {
         retval = buffer[i++];
@@ -37,6 +40,11 @@ public:
         return retval;
     }
 
+    void ascii (ofstream &out)
+    {
+        out << "RETURN  " << retval;
+    }
+    
 private:
     s_int32 retval;
 };
@@ -77,7 +85,8 @@ public:
 
     void write (FILE*);             // Write the command as script code to file
     void ascii (ofstream&);         // Write cmd as human readable test to file
-
+    void setjmp (s_int32);
+    
 private:
     s_int32 offset;
     char* condition;

@@ -1065,11 +1065,12 @@ yyerrhandle:
 void varserror(char *s)
 {
     v_error = 1;
-    v_err += string(s) + string ("near token") + varslval + string ("\n");
+    v_err += string(s) + string (" near token ") + varslval + string ("\n");
 }
 
 int vars_compile (const char *str, string &errormsg, vector<command*> &script)
 {
+    v_scrpt.clear ();
     v_error = 0;
     v_err = "";
 
@@ -1081,7 +1082,7 @@ int vars_compile (const char *str, string &errormsg, vector<command*> &script)
     varsparse ();
 
     errormsg = v_err;
-    script = v_scrpt;
+    script.insert (script.end(), v_scrpt.begin(), v_scrpt.end()); 
 
     // clean up
     vars_delete_buffer (buffer);

@@ -117,8 +117,12 @@ on_file_save_activate (GtkMenuItem * menuitem, gpointer user_data)
 void 
 on_dialogue_compile_activate (GtkMenuItem * menuitem, gpointer user_data)
 {
-    make_dialogue ((MainFrame *) user_data);
-    gtk_widget_set_sensitive (((MainFrame *) user_data)->dialogue_run, TRUE);
+    MainFrame *wnd = (MainFrame *) user_data;
+    dlg_compiler compiler (wnd->nodes, wnd->file_name);
+
+    compiler.run ();
+
+    gtk_widget_set_sensitive (wnd->dialogue_run, TRUE);
 }
 
 /* Dialogue Menu: Run */

@@ -12,6 +12,10 @@
    See the COPYING file for more details.
  */
 
+#ifndef __MAIN_H__
+#define __MAIN_H__
+
+#include <gtk/gtkstyle.h>
 #include <string>
 #include <vector>
 #include "dlgnode.h"
@@ -71,3 +75,5 @@ MainFrame;
 /* Functions */
 void init_app (MainFrame *);
 void delete_dialogue (MainFrame *);
+
+#endif // __MAIN_H__

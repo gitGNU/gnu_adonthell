@@ -20,6 +20,7 @@ Circle::Circle ()
     comment = "";
     conditions = "";
     variables =	"";
+    mood = 0;
 }
 
 Circle::Circle (u_int32 num, u_int8 tp, s_int32 x, s_int32 y)
@@ -31,6 +32,7 @@ Circle::Circle (u_int32 num, u_int8 tp, s_int32 x, s_int32 y)
 
     number = num;
     type = tp;
+    mood = 0;
 
     position.x = x - 10;
     position.y = y - 10;
@@ -39,7 +41,7 @@ Circle::Circle (u_int32 num, u_int8 tp, s_int32 x, s_int32 y)
 }
 
 // Save all data neccessary to restore the circle
-void Circle::save (ofstream &file)
+void Circle::save (ofstream &file, u_int32* table)
 {
     // Keyword "Circle" and circle's number
     file << "\nCircle\n";
@@ -88,6 +90,9 @@ void Circle::load (u_int32 num)
             case LOAD_TYPE:
             {
                 if (parse_dlgfile (str, n) == LOAD_NUM) type = n;
+                if (type == PLAYER) character = 0;
+                else character = 1;
+                
                 break;
             }
 
@@ -142,7 +147,7 @@ Arrow::Arrow (u_int32 num, u_int8 tp)
 }
 
 // Save all data neccessary to restore the arrow
-void Arrow::save (ofstream &file)
+void Arrow::save (ofstream &file, u_int32 *table)
 {
     u_int32 i;
     
@@ -153,14 +158,14 @@ void Arrow::save (ofstream &file)
     file << "  Type " << (int) type << "\n";
 
     // start circle
-    file << "  Prev " << prev[0]->number << "\n";
+    file << "  Prev " << table[prev[0]->number] << "\n";
 
     // end circle
-    file << "  Next " << next[0]->number << "\n";
+    file << "  Next " << table[next[0]->number] << "\n";
 
     // all the links
     for (i = 0; i < link.size (); i++)
-        file << "  Link " << link[i]->number << "\n";
+        file << "  Link " << table[link[i]->number] << "\n";
 
     file << "End\n";
 }

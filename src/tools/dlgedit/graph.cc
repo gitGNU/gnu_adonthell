@@ -885,8 +885,8 @@ save_dialogue (MainFrame * wnd)
 {
     time_t tm;
     u_int32 i;
-    int index = 0;
-    int *table = (int *)malloc (sizeof (int) * wnd->number);
+    u_int32 index = 0;
+    u_int32 *table = new u_int32[wnd->number];
     GString *file = g_string_new (NULL);
     ofstream out;
     GtkWidget *fs = create_fileselection (file, 0);
@@ -935,7 +935,7 @@ save_dialogue (MainFrame * wnd)
     for (i = 0; i < wnd->number; i++)
         if (wnd->nodes[i]->type != LINK)
         {
-            wnd->nodes[i]->save (out);
+            wnd->nodes[i]->save (out, table);
             table[i] = index;
             index++;
         }
@@ -944,7 +944,7 @@ save_dialogue (MainFrame * wnd)
     for (i = 0; i < wnd->number; i++)
         if (wnd->nodes[i]->type == LINK)
         {
-            wnd->nodes[i]->save (out);
+            wnd->nodes[i]->save (out, table);
             index++;
         }
 
@@ -954,7 +954,7 @@ save_dialogue (MainFrame * wnd)
 
     // clean up 
     g_string_free (file, TRUE);
-    free (table);
+    delete[] table;
 
     out.close ();
 }

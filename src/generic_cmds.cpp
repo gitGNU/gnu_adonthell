@@ -206,15 +206,15 @@ void binary_cmd::ascii (ofstream &out)
     char* ops[] = { "", "", "", "", "", "", "LET", "ADD", "SUB", "MUL", "DIV",
                     "EQ ", "NEQ", "LT ", "LEQ", "GT ", "GEQ", "AND", "OR " };
 
-    out << "\n" << ops[type] << "     ";
+    out << ops[type] << "     ";
 
-    if (c_param1 != NULL) out << param1_location << "." << c_param1 << ", ";
-    else out << i_param1 << ", ";
+    if (c_param1 != NULL) out << param1_location << "." << c_param1 << " ";
+    else out << i_param1 << " ";
 
     if (type != LET)
     {
         if (c_param2 != NULL) out << param2_location << "." << c_param2 << " ";
-        else out << i_param2 << ", ";
+        else out << i_param2 << " ";
     }
     
     out << target_location << "." << target;
@@ -354,7 +354,7 @@ void jmp_cmd::write (FILE* out)
 
 void jmp_cmd::ascii (ofstream &out)
 {
-    out << "\nJMP  " << offset;
+    out << "JMP  " << offset+1;
 }
 
 
@@ -385,5 +385,10 @@ void branch_cmd::write (FILE* out)
 
 void branch_cmd::ascii (ofstream &out)
 {
-    out << "\nBRANCH  local." << condition << ", " << offset;
+    out << "BRANCH  local." << condition << " " << offset+1;
+}
+
+void branch_cmd::setjmp (s_int32 o)
+{
+    offset = o;
 }

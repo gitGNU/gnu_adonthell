@@ -102,7 +102,7 @@ int config::read_adonthellrc ()
                 if (section == "") 
                     if (parse_adonthellrc (n, s) == PREFS_STR)
                         section = s;
-
+                    
                 break;
             }
 

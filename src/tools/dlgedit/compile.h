@@ -20,6 +20,21 @@
 
 #include "../../interpreter.h" 
 
+extern int cond_compile (const char*, string&, vector<command*>&);
+extern int vars_compile (const char*, string&, vector<command*>&);
+
+// Data used to link the different blocks together
+class cmp_data
+{
+public:
+    cmp_data () { }
+    cmp_data (DlgNode *n, command *c, u_int32 l) : node(n), cmd(c), line(l) { }
+
+    DlgNode *node;                  // The original dialogue node
+    command *cmd;                   // The command representing this node
+    u_int32 line;                   // The commands position in the script
+};
+
 // Dialogue Compiler
 class dlg_compiler
 {
@@ -32,13 +47,31 @@ public:
 private:
     vector<command*> code;          // The compiled script
     vector<DlgNode*> dlg;           // The input dialogue
+    vector<DlgNode*> cur_nodes;     // Those dlg-nodes to compile right now
+    vector<cmp_data*> todo_nodes;   // Those nodes to compile next
+    vector<cmp_data*> done_nodes;   // Already compiled nodes
+    
     string filename;                // The base dialogue filename
 
-    u_int32 *text_lookup;           // 
+    u_int32 *text_lookup;           // tells Text ID when given node-number
 
-    void write_text ();             // Write the Dialogues text
+    Circle *cur_crcle;              // Circle all the write... functions work on
+
+    void write_npc ();              // Write NPC part of a script block
+    void write_player ();           // Write Player part of a block
+    void write_import ();           // Write the string-file and creates import cmd
+    void write_speaker ();          // Set the current speaker
+    void write_condition ();        // Writes a node's condition
+    void write_variables ();        // Write a node's operations on gamestates
+    void write_text ();             // Writes a node's text
+    void write_display ();          // Tells the interpreter to show the new text
+    void write_end ();              // Tells the interpreter to quit
+    
+    void output_script ();          // Write the compiled script to disk
+    void get_cur_nodes ();          // Get the nodes to create the next block from
+
+    u_int8 isdone (DlgNode*, cmp_data*); // Was DlgNode already compiled?
+    u_int8 ptext_follows ();
 };
-
-void make_dialogue (MainFrame *);
 
 #endif // __COMPILE_H__
