@@ -69,14 +69,17 @@ public:
 
     /** 
      * Sets the local to use for this script.
-     * 
+     *
+     * @note You have to set a script first, before you can add any locals.
      * @param l locals to use for this script.
+     * @todo Since the locals given are just copied over to py_script's locals,
+     *       it might be faster to pass the plain values instead
      */
     void set_locals (PyObject * l = NULL)
     {
-        locals = l; 
+        locals = l;
     }
-    
+
     /** 
      * Sets the script.
      * 
@@ -127,9 +130,10 @@ public:
     
 private:
     bool script_activated;
-    PyCodeObject *script;
     string script_file_;
 
+    PyCodeObject *script;
+    PyCodeObject *cleanup;
     PyObject * locals;
 };
 

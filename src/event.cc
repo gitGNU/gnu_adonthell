@@ -70,9 +70,9 @@ void event_list::save (ogzstream& out) const
 {
     vector <event *>::iterator i;
     u_int32 nbr_events = events.size ();
-
-    nbr_events >> out;  
     
+    nbr_events >> out; 
+
     for (i = events.begin (); i != events.end (); i++)
         (*i)->save (out); 
 }
@@ -84,7 +84,7 @@ bool event_list::load (igzstream& in)
     u_int8 type;
 
     nbr_events << in;
-
+    
     while (nbr_events--) 
     {
         event * e = NULL;
@@ -116,7 +116,7 @@ event::~event ()
 void event::set_script (string filename)
 {
     if (filename == "") script.set_script (filename);
-    else script.set_script (EVENTS_DIR + filename + ".py");
+    else script.set_script (EVENTS_DIR + filename);
     script_file_ = filename;
 }
 

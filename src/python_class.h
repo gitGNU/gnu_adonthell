@@ -28,6 +28,8 @@
 #ifndef PYTHON_CLASS_H__
 #define PYTHON_CLASS_H__
 
+#include <string>
+
 #include "Python.h"
 #include "compile.h"
 #include "eval.h"
@@ -84,7 +86,7 @@ public:
      * 
      * @return pointer to the imported module.
      */
-    static PyObject *import_module( char *filename);
+    static PyObject *import_module (string filename);
     
     /** 
      * Dumps any error information to stderr.
@@ -93,14 +95,24 @@ public:
     static void show_traceback( void );
     
     /** 
-     * Magic function that makes any C object available from Python!
+     * Magic function that makes any C object available to Python!
      * 
      * @param instance pointer to the instance to pass.
      * @param class_name name of the class of the passed instance.
      * 
-     * @return pointer to the passed object.
+     * @return pointer to the passed %object.
      */
-    static PyObject *pass_instance (void* instance, const char* class_name); 
+    static PyObject *pass_instance (void* instance, const char* class_name);
+
+    /**
+     * Return a function defined in the module as a code %object!
+     *
+     * @param pointer to the module.
+     * @param func_name name of the function to grab.
+     *
+     * @return pointer to the code %object, or NULL if the function does not exist.
+     */
+    static PyCodeObject *get_function_code (PyObject *module, const char* func_name);
 };
 
 

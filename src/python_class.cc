@@ -111,9 +111,9 @@ void python::show_traceback(void)
 }
 
 /* Import a module, return module ptr */
-PyObject *python::import_module( char *filename )
+PyObject *python::import_module (string filename)
 {
-    PyObject *result = PyImport_ImportModule( filename );
+    PyObject *result = PyImport_ImportModule ((char *) filename.c_str ());
     
     show_traceback ();
     return result;
@@ -147,4 +147,39 @@ PyObject *python::pass_instance (void *instance, const char *class_name)
     
     // Voila: "res" is 'identical' to "instance" :)
     return res;
+}
+
+// Grab a function's code object from a Python module
+PyCodeObject *python::get_function_code (PyObject *module, const char* func_name)
+{
+    PyCodeObject *code = NULL;
+
+    // Try to grab the function object
+    if (PyObject_HasAttrString (module, (char*) func_name))
+    {
+        PyObject *function = PyObject_GetAttrString (module, (char*) func_name);
+
+        // If the function exists, get it's code object
+        if (function && PyCallable_Check (function))
+        {
+            code = (PyCodeObject *) PyObject_GetAttrString (function, "func_code");
+/*
+            cout << "code->co_flags   " << code->co_flags << endl;
+            cout << "code->co_nlocals " << code->co_nlocals << endl;
+            cout << "code->co_names ";
+            PyObject_Print (code->co_names, stdout, 0);	
+            cout << endl << "code->co_varnames ";
+            PyObject_Print (code->co_varnames, stdout, 0);
+            cout << endl << endl;
+*/
+            //if (code->co_flags & CO_NEWLOCALS)
+            //    code->co_flags -= CO_NEWLOCALS;
+            // code->co_flags = 0;
+        }
+
+        // Clean up
+        Py_XDECREF (function);
+    }
+
+    return code;
 }

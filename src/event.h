@@ -34,7 +34,7 @@
  * Directory where events scripts resides.
  * 
  */ 
-#define EVENTS_DIR "scripts/events/"
+#define EVENTS_DIR "events/"
 
 
 class event_handler;

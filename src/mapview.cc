@@ -226,10 +226,10 @@ s_int8 mapview::put_state (ogzstream& file)
 
 void mapview::set_schedule (string file)
 {
-    schedule.set_locals (locals); 
+    schedule.set_locals (locals);
     if (file == "") schedule.set_script (file);
-    else schedule.set_script ("scripts/schedules/" + file + ".py");
-    schedule_file_ = file;      
+    else schedule.set_script ("schedules/" + file);
+    schedule_file_ = file;
 }
 
 bool mapview::update ()

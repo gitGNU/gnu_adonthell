@@ -29,9 +29,10 @@
 
 py_script::py_script ()
 {
-    locals = NULL; 
+    locals = NULL;
     script = NULL;
-    set_active (true); 
+    cleanup = NULL;
+    set_active (true);
 }
 
 
@@ -40,63 +41,76 @@ py_script::~py_script ()
     clear (); 
 }
 
+// Cleanup (and re-initialisation)
 void py_script::clear ()
-{ 
-    if (script)
+{
+    // Execute the script's "destructor"
+    if (cleanup)
     {
-        Py_DECREF (script);
-        script = NULL; 
+        PyEval_EvalCode (cleanup, data::globals, locals);
+        python::show_traceback ();
     }
 
-    script_file_ = ""; 
-    locals = NULL; 
-    set_active (true); 
+    // Delete our code objects
+    Py_XDECREF (script);
+    Py_XDECREF (cleanup);
+
+    script = NULL;
+    cleanup = NULL;
+
+    script_file_ = "";
+    set_active (true);
 }
 
+// Pass a (new) Python script to be used
 void py_script::set_script (string file)
 {
+    // Cleanup if we already had a script before
+    if (script)
+        clear ();
+
+    // just clear, don't set a new script
+    if (file == "")
+        return;
+
+    // Try to import the given script
+    PyObject *module = python::import_module (file);
+    if (!module)
+        return;
+
+    // Try to get the body of the script (also checks whether
+    // the script is in the right form)
+    script = python::get_function_code (module, "run");
     if (script)
     {
-        Py_DECREF (script);
-        script = NULL;
-    }
-
-    if (file == "")
-    {
-        script_file_ = "";
-        return;
-    } 
-
-    FILE *f = fopen (file.c_str (), "r");
-
-    // See whether the script exists at all
-    if (f)
-    {
-        // Compile the script into a PyCodeObject for quicker execution
-        struct _node *n = PyParser_SimpleParseFile (f, (char *) file.c_str (), Py_file_input);
-
-        if (n)
+        // Try to call the "constructor"
+        PyCodeObject *init = python::get_function_code (module, "init");
+        if (init)
         {
-            // If no errors occured update script code ...
-            script = PyNode_Compile (n, (char *)file.c_str ());
-            PyNode_Free (n);
-
-            script_file_ = file;
-        }
-        else
-        {
-            cout << "\n*** Cannot set script: Error in" << flush;
+            PyEval_EvalCode (init, data::globals, locals);
             python::show_traceback ();
         }
-        fclose (f);
+
+        // Get the "destructor"
+        cleanup = python::get_function_code (module, "cleanup");
+
+        // Set the script file
+        script_file_ = file;
     }
     else
-        cout << "\n*** Cannot open script: file \"" << file
-             << "\" not found!" << flush;
+        cerr << "*** Error: no \"run\" function found in \"" << file << ".py\"\n";
+
+    // Cleanup
+    Py_DECREF (module);
 }
 
+// Execute the body of the script
 void py_script::run () 
 {
+    cout << "*** running " << script_file_ << endl;
+    PyObject_Print (locals, stdout, 0);
+    cout << "\n\n";
+
     if (script && is_activated ())
     {
         PyEval_EvalCode (script, data::globals, locals);
