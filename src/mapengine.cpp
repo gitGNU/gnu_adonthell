@@ -72,6 +72,7 @@ void mapengine::update_and_show(landmap * amap)
   amap->draw_down();
   amap->draw_all_characters();
   amap->draw_up();
+  if (amap->de) amap->de->update ();
 
   //  amap->win.draw();
 }

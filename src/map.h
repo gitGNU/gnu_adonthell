@@ -20,7 +20,7 @@
 #include "mapevent.h"
 #include "mappattern.h"
 #include "mapsquare.h"
-//#include "dialog.h"
+#include "dialog.h"
 
 class mapitem;
 
@@ -75,7 +75,7 @@ class landmap
   mapcharacter heroe;
 
   // This probably shouldn't be here - just testing
-  //dialog *dlg;
+    dialog_engine *de;
 
   landmap();
   // ~landmap();

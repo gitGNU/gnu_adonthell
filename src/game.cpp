@@ -21,6 +21,7 @@
 #include "prefs.h"
 #include "character.h"
 #include "py_inc.h"
+#include "win_types.h"
 #include "game.h"
 
 #ifdef SDL_MIXER
@@ -30,6 +31,7 @@
 
 SDL_Thread *game::audio_thread;
 PyObject *game::globals;
+char *game::theme;
 
 void game::init(config &myconfig)
 {
@@ -45,6 +47,9 @@ void game::init(config &myconfig)
     fprintf(stderr, "Audio will not be used\n");
   }
 #endif  
+
+    // Set the theme (later: get from config file)
+    theme = WIN_THEME_ORIGINAL;
 
   // Initialise Python
   if (!init_python())

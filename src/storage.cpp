@@ -68,11 +68,7 @@ void objects::set (const char* key, storage *val)
 
         return;
     }
-
-#ifdef _DEBUG_
-    cout << "\n*** " << key;
-#endif 
-    
+  
     data[key] = val;
 }
 
@@ -97,10 +93,6 @@ storage* objects::get (const char* key)
         // required object, we are in trouble anyway.
         return NULL;
     }
-
-#ifdef _DEBUG_
-    cout << "\n*** " << key;
-#endif 
 
     return data[key];
 }

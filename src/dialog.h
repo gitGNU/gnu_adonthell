@@ -17,6 +17,12 @@
 
 #include "Python.h"
 #include "types.h"
+#include "win_label.h"
+#include "win_container.h"
+#include "win_border.h"
+#include "win_select.h"
+#include "win_image.h"
+#include "mapcharacter.h"
 #include <vector>
 
 // This is the lowlevel dialogue class 
@@ -46,22 +52,28 @@ private:
     char* get_substr (const char*, char*, char*);
 };
 
-/*
-#ifndef _DLGEDIT_                   // Don't need this for compiling dlgedit
 class dialog_engine
 {
 public:
-    dialog_engine ();
+    dialog_engine (mapcharacter *);
     void update_keyboard ();
-    void update (window&);
+    void update ();
 
 private:
-    void run (window&);
+    void run ();
     void insert_plugin ();          // 'Merges' a dialogue with the loaded one
 
+    win_font *font;
+    win_container *wnd;
+    win_image *face;
+    win_label *name;
+    win_label *prev;
+    win_select *sel;
+    win_border *border;
+    win_background *back;
+    
     dialog *dlg;
+    int answer;
 };
-#endif // _DLGEDIT_
-*/
 #endif // __DIALOG_H__
 

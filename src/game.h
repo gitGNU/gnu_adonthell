@@ -29,6 +29,7 @@ class game
   static void cleanup();
 
   static PyObject *globals;
+  static char *theme;
 };
 
 #endif

@@ -26,6 +26,7 @@
 #include "mapcharacter.h"
 #include "mapsquare.h"
 #include "window.h"
+#include "dialog.h"
 #include "map.h"
 #ifdef SDL_MIXER
 #include "audio.h"
@@ -36,6 +37,7 @@ using namespace std;
 landmap::landmap()
 {
   maparea=NULL;
+  de = NULL;
   length=0;
   height=0;
   posx=6;
@@ -386,6 +388,19 @@ void landmap::update_keyboard()
   if ( input::is_pushed('I') || input::is_pushed('i') )
 	  test_inventory(this);
 
+    if (input::is_pushed(Space_Key))
+    {
+        if (!de)
+        {
+            de = new dialog_engine (&othermapchar[0]);
+            de->update ();
+        }
+        else
+        {
+            delete de;
+            de = NULL;
+        }
+    }
 #ifdef SDL_MIXER
   // REMOVEME
   // Sound effects tied to keyboard

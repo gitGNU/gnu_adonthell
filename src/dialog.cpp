@@ -15,10 +15,13 @@
 #include <string.h>
 #include <algorithm>
 
-#include "dialog.h"
 #include "character.h"
+#include "mapcharacter.h"
+#include "win_font.h"
+#include "game.h"
 #include "py_inc.h"
 #include "yarg.h"
+#include "dialog.h"
 
 
 // Load and instanciate the dialogue object
@@ -341,20 +344,44 @@ char *dialog::get_substr (const char* string, char* begin, char* end)
     return result;
 }
 
-/*
 // Init the dialogue engine
-dialog_engine::dialog_engine ()
+dialog_engine::dialog_engine (mapcharacter *c)
 {
-	// For the test, the only dialogue is created here
-	dlg = new dialog;
-	dlg->answer = 0;
+    npc *mynpc = (npc *) c->data;
 
-	// Import module
-	dlg->class_object = import_module( "dialog/tomas_hterin.py" );
+    // Init the low level dialogue stuff
+    dlg = new dialog;
+
+    // Create window
+    font = new win_font (game::theme);
+    border = new win_border (game::theme);
+    back = new win_background (game::theme);
+    wnd = new win_container (40, 20, 240, 160);
+
+    face = wnd->add_image (5, 5, c->portrait);
+    name = wnd->add_label (80, 5, 155, 10, font);
+    name->set_text (mynpc->name);
+
+    prev = wnd->add_label (80, 20, 155, 60, font);
+    // sel = wnd->add_select (5, 80, 230, 75, font);
+
+    wnd->set_border (border);
+    wnd->set_background (back);
+    wnd->show_all ();
+    wnd->draw ();
+
+    // Load dialogue
+	if (!dlg->init (mynpc->talk (), strrchr (mynpc->talk (), '/')+1))
+	{
+        cout << "\n*** Error loading dialogue script " << strrchr (mynpc->talk (), '/')+1 << flush;
+        answer = -1;	
+	}
+	else answer = 0;
 }
 
 void dialog_engine::update_keyboard ()
 {
+/*
 	static u_int16 lastkeypressed=0;
 	
 	if(input::is_pushed(lastkeypressed)) return;
@@ -368,77 +395,27 @@ void dialog_engine::update_keyboard ()
 	{dlg->answer = 2; lastkeypressed=99;}
 	if (input::is_pushed (100)) 
 	{dlg->answer = 3; lastkeypressed=100;}
+*/
 }
 
-void dialog_engine::update (window &win)
+void dialog_engine::update ()
 {
-
+    // wnd->update ();
+    wnd->draw ();
+/*
     if (dlg->answer == 0xFFFF) return;
 
     run (win);
     dlg->answer = 0xFFFF;
+*/
 }
 
-void dialog_engine::run (window &win)
+void dialog_engine::run ()
 {
-    u_int32 i;
-    s_int32 result;
-    char *abc[8] = { "a", "b", "c", "d", "e", "f", "g", "h" };
-    string str;
-
-    result = engine->run ();
-
-    switch (result)
-    {
-        case -1:
-        {
-            str = "Interpreter returned error";
-            break;
-        }
-
-        case 0:
-        {
-            // the end
-            str = "";
-            break;
-        }
-        
-        case 1:
-        {
-            // Player part 
-            str = dlg->npc_text;
-            
-            for (i = 0; i < dlg->player_text.length () ; i++)
-            {
-                str += " -- ";
-                str += abc[i];
-                str += "> ";
-                str += dlg->player_text.get_element (i);
-            }
-            
-            break;
-        }
-
-        case 2:
-        {
-            // NPC only
-            str = dlg->npc_text;
-        }
-    }
-    win.set_text (str.c_str ());   
+    // Error occured:
+    if (answer < 0) return;
 }
 
 void dialog_engine::insert_plugin ()
 {
-    // We have to do the following:
-    // - Add the plugin to the end of the main dialogue
-    // - Insert a JMP <length_of_main_dlg - 2> after the main dlg's IMPORT
-    //   (That means, the plugged in subjects appear before the main ones,
-    //   but else, we'd have to check the main dlg for JMP's to the first
-    //   block)
-    // - Offset the TEXT's string_id to point after the main strings
-    // - Remove the RETURN 1 of the first plugin block (fpb)
-    // - Replace the CLEAR of the fpb with JMP <-length_of_main_dlg + 2>
-    // - Replace all RETURN 0's of the plugin with JMP's to the first main block
 }
-*/

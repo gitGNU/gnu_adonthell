@@ -40,6 +40,7 @@ run_dlg::run_dlg (MainFrame *wnd)
     // The start of the dialogue
     else answer = 0;
 
+    // Execute custom code before the actual dialoge
     if (wnd->pset_vars != "")    
     {
         char *tmp = strdup (wnd->pset_vars.c_str ());

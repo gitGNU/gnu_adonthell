@@ -150,7 +150,6 @@
 */
 int main(int argc, char * argv[])
 {
-    landmap * map1 = new landmap;
     config myconfig (argc > 1 ? argv[1] : "");
 
     // try to read adonthellrc
@@ -168,11 +167,13 @@ int main(int argc, char * argv[])
 
     game::init (myconfig);
 
+    landmap * map1 = new landmap;
     if (map1->load (myconfig.mapname.data ())) 
     {
         printf("Error loading map %s!\n", myconfig.mapname.data ());
         return 1;
     }
+
     map1->load_map_data();
     //    map1->save("okidoki.map");
     // Flip flop between the mapengine and the cutscene

@@ -22,10 +22,14 @@
 npc::npc ()
 {
     schedule = NULL;
+
+    // test:
+    dialogues.push_back ("dialogues/tomas_hterin");
+    active_dialogue = 0;
 }
 
 // Returns the active dialogue
-const char* npc::talk ()
+char* npc::talk ()
 {
     return dialogues[active_dialogue];
 }
@@ -56,7 +60,7 @@ void npc::set_schedule (char* file)
         }
         fclose (f);
     }
-    else cout << "\n*** Cannot set " << name << "'s schedule: file \"" << file
+    else cout << "\n*** Cannot open " << name << "'s schedule: file \"" << file
               << "\" not found!" << flush;
 }
 

@@ -47,7 +47,7 @@ public:
 
     void set_schedule (char*);      // Set / change the active schedule
     void set_dialogue (u_int32);    // Set / change the active dialogue
-    const char* talk ();            // Returns the active dialogue
+    char* talk ();                  // Returns the active dialogue
     u_int8 move (u_int8);           // Run the active schedule
 
 protected:

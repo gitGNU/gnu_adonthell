@@ -57,6 +57,7 @@ mapcharacter::~mapcharacter ()
     free (frame);
     frame = NULL;
     nbr_of_frames = 0;
+    delete portrait;
 }
 
 s_int8 mapcharacter::get (SDL_RWops * file)
@@ -122,6 +123,11 @@ void mapcharacter::get_NPC_stat (SDL_RWops * file, u_int16 nbr)
     objects::set (data->name, data);
     PyObject *chars = PyDict_GetItemString (game::globals, "characters");
     PyDict_SetItemString (chars, data->name, pass_instance (data, "npc"));
+
+    // we'd also get the portrait to use from the data
+    portrait = new image (64, 64);
+    portrait->load_raw ("gfxtree/portraits/lyanna.pnm");
+    portrait->set_mask (true);
     
     SDL_RWread (file, &data->posx, sizeof (data->posx), 1);
     SDL_RWread (file, &data->posy, sizeof (data->posy), 1);
