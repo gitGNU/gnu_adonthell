@@ -3,7 +3,6 @@
 #include <iostream.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <sys/time.h>
 #include "types.h"
 #include "gfx.h"
 #include "pnm.h"
@@ -667,27 +666,24 @@ void screen::init_display(u_int8 vidmode = 0)
 
 void screen::show()
 {
-  static struct timeval timer1, timer2, timer3;
-#if 1
-  do
+  // Lenght of a game cycle. Decreasing it will increase the speed.
+  const u_int32 cycle_length=13;
+  static Uint32 timer1, timer2, timer3;
+
+  // Waiting for being sync with a game cycle
+  while(1)
     {
-      gettimeofday(&timer2,NULL);
-       timersub(&timer2,&timer1,&timer3);
-    }while(timer3.tv_usec<14000);
-#else
-  struct timespec timetowait={0,0};
-  gettimeofday(&timer2,NULL);
-  timersub(&timer2,&timer1,&timer3);
-  timetowait.tv_nsec=0;
-  nanosleep(&timetowait,NULL);
-#endif
-  gettimeofday(&timer1,NULL);
-  timer1.tv_usec-=(timer3.tv_usec%14000);
+      timer2=SDL_GetTicks();
+      timer3=timer2-timer1;
+      if(timer3>=cycle_length) break;
+    }
+  timer1=SDL_GetTicks();
+  timer1-=(timer3%cycle_length);
 
   SDL_UpdateRect (vis, 0, 0, 0, 0);
-  
-  frames_to_do=timer3.tv_usec/14000;
-  if (frames_to_do>20) frames_to_do=20;
+  // How slow is our machine? :)
+  frames_to_do=timer3/cycle_length;
+  if(frames_to_do>20) frames_to_do=20;
 }
 #endif
 
@@ -766,24 +762,14 @@ sprite::~sprite()
   u_int16 i;
   for(i=0;i<nbr_of_frames;i++)
     frame[i].~image();
-  free(frame);
+  delete [] frame;
 }
 
 void sprite::get(FILE * file)
 {
   fread(&nbr_of_frames,sizeof(nbr_of_frames),1,file);
-  frame=(image*)calloc(sizeof(image),
-		       nbr_of_frames);
+  frame= new image [nbr_of_frames];
   fread(&counterlimit,sizeof(counterlimit),1,file);
   fread(&alpha,sizeof(alpha),1,file);
   fread(&nbr_of_frames,sizeof(nbr_of_frames),1,file);  
-  //  toplayername=(lstr*)calloc(sizeof(lstr),
-  //			     toplayer.nbr_of_frames);
-  //  for(i=0;i<amap->toplayer.nbr_of_frames;i++)
-  //    {
-  //      getstringfromfile(amap->toplayername[i],file);
-  //      amap->toplayer.pixmap[i]=LoadGfxAdapt(amap->toplayername[i],
-  //					    &amap->toplayer.lenght,
-  //					    &amap->toplayer.height);
-  //    }
 }

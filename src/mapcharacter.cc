@@ -45,7 +45,7 @@ s_int8 mapcharacter::get(FILE * file)
   s_int8 i,retvalue=0;
   walkcounter=11;
   fread(&nbr_of_frames,sizeof(nbr_of_frames),1,file);
-  frame=(image*)calloc(sizeof(image),nbr_of_frames);
+  frame=new image[nbr_of_frames];
   for (i=0;i<nbr_of_frames;i++)
     if (!(frame[i].get(file)))retvalue=-1;
   return(retvalue);

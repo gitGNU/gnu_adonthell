@@ -17,7 +17,6 @@ class mapevent : vector<instruction*>
                                     // map structure is changed
 
  public:
-  mapevent();
   void get(FILE * file);
   void run(mapcharacter*aguy, map*amap, u_int16 x, u_int16 y);
   void set_otherevent(const u_int16&);

@@ -52,27 +52,31 @@ map::map()
   //  amap->toplayername=0;
 }
 
+/*
 map::~map()
 {
-  u_int16 i;
-  for(i=0;i<maplong;i++)
-    free(themap[i]);
-  free(themap);
-  for(i=0;i<nbr_of_patterns;i++)
-    pattern[i].~mappattern();
-  free(pattern);
-  free(patternname);
-  for(i=0;i<nbr_of_mapcharacters;i++)
-    othermapchar[i].~mapcharacter();
-  heroe.~mapcharacter();
-  free(othermapchar);
-  free(mapcharname);
-  free(event);
+  //  u_int16 i;
+
+  cout << "Freeing map\n";
+  //  for(i=0;i<maplong;i++)
+  //    delete [] themap[i];
+  //  delete [] themap;
+  cout << "1\n";
+  //  delete [] pattern;
+  cout << "2\n";
+  //  delete [] patternname;
+  cout << "3\n";
+  //  delete [] othermapchar;
+  cout << "4\n";
+  //  delete [] mapcharname;
+  cout << "5\n";
+  //  delete [] event;
+  cout << "6\n";
   //  free(toplayername);
   //  for(i=0;i<amap->toplayer.nbr_of_frames;i++)
   //    free(amap->toplayer.pixmap[i]);
   //  free(amap->toplayer.pixmap);
-}
+}*/
 
 u_int16 map::get_patternset_to_map(FILE * file, u_int16 startpos)
 {
@@ -124,10 +128,11 @@ s_int8 map::get(FILE * file)
     }
   fread(&maplong,sizeof(maplong),1,file);
   fread(&maphaut,sizeof(maphaut),1,file);
+
+  themap= new mapsquare* [maplong];
   
-  themap=(mapsquare**)calloc(sizeof(mapsquare*),maplong);
   for(i=0;i<maplong;i++)
-    themap[i]=(mapsquare*)calloc(sizeof(mapsquare),maphaut);
+    themap[i]=new mapsquare [maphaut];
   fread(&mapx,sizeof(mapx),1,file);
   fread(&mapy,sizeof(mapy),1,file);
 
@@ -138,9 +143,9 @@ s_int8 map::get(FILE * file)
   heroe.get_heroe_stat(file);
 
   fread(&nbr_of_mapcharacters,sizeof(nbr_of_mapcharacters),1,file);
-  othermapchar=(mapcharacter*)calloc(sizeof(mapcharacter),
-				     nbr_of_mapcharacters);
-  mapcharname=(lstr*)calloc(sizeof(lstr),nbr_of_mapcharacters);
+  othermapchar= new mapcharacter[nbr_of_mapcharacters];
+  mapcharname= new lstr [nbr_of_mapcharacters];
+  //  mapcharname=(lstr*)calloc(sizeof(lstr),nbr_of_mapcharacters);
   for(i=0;i<nbr_of_mapcharacters;i++)
     {
       getstringfromfile(mapcharname[i],file);
@@ -159,7 +164,7 @@ s_int8 map::get(FILE * file)
   fread(&toplayerflags,sizeof(toplayerflags),1,file);
   /* Events */
   fread(&nbr_of_events,sizeof(nbr_of_events),1,file);
-  event=(mapevent*)calloc(sizeof(mapevent),nbr_of_events+1);
+  event=new mapevent [nbr_of_events+1];
   for(i=1;i<=nbr_of_events;i++)
     event[i].get(file);
   fread(&scrolltype,sizeof(scrolltype),1,file);

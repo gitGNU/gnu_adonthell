@@ -37,10 +37,11 @@ s_int8 mappattern::get (FILE * file)
     fread (&counterlimit, sizeof (counterlimit), 1, file);
     framecounter = 0;
     currentframe = 0;
-    frame = (image*) calloc (sizeof (image), nbr_of_frames);
+    frame = new image[nbr_of_frames];
+    
     for (i = 0; i < nbr_of_frames; i++)
         if ((frame[i].get(file)))
-            return (-1);
+	  return (-1);
     return (0);
 }
 
