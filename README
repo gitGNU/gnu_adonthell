@@ -26,8 +26,8 @@ Configuring Adonthell:
 
 The first time you run Adonthell, a configuration file is created:
 $HOME/.adonthell/adonthellrc. Unless you install the data file in
-/usr/local/share/adonthell-data, you'll have to add the full path to
-the data directory yourself.
+/usr/local/share/adonthell, you'll have to add the full path to the
+data directory yourself.
 
 The available options and what they do are:
 (Some of these options might be changable from the main program)
@@ -72,7 +72,7 @@ The configuration file can have a number of such sections with
 different ID's. At the beginning you can use "Default [id]" to specify
 the section that is used by default.
 
-When running the mapengine with a section id as parameter, this special
+When running the program with a section id as parameter, this special
 configuration is loaded.
 
 

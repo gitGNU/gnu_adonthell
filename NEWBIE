@@ -3,7 +3,7 @@ Written by Andrew Henderson <hendersa@db.erau.edu>
 19 February 2000
 
 Last update by Kai Sterker <kaisterker@linuxgames.com>
-21 April 2001
+27 April 2001
 
 NOTE: The newest version of this guide can be viewed online at
 http://adonthell.linuxgames.com/en_frames/install.shtml.
@@ -226,7 +226,7 @@ Step #4: Install Adonthell. Finally, you can log in as root and type
 	make install
 
 to copy the Adonthell binary to /usr/local/bin and the game data 
-to /usr/local/share/adonthell-data.
+to /usr/local/share/adonthell.
 
 *************************
 * 5.0 RUNNING ADONTHELL *

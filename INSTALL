@@ -43,9 +43,9 @@ make
 
 The first time you run Adonthell, a configuration file is created:
 $HOME/.adonthell/adonthellrc. Unless you install the data package in
-/usr/local/share/adonthell-data/ you'll have to add the full path
-to the data directory manually. You can also configure various other 
-aspects of the game.
+/usr/local/share/adonthell/ you'll have to add the full path to the
+data directory manually. Various other aspects of the game are also
+controlled via this file. 
 
 For more information, see the README file. Problems? Don't have
 the right libraries? Please look at the NEWBIE file or our website
