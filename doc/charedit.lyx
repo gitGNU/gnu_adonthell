@@ -1,0 +1,247 @@
+#LyX 1.1 created this file. For more info see http://www.lyx.org/
+\lyxformat 2.15
+\textclass article
+\language default
+\inputencoding latin1
+\fontscheme default
+\graphics default
+\paperfontsize default
+\spacing single 
+\papersize Default
+\paperpackage a4wide
+\use_geometry 0
+\use_amsmath 0
+\paperorientation portrait
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\defskip medskip
+\quotes_language english
+\quotes_times 2
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+
+\layout Title
+
+The Character Editor
+\layout Author
+
+Kai Sterker
+\layout Section
+
+Overview
+\layout Standard
+
+The character editor is used to create and edit the non player characters
+ (NPC's) that will populate the gameworld.
+ With the editor you can set all the character's attributes such as it's
+ name, race and gender, the different animations, events specific to that
+ character and his schedule and dialogue scripts.
+ Each of that, as well as how to use the editor is explained in the correspondin
+g section.
+\layout Section
+
+Attributes
+\layout Standard
+
+The editor starts with this section displayed.
+ You can enter the character's name and select his race and gender from
+ the optionmenus.
+ Below is a list with further attributes, which usually will already contain
+ some default attributes.
+ This shall save you some typing.
+ You can change the list of default attributes by editing the file 
+\emph on 
+attributes.txt
+\emph default 
+ in the editior's directory.
+\layout Itemize
+
+To 
+\series bold 
+add
+\series default 
+ a new attribute, enter it's name into the 
+\emph on 
+Attribute
+\emph default 
+ field, it's value into the 
+\emph on 
+Value
+\emph default 
+ field.
+ Then click 
+\emph on 
+Update
+\emph default 
+.
+\layout Itemize
+
+To 
+\series bold 
+change
+\series default 
+ an entry, select it from the list.
+ Then change the value and also click 
+\emph on 
+Update
+\emph default 
+.
+\layout Itemize
+
+To 
+\series bold 
+remove
+\series default 
+ an entry, select it from the list and click 
+\emph on 
+Remove
+\emph default 
+.
+\layout Standard
+
+A word on the character's name.
+ 
+\series bold 
+It
+\series default 
+ is probably the most important attribute for the character, as the game
+ engine needs it to distinguish all the different NPC's.
+ For most operations on a NPC, the engine utilizes it's name.
+ For that reason, each character 
+\emph on 
+must 
+\emph default 
+have an unique name.
+ This is partly ensured by using the character name as the file name, so
+ you won't be able to create two characters with the same name in the same
+ directory.
+\layout Standard
+
+What attributes and flags to add to the list may vary from character to
+ character.
+ Currently, it's too early to say which ones we'll need for sure.
+\layout Section
+
+Graphics
+\layout Standard
+
+Once we know what graphics a character needs, you'll be able to assign them
+ here.
+ Until then, this part of the editor is left blank.
+\layout Section
+
+Events
+\layout Standard
+
+Here you can assign event handlers to that particular character.
+ That is, they will only react if an event was triggered by this very character.
+ Apart from that you can specify other limitations for each event.
+ See the event documentation for more details.
+\layout Itemize
+
+To 
+\series bold 
+add
+\series default 
+ an event, select the event type from the optionmenu and click 
+\emph on 
+Add
+\emph default 
+.
+\layout Itemize
+
+To 
+\series bold 
+change
+\series default 
+ an event, select it from the list and click 
+\emph on 
+Update
+\emph default 
+.
+ Note that you cannot change the event type itself, only the additional
+ parameters.
+\layout Itemize
+
+To 
+\series bold 
+remove
+\series default 
+ an event, select it from the list and click 
+\emph on 
+Remove
+\emph default 
+.
+\layout Standard
+
+When adding or changing an event, a new dialog will pop up where you can
+ enter the script that will get executed whenever the event occurs.
+ Either type in the filename without any path and file extension (e.g.
+ to add the /home/me/scripts/event_handler.py type event_handler), or click
+ on 
+\emph on 
+Browse
+\emph default 
+ to open a file browser.
+ Note, that the script needs to be placed in 
+\emph on 
+<data>/scripts/events/
+\emph default 
+ for the game engine to find it.
+\layout Standard
+
+Each event has some additional parameters that control when it will be triggered.
+ You can change them by selecting a entry from the list, entering a value
+ and clicking the 
+\emph on 
+Update
+\emph default 
+ button.
+ To find out what attributes are available for a certain type of event,
+ what values are allowed and what for they are, look at the event documentation.
+\layout Section
+
+Actions
+\layout Standard
+
+Here you can specify the initial schedule and dialogue script of a character.
+ The schedule controls it's movements on the map, the dialogue is used for
+ conversations with the player.
+ Those scripts can be changed within the game from event, schedule and dialogue
+ scripts.
+ See the corresponding documention on how to do that.
+\layout Standard
+
+To set those scrips, either type in the filename without any path and file
+ extension, or click on 
+\emph on 
+Browse
+\emph default 
+ to open a file browser.
+ Schedule scripts have to be placed into 
+\emph on 
+<data>/scripts/schedules/ 
+\emph default 
+and dialogue scripts into 
+\emph on 
+<data>/scripts/dialogues/
+\emph default 
+ for the game engine to find them.
+\layout Section
+
+Saving and Loading
+\layout Standard
+
+For editiing purpose, each character is saved in an ASCII file of it's own.
+ If you want, you can edit this file with your favourite text editor, but
+ errors in that file might crash the editor, so be careful.
+ (If you don't like this, write a more flexible parser!)
+\layout Standard
+
+For use in the game, all character files of a specific directory are merged
+ into a single, binary file that will be loaded at startup of the game.
+ So make sure to store all characters belonging to the same project in the
+ same directory.
+\the_end
