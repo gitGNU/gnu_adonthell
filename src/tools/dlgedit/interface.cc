@@ -29,8 +29,7 @@ class dialog;
 #include "interface.h"
 
 /* Create Top Level Window and Controls */
-void 
-create_mainframe (MainFrame * MainWnd)
+void create_mainframe (MainFrame * MainWnd)
 {
     GtkWidget *vbox;
     GtkWidget *menu;

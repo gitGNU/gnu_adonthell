@@ -23,7 +23,7 @@
 #include "callbacks.h"
 
 // static variables
-char *function::fct_string[] = { "LET", "IF" };
+char *function::fct_string[] = { "LET", "THEN", "IF", "AND", "OR" };
 char *function::op_string[] = { "=", "+=", "-=", "==", "!=", "<", ">" };
 map<char*, s_int32, ltstr> function::vars;
 
@@ -249,6 +249,7 @@ void function::set_operators ()
     {
         // arithmetics
         case LET:
+        case THEN:
         {
             menu = gtk_menu_new ();
 
@@ -276,6 +277,8 @@ void function::set_operators ()
 
         // comparisons
         case IF:
+        case AND:
+        case OR:
         {
             menu = gtk_menu_new ();
 
@@ -374,8 +377,23 @@ void function::create_function_dialog ()
     gtk_widget_show (glade_menuitem);
     gtk_menu_append (GTK_MENU (function_menu), glade_menuitem);
 
+    glade_menuitem = gtk_menu_item_new_with_label ("THEN");
+    gtk_object_set_user_data (GTK_OBJECT (glade_menuitem), (gpointer) GINT_TO_POINTER(THEN));
+    gtk_widget_show (glade_menuitem);
+    gtk_menu_append (GTK_MENU (function_menu), glade_menuitem);
+
     glade_menuitem = gtk_menu_item_new_with_label ("IF");
     gtk_object_set_user_data (GTK_OBJECT (glade_menuitem), (gpointer) GINT_TO_POINTER(IF));
+    gtk_widget_show (glade_menuitem);
+    gtk_menu_append (GTK_MENU (function_menu), glade_menuitem);
+
+    glade_menuitem = gtk_menu_item_new_with_label ("AND");
+    gtk_object_set_user_data (GTK_OBJECT (glade_menuitem), (gpointer) GINT_TO_POINTER(AND));
+    gtk_widget_show (glade_menuitem);
+    gtk_menu_append (GTK_MENU (function_menu), glade_menuitem);
+
+    glade_menuitem = gtk_menu_item_new_with_label ("OR");
+    gtk_object_set_user_data (GTK_OBJECT (glade_menuitem), (gpointer) GINT_TO_POINTER(OR));
     gtk_widget_show (glade_menuitem);
     gtk_menu_append (GTK_MENU (function_menu), glade_menuitem);
 

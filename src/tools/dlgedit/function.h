@@ -21,7 +21,10 @@
 enum
 {
     LET = 0,
-    IF = 1
+    THEN = 1,
+    IF = 2,
+    AND = 3,
+    OR = 4
 };
 
 // Operators
