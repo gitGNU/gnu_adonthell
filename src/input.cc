@@ -1,7 +1,7 @@
 /*
    $Id$
 
-   Copyright (C) 1999   The Adonthell Project
+   Copyright (C) 1999/2000/2001  Alexandre Courbot. 
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -12,26 +12,33 @@
    See the COPYING file for more details.
 */
 
-#include <iostream.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include "types.h"
-#include "image.h"
+
+/**
+ * @file   input.cc
+ * @author Alexandre Courbot <alexandrecourbot@linuxgames.com>
+ * 
+ * @brief  Defines the input class.
+ * 
+ * 
+ */
+
+
+#include <iostream>
+#include <cstdio>
+#include <cstdlib>
 #include "input.h"
 #include "SDL.h"
 
-//u_int8 input::keyboard_mode;
 u_int8 * input::keystate=NULL;
 u_int8 * input::p_keystate=NULL;
 u_int16 input::last_key;
 s_int32 input::keystatelength;
-//bool is_unicode_on=false;
 
 u_int16 input::mouse_posx, input::mouse_posy;
 bool input::mouse_button[3];
 
 
-int input::FilterEvents(const SDL_Event *event)
+int input::filterevents(const SDL_Event *event)
 {
   if(event->type==SDL_KEYDOWN) p_keystate[event->key.keysym.sym]++;
   return 1;
@@ -45,7 +52,7 @@ void input::init()
   p_keystate=new u_int8[keystatelength];
   memset(p_keystate, 0, keystatelength);
   set_key_repeat(0,0);
-  SDL_SetEventFilter(FilterEvents);
+  SDL_SetEventFilter(filterevents);
   SDL_EnableUNICODE(1);
 }
 

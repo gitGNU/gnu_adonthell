@@ -108,6 +108,10 @@ void game::cleanup ()
     // delete all data
     data::cleanup ();
 #endif
+
+    // shutdown input subsystem
+    input::shutdown ();
+    
     // shutdown audio
 #if defined SDL_MIXER && !defined _EDIT_
     //    audio::cleanup ();
