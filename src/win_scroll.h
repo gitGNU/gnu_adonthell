@@ -1,4 +1,6 @@
 /*
+   $Id$
+
    (C) Copyright 2000 Joel Vennin
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
@@ -10,11 +12,9 @@
    See the COPYING file for more details
 */
 
-#ifndef _WIN_SCROLLED_H_
-#define _WIN_SCROLLED_H_
+#ifndef WIN_SCROLLED_H
+#define WIN_SCROLLED_H
 
-#include "input.h"
-#include "win_base.h"
 #include "win_container.h"
 #include "win_scrollbar.h"
 

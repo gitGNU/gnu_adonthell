@@ -23,9 +23,6 @@
 #ifndef __ADONTHELL_H__
 #define __ADONTHELL_H__
 
-#include "fileops.h"
-#include "landmap.h"
-#include "win_base.h"
 #include "win_mapview.h"
 
 /**

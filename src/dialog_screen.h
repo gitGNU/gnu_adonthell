@@ -27,7 +27,6 @@
 #define DLG_ENGINE_H__
 
 #include "dialog.h"
-#include "character_base.h"
 #include "window.h"
 #include "win_select.h"
 #include "win_theme.h"

@@ -16,7 +16,6 @@
 #include <string.h>
 #include "win_types.h"
 #include "image.h"
-#include "drawing_area.h"
 
 class win_theme;
 class win_base;

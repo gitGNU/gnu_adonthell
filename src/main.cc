@@ -23,7 +23,6 @@
  */
  
 #include "audio.h"
-#include "character.h"
 #include "event_handler.h"
 #include "game.h"
 #include "gamedata.h"

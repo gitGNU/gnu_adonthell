@@ -25,8 +25,6 @@
 #ifndef PATH_H__
 #define PATH_H__
 
-#include "types.h"
-#include <vector>
 #include "mapsquare.h"
 
 #ifndef SWIG

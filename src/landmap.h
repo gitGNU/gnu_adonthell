@@ -26,12 +26,6 @@
 
 #include "mapobject.h"
 #include "mapcharacter.h"
-#include "mapsquare.h"
-#include "event_list.h"
-
-#include <string>
-#include <vector>
-#include <list>
 
 /**
  * Subdirectory where maps are saved.

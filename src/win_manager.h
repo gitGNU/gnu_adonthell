@@ -22,16 +22,9 @@
 #ifndef _WIN_MANAGER_
 #define _WIN_MANAGER_
 
-#include <list> 
-#if __GNUG__ > 2
-#include <ext/hash_map>
-#else
-#include <hash_map>
-#endif
+#include "str_hash.h"
 #include "win_theme.h"
 #include "win_font.h"
-#include "win_base.h"
-#include "str_hash.h"
 
 #ifndef SWIG
 using namespace std;   

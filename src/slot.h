@@ -23,10 +23,7 @@
 #ifndef SLOT_H
 #define SLOT_H
 
-#include <string>
 #include "fileops.h"
-
-using std::string;
 
 class item_base;
 class inventory;

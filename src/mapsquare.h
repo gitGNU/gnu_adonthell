@@ -26,14 +26,9 @@
 #ifndef MAPSQUARE_H_
 #define MAPSQUARE_H_ 
 
-
-#include "fileops.h"
-#include "mapsquare_walkable.h"
-
-#include <string>
-#include <vector>
 #include <list>
 
+#include "mapsquare_walkable.h"
 
 class mapobject;
 class mapcharacter;

@@ -14,7 +14,6 @@
 #define WIN_SCROLLBAR_H_
 
 #include "image.h"
-#include "drawing_area.h"
 #include "win_types.h"
 
 class win_theme;

@@ -16,7 +16,6 @@
 #define _WIN_CONTAINER_H_
 
 #include<list>
-#include "drawing_area.h"
 #include "win_base.h"
 
 using namespace std;

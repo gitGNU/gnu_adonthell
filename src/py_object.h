@@ -26,10 +26,7 @@
 #ifndef PY_OBJECT_H
 #define PY_OBJECT_H
                    
-#include <string>
 #include "python_class.h"
-
-using std::string; 
 
 
 /**

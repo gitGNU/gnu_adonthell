@@ -26,7 +26,6 @@
 #ifndef CHARACTER_H_
 #define CHARACTER_H_
 
-#include "storage.h"
 #include "mapcharacter.h"
 
 /**

@@ -22,10 +22,7 @@
 #ifndef TIME_EVENT_H__
 #define TIME_EVENT_H__
 
-#include <string>
 #include "event.h"
-
-using std::string;
 
 /**
  * The time %event executes the attached script or callback at a certain 

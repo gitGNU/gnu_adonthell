@@ -15,10 +15,7 @@
 #ifndef _WIN_THEME_H_
 #define _WIN_THEME_H_
 
-#include "win_border.h"
-#include "win_background.h"
 #include "win_scroll.h"
-#include "win_scrollbar.h"
 
 class win_theme
 {

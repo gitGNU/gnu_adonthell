@@ -32,13 +32,8 @@
  */ 
 #define MAPCHAR_DIR "gfx/mapcharacters/"
 
-#include <vector>
-#include <string>
 #include "animation.h"
 #include "character_base.h"
-#include "mapsquare_walkable.h"
-#include "py_object.h"
-#include "py_callback.h"
 #include "path.h"
 #include "text_bubble.h"
 #include "event_list.h"

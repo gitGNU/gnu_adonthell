@@ -25,7 +25,6 @@
 #define ITEM_BASE_H
 
 #include "py_object.h"
-#include "fileops.h"
 #include "slot.h"
 
 using std::string;

@@ -27,11 +27,8 @@
 #ifndef DATA_SCREEN_H__
 #define DATA_SCREEN_H__
 
-#include "win_types.h"
-#include "win_font.h"
 #include "win_select.h"
 #include "win_theme.h"
-#include "win_container.h"
 #include "win_write.h"
 
 /**

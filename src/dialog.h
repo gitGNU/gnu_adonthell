@@ -26,10 +26,7 @@
  */
 
 #include "character_base.h"
-#include "python_class.h"
 #include "py_object.h"
-#include "types.h"
-#include <vector>
  
 
 using namespace std; 

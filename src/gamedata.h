@@ -26,11 +26,6 @@
 #ifndef GAMEDATA_H__
 #define GAMEDATA_H__
 
-#include <zlib.h>
-#include <string> 
-#include <vector>
-#include "fileops.h"
-
 #include "quest.h"
 #include "character.h"
 #include "adonthell.h"

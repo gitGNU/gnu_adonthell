@@ -17,7 +17,6 @@ class win_theme;
 class win_base;
 
 #include "image.h"
-#include "drawing_area.h"
 #include "win_types.h"
 
 class win_background

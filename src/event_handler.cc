@@ -22,7 +22,6 @@
  */
  
 #include "event_handler.h"
-#include "event_list.h"
 #include "map_event.h"
 #include "map_event_handler.h"
 #include "time_event.h"

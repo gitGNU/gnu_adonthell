@@ -16,7 +16,6 @@
 #ifndef _WIN_OBJECT_H_
 #define _WIN_OBJECT_H_
 
-#include "win_base.h" 
 #include "win_container.h"
 
 template<class T>

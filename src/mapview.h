@@ -29,7 +29,6 @@
 
 #include "landmap.h"
 #include "python_class.h"
-#include <list>
 
 
 /**

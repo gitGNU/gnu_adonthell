@@ -27,16 +27,11 @@
 #define STORAGE_H_
 
 #include <string.h>
-#if __GNUG__ > 2
-#include <ext/hash_map>
-#else
-#include <hash_map>
-#endif
-#include "str_hash.h"
 #include <map>
 #include <vector>
-#include <string>
+
 #include "types.h"
+#include "str_hash.h"
 
 #ifndef SWIG
 using namespace std; 

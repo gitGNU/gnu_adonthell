@@ -12,7 +12,6 @@
 #include <string.h>
 #include "win_theme.h"
 #include "win_background.h"
-#include "win_base.h"
 
 win_background::win_background()
 {

@@ -26,13 +26,10 @@
 #ifndef _WIN_BASE_H_
 #define _WIN_BASE_H_
 
-#include"types.h"
-#include "input.h"
 #include "win_event.h"
 #include "win_border.h"
 #include "win_background.h"
 #include "win_keys.h"
-#include "drawing_area.h"
 
 class win_container;
 class win_scroll;
