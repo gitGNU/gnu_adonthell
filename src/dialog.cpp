@@ -44,9 +44,7 @@ bool dialog::init (char *fpath, char *name)
 		return false;
 
     // get the classes dictionary, we'll have use for it later on
-    cout << "\nGlobals: ";
-    globals = PyModule_GetDict (module);
-    if (globals) PyObject_Print (globals, stdout, 0);
+    globals = PyObject_GetAttrString (module, "__dict__");
 
 	// Py_DECREF(module);
 
@@ -54,12 +52,10 @@ bool dialog::init (char *fpath, char *name)
 	// constructor here?
 	instance = PyObject_CallObject(classobj, NULL);
 
-	// Py_DECREF(classobj);
+	Py_DECREF(classobj);
 
     // get the classes dictionary, we'll have use for it later on
-    cout << "\n Locals: ";
     locals = PyObject_GetAttrString (instance, "__dict__");
-    if (locals) PyObject_Print (locals, stdout, 0);
 
     // extract the dialogue's strings
     extract_strings ();
@@ -196,8 +192,10 @@ void dialog::run (u_int32 index)
             {
                 // scan string for { python code } before displaying
                 scan_string (s);
-            
+
+                // add string to current text list
                 text[l++] = strings[s];
+                
                 // Remember Player's possible replies to avoid loops
                 choices.push_back (s);               
                 answers.push_back (PyInt_AsLong (PyList_GetItem (cont, k+1)));
@@ -231,11 +229,7 @@ void dialog::scan_string (u_int32 index)
     {
         // check wether the string contains python code at all
         start = strchr (strings[index], '{');
-        if (start == NULL)
-        {
-            cout << "\nNo code found" << flush;
-            return;
-        }
+        if (start == NULL) return;
 
         end = strcspn (start, "}");
 
@@ -247,11 +241,14 @@ void dialog::scan_string (u_int32 index)
         strncpy (string, start+1, end-1);
 
         // run the string
-        result = PyRun_String (string, Py_eval_input, globals, locals);
+        result = PyRun_String (string, Py_eval_input, locals, globals);
 
         if (result) PyObject_Print (result, stdout, 0);
-        else cout << "\nHouston, we have a problem! (" << string << ")" << flush;
-
+        else
+        {
+            cout << "\nHouston, we have a problem! (" << string << ")" << flush;
+            show_traceback ();
+        }
         
         // Replace the string with the resulting string (if any)
         return;
