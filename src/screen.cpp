@@ -20,6 +20,7 @@
 #include "pnm.h"
 #include "prefs.h"
 #include "input.h"
+#include "game.h"
 
 u_int16 screen::width;
 u_int16 screen::height;
@@ -133,10 +134,15 @@ void screen::show()
       else if(timer3>3) SDL_Delay(timer3-2);
     }
   timer1=SDL_GetTicks();
-  timer1-=(timer3%cycle_length);
+  timer1-=timer2=(timer3%cycle_length);
   SDL_Flip(vis);
+
   // How slow is our machine? :)
   frames_to_do=timer3/cycle_length;
+
+  // Calculate new gametime
+  game::time->tick (timer3-timer2);
+  
   if(frames_to_do>20) frames_to_do=20;
   if ((SDL_GetModState()&KMOD_ALT)&&(input::is_pushed(SDLK_RETURN)))
     {

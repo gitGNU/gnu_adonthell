@@ -21,6 +21,7 @@
 #include "prefs.h"
 #include "Python.h"
 #include "storage.h"
+#include "gametime.h"
 
 class game_engine
 {
@@ -50,6 +51,7 @@ public:
   
     static char *theme;                         // Put somewhere in window code!?    
     static game_engine *engine;                 // The engine having input focus
+    static gametime *time;                      // The gametime object
 };
 
 #endif

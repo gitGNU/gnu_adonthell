@@ -29,7 +29,7 @@ LDADD = ../../py_mapengine_wrap.o \
 ../../init.o ../../prefs.o ../../win_write.o \
 ../../input.o ../../yarg.o ../../win_scrollbar.o ../../win_scrolled.o \
 ../../py_inc.o ../../dialog.o ../../storage.o \
-../../py_dialog_engine_wrap.o \
+../../py_dialog_engine_wrap.o ../../gametime.o \
 ../../py_quest_wrap.o ../../quest.o
 
 LDFLAGS=-lm -lstdc++ `gtk-config --libs`

@@ -35,6 +35,7 @@ char *game::theme;
 game_engine *game::engine;
 objects game::characters;
 objects game::quests;
+gametime *game::time;
 
 void game::init(config &myconfig)
 {
@@ -62,6 +63,9 @@ void game::init(config &myconfig)
     
     // Set the theme (later: get theme from config file)
     theme = strdup ((myconfig.window_theme + "/").c_str ());
+
+    // Init gametime
+    time = new gametime (0, 0.5);
 
     // load the game (later: continue with the last saved game?!)
     load (myconfig.datadir.c_str (), myconfig.datadir.c_str ());    
