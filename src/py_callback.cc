@@ -146,6 +146,8 @@ bool py_callback::get_state (igzstream & file)
 // the actual python callback call
 PyObject *py_callback::make_call (PyObject *args)
 {
+    if (function == NULL) return NULL;
+
     PyObject * val = PyObject_CallObject (function, args);
     Py_XDECREF (args);
 
