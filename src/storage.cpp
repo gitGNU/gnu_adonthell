@@ -69,17 +69,20 @@ pair<const char*, s_int32> storage::next ()
 // Insert a new object for access from the interpreter
 void objects::set (const char* key, storage *val)
 {
-    // Check wether that key already exists -> if so, that is bad!
-    if (data.find (key) != data.end ())
-    {
+    map<const char*, storage*, ltstr>::iterator j;
+
+    // Check whether that key already exists -> if so, that is bad!
+    for (j = data.begin (); j != data.end (); j++)
+        if (strcmp ((*j).first, key) == 0)
+        {
 #ifdef _DEBUG_
-        cout << "*** objects::set: key already exists: " << key << endl;
-        cout << "*** container contents: ";
+            cout << "*** objects::set: key already exists: '" << key << "'\n";
+            cout << "*** container contents: ";
 
-        for (map<const char*, storage*>::iterator i = data.begin (); i != data.end (); i++)
-            cout << (*i).first << ", ";
+            for (j = data.begin (); j != data.end (); j++)
+            cout << "'" << (*j).first << "', ";
 
-        cout << "\n\n" << flush;
+            cout << "\n\n" << flush;
 #endif // _DEBUG_
 
         return;
@@ -92,31 +95,32 @@ void objects::set (const char* key, storage *val)
 // Retrieve a object from the map
 storage* objects::get (const char* key)
 {
-    // Check wether the key exists
-    if (data.find (key) == data.end ())
-    {
+    map<const char*, storage*, ltstr>::iterator j;
+
+    // Check whether the key exists
+    for (j = data.begin (); j != data.end (); j++)
+        if (strcmp ((*j).first, key) == 0)
+            return (*j).second;
+
 #ifdef _DEBUG_
-        cout << "*** objects::get: key does not exist: " << key << endl;
-        cout << "*** container contents: ";
+    cout << "*** objects::get: key does not exist: '" << key << "'\n";
+    cout << "*** container contents: ";
 
-        for (map<const char*, storage*>::iterator i = data.begin (); i != data.end (); i++)
-            cout << (*i).first << ", ";
+    for (j = data.begin (); j != data.end (); j++)
+        cout << "'" << (*j).first << "', ";
 
-        cout << "\n\n" << flush;
+    cout << "\n\n" << flush;
 #endif // _DEBUG_
 
         // That probably causes a segfault, but if we can't get the
         // required object, we are in trouble anyway.
-        return NULL;
-    }
-
-    return data[key];
+    return NULL;
 }
 
 // Delete a key from the array
 void objects::erase (const char *key)
 {
-    // Check wether the key exists
+    // Check whether the key exists
     if (data.find (key) != data.end ())
     {
         data.erase (key);
