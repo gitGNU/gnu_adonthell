@@ -64,7 +64,7 @@ void event_list::add_event (event* ev)
     if (Paused) ev->pause ();
 
     // only register event if not paused
-    else if (ev->is_paused ()) event_handler::register_event (ev); 
+    else if (!ev->is_paused ()) event_handler::register_event (ev); 
 }
 
 // Remove an event from the list

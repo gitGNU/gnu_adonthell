@@ -142,7 +142,8 @@ s_int8 igzstream::get_sint8 ()
 u_int16& operator << (u_int16& n, igzstream& gfile)
 {
     gzread(gfile.file, &n, sizeof (n));
-    return SDL_SwapLE16(n);
+    n = SDL_SwapLE16(n);
+    return n;
 }
 
 /// Reads a u_int16.
@@ -157,7 +158,8 @@ u_int16 igzstream::get_uint16 ()
 s_int16& operator << (s_int16& n, igzstream& gfile)
 {
     gzread(gfile.file, &n, sizeof (n));
-    return SDL_SwapLE16(n);
+    n = SDL_SwapLE16(n);
+    return n;
 }
 
 /// Reads a s_int16.
@@ -172,7 +174,8 @@ s_int16 igzstream::get_sint16 ()
 u_int32& operator << (u_int32& n, igzstream& gfile)
 {
     gzread(gfile.file, &n, sizeof (n));
-    return SDL_SwapLE32(n);
+    n = SDL_SwapLE32(n);
+    return n;
 }
 
 /// Reads a u_int32.
@@ -187,7 +190,8 @@ u_int32 igzstream::get_uint32 ()
 s_int32& operator << (s_int32& n, igzstream& gfile)
 {
     gzread(gfile.file, &n, sizeof (n));
-    return SDL_SwapLE32(n);
+    n = SDL_SwapLE32(n);
+    return n;
 }
 
 /// Reads a s_int32.
