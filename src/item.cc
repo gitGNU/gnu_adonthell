@@ -42,21 +42,25 @@ item::item() // default constructor
   setCombineable( true );
   setEquipable( false );
   setUnequipable( false );
+  setAttached( false );
   setObtainEffAct( false );
   setDropEffAct( false );
   setEquipEffAct( false );
   setUnequipEffAct( false );
   setUseEffAct( false );
+  attached = NULL;
+  number = 1;
 }
 
-item::item( item *n, item *p, const unsigned int ix, const string nm,
-	    const string gf, const unsigned int ty, const unsigned int at[],
-	    const bool ch[], const bool ae[], const effect ef[] )
+item::item( const unsigned int ix, const string nm, const string gf,
+	    const unsigned int ty, const unsigned int at[],
+	    const bool ch[], const bool ae[], const effect ef[],
+	    const unsigned int n )
   // "full" constructor
 {
   debug_mode = false;
-  next = n;
-  prev = p;
+  next = NULL;
+  prev = NULL;
   setId( ix );
   setName( nm );
   setGfx( gf );
@@ -70,10 +74,12 @@ item::item( item *n, item *p, const unsigned int ix, const string nm,
     item_ace[i] = ae[i];
     item_eff[i] = ef[i];
   }
+  attached = NULL;
+  number = n;
 }
 
 item::item( const unsigned int ix, const string nm, const string gf,
-	    const unsigned int ty ) // "sparse" constructor
+	    const unsigned int ty, const unsigned int n ) // sparse constructor
 {
   debug_mode = false;
   next = NULL;
@@ -97,11 +103,14 @@ item::item( const unsigned int ix, const string nm, const string gf,
   setCombineable( true );
   setEquipable( false );
   setUnequipable( false );
+  setAttached( false );
   setObtainEffAct( false );
   setDropEffAct( false );
   setEquipEffAct( false );
   setUnequipEffAct( false );
   setUseEffAct( false );
+  attached = NULL;
+  number = n;
 }
 
 item::item( const string fn ) // from file constructor
@@ -142,12 +151,15 @@ item item::operator=( const item& it )
     setDropEffAct( it.getDropEffAct() );
     setEquipEffAct( it.getEquipEffAct() );
     setUnequipEffAct( it.getUnequipEffAct() );
-    setUseEff( it.getUseEff() );
+    setUseEffAct( it.getUseEffAct() );
     setObtainEff( it.getObtainEff() );
     setDropEff( it.getDropEff() );
     setEquipEff( it.getEquipEff() );
     setUnequipEff( it.getUnequipEff() );
     setUseEff( it.getUseEff() );
+    if( it.getAttached() )
+      attach( *( it.getAttItem() ) );
+    number = it.number;
   }
   return *this;
 }
@@ -173,16 +185,19 @@ bool item::operator==( const item& it ) const
       getCombineable() == it.getCombineable() &&
       getEquipable() == it.getEquipable() &&
       getUnequipable() == it.getUnequipable() &&
+      getAttached() == it.getAttached() &&
       getObtainEffAct() == it.getObtainEffAct() &&
       getDropEffAct() == it.getDropEffAct() &&
       getEquipEffAct() == it.getEquipEffAct() &&
       getUnequipEffAct() == it.getUnequipEffAct() &&
-      getUseEff() == it.getUseEff() &&
+      getUseEffAct() == it.getUseEffAct() &&
       getObtainEff() == it.getObtainEff() &&
       getDropEff() == it.getDropEff() &&
       getEquipEff() == it.getEquipEff() &&
       getUnequipEff() == it.getUnequipEff() &&
-      getUseEff() == it.getUseEff() )
+      getUseEff() == it.getUseEff() &&
+      getAttItem() == it.getAttItem() &&
+      number == it.number )
     return true;
   else
     return false;
@@ -355,6 +370,13 @@ bool item::getUnequipable() const // returns unequipable?
   return item_chr[10];
 }
 
+bool item::getAttached() const // returns combined?
+{
+  if( debug_mode )
+    cout << "getAttached(): attached? is " << pb( item_chr[11] ) << endl;
+  return item_chr[11];
+}
+
 bool item::getObtainEffAct() const // returns obtain effect active?
 {
   if( debug_mode )
@@ -428,6 +450,11 @@ effect item::getUnequipEff() const // returns unequip effect
 effect item::getUseEff() const // returns use effect
 {
   return item_eff[4];
+}
+
+item* item::getAttItem() const // returns a pointer to the attached item
+{
+  return attached;
 }
 
 // ===================================================================
@@ -594,7 +621,7 @@ bool item::setObtainEffAct( const bool val ) // sets obtain effect active?
   if( debug_mode )
   {
     cout << "setObtainEffAct(): obtain effect active? set to "
-         << pb( item_ace[0] ) << endl;
+	 << pb( item_ace[0] ) << endl;
   }
   return true;
 }
@@ -605,7 +632,7 @@ bool item::setDropEffAct( const bool val ) // sets drop effect active?
   if( debug_mode )
   {
     cout << "setDropEffAct(): drop effect active? set to "
-         << pb( item_ace[1] ) << endl;
+	 << pb( item_ace[1] ) << endl;
   }
   return true;
 }
@@ -616,7 +643,7 @@ bool item::setEquipEffAct( const bool val ) // sets equip effect active?
   if( debug_mode )
   {
     cout << "setEquipEffAct(): equip effect active? set to "
-         << pb( item_ace[2] ) << endl;
+	 << pb( item_ace[2] ) << endl;
   }
   return true;
 }
@@ -627,7 +654,7 @@ bool item::setUnequipEffAct( const bool val ) // sets unequip effect active?
   if( debug_mode )
   {
     cout << "setUnequipEffAct(): unequip effect active? set to "
-         << pb( item_ace[3] ) << endl;
+	 << pb( item_ace[3] ) << endl;
   }
   return true;
 }
@@ -638,7 +665,7 @@ bool item::setUseEffAct( const bool val ) // sets use effect active
   if( debug_mode )
   {
     cout << "setUseEffAct(): use effect active? set to "
-         << pb( item_ace[4] ) << endl;
+	 << pb( item_ace[4] ) << endl;
   }
   return true;
 }
@@ -670,6 +697,55 @@ bool item::setUnequipEff( const effect val ) // sets unequip effect
 bool item::setUseEff( const effect val ) // sets use effect
 {
   item_eff[4] = val;
+  return true;
+}
+
+// ===================================================================
+
+
+// ADVANCED FUNCTIONS AND WRAPPERS
+// ===================================================================
+
+bool item::attach( item& it )
+{
+  if( getAttached() == false && getCombineable() == true &&
+      ( it.getType() != getType() ||
+	( ( it.getType() == 0 || it.getType() == 3 ) &&
+	  ( getType() == 0 || getType() == 3 ) ) ) )
+  {
+    setAttached( true );
+    attached = &it;
+    return true;
+  }
+  else
+    return false;
+}
+
+bool item::detach()
+{
+  if( getAttached() )
+  {
+    attached = NULL; /* since the user has passed a reference to an already
+			existing item, this will not cause a leak, as that
+			item will be destroyed outside of the class */
+    setAttached( false );
+    return true;
+  }
+  else
+    return false;
+}
+
+// ===================================================================
+
+
+// PROTECTED FUNCTIONS
+// ===================================================================
+
+bool item::setAttached( const bool val )
+{
+  item_chr[11] = val;
+  if( debug_mode )
+    cout << "setAttached(): attached? set to " << pb( item_chr[11] ) << endl;
   return true;
 }
 

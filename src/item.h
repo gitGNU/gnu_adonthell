@@ -24,9 +24,9 @@
 // CONSTANTS
 // ===================================================================
 
-const unsigned int NUM_ATT = 4; // number of attributes
-const unsigned int NUM_CHR = 11; // number of characteristics
-const unsigned int NUM_EFF = 5; // number of effects
+const unsigned int NUM_ATT = 4;  // number of attributes
+const unsigned int NUM_CHR = 12; // number of characteristics
+const unsigned int NUM_EFF = 5;  // number of effects
 
 // ===================================================================
 
@@ -39,12 +39,12 @@ class item
   // ===================================================================
 
   item(); // default constructor
-  item( item *n, item *p, const unsigned int i, const string nm,
-	const string gf, const unsigned int ty, const unsigned int at[],
-	const bool ch[], const bool ae[], const effect ef[] );
+  item( const unsigned int ix, const string nm, const string gf,
+	const unsigned int ty, const unsigned int at[], const bool ch[],
+	const bool ae[], const effect ef[], const unsigned int n );
           // "full" constructor
-  item( const unsigned int i, const string nm, const string gf,
-	const unsigned int ty ); // "sparse" constructor
+  item( const unsigned int ix, const string nm, const string gf,
+	const unsigned int ty, const unsigned int n ); // "sparse" constructor
   item( const string fn ); // from file constructor
 
   // ===================================================================
@@ -65,11 +65,12 @@ class item
 
   item *next; // pointer to the next item in the container
   item *prev; // pointer to the previous item in the container
+  unsigned int number; // number of item of this type in this stack
 
   // ===================================================================
 
 
-  // VALUE RETURNING FUNCTIONS
+  // DEBUG FUNCTIONS
   // ===================================================================
 
   bool debug( bool val = true ); // turns debug on or off
@@ -79,10 +80,11 @@ class item
   // ===================================================================
 
 
-  // VALUE RETURNING FUNCTIONS
+  // "GET" FUNCTIONS, VALUE RETURNING
   // ===================================================================
 
   unsigned int getId() const; // returns ID number
+  unsigned int getNumCombined() const; // returns number of combined items
   string getName() const; // returns name
   string getGfx() const; // returns gfx filename
   unsigned int getType() const; // returns type
@@ -101,6 +103,7 @@ class item
   bool getCombineable() const; // returns combinable?
   bool getEquipable() const; // returns equipable?
   bool getUnequipable() const; // returns unequipable?
+  bool getAttached() const; // is an item currently attached to this one?
   bool getObtainEffAct() const; // returns obtain effect active?
   bool getDropEffAct() const; // returns drop effect active?
   bool getEquipEffAct() const; // returns equip effect active?
@@ -111,6 +114,13 @@ class item
   effect getEquipEff() const; // returns equip effect
   effect getUnequipEff() const; // returns unequip effect
   effect getUseEff() const; // returns use effect
+  item* getAttItem() const; // returns a pointer to attached item
+
+  // ===================================================================
+
+
+  // "SET" FUNCTIONS, MODIFY
+  // ===================================================================
 
   bool setId( const unsigned int val ); // sets ID number
   bool setName( const string val ); // sets name
@@ -144,7 +154,18 @@ class item
   
   // ===================================================================
 
+
+  // ADVANCED FUNCTIONS AND WRAPPERS
+  // ===================================================================
+
+  bool attach( item& it ); // attaches an item to this one
+  bool detach(); // detaches the combined item
+
+  // ===================================================================
+
+
  protected:
+
   
   // PROTECTED MEMBER VARIABLES
   // ===================================================================
@@ -158,8 +179,19 @@ class item
   bool item_chr[NUM_CHR]; // characteristics array, see item.txt
   bool item_ace[NUM_EFF]; // active effects array, see item.txt
   effect item_eff[NUM_EFF]; // effects array, see item.txt
+  item* attached; // pointer to combined item, see item.txt
 
   // ===================================================================
+
+
+  // PROTECTED FUNCTIONS
+  // ===================================================================
+
+  bool setAttached( const bool val ); // sets Attached?
+
+  // ===================================================================
+
+
 };
 
 #endif
