@@ -24,6 +24,7 @@
 
 #include "dlg_node.h"
 #include "dlg_module_entry.h"
+#include "kb_traverse.h"
 
 /**
  * This class contains a dialogue, made up of elementary nodes and
@@ -187,6 +188,14 @@ public:
      * @return the DlgModuleEntry of this module
      */
     DlgModuleEntry *entry ()            { return &entry_; }
+
+    /**
+     * Get a pointer to the keyboard graph traversal helper. This keeps track
+     * of the current selection's siblings. Users can navigate through them
+     * via the arrow keys.
+     * @return the KBTraverse of this module
+     */
+    KBTraverse *traverse ()             { return &traverse_; }
     
 protected:
     std::vector<DlgNode*> nodes;// all the nodes in this dialogue
@@ -203,7 +212,8 @@ protected:
     std::string description_;   // Description of the dialogue
     
     DlgModuleEntry entry_;      // further content of the dialogue
-    
+
+    KBTraverse traverse_;       // Keyboard graph traversal   helper
 private:
     void init ();               // initialize a newly constructed DlgModule
 };

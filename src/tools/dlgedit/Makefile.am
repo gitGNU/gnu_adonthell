@@ -36,6 +36,7 @@ dlgedit_SOURCES = \
     gui_modal_dialog.cc \
     gui_settings.cc \
     gui_tooltip.cc \
+    kb_traverse.cc \
     lex.loadlg.cc \
     main.cc \
     dlg_arrow.h \
@@ -66,7 +67,8 @@ dlgedit_SOURCES = \
     gui_messages.h \
     gui_modal_dialog.h \
     gui_settings.h \
-    gui_tooltip.h
+    gui_tooltip.h \
+    kb_traverse.h
 
 # Evil, but it works...
 CPPFLAGS =-I../.. -D_VERSION_=\"0.8\" $(GTK_CFLAGS) $(SDL_CFLAGS)

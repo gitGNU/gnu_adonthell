@@ -252,7 +252,9 @@ bool GuiGraph::selectNode (DlgPoint &point)
     
     // no node at that position
     if (node == NULL) return false;
-    else return selectNode (node);
+    else module->traverse ()->select (node);
+    
+    return selectNode (node);
 }
 
 // select parent
@@ -269,10 +271,10 @@ bool GuiGraph::selectParent ()
     {
         // see if selected is arrow
         if (selected->type () == LINK)
-            selected = selected->next (FIRST);
-        
+            selected = selected->prev (FIRST);
+            
         // ... try to retrieve it's parent
-        DlgNode *parent = ((DlgCircle *) selected)->parent (CURRENT);
+        DlgNode *parent = module->traverse ()->up ();
 
         // if we have it, then select it
         if (parent)
@@ -305,7 +307,7 @@ bool GuiGraph::selectChild ()
             selected = selected->prev (FIRST);
         
         // ... try to retrieve it's child
-        DlgNode *child = ((DlgCircle *) selected)->child (FIRST);
+        DlgNode *child = module->traverse ()->down ();
 
         // if we have it, then select it
         if (child)
@@ -333,20 +335,16 @@ bool GuiGraph::selectSibling (query_type pos)
     // if so ...
     if (selected)
     {
+        DlgNode *sibling;
+
         // see if selected is arrow
         if (selected->type () == LINK)
             selected = selected->next (FIRST);
         
         // ... try to retrieve it's child
-        DlgNode *sibling = ((DlgCircle *) selected)->sibling (pos);
+        if (pos == PREV) sibling = module->traverse ()->left ();
+        else sibling = module->traverse ()->right ();
 
-        // if there is none in that direction, try to wrap around
-        if (!sibling)
-        {      
-            if (pos == PREV) sibling = ((DlgCircle *) selected)->sibling (LAST);
-            else sibling = ((DlgCircle *) selected)->sibling (FIRST);
-        }
-        
         // if we have something now
         if (sibling && sibling != selected)
         {
@@ -364,18 +362,7 @@ bool GuiGraph::selectSibling (query_type pos)
 // select the first node in the dialogue
 bool GuiGraph::selectRoot ()
 {
-    if (module->selectRoot ())
-    {
-        // update the instant preview
-        GuiDlgedit::window->list ()->display (module->selected ());
-
-        // update the program state
-        GuiDlgedit::window->setMode (module->mode ());
-
-        return true;
-    }
-
-    return false;
+    return selectNode (module->traverse ()->selectRoot (&module->getNodes ()));
 }
 
 // deselect a node

@@ -264,7 +264,7 @@ private:
     GuiTooltip *tooltip;    // Tooltip for displaying node-text
     bool scrolling;         // Indicates whether autoscrolling is active
     DlgPoint scroll_offset; // Offset by which the view moves during scrolling
-    bool updateBackground;  // Don't show updates to the drawing area 
+    bool updateBackground;  // Don't show updates to the drawing area
 };
 
 #endif // GUI_GRAPH_H
