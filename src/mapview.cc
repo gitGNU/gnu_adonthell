@@ -245,7 +245,8 @@ void mapview::draw (s_int16 x, s_int16 y, const drawing_area * da_opt = NULL,
     static list <mapsquare_tile>::iterator it;
     static list <mapsquare_char>::iterator itc;
     static mapsquare_area *l;
-
+    static u_int16 offx, offy; 
+    
     if (!m_map)
         return;
 
@@ -269,6 +270,15 @@ void mapview::draw (s_int16 x, s_int16 y, const drawing_area * da_opt = NULL,
     je = j0 + d_height + (offy_ != 0) < l->area_height () ? j0 + d_height + (offy_ !=
                                                                     0) : l->area_height ();
 
+    offx = l->area_length () * MAPSQUARE_SIZE < length () ?
+        (length () - l->area_length () * MAPSQUARE_SIZE) >> 1 : 0; 
+
+    offy = l->area_height () * MAPSQUARE_SIZE < height () ?
+        (height () - l->area_height () * MAPSQUARE_SIZE) >> 1 : 0; 
+
+    x += offx;
+    y += offy; 
+    
     // 1st horizontal parse to check top overflows
     // Top-left corner
     for (it = l->area[i0][j0].tiles.begin ();

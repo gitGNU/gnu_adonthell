@@ -133,6 +133,13 @@ public:
      * @return printable information about the current screen settings.
      */
     static string info (); 
+
+    /** 
+     * Make a nice transition effect.
+     * 
+     * @param i advancement of the transition (finished when i == screen::length () / 2)
+     */
+    static void transition (u_int16 i); 
     
 private:
     /// Bytes per pixel.

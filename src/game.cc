@@ -40,6 +40,7 @@
 
 
 
+initflags game::initiated = INIT_NONE;
 config * game::configuration = NULL; 
 PyObject * game::py_module = NULL;
  
@@ -58,7 +59,7 @@ extern "C"
 
 
 // Initialize all parts of the game engine
-bool game::init (int argc, char **argv)
+bool game::init (int argc, char **argv, initflags to_init = INIT_ALL)
 {
     if (configuration) delete configuration;
     
@@ -69,33 +70,50 @@ bool game::init (int argc, char **argv)
         return false;
 
     // init game loading/saving system
-    gamedata::init (configuration->get_adonthellrc (), configuration->datadir); 
+    if (to_init & INIT_SAVES) 
+    { 
+        gamedata::init (configuration->get_adonthellrc (), configuration->datadir); 
+    }
     
     // init video subsystem
-    screen::set_video_mode (320, 240);
-    screen::set_fullscreen (configuration->screen_mode);
+    if (to_init & INIT_VIDEO) 
+    { 
+        screen::set_video_mode (320, 240);
+        screen::set_fullscreen (configuration->screen_mode);
+
+        // set the theme
+        win_theme::theme = new char[strlen(configuration->window_theme.c_str ())];
+        strcpy (win_theme::theme, configuration->window_theme.c_str ());
+        strcat (win_theme::theme,"/");
+    }
     
-    // set the theme
-    win_theme::theme = new char[strlen(configuration->window_theme.c_str ())];
-    strcpy (win_theme::theme, configuration->window_theme.c_str ());
-    strcat (win_theme::theme,"/");
 
 #if defined SDL_MIXER
     // init audio subsystem
-    audio::init (configuration);
+    if (to_init & INIT_AUDIO) 
+    { 
+        audio::init (configuration);
+    }
 #endif 
-
+    
     // init input subsystem
-    input::init ();
+    if (to_init & INIT_INPUT) 
+    { 
+        input::init ();
+    }
     
     // init python interpreter
-    python::init (); 
-
-    // initialise python import paths, SWIG module and globals
-    init_python (); 
-         
-    // init the game data
-    init_data (); 
+    if (to_init & INIT_PYTHON)
+    { 
+        python::init (); 
+        
+        // initialise python import paths, SWIG module and globals
+        init_python (); 
+        // init the game data
+        init_data (); 
+    }
+    
+    initiated = to_init; 
     
     // voila :)
     return true;
@@ -107,32 +125,42 @@ void game::cleanup ()
     // close all windows
     win_manager::destroy(); 
     
-    // cleanup the data
-    cleanup_data ();
-    
-    // cleanup the globals
-    cleanup_python (); 
-    
     // shutdown input subsystem
-    input::shutdown ();
-
+    if (initiated & INIT_INPUT) 
+    { 
+        input::shutdown ();
+    }
 #if defined SDL_MIXER
     // shutdown audio
-    audio::cleanup ();
+    if (initiated & INIT_AUDIO) 
+    {
+        audio::cleanup ();
+    }
 #endif
 
-    // Delete the theme
-    delete[] win_theme::theme; 
 
     // cleanup the saves
-    gamedata::cleanup (); 
-          
+    if (initiated & INIT_SAVES) 
+    {
+        gamedata::cleanup (); 
+    }
+    
     // shutdown python
-    python::cleanup ();     
+    if (initiated & INIT_PYTHON) 
+    {
+        cleanup_data ();
+        cleanup_python (); 
+        python::cleanup ();     
+    }
 
     // shutdown video and SDL
-    SDL_Quit ();
-
+    if (initiated & INIT_PYTHON) 
+    {
+        SDL_Quit ();
+        // Delete the theme
+        delete[] win_theme::theme; 
+    }
+    
     // save the config file
     configuration->write_adonthellrc ();
     delete configuration;
@@ -155,11 +183,34 @@ void game::init_data ()
     PyObject *quests = PyDict_New ();
     PyDict_SetItemString (data::globals, "quests", quests);
     Py_DECREF (quests); 
+
+    data::the_player = new character;
+    data::the_player->set_name ("Player");
+    
+    // Add the player to the game objects
+    data::characters[data::the_player->get_name().c_str ()] = data::the_player; 
+    
+    // retrieve character array
+    chars = PyDict_GetItemString (data::globals, "characters");
+
+    // Make the player available to Python
+    PyObject *the_player = python::pass_instance (data::the_player, "character"); 
+    PyDict_SetItemString (data::globals, "the_player", the_player);
+    
+    PyDict_SetItemString (chars, (char *) data::the_player->get_name().c_str (),
+                          the_player);
+    Py_DECREF (the_player); 
 }
 
 void game::cleanup_data () 
 {
-    delete data::map_engine; 
+  delete data::map_engine;
+  data::map_engine = NULL; 
+  if (data::the_player) 
+    { 
+      delete data::the_player;
+      data::the_player = NULL; 
+    }
 }
 
 bool game::init_python () 

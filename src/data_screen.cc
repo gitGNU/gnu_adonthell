@@ -34,8 +34,6 @@
 #include "data_screen.h"
 #include "mapengine.h"
 
-#include "game.h"
-
 data_screen::data_screen (int m) : win_container (30, 15, 260, 210, NULL)
 {
     mode = m;

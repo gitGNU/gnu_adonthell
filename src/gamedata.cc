@@ -100,24 +100,6 @@ bool gamedata::load (u_int32 pos)
     // First, unload the current game
     unload ();
     
-    // Create a player (later: load from file or whatever)
-    data::the_player = new character;
-    data::the_player->set_name ("Player");
-    
-    // Add the player to the game objects
-    data::characters[data::the_player->get_name().c_str ()] = data::the_player; 
-    
-    // retrieve character array
-    PyObject *chars = PyDict_GetItemString (data::globals, "characters");
-
-    // Make the player available to Python
-    PyObject *the_player = python::pass_instance (data::the_player, "character"); 
-    PyDict_SetItemString (data::globals, "the_player", the_player);
-    
-    PyDict_SetItemString (chars, (char *) data::the_player->get_name().c_str (),
-                          the_player);
-    Py_DECREF (the_player); 
-
     // try to open character.data
     filepath = saves[pos]->directory ();
     filepath += "/character.data";     
@@ -135,6 +117,9 @@ bool gamedata::load (u_int32 pos)
     // load characters     
 
     char ctemp;
+
+    PyObject * chars = PyDict_GetItemString (data::globals, "characters"); 
+    
     while (ctemp << in) 
     {
         mynpc = new character;
@@ -459,12 +444,26 @@ void gamedata::unload ()
     }
     data::characters.clear (); 
     
+    data::the_player = new character;
+    data::the_player->set_name ("Player");
+    
+    // Add the player to the game objects
+    data::characters[data::the_player->get_name().c_str ()] = data::the_player; 
+    
+    // retrieve character array
+    PyObject * chars = PyDict_GetItemString (data::globals, "characters");
+
+    // Make the player available to Python
+    PyObject *the_player = python::pass_instance (data::the_player, "character"); 
+    PyDict_SetItemString (data::globals, "the_player", the_player);
+    
+    PyDict_SetItemString (chars, (char *) data::the_player->get_name().c_str (),
+                          the_player);
+    Py_DECREF (the_player); 
+
     // delete all quests
     dictionnary <quest *>::iterator itq; 
     for (itq = data::quests.begin (); itq != data::quests.end (); itq++) 
         delete itq->second;
     data::quests.clear (); 
-    
-    // the main character was deleted with the other characters already
-    data::the_player = NULL;
 }

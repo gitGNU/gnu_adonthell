@@ -31,6 +31,11 @@
 #include "gamedata.h"
 #include "python.h"
 
+typedef
+enum
+{ INIT_NONE = 0, INIT_VIDEO = 1, INIT_AUDIO = 2, INIT_PYTHON = 4, INIT_DATA = 8, 
+  INIT_SAVES = 16, INIT_INPUT = 32, INIT_ALL = 255 } initflags; 
+
 /** Responsible for game initialisation and finalisation.
  *  It has only a few methods, however they are critical as they
  *  are responsible for all the game initialisation and cleanup - so they must
@@ -54,7 +59,7 @@ public:
      *     - false Initialisation failure - don't go any further and
      *             quit.
      */ 
-    static bool init (int argc, char** argv);
+    static bool init (int argc, char** argv, initflags to_init = INIT_ALL);
 
     /** Cleanup everything and quit.
      *  Performs the following:
@@ -68,6 +73,12 @@ public:
     static void cleanup (); 
     
 private:
+    /**
+     * Keep trace of initiated subsystems.
+     * 
+     */ 
+    static initflags initiated;
+    
     /**
      * The game's configuration data
      * 

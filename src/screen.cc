@@ -136,3 +136,11 @@ bool screen::set_fullscreen (bool m)
     }
     return 0; 
 }
+
+void screen::transition (u_int16 i) 
+{
+    display.fillrect (0, 0, i, screen::height (), 0); 
+    display.fillrect (screen::length () - i, 0, i, screen::height (), 0); 
+    display.fillrect (0, 0, screen::length (), i, 0); 
+    display.fillrect (0, screen::height () - i, screen::length (), i, 0); 
+}

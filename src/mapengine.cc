@@ -75,6 +75,7 @@ void mapengine::mainloop ()
         lmap.update ();
         mv.update ();
     }
+    screen::clear (); 
     mv.draw (0, 0);
     win_manager::draw ();
 }

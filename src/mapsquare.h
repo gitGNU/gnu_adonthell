@@ -115,16 +115,20 @@ private:
     /// Is this mapsquare_tile a base square?
     bool is_base;
 
+#ifndef SWIG
     /// Iterator to the base tile of this mapsquare_tile.
     list <mapsquare_tile>::iterator base_tile;
-
+#endif
+    
     /// x and y positions.
     u_int16 x, y;
  
+#ifndef SWIG
     friend class mapsquare;
     friend class mapsquare_area; 
     friend class landmap;
     friend class mapview;
+#endif
 };
 
 
@@ -148,6 +152,7 @@ public:
      */ 
     ~mapsquare_char ();
     
+#ifndef SWIG
     /**
      * Compare the location on the landsubmap of two mapsquare_chars.
      * A mapsquare_char is < to another if it's Y position is < to the other
@@ -185,6 +190,7 @@ public:
     {
         return (mt.y == y && mt.x == x);
     }
+#endif
     
 private:
     /// Pointer to the mapcharacter concerned by this mapchar_square.
@@ -196,16 +202,20 @@ private:
     /// Is this mapsquare_tile walkable?
     bool walkable;
 
+#ifndef SWIG
     /// Iterator to the base tile of this mapsquare_char.
     list <mapsquare_char>::iterator base_tile;
-
+#endif
+    
     /// x and y positions.
     u_int16 x, y;
     
+#ifndef SWIG
     friend class mapcharacter; 
     friend class mapsquare;
     friend class landmap;
     friend class mapview;
+#endif
 };
 
 
@@ -231,11 +241,13 @@ public:
      */
     mapsquare ();
     
+#ifndef SWIG
     /**
      * Copy constructor.
      * 
      */ 
     mapsquare (const mapsquare& src);
+#endif
     
     /** 
      * Destructor.
@@ -273,12 +285,12 @@ private:
     
     /// List of mapsquare_chars.
     list <mapsquare_char> mapchars;
-#endif
 
     friend class mapcharacter; 
     friend class mapsquare_area; 
     friend class landmap;
     friend class mapview;
+#endif
 };	  // mapsquare 
 
 /** 
@@ -369,13 +381,15 @@ private:
      * 
      */
     mapsquare_area (const mapsquare_area& src); 
-    
+
+#ifndef SWIG
     /**
      * Forbids mapsquare_area copy.
      * 
      */ 
     mapsquare_area & operator = (const mapsquare_area & mo);
-
+#endif
+    
     /** 
      * Place a mapobject on the submap.
      * 
@@ -398,11 +412,13 @@ private:
      * 2 dimensionnal array of mapsquares - the actual map
      * 
      */ 
+#ifndef SWIG
     mutable vector <vector<mapsquare> > area;
     
     friend class mapcharacter; 
     friend class mapview; 
     friend class landmap; 
+#endif
 }; 
 
 #endif

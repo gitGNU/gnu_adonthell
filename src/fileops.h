@@ -58,6 +58,7 @@ public:
      */
     gz_file ();
 
+#ifndef SWIG
     /** 
      * 
      * 
@@ -65,6 +66,7 @@ public:
      * @param t access (READ or WRITE).
      */
     gz_file (string fname, gz_type t);
+#endif
 
     /** 
      * Destructor.
@@ -135,6 +137,7 @@ public:
      */ 
     igzstream ();
 
+#ifndef SWIG
     /** 
      * Opens a file for read access.
      * 
@@ -142,7 +145,8 @@ public:
      * 
      */ 
     igzstream (string fname);
-
+#endif
+    
     /**
      * Destructor.
      * 
@@ -166,6 +170,7 @@ public:
      */
     void get_block (void * to, u_int32 size); 
 
+#ifndef SWIG
     /// Reads a boolean.
     friend bool& operator << (bool& n, igzstream& gfile);
 
@@ -192,7 +197,8 @@ public:
 
     /// Reads a string.
     friend string& operator << (string& s, igzstream& gfile);
-
+#endif
+    
 private:
     /// NEVER pass this by value.
     igzstream (igzstream& src);  
@@ -210,6 +216,7 @@ public:
      */ 
     ogzstream ();
 
+#ifndef SWIG
     /** 
      * Opens a file for write access.
      * 
@@ -217,7 +224,7 @@ public:
      * 
      */ 
     ogzstream (string fname);
-
+#endif
     
     /**
      * Destructor.
@@ -242,6 +249,7 @@ public:
      */
     void put_block (void * to, u_int32 size); 
 
+#ifndef SWIG
     /// Writes a boolean.
     friend const bool& operator >> (const bool& n, ogzstream& gfile);
 
@@ -268,7 +276,8 @@ public:
 
     /// Writes a string.
     friend string& operator >> (const string& s, ogzstream& gfile);
-
+#endif
+    
 private:
     /// NEVER pass this by value.
     ogzstream (ogzstream& src);   
