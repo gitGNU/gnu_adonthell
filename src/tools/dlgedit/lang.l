@@ -9,6 +9,9 @@ ident  {letter}({letter}|{digit})*
 num    {digit}+
 
 %%
+[ \t\n]+    ;           // Whitespace
+"//".*\n    ;           // C++ style comments
+"/*"(.|[\n])*"*/"   ;   // C style comments
 
 if          { return _IF; }
 else        { return _ELSE; }
@@ -31,6 +34,4 @@ else        { return _ELSE; }
 "||"        { return _OR; }
 ";"         { return _SEMICOLON; }
 
-[ \t\n]   ;
-
-.       { printf("Illegal character.\n"); return yytext[0]; }
+.           { printf("Illegal character.\n"); return yytext[0]; }

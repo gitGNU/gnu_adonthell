@@ -11,6 +11,9 @@ int yylex();
 void create_code (string);
 
 vector<string> vars;
+
+char* ops[] = { "", "", "", "", "", "", "Let", "Add", "Sub", "Mul", "Div",
+                "Eq", "Neq", "Lt", "Leq", "Gt", "Geq", "And", "Or" };
 %}
 
 %token _ID
@@ -63,7 +66,7 @@ expr:     val                       { $$ = $1; }
 ;
 
 if_stat:  _IF _LPAREN comp _RPAREN assign    { $$ = $3 + string (1,THEN) + $5; }
-	    | _IF _LPAREN comp _RPAREN assign _ELSE assign  { $$ = $3 + string(1,ELSE) + $5 + string(1,THEN) + $7; }
+	    | _IF _LPAREN comp _RPAREN assign _ELSE assign  { $$ = $3 + string(1,THEN) + $5 + string(1,ELSE) + $7; }
 ;
 	
 comp:     comp _AND comp            { $$ = string(1, AND) + $1 + $3; }
@@ -89,11 +92,32 @@ int main()
   yyparse();
 }
 
+int get_concat (string &prog, int index)
+{
+    int i, opcode;
+    
+    for (i = index; i >= 0; i--)
+    {
+        opcode = prog[i];
+          
+        if (opcode == AND || opcode == OR)
+        {
+            prog.erase (prog.begin () + i);
+            return opcode;
+        }
+    }
+    
+    return 0;
+}
+
 void create_code (string prog)
 {
     int i, j = vars.size (), k = 0;
     int code[3] = { 0, 0, 0 };
     int numvals[3] = { 0, 0, 0 };
+    char regs = '0';
+    int then_length, else_length = 0;
+    int num_cmds = 0;
     unsigned char opcode;
     
     for (i = 0; i < prog.size (); i++)
@@ -136,6 +160,7 @@ void create_code (string prog)
         {
             case ID:
             case NUM:
+            case REG:
             {
                 j--;
                 continue;
@@ -146,50 +171,103 @@ void create_code (string prog)
             case MUL:
             case DIV:
             {
-                cout << int(opcode) << " " << vars[j] << " "<< vars[j+1] << " tmp\n";
-                prog.replace (prog.begin () + i, prog.begin () + i + 3, 1, ID);
+                // if both arguments are registers, one of them is no longer needed afterwards
+                if (prog[i+1] == char(REG) && prog[i+2] == char(REG) && regs > '0') regs--;
+
+                // store result into a new register if both arguments are immediate ones
+                if (prog[i+1] != char(REG) && prog[i+2] != char(REG)) regs++;
+
+                cout << ops[opcode] << " " << vars[j] << " "<< vars[j+1] << " reg" << regs << "\n";
+                prog.replace (prog.begin () + i, prog.begin () + i + 3, 1, REG);
                 vars.erase (vars.begin () + j, vars.begin () + j + 2);
-                vars.insert (vars.begin () + j, "tmp");
+                vars.insert (vars.begin () + j, ("reg"+string(1, regs)));
 
                 i = prog.size ();
                 j = vars.size ();
+
+                num_cmds++;
+                
                 break;
             }
 
             case LET:
             {
-                cout << int(opcode) << " " << vars[j] << " "<< vars[j+1] << "\n" << flush;
+                cout << ops[opcode] << " " << vars[j] << " "<< vars[j+1] << "\n" << flush;
                 prog.erase (prog.begin () + i, prog.begin () + i + 3);
                 vars.erase (vars.begin () + j, vars.begin () + j + 2);
 
                 i = prog.size ();
                 j = vars.size ();
+                regs = '0';
+
+                num_cmds++;
+                
                 break;
             }
 
             case THEN:
-            case ELSE:
             {
+                then_length = num_cmds;
+                num_cmds = 0;
                 prog.erase (prog.begin () + i);
                 continue;
             }
 
-            default:
+            case ELSE:
             {
-                cout << int(opcode) << " " << vars[j] << " "<< vars[j+1] << "\n" << flush;
+                else_length = num_cmds;
+                num_cmds = 0;
+                prog.erase (prog.begin () + i);
+                continue;
+            }
+
+            case EQ:
+            case NEQ:
+            case LT:
+            case LEQ:
+            case GT:
+            case GEQ:
+            {
+                // Look wether AND or OR follows
+                switch (get_concat (prog, i))
+                {
+                    case AND:
+                    {
+                        cout << ops[opcode] << " " << vars[j] << " "<< vars[j+1] << " else\n" << flush;
+                        i--;
+                        break;
+                    }
+                    case OR:
+                    {
+                        cout << ops[opcode] << " " << vars[j] << " "<< vars[j+1] << " 2\nJmp then\n" << flush;
+                        i--;
+                        break;
+                    }
+                    default:
+                    {
+                        cout << ops[opcode] << " " << vars[j] << " "<< vars[j+1] << " else\n" << flush;
+                        break;
+                    }
+                }
+                
                 prog.erase (prog.begin () + i, prog.begin () + i + 3);
                 vars.erase (vars.begin () + j, vars.begin () + j + 2);
 
                 i = prog.size ();
                 j = vars.size ();
+                regs = '0';
             }
         }
 
-        copy(vars.begin(), vars.end(), ostream_iterator<string>(cout, " "));
-        cout << endl;
+        // prints program and argument stack
+        cout << "*** ";
         copy(prog.begin(), prog.end(), ostream_iterator<int>(cout, " "));
+        cout << "\n*** ";
+        copy(vars.begin(), vars.end(), ostream_iterator<string>(cout, " "));
         cout << endl;
 
 //    }
-    }           
+    }
+
+    cout << "*** then " << then_length << "\n*** else " << else_length << "\n";  
 }
