@@ -23,7 +23,7 @@
 #define __PREFS_H__
 
 #include <string>
-#include <fstream.h>
+#include <fstream>
 #include "types.h"
 
 #ifndef SWIG

@@ -370,7 +370,7 @@ s_int8 landmap::put_state (ogzstream& file) const
 }
 
 s_int8 landmap::insert_mapobject (mapobject * an, u_int16 pos,
-                                  string srcfile = "")
+                                  string srcfile)
 {     
     if (pos > nbr_of_mapobjects ())
         return -2;

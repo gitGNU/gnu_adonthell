@@ -29,7 +29,7 @@
 #include "win_manager.h"
 
 text_bubble::text_bubble (const string & text, const string & textcolor,
-                          const string & themename, u_int16 len = 110) : win_label ()
+                          const string & themename, u_int16 len) : win_label ()
 {
     remain = 75 + text.length () * 4;
 

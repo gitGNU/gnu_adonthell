@@ -57,7 +57,7 @@ void mapview::detach_map ()
     m_map = NULL;
 }
 
-s_int8 mapview::set_pos (u_int16 sm, u_int16 px, u_int16 py, s_int16 ox = 0, s_int16 oy = 0)
+s_int8 mapview::set_pos (u_int16 sm, u_int16 px, u_int16 py, s_int16 ox, s_int16 oy)
 {
     currentsubmap_ = sm;
     mapsquare_area * ms = m_map->submap[sm]; 
@@ -87,8 +87,7 @@ s_int8 mapview::set_pos (u_int16 sm, u_int16 px, u_int16 py, s_int16 ox = 0, s_i
     return 0;
 }
 
-s_int8 mapview::center_on (u_int16 sm, u_int16 px, u_int16 py, s_int16 ox =
-                           0, s_int16 oy = 0)
+s_int8 mapview::center_on (u_int16 sm, u_int16 px, u_int16 py, s_int16 ox, s_int16 oy)
 {
     s_int32 tpx = px * MAPSQUARE_SIZE + ox - (length () - MAPSQUARE_SIZE >> 1); 
     s_int32 tpy = py * MAPSQUARE_SIZE + oy - (height () - MAPSQUARE_SIZE >> 1); 
@@ -228,7 +227,7 @@ s_int8 mapview::put_state (ogzstream& file)
     return 0;
 }
 
-void mapview::set_schedule (string file, PyObject * args = NULL)
+void mapview::set_schedule (string file, PyObject * args)
 {
     if (file == "") 
     {
@@ -268,8 +267,8 @@ bool mapview::update ()
     return true; 
 }
 
-void mapview::draw (s_int16 x, s_int16 y, const drawing_area * da_opt = NULL,
-                    surface *target = NULL) const
+void mapview::draw (s_int16 x, s_int16 y, const drawing_area * da_opt,
+                    surface *target) const
 {
     static u_int16 i, j;
     static u_int16 i0, j0, ie, je;

@@ -317,7 +317,7 @@ void win_scrollbar::update_bar()
 }
 
 
-void win_scrollbar::draw(drawing_area * da = NULL)
+void win_scrollbar::draw(drawing_area * da)
 {
   if(!visible_ || !back_draw_ || !bar_draw_) return; 
   

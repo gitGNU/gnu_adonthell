@@ -118,7 +118,7 @@ event::~event ()
 {
 }
 
-void event::set_script (string filename, PyObject * args = NULL)
+void event::set_script (string filename, PyObject * args)
 {
     if (filename == "") 
     {

@@ -143,8 +143,8 @@ void animation::next_frame ()
     speedcounter = 0;
 }
  
-void animation::draw (s_int16 x, s_int16 y, const drawing_area * da_opt = NULL, 
-                      surface *target = NULL) const
+void animation::draw (s_int16 x, s_int16 y, const drawing_area * da_opt, 
+                      surface *target) const
 {
     t_frame[frame[currentframe ()].image_nbr ()]->
         set_mask (frame[currentframe ()].is_masked ());

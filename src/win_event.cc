@@ -17,7 +17,7 @@
 #include "py_callback.h"
 
 
-void win_event::py_signal_connect (PyObject *pyfunc, int signal, PyObject *args = NULL) 
+void win_event::py_signal_connect (PyObject *pyfunc, int signal, PyObject *args) 
 {
     // create the callback
     py_callback *callback = new py_callback (pyfunc, args);

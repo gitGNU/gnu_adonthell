@@ -27,7 +27,6 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <dirent.h>
-#include <fstream.h>
 #include <unistd.h>
 
 #ifdef HAVE__GETOPT_H

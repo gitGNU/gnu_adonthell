@@ -274,7 +274,7 @@ void mapcharacter::remove_from_pos ()
 }
 
 void mapcharacter::jump_to (u_int16 smap, u_int16 x, u_int16 y,
-			    u_int16 pos = NO_MOVE)
+			    u_int16 pos)
 {
     leave_position (); 
     set_pos (smap, x, y);
@@ -522,7 +522,7 @@ bool mapcharacter::go_west ()
     return false; 
 }
 
-bool mapcharacter::set_goal (u_int16 x, u_int16 y, u_int16 dir = NO_MOVE)
+bool mapcharacter::set_goal (u_int16 x, u_int16 y, u_int16 dir)
 {
     mypath.refmap = mymap ();
     mypath.submap = submap (); 
@@ -654,7 +654,7 @@ mapcharacter *mapcharacter::whosnext () const
     return NULL;
 }
 
-void mapcharacter::set_schedule (string file, PyObject * args = NULL)
+void mapcharacter::set_schedule (string file, PyObject * args)
 {     
     // Clears the schedule
     schedule.clear ();
@@ -686,7 +686,7 @@ void mapcharacter::set_schedule (string file, PyObject * args = NULL)
     schedule_file_ = file;
 }
 
-void mapcharacter::set_action (string file, PyObject * args = NULL)
+void mapcharacter::set_action (string file, PyObject * args)
 {     
     // Clears the action script
     action.clear ();
@@ -746,13 +746,13 @@ void mapcharacter::launch_action (mapcharacter * requester)
     Py_DECREF (args);
 }
 
-void mapcharacter::draw (s_int16 x, s_int16 y, const drawing_area * da_opt = NULL, surface * target = NULL) const
+void mapcharacter::draw (s_int16 x, s_int16 y, const drawing_area * da_opt, surface * target) const
 {
     anim[current_move]->draw (x, y, da_opt, target);
 }
 
-void mapcharacter::draw_bubble (s_int16 x, s_int16 y, const drawing_area * da_opt = NULL,
-                                surface * target = NULL) const
+void mapcharacter::draw_bubble (s_int16 x, s_int16 y, const drawing_area * da_opt,
+                                surface * target) const
 {
     if (saying) 
     {

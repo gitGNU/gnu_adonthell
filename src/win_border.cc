@@ -43,7 +43,7 @@ win_border::win_border(win_base *wb)
   set_brightness_border( false );
 }
 
-win_border::win_border(char * rep,char * size=WIN_BORDER_NORMAL_SIZE)
+win_border::win_border(char * rep,char * size)
 {
   wb_=NULL;
   

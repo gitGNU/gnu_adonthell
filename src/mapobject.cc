@@ -60,7 +60,7 @@ bool mapobject::update ()
     return true; 
 }
 
-void mapobject::draw (s_int16 x, s_int16 y, const drawing_area * da_opt = NULL, surface * target = NULL) const
+void mapobject::draw (s_int16 x, s_int16 y, const drawing_area * da_opt, surface * target) const
 {
     vector <animation *>::iterator i; 
     
@@ -69,7 +69,7 @@ void mapobject::draw (s_int16 x, s_int16 y, const drawing_area * da_opt = NULL, 
 }
 
 void mapobject::draw_from_base (s_int16 x, s_int16 y,
-                                const drawing_area * da_opt = NULL, surface * target = NULL) const
+                                const drawing_area * da_opt, surface * target) const
 {
     draw (x - base_x () * MAPSQUARE_SIZE, y - base_y () * MAPSQUARE_SIZE,
           da_opt, target);

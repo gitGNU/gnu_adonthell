@@ -153,7 +153,7 @@ public:
 template <class RT,class Func>
 class FunctionTranslator0wRet:public Functor0wRet<RT>{
 public:
-	FunctionTranslator0wRet(Func f):Functor0wRet<RT>(thunk,0,(PFunc)f,0,0){}
+	FunctionTranslator0wRet(Func f):Functor0wRet<RT>(thunk,0,(typename FunctionTranslator0wRet<RT, Func>::PFunc)f,0,0){}
 	static RT thunk(const FunctorBase &ftor)
 		{
 		return (Func(ftor.getFunc()))();

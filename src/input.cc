@@ -82,7 +82,7 @@ bool input::has_been_pushed(SDLKey key)
   return ret;
 }
 
-void input::set_key_repeat(int delay=SDL_DEFAULT_REPEAT_DELAY, int interval=SDL_DEFAULT_REPEAT_INTERVAL)
+void input::set_key_repeat(int delay, int interval)
 {
   SDL_EnableKeyRepeat(delay, interval);
 }

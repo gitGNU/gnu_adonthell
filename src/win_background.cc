@@ -171,7 +171,7 @@ void win_background::update()
 }
 
 
-void win_background::draw(drawing_area * da = NULL)
+void win_background::draw(drawing_area * da)
 {
   if(!visible_ || !background_draw_ || !wb_) return; 
   background_draw_->draw(wb_->real_x(),wb_->real_y(),da);

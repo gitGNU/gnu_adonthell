@@ -48,7 +48,7 @@ void py_object::clear ()
 }
 
 // Pass a (new) Python module to be used
-bool py_object::create_instance (string file, string classname, PyObject * args = NULL)
+bool py_object::create_instance (string file, string classname, PyObject * args)
 {
     // Try to import the given script
     PyObject *module = python::import_module (file);
@@ -59,7 +59,7 @@ bool py_object::create_instance (string file, string classname, PyObject * args 
 }
 
 // Reload a python module in case it has changed on disk
-bool py_object::reload_instance (string file, string classname, PyObject * args = NULL)
+bool py_object::reload_instance (string file, string classname, PyObject * args)
 {
     // Try to import the given script
     PyObject *module = python::import_module (file);
@@ -94,7 +94,7 @@ bool py_object::instanciate (PyObject *module, string file, string classname, Py
 }
 
 // Execute a method of the script
-PyObject* py_object::call_method_ret (const string & name, PyObject * args = NULL)
+PyObject* py_object::call_method_ret (const string & name, PyObject * args)
 {
     PyObject *result = NULL;
      

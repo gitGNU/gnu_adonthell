@@ -35,7 +35,7 @@ u_int32 screen::trans = 0;
 bool screen::fullscreen_ = false; 
 bool screen::dblmode;
 
-void screen::set_video_mode (u_int16 nl, u_int16 nh, u_int8 depth = 0, bool dbl = false, bool fscreen = false)
+void screen::set_video_mode (u_int16 nl, u_int16 nh, u_int8 depth, bool dbl, bool fscreen)
 {
     u_int8 bpp;
     u_int32 SDL_flags = SDL_HWSURFACE | SDL_DOUBLEBUF;

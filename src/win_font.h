@@ -13,7 +13,7 @@
 #ifndef _WIN_FONT_H_
 #define _WIN_FONT_H_
 
-#include <iostream.h>
+#include <iostream>
 #include <stdlib.h>
 #include <string.h>
 #include "types.h"
