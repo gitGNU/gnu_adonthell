@@ -27,9 +27,6 @@
 #include "dlgrun.h"
 #include "interface.h"
 
-s_int32 *dialog::offset;
-s_int32 *dialog::length;
-
 /* run the compiled dialogue */
 void 
 run_dialogue (MainFrame * wnd)
