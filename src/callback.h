@@ -14,11 +14,50 @@
    See the COPYING file for more details
 */
 
+/**
+ * @file   callback_slot.h
+ * @author Joel Vennin <jol@linuxgames.com>
+ * 
+ * @brief  Declares the callback template class.
+ * 
+ * 
+ */
+
+
 #ifndef _CALL_BACK_H_
 #define _CALL_BACK_H_
 
 #include <string.h> 
 #include <stddef.h> 
+
+
+/**
+ * All stuff is here is inspirated from Rich Hickey callback mechanics. Everybody know what is
+ * callback, so i explain just how use it in example.
+ *
+ *  class A{
+ *   public:
+ *    void print() { cout << "Adonthell callback\n"; }
+ * 
+ *    int count(int i) { return ++i; }
+ *   };
+ *  
+ *  void main()
+ *  {
+ *    Functor0 func0;
+ *    Functor1wRet<int,int> func1;
+ *    A a;
+ * 
+ *    func0 = makeFunctor(a, &A::print);
+ *    func1 = makeFunctor(&func1,a,&A::count);
+ * 
+ *    func0();
+ *    cout << func1(10000) << endl;
+ *   }
+ *
+ * With different callback template you can have 0,1,2,3 args and a return value, enjoy !
+ */
+
 
 class FunctorBase
 {

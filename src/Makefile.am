@@ -67,7 +67,9 @@ libadonthell_a_SOURCES = animation.cc drawable.cc drawing_area.cc fileops.cc \
 	callback.h py_callback.h python_class.h py_object.h \
 	str_hash.h win_font.h win_image.h win_label.h win_mapview.h label.h label_input.h \
 	win_scrollbar.h win_scroll.h win_select.h win_theme.h win_keys.h win_event.h win_types.h \
-	win_write.h win_manager.h win_object.h window.h
+	win_write.h win_manager.h win_object.h window.h callback_slot.cc \
+	callback_slot.h
+
 
 alextest_SOURCES = main.cc
 
