@@ -17,7 +17,7 @@
 #include "gui_circle_events.h"
 
 /**
- * @file gui_circle.h
+ * @file gui_circle.cc
  *
  * @author Kai Sterker
  * @brief The Edit Circle window

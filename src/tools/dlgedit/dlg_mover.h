@@ -27,7 +27,7 @@
 
 /**
  * Arrows have to be connected to two nodes, so to drag them from one
- * Circle to another, it needs to be connected to an (invisble) mover.
+ * Circle to another, they have to be connected to an (invisble) mover.
  */
 class DlgMover : public DlgNode
 {

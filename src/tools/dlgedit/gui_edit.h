@@ -16,7 +16,7 @@
  * @file gui_edit.h
  *
  * @author Kai Sterker
- * @brief Wrapper around the gtkeditor widget.
+ * @brief Wrapper around the GtkText widget.
  */
 
 #include <string>
@@ -24,21 +24,21 @@
 #include <gdk/gdktypes.h>
 
 /**
- * The gtkeditor widget is a custom textbox widget with syntax-highlighting
- * abilities. This class provides the gtkeditor widget with Python support.
+ * Provides a simple C++ interface to GtkText. The widget is initialised
+ * to use a font with fixed width, so it should only be used to edit code.
  */
 class GuiEdit
 {
 public:
     /**
-     * Create a new editor widget with Python syntax highlighting.
+     * Create a new GtkText widget.
      * @param container Container to put the editor widget into.
      */
     GuiEdit (GtkWidget *container);
     ~GuiEdit ();
 
     /**
-     * Get a pointer to the editor widget.
+     * Get a pointer to the GtkText widget.
      * @return a pointer to the editor widget.
      */
     GtkWidget *widget ()            { return entry; }

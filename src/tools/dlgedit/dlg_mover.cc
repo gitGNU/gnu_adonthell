@@ -13,7 +13,7 @@
 */
 
 /** 
- * @file dlg_mover.h
+ * @file dlg_mover.cc
  *
  * @author Kai Sterker
  * @brief A dummy node for drag'n dropping DlgArrows.

@@ -175,8 +175,27 @@ public:
      * @name Drag'n dropping of DlgNodes
      */
     //@{
+    /**
+     * Prepare a DlgNode for dragging. Circles can be moved directly.
+     * Arrows need to be attached to a temporary, invisible node. This
+     * method takes care of that.
+     * @param point position where the user started to drag the mouse.
+     * @return <b>true</b> if a node is being dragged, <b>false</b> otherwise.
+     */
     bool prepareDragging (DlgPoint &point);
+    /**
+     * As long as in dragging mode, this method will update the position
+     * of the node being dragged.
+     * @param point current cursor position.
+     */
     void drag (DlgPoint &point);
+    /**
+     * Once the user releases the left mouse button, this method calculates
+     * the final position. In case of an Arrow being dragged, it will be
+     * attached to a node if possible. Otherwise, the former state will be
+     * restored.
+     * @param point current cursor position. 
+     */
     void stopDragging (DlgPoint &point);
     //@}
     

@@ -82,7 +82,7 @@ bool DlgCmdline::parse (int argc, char* argv[])
                 
                 if (!mydir) 
                 {
-                    cerr << "Cannot open directory " << datadir << "!" << endl;
+                    cerr << "No such directory " << datadir << "!" << endl;
                     return false;
                 }
                 closedir (mydir);

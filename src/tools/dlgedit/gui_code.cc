@@ -17,7 +17,7 @@
 #include "gui_dlgedit.h"
 
 /**
- * @file gui_code.h
+ * @file gui_code.cc
  *
  * @author Kai Sterker
  * @brief The Custom Code dialog

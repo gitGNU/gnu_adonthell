@@ -26,12 +26,15 @@
 #include "dlg_node.h"
 
 /**
- * This node types' sole purpose is to link any two DlgCircles.
+ * This node type's sole purpose is to link any two DlgCircles.
  * It's graphical representation is an arrow, hence the name.  
  */
 class DlgArrow : public DlgNode
 {
 public:
+    /**
+     * Create a new arrow.
+     */
     DlgArrow () { mode_ = IDLE; type_ = LINK; }
     /**
      * Create a new link between two nodes.
@@ -79,7 +82,16 @@ public:
      */
     bool operator== (DlgPoint &point);
     
+    /**
+     * Get the arrow's head.
+     * @return position of the arrow's head.
+     */
     DlgPoint getTip ()      { return DlgPoint (line[1]); }
+    
+    /**
+     * Get the arrow's tail.
+     * @return position of the arrow's tail.
+     */
     DlgPoint getTail ()     { return DlgPoint (line[0]); }
     
 private:
