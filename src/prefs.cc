@@ -258,7 +258,7 @@ void config::write_adonthellrc ()
        << "# edit to your needs!\n\n"
        << "# Screen-mode num\n#   0  Windowed mode\n"
        << "#   1  Fullscreen mode\n    Screen-mode " << (int) screen_mode << "\n\n"
-       << "# Language [locale]\n    Language [" << language << "]\n\n"
+       << "# Language [locale]\n# Where locale has the form fr_FR or de_DE, etc.\n    Language [" << language << "]\n\n"
        << "# Audio-channels num\n#   0  Mono\n#   1  Stereo\n"
        << "    Audio-channels " << (int) audio_channels << "\n\n"
        << "# Audio-resolution num\n#   0  8 bit\n#   1  16 bit\n"
