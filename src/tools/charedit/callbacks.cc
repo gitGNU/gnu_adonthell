@@ -51,7 +51,7 @@ on_attrib_update_clicked (GtkButton * button, gpointer user_data)
     int i = 0;
 
     // grab attribute and value
-    text[0] = gtk_entry_get_text (GTK_ENTRY (wnd->attrib_entry));
+    text[0] = g_strstrip (gtk_entry_get_text (GTK_ENTRY (wnd->attrib_entry)));
     text[1] = gtk_entry_get_text (GTK_ENTRY (wnd->val_entry));
 
     // check whether attribute and value are nonzero
@@ -61,22 +61,25 @@ on_attrib_update_clicked (GtkButton * button, gpointer user_data)
     // check whether value is an integer
     if (text[1][0] != '-' && !isdigit (text[1][0])) return;
 
+    // clear entries and selection
+    gtk_entry_set_text (GTK_ENTRY (wnd->attrib_entry), "");
+    gtk_entry_set_text (GTK_ENTRY (wnd->val_entry), "");
+    gtk_clist_unselect_row (GTK_CLIST (wnd->attribute_list), wnd->attribute_list_sel, 0);
+
     // check whether attribute already exists
     while (gtk_clist_get_text (GTK_CLIST (wnd->attribute_list), i++, 0, &str))
         if (!strcmp (text[0], str))
         {
             // in case it does, only update the value
             gtk_clist_set_text (GTK_CLIST (wnd->attribute_list), i-1, 1, text[1]);
-            gtk_entry_set_text (GTK_ENTRY (wnd->attrib_entry), "");
-            gtk_entry_set_text (GTK_ENTRY (wnd->val_entry), ""); 
 
             return;
         }
     
-    // add them to the list and clear the entries
+    // else add them to the list and clear the entries
     gtk_clist_append (GTK_CLIST (wnd->attribute_list), text);
-    gtk_entry_set_text (GTK_ENTRY (wnd->attrib_entry), "");
-    gtk_entry_set_text (GTK_ENTRY (wnd->val_entry), ""); 
+
+    wnd->colorify_list (GTK_CLIST (wnd->attribute_list));
 }
 
 // Remove the selected row in the attribute-list
@@ -104,10 +107,10 @@ on_attrib_remove_clicked (GtkButton * button, gpointer user_data)
 
         // Delete row
         gtk_clist_remove (GTK_CLIST (wnd->attribute_list), wnd->attribute_list_sel);
+        wnd->colorify_list (GTK_CLIST (wnd->attribute_list));
         
         return;
     }
-    
 
     // check whether attribute is nonzero
     if (attr == NULL || !strcmp (attr, "")) return;
@@ -117,6 +120,8 @@ on_attrib_remove_clicked (GtkButton * button, gpointer user_data)
         if (!strcmp (attr, str))
         {
             gtk_clist_remove (GTK_CLIST (wnd->attribute_list), i-1);
+            wnd->colorify_list (GTK_CLIST (wnd->attribute_list));
+
             gtk_entry_set_text (GTK_ENTRY (wnd->attrib_entry), "");
             gtk_entry_set_text (GTK_ENTRY (wnd->val_entry), ""); 
 
@@ -154,7 +159,29 @@ on_attribute_list_unselect_row (GtkCList * clist, gint row, gint column, GdkEven
 void
 on_event_add_clicked (GtkButton * button, gpointer user_data)
 {
+    main_wnd *wnd = (main_wnd *) user_data;
+    GtkWidget *event_dlg = 0;
+    gchar *text[3];
 
+    // get the selected event type
+    gchar *event = wnd->get_option (GTK_OPTION_MENU (wnd->event_choice));
+
+    // Enter-event
+    if (!strcmp (event, "Enter")) event_dlg = create_event_enter ();
+
+    if (event_dlg != NULL)
+    {
+        gtk_widget_show (event_dlg);
+        gtk_window_set_modal (GTK_WINDOW (event_dlg), TRUE);
+        gtk_main ();
+
+        text[0] = event;
+        text[1] = "script";
+        text[2] = "x=142, y=23";
+
+        gtk_clist_append (GTK_CLIST (wnd->event_list), text);
+        wnd->colorify_list (GTK_CLIST (wnd->event_list));
+    }
 }
 
 
@@ -168,6 +195,10 @@ on_event_remove_clicked (GtkButton * button, gpointer user_data)
 void
 on_event_update_clicked (GtkButton * button, gpointer user_data)
 {
+    main_wnd *wnd = (main_wnd *) user_data;
+    gchar *event;
+    
+    gtk_clist_get_text (GTK_CLIST (wnd->event_list), wnd->event_list_sel, 0, &event);
 
 }
 
@@ -175,7 +206,16 @@ on_event_update_clicked (GtkButton * button, gpointer user_data)
 void
 on_event_list_select_row (GtkCList * clist, gint row, gint column, GdkEvent * event, gpointer user_data)
 {
+    main_wnd *wnd = (main_wnd *) user_data;
+    wnd->event_list_sel = row;
+}
 
+
+void
+on_event_list_unselect_row (GtkCList * clist, gint row, gint column, GdkEvent * event, gpointer user_data)
+{
+    main_wnd *wnd = (main_wnd *) user_data;
+    wnd->event_list_sel = -1;
 }
 
 

@@ -208,16 +208,20 @@ create_main_wnd (main_wnd &wnd)
     gtk_box_pack_start (GTK_BOX (hbox2), race_choice, TRUE, TRUE, 0);
     gtk_tooltips_set_tip (tooltips, race_choice, "The Characters race", 0);
     race_choice_menu = gtk_menu_new ();
-    glade_menuitem = gtk_menu_item_new_with_label ("Dwarf");
+    glade_menuitem = gtk_menu_item_new_with_label (wnd.races[0]);
+    gtk_object_set_user_data (GTK_OBJECT (glade_menuitem), wnd.races[0]);
     gtk_widget_show (glade_menuitem);
     gtk_menu_append (GTK_MENU (race_choice_menu), glade_menuitem);
-    glade_menuitem = gtk_menu_item_new_with_label ("Elf");
+    glade_menuitem = gtk_menu_item_new_with_label (wnd.races[1]);
+    gtk_object_set_user_data (GTK_OBJECT (glade_menuitem), wnd.races[1]);
     gtk_widget_show (glade_menuitem);
     gtk_menu_append (GTK_MENU (race_choice_menu), glade_menuitem);
-    glade_menuitem = gtk_menu_item_new_with_label ("Half-Elf");
+    glade_menuitem = gtk_menu_item_new_with_label (wnd.races[2]);
+    gtk_object_set_user_data (GTK_OBJECT (glade_menuitem), wnd.races[2]);
     gtk_widget_show (glade_menuitem);
     gtk_menu_append (GTK_MENU (race_choice_menu), glade_menuitem);
-    glade_menuitem = gtk_menu_item_new_with_label ("Human");
+    glade_menuitem = gtk_menu_item_new_with_label (wnd.races[3]);
+    gtk_object_set_user_data (GTK_OBJECT (glade_menuitem), wnd.races[3]);
     gtk_widget_show (glade_menuitem);
     gtk_menu_append (GTK_MENU (race_choice_menu), glade_menuitem);
     gtk_option_menu_set_menu (GTK_OPTION_MENU (race_choice), race_choice_menu);
@@ -237,10 +241,12 @@ create_main_wnd (main_wnd &wnd)
     gtk_box_pack_start (GTK_BOX (hbox2), gender_choice, TRUE, TRUE, 0);
     gtk_tooltips_set_tip (tooltips, gender_choice, "The Characters gender", 0);
     gender_choice_menu = gtk_menu_new ();
-    glade_menuitem = gtk_menu_item_new_with_label ("Female");
+    glade_menuitem = gtk_menu_item_new_with_label (wnd.gender[0]);
+    gtk_object_set_user_data (GTK_OBJECT (glade_menuitem), wnd.gender[0]);
     gtk_widget_show (glade_menuitem);
     gtk_menu_append (GTK_MENU (gender_choice_menu), glade_menuitem);
-    glade_menuitem = gtk_menu_item_new_with_label ("Male");
+    glade_menuitem = gtk_menu_item_new_with_label (wnd.gender[1]);
+    gtk_object_set_user_data (GTK_OBJECT (glade_menuitem), wnd.gender[1]);
     gtk_widget_show (glade_menuitem);
     gtk_menu_append (GTK_MENU (gender_choice_menu), glade_menuitem);
     gtk_option_menu_set_menu (GTK_OPTION_MENU (gender_choice), gender_choice_menu);
@@ -390,19 +396,24 @@ create_main_wnd (main_wnd &wnd)
     gtk_widget_show (event_choice);
     gtk_box_pack_start (GTK_BOX (hbox6), event_choice, TRUE, FALSE, 0);
     event_choice_menu = gtk_menu_new ();
-    glade_menuitem = gtk_menu_item_new_with_label ("Enter");
+    glade_menuitem = gtk_menu_item_new_with_label (wnd.events[0]);
+    gtk_object_set_user_data (GTK_OBJECT (glade_menuitem), wnd.events[0]);
     gtk_widget_show (glade_menuitem);
     gtk_menu_append (GTK_MENU (event_choice_menu), glade_menuitem);
-    glade_menuitem = gtk_menu_item_new_with_label ("Leave");
+    glade_menuitem = gtk_menu_item_new_with_label (wnd.events[1]);
+    gtk_object_set_user_data (GTK_OBJECT (glade_menuitem), wnd.events[1]);
     gtk_widget_show (glade_menuitem);
     gtk_menu_append (GTK_MENU (event_choice_menu), glade_menuitem);
-    glade_menuitem = gtk_menu_item_new_with_label ("Pickup");
+    glade_menuitem = gtk_menu_item_new_with_label (wnd.events[2]);
+    gtk_object_set_user_data (GTK_OBJECT (glade_menuitem), wnd.events[2]);
     gtk_widget_show (glade_menuitem);
     gtk_menu_append (GTK_MENU (event_choice_menu), glade_menuitem);
-    glade_menuitem = gtk_menu_item_new_with_label ("Drop");
+    glade_menuitem = gtk_menu_item_new_with_label (wnd.events[3]);
+    gtk_object_set_user_data (GTK_OBJECT (glade_menuitem), wnd.events[3]);
     gtk_widget_show (glade_menuitem);
     gtk_menu_append (GTK_MENU (event_choice_menu), glade_menuitem);
-    glade_menuitem = gtk_menu_item_new_with_label ("Kill");
+    glade_menuitem = gtk_menu_item_new_with_label (wnd.events[4]);
+    gtk_object_set_user_data (GTK_OBJECT (glade_menuitem), wnd.events[4]);
     gtk_widget_show (glade_menuitem);
     gtk_menu_append (GTK_MENU (event_choice_menu), glade_menuitem);
     gtk_option_menu_set_menu (GTK_OPTION_MENU (event_choice), event_choice_menu);
@@ -565,14 +576,16 @@ create_main_wnd (main_wnd &wnd)
     gtk_signal_connect (GTK_OBJECT (attrib_remove), "clicked", GTK_SIGNAL_FUNC (on_attrib_remove_clicked), &wnd);
     gtk_signal_connect (GTK_OBJECT (attribute_list), "select_row", GTK_SIGNAL_FUNC (on_attribute_list_select_row), &wnd);
     gtk_signal_connect (GTK_OBJECT (attribute_list), "unselect_row", GTK_SIGNAL_FUNC (on_attribute_list_unselect_row), &wnd);
-    gtk_signal_connect (GTK_OBJECT (event_add), "clicked", GTK_SIGNAL_FUNC (on_event_add_clicked), NULL);
+    gtk_signal_connect (GTK_OBJECT (event_add), "clicked", GTK_SIGNAL_FUNC (on_event_add_clicked), &wnd);
     gtk_signal_connect (GTK_OBJECT (event_remove), "clicked", GTK_SIGNAL_FUNC (on_event_remove_clicked), NULL);
     gtk_signal_connect (GTK_OBJECT (event_update), "clicked", GTK_SIGNAL_FUNC (on_event_update_clicked), NULL);
     gtk_signal_connect (GTK_OBJECT (event_list), "select_row", GTK_SIGNAL_FUNC (on_event_list_select_row), NULL);
+    gtk_signal_connect (GTK_OBJECT (event_list), "unselect_row", GTK_SIGNAL_FUNC (on_event_list_unselect_row), NULL);
     gtk_signal_connect (GTK_OBJECT (dlg_add), "clicked", GTK_SIGNAL_FUNC (on_dlg_add_clicked), NULL);
     gtk_signal_connect (GTK_OBJECT (dlg_remove), "clicked", GTK_SIGNAL_FUNC (on_dlg_remove_clicked), NULL);
     gtk_signal_connect (GTK_OBJECT (dlg_default), "clicked", GTK_SIGNAL_FUNC (on_dlg_default_clicked), NULL);
     gtk_signal_connect (GTK_OBJECT (dlg_list), "select_row", GTK_SIGNAL_FUNC (on_dlg_list_select_row), NULL);
+    // gtk_signal_connect (GTK_OBJECT (dlg_list), "unselect_row", GTK_SIGNAL_FUNC (on_dlg_list_unselect_row), NULL);
 
     gtk_object_set_data (GTK_OBJECT (main_wnd), "tooltips", tooltips);
 
@@ -609,7 +622,7 @@ create_event_enter (void)
     GtkWidget *enter_ok;
     GtkWidget *enter_cancel;
 
-    event_enter = gtk_window_new (GTK_WINDOW_POPUP);
+    event_enter = gtk_window_new (GTK_WINDOW_DIALOG);
     gtk_object_set_data (GTK_OBJECT (event_enter), "event_enter", event_enter);
     gtk_window_set_title (GTK_WINDOW (event_enter), "Enter Event");
     gtk_window_set_position (GTK_WINDOW (event_enter), GTK_WIN_POS_MOUSE);
@@ -773,6 +786,7 @@ create_event_enter (void)
     gtk_container_add (GTK_CONTAINER (hbuttonbox3), enter_cancel);
     GTK_WIDGET_SET_FLAGS (enter_cancel, GTK_CAN_DEFAULT);
 
+    gtk_signal_connect (GTK_OBJECT (event_enter), "delete_event", GTK_SIGNAL_FUNC (on_widget_destroy), NULL);
     gtk_signal_connect (GTK_OBJECT (enter_script_entry), "changed", GTK_SIGNAL_FUNC (on_enter_script_entry_changed), NULL);
     gtk_signal_connect (GTK_OBJECT (enter_browse), "clicked", GTK_SIGNAL_FUNC (on_enter_browse_clicked), NULL);
     gtk_signal_connect (GTK_OBJECT (enter_ok), "clicked", GTK_SIGNAL_FUNC (on_enter_ok_clicked), NULL);

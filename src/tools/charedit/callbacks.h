@@ -37,6 +37,8 @@ void on_event_update_clicked (GtkButton * button, gpointer user_data);
 
 void on_event_list_select_row (GtkCList * clist, gint row, gint column, GdkEvent * event, gpointer user_data);
 
+void on_event_list_unselect_row (GtkCList * clist, gint row, gint column, GdkEvent * event, gpointer user_data);
+
 void on_dlg_add_clicked (GtkButton * button, gpointer user_data);
 
 void on_dlg_remove_clicked (GtkButton * button, gpointer user_data);
