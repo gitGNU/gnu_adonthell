@@ -1,0 +1,68 @@
+/*
+   $Id$
+
+   Copyright (C) 2002 Kai Sterker <kaisterker@linuxgames.com>
+   Part of the Adonthell Project http://adonthell.linuxgames.com
+
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License.
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY.
+
+   See the COPYING file for more details.
+*/
+
+/** 
+ * @file dlg_point.h
+ *
+ * @author Kai Sterker
+ * @brief A wrapper around GdkPoint.
+ */
+
+#ifndef DLG_POINT_H
+#define DLG_POINT_H
+
+#include <gdk/gdktypes.h>
+
+/**
+ * The representation of a point, defined by its x and y coordinate. 
+ * 
+ * This class provides some abstraction from the GdkPoint type 
+ * defined in GTK+, to remain as independent from the actual GUI 
+ * toolkit as possible.
+ */
+class DlgPoint
+{
+public:
+    DlgPoint () : x_(0), y_(0) { }
+    DlgPoint (int x, int y) : x_(x), y_(y) { }
+    DlgPoint (GdkPoint &point) : x_(point.x), y_(point.y) { }
+    
+    int x ()                        { return x_; }
+    int y ()                        { return y_; }
+    
+    /**
+     * Creates a new point, which is moved by the values of the given point.
+     * @param p the distance to offset this point
+     * @return this point, offset by the point p
+     */
+    DlgPoint offset (DlgPoint &p);
+    /**
+     * Creates a new point, which is moved by the given values.
+     * @param x the offset in x direction
+     * @param y the offset in y direction
+     * @return this point, offset by the given values.
+     */
+    DlgPoint offset (int x, int y)  { return DlgPoint (x_ + x, y_ + y); }
+                
+    /**
+     * Convert a DlgPoint into a GdkPoint.
+     */
+    operator GdkPoint();
+     
+private:
+    int x_;
+    int y_;
+};
+ 
+#endif // DLG_POINT_H

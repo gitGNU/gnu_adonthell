@@ -1,7 +1,7 @@
 /*
    $Id$
    
-   Copyright (C) 1999/2000/2001 Kai Sterker <kaisterker@linuxgames.com>
+   Copyright (C) 1999/2000/2001/2002 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -12,6 +12,35 @@
    See the COPYING file for more details.
 */
 
+/** 
+ * @file main.cc
+ *
+ * @author Kai Sterker
+ * @brief The main function of dlgedit.
+ */
+
+#include <gtk/gtk.h>
+#include "gui_dlgedit.h"
+
+int main (int argc, char *argv[])
+{
+    // Init GTK+
+    gtk_init (&argc, &argv);
+    
+    // Create the User Interface
+    GuiDlgedit dlgedit;
+    
+    // Create a new dialogue
+    dlgedit.newDialogue ();
+    
+    // Start the main loop
+    gtk_main ();
+    
+    // good bye
+    return 0;
+}
+
+/*
 class dialog;
 
 extern "C"
@@ -229,7 +258,7 @@ void MainFrame::set_npc (character_base *npc)
     Py_DECREF (charref);
 }
 
-/* Set variables to safe values */
+// Set variables to safe values
 void 
 init_app (MainFrame * MainWnd)
 {
@@ -257,13 +286,13 @@ init_app (MainFrame * MainWnd)
     data::characters[MainWnd->myplayer->get_name().c_str ()] = MainWnd->myplayer;
 }
 
-/* free allocated memory */
+// free allocated memory
 void 
 delete_dialogue (MainFrame * wnd)
 {
     u_int32 i;
 
-    /* Delete all nodes */
+    // Delete all nodes
     for (i = 0; i < wnd->number; i++)
         delete wnd->nodes[i];
 
@@ -272,4 +301,4 @@ delete_dialogue (MainFrame * wnd)
     g_free (wnd->file_name);
     if (wnd->tooltip) gtk_widget_destroy (wnd->tooltip);
 }
-
+*/
