@@ -312,6 +312,13 @@ gamedata* data::save (u_int32 pos, char *desc)
             // that's the directory we're going to save to
             sprintf (filepath, "%s/adonthell-save-%03i", adonthell_dir, pos++);
             success = mkdir (filepath, 0700);
+
+            // prevent infinite loop if we can't write to the directory
+            if (pos >= 1000) 
+            {
+                fprintf (stderr, "Save failed - seems like you have no write permission in\n%s\n.", adonthell_dir);
+                return NULL;
+            }
         }
         
         // we'll need a new gamedata record
