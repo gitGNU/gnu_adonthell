@@ -245,14 +245,15 @@ Makefile
 doc/Makefile
 src/Makefile
 src/tools/Makefile
-src/tools/pydonthell/Makefile
+src/tools/charedit/Makefile
+src/tools/combat/Makefile
 src/tools/dlgedit/Makefile
 src/tools/dlgedit/examples/Makefile
+src/tools/fontedit/Makefile
 src/tools/maptools/Makefile
 src/tools/questedit/Makefile
-src/tools/charedit/Makefile
 src/tools/oggloop/Makefile
-src/tools/combat/Makefile
+src/tools/pydonthell/Makefile
 ])
 
 

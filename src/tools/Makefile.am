@@ -1,7 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 
 if HAVE_GTK
-SUBDIRS = dlgedit pydonthell maptools questedit charedit oggloop combat
+SUBDIRS = charedit combat dlgedit fontedit maptools oggloop pydonthell questedit   
 else
-SUBDIRS = pydonthell maptools oggloop combat
+SUBDIRS = combat fontedit maptools oggloop pydonthell
 endif

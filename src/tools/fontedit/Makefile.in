@@ -84,23 +84,13 @@ VORBISFILE_LIBS = @VORBISFILE_LIBS@
 VORBIS_CFLAGS = @VORBIS_CFLAGS@
 VORBIS_LIBS = @VORBIS_LIBS@
 
-EXTRA_DIST = attributes.txt
+bin_PROGRAMS = fontedit
 
-bin_PROGRAMS = questedit mergequests
+fontedit_SOURCES = font_editor.cpp
+fontedit_LDADD = pnm.o drawing_area.o image.o screen.o 	prefs.o lex.prefs.o input.o 	win_label.o win_write.o win_query.o win_info.o 	win_container.o win_select.o win_file.o win_file_select.o 	win_border.o win_base.o win_font.o win_image.o win_font_editor.o 	win_background.o win_scrolled.o win_scrollbar.o win_theme.o mapselect.o 	$(SDL_LIBS)
 
-questedit_SOURCES = main.cc interface.cc callbacks.cc dirbrowser.cc callbacks.h dirbrowser.h interface.h main.h
 
-
-questedit_LDADD = -lm -lstdc++ $(GTK_LIBS)
-
-mergequests_SOURCES = mergequests.cc
-
-mergequests_LDADD = quest.o storage.o fileops.o $(GTK_LIBS)
-
-# Evil, but it works...
-CPPFLAGS =  -I../.. $(GTK_CFLAGS)
-
-LDFLAGS = 
+CPPFLAGS =  -I../.. -D_EDIT_ -DUSE_MAP $(SDL_CFLAGS)
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = ../../../header.h
 CONFIG_CLEAN_FILES = 
@@ -108,19 +98,17 @@ PROGRAMS =  $(bin_PROGRAMS)
 
 
 DEFS = @DEFS@ -I. -I$(srcdir) -I../../..
-questedit_OBJECTS =  main.o interface.o callbacks.o dirbrowser.o
-questedit_DEPENDENCIES = 
-questedit_LDFLAGS = 
-mergequests_OBJECTS =  mergequests.o
-mergequests_DEPENDENCIES =  quest.o storage.o fileops.o
-mergequests_LDFLAGS = 
+LDFLAGS = @LDFLAGS@
+fontedit_OBJECTS =  font_editor.o
+fontedit_DEPENDENCIES =  pnm.o drawing_area.o image.o screen.o prefs.o \
+lex.prefs.o input.o win_label.o win_write.o win_query.o win_info.o \
+win_container.o win_select.o win_file.o win_file_select.o win_border.o \
+win_base.o win_font.o win_image.o win_font_editor.o win_background.o \
+win_scrolled.o win_scrollbar.o win_theme.o mapselect.o
+fontedit_LDFLAGS = 
 CXXCOMPILE = $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
 CXXLD = $(CXX)
 CXXLINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(LDFLAGS) -o $@
-CFLAGS = @CFLAGS@
-COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-CCLD = $(CC)
-LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(LDFLAGS) -o $@
 DIST_COMMON =  Makefile.am Makefile.in
 
 
@@ -128,16 +116,15 @@ DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 
 TAR = tar
 GZIP_ENV = --best
-DEP_FILES =  .deps/callbacks.P .deps/dirbrowser.P .deps/interface.P \
-.deps/main.P .deps/mergequests.P
-SOURCES = $(questedit_SOURCES) $(mergequests_SOURCES)
-OBJECTS = $(questedit_OBJECTS) $(mergequests_OBJECTS)
+DEP_FILES =  .deps/font_editor.P
+SOURCES = $(fontedit_SOURCES)
+OBJECTS = $(fontedit_OBJECTS)
 
 all: all-redirect
 .SUFFIXES:
-.SUFFIXES: .S .c .cc .o .s
+.SUFFIXES: .S .c .cpp .o .s
 $(srcdir)/Makefile.in: Makefile.am $(top_srcdir)/configure.in $(ACLOCAL_M4) 
-	cd $(top_srcdir) && $(AUTOMAKE) --gnu src/tools/questedit/Makefile
+	cd $(top_srcdir) && $(AUTOMAKE) --gnu src/tools/fontedit/Makefile
 
 Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status $(BUILT_SOURCES)
 	cd $(top_builddir) \
@@ -185,14 +172,10 @@ distclean-compile:
 
 maintainer-clean-compile:
 
-questedit: $(questedit_OBJECTS) $(questedit_DEPENDENCIES)
-	@rm -f questedit
-	$(CXXLINK) $(questedit_LDFLAGS) $(questedit_OBJECTS) $(questedit_LDADD) $(LIBS)
-
-mergequests: $(mergequests_OBJECTS) $(mergequests_DEPENDENCIES)
-	@rm -f mergequests
-	$(CXXLINK) $(mergequests_LDFLAGS) $(mergequests_OBJECTS) $(mergequests_LDADD) $(LIBS)
-.cc.o:
+fontedit: $(fontedit_OBJECTS) $(fontedit_DEPENDENCIES)
+	@rm -f fontedit
+	$(CXXLINK) $(fontedit_LDFLAGS) $(fontedit_OBJECTS) $(fontedit_LDADD) $(LIBS)
+.cpp.o:
 	$(CXXCOMPILE) -c $<
 
 # This directory's subdirectories are mostly independent; you can cd
@@ -286,14 +269,14 @@ maintainer-clean-tags:
 
 distdir = $(top_builddir)/$(PACKAGE)-$(VERSION)/$(subdir)
 
-subdir = src/tools/questedit
+subdir = src/tools/fontedit
 
 distdir: $(DISTFILES)
 	here=`cd $(top_builddir) && pwd`; \
 	top_distdir=`cd $(top_distdir) && pwd`; \
 	distdir=`cd $(distdir) && pwd`; \
 	cd $(top_srcdir) \
-	  && $(AUTOMAKE) --include-deps --build-dir=$$here --srcdir-name=$(top_srcdir) --output-dir=$$top_distdir --gnu src/tools/questedit/Makefile
+	  && $(AUTOMAKE) --include-deps --build-dir=$$here --srcdir-name=$(top_srcdir) --output-dir=$$top_distdir --gnu src/tools/fontedit/Makefile
 	@for file in $(DISTFILES); do \
 	  d=$(srcdir); \
 	  if test -d $$d/$$file; then \
@@ -347,7 +330,7 @@ maintainer-clean-depend:
 	    >> .deps/$(*F).P; \
 	rm -f .deps/$(*F).pp
 
-%.o: %.cc
+%.o: %.cpp
 	@echo '$(CXXCOMPILE) -c $<'; \
 	$(CXXCOMPILE) -Wp,-MD,.deps/$(*F).pp -c $<
 	@-cp .deps/$(*F).pp .deps/$(*F).P; \
@@ -356,7 +339,7 @@ maintainer-clean-depend:
 	    >> .deps/$(*F).P; \
 	rm .deps/$(*F).pp
 
-%.lo: %.cc
+%.lo: %.cpp
 	@echo '$(LTCXXCOMPILE) -c $<'; \
 	$(LTCXXCOMPILE) -Wp,-MD,.deps/$(*F).pp -c $<
 	@-sed -e 's/^\([^:]*\)\.o[ 	]*:/\1.lo \1.o :/' \
@@ -445,13 +428,7 @@ distclean-generic clean-generic maintainer-clean-generic clean \
 mostlyclean distclean maintainer-clean
 
 
-fileops.o : ../../fileops.cpp
-	$(CXXCOMPILE) -c $< -o $@
-
-quest.o : ../../quest.cpp
-	$(CXXCOMPILE) -c $< -o $@
-
-storage.o : ../../storage.cpp
+%.o : ../../%.cpp
 	$(CXXCOMPILE) -c $< -o $@
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.

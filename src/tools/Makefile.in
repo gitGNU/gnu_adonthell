@@ -82,8 +82,8 @@ VORBISENC_LIBS = @VORBISENC_LIBS@
 VORBISFILE_LIBS = @VORBISFILE_LIBS@
 VORBIS_CFLAGS = @VORBIS_CFLAGS@
 VORBIS_LIBS = @VORBIS_LIBS@
-@HAVE_GTK_TRUE@SUBDIRS = dlgedit pydonthell maptools questedit charedit oggloop combat
-@HAVE_GTK_FALSE@SUBDIRS = pydonthell maptools oggloop combat
+@HAVE_GTK_TRUE@SUBDIRS = charedit combat dlgedit fontedit maptools oggloop pydonthell questedit   
+@HAVE_GTK_FALSE@SUBDIRS = combat fontedit maptools oggloop pydonthell
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = ../../header.h
 CONFIG_CLEAN_FILES = 
@@ -92,10 +92,10 @@ DIST_COMMON =  Makefile.am Makefile.in
 
 DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 
-TAR = gtar
+TAR = tar
 GZIP_ENV = --best
-DIST_SUBDIRS =  dlgedit pydonthell maptools questedit charedit oggloop \
-combat pydonthell maptools oggloop combat
+DIST_SUBDIRS =  charedit combat dlgedit fontedit maptools oggloop \
+pydonthell questedit combat fontedit maptools oggloop pydonthell
 all: all-redirect
 .SUFFIXES:
 $(srcdir)/Makefile.in: Makefile.am $(top_srcdir)/configure.in $(ACLOCAL_M4) 
