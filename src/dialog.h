@@ -37,7 +37,7 @@ using namespace std;
 
 /**
  * The lowlevel dialog class. It is the link between Python dialogue
- * scripts and the \link dialog_engine dialogue GUI \endlink . As such
+ * scripts and the \link dialog_screen dialogue GUI \endlink . As such
  * it is responsible for loading dialogue scripts and for stepping through
  * the dialogue according to the player's %input and the current state
  * of the %game. After each step, the resulting dialogue %text is available

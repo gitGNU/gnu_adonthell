@@ -20,7 +20,7 @@ the lowlevel dialog class.
 
 Each step results in a number of strings, the speech of the NPC and an optional
 list of the player's possible responses. These are displayed in the \link
-dialog_engine Dialogue Window \endlink . Once the player has chosen an answer
+dialog_screen Dialogue Window \endlink . Once the player has chosen an answer
 the next step of the script is executed.
 
 The script itself returns three lists. Possible NPC speeches, the player's possible
