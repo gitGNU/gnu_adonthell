@@ -11,6 +11,9 @@
 
 */
 
+#ifndef _mapitem_h
+#define _mapitem_h
+
 #include "types.h"
 #include "mapevent.h"
 
@@ -60,3 +63,5 @@ class mapitem
 int loaditems(char*, mapitem**, mapevent**, u_int16*);
 void linesep(char*,char**,int*);
 int test_line(char* string, char **word, int*wordc);
+
+#endif
