@@ -77,11 +77,7 @@ public:
      * @param k button concerned by this event.
      * 
      */
-    control_event(event_type t, button_type b) : input_event(CONTROL_EVENT)
-    {
-        Type = t;
-        Button = b;
-    }
+    control_event(event_type t, button_type b);
 
     /** 
      * Returns the type of this event.

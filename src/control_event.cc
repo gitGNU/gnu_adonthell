@@ -27,6 +27,12 @@ string control_event::Button_symbol[control_event::NBR_BUTTONS] =
     "D button"
 };
 
+control_event::control_event(event_type t, button_type b) : input_event(CONTROL_EVENT)
+{
+    Type = t;
+    Button = b;
+}
+
 const string & control_event::button_symbol() const
 {
     return Button_symbol[button()];

@@ -258,6 +258,12 @@ string keyboard_event::Key_symbol[keyboard_event::NBR_KEYS] =
     "euro"
 };
 
+keyboard_event::keyboard_event (event_type t, key_type k) : input_event (KEYBOARD_EVENT)
+{
+    Type = t;
+    Key = k; 
+}
+
 const string & keyboard_event::key_symbol() const
 {
     return Key_symbol[key()];

@@ -23,3 +23,8 @@
 
 
 #include "input_event.h"
+
+input_event::input_event (input_type t)
+{
+    Type = t; 
+}

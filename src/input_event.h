@@ -54,11 +54,7 @@ public:
      * 
      * @param t input event type.
      */
-    input_event (input_type t)
-    {
-        Type = t; 
-    }
-
+    input_event (input_type t);
 
     /** 
      * Returns the type of this event.

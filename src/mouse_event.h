@@ -66,14 +66,7 @@ public:
      * @param ypos y position of the cursor when the event occured.
      * 
      */
-    mouse_event (event_type t, button_type b, u_int16 xpos, u_int16 ypos)
-        : input_event (MOUSE_EVENT)
-    {
-        Type = t;
-        Button = b;
-        X = xpos;
-        Y = ypos;
-    }
+    mouse_event (event_type t, button_type b, u_int16 xpos, u_int16 ypos);
 
     /** 
      * Returns the type of this event.

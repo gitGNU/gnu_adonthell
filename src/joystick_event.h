@@ -69,13 +69,7 @@ public:
      * @param b button concerned by this event
      * 
      */
-    joystick_event(u_int8 joynbr, event_type t, button_type b)
-        : input_event (input_event::JOYSTICK_EVENT)
-    {
-        Joynbr = joynbr;
-        Type = t;
-        Button = b;
-    }
+    joystick_event(u_int8 joynbr, event_type t, button_type b);
 
     /** 
      * Returns the number of the joystick concerned by this event.

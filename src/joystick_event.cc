@@ -59,6 +59,14 @@ string joystick_event::Button_symbol[joystick_event::NBR_BUTTONS] =
     "axis 9 back"
 };
 
+joystick_event::joystick_event(u_int8 joynbr, event_type t, button_type b)
+    : input_event (input_event::JOYSTICK_EVENT)
+{
+    Joynbr = joynbr;
+    Type = t;
+    Button = b;
+}
+
 const string & joystick_event::button_symbol() const
 {
     return Button_symbol[button()];

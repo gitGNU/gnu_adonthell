@@ -293,11 +293,7 @@ public:
      * @param k key concerned bu this event.
      *
      */
-    keyboard_event (event_type t, key_type k) : input_event (KEYBOARD_EVENT)
-    {
-        Type = t;
-        Key = k; 
-    }
+    keyboard_event (event_type t, key_type k);
 
     /** 
      * Returns the type of this event.

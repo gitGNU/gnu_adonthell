@@ -35,6 +35,15 @@ string mouse_event::Button_symbol[mouse_event::NBR_BUTTONS] =
     "wheel down"
 };
 
+mouse_event::mouse_event (event_type t, button_type b, u_int16 xpos, u_int16 ypos)
+    : input_event (MOUSE_EVENT)
+{
+    Type = t;
+    Button = b;
+    X = xpos;
+    Y = ypos;
+}
+
 const string & mouse_event::button_symbol() const
 {
     return Button_symbol[button()];
