@@ -3,7 +3,7 @@ Written by Andrew Henderson <hendersa@db.erau.edu>
 19 February 2000
 
 Last update by Kai Sterker <kaisterker@linuxgames.com>
-6 January 2002
+12 January 2002
 
 
 ****************************
@@ -74,7 +74,7 @@ Adonthell:
   - Configuring your system to use the libraries
 
 * Building the Adonthell source code
-  - Downloading the Adonthell source package and data
+  - Downloading the Adonthell source and data package
   - Building the source package
   - Installing Adonthell
 
@@ -140,11 +140,11 @@ you don't).
 
 Step #2: Decompress the tar.gz file. Do this by typing:
 
-	tar -xzf SDL-x.x.x.tar.gz   	(for SDL)
+	tar -xzf SDL-x.x.x.tar.gz           (for SDL)
 		    or
-	tar -xzf Python-x.x.tar.gz	    (for Python)
+	tar -xzf Python-x.x.tar.gz          (for Python)
 		    or
-	tar -xzf libao-x.x.x.tar.gz	    (for libao)
+	tar -xzf libao-x.x.x.tar.gz         (for libao)
                     
         etc. 
 
@@ -190,10 +190,10 @@ a convenient directory.
 Step #2: Decompress the tar.gz files. Do this by typing:
 
 	tar -xzf adonthell-0.3.tar.gz
-	tar -xzf adonthell-data-0.3.tar.gz	
+	tar -xzf wastesedge-0.3.tar.gz	
 
 Two new directories will be created in the current directory, named
-"adonthell-0.3" and "adonthell-data-0.3". Complete step #3 and #4 for 
+"adonthell-0.3" and "wastesedge-0.3". Complete step #3 and #4 for 
 both directories.
 
 Step #3: Build Adonthell. Do this by changing into the newly created 
@@ -216,7 +216,7 @@ A successful configure will produce an output like this:
 
 If everything configured and built with no errors (which it should,
 if the SDL libraries were correctly installed), Adonthell will now
-be compiled and ready for use. If you installed OggVorbis the 
+be compiled and ready for use. If you installed Ogg Vorbis, the 
 configure script will detect it and configure the program to play 
 music automatically.
 
@@ -282,7 +282,7 @@ complaining about or you forgot to type the command 'ldconfig'
 as a superuser account (i.e. root) after you installed the library.
 
 
-Q: When I run Adonthell in Fullscreen mode I get a tiny window with
+Q: When I run Adonthell in fullscreen mode I get a tiny window with
 a large black border around.
 
 A: See the Fullscreen Howto below for help.
@@ -293,9 +293,11 @@ help? How do I contact you?
 
 A: Adonthell has three public mailing lists to provide support, take
 suggestions, and interact with the users of the Adonthell software.
-Any requests for help or bug reports can be directed to the Adonthell
-developer mailing list. There is usually a fairly short response time
-for any request of help.
+Any requests for help can be directed to the tech support manager.
+To report bugs, please write to the Adonthell developer mailing list. 
+There is usually a fairly short response time for any request of help.
+
+Tech support manager:	http://savannah.gnu.org/support/?group_id=702
 
 The mailing list addresses are:
 
@@ -336,14 +338,17 @@ starts with "320x240". Now pick one of the following modelines that
 best matches your monitor and copy it into the monitor section (but 
 don't change the HorizSync or VertRefresh entry):
 
+  # -- 15" --
   HorizSync     29-65
   VertRefresh   47-80
   Modeline "320x240" 15.750 320 336 384 400 240 244 246 262 Doublescan
 
+  # -- 17" --
   HorizSync    30-85
   VertRefresh  50-100
   Modeline "320x240" 15.750 320 336 384 400 240 244 246 262 Doublescan
 
+  # -- 19" --
   HorizSync    30-110
   VertRefresh  50-150
   Modeline "320x240" 15.750 320 340 388 432 240 244 246 258 Doublescan
