@@ -59,7 +59,7 @@ if test x$gamedatadir = xnone; then
       gamedatadir="/boot/home/share/adonthell"
     ;;
     *)
-      gamedatadir="${datadir}/adonthell"
+      gamedatadir="$datadir/adonthell"
     ;;
   esac
 fi
@@ -332,7 +332,7 @@ echo Ogg music ................. : $ogg_music
 echo Building editors .......... : $tools
 echo Building API doc .......... : $builddoc
 if test x$memleaks = xyes; then
-echo Test for Memory Leaks : enabled
+echo Test for Memory Leaks ..... : enabled
 fi
 echo Data directory ............ : $gamedatadir
 

@@ -10,8 +10,8 @@ Preparations:
 =============
 
 If you have compiled other software on your system already, you can
-probably skip this section. Read on to find a summary how to prepare
-BeOS for compiling Adonthell, what tools you need and how to install 
+probably skip this section. Read on to find a summary for preparing
+BeOS to compile Adonthell: what tools you need and how to install 
 them. If you run into any problems, please refer to the Documentation
 shipped with the individual library or tool.
 
@@ -21,30 +21,42 @@ come as an extra package. You can find them at
 
 Next you'll have to install SDL, Python and Ogg Vorbis. See the INSTALL
 file for the respective URLs.
-SDL is simple: 'configure', 'make' and 'make install' is all it takes.
-However, you should also download and install the patch from
-	http://libsdl.org/faq/beos-sdl.diff 
 
-by typing:
-	$ (cd /; patch -p1 </path/to/patch/beos-sdl.diff) 
+SDL is simple: Open a terminal, cd into the SDL-1.2.x directory and type
+'configure', 'make' and 'make install'. You should also download the 
+patch from http://libsdl.org/faq/beos-sdl.diff and install by typing:
+	
+    $ (cd /; patch -p1 </path/to/patch/beos-sdl.diff) 
 
 This will add the /boot/develop/tools/gnupro/lib directory to the 
 systems library path (after a reboot). That is useful, as all the
 libraries we install go into that directory. 
 
-Python requires a little work: do a 
-	$ cp Misc/BeOS-setup.py 
-in the toplevel directory before running the usual 'configure', 
-'make' and 'make install'. 
+Python requires a little work. In the Python toplevel directory do a 
+	
+    $ cp Misc/BeOS-setup.py setup.py
 
-libogg (1.0 rc 2) didn't compile out of the box. Search for
-'#elif defined(__BEOS__)' in <oggdir>/include/ogg/os_types.h and 
-add '#include <ogg/config_types.h>' after '#include <inttypes.h>'.
-And the libvorbis configure script wouldn't find libogg unless 
-passing the '--with-ogg-prefix=/boot/develop/tools/gnupro/' option.
-Apart from that, it's the usual procedure.
+before running the usual 'configure', 'make' and 'make install'. 
 
-Now you are ready to compile Adonthell.
+The next library, libogg (1.0rc2) didn't compile out of the box. 
+Search for the part that reads
+
+    #elif defined(__BEOS__) 
+    #  include <inttypes.h>
+
+in <oggdir>/include/ogg/os_types.h and add 
+    
+    #  include <ogg/config_types.h> 
+
+after the first #include.
+
+To compile libvorbis, I had to pass the location of libogg to the
+configure script, as it wasn't detected automatically:
+ 
+    $ configure --with-ogg-prefix=/path/to/libogg/directory
+    
+Apart from that, it's the usual procedure. Afterwards you are ready 
+to compile Adonthell.
 
 
 Compiling Adonthell:
