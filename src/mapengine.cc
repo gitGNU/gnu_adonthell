@@ -30,6 +30,7 @@ mapengine::mapengine ()
 {
     mv.mapview::resize (screen::length (), screen::height ());
     letsexit = false;
+    should_update_map_ = true; 
 }
 
 mapengine::~mapengine ()
@@ -76,7 +77,7 @@ void mapengine::mainloop ()
     for (int i = 0; i < gametime::frames_to_do (); i++)
     {
         win_manager::input_update ();
-        lmap.update ();
+        if (should_update_map ()) lmap.update ();
         win_manager::update ();
         mv.mapview::update ();
     }

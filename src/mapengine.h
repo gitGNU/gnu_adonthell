@@ -57,9 +57,20 @@ public:
         mv.mapview::draw (x, y, da_opt, target); 
     }
 
+    void set_should_update_map (bool b) 
+    {
+        should_update_map_ = b; 
+    }
+
+    bool should_update_map () 
+    {
+        return should_update_map_;
+    }
+    
 protected:
     landmap lmap;
     win_mapview mv;
+    bool should_update_map_;
     bool letsexit;
 };
 
