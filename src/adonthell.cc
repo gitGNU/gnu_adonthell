@@ -33,6 +33,10 @@ adonthell::adonthell ()
 {
     letsexit = false;
     update_map_ = false;
+    control_active_ = false;
+    
+    // load the script taking care of additional game commands
+    control.create_instance ("schedules/control", "control");
 }
 
 // start and execute the game's main loop 
@@ -72,13 +76,14 @@ void adonthell::main_loop ()
         win_manager::active->input_update ();
         if (update_map ()) lmap.update ();
         win_manager::active->update ();
+        if (control_active ()) control.run ();
     }
    
     // first clear the screen to avoid artifacts
     screen::clear ();
     
     // draw everything to our display surface
-    win_manager::active->draw ();
+    if (!letsexit) win_manager::active->draw ();
 }
 
 // quit the main loop
@@ -91,16 +96,17 @@ void adonthell::main_quit ()
 void adonthell::fade_out ()
 {
     s_int16 i = 0;
-
-    while (i <= 60)
+    
+    while (i < 60)
     {
+        gametime::update ();
+        i += gametime::frames_to_skip () * 2;
+        if (i > 60) i = 60;
+        
         main_loop ();
 
         screen::transition (i * 2);
         screen::show ();
-
-        gametime::update ();
-        i += gametime::frames_to_skip () * 2;
     }
 }
 
@@ -108,16 +114,17 @@ void adonthell::fade_out ()
 void adonthell::fade_in ()
 {
     s_int16 i = 60;
-
-    while (i >= 0)
+    
+    while (i > 0)
     {
+        gametime::update ();
+        i -= gametime::frames_to_skip () * 2;
+        if (i < 0) i = 0;
+        
         main_loop ();
 
         screen::transition (i * 2);
         screen::show ();
-
-        gametime::update ();
-        i -= gametime::frames_to_skip () * 2;
     }
 }
 

@@ -125,6 +125,39 @@ class adonthell
     //@}
     
     /**
+     * @name Additional game control
+     * 
+     */ 
+    //@{
+    /**
+     * Returns whether the control script is active or not.
+     *
+     * @return 
+     *      @li true if that is the case.
+     *      @li false otherwise.
+     */
+    bool control_active ()
+    {
+        return control_active_;
+    }
+    
+    /**
+     * Set whether the control script should be executed or
+     * not. This script provides functionality that is not
+     * directly related to contolling the main character,
+     * like opening the main menu, the load or save screen,
+     * etc.
+     *
+     * @param c Pass true to enable the control script, false
+     *          to disable it.
+     */
+    void set_control_active (bool c)
+    {
+        control_active_ = c;
+    }
+    //@}
+
+    /**
      * @todo move landmap handling somewhere else
      */
     landmap *get_landmap ()
@@ -179,6 +212,9 @@ class adonthell
     void mapview_start ();
 
   private:
+    py_object control;
+    // flag to indicate whether the control script is active or not
+    bool control_active_;
     // flag to indicate whether to exit the main loop
     bool letsexit;
     // indicates whether the map should be updated or not

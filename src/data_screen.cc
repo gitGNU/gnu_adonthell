@@ -59,34 +59,34 @@ data_screen::data_screen (int m)
      
     //Create a win_select
     image_list = new win_select();
-    image_list->move(10,0);
-    image_list->resize(250,210);
+    image_list->move (10, 0);
+    image_list->resize (250, 210);
     image_list->set_mode (win_select::MODE_BRIGHTNESS);
     image_list->set_layout (win_container::LIST_LAYOUT);
     image_list->set_circle (true);
     image_list->set_space_with_border (9);
     image_list->set_space_with_object (9);
     
-    image_list->set_scrollbar(*theme);
-    image_list->set_visible_scrollbar(true);
+    image_list->set_scrollbar (*theme);
+    image_list->set_visible_scrollbar (true);
     
-    //activate the list
+    // activate the list
     image_list->set_activate (true);
     
-    //when this have focus, give focus to the list
+    // when this have focus, give focus to the list
     set_focus_object(image_list);
     
     image_list->set_signal_connect (
         makeFunctor (*this, &data_screen::on_select), 
         win_event::ACTIVATE_KEY);
     
-    //add the win_select to *this
+    // add the win_select to *this
     add (image_list);
     
-    // Add all the saved games to the list
+    // add all the saved games to the list
     init ();
     
-    // Show everything
+    // show everything
     set_visible_background (true);
     set_visible_border (true);
     
@@ -95,6 +95,7 @@ data_screen::data_screen (int m)
 
 data_screen::~data_screen ()
 {
+    data::engine->fade_in ();
 }
 
 void data_screen::init ()
@@ -112,32 +113,33 @@ void data_screen::init ()
         filepath = gdata->directory ();
         filepath += "/preview.pnm";
     
-        shot = new win_image();
+        shot = new win_image ();
         shot->image::load_pnm (filepath); 
-        shot->move(5,2);
-        shot->set_border(*theme,win_border::MINI);
+        shot->move (5, 2);
+        shot->set_border (*theme, win_border::MINI);
         shot->set_visible_border (true);
         shot->pack();
 	
-        entry = new win_write();
-        entry->move(100,2);
-        ((label_input*)entry)->resize(130,54);
-        entry->set_font(*font);
+        entry = new win_write ();
+        entry->move (100, 2);
+        ((label_input*)entry)->resize (130, 54);
+        entry->set_font (*font);
         entry->set_text (gdata->description ());
+        entry->set_cursor_visible (false);
         entry->pack();
 	
         entry_list.push_back (entry);
 	
         box = new win_container ();
-        box->move(0,0);
-        box->resize(230,58);
+        box->move (0, 0);
+        box->resize (230, 58);
         box->add (shot);
         box->add (entry);
         box->set_visible_all (true);
 	
         // when the box is activated, we set the entry as 
         // focus object of the box
-        box->set_focus_object(entry);
+        box->set_focus_object (entry);
         
         image_list->add (box);
         
@@ -148,24 +150,25 @@ void data_screen::init ()
     if (mode == SAVE_SCREEN)
     {
         shot = new win_image ();
-        shot->move(5,2);
-        shot->load_pnm("gfx/empty_slot.pnm");
-        shot->set_border(*theme, win_border::MINI);
+        shot->move (5, 2);
+        shot->load_pnm ("gfx/empty_slot.pnm");
+        shot->set_border (*theme, win_border::MINI);
         shot->set_visible_border (true);
         shot->pack (); 
         
         entry = new win_write ();
-        entry->set_font(*font);
-        entry->move(100,2);
-        ((label_input*) entry)->resize(130,54);
+        entry->set_font (*font);
+        entry->move (100, 2);
+        ((label_input*) entry)->resize (130, 54);
         entry->set_text ("Empty Slot");
-        entry->pack();
+        entry->set_cursor_visible (false);
+        entry->pack ();
 	
         entry_list.push_back (entry);
         
         box = new win_container ();
-        box->move(0,0);
-        box->resize(230,58);
+        box->move (0, 0);
+        box->resize (230, 58);
         box->add (shot);
         box->add (entry);
         box->set_visible_all (true);
@@ -233,9 +236,9 @@ void data_screen::on_select ()
     if (mode == LOAD_SCREEN)
     {
         data::engine->fade_out ();
+        set_visible (false);
         gamedata::load (pos);
         data::engine->main_quit ();
-        entry->set_cursor_visible (false);
     }
     // saving
     else
@@ -244,8 +247,8 @@ void data_screen::on_select ()
 	    image_list->set_focus_object(tmp);
 	
 	    entry = (win_write*) tmp->focus_object();
-            entry->set_cursor_visible (true);
-            entry->set_cursor_moveable (true);
+        entry->set_cursor_visible (true);
+        entry->set_cursor_moveable (true);
 	
 	    const char *txt = entry->text_char ();
 	    if (txt && !strncmp (txt, "Empty Slot", 10))
