@@ -19,6 +19,15 @@
 
 class MainFrame;
 class objects;
+class storage;
+
+class dbg_node_data
+{
+public:
+    dbg_node_data (char *a, int t) : attribute (a), touched (t) { }
+    char *attribute;
+    int touched;
+};
 
 class debug_dlg
 {
@@ -43,6 +52,14 @@ public:
     static int destroy;         // Set to 1 if debug window is open
     int active_page;            // Whether dialogue, character or quest page is active
     int selected_row;           // The row selected in the active tree
+
+private:
+    void check_removed (GtkCTree*); // Check a tree for obsolete nodes
+    int update_children (GtkCTree*, GtkCTreeNode*, storage*);
+
+    GdkColor red;               // Red
+    GdkColor green;             // Green 
+    GdkColor black;             // Black
 };
 
 #endif // __DEBUG_H__

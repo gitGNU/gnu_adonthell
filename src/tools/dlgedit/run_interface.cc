@@ -19,7 +19,6 @@
 #include "run_interface.h"
 #include "callbacks.h" 
 
-
 GtkWidget *
 create_run_dlg_wnd (run_dlg *dlg)
 {
@@ -29,8 +28,9 @@ create_run_dlg_wnd (run_dlg *dlg)
     GtkWidget *dialogue_list;
     GtkWidget *hseparator1;
     GtkWidget *hbuttonbox1;
-    GtkWidget *dialogue_export;
+    GtkWidget *dialogue_debug;
     GtkWidget *dialogue_close;
+    GtkWidget *dialogue_restart;
     GtkTooltips *tooltips;
 
     tooltips = gtk_tooltips_new ();
@@ -77,14 +77,21 @@ create_run_dlg_wnd (run_dlg *dlg)
     gtk_button_box_set_layout (GTK_BUTTON_BOX (hbuttonbox1), GTK_BUTTONBOX_END);
     gtk_button_box_set_spacing (GTK_BUTTON_BOX (hbuttonbox1), 0);
 
-    dialogue_export = gtk_button_new_with_label ("Export");
-    gtk_widget_ref (dialogue_export);
-    gtk_object_set_data_full (GTK_OBJECT (run_dlg_wnd), "dialogue_export", dialogue_export, (GtkDestroyNotify) gtk_widget_unref);
-    gtk_widget_show (dialogue_export);
-    gtk_container_add (GTK_CONTAINER (hbuttonbox1), dialogue_export);
-    gtk_widget_set_sensitive (dialogue_export, FALSE);
-    GTK_WIDGET_SET_FLAGS (dialogue_export, GTK_CAN_DEFAULT);
-    gtk_tooltips_set_tip (tooltips, dialogue_export, "Save this Conversation as ASCII text", (char*)NULL);
+    dialogue_restart = gtk_button_new_with_label ("Restart");
+    gtk_widget_ref (dialogue_restart);
+    gtk_object_set_data_full (GTK_OBJECT (run_dlg_wnd), "dialogue_restart", dialogue_restart, (GtkDestroyNotify) gtk_widget_unref);
+    gtk_widget_show (dialogue_restart);
+    gtk_container_add (GTK_CONTAINER (hbuttonbox1), dialogue_restart);
+    GTK_WIDGET_SET_FLAGS (dialogue_restart, GTK_CAN_DEFAULT);
+    gtk_tooltips_set_tip (tooltips, dialogue_restart, "Start the dialogue from the beginning", (char*)NULL);
+
+    dialogue_debug = gtk_button_new_with_label ("Debug");
+    gtk_widget_ref (dialogue_debug);
+    gtk_object_set_data_full (GTK_OBJECT (run_dlg_wnd), "dialogue_debug", dialogue_debug, (GtkDestroyNotify) gtk_widget_unref);
+    gtk_widget_show (dialogue_debug);
+    gtk_container_add (GTK_CONTAINER (hbuttonbox1), dialogue_debug);
+    GTK_WIDGET_SET_FLAGS (dialogue_debug, GTK_CAN_DEFAULT);
+    gtk_tooltips_set_tip (tooltips, dialogue_debug, "Open the debug window", (char*)NULL);
 
     dialogue_close = gtk_button_new_with_label ("Close");
     gtk_widget_ref (dialogue_close);
@@ -95,7 +102,8 @@ create_run_dlg_wnd (run_dlg *dlg)
     gtk_tooltips_set_tip (tooltips, dialogue_close, "Close this window", (char*)NULL);
 
     gtk_signal_connect (GTK_OBJECT (dialogue_list), "select_child", GTK_SIGNAL_FUNC (on_dialogue_list_select_child), dlg);
-    gtk_signal_connect (GTK_OBJECT (dialogue_export), "clicked", GTK_SIGNAL_FUNC (on_dialogue_export_pressed), NULL);
+    gtk_signal_connect (GTK_OBJECT (dialogue_restart), "clicked", GTK_SIGNAL_FUNC (on_dialogue_restart_pressed), dlg);
+    gtk_signal_connect (GTK_OBJECT (dialogue_debug), "clicked", GTK_SIGNAL_FUNC (on_dialogue_debug_pressed), dlg);
     gtk_signal_connect (GTK_OBJECT (dialogue_close), "clicked", GTK_SIGNAL_FUNC (on_dialogue_close_pressed), dlg);
     gtk_signal_connect (GTK_OBJECT (run_dlg_wnd), "destroy", GTK_SIGNAL_FUNC (on_run_destroy), dlg);
 

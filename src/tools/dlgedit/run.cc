@@ -17,6 +17,7 @@
 
 #include "run.h"
 #include "run_interface.h"
+#include "debug.h"
 #include "../../dialog.h"
 #include "../../game.h"
 #include "../../py_inc.h"
@@ -25,12 +26,27 @@ int run_dlg::destroy = 0;
 
 run_dlg::run_dlg (MainFrame *w) : wnd (w)
 {
+    dat = NULL;
     destroy = 1;
 
+    dlg = create_run_dlg_wnd (this);
+    gtk_window_set_transient_for (GTK_WINDOW (dlg), GTK_WINDOW (wnd->wnd));
+
+    start ();
+}
+
+run_dlg::~run_dlg ()
+{
+    wnd->test_dlg = NULL;
+    delete dat;
+}
+
+void run_dlg::start ()
+{
     char *file = g_basename (wnd->file_name);
     char *path = g_dirname (wnd->file_name);
 
-    dlg = create_run_dlg_wnd (this);
+    if (dat) delete dat;
     dat = new dialog;
 
     // Import module
@@ -55,13 +71,6 @@ run_dlg::run_dlg (MainFrame *w) : wnd (w)
     free (path);
 }
 
-
-run_dlg::~run_dlg ()
-{
-    wnd->test_dlg = NULL;
-    delete dat;
-}
-
 PyObject *run_dlg::get_instance ()
 {
     return dat->get_instance ();
@@ -78,6 +87,9 @@ void run_dlg::run ()
 
     // Run the interpreter
     dat->run ((u_int32) answer);
+
+    // Update the debug window
+    if (debug_dlg::destroy != 0) wnd->dbg_dlg->update ();
 
     // See if we reached the end of the script
     if (dat->text == NULL) return;

@@ -18,10 +18,8 @@
 #include <gtk/gtk.h>
 
 void on_debug_destroy (GtkWidget *, gpointer);
-// void on_character_tree_expand (GtkCTree *, GList *, gpointer);
 void on_character_tree_select (GtkWidget *, gint, gint, GdkEventButton *, gpointer);
-// void on_quest_tree_expand (GtkCTree *, GList *, gpointer);
-void on_update_debug_clicked (GtkButton *, gpointer);
+void on_run_debug_clicked (GtkButton *, gpointer);
 void on_close_debug_clicked (GtkButton *, gpointer);
 void on_debug_page_switched (GtkNotebook *, GtkNotebookPage *, gint, gpointer);
 void on_dbg_edit_ok_clicked (GtkButton *, gpointer);

@@ -17,7 +17,7 @@
 #include "run.h"
 #include "run_callbacks.h"
 #include "run_interface.h"
-
+#include "debug.h"
 
 void
 on_run_destroy (GtkWidget * widget, gpointer user_data)
@@ -80,13 +80,27 @@ on_dialogue_list_select_child (GtkList * list, GtkWidget * widget, gpointer user
     dlg->run ();    
 }
 
-
 void
-on_dialogue_export_pressed (GtkButton * button, gpointer user_data)
+on_dialogue_restart_pressed (GtkButton * button, gpointer user_data)
 {
+    run_dlg *dlg = (run_dlg *) user_data;
+    gtk_list_clear_items (GTK_LIST (dlg->list), 0, -1);
 
+    dlg->start ();
+    dlg->run ();
 }
 
+void
+on_dialogue_debug_pressed (GtkButton * button, gpointer user_data)
+{
+    run_dlg *dlg = (run_dlg *) user_data;
+
+    if (debug_dlg::destroy == 0)
+    {
+        dlg->wnd->dbg_dlg = new debug_dlg (dlg->wnd);
+        dlg->wnd->dbg_dlg->update ();
+    }
+}
 
 void
 on_dialogue_close_pressed (GtkButton * button, gpointer user_data)

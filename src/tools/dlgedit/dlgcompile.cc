@@ -155,7 +155,8 @@ void dlg_compiler::write_entry_func ()
         script << "\n    def __setattr__ (self, name, value):"
                << "\n        self.__dict__[name] = value"
                << "\n        if type (value) is IntType:"
-               << "\n            self.debug_info[name] = value\n";
+               << "\n            self.debug_info[name] = value\n"
+               << "\n    __debug__ = 1\n";
     }
     
     // Write the function to start/continue the dialogue

@@ -17,6 +17,7 @@
 #include "dbg_callbacks.h"
 #include "dbg_interface.h"
 #include "callbacks.h"
+#include "main.h"
 
 GtkWidget *
 create_debug_wnd (debug_dlg * dlg)
@@ -134,7 +135,7 @@ create_debug_wnd (debug_dlg * dlg)
     gtk_button_box_set_layout (GTK_BUTTON_BOX (hbuttonbox1), GTK_BUTTONBOX_END);
     gtk_button_box_set_spacing (GTK_BUTTON_BOX (hbuttonbox1), 0);
 
-    update_debug = gtk_button_new_with_label ("Update");
+    update_debug = gtk_button_new_with_label ("Run");
     gtk_widget_ref (update_debug);
     gtk_object_set_data_full (GTK_OBJECT (debug_wnd), "update_debug", update_debug, (GtkDestroyNotify) gtk_widget_unref);
     gtk_widget_show (update_debug);
@@ -148,14 +149,15 @@ create_debug_wnd (debug_dlg * dlg)
     gtk_container_add (GTK_CONTAINER (hbuttonbox1), close_debug);
     GTK_WIDGET_SET_FLAGS (close_debug, GTK_CAN_DEFAULT);
 
-//    gtk_signal_connect (GTK_OBJECT (character_tree), "tree_expand", GTK_SIGNAL_FUNC (on_character_tree_expand), NULL);
     gtk_signal_connect (GTK_OBJECT (character_tree), "select_row", GTK_SIGNAL_FUNC (on_character_tree_select), dlg);
     gtk_signal_connect (GTK_OBJECT (dlg_tree), "select_row", GTK_SIGNAL_FUNC (on_character_tree_select), dlg);
-//    gtk_signal_connect (GTK_OBJECT (quest_tree), "tree_expand", GTK_SIGNAL_FUNC (on_quest_tree_expand), NULL);
-    gtk_signal_connect (GTK_OBJECT (update_debug), "clicked", GTK_SIGNAL_FUNC (on_update_debug_clicked), NULL);
+    gtk_signal_connect (GTK_OBJECT (update_debug), "clicked", GTK_SIGNAL_FUNC (on_run_debug_clicked), dlg);
     gtk_signal_connect (GTK_OBJECT (close_debug), "clicked", GTK_SIGNAL_FUNC (on_close_debug_clicked), dlg);
     gtk_signal_connect (GTK_OBJECT (debug_wnd), "destroy", GTK_SIGNAL_FUNC (on_debug_destroy), dlg);
     gtk_signal_connect (GTK_OBJECT (notebook1), "switch_page", GTK_SIGNAL_FUNC (on_debug_page_switched), dlg);
+
+    gtk_window_set_transient_for (GTK_WINDOW (debug_wnd), GTK_WINDOW (dlg->wnd->wnd));
+    gtk_widget_grab_default (close_debug);
     gtk_widget_show (debug_wnd);
 
     return debug_wnd;

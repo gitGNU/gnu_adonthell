@@ -12,7 +12,7 @@ ps_callbacks.cc ps_dlg.cc ps_interface.cc pset_callbacks.cc \
 pset_interface.cc run.cc run_callbacks.cc run_interface.cc
 
 # Evil, but it works...
-CPPFLAGS += -D_DLGEDIT_ -D_DEBUG_ -D_VERSION_=\"0.6\" `gtk-config --cflags`
+CPPFLAGS += -D_DLGEDIT_ -D_DEBUG_ -D_VERSION_=\"0.7\" `gtk-config --cflags`
 
 LDADD = ../../py_mapengine_wrap.o \
 ../../animation.o ../../py_character_wrap.o \

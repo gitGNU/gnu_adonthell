@@ -17,6 +17,7 @@
 #include "dbg_callbacks.h"
 #include "dbg_interface.h"
 #include "debug.h"
+#include "run.h"
 
 void
 on_debug_destroy (GtkWidget * widget, gpointer user_data)
@@ -30,18 +31,13 @@ on_debug_destroy (GtkWidget * widget, gpointer user_data)
         delete dlg;
     }
 }
-/*
-void
-on_character_tree_expand (GtkCTree * ctree, GList * node, gpointer user_data)
-{
 
-}
-*/
 void
-on_character_tree_select (GtkWidget * widget, gint row, gint column, GdkEventButton * bevent, gpointer data)
+on_character_tree_select (GtkWidget * widget, gint row, gint column, GdkEventButton * bevent, gpointer user_data)
 {
-    debug_dlg *dlg = (debug_dlg *) data;
+    debug_dlg *dlg = (debug_dlg *) user_data;
     char *title, *attribute, *value;
+    dbg_node_data *data;
 	GtkCTreeNode *node;
 
 	if (bevent)
@@ -51,7 +47,8 @@ on_character_tree_select (GtkWidget * widget, gint row, gint column, GdkEventBut
             dlg->selected_row = row;
 		
 			node = gtk_ctree_node_nth (GTK_CTREE (widget), row);
-			attribute = (char *) gtk_ctree_node_get_row_data (GTK_CTREE (widget), node);
+			data = (dbg_node_data *) gtk_ctree_node_get_row_data (GTK_CTREE (widget), node);
+            attribute = data->attribute;
             gtk_ctree_node_get_text (GTK_CTREE (widget), node, 1, &value);
 
             // Top-Level node:
@@ -65,9 +62,10 @@ on_character_tree_select (GtkWidget * widget, gint row, gint column, GdkEventBut
             else
             {
                 GtkCTreeRow *tree_row = GTK_CTREE_ROW (node);
-			    title = (char *) gtk_ctree_node_get_row_data (GTK_CTREE (widget), tree_row->parent);
+			    data = (dbg_node_data *) gtk_ctree_node_get_row_data (GTK_CTREE (widget), tree_row->parent);
+                title = data->attribute;
             }
-            
+
             create_dbg_edit_wnd (dlg, title, attribute, value);
             gtk_main ();
 
@@ -76,18 +74,17 @@ on_character_tree_select (GtkWidget * widget, gint row, gint column, GdkEventBut
 		}
 	}
 }
-/*
-void
-on_quest_tree_expand (GtkCTree * ctree, GList * node, gpointer user_data)
-{
-
-}
-*/
 
 void
-on_update_debug_clicked (GtkButton * button, gpointer user_data)
+on_run_debug_clicked (GtkButton * button, gpointer user_data)
 {
+    debug_dlg *dlg = (debug_dlg *) user_data;
 
+    if (run_dlg::destroy == 0)
+    {
+        dlg->wnd->test_dlg = new run_dlg (dlg->wnd);
+        dlg->wnd->test_dlg->run ();
+    }
 }
 
 
