@@ -40,6 +40,9 @@ public:
      * @param paned The GtkPaned that will hold the list widget.
      */
     GuiList (GtkWidget* paned);
+    /**
+     * Standard desctructor.
+     */
     ~GuiList ();
     
     /**

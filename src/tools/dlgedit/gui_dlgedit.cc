@@ -87,7 +87,7 @@ GuiDlgedit::GuiDlgedit ()
     GtkWidget *menu;
     GtkWidget *submenu;
     GtkWidget *menuitem;
-    GtkWidget *paned;
+    GtkWidget *hpaned, *vpaned;
     GdkPixmap *icon;
     GdkBitmap *mask;
     GtkAccelGroup *accel_group;
@@ -308,20 +308,29 @@ GuiDlgedit::GuiDlgedit ()
 
     gtk_widget_show (menu);
 
-    paned = gtk_vpaned_new ();
-    gtk_box_pack_start (GTK_BOX (vbox), paned, TRUE, TRUE, 2);
-    gtk_paned_set_handle_size (GTK_PANED (paned), 5);
-    gtk_paned_set_gutter_size (GTK_PANED (paned), 7);
-    gtk_widget_show (paned);
+    vpaned = gtk_vpaned_new ();
+    gtk_box_pack_start (GTK_BOX (vbox), vpaned, TRUE, TRUE, 2);
+    gtk_paned_set_handle_size (GTK_PANED (vpaned), 5);
+    gtk_paned_set_gutter_size (GTK_PANED (vpaned), 7);
+    gtk_widget_show (vpaned);
 
+    hpaned = gtk_hpaned_new ();
+    gtk_paned_add1 (GTK_PANED (vpaned), hpaned);
+    gtk_paned_set_handle_size (GTK_PANED (hpaned), 5);
+    gtk_paned_set_gutter_size (GTK_PANED (hpaned), 7);
+    gtk_widget_show (hpaned);
+    
     // Accelerators
     gtk_window_add_accel_group (GTK_WINDOW (wnd), accel_group);
 
+    // Tree
+    tree_ = new GuiTree (hpaned);
+    
     // Drawing Area
-    graph_ = new GuiGraph (paned);
+    graph_ = new GuiGraph (hpaned);
     
     // List
-    list_ = new GuiList (paned);
+    list_ = new GuiList (vpaned);
     
     // Status bars
     hbox = gtk_hbox_new (FALSE, 0);
@@ -507,6 +516,7 @@ void GuiDlgedit::revertDialogue ()
     
     // redisplay
     graph_->detachModule ();
+    tree_->display (module);
     graph_->attachModule (module);
 }
 
@@ -560,6 +570,9 @@ void GuiDlgedit::closeDialogue ()
     // detach module
     graph_->detachModule ();
     
+    // clear the module structure
+    tree_->clear ();
+
     // if another dialogue is open, display that one
     if (dialogues_.size () > 0) showDialogue (dialogues_.front ());
     // otherwise just clear the GUI
@@ -580,6 +593,9 @@ void GuiDlgedit::showDialogue (DlgModule *module, bool center)
 {
     // remove the current module from the view
     graph_->detachModule ();
+    
+    // update the tree view
+    tree_->display (module);
     
     // attach the dialogue to the view
     graph_->attachModule (module, center);

@@ -226,6 +226,20 @@ public:
     void setChanged (bool c = true)     { changed_ = c; }
     
     /**
+     * Retrieve the parent dialogue of this module. If the module is
+     * a sub-dialogue, this will point to the dialogue that contains
+     * the module. If it is the top-level dialogue, the parent will be
+     * NULL.
+     * @return parent of this dialogue, or \b NULL if it's a top-level dialogue 
+     */
+    DlgModule *parent ()                { return parent_; }
+    /**
+     * Set the parent of this dialogue.
+     * @param parent The module containing this sub-dialogue
+     */
+    void setParent (DlgModule *parent)  { parent_ = parent; }
+    
+    /**
      * Get a pointer to the module entry
      * @return the DlgModuleEntry of this module
      */
@@ -244,6 +258,7 @@ protected:
     std::vector<DlgNode*> nodes;// all the nodes in this dialogue
     DlgNode *selected_;         // the node currently selected
     DlgNode *highlighted_;      // the node currently under the cursor
+    DlgModule *parent_;         // parent of sub-dialogue
     
     DlgPoint offset_;           // The current offset in the graph view
     bool changed_;              // Whether there were changes since saving

@@ -39,6 +39,7 @@ dlgedit_SOURCES = \
     gui_modal_dialog.cc \
     gui_settings.cc \
     gui_tooltip.cc \
+    gui_tree.cc \
     kb_traverse.cc \
     lex.loadcfg.cc \
     lex.loadlg.cc \
@@ -75,6 +76,7 @@ dlgedit_SOURCES = \
     gui_modal_dialog.h \
     gui_settings.h \
     gui_tooltip.h \
+    gui_tree.h \
     kb_traverse.h
 
 # Evil, but it works...

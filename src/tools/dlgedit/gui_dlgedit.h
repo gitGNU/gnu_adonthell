@@ -25,6 +25,7 @@
 #include "gui_messages.h"
 #include "gui_graph.h"
 #include "gui_list.h"
+#include "gui_tree.h"
 
 /**
  * The application's main window. Contains the menu- and statusbar, as
@@ -62,11 +63,16 @@ public:
      */
     GuiGraph *graph ()      { return graph_; }
     /**
-     * Retriecve the instant preview widget.
+     * Retrieve the instant preview widget.
      * @return the widget containing the text of the selected DlgNode and
      *         that of it's parents and children.  
      */
     GuiList *list ()        { return list_; }
+    /**
+     * Retrieve the module structure view.
+     * @return the widget displaying the dialogue and its sub-modules.
+     */
+    GuiTree *tree ()        { return tree_; }
     
     /**
      * Retrieve the font used to draw text onto a drawing area.
@@ -214,6 +220,7 @@ private:
     int number;                     // serial number of open dialogues
     mode_type mode_;                // the program mode
     GuiList *list_;                 // instant preview widget
+    GuiTree *tree_;                 // dialogue structure view
     GuiGraph *graph_;               // dialogue view
     GuiMessages *message;           // statusbar for displaying help/error texts
     GtkWidget *wnd;                 // actual main window

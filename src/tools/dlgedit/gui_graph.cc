@@ -41,7 +41,7 @@ GuiGraph::GuiGraph (GtkWidget *paned)
     // create drawing area for the graph
     graph = gtk_drawing_area_new ();
     gtk_drawing_area_size (GTK_DRAWING_AREA (graph), 200, 450);
-    gtk_paned_add1 (GTK_PANED (paned), graph);
+    gtk_paned_add2 (GTK_PANED (paned), graph);
     gtk_widget_show (graph);
     gtk_widget_grab_focus (graph);
     
@@ -70,7 +70,10 @@ void GuiGraph::attachModule (DlgModule *m, bool cntr)
 
     // if a node is selected, update the instant preview
     GuiDlgedit::window->list ()->display (module->selected ());
-        
+    
+    // update the module structure
+    GuiDlgedit::window->tree ()->select (module);
+
     // update the program state
     GuiDlgedit::window->setMode (module->mode ());
 
@@ -88,7 +91,7 @@ void GuiGraph::detachModule ()
     
     // clear the instant preview
     GuiDlgedit::window->list ()->clear ();
-
+    
     // update the program state
     GuiDlgedit::window->setMode (IDLE);
 
@@ -98,6 +101,13 @@ void GuiGraph::detachModule ()
         delete tooltip;
         tooltip = NULL;
     }
+}
+
+// display a different module
+void GuiGraph::switchModule (DlgModule *m)
+{
+    detachModule ();
+    attachModule (m);
 }
 
 // create a new circle
@@ -201,10 +211,13 @@ bool GuiGraph::newModule (DlgPoint &point)
     GuiFile fs = GuiFile (FS_LOAD, "Select sub-dialogue to add", dir + "/");
     if (fs.run ())
     {
-        DlgModule *subdlg = GuiDlgedit::window ->loadSubdialogue (fs.getSelection());
+        DlgModule *subdlg = GuiDlgedit::window->loadSubdialogue (fs.getSelection());
 
         if (subdlg == NULL) return false;
 
+        // set parent of the sub-dialogue
+        subdlg->setParent (module);
+        
         // draw the sub-dialogue
         subdlg->initShape (point);
         subdlg->draw (surface, *offset);
@@ -213,6 +226,9 @@ bool GuiGraph::newModule (DlgPoint &point)
         module->setChanged ();
         module->addNode (subdlg);
               
+        // update the module tree
+        GuiDlgedit::window->tree ()->insert (module, subdlg);
+        
         return true;
     }
     
@@ -291,9 +307,22 @@ bool GuiGraph::selectNode (DlgPoint &point)
     
     // no node at that position
     if (node == NULL) return false;
-    else module->traverse ()->select (node);
+
+    // if we have a sub-dialogue, descent
+    if (node->type () == MODULE)
+    {
+        switchModule ((DlgModule *) node);
+        return true;
+    }
+
+    // otherwise select the node
+    if (selectNode (node))
+    {
+        module->traverse ()->select (node);
+        return true;
+    }
     
-    return selectNode (node);
+    return false;
 }
 
 // select parent
@@ -795,4 +824,17 @@ void GuiGraph::scroll ()
 {
     offset->move (scroll_offset);
     draw ();
+}
+
+// get the toplevel dialogue module
+DlgModule *GuiGraph::dialogue ()
+{
+    // if there is no module assigned to the view, there is nothing to do
+    if (module == NULL) return NULL;
+
+    DlgModule *toplevel = module;
+    
+    while (toplevel->parent () != NULL) toplevel = toplevel->parent ();
+    
+    return toplevel;
 }

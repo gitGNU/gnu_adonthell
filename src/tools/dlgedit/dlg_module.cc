@@ -44,6 +44,7 @@ void DlgModule::init ()
     mode_ = IDLE;
     selected_ = NULL;
     highlighted_ = NULL;
+    parent_ = NULL;
     changed_ = false;
 }
 

@@ -41,8 +41,15 @@ public:
      * @param paned The GtkPaned that will hold the graph view widget.
      */
     GuiGraph (GtkWidget* paned);
+    /**
+     * Standard desctructor.
+     */
     ~GuiGraph ();
     
+    /**
+     * @name Changing the view
+     */
+    //@{
     /**
      * Attach a dialogue module to the view for drawing.
      * @param m the DlgModule to display and edit.
@@ -53,6 +60,13 @@ public:
      * Detach the dialogue module attached to the view.
      */ 
     void detachModule ();
+    /**
+     * Switch view to the given module. Just a convenience method. Calling
+     * detachModule () followed by attachModule (m) will do the same.
+     * @param m The module to display.
+     */
+    void switchModule (DlgModule *m);
+    //@}
     
     /**
      * @name Drawing area handling methods.
@@ -254,7 +268,13 @@ public:
      * Return the attached dialogue module.
      * @return the DlgModule currently attached to the view 
      */
-    DlgModule *dialogue ()      { return module; }
+    DlgModule *getAttached ()   { return module; }
+    /**
+     * Get the (toplevel) dialogue the attached module
+     * belongs to.
+     * @return The toplevel dialogue.
+     */
+    DlgModule *dialogue ();
     /**
      * Get the state of the attached module.
      * @return the attached DlgModule's state. 
