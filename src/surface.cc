@@ -52,6 +52,9 @@ void surface::double_size(const surface & src)
 {
     u_int32 col;
 
+    lock ();
+    src.lock ();
+    
     resize(src.length(), src.height());
     for (u_int16 j = 0; j < height(); j++)
         for (u_int16 i = 0; i < length(); i++)
@@ -59,11 +62,17 @@ void surface::double_size(const surface & src)
             src.get_pix_aux(i, j, col);
             put_pix(i, j, col);
         }
+    
+    src.unlock ();
+    unlock ();
 }
 
 void surface::half_size(const surface & src)
 {
     u_int32 col;
+
+    lock ();
+    src.lock ();
 
     resize_aux(src.length(), src.height());
     for (u_int16 j = 0; j < src.height() - 1; j++)
@@ -72,6 +81,9 @@ void surface::half_size(const surface & src)
             src.get_pix(i, j, col);
             put_pix_aux(i, j, col);
         }
+        
+    src.unlock ();
+    unlock ();
 }
 
 void surface::get_pix_aux (u_int16 x, u_int16 y, u_int32& col) const

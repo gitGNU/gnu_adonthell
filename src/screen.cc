@@ -38,7 +38,7 @@ bool screen::dblmode;
 void screen::set_video_mode (u_int16 nl, u_int16 nh, u_int8 depth, bool dbl, bool fscreen)
 {
     u_int8 bpp;
-    u_int32 SDL_flags = SDL_DOUBLEBUF;
+    u_int32 SDL_flags = SDL_SWSURFACE;
     u_int8 emulated = depth; 
     
     if (fscreen) 
@@ -58,7 +58,10 @@ void screen::set_video_mode (u_int16 nl, u_int16 nh, u_int8 depth, bool dbl, boo
     // Default video depth if none chosen.
     if (!depth) depth = 16; 
     
-    bpp = SDL_VideoModeOK (nl, nh, depth, SDL_flags);
+    if (dblmode)
+        bpp = SDL_VideoModeOK (nl << 1, nh << 1, depth, SDL_flags);
+    else
+        bpp = SDL_VideoModeOK (nl, nh, depth, SDL_flags);
 
     if ((emulated) && (bpp) && (bpp != depth)) bpp = depth; 
 
