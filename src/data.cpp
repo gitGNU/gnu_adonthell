@@ -309,8 +309,10 @@ void data::unload ()
     while ((mychar = (character *) characters.next ()) != NULL)
     {
         characters.erase (mychar->get_name());
+#if defined (USE_MAP)
         map_engine->get_landmap ()->remove_mapchar (mychar, 
             mychar->get_submap (), mychar->get_posx (), mychar->get_posy ());
+#endif
         delete mychar;
     }
 
@@ -325,7 +327,9 @@ void data::unload ()
     the_player = NULL;
 
     // clean the map
+#if defined (USE_MAP)
     map_engine->get_landmap ()->mapchar.clear ();
+#endif
 }
 
 // Save all dynamic gamedata to the gamedir
@@ -450,13 +454,14 @@ gamedata* data::save (u_int32 pos, char *desc)
 bool data::save_mapcharacter (char *file)
 {
     ofstream f (file);
-    character *mychar;
-    char *fname;
 
     if (!f) return false;
 
 #if defined (USE_MAP)
-    f << "map = map_engine.get_landmap ()\n\n";
+    character *mychar;
+    char *fname;
+
+     f << "map = map_engine.get_landmap ()\n\n";
 
     while ((mychar = (character *) characters.next ()) != NULL)
     {
