@@ -100,7 +100,6 @@ void game::init(config &myconfig)
         mynpc = new npc;
         mynpc->load (in);
         PyDict_SetItemString (chars, mynpc->name, pass_instance (mynpc, "npc"));
-        characters.set (mynpc->name, mynpc);
     }
     
     fclose (in);

@@ -21,6 +21,7 @@
 void character::save (FILE *out)
 {
     hash_map<const char*, s_int32, hash<const char*>, equal_key>::iterator i;
+    vector<event*>::iterator k;
     int j;
 
     // Save name
@@ -43,17 +44,28 @@ void character::save (FILE *out)
         fwrite ((*i).first, j, 1, out);
         fwrite (&(*i).second, sizeof (s_int32), 1, out);
     }
+
+    // save events
+    j = events.size ();
+    fwrite (&j, sizeof (j), 1, out);
+    
+    for (k = events.begin (); k != events.end (); k++)
+        (*k)->save (out);
 }
 
-void character::load (FILE *in)
+void character::load (FILE *in, bool reg_event)
 {
     int i, j, size, value;
+    event *e;
     char *key;
 
     // load name
     fread (&size, sizeof(size), 1, in);
     name = new char[size];
     fread (name, size, 1, in);
+
+    // We have to insert the character here *before* loading it's events
+    game::characters.set (name, this);
 
     // Load position
     fread (&posx, sizeof(posx), 1, in);
@@ -70,6 +82,14 @@ void character::load (FILE *in)
 
         set (key, value);
     }
+
+    // load all events
+    fread (&size, sizeof(size), 1, in);
+    for (i = 0; i < size; i++)
+    {
+        e = event_handler::load_event (in, reg_event);
+        if (e) events.push_back (e);
+    }
 }
 
 // Init NPC
@@ -83,7 +103,7 @@ npc::npc ()
 // Cleanup NPC
 npc::~npc ()
 {
-    Py_XDECREF (schedule);
+    if (schedule) delete schedule;
     if (dialogue) free (dialogue);
     if (schedule_file) free (schedule_file);
 }
@@ -96,13 +116,21 @@ void npc::set_dialogue (char *dlg)
 }
 
 // Set/change active schedule
-void npc::set_schedule (char* file)
+void npc::set_schedule (char* file, bool load_script)
 {
+    // char- and dlgedit don't have to load the script
+    if (!load_script)
+    {
+        if (schedule_file) free (schedule_file);
+        schedule_file = strdup (file);
+        return;
+    }
+    
     char script[255];
-    strcpy (script, "scripts/");
+    strcpy (script, "scripts/schedules/");
     strcat (script, file);
     strcat (script, ".py");
-    
+
     FILE *f = fopen (script, "r");
 
     // See whether the script exists at all
@@ -113,7 +141,7 @@ void npc::set_schedule (char* file)
         if (n)
         {
             // If no errors occured update schedule code ...
-            Py_XDECREF (schedule);
+            if (schedule) delete schedule;
             schedule = PyNode_Compile (n, file);
 
             // ... and the schedule script file
@@ -185,11 +213,11 @@ void npc::save (FILE *out)
 }
 
 // load npc from disk
-void npc::load (FILE *in)
+void npc::load (FILE *in, bool load_script)
 {
     int i;
 
-    character::load (in);
+    character::load (in, load_script);
 
     fread (&i, sizeof (i), 1, in);
     if (dialogue) free (dialogue);
@@ -200,5 +228,5 @@ void npc::load (FILE *in)
     if (schedule_file) free (schedule_file);
     schedule_file = (char*) malloc (i);
     fread (schedule_file, i, 1, in);
-    set_schedule (schedule_file);   
+    set_schedule (schedule_file, load_script);   
 }

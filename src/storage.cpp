@@ -20,7 +20,7 @@
 void storage::set (const char *key, s_int32 value)
 {
 #ifdef _DEBUG_
-    cout << " storage::set \"" << key << "\" = " << value;
+    cout << "\nstorage::set \"" << key << "\" = " << value;
 #endif
     if (!value) data.erase (key);
     else data[key] = value;
@@ -31,9 +31,9 @@ s_int32 storage::get (const char *key)
 {
 #ifdef _DEBUG_
     if (data.find (key) != data.end ())
-        cout << " storage::get \"" << key << "\" = " << data[key];
+        cout << "\nstorage::get \"" << key << "\" = " << data[key];
     else
-        cout << " storage::get no such key \"" << key << "\"";
+        cout << "\nstorage::get no such key \"" << key << "\"";
 #endif
     if (data.find (key) == data.end ()) return 0;
     else return data[key];

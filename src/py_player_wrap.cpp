@@ -708,11 +708,14 @@ static PyObject *_wrap_npc_set_schedule(PyObject *self, PyObject *args) {
     PyObject *resultobj;
     npc *arg0 ;
     char *arg1 ;
+    bool arg2 = true ;
     PyObject * argo0 =0 ;
+    int tempbool2 = (int) true ;
     
-    if(!PyArg_ParseTuple(args,"Os:npc_set_schedule",&argo0,&arg1)) return NULL;
+    if(!PyArg_ParseTuple(args,"Os|i:npc_set_schedule",&argo0,&arg1,&tempbool2)) return NULL;
     if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_npc,1)) == -1) return NULL;
-    arg0->set_schedule(arg1);
+    arg2 = (bool ) tempbool2;
+    arg0->set_schedule(arg1,arg2);
     Py_INCREF(Py_None);
     resultobj = Py_None;
     return resultobj;

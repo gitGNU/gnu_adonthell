@@ -36,6 +36,11 @@ class event
 {
 friend event_handler;
 
+public:
+    char* script_file;                          // Filename of the event script
+    virtual void save (FILE*) = 0;              // save the event data
+    virtual ~event ();
+    
 // Don't grant direct access to these: only event_handler may set/modify
 // event type or script (for safety reasons)
 protected:
@@ -52,6 +57,7 @@ class enter_event : public event
 {
 public:
     enter_event ();
+    void save (FILE*);                          // Save event data
 
     s_int32 x;                                  // x coordinate
     s_int32 y;                                  // y coordinate
@@ -73,7 +79,7 @@ public:
     ~event_list ();                             // Unregister all events
 };
 
-// Keeps track of registers scripts, recieves triggered events 
+// Keeps track of registered scripts, recieves triggered events 
 // and executes scripts handling those events
 class event_handler
 {
@@ -81,7 +87,7 @@ public:
     static void register_event (event*, char*); // register an event
     static void remove_event (event*);          // unregister an event
     static void raise_event (event*);           // event triggered
-    static event* load_event (FILE*, bool);     // load an event
+    static event* load_event (FILE*, bool=true);// load an event
     
 private:
     static vector<event*> handlers[MAX_EVENT];  // registered events storage

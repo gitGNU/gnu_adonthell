@@ -35,6 +35,12 @@ event_list::~event_list ()
     }    
 }
 
+event::~event ()
+{
+    if (script_file) delete script_file;
+    if (script) delete script;
+}
+
 // Array with the registered events; each type of event is kept in
 // a vector of its own for faster access
 vector<event*> event_handler::handlers[MAX_EVENT];
@@ -90,11 +96,10 @@ void event_handler::register_event (event *e, char *file)
 }
 
 // Load (and register an event)
-event* event_handler::load_event (FILE* f, bool reg = true)
+event* event_handler::load_event (FILE* f, bool reg)
 {
     u_int8 type;
-    u_int16 len;
-    char *file;
+    char *script_file;
     event *e = NULL;
 
     fread (&type, sizeof (type), 1, f);
@@ -103,7 +108,7 @@ event* event_handler::load_event (FILE* f, bool reg = true)
     {
         case ENTER_EVENT:
         {
-            e = new enter_event ();
+            e = new enter_event;
             break;
         }
         
@@ -119,11 +124,12 @@ event* event_handler::load_event (FILE* f, bool reg = true)
     // should we register the event?
     if (reg)
     {
-        fread (&len, sizeof (len), 1, f);
-        file = new char[len];
-        fread (file, len, 1, f);
-        register_event (e, file);
-        delete file; 
+        script_file = new char[strlen (e->script_file) + 20];
+        strcpy (script_file, "scripts/events/");
+        strcat (script_file, e->script_file);
+        strcat (script_file, ".py");
+        
+        register_event (e, script_file);
     }
     
     return e;
@@ -137,6 +143,8 @@ enter_event::enter_event ()
     type = ENTER_EVENT; 
     x = y = dir = map = -1;
     c = NULL;
+    script_file = NULL;
+    script = NULL;
 }
 
 // compare two enter events
@@ -175,15 +183,39 @@ void enter_event::execute (event *e)
 void enter_event::load (FILE *f)
 {
     u_int16 len;
-    char *name;
-    
+    char* name;
+        
     fread (&x, sizeof (x), 1, f);
     fread (&y, sizeof (y), 1, f);
     fread (&dir, sizeof (dir), 1, f);
     fread (&map, sizeof (map), 1, f);
+
     fread (&len, sizeof (len), 1, f);
     name = new char[len];
     fread (name, len, 1, f);
     c = (character*) game::characters.get (name);
+
+    fread (&len, sizeof (len), 1, f);
+    script_file = new char[len];
+    fread (script_file, len, 1, f);
+
     delete name;
+}
+
+// Save enter_event to file
+void enter_event::save (FILE *out)
+{
+    u_int16 len = strlen (c->name) + 1;
+
+    fwrite (&type, sizeof (type), 1, out);
+    fwrite (&x, sizeof (x), 1, out);
+    fwrite (&y, sizeof (y), 1, out);
+    fwrite (&dir, sizeof (dir), 1, out);
+    fwrite (&map, sizeof (map), 1, out);    
+    fwrite (&len, sizeof (len), 1, out);
+    fwrite (c->name, len, 1, out);    
+
+    len = strlen (script_file) + 1;
+    fwrite (&len, sizeof (len), 1, out);
+    fwrite (script_file, len, 1, out);    
 }

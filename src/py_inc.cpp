@@ -51,6 +51,7 @@ bool init_python(void)
 	Py_Initialize();
 
 	insert_path("scripts");
+	insert_path("scripts/modules");
 	//exec_file("scripts/init.py");
 
 	/* Initialise SWIG modules. This should go if we ever switch to dynamic 
