@@ -193,6 +193,9 @@ int main(int argc, char * argv[])
 
     mapengine::map_engine(map1);
     
+    // save the config file
+    myconfig.write_adonthellrc ();
+
     game::cleanup();
   
     return 0;

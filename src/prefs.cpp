@@ -19,12 +19,15 @@
 
 config::config (string s) : section (s)
 {
+    alt_configs = NULL;                     // Alternative Configurations
+    defaults = "adonthell";                 // Default configuration
+    
     // set some default values where possible
     datadir = "/usr/local/share/adonthell"; // Directory containing the gamedata
     mapname = "maptest.map";                // Map to load on startup
     screen_resolution = 0;                  // 320x240
     screen_mode = 1;                        // Fullscreen
-    window_theme = "original";             // Default theme
+    window_theme = "original";              // Default theme
     audio_channels = 1;                     // Stereo
     audio_resolution = 1;                   // 16 bit
     audio_interpolation = 1;                // Interpolation on
@@ -33,9 +36,6 @@ config::config (string s) : section (s)
 
     // set the path to the adonthellrc file:
     adonthellrc = string (getenv ("HOME")) + "/.adonthell";
-
-    // try to create that directory in case it dosn't exist
-    mkdir (adonthellrc.data (), 0700);
 }
 
 
@@ -50,8 +50,15 @@ void config::write_adonthellrc ()
        << "# edit to your needs!\n\n"
        << "# Default [section]\n#   Section to load if engine is called"
        << " without parameter\n"
-       << "Default [adonthell]\n\n"
-       << "Section [adonthell]\n\n"
+       << "Default [" << defaults << "]\n\n";
+
+    save_section (rc);
+    rc.close ();
+}
+
+void config::save_section (ofstream &rc)
+{
+    rc << "Section [" << section << "]\n\n"
        << "# Data [path]\n#   Path to the games data directory\n"
        << "    Data [" << datadir << "]\n\n"
        << "# Map [file]\n#   Filename of the standard map to load\n"
@@ -73,15 +80,20 @@ void config::write_adonthellrc ()
        << "    Audio-interpolation " << (int) audio_interpolation << "\n\n"
        << "# Audio-volume num\n#   0 - 100 %\n"
        << "    Audio-volume " << (int) audio_volume << "\n\n"
-       << "End\n";
+       << "End\n\n";
 
-    rc.close ();
+    // recusively save all the other sections :)
+    if (alt_configs != NULL) alt_configs->save_section (rc);
 }
 
 int config::read_adonthellrc ()
 {
-    int n, i = 1;
+    int n, i = 1, got_it = 0;
     string s, fname = adonthellrc + "/adonthellrc";
+    config *c;
+
+    // try to create that directory in case it dosn't exist
+    mkdir (adonthellrc.data (), 0700);
 
     // prefsin is declared in lex.prefs.c
     prefsin = fopen (fname.c_str (), "r");
@@ -105,33 +117,37 @@ int config::read_adonthellrc ()
         {
             case PREFS_DEFAULT:
             {
-                if (section == "") 
-                    if (parse_adonthellrc (n, s) == PREFS_STR)
-                        section = s;
-                    
+                if (parse_adonthellrc (n, s) == PREFS_STR)
+                    defaults = s;
+
+                if (section == "")
+                    section = defaults;
+                        
                 break;
             }
 
             case PREFS_SECTION:
             {
-                // In case we have no explicit section to load, take this as it
-                // is the first
-                if (section == "")
+                if (parse_adonthellrc (n, s) == PREFS_STR)
                 {
-                    load_section ();
-                    return 1;
-                }
-                
-                // If we have been given a (default) section to load, look if
-                // we found it
-                else
-                {
-                    if (parse_adonthellrc (n, s) == PREFS_STR)
-                        if (s == section)
-                        {
-                            load_section ();
-                            return 1;
-                        }
+                    // In case no section and no defaults given, load the
+                    // first one
+                    if (section == "") section = s;
+                        
+                    // This is the section we have been given to load, 
+                    if (section == s)
+                    {
+                        load_section ();
+                        got_it = 1;
+                    }
+                    // Load the rest and add them to the list o' sections
+                    else
+                    {
+                        c = new config (s);
+                        c->load_section ();
+                        c->alt_configs = alt_configs;
+                        alt_configs = c;
+                    }
                 }
 
                 break;
@@ -141,12 +157,16 @@ int config::read_adonthellrc ()
         }
     } 
 
-    // If we arrive here, no configuration has been loaded
-    cout << "\nSorry, could not load the configuration \"" << section << "\".\n"
-         << "Please check the " << adonthellrc << "/adonthellrc file\n"
-         << "for available configurations.\n" << flush;
-
-    return 0;
+    if (!got_it)
+    {
+        // If we arrive here, no configuration has been loaded
+        cout << "\nSorry, could not load the configuration \"" << section << "\".\n"
+             << "Please check the " << adonthellrc << "/adonthellrc file\n"
+             << "for available configurations.\n" << flush;
+        return 0;
+    }
+    
+    return 1;
 }
 
 void config::load_section ()

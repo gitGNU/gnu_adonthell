@@ -16,6 +16,7 @@
 #define __PREFS_H__
 
 #include <string>
+#include <fstream.h>
 #include "types.h"
 
 extern FILE* prefsin;
@@ -64,9 +65,13 @@ public:
 
 private:
     void load_section ();           // Load the actual game settings
-
+    void save_section (ofstream&);  // Save them
+    
     string section;                 // Which section of the adonthellrc to read
+    string defaults;                // Default section to load
     string adonthellrc;             // Path to the adonthellrc file: $HOME/.adonthell/ 
+
+    config *alt_configs;            // List of alternative configurations
 };
 
 #endif // __PREFS_H__
