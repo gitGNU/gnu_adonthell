@@ -256,6 +256,10 @@ string dlg_compiler::inflate (string code, int mode)
         (code.find ('(') != code.npos && code.find (')') != code.npos))
         return code;
 
+    // ignore comments and empty lines
+    if (code == "" || code[0] == '#')
+        return code;
+    
     string variable, prefix(""), suffix("");
 
     switch (mode)
