@@ -21,6 +21,7 @@ dlgedit_SOURCES = \
     dlg_module_entry.cc \
     dlg_mover.cc \
     dlg_node.cc \
+    dlg_node_gfx.cc \
     dlg_point.cc \
     dlg_rect.cc \
     gui_circle.cc \
@@ -37,6 +38,7 @@ dlgedit_SOURCES = \
     gui_list_events.cc \
     gui_messages.cc \
     gui_modal_dialog.cc \
+    gui_resources.cc \
     gui_settings.cc \
     gui_tooltip.cc \
     gui_tree.cc \
@@ -74,6 +76,7 @@ dlgedit_SOURCES = \
     gui_list_events.h \
     gui_messages.h \
     gui_modal_dialog.h \
+    gui_resources.h \
     gui_settings.h \
     gui_tooltip.h \
     gui_tree.h \

@@ -78,11 +78,6 @@ public:
      */
     void mouseMoved (DlgPoint &point);
     /**
-     * Blit a certain area of the graph widget to the screen
-     * @param the rectangular area to update.
-     */
-    void update (DlgRect &area);
-    /**
      * Draw everything to the backing pixmap.
      */
     void draw ();
@@ -279,7 +274,7 @@ public:
      * Get the state of the attached module.
      * @return the attached DlgModule's state. 
      */
-    mode_type mode ()           { return module ? module->mode () : IDLE; }
+    mode_type mode ()           { return module ? module->state () : IDLE; }
     //@}
     
 private:
@@ -292,7 +287,6 @@ private:
     GuiTooltip *tooltip;    // Tooltip for displaying node-text
     bool scrolling;         // Indicates whether autoscrolling is active
     DlgPoint scroll_offset; // Offset by which the view moves during scrolling
-    bool updateBackground;  // Don't show updates to the drawing area
 };
 
 #endif // GUI_GRAPH_H

@@ -87,8 +87,9 @@ public:
      * The node's current mode determines the color thw node is drawn with. 
      * @param surface the GdkPixmap to draw to
      * @param offset the DlgPoint to use as offset
+     * @param widget the GtkWidget to update after drawing
      */
-    void draw (GdkPixmap *surface, DlgPoint &offset);
+    void draw (GdkPixmap *surface, DlgPoint &offset, GtkWidget *widget);
 
     /**
      * Get the contents of this node.

@@ -66,8 +66,9 @@ public:
      * The node's current mode determines the color thw node is drawn with. 
      * @param surface the GdkPixmap to draw to
      * @param offset the DlgPoint to use as offset
+     * @param widget the GtkWidget to update after drawing
      */
-    void draw (GdkPixmap *surface, DlgPoint &offset);
+    void draw (GdkPixmap *surface, DlgPoint &offset, GtkWidget *widget);
     //@}
     
     /**
@@ -239,6 +240,18 @@ public:
      */
     void setParent (DlgModule *parent)  { parent_ = parent; }
     
+    /** 
+     * Get the current state of the module, i.e. whether a node is selected,
+     * highlighted, etc ... .
+     * @return The module's state.
+     */
+    mode_type state ()                  { return state_; }
+    /** 
+     * Set the state mode of the module.
+     * @param state The modules new state.
+     */
+    void setState (mode_type state)     { state_ = state; }
+    
     /**
      * Get a pointer to the module entry
      * @return the DlgModuleEntry of this module
@@ -263,6 +276,8 @@ protected:
     DlgPoint offset_;           // The current offset in the graph view
     bool changed_;              // Whether there were changes since saving
     int nid_;                   // Id to use for the next new node
+
+    mode_type state_;           // one of NONE, HILIGHTED, SELECTED
 
     std::string name_;          // Short (file-) name of the dialogue 
     std::string path_;          // Path of the dialogue

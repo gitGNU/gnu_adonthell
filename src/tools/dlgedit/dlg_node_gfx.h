@@ -22,6 +22,7 @@
 #ifndef DLG_NODE_GFX_H
 #define DLG_NODE_GFX_H
 
+#include <gtk/gtkstyle.h>
 #include "dlg_rect.h"
 #include "dlg_types.h"
 
@@ -51,21 +52,30 @@ public:
     mode_type mode ()           { return mode_; }
     
     /**
+     * Blit a certain area of the graph widget to the screen
+     * @param widget the widget to update
+     * @param area the rectangular area to update.
+     */
+    void update (GtkWidget *widget, DlgRect &area);
+    
+    /**
      * Draw this node to the given surface with the specified offset. 
      * The node's current mode determines the color thw node is drawn with. 
      * @param surface the GdkPixmap to draw to
      * @param offset the DlgPoint to use as offset
+     * @param widget the GtkWidget to update after drawing
      */
-    virtual void draw (GdkPixmap *surface, DlgPoint &offset) = 0;
+    virtual void draw (GdkPixmap *surface, DlgPoint &offset, GtkWidget *widget) = 0;
 
     /**
      * Draw this node to the given surface. During drawing, the mode is
      * temporarily changed to the given mode.
      * @param surface the GdkPixmap to draw to
      * @param offset the DlgPoint to use as offset
+     * @param widget the GtkWidget to update after drawing
      * @param mode the new mode of the node
      */
-    virtual void draw (GdkPixmap *surface, DlgPoint &offset, mode_type mode) = 0;
+    virtual void draw (GdkPixmap *surface, DlgPoint &offset, GtkWidget *widget, mode_type mode) = 0;
        
     /**
      * Check whether the node is located at the given point.

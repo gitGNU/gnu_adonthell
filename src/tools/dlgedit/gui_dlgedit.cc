@@ -36,6 +36,7 @@
 #include "dlg_compiler.h"
 #include "gui_code.h"
 #include "gui_settings.h"
+#include "gui_resources.h"
 #include "gui_dlgedit.h"
 #include "gui_dlgedit_events.h"
 
@@ -95,9 +96,6 @@ GuiDlgedit::GuiDlgedit ()
     window = this;
 
     number = 0;
-    
-    for (int i = 0; i < MAX_GC; i++)
-        color[i] = NULL;
     
     // Statusbar for displaying help and error messages
     GtkWidget *status_help = gtk_statusbar_new ();
@@ -369,18 +367,15 @@ GuiDlgedit::GuiDlgedit ()
     // Display welcome message
     message->display (1000);
 
-    // font to use on the drawing area
-    font_ = gdk_font_load ("-*-*-medium-r-normal-sans-12-*-*-*-*-*-iso8859-1");
-
-    // init the colors we need for drawing
-    initColors (graph_->drawingArea ());
-
     // init list of previously opened files
     initRecentFiles ();
     
     // get the current working directory
     directory_ = g_get_current_dir ();
     
+    // init the resources we will need
+    GuiResources::init (graph_->drawingArea ());
+
     clear ();
 }
 
@@ -754,7 +749,7 @@ void GuiDlgedit::exitPreview ()
     // restore the program mode
     if (module != NULL) 
     {
-        setMode (module->mode ());
+        setMode (module->state ());
         
         // deselect selected node, if any
         DlgNode *node = module->deselectNode ();
@@ -900,84 +895,6 @@ void GuiDlgedit::initRecentFiles ()
     gtk_menu_item_set_submenu (GTK_MENU_ITEM(menuItem[OPEN_RECENT]), submenu);
 }
 
-// Prepare some colors for later use
-void GuiDlgedit::initColors (GtkWidget *graph)
-{
-    GdkColor c;
-
-    // Yellow
-    color[GC_YELLOW] = gdk_gc_new (gtk_widget_get_parent_window (graph));
-    c.red = 65535;
-    c.green = 32700;
-    c.blue = 0;
-    gdk_colormap_alloc_color (gtk_widget_get_colormap (wnd), &c, TRUE, TRUE);
-    gdk_gc_set_foreground (color[GC_YELLOW], &c);
-
-    // Orange
-    color[GC_RED] = gdk_gc_new (gtk_widget_get_parent_window (graph));
-    c.red = 65535;
-    c.green = 16350;
-    c.blue = 0;
-    gdk_colormap_alloc_color (gtk_widget_get_colormap (graph), &c, TRUE, TRUE);
-    gdk_gc_set_foreground (color[GC_RED], &c);
-
-    // Dark Red
-    color[GC_DARK_RED] = gdk_gc_new (gtk_widget_get_parent_window (graph));
-    c.red = 65535;
-    c.green = 0;
-    c.blue = 0;
-    gdk_colormap_alloc_color (gtk_widget_get_colormap (wnd), &c, TRUE, TRUE);
-    gdk_gc_set_foreground (color[GC_DARK_RED], &c);
-
-    // Dark Blue
-    color[GC_DARK_BLUE] = gdk_gc_new (gtk_widget_get_parent_window (graph));
-    c.red = 0;
-    c.green = 0;
-    c.blue = 35000;
-    gdk_colormap_alloc_color (gtk_widget_get_colormap (wnd), &c, TRUE, TRUE);
-    gdk_gc_set_foreground (color[GC_DARK_BLUE], &c);
-
-    // Green
-    color[GC_GREEN] = gdk_gc_new (gtk_widget_get_parent_window (graph));
-    c.red = 16000;
-    c.green = 50000;
-    c.blue = 5000;
-    gdk_colormap_alloc_color (gtk_widget_get_colormap (wnd), &c, TRUE, TRUE);
-    gdk_gc_set_foreground (color[GC_GREEN], &c);
-
-    // Dark Green
-    color[GC_DARK_GREEN] = gdk_gc_new (gtk_widget_get_parent_window (graph));
-    c.red = 0;
-    c.green = 27300;
-    c.blue = 15600;
-    gdk_colormap_alloc_color (gtk_widget_get_colormap (wnd), &c, TRUE, TRUE);
-    gdk_gc_set_foreground (color[GC_DARK_GREEN], &c);
-
-    // Grey
-    color[GC_GREY] = gdk_gc_new (gtk_widget_get_parent_window (graph));
-    c.red = 40000;
-    c.green = 40000;
-    c.blue = 40000;
-    gdk_colormap_alloc_color (gtk_widget_get_colormap (wnd), &c, TRUE, TRUE);
-    gdk_gc_set_foreground (color[GC_GREY], &c);
-
-    // Black
-    color[GC_BLACK] = gdk_gc_new (gtk_widget_get_parent_window (graph));
-    c.red = 0;
-    c.green = 0;
-    c.blue = 0;
-    gdk_colormap_alloc_color (gtk_widget_get_colormap (wnd), &c, TRUE, TRUE);
-    gdk_gc_set_foreground (color[GC_BLACK], &c);
-    
-    // White
-    color[GC_WHITE] = gdk_gc_new (gtk_widget_get_parent_window (graph));
-    c.red = 65535;
-    c.green = 65535;
-    c.blue = 65535;
-    gdk_colormap_alloc_color (gtk_widget_get_colormap (wnd), &c, TRUE, TRUE);
-    gdk_gc_set_foreground (color[GC_WHITE], &c);
-}
-
 void GuiDlgedit::clear ()
 {
     // update the window title
@@ -1028,52 +945,6 @@ void GuiDlgedit::setMode (mode_type mode)
     
     // add the new status
     gtk_statusbar_push (GTK_STATUSBAR (status_mode), id, text);
-}
-
-
-// Get a certain predefined color
-GdkGC *GuiDlgedit::getColor (int col)
-{
-    if (col < 0 || col > MAX_GC) return NULL;
-    else return color[col];
-}
-
-// Get the right color for a (mode, type) combination
-GdkGC *GuiDlgedit::getColor (mode_type mode, node_type type)
-{    
-    switch (mode)
-    {
-        // not selected    
-        case IDLE:
-        {
-            if (type == NPC || type == LINK || type == MODULE) return color[GC_BLACK];
-            else if (type == NARRATOR) return color[GC_DARK_GREEN];
-            else return color[GC_DARK_BLUE];
-            break;
-        }
-
-        // selected
-        case NODE_SELECTED:
-        {
-            if (type == NPC || type == LINK || type == MODULE) return color[GC_DARK_RED];
-            else if (type == NARRATOR) return color[GC_YELLOW];
-            else return color[GC_RED];
-            break;
-        }
-
-        // highlighted
-        case NODE_HILIGHTED:
-        {
-            return color[GC_GREEN];
-            break;
-        }
-
-        // unknown
-        default:
-            break;
-    }
-
-    return NULL;
 }
 
 // get the full path/name/extension of a dialogue

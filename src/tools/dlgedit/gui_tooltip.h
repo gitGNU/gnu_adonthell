@@ -22,7 +22,6 @@
 #ifndef GUI_TOOLTIP_H
 #define GUI_TOOLTIP_H
 
-#include <gtk/gtkstyle.h>
 #include "dlg_node.h"
 
 /**

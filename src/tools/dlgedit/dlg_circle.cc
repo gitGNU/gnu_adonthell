@@ -19,9 +19,8 @@
  * @brief The node containing the actual dialogue text.
  */
 
-#include <gtk/gtk.h>
 #include "dlg_circle.h"
-#include "gui_dlgedit.h"
+#include "gui_resources.h"
 
 // Constructor
 DlgCircle::DlgCircle (DlgPoint &p, node_type t, DlgCircleEntry *e)
@@ -75,17 +74,17 @@ bool DlgCircle::hasChild (DlgNode *child)
 }
 
 // draw the circle
-void DlgCircle::draw (GdkPixmap *surface, DlgPoint &os)
+void DlgCircle::draw (GdkPixmap *surface, DlgPoint &os, GtkWidget *widget)
 {
     // get the color for drawing the circle
-    GdkGC *gc = GuiDlgedit::window->getColor (mode_, type_);
+    GdkGC *gc = GuiResources::getColor (mode_, type_);
     
     // offset circle
     DlgPoint position = topLeft ().offset (os);
     DlgRect area (position, width () + 1, height () + 1);
     
     // draw everything to the surface
-    gdk_draw_arc (surface, GuiDlgedit::window->getColor (GC_WHITE), TRUE, position.x (), position.y (), 20, 20, 0, 36000);
+    gdk_draw_arc (surface, GuiResources::getColor (GC_WHITE), TRUE, position.x (), position.y (), 20, 20, 0, 36000);
     gdk_draw_arc (surface, gc, FALSE, position.x (), position.y (), 20, 20, 0, 36000);
     
     // Indicate whether node contains additional code
@@ -97,7 +96,7 @@ void DlgCircle::draw (GdkPixmap *surface, DlgPoint &os)
         if (entry_->loop ()) g_string_append_c (code, 'o');
         
         // get the font to use
-        GdkFont *font = GuiDlgedit::window->font ();
+        GdkFont *font = GuiResources::font ();
     
         // place text in circles center
         int x = position.x () + (width () - gdk_string_width (font, code->str)) / 2;
@@ -108,7 +107,7 @@ void DlgCircle::draw (GdkPixmap *surface, DlgPoint &os)
     }
     
     // Update the drawing area
-    GuiDlgedit::window->graph ()->update (area);
+    update (widget, area);
 }
 
 // load a circle from a file

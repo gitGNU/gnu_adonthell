@@ -23,9 +23,10 @@
 #include "cfg_data.h"
 #include "dlg_mover.h"
 #include "gui_dlgedit.h"
+#include "gui_graph_events.h"
+#include "gui_resources.h"
 #include "gui_circle.h"
 #include "gui_file.h"
-#include "gui_graph_events.h"
 
 // Constructor
 GuiGraph::GuiGraph (GtkWidget *paned)
@@ -36,7 +37,6 @@ GuiGraph::GuiGraph (GtkWidget *paned)
     offset = NULL;
     surface = NULL;
     scrolling = false;
-    updateBackground = true;
     
     // create drawing area for the graph
     graph = gtk_drawing_area_new ();
@@ -75,7 +75,7 @@ void GuiGraph::attachModule (DlgModule *m, bool cntr)
     GuiDlgedit::window->tree ()->select (module);
 
     // update the program state
-    GuiDlgedit::window->setMode (module->mode ());
+    GuiDlgedit::window->setMode (module->state ());
 
     // set the size of the dialogue
     drawing_area.resize (graph->allocation.width, graph->allocation.height);
@@ -189,7 +189,7 @@ bool GuiGraph::newArrow (DlgPoint &point)
     
     // ... and update everything
     GuiDlgedit::window->list ()->display (start);
-	arrow->draw (surface, *offset);
+	arrow->draw (surface, *offset, graph);
     module->setChanged ();
     
     return true;
@@ -220,7 +220,7 @@ bool GuiGraph::newModule (DlgPoint &point)
         
         // draw the sub-dialogue
         subdlg->initShape (point);
-        subdlg->draw (surface, *offset);
+        subdlg->draw (surface, *offset, graph);
 
         // update the module
         module->setChanged ();
@@ -282,7 +282,7 @@ bool GuiGraph::selectNode (DlgNode *node)
         GuiDlgedit::window->list ()->display (node);
         
         // redraw the node
-        node->draw (surface, *offset);
+        node->draw (surface, *offset, graph);
 
         return true;
     }
@@ -307,13 +307,6 @@ bool GuiGraph::selectNode (DlgPoint &point)
     
     // no node at that position
     if (node == NULL) return false;
-
-    // if we have a sub-dialogue, descent
-    if (node->type () == MODULE)
-    {
-        switchModule ((DlgModule *) node);
-        return true;
-    }
 
     // otherwise select the node
     if (selectNode (node))
@@ -439,7 +432,7 @@ void GuiGraph::deselectNode ()
         GuiDlgedit::window->list ()->clear ();
         
         // redraw the node
-        deselected->draw (surface, *offset);
+        deselected->draw (surface, *offset, graph);
     }
     
     return;
@@ -496,22 +489,29 @@ bool GuiGraph::editNode ()
     if (module == NULL) return false;
     
     // see if a node is currently selected
-    DlgCircle *selected = (DlgCircle *) module->selected ();
+    DlgNode *selected = module->selected ();
 
-    // if so ...
+    // disable scrolling (just in case)
+    scrolling = false;
+
+    // if we have a sub-dialogue, descent for editing
+    if (selected->type () == MODULE)
+    {
+        switchModule ((DlgModule *) selected);
+        return true;
+    }
+
+    // if we have a circle, open edit dialog
     if (selected && selected->type () != LINK)
     {
-        // disable scrolling (just in case)
-        scrolling = false;
-        
-        GuiCircle edit (&selected->type (), selected->entry (), module->entry ());
+        GuiCircle edit (&selected->type (), ((DlgCircle *) selected)->entry (), module->entry ());
 
-	    // Editing aborted?
+	    // editing aborted?
 	    if (!edit.run ()) return false;
 	
 	    // otherwise update everything
         GuiDlgedit::window->list ()->display (selected);
-	    selected->draw (surface, *offset);
+	    selected->draw (surface, *offset, graph);
         module->setChanged ();
         
         return true;
@@ -572,7 +572,7 @@ bool GuiGraph::prepareDragging (DlgPoint &point)
     if (mover != NULL)
     {
         GuiDlgedit::window->setMode (NODE_DRAGGED);
-        module->setMode (NODE_DRAGGED);
+        module->setState (NODE_DRAGGED);
         
         return true;
     }
@@ -655,7 +655,7 @@ void GuiGraph::stopDragging (DlgPoint &point)
     {    
         GuiDlgedit::window->list ()->display (module->selected ());
         GuiDlgedit::window->setMode (NODE_SELECTED);
-        module->setMode (NODE_SELECTED);
+        module->setState (NODE_SELECTED);
         module->setChanged ();
     }
 
@@ -676,7 +676,7 @@ void GuiGraph::resizeSurface (GtkWidget *widget)
         widget->allocation.height, -1);
 
     // init the surface
-    if (GuiDlgedit::window->getColor (GC_GREY)) clear ();
+    if (GuiResources::getColor (GC_GREY)) clear ();
             
     // set the size of the attached dialogues
     drawing_area.resize (widget->allocation.width, widget->allocation.height);
@@ -687,7 +687,7 @@ void GuiGraph::clear ()
 {
     GdkRectangle t;
 
-    gdk_draw_rectangle (surface, GuiDlgedit::window->getColor (GC_GREY), 
+    gdk_draw_rectangle (surface, GuiResources::getColor (GC_GREY), 
         TRUE, 0, 0, graph->allocation.width, graph->allocation.height);
 
     t.x = 0;
@@ -696,15 +696,6 @@ void GuiGraph::clear ()
     t.height = graph->allocation.height;
 
     gtk_widget_draw (graph, &t);        
-}
-
-// update the graph widget
-void GuiGraph::update (DlgRect &area)
-{
-    if (updateBackground == false) return;
-    
-    GdkRectangle rect = (GdkRectangle) area;
-    gtk_widget_draw (graph, &rect);
 }
 
 // draw the graph to the surface
@@ -725,11 +716,8 @@ void GuiGraph::draw ()
 
     DlgRect rect (t);
 
-    // prevent changes to the drawing area to propagate to the screen
-    updateBackground = false;
-    
     // Clear graph
-    gdk_draw_rectangle (surface, GuiDlgedit::window->getColor (GC_WHITE), TRUE, 0, 0, t.width, t.height);
+    gdk_draw_rectangle (surface, GuiResources::getColor (GC_WHITE), TRUE, 0, 0, t.width, t.height);
 
     // normalize rect
     t.x = 0;
@@ -739,10 +727,7 @@ void GuiGraph::draw ()
     for (i = nodes.rbegin (); i != nodes.rend (); i++)
         // draw nodes and arrows
         if ((*i)->contains (rect))
-            (*i)->draw (surface, *offset);
-
-    // allow that again
-    updateBackground = true;
+            (*i)->draw (surface, *offset, NULL);
 
     // draw backing image to screen
     gtk_widget_draw (graph, &t);
@@ -769,7 +754,7 @@ void GuiGraph::mouseMoved (DlgPoint &point)
         // clear old if necessary
         if (prev != NULL)
         {
-            prev->draw (surface, *offset);
+            prev->draw (surface, *offset, graph);
             if (tooltip) 
             {
                 delete tooltip;
@@ -780,7 +765,7 @@ void GuiGraph::mouseMoved (DlgPoint &point)
         // then highlight the new one
         if (node != NULL) 
         {
-            node->draw (surface, *offset, NODE_HILIGHTED);
+            node->draw (surface, *offset, graph, NODE_HILIGHTED);
             tooltip = new GuiTooltip (node);
             tooltip->draw (graph, *offset);
         }

@@ -75,31 +75,10 @@ public:
     GuiTree *tree ()        { return tree_; }
     
     /**
-     * Retrieve the font used to draw text onto a drawing area.
-     * @return a GdkFont.
-     */
-    GdkFont *font ()        { return font_; }
-
-    /**
      * Retrieve the main window of the applictaion.
      * @return a GtkWidget.
      */
     GtkWidget *getWindow () { return wnd; }
-
-    /**
-     * Retrieve a colored 'pen' to draw onto a drawing area.
-     * @param col the color to retrieve
-     * @return a GdkGC.
-     */
-    GdkGC *getColor (int col);
-    /**
-     * Retrieve a colored 'pen' to draw onto a drawing area, depending
-     * on the given mode and type.
-     * @param mode the mode of a DlgNode
-     * @param type the type of a DlgNode
-     * @return a GdkGC.
-     */
-    GdkGC *getColor (mode_type mode, node_type type);
     //@}
     
     /**
@@ -192,11 +171,6 @@ public:
                         
 private:
     /**
-     * Prepare some colored pens for later use
-     * @param widget the widget we later draw to 
-     */
-    void initColors (GtkWidget *widget);
-    /**
      * (Re)build the 'windows' menu 
      */
     void initMenu ();
@@ -227,8 +201,6 @@ private:
     GtkWidget *menuItem[MAX_ITEM];  // pointers to a few menu-items
     GtkWidget *windowMenu;          // the 'Windows' dropdown menu
     GtkWidget *status_mode;         // statusbar displaying the program state
-    GdkFont *font_;                 // font for text-output
-    GdkGC *color[MAX_GC];           // custom Pens
     std::vector<DlgModule*> dialogues_;// dialogues currently loaded
     std::string directory_;            // directory used in last file-selection
     static char *progState[NUM_MODES]; // Textual program states

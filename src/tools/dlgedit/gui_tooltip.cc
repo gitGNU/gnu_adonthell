@@ -20,8 +20,9 @@
  */
 
 #include <gtk/gtk.h>
+#include "dlg_circle.h"
+#include "dlg_module.h"
 #include "gui_tooltip.h"
-#include "gui_dlgedit.h"
 
 // constructor
 GuiTooltip::GuiTooltip (DlgNode *n)
@@ -86,12 +87,17 @@ GuiTooltip::~GuiTooltip ()
 void GuiTooltip::draw (GtkWidget *graph, DlgPoint &offset)
 {
     if (node->type () == LINK) return;
+
+    // get position and extension of dlgedit window    
+    int x, y, width, height;
+    GdkWindow *window = gtk_widget_get_parent_window (graph);
+    gdk_window_get_origin (window, &x, &y);
+    gdk_window_get_size (window, &width, &height);
     
-    int x, y;
-    gdk_window_get_origin (gtk_widget_get_parent_window (graph), &x, &y);
     gtk_widget_realize (tooltip);
     
     // calculate the position of the tooltip
+    x += width - graph->allocation.width;
     if (node->x () < graph->allocation.width / 2) 
         x += node->x () + node->width ();
     else 

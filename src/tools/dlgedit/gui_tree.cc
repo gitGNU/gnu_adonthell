@@ -110,7 +110,7 @@ void GuiTree::build (GtkCTreeNode *root)
     for (std::vector<DlgNode*>::iterator i = nodes.begin (); i != nodes.end (); i++)
         // if we find a sub-dialogue
         if ((*i)->type () == MODULE)
-            // insert it into the tree and continue with it's sub-dialogues
+            // insert it into the tree and continue with its sub-dialogues
             build (insert (root, (DlgModule *) *i));
 }
 

@@ -143,14 +143,14 @@ void DlgNode::removePrev (DlgNode *node)
 }
 
 // draw the node (with a certain mode)
-void DlgNode::draw (GdkPixmap *surface, DlgPoint &offset, mode_type m)
+void DlgNode::draw (GdkPixmap *surface, DlgPoint &offset, GtkWidget *widget, mode_type m)
 {
     // change the mode temporarily
     mode_type oldMode = mode_;
     mode_ = m;
     
     // draw
-    draw (surface, offset);
+    draw (surface, offset, widget);
     
     // restore old mode
     mode_ = oldMode; 

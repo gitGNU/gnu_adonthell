@@ -115,16 +115,20 @@ public:
      * temporarily changed to the given mode.
      * @param surface the GdkPixmap to draw to
      * @param offset the DlgPoint to use as offset
+     * @param widget the GtkWidget to update after drawing
      * @param mode the new mode of the node
      */
-    void draw (GdkPixmap *surface, DlgPoint &offset, mode_type mode);
+    void draw (GdkPixmap *surface, DlgPoint &offset, GtkWidget *widget, mode_type mode);
     
     /**
      * Draw this node to the given surface.
      * @param surface the GdkPixmap to draw to
      * @param offset the DlgPoint to use as offset
+     * @param widget the GtkWidget to update after drawing
      */
-    virtual void draw (GdkPixmap *surface, DlgPoint &offset) { }
+    virtual void draw (GdkPixmap *surface, DlgPoint &offset, GtkWidget *widget)
+    { 
+    }
     
     /**
      * Save a node to file

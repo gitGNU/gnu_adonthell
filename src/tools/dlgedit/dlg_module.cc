@@ -19,12 +19,11 @@
  * @brief One complete dialogue or sub-dialogue.
  */
 
-#include <gtk/gtk.h>
 #include <algorithm>
 #include "dlg_module.h"
 #include "dlg_circle.h"
 #include "dlg_arrow.h"
-#include "gui_dlgedit.h"
+#include "gui_resources.h"
 
 // ctor
 DlgModule::DlgModule (std::string p, std::string n, std::string s, std::string d)
@@ -41,7 +40,7 @@ DlgModule::DlgModule (std::string p, std::string n, std::string s, std::string d
 void DlgModule::init ()
 {
     type_ = MODULE;
-    mode_ = IDLE;
+    state_ = IDLE;
     selected_ = NULL;
     highlighted_ = NULL;
     parent_ = NULL;
@@ -65,7 +64,7 @@ void DlgModule::clear ()
 void DlgModule::initShape (DlgPoint &center)
 {
     // calculate width of the module icon
-    GdkFont *font = GuiDlgedit::window->font ();
+    GdkFont *font = GuiResources::font ();
     int width = gdk_string_width (font, name ().c_str ()) + 10;
     
     // align module to the (imaginary) grid and set shape
@@ -89,7 +88,7 @@ bool DlgModule::selectNode (DlgNode *node)
     selected_ = node;
     
     // set the mode of dialogue and node
-    mode_ = NODE_SELECTED;
+    state_ = NODE_SELECTED;
     node->setMode (NODE_SELECTED);
 
     return true;
@@ -188,7 +187,7 @@ DlgNode* DlgModule::deselectNode ()
     if (selected_ == NULL) return NULL;
 
     // unselect node
-    mode_ = IDLE;
+    state_ = IDLE;
     selected_->setMode (IDLE);
     
     // nothing selected
@@ -199,21 +198,21 @@ DlgNode* DlgModule::deselectNode ()
 }
 
 // draw the module
-void DlgModule::draw (GdkPixmap *surface, DlgPoint &offset)
+void DlgModule::draw (GdkPixmap *surface, DlgPoint &offset, GtkWidget *widget)
 {
     // get the color for drawing the circle
-    GdkGC *gc = GuiDlgedit::window->getColor (mode_, type_);
+    GdkGC *gc = GuiResources::getColor (mode_, type_);
 
     // offset circle
     DlgPoint position = topLeft ().offset (offset);
     DlgRect area (position, width () + 1, height () + 1);
 
     // draw everything to the surface
-    gdk_draw_rectangle (surface, GuiDlgedit::window->getColor (GC_WHITE), TRUE, position.x (), position.y (), width (), height ());
+    gdk_draw_rectangle (surface, GuiResources::getColor (GC_WHITE), TRUE, position.x (), position.y (), width (), height ());
     gdk_draw_rectangle (surface, gc, FALSE, position.x (), position.y (), width (), height ());
 
     // get the font to draw name
-    GdkFont *font = GuiDlgedit::window->font ();
+    GdkFont *font = GuiResources::font ();
 
     // place text in module's center
     int x = position.x () + 5;
@@ -221,7 +220,7 @@ void DlgModule::draw (GdkPixmap *surface, DlgPoint &offset)
     gdk_draw_string (surface, font, gc, x, y, name ().c_str ());
 
     // Update the drawing area
-    GuiDlgedit::window->graph ()->update (area);
+    update (widget, area);
 }
 
 // Get extension of the graph for proper displaying

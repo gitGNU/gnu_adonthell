@@ -20,9 +20,8 @@
  */
 
 #include <math.h>
-#include <gtk/gtk.h>
 #include "dlg_arrow.h"
-#include "gui_dlgedit.h"
+#include "gui_resources.h"
 
 // Create a new link between two nodes
 DlgArrow::DlgArrow (DlgNode *start, DlgNode *end)
@@ -189,11 +188,11 @@ DlgPoint DlgArrow::getIntersection (DlgPoint &start, DlgPoint &end, DlgRect &sha
 }
 
 // draw the Arrow
-void DlgArrow::draw (GdkPixmap *surface, DlgPoint &point)
+void DlgArrow::draw (GdkPixmap *surface, DlgPoint &point, GtkWidget *widget)
 {
     GdkPoint l[2];
     GdkPoint t[3];
-    GdkGC *gc = GuiDlgedit::window->getColor (mode_, type_);
+    GdkGC *gc = GuiResources::getColor (mode_, type_);
     DlgRect area = inflate (10, 10);
     
     // Current position
@@ -206,11 +205,11 @@ void DlgArrow::draw (GdkPixmap *surface, DlgPoint &point)
 
     // draw everything
     gdk_draw_polygon (surface, gc, FALSE, l, 2);
-    gdk_draw_polygon (surface, GuiDlgedit::window->getColor (GC_WHITE), TRUE, t, 3);
+    gdk_draw_polygon (surface, GuiResources::getColor (GC_WHITE), TRUE, t, 3);
     gdk_draw_polygon (surface, gc, FALSE, t, 3);
 
     // update drawing area
-    GuiDlgedit::window->graph ()->update (area);
+    update (widget, area);
 }
     
 bool DlgArrow::operator== (DlgPoint &point)

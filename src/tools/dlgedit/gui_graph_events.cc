@@ -73,7 +73,6 @@ gint button_press_event (GtkWidget *widget, GdkEventButton *event, gpointer data
                     // create a submodule, if we aren't
                     graph->newModule (point);
      
-            
             // Edit node
             if (graph->mode () == NODE_SELECTED)
                 graph->editNode ();
