@@ -41,7 +41,8 @@
 #include "win_file_select.h"
 
 #ifdef _EDIT_
-typedef enum anim_editor_mode {IMAGE, FRAME};
+typedef enum anim_editor_mode
+    { IMAGE, FRAME };
 #endif
 
 #endif
@@ -49,215 +50,280 @@ typedef enum anim_editor_mode {IMAGE, FRAME};
 class animationframe
 {
  public:
-  animationframe();
-  void clear();
-  ~animationframe();
-  u_int8 alpha()
-    {
+    animationframe ();
+    void clear ();
+    ~animationframe ();
+    u_int8 alpha ()
+	{
 #ifdef REVERSE_ALPHA
-      return alpha_;
+            return alpha_;
 #else
-      return 255-alpha_;
+            return 255 - alpha_;
 #endif
-      
-    }
-  void set_alpha(u_int8 a)
-    {
-#ifdef REVERSE_ALPHA
-  alpha_=a;
-#else
-  alpha_=255-a;
-#endif
-    }
-  bool is_masked() { return is_masked_; }
-  void set_mask(bool mask) { is_masked_=mask; }
-  u_int16 image_nbr() { return imagenbr; }
-  void set_image_nbr(u_int16 imnbr) { imagenbr=imnbr; }
-  u_int16 delay() { return delay_; }
-  void set_delay(u_int16 d) { delay_=d; }
-  u_int16 nextframe() { return nextframe_; }
-  void set_nextframe(u_int16 nf) { nextframe_=nf; }
-  s_int8 get(gzFile file);
-  s_int8 load(const char * fname);
 
-  u_int16 offx() { return gapx;}
-  void set_offx(u_int16 ox) { gapx=ox;}
-  u_int16 offy() { return gapy;}
-  void set_offy(u_int16 oy) { gapy=oy;}
- private:
-  u_int16 imagenbr;
-  bool is_masked_;
-  u_int8 alpha_;
-  s_int16 gapx;
-  s_int16 gapy;
-  u_int16 delay_;
-  u_int16 nextframe_;
+	}
+    void set_alpha (u_int8 a)
+	{
+#ifdef REVERSE_ALPHA
+            alpha_ = a;
+#else
+            alpha_ = 255 - a;
+#endif
+	} bool is_masked ()
+            {
+		return is_masked_;
+            }
+    void set_mask (bool mask)
+	{
+            is_masked_ = mask;
+	} u_int16 image_nbr ()
+            {
+		return imagenbr;
+            }
+    void set_image_nbr (u_int16 imnbr)
+	{
+            imagenbr = imnbr;
+	} u_int16 delay ()
+            {
+		return delay_;
+            }
+    void set_delay (u_int16 d)
+	{
+            delay_ = d;
+	} u_int16 nextframe ()
+            {
+		return nextframe_;
+            }
+    void set_nextframe (u_int16 nf)
+	{
+            nextframe_ = nf;
+	} s_int8 get (gzFile file);
+    s_int8 load (const char *fname);
+
+    u_int16 offx ()
+	{
+            return gapx;
+	}
+    void set_offx (u_int16 ox)
+	{
+            gapx = ox;
+	} u_int16 offy ()
+            {
+		return gapy;
+            }
+    void set_offy (u_int16 oy)
+	{
+            gapy = oy;
+        } private:
+        u_int16 imagenbr;
+	bool is_masked_;
+	u_int8 alpha_;
+	s_int16 gapx;
+	s_int16 gapy;
+	u_int16 delay_;
+	u_int16 nextframe_;
 #ifdef _DEBUG_
-  static u_int16 a_d_diff;
+	static u_int16 a_d_diff;
 #endif
 
-  void init();
+	void init ();
 
  public:
 #ifdef _EDIT_
-  s_int8 put(gzFile file);
-  s_int8 save(const char * fname);
+        s_int8 put (gzFile file);
+	s_int8 save (const char *fname);
 #endif
 
 #ifndef SWIG
-  friend class animation;
-  friend class win_anim;
+	friend class animation;
+	friend class win_anim;
 #endif
 };
 
 class animation
 {
  public:
-  animation();
-  void clear();
-  ~animation();
-  bool is_empty();
-  u_int16 length() { return length_; }
-  u_int16 height() { return height_; }
+    animation ();
+    void clear ();
+    ~animation ();
+    bool is_empty ();
+    u_int16 length ()
+	{
+            return length_;
+	}
+    u_int16 height ()
+	{
+            return height_;
+	}
 
-  void play();
-  void stop();
-  void rewind();
+    void play ();
+    void stop ();
+    void rewind ();
 
-  void update();
-  void draw(s_int16 x, s_int16 y, drawing_area * da_opt=NULL);
-  void draw_border(u_int16 x, u_int16 y, drawing_area * da_opt=NULL);
+    void update ();
+    void draw (s_int16 x, s_int16 y, drawing_area * da_opt = NULL);
+    void draw_border (u_int16 x, u_int16 y, drawing_area * da_opt = NULL);
 
-  s_int8 get(gzFile file);
-  s_int8 load(const char * fname);
-  s_int8 get_off(gzFile file);
-  s_int8 load_off(const char * fname);
+    s_int8 get (gzFile file);
+    s_int8 load (const char *fname);
+    s_int8 get_off (gzFile file);
+    s_int8 load_off (const char *fname);
 
-  u_int16 nbr_of_frames() { return frame.size(); }
-  u_int16 nbr_of_images() { return t_frame.size(); }
+    u_int16 nbr_of_frames ()
+	{
+            return frame.size ();
+	}
+    u_int16 nbr_of_images ()
+	{
+            return t_frame.size ();
+	}
 
-  u_int16 currentframe() { return currentframe_; };
-  void set_currentframe(u_int16 framenbr) { currentframe_=framenbr; }
+    u_int16 currentframe ()
+	{
+            return currentframe_;
+	};
+    void set_currentframe (u_int16 framenbr)
+	{
+            currentframe_ = framenbr;
+	} s_int16 xoffset ()
+            {
+		return xoffset_;
+            }
+    s_int16 yoffset ()
+	{
+            return yoffset_;
+	}
 
-  s_int16 xoffset() { return xoffset_; }
-  s_int16 yoffset() { return yoffset_; }
+    void set_offset (s_int16 x, s_int16 y)
+	{ xoffset_ = x;
+        yoffset_ = y;
+	} void next_frame ();
 
-  void set_offset(s_int16 x, s_int16 y)
-    {
-      xoffset_=x;
-      yoffset_=y;
-    }
+    animationframe *get_frame (u_int16 nbr)
+	{
+            return &(frame[nbr]);
+	}
+    animationframe *get_current_frame ()
+	{
+            return get_frame (currentframe ());
+	}
+    image *get_image (u_int16 nbr)
+	{
+            return t_frame[nbr];
+	}
 
-  void next_frame();
-  
-  animationframe * get_frame(u_int16 nbr) { return &(frame[nbr]); }
-  animationframe * get_current_frame() { return get_frame(currentframe()); }
-  image * get_image(u_int16 nbr) { return t_frame[nbr]; }
+    u_int16 add_image (image * im)
+	{
+            insert_image (im, nbr_of_images ());
+            return nbr_of_images () - 1;
+	}
+    u_int16 add_frame (animationframe af)
+	{
+            insert_frame (af, nbr_of_frames ());
+            return nbr_of_frames () - 1;
+	}
 
-  u_int16 add_image(image * im) { insert_image(im, nbr_of_images()); return nbr_of_images()-1;}
-  u_int16 add_frame(animationframe af) { insert_frame(af, nbr_of_frames()); return nbr_of_frames()-1;}
-
-  void zoom(u_int16 sx, u_int16 sy, animation * src);
+    void zoom (u_int16 sx, u_int16 sy, animation * src);
 
  private:
 #ifdef _EDIT_
-  char file_name[500];
-  win_label * info_win_label;
-  win_container * info_win;
-  u_int8 info_win_count;
+    char file_name[500];
+    win_label *info_win_label;
+    win_container *info_win;
+    u_int8 info_win_count;
 
-  image * clipboard;
-  animationframe f_clipboard;
-  bool mode;
-  char frame_txt[500];
-  win_font * font;
-  win_theme * th;
+    image *clipboard;
+    animationframe f_clipboard;
+    bool mode;
+    char frame_txt[500];
+    win_font *font;
+    win_theme *th;
 
-  win_container * container;
-  win_label * label_mode;
-  win_label * label_frame_nbr;
-  win_label * label_frame_info;
-  win_label * label_anim_info;
-  bool must_upt_label_mode;
-  bool must_upt_label_frame_nbr;
-  bool must_upt_label_frame_info;
-  bool must_upt_label_status;
+    win_container *container;
+    win_label *label_mode;
+    win_label *label_frame_nbr;
+    win_label *label_frame_info;
+    win_label *label_anim_info;
+    bool must_upt_label_mode;
+    bool must_upt_label_frame_nbr;
+    bool must_upt_label_frame_info;
+    bool must_upt_label_status;
 
-  u_int16 currentimage;
-  bool in_editor;
+    u_int16 currentimage;
+    bool in_editor;
 #endif
 
-  void init();
+    void init ();
 
  protected:
 #ifdef _DEBUG_
-  static u_int16 a_d_diff;
+    static u_int16 a_d_diff;
 #endif
-  vector<image *> t_frame;
-  vector<animationframe> frame;
-  u_int16 length_, height_;
-  u_int16 currentframe_;
-  u_int16 speedcounter;
-  bool play_flag;
-  s_int16 xoffset_, yoffset_;
+    vector < image * >t_frame;
+    vector < animationframe > frame;
+    u_int16 length_, height_;
+    u_int16 currentframe_;
+    u_int16 speedcounter;
+    bool play_flag;
+    s_int16 xoffset_, yoffset_;
 
-  s_int8 insert_image(image * im, u_int16 pos);
-  s_int8 insert_frame(animationframe af, u_int16 pos);
-  s_int8 delete_image(u_int16 pos);
-  s_int8 delete_frame(u_int16 pos);
+    s_int8 insert_image (image * im, u_int16 pos);
+    s_int8 insert_frame (animationframe af, u_int16 pos);
+    s_int8 delete_image (u_int16 pos);
+    s_int8 delete_frame (u_int16 pos);
 
  public:
 #ifdef _EDIT_
-  s_int8 put(gzFile file);
-  s_int8 save(const char * fname);
-  s_int8 put_off(gzFile file);
-  s_int8 save_off(const char * fname);
+    s_int8 put (gzFile file);
+    s_int8 save (const char *fname);
+    s_int8 put_off (gzFile file);
+    s_int8 save_off (const char *fname);
 
-  void select_image(u_int16 nbr);
-  void select_frame(u_int16 nbr);
+    void select_image (u_int16 nbr);
+    void select_frame (u_int16 nbr);
 
-  void set_frame_gapx(u_int16 nbr, s_int16 gx);
-  void set_frame_gapy(u_int16 nbr, s_int16 gy);
-  void set_frame_alpha(u_int16 nbr, u_int8 a);
-  void set_frame_delay(u_int16 nbr, u_int16 d);
-  void set_frame_nextframe(u_int16 nbr, u_int16 nf);
-  void set_frame_mask(u_int16 nbr, bool m);
-  void set_frame_imagenbr(u_int16 nbr, u_int16 imnbr);
-  u_int16 increase_frame(u_int16 c);
-  u_int16 decrease_frame(u_int16 c);
-  u_int16 increase_image(u_int16 c);
-  u_int16 decrease_image(u_int16 c);
+    void set_frame_gapx (u_int16 nbr, s_int16 gx);
+    void set_frame_gapy (u_int16 nbr, s_int16 gy);
+    void set_frame_alpha (u_int16 nbr, u_int8 a);
+    void set_frame_delay (u_int16 nbr, u_int16 d);
+    void set_frame_nextframe (u_int16 nbr, u_int16 nf);
+    void set_frame_mask (u_int16 nbr, bool m);
+    void set_frame_imagenbr (u_int16 nbr, u_int16 imnbr);
+    u_int16 increase_frame (u_int16 c);
+    u_int16 decrease_frame (u_int16 c);
+    u_int16 increase_image (u_int16 c);
+    u_int16 decrease_image (u_int16 c);
 
-  void ed_add_image();
-  void ed_add_raw_image();
-  void ed_add_frame();
+    void ed_add_image ();
+    void ed_add_raw_image ();
+    void ed_add_frame ();
 
-  void quick_save();
-  void quick_load();
-  void save();
-  void load();
+    void quick_save ();
+    void quick_load ();
+    void save ();
+    void load ();
 
-  void save_image();
-  void save_image_raw();
+    void save_image ();
+    void save_image_raw ();
 
-  void set_mode(anim_editor_mode m);
+    void set_mode (anim_editor_mode m);
 
-  void update_label_mode();
-  void update_label_frame_nbr();
-  void update_label_frame_info();
-  void update_label_status();
-  void update_editor_keys();
-  void update_editor();
+    void update_label_mode ();
+    void update_label_frame_nbr ();
+    void update_label_frame_info ();
+    void update_label_status ();
+    void update_editor_keys ();
+    void update_editor ();
 
-  void draw_editor();
-  void update_and_draw();
-  void set_info_win(char * text);
-  void editor();
+    void draw_editor ();
+    void update_and_draw ();
+    void set_info_win (char *text);
+    void editor ();
 #endif
 
 #ifndef SWIG
-  friend class win_anim;
-  animation &operator =(animation &a);
+    friend class win_anim;
+    animation & operator = (animation & a);
 #endif
 };
 
