@@ -18,5 +18,6 @@
 #include "debug.h"
 
 GtkWidget *create_debug_wnd (debug_dlg*);
+GtkWidget* create_dbg_edit_wnd (debug_dlg*, char*, char*, char*);
 
 #endif

@@ -23,12 +23,18 @@ class debug_dlg
 {
 public:
     debug_dlg ();
+    ~debug_dlg ();
+    void init ();
     void update ();
 
     GtkWidget *quest_tree;
     GtkWidget *char_tree;
+    GtkWidget *val_entry;
+    GtkWidget *attrib_entry;
     GtkWidget *dlg;
     MainFrame *wnd;
+
+    static int destroy;
 };
 
 #endif // __DEBUG_H__

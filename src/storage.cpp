@@ -45,6 +45,20 @@ s_int32& storage::operator[] (const char *key)
     return data[key];
 }
 
+// Iterate over the array
+pair<const char*, s_int32> storage::next ()
+{
+    static hash_map<const char*, s_int32, hash<const char*>, equal_key>::iterator i = data.begin ();
+    
+    if (i == data.end ()) 
+    {
+        i = data.begin ();
+        return pair<const char*, s_int32> (NULL, 0);
+    }
+
+    return *i++;
+}
+
 
 // Insert a new object for access from the interpreter
 void objects::set (const char* key, storage *val)

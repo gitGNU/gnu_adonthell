@@ -17,14 +17,14 @@ CPPFLAGS += -D_DLGEDIT_ -D_DEBUG_ -D_VERSION_=\"0.6\" `gtk-config --cflags`
 LDADD = ../../inventory.o ../../py_mapengine_wrap.o \
 ../../animation.o ../../py_character_wrap.o \
 ../../audio.o ../../lex.prefs.o ../../screen.o \
-../../audio_thread.o ../../event.o \
+../../audio_thread.o ../../drawing_area.o ../../event.o \
 ../../character.o ../../map.o ../../win_base.o \
 ../../mapcharacter.o ../../win_border.o \
 ../../cutscene.o ../../mapengine.o ../../win_container.o \
 ../../mapevent.o ../../win_font.o \
 ../../fileops.o ../../mapitem.o \
 ../../game.o ../../mappattern.o ../../win_image.o \
-../../mapsquare.o ../../win_label.o ../../drawing_area.o \
+../../mapsquare.o ../../win_label.o \
 ../../image.o ../../pnm.o ../../win_select.o \
 ../../init.o ../../prefs.o ../../win_write.o \
 ../../input.o ../../yarg.o ../../win_anim.o \

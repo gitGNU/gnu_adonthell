@@ -49,6 +49,7 @@ public:
     void set (const char*, s_int32);
     s_int32 get (const char*);
     s_int32& operator[] (const char*);
+    pair<const char*, s_int32> next ();
     
 protected:
     hash_map <const char*, s_int32, hash<const char*>, equal_key> data;

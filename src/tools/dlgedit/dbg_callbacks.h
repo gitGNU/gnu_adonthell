@@ -17,9 +17,13 @@
 
 #include <gtk/gtk.h>
 
-void on_character_tree_expand (GtkCTree * ctree, GList * node, gpointer user_data);
-void on_quest_tree_expand (GtkCTree * ctree, GList * node, gpointer user_data);
-void on_update_debug_clicked (GtkButton * button, gpointer user_data);
-void on_close_debug_clicked (GtkButton * button, gpointer user_data);
+void on_debug_destroy (GtkWidget *, gpointer);
+void on_character_tree_expand (GtkCTree *, GList *, gpointer);
+void on_character_tree_select (GtkWidget *, gint, gint, GdkEventButton *, gpointer);
+void on_quest_tree_expand (GtkCTree *, GList *, gpointer);
+void on_update_debug_clicked (GtkButton *, gpointer);
+void on_close_debug_clicked (GtkButton *, gpointer);
+void on_dbg_edit_ok_clicked (GtkButton *, gpointer);
+void on_dbg_edit_cancel_clicked (GtkButton *, gpointer);
 
 #endif
