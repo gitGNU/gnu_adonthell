@@ -124,7 +124,7 @@ void data::cleanup ()
     for (vector<gamedata*>::iterator i = saves.begin (); i != saves.end (); i++)
         delete *i;
 
-    Py_DECREF (globals);
+    Py_XDECREF (globals);
 }
 
 // Load a game from the gamedir directory
