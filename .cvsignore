@@ -13,3 +13,10 @@ ltmain.sh
 stamp-h
 config.h
 config.h.in
+autom4te.cache
+depcomp
+install-sh
+missing
+mkinstalldirs
+py-compile
+stamp-h1
