@@ -12,3 +12,6 @@ ltconfig
 ltmain.sh
 stamp-h
 config.h
+adonthell.spec
+autom4te.cache
+config.h.in
