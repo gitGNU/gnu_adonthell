@@ -112,7 +112,7 @@ bool gamedata::load_characters (u_int32 pos)
     // first, the player
     data::the_player = new character ();
     data::the_player->character_base::get_state (in);
-    data::characters[data::the_player->get_name ().c_str ()] = data::the_player;
+    data::characters[data::the_player->get_id ().c_str ()] = data::the_player;
 
     // then all the others
     while (ctemp << in)
@@ -121,7 +121,7 @@ bool gamedata::load_characters (u_int32 pos)
         mynpc->character_base::get_state (in);
  
         // Make this character available to the engine
-        data::characters[mynpc->get_name ().c_str ()] = mynpc;
+        data::characters[mynpc->get_id ().c_str ()] = mynpc;
     }
     in.close ();
 

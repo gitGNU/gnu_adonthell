@@ -425,7 +425,7 @@ void dlg_compiler::write_npc (Circle *circle)
         changed = 1;
         
         script << "\n" << space << "self.set_npc (";
-        if (circle->character == "") script << "self.the_npc.get_name())";
+        if (circle->character == "") script << "self.the_npc.get_id())";
         else script << "\"" << circle->character << "\")";
     }
 

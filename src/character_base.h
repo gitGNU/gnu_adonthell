@@ -60,6 +60,17 @@ enum
 };
 
 /**
+ * Type enumeration.
+ *
+ */
+enum
+{
+    NPC = 0,
+    PLAYER = 1,
+    PARTY = 2
+};
+
+/**
  * Base character class containing attributes and dialog stuff.
  * 
  */ 
@@ -85,12 +96,25 @@ class character_base : public storage
      */
     string get_name () const { return name; }
 
+    /**
+     * Returns an unique identifier of the %character. 
+     *
+     * @return
+     *      @li <b>Player</b> for the player controlled %character
+     *      @li the %character's name otherwise.
+     */
+    string get_id ()
+    {
+        if (get_val ("type") == PLAYER) return "Player";
+        else return name;
+    }
+    
     /** 
      * Sets the name of the %character.
      * 
      * @param newname name of the %character.
      */
-    void set_name(string newname);
+    void set_name (string newname);
 
     /**
      * Returns the color representing the %character.
@@ -150,11 +174,10 @@ class character_base : public storage
     void put_state (ogzstream& out);
          
 private:
-    string id;
     string name;
     string dialogue;
     string portrait; 
-    u_int32 color; 
+    u_int32 color;
 };
 
 #endif

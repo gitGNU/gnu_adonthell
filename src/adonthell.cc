@@ -79,11 +79,14 @@ void adonthell::main_loop ()
         if (control_active ()) control.run ();
     }
    
-    // first clear the screen to avoid artifacts
-    screen::clear ();
+    if (!letsexit) 
+    {
+        // first clear the screen to avoid artifacts
+        screen::clear ();
     
-    // draw everything to our display surface
-    if (!letsexit) win_manager::active->draw ();
+        // draw everything to our display surface
+        win_manager::active->draw ();
+    }
 }
 
 // quit the main loop

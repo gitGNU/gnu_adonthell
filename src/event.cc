@@ -146,7 +146,6 @@ void event::set_script (string filename, PyObject * args = NULL)
         }
         script.create_instance (EVENTS_DIR + filename, filename, theargs);
         Py_DECREF (theargs);
-        Py_XDECREF (args);
     }
     script_file_ = filename;
 }

@@ -34,10 +34,3 @@ character::character() : mapcharacter ()
 character::~character()
 {
 }
-
-void character::rename (string newname)
-{
-    data::characters.erase (get_name ());
-    set_name (newname);
-    data::characters[newname] = this;
-}

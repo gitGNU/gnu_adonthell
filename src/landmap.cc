@@ -85,7 +85,7 @@ void base_map_event::execute (event& e)
     base_map_event t = (base_map_event&) e; 
     
     PyObject * args = Py_BuildValue ("(i, i, i, i, s)", t.submap, t.x, t.y,
-                                     t.dir, t.c->get_name ().c_str ());  
+                                     t.dir, t.c->get_id ().c_str ());  
     
     // Execute script
     script.run (args);
@@ -108,11 +108,7 @@ bool base_map_event::load (igzstream& f)
     map << f;
 
     s << f;
-    if (s != "")
-    {
-        if (s == "Player") c = data::the_player;
-        else c = (mapcharacter*) data::characters[s.c_str ()];
-    }
+    if (s != "") c = (mapcharacter*) data::characters[s.c_str ()];
     else c = NULL; 
     
     event::get_script_state (f); 
@@ -129,11 +125,8 @@ void base_map_event::save (ogzstream& out) const
     y >> out;
     dir >> out;
     map >> out;
-    if (c)
-    {
-        if (c != data::the_player) c->get_name () >> out;
-        else "Player" >> out;
-    }
+    
+    if (c) c->get_id () >> out;
     else 
     {
         string s = ""; 
@@ -331,7 +324,7 @@ s_int8 landmap::get_state (igzstream& file)
 {
     mapcharacter *mc = NULL;
     u_int16 nbr_of;
-    string name;
+    string id;
     
     // try to load event list
     if (!event_list::load (file))
@@ -342,10 +335,9 @@ s_int8 landmap::get_state (igzstream& file)
 
     for (u_int16 i = 0; i < nbr_of; i++)
     {
-        name << file;
-        if (name == "Player") mc = (mapcharacter *) data::the_player;
-        else mc = (mapcharacter *) data::characters[name.c_str ()];
-        
+        id << file;
+
+        mc = (mapcharacter *) data::characters[id.c_str ()];
         mc->set_map (this);
         mc->get_state (file);
     }
@@ -356,7 +348,7 @@ s_int8 landmap::get_state (igzstream& file)
 s_int8 landmap::put_state (ogzstream& file) const
 {
     u_int16 nbr_of = nbr_of_mapcharacters ();
-    string name;
+    string id;
     
     // save all events attached to this map
     event_list::save (file); 
@@ -368,10 +360,9 @@ s_int8 landmap::put_state (ogzstream& file) const
     {
         mapcharacter *mc = mapchar[i]; 
 
-        if (mc == data::the_player) name = "Player";
-        else name = mc->get_name ();
+        id = mc->get_id ();
+        id >> file;
 
-        name >> file;
         mc->put_state (file);
     }
     

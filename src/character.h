@@ -47,13 +47,6 @@ public:
      * 
      */ 
     ~character();
-
-    /*
-     * Changes a character's name. Also updates the entry in data::characters
-     *
-     * @arg newname the new name
-     */
-    void rename (string newname);
 };
 
 #ifndef SWIG

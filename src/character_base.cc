@@ -1,7 +1,7 @@
 /*
    $Id$
    
-   Copyright (C) 2000 Kai Sterker <kaisterker@linuxgames.com>
+   Copyright (C) 2000/2001 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -31,9 +31,12 @@ using namespace std;
 
 character_base::character_base ()
 {
-  color = 1;
-  name = "";
-  dialogue = "";
+    color = 1;
+    name = "";
+    dialogue = "";
+
+    // characters are NPC's by default
+    set_val ("type", NPC);
 }
 
 character_base::~character_base ()

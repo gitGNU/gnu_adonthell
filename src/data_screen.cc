@@ -73,8 +73,8 @@ data_screen::data_screen (int m)
     // activate the list
     image_list->set_activate (true);
     
-    // when this have focus, give focus to the list
-    set_focus_object(image_list);
+    // give focus to the list
+    set_focus_object (image_list);
     
     image_list->set_signal_connect (
         makeFunctor (*this, &data_screen::on_select), 
@@ -89,13 +89,13 @@ data_screen::data_screen (int m)
     // show everything
     set_visible_background (true);
     set_visible_border (true);
-    
     set_visible_all (true);
 }
 
 data_screen::~data_screen ()
 {
-    data::engine->fade_in ();
+    // fade in from black after loading a game
+    if (mode == LOAD_SCREEN) data::engine->fade_in ();
 }
 
 void data_screen::init ()
@@ -184,7 +184,7 @@ void data_screen::init ()
     }
     else image_list->set_default_position (0);
 
-    // If there is no saved games, display a message.
+    // If there are no saved games, display a message.
     if (!num) 
     {
         box = new win_container ();
@@ -235,6 +235,7 @@ void data_screen::on_select ()
     // loading
     if (mode == LOAD_SCREEN)
     {
+        // fade to black before doing the actual work
         data::engine->fade_out ();
         set_visible (false);
         gamedata::load (pos);
