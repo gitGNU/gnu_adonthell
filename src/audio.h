@@ -19,8 +19,10 @@
 
 // We'll only load two waves into memory
 #define NUM_WAVES 2
-// We'll only load one .it file into memory
-#define NUM_MUSIC 1
+// We'll only load two .it files into memory
+#define NUM_MUSIC 2
+// We can play four SFX at once
+#define NUM_CHANNELS 4
 
 class audio
 {
@@ -48,7 +50,7 @@ public:
     int load_background(int slot, char *filename);
     void unload_background(int slot);
 
-    // All input is clamped from 0 to 255
+    // All input is clamped from 0 to 100
     void set_background_volume(int);
 
     // Use only when music is loaded
@@ -68,6 +70,8 @@ public:
     void fade_in_background(int slot, int time);
     void fade_out_background(int time);
 
+    // Temporary convience function to change background
+    void change_background(int slot, int time);
 };
 
 #endif

@@ -25,7 +25,7 @@ audio::audio() {
   audio_rate = 22050;        // Sample at 22050Hz
   audio_format = AUDIO_S8;   // Output in signed 8-bit form
   audio_channels = 1;        // 1 is mono, 2 is stereo
-  background_volume = 128;   // 128... seems to work well ;>
+  background_volume = 100;   // 100... scales to percentages ;>
   buffer_size = 512;         // Audio buffer size
   effects_volume = 128;	     // Still figuring this one out...
   background_on = false;     // No background music is playing
@@ -132,6 +132,8 @@ void audio::unpause_music(void) {
   Mix_ResumeMusic();
 }
 
+// Accepts a percentage of the maximum volume level
+// and clips out of bounds values to 0-100.
 void audio::set_background_volume(int volume) {
 
   // Check for bad input
@@ -142,7 +144,9 @@ void audio::set_background_volume(int volume) {
   } else
     background_volume = volume;
 
-  Mix_VolumeMusic(volume);
+  // Scales 0-100% to 0-128
+  Mix_VolumeMusic(int(background_volume * 1.28));
+  //fprintf(stderr, "Volume: %d Mix: %d\n", background_volume, int(background_volume * 1.28));
 }
 
 // This should be done better, but I'll wait until
@@ -167,7 +171,8 @@ void audio::unload_wave(int wave) {
 }
 
 void audio::play_wave(int channel, int slot) {
-  if (sounds[slot] != NULL) Mix_PlayChannel(channel, sounds[slot], 0);
+  if ((slot > -1) && (slot < NUM_CHANNELS))
+    if (sounds[slot] != NULL) Mix_PlayChannel(channel, sounds[slot], 0);
 }
 
 void audio::play_background(int slot) {
@@ -191,6 +196,12 @@ void audio::fade_in_background(int slot, int time) {
     background_on = true;
     Mix_FadeInMusic(music[slot], 0, time);
   }
+}
+
+// Temporary convience function for testing
+void audio::change_background(int slot, int time) {
+  fade_out_background(time);
+  fade_in_background(slot, time);
 }
 
 // This is our audio 'hook'. In order to use audio,
