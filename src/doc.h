@@ -54,8 +54,11 @@
  a similar shape to make it easier to read.
 
  Once you understand the basics, you might want to explore specific parts of the
- engine in more detail. This chapter explains how the \ref page3 works, and how
- new events can be defined.
+ engine in more detail. As many parts of the %game are divided into several classes,
+ these chapters are there to give a first overview how they work and interact.
+ 	- \ref page3
+ 	- \ref page4
+ 	- \ref page5
 */
 
 /**
@@ -248,7 +251,7 @@
  *     void doesntmodify (const myclass & myobject);
  *     @endcode
  *
- * @li When your function requires an object and modify it, pass it by adress.
+ * @li When your function requ-ires an object and modify it, pass it by adress.
  *     @code
  *     void modify (myclass * myobject);
  *     @endcode
@@ -273,7 +276,7 @@
  *
  */
 
-/*! \page page3 Event System
+/*! \page page3 The Event System
  
  The %event system is divided into three parts. The %event handler
  keeps track of all registered %event scripts. Whenever an
@@ -370,4 +373,55 @@ REGISTER_EVENT(type,evt)
 and %REGISTER_EVENT() will pass this function to the %event list. The only
 information the %event system needs to know apart from that is the numerical
 %event ID, i.e. its type. 
+*/
+
+/*! \page page4 The Map Engine
+
+The map engine consists of several parts that work together to display the
+%game world on %screen.
+
+\section map_data Map Data
+
+The landmap holds the %data of the map: the actual \link mapobject graphics
+\endlink used on that map, and the information how to place them. A single map
+can contain multiple, independent \link mapsquare_area terrains \endlink
+that share the same graphics though. All terrains (or submaps) of a map are
+kept in memory, so transition between them is fast. Therefore it is desirable
+to keep related areas, like different levels of a dungeon or the floors of a
+building, on the same map.
+
+\section map_rendering The Renderer
+
+The %data on its own is only of little use as long as there is no way of displaying
+it. This is the \link mapview mapview's \endlink task. It renders a certain area
+of the map and everything on it onto a surface. That way, it can be as easily
+displayed on %screen as it can be saved to disk.
+
+The %mapview itself is rather dumb and without further instructions it would
+render the same part of the map for the rest of eternity. A \link py_script python
+script \endlink can be used to achieve a dynamic behaviour of the mapview, like
+following the player around the map. This script is called once every cycle of the
+%game and has access to practically all API functions and in-%game data, to permit
+as much flexibility as possible.
+*/
+
+/*! \page page5 The Dialogue Engine
+
+The dialogue engine is handling conversations between the player and NPCs.
+Dialogues themselves are %python scripts that are executed step by step by
+the lowlevel dialog class.
+
+Each step results in a number of strings, the speech of the NPC and an optional
+list of the player's possible responses. These are displayed in the \link
+dialog_engine Dialogue Window \endlink . Once the player has chosen an answer
+the next step of the script is executed.
+
+The script itself returns three lists. Possible NPC speeches, the player's possible
+responses for each of those speaches and finally a list with the successor of each
+choice. The dialogue engine randomly picks one of the NPC speeches and the according
+answers. It also makes sure that each piece of dialogue is only used once during the
+conversation. More complex operations, such as depending a piece of dialogue on a
+certain condition are already handled in the %python script.
+
+For more information you should refer to the Dialogue Editor documentation.
 */
