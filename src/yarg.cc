@@ -13,6 +13,7 @@
 */
 
 #include <time.h>
+#include <string.h>
 #include "yarg.h"
 
 yarg::yarg ()
@@ -83,3 +84,4 @@ int yarg::zufallszahl ()
 
     return (zahl%(max - min + 1)) + min;
 }
+
