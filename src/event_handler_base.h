@@ -1,7 +1,7 @@
 /*
    $Id$
 
-   Copyright (C) 2002 Kai Sterker <kaisterker@linuxgames.com>
+   Copyright (C) 2000/2001/2002 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -12,11 +12,13 @@
    See the COPYING file for more details.
 */
 
+
 /**
- * @file event_handler_base.h
- *
- * @author Kai Sterker
- * @brief Base class for %event handlers.
+ * @file   event_handler_base.h
+ * @author Kai Sterker <kaisterker@linuxgames.com>
+ * 
+ * @brief  Declares the base class for event handlers.
+ * 
  */
 
 #ifndef EVENT_HANDLER_BASE_H__
@@ -25,24 +27,39 @@
 #include "event.h"
 
 /**
- * Docu follows soon ...
- */
+ * This is the base class for actual event handlers. It
+ * keeps track of registered scripts, recieves triggered events
+ * and executes scripts handling those events
+ */ 
 class event_handler_base
 {
 public:
-    virtual ~event_handler_base () { }
 
     /**
+     * Destructor
      */
-    virtual void register_event (event *evnt) = 0;
-    
-    /**
+    virtual ~event_handler_base () {}
+
+    /** 
+     * Registers an event.
+     * 
+     * @param ev pointer to the event to register.
      */
-    virtual void remove_event (event *evnt) = 0;
-    
-    /**
+    virtual void register_event (event* ev) = 0;
+
+    /** 
+     * Unregister an event.
+     * 
+     * @param ev pointer to the event to unregister.
      */
-    virtual void raise_event (const event &evnt) = 0;
+    virtual void remove_event (event* ev) = 0;
+
+    /** 
+     * Check if an event corresponding to ev exists, and execute it. 
+     * 
+     * @param ev event to raise.
+     */
+    virtual void raise_event (const event& ev) = 0;
 };
 
 #endif // EVENT_HANDLER_BASE_H__
