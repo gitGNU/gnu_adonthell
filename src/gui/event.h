@@ -16,13 +16,11 @@
 #define GUI_EVENT_H_
 
 #include "Python.h"
+#include "python/callback.h"
 #include <vector>
 
-class py_callback;
-
-
-#include "../types.h"
-#include "../callback.h"
+#include "types.h"
+#include "callback.h"
 
 
 namespace gui {
@@ -101,7 +99,7 @@ namespace gui {
     protected:
       
       /* this vector contains all python callback connected for this objet */
-      std::vector<py_callback *> py_callbacks;   
+      std::vector<python::callback *> py_callbacks;   
   
       /* define C++ callback for this objet */
       Functor0 callback_[20];

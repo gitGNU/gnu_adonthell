@@ -26,20 +26,23 @@
 #ifndef GUI_BASE_H_
 #define GUI_BASE_H_
 
-#include "../types.h"
-#include "../input.h"
+#include "types.h"
+#include "input/listener.h"
+
 #include "event.h"
 #include "border.h"
 #include "background.h"
 #include "keys.h"
 #include "../gfx/drawing_area.h"
 
+
+
 namespace gui {
  
   class container;
   class scroll;
   class select;
- 
+  
   /**
    * Common properties for each base's object
    *
@@ -48,7 +51,7 @@ namespace gui {
    *      of being assigned a target parameter, which is a pointer
    *      to the surface they should be drawn.
    */ 
-  class base: public event, public border, public gfx::drawing_area, public background
+  class base: public event, public border, public gfx::drawing_area, public background, protected input::listener
     {
     public:
       
