@@ -176,7 +176,6 @@ main (int argc, char *argv[])
     init_app (MainWnd);
 
     // Add the player to the character array
-    data::characters[MainWnd->myplayer->get_name().c_str ()] = MainWnd->myplayer;
     data::the_player = MainWnd->myplayer;
 
     // Make "the_player" available to the interpreter
@@ -248,6 +247,9 @@ init_app (MainFrame * MainWnd)
     MainWnd->myplayer->set_name ("Banec");
     MainWnd->myplayer->set ("race", 0);     // Dwarf
     MainWnd->myplayer->set ("gender", 1);   // Male
+
+    data::characters.erase (MainWnd->myplayer->get_name().c_str ());
+    data::characters[MainWnd->myplayer->get_name().c_str ()] = MainWnd->myplayer;
 }
 
 /* free allocated memory */

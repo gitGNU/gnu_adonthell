@@ -997,7 +997,6 @@ load_dialogue (MainFrame * wnd, const char *file)
     init_app (wnd);
 
     // ... then load all nodes.
-    dictionary <character *>::iterator itc = data::characters.begin (); 
     while (i)
     {
         switch (i = parse_dlgfile (s, n))
@@ -1040,15 +1039,15 @@ load_dialogue (MainFrame * wnd, const char *file)
 
             case LOAD_NPC:
             {
-                character_base *mynpc = NULL;
+                character *mynpc = NULL;
 
                 if (parse_dlgfile (s, n) == LOAD_STR)
-                    mynpc = (character_base *) data::characters[s.c_str ()];
+                    mynpc = data::characters.find (s.c_str ())->second;
 
                 if (mynpc == NULL) 
                 {
+                    dictionary <character *>::const_iterator itc = data::characters.begin ();
                     mynpc = itc->second;
-                    itc++;
                 }
                 
                 wnd->set_npc (mynpc);
@@ -1182,7 +1181,7 @@ save_dialogue (MainFrame * wnd)
         out << "\nGender " << wnd->myplayer->storage::get ("gender");
 
     // NPC name
-    out << "\nNPC §" << wnd->mynpc->get_name() << "§";
+    out << "\nNPC §" << wnd->mynpc->get_name() << "§\n";
 
     // Save Circles and create position-table 
     for (i = 0; i < wnd->number; i++)

@@ -222,13 +222,14 @@ GtkWidget * create_ps_window (ps_dlg *dlg, const char* name, int race, int gende
 
     npc_selection_menu = gtk_menu_new ();
 
-    dictionary <character *>::iterator itc; 
+    dictionary <character *>::const_iterator itc;
     for (itc = data::characters.begin (); itc != data::characters.end (); itc++)
     {
         // don't add the player character to the list
         if (!strcmp ((*itc).first, name))
             continue;
-        
+
+        cout << (*itc).first << endl << flush;
         glade_menuitem = gtk_menu_item_new_with_label ((*itc).first);
         gtk_object_set_user_data (GTK_OBJECT (glade_menuitem), (void *) (*itc).first);
         gtk_widget_show (glade_menuitem);
