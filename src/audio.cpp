@@ -16,6 +16,7 @@
 
 #include <string.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include "SDL.h"
 #include "prefs.h"
 #include "audio.h"
