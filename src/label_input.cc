@@ -15,53 +15,51 @@
 
 #include "label_input.h"
 
-
-
-
-void label_input::insert(const u_int16 pos,const char * letter)
+label_input::label_input () : label ()
 {
-  text_.insert(pos,letter);
-  
-  if(cursor_pos_ == text_size_)
-    {
-      text_size_= text_.length();
-      cursor_pos_ = text_size_ ;
-    }
-  else
-  {
-
-      text_size_= text_.length();
-      cursor_pos_++; 
-  }
-  check_form();
+    set_cursor_visible (true);
+    set_cursor_moveable (true);
+    set_editable (true); 
 }
 
-
-
+void label_input::set_editable (const bool b)
+{
+    editable_ = b; 
+}
+ 
 bool label_input::input_update()
 {
-  
-  label::input_update();
-  
-  if(!font_) return false;
-  
-  static s_int32 c;
+    if (!editable_) return false; 
+    
+    label::input_update();
 
-  while((c=input::get_next_unicode())>0)
+    if (my_font_ == NULL) return false; 
+    
+    static s_int32 c; 
+
+    while((c=input::get_next_unicode())>0)
     {
-      
-      if((c == SDLK_BACKSPACE || c == SDLK_DELETE) && text_size_>0 && cursor_pos_ > 0)
-      {
-	  text_.erase(--cursor_pos_, 1);
-          text_size_ = text_.length();
-          check_form ();
-      }
-      else if(c == SDLK_RETURN) {
-          insert(cursor_pos_, "\n");
-      }
-      else if(font_->in_table(c)) insert(cursor_pos_, (char*) &c);
-    }
-  return true;
+        cursor_undraw (); 
+        if((c == SDLK_BACKSPACE || c == SDLK_DELETE) && my_text_.size () >0 && my_cursor_.idx > 0)
+        {    
+            my_text_.erase(--my_cursor_.idx, 1);
+            my_old_cursor_ = my_cursor_; 
+            update_cursor ();
+            
+            lock (); 
+            fillrect (my_cursor_.pos_x, my_cursor_.pos_y,
+                      (*my_font_) [my_text_[my_cursor_.idx]].length (),
+                      my_font_->height (), screen::trans_col ()); 
+            unlock (); 
+            
+            build (false);
+        }
+        else if(c == SDLK_RETURN) add_text ("\n"); 
+        else if(my_font_->in_table(c)) add_text((char*) &c); 
+    }  
+    return true;
 }
 
  
+
+

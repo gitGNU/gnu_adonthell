@@ -11,8 +11,8 @@
    See the COPYING file for more details
 */
 
-#ifndef _WRITE_H__
-#define _WRITE_H__
+#ifndef LABEL_INPUT_H_
+#define LABEL_INPUT_H_
 
 #include "label.h"
 
@@ -20,13 +20,24 @@
 class label_input : public label
 {
  public:
-    
-  bool input_update();
-  
- protected:
-  void insert(const u_int16 pos, const char * letter);
+    /**
+       Constructor
+       Initialize to : cursor_moveable,  cursor_visible and editable
+    */ 
+    label_input (); 
 
-  
+    /**
+       Set the label input in editable
+    */
+    void set_editable (const bool); 
+    
+    /**
+       Input update
+    */
+    bool input_update();
+
+protected:
+    bool editable_; 
 };
 
 

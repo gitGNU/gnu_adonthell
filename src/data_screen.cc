@@ -235,6 +235,7 @@ void data_screen::on_select ()
         data::engine->fade_out ();
         gamedata::load (pos);
         data::engine->main_quit ();
+        entry->set_cursor_visible (false);
     }
     // saving
     else
@@ -243,8 +244,8 @@ void data_screen::on_select ()
 	    image_list->set_focus_object(tmp);
 	
 	    entry = (win_write*) tmp->focus_object();
-		entry->set_cursor ( true);
-		entry->set_cursor_moveable (true);
+            entry->set_cursor_visible (true);
+            entry->set_cursor_moveable (true);
 	
 	    const char *txt = entry->text_char ();
 	    if (txt && !strncmp (txt, "Empty Slot", 10))

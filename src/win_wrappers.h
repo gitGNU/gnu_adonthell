@@ -563,10 +563,8 @@ class label: public image
   void set_font(win_font & font);
   
   void set_form(const u_int8);
-  
-  void set_eot(const bool b);
-  
-  void set_cursor(const bool b){cursor_ = b;}
+     
+  void set_cursor_visible (const bool b){cursor_ = b;}
   
   void set_cursor_moveable(const bool b){cursor_moveable_ = b;}
 

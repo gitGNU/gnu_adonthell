@@ -31,7 +31,7 @@
  * This constant implicitly defines the maximum number of frames per 
  * second (FPS): FPS = 1000 / CYCLE_LENGTH.
  */ 
-#define CYCLE_LENGTH 20
+#define CYCLE_LENGTH 13
 
 /** 
  * Defines the maximum number of frames to skip in order to keep the %game's

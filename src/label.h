@@ -12,111 +12,241 @@
    See the COPYING file for more details
 */
 
+#ifndef LABEL_H_
+#define LABEL_H_
 
-
-#ifndef _LABEL_H_
-#define _LABEL_H_
-
+#include <vector> 
 #include <string>
 #include "input.h"
 #include "win_font.h"
 
+using namespace std; 
+
 class label: public image
 {
- public:
-  label();
-  
-  const string & text_string(){return text_;}
-  const char * text_char(){return text_.c_str();} 
+public :
+    /**
+       Constructor
+       by default,  cursor is not moveable,  cursor is not visible,  and the form is set as NOTHING,  the default size is (0, 0) 
+    */
+    label (); 
 
-  void set_text(const string & str);
-  
-  void set_text(const char * str);
-  
-  void add_text(const string & str);
-  
-  void add_text(const char * str);
-  
-  void set_font(win_font & font);
-  
-  void set_form(const u_int8);
-  
-  void set_eot(const bool b);
-  
-  void set_cursor(const bool b){cursor_ = b;}
-  
-  void set_cursor_moveable(const bool b){cursor_moveable_ = b;}
+    
+    /**
+       Destructor
+    */
+    ~label ();
 
-  void resize(const u_int16 l,const u_int16 h);
- 
-  bool update();
+    
+    /**
+       Set the font
+    */
+    inline void set_font (win_font & font);  
 
-  bool input_update();
 
-  const static u_int8 NOTHING = 0;
-  const static u_int8 AUTO_HEIGHT = 1;
-  const static u_int8 AUTO_SIZE = 2;
-  
-  const static SDLKey KEY_CURSOR_NEXT = SDLK_RIGHT;
-  const static SDLKey KEY_CURSOR_PREVIOUS = SDLK_LEFT;
+    /**
+       Set the text 
+    */
+    void set_text (const string & text);
+    
+    
+    /**
+       Add text
+    */
+    void add_text (const string & text);
 
- protected:
-  
-  void check_form();
-  
-  void form_auto_size();
-  
-  void form_auto_height();
-  
-  void form_nothing();
-  
-  void cursor_next();
-  
-  void cursor_previous();
-  
-  u_int8 word_place( u_int16 & cur_line_size, u_int16 & word_size );
-  
-  void find_word(u_int16 & begin,u_int16 &length, u_int16 & size_pix);
-  
-  //the text
-  string text_;
-  
-  //the size of text
-  u_int16 text_size_;
-  
-  //start to begin at the index
-  u_int16 text_index_begin_;
-  
-  //it's the last letter which was drawing
-  u_int16 text_index_end_;
-  
-  u_int16 cursor_pos_;
-  
-  bool cursor_;
-  
-  //set cursor visible
-  bool cursor_visible_;
-  
-  //set cursor moveable
-  bool cursor_moveable_;
 
-  static u_int16 cursor_blink_speed_;
-  
-  u_int16 cursor_blink_cur_;
+    /**
+       Set the form of the display
+       NOTHING, AUTO_SIZE, AUTO_HEIGHT
+    */
+    inline void set_form (const u_int8 form); 
 
-  bool text_eot_;
+    
+    /**
+       Set visible cursor
+    */
+    inline void set_cursor_visible (const bool b);
+    
 
-  //the font
-  win_font * font_;
-  
-  //the style text displayed
-  u_int8 form_;
+    /**
+       Set if the cursor can be moved with arrow key
+    */
+    inline void set_cursor_moveable (const bool b);
+    
+    
+    /**
+       Update the label
+    */
+    bool update (); 
 
- private: 
-};
+
+    /**
+       Update input label, you can move the cursor if the cursor is moveable
+    */
+    bool input_update (); 
+
+
+    /**
+       Get the text in string
+    */
+    inline const string text_string () const;
+
+
+    /**
+       Get the text in char
+    */
+    inline const char * text_char () const;
+
+
+    /**
+       Resize the label
+    */
+    inline void resize (u_int16 l, u_int16 h);
+    
+    
+#ifdef SWIG
+    
+#define label_NOTHING 0;
+#define label_AUTO_HEIGHT 1;
+#define label_AUTO_SIZE 2;
+
+#define label_KEY_CURSOR_NEXT SDLK_RIGHT;
+#define label_KEY_CURSOR_PREVIOUS SDLK_LEFT;
+     
+#endif
+    
+#ifndef SWIG 
+    
+    static const u_int8 NOTHING = 0;
+    static const u_int8 AUTO_HEIGHT = 1;
+    static const u_int8 AUTO_SIZE = 2; 
+
+    
+    const static SDLKey KEY_CURSOR_NEXT = SDLK_RIGHT;
+    const static SDLKey KEY_CURSOR_PREVIOUS = SDLK_LEFT;
+
+    
+
+protected :
+    
+    struct Sline_text
+    {
+        u_int16 idx_beg;
+        s_int16 idx_end; 
+        u_int16 pos_x;
+    }; 
+    
+    struct Scursor
+    {
+        u_int16 pos_x;
+        u_int16 pos_y;
+        u_int16 idx;
+        u_int16 line; 
+    };
+    
+    /**
+       Init vector and cursor,  don't erase my_text_
+    */
+    void init_vec_cursor (); 
+
+
+    /**
+       Build label 
+       
+    */
+    void build(const bool erase_all); 
+    
+
+    /**
+       
+     */
+    void build_form_nothing (); 
+
+
+    /**
+
+    */ 
+    void build_form_auto_height ();
+
+    /**
+     */ 
+    void build_form_auto_size(); 
+
+    /**
+
+    */
+    void clean_surface (const bool erase_all); 
+
+    /**
+     */
+    u_int8 find_word (u_int16 & index, u_int16 & wlength, u_int16 & wlengthpix, const u_int16 rlength); 
+
+    /**
+     */
+    void draw_string (const bool at_cursor); 
+
+
+    /**
+
+    */
+    void update_cursor (); 
+
+    /**
+     */
+    void cursor_next ();
+
+    /**
+     */
+    
+    void cursor_previous ();
+
+    /**
+     */
+    void cursor_draw ();
+
+    void cursor_undraw (); 
+    
+    
+    // my_font
+    win_font * my_font_; 
+    
+    
+    // my text
+    string my_text_;
+    
+    // form display
+    u_int8 my_form_;  
+    
+
+    // visible cursor
+    bool visible_cursor_; 
+
+    // moveable_cursor
+    bool moveable_cursor_; 
+    
+    
+    u_int16 cursor_cur_blink_;
+    
+
+    static u_int16 cursor_blink_cycle; 
+       
+    // my cursor
+    Scursor my_cursor_;   
+
+    // my old cursor
+    Scursor my_old_cursor_; 
+    
+    // it is a vector which represent each line in the label
+    vector<Sline_text> my_vect_;   
+    
+    u_int16 start_line_;
 
 #endif
-
+    // it's the endif of swig
+    
+}; 
+#endif
 
 
 
