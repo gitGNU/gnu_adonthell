@@ -32,8 +32,8 @@ class win_file: public win_container
   char * get_text(){return entry_->get_text();}
   void set_curdirectory(char *);
   //choice what you want to do when these button are activated CALLBACK POWER
-  void set_sig_activate_button_ok(Functor0 & func);
-  void set_sig_activate_button_cancel(Functor0 & func);
+  void set_sig_activate_button_ok(Functor0 &func);
+  void set_sig_activate_button_cancel(Functor0 &func);
   ~win_file();  
 };
 #endif

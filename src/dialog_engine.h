@@ -57,7 +57,6 @@ private:
     s_int32 answer;                 // The selected dialogue option
     u_int32 sel_start;              // Index of first selectible dialogue item
     
-    bool can_add;                   // Is true while we can concatenate NPC text
     bool is_running;                // True as long as we don't want to quit
 #endif // SWIG
 };

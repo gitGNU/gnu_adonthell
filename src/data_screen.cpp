@@ -149,6 +149,9 @@ void data_screen::init ()
 
 bool data_screen::update ()
 {
+    // cancel saving/loading
+    if (input::has_been_pushed (SDLK_ESCAPE)) return false;
+
     // nothing selected --> browse through available games
     if (!entry)
     {
@@ -172,6 +175,7 @@ void data_screen::on_select ()
     if (mode == LOAD_SCREEN)
     {
         data::load (pos);
+        set_return_code (1);
         quit = true;
     }
     // saving
@@ -204,6 +208,7 @@ void data_screen::on_save ()
         save_preview (filepath);
     }
 
+    set_return_code (1);
     quit = true;
 }
 

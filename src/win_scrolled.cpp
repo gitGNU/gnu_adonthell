@@ -42,13 +42,13 @@ win_scrolled::~win_scrolled()
 void win_scrolled::on_up()
 {
   //signal called on up if up is ok
-  if(callback_[WIN_SIG_SCROLL_UP]) callback_[WIN_SIG_SCROLL_UP]();
+  if(callback_[WIN_SIG_SCROLL_UP]) (callback_[WIN_SIG_SCROLL_UP])();
 }
 
 void win_scrolled::on_down()
 {
   //signal called on down if down is ok
-  if(callback_[WIN_SIG_SCROLL_DOWN]) callback_[WIN_SIG_SCROLL_DOWN]();
+  if(callback_[WIN_SIG_SCROLL_DOWN]) (callback_[WIN_SIG_SCROLL_DOWN])();
 }
 
 

@@ -11,6 +11,7 @@
    See the COPYING file for more details
 */
 #include <iostream.h>
+#include <stdlib.h>
 #include <string.h>
 #include "types.h"
 #include "image.h"

@@ -20,6 +20,7 @@
 #include "mapview.h"
 #include "mapengine.h"
 #include "character.h"
+#include "callback_wrap.h"
 #include "win_types.h"
 #include "win_font.h"
 #include "win_theme.h"
@@ -41,6 +42,21 @@
 #define USE_MAP
 #define USE_PYTHON
 
+%typemap (python,in) PyObject *pyfunc 
+{ 
+    if (!PyCallable_Check($source)) 
+    { 
+        PyErr_SetString (PyExc_TypeError, "Need a callable object!");
+        return NULL;
+    }
+    $target = $source; 
+}
+
+%typemap (python,in) PyObject*
+{ 
+    $target = $source; 
+}
+
 %include "types.h"
 %include "storage.h"
 %include "event.h"
@@ -58,6 +74,7 @@
 %include "landmap.h"
 %include "mapview.h"
 %include "mapengine.h"
+%include "callback_wrap.h"
 %include "win_types.h"
 %include "win_font.h"
 %include "win_theme.h"

@@ -30,6 +30,7 @@ class mapengine
   void use_map(landmap * lm);
   landmap * get_landmap() { return lmap; }
   void run();
+  void quit() { letsexit = true; }
 
   void mainloop();
 

@@ -303,7 +303,7 @@ bool data::load (u_int32 pos)
 void data::unload ()
 {
 #if defined (USE_MAP)
-    landmap *map = map_engine->get_landmap ();
+    landmap *map = map_engine ? map_engine->get_landmap () : NULL;
 #endif
     character *mychar;
     quest *myquest;

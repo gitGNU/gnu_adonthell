@@ -44,9 +44,9 @@ void mapengine::run()
   screen::init_frame_counter();
   while(!letsexit)
     {
-      if(input::has_been_pushed(SDLK_ESCAPE)) letsexit=true;
       mainloop();
       screen::show();
+      if(input::has_been_pushed(SDLK_ESCAPE)) letsexit=true;
     }
 }
 

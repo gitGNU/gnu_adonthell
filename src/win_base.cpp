@@ -78,6 +78,9 @@ win_base::win_base(s_int16 tx,s_int16 ty,u_int16 tl,u_int16 th,win_theme * wth)
 
   //set align object
   align_=WIN_ALIGN_NONE;
+
+  //return code of the window
+  return_code_ = 0;
   
   //padding X,Y
   padx_=0;
@@ -106,6 +109,9 @@ win_base::win_base(s_int16 tx,s_int16 ty,u_int16 tl,u_int16 th,win_theme * wth)
 
 win_base::~win_base()
 {
+  //notify that window is closing 
+  if (callback_quit_) (callback_quit_) (return_code_);
+
   //delete cur drawing area
   delete da_;
 
@@ -139,7 +145,7 @@ bool win_base::update()
 {
   if(focus_ && activated_ && callback_[WIN_SIG_KEYBOARD])(callback_[WIN_SIG_KEYBOARD])();
 
-  if(callback_destroy_ && !callback_destroy_()) return false;
+  if(callback_destroy_ && !(callback_destroy_)()) return false;
   on_update();
   return true;
 }
@@ -206,9 +212,9 @@ void win_base::update_real_position()
 }
 
 //add a signal 
-void win_base::set_signal_connect(const Functor0 & func,u_int8 signal)
+void win_base::set_signal_connect(const Functor0 &func, u_int8 signal)
 {
-  callback_[signal]=func;
+  callback_[signal] = func;
 } 
 
 //on activate 

@@ -113,6 +113,8 @@
 #define WIN_SIG_SELECT 9
 #define WIN_SIG_UNSELECT 10
 #define WIN_SIG_KEYBOARD 12
+#define WIN_SIG_DESTROY 20
+#define WIN_SIG_CLOSE 21
 
 
 

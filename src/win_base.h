@@ -78,9 +78,12 @@ class win_base
   //CALLBACK AND EVENT
   /*******************************************************************/
   //Use this function to set a callback function
-  void set_signal_connect(const Functor0 &func,u_int8 signal);
-  void set_callback_destroy(const Functor0wRet<bool> & func)
+  void set_return_code (int rc) { return_code_ = rc; }
+  void set_signal_connect (const Functor0 &func, u_int8 signal);
+  void set_callback_destroy (const Functor0wRet<bool> &func)
     {callback_destroy_=func;}
+  void set_callback_quit (const Functor1<int> &func)
+    {callback_quit_=func;}
 
 
 
@@ -149,7 +152,7 @@ class win_base
  protected:
   
   int level_trans_back_; 
-
+  int return_code_;
   
   s_int16 x_,realx_;
   s_int16 y_,realy_;
@@ -161,7 +164,7 @@ class win_base
 
   Functor0 callback_[20];
   Functor0wRet<bool> callback_destroy_;
-
+  Functor1<int> callback_quit_;
 
   drawing_area * da_;
   drawing_area * pda_;
