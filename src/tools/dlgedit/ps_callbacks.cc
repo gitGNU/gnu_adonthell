@@ -1,7 +1,7 @@
 /*
    $Id$
 
-   (C) Copyright 2000 Kai Sterker <kaisterker@linuxgames.com>
+   (C) Copyright 2000/2001 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -18,7 +18,7 @@
 #include "ps_dlg.h"
 #include "ps_callbacks.h"
 #include "ps_interface.h"
-#include "../../python.h"
+#include "../../python_class.h"
 
 extern gchar *get_option (GtkOptionMenu*);
 

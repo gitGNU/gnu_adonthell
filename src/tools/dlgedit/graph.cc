@@ -1,7 +1,7 @@
 /*
    $Id$ 
 
-   Copyright (C) 1999 Kai Sterker <kaisterker@linuxgames.com>
+   Copyright (C) 1999/2000/2001 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -25,7 +25,7 @@ class dialog;
 
 #include "../../types.h"
 #include "../../character.h"
-#include "../../python.h"
+#include "../../python_class.h"
 #include "dlgnode.h"
 #include "main.h"
 #include "geometrie.h"

@@ -16,5 +16,5 @@ mergequests_SOURCES = mergequests.cc
 mergequests_LDADD = ../../libadonthell.a $(GTK_LIBS)
 
 # Evil, but it works...
-CPPFLAGS +=-I../.. $(GTK_CFLAGS)
+CPPFLAGS +=-I../.. $(SDL_CFLAGS) $(GTK_CFLAGS)
 

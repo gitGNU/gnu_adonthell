@@ -1,7 +1,7 @@
 /*
    $Id$
    
-   Copyright (C) 1999 Kai Sterker <kaisterker@linuxgames.com>
+   Copyright (C) 1999/2000/2001 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -25,7 +25,7 @@ extern "C"
 #include <gtk/gtk.h>
 
 #include "../../types.h"
-#include "../../python.h"
+#include "../../python_class.h"
 #include "../../prefs.h"
 #include "../../quest.h"
 #include "../../fileops.h"
@@ -33,8 +33,8 @@ extern "C"
 #include "graph.h"
 #include "interface.h"
 
-int 
-main (int argc, char *argv[])
+
+int main (int argc, char *argv[])
 {
     char tmp[256];
     PyObject *pyref;

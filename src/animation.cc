@@ -26,7 +26,6 @@
  
  
 #include "animation.h"
-#include "image.h"
 
 
 using namespace std; 

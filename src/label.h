@@ -20,7 +20,6 @@
 #include <string>
 #include "input.h"
 #include "win_font.h"
-#include "image.h"
 
 class label: public image
 {
