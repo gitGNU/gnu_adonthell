@@ -19,14 +19,14 @@
 #include "animation.h"
 
 #ifdef _DEBUG_
-u_int16 animation_frame::a_d_diff=0;
+u_int16 animationframe::a_d_diff=0;
 #endif
 
 #ifdef _DEBUG_
 u_int16 animation::a_d_diff=0;
 #endif
 
-void animation_frame::init()
+void animationframe::init()
 {
   imagenbr=0;
   is_masked=false;
@@ -37,24 +37,24 @@ void animation_frame::init()
   nextframe=0;
 }
 
-animation_frame::animation_frame()
+animationframe::animationframe()
 {
   init();
 #ifdef _DEBUG_
-  cout << "animation_frame() called, "<< ++a_d_diff
+  cout << "animationframe() called, "<< ++a_d_diff
        << " objects currently allocated\n";
 #endif
 }
 
-animation_frame::~animation_frame()
+animationframe::~animationframe()
 {
 #ifdef _DEBUG_
-  cout << "~animation_frame() called, "<< --a_d_diff
+  cout << "~animationframe() called, "<< --a_d_diff
        << " objects currently allocated\n";
 #endif
 }
 
-u_int8 animation_frame::get_alpha()
+u_int8 animationframe::get_alpha()
 {
 #ifdef REVERSE_ALPHA
   return alpha;
@@ -63,7 +63,7 @@ u_int8 animation_frame::get_alpha()
 #endif
 }
 
-void animation_frame::set_alpha(u_int8 a)
+void animationframe::set_alpha(u_int8 a)
 {
 #ifdef REVERSE_ALPHA
   alpha=a;
@@ -72,47 +72,47 @@ void animation_frame::set_alpha(u_int8 a)
 #endif
 }
 
-bool animation_frame::get_mask()
+bool animationframe::get_mask()
 {
   return is_masked;
 }
 
-void animation_frame::set_mask(bool mask)
+void animationframe::set_mask(bool mask)
 {
   is_masked=mask;
 }
 
-u_int16 animation_frame::get_image()
+u_int16 animationframe::get_image()
 {
   return imagenbr;
 }
 
-void animation_frame::set_image(u_int16 imnbr)
+void animationframe::set_image(u_int16 imnbr)
 {
   imagenbr=imnbr;
 }
 
-u_int16 animation_frame::get_delay()
+u_int16 animationframe::get_delay()
 {
   return delay;
 }
 
-void animation_frame::set_delay(u_int16 d)
+void animationframe::set_delay(u_int16 d)
 {
   delay=d;
 }
 
-u_int16 animation_frame::get_nextframe()
+u_int16 animationframe::get_nextframe()
 {
   return nextframe;
 }
 
-void animation_frame::set_nextframe(u_int16 nf)
+void animationframe::set_nextframe(u_int16 nf)
 {
   nextframe=nf;
 }
 
-s_int8 animation_frame::get(gzFile file)
+s_int8 animationframe::get(gzFile file)
 {
   gzread(file,&imagenbr,sizeof(imagenbr));
   gzread(file,&is_masked,sizeof(is_masked));
@@ -125,7 +125,7 @@ s_int8 animation_frame::get(gzFile file)
   return(0);
 }
 
-s_int8 animation_frame::load(const char * fname)
+s_int8 animationframe::load(const char * fname)
 {
   gzFile file;
   u_int8 retvalue;
@@ -137,7 +137,7 @@ s_int8 animation_frame::load(const char * fname)
 }
 
 #ifdef _EDIT_
-s_int8 animation_frame::put(gzFile file)
+s_int8 animationframe::put(gzFile file)
 {
   gzwrite(file,&imagenbr,sizeof(imagenbr));
   gzwrite(file,&is_masked,sizeof(is_masked));
@@ -151,7 +151,7 @@ s_int8 animation_frame::put(gzFile file)
   return(0);
 }
 
-s_int8 animation_frame::save(const char * fname)
+s_int8 animationframe::save(const char * fname)
 {
   gzFile file;
   u_int8 retvalue;
@@ -295,7 +295,7 @@ s_int8 animation::get(gzFile file)
     t_frame[i].get_raw(file);
   gzread(file,&nbr_of_frames,sizeof(nbr_of_frames));
   delete[] frame;
-  frame=new animation_frame[nbr_of_frames];
+  frame=new animationframe[nbr_of_frames];
   for(i=0;i<nbr_of_frames;i++)
       frame[i].get(file);
 
@@ -340,7 +340,7 @@ void animation::zoom(u_int16 sx, u_int16 sy, animation * src)
     }
   
   nbr_of_frames=src->nbr_of_frames;
-  frame=new animation_frame[nbr_of_frames];
+  frame=new animationframe[nbr_of_frames];
   for(i=0;i<nbr_of_frames;i++)
     {
       frame[i]=src->frame[i];
@@ -491,7 +491,7 @@ animation & animation::operator =(animation &a)
   for(i=0;i<nbr_of_images;i++)
     t_frame[i]=a.t_frame[i];
   delete[] frame;
-  frame=new animation_frame[nbr_of_frames];
+  frame=new animationframe[nbr_of_frames];
   for(i=0;i<nbr_of_frames;i++)
     frame[i]=a.frame[i];
   return *this;
@@ -583,12 +583,12 @@ s_int8 animation::insert_image(image &im, u_int16 pos)
   return 0;
 }
 
-s_int8 animation::insert_frame(animation_frame &af, u_int16 pos)
+s_int8 animation::insert_frame(animationframe &af, u_int16 pos)
 {
-  animation_frame * oldframe=frame;
+  animationframe * oldframe=frame;
   u_int16 i;
   if(pos>nbr_of_frames) return -2;
-  frame=new animation_frame[++nbr_of_frames];
+  frame=new animationframe[++nbr_of_frames];
   for(i=0;i<pos;i++)
     frame[i]=oldframe[i];
   frame[pos]=af;
@@ -784,10 +784,10 @@ s_int8 animation::delete_image(u_int16 pos)
 
 s_int8 animation::delete_frame(u_int16 pos)
 {
-  animation_frame * oldframe=frame;
+  animationframe * oldframe=frame;
   u_int16 i;
   if(pos>nbr_of_frames-1) return -2;
-  frame=new animation_frame[--nbr_of_frames];
+  frame=new animationframe[--nbr_of_frames];
   for(i=0;i<pos;i++)
     frame[i]=oldframe[i];
   for(i=pos;i<nbr_of_frames;i++)
@@ -814,7 +814,7 @@ s_int8 animation::delete_frame(u_int16 pos)
 
 void animation::add_frame()
 {
-  animation_frame af;
+  animationframe af;
   if(!nbr_of_images)
     {
       win_info * wi=new win_info(70,40,th,font,"You must have at least one image in your animation before thinking about inserting a frame!");
@@ -1066,7 +1066,7 @@ void animation::update_editor_keys()
 	    insert_image(*clipboard,nbr_of_images);
 	  if(mode==FRAME)
 	    {
-	      animation_frame af;
+	      animationframe af;
 	      af.is_masked=f_clipboard.is_masked;
 	      af.alpha=f_clipboard.alpha;
 	      insert_frame(af,nbr_of_frames);

@@ -19,24 +19,7 @@
  */
 extern "C"
 {
-	void initinputc (void);
-	void initaudioc (void);
-	void initscreenc (void);
-	void initimagec (void);
-	void initwin_fontc (void);
-	void initwin_themec (void);
-	void initwin_basec (void);
-	void initwin_labelc (void);
-	void initwin_imagec (void);
-	void initwin_containerc (void);
-	void initdialog_enginec (void);
-	void initcharacterc (void);
-	void initquestc (void);
-	void initlandmapc (void);
-	void initmapcharacterc (void);
-	void initmapviewc (void);
-	void initmapenginec (void);
-	void initeventc (void);
+	void initadonthellc (void);
 }
 
 /*
@@ -51,24 +34,7 @@ bool init_python (void)
 
 	/* Initialise SWIG modules. This should go if we ever switch to dynamic 
 	   link */
-	initinputc();
-	initaudioc();
-	initscreenc();
-	initimagec();
-	initwin_fontc();
-	initwin_themec();
-	initwin_basec();
-	initwin_labelc();
-	initwin_imagec();
-	initwin_containerc();
-	initcharacterc ();
-	initdialog_enginec ();
-	initquestc ();
-	initlandmapc();
-	initmapcharacterc();
-	initmapviewc();
-	initmapenginec();
-	initeventc();
+	initadonthellc();
 	return true;
 }
 

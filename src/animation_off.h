@@ -20,6 +20,7 @@
 class animation_off : public animation
 {
   s_int16 xoffset, yoffset;
+
  public:
   animation_off();
   ~animation_off();

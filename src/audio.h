@@ -31,6 +31,7 @@
 class loop_info;
 class audio
 {
+#ifndef SWIG
   static int background_volume;
   static int effects_volume;
   static Mix_Music *music[NUM_MUSIC];
@@ -44,6 +45,7 @@ class audio
   static Uint16 buffer_size;
   static Uint16 audio_format;
   static int audio_channels;
+#endif
 
 public:
 

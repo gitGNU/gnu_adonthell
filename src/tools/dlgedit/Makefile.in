@@ -82,7 +82,7 @@ dlgedit_SOURCES = callbacks.cc circle.cc crcle_callbacks.cc crcle_interface.cc d
 
 
 # Evil, but it works...
-CPPFLAGS =  -I../.. -D_DLGEDIT_ -D_DEBUG_ -D_VERSION_=\"0.7\" `gtk-config --cflags`
+CPPFLAGS =  -I../.. -D_DLGEDIT_ -D_VERSION_=\"0.7\" `gtk-config --cflags`
 
 SWIGFLAGS = -D_DLGEDIT_ -D_DEBUG_
 

@@ -45,7 +45,7 @@ typedef enum anim_editor_mode {IMAGE, FRAME};
 
 #endif
 
-class animation_frame
+class animationframe
 {
 #ifdef _DEBUG_
   static u_int16 a_d_diff;
@@ -57,10 +57,11 @@ class animation_frame
   s_int16 gapy;
   u_int16 delay;
   u_int16 nextframe;
+
  public:
   void init();
-  animation_frame();
-  ~animation_frame();
+  animationframe();
+  ~animationframe();
   u_int8 get_alpha();
   void set_alpha(u_int8 a);
   bool get_mask();
@@ -99,7 +100,7 @@ class animation
   u_int8 info_win_count;
 
   image * clipboard;
-  animation_frame f_clipboard;
+  animationframe f_clipboard;
   bool mode;
   char frame_txt[500];
   win_font * font;
@@ -126,10 +127,10 @@ class animation
   u_int16 currentframe;
   u_int16 speedcounter;
   bool play_flag;
-
  public:
+
   image * t_frame;
-  animation_frame * frame;
+  animationframe * frame;
 
   void init();
   animation();
@@ -169,7 +170,7 @@ class animation
   void set_frame_mask(u_int16 nbr, bool m);
   void set_frame_imagenbr(u_int16 nbr, u_int16 imnbr);
   s_int8 insert_image(image &im, u_int16 pos);
-  s_int8 insert_frame(animation_frame &af, u_int16 pos);
+  s_int8 insert_frame(animationframe &af, u_int16 pos);
   u_int16 increase_frame(u_int16 c);
   u_int16 decrease_frame(u_int16 c);
   u_int16 increase_image(u_int16 c);

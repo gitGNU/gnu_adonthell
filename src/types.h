@@ -22,20 +22,4 @@
 #define s_int16 Sint16
 #define s_int32 Sint32
 
-typedef const char *cptr;
-
-//#define u_int8 unsigned char
-//#define u_int16 unsigned short int
-//#define u_int32 unsigned long int
-//#define s_int8 signed char
-//#define s_int16 signed short int
-//#define s_int32 signed long int
-
-#define RIGHT 1
-#define LEFT 2
-#define UP 3
-#define DOWN 4
-
-#define PATTERN_SIZE 16
-
 #endif
