@@ -22,8 +22,7 @@ void mapengine::map_engine(map*amap)
 {
   amap->set_status(0);
   amap->init_for_scrolling();
-  amap->win.init(80,20,150,60,WIN_NORMAL);
-  //amap->win.set_text("I hope you enjoy this window system! ;) The words are cutted if they reach the end of a line, but please press Enter key:    Hopefully messages can be scrolled. Now let's go for new adventures!                      Joel"); 
+  amap->win.init(70,20,180,60,WIN_NORMAL);
 
   // Just a quick hack
   dlg = new dialog_engine;

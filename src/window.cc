@@ -35,7 +35,8 @@ void window::init(u_int16 x, u_int16 y, u_int16 l, u_int16 h,u_int8 style)
   lenght=l;
   height=h; 
   
-  text_window=NULL;
+  text_window=new char[5000];
+  //  text_window=NULL;
   text_window_pos=0;
   text_window_lenght=0;
   
@@ -195,13 +196,12 @@ bool window::end_text()
 
 void window::set_text(const char *string)
 { 
-  char *tmp;
-  delete[] text_window;
+  
+  //  delete[] text_window;
   text_window_pos=0;
   text_window_lenght=strlen(string);
-  tmp=new char [text_window_lenght];
-  strcpy(tmp,string);
-  text_window=tmp;
+  //  text_window=new char [text_window_lenght];
+  strcpy(text_window,string);
   continue_text=true;
 }
 
@@ -251,7 +251,10 @@ void window::change_mode(u_int8 m)
 
 
 void window::draw_text()
-{u_int16 i=0;
+  // The bug is somewhere here! >:]
+
+{
+  u_int16 i=0;
  u_int16 j;u_int8 k;
  text_window_pos_tmp=text_window_pos;
  while(((sytext+i*WIN_FONT_HEIGHT)<eytext) && (text_window_pos_tmp<text_window_lenght))
@@ -263,7 +266,6 @@ void window::draw_text()
 	    {j+=WIN_SPACE_LENGHT; }
           else if (tablechar[k].get_height() != 0)
 	    { 
-	      // tablechar[k].putbox_mask(sxtext+j,sytext+i*WIN_FONT_HEIGHT);
 	      tablechar[k].putbox_mask(sxtext+j,sytext+i*WIN_FONT_HEIGHT);
 	      j+= (tablechar[k].get_lenght()/tablechar[k].get_sizefactor());
              }
