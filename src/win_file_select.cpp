@@ -30,6 +30,7 @@ win_file_select::win_file_select(s_int16 tx,s_int16 ty,u_int16 tl,u_int16 th,win
       if(cur_dir_[strlen(base_dir_)-1]!='/') strcat(base_dir_,"/");
       strcat(base_dir_,bdir);
       strcpy(cur_dir_,base_dir_);
+      cout << cur_dir_ << endl;
     }
   strcpy(ext,fext);
 
