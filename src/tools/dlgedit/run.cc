@@ -85,16 +85,16 @@ void run_dlg::run ()
     if (debug_dlg::destroy != 0) wnd->dbg_dlg->update ();
 
     // See if we reached the end of the script
-    if (dat->text == NULL) return;
+    if (dat->text() == NULL) return;
 
     // Now examine  dat->text  and see what we've got
     // case 1: only one NPC line
-    if (dat->text_size == 1)
+    if (dat->text_size() == 1)
     {
         // Fill the list with the text (i.e add an empty line and then the
         // clickable NPC text
         tmp_list = g_list_append (tmp_list, create_dlg_list_item (" ", 2, -2));
-        tmp_list = g_list_append (tmp_list, create_dlg_list_item (dat->text[0], 5, 0));
+        tmp_list = g_list_append (tmp_list, create_dlg_list_item (dat->text()[0], 5, 0));
     }
     
     // case 2: there is NPC text and Player text available
@@ -102,11 +102,11 @@ void run_dlg::run ()
     {
         // Fill in the NPC text
         tmp_list = g_list_append (tmp_list, create_dlg_list_item (" ", 2, -1));
-        tmp_list = g_list_append (tmp_list, create_dlg_list_item (dat->text[0], 4, -1));
+        tmp_list = g_list_append (tmp_list, create_dlg_list_item (dat->text()[0], 4, -1));
 
         // Now look for the player text
-        for (i = 1; i < dat->text_size; i++)
-            tmp_list = g_list_append (tmp_list, create_dlg_list_item (dat->text[i], 3, i));            
+        for (i = 1; i < dat->text_size(); i++)
+            tmp_list = g_list_append (tmp_list, create_dlg_list_item (dat->text()[i], 3, i));            
     }
 
     // Now stuff everything into the list

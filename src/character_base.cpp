@@ -22,7 +22,7 @@ character_base::character_base ()
 {
   dialogue = NULL;
   name = NULL;
-  color = 0;
+  color = 1;
 }
 
 character_base::~character_base ()
@@ -62,7 +62,10 @@ void character_base::save(gzFile out)
   
   // Save name
   fileops::put_string (out, name);
-    
+
+  // save color
+  gzwrite (out, &color, sizeof (color));
+  
   // Save all attributes and flags
   j = data.size ();
   gzwrite (out, &j, sizeof (j));
@@ -86,6 +89,9 @@ void character_base::load (gzFile in)
 
     // load name
     name = fileops::get_string (in);
+
+    // load color
+    gzread (in, &color, sizeof (color));
 
 #ifndef _EDIT_
     // make the character available from data

@@ -170,7 +170,7 @@ fi
 AC_MSG_RESULT(found)
 
 
-dnl Versions of python that load modules dynically need this too
+dnl Versions of python that load modules dynamically need this too
 
 PY_LIBS="-Wl,-E $PY_LIBS"
 

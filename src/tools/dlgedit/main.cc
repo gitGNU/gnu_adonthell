@@ -99,7 +99,7 @@ main (int argc, char *argv[])
     {
         character *mynpc = NULL;
     
-        if (!fileops::get_version (in, 1, 1, tmp))
+        if (!fileops::get_version (in, 2, 2, tmp))
             return 1;
 
         while (gzgetc (in))

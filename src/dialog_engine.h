@@ -21,6 +21,8 @@
 #include "win_select.h"
 #include "win_theme.h"
 
+#define MAX_COLOR 6
+
 class dialog_engine : public win_container
 {
 public:
@@ -35,28 +37,28 @@ public:
     bool update ();                 // React to (keyboard) input
     void run ();                    // Execute one step of the dialogue
 
-    bool is_running;                // True as long as we don't want to quit
 #ifndef SWIG
 private:
     void insert_plugin ();          // 'Merges' a dialogue with the loaded one
-    void on_change_selection ();    // Callback when selection has changed
     void on_select ();              // Callback when item is "activated"
     
-    win_font *font;                 // The font
     win_image *face;                // Widget holding NPC portrait
     win_label *name;                // Widget holding NPC name
     win_theme *theme;               // Window theme
     win_select *sel;                // Selection of possible answers
 
+    win_font *fonts[MAX_COLOR];     // As long as realtime coloring does not work
+    
     vector <win_label*> cur_answers;// Answers currently available for selection
 
     PyObject* instance;             // Dialogue Engine Python wrapper class
     dialog *dlg;                    // The Python/C interface for the dialogue
 
     s_int32 answer;                 // The selected dialogue option
-    u_int16 sel_start;              // The start of the current Dialogue items
-
+    u_int32 sel_start;              // Index of first selectible dialogue item
+    
     bool can_add;                   // Is true while we can concatenate NPC text
+    bool is_running;                // True as long as we don't want to quit
 #endif // SWIG
 };
 

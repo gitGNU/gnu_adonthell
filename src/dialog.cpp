@@ -72,7 +72,7 @@ bool dialog::init (char *fpath, char *name)
     // Init the first answer
     answers.push_back(0);
 
-    text = NULL;
+    _text = NULL;
 
 	return true;
 }
@@ -121,13 +121,13 @@ void dialog::run (u_int32 index)
     PyObject *npc, *player, *cont;
 
     // (Re)Init dialog::text
-    if (text)
+    if (_text)
     {
-        for (i = 0; i < text_size; i++) delete text[i];
-        delete text;
+        for (i = 0; i < _text_size; i++) delete _text[i];
+        delete _text;
 
-        text_size = 0;
-        text = NULL;
+        _text_size = 0;
+        _text = NULL;
     }
 
     // End of dialogue:
@@ -158,9 +158,7 @@ void dialog::run (u_int32 index)
     npc = PyObject_GetAttrString (instance, "npc");
     player = PyObject_GetAttrString (instance, "player");
     cont = PyObject_GetAttrString (instance, "cont");
-    npc_color = PyInt_AsLong (PyObject_GetAttrString (instance, "color"));
-    
-    
+    _npc_color = PyInt_AsLong (PyObject_GetAttrString (instance, "color"));
 
     // 2. Search the NPC part for used text
     for (i = 0; (int)i < PyList_Size (npc); i++)
@@ -177,7 +175,7 @@ void dialog::run (u_int32 index)
 
     if (nsz != 0)
     {
-        text = new char*[nsz+psz];
+        _text = new char*[nsz+psz];
         // 3. Randomly chose between possible NPC replies
         randgen.init (" ", 0, nsz-1);
     }
@@ -191,7 +189,7 @@ void dialog::run (u_int32 index)
     s = PyInt_AsLong (PyList_GetItem (npc, i));
 
     // scan the string for { python code }
-    text[0] = scan_string (strings[s]);
+    _text[0] = scan_string (strings[s]);
     answers.push_back (-1);
 
     // 4. Mark the NPC text as used unless it's allowed to loop
@@ -212,7 +210,7 @@ void dialog::run (u_int32 index)
             if (find (used.begin (), used.end (), s) == used.end ())
             {
                 // add string to current text list
-                text[l++] = scan_string (strings[s]);
+                _text[l++] = scan_string (strings[s]);
                 
                 // Remember Player's possible replies to avoid loops
                 choices.push_back (s);               
@@ -225,7 +223,7 @@ void dialog::run (u_int32 index)
 
     // Insert the target of the NPC text
     answers[0] = PyInt_AsLong (PyList_GetItem (cont, k-1));
-    text_size = l;
+    _text_size = l;
 
     // Free the three lists
     Py_XDECREF (npc);

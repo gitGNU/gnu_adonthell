@@ -12,6 +12,7 @@
    See the COPYING file for more details
 */
 
+#include <string.h>
 #include <time.h>
 #include <string.h>
 #include "yarg.h"

@@ -30,14 +30,16 @@ public:
     void run (u_int32);             // Run the dialogue 
     PyObject *get_instance ();      // Get the Python dialogue instance
 
-    char **text;                    // NPC's speech and according Player responses
-    u_int32 npc_color;              // The color of the NPC's text
-    u_int32 text_size;              // Number of strings in text
-
+    u_int32 npc_color () { return _npc_color; }
+    u_int32 text_size () { return _text_size; }
+    char** text () { return _text; }
+    
 private:
 	PyObject *instance;             // Points to the instantiated dialogue class
-
     char **strings;                 // The dialogue text
+    char **_text;                   // NPC's speech and according Player responses
+    u_int32 _npc_color;             // The color of the NPC's text
+    u_int32 _text_size;             // Number of strings in text
 
     vector<s_int32> answers;        // The indices with which to call instance.run () 
     vector<s_int32> choices;        // Strings player can chose from

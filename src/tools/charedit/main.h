@@ -50,8 +50,8 @@ class main_wnd
     gchar *last_dir;
     gchar *char_dir;
     gchar *cur_dir;
-    gchar *posx;
-    gchar *posy;
+
+    unsigned int npc_color;
 
     static gchar *events[5];    // = { "Enter", "Leave", "Pickup", "Drop", "Kill" };
     static gchar *races[4];     // = { "Dwarf", "Elf", "Half-Elf", "Human" };

@@ -48,6 +48,7 @@ class character_base : public storage
   char * get_name() { return name; }        // Get the character's name
   void set_name(const char * newname);      // Set the character's name
   u_int32 get_color() { return color; }     // Return the character's text color 
+  void set_color (int c) { color = c; }     // Set the character's text color 
   char * get_dialogue () { return dialogue; }// Gets the character's active dialogue
   void set_dialogue (const char * dialogue);// Set the active dialogue
 

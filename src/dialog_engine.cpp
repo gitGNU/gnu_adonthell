@@ -12,6 +12,7 @@
    See the COPYING file for more details
 */
 
+#include <iostream.h>
 #include <string.h>
 #include "character.h"
 #include "data.h"
@@ -30,12 +31,17 @@ dialog_engine::dialog_engine (character_base *mynpc, char * dlg_file, u_int8 siz
 
 void dialog_engine::init(character_base *mynpc, char * dlg_file, u_int8 size)
 {
-    sel_start = 1;
-    can_add = true;
     is_running = true;
     instance = NULL;
-  
-    font = new win_font (win_theme::theme);
+
+    // Load the different fonts
+    fonts[0] = new win_font ("white/");
+    fonts[1] = new win_font ("yellow/");
+    fonts[2] = new win_font ("red/");
+    fonts[3] = new win_font ("violet/");
+    fonts[4] = new win_font ("blue/");
+    fonts[5] = new win_font ("green/");
+    
     theme = new win_theme (win_theme::theme);
     set_theme (theme);
 
@@ -57,7 +63,7 @@ void dialog_engine::init(character_base *mynpc, char * dlg_file, u_int8 size)
     face = new win_image (5, 5, 64, 64, theme);
 
     // The NPC's name
-    name = new win_label (5, 74, 64, 0, theme, font);
+    name = new win_label (5, 74, 64, 0, theme, fonts[0]);
     name->set_auto_height (true);
 
     // The list with the dialogue
@@ -74,12 +80,6 @@ void dialog_engine::init(character_base *mynpc, char * dlg_file, u_int8 size)
     // Notification when a dialogue item get's selected
     sel->set_signal_connect (makeFunctor (*this, 
         &dialog_engine::on_select), WIN_SIG_ACTIVATE_KEY);
-
-    // Make sure only the current items can be chosen
-    sel->set_signal_connect (makeFunctor (*this, 
-        &dialog_engine::on_change_selection), WIN_SIG_NEXT_KEY);
-    sel->set_signal_connect (makeFunctor (*this, 
-        &dialog_engine::on_change_selection), WIN_SIG_PREVIOUS_KEY);
 
     // set the NPC's portrait (later:  get the portrait to use from the npc data)
     set_portrait ("gfx/portraits/lyanna.pnm");
@@ -127,8 +127,10 @@ dialog_engine::~dialog_engine ()
     sel->set_activated (false);
 
     delete dlg;
-    delete font;
     delete theme;
+    
+    for (int i = 0; i < MAX_COLOR; i++)
+        delete fonts[i];
 
     Py_XDECREF (instance);
 }
@@ -149,18 +151,19 @@ void dialog_engine::run ()
     dlg->run (answer);
 
     // End of dialogue
-    if (!dlg->text)
+    if (!dlg->text ())
     {
         is_running = false;
         return;
     }
 
     // Add NPC text and all player reactions to container
-    for (i = 0; i < dlg->text_size; i++)
+    for (i = 0; i < dlg->text_size (); i++)
     {
-        l = new win_label (0, 0, 180, 0, theme, font);
+        l = new win_label (0, 0, 180, 0, theme, 
+            i == 0 ? fonts[dlg->npc_color()] : fonts[1]);
         l->set_auto_height (true);
-        l->set_text (dlg->text[i]);
+        l->set_text (dlg->text()[i]);
         l->set_visible (true);
         
         cur_answers.push_back (l);
@@ -168,13 +171,13 @@ void dialog_engine::run ()
     }
 
     // Either select the single NPC speech ...
-    if (dlg->text_size == 1) sel->set_default (cur_answers.front ());
+    if (dlg->text_size() == 1) sel->set_default (cur_answers.front ());
     
     // ... or the player's first answer
     else 
     {
+        cur_answers[0]->set_can_be_selected (false);
         sel->set_default (cur_answers [1]);
-        sel_start++;
     }
 }
 
@@ -184,69 +187,20 @@ bool dialog_engine::update ()
     return is_running;
 }
 
-// Ensure that only valid dialogue options can be selected
-void dialog_engine::on_change_selection ()
-{
-    u_int16 cur_sel = sel->get_pos ();
-    if (cur_sel < sel_start)
-    {
-        if (cur_sel == sel_start-1) sel->set_default (cur_answers.back ());
-        else sel->set_default (sel_start);
-    }
-}
-
 void dialog_engine::on_select ()
 {
     vector<win_label*>::iterator i;
-    win_label *cur_sel = (win_label *) sel->get ();
-    win_label *l;
 
     // remember choice
-    answer = sel->get_pos () - sel_start;
+    answer = sel->get_pos () - 1;
 
-    // Concatenate multiple NPC texts (if possible)
-    if (can_add && sel_start > 1)
+    // remove all the text
+    for (i = cur_answers.begin (); i != cur_answers.end (); i++)
     {
-        if (dlg->text_size == 1) sel->set_default (sel_start-1);
-        else
-        { 
-            sel->set_default (sel_start-2);
-            sel_start--;    
-        }
-        
-        l = (win_label *) sel->get ();
-        char *txt = cur_answers[0]->get_text ();
-        char str[strlen(txt)+2];
-        str[0] = ' ';
-        strncpy (str+1, txt, strlen (txt)+1);
-        l->add_text (str);
-        l->draw ();
-
-        sel->remove (cur_answers[0]);
-        delete cur_answers[0];
-    }
-    else if (dlg->text_size == 1) sel_start++;
-    
-    // remove all the player text except the chosen answer
-    for (i = cur_answers.begin (); ++i != cur_answers.end ();)
-    {
-        if (*i != cur_sel)
-        {
-            sel->remove (*i);
-            delete *i;
-        }
-        else sel_start++;
+        sel->remove (*i);
+        delete *i;
     }
         
-    // When we have a single NPC text, chances are good we can append the
-    // NPC text that will follow
-    if (dlg->text_size == 1) can_add = true;
-    else 
-    {
-        can_add = false;
-        answer++;
-    }
-
     cur_answers.clear ();
     run ();
 }

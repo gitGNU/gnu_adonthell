@@ -228,7 +228,7 @@ bool data::load (u_int32 pos)
         return false;
     }
 
-    if (!fileops::get_version (in, 1, 1, filepath))
+    if (!fileops::get_version (in, 2, 2, filepath))
         return false;
 
     // load characters     
@@ -355,7 +355,7 @@ gamedata* data::save (u_int32 pos, char *desc)
         return NULL;
     }
 
-    fileops::put_version (file, 1);
+    fileops::put_version (file, 2);
     while ((mychar = (character *) characters.next ()) != NULL)
     {
         // don't save the player

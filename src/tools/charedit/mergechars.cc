@@ -17,6 +17,7 @@
 #include <glib.h>
 #include <dirent.h>
 #include <string.h>
+#include <stdlib.h>
 #include <iostream.h>
 #include <fstream.h>
 #include <unistd.h>
@@ -86,6 +87,7 @@ void process_character (char *input, gzFile output)
                 case 1:
                 {
                     if (strcmp (vals[0], "name") == 0) mynpc.set_name(strdup (vals[1]));
+                    else if (strcmp (vals[0], "color") == 0) mynpc.set_color(atoi (vals[1]));
                     else if (strcmp (vals[0], "race") == 0)
                     {
                         if (strcmp (vals[1], "Elf") == 0) mynpc.set ("race", ELF);
@@ -221,7 +223,7 @@ int main (int argc, char* argv[])
     }
 
     // write version
-    fileops::put_version (outfile, 1);
+    fileops::put_version (outfile, 2);
 
     // get absolute pathname
     chdir (argv[1]);
