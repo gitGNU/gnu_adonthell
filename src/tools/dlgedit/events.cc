@@ -153,7 +153,7 @@ motion_notify_event (GtkWidget * widget, GdkEventMotion * event, gpointer data)
     point.y = (s_int32) event->y - MainWnd->y_offset;
 
     // start/stop scrolling of dialogue area
-    begin_scrolling (MainWnd, point);
+    if (MainWnd->number > 0) begin_scrolling (MainWnd, point);
 
     // Dragging dialogue nodes
     if (event->state == GDK_BUTTON_PRESS_MASK)

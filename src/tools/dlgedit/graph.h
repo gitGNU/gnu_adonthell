@@ -18,7 +18,7 @@ void multsel_objects (MainFrame*);
 int select_object (MainFrame *, GdkPoint);
 void select_object_index (MainFrame *, int);
 int deselect_object (MainFrame *);
-void center_object (MainFrame *, DlgNode *);
+int center_object (MainFrame *, DlgNode *);
 int new_circle (MainFrame *, GdkPoint, int);
 void draw_circle (MainFrame *, DlgNode *, int);
 int new_arrow (MainFrame *, GdkPoint);

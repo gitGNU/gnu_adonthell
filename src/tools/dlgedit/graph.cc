@@ -882,8 +882,7 @@ load_dialogue (MainFrame * wnd, const char *file)
     delete_dialogue (wnd);
     init_app (wnd);
 
-    // ... then load all nodes ... 
-
+    // ... then load all nodes.
     while (i)
     {
         switch (i = parse_dlgfile (s, n))
@@ -912,13 +911,13 @@ load_dialogue (MainFrame * wnd, const char *file)
 
             case LOAD_RACE:
             {
-                if (parse_dlgfile (s, n) == LOAD_NUM); // wnd->myplayer->set ("race", n);
+                if (parse_dlgfile (s, n) == LOAD_NUM) wnd->myplayer->set ("race", n);
                 break;
             }
 
             case LOAD_GENDER:
             {
-                if (parse_dlgfile (s, n) == LOAD_NUM); // wnd->myplayer->set ("gender", n);
+                if (parse_dlgfile (s, n) == LOAD_NUM) wnd->myplayer->set ("gender", n);
                 break;
             }
             
@@ -945,11 +944,13 @@ load_dialogue (MainFrame * wnd, const char *file)
         }
     }
 
-    // ... and redraw them 
-    redraw_graph (wnd);
-
     // set number of nodes
     wnd->number = wnd->nodes.size ();
+
+    // center view on first node
+    if (wnd->number > 0) 
+        if (!center_object (wnd, wnd->nodes[0]))
+            redraw_graph (wnd);
 
     // set new window - title 
     wnd->file_name = g_strdup (file);
@@ -1068,7 +1069,7 @@ void update_gui (MainFrame *wnd)
     // check wether dialogue script exists and set "run" menuitem accordingly
     test = fopen (script.c_str (), "r");
     if (!test) gtk_widget_set_sensitive (wnd->dialogue_run, FALSE);
-    else 
+    else
     {
         gtk_widget_set_sensitive (wnd->dialogue_run, TRUE);
         fclose (test);
@@ -1423,7 +1424,7 @@ get_cur_selection (MainFrame * wnd, GdkPoint point)
 }
 
 // center the view on node 
-void
+int
 center_object (MainFrame * wnd, DlgNode * node)
 {
     GdkRectangle view;
@@ -1445,7 +1446,10 @@ center_object (MainFrame * wnd, DlgNode * node)
         wnd->y_offset -= pos.y - wnd->graph->allocation.height / 2;
 
         redraw_graph (wnd);
+        return 1;
     }
+    
+    return 0;
 }
 
 // prepare everything for 'auto-scrolling' (TM) ;-)
