@@ -1,8 +1,10 @@
 /*  
    $Id$
+
    Copyright (C) 2000 Kai Sterker <kaisterker@linuxgames.com>
+   Part of the Adonthell Project http://adonthell.linuxgames.com
    
-   This code is taken from:
+   This code was originally taken from:
  
    XMMS - Cross-platform multimedia player
    Copyright (C) 1998-2000  Peter Alm, Mikael Alm, Olle Hallnas, Thomas Nilsson and 4Front Technologies

@@ -77,6 +77,10 @@ private:
     win_label *name;
     win_border *border;
     win_background *back;
+    win_select *sel;
+    win_cursor *cursor;
+
+    vector <win_label*> cur_answers;
     
     dialog *dlg;
     game_engine *engine;

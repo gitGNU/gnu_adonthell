@@ -158,6 +158,7 @@ void dialog::run (u_int32 index)
     else 
     {
         // End of dialogue
+        text_size = 0;
         text = NULL;
         return;
     }
@@ -253,7 +254,7 @@ char* dialog::scan_string (const char *s)
             string[end-1] = 0;        
             strncpy (string, start+3, end);
 
-            if (the_player->get("gender") == 0) mid = get_substr (string, "{", "/");
+            if (the_player->get("gender") == FEMALE) mid = get_substr (string, "{", "/");
             else mid = get_substr (string, "/", "}");
 
             begin = strlen(newstr) - strlen(start);
@@ -355,15 +356,20 @@ dialog_engine::dialog_engine (mapcharacter *c, game_engine *e) : engine (e)
     // Create window
     font = new win_font (game::theme);
     border = new win_border (game::theme);
+    cursor = new win_cursor (game::theme);
     back = new win_background (game::theme);
     wnd = new win_container (40, 20, 240, 160);
 
     face = wnd->add_image (5, 5, c->portrait);
     name = wnd->add_label (5, 75, 64, 10, font);
+    name->set_auto_height (true);
     name->set_text (mynpc->name);
-
+    
     txt = wnd->add_container (80, 5, 155, 150);
-
+    sel = new win_select (txt);
+    sel->set_cursor (cursor);
+    sel->set_border (border);
+    
     wnd->set_border (border);
     wnd->set_background (back);
     wnd->show_all ();
@@ -384,6 +390,7 @@ dialog_engine::~dialog_engine ()
 {
     delete wnd;
     delete border;
+    delete cursor;
     //    delete face;
     //    delete name;
     //    delete txt;
@@ -392,12 +399,13 @@ dialog_engine::~dialog_engine ()
 
 void dialog_engine::run ()
 {
-    u_int32 i;
+    u_int32 i, h = 0;
     win_label *l;
     
-    // Error occured:
+    // Possibly error
     if (answer < 0)
     {
+        screen::drawbox(0,0,320,200,0);
         game::engine = engine;
         delete this;
         return;
@@ -405,12 +413,28 @@ void dialog_engine::run ()
     
     dlg->run (answer);
 
+    if (!dlg->text)
+    {
+        screen::drawbox(0,0,320,200,0);
+        game::engine = engine;
+        delete this;
+        return;
+    }
+    
     for (i = 0; i < dlg->text_size; i++)
     {
-        l = txt->add_label (0, 0, 155, 20, font);
-        l->set_text (dlg->text[i]);  
+        l = txt->add_label (0, h, 155, h+font->height, font);
+        l->set_auto_height (true);
+        l->set_text (dlg->text[i]);
+        sel->add (l, WIN_SELECT_MODE_BORDER);  
+        cur_answers.push_back (l);
+
+        h += l->height;
     }
 
+    if (dlg->text_size == 1) sel->set_default_obj (cur_answers.front ());
+    else sel->set_default_obj (cur_answers[1]);
+    
     txt->show_all ();
     txt->draw ();
 }
@@ -424,9 +448,33 @@ void dialog_engine::update_keyboard ()
 {
     if (input::has_been_pushed (SDLK_SPACE))
     {
-        screen::drawbox(0,0,320,200,0);
-        game::engine = engine;
-        delete this;
+        vector<win_label*>::iterator i;
+        
+        answer = sel->get_pos () - 1;
+
+        for (i = cur_answers.begin (); i != cur_answers.end (); i++)
+        {
+            sel->remove (*i);
+            txt->remove (*i);
+            delete *i;
+        }
+        
+        cur_answers.clear ();
+        run ();
+    }
+
+    if (dlg->text_size > 1)
+    {
+        if (input::has_been_pushed (SDLK_UP))
+        {
+            if (sel->get_pos () == 2) sel->set_default_obj (cur_answers.back ());
+            else sel->preview ();
+        }
+        if (input::has_been_pushed (SDLK_DOWN))
+        {
+            if (sel->get_pos () == cur_answers.size ()) sel->set_default_obj (cur_answers[1]);
+            else sel->next ();    
+        }
     }
 }
 
