@@ -103,6 +103,11 @@ void gamedata::set_directory (string dir)
     Directory = dir;
 }
 
+void gamedata::set_gametime (string time)
+{
+    Gametime = time;
+}
+
 bool gamedata::load_characters (u_int32 pos)
 {
     igzstream in;

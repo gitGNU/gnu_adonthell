@@ -28,6 +28,7 @@
 #include "types.h"
 #include "pnm.h"
 #include "gamedata.h"
+#include "gamedate.h"
 #include "image.h"
 #include "input.h"
 #include "window.h"
@@ -104,7 +105,9 @@ void data_screen::init ()
     u_int16 num = 0; 
     win_image *shot;
     win_write *entry;
+    win_label *date;
     win_container *box = NULL;
+    win_font *yellow = win_manager::get_font ("yellow");
     gamedata *gdata;
     
     // display all the available saved games
@@ -119,10 +122,18 @@ void data_screen::init ()
         shot->set_border (*theme, win_border::MINI);
         shot->set_visible_border (true);
         shot->pack();
-	
+	    
+        date = new win_label ();
+        date->move (100, 2);
+        ((label*)date)->resize (130, 14);
+        date->set_font (*yellow);
+        date->set_text (gdata->gametime ());
+        date->set_cursor_visible (false);
+        date->pack();
+        
         entry = new win_write ();
-        entry->move (100, 2);
-        ((label_input*)entry)->resize (130, 54);
+        entry->move (100, 18);
+        ((label_input*)entry)->resize (130, 40);
         entry->set_font (*font);
         entry->set_text (gdata->description ());
         entry->set_cursor_visible (false);
@@ -134,6 +145,7 @@ void data_screen::init ()
         box->move (0, 0);
         box->resize (230, 58);
         box->add (shot);
+        box->add (date);
         box->add (entry);
         box->set_visible_all (true);
 	
@@ -149,6 +161,9 @@ void data_screen::init ()
     // If we're saving the game, add "Empty Slot"
     if (mode == SAVE_SCREEN)
     {
+        sprintf (gametime, "Day %i - %02i:%02i", gamedate::day (), 
+            gamedate::hour (), gamedate::minute ());
+        
         shot = new win_image ();
         shot->move (5, 2);
         shot->load_pnm ("gfx/empty_slot.pnm");
@@ -156,10 +171,18 @@ void data_screen::init ()
         shot->set_visible_border (true);
         shot->pack (); 
         
+        date = new win_label ();
+        date->move (100, 2);
+        ((label*)date)->resize (130, 14);
+        date->set_font (*yellow);
+        date->set_text (gametime);
+        date->set_cursor_visible (false);
+        date->pack();
+
         entry = new win_write ();
         entry->set_font (*font);
-        entry->move (100, 2);
-        ((label_input*) entry)->resize (130, 54);
+        entry->move (100, 18);
+        ((label_input*) entry)->resize (130, 40);
         entry->set_text ("Empty Slot");
         entry->set_cursor_visible (false);
         entry->pack ();
@@ -170,6 +193,7 @@ void data_screen::init ()
         box->move (0, 0);
         box->resize (230, 58);
         box->add (shot);
+        box->add (date);
         box->add (entry);
         box->set_visible_all (true);
 	
@@ -273,6 +297,7 @@ void data_screen::on_save ()
     // save sucessful --> save preview
     if (gdata != NULL)
     {
+        gdata->set_gametime (gametime); 
         string filepath = gdata->directory ();
         filepath += "/preview.pnm";
         save_preview (filepath);

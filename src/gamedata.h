@@ -148,6 +148,12 @@ public:
      */
     void set_directory (string);
 
+    /** 
+     * Set the in-game time of the saved %game.
+     * 
+     * @param string In-game time of the saved %game.
+     */
+    void set_gametime (string);
     //@}
 
     /** 

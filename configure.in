@@ -14,6 +14,7 @@ AM_INIT_AUTOMAKE(adonthell, 0.3.3pre1)
 AM_CONFIG_HEADER(config.h)
 
 CFLAGS="-g -Wall -fno-exceptions -fno-rtti"
+CPPFLAGS=""
 DEFS=""
 
 dnl ********************
@@ -389,6 +390,7 @@ CXXFLAGS="$CFLAGS $DEFS $INCLUDES"
 
 AC_SUBST(CXX) 
 AC_SUBST(CXXFLAGS) 
+AC_SUBST(CPPFLAGS)
 AC_SUBST(LIBS) 
 AC_SUBST(SDL_CFLAGS)
 AC_SUBST(SDL_LIBS)

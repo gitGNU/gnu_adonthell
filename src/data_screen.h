@@ -117,6 +117,7 @@ private:
     vector<win_write*> entry_list;  // list of game descriptions
     int mode;                       // Whether we're saving or loading
     bool aborted;                   // Indicates whether action has been cancelled
+    char gametime[20];              // time when saving the game
 };
 
 #endif // DATA_SCREEN_H__
