@@ -256,8 +256,6 @@ gamedata* data::save (u_int32 pos, char *desc)
 
         // we'll need a new gamedata record
         gdata = new gamedata (dir, desc);
-
-        saves.push_back (gdata);
     }
     else
     {
@@ -321,8 +319,11 @@ gamedata* data::save (u_int32 pos, char *desc)
     if (!file)
     {
         fprintf (stderr, "Couldn't create \"%s\" - save failed\n", filepath);
-        return false;
+        return NULL;
     }
+
+    // only now it is save to add the new record to the array
+    if (pos >= saves.size ()) saves.push_back (gdata);
 
     vector<gamedata*>::iterator i = saves.begin (); 
 
