@@ -23,9 +23,10 @@ audio::audio() {
   int i;  // Generic counter variable
 
   audio_rate = 22050;        // Sample at 22050Hz
-  audio_format = AUDIO_S16;  // Output in signed 16-bit form
-  audio_channels = 2;        // 1 is mono, 2 is stereo
+  audio_format = AUDIO_S8;  // Output in signed 16-bit form
+  audio_channels = 1;        // 1 is mono, 2 is stereo
   background_volume = 128;   // 128... seems to work well ;>
+  buffer_size = 512;         // Audio buffer size
   effects_volume = 128;	     // Still figuring this one out...
   background_on = false;     // No background music is playing
   current_background = -1;   // No song currently playing
@@ -33,14 +34,16 @@ audio::audio() {
   audio_initialized = false; // No audio connection yet
 
   // Unload any junk in memory (if there is any)
-  // for (i = 0; i < NUM_WAVES; i++) unload_wave(i);
-  // for (i = 0; i < NUM_MUSIC; i++) unload_background(i);
+  // Alex: Ark! Looks like pointers are not initialized
+  // to NULL, enabling the 2 following lines cause a segfault
+  //  for (i = 0; i < NUM_WAVES; i++) unload_wave(i);
+  //  for (i = 0; i < NUM_MUSIC; i++) unload_background(i);
 
   for (i = 0; i < NUM_MUSIC; i++) music[i] = NULL; 
 
   // Try opening the audio device at our defaults
   i=Mix_OpenAudio(audio_rate, audio_format,
-    audio_channels, background_volume);
+    audio_channels, buffer_size);
 
   // Now see what we got when opening the audio device
   // If we COULDN'T open the audio...
@@ -101,8 +104,12 @@ int audio::load_background(int new_background) {
   } else {
 
     // Music already occupies that slot
-    if (music[new_background] != NULL)
-      unload_background(new_background);
+
+    // Alex: Ark! Looks like pointers are not initialized
+    // to NULL, enabling the 2 following lines cause a segfault
+
+    //    if (music[new_background] != NULL)
+    //      unload_background(new_background);
 
     // No music in slot, load new tune in
     music[new_background] = Mix_LoadMUS("audio/water.it");

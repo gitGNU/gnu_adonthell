@@ -31,7 +31,6 @@ int audio_init() {
 
 void audio_update()
 {
-
   // Keep audio up-to-date
   while (1==1) {
 
@@ -44,7 +43,7 @@ void audio_update()
         Mix_PlayMusic(audio_in->music[audio_in->current_background], 2);
       }
     }
-    SDL_Delay(100);
+    SDL_Delay(1000);
   }
 }
 

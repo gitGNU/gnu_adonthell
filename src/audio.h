@@ -33,6 +33,7 @@ public:
   bool background_paused;
   bool audio_initialized;
   int audio_rate;
+  Uint16 buffer_size;
   Uint16 audio_format;
   int audio_channels;
 
