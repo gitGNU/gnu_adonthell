@@ -18,6 +18,15 @@
 #include <vector>
 #include <string>
 
+#define NUM_OPS 17
+
+enum
+{
+    LGET = 0,
+    RGET = 1,
+    SET = 2
+};
+
 // Dialogue Compiler
 class dlg_compiler
 {
@@ -55,14 +64,18 @@ private:
     void write_player_answer (DlgNode*);// Write the answer function's Player part
     void write_start ();            // Writes the first function
 
-    u_int8 npc_follows (DlgNode*);   // TRUE if player node(s) follow Circle
+    string inflate (string, int);   // Inflates "shortcut code"
+    
+    u_int8 npc_follows (DlgNode*);  // TRUE if player node(s) follow Circle
     u_int8 player_follows (DlgNode*);// TRUE if player node(s) follow Circle
     u_int8 narrator_before (Circle*);// TRUE if Narrator text before Circle
     u_int8 character_changed (Circle*);// TRUE if another NPC speaks
 
-    void sort (vector<DlgNode*>&);   // Rearrange if [elif ...] else statements
+    void sort (vector<DlgNode*>&);  // Rearrange if [elif ...] else statements
     void get_prev_npc_nodes (Circle*, vector<Circle*>&);
     void get_prev_npc_links (Circle*, vector<Circle*>&);
+
+    static string operators[NUM_OPS];
 };
 
 #endif // __COMPILE_H__

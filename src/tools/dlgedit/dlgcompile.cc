@@ -12,12 +12,17 @@
    See the COPYING file for more details.
 */ 
 
+#include <ctype.h>
 #include <string.h>
 #include <algorithm>
 
 #include "../../types.h"
+#include "../../data.h"
 #include "dlgnode.h"
 #include "dlgcompile.h"
+
+string dlg_compiler::operators[NUM_OPS] = { "and", "or", "==", "!=", "<", "<=", ">", 
+    ">=", "+", "-", "*", "/", "%", "&", "|", "^", "."};
 
 dlg_compiler::dlg_compiler (vector<DlgNode*> &d, string f, string c, string i, u_int8 dbg)
 {
@@ -184,17 +189,163 @@ void dlg_compiler::write_custom_code (string code)
 {
     u_int32 i = 0, j;
 
+    cout << code << endl;
     code += '\n';
         
     while ((j = code.find ('\n', i)) < code.size ())
     {
-        script << "\n" << space << code.substr (i,j-i);
+        string inflated = inflate (code.substr (i,j-i), RGET);
+        cout << inflated << endl;
+        script << "\n" << space << inflated;
         i = ++j;
     }
 
     code.erase (code.end()-1);
-
+    cout << endl;
     script << "\n";
+}
+
+// Inflate short code like "a_quest.attribute = 4" to the proper
+// quests.get ("a_quest").set ("attribute", 4):
+//
+// First we transform the code into a binary tree, where each inner node
+// is an operator like 'and', 'or', '==', ... and each leaf either a
+// variable or constant.
+//
+// Then we traverse the tree in order to reassemble the code. On
+// that occasion we replace var with 'get ("var")' or set '("var",' 
+// accordingly.
+//
+// Oh, and instead of building an actual tree, we simply use recusion
+// - that's much more fun! :)
+string dlg_compiler::inflate (string code, int mode)
+{
+    u_int32 i, pos;
+    string left;
+
+    // '=' (but not '!=', '<=', '>=' or '==')
+    if ((pos = code.find ("=")) != code.npos && code[pos-1] != '!' &&
+        code[pos-1] != '<' && code[pos-1] != '>' && code[pos+1] != '=')
+    {
+        left = code.substr (0, pos);
+
+        // don't break assignments to local variables
+        if (left.find (".") == left.npos || left.find ("self.") != left.npos) 
+            return left + string ("=") + inflate (code.substr (pos + 1), RGET); 
+        else
+            return inflate (left, SET) + string (", ") + 
+                inflate (code.substr (pos + 1), RGET) + ")"; 
+    }
+    
+    // everything 'cept '='
+    for (i = 0; i < NUM_OPS; i++)
+        if ((pos = code.find (operators[i])) != code.npos)
+        {
+            left = inflate (code.substr (0, pos), LGET);
+
+            // don't break reads from local variables
+            if (operators[i] == "." && left.find ("self") != left.npos)
+                return left + operators[i] + code.substr (pos + operators[i].length());
+            else
+                return left + operators[i] + inflate (code.substr (pos +
+                    operators[i].length()), mode == SET ? SET : RGET);
+        }
+        
+    // if we reach this point, we're in a leaf
+
+    // if the code already contains 'set' or 'get' there'll be a pair 
+    // of quotes or brackets and we've got nothing to do
+    if ((code.find ('"') != code.npos || code.find ('\'') != code.npos) ||
+        (code.find ('(') != code.npos && code.find (')') != code.npos))
+        return code;
+
+    string variable, prefix(""), suffix("");
+
+    switch (mode)
+    {
+        // if we're in the left child, we gotta watch out for 'self',
+        // 'the_player' and 'the_npc'. Further, we might have an 'if',
+        // 'elif' or 'else' in  front of our variable
+        case LGET:
+        {
+            // handle trailing whitespace
+            pos = code.length()-1;
+            while (code[pos] == ' ') pos--;
+            
+            if (pos != code.length()-1)
+            {
+                suffix = code.substr (pos+1);
+                code.erase (pos+1);
+            }
+            
+            pos = 0;
+
+            while (pos != code.npos)
+            {
+                variable = code.substr (pos == 0 ? 0 : pos + 1);
+                prefix = code.substr (0, pos == 0 ? 0 : pos + 1);
+#ifdef _DEBUG_
+                cout << "*** c: " << code << " p: " << prefix << " v: " << variable << endl;
+#endif
+                if (variable != "the_player" && variable != "the_npc" && 
+                    variable != "self")
+                {
+                    // check whether we access the quest- or character array
+                    if (data::quests.get (variable.c_str()) != NULL)
+                        return prefix + string ("quests.get (\"") + variable + 
+                            string ("\")") + suffix;
+
+                    if (data::characters.get (variable.c_str()) != NULL)
+                        return prefix + string ("characters.get (\"") + variable +
+                            string ("\")") + suffix;                         
+                }
+
+                pos = code.find (' ', pos + 1);
+            }
+
+            break;
+        }
+
+        // in a right child, we might have a ':' or ')' following the variable
+        case SET:
+        case RGET:
+        {
+            pos = 0;
+            
+            // handle leading whitespace
+            while (code[pos] == ' ') pos++;
+
+            if (pos)
+            {
+                prefix = code.substr (0, pos);
+                code.erase (0, pos);
+            }
+
+            // extract the variable
+            pos = code.find_last_not_of (":) ") + 1;
+
+            suffix = code.substr (pos);
+            variable = code.substr (0, pos);
+
+            // don't mess with constants
+            if ((variable[0] == '-' && isdigit (variable[variable.length()-1])) ||
+                isdigit (variable[0]))
+                return prefix + code;
+
+            // ignore 'else'
+            if (variable == "else") return prefix + code;
+#ifdef _DEBUG_
+            cout << "*** c: " << code << " v: " << variable << " s: " << suffix << endl;
+#endif
+            if (mode == SET)
+                return prefix + string ("set (\"") + variable + "\"" + suffix;
+            else
+                return prefix + string ("get (\"") + variable + "\")" + suffix;
+        }
+    }
+
+    // actually, we should never reach this
+    return code;
 }
 
 // Write a NPC part 
@@ -245,7 +396,7 @@ void dlg_compiler::write_player (Circle *circle)
     // write circle's condition (if any)
     if (circle->conditions != "") 
     {
-        script << "\n" << space << circle -> conditions;
+        write_custom_code (circle->conditions);
         space += "    ";
     }
 
@@ -319,7 +470,7 @@ void dlg_compiler::write_answer ()
         // write circle's condition (if any)
         if (((Circle*)(*i))->conditions != "") 
         {
-            script << "\n        " << ((Circle*)(*i))->conditions;
+            write_custom_code (((Circle*)(*i))->conditions);
             space = "            ";
         }   
 
