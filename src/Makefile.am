@@ -125,7 +125,7 @@ alextest_SOURCES = main.cc
 
 joltest_SOURCES = joltest.cc
 
-joltest_LDADD = libgfx.a libgui.a libinput.a libbase.a $(libbase_LDADD) $(libgui_LDADD)
+joltest_LDADD = libgui.a libgfx.a libinput.a libbase.a $(libbase_LDADD) $(libgui_LDADD)
 
 alextest_LDADD = libmap.a libgfx.a libinput.a libbase.a $(libbase_LDADD)
 
