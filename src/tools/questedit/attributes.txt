@@ -1,0 +1,3 @@
+# Enter the default variables and flags of quests here
+
+complete
