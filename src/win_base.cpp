@@ -171,18 +171,27 @@ void win_base::draw_border()
     {
       if(!selected_)
 	{
-	  if(mode_select_==WIN_SELECT_MODE_BORDER) return;
+	  if(mode_select_==WIN_SELECT_MODE_BORDER)
+	  {
+	       visible_border_=false;
+	       return;
+      }
 	  else if(mode_select_==WIN_SELECT_MODE_BRIGHTNESS) draw_brightness_=true;
 	}
       else
 	{
-	  if(mode_select_==WIN_SELECT_MODE_BORDER) border=theme_->mini;
+	  if(mode_select_==WIN_SELECT_MODE_BORDER) 
+	  {
+	   border=theme_->mini;
+        visible_border_=true;
+      }
 	  else if(mode_select_==WIN_SELECT_MODE_BRIGHTNESS) 
 	    {draw_brightness_=false;	    
 	    }   
 	}
     }
-  else if(!visible_border_) return;
+
+  if(!visible_border_) return;
 
   static image imgbright;
   switch(draw_brightness_)

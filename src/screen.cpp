@@ -170,6 +170,41 @@ void screen::clear()
   drawbox(0,0,l,h,0);
 }
 
+image *screen::shot ()
+{
+    image *shot = new image;
+    shot->bytes_per_pixel = 3;
+    shot->length = l;
+    shot->height = h;
+    
+    
+    // We need a 24bpp image to save it as PNM afterwards
+	SDL_Surface *surface = SDL_CreateRGBSurface (SDL_SWSURFACE, l, h, 24,
+		0x000000FF, 0x0000FF00, 0x00FF0000, 0);
+
+    // Copy the contents of the screen over to our image
+    if (surface != NULL)
+    {
+        SDL_Rect bounds;
+
+        bounds.x = 0;
+	    bounds.y = 0;
+		bounds.w = l;
+		bounds.h = h;
+
+		if (SDL_LowerBlit (vis, &bounds, surface, &bounds) < 0)
+		{
+			SDL_FreeSurface (surface);
+			delete shot;
+            return NULL;
+		}
+    }
+		
+	shot->data = surface;
+
+    return shot;
+}
+
 void screen::makesquare(u_int16 px,u_int16 py, u_int16 fact)
 {
   drawbox(0,py,320,fact,0);

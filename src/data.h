@@ -22,13 +22,13 @@
 class data
 {
 public:
-    static bool load (const char*, const char*);// Load a game
-    static void save (const char*);             // Save the game
+    static bool load (const char*);         // Load a game
+    static void save (const char*);         // Save the game
 
-    static PyObject *globals;                   // Global namespace to use in scripts
-    static gametime *time;                      // The gametime object
-    static objects characters;                  // All the characters 
-    static objects quests;                      // All the quests
+    static PyObject *globals;               // Global namespace to use in scripts
+    static gametime *time;                  // The gametime object
+    static objects characters;              // All the characters 
+    static objects quests;                  // All the quests
 };
 
 #endif // __DATA_H__

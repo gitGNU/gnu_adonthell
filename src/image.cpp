@@ -484,7 +484,7 @@ u_int32 image::get_pix(u_int16 x, u_int16 y)
       break;
     case 2: return *((u_int16*)data->pixels+offset);
       break;
-    case 3: return *((u_int32*)data->pixels+offset);
+    case 4: return *((u_int32*)data->pixels+offset);
       break;
     default: memcpy(&retvalue,(char*)data->pixels+(offset*bytes_per_pixel),
 		    bytes_per_pixel);

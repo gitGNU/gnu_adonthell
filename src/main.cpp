@@ -30,7 +30,7 @@
 #include "win_select.h"
 #include "win_theme.h"
 #include "win_background.h"
-
+#include "data_screen.h"
 
 int main(int argc, char * argv[])
 {
@@ -90,7 +90,7 @@ int main(int argc, char * argv[])
     // This is quite self-explicit...
     while(1)
       {
-	input::update();
+  	input::update();
 	if(input::has_been_pushed(SDLK_ESCAPE)) break;
 	for(int i=0;i<screen::frames_to_do();i++)
 	  {

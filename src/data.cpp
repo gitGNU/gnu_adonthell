@@ -26,9 +26,8 @@ objects data::characters;       // All the character data
 objects data::quests;           // All the quest data (the state of the gameworld)
 
 
-// Load a game. First try to load all dynamic data from gamedir, then load 
-// everything else from the static data directory.
-bool data::load (const char *gamedir, const char *staticdir)
+// Load a game from the gamedir directory
+bool data::load (const char *gamedir)
 {
     FILE *in = NULL;
     char filepath[256];
@@ -61,15 +60,8 @@ bool data::load (const char *gamedir, const char *staticdir)
 
     if (!in)
     {
-        // try loading from static data-dir then
-        sprintf (filepath, "%s/character.data", staticdir);
-        in = fopen (filepath, "r");
-        
-        if (!in)
-        {
-            fprintf (stderr, "Couldn't open \"character.data\" - stopping\n");
-            return false;
-        }
+        fprintf (stderr, "Couldn't open \"character.data\" - stopping\n");
+        return false;
     }
 
     // load characters     
@@ -94,15 +86,8 @@ bool data::load (const char *gamedir, const char *staticdir)
 
     if (!in)
     {
-        // try loading from static data-dir then
-        sprintf (filepath, "%s/quest.data", staticdir);
-        in = fopen (filepath, "r");
-        
-        if (!in)
-        {
-            fprintf (stderr, "Couldn't open \"quest.data\" - stopping\n");
-            return false;
-        }
+        fprintf (stderr, "Couldn't open \"quest.data\" - stopping\n");
+        return false;
     }
     
     // load quests
@@ -126,3 +111,4 @@ bool data::load (const char *gamedir, const char *staticdir)
 void data::save (const char* gamedir)
 {
 }
+

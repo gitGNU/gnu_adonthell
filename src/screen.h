@@ -44,6 +44,9 @@ class screen
 		      u_int32 color, drawing_area * da_opt=NULL);
   // Draw a box of a given color.
 
+  static image *shot ();
+  // Take a screenshot
+
   static void clear();
 
   static void makesquare(u_int16 px, u_int16 py, u_int16 factor);
