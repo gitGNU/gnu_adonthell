@@ -275,6 +275,9 @@ void win_border::draw(drawing_area * da)
 {  
   if(!h_border_template_ || !visible_border_ || !wb_) return;
   
+  u_int8 xodd = (border_draw_[0]->length () % 2);
+  u_int8 yodd = (border_draw_[0]->length () % 2); 
+
   border_draw_[5]->draw(wb_->real_x(), wb_->real_y() - height_border(),da);
   
   border_draw_[5]->draw(wb_->real_x(), wb_->real_y() + wb_->height(),da);
@@ -283,17 +286,17 @@ void win_border::draw(drawing_area * da)
   
   border_draw_[4]->draw(wb_->real_x() + wb_->length(), wb_->real_y(),da);
   
-  border_draw_[0]->draw(wb_->real_x() - (border_draw_[0]->length()>>1) - (length_border()>>1),
-			wb_->real_y() - (border_draw_[0]->height()>>1) - (height_border()>>1),da);   
+  border_draw_[0]->draw(wb_->real_x() - (border_draw_[0]->length()>>1) - (length_border()>>1) - xodd,
+			wb_->real_y() - (border_draw_[0]->height()>>1) - (height_border()>>1) - yodd, da);   
   
   border_draw_[1]->draw(wb_->real_x() + wb_->length() - (border_draw_[0]->length()>>1) + (length_border()>>1),
-			wb_->real_y() - (border_draw_[0]->height()>>1) - (height_border()>>1),da);
+			wb_->real_y() - (border_draw_[0]->height()>>1) - (height_border()>>1) - yodd, da);
   
-  border_draw_[2]->draw(wb_->real_x() - (border_draw_[0]->length()>>1) - (length_border()>>1),
-			wb_->real_y() + wb_->height() - (border_draw_[0]->height()>>1) + (height_border()>>1),da); 
+  border_draw_[2]->draw(wb_->real_x() - (border_draw_[0]->length()>>1) - (length_border()>>1) - xodd ,
+			wb_->real_y() + wb_->height() - (border_draw_[0]->height()>>1) + (height_border()>>1), da); 
   
   border_draw_[3]->draw(wb_->real_x() + wb_->length() - (border_draw_[0]->length()>>1) + (length_border()>>1),
-			wb_->real_y() + wb_->height() - (border_draw_[0]->height()>>1) + (height_border()>>1),da);  
+			wb_->real_y() + wb_->height() - (border_draw_[0]->height()>>1) + (height_border()>>1), da);  
 }
 
 
