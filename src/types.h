@@ -1,6 +1,7 @@
 #ifndef _types_h
 #define _types_h
 
+// $Id
 /*
    Copyright (C) 1999 Alexandre Courbot.
 
@@ -12,8 +13,17 @@
 
  */
 
-/* Change the definitions here so they fit with your system */
-/* The actual values should be ok for i86 processors */
+#ifdef SDL
+#include <SDL/SDL.h>
+
+#define u_int8 Uint8
+#define u_int16 Uint16
+#define u_int32 Uint32
+#define s_int8 Sint8
+#define s_int16 Sint16
+#define s_int32 Sint32
+
+#else
 
 #define u_int8 unsigned char
 #define u_int16 unsigned short int
@@ -21,6 +31,8 @@
 #define s_int8 signed char
 #define s_int16 signed short int
 #define s_int32 signed long int
+
+#endif
 
 #define RIGHT 1
 #define LEFT 2
