@@ -14,7 +14,7 @@ LDADD = ../../animation.o ../../animation_off.o ../../audio.o \
 ../../mapselect.o ../../maptpl.o ../../mapobject.o ../../mapcharacter.o ../../landmap.o ../../mapview.o ../../mapengine.o \
 ../../pnm.o ../../prefs.o ../../quest.o ../../screen.o ../../storage.o \
 ../../win_base.o ../../win_border.o ../../win_container.o ../../win_font.o ../../win_theme.o ../../win_scrolled.o ../../win_background.o ../../win_scrollbar.o \
-../../win_file.o ../../win_image.o ../../win_label.o ../../win_select.o ../../win_write.o ../../yarg.cc
+../../win_file.o ../../win_image.o ../../win_label.o ../../win_select.o ../../win_write.o ../../win_manager.o ../../yarg.o
 
 # Evil, but it works...
 CPPFLAGS +=-I../..
@@ -23,4 +23,7 @@ lex.prefs.cpp : prefs.l
 	flex -olex.prefs.cpp $<
 
 %.o: %.cpp
+	$(CXXCOMPILE) -c $< -o $@
+
+%.o: %.cc
 	$(CXXCOMPILE) -c $< -o $@
