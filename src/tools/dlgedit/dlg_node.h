@@ -23,8 +23,16 @@
 #define DLG_NODE_H
 
 #include <list>
+#include <string>
+#include <stdio.h>
 #include "dlg_types.h"
 #include "dlg_node_gfx.h"
+
+
+// Definitions needed for the dialogue source file parser
+extern int parse_dlgfile (string&, int&);
+extern FILE *loadlgin;
+
 
 /**
  * This is the base class for all dialogue objects. As this, it has three

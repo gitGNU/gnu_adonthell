@@ -22,6 +22,7 @@
 #ifndef DLG_ARROW_H
 #define DLG_ARROW_H
 
+#include <vector>
 #include "dlg_node.h"
 
 /**
@@ -31,6 +32,7 @@
 class DlgArrow : public DlgNode
 {
 public:
+    DlgArrow () { mode_ = NONE; }
     /**
      * Create a new link between two nodes.
      * @param s The node where the link starts.
@@ -51,6 +53,14 @@ public:
      * @param offset the DlgPoint to use as offset
      */
     void draw (GdkPixmap *surface, DlgPoint &offset);
+
+    /**
+     * Init the Arrow from a file
+     * @param nodes The rest of the dialogue, to connect this Arrow to
+     * @return <b>true</b> if loading was successful, <b>false</b>
+     *         otherwise.
+     */
+    bool load (vector<DlgNode*> &nodes);
 
 private:
     GdkPoint line[2];       // the arrow's line

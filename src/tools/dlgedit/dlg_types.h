@@ -27,11 +27,12 @@
  */
 enum node_type
 {
-    PLAYER          = 0,
-    NPC             = 1,
-    NARRATOR        = 2,
+    PLAYER          = 1,
+    NPC             = 2,
     LINK            = 3,
-    MODULE          = 4
+    MOVER           = 4,
+    NARRATOR        = 5,
+    MODULE          = 6
 };
 
 /**
@@ -81,6 +82,35 @@ enum menu_item
     COMPILE         = 4,
     RUN             = 5,
     MAX_ITEM        = 6
+};
+
+#define LOAD    1
+#define SAVE    2
+
+// For loading Dialogue Files
+enum
+{
+    LOAD_CIRCLE = 1,
+    LOAD_ARROW = 2,
+    LOAD_END = 3,
+    LOAD_TYPE = 4,
+    LOAD_PREV = 5,
+    LOAD_NEXT = 6,
+    LOAD_LINK = 7,
+    LOAD_POS = 8,
+    LOAD_NOTE = 9,
+    LOAD_TEXT = 10,
+    LOAD_COND = 11,
+    LOAD_VARS = 12,
+    LOAD_FUNC = 13,
+    LOAD_ACT = 14,
+    LOAD_NAME = 15,
+    LOAD_RACE = 16,
+    LOAD_GENDER = 17,
+    LOAD_NPC = 18,
+    LOAD_STR = 19,
+    LOAD_NUM = 20,
+    LOAD_UNKNOWN = 21
 };
 
 /**

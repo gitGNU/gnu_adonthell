@@ -59,7 +59,14 @@ public:
      *         node has been deselected
      */
     DlgNode* deselectNode ();
-    
+
+    /**
+     * Init the Dialogue from a file
+     * @return <b>true</b> if loading was successful, <b>false</b>
+     *         otherwise.
+     */
+    bool load ();
+
     /**
      * Get the list of nodes in this dialogue.
      * @return a reference to the list of nodes.

@@ -21,6 +21,7 @@
 
 #include <gtk/gtk.h>
 #include "gui_dlgedit.h"
+#include "gui_file.h"
 
 // Main Window: on_widget_destroy App
 void on_widget_destroy (GtkWidget * widget, gpointer data)
@@ -39,23 +40,14 @@ void on_file_new_activate (GtkMenuItem * menuitem, gpointer user_data)
 // File Menu: Load
 void on_file_load_activate (GtkMenuItem * menuitem, gpointer user_data)
 {
-/*
-    MainFrame *wnd = (MainFrame *) user_data;
+    GuiFile fs (LOAD, "Load dialogue source", "*.dlgs");
 
-    GString *file = g_string_new (NULL);
-    GtkWidget *fs = create_fileselection (file, 1);
-    gtk_file_selection_set_filename ((GtkFileSelection *) fs, wnd->file_name);
-
-    // chose file
-    gtk_widget_show (fs);
-    gtk_main ();
-
-    // Try to load file
-    load_dialogue (wnd, file->str);
-
-    // Clean up
-    g_string_free (file, TRUE);
-*/
+    // File selection closed with OK
+    if (fs.run ())
+    {
+        GuiDlgedit *dlgedit = (GuiDlgedit *) user_data;
+        dlgedit->loadDialogue (fs.getSelection ());
+    }
 }
 
 // File Menu: Save

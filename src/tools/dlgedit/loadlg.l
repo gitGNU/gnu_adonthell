@@ -43,15 +43,14 @@ Text            return LOAD_TEXT;
 Cond            return LOAD_COND;
 Vars            return LOAD_VARS;
 Func            return LOAD_FUNC;
-Act             return LOAD_ACT;
 NPC             return LOAD_NPC;
 Name            return LOAD_NAME;
 Race            return LOAD_RACE;
 Gender          return LOAD_GENDER;
 
-§              mytext = ""; BEGIN(text);
-<text>§        BEGIN(INITIAL); return LOAD_STR;
-<text>[^§]+    mytext += yytext;
+§               mytext = ""; BEGIN(text);
+<text>§         BEGIN(INITIAL); return LOAD_STR;
+<text>[^§]+     mytext += yytext;
 
 {num}           mynum = atoi (yytext); return LOAD_NUM;
 

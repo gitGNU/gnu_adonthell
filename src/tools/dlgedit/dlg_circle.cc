@@ -31,7 +31,7 @@ DlgCircle::DlgCircle (node_type t, DlgCircleEntry *e, DlgPoint &p)
     
     // Align Circle to the (imaginary) grid
     top_left = DlgPoint (p.x () - (p.x () % CIRCLE_DIAMETER), p.y () - (p.y () % CIRCLE_DIAMETER));
-    bottom_right = DlgPoint (p.x () + CIRCLE_DIAMETER, p.y () + CIRCLE_DIAMETER);
+    bottom_right = DlgPoint (x () + CIRCLE_DIAMETER, y () + CIRCLE_DIAMETER);
 }
 
 // get a certain parent-circle of this circle
@@ -78,15 +78,13 @@ DlgCircle *DlgCircle::sibling (query_type pos, int offset)
 // draw the circle
 void DlgCircle::draw (GdkPixmap *surface, DlgPoint &os)
 {
-    GdkGC *gc;
-
     // get the color for drawing the circle
-    gc = GuiDlgedit::window->getColor (mode_, type_);
+    GdkGC *gc = GuiDlgedit::window->getColor (mode_, type_);
     
     // offset circle
     DlgPoint position = topLeft ().offset (os);
     DlgRect area = DlgRect (position, CIRCLE_DIAMETER, CIRCLE_DIAMETER);
-            
+
     // draw everything to the surface
     gdk_draw_arc (surface, GuiDlgedit::window->getColor (GC_WHITE), TRUE, position.x (), position.y (), 20, 20, 0, 36000);
     gdk_draw_arc (surface, gc, FALSE, position.x (), position.y (), 20, 20, 0, 36000);
@@ -109,6 +107,87 @@ void DlgCircle::draw (GdkPixmap *surface, DlgPoint &os)
     
     // Update the drawing area
     GuiDlgedit::window->graph ()->update (area);
+}
+
+// load a circle from a file
+bool DlgCircle::load ()
+{
+    entry_ = new DlgCircleEntry;
+    string str;
+    int n;
+
+    // as long as we haven't reached EOF or are finished with loading:
+    while (1)
+    {
+        // look what we find in the file
+        switch (parse_dlgfile (str, n))
+        {
+            // EOF or finished
+            case 0:
+            case LOAD_END: return true;
+
+            // Type of node
+            case LOAD_TYPE:
+            {
+                if (parse_dlgfile (str, n) == LOAD_NUM) type_ = (node_type) n;
+
+                break;
+            }
+
+            // Coordinates of Circle
+            case LOAD_POS:
+            {
+                int px, py;
+                if (parse_dlgfile (str, n) == LOAD_NUM) px = n;
+                if (parse_dlgfile (str, n) == LOAD_NUM) py = n;
+
+                // Align Circle to the (imaginary) grid
+                top_left = DlgPoint (px - (px % CIRCLE_DIAMETER), py - (py % CIRCLE_DIAMETER));
+                bottom_right = DlgPoint (x () + CIRCLE_DIAMETER, y () + CIRCLE_DIAMETER);
+                break;
+            }
+
+            // The Circle's Text
+            case LOAD_TEXT:
+            {
+                if (parse_dlgfile (str, n) == LOAD_STR) entry_->setText (str);
+                break;
+            }
+
+            // The Circle's Annotations
+            case LOAD_NOTE:
+            {
+                if (parse_dlgfile (str, n) == LOAD_STR) entry_->setAnnotation (str);
+                break;
+            }
+
+            // The Circle's Character
+            case LOAD_NPC:
+            {
+                if (parse_dlgfile (str, n) == LOAD_STR) entry_->setNpc (str);
+                break;
+            }
+
+            // The Circle's Conditions
+            case LOAD_COND:
+            {
+                if (parse_dlgfile (str, n) == LOAD_STR) entry_->setCondition (str);
+                break;
+            }
+
+            // The Circle's Variables
+            case LOAD_VARS:
+            {
+                if (parse_dlgfile (str, n) == LOAD_STR) entry_->setCode (str);
+                break;
+            }
+
+            // Just ignore everything else
+            default: break;
+        }
+    }
+
+    return true;
 }
 
 // get the text of a circle

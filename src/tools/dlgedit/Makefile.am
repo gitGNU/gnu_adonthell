@@ -18,10 +18,12 @@ dlgedit_SOURCES = \
     dlg_rect.cc \
     gui_dlgedit.cc \
     gui_dlgedit_events.cc \
+    gui_file.cc \
     gui_graph.cc \
     gui_graph_events.cc \
     gui_list.cc \
     gui_list_events.cc \
+    lex.loadlg.cc \
     main.cc \
     dlg_arrow.h \
     dlg_circle.h \
@@ -34,6 +36,7 @@ dlgedit_SOURCES = \
     dlg_types.h \
     gui_dlgedit.h \
     gui_dlgedit_events.h \
+    gui_file.h \
     gui_graph.h \
     gui_graph_events.h \
     gui_list.h \

@@ -192,7 +192,7 @@ void GuiGraph::draw ()
     if (module == NULL) return;
             
     GdkRectangle t;
-    vector<DlgNode*>::iterator i;
+    vector<DlgNode*>::reverse_iterator i;
     vector<DlgNode*> nodes = module->getNodes ();
     
     // get visible part of graph
@@ -207,7 +207,7 @@ void GuiGraph::draw ()
     gdk_draw_rectangle (surface, GuiDlgedit::window->getColor (GC_WHITE), TRUE, 0, 0, t.width, t.height);
 
     // check for each node, wether it is visible
-    for (i = nodes.begin (); i != nodes.end (); i++)
+    for (i = nodes.rbegin (); i != nodes.rend (); i++)
         // draw nodes and arrows
         if ((*i)->contains (rect))
             (*i)->draw (surface, *offset);

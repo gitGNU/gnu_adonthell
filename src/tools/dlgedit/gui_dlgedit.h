@@ -74,7 +74,13 @@ public:
      * @return a GdkFont.
      */
     GdkFont *font ()        { return font_; }
-    
+
+    /**
+     * Retrieve the main window of the applictaion.
+     * @return a GtkWidget.
+     */
+    GtkWidget *getWindow () { return wnd; }
+
     /**
      * Retrieve a colored 'pen' to draw onto a drawing area.
      * @param col the color to retrieve
@@ -102,6 +108,11 @@ public:
      */
     void newDialogue ();
     /**
+     * Load a dialogue from a file
+     * @param file Filename (and path) of the dialogue to load.
+     */
+    void loadDialogue (string file);
+    /**
      * Close a dialogue
      */
     void closeDialogue ();
@@ -125,6 +136,10 @@ private:
      * Display the correct window title
      */
     void initTitle ();
+    /**
+     * Add a dialogue to the GUI
+     */
+    DlgModule *initDialogue (char*);
     /**
      * Set the GUI back to it's initial state.
      */

@@ -37,6 +37,7 @@
 class DlgCircle : public DlgNode
 {
 public:
+    DlgCircle () { mode_ = NONE; }
     DlgCircle (node_type t, DlgCircleEntry *e, DlgPoint &p);
 
     /** 
@@ -77,7 +78,9 @@ public:
      */
     DlgCircle* sibling (query_type pos, int offset = 1);  
     //@}
-    
+
+    bool load ();
+
     /**
      * Draw this node to the given surface with the specified offset. 
      * The node's current mode determines the color thw node is drawn with. 

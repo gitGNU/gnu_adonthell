@@ -78,7 +78,7 @@ GuiDlgedit::GuiDlgedit ()
     menuitem = gtk_menu_item_new_with_label ("Open");
     gtk_container_add (GTK_CONTAINER (submenu), menuitem);
     gtk_widget_add_accelerator (menuitem, "activate", accel_group, GDK_o, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
-    gtk_signal_connect (GTK_OBJECT (menuitem), "activate", GTK_SIGNAL_FUNC (on_file_load_activate), (gpointer) NULL);
+    gtk_signal_connect (GTK_OBJECT (menuitem), "activate", GTK_SIGNAL_FUNC (on_file_load_activate), (gpointer) this);
     gtk_widget_show (menuitem);
 
     // Save
@@ -235,26 +235,41 @@ void GuiDlgedit::newDialogue ()
     gchar *name = g_strdup_printf ("untitled-%i", ++number);
             
     // the new dialogue
-    DlgModule *dlg = new DlgModule (name, "New Dialogue");
-    
-    // attach the dialogue to the view
-    graph_->attachModule (dlg);
-    
-    // insert into the list of open dialogues
-    dialogues_.push_back (dlg);
-    
-    // rebuild the 'Window' menu
-    initMenu ();
-    
-    // update the window title
-    initTitle ();
+    DlgModule *module = initDialogue (name);
 
-    // activate all dialogue related menu-items
-    gtk_widget_set_sensitive (menuItem[SAVE], TRUE);
-    gtk_widget_set_sensitive (menuItem[CLOSE], TRUE);
-    gtk_widget_set_sensitive (menuItem[SETTINGS], TRUE);
-    gtk_widget_set_sensitive (menuItem[FUNCTIONS], TRUE);
-    gtk_widget_set_sensitive (menuItem[COMPILE], TRUE);
+    // Display the dialogue
+    showDialogue (module);
+
+    g_free (name);
+}
+
+// load a new dialogue
+void GuiDlgedit::loadDialogue (string file)
+{
+    // first, open the file
+    loadlgin = fopen (file.c_str (), "rb");
+
+    if (!loadlgin)
+    {
+        g_message ("could not open file %s", file.c_str ());
+        return;
+    }
+
+    // get the name to use for the dialogue
+    unsigned int pos = file.rfind (".adlg");
+    if (pos != file.npos) file.replace (pos, 5, g_strdup_printf ("-%i", ++number));
+    else file +=g_strdup_printf ("-%i", ++number);
+
+    gchar *name = g_basename (file.c_str ());
+
+    // the new dialogue
+    DlgModule *module = initDialogue (name);
+
+    // try to load from file
+    if (!module->load ()) closeDialogue ();
+
+    // Display the dialogue
+    else showDialogue (module);
 }
 
 // close the dialogue being displayed
@@ -292,6 +307,27 @@ void GuiDlgedit::showDialogue (DlgModule *module)
     
     // update the window title
     initTitle ();
+}
+
+DlgModule *GuiDlgedit::initDialogue (char *name)
+{
+    // the new dialogue
+    DlgModule *dlg = new DlgModule (name, "New Dialogue");
+
+    // insert into the list of open dialogues
+    dialogues_.push_back (dlg);
+
+    // rebuild the 'Window' menu
+    initMenu ();
+
+    // activate all dialogue related menu-items
+    gtk_widget_set_sensitive (menuItem[SAVE], TRUE);
+    gtk_widget_set_sensitive (menuItem[CLOSE], TRUE);
+    gtk_widget_set_sensitive (menuItem[SETTINGS], TRUE);
+    gtk_widget_set_sensitive (menuItem[FUNCTIONS], TRUE);
+    gtk_widget_set_sensitive (menuItem[COMPILE], TRUE);
+
+    return dlg;
 }
 
 // sets the window title
@@ -480,7 +516,7 @@ GdkGC *GuiDlgedit::getColor (mode_type mode, node_type type)
         // not selected    
         case NONE:
         {
-            if (type == NPC) return color[GC_BLACK]; 
+            if (type == NPC || type == LINK) return color[GC_BLACK];
             else if (type == NARRATOR) return color[GC_DARK_GREEN];
             else return color[GC_DARK_BLUE];
             break;
@@ -489,7 +525,7 @@ GdkGC *GuiDlgedit::getColor (mode_type mode, node_type type)
         // selected
         case NODE_SELECTED:
         {
-            if (type == NPC) return color[GC_DARK_RED];
+            if (type == NPC || type == LINK) return color[GC_DARK_RED];
             else if (type == NARRATOR) return color[GC_YELLOW];
             else return color[GC_RED];
             break;

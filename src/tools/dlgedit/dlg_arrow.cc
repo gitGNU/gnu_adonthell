@@ -28,6 +28,7 @@
 DlgArrow::DlgArrow (DlgNode *start, DlgNode *end)
 {
     type_ = LINK;
+    mode_ = NONE;
     
     // add the start and end to this arrow
     prev_.push_back (start);
@@ -97,4 +98,78 @@ void DlgArrow::draw (GdkPixmap *surface, DlgPoint &point)
 
     // update drawing area
     GuiDlgedit::window->graph ()->update (area);
+}
+
+// load an arrow
+bool DlgArrow::load (vector<DlgNode*> &nodes)
+{
+    DlgNode *circle;
+    string str;
+    int n;
+
+    // as long as we haven't reached EOF or are finished with loading:
+    while (1)
+    {
+        // look what we find in the file
+        switch (parse_dlgfile (str, n))
+        {
+            // EOF or finished
+            case 0:
+            case LOAD_END:
+            {
+                // claculate the Arrow's shape
+                initShape ();
+
+                return true;
+            }
+
+            // Type of node
+            case LOAD_TYPE:
+            {
+                if (parse_dlgfile (str, n) == LOAD_NUM) type_ = (node_type) n;
+                break;
+            }
+
+            // Node prior to arrow
+            case LOAD_PREV:
+            {
+                if (parse_dlgfile (str, n) == LOAD_NUM)
+                {
+                    circle = nodes[n];
+                    circle->addNext (this);
+                    prev_.push_back (circle);
+                }
+                break;
+            }
+
+            // Node following arrow
+            case LOAD_NEXT:
+            {
+                if (parse_dlgfile (str, n) == LOAD_NUM)
+                {
+                    circle = nodes[n];
+                    circle->addPrev (this);
+                    next_.push_back (circle);
+                }
+                break;
+            }
+
+            // Nodes linked to the arrow (obsolete -> convert to normal arrow)
+            case LOAD_LINK:
+            {
+                if (parse_dlgfile (str, n) == LOAD_NUM)
+                {
+                    circle = nodes[n];
+                    DlgArrow *arrow = new DlgArrow (circle, next_.front ());
+                    nodes.push_back (arrow);
+                }
+                break;
+            }
+
+            // Just ignore everything else
+            default: break;
+        }
+    }
+
+    return false;
 }
