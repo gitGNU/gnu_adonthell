@@ -29,10 +29,7 @@
 /**
  * Directory where event scripts reside.
  */ 
-#define EVENTS_DIR "events/"
-
-
-class event_handler;
+#define EVENTS_DIR "events."
 
 /**
  * Available Event types.
@@ -41,7 +38,7 @@ enum
 {
     ENTER_EVENT     = 0,            // Characters reach a new tile
     LEAVE_EVENT     = 1,            // Characters leave a tile
-    TIME_EVENT      = 2,            // A minute of gametime passed
+    TIME_EVENT      = 2,            // Certain point in gametime reached
     ACTION_EVENT    = 3,            // Character "acts" on a square 
     MAX_EVENT       = 4
 };
@@ -57,8 +54,36 @@ public:
     /** 
      * Destructor.
      */ 
-     virtual ~event ();
+    virtual ~event ();
 
+    /**
+     * Cleanup. Clears script and its arguments. 
+     */
+    void clear ();    
+    
+    /**
+     * Get the event's type.
+     *
+     * @return type of the event
+     */
+    u_int8 type () const
+    { 
+        return Type;
+    }
+     
+    /**
+     * Return whether this event should be repeated.
+     *
+     * @return the number of times this event should be repeated or
+     *      -1 in case it should be repeated unlimited times.
+     */
+    s_int32 repeat ()
+    {
+        if (Repeat > 0) Repeat--;
+        
+        return Repeat;
+    }
+    
     /**
      * @name Event Handling
      */
@@ -69,7 +94,7 @@ public:
      * 
      * @param evnt The event that triggered the execution.
      */ 
-    virtual void execute (event& evnt) = 0;
+    virtual void execute (const event& evnt) = 0;
 
     /** 
      * Compare two events for equality.
@@ -77,20 +102,32 @@ public:
      * @param evnt pointer to the event to compare with.
      * @return \e true if the events are equal, \e false otherwise.
      */
-    virtual bool equals (event& evnt) = 0;
+    virtual bool equals (const event& evnt) = 0;
 
     //@}
     
     /** 
-     * Sets the script for an event.
+     * Sets the script to be executed whenever the event occurs.
      * 
      * @param filename filename of the script to set.
      * @param args The arguments to pass to the script's constructor
      */
     void set_script (string filename, PyObject * args = NULL);
     
-protected:
-#ifndef SWIG
+    /**
+     * Sets the script to be executed whenever the event occurs.
+     * This method allows to specify a script that is already
+     * in use elsewhere.
+     *
+     * @warning After calling this method, both the event and the 
+     * original owner share the same script instance. Therefore, the 
+     * event will <b>not</b> save the script. When loading a game,
+     * the original owner has to supply the event with the script.
+     *
+     * @param script reference to a script initialized elsewhere.
+     */
+    void set_shared_script (py_object & script);
+    
     /**
      * @name Loading / Saving
      */
@@ -115,6 +152,8 @@ protected:
 
     //@}
     
+protected:
+#ifndef SWIG
     /**
      * @name Basic Event Data
      */
@@ -125,6 +164,13 @@ protected:
      */ 
     u_int8 Type;
 
+    /**
+     * For events that share their script with another class, Shared
+     * has to be set <b>true</b>. This prevents the script from getting
+     * saved to file.
+     */
+    bool Shared;
+    
     /**
      * Defines how often the %event should be repeated. <b>0</b> means
      * never, <b>-1</b> means infinitely and <b>n</b> (n > 0) means 

@@ -62,7 +62,7 @@ public:
      * @param evnt An %event structure with the current %game time in 
      *      minutes.
      */
-    void raise_event (const event &evnt);
+    void raise_event (event &evnt);
     
 private:
     // storage for registered time events.

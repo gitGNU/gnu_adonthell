@@ -6,6 +6,7 @@
 #include "game.h"
 #include "fileops.h"
 #include "gametime.h"
+#include "schedule.h"
 
 %}
 
@@ -14,3 +15,4 @@
 %include "game.h"
 %include "fileops.h"
 %include "gametime.h"
+%include "schedule.h"

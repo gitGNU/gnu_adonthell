@@ -62,14 +62,14 @@ public:
      * 
      * @param name directory to add to Python's include path.
      */
-    static void insert_path( char * name);
+    static void insert_path (char * name);
     
     /** 
      * Execute Python statements contained in a string.
      * 
      * @param s string containing Python statements to execute.
      */
-    static void exec_string(char * s);
+    static void exec_string (char * s);
     
     /** 
      * Executes a Python script.
@@ -90,10 +90,10 @@ public:
     static PyObject *import_module (string filename);
     
     /** 
-     * Dumps any error information to stderr.
+     * Dumps Python error information to stderr.
      * 
      */
-    static void show_traceback( void );
+    static void show_traceback (void);
     
     /** 
      * Magic function that makes any C object available to Python!
@@ -150,7 +150,7 @@ private:
      * Convert a Pointer to a String, like SWIG 1.3.7 does
      *
      */
-    static char *ptr_to_string (char *c, void *ptr, int sz);
+    static char *ptr_to_string (char *c, void *ptr, u_int32 sz);
 
     /**
      * Saves basic Python types, like integers or strings to file.

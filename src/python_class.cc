@@ -36,7 +36,7 @@ PyObject * data::globals;
  */
 void python::init (void)
 {
-    Py_Initialize();
+    Py_Initialize ();
 }
 
 void python::cleanup () 
@@ -47,12 +47,11 @@ void python::cleanup ()
 /*
  * Insert a string into the module search path.
  */
-void python::insert_path( char *name )
+void python::insert_path (char *name)
 {
-    char buf[256];
+    string cmd = string ("import sys ; sys.path.insert (0, '") + string (name) + string ("')");
     
-    sprintf ( buf, "import sys ; sys.path.insert(0, '%s')", name );
-    PyRun_SimpleString ( buf );
+    PyRun_SimpleString ((char *) cmd.c_str ());
 }
 
 /*
@@ -142,14 +141,13 @@ PyObject *python::pass_instance (void *instance, const char *class_name)
 }
 
 // Convert a pointer to a string (like SWIG 1.3.7 does)
-char *python::ptr_to_string (char *c, void *ptr, int sz)
+char *python::ptr_to_string (char *c, void *ptr, u_int32 sz)
 {
     static char hex[17] = "0123456789abcdef";
-    int i;
     unsigned char *u = (unsigned char *) ptr;
     register unsigned char uu;
 
-    for (i = 0; i < sz; i++,u++)
+    for (u_int32 i = 0; i < sz; i++,u++)
     {
         uu = *u;
         *(c++) = hex[(uu & 0xf0) >> 4];
@@ -162,11 +160,11 @@ char *python::ptr_to_string (char *c, void *ptr, int sz)
 // load tuple from file
 PyObject * python::get_tuple (igzstream & file)
 {
-    PyObject *tuple, *item;
+    PyObject *tuple = NULL, *item;
     u_int32 size;
 
     size << file;
-    tuple = PyTuple_New (size);
+    if (size > 0) tuple = PyTuple_New (size);
 
     for (u_int32 i = 0; i < size; i++)
     {
@@ -180,13 +178,21 @@ PyObject * python::get_tuple (igzstream & file)
 // save contents of a tuple to file
 void python::put_tuple (PyObject * tuple, ogzstream & file)
 {
+    u_int32 size = 0;
+
+    if (tuple == NULL)
+    {
+        size >> file;
+        return;
+    }
+    
     if (!PyTuple_Check (tuple))
     {
-        fprintf (stderr, "*** python::put_tuple: argument is no tuple!");
+        fprintf (stderr, "*** python::put_tuple: argument is no tuple!\n");
         return;
     }
 
-    u_int32 size = PyTuple_Size (tuple);
+    size = PyTuple_Size (tuple);
     size >> file;
 
     for (u_int32 i = 0; i < size; i++)
@@ -219,7 +225,7 @@ void python::put_dict (PyObject * dict, ogzstream & file)
 {
     if (!PyDict_Check (dict))
     {
-        fprintf (stderr, "*** python::put_dict: argument is no dict!");
+        fprintf (stderr, "*** python::put_dict: argument is no dict!\n");
         return;
     }
 
@@ -272,7 +278,7 @@ PyObject *python::get_object (igzstream &file)
         // error:
         default:
         {
-            fprintf (stderr, "*** python::get_object: unknown object code '%c'", c);
+            fprintf (stderr, "*** python::get_object: unknown object code '%c'\n", c);
         }
     }
 

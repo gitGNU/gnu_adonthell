@@ -1,7 +1,7 @@
 /*
   $Id$
   
-  Copyright (C) 1999/2000/2001   Kai Sterker
+  Copyright (C) 1999/2000/2001/2002 Kai Sterker
   Copyright (C) 2001    Alexandre Courbot
   Part of the Adonthell Project http://adonthell.linuxgames.com
   
@@ -28,8 +28,10 @@
 
 py_object::py_object ()
 {
-    instance = NULL;
-    script_file_ = "";
+    Instance = NULL;
+    CtorArgs = NULL;
+    Classname = "";
+    Filename = "";
 }
 
 py_object::~py_object ()
@@ -41,14 +43,18 @@ py_object::~py_object ()
 void py_object::clear ()
 {
     // Delete our instance
-    Py_XDECREF (instance);
-    instance = NULL;
+    Py_XDECREF (Instance);
+    Py_XDECREF (CtorArgs);
     
-    script_file_ = "";
+    Instance = NULL;
+    CtorArgs = NULL;
+    
+    Classname = "";
+    Filename = "";
 }
 
 // Pass a (new) Python module to be used
-bool py_object::create_instance (string file, string classname, PyObject * args = NULL)
+bool py_object::create_instance (string file, string classname, PyObject *args)
 {
     // Try to import the given script
     PyObject *module = python::import_module (file);
@@ -59,7 +65,7 @@ bool py_object::create_instance (string file, string classname, PyObject * args 
 }
 
 // Reload a python module in case it has changed on disk
-bool py_object::reload_instance (string file, string classname, PyObject * args = NULL)
+bool py_object::reload_instance (string file, string classname, PyObject *args)
 {
     // Try to import the given script
     PyObject *module = python::import_module (file);
@@ -74,7 +80,7 @@ bool py_object::reload_instance (string file, string classname, PyObject * args 
 }
 
 // Instanciate the given class from the module
-bool py_object::instanciate (PyObject *module, string file, string classname, PyObject * args)
+bool py_object::instanciate (PyObject *module, string file, string classname, PyObject *args)
 {
     // Cleanup
     clear ();
@@ -84,21 +90,24 @@ bool py_object::instanciate (PyObject *module, string file, string classname, Py
     if (!classobj) return false;
 
     // Create the instance
-    instance = PyObject_CallObject (classobj, args);
+    Instance = PyObject_CallObject (classobj, args);
     Py_DECREF (classobj);
-    if (!instance) return false;
+    if (!Instance) return false;
 
-    script_file_ = classname;
-
+    Classname = classname;
+    Filename = file;
+    Py_XINCREF (args);
+    CtorArgs = args;
+    
     return true;
 }
 
 // Execute the body of the script
 void py_object::call_method (const string & name, PyObject * args = NULL)
 {
-    if (instance)
+    if (Instance)
     {
-        PyObject *tocall = PyObject_GetAttrString (instance, (char *) name.c_str ());
+        PyObject *tocall = PyObject_GetAttrString (Instance, (char *) name.c_str ());
 
         if (PyCallable_Check (tocall) == 1)
         {    
@@ -115,7 +124,69 @@ void py_object::call_method (const string & name, PyObject * args = NULL)
 // Get an attribute of the instance
 PyObject *py_object::get_attribute (const string &name)
 {
-    if (!instance) return NULL;
+    if (Instance) 
+        return PyObject_GetAttrString (Instance, (char *) name.c_str ());
+    else
+        return NULL;
+}
 
-    return PyObject_GetAttrString (instance, (char *) name.c_str ());
+// Save internal state of the script to disk
+void py_object::put_state (ogzstream &file)
+{
+    Filename >> file;
+    Classname >> file;
+    python::put_tuple (CtorArgs, file);
+    python::put_dict (PyObject_GetAttrString (Instance, "__dict__"), file);
+
+}
+
+// Get internal script state from disk
+bool py_object::get_state (igzstream &file)
+{
+    PyObject *state;
+
+    // clear the current state    
+    clear ();
+    
+    // get file- and classname, constructor arguments and script state
+    Filename << file;
+    Classname << file;
+    CtorArgs = python::get_tuple (file);
+    state = python::get_dict (file);
+    
+    // instanciate the script and restore script state
+    if (create_instance (Filename, Classname, CtorArgs))
+    {
+        PyObject *dict, *key, *value;
+        s_int32 pos = 0;
+        
+        // we'll have to merge the state with the object's current
+        // __dict__, as only part of it has been saved
+        dict = PyObject_GetAttrString (Instance, "__dict__");
+        
+        while (PyDict_Next (state, &pos, &key, &value))
+            PyDict_SetItem (dict, key, value);
+        
+        Py_DECREF (state);
+        return true;
+    }
+    
+    return false;
+}
+
+// 'clone' a py_object
+void py_object::operator= (const py_object & script)
+{
+    // cleanup
+    clear ();
+    
+    // copy
+    Classname = script.class_name ();
+    Filename = script.file_name ();
+    CtorArgs = script.get_ctorargs ();
+    Instance = script.get_instance ();
+    
+    // make sure the refcount is correct
+    Py_XINCREF (CtorArgs);
+    Py_XINCREF (Instance);
 }

@@ -19,8 +19,9 @@
  * @brief Implements the time_event_handler class.
  */
 
+#include <algorithm>
 #include "time_event_handler.h"
-#include "time_event_h"
+#include "time_event.h"
 
 // See whether a matching event is registered and execute the
 // according script(s) 
@@ -45,9 +46,8 @@ void time_event_handler::raise_event (event& e)
     return;
 }
 
-
 // Unregister an event
-void event_handler::remove_event (event *e)
+void time_event_handler::remove_event (event *e)
 {
     vector<event*>::iterator i;
 
@@ -59,7 +59,7 @@ void event_handler::remove_event (event *e)
 }
 
 // register an event with the handler
-void event_handler::register_event (event *e)
+void time_event_handler::register_event (event *e)
 {
     vector<event*>::iterator i = Events.begin ();
 
@@ -67,7 +67,7 @@ void event_handler::register_event (event *e)
     while (i != Events.end ())
     {
         // skip events that are raised earlier than e
-        if (e->time () <= (*i)->time ()) break;
+        if (((time_event *) e)->time () <= ((time_event *) (*i))->time ()) break;
         i++;
     }
     

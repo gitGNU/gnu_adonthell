@@ -20,23 +20,37 @@ CLEANFILES = $(moddata_SCRIPTS)
 
 libbase_a_SOURCES = \
         character_base.cc \
+        event.cc \
+        event_handler.cc \
+        event_list.cc \
         fileops.cc \
 	game.cc \
         gamedate.cc \
         gametime.cc \
+        py_base_wrap.cc \
         quest.cc \
+        schedule.cc \
         storage.cc \
-	py_base_wrap.cc \
+        time_event.cc \
+        time_event_handler.cc \
+        yarg.cc \
         callback.h \
         character_base.h \
+        event.h \
+        event_handler.h \
+        event_list.h \
 	fileops.h \
 	game.h \
         gamedate.h \
         gametime.h \
         quest.h \
+        schedule.h \
         storage.h \
 	str_hash.h \
-        types.h 
+        time_event.h \
+        time_event_handler.h \
+        types.h \
+        yarg.h
 
 libbase_LDADD = $(SDL_LIBS)
 
@@ -93,7 +107,6 @@ liboldwin_a_SOURCES = win_background.cc win_base.cc win_border.cc \
 	win_write.h win_manager.h win_object.h window.h  
 
 libadonthell_a_SOURCES = input.cc \
-	yarg.cc \
 	input.h 
 
 alextest_SOURCES = main.cc
@@ -106,7 +119,7 @@ joltest_LDADD = libgui.a libgfx.a libinput.a libbase.a $(libbase_LDADD) $(libgui
 
 alextest_LDADD = libmap.a libgfx.a libinput.a libbase.a $(libbase_LDADD)
 
-pytest_LDADD = libpython.a libgfx.a libinput.a libbase.a $(libbase_LDADD) $(libpython_LDADD)
+pytest_LDADD = libbase.a libpython.a libgfx.a libinput.a $(libbase_LDADD) $(libpython_LDADD)
 
 # Note: .py files are also built by this target.
 py_%_wrap.cc : py_%.i *.h

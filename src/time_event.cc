@@ -26,21 +26,21 @@
 // create a new time event
 time_event::time_event (const string & time, bool absolute)
 {
-    Type = TIME_EVENT;
     Repeat = 0;
-    Time = parse_date (time);
+    Type = TIME_EVENT;
+    Time = parse_time (time);
     if (!absolute) Time += gamedate::time ();
 }
 
 // specify the interval between two occurances of the event
 void time_event::repeat (const string & interval, s_int32 count)
 {
-    Interval = parse_date (interval);
+    Interval = parse_time (interval);
     Repeat = count;
 }
 
 // execute the time event
-void time_event::execute (event & evnt)
+void time_event::execute (const event & evnt)
 {
     // nothing needs be passed to the script; it can get the
     // current time from the gametime class if it is needed.
@@ -77,40 +77,44 @@ bool time_event::get_state (igzstream& in)
 }
 
 // convert the time string to gametime minutes
-u_int32 time_event::parse_date (const string & date)
+u_int32 time_event::parse_time (const string & time)
 {
     u_int32 minutes = 0, number = 0;
-
-    for (u_int32 i = 0; i < date.length (); i++)
+    char num[2] = "0";
+    
+    for (u_int32 i = 0; i < time.length (); i++)
     {
         // got a number
-        if (isdigit (date[i])
-            number = 10 * number + atoi (date[i]);
+        if (isdigit (time[i]))
+        {
+            num[0] = time[i];
+            number = 10 * number + atoi (num);
+        }
         // got a letter
         else
         {
-            switch (date[i])
+            switch (time[i])
             {
                 // weeks
-                case w:
+                case 'w':
                 {
                     minutes += number * DAYS_PER_WEEK * HOURS_PER_DAY * 60;
                     break;
                 }
                 // days
-                case d:
+                case 'd':
                 {
                     minutes += number * HOURS_PER_DAY * 60;
                     break;
                 }
                 // hours
-                case h:
+                case 'h':
                 {
                     minutes += number * 60;
                     break;
                 }
                 // minutes
-                case m:
+                case 'm':
                 {
                     minutes += number;
                     break;
@@ -118,8 +122,7 @@ u_int32 time_event::parse_date (const string & date)
                 // error
                 default:
                 {
-                    cerr << "*** time_event::parse_date: Unknown time specifier '"
-                         << date[i] << "'\n" << flush;
+                    fprintf (stderr, "*** time_event::parse_date: Unknown time specifier '%c'\n", time[i]);
                     break;
                 }
             }

@@ -1,7 +1,7 @@
 /*
    $Id$
 
-   Copyright (C) 1999/2000/2001    Kai Sterker
+   Copyright (C) 1999/2000/2001/2002 Kai Sterker
    Copyright (C) 2001    Alexandre Courbot
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
@@ -40,8 +40,8 @@ using std::string;
  *
  * Use this class to create instances of Python classes
  * contained in Python modules, then control their execution. You can pass
- * arguments to the class constructor when the script is imported, then to
- * any method you want to run.
+ * arguments to the class constructor when the script is imported and to
+ * any method you wish to run.
  * 
  */ 
 class py_object
@@ -92,21 +92,41 @@ public:
      *
      * @return the Python class instance
      */
-    PyObject *get_instance ()
+    PyObject *get_instance () const
     {
-        return instance;
+        return Instance;
     }
 
     /**
-     * Returns the module name of this object.
+     * Returns the arguments of this object.
      * 
-     * @return module name of this object.
+     * @return arguments of this object.
      */
-    string object_file () const
+    PyObject *get_ctorargs () const
     {
-        return script_file_;
+        return CtorArgs;
+    }
+
+    /**
+     * Returns the class name of this object.
+     * 
+     * @return class name of this object.
+     */
+    string class_name () const
+    {
+        return Classname;
     }
      
+    /**
+     * Returns the file name of this object.
+     * 
+     * @return fiöe name of this object.
+     */
+    string file_name () const
+    {
+        return Filename;
+    }
+
     /** 
      * Call a method of this object.
      * 
@@ -119,7 +139,7 @@ public:
      * Calls the run () method of this object.
      * Equivalent to call_method ("run", args); 
      *
-     * @param args Python tuple containing the arguments to pass to the method.  
+     * @param args Python tuple containing the arguments to pass to the method. 
      */
     void run (PyObject * args = NULL)
     {
@@ -134,17 +154,71 @@ public:
      */
     PyObject* get_attribute (const string & name);
 
+    /**
+     * Saves the state of the associated script, so that it can be
+     * completely restored later on. Writes the file- and class name
+     * of the script, the arguments passed to its constructor and
+     * finally its internal state (i.e. the __dict__) to file. 
+     *
+     * @param file The stream to save the state to.
+     */
+    void put_state (ogzstream & file);
+    
+    /**
+     * Restores the state of the py_object from file. Loads file-,
+     * class name and constructor arguement. Then instanciates the
+     * script and finally merges its __dict__ with the key/value pairs 
+     * read from file.
+     *
+     * @param file The stream to load the state from.
+     * @return <b>true</b>if loading succeeded, <b>false</b> otherwise.
+     */
+    bool get_state (igzstream & file);
+
+#ifndef SWIG
+    /**
+     * Clone the %py_pbject. Note that this implementation makes
+     * a shallow copy of the underlying python instance. However, thanks
+     * to python's reference counting, deleting the clone will not effect
+     * the original or vice versa. But changing one will change the other.
+     *
+     * @param script The &py_object to clone
+     */
+     void operator= (const py_object &script);
+#endif // SWIG
+
 private:
     /**
-     * Helper for create_instance and reload_instance
+     * Helper for create_instance and reload_instance. Instanciates a
+     * class contained with a python module (i.e. at the toplevel of
+     * a Python script).
      *
+     * @param module The Python module that contains the class to instanciate.
+     * @param path The full path to the module
+     * @param classname The name of the class to instanciate
+     * @param args A tuple of the arguments to pass to the class constructor.
      */
-    bool instanciate (PyObject*, string, string, PyObject*);
+    bool instanciate (PyObject *module, string path, string classname, PyObject *args);
 
-    string script_file_;
+    /**
+     * The class name of the current script
+     */
+    string Classname;
+    
+    /**
+     * The file name of the current script
+     */
+    string Filename;
 
-    PyObject *instance;
+    /**
+     * The actual instance of the Python class
+     */
+    PyObject *Instance;
+    
+    /**
+     * Constructor arguments
+     */
+    PyObject *CtorArgs;
 };
-
 
 #endif

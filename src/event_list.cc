@@ -20,7 +20,8 @@
  * @brief  Implements the event_list class.
  * 
  */
- 
+
+#include "event_list.h"
 #include "event_handler.h"
  
 // Array with callbacks to return a newly instanciated event
@@ -69,7 +70,7 @@ void event_list::put_state (ogzstream& out) const
     nbr_events >> out; 
 
     for (i = events.begin (); i != events.end (); i++)
-        (*i)->save (out); 
+        (*i)->put_state (out); 
 }
 
 // Loads an event_list from file
@@ -90,7 +91,7 @@ bool event_list::get_state (igzstream& in)
             e = instanciate_event[type]();
  
         // try to load it, ...
-        if (e != NULL && e->load (in))
+        if (e != NULL && e->get_state (in))
             add_event (e);
         
         // ... otherwise fail.

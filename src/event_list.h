@@ -25,6 +25,7 @@
 #ifndef EVENT_LIST_H__
 #define EVENT_LIST_H__
 
+#include <vector>
 #include "event.h"
 
 /**

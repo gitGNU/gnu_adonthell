@@ -20,7 +20,8 @@
  * @brief  Implements the event_handler class.
  * 
  */
-
+ 
+#include <algorithm>
 #include "event_handler.h"
 
 // Array with the registered events; each type of event is kept in
@@ -33,7 +34,7 @@ void event_handler::raise_event (const event& e)
 {
     vector<event*>::iterator i;
     // Search through all registered events with the type of the raised event
-    for (i = handlers[e.type].begin (); i != handlers[e.type].end (); i++)
+    for (i = handlers[e.type ()].begin (); i != handlers[e.type ()].end (); i++)
         // Execute the script; pass recieved event on to get event data
         if ((*i)->equals (e)) (*i)->execute (e); 
 }
@@ -45,15 +46,14 @@ void event_handler::remove_event (event *e)
     vector<event*>::iterator i;
 
     // Search for the event we want to remove
-    i = find (handlers[e->type].begin (), handlers[e->type].end (), e);
+    i = find (handlers[e->type ()].begin (), handlers[e->type ()].end (), e);
 
     // found? -> get rid of it :)
-    if (i != handlers[e->type].end ()) handlers[e->type].erase(i);
-
+    if (i != handlers[e->type ()].end ()) handlers[e->type ()].erase(i);
 }
 
 // Register a event with it's script
 void event_handler::register_event (event *e)
 {
-    handlers[e->type].push_back (e);
+    handlers[e->type ()].push_back (e);
 }

@@ -26,22 +26,27 @@
 // destructor
 event::~event ()
 {
+    clear ();
+}
+
+// cleanup
+void event::clear ()
+{
+    Script.clear ();
+    Py_XDECREF (Args);
+    Args = NULL;
 }
 
 // set the script asspciated with the event
 void event::set_script (string filename, PyObject * args = NULL)
 {
-    if (filename == "") 
-    {
-        Script.clear ();
-        Py_XDECREF (Args);
-        Args = NULL; 
-    }
+    if (filename == "") clear ();
     else 
     {
         Py_XINCREF (args);
         Args = args; 
-        
+        Shared = false;
+       
         u_int16 argssize = args == NULL ? 1 : PyTuple_Size (args) + 1; 
         PyObject *theargs = PyTuple_New (argssize);
         
@@ -59,35 +64,60 @@ void event::set_script (string filename, PyObject * args = NULL)
     }
 }
 
+// make the event script a reference to an existing script
+void event::set_shared_script (py_object &script)
+{
+    // cleanup
+    clear ();
+
+    // 'clone' the given script
+    Script = script;
+    
+    // tell the script not to save any arguments
+    Shared = true;
+}
+
 // save the state of the script associated with the event
 void event::put_state (ogzstream & file) const
 {
     Type >> file;
     Repeat >> file;
-    Script.object_file () >> file;
-    if (Args) 
+    Shared >> file;
+    
+    if (Shared) return;
+    
+    Script.class_name () >> file;
+    
+    if (Args)
     {
-        true >> file; 
+        true >> file;
         python::put_tuple (Args, file);
     }
-    else false >> file; 
+    else false >> file;
 }
 
 // load the state of the script associated with the event 
-void event::get_state (igzstream & file) 
+bool event::get_state (igzstream & file) 
 {
     string name;
     bool has_args;
-    PyObject * args = NULL; 
+    PyObject * args = NULL;
 
     // Note that »Type« is already read by event_list::load to
     // determine what event subclass to instanciate
     Repeat << file;
+    Shared << file;
+    
+    // shared scripts have to be restored by the event's owner
+    if (Shared) return true;
+    
     name << file;
-    has_args << file; 
+    has_args << file;
     
     if (has_args) args = python::get_tuple (file);
     
-    set_script (name, args);      
-    Py_XDECREF (args); 
+    set_script (name, args);
+    Py_XDECREF (args);
+    
+    return true;
 }

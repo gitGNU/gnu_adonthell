@@ -55,6 +55,14 @@ public:
 
 #ifndef SWIG
     /**
+     * Standart constructor.
+     */
+    time_event ()
+    {
+        Type = TIME_EVENT;
+    }
+     
+    /**
      * Create a new time %event. This constructor is primarily used for
      * raising time events.
      *
@@ -88,7 +96,7 @@ public:
      * @param evnt The time event to compare this to.
      * @return <b>True</b> if the two events equal, <b>false</b> otherwise.
      */
-    bool equals (event & evnt)
+    bool equals (const event & evnt)
     {
         time_event e = (time_event &) evnt;
         return Time == e.time ();
@@ -100,7 +108,7 @@ public:
      *
      * @param evnt The %event that triggered this time %event.
      */
-    void execute (event & evnt);
+    void execute (const event & evnt);
     //@}
     
     /**
@@ -132,7 +140,7 @@ public:
      *
      * @return the "alarm" time in %gametime minutes.
      */
-    u_int32 time ()
+    u_int32 time () const
     {
         return Time;
     }

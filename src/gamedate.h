@@ -54,6 +54,12 @@ public:
     static void update ();
 
     /**
+     * Get the current %gametime.
+     * @return %gametime in minutes since start of the game.
+     */
+    static u_int32 time ()      { return Time; }
+
+    /**
      * Get the current weekday.
      * @return weekday as a number between 0 and DAYS_PER_WEEK - 1
      */
