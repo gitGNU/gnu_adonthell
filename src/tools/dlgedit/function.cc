@@ -28,7 +28,7 @@ char *function::op_string[] = { "=", "+=", "-=", "==", "!=", "<", ">" };
 map<char*, s_int32, ltstr> function::vars;
 
 // Constructor
-function::function (DlgNode *n) : node (n), number (-1), thefunction (IF)
+function::function (DlgNode *n) : node (n), number (-1), thefunction (_IF)
 {
     u_int32 i, row;
     char *entry[4];
@@ -224,7 +224,7 @@ void function::set_variables ()
 // Change the function
 void function::set_function ()
 {
-    GtkWidget *menu = gtk_option_menu_get_menu ((GtkOptionMenu *) function);
+    GtkWidget *menu = gtk_option_menu_get_menu ((GtkOptionMenu *) functions);
     GtkWidget *menu_item = gtk_menu_get_active ((GtkMenu *) menu);
     thefunction = GPOINTER_TO_INT(gtk_object_get_user_data (GTK_OBJECT (menu_item)));
 
@@ -248,8 +248,8 @@ void function::set_operators ()
     switch (thefunction)
     {
         // arithmetics
-        case LET:
-        case THEN:
+        case _LET:
+        case _THEN:
         {
             menu = gtk_menu_new ();
 
@@ -257,28 +257,28 @@ void function::set_operators ()
             menuitem = gtk_menu_item_new_with_label ("=");
             gtk_widget_show (menuitem);
             gtk_menu_append (GTK_MENU (menu), menuitem);
-            gtk_object_set_user_data (GTK_OBJECT (menuitem), (gpointer) GINT_TO_POINTER(ASSIGN));
+            gtk_object_set_user_data (GTK_OBJECT (menuitem), (gpointer) GINT_TO_POINTER(_ASSIGN));
             
             // add
             menuitem = gtk_menu_item_new_with_label ("+=");
             gtk_widget_show (menuitem);
             gtk_menu_append (GTK_MENU (menu), menuitem);
-            gtk_object_set_user_data (GTK_OBJECT (menuitem), (gpointer) GINT_TO_POINTER(ADD));
+            gtk_object_set_user_data (GTK_OBJECT (menuitem), (gpointer) GINT_TO_POINTER(_ADD));
 
             // sub
             menuitem = gtk_menu_item_new_with_label ("-=");
             gtk_widget_show (menuitem);
             gtk_menu_append (GTK_MENU (menu), menuitem);
-            gtk_object_set_user_data (GTK_OBJECT (menuitem), (gpointer) GINT_TO_POINTER(SUB));
+            gtk_object_set_user_data (GTK_OBJECT (menuitem), (gpointer) GINT_TO_POINTER(_SUB));
 
-            theoperation = ASSIGN;
+            theoperation = _ASSIGN;
             break;
         }
 
         // comparisons
-        case IF:
-        case AND:
-        case OR:
+        case _IF:
+        case _AND:
+        case _OR:
         {
             menu = gtk_menu_new ();
 
@@ -286,27 +286,27 @@ void function::set_operators ()
             menuitem = gtk_menu_item_new_with_label ("==");
             gtk_widget_show (menuitem);
             gtk_menu_append (GTK_MENU (menu), menuitem);
-            gtk_object_set_user_data (GTK_OBJECT (menuitem), (gpointer) GINT_TO_POINTER(EQ));
+            gtk_object_set_user_data (GTK_OBJECT (menuitem), (gpointer) GINT_TO_POINTER(_EQ));
 
             // not equal
             menuitem = gtk_menu_item_new_with_label ("!=");
             gtk_widget_show (menuitem);
             gtk_menu_append (GTK_MENU (menu), menuitem);
-            gtk_object_set_user_data (GTK_OBJECT (menuitem), (gpointer) GINT_TO_POINTER(NEQ));
+            gtk_object_set_user_data (GTK_OBJECT (menuitem), (gpointer) GINT_TO_POINTER(_NEQ));
 
             // less than
             menuitem = gtk_menu_item_new_with_label ("<");
             gtk_widget_show (menuitem);
             gtk_menu_append (GTK_MENU (menu), menuitem);
-            gtk_object_set_user_data (GTK_OBJECT (menuitem), (gpointer) GINT_TO_POINTER(LT));
+            gtk_object_set_user_data (GTK_OBJECT (menuitem), (gpointer) GINT_TO_POINTER(_LT));
 
             // greater than
             menuitem = gtk_menu_item_new_with_label (">");
             gtk_widget_show (menuitem);
             gtk_menu_append (GTK_MENU (menu), menuitem);
-            gtk_object_set_user_data (GTK_OBJECT (menuitem), (gpointer) GINT_TO_POINTER(GT));
+            gtk_object_set_user_data (GTK_OBJECT (menuitem), (gpointer) GINT_TO_POINTER(_GT));
             
-            theoperation = EQ;
+            theoperation = _EQ;
             break;
         }
         default: return;
@@ -364,41 +364,41 @@ void function::create_function_dialog ()
     gtk_box_pack_start (GTK_BOX (vbox1), hbox1, FALSE, FALSE, 0);
 
     // Function - selection (with LET and IF function)
-    function = gtk_option_menu_new ();
-    gtk_widget_ref (function);
-    gtk_object_set_data_full (GTK_OBJECT (function_dialog), "function", function,
+    functions = gtk_option_menu_new ();
+    gtk_widget_ref (functions);
+    gtk_object_set_data_full (GTK_OBJECT (function_dialog), "function", functions,
         (GtkDestroyNotify) gtk_widget_unref);
-    gtk_widget_show (function);
-    gtk_box_pack_start (GTK_BOX (hbox1), function, FALSE, FALSE, 0);
+    gtk_widget_show (functions);
+    gtk_box_pack_start (GTK_BOX (hbox1), functions, FALSE, FALSE, 0);
     function_menu = gtk_menu_new ();
 
     glade_menuitem = gtk_menu_item_new_with_label ("LET");
-    gtk_object_set_user_data (GTK_OBJECT (glade_menuitem), (gpointer) GINT_TO_POINTER(LET));
+    gtk_object_set_user_data (GTK_OBJECT (glade_menuitem), (gpointer) GINT_TO_POINTER(_LET));
     gtk_widget_show (glade_menuitem);
     gtk_menu_append (GTK_MENU (function_menu), glade_menuitem);
 
     glade_menuitem = gtk_menu_item_new_with_label ("THEN");
-    gtk_object_set_user_data (GTK_OBJECT (glade_menuitem), (gpointer) GINT_TO_POINTER(THEN));
+    gtk_object_set_user_data (GTK_OBJECT (glade_menuitem), (gpointer) GINT_TO_POINTER(_THEN));
     gtk_widget_show (glade_menuitem);
     gtk_menu_append (GTK_MENU (function_menu), glade_menuitem);
 
     glade_menuitem = gtk_menu_item_new_with_label ("IF");
-    gtk_object_set_user_data (GTK_OBJECT (glade_menuitem), (gpointer) GINT_TO_POINTER(IF));
+    gtk_object_set_user_data (GTK_OBJECT (glade_menuitem), (gpointer) GINT_TO_POINTER(_IF));
     gtk_widget_show (glade_menuitem);
     gtk_menu_append (GTK_MENU (function_menu), glade_menuitem);
 
     glade_menuitem = gtk_menu_item_new_with_label ("AND");
-    gtk_object_set_user_data (GTK_OBJECT (glade_menuitem), (gpointer) GINT_TO_POINTER(AND));
+    gtk_object_set_user_data (GTK_OBJECT (glade_menuitem), (gpointer) GINT_TO_POINTER(_AND));
     gtk_widget_show (glade_menuitem);
     gtk_menu_append (GTK_MENU (function_menu), glade_menuitem);
 
     glade_menuitem = gtk_menu_item_new_with_label ("OR");
-    gtk_object_set_user_data (GTK_OBJECT (glade_menuitem), (gpointer) GINT_TO_POINTER(OR));
+    gtk_object_set_user_data (GTK_OBJECT (glade_menuitem), (gpointer) GINT_TO_POINTER(_OR));
     gtk_widget_show (glade_menuitem);
     gtk_menu_append (GTK_MENU (function_menu), glade_menuitem);
 
-    gtk_option_menu_set_menu (GTK_OPTION_MENU (function), function_menu);
-    gtk_option_menu_set_history (GTK_OPTION_MENU (function), thefunction);
+    gtk_option_menu_set_menu (GTK_OPTION_MENU (functions), function_menu);
+    gtk_option_menu_set_history (GTK_OPTION_MENU (functions), thefunction);
 
     // Variable selection (either chose out of the list or add a new one)
     variable = gtk_combo_new ();
@@ -592,6 +592,6 @@ void function::create_function_dialog ()
         GTK_SIGNAL_FUNC (on_fct_select_row), (gpointer) this);
     gtk_signal_connect (GTK_OBJECT (function_list), "unselect_row",
         GTK_SIGNAL_FUNC (on_fct_unselect_row), (gpointer) this);
-    gtk_signal_connect (GTK_OBJECT (GTK_OPTION_MENU (function)->menu), 
+    gtk_signal_connect (GTK_OBJECT (GTK_OPTION_MENU (functions)->menu), 
         "deactivate", GTK_SIGNAL_FUNC (on_function_released), (gpointer) this);
 }

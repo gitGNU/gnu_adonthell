@@ -20,23 +20,23 @@
 // Functions
 enum
 {
-    LET = 0,
-    THEN = 1,
-    IF = 2,
-    AND = 3,
-    OR = 4
+    _LET = 0,
+    _THEN = 1,
+    _IF = 2,
+    _AND = 3,
+    _OR = 4
 };
 
 // Operators
 enum
 {
-    ASSIGN = 0,
-    ADD = 1,
-    SUB = 2,
-    EQ = 3,
-    NEQ = 4,
-    LT = 5,
-    GT = 6
+    _ASSIGN = 0,
+    _ADD = 1,
+    _SUB = 2,
+    _EQ = 3,
+    _NEQ = 4,
+    _LT = 5,
+    _GT = 6
 };
 
 // data representing the function (operation (variable, value))
@@ -76,6 +76,7 @@ public:
 
     static char* fct_string[];      // String representation of functions
     static char* op_string[];       // String representation of operators
+    static map<char*, s_int32, ltstr> vars;// Contains all used variables
     
 private:
     void create_function_dialog (); // Create the GUI
@@ -87,7 +88,7 @@ private:
     GtkWidget *variable;            // The ´Variable´-combobox
     GtkWidget *value;               // The ´Value´-combobox
     GtkWidget *operation;           // The ´Operation´-Dropdownlist
-    GtkWidget *function;            // The ´Function´-Dropdownlist
+    GtkWidget *functions;            // The ´Function´-Dropdownlist
     GtkWidget *add_button;          // Add Function to node
     GtkWidget *remove_button;       // Remove function from node
     GtkWidget *up_button;           // Change the order of ...
@@ -95,7 +96,6 @@ private:
 
     DlgNode *node;                  // The Arrow which is being edited
 
-    static map<char*, s_int32, ltstr> vars;// Contains all used variables
 
     s_int32 selection;              // Selected function in the list 
     s_int32 number;                 // Number of functions in list
