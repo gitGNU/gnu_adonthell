@@ -13,6 +13,7 @@
 */
 
 #include "landmap.h"
+#include "mapview.h"
 
 #ifdef _DEBUG_
 u_int16 mapsquare::a_d_diff=0;
@@ -40,11 +41,11 @@ void mapsquare_tile::draw(mapview * mv)
   if(is_base)
     {
       u_int16 rx, ry;
-      rx=(mv->posx>mv->ctrx)?x-(mv->posx-mv->ctrx):x;
-      ry=(mv->posy>mv->ctry)?y-(mv->posy-mv->ctry):y;
+      rx=(mv->posx>0)?x-mv->posx:x;
+      ry=(mv->posy>0)?y-mv->posy:y;
       mv->m_map->pattern[objnbr]->draw
-	((rx*MAPSQUARE_SIZE-mv->offx)+mv->x,
-	 (ry*MAPSQUARE_SIZE-mv->offy)+mv->y,
+	((rx*MAPSQUARE_SIZE-mv->offx)+mv->x-mv->draw_offx,
+	 (ry*MAPSQUARE_SIZE-mv->offy)+mv->y-mv->draw_offy,
 	 mv->da);
     }
   else
@@ -56,8 +57,8 @@ void mapsquare_tile::draw_border(mapview * mv)
   if(is_base)
     {
       u_int16 rx, ry;
-      rx=(mv->posx>mv->ctrx)?x-(mv->posx-mv->ctrx):x;
-      ry=(mv->posy>mv->ctry)?y-(mv->posy-mv->ctry):y;
+      rx=(mv->posx>0)?x-mv->posx:x;
+      ry=(mv->posy>0)?y-mv->posy:y;
       mv->m_map->pattern[objnbr]->draw_border
 	(rx*MAPSQUARE_SIZE,ry*MAPSQUARE_SIZE,mv->da);
     }
@@ -70,8 +71,8 @@ void mapsquare_tile::draw_base_tile(mapview * mv)
   if(is_base)
     {
       u_int16 rx,ry;
-      rx=(mv->posx>mv->ctrx)?x-(mv->posx-mv->ctrx):x;
-      ry=(mv->posy>mv->ctry)?y-(mv->posy-mv->ctry):y;
+      rx=(mv->posx>0)?x-mv->posx:x;
+      ry=(mv->posy>0)?y-mv->posy:y;
       mv->m_map->pattern[objnbr]->draw_base_tile
 	(rx*MAPSQUARE_SIZE,ry*MAPSQUARE_SIZE,mv->da);
     }
@@ -104,8 +105,8 @@ void mapsquare_char::draw(mapview * mv)
   if(is_base)
     {
       u_int16 rx, ry;
-      rx=(mv->posx>mv->ctrx)?x-(mv->posx-mv->ctrx):x;
-      ry=(mv->posy>mv->ctry)?y-(mv->posy-mv->ctry):y;
+      rx=(mv->posx>0)?x-mv->posx:x;
+      ry=(mv->posy>0)?y-mv->posy:y;
       mchar->draw
 	((rx*MAPSQUARE_SIZE-mv->offx)+mv->x,
 	 (ry*MAPSQUARE_SIZE-mv->offy)+mv->y,
@@ -132,93 +133,6 @@ mapsquare::~mapsquare()
   cout << "~mapsquare() called, "<< --a_d_diff
        << " objects currently allocated\n";
 #endif
-}
-
-void mapsquare::draw(mapview * mv)
-{
-  list<mapsquare_tile>::iterator i;
-  i=tiles.begin();
-  while(i!=tiles.end())
-    {
-      if(i->is_base) mv->m_map->pattern[i->objnbr]->
-		       draw((i->x-(mv->posx-mv->ctrx))*MAPSQUARE_SIZE,
-			    (i->y-(mv->posy-mv->ctry))*MAPSQUARE_SIZE,
-			    mv->da);
-      else
-	{
-	  // Right (bottom) overflow?
-	  // FIXME: not correct. For top/bottom+left/right tests, must
-	  // check FIRST if the square is on a screen corner.
-	  // Optimize this!
-
-	  // Bottom Right corner test
-	  if(i->x-(mv->posx-mv->ctrx)+1==mv->d_length && 
-	     i->y-(mv->posy-mv->ctry)+1==mv->d_height &&
-	     i->base_tile->x>i->x && i->base_tile->y>i->y)
-	  i->base_tile->draw(mv);
-
-	  // Bottom Left corner test
-	  else if(i->x-(mv->posx-mv->ctrx)==0 && 
-	     i->y-(mv->posy-mv->ctry)+1==mv->d_height &&
-	     i->base_tile->x<i->x && i->base_tile->y>i->y)
-	      mv->m_map->submap[mv->currentsubmap]->land[i->x][i->base_tile->y].
-		draw(mv);
-
-	    //	    i->base_tile->draw(mv);
-
-	  // Top Right corner test
-	  else if(i->x-(mv->posx-mv->ctrx)+1==mv->d_length && 
-	     i->y-(mv->posy-mv->ctry)==0 &&
-	     i->base_tile->x>i->x && i->base_tile->y<i->y)
-	    i->base_tile->draw(mv);
-
-	  // Top Left corner test
-	  else if(i->x-(mv->posx-mv->ctrx)==0 && 
-	     i->y-(mv->posy-mv->ctry)==0 &&
-	     i->base_tile->x<i->x && i->base_tile->y<i->y)
-	    i->base_tile->draw(mv);
-
-	  else if(i->x-(mv->posx-mv->ctrx)+1==mv->d_length && 
-		  i->base_tile->x>i->x && i->base_tile->y>=i->y)
-	    {
-	      i->base_tile->draw(mv);
-	      //	      break;
-	    }
-	  // Right overflow?
-	  else if(i->x-(mv->posx-mv->ctrx)+1==mv->d_length && 
-		  i->base_tile->x>i->x && i->base_tile->y==i->y)
-	    {
-	      i->base_tile->draw(mv);
-	      //	      break;
-	    }
-	  // Left overflow?
-	  else if(i->x-(mv->posx-mv->ctrx)==0 && i->base_tile->x<i->x 
-		  && i->base_tile->y==i->y)
-	    {
-	      i->base_tile->draw(mv);
-	      //	      break;
-	    }
-	  // Bottom overflow?
-	  else if(i->y-(mv->posy-mv->ctry)+1==mv->d_height && 
-		  i->base_tile->y>i->y && i->base_tile->x==i->x)
-	    {
-	      mv->critical_draw.push_front(*i);
-	      i->base_tile->draw(mv);
-	      //	      break;
-	    }
-	  // Top overflow?
-	  else if(i->y-(mv->posy-mv->ctry)==0 && i->base_tile->y<i->y 
-		  /*		  && i->base_tile->x==i->x*/)
-	    {
-	      if(!(i->x-i->base_tile->x+mv->m_map->pattern[i->objnbr]->basex))
-		{
-		  i->base_tile->draw(mv);
-		}
-	      //	      break;
-	    }
-	}
-      i++;
-    }
 }
 
 void mapsquare::draw(s_int16 x, s_int16 y, mapobject ** pattern,
@@ -951,7 +865,7 @@ void landmap::draw_square(u_int16 smap, u_int16 x, u_int16 y, u_int16 px,
   submap[smap]->draw_square(x,y,px,py,pattern,da_opt);
 }
 
-#ifdef _EDIT
+#ifdef _EDIT_
 void landmap::reset_objs()
 {
   u_int16 i;
@@ -960,5 +874,14 @@ void landmap::reset_objs()
       pattern[i]->rewind();
       mini_pattern[i]->rewind();
     }
+}
+
+void landmap::editor()
+{
+  mapview mview;
+  mview.attach_map(this);
+  mview.set_current_submap(0);
+  mview.resize(11*MAPSQUARE_SIZE,11*MAPSQUARE_SIZE);
+  mview.editor();
 }
 #endif

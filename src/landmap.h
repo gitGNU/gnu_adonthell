@@ -20,11 +20,12 @@
 #include <string>
 #include <vector>
 #include <list>
-#include "mapview.h"
 
 #ifdef _EDIT_
 #define OBJSMPLSIZE 40
 #endif 
+
+class mapview;
 
 class mapsquare_tile
 {
@@ -97,7 +98,6 @@ class mapsquare
   ~mapsquare();
 
   // Draw takes only a mapview as argument.
-  void draw(mapview * mv);
   void draw(s_int16 x, s_int16 y, mapobject ** pattern, 
 	    drawing_area * da_opt=NULL);
   bool is_walkable_left() { return walkable & WALKABLE_LEFT; }
@@ -257,6 +257,10 @@ class landmap
 		   drawing_area * da_opt=NULL);
   friend class mapview;
   friend class mapcharacter;
+
+#ifdef _EDIT_
+  void editor();
+#endif
 };  // landmap
 
 #endif

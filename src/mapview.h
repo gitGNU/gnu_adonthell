@@ -16,6 +16,7 @@
 #define _MAPVIEW_H_
 
 #include "mapobject.h"
+#include "landmap.h"
 #include <list>
 class mapsquare_tile;
 class mapsquare_char;
@@ -34,9 +35,11 @@ class mapview
   u_int16 posx, posy;
   u_int16 offx, offy;
 
+  u_int16 draw_offx, draw_offy;
+
   landmap * m_map;
 
-  u_int16 ctrx,ctry;
+  //  u_int16 ctrx,ctry;
   drawing_area * da;
 
   list<mapsquare_tile> critical_draw;
@@ -85,7 +88,17 @@ class mapview
   void detach_map();
   void set_screen_pos(u_int16 nx, u_int16 ny);
   s_int8 set_current_submap(u_int16 sm);
-  s_int8 set_pos(u_int16 x, u_int16 y);
+  s_int8 set_pos(u_int16 x, u_int16 y, u_int16 ox=0, u_int16 oy=0);
+
+  bool can_scroll_right()
+    { return (posx!=m_map->submap[currentsubmap]->length-d_length); }
+  bool can_scroll_left()
+    { return (posx || offx); }
+  bool can_scroll_up()
+    { return (posy || offy); }
+  bool can_scroll_down()
+    { return (posy!=m_map->submap[currentsubmap]->height-d_height); }
+
   void scroll_right();
   void scroll_left();
   void scroll_down();
@@ -93,7 +106,7 @@ class mapview
   u_int16 get_current_submap() { return currentsubmap; }
   u_int16 get_posx() { return posx; }
   u_int16 get_posy() { return posy; }
-  void resize(u_int16 d_l, u_int16 d_h);
+  void resize(u_int16 l, u_int16 h);
   void update();
   void draw_cursor();
   void draw_walkable(u_int16 x, u_int16 y, drawing_area * da_opt=NULL);

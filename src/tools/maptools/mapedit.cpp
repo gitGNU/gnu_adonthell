@@ -22,16 +22,11 @@ int main(int argc, char * argv[])
         return 1;
 
     landmap lmap;
-    mapview mview;
 
     if(argc==2)
       lmap.load(argv[1]);
 
-    mview.attach_map(&lmap);
-    mview.set_current_submap(0);
-    mview.resize(11,11);
-
-    mview.editor();
+    lmap.editor();
 
     return 0;
 }

@@ -69,12 +69,9 @@ VERSION = @VERSION@
 
 SUBDIRS = . tools
 
-bin_PROGRAMS = adonthell joltest
+bin_PROGRAMS = adonthell
 
-adonthell_SOURCES = animation.cpp animation_off.cpp audio.cpp audio_thread.cpp character.cpp cutscene.cpp data.cpp data_screen.cpp dialog.cpp dialog_engine.cpp drawing_area.cpp event.cpp fileops.cpp game.cpp gametime.cpp image.cpp input.cpp lex.prefs.cpp main.cpp mapselect.cpp maptpl.cpp mapobject.cpp mapcharacter.cpp landmap.cpp mapview.cpp pnm.cpp prefs.cpp py_character_wrap.cpp py_dialog_engine_wrap.cpp py_inc.cpp py_modules.cpp py_quest_wrap.cpp quest.cpp screen.cpp storage.cpp win_base.cpp win_border.cpp win_container.cpp win_font.cpp win_theme.cpp win_scrolled.cpp win_background.cpp win_scrollbar.cpp win_file.cpp win_image.cpp win_label.cpp win_select.cpp win_write.cpp yarg.cc
-
-
-joltest_SOURCES = animation.cpp animation_off.cpp audio.cpp audio_thread.cpp  drawing_area.cpp  fileops.cpp  image.cpp input.cpp lex.prefs.cpp joel.cpp pnm.cpp prefs.cpp  screen.cpp  win_base.cpp win_border.cpp win_container.cpp win_font.cpp win_theme.cpp win_scrolled.cpp win_background.cpp win_scrollbar.cpp win_file.cpp win_image.cpp win_label.cpp win_select.cpp win_write.cpp yarg.cc
+adonthell_SOURCES = animation.cpp animation_off.cpp audio.cpp audio_thread.cpp character.cpp cutscene.cpp data.cpp data_screen.cpp dialog.cpp dialog_engine.cpp drawing_area.cpp event.cpp fileops.cpp game.cpp gametime.cpp image.cpp input.cpp lex.prefs.cpp main.cpp mapselect.cpp maptpl.cpp mapobject.cpp mapcharacter.cpp landmap.cpp mapview.cpp pnm.cpp prefs.cpp py_character_wrap.cpp py_dialog_engine_wrap.cpp py_inc.cpp py_modules.cpp py_quest_wrap.cpp py_screen_wrap.cpp py_image_wrap.cpp quest.cpp screen.cpp storage.cpp win_base.cpp win_border.cpp win_container.cpp win_font.cpp win_theme.cpp win_scrolled.cpp win_background.cpp win_scrollbar.cpp win_file.cpp win_image.cpp win_label.cpp win_select.cpp win_write.cpp yarg.cc
 
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = ../header.h
@@ -91,21 +88,14 @@ character.o cutscene.o data.o data_screen.o dialog.o dialog_engine.o \
 drawing_area.o event.o fileops.o game.o gametime.o image.o input.o \
 lex.prefs.o main.o mapselect.o maptpl.o mapobject.o mapcharacter.o \
 landmap.o mapview.o pnm.o prefs.o py_character_wrap.o \
-py_dialog_engine_wrap.o py_inc.o py_modules.o py_quest_wrap.o quest.o \
-screen.o storage.o win_base.o win_border.o win_container.o win_font.o \
-win_theme.o win_scrolled.o win_background.o win_scrollbar.o win_file.o \
-win_image.o win_label.o win_select.o win_write.o yarg.o
+py_dialog_engine_wrap.o py_inc.o py_modules.o py_quest_wrap.o \
+py_screen_wrap.o py_image_wrap.o quest.o screen.o storage.o win_base.o \
+win_border.o win_container.o win_font.o win_theme.o win_scrolled.o \
+win_background.o win_scrollbar.o win_file.o win_image.o win_label.o \
+win_select.o win_write.o yarg.o
 adonthell_LDADD = $(LDADD)
 adonthell_DEPENDENCIES = 
 adonthell_LDFLAGS = 
-joltest_OBJECTS =  animation.o animation_off.o audio.o audio_thread.o \
-drawing_area.o fileops.o image.o input.o lex.prefs.o joel.o pnm.o \
-prefs.o screen.o win_base.o win_border.o win_container.o win_font.o \
-win_theme.o win_scrolled.o win_background.o win_scrollbar.o win_file.o \
-win_image.o win_label.o win_select.o win_write.o yarg.o
-joltest_LDADD = $(LDADD)
-joltest_DEPENDENCIES = 
-joltest_LDFLAGS = 
 CXXFLAGS = @CXXFLAGS@
 CXXCOMPILE = $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
 CXXLD = $(CXX)
@@ -115,25 +105,25 @@ DIST_COMMON =  Makefile.am Makefile.in
 
 DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 
-TAR = tar
+TAR = gtar
 GZIP_ENV = --best
 DEP_FILES =  .deps/animation.P .deps/animation_off.P .deps/audio.P \
 .deps/audio_thread.P .deps/character.P .deps/cutscene.P .deps/data.P \
 .deps/data_screen.P .deps/dialog.P .deps/dialog_engine.P \
 .deps/drawing_area.P .deps/event.P .deps/fileops.P .deps/game.P \
-.deps/gametime.P .deps/image.P .deps/input.P .deps/joel.P \
-.deps/landmap.P .deps/lex.prefs.P .deps/main.P .deps/mapcharacter.P \
-.deps/mapobject.P .deps/mapselect.P .deps/maptpl.P .deps/mapview.P \
-.deps/pnm.P .deps/prefs.P .deps/py_character_wrap.P \
-.deps/py_dialog_engine_wrap.P .deps/py_inc.P .deps/py_modules.P \
-.deps/py_quest_wrap.P .deps/quest.P .deps/screen.P .deps/storage.P \
-.deps/win_background.P .deps/win_base.P .deps/win_border.P \
-.deps/win_container.P .deps/win_file.P .deps/win_font.P \
-.deps/win_image.P .deps/win_label.P .deps/win_scrollbar.P \
-.deps/win_scrolled.P .deps/win_select.P .deps/win_theme.P \
-.deps/win_write.P .deps/yarg.P
-SOURCES = $(adonthell_SOURCES) $(joltest_SOURCES)
-OBJECTS = $(adonthell_OBJECTS) $(joltest_OBJECTS)
+.deps/gametime.P .deps/image.P .deps/input.P .deps/landmap.P \
+.deps/lex.prefs.P .deps/main.P .deps/mapcharacter.P .deps/mapobject.P \
+.deps/mapselect.P .deps/maptpl.P .deps/mapview.P .deps/pnm.P \
+.deps/prefs.P .deps/py_character_wrap.P .deps/py_dialog_engine_wrap.P \
+.deps/py_image_wrap.P .deps/py_inc.P .deps/py_modules.P \
+.deps/py_quest_wrap.P .deps/py_screen_wrap.P .deps/quest.P \
+.deps/screen.P .deps/storage.P .deps/win_background.P .deps/win_base.P \
+.deps/win_border.P .deps/win_container.P .deps/win_file.P \
+.deps/win_font.P .deps/win_image.P .deps/win_label.P \
+.deps/win_scrollbar.P .deps/win_scrolled.P .deps/win_select.P \
+.deps/win_theme.P .deps/win_write.P .deps/yarg.P
+SOURCES = $(adonthell_SOURCES)
+OBJECTS = $(adonthell_OBJECTS)
 
 all: all-redirect
 .SUFFIXES:
@@ -190,10 +180,6 @@ maintainer-clean-compile:
 adonthell: $(adonthell_OBJECTS) $(adonthell_DEPENDENCIES)
 	@rm -f adonthell
 	$(CXXLINK) $(adonthell_LDFLAGS) $(adonthell_OBJECTS) $(adonthell_LDADD) $(LIBS)
-
-joltest: $(joltest_OBJECTS) $(joltest_DEPENDENCIES)
-	@rm -f joltest
-	$(CXXLINK) $(joltest_LDFLAGS) $(joltest_OBJECTS) $(joltest_LDADD) $(LIBS)
 .cc.o:
 	$(CXXCOMPILE) -c $<
 .cpp.o:
@@ -301,7 +287,7 @@ distdir: $(DISTFILES)
 	@for file in $(DISTFILES); do \
 	  d=$(srcdir); \
 	  if test -d $$d/$$file; then \
-	    cp -pr $$d/$$file $(distdir)/$$file; \
+	    cp -pr $$/$$file $(distdir)/$$file; \
 	  else \
 	    test -f $(distdir)/$$file \
 	    || ln $$d/$$file $(distdir)/$$file 2> /dev/null \
@@ -467,6 +453,22 @@ all-redirect all-am all installdirs-am installdirs mostlyclean-generic \
 distclean-generic clean-generic maintainer-clean-generic clean \
 mostlyclean distclean maintainer-clean
 
+
+#joltest_SOURCES = animation.cpp animation_off.cpp audio.cpp audio_thread.cpp \
+# drawing_area.cpp  fileops.cpp  \
+#image.cpp input.cpp lex.prefs.cpp joel.cpp \
+#pnm.cpp prefs.cpp \
+# screen.cpp  \
+#win_base.cpp win_border.cpp win_container.cpp win_font.cpp win_theme.cpp win_scrolled.cpp win_background.cpp win_scrollbar.cpp \
+#win_file.cpp win_image.cpp win_label.cpp win_select.cpp win_write.cpp yarg.cc
+
+py_screen_wrap.cpp : py_screen.i
+	swig -python -shadow -c++ -make_default -o $*.cpp $< 
+	@mv screen.py ../scripts
+
+py_image_wrap.cpp : py_image.i
+	swig -python -shadow -c++ -make_default -o $*.cpp $< 
+	@mv image.py ../scripts
 
 py_dialog_engine_wrap.cpp : py_dialog_engine.i
 	swig -python -shadow -c++ -make_default -o $*.cpp $< 

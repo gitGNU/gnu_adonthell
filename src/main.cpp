@@ -16,6 +16,7 @@
 #include "game.h"
 #include "landmap.h"
 #include "mapview.h"
+#include "py_inc.h"
 
 // This is nice but very long! `:/
 #include "win_types.h"
@@ -64,15 +65,10 @@ int main(int argc, char * argv[])
     heroe->set_on_map(&mymap);
     heroe->set_pos(0,3,3);
     
-    // The map view will display 15 squares horizontally and 11 vertically
-    // This is perfect for a 320x240 display, as 15*20=300 and 11*20=220
-    // The number of squares to display must be even, or the character won't
-    // be centered on the map (may change soon)
-    mview.resize(15,11);
+    // The map view should cover the entire screen
+    mview.resize(320,240);
     // The map view will display "mymap"
     mview.attach_map(&mymap);
-
-    mview.draw(10,10);
 
     // This is quite self-explicit...
     while(1)
@@ -104,9 +100,10 @@ int main(int argc, char * argv[])
 	      }
 	  }
 	//      	screen::clear();
-	mview.draw(10,10);
+	mview.draw(0,0);
 	if (ds) ds->draw ();
 	screen::show();
       }
+
     return 0;
 }

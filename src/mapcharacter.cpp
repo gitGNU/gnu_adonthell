@@ -13,6 +13,7 @@
 */
 
 #include "mapcharacter.h"
+#include "mapview.h"
 
 void mapcharacter::init()
 {
@@ -349,8 +350,8 @@ void mapcharacter::draw(s_int16 x, s_int16 y, drawing_area * da_opt=NULL)
 
 void mapcharacter::draw(mapview * mv)
 {
-  u_int16 xdraw=((posx-(mv->posx-mv->ctrx)-basex)*MAPSQUARE_SIZE)+offx-mv->offx+mv->x;
-  u_int16 ydraw=((posy-(mv->posy-mv->ctry)-basey)*MAPSQUARE_SIZE)+offy-mv->offy+mv->y;
+  u_int16 xdraw=((posx-mv->posx-basex)*MAPSQUARE_SIZE)+offx-mv->offx+mv->x-mv->draw_offx;
+  u_int16 ydraw=((posy-mv->posy-basey)*MAPSQUARE_SIZE)+offy-mv->offy+mv->y-mv->draw_offy;
   draw(xdraw,ydraw,mv->da);
 }
 

@@ -19,7 +19,7 @@ void mapview::init()
 {
   length=height=d_length=d_height=currentsubmap=posx=posy=0;
   m_map=NULL;
-  x=y=offx=offy=ctrx=ctry=0;
+  x=y=offx=offy=draw_offx=draw_offy=0;
 #ifdef _EDIT_
   currentobj=0;
   walkimg=new image(MAPSQUARE_SIZE, MAPSQUARE_SIZE);
@@ -105,55 +105,58 @@ s_int8 mapview::set_current_submap(u_int16 sm)
   return 0;
 }
 
-s_int8 mapview::set_pos(u_int16 x, u_int16 y)
+s_int8 mapview::set_pos(u_int16 px, u_int16 py, u_int16 ox=0, u_int16 oy=0)
 {
   if(!m_map->nbr_of_submaps) return -1;
-  if(x>=m_map->submap[currentsubmap]->length || 
-     y>=m_map->submap[currentsubmap]->height) return -1;
-  posx=x<ctrx?ctrx:x;
-  posy=y<ctry?ctry:y;
-  offx=0;
-  offy=0;
+  px+=ox/MAPSQUARE_SIZE; ox%=MAPSQUARE_SIZE;
+  py+=oy/MAPSQUARE_SIZE; oy%=MAPSQUARE_SIZE;
+  if(px>=m_map->submap[currentsubmap]->length || 
+     py>=m_map->submap[currentsubmap]->height) return -1;
+
+  posx=px;
+  posy=py;
+  offx=ox;
+  offy=oy;
   return 0;
 }
 
 void mapview::scroll_right()
 {
-  if(posx>=m_map->submap[currentsubmap]->length-(ctrx+1)) return;
+  if(!can_scroll_right()) return;
   if(offx==MAPSQUARE_SIZE-1) { offx=0; posx++; }
   else offx++;
 }
 
 void mapview::scroll_left()
 {
-  if(posx<=ctrx && offx==0) return;
+  if(!can_scroll_left()) return;
   if(offx==0) { offx=MAPSQUARE_SIZE-1; posx--; }
   else offx--;
 }
 
 void mapview::scroll_down()
 {
-  if(posy>=m_map->submap[currentsubmap]->height-(ctry+1)) return;
+  if(!can_scroll_down()) return;
   if(offy==MAPSQUARE_SIZE-1) { offy=0; posy++; }
   else offy++;
 }
 
 void mapview::scroll_up()
 {
-  if(posy<=ctry && offy==0) return;
+  if(!can_scroll_up()) return;
   if(offy==0) { offy=MAPSQUARE_SIZE-1; posy--; }
   else offy--;
 }
 
-void mapview::resize(u_int16 d_l, u_int16 d_h)
+void mapview::resize(u_int16 l, u_int16 h)
 {
-  d_length=d_l;
-  d_height=d_h;
-  length=d_length*MAPSQUARE_SIZE;
-  height=d_height*MAPSQUARE_SIZE;
-  ctrx=d_length/2;
-  ctry=d_height/2;
-  da->resize(d_l*MAPSQUARE_SIZE,d_h*MAPSQUARE_SIZE);
+  length=l;
+  height=h;
+  draw_offx=(l%MAPSQUARE_SIZE);
+  draw_offy=(h%MAPSQUARE_SIZE);
+  d_length=(l/MAPSQUARE_SIZE)+(l%MAPSQUARE_SIZE!=0);
+  d_height=(h/MAPSQUARE_SIZE)+(h%MAPSQUARE_SIZE!=0);
+  da->resize(length,height);
 #ifdef _EDIT_
   mapselect::resize_view(d_length,d_height);
 #endif
@@ -179,16 +182,11 @@ void mapview::draw(u_int16 x, u_int16 y, drawing_area * da_opt=NULL)
 
   l=m_map->submap[currentsubmap];
   if(!l->length || !l->height) return;
-  //  if(da) da->move(x,y);
 
-  i0=posx-ctrx;
-  j0=posy-ctry;
+  i0=posx;
+  j0=posy;
   ie=i0+d_length+(offx!=0)<l->length?i0+d_length+(offx!=0):l->length;
   je=j0+d_height+(offy!=0)<l->height?j0+d_height+(offy!=0):l->height;
-  /*  i0=(posx<ctrx)?0:(posx>m_map->submap[currentsubmap].length-(ctrx+1))?
-    m_map->submap[currentsubmap].length-(2*ctrx+1):posx-ctrx;
-  j0=(posy<ctry)?0:(posy>m_map->submap[currentsubmap].height-(ctry+1))?
-  m_map->submap[currentsubmap].height-(2*ctry+1):posy-ctry;*/
 
   // 1st horizontal parse to check top overflows
   // Top-left corner
@@ -756,7 +754,7 @@ void mapview::move_cursor_left()
   mapsquare_tile t;
   t=*current_tile;
   mapselect::move_cursor_left();
-  if(mapselect::posx<get_posx()-ctrx)
+  if(mapselect::posx<posx)
     set_pos(get_posx()?get_posx()-1:0,get_posy());
   update_current_tile(t);
   must_upt_label_pos=true;
@@ -769,8 +767,8 @@ void mapview::move_cursor_right()
   mapsquare_tile t;
   t=*current_tile;
   mapselect::move_cursor_right();
-  if(mapselect::posx>get_posx()+ctrx)
-    set_pos(get_posx()+1,get_posy());
+  if(mapselect::posx>=posx+d_length)
+    set_pos(posx+1,posy);
   update_current_tile(t);
   must_upt_label_pos=true;
   must_upt_label_square=true;
@@ -782,7 +780,7 @@ void mapview::move_cursor_up()
   mapsquare_tile t;
   t=*current_tile;
   mapselect::move_cursor_up();
-  if(mapselect::posy<get_posy()-ctry)
+  if(mapselect::posy<posy)
     set_pos(get_posx(),get_posy()?get_posy()-1:0);
   update_current_tile(t);
   must_upt_label_pos=true;
@@ -795,7 +793,7 @@ void mapview::move_cursor_down()
   mapsquare_tile t;
   t=*current_tile;
   mapselect::move_cursor_down();
-  if(mapselect::posy>get_posy()+ctry)
+  if(mapselect::posy>=posy+d_height)
     set_pos(get_posx(),get_posy()+1);
   update_current_tile(t);
   must_upt_label_pos=true;
@@ -808,13 +806,9 @@ void mapview::draw_cursor()
   if(mapselect::cursor_blink<CURSOR_BLINK_RATE)
     m_map->pattern[currentobj]->draw(s_posx+MAPSQUARE_SIZE*(mapselect::posx-
 							   mapselect::d_posx),
-				    s_posy+MAPSQUARE_SIZE*(mapselect::posy-
-							   mapselect::d_posy),
-				    da);
-    /*    screen::drawbox(s_posx+MAPSQUARE_SIZE*(posx-d_posx),
-		    s_posy+MAPSQUARE_SIZE*(posy-d_posy),MAPSQUARE_SIZE,
-		    MAPSQUARE_SIZE,0xFFFFFF);*/
-
+				     s_posy+MAPSQUARE_SIZE*(mapselect::posy-
+							    mapselect::d_posy),
+				     da);
 }
 
 void mapview::draw_walkable(u_int16 x, u_int16 y, drawing_area * da_opt=NULL)
@@ -827,8 +821,8 @@ void mapview::draw_walkable(u_int16 x, u_int16 y, drawing_area * da_opt=NULL)
   l=m_map->submap[currentsubmap];
   if(da) da->move(x,y);
 
-  i0=posx-ctrx;
-  j0=posy-ctry;
+  i0=posx;
+  j0=posy;
   ie=i0+d_length+(offx!=0)<l->length?i0+d_length+(offx!=0):l->length;
   je=j0+d_height+(offy!=0)<l->height?j0+d_height+(offy!=0):l->height;
 
@@ -836,8 +830,8 @@ void mapview::draw_walkable(u_int16 x, u_int16 y, drawing_area * da_opt=NULL)
     for(i=i0;i<ie;i++)
       {
 	u_int16 rx, ry;
-	rx=(posx>ctrx)?i-(posx-ctrx):i;
-	ry=(posy>ctry)?j-(posy-ctry):j;
+	rx=(posx>0)?i-posx:i;
+	ry=(posy>0)?j-posy:j;
 	const u_int32 col=0x0ff000;
 	if(!l->land[i][j].is_walkable_left())
 	  screen::drawbox(rx*MAPSQUARE_SIZE-offx+1,

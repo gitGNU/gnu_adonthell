@@ -19,6 +19,8 @@
  */
 extern "C"
 {
+	void initscreenc (void);
+	void initimagec (void);
 	void initdialog_enginec (void);
 	void initcharacterc (void);
 	void initquestc (void);
@@ -36,10 +38,12 @@ bool init_python (void)
 
 	/* Initialise SWIG modules. This should go if we ever switch to dynamic 
 	   link */
+	initscreenc();
+	initimagec();
 	initcharacterc ();
-    initdialog_enginec ();
+	initdialog_enginec ();
 	initquestc ();
-
+	
 	return true;
 }
 

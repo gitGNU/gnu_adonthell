@@ -20,7 +20,6 @@
 #include "animation_off.h"
 #include "maptpl.h"
 #include "landmap.h"
-#include "mapview.h"
 
 #ifdef _EDIT_
 #include "mapselect.h"
@@ -51,6 +50,8 @@
 #define NBR_MOVES 8
 
 #define NO_MOVE 65535
+
+class mapview;
 
 class mapcharacter : public maptpl
 {
