@@ -3,9 +3,13 @@
 #include "items.h"
 #include "../../types.h"
 
+
+//saving_roll, which is used in melee::calc_damage needs to be static
+//so I create it global here.
+//int saving_roll = 0;
+
 //Class used in melee hit determination
 class melee {
-	
 	private:
 	
    //Used in damage calculation
@@ -64,7 +68,7 @@ class melee {
   //Calculate relevant stat ranges
   void calc_stats();
 
-  	friend void show_results (int);
+  friend void show_results (int);
 	friend float get_dice (int);
 	friend int main (void);
 };
@@ -88,6 +92,8 @@ private:
     unsigned char schieberegister[16];     // Here the random numbers are created
     int min;                               // Smallest possible numbe
     int max;                               // Largest possible number
+
+	friend class melee;
 };
 #endif
 

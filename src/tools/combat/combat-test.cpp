@@ -36,7 +36,7 @@ int b_hit = 0;
 //Main test loop
 
 int main (void) {
-   int random_chars = 2;
+  int random_chars = 2;
 	int rounds = 0;	
 	char seed;
    //Initialize roller for first 1000 random numbers
@@ -49,36 +49,36 @@ int main (void) {
 	printf("\n\nWeapon Properties\n===============\n\n");
 	printf("WEAPON_ID	WEAPON NAME	BASE_DAMAGE\n-------------------------------------------\n");
 	printf("%-8d	Dagger              %-10d\n", DAGGER, DAGGER_BASE);
-   printf("%-8d	Short Sword         %-10d\n", SHORTSWORD, SHORT_BASE);
+  printf("%-8d	Short Sword         %-10d\n", SHORTSWORD, SHORT_BASE);
 	printf("%-8d	Rapier              %-10d\n", RAPIER, RAPIER_BASE);
 	printf("%-8d	Cutlass             %-10d\n", CUTLASS, CUTLASS_BASE);
 	printf("%-8d	Broad Sword         %-10d\n", BROADSWORD, BROAD_BASE);
-   printf("%-8d	Samurai Sword       %-10d\n", SAMURAISWORD, SAMURAI_BASE);
+  printf("%-8d	Samurai Sword       %-10d\n", SAMURAISWORD, SAMURAI_BASE);
 	printf("%-8d	Two Handed Sword    %-10d\n", TWOHANDEDSWORD, TWOHANDED_BASE);
 	printf("%-8d	Bastard Sword       %-10d\n", BASTARDSWORD, BASTARD_BASE);
 	printf("%-8d	Massive Sword       %-10d\n", MASSIVESWORD, MASSIVE_BASE);
-   printf("\n\nEnter desired weapon ID for Character A:");
+  printf("\n\nEnter desired weapon ID for Character A:");
 	cin >> test.a_weapon;
 	garbage = getc(stdin);
 	printf("Enter desired weapon ID for Character B:");
 	cin >> test.b_weapon;
 	garbage = getc(stdin);
 	printf("\n\n*****\nNOTE: Consult items.h for Armor properties, I'm not going to list them here.\n*****\n");
-   printf("Current Armor IDs range from 0 to %d\n", ARMOR_MAX - 1);
+  printf("Current Armor IDs range from 0 to %d\n", ARMOR_MAX - 1);
 	printf("Enter Armor ID for character A:");
 	cin >> test.a_armor;
 	garbage = getc(stdin);
 	printf("Enter Armor ID for Character B:");
-   cin >> test.b_armor;
+  cin >> test.b_armor;
 	garbage = getc(stdin);
-   	while (random_chars != 0 && random_chars != 1){
+  while (random_chars != 0 && random_chars != 1){
 		printf("\nCreate random character stats?[0/1]:");
 		cin >> random_chars;
 	}
 	if (random_chars == 0) {
 		// get char A's stats
 		cout << "\na_luck:";
-	   	cin >> test.a_luck;
+	 	cin >> test.a_luck;
 		garbage = getc(stdin);
 		cout << "\na_str:";
 		cin >> test.a_str;
@@ -95,7 +95,7 @@ int main (void) {
 		
 		//get char B's stats:
 		cout << "\nb_luck:";
-	   	cin >> test.b_luck;
+	 	cin >> test.b_luck;
 		garbage = getc(stdin);
 		cout << "\nb_str:";
 		cin >> test.b_str;
@@ -112,7 +112,7 @@ int main (void) {
 	}
 	
 	while (1) {
-        	//create 2 random characters, crunch players stats, show results.
+  	//create 2 random characters, crunch players stats, show results.
 		if (random_chars == 1) {
 			test.create_characters();
 		}
@@ -157,8 +157,8 @@ float get_dice (int pass) {
 
 	//Re-seed roler after 1000 uses.
 	if (pass % 1000 == 0) {
-   		srandom((unsigned int)time((time_t *)NULL));
-   		seed = ((rand()%100000000));
+   	srandom((unsigned int)time((time_t *)NULL));
+   	seed = ((rand()%100000000));
 		roler.init(&seed, 0, 10000);
 		roler.randomize();
 		number = float (roler.get(pass)) / 10000;
@@ -170,15 +170,15 @@ float get_dice (int pass) {
 //******Temporary, for testing purposes*******
 void show_results(int parity) {
 	float dice;
-   int outcome;
-   int a_armor;
+  int outcome;
+  int a_armor;
 	int a_weapon;
 	int b_weapon;
 	int b_armor;
 	char garbage;
 	// get random number for this turn
 	dice = get_dice(parity);
-   	printf("\n\n\n\n\n\n\n\n\n\n");
+ 	printf("\n\n\n\n\n\n\n\n\n\n");
 	printf("\n\nCharacter Statistics:\n=====================\n");
 	printf("Character A:\n------------\n");
 	printf("Strength: %d\n", int(test.a_str));
@@ -199,53 +199,61 @@ void show_results(int parity) {
 		printf("Character A Attack Range: 0-->%4.4f\n",test.a_attack_range);
 		printf("Character B Defense Range: %4.4f-->%4.4f)\n", test.a_attack_range, (test.a_attack_range + test.b_defense_range));
 		printf("Character A Percent of alloted luck: %4.2f\%\n", (test.a_attack_a_real_luck / test.a_attack_luck_allotment) * 100);
-	   printf("Character B Percent of alloted luck: %4.2f\%\n", (test.a_attack_b_real_luck / test.a_attack_luck_allotment) * 100);
-	   printf("\n\nResults:\n--------\n");
-	   printf("Total Allotment: %4.4f\n", test.a_attack_total_allotment);
-	   printf("Chance for A to hit (not including luck): %4.2f\%\n", test.a_attack_range / (test.a_attack_total_allotment - test.a_attack_luck_allotment) * 100);
-	   printf("Number Rolled: %4.4f\n", dice);
-	   if(dice <= test.a_attack_range) {
-	  		printf("HIT!\n\n");
+    printf("Character B Percent of alloted luck: %4.2f\%\n", (test.a_attack_b_real_luck / test.a_attack_luck_allotment) * 100);
+    printf("\n\nResults:\n--------\n");
+	  printf("Total Allotment: %4.4f\n", test.a_attack_total_allotment);
+	  printf("Chance for A to hit (not including luck): %4.2f\%\n", test.a_attack_range / (test.a_attack_total_allotment - test.a_attack_luck_allotment) * 100);
+	  printf("Number Rolled: %4.4f\n", dice);
+	  if(dice <= test.a_attack_range) {
+	  	printf("HIT!\n\n");
 			outcome = test.calc_damage(parity, 0, attack_method); //parity, action, attack method
 			printf("\ncalcdamage results: %d\n", outcome);
-			b_hit += 1; }
-	  	if(dice > test.a_attack_range && (dice < (test.a_attack_total_allotment - test.a_attack_luck_allotment)))
-	  		printf("MISS!\n\n");
-	  	if(dice > (test.a_attack_range + test.b_defense_range) && (dice < test.a_attack_total_allotment - test.a_attack_b_real_luck)) {
-	  		printf("CTITICAL HIT!!\n\n");
-			outcome = test.calc_damage(parity, 1, attack_method); //parity, action, attack method
-			printf("\ncalcdamage results: %d\n", outcome);
-			b_hit += 3; }
-	  	if(dice	> (test.a_attack_total_allotment - test.a_attack_b_real_luck) && dice <= test.a_attack_total_allotment) {
-	  		printf("CRITICAL MISS!!\n\n");
-			a_hit += 1; }
+			b_hit += 1;
+		}
+	  if(dice > test.a_attack_range && (dice < (test.a_attack_total_allotment - test.a_attack_luck_allotment)))
+	  	printf("MISS!\n\n");
+			outcome = test.calc_damage(parity, 3, attack_method);
+	  if(dice > (test.a_attack_range + test.b_defense_range) && (dice < test.a_attack_total_allotment - test.a_attack_b_real_luck)) {
+	  	printf("CTITICAL HIT!!\n\n");
+		outcome = test.calc_damage(parity, 1, attack_method); //parity, action, attack method
+		printf("\ncalcdamage results: %d\n", outcome);
+		b_hit += 3; }
+	  if(dice	> (test.a_attack_total_allotment - test.a_attack_b_real_luck) && dice <= test.a_attack_total_allotment) {
+	  	printf("CRITICAL MISS!!\n\n");
+			outcome = test.calc_damage(parity, 2, attack_method); //parity, action, attack method
+			a_hit += 1;
+		}
 	} else {
 	 	printf("***************\n* B attacks A *\n***************\n\n");
 		printf("Character B Attack Range: 0-->%4.4f\n",test.b_attack_range);
 		printf("Character A Defense Range: %4.4f-->%4.4f)\n", test.b_attack_range, (test.b_attack_range + test.a_defense_range));
 		printf("Character B Percent of alloted luck: %4.2f\%\n", (test.b_attack_b_real_luck / test.b_attack_luck_allotment) * 100);
-	  	printf("Character A Percent of alloted luck: %4.2f\%\n", (test.b_attack_a_real_luck / test.b_attack_luck_allotment) * 100);
-	  	printf("\n\nResults:\n--------\n");
-	  	printf("Total Allotment: %4.4f\n", test.b_attack_total_allotment);
-	  	printf("Chance for B to hit (not including luck): %4.2f\%\n", test.b_attack_range / (test.b_attack_total_allotment - test.b_attack_luck_allotment) * 100);
-	  	printf("Number Rolled: %4.4f\n", dice);
-	  	if(dice <= test.b_attack_range) {
-	  		printf("HIT!\n\n");
+	  printf("Character A Percent of alloted luck: %4.2f\%\n", (test.b_attack_a_real_luck / test.b_attack_luck_allotment) * 100);
+	  printf("\n\nResults:\n--------\n");
+	  printf("Total Allotment: %4.4f\n", test.b_attack_total_allotment);
+	  printf("Chance for B to hit (not including luck): %4.2f\%\n", test.b_attack_range / (test.b_attack_total_allotment - test.b_attack_luck_allotment) * 100);
+	  printf("Number Rolled: %4.4f\n", dice);
+	  if(dice <= test.b_attack_range) {
+	  	printf("HIT!\n\n");
 			outcome = test.calc_damage(parity, 0, attack_method); //parity, action, attack method
 			printf("\ncalcdamage results: %d\n", outcome);
-			a_hit += 1; }
-	  	if(dice > test.b_attack_range && (dice < (test.b_attack_total_allotment - test.b_attack_luck_allotment)))
-	  		printf("MISS!\n\n");
-	  	if(dice > (test.b_attack_range + test.a_defense_range) && (dice < test.b_attack_total_allotment - test.b_attack_b_real_luck)) {
-	  		printf("CTITICAL HIT!!\n\n");
+			a_hit += 1;
+		}
+	  if(dice > test.b_attack_range && (dice < (test.b_attack_total_allotment - test.b_attack_luck_allotment)))
+	  	printf("MISS!\n\n");
+			outcome = test.calc_damage(parity, 3, attack_method);
+	  if(dice > (test.b_attack_range + test.a_defense_range) && (dice < test.b_attack_total_allotment - test.b_attack_b_real_luck)) {
+	  	printf("CTITICAL HIT!!\n\n");
 			outcome = test.calc_damage(parity, 1, attack_method); //parity, action, attack method
 			printf("\ncalcdamage results: %d\n", outcome);
-			a_hit += 3; }
-	   	if(dice	> (test.b_attack_total_allotment - test.b_attack_b_real_luck) && dice <= test.b_attack_total_allotment) {
-	  		printf("CRITICAL MISS!!\n\n");
-			b_hit += 1; }
+			a_hit += 3;
+		}
+	  if(dice	> (test.b_attack_total_allotment - test.b_attack_b_real_luck) && dice <= test.b_attack_total_allotment) {
+	  	printf("CRITICAL MISS!!\n\n");
+			outcome = test.calc_damage(parity, 2, attack_method); //parity, action, attack method
+			b_hit += 1;
+		}
 	}
-
 	printf("A IS HIT: %i\nB IS HIT: %i\n\n", a_hit, b_hit);
 }	
 

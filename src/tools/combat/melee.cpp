@@ -20,7 +20,7 @@
 #include <stdlib.h>
  #include <time.h>
  #include "items.h"
-
+int saving_roll = 0;
 
 //Definitions for structures containing item properties.
 struct weapon {   int base; //weapon base damage
@@ -77,7 +77,7 @@ struct armor armors[ARMOR_MAX] = {
 
 void melee::create_characters() {
 	float dice;
-	int count = 10;
+	int count = 11;
 	  srandom((unsigned int)time((time_t *)NULL));
 	while (count--) {
 		//populate character variables
@@ -171,20 +171,22 @@ void melee::calc_stats() {
 }
 
 	//Calculate damage inflicted by a sucessful melee blow
-	int melee::calc_damage (
-		int parity,		// who is attacking whom
-		int action,		// hit = 0, critical_hit = 1, critical_miss = 2
-		int method		//  Attack method
-	) {
-	
+int melee::calc_damage (
+	int parity,		// who is attacking whom
+	int action,		// hit = 0, critical_hit = 1, critical_miss = 2, 3 = miss, reset saving_roll
+	int method		//  Attack method
+) {
+	class yarg roler;
 	float a_modifier;  //calculated value for character A
 	float b_modifier; //calculated value for character B
-   float a_ratio;
+  float a_ratio;
 	float b_ratio;
-	int result; 	//returned value
-	
+	float raw; 	//raw base damage
+	float rare;  //raw * random !> 20%
+	int cooked;  //returned value
 	//A is attacking, time for the number crunching.
 	if ( (parity % 2) > 0) {
+		printf("SAVING ROLL: %d", saving_roll);
 		switch (method) {
 			case  0:			//thrust
 				a_modifier = (weapons[a_weapon].base + a_str  + armors[b_armor].dexhit) * (a_attack_range / .6);
@@ -217,24 +219,52 @@ void melee::calc_stats() {
 				printf("b_ratio: %3.4f\n", b_ratio);
 				break;
 		}
-		switch (action) {
-			case 0:			//hit
-			result = int(weapons[a_weapon].base * a_ratio) ;
-				return result;
-			case 1:		//critical hit
-				result = int(weapons[a_weapon].base * a_ratio);
-				return int(result * 1.5);
-			case 2:		//criitcal miss
- 		    	
-				return result;
-		}
+		//Last opponent attack was a critical miss
+		if (saving_roll > 0) {
+			if (roler.get(parity) > b_defense_range) {
+				printf("\nrolergetparity greater than b_defense_range\n");
+				raw = int(weapons[a_weapon].base * a_ratio);
+				printf ("raw is %d", int(raw));
+				cooked = int(raw * 1.5);
+				printf ("\nreturning %d\n", cooked);
+				saving_roll = 0;
+				return cooked;
+		 	}
+			saving_roll = 0;
+		}  else {
+			switch (action) {
+				case 0:			//hit
+					raw = int(weapons[a_weapon].base * a_ratio) ;
+					srandom((unsigned int)time((time_t *)NULL));
+					rare = float(random()%20);
+					if (rare > 10) {
+						cooked = int(rare * .05 * .2 * raw + raw);
+						return cooked;
+					} else {
+						cooked = int(raw - rare * .05 * .02);
+						return cooked;
+					}
+				case 1:		//critical hit
+					raw = int(weapons[a_weapon].base * a_ratio);
+					cooked = int(raw * 1.5);
+					return cooked;
+				case 2:		//critical miss
+ 		    		saving_roll = 1;
+						printf ("saving roll set to 1\n");
+						return 0;
+				case 3:
+					saving_roll = 0;
+					return 0;
+			}
+		}	
 	} else {
+		printf ("SAVING ROLL: %d", saving_roll);
 		switch (method) {
 			case  0:			//thrust
 				b_modifier = (weapons[b_weapon].base + b_str  + armors[a_armor].dexhit) * (b_attack_range / .6);
 				printf("\nb_modifier: %3.4f\n", b_modifier);
 				a_modifier = (armors[a_armor].ar * .5 + armors[a_armor].thrust + a_dex) * (a_defense_range / .4);	
-   				printf("a_modifier: %3.4f\n", a_modifier);
+ 				printf("a_modifier: %3.4f\n", a_modifier);
 				a_ratio = a_modifier / (a_modifier + b_modifier) ;
 				printf("a_ratio: %3.4f\n", a_ratio);
 				b_ratio = b_modifier / (a_modifier + b_modifier);
@@ -244,36 +274,62 @@ void melee::calc_stats() {
           	b_modifier = (weapons[b_weapon].base + b_str  + armors[a_armor].dexhit) * (b_attack_range / .6);
 				printf("\na_modifier: %3.4f\n", b_modifier);
 				a_modifier = (armors[a_armor].ar * .5 + armors[a_armor].chop + a_dex) * (a_defense_range / .4);	
-   				printf("a_modifier: %3.4f\n", a_modifier);
+				printf("a_modifier: %3.4f\n", a_modifier);
 				a_ratio = a_modifier / (a_modifier + b_modifier) ;
 				printf("a_ratio: %3.4f\n", a_ratio);
 				b_ratio = b_modifier / (a_modifier + b_modifier);
 				printf("b_ratio: %3.4f\n", b_ratio);
 				break;
 			case 2: 				//smash
-          	b_modifier = (weapons[b_weapon].base + b_str  + armors[a_armor].dexhit) * (b_attack_range / .6);
+				printf ("B-SMASH");
+        b_modifier = (weapons[b_weapon].base + b_str  + armors[a_armor].dexhit) * (b_attack_range / .6);
 				printf("\na_modifier: %3.4f\n", b_modifier);
 				a_modifier = (armors[a_armor].ar * .5 + armors[a_armor].smash + a_dex) * (a_defense_range / .4);	
-   				printf("a_modifier: %3.4f\n", a_modifier);
+				printf("a_modifier: %3.4f\n", a_modifier);
 				a_ratio = a_modifier / (a_modifier + b_modifier) ;
 				printf("a_ratio: %3.4f\n", a_ratio);
 				b_ratio = b_modifier / (a_modifier + b_modifier);
 				printf("b_ratio: %3.4f\n", b_ratio);
 				break;
 		}
-		switch (action) {
-			case 0: 			//hit
-				result = int(weapons[b_weapon].base * b_ratio) ;
-				return result;
-			case 1:		//critical hit
-				result = int(weapons[b_weapon].base * b_ratio);
-				return int(result * 1.5);
-			case 2:		//criitcal miss
- 		    	
-				return result;
+		if (saving_roll > 0) {
+			if (roler.get(parity) > a_defense_range) {
+				printf ("\nrolergetparity is greater than a_defense_range");
+				raw = int(weapons[b_weapon].base * b_ratio);
+				printf ("\nraw is %d", int(raw));
+				saving_roll = 0;
+				cooked = int(raw * 1.5);
+				printf ("\nreturning %d\n", cooked);
+				return cooked;
+			}
+			saving_roll = 0;
+		} else {
+	      switch (action) {
+				case 0: 			//hit
+					raw = int(weapons[b_weapon].base * b_ratio) ;
+					srandom((unsigned int)time((time_t *)NULL));
+					rare = float(random()%20);
+					saving_roll = 0;
+					if (rare > 10) {
+						cooked = int(rare * .05 * .2 * raw + raw);
+						return cooked;
+					} else {
+						cooked = int(raw - rare * .05 * .02);
+						return cooked;
+					}
+				case 1:		//critical hit
+					raw = int(weapons[b_weapon].base * b_ratio);
+					cooked = int(raw * 1.5);
+					saving_roll = 0;
+					return cooked;
+				case 2:		//critical miss
+ 			   	saving_roll = 1;
+					printf ("saving_roll set to 1\n");
+					return 0; 	
+				case 3:
+					saving_roll = 0;
+					return 0;
+				}
 		}
 	}
 }
-		
- 		
-
