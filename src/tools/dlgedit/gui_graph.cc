@@ -280,7 +280,8 @@ void GuiGraph::editNode ()
     // if so ...
     if (selected && selected->type () != LINK)
     {
-        GuiCircle *edit = new GuiCircle (selected->type (), selected->entry ());
+        GuiCircle edit (selected->type (), selected->entry ());
+	edit.run ();
     }
 }
 

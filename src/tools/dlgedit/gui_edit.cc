@@ -22,26 +22,9 @@
 #include <gtk/gtk.h>
 #include "gui_edit.h"
 
-extern "C" 
-{
-    /* these symbols we get from the (python) scanner */ 
-    extern const char *get_name (void); 
-    extern const char **get_token_names (void); 
-    extern const char **get_block_names (void); 
-    extern int get_token_no ();
-    extern int get_block_no (); 
-    extern void token_func (void (*func)(int id, int precedence, int length, int pos, int block_id, int nesting, int block_type)); 
-    extern void char_func (int (*func)()); 
-    extern int get_state (void); 
-    extern void set_state (int state); 
-    extern int lex ();
-}
-
+// ctor
 GuiEdit::GuiEdit (GtkWidget *container)
 {
-    GtkWidget *view;
-    GtkTextTag *tag;
-    
     // let the editor be scrollable
     GtkWidget *scrolled = gtk_scrolled_window_new (0, 0);
     gtk_container_add (GTK_CONTAINER (container), scrolled);
@@ -50,46 +33,35 @@ GuiEdit::GuiEdit (GtkWidget *container)
     gtk_widget_show (scrolled);
 
     // create the editor
-    entry = gtk_editor_new ();
-    view = gtk_text_view_new_with_buffer(GTK_TEXT_BUFFER (entry));
-    gtk_container_add (GTK_CONTAINER (scrolled), view);
-    GTK_WIDGET_SET_FLAGS (view, GTK_CAN_DEFAULT);
-    gtk_editable_set_editable (GTK_EDITABLE (entry), TRUE);
-    // gtk_text_set_word_wrap (GTK_TEXT (entry), TRUE);
-    gtk_widget_show (view);
-    
-    // access the statically linked scanner
-    GtkEditorScanner *scanner = gtk_editor_static_scanner (get_name, 
-            get_token_names, get_block_names, get_token_no, get_block_no, 
-            token_func, char_func, get_state, set_state, lex);
-    gtk_editor_install_scanner (entry, scanner);
-    
-    // define the fonts to use
-    char *medium = "-*-lucidatypewriter-medium-*-*-*-12-*-*-*-*-*-*";
-    char *bold = "-*-lucidatypewriter-bold-*-*-*-12-*-*-*-*-*-*";
+    entry = gtk_text_new (0, 0);
+    gtk_container_add (GTK_CONTAINER (scrolled), entry);
+    GTK_WIDGET_SET_FLAGS (entry, GTK_CAN_DEFAULT);
+    gtk_text_set_editable (GTK_TEXT (entry), TRUE);
+    gtk_text_set_word_wrap (GTK_TEXT (entry), TRUE);
+    gtk_widget_show (entry);
 
-    // set the highlighting
-    tag = gtk_editor_create_tag (entry, "keyword");
-    gtk_object_set (GTK_OBJECT (tag), "foreground", "#000000", "font", bold, NULL);
+    // define the font to use
+    font = gdk_font_load ("-*-lucidatypewriter-medium-*-*-*-12-*-*-*-*-*-*");
+}
 
-    tag = gtk_editor_create_tag (entry, "comment");
-    gtk_object_set (GTK_OBJECT (tag), "foreground", "#008000", "font", medium, NULL);
+// dtor
+GuiEdit::~GuiEdit ()
+{
+}
 
-    tag = gtk_editor_create_tag (entry, "string");
-    gtk_object_set (GTK_OBJECT (tag), "foreground", "#000080", "font", medium, NULL);
+// set the entry's text
+void GuiEdit::setText (const string &text)
+{
+    gtk_text_insert (GTK_TEXT (entry), font, &entry->style->black,
+        &entry->style->white, text.c_str (), -1);
+}
 
-    tag = gtk_editor_create_tag (entry, "type");
-    gtk_object_set (GTK_OBJECT (tag), "foreground", "#800000", "font", medium, NULL);
+// return the entry's text
+string GuiEdit::getText ()
+{
+    gchar *tmp = gtk_editable_get_chars (GTK_EDITABLE (entry), 0, -1);
+    string text (tmp);
+    g_free (tmp);
 
-    tag = gtk_editor_create_tag (entry, "function");
-    gtk_object_set (GTK_OBJECT (tag), "foreground", "#0080ff", "font", medium, NULL);
-    
-    tag = gtk_editor_create_tag (entry, "include");
-    gtk_object_set (GTK_OBJECT (tag), "foreground", "#0080ff", "font", medium, NULL);
-
-    tag = gtk_editor_create_tag (entry, "constant");
-    gtk_object_set (GTK_OBJECT (tag), "foreground", "#0080ff", "font", medium, NULL);
-    
-    tag = gtk_editor_create_tag (entry, "operator");
-    gtk_object_set (GTK_OBJECT (tag), "foreground", "#000000", "font", bold, NULL);
+    return text;
 }

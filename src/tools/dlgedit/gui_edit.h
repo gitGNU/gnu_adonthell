@@ -19,8 +19,9 @@
  * @brief Wrapper around the gtkeditor widget.
  */
 
+#include <string>
 #include <gtk/gtkstyle.h>
-#include "gtkeditor/gtkeditor.h"
+#include <gdk/gdktypes.h>
 
 /**
  * The gtkeditor widget is a custom textbox widget with syntax-highlighting
@@ -34,14 +35,27 @@ public:
      * @param container Container to put the editor widget into.
      */
     GuiEdit (GtkWidget *container);
-    ~GuiEdit () { }
+    ~GuiEdit ();
 
     /**
      * Get a pointer to the editor widget.
      * @return a pointer to the editor widget.
      */
-    GtkEditor *widget ()        { return entry; }
-    
+    GtkWidget *widget ()            { return entry; }
+
+    /**
+     * Set the text of the widget
+     * @param text to display in the entry
+     */
+    void setText (const string &text);
+
+    /**
+     * Retrieve the text of the widget
+     * @return text contained in the widget.
+     */
+    string getText ();
+
 private:
-    GtkEditor *entry;
+    GtkWidget *entry;          // The GtkText widget
+    GdkFont *font;             // The font to use for the text
 };

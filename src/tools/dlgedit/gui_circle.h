@@ -23,10 +23,10 @@
 #define GUI_CIRCLE_H
 
 #include <string>
-#include <gtk/gtkstyle.h>
 #include "dlg_circle_entry.h"
 #include "dlg_types.h"
 #include "gui_edit.h"
+#include "gui_modal_dialog.h"
 
 /**
  * This is the dialog used to input text, conditions and arbitrary code of
@@ -35,7 +35,7 @@
  * be attached to a special NPC, or to the default one. This default one is
  * always the NPC to whom the dialogue belongs in the game.
  */
-class GuiCircle
+class GuiCircle : public GuiModalDialog
 {
 public:
     /**
@@ -44,12 +44,10 @@ public:
      * @param entry The contents of the circle
      */
     GuiCircle (node_type type, DlgCircleEntry *entry);
-    ~GuiCircle ();
 
 private:
-    GuiEdit *cond_edit;
-    GuiEdit *code_edit;
-    GtkWidget *dialog;              // The dialog window
+    GuiEdit *cond_edit;             // Text entry for conditions
+    GuiEdit *code_edit;             // Text entry for code
     GtkWidget *npc_selection;       // The dropdown list with the various NPC's
     DlgCircleEntry *entry;          // The data to display
 };

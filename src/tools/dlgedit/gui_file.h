@@ -20,28 +20,22 @@
  */
 
 #include <string>
-#include <gtk/gtkstyle.h>
+#include "gui_modal_dialog.h"
 
 /**
  * A C++ interfact to GTK's file selection dialog.
  */
-class GuiFile
+class GuiFile : public GuiModalDialog
 {
 public:
     GuiFile (int type, const string &file, const string &title);
     ~GuiFile ();
 
-    bool run ();
-    void okButtonPressed (bool button)  { pressedOK = button; }
-
     string getSelection ()              { return file_; }
     void setSelection (string file)     { file_ = file; }
 
-    GtkFileSelection *getWindow ()      { return window; }
 private:
-    GtkFileSelection *window;       // The actual file selection widget
     string file_;                   // the file the user has selected
-    bool pressedOK;                 // whether the Cancel or OK button has been pushed
 };
 
 

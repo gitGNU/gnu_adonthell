@@ -17,6 +17,7 @@ dlgedit_SOURCES = \
     dlg_point.cc \
     dlg_rect.cc \
     gui_circle.cc \
+    gui_circle_events.cc \
     gui_dlgedit.cc \
     gui_dlgedit_events.cc \
     gui_edit.cc \
@@ -25,6 +26,7 @@ dlgedit_SOURCES = \
     gui_graph_events.cc \
     gui_list.cc \
     gui_list_events.cc \
+    gui_modal_dialog.cc \
     gui_tooltip.cc \
     lex.loadlg.cc \
     main.cc \
@@ -38,6 +40,7 @@ dlgedit_SOURCES = \
     dlg_rect.h \
     dlg_types.h \
     gui_circle.h \
+    gui_circle_events.h \
     gui_dlgedit.h \
     gui_dlgedit_events.h \
     gui_edit.h \
@@ -46,6 +49,7 @@ dlgedit_SOURCES = \
     gui_graph_events.h \
     gui_list.h \
     gui_list_events.h \
+    gui_modal_dialog.h \
     gui_tooltip.h
 
 # Evil, but it works...
