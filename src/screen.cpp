@@ -136,7 +136,7 @@ void screen::show()
     ftd = timer2 / CYCLE_LENGTH;
     if (ftd > 20) ftd = 20;
 
-    if ((SDL_GetModState()&KMOD_ALT)&&(input::is_pushed(SDLK_RETURN)))
+    if ((SDL_GetModState()&(KMOD_ALT|KMOD_META))&&(input::is_pushed(SDLK_RETURN)))
     {
         if (screen::get_fullscreen ()) screen::set_fullscreen (false);
         else screen::set_fullscreen (true);
