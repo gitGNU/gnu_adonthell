@@ -22,7 +22,7 @@
 #ifndef CFG_IO_H
 #define CFG_IO_H
 
-#include <string>
+#include "cfg_data.h"
 
 /**
  * This class implements loading and saving of the dlgedit configuration
@@ -58,7 +58,7 @@ private:
      */
     void save ();
 
-    // CfgData     Data;           // Global configuration data
+    CfgData     Data;           // Global configuration data
     std::string Dlgeditrc;      // Path to configuration file  
 };
 

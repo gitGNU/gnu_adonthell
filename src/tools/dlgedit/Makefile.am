@@ -9,7 +9,9 @@ SUBDIRS = examples
 EXTRA_DIST = loadlg.l
 
 dlgedit_SOURCES = \
+    cfg_data.cc \
     cfg_io.cc \
+    cfg_project.cc \
     dlg_arrow.cc \
     dlg_circle.cc \
     dlg_circle_entry.cc \
@@ -41,7 +43,9 @@ dlgedit_SOURCES = \
     lex.loadcfg.cc \
     lex.loadlg.cc \
     main.cc \
+    cfg_data.h \
     cfg_io.h \
+    cfg_project.h \
     dlg_arrow.h \
     dlg_circle.h \
     dlg_circle_entry.h \

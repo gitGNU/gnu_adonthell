@@ -21,11 +21,12 @@
 
 #include <stdio.h>
 #include "cfg_io.h"
+#include "dlg_types.h"
 
-/**
- * The config file opened by the lexical scanner
- */
+// The config file opened by the lexical scanner
 extern FILE* loadcfgin;
+
+extern int parse_cfgfile (std::string&, int&);
 
 // ctor; load config
 CfgIO::CfgIO ()
@@ -54,11 +55,46 @@ CfgIO::~CfgIO ()
 // load config
 void CfgIO::load ()
 {
+    int token = 1, n;
+    std::string s;
     
+    // as long as reading something from file ...
+    while (token)
+    {
+        // get next token
+        switch (token = parse_cfgfile (s, n))
+        {
+            case LOAD_FILE:
+            {
+                if (parse_cfgfile (s, n) == LOAD_STR) Data.addFile (s);               
+                break;
+            }
+            
+            case LOAD_PROJECT:
+            {
+                if (parse_cfgfile (s, n) == LOAD_STR) Data.addProject (s);
+                break;
+            }
+            
+            default: break;
+        }
+    }
+    
+    return;
 }
 
 // save config
 void CfgIO::save ()
 {
+    // open file for writing
+    std::ofstream out (Dlgeditrc.c_str ());
     
-}
+    // opening failed for some reasons    
+    if (!out) return;
+    
+    // write header
+    out << "# Adonthell Dialogue Editor configuration file\n" << endl;
+            
+    // save data
+    Data.save (out);
+} 
