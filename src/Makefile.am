@@ -14,7 +14,7 @@ EXTRA_DIST = .indent.pro prefs.l # py_adonthell.i adonthell.py
 
 CPPFLAGS += $(SDL_DEFS) $(OGG_DEFS) $(SDL_CFLAGS) $(OGG_CFLAGS) $(PY_CFLAGS) $(FT2_CFLAGS)
 
-noinst_LIBRARIES = libadonthell.a
+noinst_LIBRARIES = libbase.a libinput.a libgfx.a libaudio.a libpython.a libmap.a libgui.a liboldwin.a libadonthell.a
 
 CLEANFILES = $(moddata_SCRIPTS)
 
@@ -47,42 +47,64 @@ CLEANFILES = $(moddata_SCRIPTS)
 
 #adonthell_SOURCES = main.cc
 
-libadonthell_a_SOURCES = animation.cc drawable.cc drawing_area.cc fileops.cc \
-	image.cc input.cc gametime.cc map_coordinates.cc map_placeable_area.cc \
-	map_placeable_area_gfx.cc map_placeable_model.cc map_placeable_model_gfx.cc map_placeable.cc map_placeable_gfx.cc \
-	map_moving.cc map_character.cc \
-	map_character_with_gfx.cc map_object.cc game.cc \
-	map_object_with_gfx.cc landmap.cc pnm.cc surface.cc screen.cc \
-	py_callback.cc python_class.cc py_object.cc \
-	win_background.cc win_base.cc win_border.cc \
-	win_container.cc win_font.cc win_keys.cc\
-	win_manager.cc win_scrollbar.cc win_scroll.cc win_select.cc win_theme.cc \
-	label.cc  label_input.cc win_event.cc yarg.cc \
-	input_manager.cc input_manager_SDL.cc input_event.cc input_listener.cc keyboard_event.cc \
-	joystick_event.cc mouse_event.cc control_event.cc \
-	types.h animation.h drawable.h drawing_area.h fileops.h image.h \
-	input.h gametime.h map_coordinates.h map_placeable_area.h \
-	map_placeable_area_gfx.h map_placeable.h map_placeable_gfx.h map_placeable_model.h map_placeable_model_gfx.h \
-	map_moving.h map_character.h \
-	map_character_with_gfx.h game.h \
-	map_object_with_gfx.h landmap.h pnm.h surface.h screen.h \
-	callback.h py_callback.h python_class.h py_object.h \
-	str_hash.h win_font.h win_image.h win_label.h win_mapview.h label.h label_input.h \
-	win_scrollbar.h win_scroll.h win_select.h win_theme.h win_keys.h win_event.h win_types.h \
-	win_write.h win_manager.h win_object.h window.h callback_sig.cc callback_sig.h\
-	callback_slot.h atk_font.h atk_font.cc atk_widget.cc atk_widget.h \
-	atk_container.h atk_container.cc atk_label.h atk_label.cc atk_box.h atk_box.cc atk_misc.cc atk_misc.h \
-	input_manager.h input_event.h input_listener.h keyboard_event.h joystick_event.h mouse_event.h \
-	control_event.h atk_fixed.h atk_fixed.cc
+libbase_a_SOURCES = fileops.cc gametime.cc \
+	types.h fileops.h gametime.h callback.h
 
+libinput_a_SOURCES = input_event.cc joystick_event.cc mouse_event.cc \
+	keyboard_event.cc control_event.cc input_listener.cc input_manager.cc \
+	input_manager_SDL.cc \
+	input_event.h joystick_event.h mouse_event.h keyboard_event.h \
+	control_event.h input_listener.h input_manager.h
+
+libgfx_a_SOURCES = drawable.cc drawing_area.cc screen.cc surface.cc pnm.cc \
+	image.cc animation.cc \
+	drawable.h drawing_area.h screen.h surface.h pnm.h image.h \
+	animation.h
+
+libaudio_a_SOURCES = 
+
+libpython_a_SOURCES = python_class.cc py_object.cc py_callback.cc \
+	python_class.h py_object.h py_callback.h
+
+libmap_a_SOURCES = map_coordinates.cc map_placeable_area.cc \
+	map_placeable_area_gfx.cc map_placeable_model.cc \
+	map_placeable_model_gfx.cc map_placeable.cc map_placeable_gfx.cc \
+	map_moving.cc map_object.cc map_object_with_gfx.cc map_character.cc \
+	map_character_with_gfx.cc landmap.cc \
+	map_coordinates.h map_placeable_area.h \
+	map_placeable_area_gfx.h map_placeable_model.h \
+	map_placeable_model_gfx.h map_placeable.h map_placeable_gfx.h \
+	map_moving.h map_object.h map_object_with_gfx.h map_character.h \
+	map_character_with_gfx.h landmap.h
+
+libgui_a_SOURCES = atk_box.cc atk_misc.cc atk_container.cc atk_label.cc \
+	atk_font.cc atk_widget.cc atk_fixed.cc callback_sig.cc \
+	callback_slot.h atk_box.h atk_misc.h atk_container.h \
+	atk_label.h atk_font.h atk_widget.h atk_fixed.h \
+	callback_sig.h
+
+liboldwin_a_SOURCES = win_background.cc win_base.cc win_border.cc \
+	win_container.cc win_font.cc win_keys.cc \
+	win_manager.cc win_scrollbar.cc win_scroll.cc win_select.cc win_theme.cc \
+	label.cc label_input.cc win_event.cc \
+	win_font.h win_image.h win_label.h label.h label_input.h \
+	win_scrollbar.h win_scroll.h win_select.h win_theme.h win_keys.h win_event.h win_types.h \
+	win_write.h win_manager.h win_object.h window.h  
+
+libadonthell_a_SOURCES = input.cc \
+	game.cc \
+	yarg.cc \
+	input.h \
+	game.h \
+	str_hash.h
 
 alextest_SOURCES = main.cc
 
 joltest_SOURCES = joltest.cc
 
-joltest_LDADD = libadonthell.a $(SDL_LIBS) $(FT2_LIBS)
+joltest_LDADD = libgfx.a libgui.a libbase.a $(SDL_LIBS) $(FT2_LIBS)
 
-alextest_LDADD = libadonthell.a $(SDL_LIBS)
+alextest_LDADD = libmap.a libgfx.a libinput.a libbase.a $(SDL_LIBS)
 
 # Note: adonthell.py is also built by this target. 
 py_adonthell_wrap.cc : py_adonthell.i *.h
