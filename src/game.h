@@ -16,7 +16,6 @@
 #define __GAME_H__
 
 #include "prefs.h"
-#include "SDL_thread.h"
 
 class game
 {

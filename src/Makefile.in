@@ -60,11 +60,22 @@ POST_UNINSTALL = :
 CC = @CC@
 CXX = @CXX@
 CXXCPP = @CXXCPP@
+CXXFLAGS = @CXXFLAGS@
+GTK_CFLAGS = @GTK_CFLAGS@
+GTK_CONFIG = @GTK_CONFIG@
+GTK_LIBS = @GTK_LIBS@
+LIBS = @LIBS@
 MAKEINFO = @MAKEINFO@
+OGG_CFLAGS = @OGG_CFLAGS@
+OGG_DEFS = @OGG_DEFS@
+OGG_LIBS = @OGG_LIBS@
 PACKAGE = @PACKAGE@
 PYPACKAGE = @PYPACKAGE@
+PY_CFLAGS = @PY_CFLAGS@
+PY_LIBS = @PY_LIBS@
 SDL_CFLAGS = @SDL_CFLAGS@
 SDL_CONFIG = @SDL_CONFIG@
+SDL_DEFS = @SDL_DEFS@
 SDL_LIBS = @SDL_LIBS@
 VERSION = @VERSION@
 VORBISENC_LIBS = @VORBISENC_LIBS@
@@ -72,13 +83,14 @@ VORBISFILE_LIBS = @VORBISFILE_LIBS@
 VORBIS_CFLAGS = @VORBIS_CFLAGS@
 VORBIS_LIBS = @VORBIS_LIBS@
 
-SUBDIRS = . tools
+@BUILD_TOOLS_TRUE@SUBDIRS = . tools
 
 bin_PROGRAMS = adonthell
 
 EXTRA_DIST = win_info.cpp win_file_select.cpp .indent.pro prefs.l win_query.cpp
 
-CPPFLAGS =  -DUSE_PYTHON -DUSE_MAP
+CPPFLAGS =  -DUSE_PYTHON -DUSE_MAP $(SDL_DEFS) $(OGG_DEFS) $(SDL_CFLAGS) $(OGG_CFLAGS) $(PY_CFLAGS)
+adonthell_LDADD = $(SDL_LIBS) $(OGG_LIBS) $(PY_LIBS)
 
 adonthell_SOURCES = animation.cpp animation_off.cpp audio.cpp audio_loop.cpp character_base.cpp character.cpp data.cpp data_screen.cpp dialog.cpp dialog_engine.cpp drawing_area.cpp event.cpp fileops.cpp game.cpp gametime.cpp image.cpp input.cpp lex.prefs.cpp main.cpp mapselect.cpp maptpl.cpp mapobject.cpp mapcharacter.cpp landmap.cpp mapengine.cpp py_inc.cpp py_modules.cpp mapview.cpp pnm.cpp prefs.cpp  quest.cpp screen.cpp storage.cpp win_base.cpp win_border.cpp win_container.cpp win_font.cpp win_theme.cpp win_scrolled.cpp win_background.cpp win_scrollbar.cpp win_file.cpp win_image.cpp win_label.cpp win_select.cpp win_write.cpp win_manager.cpp yarg.cc py_adonthell_wrap.cpp animation.h animation_off.h audio.h audio_loop.h callback.h character_base.h character.h data.h data_screen.h dialog.h dialog_engine.h drawing_area.h event.h fileops.h game.h gametime.h image.h input.h inventory.h item.h landmap.h mapcharacter.h mapobject.h mapselect.h maptpl.h mapview.h mapengine.h pnm.h prefs.h py_inc.h py_modules.h quest.h screen.h storage.h types.h win_anim.h win_background.h win_base.h win_border.h win_container.h win_file.h win_file_select.h win_font.h win_image.h win_info.h win_label.h win_query.h win_scrollbar.h win_scrolled.h win_select.h win_theme.h win_types.h win_write.h win_manager.h window.h yarg.h
 
@@ -90,7 +102,6 @@ PROGRAMS =  $(bin_PROGRAMS)
 
 DEFS = @DEFS@ -I. -I$(srcdir) -I..
 LDFLAGS = @LDFLAGS@
-LIBS = @LIBS@
 adonthell_OBJECTS =  animation.o animation_off.o audio.o audio_loop.o \
 character_base.o character.o data.o data_screen.o dialog.o \
 dialog_engine.o drawing_area.o event.o fileops.o game.o gametime.o \
@@ -100,10 +111,8 @@ pnm.o prefs.o quest.o screen.o storage.o win_base.o win_border.o \
 win_container.o win_font.o win_theme.o win_scrolled.o win_background.o \
 win_scrollbar.o win_file.o win_image.o win_label.o win_select.o \
 win_write.o win_manager.o yarg.o py_adonthell_wrap.o
-adonthell_LDADD = $(LDADD)
 adonthell_DEPENDENCIES = 
 adonthell_LDFLAGS = 
-CXXFLAGS = @CXXFLAGS@
 CXXCOMPILE = $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
 CXXLD = $(CXX)
 CXXLINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(LDFLAGS) -o $@
@@ -116,8 +125,9 @@ DIST_COMMON =  Makefile.am Makefile.in
 
 DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 
-TAR = gtar
+TAR = tar
 GZIP_ENV = --best
+DIST_SUBDIRS =  . tools
 DEP_FILES =  .deps/animation.P .deps/animation_off.P .deps/audio.P \
 .deps/audio_loop.P .deps/character.P .deps/character_base.P \
 .deps/data.P .deps/data_screen.P .deps/dialog.P .deps/dialog_engine.P \
@@ -304,7 +314,7 @@ distdir: $(DISTFILES)
 	    || cp -p $$d/$$file $(distdir)/$$file || :; \
 	  fi; \
 	done
-	for subdir in $(SUBDIRS); do \
+	for subdir in $(DIST_SUBDIRS); do \
 	  if test "$$subdir" = .; then :; else \
 	    test -d $(distdir)/$$subdir \
 	    || mkdir $(distdir)/$$subdir \

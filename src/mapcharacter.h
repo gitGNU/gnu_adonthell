@@ -24,9 +24,10 @@
 #include "landmap.h"
 #include "character_base.h"
 #include "data.h"
-#include "event.h"
-#include "data.h"
+
+#ifdef USE_PYTHON
 #include "py_inc.h"
+#endif
 
 #ifdef _EDIT_
 #include "mapselect.h"

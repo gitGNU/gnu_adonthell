@@ -19,7 +19,9 @@
 
 #include "mapobject.h"
 #include "mapcharacter.h"
+#ifndef _EDIT_
 #include "event.h"
+#endif
 #include <string>
 #include <vector>
 #include <list>

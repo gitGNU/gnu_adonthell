@@ -12,11 +12,14 @@
    See the COPYING file for more details.
 */
 
-#include "dialog_engine.h"
 #include "mapcharacter.h"
 #include "win_manager.h"
 #include "mapview.h"
 #include "mapengine.h"
+
+#ifndef _EDIT_
+#include "dialog_engine.h"
+#endif
 
 void mapcharacter::init()
 {

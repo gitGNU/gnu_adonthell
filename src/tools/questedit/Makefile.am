@@ -7,14 +7,16 @@ bin_PROGRAMS = questedit mergequests
 questedit_SOURCES = main.cc interface.cc callbacks.cc dirbrowser.cc \
 callbacks.h dirbrowser.h interface.h main.h
 
+questedit_LDADD = -lm -lstdc++ $(GTK_LIBS)
+
 mergequests_SOURCES = mergequests.cc
 
-mergequests_LDADD = quest.o storage.o fileops.o
+mergequests_LDADD = quest.o storage.o fileops.o $(GTK_LIBS)
 
 # Evil, but it works...
-CPPFLAGS +=-I../.. `gtk-config --cflags`
+CPPFLAGS +=-I../.. $(GTK_CFLAGS)
 
-LDFLAGS=-lm -lstdc++ `gtk-config --libs`
+LDFLAGS=
 
 fileops.o : ../../fileops.cpp
 	$(CXXCOMPILE) -c $< -o $@

@@ -2,3 +2,5 @@
 
 bin_PROGRAMS = oggloop 
 
+oggloop_LDADD = $(OGG_LIBS)
+

@@ -20,8 +20,11 @@
 #include <vector>
 #include <zlib.h>
 
+#ifdef USE_PYTHON
 #include "Python.h"
 #include "compile.h"
+#endif
+
 #include "types.h"
 
 class event_handler;

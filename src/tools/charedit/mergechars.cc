@@ -22,33 +22,21 @@
 #include <unistd.h>
 
 #include "../../character_base.h"
-#include "../../event.h"
+// #include "../../event.h"
 #include "../../data.h"
 
 objects data::characters;
-/*
-// Dump any error information to stderr (same as in ../../py_inc.cpp)
-void show_traceback (void)
-{
-	if ( PyErr_Occurred() )
-		PyErr_Print();
-}
 
-// Also used to avoid linking problems
-PyObject *pass_instance (void *instance, const char *class_name)
-{
-    return NULL;
-}
-*/
 // read the character source file and append it to the character data file
 void process_character (char *input, gzFile output)
 {
     ifstream in (input);
-    gchar str[256], **vals, **params, **pair;
-    event *myevent = NULL;
-    int event_type = -1;
+    gchar str[256], **vals;
     int mode = 0;
-    int i = 0;
+//    gchar **params, **pair;
+//    event *myevent = NULL;
+//    int event_type = -1;
+//    int i = 0;
     
     if (!in)
     {
@@ -236,9 +224,6 @@ int main (int argc, char* argv[])
     chdir (argv[1]);
     cwd = getcwd (cwd, 0);
 
-    // We need Python for loading character schedules
-	Py_Initialize();
-  
     // process all ".character" files in the given directory:
     if ((dir = opendir (cwd)) != NULL)
     {
@@ -274,6 +259,5 @@ int main (int argc, char* argv[])
     gzputc (outfile, 0);
     gzclose (outfile);
     
-	Py_Finalize();
     return 0;
 }

@@ -15,6 +15,8 @@
 #ifndef _py_inc_h
 #define _py_inc_h
 
+#ifdef USE_PYTHON
+
 #include "Python.h"
 #include "compile.h"
 #include "eval.h"
@@ -25,4 +27,6 @@ extern bool exec_file( char *filename );
 extern PyObject *import_module( char *);
 extern void show_traceback( void );
 extern PyObject *pass_instance (void*, const char*);
+
+#endif
 #endif

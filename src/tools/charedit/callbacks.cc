@@ -47,7 +47,8 @@ void
 on_save_activate (GtkMenuItem * menuitem, gpointer user_data)
 {
     main_wnd *wnd = (main_wnd *) user_data;
-    gchar *name, *dialogue, *schedule;
+    gchar *name, *dialogue;
+    // gchar *schedule;
     GtkWidget *dir_browser;
 
     // check a few things:
@@ -73,7 +74,7 @@ on_save_activate (GtkMenuItem * menuitem, gpointer user_data)
         gtk_main ();
         return;
     }
-    
+    */    
     // has the character a dialogue?
     dialogue = g_strstrip (gtk_entry_get_text (GTK_ENTRY (wnd->dlg_entry)));
     if (dialogue == NULL || !strcmp (dialogue, ""))
@@ -84,7 +85,6 @@ on_save_activate (GtkMenuItem * menuitem, gpointer user_data)
         gtk_main ();
         return;
     }
-    */
 
     // chose directory to save to
     dir_browser = xmms_create_dir_browser ("Select character directory", wnd->char_dir, GTK_SELECTION_SINGLE, wnd);

@@ -6,15 +6,13 @@ bin_PROGRAMS = charedit mergechars
 
 charedit_SOURCES = main.cc interface.cc callbacks.cc dirbrowser.cc \
 callbacks.h dirbrowser.h interface.h main.h
+charedit_LDADD = -lm -lstdc++ $(GTK_LIBS)
 
 mergechars_SOURCES = mergechars.cc
-
-mergechars_LDADD = character_base.o storage.o fileops.o
+mergechars_LDADD = character_base.o storage.o fileops.o $(GTK_LIBS)
 
 # Evil, but it works...
-CPPFLAGS +=-I../.. `gtk-config --cflags`
-
-LDFLAGS=-lm -lstdc++ `gtk-config --libs`
+CPPFLAGS +=-I../.. $(GTK_CFLAGS)
 
 %.o : ../../%.cpp
 	$(CXXCOMPILE) -c $< -o $@

@@ -1,12 +1,15 @@
 ## Process this file with automake to produce Makefile.in
 
+if BUILD_TOOLS
 SUBDIRS = . tools
+endif
 
 bin_PROGRAMS = adonthell
 
 EXTRA_DIST = win_info.cpp win_file_select.cpp .indent.pro prefs.l win_query.cpp
 
-CPPFLAGS +=-DUSE_PYTHON -DUSE_MAP
+CPPFLAGS +=-DUSE_PYTHON -DUSE_MAP $(SDL_DEFS) $(OGG_DEFS) $(SDL_CFLAGS) $(OGG_CFLAGS) $(PY_CFLAGS)
+adonthell_LDADD = $(SDL_LIBS) $(OGG_LIBS) $(PY_LIBS)
 
 adonthell_SOURCES = animation.cpp animation_off.cpp audio.cpp \
 audio_loop.cpp \
