@@ -81,6 +81,5 @@ int yarg::zufallszahl ()
 
     zahl = zahl >> 1;
 
-    if (max == min) return max;
-    else return (zahl%(max - min + 1)) + min;
+    return (zahl%(max - min + 1)) + min;
 }
