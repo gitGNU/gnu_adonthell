@@ -96,7 +96,7 @@ void run_dlg::run ()
 {
     s_int32 retval;
     tmp_list = NULL;
-    u_int32 npc_answer;
+    s_int32 npc_answer;
     u_int32 i, index = 0;
     GtkAdjustment *adj;
 
@@ -107,7 +107,10 @@ void run_dlg::run ()
     if (retval == 0) return;
 
     // Prepare the random number generator
-    randgen.init (dat->strings[dat->npc_text[0]->id], 0, dat->npc_text.size ()-1);
+    if (dat->npc_text.size ())
+        randgen.init (dat->strings[dat->npc_text[0]->id], 0, dat->npc_text.size ()-1);
+    else
+        randgen.init (" ", -1, -1);
     randgen.randomize ();
 
     // Get the NPCs answer in case there are more than one possible NPC answers
@@ -146,11 +149,15 @@ void run_dlg::run ()
         index = 0;
         
         // Fill in the NPC text
-        tmp_list = g_list_append (tmp_list, create_dlg_list_item (" ", 2, -2));
-        tmp_list = g_list_append (tmp_list, create_dlg_list_item (dat->strings[dat->npc_text[npc_answer]->id], 4, -1));
+        if (npc_answer != -1)
+        {
+            tmp_list = g_list_append (tmp_list, create_dlg_list_item (" ", 2, -2));
+            tmp_list = g_list_append (tmp_list, create_dlg_list_item (dat->strings[dat->npc_text[npc_answer]->id], 4, -1));
+        }
+        else tmp_list = g_list_append (tmp_list, create_dlg_list_item (" ", 2, 0));
 
         // Now look for the player text
-        for (i = 0; (i < dat->player_text.size () && index < npc_answer); i++)
+        for (i = 0; (i < dat->player_text.size () && (s_int32) index < npc_answer); i++)
             if (dat->player_text[i] == NULL) index++;
 
         index = 0;

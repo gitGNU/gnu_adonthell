@@ -37,21 +37,36 @@ on_dialogue_list_select_child (GtkList * list, GtkWidget * widget, gpointer user
     npc_text = (GtkWidget *) g_list_nth_data (items, pos-1);
 
     // Player text available!?
-    if (GPOINTER_TO_INT (gtk_object_get_user_data (GTK_OBJECT (npc_text))) == -1)
+    switch (GPOINTER_TO_INT (gtk_object_get_user_data (GTK_OBJECT (npc_text))))
     {
-        gtk_label_get ((GtkLabel *) ((GtkBin *) npc_text)->child, &str);
-        new_items = g_list_append (new_items, create_dlg_list_item (str, 2, -3));
-        gtk_label_get ((GtkLabel *) ((GtkBin *) widget)->child, &str);
-        new_items = g_list_append (new_items, create_dlg_list_item (str, 1, -3));
-        gtk_list_clear_items (list, pos-2, -1);
-    }
-    else
-    {
-        gtk_label_get ((GtkLabel *) ((GtkBin *) widget)->child, &str);
-        new_items = g_list_append (new_items, create_dlg_list_item (str, 2, -3));
-        gtk_list_clear_items (list, pos-1, -1);
-    }
+        case -2:
+        {
+            gtk_label_get ((GtkLabel *) ((GtkBin *) widget)->child, &str);
+            new_items = g_list_append (new_items, create_dlg_list_item (str, 2, -3));
+            gtk_list_clear_items (list, pos-1, -1);
 
+            break;
+        }
+        case -1:
+        {
+            gtk_label_get ((GtkLabel *) ((GtkBin *) npc_text)->child, &str);
+            new_items = g_list_append (new_items, create_dlg_list_item (str, 2, -3));
+            gtk_label_get ((GtkLabel *) ((GtkBin *) widget)->child, &str);
+            new_items = g_list_append (new_items, create_dlg_list_item (str, 1, -3));
+            gtk_list_clear_items (list, pos-2, -1);
+
+            break;
+        }
+        case 0:
+        {
+            gtk_label_get ((GtkLabel *) ((GtkBin *) widget)->child, &str);
+            new_items = g_list_append (new_items, create_dlg_list_item (str, 1, -3));
+            gtk_list_clear_items (list, pos-1, -1);
+
+            break;
+        }
+    }
+    
     gtk_list_append_items (list, new_items);
 
     // continue the dialogue
