@@ -12,7 +12,7 @@ bin_PROGRAMS = alextest joltest
 
 EXTRA_DIST = .indent.pro prefs.l py_adonthell.i adonthell.py
 
-CPPFLAGS += $(SDL_DEFS) $(OGG_DEFS) $(SDL_CFLAGS) $(OGG_CFLAGS) $(PY_CFLAGS) $(FTT2_CFLAGS)
+CPPFLAGS += $(SDL_DEFS) $(OGG_DEFS) $(SDL_CFLAGS) $(OGG_CFLAGS) $(PY_CFLAGS) $(FT2_CFLAGS)
 
 noinst_LIBRARIES = libadonthell.a
 
@@ -80,7 +80,7 @@ alextest_SOURCES = main.cc
 
 joltest_SOURCES = joltest.cc
 
-joltest_LDADD = libadonthell.a $(SDL_LIBS) $(FTT2_LIBS)
+joltest_LDADD = libadonthell.a $(SDL_LIBS) $(FT2_LIBS)
 
 alextest_LDADD = libadonthell.a $(SDL_LIBS)
 

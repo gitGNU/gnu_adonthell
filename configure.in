@@ -97,9 +97,9 @@ dnl *******************
 dnl Check for FreeType2
 dnl *******************
 
-AC_CHECK_FT2(8.0.0,
+AC_CHECK_FT2(6.0.0,
     :,
-    AC_MSG_ERROR([*** Freetype version >= 8.0.0 not found!])
+    AC_MSG_ERROR([*** Freetype version >= 6.0.0 not found!])
 )
 
 
@@ -349,9 +349,9 @@ AC_SUBST(PY_CFLAGS)
 AC_SUBST(PY_LIBS)
 AC_SUBST(P_SWIG)
 AC_SUBST(gamedatadir)
-AC_SUBST(FTT2_LIBS)
-AC_SUBST(FTT2_CFLAGS)
-  
+AC_SUBST(FT2_LIBS)
+AC_SUBST(FT2_CFLAGS)
+
 AC_OUTPUT([
 Makefile
 doc/Makefile
