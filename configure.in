@@ -57,6 +57,12 @@ AC_ARG_WITH(vorbis,
 AC_ARG_WITH(data-dir,
 [  --with-data-dir=DIR    Directory where datas will be installed],
             gamedatadir="$withval", gamedatadir=none)
+AC_ARG_WITH(py-libs,
+[  --with-py-libs=DIR     Override Python libraries auto-detection],
+            pylibs="$withval", pylibs=none)
+AC_ARG_WITH(py-cflags,
+[  --with-py-cflags=DIR   Override Python cflags auto-detection],
+            pycflags="$withval", pycflags=none)
 
 dnl **********************
 dnl Set the data directory
@@ -133,104 +139,109 @@ dnl ********************
 dnl Check for Python. 
 dnl ********************
 
-AM_PATH_PYTHON()
+if test x$pylibs = xnone; then
+   AM_PATH_PYTHON()
 
-dnl Find Python executable
-AC_PATH_PROGS(PYPACKAGE, python)
+   dnl Find Python executable
+   AC_PATH_PROGS(PYPACKAGE, python)
 
-dnl Extract the version using Python, check against 1.5+
+   dnl Extract the version using Python, check against 1.5+
 
-changequote(<<, >>)
-PYTHON_VERSION=`$PYPACKAGE -c 'import sys ; print (int(sys.version[0]) * 10 + int(sys.version[2]))'`
-PY_VERSION=`$PYPACKAGE -c 'import sys ; print sys.version[0:3]'`
-changequote([, ])
+   changequote(<<, >>)
+   PYTHON_VERSION=`$PYPACKAGE -c 'import sys ; print (int(sys.version[0]) * 10 + int(sys.version[2]))'`
+   PY_VERSION=`$PYPACKAGE -c 'import sys ; print sys.version[0:3]'`
+   changequote([, ])
 
-if test $PYTHON_VERSION -lt 15; then
+   if test $PYTHON_VERSION -lt 15; then
 	echo "Sorry, you need to have Python 1.5+ installed - update your version!"
 	AC_MSG_ERROR([Python 1.5 or better required])
-fi
+   fi
 
-dnl Find the Python.h header file
+   dnl Find the Python.h header file
 
-AC_MSG_CHECKING(for Python header files)
-changequote(<<, >>)
-PYINCLUDE=`$PYPACKAGE -c 'import sys ; print "%s/include/python%s" % (sys.prefix, sys.version[:3])'`
-changequote([, ])
+   AC_MSG_CHECKING(for Python header files)
+   changequote(<<, >>)
+   PYINCLUDE=`$PYPACKAGE -c 'import sys ; print "%s/include/python%s" % (sys.prefix, sys.version[:3])'`
+   changequote([, ])
 
-if test -r "$PYINCLUDE/Python.h"; then
-   PY_CFLAGS="-I$PYINCLUDE"
-else
-   AC_MSG_ERROR([Could not find Python.h in $PYINCLUDE])
-fi
-AC_MSG_RESULT(found)
-
-
-dnl Find the Python library
-
-AC_MSG_CHECKING(for Python library)
-changequote(<<, >>)
-PYLIB=`$PYPACKAGE -c 'import sys; print "%s/lib/python%s/config" % (sys.prefix, sys.version[:3])'`
-PYLIBVER=`$PYPACKAGE -c 'import sys; print sys.version[:3]'`
-changequote([, ])
+   if test -r "$PYINCLUDE/Python.h"; then
+      PY_CFLAGS="-I$PYINCLUDE"
+   else
+      AC_MSG_ERROR([Could not find Python.h in $PYINCLUDE])
+   fi
+   AC_MSG_RESULT(found)
 
 
-dnl Try for specific version first, then the generic version, then panic
+   dnl Find the Python library
 
-if test -r "$PYLIB/libpython$PYLIBVER.so"; then
-    PY_LIBS="-L$PYLIB -lpython$PYLIBVER $PY_LIBS"
-elif test -r "$PYLIB/libpython$PYLIBVER.a"; then
-    PY_LIBS="-L$PYLIB -lpython$PYLIBVER $PY_LIBS"
-elif test -r "$PYLIB/libpython.so"; then
-    PY_LIBS="-L$PYLIB -lpython $PY_LIBS"
-elif test -r "$PYLIB/libpython.a"; then
-    PY_LIBS="-L$PYLIB -lpython $PY_LIBS"
-else
-    AC_MSG_ERROR([Python library not found in $PYLIB])
-fi
-AC_MSG_RESULT(found)
+   AC_MSG_CHECKING(for Python library)
+   changequote(<<, >>)
+   PYLIB=`$PYPACKAGE -c 'import sys; print "%s/lib/python%s/config" % (sys.prefix, sys.version[:3])'`
+   PYLIBVER=`$PYPACKAGE -c 'import sys; print sys.version[:3]'`
+   changequote([, ])
 
 
-dnl Get the libraries that python depends on
+   dnl Try for specific version first, then the generic version, then panic
 
-AC_PATH_PROG(haveldd, ldd)
-AC_MSG_CHECKING(for Python's dependencies)
+   if test -r "$PYLIB/libpython$PYLIBVER.so"; then
+       PY_LIBS="-L$PYLIB -lpython$PYLIBVER $PY_LIBS"
+   elif test -r "$PYLIB/libpython$PYLIBVER.a"; then
+       PY_LIBS="-L$PYLIB -lpython$PYLIBVER $PY_LIBS"
+   elif test -r "$PYLIB/libpython.so"; then
+       PY_LIBS="-L$PYLIB -lpython $PY_LIBS"
+   elif test -r "$PYLIB/libpython.a"; then
+       PY_LIBS="-L$PYLIB -lpython $PY_LIBS"
+   else
+       AC_MSG_ERROR([Python library not found in $PYLIB])
+   fi
+   AC_MSG_RESULT(found)
 
-if test x$haveldd != x ; then
-    changequote(<<, >>)
-    py_deps=`ldd $PYPACKAGE | sed 's/\( *lib\([^\/]*\)\.so.*=.*$\)/-l\2/p; d'`
-    for py_lib in $py_deps ; do
-        if test "$py_lib" != "-lm" && test "$py_lib" != "-lc" ; then
+
+   dnl Get the libraries that python depends on
+
+   AC_PATH_PROG(haveldd, ldd)
+   AC_MSG_CHECKING(for Python's dependencies)
+
+   if test x$haveldd != x ; then
+       changequote(<<, >>)
+       py_deps=`ldd $PYPACKAGE | sed 's/\( *lib\([^\/]*\)\.so.*=.*$\)/-l\2/p; d'`
+       for py_lib in $py_deps ; do
+         if test "$py_lib" != "-lm" && test "$py_lib" != "-lc" ; then
             PY_DEPS="$PY_DEPS $py_lib"
-        fi
-    done
-    changequote([, ])
-fi
+         fi
+      done
+      changequote([, ])
+   fi
 
-case $target in
-    *-sun-solaris*)
-        PY_DEPS="$PY_DEPS -lsocket -lnsl -ldl"
-        ;;
-esac
+   case $target in
+       *-sun-solaris*)
+         PY_DEPS="$PY_DEPS -lsocket -lnsl -ldl"
+           ;;
+   esac
 
-AC_MSG_RESULT($PY_DEPS)
+   AC_MSG_RESULT($PY_DEPS)
 
-dnl only GNU ld seems to knows -E flag
-if $LD -v 2>&1 </dev/null | egrep '(GNU|with BFD)' 1>&5; then
-    PY_LIBS="-Wl,-E $PY_LIBS $PY_DEPS"
-else
-    PY_LIBS="$PY_LIBS $PY_DEPS"
-fi
+   dnl only GNU ld seems to knows -E flag
+   if $LD -v 2>&1 </dev/null | egrep '(GNU|with BFD)' 1>&5; then
+       PY_LIBS="-Wl,-E $PY_LIBS $PY_DEPS"
+   else
+       PY_LIBS="$PY_LIBS $PY_DEPS"
+   fi
 
-dnl See whether we should enable python debugging
+   dnl See whether we should enable python debugging
 
-AC_MSG_CHECKING(whether to enable Python debugging)
-if test x$pydebug = xno; then
+   AC_MSG_CHECKING(whether to enable Python debugging)
+   if test x$pydebug = xno; then
 	AC_MSG_RESULT(no)
-else
-    PY_CFLAGS="$PY_CFLAGS -DPY_DEBUG"
+   else
+        PY_CFLAGS="$PY_CFLAGS -DPY_DEBUG"
 	AC_MSG_RESULT(yes)
+   fi
+else
+   PY_LIBS=${pylibs}
+   PY_CFLAGS=${pycflags}
+   PY_VERSION="Manually specified"   
 fi
-
 
 dnl **************
 dnl Check for SWIG

@@ -110,7 +110,6 @@ int main(int argc, char * argv[])
         if (b[ti] == '\\') b[ti] = '/';
         ti++;
     }
-    cout << b << endl;
     game::init(b);
 #endif
 

@@ -680,7 +680,7 @@ void mapcharacter::set_schedule (string file, PyObject * args = NULL)
             Py_INCREF (intref); 
             PyTuple_SetItem (theargs, i, intref); 
         }
-        schedule.create_instance ("schedules/mapcharacters/" + file, file, theargs);
+        schedule.create_instance ("schedules.mapcharacters." + file, file, theargs);
         Py_DECREF (theargs); 
     }
     schedule_file_ = file;
@@ -711,7 +711,7 @@ void mapcharacter::set_action (string file, PyObject * args = NULL)
             Py_INCREF (intref); 
             PyTuple_SetItem (theargs, i, intref); 
         }
-        action.create_instance ("actions/" + file, file, theargs);
+        action.create_instance ("actions." + file, file, theargs);
         Py_DECREF (theargs); 
     }
     action_file_ = file;
