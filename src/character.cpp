@@ -124,7 +124,7 @@ void npc::set_schedule (char* file, bool load_script)
     if (!load_script)
     {
         if (schedule_file) free (schedule_file);
-        schedule_file = strdup (file);
+        schedule_file = file;
         return;
     }
     
@@ -148,7 +148,7 @@ void npc::set_schedule (char* file, bool load_script)
 
             // ... and the schedule script file
             if (schedule_file) free (schedule_file);
-            schedule_file = strdup (file);
+            schedule_file = file;
         }
         else
         {
