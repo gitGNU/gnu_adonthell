@@ -2,6 +2,7 @@
 
 %{
 
+#include "character.h"
 #include "mapcharacter.h"
 
 %}
@@ -14,4 +15,5 @@
 #define s_int32 signed long
 
 %include "landmap.h"
+%include "character.h"
 %include "mapcharacter.h"
