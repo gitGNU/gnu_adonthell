@@ -226,7 +226,11 @@ void win_base::draw_border()
       if(!selected_)
 	{
 	  //if curmode of the select is win_border so draw nothing
-	  if(mode_select_==WIN_SELECT_MODE_BORDER) return;
+	  if(mode_select_==WIN_SELECT_MODE_BORDER)
+	  {
+        visible_border_=true;
+	    return;
+      }
 	  //if mode is brightness draw the border on brigthness mode
 	  else if(mode_select_==WIN_SELECT_MODE_BRIGHTNESS) draw_brightness_=true;
 	}
@@ -234,15 +238,20 @@ void win_base::draw_border()
 	{
 	  //if the object is in select and the object is selected
 	  //if selection is border ----> WARNING  I MUST CHECK WHY theme_->mini, why not use the cur size of border ????
-	  if(mode_select_==WIN_SELECT_MODE_BORDER) border=theme_->mini;
+	  if(mode_select_==WIN_SELECT_MODE_BORDER) 
+	  {
+	    border=theme_->mini;
+        visible_border_ = true;
+      }
 	  //if mode is brightness this object must not drawing with brightness
 	  else if(mode_select_==WIN_SELECT_MODE_BRIGHTNESS) 
 	    {draw_brightness_=false;	    
 	    }   
 	}
     }
+
   //if the is not in win_select and i not visible return 
-  else if(!visible_border_) return;
+  if(!visible_border_) return;
 
   //create a static image to draw border
   static image imgbright;
