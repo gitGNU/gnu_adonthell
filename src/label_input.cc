@@ -12,7 +12,7 @@
    See the COPYING file for more details
 */
 
-
+#include <SDL/SDL_endian.h>
 #include "label_input.h"
 
 label_input::label_input () : label ()
@@ -40,8 +40,10 @@ bool label_input::input_update()
     while((c=input::get_next_unicode())>0)
     {
         cursor_undraw (); 
-        if((c == SDLK_BACKSPACE || c == SDLK_DELETE) && my_text_.size () >0 && my_cursor_.idx > 0)
-        {    
+        if((c == SDLK_BACKSPACE || c == SDLK_DELETE))
+        {            
+            if (my_text_.empty () || my_cursor_.idx == 0) return true;
+            
             my_text_.erase(--my_cursor_.idx, 1);
             update_cursor ();
             my_old_cursor_ = my_cursor_; 
@@ -55,7 +57,11 @@ bool label_input::input_update()
             build (false);
         }
         else if(c == SDLK_RETURN) add_text ("\n"); 
-        else if(my_font_->in_table(c)) add_text((char*) &c); 
+        else 
+        {
+            string s (1, (char) c);
+            if (my_font_->in_table(c)) add_text (s); 
+        }
     }  
     return true;
 }
