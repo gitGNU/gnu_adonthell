@@ -27,8 +27,8 @@ class character;
 enum
 {
     ENTER_EVENT = 0,                            // Characters reach a new tile
-    // LEAVE_EVENT = 1,                            // Characters leave a tile
-    MAX_EVENT = 1
+    LEAVE_EVENT = 1,                            // Characters leave a tile
+    MAX_EVENT = 2
 };
 
 // Baseclass for event data
@@ -52,11 +52,10 @@ protected:
     virtual void load (FILE*) = 0;              // load the event data
 };
 
-// To notify when a character entered a maptile
-class enter_event : public event
+// Baseclass for enter/leave events
+class base_map_event : public event
 {
 public:
-    enter_event ();
     void save (FILE*);                          // Save event data
 
     s_int32 x;                                  // x coordinate
@@ -66,9 +65,25 @@ public:
     character *c;                               // character triggering the event
 
 protected:
+    base_map_event ();
+
     void execute (event*);                      // Run the event's script
     bool equals (event*);                       // Compare two events
     void load (FILE*);                          // Load event data
+};
+
+// To notify when a character entered a maptile
+class enter_event : public base_map_event
+{
+public:
+    enter_event ();
+};
+
+// To notify when a character entered a maptile
+class leave_event : public base_map_event
+{
+public:
+    leave_event ();
 };
 
 // Base class for objects that want to register events

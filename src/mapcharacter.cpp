@@ -336,6 +336,7 @@ void mapcharacter::update_move (landmap * amap)
             else
                 amap->put_character (data->posx, data->posy + 1, this);
             framefactor = 0;
+            is_event = MAPCHAR_EVENT_LEFT;
         }
         break;
     case UP:
@@ -359,6 +360,7 @@ void mapcharacter::update_move (landmap * amap)
             else
                 amap->put_character (data->posx, data->posy - 1, this);
             framefactor = 2;
+            is_event = MAPCHAR_EVENT_LEFT;
         }
         break;
     case RIGHT:
@@ -382,6 +384,7 @@ void mapcharacter::update_move (landmap * amap)
             else
                 amap->put_character (data->posx + 1, data->posy, this);
             framefactor = 4;
+            is_event = MAPCHAR_EVENT_LEFT;
         }
         break;
     case LEFT:
@@ -405,6 +408,7 @@ void mapcharacter::update_move (landmap * amap)
             else
                 amap->put_character (data->posx - 1, data->posy, this);
             framefactor = 6;
+            is_event = MAPCHAR_EVENT_LEFT;
         }
         break;
     }
@@ -533,6 +537,18 @@ void mapcharacter::update_eventleave (landmap * amap)
     {
         is_event = 0;
         amap->launch_event (this, amap->get_square_eventleavenbr (data->posx, data->posy));
+
+        // test:
+        leave_event e;
+
+        e.x = data->posx;
+        e.y = data->posy;
+        e.dir = movtype;
+        e.map = 0;
+        e.c = data;
+
+        event_handler::raise_event (&e);
+
         return;
     }
 }

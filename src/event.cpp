@@ -111,6 +111,12 @@ event* event_handler::load_event (FILE* f, bool reg)
             e = new enter_event;
             break;
         }
+
+        case LEAVE_EVENT:
+        {
+            e = new leave_event;
+            break;
+        }
         
         default:
         {
@@ -139,9 +145,18 @@ event* event_handler::load_event (FILE* f, bool reg)
 // =======================================================================
 // HERE COME ALL THE DIFFERENT EVENTS:
 
-enter_event::enter_event ()
-{ 
+enter_event::enter_event () : base_map_event ()
+{
     type = ENTER_EVENT; 
+}
+
+leave_event::leave_event () : base_map_event ()
+{
+    type = LEAVE_EVENT; 
+}
+
+base_map_event::base_map_event ()
+{
     x = y = dir = map = -1;
     c = NULL;
     script_file = NULL;
@@ -149,10 +164,10 @@ enter_event::enter_event ()
 }
 
 // compare two enter events
-bool enter_event::equals (event *e)
+bool base_map_event::equals (event *e)
 {
     // we know that we've got an enter_event :)
-    enter_event *tmp = (enter_event *) e;
+    base_map_event *tmp = (base_map_event *) e;
 
     if (tmp->x != -1 && tmp->x != x) return false;
     if (tmp->y != -1 && tmp->y != y) return false;
@@ -164,9 +179,9 @@ bool enter_event::equals (event *e)
 }
 
 // Execute enter event's script
-void enter_event::execute (event *e)
+void base_map_event::execute (event *e)
 {
-    enter_event *t = (enter_event *) e;
+    base_map_event *t = (base_map_event *) e;
 
     // Build the event script's local namespace
     PyObject *locals = Py_BuildValue ("{s:i,s:i,s:i,s:i,s:s}", "posx", t->x, 
@@ -181,7 +196,7 @@ void enter_event::execute (event *e)
 }
 
 // Load a enter event from file
-void enter_event::load (FILE *f)
+void base_map_event::load (FILE *f)
 {
     u_int16 len;
     char* name;
@@ -204,7 +219,7 @@ void enter_event::load (FILE *f)
 }
 
 // Save enter_event to file
-void enter_event::save (FILE *out)
+void base_map_event::save (FILE *out)
 {
     u_int16 len = strlen (c->name) + 1;
 
