@@ -320,6 +320,18 @@ s_int8 animation::get(gzFile file)
   frame=new animation_frame[nbr_of_frames];
   for(i=0;i<nbr_of_frames;i++)
       frame[i].get(file);
+
+  for(currentframe=0;currentframe<nbr_of_frames;currentframe++)
+    {
+      u_int16 tl,th;
+      if((tl=t_frame[frame[currentframe].imagenbr].
+	  get_length()+frame[currentframe].gapx)>length)
+	length=tl;
+      
+      if((th=t_frame[frame[currentframe].imagenbr].
+	  get_height()+frame[currentframe].gapy)>height)
+	height=th;
+    }
   currentframe=0;
   return(0);
 }
@@ -536,6 +548,8 @@ void animation::load()
 animation & animation::operator =(animation &a)
 {
   u_int16 i;
+  length=a.length;
+  height=a.height;
   nbr_of_images=a.nbr_of_images;
   nbr_of_frames=a.nbr_of_frames;
   currentframe=a.currentframe;
@@ -797,7 +811,7 @@ inline bool testkey(SDLKey k)
 {
   if(SDL_GetModState()&KMOD_LCTRL)
     return((input::is_pushed(k)));
-  else return ((input::has_been_pushed(k)));//&&(SDL_GetModState()&&KMOD_LCTRL)));
+  else return ((input::has_been_pushed(k)));
 }
 
 void animation::set_mode(anim_editor_mode m)
@@ -844,7 +858,8 @@ void animation::update_label_frame_info()
 	  sprintf(s_delay,"%d",frame[currentframe].delay);
 	  sprintf(frame_txt,"Frame info :\nImage number: %d\nLength: %d\n"
 		  "Height: %d\nDelay: %s\nX Offset:%d\nY Offset:%d\n"
-		  "Next Frame: %d\n\nMasked: %s\nAlpha: %d",
+		  "Next Frame: %d\nMasked: %s\nAlpha: %d\n"
+		  "\nAnimation info:\nLength: %d\nHeight:%d\n",
 		  frame[currentframe].imagenbr,
 		  t_frame[frame[currentframe].imagenbr].length,
 		  t_frame[frame[currentframe].imagenbr].height,
@@ -852,7 +867,8 @@ void animation::update_label_frame_info()
 		  frame[currentframe].gapx,frame[currentframe].gapy,
 		  frame[currentframe].nextframe,
 		  frame[currentframe].get_mask()?"Yes":"No",
-		  frame[currentframe].get_alpha());
+		  frame[currentframe].get_alpha(),
+		  length,height);
 	  label_frame_info->set_text(frame_txt);
 	}
       else
@@ -891,14 +907,20 @@ void animation::update_label_status()
 void animation::update_editor()
 {  
   update();
-  if(nbr_of_frames>0)
+  u_int16 i;
+  length=0;
+  height=0;
+  for(i=0;i<nbr_of_frames;i++)
     {
-      length=t_frame[frame[currentframe].imagenbr].
-	get_length()+frame[currentframe].gapx;
-      height=t_frame[frame[currentframe].imagenbr].
-	get_height()+frame[currentframe].gapy;
+      u_int16 tl,th;
+      if((tl=t_frame[frame[i].imagenbr].
+	get_length()+frame[i].gapx)>length)
+	length=tl;
+
+      if((th=t_frame[frame[i].imagenbr].
+	get_height()+frame[i].gapy)>height)
+	  height=th;
     }
-  //  container->update();
 }
 
 void animation::update_editor_keys()
@@ -1067,7 +1089,7 @@ void animation::editor()
   label_mode=container->add_label(5,5,100,30,font);
   label_frame_nbr=container->add_label(5,35,100,30,font);
   label_anim_info=container->add_label(5,65,100,65,font);
-  label_frame_info=container->add_label(5,100,100,100,font);
+  label_frame_info=container->add_label(5,80,100,120,font);
   container->set_border(border);
   container->show_all();
   must_upt_label_mode=false;

@@ -11,12 +11,14 @@
    See the COPYING file for more details.
 */
 
-#include "screen.h"
+#include "image.h"
 
 #define MAPSQUARE_SIZE 20
+#define CURSOR_BLINK_RATE 40
 
 class mapselect
 {
+ protected:
   u_int16 s_posx;
   u_int16 s_posy;
   u_int16 length;
@@ -31,6 +33,8 @@ class mapselect
   u_int16 posy;
   u_int16 cl;
   u_int16 ch;
+  u_int16 cursor_blink;
+  drawing_area * da;
 
  public:
   mapselect(u_int16 x, u_int16 y, u_int16 l, u_int16 h,
@@ -40,6 +44,7 @@ class mapselect
   void check_if_fits();
   void move(u_int16 x, u_int16 y);
   void resize(u_int16 l, u_int16 h);
+  void resize_view(u_int16 l, u_int16 h);
 
   void set_cursor_pos(u_int16 x, u_int16 y);
   s_int8 move_cursor_right();

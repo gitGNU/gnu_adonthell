@@ -27,6 +27,8 @@ class drawing_area : public SDL_Rect
 
   drawing_area(u_int16 px, u_int16 py, u_int16 pw, u_int16 ph);
   drawing_area();
+  void resize(u_int16 dl, u_int16 dh);
+  void move(u_int16 dx, u_int16 dy);
   bool is_x_in(s_int16 px);
   bool is_y_in(s_int16 py);
   bool is_point_in(s_int16 px, s_int16 py);
@@ -69,7 +71,6 @@ class image
   void resize(u_int16 l, u_int16 h);
   u_int16 get_length();
   u_int16 get_height();
-  s_int8 get(char * file);
 
   s_int8 get(gzFile file);
   s_int8 load(const char * fname);

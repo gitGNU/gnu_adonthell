@@ -43,6 +43,18 @@ drawing_area::drawing_area()
   draw_to=NULL;
 }
 
+void drawing_area::resize(u_int16 dl, u_int16 dh)
+{
+  w=dl;
+  h=dh;
+}
+
+void drawing_area::move(u_int16 dx, u_int16 dy)
+{
+  x=dx;
+  y=dy;
+}
+
 bool drawing_area::is_x_in(s_int16 px)
 {
   return((px-x>0)&&(px-(x+w)<0));
@@ -408,22 +420,6 @@ void image::get_from_screen(s_int16 x, s_int16 y)
   dr.h=height;
   SDL_BlitSurface(screen::vis,&sr,data,&dr);
 }
-
-s_int8 image::get(char * file)
-{
-  SDL_Surface * tmp;
-
-  tmp=IMG_Load(file);
-  length=tmp->w;
-  height=tmp->h;
-  
-  data=SDL_DisplayFormat(tmp);
-  SDL_FreeSurface(tmp);
-  if (!data) return(-1);
-  bytes_per_pixel=data->format->BytesPerPixel;
-  return(0);
-}
-
 
 s_int8 image::get(gzFile file)
 {
