@@ -1019,8 +1019,7 @@ load_dialogue (MainFrame * wnd, const char *file)
                 if (parse_dlgfile (s, n) == LOAD_STR)
                 {
                     data::characters.erase (wnd->myplayer->get_name().c_str ());
-                    delete wnd->myplayer->get_name().c_str ();
-                    wnd->myplayer->set_name (s.c_str ());
+                    wnd->myplayer->set_name (s);
                     data::characters.set (wnd->myplayer->get_name().c_str (), wnd->myplayer);
                 }
                 break;             
