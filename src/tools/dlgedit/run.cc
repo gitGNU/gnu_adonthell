@@ -68,6 +68,7 @@ void run_dlg::run ()
     tmp_list = NULL;
     u_int32 npc_answer;
     u_int32 i, index = 0;
+    GtkAdjustment *adj;
 
     // Start the interpreter
     retval = vm->run ();
@@ -118,10 +119,12 @@ void run_dlg::run ()
         }
     }
 
-    // Now stuff everything into the list!
-    gtk_widget_hide (list);
-    gtk_list_append_items (GTK_LIST (list), tmp_list); 
-    gtk_widget_show (list);
+    // Now stuff everything into the list
+    gtk_list_append_items (GTK_LIST (list), tmp_list);
 
+    // and scroll to its bottom (gtk_list_scroll_vertical () didn't work!)
+    adj = gtk_viewport_get_vadjustment ((GtkViewport *) list->parent);
+    gtk_adjustment_set_value (adj, adj->upper);
+    
     return;
 }

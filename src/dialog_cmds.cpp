@@ -146,7 +146,7 @@ s_int32 text_cmd::run (u_int32 &pc, void *data)
     dlg_text *t;
 
     // Look if that part of the conversation was already in use     
-    if (find (dlg->used_text.begin(), dlg->used_text.end(), pc + pc_off) == dlg->used_text.end ())
+    if (find (dlg->used_text.begin(), dlg->used_text.end(), pc + pc_off - 1) == dlg->used_text.end ())
     {
         // The offset given with the TEXT command is relative to the current line
         // That is:  current_line + pc_off  gives the line where the dialogue will

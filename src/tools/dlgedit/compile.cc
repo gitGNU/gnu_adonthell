@@ -133,7 +133,7 @@ void dlg_compiler::write_npc ()
 {
     u_int32 i;
     u_int32 pos;
-    branch_cmd *cmd;
+    branch_cmd *cmd = NULL;
     cmp_data *data;
 
     // Look wether multiple NPC nodes with multiple parents exist
@@ -155,9 +155,13 @@ void dlg_compiler::write_npc ()
         // branch target later in this function
         if (cur_crcle->conditions != "") 
         {
-            write_condition ();
-            cmd = (branch_cmd *) code.back ();
             pos = code.size ();
+            write_condition ();
+            if (code.size () > pos)
+            {
+                cmd = (branch_cmd *) code.back ();
+                pos = code.size ();
+            }
         }
 
         // Write the text that will be spoken by the NPC
@@ -195,7 +199,7 @@ void dlg_compiler::write_npc ()
 
         // if there was a condition, this is the line we have to jump to if
         // it isn't met 
-        if (cur_crcle->conditions != "") cmd->setjmp (code.size () - pos);
+        if (cmd != NULL) cmd->setjmp (code.size () - pos);
     }
 
     // That tells the dialoge engine to update the conversation with the
@@ -215,7 +219,7 @@ void dlg_compiler::write_npc ()
 void dlg_compiler::write_player ()
 {
     Circle *npc = cur_crcle;
-    u_int32 i;
+    u_int32 i, pos;
     branch_cmd *cmd;
     cmp_data *data;
 
@@ -233,9 +237,10 @@ void dlg_compiler::write_player ()
         // write the condition and branch after the text command
         if (cur_crcle->conditions != "") 
         {
+            pos = code.size ();
             write_condition ();
             cmd = (branch_cmd *) code.back ();
-            cmd->setjmp (1);
+            if (code.size () > pos) cmd->setjmp (1);
         }
 
         write_text ();
@@ -252,9 +257,10 @@ void dlg_compiler::write_player ()
 
         if (cur_crcle->conditions != "") 
         {
+            pos = code.size ();
             write_condition ();
             cmd = (branch_cmd *) code.back ();
-            cmd->setjmp (1);
+            if (code.size () > pos) cmd->setjmp (1);
         }
 
         write_text ();
@@ -280,7 +286,6 @@ void dlg_compiler::write_condition ()
 
 void dlg_compiler::write_text ()
 {
-    cout << "\nDoing node " << text_lookup[cur_crcle->number];
     text_cmd *cmd = new text_cmd (text_lookup[cur_crcle->number], 0);
     code.push_back (cmd);
 }

@@ -55,7 +55,6 @@ on_dialogue_list_select_child (GtkList * list, GtkWidget * widget, gpointer user
     }
 
     gtk_list_append_items (list, new_items);
-    gtk_list_scroll_vertical (list, GTK_SCROLL_JUMP, 0);
 
     // continue the dialogue
     ((run_dlg *) user_data)->run ();    
