@@ -127,7 +127,7 @@ on_ok_button_pressed (GtkButton * button, gpointer user_data)
     /* Set Nodes Text */
     if (cbd->node->text)
         g_free (cbd->node->text);
-    cbd->node->text = gtk_editable_get_chars (cbd->edit_box, 0, -1);
+    cbd->node->text = g_strdelimit (gtk_editable_get_chars (cbd->edit_box, 0, -1), "\n\t", ' ');
 
     /* close dialog */
     gtk_widget_destroy (cbd->wnd->text_dlg);
@@ -226,11 +226,11 @@ on_dialogue_run_activate (GtkMenuItem * menuitem, gpointer user_data)
 
 /* Continue Dialogue */
 void 
-on_player_txt_select_row (GtkCList * clist, gint row, gint column, GdkEvent * event, gpointer user_data)
+on_player_txt_select_row (GtkList * list, GtkWidget *widget, gpointer user_data)
 {
     RunData *rd = (RunData *) user_data;
 
-    rd->data->answer = row;
+    rd->data->answer = GPOINTER_TO_INT(gtk_object_get_user_data (GTK_OBJECT(widget)));
     ShowDialogue (rd);
 }
 

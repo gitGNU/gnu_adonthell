@@ -23,3 +23,4 @@ RunData;
 void run_dialogue (MainFrame *);
 void StartDialogue (RunData *);
 s_int8 ShowDialogue (RunData *);
+GtkWidget *list_item (const char*, u_int32);

@@ -97,9 +97,14 @@ button_press_event (GtkWidget * widget, GdkEventButton * event, gpointer data)
         /* Middle Button */
     case 2:
         {
+            /* If nothing selected, see if we're over a node */
+            if (MainWnd->mode == IDLE)
+                select_object (MainWnd, point);
+
             /* Edit node */
             if (MainWnd->mode == OBJECT_MARKED)
                 edit_node (MainWnd);
+                
             break;
         }
 

@@ -490,19 +490,18 @@ create_run_dialogue (RunData * rd)
     gtk_object_set_data_full (GTK_OBJECT (run_dialogue), "scrolledwindow2", scrolledwindow2, (GtkDestroyNotify) gtk_widget_unref);
     gtk_widget_show (scrolledwindow2);
     gtk_box_pack_start (GTK_BOX (vbox1), scrolledwindow2, TRUE, TRUE, 0);
+    gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolledwindow2), GTK_POLICY_NEVER, GTK_POLICY_ALWAYS);
 
-    player_txt = gtk_clist_new (1);
+    player_txt = gtk_list_new ();
     gtk_widget_set_name (player_txt, "player_txt");
     gtk_widget_ref (player_txt);
     gtk_object_set_data_full (GTK_OBJECT (run_dialogue), "player_txt", player_txt, (GtkDestroyNotify) gtk_widget_unref);
     gtk_widget_show (player_txt);
-    gtk_container_add (GTK_CONTAINER (scrolledwindow2), player_txt);
-    gtk_clist_set_column_width (GTK_CLIST (player_txt), 0, 80);
-    gtk_clist_column_titles_hide (GTK_CLIST (player_txt));
+    gtk_scrolled_window_add_with_viewport (GTK_SCROLLED_WINDOW (scrolledwindow2), player_txt);
     rd->player = player_txt;
 
     gtk_signal_connect (GTK_OBJECT (run_dialogue), "delete_event", GTK_SIGNAL_FUNC (on_widget_destroy), NULL);
-    gtk_signal_connect (GTK_OBJECT (player_txt), "select_row", GTK_SIGNAL_FUNC (on_player_txt_select_row), rd);
+    gtk_signal_connect (GTK_OBJECT (player_txt), "select_child", GTK_SIGNAL_FUNC (on_player_txt_select_row), rd);
 
     return run_dialogue;
 }

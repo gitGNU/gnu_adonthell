@@ -33,7 +33,7 @@ void on_dialogue_compile_activate (GtkMenuItem *, gpointer);
 void on_dialogue_run_activate (GtkMenuItem *, gpointer);
 
 // Run Dialog Callbacks
-void on_player_txt_select_row (GtkCList *, gint, gint, GdkEvent *, gpointer);
+void on_player_txt_select_row (GtkList *, GtkWidget *, gpointer);
 void on_list_select (GtkList *, GtkWidget *, gpointer);
 
 // Function Dialog Callbacks

@@ -91,7 +91,7 @@ ShowDialogue (RunData * rd)
 {
     u_int32 i;
     s_int32 result;
-    char *text[1];
+    GList *text = NULL;
     char **player_text;
 
     /* Thats the important call to the Dialogue engine with the (zero based)
@@ -125,18 +125,15 @@ ShowDialogue (RunData * rd)
                 &rd->npc->style->black, &rd->npc->style->white,
                 rd->data->npc_text, -1);
 
-            gtk_clist_freeze (GTK_CLIST (rd->player));
-            gtk_clist_clear (GTK_CLIST (rd->player));
-
+            gtk_list_clear_items (GTK_LIST (rd->player), 0, -1);
+            
             player_text = rd->data->player_text.get_array ();
             
             for (i = 0; i < rd->data->player_text.length (); i++)
-            {
-                text[0] = player_text[i];
-                gtk_clist_append (GTK_CLIST (rd->player), text);
-            }
-        
-            gtk_clist_thaw (GTK_CLIST (rd->player));
+                text = g_list_append (text, list_item (player_text[i], i));
+
+            gtk_list_append_items (GTK_LIST (rd->player), text);
+
             break;
         }
 
@@ -148,16 +145,36 @@ ShowDialogue (RunData * rd)
                 &rd->npc->style->black, &rd->npc->style->white,
                 rd->data->npc_text, -1);
 
-            gtk_clist_freeze (GTK_CLIST (rd->player));
-            gtk_clist_clear (GTK_CLIST (rd->player));
+            gtk_list_clear_items (GTK_LIST (rd->player), 0, -1);
 
-            text[0] = "... continue ...";
+            text = g_list_append (text, list_item ("... continue ...", 0));
+            gtk_list_append_items (GTK_LIST (rd->player), text);
 
-            gtk_clist_append (GTK_CLIST (rd->player), text);
-            gtk_clist_thaw (GTK_CLIST (rd->player));
             break;
         }
     }
     
     return result;
+}
+
+GtkWidget* list_item (const char *text, u_int32 index)
+{
+    GtkWidget *label;
+    GtkWidget *item;
+
+    /* create label */    
+    label = gtk_label_new (text);
+    gtk_widget_set_usize (label, 360, 0);
+    gtk_label_set_justify ((GtkLabel *) label, GTK_JUSTIFY_LEFT);
+    gtk_label_set_line_wrap ((GtkLabel *) label, TRUE);
+    gtk_widget_show (label);
+
+    /* add label to list_item */
+    item = gtk_list_item_new ();
+    gtk_container_add (GTK_CONTAINER(item), label);
+    gtk_object_set_user_data (GTK_OBJECT (item), GINT_TO_POINTER(index));
+    GTK_WIDGET_UNSET_FLAGS (item, GTK_CAN_FOCUS);
+    gtk_widget_show (item);
+    
+    return item;
 }
