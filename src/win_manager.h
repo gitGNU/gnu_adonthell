@@ -23,14 +23,9 @@
 #include "win_theme.h"
 #include "win_font.h"
 #include "win_base.h"
+#include "str_hash.h"
 
-using namespace std; 
-
-template<> struct hash<string> {
-    size_t operator()(const string& s) const {
-	return __stl_hash_string(s.c_str());
-}};
- 
+using namespace std;   
 
 class win_manager
 {

@@ -32,7 +32,8 @@
 #else
 #include <hash_map>
 #endif
-#include <map>
+#include "str_hash.h"
+// #include <map>
 #include <vector>
 #include <string>
 #include "types.h"
@@ -69,7 +70,7 @@ public:
      * @param key key.
      * @param value value.
      */
-    void set_val (const char * key, s_int32 value);
+    void set_val (string key, s_int32 value);
 
     /** 
      * Returns the value of a key.
@@ -78,7 +79,7 @@ public:
      * 
      * @return value of key.
      */
-    s_int32 get_val (const char * key);
+    s_int32 get_val (string key);
 
     /** 
      * Returns the next (key, value) pair of the storage.
@@ -86,7 +87,7 @@ public:
      * 
      * @return Next element.
      */
-    pair<const char *, s_int32> next ();
+    pair<string, s_int32> next ();
 
 #ifndef SWIG
     /** 
@@ -99,25 +100,13 @@ public:
      * 
      * @return value of key.
      */
-    s_int32& operator[] (const char * key);
+    s_int32& operator[] (string key);
 #endif
     
 private:
 #ifndef SWIG
-    /*
-     * Checks two strings for equality (needed for the hash_map)
-     *
-     */ 
-    struct equal_key
-    {
-        bool operator() (const char * s1, const char * s2)
-        {
-            return (strcmp (s1, s2) == 0);
-        } 
-    };
-
-    hash_map<const char *, s_int32, hash<const char *>, equal_key> data;
-    hash_map<const char *, s_int32, hash<const char *>, equal_key>::iterator i;
+    hash_map<string, s_int32> data;
+    hash_map<string, s_int32>::iterator i;
     u_int8 changed;
 #endif
 
@@ -127,7 +116,7 @@ public:
      * Storage iterator, similar to STL iterator.
      * 
      */ 
-    typedef hash_map<const char *, s_int32, hash<const char *>, equal_key>::iterator iterator;
+    typedef hash_map<string, s_int32>::iterator iterator;
     
     /** 
      * Returns an iterator to the beginning of the storage.
@@ -165,80 +154,72 @@ public:
 };
 
 
-/**
- * The global container for access to all the different %game objects 
- * from within a script
- */ 
-class objects
-{
-public:
-    /** 
-     * Default constructor.
-     * 
-     */
-    objects () { changed = 1; }
+// /**
+//  * The global container for access to all the different %game objects 
+//  * from within a script
+//  */ 
+// class objects
+// {
+// public:
+//     /** 
+//      * Default constructor.
+//      * 
+//      */
+//     objects () { changed = 1; }
     
-    /** 
-     * Associates an object to a key.
-     * 
-     * @param key key.
-     * @param val storage associated to key.
-     */
-    void set_val (const char * key, storage* val);
+//     /** 
+//      * Associates an object to a key.
+//      * 
+//      * @param key key.
+//      * @param val storage associated to key.
+//      */
+//     void set_val (const char * key, storage* val);
 
-    /** 
-     * Returns a storage associated to a key.
-     * 
-     * @param key key to return.
-     * 
-     * @return storage associated to key.
-     */
-    storage* get_val (const char * key);
+//     /** 
+//      * Returns a storage associated to a key.
+//      * 
+//      * @param key key to return.
+//      * 
+//      * @return storage associated to key.
+//      */
+//     storage* get_val (const char * key);
 
-    /** 
-     * Erases a storage from it's key.
-     * 
-     * @param key key to erase.
-     */
-    void erase (const char * key);
+//     /** 
+//      * Erases a storage from it's key.
+//      * 
+//      * @param key key to erase.
+//      */
+//     void erase (const char * key);
 
-    /** 
-     * Returns the next storage in the object.
-     * 
-     * 
-     * @return next storage in the object.
-     */
-    storage* next ();
+//     /** 
+//      * Returns the next storage in the object.
+//      * 
+//      * 
+//      * @return next storage in the object.
+//      */
+//     storage* next ();
 
-private:
+// private:
+// #ifndef SWIG
+//     /*
+//      * Checks two strings for their order (needed for the map)
+//      *
+//      */
+//     struct ltstr
+//     {
+//         bool operator()(const char* s1, const char* s2) const
+//         {
+//             return strcmp (s1, s2) < 0;
+//         }
+//     };
+
+//     map<const char*, storage*, ltstr> data;
+//     map<const char*, storage*, ltstr>::iterator i;
+//     u_int8 changed; 
+// #endif
+// };
+
 #ifndef SWIG
-    /*
-     * Checks two strings for their order (needed for the map)
-     *
-     */
-    struct ltstr
-    {
-        bool operator()(const char* s1, const char* s2) const
-        {
-            return strcmp (s1, s2) < 0;
-        }
-    };
-
-    map<const char*, storage*, ltstr> data;
-    map<const char*, storage*, ltstr>::iterator i;
-    u_int8 changed; 
-#endif
-};
-
-#ifndef SWIG
-
-struct eqstr
-{
-    bool operator()(const char * s1, const char * s2) const
-    {
-        return (strcmp (s1, s2) == 0);
-    }
-};
 
 /**
  * Stores %objects of any kind.
@@ -248,7 +229,7 @@ struct eqstr
  * 
  */
 template <class mytype>
-class dictionary : public hash_map<const char *, mytype, hash<const char *>, eqstr>
+class dictionary : public hash_map<string, mytype>
 {
 };
 

@@ -668,9 +668,9 @@ void mapcharacter::draw_bubble (s_int16 x, s_int16 y, const drawing_area * da_op
         s_int16 dx = x - (saying->drawing_area::length () >> 1) + (anim[current_move]->length () >> 1); 
         s_int16 dy = y - (saying->drawing_area::height ()) + 5;
 
-        if (dx < 0) dx = 0;
-        else if (dx + saying->drawing_area::length () > da_opt->x () + da_opt->length ())
-            dx = da_opt->x () + da_opt->length () - saying->drawing_area::length (); 
+        if (dx < 4) dx = 4;
+        else if (dx + saying->drawing_area::length () > da_opt->x () + da_opt->length () - 4)
+            dx = da_opt->x () + da_opt->length () - saying->drawing_area::length () - 4; 
         
         saying->move (dx, dy);
         saying->assign_drawing_area (da_opt);
