@@ -1,5 +1,6 @@
 /*
    $Id$
+
    Copyright (C) 2000 Andrew Henderson <hendersa@db.erau.edu>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
@@ -27,7 +28,7 @@ int audio_init() {
   audio_in = new audio;
 
   // Load our background music and SFX in
-  audio_in->load_background(0, "audio/water.it");
+  audio_in->load_background(0, "audio/at-2.it");
   audio_in->load_wave(0, "audio/at0.wav");
   audio_in->load_wave(1, "audio/at1.wav");
 
