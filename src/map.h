@@ -70,8 +70,6 @@ class map
   
  public:
   window win;          /* status window */
-  static const u_int8 depx=56;
-  static const u_int8 depy=12;
   //  static u_int8 (*stdevent[256])(mapevent * ev,mapcharacter * aguy,map * amap,
   //				 u_int16 x, u_int16 y);
   
@@ -112,10 +110,12 @@ class map
 			  mapsquare * msqr, int xo, int yo);
   void drawupsquarepart(int x, int y, int w, int h, 
 			mapsquare * msqr, int xo, int yo);
-  void draw_down();
-  void draw_up();
-  void draw_character(mapcharacter * aguy);
-  void draw_all_characters();
+  void draw_down(u_int16 depx=56, u_int16 depy=12,
+		 u_int16 length=13, u_int16 height=11);
+  void draw_up(u_int16 depx=56, u_int16 depy=12,
+	       u_int16 length=13, u_int16 height=11);
+  void draw_character(mapcharacter * aguy,u_int16 depx=56, u_int16 depy=12);
+  void draw_all_characters(u_int16 depx=56, u_int16 depy=12);
   bool is_unreachable(u_int16 x, u_int16 y);
   bool is_others_unreachable(u_int16 x, u_int16 y);
   u_int16 is_occuped(u_int16 x, u_int16 y);

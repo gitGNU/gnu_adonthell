@@ -636,63 +636,47 @@ void image::adapttodepth()
   // always convert to the display surface format..
 }
 
-void screen::init_display(u_int8 vidmode = 0)
+void screen::set_video_mode(u_int16 w, u_int16 h, u_int8 sf=1)
 {
   u_int8 bpp;
-  
-  switch (vidmode)
-    {
-    case 0:
-      screenwidth = 320;
-      screenheight = 200;
-      sizefactor = 1;
-      image::set_sizefactor(1);
-      break;
-    case 1:
-      screenwidth = 640;
-      screenheight = 400;
-      sizefactor = 2;
-      image::set_sizefactor(2);
-      break;
-    default:                   /*printdisclaimer(); */
-      exit (1);
-    }
 
+  image::set_sizefactor(sf);
   if (SDL_Init (SDL_INIT_VIDEO) < 0) {
     fprintf (stderr, "couldn't init SDL: %s\n", SDL_GetError ());
     exit (1);
   }
-
+  
   atexit (SDL_Quit);
-
-
-  bpp=SDL_VideoModeOK(screenwidth, screenheight, 16, SDL_HWSURFACE);
+  bpp=SDL_VideoModeOK(w, h, 16, SDL_HWSURFACE);
 
   switch (bpp)
     {
     case 0:
-      fprintf(stderr, "Video mode %dx%d unavailable. Exiting.. \n",screenwidth, screenheight);
+      fprintf(stderr, "Video mode %dx%d unavailable. Exiting.. \n",w, h);
       exit (1);
       break;
     case 16:
-      printf ("Using 16bpp depth: %dx%d.\n",screenwidth,screenheight);
+      printf ("Using 16bpp depth: %dx%d.\n",w,h);
       bytes_per_pixel = 2;
       trans=0xF81F;  
       break;
     case 24:
-      printf ("Using 24bpp depth: %dx%d.\n",screenwidth,screenheight);
+      printf ("Using 24bpp depth: %dx%d.\n",w,h);
       bytes_per_pixel = 3;
       trans=0xFF00FF;  
       break;
     default:
-      printf ("Emulating 16bpp depth in %dbpp mode: %dx%d.\n",bpp,screenwidth,screenheight);
+      printf ("Emulating 16bpp depth in %dbpp mode: %dx%d.\n",bpp,w,h);
       bpp=16;
       bytes_per_pixel = 2;
       trans=0xF81F;
       break;
     }
- 
-  vis = SDL_SetVideoMode (screenwidth, screenheight, bpp, SDL_HWSURFACE);
+
+  screenwidth=w;
+  screenheight=h;
+  sizefactor=sf;
+  vis=SDL_SetVideoMode(w, h, bpp, SDL_HWSURFACE);
   if (vis == NULL) 
     {
       fprintf (stderr, "error: %s\n", SDL_GetError ());
@@ -702,9 +686,29 @@ void screen::init_display(u_int8 vidmode = 0)
   SDL_ShowCursor(0);
   
   SDL_WM_SetCaption ("Adonthell", NULL);
-
+  
   init_gfx_buffers();
   frames_to_do=1;
+}
+
+void screen::init_display(u_int8 vidmode = 0)
+{  
+  switch (vidmode)
+    {
+    case 0:
+      screenwidth = 320;
+      screenheight = 200;
+      sizefactor = 1;
+      break;
+    case 1:
+      screenwidth = 640;
+      screenheight = 400;
+      sizefactor = 2;
+      break;
+    default:                   /*printdisclaimer(); */
+      exit (1);
+    }
+  set_video_mode(screenwidth, screenheight, sizefactor);
 }
 
 void screen::show()
@@ -787,6 +791,16 @@ void screen::makesquare(u_int16 px,u_int16 py, u_int16 fact)
   drawbox(0,200-fact-py,320,fact,0);
   drawbox(px,0,fact,200,0);
   drawbox(320-fact-px,0,fact,200,0);
+}
+
+void screen::mouse_cursor_off()
+{
+  SDL_ShowCursor(0);
+}
+
+void screen::mouse_cursor_on()
+{
+  SDL_ShowCursor(1);
 }
 
 sprite::sprite()

@@ -28,8 +28,8 @@ class mapengine
   static void cleanup();
   static void map_engine(map*amap);
   static void update_and_show(map * amap);
-  static void fade_out(map*amap); 
-  static void fade_in(map*amap); 
+  static void fade_out(map*amap,u_int16 depx=56, u_int16 depy=12); 
+  static void fade_in(map*amap,u_int16 depx=56, u_int16 depy=12); 
 };
 
 #endif

@@ -32,18 +32,33 @@ class screen
   static SDL_Surface * vis;
   static SDL_Surface * getbuffer;
 
+  static void set_video_mode(u_int16 w, u_int16 h, u_int8 sf=1);
+  // Set a video mode. sf is the size factor of all the drawables, set it to
+  // 2 if you want to double the drawables size.
+  // This function should only be used in very special cases, like editing
+  // tools.
   static void init_display(u_int8 vidmode = 0);
+  // Display init for the game. If vidmode != 0 the screen and drawable size
+  // will be doubled by a factor of vidmode.
   static void show();
+  // update the screen.
   static u_int8 get_bytes_per_pixel();
   static u_int8 get_sizefactor();
   static u_int32 get_trans();
   static u_int8 get_frames_to_do();
   static u_int8 get_screenwidth();
   static u_int8 get_screenheight();
+  // Protected variable access.
   static void init_gfx_buffers();
+  // Called by init_display to init the drawable fx buffers.
   static void drawbox(u_int16 x, u_int16 y, u_int16 w, u_int16 h, 
 		      u_int32 color);
+  // Draw a box of a given color.
   static void makesquare(u_int16 px, u_int16 py, u_int16 factor);
+  // FIXME: Used in mapeditor only, move it somewhere else
+  static void mouse_cursor_off();
+  static void mouse_cursor_on();
+  // Mouse cursor display functions.
 };
 
 class image

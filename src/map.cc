@@ -445,20 +445,21 @@ void map::drawupsquarepart(int x, int y, int w, int h, mapsquare * msqr,
   pattern[msqr->get_up_pattern_nbr()].putbox_part(x,y,w,h,xo,yo);
 }
 
-void map::draw_down()
+void map::draw_down(u_int16 depx=56, u_int16 depy=12, 
+		    u_int16 length=13, u_int16 height=11)
 {
   int i,j;
   if((mapaddx==0)&&(mapaddy==0))
     {
-      for(i=0;i<13;i++)
-	for(j=0;j<11;j++)
+      for(i=0;i<length;i++)
+	for(j=0;j<height;j++)
 	  drawdownsquare((i*16)+depx,
 			 (j*16)+depy,
 			 &themap[mapx-6+i][mapy-5+j]);
     }
   else
     {
-      if(mapaddx) for(j=0;j<11;j++)
+      if(mapaddx) for(j=0;j<height;j++)
 	{
 	  drawdownsquarepart(depx,
 			     (j*16)+depy,
@@ -466,62 +467,63 @@ void map::draw_down()
 			     &themap[mapx-6][mapy-5+j],
 			     mapaddx,0);
 	  
-	  for(i=1;i<13;i++)
+	  for(i=1;i<length;i++)
 	    drawdownsquare((i*16)+depx-mapaddx,
 			   (j*16)+depy-mapaddy,
 			   &themap[mapx-6+i][mapy-5+j]);
 	  
-	  drawdownsquarepart(depx+(13*16)-mapaddx,
+	  drawdownsquarepart(depx+(length*16)-mapaddx,
 			     (j*16)+depy,
 			     mapaddx,16,
 			     &themap[mapx+7][mapy-5+j],0,0);
 	}
-      if(mapaddy) for(i=0;i<13;i++)
+      if(mapaddy) for(i=0;i<length;i++)
 	{
 	  drawdownsquarepart((i*16)+depx,depy,16,16-mapaddy,
 			     &themap[mapx-6+i][mapy-5],0,mapaddy);
 		  
-	  for(j=1;j<11;j++)
+	  for(j=1;j<height;j++)
 	    drawdownsquare((i*16)+depx-mapaddx,(j*16)+depy-mapaddy,
 			   &themap[mapx-6+i][mapy-5+j]);
 	  
 	  drawdownsquarepart((i*16)+depx,
-			     depy+(11*16)-mapaddy,
+			     depy+(height*16)-mapaddy,
 			     16,mapaddy,
 			     &themap[mapx-6+i][mapy+6],0,0);
 	}
     }
 }
 
-void map::draw_up()
+void map::draw_up(u_int16 depx=56, u_int16 depy=12,
+		  u_int16 length=13, u_int16 height=11)
 {
   int i,j;
   if((mapaddx==0)&&(mapaddy==0))
     {
-      for(i=0;i<13;i++)
-	for(j=0;j<11;j++)
+      for(i=0;i<length;i++)
+	for(j=0;j<height;j++)
 	  drawupsquare((i*16)+depx,(j*16)+depy,
 		       &themap[mapx-6+i][mapy-5+j]);
     }
   else
     {
-      if (mapaddx) for(j=0;j<11;j++)
+      if (mapaddx) for(j=0;j<height;j++)
 	{
 	  drawupsquarepart(depx,(j*16)+depy,16-mapaddx,16,
 			   &themap[mapx-6][mapy-5+j],mapaddx,0);
 	  
-	  for(i=1;i<13;i++)
+	  for(i=1;i<length;i++)
 	    drawupsquare((i*16)+depx-mapaddx,
 			 (j*16)+depy-mapaddy,
 			 &themap[mapx-6+i][mapy-5+j]);
 	  
-	  drawupsquarepart(depx+(13*16)-mapaddx,
+	  drawupsquarepart(depx+(length*16)-mapaddx,
 			   (j*16)+depy,
 			   mapaddx,16,
 			   &themap[mapx+7][mapy-5+j],
 			   0,0);
 	}      
-      if(mapaddy) for(i=0;i<13;i++)
+      if(mapaddy) for(i=0;i<length;i++)
 	{
 	  drawupsquarepart((i*16)+depx,
 			   depy,
@@ -530,13 +532,13 @@ void map::draw_up()
 			   &themap[mapx-6+i][mapy-5],
 			   0,mapaddy);
 	  
-	  for(j=1;j<11;j++)
+	  for(j=1;j<height;j++)
 	    drawupsquare((i*16)+depx-mapaddx,
 			 (j*16)+depy-mapaddy,
 			 &themap[mapx-6+i][mapy-5+j]);
 	  
 	  drawupsquarepart((i*16)+depx,
-			   depy+(11*16)-mapaddy,
+			   depy+(height*16)-mapaddy,
 			   16,mapaddy,
 			   &themap[mapx-6+i][mapy+6],
 			   0,0);
@@ -544,7 +546,7 @@ void map::draw_up()
     }
 }
 
-void map::draw_character(mapcharacter * aguy)
+void map::draw_character(mapcharacter * aguy, u_int16 depx=56, u_int16 depy=12)
 { 
   s_int16 drawx=depx+((96+(aguy->get_posx()*16)+aguy->get_addx()-
 			    ((mapx*16)+mapaddx)));
@@ -602,11 +604,11 @@ void map::draw_character(mapcharacter * aguy)
     }
 }
 
-void map::draw_all_characters()
+void map::draw_all_characters(u_int16 depx=56, u_int16 depy=12)
 {
   u_int16 i;
   for(i=0;i<nbr_of_mapcharacters;i++)
-    draw_character(&othermapchar[i]);
+    draw_character(&othermapchar[i],depx,depy);
   draw_character(&heroe);
 }
 
