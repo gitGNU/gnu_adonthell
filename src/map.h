@@ -61,7 +61,7 @@ class map
   //				 u_int16 x, u_int16 y);
 
   map();
-  //  ~map();
+  // ~map();
   u_int16 get_patternset_to_map(FILE * file, u_int16 startpos);
   u_int16 load_patternset_to_map(char * fname, u_int16 startpos);
   s_int8 get(FILE * file);

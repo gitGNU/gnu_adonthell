@@ -48,19 +48,26 @@ public:
     int load_background(int slot, char *filename);
     void unload_background(int slot);
 
+    // All input is clamped from 0 to 255
     void set_background_volume(int);
 
     // Use only when music is loaded
     void pause_music(void);
     void unpause_music(void);
 
-  // Sound Effect functions:
     // Use these to load/unload wave files
     int load_wave(int slot, char *filename);
     void unload_wave(int slot);
 
+    // Used to just start sounds playing
     void play_wave(int channel, int slot);
     void play_background(int slot);
+
+    // Fade in and fade out background music (time in ms)
+    // Fadeout unselects current tune when done
+    void fade_in_background(int slot, int time);
+    void fade_out_background(int time);
+
 };
 
 #endif

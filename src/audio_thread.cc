@@ -32,7 +32,7 @@ int audio_init() {
   audio_in->load_wave(1, "audio/at1.wav");
 
   // Start the background music playing
-  audio_in->play_background(0);
+  audio_in->fade_in_background(0, 500);
   return(0);
 }
 

@@ -51,33 +51,29 @@ map::map()
   mapcharname=NULL;
   //  amap->toplayername=0;
 }
-
 /*
 map::~map()
 {
-  //  u_int16 i;
-
-  cout << "Freeing map\n";
-  //  for(i=0;i<maplong;i++)
-  //    delete [] themap[i];
-  //  delete [] themap;
-  cout << "1\n";
-  //  delete [] pattern;
-  cout << "2\n";
-  //  delete [] patternname;
-  cout << "3\n";
-  //  delete [] othermapchar;
-  cout << "4\n";
-  //  delete [] mapcharname;
-  cout << "5\n";
-  //  delete [] event;
-  cout << "6\n";
+  u_int16 i;
+  for(i=0;i<maplong;i++)
+    free(themap[i]);
+  free(themap);
+  for(i=0;i<nbr_of_patterns;i++)
+    pattern[i].~mappattern();
+  free(pattern);
+  free(patternname);
+  for(i=0;i<nbr_of_mapcharacters;i++)
+    othermapchar[i].~mapcharacter();
+  heroe.~mapcharacter();
+  free(othermapchar);
+  free(mapcharname);
+  free(event);
   //  free(toplayername);
   //  for(i=0;i<amap->toplayer.nbr_of_frames;i++)
   //    free(amap->toplayer.pixmap[i]);
   //  free(amap->toplayer.pixmap);
-}*/
-
+}
+*/
 u_int16 map::get_patternset_to_map(FILE * file, u_int16 startpos)
 {
   u_int16 i;
@@ -128,11 +124,10 @@ s_int8 map::get(FILE * file)
     }
   fread(&maplong,sizeof(maplong),1,file);
   fread(&maphaut,sizeof(maphaut),1,file);
-
-  themap= new mapsquare* [maplong];
   
+  themap=(mapsquare**)calloc(sizeof(mapsquare*),maplong);
   for(i=0;i<maplong;i++)
-    themap[i]=new mapsquare [maphaut];
+    themap[i]=(mapsquare*)calloc(sizeof(mapsquare),maphaut);
   fread(&mapx,sizeof(mapx),1,file);
   fread(&mapy,sizeof(mapy),1,file);
 
@@ -143,9 +138,9 @@ s_int8 map::get(FILE * file)
   heroe.get_heroe_stat(file);
 
   fread(&nbr_of_mapcharacters,sizeof(nbr_of_mapcharacters),1,file);
-  othermapchar= new mapcharacter[nbr_of_mapcharacters];
-  mapcharname= new lstr [nbr_of_mapcharacters];
-  //  mapcharname=(lstr*)calloc(sizeof(lstr),nbr_of_mapcharacters);
+  othermapchar=(mapcharacter*)calloc(sizeof(mapcharacter),
+				     nbr_of_mapcharacters);
+  mapcharname=(lstr*)calloc(sizeof(lstr),nbr_of_mapcharacters);
   for(i=0;i<nbr_of_mapcharacters;i++)
     {
       getstringfromfile(mapcharname[i],file);
@@ -164,7 +159,7 @@ s_int8 map::get(FILE * file)
   fread(&toplayerflags,sizeof(toplayerflags),1,file);
   /* Events */
   fread(&nbr_of_events,sizeof(nbr_of_events),1,file);
-  event=new mapevent [nbr_of_events+1];
+  event=(mapevent*)calloc(sizeof(mapevent),nbr_of_events+1);
   for(i=1;i<=nbr_of_events;i++)
     event[i].get(file);
   fread(&scrolltype,sizeof(scrolltype),1,file);
@@ -285,7 +280,12 @@ void map::update_keyboard()
 {
   if(status==MAP_STATUS_FADE) return;
   keyboard::update_keyboard();
-  if (keyboard::is_pushed(Escape_Key)) status=MAP_STATUS_QUIT;
+
+  if (keyboard::is_pushed(Escape_Key)) {
+    status=MAP_STATUS_QUIT;
+    audio_in->fade_out_background(500);
+  }
+
   if (heroe.get_scridx()) return;
 #ifdef SDL
   if((heroe.get_movtype()==RIGHT&&!keyboard::is_pushed(275))||
@@ -318,9 +318,16 @@ void map::update_keyboard()
 #endif
 
 #ifdef SDL_MIXER
-// Sound effects... not working at the moment
+  // Sound effects tied to keyboard
   if(keyboard::is_pushed(49)) audio_in->play_wave(1,0); // '1' Key
   if(keyboard::is_pushed(50)) audio_in->play_wave(1,1); // '2' Key
+
+  // Fade in and out for background music (500 ms, slot 0)
+  if (keyboard::is_pushed(51)) audio_in->fade_out_background(500); // '3' Key
+  if (keyboard::is_pushed(52)) audio_in->fade_in_background(0, 500);  // '4' Key
+
+  if (keyboard::is_pushed(53)) audio_in->set_background_volume(audio_in->background_volume - 2); // '5' Key
+  if (keyboard::is_pushed(54)) audio_in->set_background_volume(audio_in->background_volume + 2); // '6' Key
 #endif
 }
 

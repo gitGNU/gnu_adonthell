@@ -23,7 +23,7 @@ audio::audio() {
   int i;  // Generic counter variable
 
   audio_rate = 22050;        // Sample at 22050Hz
-  audio_format = AUDIO_S8;  // Output in signed 16-bit form
+  audio_format = AUDIO_S8;   // Output in signed 8-bit form
   audio_channels = 1;        // 1 is mono, 2 is stereo
   background_volume = 128;   // 128... seems to work well ;>
   buffer_size = 512;         // Audio buffer size
@@ -133,6 +133,11 @@ void audio::unpause_music(void) {
 }
 
 void audio::set_background_volume(int volume) {
+
+  // Check for bad input
+  if (volume < 0) Mix_VolumeMusic(0);
+  if (volume > 50) Mix_VolumeMusic (50);
+
   Mix_VolumeMusic(volume);
   background_volume = volume;
 }
@@ -166,6 +171,22 @@ void audio::play_background(int slot) {
   if (music[slot] != NULL) {
     current_background = slot;
     background_on = true;
+  }
+}
+
+void audio::fade_out_background(int time) {
+  if (background_on == true) {
+    Mix_FadeOutMusic(time);
+    background_on = false;
+    current_background = -1;
+  }
+}
+
+void audio::fade_in_background(int slot, int time) {
+  if ((background_on == false) && (music[slot] != NULL)) {
+    current_background = slot;
+    background_on = true;
+    Mix_FadeInMusic(music[slot], 0, time);
   }
 }
 
