@@ -517,7 +517,7 @@ s_int8 image::save_pnm(char * fname)
 
 #endif
 
-inline u_int32 image::get_pix(u_int16 x, u_int16 y)
+u_int32 image::get_pix(u_int16 x, u_int16 y)
 {
   u_int32 offset=((y*length)+x)*bytes_per_pixel;
   u_int32 retvalue=0;
@@ -525,7 +525,7 @@ inline u_int32 image::get_pix(u_int16 x, u_int16 y)
   return(retvalue);
 }
 
-inline void image::put_pix(u_int16 x, u_int16 y, u_int32 col)
+void image::put_pix(u_int16 x, u_int16 y, u_int32 col)
 {
   u_int32 offset=((y*length)+x)*bytes_per_pixel;
   memcpy((char*)data->pixels+offset,&col,bytes_per_pixel);

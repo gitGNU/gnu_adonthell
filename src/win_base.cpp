@@ -22,13 +22,22 @@
 #include "win_container.h"
 #include "win_select.h"
 
-void win_base::init_base(u_int16 tx,u_int16 ty, u_int16 tl,u_int16 th,win_container *twc,drawing_area * tda)
+
+#ifdef _DEBUG_
+u_int16 win_base::cpt_win_obj_debug=0;
+#endif
+
+
+
+void win_base::init_base(s_int16 tx,s_int16 ty, u_int16 tl,u_int16 th,win_container *twc,drawing_area * tda)
 {
    //set position
    win_base::x=tx;
    win_base::y=ty;
    win_base::length=tl;
    win_base::height=th;
+   save_x=0;
+   save_y=0;
    
    
    //set flags
@@ -43,6 +52,7 @@ void win_base::init_base(u_int16 tx,u_int16 ty, u_int16 tl,u_int16 th,win_contai
    win_base::update_da();
 
    //initialize image
+  
    h_border=NULL;
    v_border=NULL;
    corner=NULL;
@@ -51,7 +61,7 @@ void win_base::init_base(u_int16 tx,u_int16 ty, u_int16 tl,u_int16 th,win_contai
    wback=NULL;
    
    //initialize transluency of background
-   level_trans_back=128;
+   level_trans_back=180;
 
    //initialize select
    wselect=NULL;
@@ -61,24 +71,32 @@ void win_base::init_base(u_int16 tx,u_int16 ty, u_int16 tl,u_int16 th,win_contai
 
 }
 
-win_base::win_base(u_int16 tx,u_int16 ty, u_int16 tl,u_int16 th,win_container * twc=NULL,drawing_area * tda=NULL)
+win_base::win_base(s_int16 tx,s_int16 ty, u_int16 tl,u_int16 th,win_container * twc=NULL,drawing_area * tda=NULL)
 {
-   init_base(tx,ty,tl,th,twc,tda);
+#ifdef _DEBUG_
+  cout << "win_base() called, "<< ++cpt_win_obj_debug
+       << " objects currently allocated\n";
+#endif
+  init_base(tx,ty,tl,th,twc,tda);
 }
 
 win_base::~win_base()
 {
-   wc=NULL;
-   da=NULL;
-   wborder=NULL;
-   wback=NULL; 
+  wc=NULL;
+  da=NULL;
+  wborder=NULL;
+  wback=NULL; 
  
-   if(h_border) delete h_border;
-   if(v_border) delete v_border;
-   if(corner) delete corner;
-   if(background) delete background;
+#ifdef _DEBUG_
+  cout << "~win_base() called, "<< --cpt_win_obj_debug
+       << " objects currently allocated\n";
+#endif
+  
+  if(h_border) delete h_border;
+  if(v_border) delete v_border;
+  if(corner) delete corner;
+  if(background) delete background;
 }
-
 
 void win_base::select()
 {
@@ -100,12 +118,12 @@ void win_base::hide()
   visible=false;
 }
 
-u_int16 win_base::get_x()
+s_int16 win_base::get_x()
 {
    return(x);
 }
 
-u_int16 win_base::get_y()
+s_int16 win_base::get_y()
 {
    return(y);
 }
@@ -124,14 +142,17 @@ void win_base::resize(u_int16 tl, u_int16 th)
 {
    length=tl;
    height=th;
+   if(wc) wc->find_obj_max_y(); //for scrollbar
    resize_border();
    resize_background();
 }
 
-void win_base::move(u_int16 tx, u_int16 ty)
+void win_base::move(s_int16 tx, s_int16 ty,bool move_by_scrollbar=false )
 {
    x=tx;
    y=ty;
+   if(!move_by_scrollbar)
+     if(wc) wc->find_obj_max_y(); //for scrollbar
    win_base::update_da();
 }
 
@@ -150,11 +171,14 @@ void win_base::set_border(win_border * twb)
    wborder=twb;
    if(wborder)
      {
-	if(!h_border) h_border=new image();
-	if(!v_border) v_border=new image();
-	if(!corner) corner=new image();
-	*corner=*(twb->corner);
-	resize_border();
+       if(h_border) delete h_border;
+       if(v_border) delete v_border;
+       if(corner) delete corner;
+       h_border=new image();
+       v_border=new image();
+       corner=new image();
+       *corner=*(twb->corner);
+       resize_border();
      }
 }
 
@@ -229,7 +253,7 @@ void win_base::draw_border()
 		}
 	      else
 		{//if wselect but not select
-		  static image tmp;
+		  image tmp;
 		  if(wc)
 		    { 
 		      tmp.brightness(h_border,120);
@@ -315,7 +339,8 @@ void win_base::draw_border()
 void win_base::set_background(win_background * twb)
 {
   wback=twb;
-  if(!background) background = new image();
+  if(background) delete background;
+  background = new image();
   resize_background();  
 }
 
@@ -333,7 +358,7 @@ void win_base::draw_background()
 	    } 
 	  else
 	    {
-	      static image tmp;
+	      image tmp;
 	      tmp.brightness(background,120);
 	      if(wc) tmp.putbox_trans(real_x,real_y,level_trans_back,wc->get_drawing_area());
 	      else tmp.putbox_trans(real_x,real_y,level_trans_back);
@@ -397,6 +422,40 @@ void win_base::activate()
 {
   execute_activate_function();
 }
+
+void win_base::set_select_mode(u_int8 tmp)
+{
+  select_mode=tmp;
+}
+
+u_int8 win_base::get_select_mode()
+{
+  return select_mode;
+}
+
+
+
+void win_base::save_position()
+{
+  save_x=x;
+  save_y=y;
+}
+
+void win_base::reload_position()
+{
+  move(save_x,save_y);
+  // x=save_x;
+  //y=save_y;
+}
+
+
+
+
+
+
+
+
+
 
 
 

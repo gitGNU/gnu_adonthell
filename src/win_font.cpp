@@ -63,29 +63,40 @@ void win_font::load(char * rep)
   font->load_raw(path);//new
   //delete [] path;
   //create a table for each letter
-  table=new image[NB_TABLE_CHAR];
+  table=new image[WIN_NB_TABLE_CHAR];
+  init_in_table();
   char i;int j;
   u_int16 pos,tl;
   j=0;
-  while(j<NB_TABLE_CHAR && !feof(f) )
+  while(j<WIN_NB_TABLE_CHAR && !feof(f) )
     {
       fread(&i,sizeof(i),1,f);
       fread(&pos,sizeof(pos),1,f);
       fread(&tl,sizeof(tl),1,f);
+      table_core[i]=true;
       table[i].resize(tl,font->height);
       table[i].putbox_part_img(font,0,0,tl,font->height,pos,0);
       j++;
     }
   height=font->height;
-  lenght=table['A'].length;
+  length=table['A'].length;
+  if(font)delete font;
   fclose(f);
-  delete font;
 }
 
 
+bool win_font::in_table(u_int16 tmp)
+{
+  if(tmp>WIN_NB_TABLE_CHAR) return false;
+  return table_core[tmp];
+}
 
-
-
+void win_font::init_in_table()
+{
+  register u_int16 i;
+  for(i=0;i<WIN_NB_TABLE_CHAR;i++)
+    table_core[i]=false;
+}
 
 
 

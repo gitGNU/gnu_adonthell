@@ -16,7 +16,6 @@
 #define WIN_BORDER_H_
 
 #include "win_types.h"
-
 class image;
 class win_container;
 
@@ -44,11 +43,29 @@ class win_background
   ~win_background();
   void load(char *);
 };
+
+class win_cursor
+{
+ public:
+  image * cursor;
+  win_cursor(char *);
+  ~win_cursor();
+  void load(char *);
+};
+
+
+class win_scrollbar
+{
+ public:
+  image * bar;
+  image * bottom;
+  image * middle;
+  image * top;
+  win_scrollbar(char *);
+  void load(char *);
+  ~win_scrollbar();
+};
 #endif
-
-
-
-
 
 
 

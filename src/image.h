@@ -51,8 +51,6 @@ class image
   drawing_area * draw_to;
 
   inline void get_rects(s_int16 x, s_int16 y);
-  inline u_int32 get_pix(u_int16 x, u_int16 y);
-  inline void put_pix(u_int16 x, u_int16 y, u_int32 col);
 
  public:
   SDL_Surface * data;
@@ -106,6 +104,8 @@ class image
   void putbox_mask_img (image * source, u_int16 x, u_int16 y);
   void putbox_part_img (image * source, u_int16 x, u_int16 y, u_int16 bw, 
 			u_int16 bh, u_int16 xo, u_int16 yo);
+  u_int32 get_pix(u_int16 x, u_int16 y);
+  void put_pix(u_int16 x, u_int16 y, u_int32 col);
 };
 
 #endif

@@ -17,6 +17,7 @@
 
 #include "Python.h"
 #include "types.h"
+#include "window.h"
 #include "win_label.h"
 #include "win_container.h"
 #include "win_border.h"

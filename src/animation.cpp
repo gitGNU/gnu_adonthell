@@ -165,7 +165,7 @@ animation::animation()
   label_mode=container->add_label(5,5,100,30,font);
   label_frame_nbr=container->add_label(5,35,100,30,font);
   label_anim_info=container->add_label(5,65,100,65,font);
-  label_frame_info=container->add_label(5,100,100,65,font);
+  label_frame_info=container->add_label(5,100,100,100,font);
   bg=new image(320,240);
   bg->putbox_tile_img(&temp);
   container->set_border(border);
@@ -313,7 +313,6 @@ void animation::info_window(char * t_label)
   win_border * queryborder;
   win_font * queryfont;
   win_background * queryback;
-  u_int8 previous_mode=input::get_keyboard_mode();
 
   queryback=new win_background(WIN_THEME_ORIGINAL);
   queryfont=new win_font(WIN_THEME_ORIGINAL);
@@ -326,7 +325,6 @@ void animation::info_window(char * t_label)
   querycont->set_border(queryborder);
   querycont->set_background(queryback);
   querycont->show_all();
-  input::set_keyboard_mode(MODE_PUSHED);
   input::clear_keys_queue();
   do
     {
@@ -337,7 +335,6 @@ void animation::info_window(char * t_label)
       screen::show();
     }
   while(input::get_next_key()<0);
-  input::set_keyboard_mode(previous_mode);
   delete querycont;
   delete queryfont;
   delete queryback;
@@ -346,7 +343,6 @@ void animation::info_window(char * t_label)
 
 char * animation::query_window(char * t_label)
 {
-  u_int8 previous_mode=input::get_keyboard_mode();
   char * s;
   win_container * querycont;
   win_label * querylabel;
@@ -364,30 +360,32 @@ char * animation::query_window(char * t_label)
   querywrite=querycont->add_write(5,20,100,30,queryfont);
   querycont->set_border(queryborder);
   querycont->set_background(queryback);
-  querycont->show_all();  
-  input::set_keyboard_mode(MODE_CHAR);
+  querycont->show_all();
+  input::clear_keys_queue();
+  input::set_key_repeat();
   while(!querywrite->is_text())
     {
       input::update();
+      if(input::has_been_pushed(SDLK_ESCAPE))
+      {
+	delete querycont;
+	delete queryfont;
+	delete queryback;
+	s=NULL;
+	return(s);
+      }
       update_and_draw();
       querycont->update();
       querycont->draw();
       screen::show();
-      if(input::is_pushed(SDLK_ESCAPE))
-	{
-	  input::set_keyboard_mode(previous_mode);
-	  delete querycont;
-	  delete queryfont;
-	  delete queryback;
-	  s=NULL;
-	  return(s);
-	}
     }
-  input::set_keyboard_mode(previous_mode);
+  input::set_key_repeat(0);
+  input::clear_keys_queue();
   s=strdup(querywrite->get_text());
   delete querycont;
   delete queryfont;
   delete queryback;
+  cout << "Returning:" << s << endl;
   return(s);
 }
 
@@ -590,7 +588,7 @@ u_int16 animation::decrease_image(u_int16 c)
 
 inline bool testkey(SDLKey k)
 {
-  return ((input::is_pushed(k)));//&&(SDL_GetModState()&&KMOD_LCTRL)));
+  return ((input::has_been_pushed(k)));//&&(SDL_GetModState()&&KMOD_LCTRL)));
 }
 
 void animation::update_editor()
@@ -601,72 +599,68 @@ void animation::update_editor()
 
 void animation::update_editor_keys()
 {
-  if((SDL_GetModState()&&KMOD_LCTRL)) input::set_keyboard_mode(MODE_STATE);
-  else input::set_keyboard_mode(MODE_PUSHED);
-
   // Mode switching
-  if(input::is_pushed(SDLK_F1)) mode=IMAGE;
-  if(input::is_pushed(SDLK_F2)) mode=FRAME;
+  if(input::has_been_pushed(SDLK_F1)) mode=IMAGE;
+  if(input::has_been_pushed(SDLK_F2)) mode=FRAME;
 
   // General functions
-  if(input::is_pushed(SDLK_F5)) save();
-  if(input::is_pushed(SDLK_F6)) load();
+  if(input::has_been_pushed(SDLK_F5)) save();
+  if(input::has_been_pushed(SDLK_F6)) load();
 
-  // Image mode functions
-  if(mode==IMAGE)
+  // Editor keys
+
+  if(testkey(SDLK_RIGHT)) 
     {
-      if(testkey(SDLK_RIGHT)) 
-	currentimage=increase_image(currentimage);
-      if(testkey(SDLK_LEFT)) 
-	currentimage=decrease_image(currentimage);
-
-      if(input::is_pushed(SDLK_a)) add_image();
-      if(input::is_pushed(SDLK_d)) delete_image(currentimage);
+      if(mode==IMAGE) currentimage=increase_image(currentimage);
+      if((mode==FRAME)&&(!play_flag)) 
+	currentframe=increase_frame(currentframe);
     }
 
-  // Frame mode functions
-  else
+  if(testkey(SDLK_LEFT))
     {
-      if(input::is_pushed(SDLK_p)) play();
-      if(input::is_pushed(SDLK_o)) stop();
-      if(input::is_pushed(SDLK_i)) rewind();
-
-      if(!play_flag)
-	{
-	  if(input::is_pushed(SDLK_a)) add_frame();
-	  if(input::is_pushed(SDLK_d)) delete_frame(currentframe);
-	  if(testkey(SDLK_KP_PLUS))
-	    frame[currentframe].imagenbr=
-	      increase_image(frame[currentframe].imagenbr);
-	  if(testkey(SDLK_KP_MINUS)) 
-	    frame[currentframe].imagenbr=
-	      decrease_image(frame[currentframe].imagenbr);
-	  
-	  if(testkey(SDLK_RIGHT)) 
-	    currentframe=increase_frame(currentframe);
-	  if(testkey(SDLK_LEFT)) 
-	    currentframe=decrease_frame(currentframe);
-	  
-	  if(testkey(SDLK_UP))
-	    frame[currentframe].delay++;
-	  if(testkey(SDLK_DOWN)) 
-	    frame[currentframe].delay--;
-	  
-	  if(testkey(SDLK_PAGEUP)) frame[currentframe].alpha++;
-	  if(testkey(SDLK_PAGEDOWN)) frame[currentframe].alpha--;
-	  
-	  if(testkey(SDLK_HOME))
-	    frame[currentframe].nextframe=
-	      increase_frame(frame[currentframe].nextframe);
-	  if(testkey(SDLK_END)) 
-	    frame[currentframe].nextframe=
-	      decrease_frame(frame[currentframe].nextframe);
-	  
-	  if(testkey(SDLK_INSERT)) 
-	    frame[currentframe].is_masked=frame[currentframe].is_masked==true?
-	      false:true;
-	}
+      if(mode==IMAGE) currentimage=decrease_image(currentimage);
+      if((mode==FRAME)&&(!play_flag)) 
+	currentframe=decrease_frame(currentframe);
     }
+
+  if(input::has_been_pushed(SDLK_a))
+    {
+      if(mode==IMAGE) add_image();
+      if((mode==FRAME)&&(!play_flag)) add_frame();
+    }
+  
+  if(input::has_been_pushed(SDLK_d))
+    {
+      if(mode==IMAGE) delete_image(currentimage);
+      if((mode==FRAME)&&(!play_flag)) delete_frame(currentframe);
+    }
+
+  if(input::has_been_pushed(SDLK_p)) play();
+  if(input::has_been_pushed(SDLK_o)) stop();
+  if(input::has_been_pushed(SDLK_i)) rewind();
+
+  if(testkey(SDLK_KP_PLUS)&&mode==FRAME)
+    frame[currentframe].imagenbr=increase_image(frame[currentframe].imagenbr);
+
+  if(testkey(SDLK_KP_MINUS)&&mode==FRAME) 
+    frame[currentframe].imagenbr=decrease_image(frame[currentframe].imagenbr);
+
+  if(testkey(SDLK_UP)&&mode==FRAME) frame[currentframe].delay++;
+  if(testkey(SDLK_DOWN)&&mode==FRAME) frame[currentframe].delay--;
+
+  if(testkey(SDLK_PAGEUP)&&mode==FRAME) frame[currentframe].alpha++;
+  if(testkey(SDLK_PAGEDOWN)&&mode==FRAME) frame[currentframe].alpha--;
+  
+  if(testkey(SDLK_HOME)&&mode==FRAME)
+    frame[currentframe].nextframe=
+      increase_frame(frame[currentframe].nextframe);
+  if(testkey(SDLK_END)&&mode==FRAME) 
+    frame[currentframe].nextframe=
+      decrease_frame(frame[currentframe].nextframe);
+  
+  if(testkey(SDLK_INSERT)&&mode==FRAME) 
+    frame[currentframe].is_masked=frame[currentframe].is_masked==true?
+      false:true;
 }
 
 void animation::draw_editor()
@@ -750,15 +744,13 @@ void animation::update_and_draw()
 
 void animation::editor()
 {
-  u_int8 previous_mode=input::get_keyboard_mode();
-  while(!input::is_pushed(SDLK_ESCAPE))
+  while(!input::has_been_pushed(SDLK_ESCAPE))
     {
       input::update();
       update_editor_keys();
       update_and_draw();
       screen::show();
     }
-  input::set_keyboard_mode(previous_mode);
 }
 
 #endif

@@ -33,10 +33,11 @@ class screen
   static u_int32 trans;
 
   static SDL_Surface * vis;
-  static SDL_Surface * getbuffer;
 
-  static void set_video_mode(u_int16 w, u_int16 h);
+  static void set_video_mode(u_int16 w, u_int16 h, config * myconfig=NULL);
   static void init_display(config *myconfig);
+  static void set_fullscreen(bool mode);
+  static bool get_fullscreen();
   static void show();
   // update the screen.
 

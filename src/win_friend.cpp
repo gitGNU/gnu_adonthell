@@ -25,7 +25,7 @@ void draw_text(u_int16 sx,u_int16 sy,u_int16 ex,u_int16 ey,win_font *font,text_w
   u_int16 j;
   u_int8 k;
   bool b;
-  static image tmp;
+  image tmp;
   txt.len_fl=0;
   txt.pos_tmp=txt.pos;
   txt.end_win=false;
@@ -35,7 +35,7 @@ void draw_text(u_int16 sx,u_int16 sy,u_int16 ex,u_int16 ey,win_font *font,text_w
     while((b) && ((sx+j)<ex) && (txt.pos_tmp<txt.lenght)) {
       k=txt.text[txt.pos_tmp];
       if(k==' ') 
-	j+=font->lenght;
+	j+=font->length;
       else { 
 	if(k=='\n') b=false;
 	else { 

@@ -49,6 +49,7 @@ void win_border::update()
 
 win_border::~win_border()
 {
+ 
   if(h_border_template) delete h_border_template;
   if(v_border_template)  delete v_border_template;
   if(corner) delete corner;
@@ -79,7 +80,9 @@ void win_border::load(char * rep,char *size)
   strcat(tmp,WIN_CORNER_FILE);
   corner->load_raw(tmp);//new
 }
-
+/***********************************************************/
+/***************************WIN BACKGROUND******************/
+/***********************************************************/
 
 
 
@@ -105,4 +108,99 @@ void win_background::load(char *rep)
   background_template=new image();
   background_template->load_raw(path);//new
 }
+
+
+
+/***********************************************************/
+/***************************WIN CURSOR******************/
+/***********************************************************/
+
+
+
+win_cursor::win_cursor(char *rep)
+{
+  cursor=NULL;
+  win_cursor::load(rep);
+}
+
+win_cursor::~win_cursor()
+{
+  delete cursor;
+}
+
+void win_cursor::load(char *rep)
+{
+  if(cursor) delete cursor;
+  char path[255];
+  strcpy(path,WIN_DIRECTORY);
+  strcat(path,WIN_CURSOR_DIRECTORY);
+  strcat(path,rep);
+  strcat(path,WIN_CURSOR_FILE);
+  cursor=new image();
+  cursor->load_raw(path);//new
+}
+
+
+
+/********************************************/
+/****************win_scrollbar***************/
+/********************************************/
+
+win_scrollbar::win_scrollbar(char * theme)
+{
+  bar=NULL;
+  bottom=NULL;
+  middle=NULL;
+  top=NULL;
+  load(theme);
+}
+
+void win_scrollbar::load(char * theme)
+{
+  if(bar) delete bar; 
+  if(bottom) delete bottom; 
+  if(middle) delete middle;
+  if(top) delete top;
+  char path[255];char tmp[255];
+  strcpy(path,WIN_DIRECTORY);
+  strcat(path,WIN_SCROLLBAR_DIRECTORY);
+  strcat(path,theme);
+  
+  bar=new image();
+  strcpy(tmp,path);
+  strcat(tmp,WIN_SCROLLBAR_BAR_FILE);
+  bar->load_raw(tmp);
+    
+  bottom=new image();
+  strcpy(tmp,path);
+  strcat(tmp,WIN_SCROLLBAR_BOTTOM_FILE);
+  bottom->load_raw(tmp);
+ 
+  middle=new image();
+  strcpy(tmp,path);
+  strcat(tmp,WIN_SCROLLBAR_MIDDLE_FILE);
+  middle->load_raw(tmp);
+ 
+  top=new image();
+  strcpy(tmp,path);
+  strcat(tmp,WIN_SCROLLBAR_TOP_FILE);
+  top->load_raw(tmp);
+}
+
+win_scrollbar::~win_scrollbar()
+{
+  if(bar) delete bar; 
+  if(bottom) delete bottom; 
+  if(middle) delete middle;
+  if(top) delete top;
+}
+
+
+
+
+
+
+
+
+
 

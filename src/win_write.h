@@ -17,27 +17,51 @@
 
 
 class win_base;
+class win_label;
 class win_font;
 class win_container;
 class drawing_area;
 
-class win_write : public win_base
+class win_write : public win_label
 {
-  win_font * font;
+
+  char tmp_input[2];
+  char text_get[WIN_TEXT_MAX_LENGTH]; 
+  bool ok_text;
+  u_int16 begin_text;
+  u_int16 end_text;
   
   void write();
+ 
+ public:
+  win_write(s_int16,s_int16,u_int16,u_int16,win_font * fo,win_container *);
+  
+
+
+  void update();
+  bool is_text();
+  char * get_text_entry(); //get text between two entry
+  
+  /*
+  // win_font * font;
+  
+  // void write();
   
  protected:
-  
-  char text_result[TEXT_MAX];
+   
+  char text_result[WIN_TEXT_MAX_LENGTH];
   
   text_w text;
-  /*  int beg_select;
-      int end_select;*/
+  int beg_select;
+  int end_select;
   bool ok_text;
   
  
  public:
+
+
+
+  
   win_write(u_int16,u_int16,u_int16,u_int16,win_font *fo,win_container *);
   ~win_write();
   void set_font(win_font *fo);
@@ -45,6 +69,7 @@ class win_write : public win_base
   char * get_text();//return seltext if is_text
   void draw();
   void update();
+  */
 };
 
 #endif

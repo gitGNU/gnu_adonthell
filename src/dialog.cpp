@@ -17,7 +17,6 @@
 
 #include "character.h"
 #include "mapcharacter.h"
-#include "win_font.h"
 #include "game.h"
 #include "py_inc.h"
 #include "yarg.h"
@@ -385,9 +384,9 @@ dialog_engine::~dialog_engine ()
 {
     delete wnd;
     delete border;
-    delete face;
-    delete name;
-    delete txt;
+    //    delete face;
+    //    delete name;
+    //    delete txt;
     delete font;
 }
 
@@ -425,6 +424,7 @@ void dialog_engine::update_keyboard ()
 {
     if (input::has_been_pushed (SDLK_SPACE))
     {
+        screen::drawbox(0,0,320,200,0);
         game::engine = engine;
         delete this;
     }

@@ -22,7 +22,7 @@
 #include "win_image.h"
 
 
-win_image::win_image(u_int16 tx,u_int16 ty,image * tpic,win_container * twc):win_base(tx,ty,0,0,twc,twc->get_drawing_area())
+win_image::win_image(s_int16 tx,s_int16 ty,image * tpic,win_container * twc):win_base(tx,ty,0,0,twc,twc->get_drawing_area())
 {
   picture=tpic;
   if(picture)
@@ -34,11 +34,7 @@ win_image::win_image(u_int16 tx,u_int16 ty,image * tpic,win_container * twc):win
 
 win_image::~win_image()
 {
-  if(wselect)
-    {
-       wselect->remove(this);
-       wselect=NULL;
-     }
+  dettach_select();
 }
 
 void win_image::set_image(image * tpic)
@@ -62,5 +58,31 @@ void win_image::draw()
 
 void win_image::update()
 {
-
+ 
 }
+
+
+
+
+
+void win_image::attach_select(win_select * tmp)
+{
+   wselect=tmp;
+}
+
+
+void win_image::dettach_select()
+{
+  if(wselect)
+    {
+      wselect->remove(this);
+      wselect=NULL;
+    }
+}
+
+
+
+
+
+
+

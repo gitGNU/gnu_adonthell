@@ -24,6 +24,8 @@ class win_write;
 class win_container;
 class win_border;
 class win_select;
+class win_cursor;
+class image;
 
 class Type_win_select{
 
@@ -45,9 +47,6 @@ class Type_win_select{
   ///needed to identify type of object
   u_int8 id; // 0:lab, 1:wri, 2:img, 3: con
   
-  //selection mode; 0: brightness, 1: border
-  u_int8 mode; 
-
   //constructor for each object
   Type_win_select(win_image * p,win_select *,u_int8 m);
   Type_win_select(win_label * p,win_select *,u_int8 m);
@@ -67,6 +66,10 @@ class Type_win_select{
 
   //give the unselected mode of this object
   void unselect();
+  
+  s_int16 get_y_move(win_container *);
+
+  void y_move(s_int16);
 };
 
 
@@ -77,17 +80,12 @@ class win_select
   //****************************************
   //**************** PUBLIC  ***************
   //****************************************
-  
+  win_container * wc;
   //CONSTRUCTOR
-   win_select();
+  win_select(win_container *);
 
    //DESTRUCTOR
   ~win_select();
-
-  
-  
-
-
 
   //list of all object in this selection
   list<Type_win_select> l_list;
@@ -95,8 +93,11 @@ class win_select
   //pointer on the l_list
   list<Type_win_select>::iterator ite_list;
   
+  
   //border used to select an object
   win_border * cur_border; 
+  //cursor used to select an object
+  win_cursor * cursor;
   
   //Method used to add object
   void add(win_label *,u_int8 m=WIN_SELECT_MODE_BRIGHTNESS);
@@ -108,7 +109,7 @@ class win_select
   void remove(win_label *);
   void remove(win_write *);
   void remove(win_image *);
-  void remove(win_container *);
+  void remove(win_container*);
 
   //change position to next object and return this pointer 
   void * next();
@@ -119,15 +120,23 @@ class win_select
   //get pointer of the cur object 
   void * get();
 
+  //get position of the cur object start at 1 return zero if no objet
+  u_int16 get_pos();
+  
+
   //set the default object
-  void set_default(void * tmp);
+  void set_default_obj(void * tmp);
 
   //set border to the selection, You need to set a border if you have insert object with WIN_SELECT_MODE_BORDER
   void set_border(win_border *);
   
+  void set_cursor(win_cursor *);
+
   //activate the cur object
   void activate_select();
   
+  void adjust_visible();
+
 };
 #endif
 

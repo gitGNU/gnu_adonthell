@@ -387,7 +387,7 @@ void landmap::update_keyboard()
   if (input::is_pushed(SDLK_i))
 	  test_inventory(this);
 
-    if (input::is_pushed(SDLK_SPACE))
+    if (input::has_been_pushed(SDLK_SPACE))
     {
         // when starting a dialogue
         game::engine = new dialog_engine (&othermapchar[0], this);

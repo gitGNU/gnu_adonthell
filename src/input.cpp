@@ -62,8 +62,6 @@ void input::update()
 bool input::is_pushed(SDLKey key)
 {
   bool ret;
-  /*  if(keyboard_mode==MODE_PUSHED) keystate[key]=0;
-      if(keyboard_mode==MODE_PUSHED) ret=p_keystate[key]; else ret=keystate[key];*/
   ret=keystate[key];
   if((ret)&&(p_keystate[key])) p_keystate[key]--;
   return ret;
@@ -77,37 +75,10 @@ bool input::has_been_pushed(SDLKey key)
   return ret;
 }
 
-/*void input::set_keyboard_mode(u_int8 mode)
-{
-  if((mode==MODE_CHAR)&&(keyboard_mode!=MODE_CHAR))
-    {
-      SDL_EnableUNICODE(1);
-      set_key_repeat();
-      //      SDL_SetEventFilter(NULL);
-    }
-  if((mode==MODE_STATE)&&(keyboard_mode!=MODE_STATE))
-    {
-      SDL_EnableUNICODE(0);
-      set_key_repeat(0,0);
-      //      SDL_SetEventFilter(NULL);
-    }
-  if((mode==MODE_PUSHED)&&(keyboard_mode!=MODE_PUSHED))
-    {
-      SDL_EnableUNICODE(0);
-      set_key_repeat(0,0);
-    }
-  keyboard_mode=mode;
-}*/
-
 void input::set_key_repeat(int delay=SDL_DEFAULT_REPEAT_DELAY, int interval=SDL_DEFAULT_REPEAT_INTERVAL)
 {
   SDL_EnableKeyRepeat(delay, interval);
 }
-
-/*u_int8 input::get_keyboard_mode()
-{
-  return(keyboard_mode);
-}*/
 
 s_int32 input::get_next_key()
 {
@@ -117,8 +88,8 @@ s_int32 input::get_next_key()
   if(SDL_PeepEvents(&event,1,SDL_GETEVENT,SDL_KEYDOWNMASK)==1)
     {
       b=true;
-      /*      if(p_keystate[event.key.keysym.sym]) p_keystate[event.key.keysym.sym]--;
-	      if(!p_keystate[event.key.keysym.sum]) keystate[event.key.keysym.sym]=0;*/
+      if(p_keystate[event.key.keysym.sym]) p_keystate[event.key.keysym.sym]--;
+      keystate[event.key.keysym.sym]=0;
     }
   // FIXME: this should be placed elsewhere.
   while(SDL_PeepEvents
@@ -131,13 +102,15 @@ s_int32 input::get_next_unicode()
 {
   static SDL_Event event;
   static bool b;
-  //  if(!get_unicode()) return 0;
   b=false;
   if(SDL_PeepEvents(&event,1,SDL_GETEVENT,SDL_KEYDOWNMASK)==1)
     {
       b=true;
-      /*      if(p_keystate[event.key.keysym.sym]) p_keystate[event.key.keysym.sym]--;
-	      if(!p_keystate[event.key.keysym.sum]) keystate[event.key.keysym.sym]=0;*/
+      if(event.key.keysym.unicode)
+	{
+	  if(p_keystate[event.key.keysym.sym]) p_keystate[event.key.keysym.sym]--;
+	  keystate[event.key.keysym.sym]=0;
+	}
     }
   // FIXME: this should be placed elsewhere.
   while(SDL_PeepEvents
@@ -146,40 +119,8 @@ s_int32 input::get_next_unicode()
   return(-1);
 }
 
-  /*s_int32 input::get_next_key()
-{
-  static SDL_Event event;
-  if(SDL_PeepEvents(&event,1,SDL_GETEVENT,SDL_KEYDOWNMASK)==1)
-    {
-      if(p_keystate[event.key.keysym.sym]) p_keystate[event.key.keysym.sym]--;
-      if(keyboard_mode==MODE_PUSHED) keystate[event.key.keysym.sym]=0;
-      if(keyboard_mode==MODE_CHAR) 
-	{
-	  return(event.key.keysym.unicode);
-	}
-      else if((keyboard_mode==MODE_STATE)||(keyboard_mode==MODE_PUSHED)) 
-	{
-	  return(event.key.keysym.sym);
-	}
-      else return(0);
-    }
-  while(SDL_PeepEvents
-	(&event,1,SDL_GETEVENT,SDL_ALLEVENTS-SDL_KEYDOWNMASK)==1);
-  return(-1);
-}*/
-
 void input::clear_keys_queue()
 {
   while(get_next_key()!=-1);
   memset(p_keystate, 0, keystatelength);
 }
-
-/*void input::set_unicode(bool u)
-{
-  is_unicode_on=u;
-}
-
-bool input::get_unicode()
-{
-  return is_unicode_on;
-}*/

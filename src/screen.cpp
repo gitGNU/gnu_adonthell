@@ -19,20 +19,23 @@
 #include "image.h"
 #include "pnm.h"
 #include "prefs.h"
+#include "input.h"
 
 u_int16 screen::width;
 u_int16 screen::height;
-u_int32 screen::SDL_flags;
+u_int32 screen::SDL_flags=0;
 u_int8 screen::frames_to_do;
 u_int8 screen::bytes_per_pixel;
 u_int32 screen::trans;
 
 SDL_Surface * screen::vis;
-SDL_Surface * screen::getbuffer;
 
-void screen::set_video_mode(u_int16 w, u_int16 h)
+void screen::set_video_mode(u_int16 w, u_int16 h, config * myconfig=NULL)
 {
   u_int8 bpp;
+  SDL_flags |= SDL_HWSURFACE;
+  SDL_flags |= SDL_DOUBLEBUF;
+  //  if(myconfig&&(myconfig->screen_mode == 1)) SDL_flags |= SDL_FULLSCREEN;
 
   if (SDL_Init (SDL_INIT_VIDEO) < 0) {
     fprintf (stderr, "couldn't init SDL: %s\n", SDL_GetError ());
@@ -40,7 +43,7 @@ void screen::set_video_mode(u_int16 w, u_int16 h)
   }
   
   atexit (SDL_Quit);
-  bpp = SDL_VideoModeOK(w, h, 16, SDL_HWSURFACE | SDL_flags);
+  bpp = SDL_VideoModeOK(w, h, 16, SDL_flags);
 
   switch (bpp)
     {
@@ -76,32 +79,36 @@ void screen::set_video_mode(u_int16 w, u_int16 h)
       fprintf (stderr, "error: %s\n", SDL_GetError ());
       exit (1);
     }
+
   // Turning off mouse cursor
   SDL_ShowCursor(0);
   
   SDL_WM_SetCaption ("Adonthell", NULL);
   
-  init_gfx_buffers();
   frames_to_do=1;
+}
+
+void screen::set_fullscreen(bool mode)
+{
+  if(mode)
+    {
+      SDL_flags|=SDL_FULLSCREEN;
+    }
+  else
+    {
+      SDL_flags-=SDL_FULLSCREEN;
+    }
+  vis=SDL_SetVideoMode(width,height,bytes_per_pixel*8,SDL_flags);
+}
+
+bool screen::get_fullscreen()
+{
+  return(SDL_flags&SDL_FULLSCREEN);
 }
 
 void screen::init_display(config *myconfig)
 {
-  SDL_flags = 0x0;
-
-  // Set width and height of display
-  if (myconfig->screen_resolution == 1) {
-    width = 640;
-    height = 480;
-  } else {
-    width = 320;
-    height = 200;
-  }
-
-  // Check for full screen mode
-  if (myconfig->screen_mode == 1) SDL_flags |= SDL_FULLSCREEN;
-
-  set_video_mode(width, height);
+  set_video_mode(320,200,myconfig);
 }
 
 void screen::show()
@@ -121,16 +128,18 @@ void screen::show()
     }
   timer1=SDL_GetTicks();
   timer1-=(timer3%cycle_length);
-
-  SDL_UpdateRect (vis, 0, 0, 0, 0);
+  SDL_Flip(vis);
+  //  SDL_UpdateRect (vis, 0, 0, 0, 0);
   // How slow is our machine? :)
   frames_to_do=timer3/cycle_length;
   if(frames_to_do>20) frames_to_do=20;
-}
-
-void screen::init_gfx_buffers()
-{
- getbuffer=SDL_ConvertSurface(vis, vis->format, SDL_HWSURFACE);
+  if ((SDL_GetModState()&KMOD_ALT)&&(input::is_pushed(SDLK_RETURN)))
+    {
+      if(screen::get_fullscreen())
+	screen::set_fullscreen(false);
+      else screen::set_fullscreen(true);
+      input::clear_keys_queue();
+    }
 }
 
 void screen::drawbox(u_int16 x, u_int16 y, u_int16 w, u_int16 h, u_int32 color)

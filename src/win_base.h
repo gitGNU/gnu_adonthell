@@ -24,16 +24,20 @@ class win_select;
 
 class win_base
 {
- private:
-  void init_base(u_int16 tx,u_int16 ty, u_int16 tl,u_int16 th,win_container *,drawing_area *);
-  
 
- 
+ private:
+  void init_base(s_int16 tx,s_int16 ty, u_int16 tl,u_int16 th,win_container *,drawing_area *);
+  
+  s_int16 save_x;
+  s_int16 save_y;
+#ifdef _DEBUG_
+  static u_int16 cpt_win_obj_debug; 
+#endif
   image * corner;
   image * h_border;
   image * v_border;
   image * background;
-  
+
   //contain image to build border
   win_border * wborder;
   
@@ -43,70 +47,44 @@ class win_base
   //transparency of background
   u_int8 level_trans_back;
   
-
+  //function to activate by selection
   void (*act_function)(void*,void*);
   void * param_func1;
   void * param_func2;
   void execute_activate_function();
   
- protected: 
 
+ protected: 
   //pointer of win_select, needed because each object depend of a win_container
    win_container * wc;
 
    //drawing area where the object can be visible
    drawing_area * da;
    
-   //position and size of this object
-   u_int16 x;
-   u_int16 y;
-   u_int16 length;
-   u_int16 height;
-   
-
    bool selected;
    bool visible;
-  
-
+    
    void draw_background();
-   
    void draw_border();
-   //resize border: Don't use it
    void resize_border();
-   //draw border: Don't use it
    void resize_background();
 
-   
-
+   u_int8 select_mode;
  
  public:
-    win_base(u_int16,u_int16,u_int16,u_int16,win_container * twc=NULL ,drawing_area * tda=NULL);
+
+   
+   /**************************************************************************/
+   /****************************YOU CAN USE THIS *****************************/
+   /**************************************************************************/
+ 
+   win_base(s_int16,s_int16,u_int16,u_int16,win_container * twc=NULL ,drawing_area * tda=NULL);
    ~win_base();
-   
-   //pointer to a win_select
-   win_select * wselect;
 
-   //mode of the selection
-   u_int8 select_mode;
-
-   //postion of x,y in the screen, not the position of the object in a container
-   u_int16 real_x;
-   u_int16 real_y;
-     
-   
-   //select && visible
-   void select();
-   void unselect();
+   //visible
    void show();
    void hide();
-
-   //update postion and etc.... : don't use it
-   void update_da();
- 
-
-   //activate the object:: don't use it
-   void activate();
- 
+  
    //attach a function which is executing when the object is activate
    //this function must have 2 parameter void
    void attach_activate_function(void (*f)(void*,void*),void*,void*);
@@ -115,26 +93,62 @@ class win_base
    void detach_activate_function();
 
    //position && size
-   u_int16 get_x();
-   u_int16 get_y();
+   s_int16 get_x();
+   s_int16 get_y();
    u_int16 get_length();
    u_int16 get_height();
    void resize(u_int16,u_int16);
-   void move(u_int16,u_int16);
+   void move(s_int16,s_int16,bool move_by_scrollbar=false);
+   
+   //select mode
+   void set_select_mode(u_int8);
+   u_int8 get_select_mode();
    
    //return pointer drawing_area
    drawing_area * get_drawing_area();
    
-  //return norder of this object
+   //return norder of this object
    win_border * get_border(); 
    
    //set border of this object, if paramater is NULL, no border is drawing
-   void set_border(win_border *);
-  
-    //set background of this object, if paramater is NULL, no background is drawing
+   void set_border(win_border * );
+   
+   //set background of this object, if paramater is NULL, no background is drawing
    void set_background(win_background * );
-  
+
+
+
+
+   /**************************************************************************/
+   /****************************NEVER USE THIS *******************************/
+   /**************************************************************************/
+   
+   //pointer to a win_select, if this object is in a win_select wselect!=NULL
+   win_select * wselect;
+   
+   //postion of x,y in the screen, not the position of the object in a container
+   s_int16 real_x; //position on the screen
+   s_int16 real_y; //position on the screen
+   
+   //x,y position in the container
+   s_int16 x; //position on a container
+   s_int16 y; //position on a container
+   u_int16 length; //size visible on the screen
+   u_int16 height; //size visible on the screen
+   
+   //select && visible
+   void select();
+   void unselect();
+   
+   //update postion and etc.... 
+   void update_da();
  
+   //activate the object
+   void activate();
+
+   void save_position();
+   void reload_position();
+
 };
 #endif
 

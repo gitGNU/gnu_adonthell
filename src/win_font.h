@@ -21,18 +21,19 @@ class win_font{
 
  private:
   void erase();
-
+  void init_in_table();
 
  public:
   
   image * table;
   u_int8 height;
-  u_int8 lenght; //just for space bar
-  
+  u_int8 length; //just for space bar
+  bool table_core[WIN_NB_TABLE_CHAR];
   win_font();
   win_font(char *);
   ~win_font();
   void load(char *);
+  bool in_table(u_int16 tmp);
 };
 
 #endif
