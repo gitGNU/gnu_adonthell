@@ -48,15 +48,10 @@ config::config ()
     audio_resolution = 1;           // 16 bit
     audio_sample_rate = 2;          // 11025, 22050 or 44100 Hz
     audio_volume = 100;             // 0 - 100%
+    language = "";                  // Let the user's environment decide
     
     // set the path to the adonthellrc file:
     adonthellrc = string (getenv ("HOME")) + "/.adonthell";
-    
-    // try to figure out the language
-    char *lang = getenv ("LANG");
-    if (lang == NULL) lang = getenv ("LC_ALL");
-    if (lang == NULL) lang = getenv ("LC_MESSAGES");
-    language = lang ? lang : "en_EN";
 }
  
 /**

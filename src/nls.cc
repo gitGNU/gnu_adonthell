@@ -30,7 +30,12 @@
 // Initialize NLS
 void nls::init (config &myconfig)
 {
-    if (myconfig.language != "en_EN")
+    // if no language specified in the config file, determine
+    // the locale from the environment variables 
+    if (myconfig.language == "")
+        setlocale (LC_MESSAGES, "");
+    // otherwise overwrite any environment variables
+    else 
         set_language (myconfig.language);
     
     // open the message catalogue
