@@ -33,7 +33,7 @@ config::config (string s) : section (s)
     adonthellrc = string (getenv ("HOME")) + "/.adonthell";
 
     // try to create that directory in case it dosn't exist
-    mkdir (adonthellrc.data (), 755);
+    mkdir (adonthellrc.data (), 0700);
 }
 
 
