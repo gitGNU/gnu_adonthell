@@ -4,14 +4,17 @@ bin_PROGRAMS = combat-test itemtest
 
 CPPFLAGS += $(SDL_DEFS) $(SDL_CFLAGS) $(PY_CFLAGS)
 
+EXTRA_DIST = py_itemtest_wrap.cc py_itemtest.i
+
 combat_test_SOURCES = combat-test.cc melee.cc yarg.cc combat_classes.h \
-items.h
+	items.h
 
 combat_test_LDADD = ${SDL_LIBS}
 
 itemtest_SOURCES = character_base.cc item_base.cc storage.cc python_class.cc \
-	py_object.cc itemtest.cc py_itemtest_wrap.cc fileops.cc character_base.h \ 
-	item_base.h storage.h python_class.h py_object.h fileops.h
+	py_object.cc itemtest.cc py_itemtest_wrap.cc fileops.cc \
+	character_base.h item_base.h storage.h python_class.h py_object.h \
+	fileops.h
 
 itemtest_LDADD = ${PY_LIBS}
 
