@@ -343,7 +343,6 @@ void dlg_compiler::write_player_answer (DlgNode *npc)
     for (i = npc->link.begin (); i != npc->link.end (); i++)
         answers.push_back ((*i)->next[0]);
 
-    cout << "answers.size () = " << answers.size () << endl << flush;
     if (answers.size () > 1) sort (answers);
 
     // write the code
