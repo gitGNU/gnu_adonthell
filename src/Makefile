@@ -1,7 +1,7 @@
 CC = g++
 
 # These two lines are for SDL and GGI
-CPPFLAGS = -Wall -O6 -D_16BIT -DSDL -D_REENTRANT -I/usr/local/include/SDL
+CPPFLAGS = -Wall -O6 -D_16BIT -DSDL -DSDL_MIXER -D_REENTRANT -I/usr/local/include/SDL
 LIBS = -lpthread -lSDL -lSDL_mixer
 
 # These two lines are for only GGI
