@@ -180,7 +180,7 @@ public:
      *
      * @sa load ()
      */
-    static void register_event (int type, new_event e);
+    static void register_event (u_int8 type, new_event e);
     
     /** 
      * Save the event_list to a file.

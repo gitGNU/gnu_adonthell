@@ -79,7 +79,8 @@ s_int8 mapengine::get_state (igzstream& file)
     load_map (t);
 
     // Load the map state (events)
-    lmap.get_state (file); 
+    if (!lmap.get_state (file))
+        return false; 
 
     // Load the mapcharacters
     nbr_of << file; 
@@ -94,7 +95,8 @@ s_int8 mapengine::get_state (igzstream& file)
     }
     // Load the mapview state
     mv.get_state (file);
-    return 0;
+    
+    return true;
 }
 
 s_int8 mapengine::put_state (ogzstream& file)

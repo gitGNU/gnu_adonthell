@@ -62,7 +62,7 @@ void event_list::add_event (event* ev)
 }
 
 // Register an event for loading
-void event_list::register_event (int type, new_event e)
+void event_list::register_event (u_int8 type, new_event e)
 {
     if (type < MAX_EVENT)
         instanciate_event[type] = e;

@@ -298,7 +298,13 @@ bool data::load (u_int32 pos)
     }
     if (!fileops::get_version (in, 1, 1, filepath))
         return false;
-    map_engine->get_state(in); 
+
+    if (!map_engine->get_state(in))
+    {
+        cerr << "Couldn't load \"" << filepath << " - stopping\n" << endl;
+        return false;
+    }
+    
     in.close (); 
 #endif
     return true;
@@ -365,8 +371,8 @@ gamedata* data::save (u_int32 pos, string desc)
             // that's the directory we're going to save to
             sprintf(t,"%03i",pos++);
             filepath = get_adonthell_dir();
-	    filepath += "/adonthell-save-";
-	    filepath += t;
+	        filepath += "/adonthell-save-";
+	        filepath += t;
             success = mkdir (filepath.c_str(), 0700);
 
             // prevent infinite loop if we can't write to the directory
@@ -433,7 +439,6 @@ gamedata* data::save (u_int32 pos, string desc)
         // tell the quest.data loader that another entry follows
         vnbr = 1;
         vnbr >> file; 
-        //         gzputc (file, 1);
 
         // append the character data
         myquest->save (file);
@@ -444,6 +449,23 @@ gamedata* data::save (u_int32 pos, string desc)
     vnbr >> file; 
     file.close ();
     
+#ifdef USE_MAP
+    // Save mapengine state
+    filepath = gdata->get_directory(); 
+    filepath += "/mapengine.data";
+    file.open (filepath); 
+    
+    if (!file.is_open ())
+    {
+        cerr << "Couldn't create \"" << filepath << "\" - save failed\n"; 
+        return NULL;
+    }
+
+    fileops::put_version (file, 1);
+    map_engine->put_state(file);
+    file.close (); 
+#endif
+
     // save gamedata
     filepath = gdata->get_directory ();
     filepath += "/save.data"; 
@@ -458,16 +480,6 @@ gamedata* data::save (u_int32 pos, string desc)
     gdata->save (file);
     file.close ();
     
-#ifdef USE_MAP
-    // Save mapengine state
-    filepath = gdata->get_directory(); 
-    filepath += "/mapengine.data";
-    file.open (filepath); 
-    fileops::put_version (file, 1);
-    map_engine->put_state(file);
-    file.close (); 
-#endif
-
     // only now it is safe to add the new record to the array
     if (pos >= saves.size ()) saves.push_back (gdata);
     
