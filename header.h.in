@@ -1,16 +1,16 @@
 /* header.h.in.  Generated automatically from configure.in by autoheader.  */
 
-/* Define if you have the <SDL/SDL.h> header file.  */
-#undef HAVE_SDL_SDL_H
+/* Define if you have the <pthread.h> header file.  */
+#undef HAVE_PTHREAD_H
 
 /* Define if you have the <SDL/SDL_audio.h> header file.  */
 #undef HAVE_SDL_SDL_AUDIO_H
 
+/* Define if you have the <SDL/SDL.h> header file.  */
+#undef HAVE_SDL_SDL_H
+
 /* Define if you have the <SDL/SDL_mixer.h> header file.  */
 #undef HAVE_SDL_SDL_MIXER_H
-
-/* Define if you have the <pthread.h> header file.  */
-#undef HAVE_PTHREAD_H
 
 /* Define if you have the <vorbis/vorbisfile.h> header file.  */
 #undef HAVE_VORBIS_VORBISFILE_H

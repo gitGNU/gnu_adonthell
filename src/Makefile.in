@@ -116,7 +116,7 @@ DIST_COMMON =  Makefile.am Makefile.in
 
 DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 
-TAR = tar
+TAR = gtar
 GZIP_ENV = --best
 DEP_FILES =  .deps/animation.P .deps/animation_off.P .deps/audio.P \
 .deps/audio_loop.P .deps/character.P .deps/character_base.P \

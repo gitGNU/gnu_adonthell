@@ -20,6 +20,7 @@ class win_manager
 {
  public:
   static void add(win_container *);
+  static bool exist(win_container *);
   static void remove(win_container *);
   static void update();
   // static void update_keyboard();

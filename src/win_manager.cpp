@@ -27,6 +27,15 @@ void win_manager::add(win_container * tmp)
   lmanage.push_back(tmp);
 }
 
+bool win_manager::exist(win_container * tmp)
+{
+  for(list<win_container *>::iterator i=lmanage.begin();i!=lmanage.end();i++)
+    {
+      if(*i==tmp) return true;
+    }
+  return false;
+}
+
 //Remove container 
 void win_manager::remove(win_container * tmp)
 {

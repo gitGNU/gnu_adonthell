@@ -1,4 +1,4 @@
-# Makefile.in generated automatically by automake 1.4a from Makefile.am
+# Makefile.in generated automatically by automake 1.4 from Makefile.am
 
 # Copyright (C) 1994, 1995-8, 1999 Free Software Foundation, Inc.
 # This Makefile.in is free software; the Free Software Foundation
@@ -9,6 +9,7 @@
 # but WITHOUT ANY WARRANTY, to the extent permitted by law; without
 # even the implied warranty of MERCHANTABILITY or FITNESS FOR A
 # PARTICULAR PURPOSE.
+
 
 SHELL = @SHELL@
 
@@ -45,10 +46,9 @@ AUTOMAKE = @AUTOMAKE@
 AUTOHEADER = @AUTOHEADER@
 
 INSTALL = @INSTALL@
-INSTALL_PROGRAM = @INSTALL_PROGRAM@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@ $(AM_INSTALL_PROGRAM_FLAGS)
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
-INSTALL_STRIP_FLAG =
 transform = @program_transform_name@
 
 NORMAL_INSTALL = :
@@ -57,8 +57,6 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-AMTAR = @AMTAR@
-AMTARFLAGS = @AMTARFLAGS@
 CC = @CC@
 CXX = @CXX@
 CXXCPP = @CXXCPP@
@@ -74,11 +72,9 @@ VORBISFILE_LIBS = @VORBISFILE_LIBS@
 VORBIS_CFLAGS = @VORBIS_CFLAGS@
 VORBIS_LIBS = @VORBIS_LIBS@
 
-
 bin_PROGRAMS = combat-test
 
-combat_test_SOURCES = combat-test.cpp melee.cpp yarg.cc combat_classes.h \
-items.h
+combat_test_SOURCES = combat-test.cpp melee.cpp yarg.cc combat_classes.h items.h
 
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = ../../../header.h
@@ -90,34 +86,33 @@ DEFS = @DEFS@ -I. -I$(srcdir) -I../../..
 CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
-am_combat_test_OBJECTS =  combat-test.o melee.o yarg.o
-combat_test_OBJECTS =  $(am_combat_test_OBJECTS)
+combat_test_OBJECTS =  combat-test.o melee.o yarg.o
 combat_test_LDADD = $(LDADD)
 combat_test_DEPENDENCIES = 
 combat_test_LDFLAGS = 
 CXXFLAGS = @CXXFLAGS@
 CXXCOMPILE = $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
 CXXLD = $(CXX)
-CXXLINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
+CXXLINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(LDFLAGS) -o $@
 CFLAGS = @CFLAGS@
 COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CCLD = $(CC)
-LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-DIST_SOURCES =  $(combat_test_SOURCES)
+LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(LDFLAGS) -o $@
 DIST_COMMON =  Makefile.am Makefile.in
 
 
-DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
+DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 
+TAR = gtar
 GZIP_ENV = --best
 DEP_FILES =  .deps/combat-test.P .deps/melee.P .deps/yarg.P
 SOURCES = $(combat_test_SOURCES)
-OBJECTS = $(am_combat_test_OBJECTS)
+OBJECTS = $(combat_test_OBJECTS)
 
 all: all-redirect
 .SUFFIXES:
-.SUFFIXES: .c .cc .cpp .o
-$(srcdir)/Makefile.in: Makefile.am $(top_srcdir)/$(altdir)configure.in $(ACLOCAL_M4) 
+.SUFFIXES: .S .c .cc .cpp .o .s
+$(srcdir)/Makefile.in: Makefile.am $(top_srcdir)/configure.in $(ACLOCAL_M4) 
 	cd $(top_srcdir) && $(AUTOMAKE) --gnu src/tools/combat/Makefile
 
 Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status $(BUILT_SOURCES)
@@ -139,19 +134,22 @@ install-binPROGRAMS: $(bin_PROGRAMS)
 	$(mkinstalldirs) $(DESTDIR)$(bindir)
 	@list='$(bin_PROGRAMS)'; for p in $$list; do \
 	  if test -f $$p; then \
-	    f="`echo $$p|sed -e 's/$(EXEEXT)$$//' -e '$(transform)' -e 's/$$/$(EXEEXT)/'`"; \
-	    echo "  $(INSTALL_PROGRAM) $(INSTALL_STRIP_FLAG) $$p $(DESTDIR)$(bindir)/$$f"; \
-	     $(INSTALL_PROGRAM) $(INSTALL_STRIP_FLAG) $$p $(DESTDIR)$(bindir)/$$f; \
+	    echo "  $(INSTALL_PROGRAM) $$p $(DESTDIR)$(bindir)/`echo $$p|sed 's/$(EXEEXT)$$//'|sed '$(transform)'|sed 's/$$/$(EXEEXT)/'`"; \
+	     $(INSTALL_PROGRAM) $$p $(DESTDIR)$(bindir)/`echo $$p|sed 's/$(EXEEXT)$$//'|sed '$(transform)'|sed 's/$$/$(EXEEXT)/'`; \
 	  else :; fi; \
 	done
 
 uninstall-binPROGRAMS:
 	@$(NORMAL_UNINSTALL)
-	@list='$(bin_PROGRAMS)'; for p in $$list; do \
-	  f="`echo $$p|sed -e 's/$(EXEEXT)$$//' -e '$(transform)' -e 's/$$/$(EXEEXT)/'`"; \
-	  echo " rm -f $(DESTDIR)$(bindir)/$$f"; \
-	  rm -f $(DESTDIR)$(bindir)/$$f; \
+	list='$(bin_PROGRAMS)'; for p in $$list; do \
+	  rm -f $(DESTDIR)$(bindir)/`echo $$p|sed 's/$(EXEEXT)$$//'|sed '$(transform)'|sed 's/$$/$(EXEEXT)/'`; \
 	done
+
+.s.o:
+	$(COMPILE) -c $<
+
+.S.o:
+	$(COMPILE) -c $<
 
 mostlyclean-compile:
 	-rm -f *.o core *.core
@@ -162,17 +160,14 @@ distclean-compile:
 	-rm -f *.tab.c
 
 maintainer-clean-compile:
-combat-test.o:
-melee.o:
-yarg.o:
 
 combat-test: $(combat_test_OBJECTS) $(combat_test_DEPENDENCIES)
 	@rm -f combat-test
 	$(CXXLINK) $(combat_test_LDFLAGS) $(combat_test_OBJECTS) $(combat_test_LDADD) $(LIBS)
 .cc.o:
-	$(CXXCOMPILE) -c -o $@ $<
+	$(CXXCOMPILE) -c $<
 .cpp.o:
-	$(CXXCOMPILE) -c -o $@ $<
+	$(CXXCOMPILE) -c $<
 
 tags: TAGS
 
@@ -216,7 +211,7 @@ distdir: $(DISTFILES)
 	@for file in $(DISTFILES); do \
 	  d=$(srcdir); \
 	  if test -d $$d/$$file; then \
-	    cp -pr $$d/$$file $(distdir)/$$file; \
+	    cp -pr $$/$$file $(distdir)/$$file; \
 	  else \
 	    test -f $(distdir)/$$file \
 	    || ln $$d/$$file $(distdir)/$$file 2> /dev/null \
@@ -237,43 +232,62 @@ distclean-depend:
 
 maintainer-clean-depend:
 
+%.o: %.c
+	@echo '$(COMPILE) -c $<'; \
+	$(COMPILE) -Wp,-MD,.deps/$(*F).pp -c $<
+	@-cp .deps/$(*F).pp .deps/$(*F).P; \
+	tr ' ' '\012' < .deps/$(*F).pp \
+	  | sed -e 's/^\\$$//' -e '/^$$/ d' -e '/:$$/ d' -e 's/$$/ :/' \
+	    >> .deps/$(*F).P; \
+	rm .deps/$(*F).pp
+
+%.lo: %.c
+	@echo '$(LTCOMPILE) -c $<'; \
+	$(LTCOMPILE) -Wp,-MD,.deps/$(*F).pp -c $<
+	@-sed -e 's/^\([^:]*\)\.o[ 	]*:/\1.lo \1.o :/' \
+	  < .deps/$(*F).pp > .deps/$(*F).P; \
+	tr ' ' '\012' < .deps/$(*F).pp \
+	  | sed -e 's/^\\$$//' -e '/^$$/ d' -e '/:$$/ d' -e 's/$$/ :/' \
+	    >> .deps/$(*F).P; \
+	rm -f .deps/$(*F).pp
+
 %.o: %.cc
 	@echo '$(CXXCOMPILE) -c $<'; \
-	$(CXXCOMPILE) -Wp,-MD,.deps/$(*D)/$(*F).pp -c $<
-	@-cp .deps/$(*D)/$(*F).pp .deps/$(*D)/$(*F).P; \
-	tr ' ' '\012' < .deps/$(*D)/$(*F).pp \
+	$(CXXCOMPILE) -Wp,-MD,.deps/$(*F).pp -c $<
+	@-cp .deps/$(*F).pp .deps/$(*F).P; \
+	tr ' ' '\012' < .deps/$(*F).pp \
 	  | sed -e 's/^\\$$//' -e '/^$$/ d' -e '/:$$/ d' -e 's/$$/ :/' \
-	    >> .deps/$(*D)/$(*F).P; \
-	rm .deps/$(*D)/$(*F).pp
+	    >> .deps/$(*F).P; \
+	rm .deps/$(*F).pp
 
 %.lo: %.cc
 	@echo '$(LTCXXCOMPILE) -c $<'; \
-	$(LTCXXCOMPILE) -Wp,-MD,.deps/$(*D)/$(*F).pp -c $<
+	$(LTCXXCOMPILE) -Wp,-MD,.deps/$(*F).pp -c $<
 	@-sed -e 's/^\([^:]*\)\.o[ 	]*:/\1.lo \1.o :/' \
-	  < .deps/$(*D)/$(*F).pp > .deps/$(*D)/$(*F).P; \
-	tr ' ' '\012' < .deps/$(*D)/$(*F).pp \
+	  < .deps/$(*F).pp > .deps/$(*F).P; \
+	tr ' ' '\012' < .deps/$(*F).pp \
 	  | sed -e 's/^\\$$//' -e '/^$$/ d' -e '/:$$/ d' -e 's/$$/ :/' \
-	    >> .deps/$(*D)/$(*F).P; \
-	rm -f .deps/$(*D)/$(*F).pp
+	    >> .deps/$(*F).P; \
+	rm -f .deps/$(*F).pp
 
 %.o: %.cpp
 	@echo '$(CXXCOMPILE) -c $<'; \
-	$(CXXCOMPILE) -Wp,-MD,.deps/$(*D)/$(*F).pp -c $<
-	@-cp .deps/$(*D)/$(*F).pp .deps/$(*D)/$(*F).P; \
-	tr ' ' '\012' < .deps/$(*D)/$(*F).pp \
+	$(CXXCOMPILE) -Wp,-MD,.deps/$(*F).pp -c $<
+	@-cp .deps/$(*F).pp .deps/$(*F).P; \
+	tr ' ' '\012' < .deps/$(*F).pp \
 	  | sed -e 's/^\\$$//' -e '/^$$/ d' -e '/:$$/ d' -e 's/$$/ :/' \
-	    >> .deps/$(*D)/$(*F).P; \
-	rm .deps/$(*D)/$(*F).pp
+	    >> .deps/$(*F).P; \
+	rm .deps/$(*F).pp
 
 %.lo: %.cpp
 	@echo '$(LTCXXCOMPILE) -c $<'; \
-	$(LTCXXCOMPILE) -Wp,-MD,.deps/$(*D)/$(*F).pp -c $<
+	$(LTCXXCOMPILE) -Wp,-MD,.deps/$(*F).pp -c $<
 	@-sed -e 's/^\([^:]*\)\.o[ 	]*:/\1.lo \1.o :/' \
-	  < .deps/$(*D)/$(*F).pp > .deps/$(*D)/$(*F).P; \
-	tr ' ' '\012' < .deps/$(*D)/$(*F).pp \
+	  < .deps/$(*F).pp > .deps/$(*F).P; \
+	tr ' ' '\012' < .deps/$(*F).pp \
 	  | sed -e 's/^\\$$//' -e '/^$$/ d' -e '/:$$/ d' -e 's/$$/ :/' \
-	    >> .deps/$(*D)/$(*F).P; \
-	rm -f .deps/$(*D)/$(*F).pp
+	    >> .deps/$(*F).P; \
+	rm -f .deps/$(*F).pp
 info-am:
 info: info-am
 dvi-am:
@@ -296,7 +310,7 @@ uninstall: uninstall-am
 all-am: Makefile $(PROGRAMS)
 all-redirect: all-am
 install-strip:
-	$(MAKE) $(AM_MAKEFLAGS) INSTALL_STRIP_FLAG=-s install
+	$(MAKE) $(AM_MAKEFLAGS) AM_INSTALL_PROGRAM_FLAGS=-s install
 installdirs:
 	$(mkinstalldirs)  $(DESTDIR)$(bindir)
 
@@ -342,8 +356,8 @@ clean-tags maintainer-clean-tags distdir mostlyclean-depend \
 distclean-depend clean-depend maintainer-clean-depend info-am info \
 dvi-am dvi check check-am installcheck-am installcheck install-exec-am \
 install-exec install-data-am install-data install-am install \
-uninstall-am uninstall all-redirect all-am all install-strip \
-installdirs mostlyclean-generic distclean-generic clean-generic \
+uninstall-am uninstall all-redirect all-am all installdirs \
+mostlyclean-generic distclean-generic clean-generic \
 maintainer-clean-generic clean mostlyclean distclean maintainer-clean
 
 

@@ -1,4 +1,4 @@
-# Makefile.in generated automatically by automake 1.4a from Makefile.am
+# Makefile.in generated automatically by automake 1.4 from Makefile.am
 
 # Copyright (C) 1994, 1995-8, 1999 Free Software Foundation, Inc.
 # This Makefile.in is free software; the Free Software Foundation
@@ -9,6 +9,7 @@
 # but WITHOUT ANY WARRANTY, to the extent permitted by law; without
 # even the implied warranty of MERCHANTABILITY or FITNESS FOR A
 # PARTICULAR PURPOSE.
+
 
 SHELL = @SHELL@
 
@@ -45,10 +46,9 @@ AUTOMAKE = @AUTOMAKE@
 AUTOHEADER = @AUTOHEADER@
 
 INSTALL = @INSTALL@
-INSTALL_PROGRAM = @INSTALL_PROGRAM@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@ $(AM_INSTALL_PROGRAM_FLAGS)
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
-INSTALL_STRIP_FLAG =
 transform = @program_transform_name@
 
 NORMAL_INSTALL = :
@@ -57,8 +57,6 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-AMTAR = @AMTAR@
-AMTARFLAGS = @AMTARFLAGS@
 CC = @CC@
 CXX = @CXX@
 CXXCPP = @CXXCPP@
@@ -74,24 +72,13 @@ VORBISFILE_LIBS = @VORBISFILE_LIBS@
 VORBIS_CFLAGS = @VORBIS_CFLAGS@
 VORBIS_LIBS = @VORBIS_LIBS@
 
-
 SUBDIRS = examples
 
 EXTRA_DIST = loadlg.l ins_dlgedit_modules.py py_character.i py_quest.i
 
 bin_PROGRAMS = dlgedit
 
-dlgedit_SOURCES = callbacks.cc circle.cc crcle_callbacks.cc \
-crcle_interface.cc dbg_callbacks.cc dbg_interface.cc debug.cc \
-dlgcompile.cc dlgnode.cc events.cc function.cc geometrie.cc \
-graph.cc lex.loadlg.cc interface.cc main.cc preset.cc py_character_wrap.cpp \
-py_quest_wrap.cpp ps_callbacks.cc ps_dlg.cc ps_interface.cc pset_callbacks.cc \
-pset_interface.cc run.cc run_callbacks.cc run_interface.cc \
-callbacks.h circle.h crcle_callbacks.h crcle_interface.h \
-dbg_callbacks.h dbg_interface.h debug.h dlgcompile.h dlgnode.h \
-events.h function.h geometrie.h graph.h interface.h main.h \
-preset.h ps_callbacks.h ps_dlg.h ps_interface.h pset_callbacks.h \
-pset_interface.h run.h run_callbacks.h run_interface.h
+dlgedit_SOURCES = callbacks.cc circle.cc crcle_callbacks.cc crcle_interface.cc dbg_callbacks.cc dbg_interface.cc debug.cc dlgcompile.cc dlgnode.cc events.cc function.cc geometrie.cc graph.cc lex.loadlg.cc interface.cc main.cc preset.cc py_character_wrap.cpp py_quest_wrap.cpp ps_callbacks.cc ps_dlg.cc ps_interface.cc pset_callbacks.cc pset_interface.cc run.cc run_callbacks.cc run_interface.cc callbacks.h circle.h crcle_callbacks.h crcle_interface.h dbg_callbacks.h dbg_interface.h debug.h dlgcompile.h dlgnode.h events.h function.h geometrie.h graph.h interface.h main.h preset.h ps_callbacks.h ps_dlg.h ps_interface.h pset_callbacks.h pset_interface.h run.h run_callbacks.h run_interface.h
 
 
 # Evil, but it works...
@@ -99,9 +86,7 @@ CPPFLAGS =  -I../.. -DUSE_PYTHON -D_VERSION_=\"0.7\" `gtk-config --cflags`
 
 SWIGFLAGS = -D_DLGEDIT_ -D_DEBUG_
 
-LDADD = character.o data.o dialog.o \
-event.o fileops.o lex.prefs.o prefs.o py_inc.o \
-quest.o storage.o yarg.o character_base.o
+LDADD = character.o data.o dialog.o event.o fileops.o lex.prefs.o prefs.o py_inc.o quest.o storage.o yarg.o character_base.o
 
 
 LDFLAGS = -lm -lstdc++ `gtk-config --libs`
@@ -113,13 +98,12 @@ PROGRAMS =  $(bin_PROGRAMS)
 
 DEFS = @DEFS@ -I. -I$(srcdir) -I../../..
 LIBS = @LIBS@
-am_dlgedit_OBJECTS =  callbacks.o circle.o crcle_callbacks.o \
+dlgedit_OBJECTS =  callbacks.o circle.o crcle_callbacks.o \
 crcle_interface.o dbg_callbacks.o dbg_interface.o debug.o dlgcompile.o \
 dlgnode.o events.o function.o geometrie.o graph.o lex.loadlg.o \
 interface.o main.o preset.o py_character_wrap.o py_quest_wrap.o \
 ps_callbacks.o ps_dlg.o ps_interface.o pset_callbacks.o \
 pset_interface.o run.o run_callbacks.o run_interface.o
-dlgedit_OBJECTS =  $(am_dlgedit_OBJECTS)
 dlgedit_LDADD = $(LDADD)
 dlgedit_DEPENDENCIES =  character.o data.o dialog.o event.o fileops.o \
 lex.prefs.o prefs.o py_inc.o quest.o storage.o yarg.o character_base.o
@@ -127,17 +111,17 @@ dlgedit_LDFLAGS =
 CXXFLAGS = @CXXFLAGS@
 CXXCOMPILE = $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
 CXXLD = $(CXX)
-CXXLINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
+CXXLINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(LDFLAGS) -o $@
 CFLAGS = @CFLAGS@
 COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CCLD = $(CC)
-LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-DIST_SOURCES =  $(dlgedit_SOURCES)
+LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(LDFLAGS) -o $@
 DIST_COMMON =  Makefile.am Makefile.in
 
 
-DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
+DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 
+TAR = gtar
 GZIP_ENV = --best
 DEP_FILES =  .deps/callbacks.P .deps/circle.P .deps/crcle_callbacks.P \
 .deps/crcle_interface.P .deps/dbg_callbacks.P .deps/dbg_interface.P \
@@ -148,12 +132,12 @@ DEP_FILES =  .deps/callbacks.P .deps/circle.P .deps/crcle_callbacks.P \
 .deps/pset_interface.P .deps/py_character_wrap.P .deps/py_quest_wrap.P \
 .deps/run.P .deps/run_callbacks.P .deps/run_interface.P
 SOURCES = $(dlgedit_SOURCES)
-OBJECTS = $(am_dlgedit_OBJECTS)
+OBJECTS = $(dlgedit_OBJECTS)
 
 all: all-redirect
 .SUFFIXES:
-.SUFFIXES: .c .cc .cpp .o
-$(srcdir)/Makefile.in: Makefile.am $(top_srcdir)/$(altdir)configure.in $(ACLOCAL_M4) 
+.SUFFIXES: .S .c .cc .cpp .o .s
+$(srcdir)/Makefile.in: Makefile.am $(top_srcdir)/configure.in $(ACLOCAL_M4) 
 	cd $(top_srcdir) && $(AUTOMAKE) --gnu src/tools/dlgedit/Makefile
 
 Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status $(BUILT_SOURCES)
@@ -175,19 +159,22 @@ install-binPROGRAMS: $(bin_PROGRAMS)
 	$(mkinstalldirs) $(DESTDIR)$(bindir)
 	@list='$(bin_PROGRAMS)'; for p in $$list; do \
 	  if test -f $$p; then \
-	    f="`echo $$p|sed -e 's/$(EXEEXT)$$//' -e '$(transform)' -e 's/$$/$(EXEEXT)/'`"; \
-	    echo "  $(INSTALL_PROGRAM) $(INSTALL_STRIP_FLAG) $$p $(DESTDIR)$(bindir)/$$f"; \
-	     $(INSTALL_PROGRAM) $(INSTALL_STRIP_FLAG) $$p $(DESTDIR)$(bindir)/$$f; \
+	    echo "  $(INSTALL_PROGRAM) $$p $(DESTDIR)$(bindir)/`echo $$p|sed 's/$(EXEEXT)$$//'|sed '$(transform)'|sed 's/$$/$(EXEEXT)/'`"; \
+	     $(INSTALL_PROGRAM) $$p $(DESTDIR)$(bindir)/`echo $$p|sed 's/$(EXEEXT)$$//'|sed '$(transform)'|sed 's/$$/$(EXEEXT)/'`; \
 	  else :; fi; \
 	done
 
 uninstall-binPROGRAMS:
 	@$(NORMAL_UNINSTALL)
-	@list='$(bin_PROGRAMS)'; for p in $$list; do \
-	  f="`echo $$p|sed -e 's/$(EXEEXT)$$//' -e '$(transform)' -e 's/$$/$(EXEEXT)/'`"; \
-	  echo " rm -f $(DESTDIR)$(bindir)/$$f"; \
-	  rm -f $(DESTDIR)$(bindir)/$$f; \
+	list='$(bin_PROGRAMS)'; for p in $$list; do \
+	  rm -f $(DESTDIR)$(bindir)/`echo $$p|sed 's/$(EXEEXT)$$//'|sed '$(transform)'|sed 's/$$/$(EXEEXT)/'`; \
 	done
+
+.s.o:
+	$(COMPILE) -c $<
+
+.S.o:
+	$(COMPILE) -c $<
 
 mostlyclean-compile:
 	-rm -f *.o core *.core
@@ -198,41 +185,14 @@ distclean-compile:
 	-rm -f *.tab.c
 
 maintainer-clean-compile:
-callbacks.o:
-circle.o:
-crcle_callbacks.o:
-crcle_interface.o:
-dbg_callbacks.o:
-dbg_interface.o:
-debug.o:
-dlgcompile.o:
-dlgnode.o:
-events.o:
-function.o:
-geometrie.o:
-graph.o:
-lex.loadlg.o:
-interface.o:
-main.o:
-preset.o:
-py_character_wrap.o:
-py_quest_wrap.o:
-ps_callbacks.o:
-ps_dlg.o:
-ps_interface.o:
-pset_callbacks.o:
-pset_interface.o:
-run.o:
-run_callbacks.o:
-run_interface.o:
 
 dlgedit: $(dlgedit_OBJECTS) $(dlgedit_DEPENDENCIES)
 	@rm -f dlgedit
 	$(CXXLINK) $(dlgedit_LDFLAGS) $(dlgedit_OBJECTS) $(dlgedit_LDADD) $(LIBS)
 .cc.o:
-	$(CXXCOMPILE) -c -o $@ $<
+	$(CXXCOMPILE) -c $<
 .cpp.o:
-	$(CXXCOMPILE) -c -o $@ $<
+	$(CXXCOMPILE) -c $<
 
 # This directory's subdirectories are mostly independent; you can cd
 # into them and run `make' without going through this Makefile.
@@ -270,7 +230,7 @@ maintainer-clean-recursive:
 	dot_seen=no; \
 	rev=''; list='$(SUBDIRS)'; for subdir in $$list; do \
 	  rev="$$subdir $$rev"; \
-	  if test "$$subdir" = "."; then dot_seen=yes; else :; fi; \
+	  test "$$subdir" = "." && dot_seen=yes; \
 	done; \
 	test "$$dot_seen" = "no" && rev=". $$rev"; \
 	target=`echo $@ | sed s/-recursive//`; \
@@ -336,7 +296,7 @@ distdir: $(DISTFILES)
 	@for file in $(DISTFILES); do \
 	  d=$(srcdir); \
 	  if test -d $$d/$$file; then \
-	    cp -pr $$d/$$file $(distdir)/$$file; \
+	    cp -pr $$/$$file $(distdir)/$$file; \
 	  else \
 	    test -f $(distdir)/$$file \
 	    || ln $$d/$$file $(distdir)/$$file 2> /dev/null \
@@ -367,43 +327,62 @@ distclean-depend:
 
 maintainer-clean-depend:
 
+%.o: %.c
+	@echo '$(COMPILE) -c $<'; \
+	$(COMPILE) -Wp,-MD,.deps/$(*F).pp -c $<
+	@-cp .deps/$(*F).pp .deps/$(*F).P; \
+	tr ' ' '\012' < .deps/$(*F).pp \
+	  | sed -e 's/^\\$$//' -e '/^$$/ d' -e '/:$$/ d' -e 's/$$/ :/' \
+	    >> .deps/$(*F).P; \
+	rm .deps/$(*F).pp
+
+%.lo: %.c
+	@echo '$(LTCOMPILE) -c $<'; \
+	$(LTCOMPILE) -Wp,-MD,.deps/$(*F).pp -c $<
+	@-sed -e 's/^\([^:]*\)\.o[ 	]*:/\1.lo \1.o :/' \
+	  < .deps/$(*F).pp > .deps/$(*F).P; \
+	tr ' ' '\012' < .deps/$(*F).pp \
+	  | sed -e 's/^\\$$//' -e '/^$$/ d' -e '/:$$/ d' -e 's/$$/ :/' \
+	    >> .deps/$(*F).P; \
+	rm -f .deps/$(*F).pp
+
 %.o: %.cc
 	@echo '$(CXXCOMPILE) -c $<'; \
-	$(CXXCOMPILE) -Wp,-MD,.deps/$(*D)/$(*F).pp -c $<
-	@-cp .deps/$(*D)/$(*F).pp .deps/$(*D)/$(*F).P; \
-	tr ' ' '\012' < .deps/$(*D)/$(*F).pp \
+	$(CXXCOMPILE) -Wp,-MD,.deps/$(*F).pp -c $<
+	@-cp .deps/$(*F).pp .deps/$(*F).P; \
+	tr ' ' '\012' < .deps/$(*F).pp \
 	  | sed -e 's/^\\$$//' -e '/^$$/ d' -e '/:$$/ d' -e 's/$$/ :/' \
-	    >> .deps/$(*D)/$(*F).P; \
-	rm .deps/$(*D)/$(*F).pp
+	    >> .deps/$(*F).P; \
+	rm .deps/$(*F).pp
 
 %.lo: %.cc
 	@echo '$(LTCXXCOMPILE) -c $<'; \
-	$(LTCXXCOMPILE) -Wp,-MD,.deps/$(*D)/$(*F).pp -c $<
+	$(LTCXXCOMPILE) -Wp,-MD,.deps/$(*F).pp -c $<
 	@-sed -e 's/^\([^:]*\)\.o[ 	]*:/\1.lo \1.o :/' \
-	  < .deps/$(*D)/$(*F).pp > .deps/$(*D)/$(*F).P; \
-	tr ' ' '\012' < .deps/$(*D)/$(*F).pp \
+	  < .deps/$(*F).pp > .deps/$(*F).P; \
+	tr ' ' '\012' < .deps/$(*F).pp \
 	  | sed -e 's/^\\$$//' -e '/^$$/ d' -e '/:$$/ d' -e 's/$$/ :/' \
-	    >> .deps/$(*D)/$(*F).P; \
-	rm -f .deps/$(*D)/$(*F).pp
+	    >> .deps/$(*F).P; \
+	rm -f .deps/$(*F).pp
 
 %.o: %.cpp
 	@echo '$(CXXCOMPILE) -c $<'; \
-	$(CXXCOMPILE) -Wp,-MD,.deps/$(*D)/$(*F).pp -c $<
-	@-cp .deps/$(*D)/$(*F).pp .deps/$(*D)/$(*F).P; \
-	tr ' ' '\012' < .deps/$(*D)/$(*F).pp \
+	$(CXXCOMPILE) -Wp,-MD,.deps/$(*F).pp -c $<
+	@-cp .deps/$(*F).pp .deps/$(*F).P; \
+	tr ' ' '\012' < .deps/$(*F).pp \
 	  | sed -e 's/^\\$$//' -e '/^$$/ d' -e '/:$$/ d' -e 's/$$/ :/' \
-	    >> .deps/$(*D)/$(*F).P; \
-	rm .deps/$(*D)/$(*F).pp
+	    >> .deps/$(*F).P; \
+	rm .deps/$(*F).pp
 
 %.lo: %.cpp
 	@echo '$(LTCXXCOMPILE) -c $<'; \
-	$(LTCXXCOMPILE) -Wp,-MD,.deps/$(*D)/$(*F).pp -c $<
+	$(LTCXXCOMPILE) -Wp,-MD,.deps/$(*F).pp -c $<
 	@-sed -e 's/^\([^:]*\)\.o[ 	]*:/\1.lo \1.o :/' \
-	  < .deps/$(*D)/$(*F).pp > .deps/$(*D)/$(*F).P; \
-	tr ' ' '\012' < .deps/$(*D)/$(*F).pp \
+	  < .deps/$(*F).pp > .deps/$(*F).P; \
+	tr ' ' '\012' < .deps/$(*F).pp \
 	  | sed -e 's/^\\$$//' -e '/^$$/ d' -e '/:$$/ d' -e 's/$$/ :/' \
-	    >> .deps/$(*D)/$(*F).P; \
-	rm -f .deps/$(*D)/$(*F).pp
+	    >> .deps/$(*F).P; \
+	rm -f .deps/$(*F).pp
 info-am:
 info: info-recursive
 dvi-am:
@@ -426,7 +405,7 @@ uninstall: uninstall-recursive
 all-am: Makefile $(PROGRAMS)
 all-redirect: all-recursive
 install-strip:
-	$(MAKE) $(AM_MAKEFLAGS) INSTALL_STRIP_FLAG=-s install
+	$(MAKE) $(AM_MAKEFLAGS) AM_INSTALL_PROGRAM_FLAGS=-s install
 installdirs: installdirs-recursive
 installdirs-am:
 	$(mkinstalldirs)  $(DESTDIR)$(bindir)
@@ -468,8 +447,8 @@ maintainer-clean: maintainer-clean-recursive
 .PHONY: mostlyclean-binPROGRAMS distclean-binPROGRAMS clean-binPROGRAMS \
 maintainer-clean-binPROGRAMS uninstall-binPROGRAMS install-binPROGRAMS \
 mostlyclean-compile distclean-compile clean-compile \
-maintainer-clean-compile install-recursive uninstall-recursive \
-install-data-recursive uninstall-data-recursive install-exec-recursive \
+maintainer-clean-compile install-data-recursive \
+uninstall-data-recursive install-exec-recursive \
 uninstall-exec-recursive installdirs-recursive uninstalldirs-recursive \
 all-recursive check-recursive installcheck-recursive info-recursive \
 dvi-recursive mostlyclean-recursive distclean-recursive clean-recursive \
@@ -479,9 +458,9 @@ mostlyclean-depend distclean-depend clean-depend \
 maintainer-clean-depend info-am info dvi-am dvi check check-am \
 installcheck-am installcheck install-exec-am install-exec \
 install-data-am install-data install-am install uninstall-am uninstall \
-all-redirect all-am all install-strip installdirs-am installdirs \
-mostlyclean-generic distclean-generic clean-generic \
-maintainer-clean-generic clean mostlyclean distclean maintainer-clean
+all-redirect all-am all installdirs-am installdirs mostlyclean-generic \
+distclean-generic clean-generic maintainer-clean-generic clean \
+mostlyclean distclean maintainer-clean
 
 
 lex.loadlg.cc: loadlg.l

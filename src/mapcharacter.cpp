@@ -16,6 +16,7 @@
 #include "mapcharacter.h"
 #include "win_manager.h"
 #include "mapview.h"
+#include "mapengine.h"
 
 void mapcharacter::init()
 {
@@ -89,6 +90,11 @@ void mapcharacter::talk ()
   win_manager::add (de);
   win_manager::set_focus (de);
   de->run ();  
+  while(win_manager::exist(de))
+    {
+      data::map_engine->mainloop();
+      screen::show();
+    }
 }
 #endif
 
