@@ -40,10 +40,16 @@ In the top level "adonthell-0.2" directory, type the following:
 ./configure
 make
 
+
+The first time you run Adonthell, a configuration file is created:
+$HOME/.adonthell/adonthellrc. For now you'll have to add the full
+path to the data directory and the map to load at startup manually.
+You can also configure various other aspects of the game.
+
 Then, type the following to have the Adonthell mapengine run
 a demo map:
 
-./mapengine forest.map
+./mapengine
 
 For more information, see the README or file. Problems? Don't have
 the right libraries? Please look at the NEWBIE file or our website

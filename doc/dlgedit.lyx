@@ -24,7 +24,7 @@
 
 \layout Title
 
-The Adonthell Dialogue Editor v0.4.1
+The Adonthell Dialogue Editor v0.6
 \layout Author
 
 Kai Sterker
@@ -89,9 +89,7 @@ NPC lines can be attached to different characters, making conversations
 
 These 11 points cover most of the Dialogue System's functionality and should
  give you an idea what you can do with it, and what you can't.
- If you are interested how everything really works, take a look at the Dialogue
- Engine documentation.
- Else it is time for an example.
+ To get you going now, it's time for a brief tutorial.
 \layout Section
 
 An Example
@@ -376,298 +374,781 @@ Of course we could have used a direct link as well, but in more complex
 
 The Result
 \layout Standard
-
+\align left 
 Now save and compile the Dialogue.
- You get three files.
- The .dlg and .str files are for the Dialogue Engine, interesting to you might
- be the .txt file, wich contains an ASCII representation of the dialogues
- code.
+ You'll get a .py file, the Python dialogue script.
  In our example it should look similar to the following:
 \newline 
 
-\layout Standard
+\protected_separator 
 
+\layout Standard
+\align left 
 
 \family typewriter 
-
-\protected_separator 
-0
-\protected_separator 
- Hello, I am Eric.
+\size footnotesize 
+class new_dialogue:
 \layout Standard
-
+\align left 
 
 \family typewriter 
+\size footnotesize 
 
 \protected_separator 
-1
+
 \protected_separator 
- I am Kai.
+
+\protected_separator 
+ loop = []
 \layout Standard
-
+\align left 
 
 \family typewriter 
+\size footnotesize 
 
 \protected_separator 
-2
+
 \protected_separator 
- Goodbye!
+
+\protected_separator 
+ strings = ["Hello,I'm Eric.","I am Kai.","Goodbye!","Farewell.","Nice to meet
+ you.",""]
 \layout Standard
-
+\align left 
 
 \family typewriter 
-
-\protected_separator 
-3
-\protected_separator 
- Fare well.
-\layout Standard
-
-
-\family typewriter 
-
-\protected_separator 
-4
-\protected_separator 
- Nice to meet you.
-\layout Standard
-
-
-\family typewriter 
+\size footnotesize 
 
 \protected_separator 
 
 \layout Standard
-
+\align left 
 
 \family typewriter 
+\size footnotesize 
 
 \protected_separator 
-0
+
 \protected_separator 
- IMPORT
+
 \protected_separator 
- 0 1 2 3 4 
+ def __init__(self):
 \layout Standard
-
+\align left 
 
 \family typewriter 
+\size footnotesize 
 
 \protected_separator 
-1
+
 \protected_separator 
- SPEAKER 1 0
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ self.dialogue = [self.start, self.answer2, self.answer4, None]
 \layout Standard
-
-
-\family typewriter 
-
-\protected_separator 
-2
-\protected_separator 
- TEXT
-\protected_separator 
-
-\protected_separator 
-
-\protected_separator 
- 0 0
-\layout Standard
-
+\align left 
 
 \family typewriter 
-
-\protected_separator 
-3
-\protected_separator 
- SPEAKER 0 0
-\layout Standard
-
-
-\family typewriter 
-
-\protected_separator 
-4
-\protected_separator 
- TEXT
-\protected_separator 
-
-\protected_separator 
-
-\protected_separator 
- 1 9
-\layout Standard
-
-
-\family typewriter 
-
-\protected_separator 
-5
-\protected_separator 
- TEXT
-\protected_separator 
-
-\protected_separator 
-
-\protected_separator 
- 2 3
-\layout Standard
-
-
-\family typewriter 
-
-\protected_separator 
-6
-\protected_separator 
- RETURN
-\protected_separator 
- 1
-\layout Standard
-
-
-\family typewriter 
+\size footnotesize 
 
 \protected_separator 
 
 \layout Standard
-
+\align left 
 
 \family typewriter 
+\size footnotesize 
 
 \protected_separator 
-7
+
 \protected_separator 
- CLEAR
+
+\protected_separator 
+ def __getattr__ (self, var):
 \layout Standard
-
+\align left 
 
 \family typewriter 
+\size footnotesize 
 
 \protected_separator 
-8
+
 \protected_separator 
- SPEAKER 1 0
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ return 0
 \layout Standard
-
-
-\family typewriter 
-
-\protected_separator 
-9
-\protected_separator 
- TEXT
-\protected_separator 
-
-\protected_separator 
-
-\protected_separator 
- 3 3
-\layout Standard
-
+\align left 
 
 \family typewriter 
-10
-\protected_separator 
- RETURN
-\protected_separator 
- 1
-\layout Standard
-
-
-\family typewriter 
+\size footnotesize 
 
 \protected_separator 
 
 \layout Standard
-
+\align left 
 
 \family typewriter 
-11
+\size footnotesize 
+
 \protected_separator 
- CLEAR
+
+\protected_separator 
+
+\protected_separator 
+ def run (self, answer):
 \layout Standard
-
+\align left 
 
 \family typewriter 
-12
+\size footnotesize 
+
 \protected_separator 
- RETURN
+
 \protected_separator 
- 0
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ self.npc = []
 \layout Standard
-
+\align left 
 
 \family typewriter 
-13
+\size footnotesize 
+
 \protected_separator 
- SPEAKER 1 0
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ self.player = []
 \layout Standard
-
+\align left 
 
 \family typewriter 
-14
+\size footnotesize 
+
 \protected_separator 
- TEXT
+
 \protected_separator 
 
 \protected_separator 
 
 \protected_separator 
- 4 0
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ self.cont = []
 \layout Standard
-
+\align left 
 
 \family typewriter 
-15
+\size footnotesize 
+
 \protected_separator 
- SPEAKER 0 0
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ self.dialogue[answer]()
 \layout Standard
-
-
-\family typewriter 
-16
-\protected_separator 
- TEXT
-\protected_separator 
-
-\protected_separator 
-
-\protected_separator 
- 2 -8
-\layout Standard
-
+\align left 
 
 \family typewriter 
-17
-\protected_separator 
- RETURN
-\protected_separator 
- 1
-\layout Standard
-
-
-\family typewriter 
+\size footnotesize 
 
 \protected_separator 
 
 \layout Standard
-
+\align left 
 
 \family typewriter 
-18
+\size footnotesize 
+
 \protected_separator 
- CLEAR
+
+\protected_separator 
+
+\protected_separator 
+ def npc0 (self):
+\layout Standard
+\align left 
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ self.npc.append (0)
+\layout Standard
+\align left 
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ self.cont.append (0)
+\layout Standard
+\align left 
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\layout Standard
+\align left 
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ def player2 (self):
+\layout Standard
+\align left 
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ self.player.append (1)
+\layout Standard
+\align left 
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ self.cont.append (1)
+\layout Standard
+\align left 
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\layout Standard
+\align left 
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ def player4 (self):
+\layout Standard
+\align left 
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ self.player.append (2)
+\layout Standard
+\align left 
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ self.cont.append (2)
+\layout Standard
+\align left 
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\layout Standard
+\align left 
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ def npc6 (self):
+\layout Standard
+\align left 
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ self.npc.append (3)
+\layout Standard
+\align left 
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ self.cont.append (0)
+\layout Standard
+\align left 
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\layout Standard
+\align left 
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ def npc8 (self):
+\layout Standard
+\align left 
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ self.npc.append (4)
+\layout Standard
+\align left 
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ self.cont.append (0)
+\layout Standard
+\align left 
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\layout Standard
+\align left 
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ def start (self):
+\layout Standard
+\align left 
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ self.npc0 ()
+\layout Standard
+\align left 
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ self.player2 ()
+\layout Standard
+\align left 
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ self.player4 ()
+\layout Standard
+\align left 
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ self.player.append (-1)
+\layout Standard
+\align left 
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\layout Standard
+\align left 
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ def answer4 (self):
+\layout Standard
+\align left 
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ self.npc6 ()
+\layout Standard
+\align left 
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ self.player.append (-1)
+\layout Standard
+\align left 
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\layout Standard
+\align left 
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ def answer2 (self):
+\layout Standard
+\align left 
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ self.npc8 ()
+\layout Standard
+\align left 
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ self.player4 ()
+\layout Standard
+\align left 
+
+\family typewriter 
+\size footnotesize 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ self.player.append (-1)
+\family default 
+\size default 
+
 \newline 
+
+\protected_separator 
 
 \layout Standard
 \pagebreak_bottom 
 You see, its a lot easier to use the Dialogue Editor than writing the Code
  by hand.
- So whats the use of this text file anyway? Its mainly for debugging purposes.
- Imagine you create, compile and test a Dialogue, and then it behaves differentl
-y than you expected.
- Look into this file and you may find out the reason behind.
- For a description of the commands refer to the Dialogue Engine Documentation.
+ Of course, if you know what you are doing, you can edit this file afterwards.
+ But usually, you should do any editing in the editor only.
+ For a description of the commands refer to the Python Documentation (http://www.
+python.org).
+ 
 \layout Section
 
 The Dialogue Editor
@@ -680,7 +1161,7 @@ After above example you should be able to start designing Dialogues right
  
 \layout Subsection
 
-The User Interface
+The Main Window
 \layout Standard
 \added_space_top 0.3cm \added_space_bottom 0.3cm \align left 
 
@@ -1027,9 +1508,11 @@ numpad
 \emph on 
 tab
 \emph default 
- to select the next Node.
- (That is, the next node in the editors internal data representation, not
- the next node on the screen!)
+ to select the next Node (That is, the next node in the editors internal
+ data representation, not the next node on the screen!).
+ Moving the mouse close to the Dialogue Areas border will also scroll the
+ dialogue, and when dragging the mouse with left button pressed, you can
+ select multiple Circles, for example to delete all of them at once.
 \layout Paragraph
 
 2.
@@ -1038,7 +1521,13 @@ tab
 
 An exclamation mark (!) inside a circle means that the node contains commands
  other than just a line of text.
- What commands that may be in detail is discussed later.
+ What commands that may be in detail is discussed in section 3.2 on page
+ 
+\begin_inset LatexCommand \pageref{edit}
+
+\end_inset 
+
+.
 \layout Paragraph
 
 3.
@@ -1119,6 +1608,9 @@ Again this is color-coded: as in the Dialogue Area (1), orange text means
 
 Text following the selected Node.
  The colors have the same meaning as in (7).
+\layout Subsection
+
+The Edit Window
 \layout Standard
 \added_space_top 0.3cm \added_space_bottom 0.3cm \align left 
 
@@ -1142,65 +1634,50 @@ When you create a new Circle, you should attach some text to it.
  Simply type the text into the entry.
  Player text will be displayed blue, NPC text black.
  You can switch between both with (5).
-\layout Standard
-
-Apart from plain text, there are a few macros available that get replaced
- at runtime:
-\layout Description
-
-$name Gets replaced with the players name.
-\layout Description
-
-$fm{
-\series medium 
-\emph on 
-female_text
-\series default 
-\emph default 
-/
-\series medium 
-\emph on 
-male_text
-\series default 
-\emph default 
-} Displays text depending on the players gender.
- 
 \layout Paragraph
 
 2.
- Conditions for the Node
+ 
+\begin_inset LatexCommand \label{edit}
+
+\end_inset 
+
+Conditions for the Node
 \layout Standard
 
 On this page, you can specifiy a condition which then decides whether this
  line of text will be available in the game or not.
- Most likely, this will of course vary from game to game.
- Basically the condition is just an 
-\emph on 
-if-statement
-\emph default 
- as used in common programming languages like C, C++ or Java.
- An exact specification of the syntax follows in section 3.2 on page 
-\begin_inset LatexCommand \pageref{syntax}
+ In fact you may enter any valid Python code, but the result may be unpredictibl
+e; so to be on the safe side, the code you write here should look like the
+ following example:
+\layout Standard
 
-\end_inset 
 
-.
+\protected_separator 
+
+\layout Standard
+
+
+\family typewriter 
+if condition_1 == 1 && (flag_1 + flag_2) <= 10:
 \layout Paragraph
 
 3.
  Set and/or change Variables
 \layout Standard
 
-Here you can set the (gamestate) variables that make the use of Conditions
- (2) possible at all and can also be accessed in other game modules than
- the dialogue system.
- Again, the code used reminds of common programming languages and is discribed
- on page 
-\begin_inset LatexCommand \pageref{syntax}
+Here you can enter a variety of Python code.
+ In contrast to the Condition code, where your code decides whether text
+ is displayed or not, this code is executed if the line of text is displayed
+ (in case of NPC text) or selected as response (in case of Player text).
+ Use the code you enter here to change quest objects, NPC or Player attributes,
+ etc.
+ How this works in detail, will be described in section 3.4 on page 
+\begin_inset LatexCommand \pageref{code}
 
 \end_inset 
 
-.
+ as soon as these features are available.
 \layout Standard
 
 The green page label tells you at a glance that this Circle contains some
@@ -1210,6 +1687,16 @@ The green page label tells you at a glance that this Circle contains some
 
 4.
  Miscellanous Commands
+\layout Standard
+
+Here are just a few shortcuts that create code as you can enter in (3).
+ Currently, only the 
+\emph on 
+Loop 
+\emph default 
+command works.
+ When activated, the Node will not be marked as used once it appears in
+ the conversation, and thus may be spoken several times.
 \layout Standard
 
 None of them are implemented yet, but they will contain commands to start
@@ -1256,6 +1743,9 @@ Here is some room for personal notes of all kind.
  Since a dialogue can get quite complex, you really should add some comments,
  so that other people as well as you can easier understand what is going
  on.
+\layout Subsection
+
+The Run Window
 \layout Standard
 \added_space_top 0.3cm \added_space_bottom 0.3cm \align left 
 
@@ -1300,7 +1790,7 @@ Usually, a line of NPC text will be followed by one or more responses, the
 4.
  Export this conversation
 \layout Standard
-\pagebreak_bottom 
+
 The idea is that you might be able to find flaws of, and make improvements
  to your dialogue when having it available as an ASCII file.
  This feature is not implemented yet, and maybe it will completely vanish
@@ -1308,1870 +1798,98 @@ The idea is that you might be able to find flaws of, and make improvements
 \layout Subsection
 
 
-\begin_inset LatexCommand \label{syntax}
+\begin_inset LatexCommand \label{code}
 
 \end_inset 
 
-The Syntax of Conditions and Variables
+Additional Python code
 \layout Standard
 
-While other parts of a Dialogue are perfect for creating them with the help
- of a tool rather than writing them completely by hand, Condition and Variable
- code is created faster without a GUI once you've accustomed yourself to
- the programming language used.
- To make this as easy as possible (at least to people familiar with programming)
- it is very similar to languages like C, C++ or Java, although without most
- of these languages' features.
-\layout Subsubsection
+As you have learned above, you can enter additional Python code at various
+ places of the dialogue:
+\layout Itemize
 
-Language features
+directly into the text.
+ This code has to be enclosed in braces {} and should return a string.
+\layout Itemize
+
+as a condition that decides whether a chunk of dialogue is displayed or
+ not, 
+\layout Itemize
+
+and finally you can add code that is executed after a piece of dialogue
+ has been displayed.
 \layout Standard
 
-Basically, the language allows two different actions:
-\layout Enumerate
-
-The setting of variables and
-\layout Enumerate
-
-The querying of variables.
-\layout Standard
-
-As an addition, both actions can contain simple integer arithmetic and queries
- may also contain the two basic logic operations AND and OR.
-\layout Standard
-
-Both actions can be combined to allow setting of variables depending on
- the value of (other) variables.
- Programmers will know this as 
-\emph on 
-if-else-statements
-\emph default 
-.
-\layout Standard
-
-A Circles Condition is limited to a single 
-\emph on 
-if-statement
-\emph default 
- (see below), the Variable code can consist of any number of different statement
-s.
-\layout Subsubsection
-
-Language elements
+Especially about the latter case, you will find more information in this
+ section.
 \layout Paragraph
 
-Keywords
+1.
+ Controlling the Dialogue flow
 \layout Standard
 
-These tokens are reserved by the language itself and may not be used except
- where permitted:
+What for is that then? Isn't that already achieved by linking Circles with
+ arrows? Well, it partly is, but there are cases that cannot be handled
+ that way.
+ Imagine you want to give the player some special reply that is only available
+ if the NPC gave him some hint earlier in the dialogue.
+ With the dialogue being not linear at all, there may be numerous ways to
+ reach the point where the player may have that optional response.
+ But how do you know what exactly the NPC has told the player?
 \layout Standard
 
-
-\family typewriter 
-if else
-\layout Paragraph
-
-Comments
-\layout Standard
-
-Comments are mainly used to add annotations to the code.
- Their syntax is the same as used in C++ or Java.
- Single line comments begin with 
-\family typewriter 
-\emph on 
-//
-\family default 
-\emph default 
-and go to the end of the line.
- Multiline comments start with 
-\family typewriter 
-/*
-\family default 
- and end with 
-\family typewriter 
-*/
-\family default 
-.
- They may span multiple lines, but the need not.
- They mustn't be nested though.
- Everything after the 
-\family typewriter 
-//
-\family default 
- or between 
-\family typewriter 
-/*
-\family default 
- \SpecialChar \ldots{}
-
-\family typewriter 
-*/
-\family default 
- is not treated as code and may contain any character found on you keyboard
- ;).
-\layout Paragraph
-
-Variables
-\layout Standard
-
-In difference to above languages, variables have no type.
- They are assumed 32 bit signed integers though.
- To (ignorant) non-programmers ;): only whole numbers (0,1,2,3,\SpecialChar \ldots{}
-) out of
- the interval [-2
-\protected_separator 
-147
-\protected_separator 
-483
-\protected_separator 
-648; 2
-\protected_separator 
-147
-\protected_separator 
-483
-\protected_separator 
-647] are allowed as a variable's value.
-\layout Standard
-
-Since variables are untyped and the language as such is that simple, there
- is no need to define/declare them, so you can start using them right away.
-\layout Standard
-
-Valid variable names have to start with a letter ([a-zA-Z]) or underscore
- (_) and may continue with letters, numbers ([0-9]) and underscores.
- The only restriction to their length are the capabilities of your machine.
-\layout Paragraph
-
-Values
-\layout Standard
-
-As said above, values have to be integers.
- They may consist of numbers ([0-9]), optionally preceeded by a minus (-)
- to indicate negative values.
-\layout Paragraph
-
-Operators
-\layout Standard
-
-The following table gives an overview of the available operators.
-\layout Standard
-\added_space_top 0.3cm \added_space_bottom 0.3cm \align center \LyXTable
-multicol5
-14 5 0 0 -1 -1 -1 -1
-1 1 0 0
-1 0 0 0
-1 0 0 0
-1 0 0 0
-1 0 0 0
-1 0 0 0
-1 0 0 0
-1 0 0 0
-1 0 0 0
-1 1 0 0
-0 1 0 0
-0 1 0 0
-0 1 0 0
-0 1 0 0
-8 1 0 "" ""
-8 1 0 "" ""
-8 1 0 "" ""
-8 1 0 "" ""
-8 1 1 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-
-
-\emph on 
-Operator
-\newline 
-Priority
-\newline 
-Operand Type(s)
-\newline 
-Associativity
-\newline 
-Operation Performed
-\emph default 
-
-\newline 
-
-\family typewriter 
-*
-\family default 
-
-\newline 
-1
-\newline 
-arithmetic
-\newline 
-left
-\newline 
-multiplication
-\newline 
-
-\family typewriter 
-/
-\family default 
-
-\newline 
-1
-\newline 
-arithmetic
-\newline 
-left
-\newline 
-division
-\newline 
-
-\family typewriter 
-+
-\family default 
-
-\newline 
-2
-\newline 
-arithmetic
-\newline 
-left
-\newline 
-addition
-\newline 
-
-\family typewriter 
--
-\family default 
-
-\newline 
-2
-\newline 
-arithmetic
-\newline 
-left
-\newline 
-subtraction
-\newline 
-
-\family typewriter 
-==
-\family default 
-
-\newline 
-3
-\newline 
-arithmetic
-\newline 
-none
-\newline 
-equal
-\newline 
-
-\family typewriter 
-!=
-\family default 
-
-\newline 
-3
-\newline 
-arithmetic
-\newline 
-none
-\newline 
-not equal
-\newline 
-
-\family typewriter 
-<
-\family default 
-
-\newline 
-3
-\newline 
-arithmetic
-\newline 
-none
-\newline 
-less than
-\newline 
-
-\family typewriter 
-<=
-\family default 
-
-\newline 
-3
-\newline 
-arithmetic
-\newline 
-none
-\newline 
-less than or equal
-\newline 
-
-\family typewriter 
->
-\family default 
-
-\newline 
-3
-\newline 
-arithmetic
-\newline 
-none
-\newline 
-greater than
-\newline 
-
-\family typewriter 
->=
-\family default 
-
-\newline 
-3
-\newline 
-arithmetic
-\newline 
-none
-\newline 
-greater than or equal
-\newline 
-
-\family typewriter 
-&&
-\family default 
-
-\newline 
-4
-\newline 
-boolean
-\newline 
-left
-\newline 
-boolean AND
-\newline 
-
-\family typewriter 
-||
-\family default 
-
-\newline 
-4
-\newline 
-boolean
-\newline 
-left
-\newline 
-boolean OR
-\newline 
-
-\family typewriter 
-=
-\family default 
-
-\newline 
-5
-\newline 
-variable, arithmetic
-\newline 
-right
-\newline 
-assignment
-\layout Standard
-
-The 
-\emph on 
-priority
-\emph default 
- defines what expressions are evaluated first.
- Basically, everything works like you should be used from Math, i.e 
-\family typewriter 
-*
-\family default 
- before 
-\family typewriter 
-+
-\family default 
-.
- Use Parentheses (
-\family typewriter 
-()
-\family default 
-) to change this behaviour.
+Here you'll have to employ additional Python code.
+ So if you want to check later whether a special piece of dialogue has been
+ spoken, you should set a flag in this special node:
 \layout Standard
 
 
-\emph on 
-Associativity
-\emph default 
- defines what expressions are evaluated first, if you concatenate operations
- with equal 
-\emph on 
-priority
-\emph default 
-.
- 
-\emph on 
-Left
-\emph default 
- meaning the leftmost expression is calculated first, 
-\emph on 
-right
-\emph default 
- meaning the rightmost and none that it isn't allowed to concatenate these
- operations.
-\layout Paragraph
+\protected_separator 
 
-Memory
-\layout Standard
-
-We know that values can be stored in variables, but what stands behind those
- variables? Basically, the variables refer to attributes of game-objects
- or gamestate variables.
- To specifiy to which object a variable shall belong, you can write 
-\family typewriter 
-object_name.variable
-\family default 
-.
- The object you want to access has to exist within the game, so there will
- be a bit of organization necessary.
- 
-\layout Standard
-
-Two objects that currently exist in Adonthell are 
-\family typewriter 
-game_state
-\family default 
- and 
-\family typewriter 
-local
-\family default 
-.
- 
-\emph on 
-Game_state
-\emph default 
- is of course the gamestate array, a global storage that is accessible by
- other modules than just the Dialogue System.
- 
-\emph on 
-Local
-\emph default 
- is the memory of the interpreter running the dialogue.
- Everything you write into this storage will be destroyed when the dialogue
- ends, so make sure only temporary variables are stored there.
-\layout Standard
-
-If you omit the object, the interpreter assumes you wish to access the gamestate
- array, as this will probably be the most frequent case.
-\layout Standard
-
-Future objects will include the player 
-\family typewriter 
-(player)
-\family default 
- and all the NPCs, which will be refered to by their name.
- The player will have (among others) the two attributes 
-\family typewriter 
-race
-\family default 
- and 
-\family typewriter 
-gender
-\family default 
-, which can be used to adjust NPC behaviour in dialogues.
-\layout Standard
-
-One use of the gamestate array could be to specify which NPCs are currently
- in the party.
- The according attribute would be 
-\emph on 
-<npc_name>
-\family typewriter 
-\emph default 
-_in_party
-\family default 
-.
- A dialogue could then take a different direction if a certain NPC is with
- the player.
-\layout Subsubsection
-
-Language Definition
 \layout Standard
 
 
-\series medium 
-Here follow all possible constructs supported by the language.
- Expressions in 
 \family typewriter 
-typewriter
-\family default 
- script are the symbols of the language, whereas 
-\shape italic 
-italics
-\shape default 
- refer to the 
-\series bold 
-label
-\series medium 
- of the same name.
-
-\series default 
- The definitions of 
-\emph on 
-variable
-\emph default 
- and 
-\emph on 
-digit
-\emph default 
- are regular expressions.
-\layout Standard
-\added_space_top 0.3cm \added_space_bottom 0.3cm \align left \LyXTable
-multicol5
-3 2 0 0 -1 -1 -1 -1
-0 0 0 0
-0 0 0 0
-0 0 0 0
-4 0 0 "" ""
-2 0 0 "" ""
-0 2 1 0 0 0 0 "" ""
-0 2 1 0 0 0 0 "" ""
-1 2 0 0 0 0 0 "" ""
-2 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-
-
-\newline 
-
-\newline 
-
-\series bold 
-program: 
-\series default 
-
-\newline 
-
-\family typewriter 
-\series bold 
-
-\protected_separator 
-
-\protected_separator 
-
-\protected_separator 
-
-\family default 
-\series default 
-
-\newline 
-
-\emph on 
-statement-list
-\layout Standard
-\added_space_top 0.3cm \added_space_bottom 0.3cm \align left \LyXTable
-multicol5
-3 2 0 0 -1 -1 -1 -1
-0 0 0 0
-0 0 0 0
-0 0 0 0
-4 0 0 "" ""
-2 0 0 "" ""
-1 2 0 0 0 0 0 "" ""
-2 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 2 1 0 0 0 0 "" ""
-0 4 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-
-
-\series bold 
-statement-list:
-\series default 
-
-\newline 
-
-\family typewriter 
-\series bold 
-
-\protected_separator 
-
-\protected_separator 
-
-\protected_separator 
-
-\family default 
-\series default 
-
-\newline 
-
-\emph on 
-statement-list
-\emph default 
-
-\newline 
-or
-\newline 
-
-\emph on 
-statement
-\layout Standard
-\added_space_top 0.3cm \added_space_bottom 0.3cm \align left \LyXTable
-multicol5
-4 2 0 0 -1 -1 -1 -1
-1 1 0 0
-0 0 0 0
-0 0 0 0
-0 0 0 0
-4 0 0 "" ""
-2 0 0 "" ""
-1 2 0 0 0 0 0 "" ""
-2 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 2 1 0 0 0 0 "" ""
-0 4 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-
-
-\series bold 
-statement:
-\series default 
-
-\newline 
-
-\family typewriter 
-\series bold 
-
-\protected_separator 
-
-\protected_separator 
-
-\protected_separator 
-
-\family default 
-\series default 
-
-\newline 
-
-\emph on 
-assignment
-\emph default 
-
-\newline 
-or
-\newline 
-
-\emph on 
-if-statement
-\emph default 
-
-\newline 
-or
-\newline 
-
-\emph on 
-if-else-statement
-\layout Standard
-\added_space_top 0.3cm \added_space_bottom 0.3cm \align left \LyXTable
-multicol5
-2 2 0 0 -1 -1 -1 -1
-0 0 0 0
-0 0 0 0
-4 0 0 "" ""
-2 0 0 "" ""
-1 2 0 0 0 0 0 "" ""
-2 2 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 2 1 0 0 0 0 "" ""
-
-
-\series bold 
-assignment:
-\series default 
-
-\newline 
-
-\family typewriter 
-\series bold 
-
-\protected_separator 
-
-\protected_separator 
-
-\protected_separator 
-
-\family default 
-\series default 
-
-\newline 
-
-\emph on 
-variable
-\emph default 
- 
-\family typewriter 
-\shape italic 
-=
-\family default 
-\shape default 
- 
-\emph on 
-arithmetic-expression 
-\family typewriter 
-\emph default 
-;
-\layout Standard
-\added_space_top 0.3cm \added_space_bottom 0.3cm \align left \LyXTable
-multicol5
-2 2 0 0 -1 -1 -1 -1
-0 0 0 0
-0 0 0 0
-2 0 0 "" ""
-2 0 0 "" ""
-1 2 0 0 0 0 0 "" ""
-2 8 1 0 0 0 0 "" ""
-0 2 1 0 0 0 0 "" ""
-0 2 1 0 0 0 0 "" ""
-
-
-\series bold 
-variable:
-\series default 
-
-\newline 
-
-\family typewriter 
-\series bold 
-
-\protected_separator 
-
-\protected_separator 
-
-\protected_separator 
-
-\family default 
-\series default 
-
-\newline 
-[
-\family typewriter 
-a
-\family default 
--
-\family typewriter 
-zA
-\family default 
--
-\family typewriter 
-Z_
-\family default 
-][
-\family typewriter 
-a
-\family default 
--
-\family typewriter 
-zA
-\family default 
--
-\family typewriter 
-Z0
-\family default 
--
-\family typewriter 
-9_
-\family default 
-]
-\family typewriter 
-*
-\layout Standard
-\added_space_top 0.3cm \added_space_bottom 0.3cm \align left \LyXTable
-multicol5
-7 2 0 0 -1 -1 -1 -1
-0 0 0 0
-0 0 0 0
-0 0 0 0
-0 0 0 0
-0 0 0 0
-0 0 0 0
-0 0 0 0
-4 0 0 "" ""
-2 0 0 "" ""
-1 2 0 0 0 0 0 "" ""
-2 2 1 0 0 0 0 "" ""
-0 2 1 0 0 0 0 "" ""
-0 2 1 0 0 0 0 "" ""
-0 4 1 0 0 0 0 "" ""
-0 2 1 0 0 0 0 "" ""
-0 2 1 0 0 0 0 "" ""
-0 2 1 0 0 0 0 "" ""
-0 2 1 0 0 0 0 "" ""
-0 2 1 0 0 0 0 "" ""
-0 2 1 0 0 0 0 "" ""
-0 2 1 0 0 0 0 "" ""
-0 2 1 0 0 0 0 "" ""
-0 2 1 0 0 0 0 "" ""
-
-
-\series bold 
-arithmetic-expression:
-\series default 
-
-\newline 
-
-\family typewriter 
-\series bold 
-
-\protected_separator 
-
-\protected_separator 
-
-\protected_separator 
-
-\family default 
-\series default 
-
-\newline 
-
-\emph on 
-value
-\emph default 
- 
-\family typewriter 
-+
-\family default 
- 
-\emph on 
-arithmetic-expression
-\emph default 
-
-\newline 
-or
-\newline 
-
-\emph on 
-value
-\emph default 
- 
-\family typewriter 
--
-\family default 
- 
-\emph on 
-arithmetic-expression
-\emph default 
-
-\newline 
-or
-\newline 
-
-\emph on 
-value
-\emph default 
- 
-\family typewriter 
-*
-\family default 
- 
-\emph on 
-arithmetic-expression
-\emph default 
-
-\newline 
-or
-\newline 
-
-\emph on 
-value
-\emph default 
- 
-\family typewriter 
-/
-\family default 
- 
-\emph on 
-arithmetic-expression
-\emph default 
-
-\newline 
-or
-\newline 
-
-\family typewriter 
-(
-\family default 
-\emph on 
- arithmetic-expression
-\emph default 
- 
-\family typewriter 
-)
-\family default 
-
-\newline 
-or
-\newline 
-
-\emph on 
-value
-\layout Standard
-\added_space_top 0.3cm \added_space_bottom 0.3cm \align left \LyXTable
-multicol5
-3 2 0 0 -1 -1 -1 -1
-0 0 0 0
-0 0 0 0
-0 0 0 0
-4 0 0 "" ""
-2 0 0 "" ""
-1 2 0 0 0 0 0 "" ""
-2 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 4 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-
-
-\series bold 
-value:
-\series default 
-
-\newline 
-
-\family typewriter 
-\series bold 
-
-\protected_separator 
-
-\protected_separator 
-
-\protected_separator 
-
-\family default 
-\series default 
-
-\newline 
-
-\emph on 
-variable
-\emph default 
-
-\newline 
-or
-\newline 
-
-\emph on 
-digit
-\layout Standard
-\added_space_top 0.3cm \added_space_bottom 0.3cm \align left \LyXTable
-multicol5
-2 2 0 0 -1 -1 -1 -1
-0 0 0 0
-0 0 0 0
-8 0 0 "" ""
-2 0 0 "" ""
-1 2 0 0 0 0 0 "" ""
-2 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-1 2 0 0 0 0 0 "" ""
-
-
-\series bold 
-digit:
-\series default 
-
-\newline 
-
-\family typewriter 
-\series bold 
-
-\protected_separator 
-
-\protected_separator 
-
-\protected_separator 
-
-\family default 
-\series default 
-
-\newline 
-
-\family typewriter 
--
-\family default 
-?[
-\family typewriter 
-0
-\family default 
--
-\family typewriter 
-9
-\family default 
-]+
-\layout Standard
-\added_space_top 0.3cm \added_space_bottom 0.3cm \align left \LyXTable
-multicol5
-8 3 0 0 -1 -1 -1 -1
-0 0 0 0
-0 0 0 0
-0 0 0 0
-0 0 0 0
-0 0 0 0
-0 0 0 0
-0 0 0 0
-0 0 0 0
-4 0 0 "" ""
-8 0 0 "" ""
-2 0 0 "" ""
-1 2 0 0 0 0 0 "" ""
-2 8 1 0 0 0 0 "" ""
-2 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-1 2 0 0 0 0 0 "" ""
-2 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-1 2 0 0 0 0 0 "" ""
-2 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 2 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-1 2 0 0 0 0 0 "" ""
-2 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 4 1 0 0 0 0 "" ""
-1 2 0 0 0 0 0 "" ""
-2 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-
-
-\series bold 
-if-statement: 
-\series default 
-
-\newline 
-
-\family typewriter 
-\series bold 
-
-\protected_separator 
-
-\protected_separator 
-
-\protected_separator 
-
-\family default 
-\series default 
-
-\newline 
-
-\family typewriter 
-if (
-\family default 
- 
-\emph on 
-boolean-expression 
-\family typewriter 
-\emph default 
-)
-\family default 
-
-\newline 
-
-\newline 
-
-\family typewriter 
-{
-\family default 
-  
-\newline 
-
-\newline 
-
-\family typewriter 
-\series bold 
-
-\protected_separator 
-
-\protected_separator 
-
-\protected_separator 
-
-\family default 
-\series default 
- 
-\newline 
-
-\emph on 
-statement-list
-\emph default 
-
-\newline 
-
-\newline 
-
-\family typewriter 
-\series bold 
-}
-\family default 
-\series default 
- 
-\newline 
-
-\newline 
-
-\newline 
-
-\newline 
-or
-\newline 
-
-\family typewriter 
-if (
-\family default 
- 
-\emph on 
-boolean-expression 
-\family typewriter 
-\emph default 
-)
-\family default 
-
-\newline 
-
-\newline 
-
-\newline 
-
-\emph on 
-statement
-\series medium 
- 
-\layout Standard
-\added_space_top 0.3cm \added_space_bottom 0.3cm \align left \LyXTable
-multicol5
-5 2 0 0 -1 -1 -1 -1
-0 0 0 0
-0 0 0 0
-0 0 0 0
-0 0 0 0
-0 0 0 0
-4 0 0 "" ""
-2 0 0 "" ""
-1 2 0 0 0 0 0 "" ""
-2 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 2 1 0 0 0 0 "" ""
-0 4 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-
-
-\series bold 
-boolean-expression:
-\series default 
-
-\newline 
-
-\family typewriter 
-\series bold 
-
-\protected_separator 
-
-\protected_separator 
-
-\protected_separator 
-
-\family default 
-\series default 
-
-\newline 
-
-\emph on 
-conditional-expression
-\emph default 
- 
-\family typewriter 
-&&
-\family default 
- 
-\emph on 
-boolean-expression
-\emph default 
-
-\newline 
-or
-\newline 
-
-\emph on 
-conditional-expression
-\emph default 
- 
-\family typewriter 
-||
-\family default 
- 
-\emph on 
-boolean-expression
-\emph default 
-
-\newline 
-or
-\newline 
-
-\family typewriter 
-(
-\family default 
- 
-\emph on 
-boolean-expression 
-\family typewriter 
-\emph default 
-)
-\family default 
-
-\newline 
-or
-\newline 
-
-\emph on 
-conditional-expression
-\layout Standard
-\added_space_top 0.3cm \added_space_bottom 0.3cm \align left \LyXTable
-multicol5
-7 2 0 0 -1 -1 -1 -1
-0 0 0 0
-0 0 0 0
-0 0 0 0
-0 0 0 0
-0 0 0 0
-0 0 0 0
-0 0 0 0
-4 0 0 "" ""
-2 0 0 "" ""
-1 2 0 0 0 0 0 "" ""
-2 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 2 1 0 0 0 0 "" ""
-0 4 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 2 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 2 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-
-
-\series bold 
-conditional-expression:
-\series default 
-
-\newline 
-
-\family typewriter 
-\series bold 
-
-\protected_separator 
-
-\protected_separator 
-
-\protected_separator 
-
-\family default 
-\series default 
-
-\newline 
-
-\emph on 
-arithmetic-expression
-\emph default 
- 
-\family typewriter 
-\series bold 
-==
-\family default 
-\series default 
- 
-\emph on 
-arithmetic-expression
-\emph default 
-
-\newline 
-or
-\newline 
-
-\emph on 
-arithmetic-expression
-\emph default 
- 
-\family typewriter 
-!=
-\family default 
- 
-\emph on 
-arithmetic-expression
-\emph default 
-
-\newline 
-or
-\newline 
-
-\emph on 
-arithmetic-expression 
-\family typewriter 
-\emph default 
-<
-\family default 
-\emph on 
- arithmetic-expression
-\emph default 
-
-\newline 
-or
-\newline 
-
-\emph on 
-arithmetic-expression
-\emph default 
- 
-\family typewriter 
-<
-\series bold 
-=
-\family default 
-\series default 
- 
-\emph on 
-arithmetic-expression
-\emph default 
-
-\newline 
-or
-\newline 
-
-\emph on 
-arithmetic-expression
-\emph default 
- 
-\family typewriter 
->
-\family default 
- 
-\emph on 
-arithmetic-expression
-\emph default 
-
-\newline 
-or
-\newline 
-
-\emph on 
-arithmetic-expression
-\emph default 
- 
-\family typewriter 
->=
-\family default 
- 
-\emph on 
-arithmetic-expressio
-\emph default 
-n
-\layout Standard
-\added_space_top 0.3cm \added_space_bottom 0.3cm \align left \LyXTable
-multicol5
-10 3 0 0 -1 -1 -1 -1
-0 0 0 0
-0 0 0 0
-0 0 0 0
-0 0 0 0
-0 0 0 0
-0 0 0 0
-0 0 0 0
-0 0 0 0
-0 0 0 0
-0 0 0 0
-4 0 0 "" ""
-2 0 0 "" ""
-2 0 0 "" ""
-1 2 0 0 0 0 0 "" ""
-2 8 1 0 0 0 0 "" ""
-2 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-1 2 0 0 0 0 0 "" ""
-2 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-1 2 0 0 0 0 0 "" ""
-2 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-1 2 0 0 0 0 0 "" ""
-2 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 2 0 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-1 2 0 0 0 0 0 "" ""
-2 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 4 1 0 0 0 0 "" ""
-1 2 0 0 0 0 0 "" ""
-2 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-1 2 0 0 0 0 0 "" ""
-2 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 2 1 0 0 0 0 "" ""
-
-
-\series bold 
-if-else-statement:
-\emph on 
- 
-\series default 
-\emph default 
-
-\newline 
-
-\family typewriter 
-\series bold 
-
-\protected_separator 
-
-\protected_separator 
-
-\protected_separator 
-
-\family default 
-\series default 
-
-\newline 
-
-\emph on 
-if-statement
-\emph default 
- 
-\newline 
-
-\newline 
-
-\family typewriter 
-\series bold 
-else
-\family default 
-\series default 
- 
-\newline 
- 
-\newline 
-
-\family typewriter 
-{
-\family default 
- 
-\newline 
-
-\newline 
-
-\family typewriter 
-\series bold 
-
-\protected_separator 
-
-\protected_separator 
-
-\protected_separator 
-
-\family default 
-\series default 
- 
-\newline 
-
-\emph on 
-statement-list
-\emph default 
-
-\newline 
-
-\newline 
-
-\family typewriter 
-\series bold 
-}
-\family default 
-\series default 
- 
-\newline 
-
-\newline 
-
-\newline 
-
-\newline 
-or
-\newline 
-
-\emph on 
-if-statement
-\emph default 
- 
-\newline 
- 
-\newline 
-
-\family typewriter 
-\series bold 
-else
-\family default 
-\series default 
- 
-\newline 
-
-\newline 
-
+self.special_text_spoken = 1
 \newline 
 
-\emph on 
-statement
 \layout Standard
 
-Okay, that's been hard stuff, therefore an example:
-\layout Subsubsection
-
-Code Example
+And later on, you can add a condition to the special response that shall
+ become available:
 \layout Standard
-\added_space_top 0.3cm \added_space_bottom 0.3cm \align left \LyXTable
-multicol5
-17 4 0 0 -1 -1 -1 -1
-0 0 0 0
-0 0 0 0
-0 0 0 0
-0 0 0 0
-0 0 0 0
-0 0 0 0
-0 0 0 0
-0 0 0 0
-0 0 0 0
-0 0 0 0
-0 0 0 0
-0 0 0 0
-0 0 0 0
-0 0 0 0
-0 0 0 0
-0 0 0 0
-0 0 0 0
-2 0 0 "" ""
-2 0 0 "" ""
-2 0 0 "" ""
-2 0 0 "" ""
-1 2 0 0 0 0 0 "" ""
-2 8 1 0 0 0 0 "" ""
-2 8 1 0 0 0 0 "" ""
-2 8 1 0 0 0 0 "" ""
-1 2 0 0 0 0 0 "" ""
-2 2 1 0 0 0 0 "" ""
-2 2 0 0 0 0 0 "" ""
-2 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-1 2 0 0 0 0 0 "" ""
-2 2 0 0 0 0 0 "" ""
-2 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-1 2 0 0 0 0 0 "" ""
-2 8 1 0 0 0 0 "" ""
-2 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-1 2 0 0 0 0 0 "" ""
-2 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-1 2 0 0 0 0 0 "" ""
-2 8 1 0 0 0 0 "" ""
-2 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-1 2 0 0 0 0 0 "" ""
-2 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-1 2 0 0 0 0 0 "" ""
-2 8 1 0 0 0 0 "" ""
-2 8 1 0 0 0 0 "" ""
-2 8 1 0 0 0 0 "" ""
-1 2 0 0 0 0 0 "" ""
-2 8 1 0 0 0 0 "" ""
-2 8 1 0 0 0 0 "" ""
-2 8 1 0 0 0 0 "" ""
-1 2 0 0 0 0 0 "" ""
-2 8 1 0 0 0 0 "" ""
-2 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-1 2 0 0 0 0 0 "" ""
-2 8 1 0 0 0 0 "" ""
-0 2 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 2 0 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-0 2 1 0 0 0 0 "" ""
-0 8 1 0 0 0 0 "" ""
-1 2 0 0 0 0 0 "" ""
-2 8 1 0 0 0 0 "" ""
-0 2 1 0 0 0 0 "" ""
-1 2 0 0 0 0 0 "" ""
-2 2 0 0 0 0 0 "" ""
-2 8 1 0 0 0 0 "" ""
-2 2 1 0 0 0 0 "" ""
-1 2 0 0 0 0 0 "" ""
-2 2 0 0 0 0 0 "" ""
-2 8 1 0 0 0 0 "" ""
-2 2 1 0 0 0 0 "" ""
+
+
+\protected_separator 
+
+\layout Standard
 
 
 \family typewriter 
-\emph on 
-// assign the value one to a variable
-\emph default 
+if self.special_text_spoken == 1:
+\newline 
+
+\layout Standard
+
+That's it.
+ With this method, you can easily control what pieces of the dialogues the
+ player traversed, and what pieces he didn't see.
+ Note that the 
+\family typewriter 
+self
+\family default 
+ keyword means that those flags are stored with the dialogue, and thus are
+ lost once the dialogue ends.
+ If you want them to be static, you'll have to set them inside an appropriate
  
-\newline 
-one = 1;
-\newline 
-
-\newline 
-
-\newline 
-
-\newline 
-
-\newline 
-
 \emph on 
-// a if-else-statement 
-\newline 
-
+quest object
 \emph default 
-
-\newline 
-
-\series bold 
-if
-\series default 
- (one + 1 == 2) 
-\newline 
-
+, or within the 
 \emph on 
-// this is true, therefore \SpecialChar \ldots{}
-
+gamestate
 \emph default 
-
-\newline 
-
-\protected_separator 
-
-\protected_separator 
-
-\protected_separator 
- 
-\newline 
-one = one + 1;
-\newline 
-
-\emph on 
-// \SpecialChar \ldots{}
- this line is executed \SpecialChar \ldots{}
-
-\emph default 
-
-\newline 
-
-\series bold 
-else
-\series default 
-
-\newline 
-
-\newline 
-
-\newline 
- one = -1;
-\newline 
-
-\emph on 
-// \SpecialChar \ldots{}
- and this one not
-\emph default 
-
-\newline 
-
-\newline 
-
-\newline 
-
-\newline 
-
-\newline 
-
-\emph on 
-/* Note that 'one + 1 == 2' in the if-statement did 
-\newline 
-
-\protected_separator 
-
-\protected_separator 
-
-\protected_separator 
-not change the value of one, therefore \SpecialChar \ldots{}
- */
-\emph default 
-
-\newline 
-
-\series bold 
-if
-\series default 
- (one == 4 / (1 + 1))
-\emph on 
-
-\protected_separator 
-
-\protected_separator 
-
-\protected_separator 
-
-\emph default 
- 
-\newline 
-
-\emph on 
-/* \SpecialChar \ldots{}
- is also true */
-\emph default 
-
-\newline 
-
-\newline 
-
-\series bold 
-if
-\series default 
- ( one == one )
-\newline 
-
-\emph on 
-// Nested if's allowed as well
-\emph default 
-
-\newline 
-
-\newline 
- 
-\protected_separator 
-
-\protected_separator 
-
-\protected_separator 
- 
-\newline 
-one = 1;
-\newline 
-
-\newline 
-
-\newline 
-
-\newline 
-
-\newline 
-
-\emph on 
-// Okay, if you know the final value of one you'll 
-\newline 
-// have no trouble with this language :-)
+ array.
+ More on those later, when they are implemented.
 \the_end

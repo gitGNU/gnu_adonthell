@@ -23,7 +23,7 @@ class dialog
 {
 public:
     ~dialog ();                     // Clean up stuff
-    bool init (char*, char*);       // Load & instanciate the dialogue object
+    bool init (char*, char*);       // Load & instantiate the dialogue object
     void run (u_int32);             // Run the dialogue 
 
     char **text;                    // NPC's speech and according Player responses
@@ -33,10 +33,9 @@ private:
 	PyObject *instance;             // Points to the instantiated dialogue class
     char **strings;                 // The dialogue text
 
-    vector<u_int32> answers;        // The indices with which to call instane.run () 
+    vector<u_int32> answers;        // The indices with which to call instance.run () 
     vector<s_int32> choices;        // Strings player can chose from
     vector<s_int32> used;           // Dialogue parts that are already spoken
-
 
     void extract_strings ();        // Gets the dialogues text from 'instance'
 };
