@@ -1471,7 +1471,7 @@ int scroll_graph (gpointer data)
 }
 
 // Removes data from a vector and reports success or failure
-template <class T> u_int8 remove_data (vector<T, allocator<T> > &array, T data)
+template <class T> u_int8 remove_data (vector<T> &array, T data)
 {
     vector<T, allocator<T> >::iterator i;
 

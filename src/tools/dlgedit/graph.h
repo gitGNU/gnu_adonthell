@@ -46,4 +46,4 @@ void delete_node (MainFrame *);
 void edit_node (MainFrame *);
 void sort_nodes (MainFrame *);
 void free_node (DlgNode *);
-template <class T> u_int8 remove_data (vector<T, allocator<T> >&, T);
+template <class T> u_int8 remove_data (vector<T>&, T);
