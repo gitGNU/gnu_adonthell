@@ -316,6 +316,8 @@ void animation::draw(u_int16 x, u_int16 y, drawing_area * da_opt=NULL)
 s_int8 animation::get(gzFile file)
 {
   u_int16 i;
+  gzread(file,&length,sizeof(length));
+  gzread(file,&height,sizeof(height));
   gzread(file,&nbr_of_images,sizeof(nbr_of_images));
   delete[] t_frame;
   t_frame=new image[nbr_of_images];
