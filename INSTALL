@@ -3,7 +3,7 @@ INSTALLING:
 Simply type the following:
 
 ./configure
-./make
+make
 cp src/mapengine .
 
 Then, type the following to have the Adonthell mapengine run
