@@ -10,25 +10,16 @@
    but WITHOUT ANY WARRANTY.
 
    See the COPYING file for more details.
-*/
+ */
 
-#include "preset.h"
-#include "pset_interface.h"
+#ifndef __DBG_CALLBACKS_H__
+#define __DBG_CALLBACKS_H__
 
-preset_dlg::preset_dlg (MainFrame *w) : wnd(w)
-{
-    dlg = create_preset_dlg (this);
-}
+#include <gtk/gtk.h>
 
+void on_character_tree_expand (GtkCTree * ctree, GList * node, gpointer user_data);
+void on_quest_tree_expand (GtkCTree * ctree, GList * node, gpointer user_data);
+void on_update_debug_clicked (GtkButton * button, gpointer user_data);
+void on_close_debug_clicked (GtkButton * button, gpointer user_data);
 
-void preset_dlg::run ()
-{
-}
-
-int preset_dlg::on_ok (char *v)
-{
-    // everything turned out fine :)
-    wnd->pset_vars = v;
-    return 1;
-}
-
+#endif

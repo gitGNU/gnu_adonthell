@@ -19,7 +19,6 @@ void on_fs_ok_button_pressed (GtkButton *, gpointer);
 void on_fs_cancel_button_pressed (GtkButton *, gpointer);
 
 // Menu Callbacks
-void on_file_project_activate (GtkMenuItem *, gpointer);
 void on_file_new_activate (GtkMenuItem *, gpointer);
 void on_file_load_activate (GtkMenuItem *, gpointer);
 void on_file_save_activate (GtkMenuItem *, gpointer);
@@ -28,5 +27,6 @@ void on_dialogue_run_activate (GtkMenuItem *, gpointer);
 void on_dialogue_variables_activate (GtkMenuItem *, gpointer);
 void on_dialogue_functions_activate (GtkMenuItem *, gpointer);
 void on_dialogue_player_activate (GtkMenuItem *, gpointer);
+void on_extras_debug_activate (GtkMenuItem *, gpointer);
 
 void on_list_select (GtkList *, GtkWidget *, gpointer);

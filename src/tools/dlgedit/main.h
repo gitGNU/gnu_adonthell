@@ -21,7 +21,7 @@
 #include "dlgnode.h"
 #include "../../character.h"
 
-class error_dlg;
+class debug_dlg;
 
 // Internal Editor Modes
 enum
@@ -45,8 +45,9 @@ enum
 };
 
 // Dialogue Editor Data
-typedef struct
+class MainFrame
 {
+public:
     GtkWidget *wnd;             // Main Window
     GtkWidget *menu;            // Menubar
     GtkWidget *graph;           // Drawing Area
@@ -54,7 +55,6 @@ typedef struct
     GtkWidget *text_dlg;
     GtkWidget *dialogue_run;    // The Dialogue_Run Menuitem
     GtkWidget *tooltip;         // The tooltip
-    GtkWidget *project;
 
     GdkPixmap *pixmap;          // Drawing surface
     GdkFont *font;              // Font for Textoutput
@@ -78,13 +78,15 @@ typedef struct
     s_int32 scroll_x;           // Auto-scroll rate
     s_int32 scroll_y;           // Auto-scroll rate
     u_int8 scroll;              // Auto-scrolling on/off
+    u_int8 changed;             // Dialogue un-/changed
 
-    error_dlg *err;             // For Displaying error messages
+    debug_dlg *dbg_dlg;         // For Displaying debug info
     string pset_vars;           // Preset variables for running the Dialogue
     string cust_func;           // Custom functions of the Dialogue
     player *myplayer;           // A player object
-}
-MainFrame;
+
+    void set_changed ();
+};
 
 /* Functions */
 void init_app (MainFrame *);

@@ -10,25 +10,17 @@
    but WITHOUT ANY WARRANTY.
 
    See the COPYING file for more details.
-*/
+ */
 
-#include "preset.h"
-#include "pset_interface.h"
+#include <gtk/gtk.h>
+#include "debug.h"
+#include "dbg_interface.h"
 
-preset_dlg::preset_dlg (MainFrame *w) : wnd(w)
+debug_dlg::debug_dlg ()
 {
-    dlg = create_preset_dlg (this);
+    dlg = create_debug_wnd (this);
 }
 
-
-void preset_dlg::run ()
+void debug_dlg::update ()
 {
 }
-
-int preset_dlg::on_ok (char *v)
-{
-    // everything turned out fine :)
-    wnd->pset_vars = v;
-    return 1;
-}
-

@@ -1,7 +1,7 @@
 /*
    $Id$
- 
-   Copyright (C) 1999   The Adonthell Project
+   
+   Copyright (C) 2000 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -10,10 +10,25 @@
    but WITHOUT ANY WARRANTY.
 
    See the COPYING file for more details.
-*/
+ */
 
-#include <gtk/gtk.h>
+#ifndef __DEBUG_H__
+#define __DEBUG_H__
 
+#include <gtk/gtkstyle.h>
 
-void on_error_close_clicked (GtkButton * button, gpointer user_data);
-void on_error_delete (GtkWidget *, GdkEvent *, gpointer);
+class MainFrame;
+
+class debug_dlg
+{
+public:
+    debug_dlg ();
+    void update ();
+
+    GtkWidget *quest_tree;
+    GtkWidget *char_tree;
+    GtkWidget *dlg;
+    MainFrame *wnd;
+};
+
+#endif // __DEBUG_H__

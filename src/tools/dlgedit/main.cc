@@ -129,8 +129,7 @@ main (int argc, char *argv[])
     MainWnd->wnd = NULL;
     MainWnd->text_dlg = NULL;
     MainWnd->pixmap = NULL;
-    MainWnd->project = NULL;
-    MainWnd->err = NULL;
+    MainWnd->dbg_dlg = NULL;
 
     // Create Top Level Window and Controls
     create_mainframe (MainWnd);
@@ -146,6 +145,15 @@ main (int argc, char *argv[])
     delete MainWnd;
 
     return 0;
+}
+
+void MainFrame::set_changed ()
+{
+    if (changed) return;
+
+    char *title = GTK_WINDOW (wnd)->title;
+    gtk_window_set_title (GTK_WINDOW (wnd), g_strjoin (NULL, title, " (changed)", NULL));
+    changed = 1;
 }
 
 /* Set variables to safe values */
@@ -165,7 +173,8 @@ init_app (MainFrame * MainWnd)
     MainWnd->scroll_x = 0;
     MainWnd->scroll_y = 0;
     MainWnd->pset_vars = "";
-
+    MainWnd->changed = 0;
+    
     MainWnd->myplayer->name = strdup ("Banec");
     MainWnd->myplayer->set ("race", 0);     // Dwarf
     MainWnd->myplayer->set ("gender", 1);   // Male

@@ -15,7 +15,6 @@
 #include <gtk/gtk.h>
 #include "circle.h"
 #include "crcle_interface.h"
-#include "error_dlg.h"
 
 // returns selected option
 gchar *get_option (GtkOptionMenu * o)

@@ -69,6 +69,7 @@ new_circle (MainFrame * wnd, GdkPoint point, int type)
         return 0;
     }
     
+    wnd->set_changed ();
     return 1;
 }
 
@@ -138,7 +139,8 @@ new_arrow (MainFrame * wnd, GdkPoint point)
     redraw_arrow (wnd, arrow);
     draw_arrow (wnd, arrow, 0);
     show_preview (wnd);
-    
+    wnd->set_changed ();
+   
     return 1;
 }
 
@@ -179,6 +181,7 @@ new_link (MainFrame * wnd, GdkPoint point)
     draw_circle (wnd, wnd->selected_node, 1);
     draw_arrow (wnd, (Arrow *) arrow, 2);
     show_preview (wnd);
+    wnd->set_changed ();
 
     return 1;
 }
@@ -210,6 +213,7 @@ remove_link (MainFrame * wnd, GdkPoint point)
     draw_circle (wnd, wnd->selected_node, 1);
     draw_arrow (wnd, (Arrow *) arrow, 0);
     show_preview (wnd);
+    wnd->set_changed ();
     
     return 1;
 }
@@ -244,8 +248,14 @@ edit_node (MainFrame * wnd)
         // Enter Dialog - Event - Loop 
         gtk_main ();
 
-        // In case  wnd -> selected_node -> type  has changed
-        draw_circle (wnd, wnd->selected_node, wnd->selected_node->highlite);
+        // Left via OK-Button
+        if (dlg.retval == 1)
+        {
+            wnd->set_changed ();
+
+            // In case  wnd -> selected_node -> type  has changed
+            draw_circle (wnd, wnd->selected_node, wnd->selected_node->highlite);
+        }
     }
 
     show_preview (wnd);
@@ -292,6 +302,7 @@ delete_node (MainFrame * wnd)
 
     redraw_graph (wnd);
     show_preview (wnd);
+    wnd->set_changed ();
 }
 
 // remove arrow from start- and end-circle 
@@ -521,6 +532,7 @@ end_moving (MainFrame * wnd, GdkPoint point)
 
     redraw_graph (wnd);
     show_preview (wnd);
+    wnd->set_changed ();
 }
 
 // Shows Preview of Dialogue 
@@ -1052,6 +1064,7 @@ save_dialogue (MainFrame * wnd)
         }
 
     wnd->file_name = g_strdup (file->str);
+    wnd->changed = 0;
 
     update_gui (wnd);
 
