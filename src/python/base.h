@@ -99,7 +99,7 @@ namespace python
      * 
      * @return pointer to the passed %object.
      */
-    PyObject *pass_instance (void* instance, const char* class_name);
+    PyObject *pass_instance (void* instance, const char* nspace_name, const char* class_name);
     
     /**
      * Loads a Python tuple previously saved with put_tuple ().

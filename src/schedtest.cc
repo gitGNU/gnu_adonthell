@@ -10,7 +10,7 @@
 
 extern "C"
 {
-    void initbasec (void);
+    void init_base (void);
 }
 
 // our global test scbedule
@@ -61,7 +61,7 @@ int main (int argc, char* argv[])
     // python system
     python::init ();
     python::insert_path ("adontest");
-    initbasec ();
+    init_base ();
     PyObject *module = python::import_module ("base");
     data::globals = PyModule_GetDict (module);
 

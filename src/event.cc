@@ -86,7 +86,7 @@ void event::set_script (std::string filename, PyObject * args)
         
     // We can pass_instance directly 'cause PyTuple_SetItem steals a
     // reference to the result of pass_instance.
-    PyTuple_SetItem (theargs, 0, python::pass_instance (this, "event"));
+    PyTuple_SetItem (theargs, 0, python::pass_instance (this, "base", "event"));
     for (u_int16 i = 1; i < argssize; i++)
     {
         PyObject *intref = PyTuple_GetItem (args, i - 1);

@@ -71,7 +71,7 @@ int listener::raise_event (event * ev)
             case PY_CALLBACK:
             {
                 PyObject * args = PyTuple_New (1);
-                PyObject * arg = python::pass_instance (ev, "input__event");
+                PyObject * arg = python::pass_instance (ev, "input", "keyboard_event");
                 PyTuple_SetItem (args, 0, arg);
                 PyObject * val = PyObject_CallObject (Py_callbacks[ev->type()], args);
                 Py_DECREF (args);

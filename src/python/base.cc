@@ -106,7 +106,7 @@ PyObject *python::import_module (std::string filename)
 }
 
 // Make a C++ instance available to Python
-PyObject *python::pass_instance (void *instance, const char *class_name)
+PyObject *python::pass_instance (void *instance, const char * nspace_name, const char *class_name)
 {
     char class_ptr[256];
     char class_addr[256];
@@ -119,7 +119,12 @@ PyObject *python::pass_instance (void *instance, const char *class_name)
     *(buffer++) = '_';
     buffer = ptr_to_string (buffer, &instance, sizeof (void *));
     strcpy (buffer, "_p_");
-    strcpy (buffer+3, class_name);
+    buffer += 3;
+    strcpy (buffer, nspace_name);
+    buffer += strlen(nspace_name);
+    strcpy (buffer, "__");
+    buffer += 2;
+    strcpy (buffer, class_name);
 
     // Now create the Python object corresponding to "instance"
     PyObject *cls = PyDict_GetItemString (data::globals, class_ptr);
