@@ -225,7 +225,7 @@ void mapcharacter::remove_from_pos ()
 }
 
 void mapcharacter::jump_to (u_int16 smap, u_int16 x, u_int16 y,
-                         u_int16 pos = NO_MOVE)
+			    u_int16 pos = NO_MOVE)
 {
     leave_position (); 
     set_pos (smap, x, y);
