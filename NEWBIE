@@ -1,0 +1,299 @@
+The Beginner's Guide to Adonthell
+Written by Andrew Henderson <hendersa@db.erau.edu>
+19 February 2000
+
+NOTE: The newest version of this guide can be viewed online at
+http://adonthell.linuxgames.com.
+
+****************************
+* 1.0 - GUIDE INTRODUCTION *
+****************************
+
+Welcome to the world of Adonthell! Most software packages for Linux
+tend to throw a lot at an unexperienced user when it comes to
+installation. We know that not everyone is a Linux or Unix guru, not
+everyone knows how to use gzip and tar, and that asking for step-by-
+step installation instructions is not too much to ask for. So, we've
+created this guide to get you rolling with as little hassle as
+possible.
+
+We've made this software distribution as easy to install as we could,
+but we can't automate everything for you. You'll have to build and
+install a few libraries that Adonthell relies on, then build the
+Adonthell game itself.
+
+If you feel that you don't need to have anyone hold your hand during
+the installation process, just read the INSTALLATION file in this
+directory for the standard install information. If you think you
+need a little help or are having problems, then read on.
+
+We're making a few assumptions. Take a quick look at them and see if
+you match:
+
+- You are using an Intel x86-based computer. If you aren't, you're out
+of luck this time around. Sorry.
+
+- You have a 2.x Linux kernel installed. If you aren't, ask the Linux
+guru who installed the 1.x kernel to upgrade, since you probably won't
+be able to build the Adonthell software on it.
+
+- You have access to a superuser account (such as root). You'll need
+the superuser permissions in order to install the libraries needed by
+Adonthell. If you don't have these permissions, bribe your system
+administrator to install them for you. Twinkies work well as bribes.
+So do Doritos.
+
+- You are running X-windows with a 16-bit color depth. If you aren't,
+Adonthell is going to run slow as it compensates for the difference in
+color depth. We can compensate for 8, 24, or 32 bit color depths only.
+If you can only run in 16 color (4-bit) mode, you're out of luck. Sorry
+again.
+
+- You have C/C++ development tools (gcc, ld, etc.) installed on your
+system, as well as the basic utility programs 'tar' and 'gzip'.
+Practically every Linux installation will install these programs by
+default. If you don't have these tools, you've got bigger problems
+than just trying to get Adonthell to run.
+
+- You have a sound card configured and running under Linux. If you
+aren't, you'll miss out on the music and sound effects, but will still
+be able to play the game. As a bonus, though, there is one less library
+you'll have to download and install.
+
+******************************************
+* 2.0 - OVERVIEW OF THE BEGINNER'S GUIDE *
+******************************************
+
+Here is a quick outline of the steps we are going to follow to install
+Adonthell:
+
+* Installing the required libraries
+  - Downloading the libraries
+  - Installing the libraries
+  - Configuring your system to use the libraries
+
+* Building the Adonthell source code
+  - Downloading the Adonthell source package
+  - Building the source package
+
+* Running Adonthell
+
+* Questions/Help
+
+*******************************************
+* 3.0 - INSTALLING THE REQUIRED LIBRARIES *
+*******************************************
+
+There are three libraries that Adonthell depends on. Two of these
+libraries are required, but one is optional. The two REQUIRED
+libraries (and where they can be downloaded from) are:
+
+1. The Simple Directmedia Layer (SDL) library, version 1.0 or later.
+2. The SDL_image library, version 1.0 or later.
+
+Sound support under Adonthell is optional (but highly recommended!!).
+We suggest building Adonthell with sound support if you have a sound
+card configured to run under Linux. To do that, you'll need to build
+and install a third library, SDL_mixer.
+
+3. The SDL_mixer library, Version 1.0 or later.
+
+********
+* NOTE *
+********
+
+As of the writing of this guide, you can get the current
+version of SDL (1.0.4) at:
+
+http://www.devolution.com/~slouken/SDL/release/SDL-1.0.4.tar.gz
+
+... and the current version of SDL_image (1.0.4) at:
+
+http://www.devolution.com/~slouken/SDL/projects/SDL_image/src/SDL_image-1.0.4.tar.gz
+
+... and the current version of SDL_mixer (1.0.4) at:
+
+http://www.devolution.com/~slouken/SDL/projects/SDL_mixer/src/SDL_mixer-1.0.4.tar.gz
+
+***********
+* INSTALL *
+***********
+
+The following steps show how to install the SDL, SDL_image, and
+SDL_mixer libraries. You must install the SDL library FIRST, then
+install the SDL_image library (and SDL_mixer library if you want
+sound), since the other libraries depend on SDL.
+
+Step #1: Download the tar file of the library to a convient
+directory. We suggest downloading to /usr/local/src (if you want to
+keep the library source around after you'd built it) or /var (if
+you don't).
+
+Step #2: Decompress the tar file. Do this by typing:
+
+	gzip -d SDL-x.x.x.tar.gz   	(for SDL)
+		    or
+	gzip -d SDL_image-x.x.x.tar.gz	(for SDL_image)
+		    or
+	gzip -d SDL_mixer-x.x.x.tar.gz	(for SDL_mixer)
+
+... where the x's are the version numbers of the file you
+downloaded. You'll notice that the file has now dropped the .gz
+extension from the end of the filename and is now much bigger
+than it was when the file was originally downloaded.
+
+Step #3: Untar the tar file. Do this by typing:
+
+	tar -xvf SDL-x.x.x.tar 		(for SDL)
+		   or
+	tar -xvf SDL_image-x.x.x.tar	(for SDL_image)
+		   or
+	tar -xvf SDL_mixer-x.x.x.tar	(for SDL_mixer)
+
+... where the x's are the version numbers of the file you
+downloaded. A new directory will be created in the current directory
+with the same name as the tar file (minus the .tar extension).
+
+Step #4: Build and install the library. Do this by changing into the
+newly created directory and typing:
+
+	./configure
+	make
+	make install
+
+Step #5: While logged in to a superuser account (i.e. root),
+configure the system linker configuration files to find the newly
+installed library. Do this by typing:
+
+	ldconfig
+
+Repeat these 5 steps for each library you want to install. If all
+went well, you now at least have SDL and SDL_image (and SDL_mixer
+if you chose to build it) installed and configured in your system.
+
+******************************************
+* 4.0 BUILDING THE ADONTHELL SOURCE CODE *
+******************************************
+
+Now that the required libraries are built and installed on your
+system, you need to build the Adonthell program itself. The
+latest version of Adonthell is 0.2. You can download it from the
+Adonthell website: http://adonthell.linuxgames.com.
+
+The steps for installing Adonthell are similar to the steps for
+installing the SDL libraries:
+
+Step #1: Download the Adonthell tar file to a convient directory.
+We suggest downloading to /usr/local/games.
+
+Step #2: Decompress the tar file. Do this by typing:
+
+	gzip -d adonthell-0.2.tar.gz   	
+
+You'll notice that the file has now dropped the .gz extension
+from the end of the filename and is now much bigger than it was
+when the file was originally downloaded.
+
+Step #3: Untar the tar file. Do this by typing:
+
+	tar -xvf adonthell-0.2.tar
+
+A new directory will be created in the current directory named
+"adonthell-0.2".
+
+Step #4: Build and install the library. Do this by changing into the
+newly created directory and typing:
+
+	./configure
+	make
+
+If everything configured and built with no errors (which it should,
+if the SDL libraries were correctly installed), Adonthell will now
+be compiled and ready for use. If you installed the SDL_mixer
+library, the configure script will detect it and configure the
+program to use sound automatically.
+
+*************************
+* 5.0 RUNNING ADONTHELL *
+*************************
+
+After building the Adonthell source, an executable named "mapengine"
+will be created in the "adonthell-0.2" directory. This is the main
+game executable. You can run the game by entering the Adonthell
+directory and typing:
+
+	./mapengine forest.map
+
+This will run the game engine with a demo map that was created by
+the Adonthell team. If have a fast computer, you might want to try
+running the map engine at 640x400 pixels, rather than at the default
+320x200 pixels. You can do this by typing:
+
+	./mapengine forest.map -m1
+
+Once the map engine has been run, the introductory cut scene will
+begin. Press enter to start the game. You'll be able to use the
+arrow keys to wander around the map. Pressing escape while on the map
+will bring you back to the introductory cutscene. Pressing escape
+during the cutscene will end the program.
+
+**********************
+* 6.0 Questions/Help *
+**********************
+
+Q: Why do I get background music, but never any sound effects?
+
+A: Full sound effect support is in the code, and some sound effects
+are even loaded into memory when the game is executed. Currently, no
+events trigger sound effects, so you won't hear any.
+
+
+Q: While compiling the Adonthell source code, the SDL_image library,
+or the SDL_mixer library, I get an error similar to the following:
+
+mapengine: error in loading shared libraries: libSDL-1.0.so.0:
+cannot open shared object file: No such file or directory
+
+A: You either didn't install the library that the error message is
+complaining about or you forgot to type the command 'ldconfig'
+as a superuser account (i.e. root) after you installed the library.
+
+
+Q: While building the SDL_image library, the configure script fails
+on the "libPNG" library. What do I do?
+
+A: It's one of two things: you either don't have the PNG graphics
+library installed or you have an incompatible version installed.
+Either way, you'll need to download and build the PNG graphics
+library. It's a default library that comes on most Linux systems, but
+you'll need a recent version for SDL_image. You can find the latest
+version of libPNG at:
+http://www.cdrom.com/pub/png/pngcode.html
+
+
+Q: I have a problem that isn't listed above. Where can I go for
+help? How do I contact you?
+
+A: Adonthell has three public mailing lists to provide support, take
+suggestions, and interact with the users of the Adonthell software.
+Any requests for help or bug reports can be directed to the Adonthell
+developer mailing list. There is usually a fairly short response time
+for any request of help.
+
+The mailing list addresses are:
+
+General topic list:	adonthell-general@lists.sourceforge.net
+Developer list:		adonthell-devel@lists.sourceforge.net
+Graphics list:		adonthell-gfx@lists.sourceforge.net
+
+You can subscribe to these mailing lists by going to the URL:
+http://sourceforge.net/mail/?group_id=1051
+
+If you'd rather e-mail an Adonthell team member directly, you can get
+a list of contacts for the team from the Adonthell web page at:
+http://adonthell.linuxgames.com
+
+*********************************************************************
+* That's it! Enjoy the game engine and let us know what you think!! *
+*********************************************************************
+					- The Adonthell Team
