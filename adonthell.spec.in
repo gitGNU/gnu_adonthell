@@ -6,6 +6,7 @@
 %define prefix      @prefix@
 %define name        @PACKAGE@
 %define bindir      @prefix@/bin
+%define datadir     @prefix@/share
 %define gamedatadir @prefix@/share/adonthell
 
 Summary: A 2D graphical RPG game.
