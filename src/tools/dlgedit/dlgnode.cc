@@ -48,7 +48,7 @@ Circle::~Circle ()
 {
     vector<Arrow*>::iterator i;
 
-    for (i = draw.begin (); i < draw.end (); i++)
+    for (i = draw.begin (); i != draw.end (); i++)
         delete *i;
 }
 

@@ -224,13 +224,13 @@ remove_link (MainFrame * wnd, GdkPoint point)
 
     // remove graphical representation of the link
     for (i = ((Circle *) wnd->selected_node)->draw.begin ();
-         i < ((Circle *) wnd->selected_node)->draw.end (); i++)
+         i != ((Circle *) wnd->selected_node)->draw.end (); i++)
         if ((*i)->link[0] == arrow)
         {
             draw_arrow (wnd, *i, 5);
-            ((Circle *) wnd->selected_node)->draw.erase (i);
-
             delete *i;
+
+            ((Circle *) wnd->selected_node)->draw.erase (i);
             break;
         }
     
@@ -360,6 +360,7 @@ delete_arrow (MainFrame * wnd, DlgNode * arrow)
 void 
 delete_links (MainFrame * wnd, DlgNode * link)
 {
+    vector<Arrow*>::iterator j;
     DlgNode *node;
     u_int32 i;
 
@@ -367,13 +368,28 @@ delete_links (MainFrame * wnd, DlgNode * link)
     for (i = 0; i < wnd->number; i++)
     {
         node = wnd->nodes[i];
-        remove_data (node->link, link);
+        if (remove_data (node->link, link))
+        {
+            // unmark former link 
+            if (node->type == LINK)
+                draw_arrow (wnd, (Arrow *) node, 0);
+            else
+            {
+                draw_circle (wnd, node, 0);
 
-        // unmark former link 
-        if (node->type == LINK)
-            draw_arrow (wnd, (Arrow *) node, 0);
-        else
-            draw_circle (wnd, node, 0);
+                // ... and remove graphical representation of the link
+                for (j = ((Circle *) node)->draw.begin (); 
+                     j != ((Circle *) node)->draw.end (); j++)
+                    if ((*j)->link[0] == link)
+                    {
+                        draw_arrow (wnd, *j, 5);
+                        delete *j;
+
+                        ((Circle *) node)->draw.erase (j);
+                        break;
+                    }
+            }
+        }
     }
 }
 
