@@ -56,7 +56,7 @@ LDFLAGS    =
 LOADLIBES := -lm -lstdc++ `gtk-config --libs`
 
 
-OBJECTS := ../../array_tmpl.o ./callbacks.o ../../commands.o ./circle.o ./compile.o ./cond.tab.o ./crcle_callbacks.o ./crcle_interface.o ./create_code.o ./dlgnode.o ./events.o ../../generic_cmds.o ./geometrie.o ./graph.o ./interface.o ../../interpreter.o  ../../dialog_cmds.o ./lex.cond.o ./lex.loadlg.o ./lex.vars.o ./linked_list.o ./main.o ./pjt_interface.o ./pjt_callbacks.o ./preset.o ./project.o ./pset_callbacks.o ./pset_interface.o ./run.o ./run_callbacks.o ./run_interface.o ../../storage.o ./vars.tab.o
+OBJECTS := ./callbacks.o ../../commands.o ./circle.o ./compile.o ./cond.tab.o ./crcle_callbacks.o ./crcle_interface.o ./create_code.o ./dlgnode.o ./events.o ../../generic_cmds.o ./geometrie.o ./graph.o ./interface.o ../../interpreter.o  ../../dialog_cmds.o ./lex.cond.o ./lex.loadlg.o ./lex.vars.o ./linked_list.o ./main.o ./pjt_interface.o ./pjt_callbacks.o ./preset.o ./project.o ./pset_callbacks.o ./pset_interface.o ./run.o ./run_callbacks.o ./run_interface.o ../../storage.o ./vars.tab.o
 
 # dlgedit
 
