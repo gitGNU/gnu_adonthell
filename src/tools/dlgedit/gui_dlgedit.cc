@@ -25,6 +25,39 @@
 #include "gui_dlgedit.h"
 #include "gui_dlgedit_events.h"
 
+// Icon of the main window
+static char * icon_xpm[] = {
+"16 16 13 1",
+" 	c None",
+".	c #888888",
+"+	c #777777",
+"@	c #999999",
+"#	c #111111",
+"$	c #222222",
+"%	c #000000",
+"&	c #333333",
+"*	c #555555",
+"=	c #666666",
+"-	c #444444",
+";	c #070707",
+">	c #AAAAAA",
+"     .+++.@     ",
+"    .#$%&**@    ",
+"    =%-#=  $*   ",
+"    #*+%+  .%-  ",
+"   .# .;+   *%= ",
+"   =- =;+   .## ",
+"   #= =#=    $%.",
+"  .%%##%$*==.&%+",
+"  +-  =%-@   *%*",
+"  #%%$#%$**=.&%+",
+"  %-++*#=    $%.",
+" =#+  =%+   .%& ",
+" -$   =%+   $%. ",
+"+%+   +%+  *#+  ",
+"-%.   =%-*=$.   ",
+"=*.   @=+..>    "};
+
 // Global pointer to the main window
 GuiDlgedit *GuiDlgedit::window = NULL;
 
@@ -41,6 +74,8 @@ GuiDlgedit::GuiDlgedit ()
     GtkWidget *submenu;
     GtkWidget *menuitem;
     GtkWidget *paned;
+    GdkPixmap *icon;
+    GdkBitmap *mask;
     GtkAccelGroup *accel_group;
     
     window = this;
@@ -58,7 +93,7 @@ GuiDlgedit::GuiDlgedit ()
     wnd = gtk_window_new (GTK_WINDOW_TOPLEVEL);
     gtk_widget_set_usize (GTK_WIDGET (wnd), 800, 600);
     gtk_signal_connect (GTK_OBJECT (wnd), "delete_event", GTK_SIGNAL_FUNC (on_widget_destroy), NULL);
-
+            
     // Menu Accelerators
     accel_group = gtk_accel_group_get_default ();
 
@@ -247,6 +282,11 @@ GuiDlgedit::GuiDlgedit ()
     gtk_box_pack_start (GTK_BOX (hbox), status_mode, FALSE, TRUE, 0);
     gtk_widget_set_usize (status_mode, 150, -2);
     
+    // set the editor's icon    
+    gtk_widget_realize (wnd);
+    icon = gdk_pixmap_create_from_xpm_d (wnd->window, &mask, NULL, icon_xpm);
+    gdk_window_set_icon (wnd->window, wnd->window, icon, mask);
+
     // Display MainWindow
     gtk_widget_show (wnd);
 
@@ -332,8 +372,17 @@ void GuiDlgedit::saveDialogue (string file)
     if (file.rfind (".adlg") == file.npos) file += ".adlg";
 
     // try to save file
-    if (!module->save (file)) message->display (-4, g_basename (file.c_str ()));
-    else message->display (201);    
+    if (!module->save (file)) 
+        message->display (-4, g_basename (file.c_str ()));
+    else
+    {
+        message->display (201);
+        
+        // update the dialogue's name in case it has changed
+        module->setName (file);
+        initTitle ();
+        initMenu ();
+    }  
 }
 
 // close the dialogue being displayed

@@ -247,7 +247,7 @@ GuiCircle::GuiCircle (node_type *t, DlgCircleEntry *e) : GuiModalDialog ()
     gtk_box_pack_start (GTK_BOX (hbox1), npc_mood, TRUE, TRUE, 0);
     gtk_tooltips_set_tip (tooltips, npc_mood, "How the speaker's image appears to the player", NULL);
     npc_mood_menu = gtk_menu_new ();
-    glade_menuitem = gtk_menu_item_new_with_label ("default");
+    glade_menuitem = gtk_menu_item_new_with_label ("Default");
     gtk_widget_show (glade_menuitem);
     gtk_menu_append (GTK_MENU (npc_mood_menu), glade_menuitem);
     gtk_option_menu_set_menu (GTK_OPTION_MENU (npc_mood), npc_mood_menu);
@@ -290,7 +290,7 @@ GuiCircle::GuiCircle (node_type *t, DlgCircleEntry *e) : GuiModalDialog ()
 
     // append tooltips
     gtk_tooltips_set_tip (tooltips, cond_edit->widget (),
-        "Enter the conditions that have to be met before this node is available in the windowue", NULL);
+        "Enter the conditions that have to be met before this node is available in the dialogue", NULL);
 
     // display the current conditios
     cond_edit->setText (entry->condition ());
@@ -313,7 +313,7 @@ GuiCircle::GuiCircle (node_type *t, DlgCircleEntry *e) : GuiModalDialog ()
 
     // append tooltips
     gtk_tooltips_set_tip (tooltips, code_edit->widget (),
-        "Here you can enter arbitrary Python code to be executed when this line of windowue is uttered.", NULL);
+        "Here you can enter arbitrary Python code to be executed when this line of dialogue is uttered.", NULL);
             
     // display the current code
     code_edit->setText (entry->code ());
@@ -393,7 +393,7 @@ gchar *GuiCircle::getOption (GtkOptionMenu * o)
     GtkMenuItem *i = (GtkMenuItem *) gtk_menu_get_active (m);
     gchar *s = (gchar *) gtk_object_get_user_data (GTK_OBJECT (i));
 
-    return s ? s : s = "";
+    return s ? s : s = "Default";
 }
 
 // sets a default option

@@ -30,8 +30,8 @@ GuiMessages::GuiMessages (GtkWidget *sb)
     statusbar = sb;
     
     // Menu Help Messages
-    messages[1]     = " Create a new dialogue";
-    messages[2]     = " Load a dialogue from disk";
+    messages[1]     = " Create new dialogue";
+    messages[2]     = " Load dialogue from disk";
     messages[3]     = " Save dialogue to disk";
     messages[4]     = " Close current dialogue";
     messages[5]     = " Exit the program";

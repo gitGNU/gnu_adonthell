@@ -240,19 +240,23 @@ void DlgCircle::save (ofstream &file)
     file << "  Pos " << x () << " " << y () << "\n";
 
     // circle's annotation
-    file << "  Note §" << entry_->annotation () << "§\n";
+    if (entry_->annotation () != "")
+        file << "  Note §" << entry_->annotation () << "§\n";
 
     // circle's text
     file << "  Text §" << entry_->text () << "§\n";
 
     // circle's character
-    file << "  NPC §" << entry_->npc () << "§\n";
+    if (type_ == NPC && entry_->npc () != "Default")
+        file << "  NPC §" << entry_->npc () << "§\n";
 
     // circle's condition(s)
-    file << "  Cond §" << entry_->condition () << "§\n";
+    if (entry_->condition () != "")
+        file << "  Cond §" << entry_->condition () << "§\n";
 
     // circle's code
-    file << "  Vars §" << entry_->code () << "§\n";
+    if (entry_->code () != "")
+        file << "  Vars §" << entry_->code () << "§\n";
     
     file << "End\n";
 }
@@ -266,7 +270,7 @@ string DlgCircle::text ()
     if (entry_ == NULL) return text;
 
     // is a certain NPC attached?
-    if (entry_->npc () != "Default")
+    if (type_ == NPC && entry_->npc () != "Default")
     {
         text += entry_->npc ();
         text += ": ";
