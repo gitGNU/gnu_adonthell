@@ -6,8 +6,8 @@ AM_CONFIG_HEADER(header.h)
 AM_INIT_AUTOMAKE(mapengine, 0.1.1.7)
 AC_PREFIX_PROGRAM(gcc)
 
-CXXFLAGS="-g -DSDL -D_REENTRANT -Wall -I/usr/local/include/SDL -I\$(top_srcdir)/src"
-LIBS="-lSDL -lpthread"
+CFLAGS="-O6 -g -Wall"
+DEFS="-DSDL"
 
 dnl Checks for programs.
 AC_PROG_CXX
@@ -19,27 +19,40 @@ dnl Checks for libraries.
 AC_CHECK_LIB(pthread, main,, echo "Adonthell requires Pthreads library.  Exitting..."; exit 1)
 AC_CHECK_LIB(SDL, main, , echo "Adonthell requires the  SDL library.  Exitting..."; exit 1)
 
+dnl Check for SDL
+SDL_VERSION=1.0.1
+AM_PATH_SDL($SDL_VERSION,
+            :,
+	    AC_MSG_ERROR([*** SDL version $SDL_VERSION not found!])
+)
+
+CFLAGS="$CFLAGS $SDL_CFLAGS"
+LIBS="$SDL_LIBS"
+
+AC_CHECK_HEADER(SDL/SDL.h)
+
 SDLFLAG=no
 
 AC_CHECK_LIB(SDLmixer,Mix_OpenAudio,
   SDLFLAG=yes
   LIBS="$LIBS -lSDLmixer"
-  CXXFLAGS="$CXXFLAGS -DSDL_MIXER",)
+  DEFS="$DEFS -DSDL_MIXER",)
 
-AC_CHECK_LIB(SDL_mixer,Mix_OpenAudio,
-  SDLFLAG=yes
-  LIBS="$LIBS -lSDL_mixer"
-  CXXFLAGS="$CXXFLAGS -DSDL_MIXER",)
-
-AC_CHECK_HEADER(SDL/SDL.h)
+if test x$SDLFLAG = xno; then
+  AC_CHECK_LIB(SDL_mixer,Mix_OpenAudio,
+    SDLFLAG=yes
+    LIBS="$LIBS -lSDL_mixer"
+    DEFS="$DEFS -DSDL_MIXER",)
+fi
 
 if test x$SDLFLAG = xyes; then
   AC_CHECK_HEADERS([SDL/SDL_mixer.h SDL/SDL_audio.h])
 fi
 
+CXXFLAGS="$CFLAGS $DEFS $INCLUDES"
+
 AC_SUBST(CXX)
 AC_SUBST(CXXFLAGS)
-AC_SUBST(CFLAGS)
 AC_SUBST(LIBS)
 AC_SUBST(SUBDIRS)
 
