@@ -37,7 +37,7 @@ void map_placeable_model_gfx::set_gfx (const string & name)
         Current_gfx->second->rewind();
     }
     
-    map <const string, map_placeable_area_gfx * const>::iterator Previous_gfx;
+    map <const string, map_placeable_area_gfx *>::iterator Previous_gfx;
     Previous_gfx = Current_gfx;
     Current_gfx = Gfxs.find (name); 
     
@@ -48,7 +48,7 @@ void map_placeable_model_gfx::set_gfx (const string & name)
 
 map_placeable_area_gfx * map_placeable_model_gfx::get_gfx(const string & name)
 {
-    map <const string, map_placeable_area_gfx * const>::iterator Gfx;
+    map <const string, map_placeable_area_gfx *>::iterator Gfx;
     Gfx = Gfxs.find (name); 
     
     if (Gfx != Gfxs.end())
@@ -58,9 +58,9 @@ map_placeable_area_gfx * map_placeable_model_gfx::get_gfx(const string & name)
 
 map_placeable_area_gfx * map_placeable_model_gfx::add_gfx(const string & name)
 {
-    map_placeable_area_gfx * const newmpa = new map_placeable_area_gfx();
+    map_placeable_area_gfx * newmpa = new map_placeable_area_gfx();
     
-    return (Gfxs.insert(pair<const string, map_placeable_area_gfx * const>
+    return (Gfxs.insert(pair<const string, map_placeable_area_gfx *>
                         (name, newmpa))).first->second;
 }
 
@@ -102,7 +102,7 @@ void map_placeable_model_gfx::put(ogzstream & file) const
     u_int32 s = Gfxs.size();
     s >> file;
     
-    for (map <const string, map_placeable_area_gfx * const>::iterator i = Gfxs.begin();
+    for (map <const string, map_placeable_area_gfx *>::iterator i = Gfxs.begin();
          i != Gfxs.end(); i++)
     {
         i->first >> file;
@@ -125,4 +125,11 @@ void map_placeable_model_gfx::get(igzstream & file)
         mpa->get(file);
         
     }
+}
+
+map_placeable_area_gfx * map_placeable_model_gfx::current_gfx()
+{
+    if (Current_gfx != Gfxs.end ())
+        return Current_gfx->second;
+    else return NULL; 
 }

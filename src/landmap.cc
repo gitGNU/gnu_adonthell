@@ -21,30 +21,50 @@ mapsquare_info::mapsquare_info (map_coordinates & pos)
 {
 }
 
-bool mapsquare::add (map_placeable * obj, map_coordinates & pos)
+bool mapsquare::add (map_placeable * obj, map_coordinates & pos, bool flat = false)
 {
     mapsquare_info mi (pos);
     mi.obj = obj; 
-    objects.push_back (mi);
+    if (!flat) objects.push_back(mi);
+    else flat_objects.push_back(mi);
     return true; 
 }
 
-bool mapsquare::remove (map_placeable * obj, map_coordinates & pos)
+bool mapsquare::remove (map_placeable * obj, map_coordinates & pos, bool flat = false)
 {
     mapsquare_info mi (pos);
     mi.obj = obj; 
-    vector <mapsquare_info>::iterator er = find (objects.begin (), objects.end (), mi); 
-    if (er == objects.end ()) return false;
-    objects.erase (er);
+    vector <mapsquare_info>::iterator er;
+    if (!flat) 
+    {
+        er = find (objects.begin (), objects.end (), mi);
+        if (er == objects.end ()) return false;
+        objects.erase (er);
+    }
+    else 
+    {
+        er = find (flat_objects.begin (), flat_objects.end (), mi);
+        if (er == flat_objects.end ()) return false;
+        flat_objects.erase (er);
+    }
     return true; 
 }
 
-bool mapsquare::exist (map_placeable * obj, map_coordinates & pos)
+bool mapsquare::exist (map_placeable * obj, map_coordinates & pos, bool flat = false)
 {
     mapsquare_info mi (pos);
     mi.obj = obj; 
-    vector <mapsquare_info>::iterator er = find (objects.begin (), objects.end (), mi); 
-    if (er == objects.end ()) return false;
+    vector <mapsquare_info>::iterator er;
+    if (!flat)
+    {
+        er = find (objects.begin (), objects.end (), mi); 
+        if (er == objects.end ()) return false;
+    }
+    else
+    {
+        er = find (flat_objects.begin (), flat_objects.end (), mi); 
+        if (er == flat_objects.end ()) return false;
+    }
     return true; 
 }
 
@@ -72,7 +92,7 @@ mapsquare * landmap::get (const u_int16 x, const u_int16 y)
     return (&area[x][y]); 
 }
 
-bool landmap::put (map_placeable * obj, map_coordinates & pos) 
+bool landmap::put (map_placeable * obj, map_coordinates & pos, bool flat = false)
 {
     u_int16 i, j;
     map_placeable_area * state = obj->current_state ();
@@ -87,8 +107,8 @@ bool landmap::put (map_placeable * obj, map_coordinates & pos)
     u_int16 fx = pos.x () + state->area_length () - state->base.x (); 
     u_int16 fy = pos.y () + state->area_height () - state->base.y () ; 
 
-    if (pos.ox ()) fx++;
-    if (pos.oy ()) fy++; 
+//     if (pos.ox ()) fx++;
+//     if (pos.oy ()) fy++; 
     
     mapsquare * msqr; 
     
@@ -96,7 +116,7 @@ bool landmap::put (map_placeable * obj, map_coordinates & pos)
         for (i = sx; i < fx; i++) 
         {
             msqr = get (i, j);
-            msqr->add (obj, pos); 
+            msqr->add (obj, pos, flat); 
         }
     return true; 
 }
@@ -106,7 +126,7 @@ bool landmap::put (map_moving * obj)
     return put (obj, *obj); 
 }
 
-bool landmap::remove (map_placeable * obj, map_coordinates & pos) 
+bool landmap::remove (map_placeable * obj, map_coordinates & pos, bool flat = false) 
 {
     u_int16 i, j;
     map_placeable_area * state = obj->current_state ();
@@ -121,8 +141,8 @@ bool landmap::remove (map_placeable * obj, map_coordinates & pos)
     u_int16 fx = pos.x () + state->area_length () - state->base.x (); 
     u_int16 fy = pos.y () + state->area_height () - state->base.y () ; 
 
-    if (pos.ox ()) fx++;
-    if (pos.oy ()) fy++; 
+//     if (pos.ox ()) fx++;
+//     if (pos.oy ()) fy++; 
     
     mapsquare * msqr; 
     
@@ -130,7 +150,7 @@ bool landmap::remove (map_placeable * obj, map_coordinates & pos)
         for (i = sx; i < fx; i++) 
         {
             msqr = get (i, j);
-            msqr->remove (obj, pos); 
+            msqr->remove (obj, pos, flat); 
         }
     return true; 
 }
@@ -156,8 +176,8 @@ map_character * landmap::add_map_character()
     return characters.add(*this);
 }
 
-bool landmap::put_map_object(u_int32 index, map_coordinates & pos)
+bool landmap::put_map_object(u_int32 index, map_coordinates & pos, bool flat = false)
 {
-    put(objects[index], pos);
+    put(objects[index], pos, flat);
     return true;
 }

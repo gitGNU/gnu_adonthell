@@ -76,9 +76,17 @@ bool map_moving::update ()
                 X++; 
                 fox -= mapsquare_size;
             }
-            else fox = 0; 
+            else
+            {
+                X = Lx - 1;
+                fox = 39; 
+            }
         }
-        if (X == Lx) fox = 0;
+        if (X == Lx) 
+        {
+            X--;
+            fox = 39;
+        }
         Ox = (u_int16) fox;
     }
 
@@ -104,9 +112,17 @@ bool map_moving::update ()
                 foy -= mapsquare_size;
                 Y++;
             }
-            else foy = 0; 
+            else 
+            {
+                Y = Ly - 1;
+                foy = 39; 
+            }
         }
-        if (Y == Ly) foy = 0; 
+        if (Y == Ly) 
+        {
+            Y--;
+            foy = 39; 
+        }
         Oy = (u_int16) foy; 
     }
     

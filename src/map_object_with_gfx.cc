@@ -17,15 +17,16 @@
 
 map_object_with_gfx::map_object_with_gfx (landmap & mymap) : map_object (mymap), map_placeable_gfx ((map_placeable &) *this) 
 {
-    map_placeable_area * moa;
-    moa = add_state ("default");
-    moa->set_area_size (4, 5);
-    moa->base.set_position (3, 4);
+//     map_placeable_area * moa;
+//     moa = add_state ("default");
+//     moa->set_area_size (4, 5);
+//     moa->base.set_position (3, 4);
+//     moa->base.set_offset (40, 40);
 
-    map_placeable_area_gfx * moag;
+//     map_placeable_area_gfx * moag;
 
-    moag = add_gfx ("default"); 
-    moag->get_animation()->load("adontest/house.anim");
+//     moag = add_gfx ("default"); 
+//     moag->get_animation()->load("adontest/house.anim");
     
 //     load("adontest/house.mdl");
     set_state("default"); 

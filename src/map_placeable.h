@@ -39,7 +39,7 @@ protected:
     landmap & Mymap;
     
 public:
-    map_coordinates base; 
+//     map_coordinates base; 
     
     map_placeable(landmap & mymap);
     

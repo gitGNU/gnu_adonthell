@@ -28,6 +28,7 @@ void map_object::put(ogzstream & file) const
 void map_object::get(igzstream & file)
 {
     map_placeable_model::get(file);
+    set_state("default");
 }
 
 s_int8 map_object::save(string fname) const

@@ -129,7 +129,7 @@ s_int8 image::get_pnm (SDL_RWops * file)
 
     rawdata = pnm::get (file, &l, &h);
     
-    raw2display (rawdata, l, h); 
+    pnm2display (rawdata, l, h); 
 
     free (rawdata);
 
@@ -349,6 +349,21 @@ void image::raw2display (void * rawdata, u_int16 l, u_int16 h)
                                                   length () * 2,
                                                   0xF800, 0x07E0,
                                                   0x001F, 0);
+
+    vis = SDL_DisplayFormat (tmp2);
+    SDL_FreeSurface (tmp2);
+}
+
+void image::pnm2display (void * rawdata, u_int16 l, u_int16 h)
+{
+    set_length (l);
+    set_height (h);
+   
+    SDL_Surface *tmp2 = SDL_CreateRGBSurfaceFrom (rawdata, length (),
+                                                  height (), 24,
+                                                  length () * 3,
+                                                  0x0000FF, 0x00FF00,
+                                                  0xFF0000, 0);
 
     vis = SDL_DisplayFormat (tmp2);
     SDL_FreeSurface (tmp2);

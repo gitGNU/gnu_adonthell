@@ -54,6 +54,7 @@ class mapsquare
 {
 private:
     vector <mapsquare_info> objects; 
+    vector <mapsquare_info> flat_objects; 
 
 public:
     typedef vector <mapsquare_info>::iterator iterator;
@@ -68,9 +69,19 @@ public:
         return objects.end (); 
     }
 
-    bool add (map_placeable * obj, map_coordinates & pos); 
-    bool remove (map_placeable * obj, map_coordinates & pos); 
-    bool exist (map_placeable * obj, map_coordinates & pos); 
+    u_int32 nbr_flat()
+    {
+        return flat_objects.size();
+    }
+
+    mapsquare_info * get_flat(int nbr)
+    {
+        return &flat_objects[nbr];
+    }
+
+    bool add (map_placeable * obj, map_coordinates & pos, bool flat = false); 
+    bool remove (map_placeable * obj, map_coordinates & pos, bool flat = false); 
+    bool exist (map_placeable * obj, map_coordinates & pos, bool flat = false); 
 }; 
 
 class landmap
@@ -169,9 +180,9 @@ private:
 
     vector <vector <mapsquare> > area;
 
-    bool put (map_placeable * obj, map_coordinates & pos); 
+    bool put (map_placeable * obj, map_coordinates & pos, bool flat = false); 
     bool put (map_moving * obj); 
-    bool remove (map_placeable * obj, map_coordinates & pos); 
+    bool remove (map_placeable * obj, map_coordinates & pos, bool flat = false); 
     bool remove (map_moving * obj); 
 
 public:
@@ -234,7 +245,7 @@ public:
      */
     map_character * add_map_character();
 
-    bool put_map_object(u_int32 index, map_coordinates & pos);
+    bool put_map_object(u_int32 index, map_coordinates & pos, bool flat = false);
 
     friend class map_moving;
 }; 

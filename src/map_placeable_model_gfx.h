@@ -23,8 +23,8 @@
 class map_placeable_model_gfx : public drawable
 {
 protected:
-    mutable map <const string, map_placeable_area_gfx * const> Gfxs;
-    map <const string, map_placeable_area_gfx * const>::iterator Current_gfx;
+    mutable map <const string, map_placeable_area_gfx *> Gfxs;
+    map <const string, map_placeable_area_gfx *>::iterator Current_gfx;
 
     map_placeable_model & Target;
 
@@ -33,6 +33,8 @@ public:
 
     ~map_placeable_model_gfx();
     
+    map_placeable_area_gfx * current_gfx();
+
     void set_gfx (const string & name);
 
     map_placeable_area_gfx * get_gfx(const string & name);

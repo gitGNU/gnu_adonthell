@@ -120,6 +120,7 @@ void map_character::put(ogzstream & file) const
 void map_character::get(igzstream & file)
 {
     map_placeable_model::get(file);
+    set_state ("s_stand"); 
 }
 
 s_int8 map_character::save(string fname) const

@@ -372,6 +372,16 @@ private:
      * @param h height of the raw image.
      */
     void raw2display (void * rawdata, u_int16 l, u_int16 h); 
+
+    /** 
+     * Converts a pnm image source recorded in RGB to the current screen depth
+     * and put it to this image.
+     * 
+     * @param rawdata raw data to convert.
+     * @param l length of the raw image.
+     * @param h height of the raw image.
+     */
+    void pnm2display (void * rawdata, u_int16 l, u_int16 h); 
 }; 
 
 
