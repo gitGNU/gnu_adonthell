@@ -8,10 +8,28 @@ mv intl/Makefile.bak intl/Makefile.in
 rm -f `find . -name 'Makefile'`
 
 # Regenerate everything
-aclocal -I .
-libtoolize --force --copy
+
+#
+# use aclocal v1.6 if available
+#
+if test "x`which aclocal-1.6`" = "x" ; then
+  aclocal -I .
+else
+  aclocal-1.6 -I .
+fi
+
+libtoolize --automake --force --copy
 autoheader
-automake --add-missing --gnu --copy
+
+#
+# use Autmake v1.6 if available
+#
+if test "x`which automake-1.6`" = "x" ; then
+  automake --add-missing --gnu --copy
+else
+  automake-1.6 --add-missing --gnu --copy
+fi
+
 autoconf 
 
 echo

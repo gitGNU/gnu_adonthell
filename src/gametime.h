@@ -75,7 +75,7 @@ public:
      *
      * @return %gametime in minutes.
      */
-    static float minute ()
+    static double minute ()
     {
         return Minute;
     }
@@ -133,7 +133,7 @@ public:
 private:
 #ifndef SWIG
     // One minute of gametime in game cycles
-    static float Minute;
+    static double Minute;
 
     static bool running; 
     

@@ -294,8 +294,8 @@ void image::zoom (const surface& src, u_int16 l, u_int16 h, u_int16 x, u_int16 y
     // way,  we can perform our zoom without having to divide two times per
     // pixel we proceed (we can replace the divides with shift, much much
     // faster.
-    u_int32 xstep = (u_int32) (((float) src.length () / (float) l) * 65535); 
-    u_int32 ystep = (u_int32) (((float) src.height () / (float) h) * 65535); 
+    u_int32 xstep = (u_int32) (((double) src.length () / (double) l) * 65535); 
+    u_int32 ystep = (u_int32) (((double) src.height () / (double) h) * 65535); 
     u_int32 xcur;
     u_int32 ycur;
 

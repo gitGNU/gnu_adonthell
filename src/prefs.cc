@@ -45,7 +45,7 @@ config::config ()
     // set some default values where possible
 #ifdef WIN32
     screen_mode = 1;                // Fullscreen
- #else
+#else
     screen_mode = 0;                // Fullscreen
 #endif
 #if defined (QTOPIA) || defined (WIN32)

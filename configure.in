@@ -132,7 +132,7 @@ OGG_VORBIS=no
 XIPH_PATH_VORBIS(
         OGG_VORBIS="yes"
         ogg_music="enabled"
-        OGG_LIBS="$VORBIS_LIBS $VORBISFILE_LIBS"
+        OGG_LIBS="$VORBISFILE_LIBS $VORBIS_LIBS"
         OGG_DEFS="-DOGG_MUSIC"
         OGG_CFLAGS="$VORBIS_CFLAGS",
         AC_MSG_RESULT(Disabling OggVorbis support)

@@ -30,12 +30,12 @@
 u_int32 gamedate::Time = 0;
 
 // number of game cycles since the last gametime minute passed
-float gamedate::Ticks = 0.0;
+double gamedate::Ticks = 0.0;
 
 // Increase gametime 
 void gamedate::update ()
 {
-    static float tenth_minute = gametime::minute () / 10.0;
+    static double tenth_minute = gametime::minute () / 10.0;
     
     // fts contains the number of cycles that passed since the last
     // call to gamedate::update

@@ -23,8 +23,9 @@
 
 #include "screen.h"
 #include <iostream>
+#ifndef __BEOS__
 #include <sstream> 
-
+#endif
 
 using namespace std; 
 
@@ -112,6 +113,7 @@ void screen::show ()
 
 string screen::info ()
 {
+#ifndef __BEOS__
     const SDL_VideoInfo * vi = SDL_GetVideoInfo ();
     ostringstream temp; 
 
@@ -136,6 +138,9 @@ string screen::info ()
          << ends;
 
     string ret = temp.str ();
+#else
+    string ret = "Sorry, not available under BeOS\n";
+#endif // __BEOS__
 
     return ret; 
 }

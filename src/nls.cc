@@ -50,7 +50,7 @@ void nls::init (config &myconfig)
 void nls::set_language (const string &language)
 {    
 #if ENABLE_NLS
-#ifndef WIN32
+#if !defined (WIN32) && !defined (__BEOS__)
     setenv ("LANGUAGE", language.c_str (), 1);
 #endif
     {

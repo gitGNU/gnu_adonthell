@@ -38,25 +38,18 @@ Python requires a little work. In the Python toplevel directory do a
 
 before running the usual 'configure', 'make' and 'make install'. 
 
-The next library, libogg (1.0rc2) didn't compile out of the box. 
-Search for the part that reads
-
-    #elif defined(__BEOS__) 
-    #  include <inttypes.h>
-
-in <oggdir>/include/ogg/os_types.h and add 
-    
-    #  include <ogg/config_types.h> 
-
-after the first #include.
-
-To compile libvorbis, I had to pass the location of libogg to the
-configure script, as it wasn't detected automatically:
+The next two libraries, libogg 1.0 and libvorbis 1.0 compile out
+of the box. Just make sure to install them to /boot/develop/tools/gnupro
+by passing proper prefix to configure:
  
-    $ configure --with-ogg-prefix=/path/to/libogg/directory
+    $ configure --prefix=/boot/develop/tools/gnupro
     
-Apart from that, it's the usual procedure. Afterwards you are ready 
-to compile Adonthell.
+From then on it's the usual procedure:
+    
+    $ make
+    $ make install
+
+If all went well you are ready to compile Adonthell.
 
 
 Compiling Adonthell:
@@ -64,7 +57,8 @@ Compiling Adonthell:
 
 That's as easy as
 	
-	$ configure
+	$ configure --disable-nls --disable-vorbistest \
+		--prefix=/boot/develop/tools/gnupro
 	$ make
 	$ make install
 
@@ -76,20 +70,6 @@ The various editors that come with Adonthell are not really written
 with portability in mind. Some of them might compile, others might
 not. Espacially those depending on GTK+ might cause trouble. However,
 for playing Adonthell, you won't need them, so it's no big loss.
-
-
-Restrictions:
-=============
-
-In contrast to other Operating Systems, BeOS seems to be unable to
-display resolutions lower than 640x480 (possibly depending on the 
-graphic driver?), specifically not 320x240. Therefore you will 
-experience a black border around the screen in fullscreen mode.
-There are no plans to change this, as the next version will use a
-higher resolution anyway. 
-
-However, if BeOS provides a workaround I am not aware of, feel 
-free to contact me:
 
 
 Contact:
