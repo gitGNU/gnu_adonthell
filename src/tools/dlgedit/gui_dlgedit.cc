@@ -133,7 +133,7 @@ GuiDlgedit::GuiDlgedit ()
     gtk_widget_show (menuitem);
 
     // Load
-    menuitem = gtk_menu_item_new_with_label ("Open");
+    menuitem = gtk_menu_item_new_with_label ("Open ...");
     gtk_container_add (GTK_CONTAINER (submenu), menuitem);
     gtk_widget_add_accelerator (menuitem, "activate", accel_group, GDK_o, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
     gtk_object_set_data (GTK_OBJECT (menuitem), "help-id", GINT_TO_POINTER (2));
@@ -152,12 +152,23 @@ GuiDlgedit::GuiDlgedit ()
     gtk_signal_connect (GTK_OBJECT (menuitem), "activate", GTK_SIGNAL_FUNC (on_file_save_activate), (gpointer) this);
     gtk_widget_show (menuitem);
     menuItem[SAVE] = menuitem;
+     
+    // Save As
+    menuitem = gtk_menu_item_new_with_label ("Save As ...");
+    gtk_container_add (GTK_CONTAINER (submenu), menuitem);
+    gtk_widget_add_accelerator (menuitem, "activate", accel_group, GDK_a, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
+    gtk_object_set_data (GTK_OBJECT (menuitem), "help-id", GINT_TO_POINTER (4));
+    gtk_signal_connect (GTK_OBJECT (menuitem), "enter-notify-event", GTK_SIGNAL_FUNC (on_display_help), message);
+    gtk_signal_connect (GTK_OBJECT (menuitem), "leave-notify-event", GTK_SIGNAL_FUNC (on_clear_help), message);
+    gtk_signal_connect (GTK_OBJECT (menuitem), "activate", GTK_SIGNAL_FUNC (on_file_save_as_activate), (gpointer) this);
+    gtk_widget_show (menuitem);
+    menuItem[SAVE_AS] = menuitem;
     
     // Close
     menuitem = gtk_menu_item_new_with_label ("Close");
     gtk_container_add (GTK_CONTAINER (submenu), menuitem);
     gtk_widget_add_accelerator (menuitem, "activate", accel_group, GDK_w, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
-    gtk_object_set_data (GTK_OBJECT (menuitem), "help-id", GINT_TO_POINTER (4));
+    gtk_object_set_data (GTK_OBJECT (menuitem), "help-id", GINT_TO_POINTER (5));
     gtk_signal_connect (GTK_OBJECT (menuitem), "enter-notify-event", GTK_SIGNAL_FUNC (on_display_help), message);
     gtk_signal_connect (GTK_OBJECT (menuitem), "leave-notify-event", GTK_SIGNAL_FUNC (on_clear_help), message);
     gtk_signal_connect (GTK_OBJECT (menuitem), "activate", GTK_SIGNAL_FUNC (on_file_close_activate), (gpointer) NULL);
@@ -174,7 +185,7 @@ GuiDlgedit::GuiDlgedit ()
     menuitem = gtk_menu_item_new_with_label ("Quit");
     gtk_menu_append (GTK_MENU (submenu), menuitem);
     gtk_widget_add_accelerator (menuitem, "activate", accel_group, GDK_q, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
-    gtk_object_set_data (GTK_OBJECT (menuitem), "help-id", GINT_TO_POINTER (5));
+    gtk_object_set_data (GTK_OBJECT (menuitem), "help-id", GINT_TO_POINTER (6));
     gtk_signal_connect (GTK_OBJECT (menuitem), "enter-notify-event", GTK_SIGNAL_FUNC (on_display_help), message);
     gtk_signal_connect (GTK_OBJECT (menuitem), "leave-notify-event", GTK_SIGNAL_FUNC (on_clear_help), message);
     gtk_signal_connect (GTK_OBJECT (menuitem), "activate", GTK_SIGNAL_FUNC (on_widget_destroy), (gpointer) NULL);
@@ -190,7 +201,7 @@ GuiDlgedit::GuiDlgedit ()
     submenu = gtk_menu_new ();
     
     // Settings
-    menuitem = gtk_menu_item_new_with_label ("Settings");
+    menuitem = gtk_menu_item_new_with_label ("Settings ...");
     gtk_container_add (GTK_CONTAINER (submenu), menuitem);
     gtk_widget_add_accelerator (menuitem, "activate", accel_group, GDK_t, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
     gtk_object_set_data (GTK_OBJECT (menuitem), "help-id", GINT_TO_POINTER (10));
@@ -201,7 +212,7 @@ GuiDlgedit::GuiDlgedit ()
     menuItem[SETTINGS] = menuitem;
 
     // Custom Functions
-    menuitem = gtk_menu_item_new_with_label ("Python Code");
+    menuitem = gtk_menu_item_new_with_label ("Python Code ...");
     gtk_container_add (GTK_CONTAINER (submenu), menuitem);
     gtk_widget_add_accelerator (menuitem, "activate", accel_group, GDK_p, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
     gtk_object_set_data (GTK_OBJECT (menuitem), "help-id", GINT_TO_POINTER (11));
@@ -230,7 +241,7 @@ GuiDlgedit::GuiDlgedit ()
 
     // Preview i18n
 #ifdef ENABLE_NLS 
-    menuitem = gtk_menu_item_new_with_label ("Preview Localization");
+    menuitem = gtk_menu_item_new_with_label ("Preview Localization ...");
     gtk_container_add (GTK_CONTAINER (submenu), menuitem);
     gtk_widget_add_accelerator (menuitem, "activate", accel_group, GDK_l, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
     gtk_object_set_data (GTK_OBJECT (menuitem), "help-id", GINT_TO_POINTER (13));
@@ -349,16 +360,11 @@ GuiDlgedit::~GuiDlgedit ()
 // starts a new dialogue
 void GuiDlgedit::newDialogue ()
 {
-    // the name of the dialogue
-    gchar *name = g_strdup_printf ("%s/untitled-%i", directory_.c_str (), ++number);
-            
     // the new dialogue
-    DlgModule *module = initDialogue (name);
+    DlgModule *module = initDialogue ("untitled");
 
     // Display the dialogue
     showDialogue (module);
-
-    g_free (name);
 }
 
 // load a new dialogue
@@ -371,19 +377,23 @@ void GuiDlgedit::loadDialogue (std::string file)
         return;
     }
     
-    // get the name to use for the dialogue
-    file += g_strdup_printf ("-%i", ++number);
-
     // remember the current directory for later use
     directory_ = g_dirname (file.c_str ());
     
+    // get the name to use for the dialogue
+    std::string filename = g_basename (file.c_str ());
+    
+    // remove file extension
+    unsigned int pos = filename.rfind (FILE_EXT);
+    if (pos != filename.npos) filename.erase (pos, -1);
+
     // the new dialogue
-    DlgModule *module = initDialogue (file);
+    DlgModule *module = initDialogue (filename);
 
     // try to load from file
     if (!module->load ())
     {
-        message->display (-2, g_basename (filename ().c_str ()));
+        message->display (-2, filename.c_str ());
         closeDialogue ();
     }
     
@@ -404,12 +414,16 @@ void GuiDlgedit::saveDialogue (std::string file)
     // remember the current directory for later use
     directory_ = g_dirname (file.c_str ());
     
-    // append the ".adlg" extension if necessary
-    if (file.rfind (".adlg") == file.npos) file += ".adlg";
+    // get the filename
+    std::string filename = g_basename (file.c_str ());
+    
+    // remove file extension
+    unsigned int pos = filename.rfind (FILE_EXT);
+    if (pos != filename.npos) filename.erase (pos, -1);
 
     // try to save file
-    if (!module->save (file)) 
-        message->display (-4, g_basename (file.c_str ()));
+    if (!module->save (directory_, filename)) 
+        message->display (-4, filename.c_str ());
     else
     {
         message->display (201);
@@ -458,11 +472,11 @@ void GuiDlgedit::showDialogue (DlgModule *module, bool center)
     
     // update the custom code entry if neccessary
     if (GuiCode::dialog != NULL)
-        GuiCode::dialog->display (module->entry (), module->name ());
+        GuiCode::dialog->display (module->entry (), module->shortName ());
     
     // update the settings if neccessary
     if (GuiSettings::dialog != NULL)
-        GuiSettings::dialog->display (module->entry (), module->name ());
+        GuiSettings::dialog->display (module->entry (), module->shortName ());
 
     // update the window title
     initTitle ();
@@ -498,7 +512,7 @@ void GuiDlgedit::settings ()
         GuiSettings::dialog = new GuiSettings ();
     
     // otherwise just show it
-    GuiSettings::dialog->display (module->entry (), module->name ());
+    GuiSettings::dialog->display (module->entry (), module->shortName ());
 }
 
 // edit custom code of current module
@@ -512,7 +526,7 @@ void GuiDlgedit::customCode ()
         GuiCode::dialog = new GuiCode ();
     
     // otherwise just show it
-    GuiCode::dialog->display (module->entry (), module->name ());
+    GuiCode::dialog->display (module->entry (), module->shortName ());
 }
 
 // preview the translated dialogue
@@ -645,8 +659,11 @@ bool GuiDlgedit::checkDialogue (std::string file)
 
 DlgModule *GuiDlgedit::initDialogue (std::string name)
 {
+    // serial number
+    std::string serial = g_strdup_printf ("-%i", ++number);
+
     // the new dialogue
-    DlgModule *dlg = new DlgModule (name, "New Dialogue");
+    DlgModule *dlg = new DlgModule (directory_, name, serial, "New Dialogue");
 
     // insert into the list of open dialogues
     dialogues_.push_back (dlg);
@@ -656,6 +673,7 @@ DlgModule *GuiDlgedit::initDialogue (std::string name)
 
     // activate all dialogue related menu-items
     gtk_widget_set_sensitive (menuItem[SAVE], TRUE);
+    gtk_widget_set_sensitive (menuItem[SAVE_AS], TRUE);
     gtk_widget_set_sensitive (menuItem[CLOSE], TRUE);
     gtk_widget_set_sensitive (menuItem[SETTINGS], TRUE);
     gtk_widget_set_sensitive (menuItem[FUNCTIONS], TRUE);
@@ -675,7 +693,7 @@ void GuiDlgedit::initTitle ()
   
     if (module != NULL)
         title = g_strjoin (NULL, title, " - [", 
-                g_basename (module->name().c_str ()), "]", NULL);
+                module->shortName ().c_str (), "]", NULL);
 
     gtk_window_set_title (GTK_WINDOW (wnd), title);
 }
@@ -693,12 +711,10 @@ void GuiDlgedit::initMenu ()
     std::vector<DlgModule*>::iterator i;
     GtkAccelGroup *accel_group = gtk_accel_group_get_default ();
     GtkWidget *menuitem;
-    gchar *name;
     
     for (i = dialogues_.begin (); i != dialogues_.end (); i++, position++)
     {
-        name = (char*) (*i)->name().c_str ();
-        menuitem = gtk_menu_item_new_with_label (g_basename (name));
+        menuitem = gtk_menu_item_new_with_label ((*i)->shortName ().c_str ());
         gtk_container_add (GTK_CONTAINER (windowMenu), menuitem);
         gtk_signal_connect (GTK_OBJECT (menuitem), "activate", GTK_SIGNAL_FUNC (on_window_activate), (gpointer) *i);
         gtk_object_set_data (GTK_OBJECT (menuitem), "help-id", GINT_TO_POINTER (20));
@@ -798,6 +814,7 @@ void GuiDlgedit::clear ()
 
     // make the various menu-items insensitive
     gtk_widget_set_sensitive (menuItem[SAVE], FALSE);
+    gtk_widget_set_sensitive (menuItem[SAVE_AS], FALSE);
     gtk_widget_set_sensitive (menuItem[CLOSE], FALSE);
     gtk_widget_set_sensitive (menuItem[SETTINGS], FALSE);
     gtk_widget_set_sensitive (menuItem[FUNCTIONS], FALSE);
@@ -887,18 +904,10 @@ GdkGC *GuiDlgedit::getColor (mode_type mode, node_type type)
     return NULL;
 }
 
-// get the full path/name of a dialogue
+// get the full path/name/extension of a dialogue
 std::string GuiDlgedit::filename ()
 {
     DlgModule *module = graph_->dialogue ();
     
-    // if there is no module, return the current working directory
-    if (module == NULL) return directory_;
-    std::string file = module->name ();
-    
-    // remove the serial number from the name
-    unsigned int pos = file.rfind ("-");
-    if (pos != file.npos) file.erase (pos);
-    
-    return file;
+    return module->fullName ();
 }

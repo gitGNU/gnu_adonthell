@@ -33,8 +33,9 @@ GuiMessages::GuiMessages (GtkWidget *sb)
     messages[1]     = " Create new dialogue";
     messages[2]     = " Load dialogue from disk";
     messages[3]     = " Save dialogue to disk";
-    messages[4]     = " Close current dialogue";
-    messages[5]     = " Exit the program";
+    messages[4]     = " Save dialogue under new name";
+    messages[5]     = " Close current dialogue";
+    messages[6]     = " Exit the program";
     
     messages[10]    = " Change the preferences of the current dialogue";
     messages[11]    = " Customize imports, constructor, destructor and methods of the dialogue script";

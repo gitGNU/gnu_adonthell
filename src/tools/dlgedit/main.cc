@@ -87,7 +87,7 @@ int main (int argc, char *argv[])
                 continue;
             }
             
-            module = new DlgModule (dialogue + "-1", "");
+            module = new DlgModule ("", dialogue, "-1", "");
             
             // try to load from file
             if (!module->load ())

@@ -22,7 +22,6 @@
 #include <gtk/gtk.h>
 #include <sys/stat.h>
 #include <iostream>
-#include "dlg_types.h"
 #include "gui_file.h"
 #include "gui_dlgedit.h"
 #include "gui_settings.h"
@@ -184,7 +183,7 @@ GuiSettings::~GuiSettings ()
 }
 
 // display the dialog
-void GuiSettings::display (DlgModuleEntry *e, std::string &name)
+void GuiSettings::display (DlgModuleEntry *e, const std::string &name)
 {
     if (entry != e)
     {
@@ -196,7 +195,7 @@ void GuiSettings::display (DlgModuleEntry *e, std::string &name)
     
     // set the title
     gchar *title = g_strjoin (NULL, "Settings - [", 
-        g_basename (name.c_str ()), "]", NULL);
+        name.c_str (), "]", NULL);
     gtk_window_set_title (GTK_WINDOW (window), title);
 
     // now show the window

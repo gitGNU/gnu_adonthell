@@ -22,7 +22,6 @@
 #include <gtk/gtk.h>
 #include "gui_list.h"
 #include "gui_list_events.h"
-#include "dlg_circle.h"
 
 GuiList::GuiList (GtkWidget *paned)
 {

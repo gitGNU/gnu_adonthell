@@ -32,7 +32,14 @@
 class GuiCode
 {
 public:
+    /**
+     * Create empty Python Code Dialog.
+     */
     GuiCode ();
+
+    /**
+     * Cleanup.
+     */
     ~GuiCode ();
     
     /**
@@ -45,7 +52,7 @@ public:
      * @param entry the custom code of a certain DlgModule to be edited.
      * @param name name of the dialogue whose code is being edited.
      */
-    void display (DlgModuleEntry *entry, std::string &name);
+    void display (DlgModuleEntry *entry, const std::string &name);
     
     /**
      * Store the user's entries once the OK button has been pressed.

@@ -28,6 +28,7 @@ void on_widget_destroy (GtkWidget *, gpointer);
 void on_file_new_activate (GtkMenuItem *, gpointer);
 void on_file_load_activate (GtkMenuItem *, gpointer);
 void on_file_save_activate (GtkMenuItem *, gpointer);
+void on_file_save_as_activate (GtkMenuItem *, gpointer);
 void on_file_close_activate (GtkMenuItem *, gpointer);
 void on_dialogue_compile_activate (GtkMenuItem *, gpointer);
 void on_dialogue_run_activate (GtkMenuItem *, gpointer);

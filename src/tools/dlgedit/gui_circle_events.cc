@@ -22,7 +22,6 @@
 #include <gtk/gtk.h>
 #include "gui_circle_events.h"
 #include "gui_circle.h"
-#include "dlg_types.h"
 
 // When switching pages of the notebook, give Focus to first widget on the new page
 void on_switch_page (GtkNotebook *notebook, GtkNotebookPage *page, gint page_num, gpointer user_data)

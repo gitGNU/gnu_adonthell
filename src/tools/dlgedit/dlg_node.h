@@ -26,7 +26,6 @@
 #include <string>
 #include <stdio.h>
 #include <fstream>
-#include "dlg_types.h"
 #include "dlg_node_gfx.h"
 
 
@@ -139,13 +138,40 @@ public:
      */
     node_type &type ()      { return type_; }
     
+    /**
+     * Set the node's position in the dlg_module::nodes array.
+     * @param i position of the node.
+     */
     void setIndex (int i)   { index_ = i; }
+
+    /**
+     * Get the node's position in the dlg_module::nodes array.
+     * @return position of the node.
+     */
     int index ()            { return index_; }
+    
+    /**
+     * Return the node's unique id. This is given when the node is
+     * created and will never change from then on. It can be used
+     * to correctly identify nodes of subdialogues and the like.
+     * @return unique id of the node.
+     */
+    int node_id ()          { return nid_; }
+    
+    /**
+     * Returns id of the module this node belongs to. It allows us 
+     * to tell nodes of different modules apart. Together with the
+     * node id, this gives each node a unique id.
+     * @return module id.
+     */
+    std::string module_id (){ return mid_; }
         
 protected:
     node_type type_;                    // type of the node
     int index_;                         // position of node in file when saving
-        
+    int nid_;                           // unique node id
+    std::string mid_;                   // unique module id
+    
     std::list<DlgNode*> prev_;          // list of node's parents
     std::list<DlgNode*> next_;          // list of node's children
 

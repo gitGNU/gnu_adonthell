@@ -26,14 +26,13 @@
 #include "dlg_cmdline.h"
 
 // ctor
-DlgModule::DlgModule (std::string n, std::string d)
+DlgModule::DlgModule (std::string p, std::string n, std::string s, std::string d)
 {
-    // get the serial number from the name
-    unsigned int pos = n.rfind ("-");
-    if (pos != n.npos) serial_ = n.substr (pos);
-    
     description_ = d;
-    setName (n);
+    serial_ = s;
+    path_ = p + "/";
+    name_ = n;
+    
     init ();
 }
 
@@ -45,20 +44,6 @@ void DlgModule::init ()
     selected_ = NULL;
     highlighted_ = NULL;
     changed_ = false;
-}
-
-// assign a name to the module
-void DlgModule::setName (const std::string &filename)
-{
-    name_ = filename;
-    
-    // remove file extension
-    unsigned int pos = name_.rfind (".adlg");
-    if (pos != name_.npos) name_.erase (pos, 5);
-    
-    // set serial number
-    pos = name_.rfind (serial_);
-    if (pos == name_.npos) name_ += serial_;
 }
 
 // select a given node
@@ -218,6 +203,7 @@ bool DlgModule::load ()
                 if (parse_dlgfile (s, n) == LOAD_STR) entry_.setProject (s);
                 break;                
             }
+
             case LOAD_NOTE:
             {
                 if (parse_dlgfile (s, n) == LOAD_STR) description_ = s;
@@ -293,9 +279,14 @@ bool DlgModule::load ()
 }
 
 // save dialogue to file
-bool DlgModule::save (std::string &file)
+bool DlgModule::save (std::string &path, std::string &name)
 {
-    std::ofstream out (file.c_str ());
+    // update path and name
+    path_ = path + "/";
+    name_ = name;
+    
+    // open file
+    std::ofstream out (fullName ().c_str ());
     int index = 0;
     
     // opening failed for some reasons    
@@ -308,6 +299,9 @@ bool DlgModule::save (std::string &file)
         << "# $I" << "d$\n\n"
         << "Note §" << description_ << "§\n\n";
 
+    // Node ID
+    out << "Id " << nid_ << "\n";
+    
     // Save settings and stuff
     if (entry_.project () != "")
         out << "Proj §" << entry_.project () << "§\n";
@@ -339,9 +333,6 @@ bool DlgModule::save (std::string &file)
 
     // mark dialogue as unchanged
     changed_ = false;
-    
-    // update filename    
-    setName (file);
     
     return true;    
 }

@@ -22,8 +22,6 @@
 #ifndef DLG_MODULE_H
 #define DLG_MODULE_H
 
-#include <vector>
-#include <string>
 #include "dlg_node.h"
 #include "dlg_module_entry.h"
 
@@ -36,7 +34,14 @@
 class DlgModule : public DlgNode
 {
 public:
-    DlgModule (std::string n, std::string d);
+    /**
+     * Create a new, empty dialogue module.
+     * @param p The full path to the file containing the module.
+     * @param n The actual name without file extension.
+     * @param s Unique id of the module.
+     * @param d Description of the module.
+     */
+    DlgModule (std::string p, std::string n, std::string s, std::string d);
     
     /**
      * Draw this node to the given surface with the specified offset. 
@@ -117,18 +122,21 @@ public:
      *         otherwise.
      */
     bool load ();
-    /**
-     * Save the Dialogue to a file
-     * @param file full path and filename of the dialogue
-     * @return <b>true</b> if saving was successful, <b>false</b>
-     *         otherwise.
-     */
-    bool save (std::string &file);
     
     /**
      * Save the Dialogue to a file
+     * @param path full path of the dialogue.
+     * @param name file name without extension.
+     * @return <b>true</b> if saving was successful, <b>false</b> otherwise.
      */
-    void save (std::ofstream &file)          { }
+    bool save (std::string &path, std::string &name);
+    
+    /**
+     * Save the Dialogue to a file. Not implemented - use 
+     * save (std::string, std::string) instead!
+     * @param file an opened file.
+     */
+    void save (std::ofstream &file)     { }
     
     /**
      * Get the list of nodes in this dialogue.
@@ -147,11 +155,20 @@ public:
      * @return a reference to the dialogue's name.
      */
     std::string &name ()                { return name_; }
+
     /**
-     * Set the name of this dialogue.
-     * @param the filename of the file the dialogue was loaded from.
+     * Get the name and id of this dialogue. To be used for window
+     * captions and window menu.
+     * @return string composed of name and unique id.
      */
-    void setName (const std::string &filename);
+    std::string shortName ()            { return name_ + serial_; }
+
+    /**
+     * Get the full path and filename of this dialogue. To be used when
+     * saving the dialogue.
+     * @return string composed of path, filename and file extension.
+     */
+    std::string fullName ()             { return path_ + name_ + FILE_EXT; }
     
     /**
      * Check whether this dialogue has been changed since it's been
@@ -178,10 +195,12 @@ protected:
     
     DlgPoint offset_;           // The current offset in the graph view
     bool changed_;              // Whether there were changes since saving
+    int nid_;                   // Id to use for the next new node
     
     std::string name_;          // Short (file-) name of the dialogue 
-    std::string description_;   // Description of the dialogue
+    std::string path_;          // Path of the dialogue
     std::string serial_;        // Unique number of the dialogue
+    std::string description_;   // Description of the dialogue
     
     DlgModuleEntry entry_;      // further content of the dialogue
     

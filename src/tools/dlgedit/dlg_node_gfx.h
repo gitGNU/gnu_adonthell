@@ -22,7 +22,6 @@
 #ifndef DLG_NODE_GFX_H
 #define DLG_NODE_GFX_H
 
-#include <gdk/gdktypes.h>
 #include "dlg_rect.h"
 #include "dlg_types.h"
 

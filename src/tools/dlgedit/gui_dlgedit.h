@@ -22,9 +22,6 @@
 #ifndef GUI_DLGEDIT_H
 #define GUI_DLGEDIT_H
 
-#include <vector>
-#include <string>
-#include <gtk/gtkstyle.h>
 #include "gui_messages.h"
 #include "gui_graph.h"
 #include "gui_list.h"

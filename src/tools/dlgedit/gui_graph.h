@@ -22,8 +22,6 @@
 #ifndef GUI_GRAPH_H
 #define GUI_GRAPH_H
 
-#include <gdk/gdktypes.h>
-#include <gtk/gtkstyle.h>
 #include "gui_tooltip.h"
 #include "dlg_module.h"
 

@@ -51,6 +51,13 @@ void on_file_load_activate (GtkMenuItem * menuitem, gpointer user_data)
 void on_file_save_activate (GtkMenuItem * menuitem, gpointer user_data)
 {
     GuiDlgedit *dlgedit = (GuiDlgedit *) user_data;
+    dlgedit->saveDialogue (dlgedit->filename ());
+}
+
+// File Menu: Save As
+void on_file_save_as_activate (GtkMenuItem * menuitem, gpointer user_data)
+{
+    GuiDlgedit *dlgedit = (GuiDlgedit *) user_data;
     GuiFile fs (SAVE, "Save dialogue source", dlgedit->filename ());
 
     // File selection closed with OK

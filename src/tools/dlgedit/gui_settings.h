@@ -32,7 +32,14 @@
 class GuiSettings
 {
 public:
+    /**
+     * Create empty Settings Dialog.
+     */
     GuiSettings ();
+
+    /**
+     * Cleanup.
+     */
     ~GuiSettings ();
     
     /**
@@ -45,7 +52,7 @@ public:
      * @param entry the settings of a certain DlgModule to be edited.
      * @param name name of the dialogue whose settings are being edited.
      */
-    void display (DlgModuleEntry *entry, std::string &name);
+    void display (DlgModuleEntry *entry, const std::string &name);
 
     /**
      * Store the user's entries once the OK button has been pressed.

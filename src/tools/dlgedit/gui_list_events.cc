@@ -22,7 +22,6 @@
 #include <gtk/gtk.h>
 #include "gui_list_events.h"
 #include "gui_dlgedit.h"
-#include "dlg_circle.h"
 
 // Node selected in preview
 void on_list_select (GtkList *list, GtkWidget *widget, gpointer user_data)

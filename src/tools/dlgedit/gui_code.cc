@@ -162,7 +162,7 @@ GuiCode::~GuiCode ()
 }
 
 // display the dialog
-void GuiCode::display (DlgModuleEntry *e, std::string &name)
+void GuiCode::display (DlgModuleEntry *e, const std::string &name)
 {
     if (entry != e)
     {
@@ -177,7 +177,7 @@ void GuiCode::display (DlgModuleEntry *e, std::string &name)
     
     // set the title
     gchar *title = g_strjoin (NULL, "Custom Python Code - [", 
-        g_basename (name.c_str ()), "]", NULL);
+        name.c_str (), "]", NULL);
     gtk_window_set_title (GTK_WINDOW (window), title);
 
     // now show the window

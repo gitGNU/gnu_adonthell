@@ -22,8 +22,6 @@
 #ifndef DLG_COMPILER_H
 #define DLG_COMPILER_H
 
-#include <vector>
-#include <fstream>
 #include "dlg_module.h"
 #include "dlg_circle.h"
 

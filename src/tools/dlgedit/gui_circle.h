@@ -22,7 +22,6 @@
 #ifndef GUI_CIRCLE_H
 #define GUI_CIRCLE_H
 
-#include <string>
 #include "dlg_circle_entry.h"
 #include "dlg_module_entry.h"
 #include "dlg_types.h"

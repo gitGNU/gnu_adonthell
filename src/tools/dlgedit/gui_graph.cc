@@ -22,7 +22,6 @@
 #include <gtk/gtk.h>
 #include "dlg_mover.h"
 #include "gui_dlgedit.h"
-#include "gui_tooltip.h"
 #include "gui_circle.h"
 #include "gui_graph_events.h"
 

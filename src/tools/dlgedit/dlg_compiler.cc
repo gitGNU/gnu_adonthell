@@ -81,10 +81,10 @@ void DlgCompiler::run ()
     }
     
     // try to open the file
-    std::string fname = dialogue->name ();
+    std::string fname = dialogue->fullName ();
 
-    // remove the serial number from the name
-    unsigned int pos = fname.rfind ("-");
+    // remove the file extension
+    unsigned int pos = fname.rfind (FILE_EXT);
     if (pos != fname.npos) fname.erase (pos);
 
     // try to open the file

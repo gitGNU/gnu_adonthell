@@ -77,19 +77,30 @@ enum
     MAX_GC          = 9
 };
 
+/**
+ * Talking names for the different file menu items.
+ */
 enum menu_item
 {
     SAVE            = 0,
-    CLOSE           = 1,
-    SETTINGS        = 2,
-    FUNCTIONS       = 3,
-    COMPILE         = 4,
-    PREVIEW         = 5,
-    RUN             = 6,
-    MAX_ITEM        = 7
+    SAVE_AS         = 1,
+    CLOSE           = 2,
+    SETTINGS        = 3,
+    FUNCTIONS       = 4,
+    COMPILE         = 5,
+    PREVIEW         = 6,
+    RUN             = 7,
+    MAX_ITEM        = 8
 };
 
+/**
+ * Load node of file selction box.
+ */
 #define LOAD    1
+
+/**
+ * Save mode of file selction box.
+ */
 #define SAVE    2
 
 /**
@@ -126,8 +137,13 @@ enum
 };
 
 /**
- * The size of a DlgCircle
+ * The size of a DlgCircle.
  */
 #define CIRCLE_DIAMETER 20
-    
+
+/**
+ * File extension of dialogue source files.
+ */
+#define FILE_EXT ".adlg"
+
 #endif // DLG_TYPES_H
