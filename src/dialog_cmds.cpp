@@ -23,6 +23,8 @@
 #include "interpreter.h"
 #include "dialog_cmds.h"
 #include "dialog.h"
+#include "storage.h"
+#include "character.h"
 
 
 // TOC of the dialogue string file
@@ -221,4 +223,41 @@ void speaker_cmd::write (FILE *out)
 void speaker_cmd::ascii (ofstream &out)
 {
     out << "SPEAKER " << speaker << " " << mood;
+}
+
+switch_dlg_cmd::switch_dlg_cmd (u_int32 d, char *n)
+{
+    type = SWITCH_DLG;
+    dlg = d;
+    npc_id = n;
+}
+
+void switch_dlg_cmd::init (s_int32 *buffer, u_int32 &i, void *data)
+{
+    npc_id = strread (buffer, i);
+    dlg = buffer[i++];
+}
+
+s_int32 switch_dlg_cmd::run (u_int32 &PC, void *data)
+{
+    npc *the_npc = (npc*) objects::get(npc_id);
+    the_npc->set_dialogue (dlg);
+
+    return 1;
+}
+
+void switch_dlg_cmd::write (FILE *out)
+{
+    u_int32 i, l = strlen (npc_id);
+    
+    fwrite (&type, sizeof (type), 1, out);
+    fwrite (&l, sizeof(l), 1, out);
+    fwrite (npc_id, l, 1, out);
+    for (i = 4; i > l%4; i--) fputc (0, out);
+    fwrite (&dlg, sizeof (dlg), 1, out);
+}
+
+void switch_dlg_cmd::ascii (ofstream &out)
+{
+    out << "SWITCH  " << npc_id << " " << dlg;
 }

@@ -24,12 +24,13 @@ enum
     // Return has to be the first command (see interpreter.cc to find out the reason)
     RETURN = 0,     // RETURN <retval>              Stop interpreter
 
-    // Dialogue (those five will change in future versions!!!)
+    // Dialogue
     IMPORT = 1,     // IMPORT <id-list>             Load Text
     TEXT = 2,       // TEXT <id> <offset>           Line of text
     CLEAR = 3,      // CLEAR                        Reset Text buffers
     SPEAKER = 4,    // SPEAKER <speaker> <mood>     Sets the Speaker
-    
+    SWITCH_DLG = 5, // SWITCH_DLG <npc> <dlg>       Changes the NPC's active dialogue
+
     // Arithmetic
     LET = 6,        // LET <id1> <id2>              id2 = id1
     ADD = 7,        // ADD <id1> <id2> <id3>        id3 = id1 + id2

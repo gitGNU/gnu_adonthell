@@ -93,4 +93,23 @@ private:
     u_int32 text;               // Id of the dialogue text
 };
 
+// switches a NPC's active dialogue
+class switch_dlg_cmd : public command
+{
+public:
+    switch_dlg_cmd () { type = SWITCH_DLG; }
+    switch_dlg_cmd (u_int32, char*);
+    virtual ~switch_dlg_cmd () { if (npc_id) delete[] npc_id; }
+    
+    void init (s_int32*, u_int32&, void*);
+    s_int32 run (u_int32&, void*);
+
+    void write (FILE*);
+    void ascii (ofstream&);   
+    
+private:
+    u_int32 dlg;                // The new dialogue
+    char *npc_id;               // The NPC whose dialogue to switch
+};
+
 #endif // __DIALOG_CMDS_H__
