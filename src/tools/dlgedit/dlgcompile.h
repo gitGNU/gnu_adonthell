@@ -18,13 +18,15 @@
 #include <vector>
 #include <string>
 
-#define NUM_OPS 17
+#define NUM_OPS 33
+#define NUM_FXD 5
 
 enum
 {
-    LGET = 0,
-    RGET = 1,
-    SET = 2
+    NONE = 0,
+    FIXED = 1,
+    VARIABLE = 2,
+    CONSTANT = 3
 };
 
 // Dialogue Compiler
@@ -64,7 +66,8 @@ private:
     void write_player_answer (DlgNode*);// Write the answer function's Player part
     void write_start ();            // Writes the first function
 
-    string inflate (string, int);   // Inflates "shortcut code"
+    string inflate (string);        // Inflates "shortcut code"
+    u_int32 token_type (string&);   // Return the type of a token
     
     u_int8 npc_follows (DlgNode*);  // TRUE if player node(s) follow Circle
     u_int8 player_follows (DlgNode*);// TRUE if player node(s) follow Circle
@@ -76,6 +79,7 @@ private:
     void get_prev_npc_links (Circle*, vector<Circle*>&);
 
     static string operators[NUM_OPS];
+    static string fixed[NUM_FXD];
 };
 
 #endif // __COMPILE_H__
