@@ -78,9 +78,12 @@ s_int8 mapobject::get (igzstream & file)
     u_int16 i;
     u_int16 nbr_of_parts;
     
+    if (!fileops::get_version (file, 1, 1, ""))
+        return -1;
+    
     // Clear everything.
     clear ();
-
+    
     // Read all the animations.
     nbr_of_parts << file;
     for (i = 0; i < nbr_of_parts; i++)
@@ -107,8 +110,42 @@ s_int8 mapobject::load (string fname)
     file.open (fdef);
     if (!file.is_open ())
         return -1;
-    if (fileops::get_version (file, 1, 1, fdef))
-        retvalue = get (file);
+    retvalue = get (file);
+    file.close ();
+    return retvalue;
+}
+
+s_int8 mapobject::put (ogzstream & file) const
+{
+    u_int16 i;
+    
+    fileops::put_version (file, 1); 
+
+    // Write all the animations.
+    nbr_of_animations () >> file;
+    for (i = 0; i < nbr_of_animations (); i++)
+    {
+        anim[i]->put (file);
+    }
+
+    mapsquare_walkable_area::put (file); 
+    
+    return 0;
+}
+
+s_int8 mapobject::save (string fname) const
+{
+    ogzstream file;
+    s_int8 retvalue = -1;
+
+    string fdef = MAPOBJECTS_DIR;
+
+    fdef += fname;
+
+    file.open (fdef);
+    if (!file.is_open ())
+        return -1;
+    retvalue = put (file);
     file.close ();
     return retvalue;
 }

@@ -22,10 +22,10 @@
 #include "prefs.h"
 #include "audio_loop.h"
 
-// We'll only load two waves into memory
-#define NUM_WAVES 2
-// We'll only load two .it files into memory
-#define NUM_MUSIC 2
+// We'll only load five waves into memory
+#define NUM_WAVES 5
+// We'll only load three .it files into memory
+#define NUM_MUSIC 3
 // We can play four SFX at once
 #define NUM_CHANNELS 4
 

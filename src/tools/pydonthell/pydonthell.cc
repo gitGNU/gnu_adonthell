@@ -24,6 +24,15 @@ extern "C" {
 extern int Py_Main(int, char **);
 }
 
+extern "C"
+{
+    /** 
+     * SWIG init prototype.
+     * 
+     */
+    void initadonthellc (void);
+}
+
 int main(int argc, char * argv[])
 {
     // Init the game engine
@@ -31,16 +40,19 @@ int main(int argc, char * argv[])
         return 1;
 
     
-    char *cwd = getcwd (NULL, 0);
-    char tmp[256];
+//     char *cwd = getcwd (NULL, 0);
+//     char tmp[256];
 
     
-    if (argc > 1 && argv[1][0] != '/') 
-    {
-        sprintf (tmp, "%s/%s", cwd, argv[1]);
-        argv[1] = tmp;
-    }
+//     if (argc > 1 && argv[1][0] != '/') 
+//     {
+//         sprintf (tmp, "%s/%s", cwd, argv[1]);
+//         argv[1] = tmp;
+//     }
 
+//     Py_Initialize (); 
+//     initadonthellc ();
     return Py_Main(argc,argv);
-//     return PyRun_InteractiveLoop (stdin, NULL); 
+    //     return PyRun_AnyFile (stdin, NULL);
+    game::cleanup (); 
 }

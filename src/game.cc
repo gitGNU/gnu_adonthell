@@ -82,7 +82,7 @@ bool game::init (int argc, char **argv)
 
 #if defined SDL_MIXER
     // init audio subsystem
-    //    audio::init (configuration);
+    audio::init (configuration);
 #endif 
 
     // init input subsystem
@@ -118,7 +118,7 @@ void game::cleanup ()
 
 #if defined SDL_MIXER
     // shutdown audio
-    //    audio::cleanup ();
+    audio::cleanup ();
 #endif
 
     // Delete the theme

@@ -25,6 +25,8 @@
 #include "win_scrolled.h"
 #include "win_select.h"
 
+#include "audio.h"
+
 //STATIC INIT
 win_select * win_select::curselect_=NULL;
 bool win_select::activate_keyboard_=true;
@@ -128,12 +130,14 @@ void win_select::destroy()
 
 void win_select::on_next()
 {
-  if(callback_[WIN_SIG_NEXT_KEY]) (callback_[WIN_SIG_NEXT_KEY])();
+    audio::play_wave (-1, 1); 
+    if(callback_[WIN_SIG_NEXT_KEY]) (callback_[WIN_SIG_NEXT_KEY])();
 }
 
 void win_select::on_previous()
 {
-  if(callback_[WIN_SIG_PREVIOUS_KEY]) (callback_[WIN_SIG_PREVIOUS_KEY])();
+    audio::play_wave (-1, 1); 
+    if(callback_[WIN_SIG_PREVIOUS_KEY]) (callback_[WIN_SIG_PREVIOUS_KEY])();
 }
 
 bool win_select::update()
@@ -435,6 +439,7 @@ bool win_select::activate___()
   if(index_list!=list_obj.end()) 
     {
       (*index_list)->set_activated(true);
+      audio::play_wave (-1, 0); 
       on_activate_key();
       return true;
     }

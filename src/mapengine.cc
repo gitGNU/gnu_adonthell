@@ -19,6 +19,8 @@
 #include "gametime.h"
 #include "character.h"
 
+#include "gamedata.h"
+
 mapengine * data::map_engine; 
 
 mapengine::mapengine ()
@@ -44,10 +46,20 @@ void mapengine::load_map (string fname)
 
 void mapengine::run ()
 {
+    //     static u_int32 cpt = 0; 
     letsexit = false; 
     gametime::start_action (); 
     while (!letsexit)
     {
+        //         cpt++;
+//         if (cpt == 200) 
+//         {
+//             static u_int32 lcpt = 0; 
+//             cpt = 0; 
+//             gamedata::load (1);
+//             data::characters["Player"]->set_schedule ("random_move");
+//             cout << "Loaded " << ++lcpt << " times\n"; 
+//         }
         mainloop ();
         screen::show ();
         gametime::update (); 

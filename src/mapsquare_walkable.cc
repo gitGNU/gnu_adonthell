@@ -87,8 +87,8 @@ s_int8 mapsquare_walkable_area::put (ogzstream& file) const
     vector <mapsquare_walkable>::iterator jt;
 
     // Put the area size.
-    length () >> file;
-    height () >> file; 
+    area_length () >> file;
+    area_height () >> file; 
     
     // Save the area.
     for (it = area.begin (); it != area.end (); it++)

@@ -100,6 +100,7 @@ enum {Python = 1, C = 0};
 }
 
 %include "types.h"
+%include "fileops.h"
 %include "storage.h"
 %include "event.h"
 %include "gametime.h"

@@ -130,6 +130,34 @@ public:
      */
     s_int8 load (string fname);
 
+    /** Saves an mapobject into an opened file, in %game format, with
+     *  alpha and mask values. 
+     *  @warning as the mapobject which is saved comes from a %screen's depth
+     *           surface, it will be slightly altered during the save.
+     *           If you want a class capable of saving mapobjects with full
+     *           truecolor quality, use mapobject_edit instead.
+     *  @param file opened file where to save into.
+     *  @return
+     *      @li 0 in case of success.
+     *      @li -1 in case of error.
+     *  @sa save ()
+     */
+    s_int8 put (ogzstream& file) const;
+
+    /** Saves an mapobject into an file, in %game format, with
+     *  alpha and mask values.
+     *  @warning as the mapobject which is saved comes from a %screen's depth
+     *           surface, it will be slightly altered during the save.
+     *           If you want a class capable of saving mapobjects with full
+     *           truecolor quality, use mapobject_edit instead.
+     *  @param fname file name where to save into.
+     *  @return
+     *      @li 0 in case of success.
+     *      @li -1 in case of error.
+     *  @sa put ()
+     */
+    s_int8 save (string fname) const;
+
     //@}
 
 

@@ -33,21 +33,24 @@ u_int8 screen::bytes_per_pixel_ = 0;
 u_int32 screen::trans = 0;
 bool screen::fullscreen_ = false; 
   
-void screen::set_video_mode (u_int16 nl, u_int16 nh)
+void screen::set_video_mode (u_int16 nl, u_int16 nh, u_int8 depth = 0)
 {
     u_int8 bpp;
     u_int32 SDL_flags = 0;
-
-//     SDL_flags |= SDL_HWSURFACE;
-//     SDL_flags |= SDL_DOUBLEBUF;
+    u_int8 emulated = depth; 
     
     if (SDL_Init (SDL_INIT_VIDEO) < 0)
     {
         fprintf (stderr, "couldn't init display: %s\n", SDL_GetError ());
         exit (1);
     }
+
+    // Default video depth if none chosen.
+    if (!depth) depth = 16; 
     
-    bpp = SDL_VideoModeOK (nl, nh, 16, SDL_flags);
+    bpp = SDL_VideoModeOK (nl, nh, depth, SDL_flags);
+
+    if ((emulated) && (bpp) && (bpp != depth)) bpp = depth; 
     
     switch (bpp)
     {

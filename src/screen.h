@@ -53,8 +53,9 @@ public:
     /** Sets the video mode.
      *  @param nl X screen resolution.
      *  @param nh Y screen resolution.
+     *  @param depth desired screen depth.
      */ 
-    static void set_video_mode (u_int16 nl, u_int16 nh);
+    static void set_video_mode (u_int16 nl, u_int16 nh, u_int8 depth = 0);
 
     /** Returns the length of the screen.
      *  @return length of the screen.

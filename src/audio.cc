@@ -135,6 +135,15 @@ int audio::load_background(int slot, char *filename) {
     return(1);
   }
 
+  //  Check if the file exists at all...
+  FILE *f = fopen (filename, "r");
+  if (!f)  
+  {
+      music[slot] = NULL; 
+      return 1;
+  }
+  fclose (f);   
+
   // If we are loading background music into the slot
   // the current background music is in...
   if (current_background == slot) {
@@ -218,13 +227,23 @@ int audio::load_wave(int slot, char *filename) {
 #ifdef SDL_MIXER
 
   if (!audio_initialized) return(1);
-
+ 
   // Check for bad input
   if ((slot >= NUM_WAVES) || (slot < 0)) {
     fprintf(stderr, "Error: Tried to put wave in invalid slot.\n");
     return(1);
   } else {
-    sounds[slot] = Mix_LoadWAV(filename);
+      //  Check if the file exists at all...
+      FILE *f = fopen (filename, "r");
+      if (!f)  
+      {
+          sounds[slot] = NULL; 
+          return 1;
+      }
+      
+      fclose (f);   
+      
+      sounds[slot] = Mix_LoadWAV(filename);
   }
 #endif
   return(0);

@@ -213,6 +213,50 @@ s_int8 animation::load (string fname)
     return (retvalue);
 }
 
+s_int8 animation::put (ogzstream& file) const
+{
+    u_int16 i;
+ 
+    xoffset () >>  file;
+    yoffset () >>  file; 
+
+
+    // TODO: Remove this! (length and height are calculated later) 
+    u_int16 dummy = 0;
+    dummy >> file;
+    dummy >> file;
+
+    // Write images
+    nbr_of_images () >> file;
+
+    for (i = 0; i < nbr_of_images (); i++)
+    {
+        t_frame[i]->put_raw (file); 
+    }
+    
+    // Write frames
+    nbr_of_frames () >> file; 
+    
+    for (i = 0; i < nbr_of_frames (); i++)
+    {
+        frame[i].put (file);
+    }
+    
+    return (0);
+}
+
+s_int8 animation::save (string fname) const
+{
+    ogzstream file (fname);
+    u_int8 retvalue;
+
+    if (!file.is_open ())
+        return (-1);
+    retvalue = put (file);
+    file.close (); 
+    return (retvalue);
+}
+
 s_int8 animation::insert_image (const image * im, u_int16 pos)
 {
     vector <image *>::iterator i;
