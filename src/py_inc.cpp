@@ -25,7 +25,7 @@ extern "C"
 {
 	void initdialog_enginec(void);
 	void initcharacterc(void);
-	void initmapenginec(void);
+  //	void initmapenginec(void);
 	void initquestc(void);
 //	void initbaseitemc(void);
 }
@@ -60,7 +60,7 @@ bool init_python(void)
 	   link */
 	initcharacterc();
     initdialog_enginec();
-	initmapenginec();
+    //	initmapenginec();
 	initquestc();
 //	initbaseitemc();
 

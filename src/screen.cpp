@@ -115,7 +115,7 @@ bool screen::get_fullscreen()
 
 void screen::init_display(config *myconfig)
 {
-  set_video_mode(320,200,myconfig);
+  set_video_mode(320,240,myconfig);
 }
 
 void screen::show()

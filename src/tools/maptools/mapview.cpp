@@ -52,9 +52,9 @@ void mapview::attach_map(landmap * m)
   m_map=m;
   currentsubmap=0;
   currentobj=0;
-  set_pos(0,0);
   if(m_map->nbr_of_submaps)
     {
+      set_pos(0,0);
       current_tile=m_map->submap[currentsubmap]->land[mapselect::posx]
 	[mapselect::posy].tiles.begin();
       update_current_tile(*current_tile);
@@ -287,8 +287,9 @@ void mapview::delete_mapobject()
       if(!m_map->nbr_of_patterns) currentobj=0;
       must_upt_label_square=true;
       must_upt_label_object=true;
-      current_tile=m_map->submap[currentsubmap]->land[mapselect::posx]
-	[mapselect::posy].tiles.begin();
+      if(m_map->nbr_of_submaps)
+	current_tile=m_map->submap[currentsubmap]->land[mapselect::posx]
+	  [mapselect::posy].tiles.begin();
     }
 }
 
@@ -557,7 +558,7 @@ void mapview::draw_cursor()
 {
   if(!m_map) return;
   if(mapselect::cursor_blink<CURSOR_BLINK_RATE)
-    m_map->pattern[currentobj].draw(s_posx+MAPSQUARE_SIZE*(mapselect::posx-
+    m_map->pattern[currentobj]->draw(s_posx+MAPSQUARE_SIZE*(mapselect::posx-
 							   mapselect::d_posx),
 				    s_posy+MAPSQUARE_SIZE*(mapselect::posy-
 							   mapselect::d_posy),
@@ -725,12 +726,13 @@ void mapview::draw_editor()
       if(m_map->nbr_of_patterns) draw_cursor();
     }
   container->draw();
-  if(m_map->nbr_of_patterns) m_map->mini_pattern[currentobj].draw_free(245,75);
+  if(m_map->nbr_of_patterns) m_map->mini_pattern[currentobj]->
+			       draw_free(245,75);
   if(m_map->nbr_of_submaps)
     {
       if(!m_map->submap[currentsubmap]->
 	 land[mapselect::posx][mapselect::posy].tiles.empty())
-	m_map->mini_pattern[current_tile->objnbr].draw_free(245,155);
+	m_map->mini_pattern[current_tile->objnbr]->draw_free(245,155);
       
       if(current_tile!=m_map->submap[currentsubmap]->land[mapselect::posx]
 	 [mapselect::posy].tiles.end())

@@ -68,7 +68,7 @@ class mapsquare
 
   // Draw takes only a mapview as argument.
   void draw(mapview * mv);
-  void draw(s_int16 x, s_int16 y, mapobject * pattern, 
+  void draw(s_int16 x, s_int16 y, mapobject ** pattern, 
 	    drawing_area * da_opt=NULL);
   friend class mapsquare_tile;
   friend class landsubmap;
@@ -116,7 +116,7 @@ class landsubmap
 			    u_int16 patnbr);
 
   void draw_square(u_int16 x, u_int16 y, u_int16 px, u_int16 py, 
-		   mapobject * pattern, drawing_area * da_opt=NULL);
+		   mapobject ** pattern, drawing_area * da_opt=NULL);
   //  void draw(mapobject * pattern, drawing_area * da_opt=NULL);
   friend class mapview;
 };  // landsubmap
@@ -131,7 +131,7 @@ class landmap
 #endif
 
 #ifdef _EDIT_
-  mapobject * mini_pattern;
+  mapobject ** mini_pattern;
   
   void update_current_tile();
 
@@ -146,7 +146,7 @@ class landmap
 
 
  public:
-  mapobject * pattern;
+  mapobject ** pattern;
   u_int16 nbr_of_patterns;
 
   vector<string> objsrc;

@@ -52,7 +52,7 @@ void mapsquare_tile::draw(mapview * mv)
       u_int16 rx, ry;
       rx=(mv->posx>mv->ctrx)?x-(mv->posx-mv->ctrx):x;
       ry=(mv->posy>mv->ctry)?y-(mv->posy-mv->ctry):y;
-      mv->m_map->pattern[objnbr].draw
+      mv->m_map->pattern[objnbr]->draw
 	(rx*MAPSQUARE_SIZE-mv->offx,ry*MAPSQUARE_SIZE-mv->offy,mv->da);
     }
   else
@@ -66,7 +66,7 @@ void mapsquare_tile::draw_border(mapview * mv)
       u_int16 rx, ry;
       rx=(mv->posx>mv->ctrx)?x-(mv->posx-mv->ctrx):x;
       ry=(mv->posy>mv->ctry)?y-(mv->posy-mv->ctry):y;
-      mv->m_map->pattern[objnbr].draw_border
+      mv->m_map->pattern[objnbr]->draw_border
 	(rx*MAPSQUARE_SIZE,ry*MAPSQUARE_SIZE,mv->da);
     }
   else 
@@ -80,7 +80,7 @@ void mapsquare_tile::draw_base_tile(mapview * mv)
       u_int16 rx,ry;
       rx=(mv->posx>mv->ctrx)?x-(mv->posx-mv->ctrx):x;
       ry=(mv->posy>mv->ctry)?y-(mv->posy-mv->ctry):y;
-      mv->m_map->pattern[objnbr].draw_base_tile
+      mv->m_map->pattern[objnbr]->draw_base_tile
 	(rx*MAPSQUARE_SIZE,ry*MAPSQUARE_SIZE,mv->da);
     }
   else
@@ -90,6 +90,7 @@ void mapsquare_tile::draw_base_tile(mapview * mv)
 mapsquare::mapsquare()
 {
   type=0;
+  walkable=true;
   base_begin=tiles.end();
 #ifdef _DEBUG_
   cout << "mapsquare() called, "<< ++a_d_diff
@@ -111,7 +112,7 @@ void mapsquare::draw(mapview * mv)
   i=tiles.begin();
   while(i!=tiles.end())
     {
-      if(i->is_base) mv->m_map->pattern[i->objnbr].
+      if(i->is_base) mv->m_map->pattern[i->objnbr]->
 		       draw((i->x-(mv->posx-mv->ctrx))*MAPSQUARE_SIZE,
 			    (i->y-(mv->posy-mv->ctry))*MAPSQUARE_SIZE,
 			    mv->da);
@@ -181,7 +182,7 @@ void mapsquare::draw(mapview * mv)
 	  else if(i->y-(mv->posy-mv->ctry)==0 && i->base_tile->y<i->y 
 		  /*		  && i->base_tile->x==i->x*/)
 	    {
-	      if(!(i->x-i->base_tile->x+mv->m_map->pattern[i->objnbr].basex))
+	      if(!(i->x-i->base_tile->x+mv->m_map->pattern[i->objnbr]->basex))
 		{
 		  i->base_tile->draw(mv);
 		}
@@ -192,14 +193,14 @@ void mapsquare::draw(mapview * mv)
     }
 }
 
-void mapsquare::draw(s_int16 x, s_int16 y, mapobject * pattern,
+void mapsquare::draw(s_int16 x, s_int16 y, mapobject ** pattern,
 		     drawing_area * da_opt=NULL)
 {
   list<mapsquare_tile>::iterator i;
   i=tiles.begin();
   while(i!=tiles.end())
     {
-      if(i->is_base) pattern[i->objnbr].draw(x,y,da_opt);
+      if(i->is_base) pattern[i->objnbr]->draw(x,y,da_opt);
       i++;
     }
   /*  static u_int16 i;
@@ -371,14 +372,14 @@ s_int8 landsubmap::set_square_pattern(u_int16 px, u_int16 py,
   // base tile isn't at right of the object.
   // Bad initialisation of i0/j0/ie/je ( must be init like remove_obj)
   
-  u_int16 ie=m_map->pattern[patnbr].maptpl::get_length();
-  u_int16 je=m_map->pattern[patnbr].maptpl::get_height();
+  u_int16 ie=m_map->pattern[patnbr]->maptpl::get_length();
+  u_int16 je=m_map->pattern[patnbr]->maptpl::get_height();
   
-  ie=px-m_map->pattern[patnbr].basex+ie>length?length-px:ie;
-  je=py-m_map->pattern[patnbr].basey+je>height?height-py:je;
+  ie=px-m_map->pattern[patnbr]->basex+ie>length?length-px:ie;
+  je=py-m_map->pattern[patnbr]->basey+je>height?height-py:je;
 
-  u_int16 i0=(px-m_map->pattern[patnbr].basex)>0?0:m_map->pattern[patnbr].basex-px;
-  u_int16 j0=(py-m_map->pattern[patnbr].basey)>0?0:m_map->pattern[patnbr].basey-py;
+  u_int16 i0=(px-m_map->pattern[patnbr]->basex)>0?0:m_map->pattern[patnbr]->basex-px;
+  u_int16 j0=(py-m_map->pattern[patnbr]->basey)>0?0:m_map->pattern[patnbr]->basey-py;
   // Steps:
   // -Find out where to start/stop placing the object (screen overflow)
   // -For each square, place it in the right order
@@ -408,9 +409,12 @@ s_int8 landsubmap::set_square_pattern(u_int16 px, u_int16 py,
   for(j=j0;j<je;j++)
     for(i=i0;i<ie;i++)
       {
-	t.x=px-m_map->pattern[patnbr].basex+i;
-	t.y=py-m_map->pattern[patnbr].basey+j;
-	if(m_map->pattern[patnbr].basex!=i || m_map->pattern[patnbr].basey!=j)
+	t.x=px-m_map->pattern[patnbr]->basex+i;
+	t.y=py-m_map->pattern[patnbr]->basey+j;
+	land[t.x][t.y].walkable&=m_map->pattern[patnbr]->
+	  placetpl[i][j].walkable;
+	if(m_map->pattern[patnbr]->basex!=i || 
+	   m_map->pattern[patnbr]->basey!=j)
 	  {
 	    for(it=land[t.x][t.y].tiles.begin();
 		it!=land[t.x][t.y].tiles.end() &&
@@ -425,7 +429,7 @@ s_int8 landsubmap::set_square_pattern(u_int16 px, u_int16 py,
 }
 
 void landsubmap::draw_square(u_int16 x, u_int16 y, u_int16 px, u_int16 py,
-			     mapobject * pattern, drawing_area * da_opt=NULL)
+			     mapobject ** pattern, drawing_area * da_opt=NULL)
 {
   land[px][py].draw(x,y,pattern,da_opt);
 }
@@ -455,9 +459,21 @@ void landmap::clear()
       delete[] submap;
       submap=NULL;
     }
-  if(pattern) {delete[] pattern;pattern=NULL;}
+  if(pattern) 
+    {
+      for(i=0;i<nbr_of_patterns;i++)
+	delete pattern[i];
+      delete[] pattern;
+      pattern=NULL;
+    }
 #ifdef _EDIT_
-  if(mini_pattern) {delete[] mini_pattern;mini_pattern=NULL;}
+  if(mini_pattern) 
+    {
+      for(i=0;i<nbr_of_patterns;i++)
+	delete mini_pattern[i];      
+      delete[] mini_pattern;
+      mini_pattern=NULL;
+    }
 #endif
   nbr_of_patterns=nbr_of_submaps=0;
 }
@@ -475,18 +491,22 @@ landmap& landmap::operator =(const landmap& lm)
 {
   u_int16 i;
   
+  clear();
   nbr_of_patterns=lm.nbr_of_patterns;
-  if(pattern) delete[] pattern;
-  pattern=new mapobject[nbr_of_patterns];
+  //  if(pattern) delete[] pattern;
+  pattern=new (mapobject*)[nbr_of_patterns];
   for(i=0;i<nbr_of_patterns;i++)
-    pattern[i]=lm.pattern[i];
+    {
+      pattern[i]=new mapobject;
+      *(pattern[i])=*(lm.pattern[i]);
+    }
   nbr_of_submaps=lm.nbr_of_submaps;
-  if(submap) 
+  /*  if(submap) 
   {
     for(i=0;i<nbr_of_submaps;i++)
       delete submap[i];
     delete[] submap;
-  }
+    }*/
   submap=new (landsubmap*)[nbr_of_submaps];
   for(i=0;i<nbr_of_submaps;i++)
   {
@@ -494,10 +514,13 @@ landmap& landmap::operator =(const landmap& lm)
     *(submap[i])=*(lm.submap[i]);
   }
 #ifdef _EDIT_
-  if(mini_pattern) delete[] mini_pattern;
-  mini_pattern=new mapobject[nbr_of_patterns];
+  //  if(mini_pattern) delete[] mini_pattern;
+  mini_pattern=new (mapobject*)[nbr_of_patterns];
   for(i=0;i<nbr_of_patterns;i++)
-    mini_pattern[i]=lm.mini_pattern[i];
+    {
+    mini_pattern[i]=new mapobject;
+    *(mini_pattern[i])=*(lm.mini_pattern[i]);
+    }
 #endif
   return *this;
 }
@@ -549,11 +572,14 @@ s_int8 landmap::put(gzFile file)
   gzwrite(file,&nbr_of_patterns,sizeof(nbr_of_patterns));
   for(i=0;i<nbr_of_patterns;i++)
     {
+      char c=0;
       u_int16 j=0;
-      do
+      while(j<objsrc[i].size())
 	{
 	  gzwrite(file,&objsrc[i][j],sizeof(objsrc[i][j]));
-	}while (j++<objsrc[i].size());
+	  j++;
+	}
+      gzwrite(file,&c,sizeof(c));
     }
   // Putting all submaps
   gzwrite(file,&nbr_of_submaps,sizeof(nbr_of_submaps));
@@ -619,9 +645,9 @@ void landmap::update()
   static u_int16 i;
   for(i=0;i<nbr_of_patterns;i++)
     {
-      pattern[i].update();
+      pattern[i]->update();
 #ifdef _EDIT_
-      mini_pattern[i].update();
+      mini_pattern[i]->update();
 #endif
     }
 }
@@ -631,9 +657,9 @@ void landmap::reset_objs()
   u_int16 i;
   for(i=0;i<nbr_of_patterns;i++)
     {
-      pattern[i].rewind();
+      pattern[i]->rewind();
 #ifdef _EDIT_
-      mini_pattern[i].rewind();
+      mini_pattern[i]->rewind();
 #endif
     }
 }
@@ -649,23 +675,23 @@ void landmap::remove_obj_from_square(u_int16 smap,
 {
   u_int16 i,j;
   list<mapsquare_tile>::iterator it;
-  u_int16 ie=pattern[obj->objnbr].maptpl::get_length();
-  u_int16 je=pattern[obj->objnbr].maptpl::get_height();
+  u_int16 ie=pattern[obj->objnbr]->maptpl::get_length();
+  u_int16 je=pattern[obj->objnbr]->maptpl::get_height();
 
-  u_int16 i0=(obj->base_tile->x-pattern[obj->objnbr].basex)>0?0:
-    pattern[obj->objnbr].basex-obj->base_tile->x;
-  u_int16 j0=(obj->base_tile->y-pattern[obj->objnbr].basey)>0?0:
-    pattern[obj->objnbr].basey-obj->base_tile->y;
+  u_int16 i0=(obj->base_tile->x-pattern[obj->objnbr]->basex)>0?0:
+    pattern[obj->objnbr]->basex-obj->base_tile->x;
+  u_int16 j0=(obj->base_tile->y-pattern[obj->objnbr]->basey)>0?0:
+    pattern[obj->objnbr]->basey-obj->base_tile->y;
 
-  ie=obj->base_tile->x-pattern[obj->objnbr].basex+ie>submap[smap]->length?
+  ie=obj->base_tile->x-pattern[obj->objnbr]->basex+ie>submap[smap]->length?
     submap[smap]->length-obj->base_tile->x:ie;
-  je=obj->base_tile->y-pattern[obj->objnbr].basey+je>submap[smap]->height?
+  je=obj->base_tile->y-pattern[obj->objnbr]->basey+je>submap[smap]->height?
     submap[smap]->height-obj->base_tile->y:je;
 
   ie-=i0;
   je-=j0;
-  i0+=obj->base_tile->x-pattern[obj->objnbr].basex;
-  j0+=obj->base_tile->y-pattern[obj->objnbr].basey;
+  i0+=obj->base_tile->x-pattern[obj->objnbr]->basex;
+  j0+=obj->base_tile->y-pattern[obj->objnbr]->basey;
   ie+=i0;
   je+=j0;
 
@@ -684,6 +710,14 @@ void landmap::remove_obj_from_square(u_int16 smap,
 		it!=submap[smap]->land[i][j].tiles.end() && 
 		  *(it->base_tile)<*it;it++);
 	    submap[smap]->land[i][j].base_begin=it;
+	    list<mapsquare_tile>::iterator it2;
+	    //	    bool w=true;
+	    it2=submap[smap]->land[i][j].tiles.begin();
+	    while(it2!=submap[smap]->land[i][j].tiles.end())
+	      {
+		// Calculate if walkable must be set to true or false
+	      }
+	    
 	  }  
       }
 }
@@ -691,25 +725,27 @@ void landmap::remove_obj_from_square(u_int16 smap,
 s_int8 landmap::insert_mapobject(mapobject &an, u_int16 pos, 
 				 const char * srcfile="")
 {
-  mapobject * oldpat=pattern;
+  mapobject ** oldpat=pattern;
   u_int16 i,j,k;
   list<mapsquare_tile>::iterator it;
 
   if(pos>nbr_of_patterns) return -2;
-  pattern=new mapobject[++nbr_of_patterns];
+  pattern=new (mapobject*)[++nbr_of_patterns];
   for(i=0;i<pos;i++)
     pattern[i]=oldpat[i];
-  pattern[pos]=an;
-  pattern[pos].play();
+  pattern[pos]=new mapobject;
+  *(pattern[pos])=an;
+  pattern[pos]->play();
   for(i=pos+1;i<nbr_of_patterns;i++)
     pattern[i]=oldpat[i-1];
   delete[] oldpat;
 #ifdef _EDIT_
   oldpat=mini_pattern;
-  mini_pattern=new mapobject[nbr_of_patterns];
+  mini_pattern=new (mapobject*)[nbr_of_patterns];
   for(i=0;i<nbr_of_patterns-1;i++)
-    mini_pattern[i]=oldpat[i];  
-  mini_pattern[pos].zoom_to_fit(OBJSMPLSIZE,&an);
+    mini_pattern[i]=oldpat[i];
+  mini_pattern[pos]=new mapobject;
+  mini_pattern[pos]->zoom_to_fit(OBJSMPLSIZE,&an);
   for(i=pos+1;i<nbr_of_patterns;i++)
     mini_pattern[i]=oldpat[i-1];
   delete[] oldpat;
@@ -736,24 +772,26 @@ s_int8 landmap::insert_mapobject(mapobject &an, u_int16 pos,
 
 s_int8 landmap::delete_mapobject(u_int16 pos)
 {
-  mapobject * oldpat=pattern;
+  mapobject ** oldpat=pattern;
   u_int16 i,j,k;
   list<mapsquare_tile>::iterator it;
 
   if(pos>nbr_of_patterns-1) return -2;
-  pattern=new mapobject[--nbr_of_patterns];
+  pattern=new (mapobject*)[--nbr_of_patterns];
   for(i=0;i<pos;i++)
     pattern[i]=oldpat[i];
+  delete oldpat[pos];
   for(i=pos;i<nbr_of_patterns;i++)
     pattern[i]=oldpat[i+1];
   delete[] oldpat;
 
 #ifdef _EDIT_
   oldpat=mini_pattern;
-  mini_pattern=new mapobject[nbr_of_patterns];
+  mini_pattern=new (mapobject*)[nbr_of_patterns];
 
   for(i=0;i<pos;i++)
     mini_pattern[i]=oldpat[i];
+  delete oldpat[pos];
   for(i=pos;i<nbr_of_patterns;i++)
     mini_pattern[i]=oldpat[i+1];
   delete[] oldpat;
