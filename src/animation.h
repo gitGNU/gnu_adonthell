@@ -44,8 +44,6 @@ class animation_frame
 {
 #ifdef _DEBUG_
   static u_int16 a_d_diff;
-#else ifdef _EDIT_
-  static u_int16 a_d_diff;
 #endif
   u_int16 imagenbr;
   bool is_masked;
@@ -87,18 +85,16 @@ class animation
 {
 #ifdef _DEBUG_
   static u_int16 a_d_diff;
-#else ifdef _EDIT_
-  static u_int16 a_d_diff;
 #endif
 
 #ifdef _EDIT_
-  static image * clipboard;
-  static animation_frame f_clipboard;
+  image * clipboard;
+  animation_frame f_clipboard;
   bool mode;
   char frame_txt[500];
-  static win_font * font;
-  static win_border * border;
-  static image * bg;
+  win_font * font;
+  win_border * border;
+  image * bg;
   win_container * container;
   win_label * label_mode;
   win_label * label_frame_nbr;
@@ -143,8 +139,6 @@ class animation
   s_int8 get(gzFile file);
   s_int8 load(const char * fname);
 
-  // Perform a zoom from the size of the currentframe of src to sx,sy.
-  // All the other frame's sizes are adjusted from src->currentframe.
   void zoom(u_int16 sx, u_int16 sy, animation * src);
   void get_zoom_scale(u_int16 &max_x, u_int16 &max_y);
 

@@ -1,6 +1,6 @@
 // $Id$
 /*
-   Copyright (C) 1999   The Adonthell Project
+   Copyright (C) 1999-2000   The Adonthell Project
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify

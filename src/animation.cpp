@@ -1,15 +1,16 @@
 // $Id$
 
 /*
-    Copyright (C) 2000 Alexandre Courbot.
-
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License.
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY.
-    See the COPYING file for more details.
-
-    This file is a part of the Adonthell project.
+  Copyright (C) 1999-2000   The Adonthell Project
+  Part of the Adonthell Project http://adonthell.linuxgames.com
+  
+  This program is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Public License.
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY.
+  See the COPYING file for more details.
+  
+  This file is a part of the Adonthell project.
 */
 
 #include <iostream.h>
@@ -19,22 +20,10 @@
 
 #ifdef _DEBUG_
 u_int16 animation_frame::a_d_diff=0;
-#else ifdef _EDIT_
-u_int16 animation_frame::a_d_diff=0;
 #endif
 
 #ifdef _DEBUG_
 u_int16 animation::a_d_diff=0;
-#else ifdef _EDIT_
-u_int16 animation::a_d_diff=0;
-#endif
-
-#ifdef _EDIT_
-image * animation::clipboard;
-animation_frame animation::f_clipboard;
-win_font * animation::font;
-win_border * animation::border;
-image * animation::bg;
 #endif
 
 void animation_frame::init()
@@ -187,21 +176,6 @@ void animation::init()
 #ifdef _EDIT_
   in_editor=false;
   currentimage=0;
-  if(!a_d_diff)
-    {
-      image temp;
-      string t;
-      t=WIN_DIRECTORY;
-      t+=WIN_BACKGROUND_DIRECTORY;
-      t+=WIN_THEME_ORIGINAL;
-      t+=WIN_BACKGROUND_FILE;
-      clipboard=new image;
-      temp.load_pnm(t.data());
-      bg=new image(320,240);
-      bg->putbox_tile_img(&temp);
-      font=new win_font(WIN_THEME_ORIGINAL);
-      border=new win_border(WIN_THEME_ORIGINAL);
-    }
 #endif
 }
 
@@ -216,17 +190,6 @@ animation::animation()
 
 void animation::clear()
 {
-  
-#ifdef _EDIT_
-  if(a_d_diff==1)
-    {
-      delete bg;
-      delete border;
-      delete font;
-      delete clipboard;
-    }
-#endif
-
   delete[] t_frame;
   delete[] frame;
 }
@@ -371,14 +334,19 @@ void animation::zoom(u_int16 sx, u_int16 sy, animation * src)
   t_frame=new image[nbr_of_images];
   for(i=0;i<nbr_of_images;i++)
     {
-      t_frame[i].resize((src->t_frame[i].length*sx)/src->t_frame[src->frame[src->currentframe].imagenbr].length, (src->t_frame[i].height*sy)/src->t_frame[src->frame[src->currentframe].imagenbr].height);
+      t_frame[i].resize((src->t_frame[i].length*sx)/src->length,
+			(src->t_frame[i].height*sy)/src->height);
       t_frame[i].zoom(&src->t_frame[i]);
     }
   
   nbr_of_frames=src->nbr_of_frames;
   frame=new animation_frame[nbr_of_frames];
   for(i=0;i<nbr_of_frames;i++)
-    frame[i]=src->frame[i]; 
+    {
+      frame[i]=src->frame[i];
+      frame[i].gapx=(src->frame[i].gapx*sx)/src->length;
+      frame[i].gapy=(src->frame[i].gapy*sy)/src->height;
+    }
 }
 
 void animation::get_zoom_scale(u_int16 &max_x, u_int16 &max_y)
@@ -1074,6 +1042,18 @@ void animation::update_and_draw()
 void animation::editor()
 {
   u_int16 i;
+  image temp;
+  string t;
+  t=WIN_DIRECTORY;
+  t+=WIN_BACKGROUND_DIRECTORY;
+  t+=WIN_THEME_ORIGINAL;
+  t+=WIN_BACKGROUND_FILE;
+  clipboard=new image;
+  temp.load_pnm(t.data());
+  bg=new image(320,240);
+  bg->putbox_tile_img(&temp);
+  font=new win_font(WIN_THEME_ORIGINAL);
+  border=new win_border(WIN_THEME_ORIGINAL);
   container=new win_container(200,12,110,216);
   label_mode=container->add_label(5,5,100,30,font);
   label_frame_nbr=container->add_label(5,35,100,30,font);
@@ -1099,6 +1079,10 @@ void animation::editor()
   input::clear_keys_queue();
   in_editor=false;
   delete container;
+  delete bg;
+  delete border;
+  delete font;
+  delete clipboard;
 }
 
 #endif

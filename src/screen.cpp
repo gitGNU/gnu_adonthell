@@ -151,10 +151,19 @@ void screen::drawbox(u_int16 x, u_int16 y, u_int16 w, u_int16 h,
 		     u_int32 color, drawing_area * da_opt=NULL)
 {
   static SDL_Rect dr;
-  dr.x=x;
-  dr.y=y;
-  dr.w=w;
-  dr.h=h;
+  if(da_opt)
+    {
+      drawing_area da_tmp(x,y,w,h);
+      da_tmp.assign_drawing_area(da_opt);
+      dr=da_tmp.get_rects();
+    }
+  else
+    {
+      dr.x=x;
+      dr.y=y;
+      dr.w=w;
+      dr.h=h;
+    }
   SDL_FillRect(vis, &dr, color);
 }
 

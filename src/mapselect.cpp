@@ -38,9 +38,9 @@ mapselect::~mapselect()
 void mapselect::check_if_fits()
 {
   if(posx>=length) posx=length-1;
-  if(d_posx>=length) d_posx=length-1;
+  if(d_posx+dl>length) d_posx=(length-dl<0)?0:length-dl;
   if(posy>=height) posy=height-1;
-  if(d_posy>=height) d_posy=height-1;
+  if(d_posy+dh>height) d_posy=(height-dh<0)?0:height-dh;
 }
 
 void mapselect::resize(u_int16 l, u_int16 h)

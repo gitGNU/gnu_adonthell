@@ -21,11 +21,11 @@
 class drawing_area : public SDL_Rect
 {
   drawing_area * draw_to;
-  SDL_Rect get_rects();
  public:
 
   drawing_area(u_int16 px, u_int16 py, u_int16 pw, u_int16 ph);
   drawing_area();
+  SDL_Rect get_rects();
   void resize(u_int16 dl, u_int16 dh);
   void move(u_int16 dx, u_int16 dy);
   bool is_x_in(s_int16 px);
