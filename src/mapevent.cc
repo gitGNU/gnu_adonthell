@@ -41,5 +41,6 @@ void mapevent::run(mapcharacter*aguy, map*amap, u_int16 x, u_int16 y)
    while(i!=end())
    {
       (*i)->exec(aguy,amap,x,y);
+      i++;
    }
 }

@@ -11,8 +11,8 @@ void instruction::get(FILE* file)
 {
    int i;
 
-   for(i=0;i<10;++i)
-      fread(&param_val[i],sizeof(u_int16),1,file);
+   for(i=0;i<9;++i)
+      fread(&param_val[i],sizeof(param_val[i]),1,file);
    getstringfromfile(string_val,file);
    fread(&otherevent_val,sizeof(otherevent_val),1,file);
 }
@@ -42,7 +42,7 @@ ostream& operator << (ostream& stream,instruction &instr)
 
 u_int16 instruction::param(int n)
 {
-   return param_val[n];
+   return param_val[n-1];
 }
 
 u_int16 instruction::otherevent()

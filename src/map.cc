@@ -155,12 +155,9 @@ s_int8 map::get(FILE * file)
   /* Events */
   
   fread(&nbr_of_events,sizeof(nbr_of_events),1,file);
-  printf("%d events\n",nbr_of_events);
   event=(mapevent*)calloc(sizeof(mapevent),nbr_of_events+1);
-  printf("Alloc ok\n");
   for(i=1;i<=nbr_of_events;i++)
     event[i].get(file);
-  printf("Got all\n");
   fread(&scrolltype,sizeof(scrolltype),1,file);
   status=MAP_STATUS_NORMAL;
   return(0);

@@ -25,4 +25,3 @@ class instruction
   friend istream& operator>> (istream&, instruction&);
   friend ostream& operator<< (ostream&, instruction&);
 };
-

@@ -20,7 +20,6 @@ void event_1::exec(mapcharacter*aguy,map*amap,u_int16 x,u_int16 y)
   if(param(3)!=255) aguy->set_framefactor(param(3));
   amap->put_character(aguy->get_posx(),aguy->get_posy(),aguy);
   aguy->init_moveframe();
-
   if(aguy->get_nbr()==255)
     {
       amap->set_posx(param(4));
