@@ -20,8 +20,9 @@
 win_image::win_image(s_int16 tx,s_int16 ty,image * tpic,win_theme* them):win_base(tx,ty,tpic->length,tpic->height,them)
 {
   picture=new image();
-  src=tpic;
-  *picture=*src; //copy image into *src
+  picture=tpic; //copy image
+  // src=tpic;
+  // *picture=*src; //copy image into *src
 }
 
 win_image::win_image(s_int16 tx,s_int16 ty,u_int16 tl,u_int16 th,win_theme* them):win_base(tx,ty,tl,th,them)
