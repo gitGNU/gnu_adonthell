@@ -45,6 +45,11 @@
 #include "gamedata.h"
 #include "game.h"
 
+// Workaround for keysym missing in older versions of SDL
+#ifndef SDLK_UNDO
+#define     SDLK_UNDO 322
+#endif
+
 // This enum allows clearer ownership operation:
 // obj.thisown = Python (Python will destroy the object)
 // obj.thisown = C (C have to destroy the object)
