@@ -14,6 +14,7 @@
 
 #include <gtk/gtk.h>
 #include <fstream.h>
+#include <string.h>
 #include <stdio.h>
 
 #include "main.h"
@@ -47,6 +48,8 @@ main_wnd::main_wnd ()
     last_dir = "";
     char_dir = g_get_current_dir ();
     cur_dir = NULL;
+    posx = "0";
+    posy = "0";
 }
 
 // load a few default attributes from a file
@@ -179,8 +182,8 @@ main_wnd::write_character_source ()
     file << "name = " << name << "\n";
     file << "race = " << get_option (GTK_OPTION_MENU (race_choice)) << "\n";
     file << "gender = " << get_option (GTK_OPTION_MENU (gender_choice)) << "\n";
-    file << "posx = 0\n";
-    file << "posy = 0\n";
+    file << "posx = " << posx << "\n";
+    file << "posy = " << posy << "\n";
 
     file << "\nattributes:\n";
     while (gtk_clist_get_text (GTK_CLIST (attribute_list), i, 0, &str))
@@ -276,6 +279,10 @@ main_wnd::read_character_source (gchar *fname)
                         set_option (GTK_OPTION_MENU (race_choice), vals[1]);
                     if (strcmp (vals[0], "gender") == 0)
                         set_option (GTK_OPTION_MENU (gender_choice), vals[1]);
+                    if (strcmp (vals[0], "posx") == 0)
+                        posx = strdup (vals[1]);
+                    if (strcmp (vals[0], "posy") == 0)
+                        posy = strdup (vals[1]);
 
                     break;
                 }
