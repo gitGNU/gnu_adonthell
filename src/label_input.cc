@@ -58,17 +58,16 @@ bool label_input::input_update()
   
   while((c=input::get_next_unicode())>0)
     {
-      //cout << "Fuck1 \n";
       
-      if(c==SDLK_BACKSPACE && text_size_>0)
+      if( c == SDLK_BACKSPACE && text_size_>0 && cursor_pos_ > 0)
 	{
 	  text_.erase(--cursor_pos_, 1);
 	  text_size_ = text_.length();
 	}
-      else if(c == SDLK_RETURN) insert_char(cursor_pos_,'\n');
+      else if(c == SDLK_RETURN) {
+	c='\n'; insert(cursor_pos_,(char*) &c);
+      }
       else if(font_->in_table(c)) insert(cursor_pos_, (char*) &c);
-
-      //cout << "Fuck2 \n";
     }
   return true;
 }

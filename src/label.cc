@@ -12,7 +12,7 @@
 
 #include "label.h"
 
-u_int16 label::cursor_blink_speed_ = 75;
+u_int16 label::cursor_blink_speed_ = 50;
 
 label::label()
 {
@@ -188,6 +188,8 @@ void label::form_auto_height()
   
   while (i < text_size_)
     {
+      cout << "Toto\n";
+      
       if(text_[i] == '\n')
 	{
 	  tmp_length_pix = 0;
@@ -625,12 +627,16 @@ void label::check_form()
 void label::cursor_next()
 {
   if(cursor_pos_ < text_size_ ) cursor_pos_++; 
-
 }
 
 
 void label::cursor_previous()
 {
-  if(cursor_pos_ > 0) cursor_pos_--;
+  if(cursor_pos_ > 1) cursor_pos_--;
 }
+
+
+
+
+
 
