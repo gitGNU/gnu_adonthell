@@ -72,7 +72,7 @@ bin_PROGRAMS = mapengine cstest
 mapengine_SOURCES = array_tmpl.cc audio.cc audio_thread.cc commands.cc dialog_cmds.cc fileops.cc 	gfx.cc init.cc instruction.cc instruction_class.cc interpreter.cc keyboard.cc main.cc 	map.cc mapcharacter.cc mapengine.cc mapevent.cc mappattern.cc mapsquare.cc pnm.cc 	window.cc animation.cc dialog.cc
 
 
-cstest_SOURCES = cutscene.cc gfx.cc keyboard.cc pnm.cc animation.cc cstest.cc audio.cc 	audio_thread.cc
+cstest_SOURCES = cutscene.cc gfx.cc keyboard.cc pnm.cc animation.cc cstest.cc audio.cc 	audio_thread.cc window.cc
 
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = ../header.h
@@ -92,7 +92,7 @@ mapengine_LDADD = $(LDADD)
 mapengine_DEPENDENCIES = 
 mapengine_LDFLAGS = 
 cstest_OBJECTS =  cutscene.o gfx.o keyboard.o pnm.o animation.o cstest.o \
-audio.o audio_thread.o
+audio.o audio_thread.o window.o
 cstest_LDADD = $(LDADD)
 cstest_DEPENDENCIES = 
 cstest_LDFLAGS = 

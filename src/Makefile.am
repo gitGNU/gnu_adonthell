@@ -6,5 +6,5 @@ mapengine_SOURCES = array_tmpl.cc audio.cc audio_thread.cc commands.cc dialog_cm
 	window.cc animation.cc dialog.cc
 
 cstest_SOURCES = cutscene.cc gfx.cc keyboard.cc pnm.cc animation.cc cstest.cc audio.cc \
-	audio_thread.cc
+	audio_thread.cc window.cc
 
