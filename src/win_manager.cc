@@ -161,7 +161,11 @@ bool win_manager::remove_theme (string name)
 win_theme * win_manager::get_theme (string name)
 {
     hash_map <string, win_theme *>::iterator it = theme.find (name); 
-    if (it == theme.end ()) return NULL;
+    if (it == theme.end ())
+    {
+        add_theme (name);
+        return get_theme (name);
+    }
     else return it->second; 
 }
 
@@ -183,6 +187,10 @@ bool win_manager::remove_font (string name)
 win_font * win_manager::get_font (string name)
 {
     hash_map <string, win_font *>::iterator it = font.find (name);
-    if (it == font.end ()) return NULL;
+    if (it == font.end ())
+    {
+        add_font (name);
+        return get_font (name);
+    }
     else return it->second; 
 }
