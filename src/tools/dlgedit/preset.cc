@@ -14,6 +14,9 @@
 
 #include "preset.h"
 #include "pset_interface.h"
+#include "../../interpreter.h"
+
+extern int vars_compile (const char*, string&, vector<command*>&);
 
 preset_dlg::preset_dlg (string &v) : vars(v)
 {
@@ -23,6 +26,14 @@ preset_dlg::preset_dlg (string &v) : vars(v)
 
 void preset_dlg::on_ok (char *v)
 {
+    string error;
+    vector<command*> code;
+
     vars = v;
+
+    if (vars != "")
+    {
+        vars_compile (v, error, code);
+    }
 }
 

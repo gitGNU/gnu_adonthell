@@ -31,24 +31,19 @@ extern int condlex();
 extern YY_BUFFER_STATE cond_scan_string (const char*);
 extern void cond_switch_to_buffer (YY_BUFFER_STATE);
 extern void cond_delete_buffer (YY_BUFFER_STATE);
+extern void create_code (string&);
+extern vector<string> vars;
 
 // some variables
-vector<string> vars;
-string err;
-int error;
-char* ops[] = { "", "", "", "", "", "", "Let", "Add", "Sub", "Mul", "Div",
-                "Eq", "Neq", "Lt", "Leq", "Gt", "Geq", "And", "Or" };
+string c_err;
+int c_error;
 %}
 
 %token _ID
 %token _IF
-%token _ELSE
 %token _NUM
 %token _LPAREN _RPAREN
-%token _LBRACE _RBRACE
-%token _SEMICOLON
 %nonassoc _EQ _NEQ _LT _GT _LEQ _GEQ
-%right _ASSIGN
 %left _ADD _SUB
 %left _MUL _DIV
 %left _NEG
@@ -98,8 +93,8 @@ val:      _NUM                      { $$ = NUM; vars.push_back ($1); }
 
 int cond_compile (const char *str, string &errormsg, vector<command*> &script)
 {
-    error = 0;
-    err = "";
+    c_error = 0;
+    c_err = "";
 
     // set the input buffer
     YY_BUFFER_STATE buffer = cond_scan_string (str);
@@ -108,186 +103,16 @@ int cond_compile (const char *str, string &errormsg, vector<command*> &script)
     // start the bison parser
     condparse ();
 
-    errormsg = err;
+    errormsg = c_err;
 
     // clean up
     cond_delete_buffer (buffer);
 
-    return error;
+    return c_error;
 }
 
 void conderror(char *s)
 {
-    error = 1;
-    err += string(s) + string ("near token") + condlval + string ("\n");
-}
-
-void create_code (string &prog)
-{
-    int i, j = vars.size ();
-    unsigned char opcode;
-    char regs = '0';
-    char bools = '0';
-    int cur_cmds = 0;
-    
-    static int num_cmds[255];
-    static int index = 0;
-    static int rec = 1;
-        
-    // Yeah, we're starting with the programs end first :)
-    for (i = prog.size () - 1; i >= 0; i--)
-    {
-        switch (opcode = prog[i])
-        {
-            case ID:
-            case NUM:
-            case REG:
-            case BOOL:
-            {
-                j--;
-                continue;
-            }
-
-            case ADD:
-            case SUB:
-            case MUL:
-            case DIV:
-            {
-                // if both arguments are registers, one of them is no longer needed afterwards
-                if (prog[i+1] == char(REG) && prog[i+2] == char(REG)) regs--;
-
-                // store result into a new register if both arguments are immediate ones
-                if (prog[i+1] != char(REG) && prog[i+2] != char(REG)) regs++;
-
-                cout << "[" << rec << "] " << ops[opcode] << " " << vars[j] << " "<< vars[j+1] << " local.reg" << regs << "\n";
-                prog.replace (prog.begin () + i, prog.begin () + i + 3, 1, REG);
-                vars.erase (vars.begin () + j, vars.begin () + j + 2);
-                vars.insert (vars.begin () + j, ("local.reg"+string(1, regs)));
-
-                i = prog.size ();
-                j = vars.size ();
-
-                num_cmds[index]++;
-                cur_cmds++;
-                
-                break;
-            }
-
-            case LET:
-            {
-                cout << "[" << rec << "] " << ops[opcode] << " " << vars[j] << " "<< vars[j+1] << "\n" << flush;
-                prog.erase (prog.begin () + i, prog.begin () + i + 3);
-                vars.erase (vars.begin () + j, vars.begin () + j + 2);
-
-                num_cmds[index]++;
-                cur_cmds++;
-                rec++;
-
-                // recursion to bring the resulting script into the right order
-                create_code (prog);
-
-                i = prog.size ();
-                j = vars.size ();
-
-                break;
-            }
-
-            case EQ:
-            case NEQ:
-            case LT:
-            case LEQ:
-            case GT:
-            case GEQ:
-            {
-                // Comparison of two integer args results in boolean result
-                bools++;
-                num_cmds[index]++;
-                cur_cmds++;
-
-                cout << "[" << rec << "] " << ops[opcode] << " " << vars[j] << " "<< vars[j+1] << " local.bool" << bools << "\n";
-                
-                prog.replace (prog.begin () + i, prog.begin () + i + 3, 1, BOOL);
-                vars.erase (vars.begin () + j, vars.begin () + j + 2);
-                vars.insert (vars.begin () + j, ("local.bool"+string(1, bools)));
-
-                i = prog.size ();
-                j = vars.size ();
-
-                break;
-            }
-
-            case AND:
-            case OR:
-            {
-                num_cmds[index]++;
-                cur_cmds++;
-                
-                // Logic operation on two bools results in on bool, which means the
-                // other is no longer needed and thus can be freed
-                bools--;
-                
-                cout << "[" << rec << "] " << ops[opcode] << " " << vars[j] << " " << vars[j+1] << " local.bool" << bools << "\n";
-
-                prog.replace (prog.begin () + i, prog.begin () + i + 3, 1, BOOL);
-                vars.erase (vars.begin () + j, vars.begin () + j + 2);
-                vars.insert (vars.begin () + j, ("local.bool"+string(1, bools)));
-
-                i = prog.size ();
-                j = vars.size ();
-
-                break;
-            }
-
-            case JMP:
-            {
-                cout << "[" << rec << "] Jmp " << num_cmds[index]+1 << "\n";
-
-                prog.erase (prog.begin () + i, prog.begin () + i + 1);
-                
-                rec++;
-                num_cmds[index-1] += num_cmds[index];
-                num_cmds[index] = 1;
-
-                create_code (prog);
-                
-                i = prog.size ();
-            
-                break;
-           }
-            
-            case BRANCH:
-            {
-                cout << "[" << rec << "] Branch " << vars[j] << " " << num_cmds[index]+1-cur_cmds << "\n";
-
-                prog.erase (prog.begin () + i, prog.begin () + i + 2);
-                vars.erase (vars.begin () + j, vars.begin () + j + 1);            
-
-                rec++;
-                num_cmds[index-1] += num_cmds[index] + 1;
-                index--;
-                
-                create_code (prog);
-                
-                i = prog.size ();
-                j = vars.size ();
-
-                break;
-            }
-
-            // Increase the 'stackpointer' for if - else - statements
-            case ENDIF:
-            {
-                prog.erase (prog.begin () + i, prog.begin () + i + 1);
-
-                index++;
-                num_cmds[index] = 0;
-                
-                i = prog.size ();
-            
-                break;
-            }
-        }
-    }
-
-    rec = 1;
+    c_error = 1;
+    c_err += string(s) + string ("near token") + condlval + string ("\n");
 }

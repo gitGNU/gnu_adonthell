@@ -1,7 +1,6 @@
-%{
 /*
    $Id$
-   
+
    Copyright (C) 2000 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
@@ -16,103 +15,12 @@
 #include <iostream.h>
 #include <string>
 #include <vector>
+
 #include "../../commands.h"
-
-#define YYSTYPE string
-
-int yyerror(char *);
-int yylex();
-void create_code (string&);
-
-vector<string> vars;
 
 char* ops[] = { "", "", "", "", "", "", "Let", "Add", "Sub", "Mul", "Div",
                 "Eq", "Neq", "Lt", "Leq", "Gt", "Geq", "And", "Or" };
-%}
-
-%token _ID
-%token _IF
-%token _ELSE
-%token _NUM
-%token _LPAREN _RPAREN
-%token _LBRACE _RBRACE
-%token _SEMICOLON
-%nonassoc _EQ _NEQ _LT _GT _LEQ _GEQ
-%right _ASSIGN
-%left _ADD _SUB
-%left _MUL _DIV
-%left _NEG
-%left _OR
-%left _AND
-
-%start input
-
-%%
-
-input:   /* empty */
-       | input stat                 { create_code ($2); vars.clear (); }
-       | error                      { yyerrok; yyclearin; } 
-;
-
-stat:     assign                    { $$ = $1; }
-	   | if_stat	                { $$ = $1; }
-;
-
-assign:   _ID _ASSIGN expr _SEMICOLON  { $$ = string(1, LET) + $3 + string(1, ID); vars.push_back ($1); }
-;
-
-val:      _NUM                      { $$ = NUM; vars.push_back ($1); }
-        | _ID                       { $$ = ID; vars.push_back ($1); }
-        | _SUB val %prec _NEG       { if ($2[0] == char(ID)) {
-                                        $$ = string(1, SUB) + string(1, NUM) + $2; vars.insert ((vars.begin () + vars.size () - 1), "0");
-                                      } else {
-                                        $$ = $2; vars[vars.size () - 1] = "-" + vars[vars.size () - 1];
-                                      }
-                                    }
-;
-
-expr:     val                       { $$ = $1; }
-        | expr _ADD expr            { $$ = string(1, ADD) + $1 + $3; }
-        | expr _SUB expr            { $$ = string(1, SUB) + $1 + $3; } 
-        | expr _MUL expr            { $$ = string(1, MUL) + $1 + $3; }
-        | expr _DIV expr            { $$ = string(1, DIV) + $1 + $3; }       
-        | _LPAREN expr _RPAREN      { $$ = $2; }
-;
-
-if_stat:  _IF _LPAREN comp _RPAREN block    { $$ = string (1,BRANCH) + $3 + $5 + string (1,ENDIF); }
-	    | _IF _LPAREN comp _RPAREN block _ELSE block  { $$ = string (1,BRANCH) + $3 + $5 + string (1,JMP) + $7 + string (1,ENDIF); }
-;
-
-block:    _LBRACE assign_list _RBRACE   { $$ = $2; }
-        | stat                      { $$ = $1; }
-;
-
-assign_list: assign_list stat       { $$ = $1 + $2; }
-        | stat                      { $$ = $1; }
-;
-
-comp:     comp _AND comp            { $$ = string(1, AND) + $1 + $3; }
-        | comp _OR comp             { $$ = string(1, OR) + $1 + $3; }
-        | _LPAREN comp _RPAREN      { $$ = $2; }
-        | expr _EQ expr             { $$ = string(1, EQ) + $1 + $3; }
-        | expr _NEQ expr            { $$ = string(1, NEQ) + $1 + $3; }
-        | expr _LT expr             { $$ = string(1, LT) + $1 + $3; }
-        | expr _LEQ expr            { $$ = string(1, LEQ) + $1 + $3; }
-        | expr _GT expr             { $$ = string(1, GT) + $1 + $3; }
-        | expr _GEQ expr            { $$ = string(1, GEQ) + $1 + $3; }
-;
-
-%%
-
-int yyerror(char *s)
-{
-  printf("%s near token %s\n", s, yylval.c_str ());
-}
-
-int main()
-{
-  yyparse();
-}
+vector<string> vars;
 
 // Transform the scanned and parsed code into the ASM-like script understandable 
 // by the interpreter. Since the code isn't quite in the right order, we have to
@@ -169,18 +77,6 @@ void create_code (string &prog)
     // Yeah, we're starting with the programs end first :)
     for (i = prog.size () - 1; i >= 0; i--)
     {
-#ifdef _DEBUG_    
-        // prints program and argument stack
-        if (prog[i] > 0)
-        {
-            cout << "*** ";
-            copy(prog.begin(), prog.end(), ostream_iterator<int>(cout, " "));
-            cout << "\n*** ";
-            copy(vars.begin(), vars.end(), ostream_iterator<string>(cout, " "));
-            cout << endl;
-       }
-#endif // _DEBUG_
-       
         switch (opcode = prog[i])
         {
             case ID:
@@ -270,7 +166,7 @@ void create_code (string &prog)
                 // other is no longer needed and thus can be freed
                 bools--;
                 
-                cout << "[" << rec << "] " << ops[opcode] << " " << vars[j] << " " << vars[j+1] << " bool" << bools << "\n";
+                cout << "[" << rec << "] " << ops[opcode] << " " << vars[j] << " " << vars[j+1] << " local.bool" << bools << "\n";
 
                 prog.replace (prog.begin () + i, prog.begin () + i + 3, 1, BOOL);
                 vars.erase (vars.begin () + j, vars.begin () + j + 2);
@@ -331,5 +227,7 @@ void create_code (string &prog)
                 break;
             }
         }
-    } 
+    }
+
+    rec = 1;
 }

@@ -35,11 +35,8 @@ num    {digit}+
 "/*"(.|[\n])*"*/"   ;   // C style comments
 
 if          { return _IF; }
-else        { return _ELSE; }
 {ident}     { condlval = condtext; return _ID; }
 {num}       { condlval = condtext; return _NUM; }
-"{"         { return _LBRACE; }
-"}"         { return _RBRACE; }
 "("         { return _LPAREN; }
 ")"         { return _RPAREN; } 
 "=="        { return _EQ; }
@@ -48,13 +45,11 @@ else        { return _ELSE; }
 ">="        { return _GEQ; }
 ">"         { return _GT; }
 "<"         { return _LT; }
-"="         { return _ASSIGN; }
 "+"         { return _ADD; }
 "-"         { return _SUB; }
 "*"         { return _MUL; }
 "/"         { return _DIV; }
 "&&"        { return _AND; }
 "||"        { return _OR; }
-";"         { return _SEMICOLON; }
 
 .           { printf("Illegal character.\n"); return condtext[0]; }

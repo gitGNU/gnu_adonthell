@@ -13,18 +13,22 @@
    See the COPYING file for more details.
 */
 
+#define YYSTYPE string
+
 #include <string>
-#include "lang.tab.h"
+#include "vars.tab.h"
 %}
 
-letter [A-Za-z_]
+
+letter [A-Za-z_.]
 digit  [0-9]
 ident  {letter}({letter}|{digit})*
 num    {digit}+
 
-%option noyywrap nounput never-interactive
+%option noyywrap nounput never-interactive prefix="vars"
 
 %%
+
 [ \t\n]+    ;           // Whitespace
 "//".*[\n]? ;           /* C++ style comments (the newline has to be optional, else a
                         comment in the last line wouldn't be recognized correctly) */
@@ -32,8 +36,8 @@ num    {digit}+
 
 if          { return _IF; }
 else        { return _ELSE; }
-{ident}     { yylval = yytext; return _ID; }
-{num}       { yylval = yytext; return _NUM; }
+{ident}     { varslval = varstext; return _ID; }
+{num}       { varslval = varstext; return _NUM; }
 "{"         { return _LBRACE; }
 "}"         { return _RBRACE; }
 "("         { return _LPAREN; }

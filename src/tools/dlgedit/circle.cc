@@ -18,6 +18,7 @@
 #include "../../interpreter.h"
 
 extern int cond_compile (const char*, string&, vector<command*>&);
+extern int vars_compile (const char*, string&, vector<command*>&);
 
 crcle_dlg::crcle_dlg (Circle *c) : circle (c)
 {
@@ -45,9 +46,16 @@ void crcle_dlg::on_ok ()
     {
         cond_compile (cond.c_str (), error, code);
     }
-    
+
+    if (vars != "")
+    {
+        vars_compile (vars.c_str (), error, code);
+    }
+
+    // Indicate that user hit the OK button
     retval = 1;
 
+    // Apply changes to the circle
     circle->type = type;
     circle->text = text;
     circle->comment = note;

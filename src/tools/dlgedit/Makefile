@@ -56,7 +56,7 @@ LDFLAGS    =
 LOADLIBES := -lm -lstdc++ `gtk-config --libs`
 
 
-OBJECTS := ../../array_tmpl.o ./callbacks.o ../../commands.o ./circle.o ./compile.o ./cond.tab.o ./crcle_callbacks.o ./crcle_interface.o ./dlgnode.o ./events.o ./geometrie.o ./graph.o ./interface.o ../../interpreter.o  ../../dialog_cmds.o ./lex.cond.o ./lex.loadlg.o ./linked_list.o ./main.o ./pjt_interface.o ./pjt_callbacks.o ./preset.o ./project.o ./pset_callbacks.o ./pset_interface.o ./run.o ./run_callbacks.o ./run_interface.o ../../storage.o
+OBJECTS := ../../array_tmpl.o ./callbacks.o ../../commands.o ./circle.o ./compile.o ./cond.tab.o ./crcle_callbacks.o ./crcle_interface.o ./create_code.o ./dlgnode.o ./events.o ./geometrie.o ./graph.o ./interface.o ../../interpreter.o  ../../dialog_cmds.o ./lex.cond.o ./lex.loadlg.o ./lex.vars.o ./linked_list.o ./main.o ./pjt_interface.o ./pjt_callbacks.o ./preset.o ./project.o ./pset_callbacks.o ./pset_interface.o ./run.o ./run_callbacks.o ./run_interface.o ../../storage.o ./vars.tab.o
 
 # dlgedit
 
@@ -66,10 +66,14 @@ dlgedit : ${OBJECTS}
 # target for making everything
 
 .PHONY : all
-all: dlgedit
+all: parser dlgedit
 
 
 parser :
+	flex -olex.loadlg.cc loadlg.l
+	flex -olex.vars.cc variable.l
+	bison -d -p vars -o vars.tab.c variable.y
+	mv vars.tab.c vars.tab.cc
 	flex -olex.cond.cc condition.l
 	bison -d -p cond -o cond.tab.c condition.y
 	mv cond.tab.c cond.tab.cc
