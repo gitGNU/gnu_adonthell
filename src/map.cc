@@ -283,7 +283,9 @@ void map::update_keyboard()
 
   if (keyboard::is_pushed(Escape_Key)) {
     status=MAP_STATUS_QUIT;
+#ifdef SDL_MIXER
     audio_in->fade_out_background(500);
+#endif
   }
 
   if (heroe.get_scridx()) return;

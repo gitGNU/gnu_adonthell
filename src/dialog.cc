@@ -28,8 +28,6 @@
 // Init the dialogue engine
 dialog_engine::dialog_engine ()
 {  
-    timer = 0;
-
     // Init interpreter
     interpreter::callbacks.clear ();
     init_interpreter ();
@@ -59,19 +57,20 @@ dialog_engine::dialog_engine ()
     engine = new interpreter ("dialog/tomas_hterin.dat", dlg);
 }
 
-void dialog_engine::update (window &win)
+void dialog_engine::update_keyboard ()
 {
-    if (timer++ < 15) return;
     if (keyboard::is_pushed (97)) dlg->answer = 0;
     if (keyboard::is_pushed (98)) dlg->answer = 1;
     if (keyboard::is_pushed (99)) dlg->answer = 2;
     if (keyboard::is_pushed (100)) dlg->answer = 3;
+}
 
+void dialog_engine::update (window &win)
+{
     if (dlg->answer == 0xFFFF) return;
 
     cout << dlg->answer << " " << flush;
 
-    timer = 0;
     win.set_text (run ());
     dlg->answer = 0xFFFF;
 }

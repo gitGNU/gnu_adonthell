@@ -257,8 +257,8 @@ void window::draw_text()
      j=0;
      while(((sxtext+j)<extext) && (text_window_pos_tmp<text_window_lenght))
        {k=text_window[text_window_pos_tmp];
-        if(k==' ' || k>NB_TABLE_CHAR) 
-	    {j+=WIN_SPACE_LENGHT;}
+        if(k==' ' || k>=NB_TABLE_CHAR) 
+	    {j+=WIN_SPACE_LENGHT; }
           else
 	    { 
 	      // tablechar[k].putbox_mask(sxtext+j,sytext+i*WIN_FONT_HEIGHT);

@@ -33,13 +33,13 @@ class dialog_engine
 {
 public:
     dialog_engine ();
+    void update_keyboard ();
     void update (window&);
     char * run ();
 
 private:
     dialog *dlg;
     interpreter *engine;
-    int timer;
 };
 #endif
 
