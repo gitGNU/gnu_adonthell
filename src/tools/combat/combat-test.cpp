@@ -141,7 +141,7 @@ int main (void) {
 
 float get_dice (int pass) {
 	char seed;
-	float number = 1.1;
+	float number = 1.2;
 	
 	//Total allotments depends on who is attacking whom.
 	// Determine this and roll until we are within range.
@@ -161,6 +161,7 @@ float get_dice (int pass) {
    		seed = ((rand()%100000000));
 		roler.init(&seed, 0, 10000);
 		roler.randomize();
+		number = float (roler.get(pass)) / 10000;
 	}
    return number;
 }
@@ -212,8 +213,10 @@ void show_results(int parity) {
 	  		printf("MISS!\n\n");
 	  	if(dice > (test.a_attack_range + test.b_defense_range) && (dice < test.a_attack_total_allotment - test.a_attack_b_real_luck)) {
 	  		printf("CTITICAL HIT!!\n\n");
+			outcome = test.calc_damage(parity, 1, attack_method); //parity, action, attack method
+			printf("\ncalcdamage results: %d\n", outcome);
 			b_hit += 3; }
-	  	if(dice	> (test.a_attack_total_allotment - test.a_attack_b_real_luck)) {
+	  	if(dice	> (test.a_attack_total_allotment - test.a_attack_b_real_luck) && dice <= test.a_attack_total_allotment) {
 	  		printf("CRITICAL MISS!!\n\n");
 			a_hit += 1; }
 	} else {
@@ -235,8 +238,10 @@ void show_results(int parity) {
 	  		printf("MISS!\n\n");
 	  	if(dice > (test.b_attack_range + test.a_defense_range) && (dice < test.b_attack_total_allotment - test.b_attack_b_real_luck)) {
 	  		printf("CTITICAL HIT!!\n\n");
+			outcome = test.calc_damage(parity, 1, attack_method); //parity, action, attack method
+			printf("\ncalcdamage results: %d\n", outcome);
 			a_hit += 3; }
-	  	if(dice	> (test.b_attack_total_allotment - test.b_attack_b_real_luck)) {
+	   	if(dice	> (test.b_attack_total_allotment - test.b_attack_b_real_luck) && dice <= test.b_attack_total_allotment) {
 	  		printf("CRITICAL MISS!!\n\n");
 			b_hit += 1; }
 	}

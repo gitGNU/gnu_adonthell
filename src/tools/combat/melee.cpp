@@ -77,9 +77,9 @@ struct armor armors[ARMOR_MAX] = {
 
 void melee::create_characters() {
 	float dice;
-	int count = 11;
+	int count = 10;
 	  srandom((unsigned int)time((time_t *)NULL));
-	while (--count) {
+	while (count--) {
 		//populate character variables
 	  switch (count) {
 	  	case 10:
@@ -222,16 +222,18 @@ void melee::calc_stats() {
 			result = int(weapons[a_weapon].base * a_ratio) ;
 				return result;
 			case 1:		//critical hit
-				return result;
+				result = int(weapons[a_weapon].base * a_ratio);
+				return int(result * 1.5);
 			case 2:		//criitcal miss
- 		    	return result;
+ 		    	
+				return result;
 		}
 	} else {
 		switch (method) {
 			case  0:			//thrust
 				b_modifier = (weapons[b_weapon].base + b_str  + armors[a_armor].dexhit) * (b_attack_range / .6);
-				printf("\na_modifier: %3.4f\n", b_modifier);
-				a_modifier = (armors[a_armor].ar * .5 + armors[a_armor].thrust + b_dex) * (b_defense_range / .4);	
+				printf("\nb_modifier: %3.4f\n", b_modifier);
+				a_modifier = (armors[a_armor].ar * .5 + armors[a_armor].thrust + a_dex) * (a_defense_range / .4);	
    				printf("a_modifier: %3.4f\n", a_modifier);
 				a_ratio = a_modifier / (a_modifier + b_modifier) ;
 				printf("a_ratio: %3.4f\n", a_ratio);
@@ -241,7 +243,7 @@ void melee::calc_stats() {
 			case 1: 				//chop
           	b_modifier = (weapons[b_weapon].base + b_str  + armors[a_armor].dexhit) * (b_attack_range / .6);
 				printf("\na_modifier: %3.4f\n", b_modifier);
-				a_modifier = (armors[a_armor].ar * .5 + armors[a_armor].chop + b_dex) * (b_defense_range / .4);	
+				a_modifier = (armors[a_armor].ar * .5 + armors[a_armor].chop + a_dex) * (a_defense_range / .4);	
    				printf("a_modifier: %3.4f\n", a_modifier);
 				a_ratio = a_modifier / (a_modifier + b_modifier) ;
 				printf("a_ratio: %3.4f\n", a_ratio);
@@ -251,7 +253,7 @@ void melee::calc_stats() {
 			case 2: 				//smash
           	b_modifier = (weapons[b_weapon].base + b_str  + armors[a_armor].dexhit) * (b_attack_range / .6);
 				printf("\na_modifier: %3.4f\n", b_modifier);
-				a_modifier = (armors[a_armor].ar * .5 + armors[a_armor].smash + b_dex) * (b_defense_range / .4);	
+				a_modifier = (armors[a_armor].ar * .5 + armors[a_armor].smash + a_dex) * (a_defense_range / .4);	
    				printf("a_modifier: %3.4f\n", a_modifier);
 				a_ratio = a_modifier / (a_modifier + b_modifier) ;
 				printf("a_ratio: %3.4f\n", a_ratio);
@@ -264,9 +266,11 @@ void melee::calc_stats() {
 				result = int(weapons[b_weapon].base * b_ratio) ;
 				return result;
 			case 1:		//critical hit
-				return result;
+				result = int(weapons[b_weapon].base * b_ratio);
+				return int(result * 1.5);
 			case 2:		//criitcal miss
- 		    	return result;
+ 		    	
+				return result;
 		}
 	}
 }
