@@ -15,7 +15,6 @@
 #include <iostream.h>
 #include <stdio.h>
 #include "types.h"
-#include "dlg_io.h"
 #include "array_tmpl.h"
 #include "interpreter.h"
 
@@ -65,14 +64,14 @@ u_int8 interpreter::load (const char *file)
     if (!dat) return 0;
     
     // read program length and reserve temporary space
-    length = h2d (4, dat);
+    fread (&length, sizeof (length), 1, dat);
     buffer = new s_int32[length];
 
     // Get number of commands in program
-    cmd_num = h2d (4, dat);
+    fread (&cmd_num, sizeof (cmd_num), 1, dat);
 
     // Read bytecode at once into memory
-    ri (buffer, length, 4, dat);
+    fread (buffer, sizeof (buffer[0]), length, dat);
 
     fclose (dat);
 
