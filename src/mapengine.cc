@@ -26,23 +26,12 @@
 #include "map.h"
 #include "mapengine.h"
 
-#include "interpreter.h"
-#include "array_tmpl.h"
-#include "dialog.h"
-
-dialog_engine *dlg;
-
 void mapengine::map_engine(map*amap)
 {
   amap->set_status(0);
   amap->init_for_scrolling();
-  amap->win.init(70,20,180,60,WIN_NORMAL);
-
-  // Just a quick hack
-  dlg = new dialog_engine;
-  dlg->update (amap->win);
-  
-  amap->win.show();
+  //amap->win.init(70,20,180,60,WIN_NORMAL);
+  //amap->win.show();
   fade_in(amap);
   while(1)
     {
@@ -58,13 +47,13 @@ void mapengine::update_and_show(map*amap)
   u_int16 i;
   for(i=0;i<screen::get_frames_to_do();i++)
     {
-      dlg->update_keyboard ();
+      //dlg->update_keyboard ();
       amap->update_keyboard();
       amap->update_patterns();
       amap->update_all_characters();
       amap->win.update();
     }
-  dlg->update(amap->win);
+  //dlg->update(amap->win);
   amap->update_status();
   amap->draw_down();
   amap->draw_all_characters();
