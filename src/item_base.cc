@@ -194,6 +194,13 @@ u_int16 item_base::recharge (u_int16 &charge)
 }
 */
 
+// compare two items for equality
+bool item_base::equals (item_base *item)
+{
+    if (!Mutable) return this == item;
+    else return name () == item->name ();
+}
+        
 // add item(s) to this stack
 void item_base::stack (item_base *item)
 {

@@ -296,6 +296,15 @@ public:
     bool put_state (ogzstream & file) const;
     //@}
 
+    /**
+     * Chack whether two are of the same kind. For mutable items this is
+     * the case if they have the same name. For immutable items, they need
+     * to be the same instances.
+     * @param the item to compare this one to.
+     * @return \b true if items are (roughly) equal, \b false otherwise.
+     */
+    bool equals (item_base *item);
+             
 protected:
 #ifndef SWIG
     /**

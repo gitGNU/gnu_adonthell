@@ -21,7 +21,7 @@ adonthell.h animation.h audio.h callback.h py_callback.h character_base.h \
 character.h gamedata.h data_screen.h dialog.h dialog_screen.h drawable.h \
 drawing_area.h event.h event_handler.h event_handler_base.h event_list.h \
 fileops.h game.h gamedate.h gametime.h gettext.h getopt.h image.h input.h \
-inventory.h item_base.h landmap.h map_event.h map_event_handler.h mapsquare.h \
+inventory.h item_base.h item_storage.h landmap.h map_event.h map_event_handler.h mapsquare.h \
 mapsquare_walkable.h nls.h mapcharacter.h mapobject.h mapview.h path.h \
 pnm.h prefs.h python_class.h py_object.h quest.h screen.h slot.h surface.h storage.h \
 types.h text_bubble.h time_event.h time_event_handler.h win_background.h \
@@ -34,7 +34,7 @@ libadonthell_a_SOURCES = adonthell.cc animation.cc audio.cc \
 character_base.cc character.cc data_screen.cc dialog.cc dialog_screen.cc \
 drawable.cc drawing_area.cc event.cc event_handler.cc event_list.cc \
 fileops.cc game.cc gamedata.cc gamedate.cc gametime.cc image.cc input.cc \
-item_base.cc label.cc label_input.cc landmap.cc lex.prefs.cc map_event.cc \
+inventory.cc item_base.cc item_storage.cc label.cc label_input.cc landmap.cc lex.prefs.cc map_event.cc \
 map_event_handler.cc mapsquare_walkable.cc mapcharacter.cc mapsquare.cc \
 mapobject.cc mapview.cc nls.cc path.cc pnm.cc prefs.cc py_callback.cc \
 python_class.cc py_adonthell_wrap.cc py_object.cc quest.cc screen.cc slot.cc \

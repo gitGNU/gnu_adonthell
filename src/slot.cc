@@ -21,12 +21,12 @@
  */
 
 #include "slot.h"
-#include "item_base.h"
+#include "item_storage.h"
 
 // ctor
-slot::slot (/*inventory *owner,*/ const std::string & id)
+slot::slot (inventory *owner, const std::string & id)
 {
-    // Owner = owner;
+    Owner = owner;
     Id = id;
     Count = 0;
     Item = NULL;
@@ -58,26 +58,24 @@ u_int32 slot::add (item_base *item, const u_int32 & count)
         // item stackable?
         if (Count >= Item->max_stack ()) return count;
         
-        // immutable items of same kind?
-        if (!item->is_mutable () && item != Item) return count;
+        // items of same kind?
+        if (!(Item->equals (item))) return count;
         
-        // mutable item of same kind?
-        if (item->is_mutable ())
-        {
-            if (item->name () == Item->name ()) Item->stack (item);
-            else return count;
-        }
+        // actually stack mutable items
+        if (item->is_mutable ()) Item->stack (item);
     }
     
     // clculate how many items will fit into the slot
     u_int32 fitting = item->max_stack () - Count;
     fitting = (fitting > count) ? count : fitting;
     
+    // remove items from the inventory they came
+    if (item->get_slot ())
+        // make sure we don't add more items than we remove
+        fitting -= item->get_slot ()->remove (item, fitting);
+    
     // adjust counts
     Count += fitting;
-    
-    // remove items from the inventory they came
-    if (item->get_slot ()) item->get_slot ()->remove (item, fitting);
     
     // adjust slots
     if (item->is_mutable ()) item->set_slot (this);
@@ -87,10 +85,10 @@ u_int32 slot::add (item_base *item, const u_int32 & count)
 }
 
 // remove item(s) from slot
-bool slot::remove (item_base *item, const u_int32 & count)
+u_int32 slot::remove (item_base *item, const u_int32 & count)
 {
     // nothing needs be done
-    if (count == 0) return false;
+    if (count == 0) return 0;
 
     // in case items match, remove count items
     if (Item == item)
@@ -106,8 +104,8 @@ bool slot::remove (item_base *item, const u_int32 & count)
         // slot empty?
         if (Count == 0) Item = NULL;
         
-        // return true if count items have been removed
-        return remove == count;
+        // return number of items that couldn't be removed
+        return count - remove;
     }
     
     // otherwise search through the stack to remove the item
@@ -119,8 +117,78 @@ bool slot::remove (item_base *item, const u_int32 & count)
             item->Slot = NULL;
             Count--;
             
-            return true;
+            return count - 1;
         }
         
-    return false;
+    return count;
+}
+
+// empty the slot
+void slot::clear ()
+{
+    // if the slot contains mutable item(s), delete them
+    if (Item && Item->is_mutable ()) 
+    {
+        Item->set_slot (NULL);
+        delete Item;
+    }
+    
+    Item = NULL;
+    Count = 0;
+}
+
+// save slot to disk
+bool slot::put_state (ogzstream & file) const
+{
+    // save slot attributes
+    Id >> file;
+    Count >> file;
+    
+    // save the item(s) in the slot
+    if (Count > 0) 
+    {
+        Item->is_mutable () >> file;
+        
+        // completely save mutable items
+        if (Item->is_mutable ()) Item->put_state (file);
+        
+        // otherwise only save unique item id
+        else Item->name () >> file; 
+    }
+    
+    return true;
+}
+
+// load slot from disk
+bool slot::get_state (igzstream & file)
+{
+    // get slot attributes
+    Id << file;
+    Count << file;
+
+    // get item(s) if any
+    if (Count > 0)
+    {
+        bool is_mutable;
+        is_mutable << file;
+        
+        // mutable items need to be instanciated and loaded
+        if (is_mutable) 
+        {
+            Item = new item_base (true);
+            Item->get_state (file);
+            Item->set_slot (this);
+        }
+        
+        // immutable items can be retrieved from the global item storage
+        else
+        {
+            std::string name;
+            name << file;
+            
+            Item = item_storage::get (name);
+        }
+    }
+    
+    return true;
 }

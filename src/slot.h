@@ -29,7 +29,7 @@
 using std::string;
 
 class item_base;
-// class inventory;
+class inventory;
 
 /**
  * The %slot class may contain one item or a stack of (roughly) equal
@@ -45,7 +45,7 @@ public:
      * @param owner The %inventory the %slot belongs to
      * @param id The slot's id
      */
-     slot (/*inventory *owner,*/ const string & id = "");
+     slot (inventory *owner, const string & id = "");
 
     /**
      * Delete a slot.
@@ -88,23 +88,46 @@ public:
      *
      * @param item the item to be removed from the slot.
      * @param count number of items to be removed.
-     * @return \b true if removal successful, \b false otherwise.
+     * @return number of items that could not be removed.
      */
-    bool remove (item_base * item, const u_int32 & count = 1);
+    u_int32 remove (item_base * item, const u_int32 & count = 1);
     
     /**
      * Remove all items from the slot, no matter whether they are mutable
      * or not.
      */
-    // void empty ();
+    void clear ();
     
     /**
      * Retrieve the number of items in this %slot. 
      * @return number of items this %slot contains.
      */
-    u_int32 count ()
+    u_int32 count () const
     {
         return Count;
+    }
+    //@}
+
+    /**
+     * Attribute access
+     */
+    //@{
+    /**
+     * Retrieve the slot's id.
+     * @return id of the %slot.
+     */
+    const string & id () const
+    {
+        return Id;
+    }
+    
+    /**
+     * Give this %slot a new Id.
+     * @param id A new identifier for this %slot. 
+     */
+    void set_id (const string & id)
+    {
+        Id = id;
     }
     //@}
     
@@ -114,18 +137,17 @@ public:
     //@{
     /**
      * Load %slot and its contents from stream. 
-     *
      * @param file stream to load %slot from.
      * @return \b true if loading successful, \b false otherwise.
      */
-    // bool get_state (igzstream & file);
+    bool get_state (igzstream & file);
     
     /**
      * Save %slot and its contents to stream.
      * @param file stream to save %slot to.
      * @return \b true if saving successful, \b false otherwise.
      */
-    // bool put_state (ogzstream & file) const;
+    bool put_state (ogzstream & file) const;
     //@}
     
 private:
@@ -139,7 +161,7 @@ private:
     /**
      * The %inventory this %slot belongs to.
      */
-    // inventory *Owner;
+    inventory *Owner;
     
     /**
      * The item(s) currently kept in this %slot.
