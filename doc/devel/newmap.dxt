@@ -26,7 +26,7 @@ This document will precisely describe the specifications/internals of
 the new map engine implementation that is supposed to be shipped with
 versions >= 0.4 of the Adonthell engine.
 
-\section p10spec Specification.
+\section p10spec Specification
 What we want is a flexible, powerfull map engine that allows the
 following things:
 

@@ -2,4 +2,4 @@
 
 SUBDIRS = . devel dlgedit
 
-EXTRA_DIST = charedit.lyx event.lyx interpreter.lyx items.txt
+EXTRA_DIST = charedit.lyx interpreter.lyx items.txt

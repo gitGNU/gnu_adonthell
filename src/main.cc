@@ -65,7 +65,7 @@ int main(int argc, char * argv[])
     if (!game::init (myconfig)) return 1;
 
     // It's up to the game what happens here
-    python::exec_file ("init.py");
+    python::exec_file ("init");
 
     // shut down the different parts of the engine
     game::cleanup ();

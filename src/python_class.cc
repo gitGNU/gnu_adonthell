@@ -70,27 +70,28 @@ void python::exec_string(char * s)
  */
 bool python::exec_file (string filename)
 {
-    int result;
-    string fn = "scripts/" + filename;
-    FILE *f = fopen (fn.c_str (), "r");
-    
-    if (!f)
+    PyObject *mod = python::import_module (filename);
+ 
+    if (!mod)
     {
-        cerr << "exec_file: " << fn << " load failed!" << endl;
+        cerr << "exec_file: " << filename << " load failed!" << endl;
         return false;
     }
 
-    result = PyRun_SimpleFile (f, (char*) fn.c_str ());
-    if (result != 0)
-    {
-         cerr << "exec_file: " << fn << " execution failed: " << endl;
+    Py_DECREF (mod); 
+
+    return true; 
+//     result = PyRun_SimpleFile (f, (char*) fn.c_str ());
+//     if (result != 0)
+//     {
+//          cerr << "exec_file: " << fn << " execution failed: " << endl;
 #ifdef PY_DEBUG
          show_traceback ();
 #endif
-    }
+//     }
     
-    fclose (f);
-    return result == 0;
+//     fclose (f);
+//     return result == 0;
 }
 
 /*
