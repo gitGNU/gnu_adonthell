@@ -12,6 +12,9 @@
    See the COPYING file for more details.
 */
 
+void draw_multiselbox (MainFrame*, GdkPoint);
+void add_to_selection (MainFrame*, DlgNode*);
+void multsel_objects (MainFrame*);
 int select_object (MainFrame *, GdkPoint);
 void select_object_index (MainFrame *, int);
 int deselect_object (MainFrame *);
@@ -32,7 +35,7 @@ void redraw_graph (MainFrame *);
 void new_dialogue (MainFrame *);
 void save_dialogue (MainFrame *);
 void load_dialogue (MainFrame *, const char*);
-void new_mover (MainFrame *, GdkPoint);
+int new_mover (MainFrame *, GdkPoint);
 void move_node (MainFrame *, GdkPoint);
 void end_moving (MainFrame *, GdkPoint);
 void delete_links (MainFrame *, DlgNode *);

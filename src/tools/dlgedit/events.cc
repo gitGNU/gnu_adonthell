@@ -43,11 +43,35 @@ gint
 expose_event (GtkWidget * widget, GdkEventExpose * event, gpointer data)
 {
     MainFrame *MainWnd = (MainFrame *) data;
+    GdkGCValues val;
+    
+    if (MainWnd->mode != MULTI_SELECT)
+        gdk_draw_pixmap (widget->window, widget->style->fg_gc[GTK_WIDGET_STATE (widget)],
+            MainWnd->pixmap, event->area.x, event->area.y, event->area.x, event->area.y,
+            event->area.width, event->area.height);
+    else
+    {
+        event->area.x += MainWnd->x_offset;
+        event->area.y += MainWnd->y_offset;
+    
+        gdk_gc_get_values (widget->style->black_gc, &val);
+        
+        gdk_draw_pixmap (event->window, widget->style->fg_gc[GTK_WIDGET_STATE (widget)],
+            MainWnd->pixmap, MainWnd->multsel_rect.x, MainWnd->multsel_rect.y, MainWnd->multsel_rect.x, MainWnd->multsel_rect.y,
+            MainWnd->multsel_rect.width, MainWnd->multsel_rect.height);
 
-    gdk_draw_pixmap (widget->window, widget->style->fg_gc[GTK_WIDGET_STATE (widget)],
-        MainWnd->pixmap, event->area.x, event->area.y, event->area.x, event->area.y,
-        event->area.width, event->area.height);
+        gdk_gc_set_line_attributes (widget->style->black_gc, val.line_width,
+            GDK_LINE_ON_OFF_DASH, val.cap_style, val.join_style);
+           
+        gdk_draw_rectangle (event->window, widget->style->black_gc, FALSE, 
+            event->area.x, event->area.y, event->area.width-1, event->area.height-1);
 
+        MainWnd->multsel_rect = event->area;
+
+        gdk_gc_set_line_attributes (widget->style->black_gc, val.line_width,
+            GDK_LINE_SOLID, val.cap_style, val.join_style);
+    }
+       
     return FALSE;
 }
 
@@ -57,6 +81,7 @@ button_press_event (GtkWidget * widget, GdkEventButton * event, gpointer data)
 {
     MainFrame *MainWnd = (MainFrame *) data;
     GdkPoint point;
+    u_int32 i;
 
     point.x = (s_int32) event->x - MainWnd->x_offset;
     point.y = (s_int32) event->y - MainWnd->y_offset;
@@ -64,43 +89,14 @@ button_press_event (GtkWidget * widget, GdkEventButton * event, gpointer data)
     /* Left Button down */
     switch (event->button)
     {
-    case 1:
-        {
-            switch (MainWnd->mode)
-            {
-                /* Unoccupied location -> create new Circle */
-                /* Circle hit -> mark Circle */
-            case IDLE:
-                {
-                    if (!select_object (MainWnd, point))
-                        new_circle (MainWnd, point, NPC);
-                    break;
-                }
-
-                /* Arrow hit -> add to marked Circles links */
-                /* Else -> Create new Arrow */
-            case OBJECT_MARKED:
-                {
-                    if (!new_link (MainWnd, point))
-                        new_arrow (MainWnd, point);
-                    break;
-                }
-
-            default:
-                break;
-            }
-
-            break;
-        }
-
         /* Middle Button */
-    case 2:
+        case 2:
         {
-            /* If nothing selected, see if we're over a node */
+            // If nothing selected, see if we're over a node
             if (MainWnd->mode == IDLE)
                 select_object (MainWnd, point);
 
-            /* Edit node */
+            // Edit node
             if (MainWnd->mode == OBJECT_MARKED)
                 edit_node (MainWnd);
                 
@@ -108,39 +104,45 @@ button_press_event (GtkWidget * widget, GdkEventButton * event, gpointer data)
         }
 
         /* Right Button */
-    case 3:
+        case 3:
         {
             switch (MainWnd->mode)
             {
-            case IDLE:
-                {
-                    break;
-                }
-
-                /* circle              -> remove link */
-                /* Unoccupied location -> deselect object */
-            case OBJECT_MARKED:
+                // circle              -> remove link
+                // Unoccupied location -> deselect object
+                case OBJECT_MARKED:
                 {
                     if (!remove_link (MainWnd, point))
                         deselect_object (MainWnd);
                     break;
                 }
 
-            default:
-                break;
+                // More then one object marked: deselect all of 'em
+                case MULTI_MARKED:
+                {
+                    for (i = 0; i < MainWnd->multsel.size (); i++)
+                    {
+                        MainWnd->selected_node = MainWnd->multsel[i];
+                        deselect_object (MainWnd);                      
+                    }
+
+                    MainWnd->multsel.clear ();
+                    break;
+                }
+                
+                default: break;
             }
 
             break;
         }
 
-    default:
-        break;
+        default: break;
     }
 
     return TRUE;
 }
 
-/* Mouse moved over drawing area */
+// Mouse moved over drawing area
 gint 
 motion_notify_event (GtkWidget * widget, GdkEventMotion * event, gpointer data)
 {
@@ -152,23 +154,25 @@ motion_notify_event (GtkWidget * widget, GdkEventMotion * event, gpointer data)
 
     switch (event->state)
     {
-        /* Dragging dialogue nodes */
-    case GDK_BUTTON_PRESS_MASK:
+        // Dragging dialogue nodes
+        case GDK_BUTTON_PRESS_MASK:
         {
             if (MainWnd->dragged_node == NULL)
-                new_mover (MainWnd, point);
+            {
+                if (!new_mover (MainWnd, point)) draw_multiselbox (MainWnd, point);
+            }
             else
             {
                 move_node (MainWnd, point);
 
-                /* update graph */
+                // update graph
                 redraw_graph (MainWnd);
             }
             break;
         }
 
-        /* Highlighting dialogue nodes */
-    default:
+        // Highlighting dialogue nodes
+        default:
         {
             mouse_over (MainWnd, point);
             break;
@@ -184,12 +188,65 @@ button_release_event (GtkWidget * widget, GdkEventButton * event, gpointer data)
 {
     MainFrame *MainWnd = (MainFrame *) data;
     GdkPoint point;
+    u_int32 index;
 
     point.x = (s_int32) event->x - MainWnd->x_offset;
     point.y = (s_int32) event->y - MainWnd->y_offset;
 
-    if (MainWnd->dragged_node != NULL)
-        end_moving (MainWnd, point);
+    if (event->button == 1)
+    {
+        switch (MainWnd->mode)
+        {
+            // Unoccupied location -> create new Circle
+            // Circle hit -> mark Circle
+            case IDLE:
+            {
+                if (!select_object (MainWnd, point))
+                    new_circle (MainWnd, point, NPC);
+                break;
+            }
+
+            // Arrow hit -> add to marked Circles links
+            // Else -> Create new Arrow
+            case OBJECT_MARKED:
+            {
+                if (!new_link (MainWnd, point))
+                   new_arrow (MainWnd, point);
+                break;
+            }
+
+            case OBJECT_DRAGGED:
+            {
+                if (MainWnd->dragged_node != NULL)
+                    end_moving (MainWnd, point);
+                break;
+            }
+
+            case MULTI_SELECT:
+            {
+                multsel_objects (MainWnd);
+                break;
+            }
+
+            // If single node selected -> cancel multi-selection 
+            case MULTI_MARKED:
+            {
+                if (get_cur_selection (MainWnd, point))
+                {
+                    for (index = 0; index < MainWnd->multsel.size (); index++)
+                    {
+                        MainWnd->selected_node = MainWnd->multsel[index];
+                        deselect_object (MainWnd);                      
+                    }
+
+                    MainWnd->multsel.clear ();
+                    select_object (MainWnd, point);
+                }
+            }
+            
+            default: break;
+        }
+    }
 
     return TRUE;
 }
@@ -215,14 +272,40 @@ key_press_notify_event (GtkWidget * widget, GdkEventKey * event, gpointer data)
         /* Deselect selected node */
         case GDK_Escape:
         {
-            deselect_object (MainWnd);
+            if (MainWnd->mode == OBJECT_MARKED)
+                deselect_object (MainWnd);
+
+            if (MainWnd->mode == MULTI_MARKED)
+            {
+                for (index = 0; index < MainWnd->multsel.size (); index++)
+                {
+                    MainWnd->selected_node = MainWnd->multsel[index];
+                    deselect_object (MainWnd);                      
+                }
+
+                MainWnd->multsel.clear ();
+            }
+
             break;
         }
 
         /* Delete selected node */
         case GDK_Delete:
         {
-            delete_node (MainWnd);
+            if (MainWnd->mode == OBJECT_MARKED)
+                delete_node (MainWnd);
+
+            if (MainWnd->mode == MULTI_MARKED)
+            {
+                for (index = 0; index < MainWnd->multsel.size (); index++)
+                {
+                    MainWnd->selected_node = MainWnd->multsel[index];
+                    delete_node (MainWnd);                      
+                }
+
+                MainWnd->multsel.clear ();
+            }
+
             break;
         }
 
@@ -232,8 +315,17 @@ key_press_notify_event (GtkWidget * widget, GdkEventKey * event, gpointer data)
             if (MainWnd->nodes.empty ())
                 break;
 
+            // multiple nodes selected -> deselect 'em all
+            if (MainWnd->mode == MULTI_MARKED)
+                for (index = 0; index < MainWnd->multsel.size (); index++)
+                {
+                     MainWnd->selected_node = MainWnd->multsel[index];
+                     deselect_object (MainWnd);                      
+                }
+
             // nothing selected -> select first 
             if (MainWnd->selected_node == NULL) index = 0;            
+
             // a node selected -> select next
             else 
             {   

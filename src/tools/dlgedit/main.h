@@ -26,7 +26,9 @@ enum
 {
     OBJECT_MARKED = 0,
     OBJECT_DRAGGED = 1,
-    IDLE = 2
+    MULTI_SELECT = 2,
+    MULTI_MARKED = 3,
+    IDLE = 4
 };
 
 // Colors
@@ -55,8 +57,11 @@ typedef struct
     GdkPixmap *pixmap;          // Drawing surface
     GdkFont *font;              // Font for Textoutput
     GdkGC *color[MAX_GC];       // Custom Pens
-
+    GdkRectangle multsel_rect;  // Extension of the multi-selection area
+    GdkPoint multsel_start;     // Start of the multi-selection area
+    
     vector<DlgNode*> nodes;     // Storage of all nodes
+    vector<DlgNode*> multsel;   // Nodes in multi-selection
 
     DlgNode *selected_node;     // Currently selected node
     DlgNode *below_pointer;     // Node under Mouse-pointer

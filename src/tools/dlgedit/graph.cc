@@ -343,22 +343,29 @@ sort_nodes (MainFrame * wnd)
 }
 
 // Select node to be dragged 
-void 
+int 
 new_mover (MainFrame * wnd, GdkPoint point)
 {
     DlgNode *node;
     GdkRectangle t;
 
-    // return if no node is selected 
-    if (wnd->selected_node == NULL)
-        return;
+    // No dragging when multiple nodes are selected
+    if (wnd->mode == MULTI_SELECT || wnd->mode == MULTI_MARKED)
+        return 0;
 
-    // set apps new mode 
+    // try to select node        
+    if (!select_object (wnd, point))
+        return 0;
+    
+    // set app's new mode 
     wnd->mode = OBJECT_DRAGGED;
 
     // Is dragged node circle or arrow? 
     if (wnd->selected_node->type != LINK)
+    {
         wnd->dragged_node = wnd->selected_node;
+        return 1;
+    }
     else
     {
         wnd->dragged_node = new DlgNode;
@@ -382,7 +389,7 @@ new_mover (MainFrame * wnd, GdkPoint point)
             wnd->selected_node->next.pop_back ();
             wnd->selected_node->next.push_back (wnd->dragged_node);
 
-            return;
+            return 1;
         }
 
         // arrow dragged by its tail? 
@@ -397,7 +404,7 @@ new_mover (MainFrame * wnd, GdkPoint point)
             wnd->selected_node->prev.pop_back ();
             wnd->selected_node->prev.push_back (wnd->dragged_node);
 
-            return;
+            return 1;
         }
 
         delete wnd->dragged_node;
@@ -406,7 +413,7 @@ new_mover (MainFrame * wnd, GdkPoint point)
         wnd->mode = OBJECT_MARKED;
     }
 
-    return;
+    return 0;
 }
 
 // move node and attached arrows 
@@ -792,6 +799,25 @@ redraw_graph (MainFrame * wnd)
     // }
 }
 
+void draw_multiselbox (MainFrame * wnd, GdkPoint end)
+{
+    GdkRectangle rect;
+
+    if (wnd->mode != MULTI_SELECT)
+    {
+        wnd->multsel_start = end;
+        wnd->mode = MULTI_SELECT;
+
+        return;
+    }
+
+    rect = create_rectangle (wnd->multsel_start, end);
+    if (rect.width == 0) rect.width = 1;
+    if (rect.height == 0) rect.height = 1;
+    
+    gtk_widget_draw (wnd->graph, &rect);
+}
+
 // create new dialogue 
 void
 new_dialogue (MainFrame * wnd)
@@ -892,6 +918,9 @@ load_dialogue (MainFrame * wnd, const char *file)
 
     // ... and redraw them 
     redraw_graph (wnd);
+
+    // set number of nodes
+    wnd->number = wnd->nodes.size ();
 
     // set new window - title 
     wnd->file_name = g_strdup (file);
@@ -1088,7 +1117,7 @@ select_object (MainFrame * wnd, GdkPoint point)
 
     // Set new Program-Mode 
     wnd->mode = OBJECT_MARKED;
-
+    
     show_preview (wnd);
     
     return 1;
@@ -1128,10 +1157,13 @@ select_object_index (MainFrame * wnd, int index)
         }
     }
 
-    // Set new Program-Mode 
-    wnd->mode = OBJECT_MARKED;
-
-    show_preview (wnd);
+    if (wnd->mode != MULTI_MARKED)
+    {
+        // Set new Program-Mode 
+        wnd->mode = OBJECT_MARKED;
+        
+        show_preview (wnd);
+    }
 }
 
 // Deselect a Node 
@@ -1147,8 +1179,8 @@ deselect_object (MainFrame * wnd)
     // unhighlite node and its links 
     switch (wnd->selected_node->type)
     {
-    case NPC:
-    case PLAYER:
+        case NPC:
+        case PLAYER:
         {
             draw_circle (wnd, wnd->selected_node, 0);
 
@@ -1158,7 +1190,7 @@ deselect_object (MainFrame * wnd)
             break;
         }
 
-    case LINK:
+        case LINK:
         {
             draw_arrow (wnd, (Arrow *) wnd->selected_node, 0);
 
@@ -1180,8 +1212,73 @@ deselect_object (MainFrame * wnd)
     return 1;
 }
 
+void multsel_objects (MainFrame * wnd)
+{
+    u_int32 i;
+
+    wnd->mode = MULTI_MARKED;
+
+    // Add single selection to multi selection
+    if (wnd->selected_node)
+        add_to_selection (wnd, wnd->selected_node);
+
+    wnd->multsel_rect.x -= wnd->x_offset;
+    wnd->multsel_rect.y -= wnd->y_offset;
+
+    // select (toggle) all nodes in rectangle specified by the user 
+    for (i = 0; i < wnd->number; i++)
+        if (wnd->nodes[i]->type != LINK)
+            if (rect_in_rect (wnd->nodes[i]->position, wnd->multsel_rect))
+                add_to_selection (wnd, wnd->nodes[i]);
+
+    wnd->multsel_rect.x += wnd->x_offset;
+    wnd->multsel_rect.y += wnd->y_offset;
+
+    // see how many nodes remain selected
+    switch (wnd->multsel.size ())
+    {
+        case 0:
+        {
+            wnd->mode = IDLE;
+            wnd->selected_node = NULL;
+            break;
+        }
+        case 1:
+        {
+            wnd->mode = OBJECT_MARKED;
+            wnd->selected_node = wnd->multsel[0];
+            wnd->multsel.clear ();
+            break;
+        }
+        default:
+        {
+            wnd->mode = MULTI_MARKED;
+            wnd->selected_node = NULL;
+        }
+    }
+
+    gtk_widget_draw (wnd->graph, &wnd->multsel_rect);
+    show_preview (wnd);
+}
+
+void add_to_selection (MainFrame *wnd, DlgNode *node)
+{
+    // select 'new' nodes and deselect 'old' ones
+    if (find (wnd->multsel.begin (), wnd->multsel.end (), node) == wnd->multsel.end ())
+    {
+        wnd->multsel.push_back (node);
+        select_object_index (wnd, node->number);
+    }
+    else
+    {
+        remove_data (wnd->multsel, node);
+        wnd->selected_node = node;
+        deselect_object (wnd);
+    }
+}
+
 void 
-show_tooltip (MainFrame * wnd, DlgNode * node)
+show_tooltip (MainFrame *wnd, DlgNode *node)
 {
     int x, y;
     GString *str;
