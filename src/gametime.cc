@@ -22,7 +22,7 @@
 #include "gametime.h"
 #include <SDL/SDL.h>
 
-u_int32 gametime::Minute;
+float gametime::Minute;
 u_int32 gametime::timer1;
 u_int32 gametime::timer2;
 u_int8 gametime::fts;
@@ -38,7 +38,7 @@ void gametime::init (u_int16 rt_minutes)
     running = false;
     
     // Number of game cycles during rt_minutes realtime minutes
-    u_int32 cycles = (1000 * rt_minutes) / CYCLE_LENGTH;
+    float cycles = (60000 * rt_minutes) / (float) CYCLE_LENGTH;
     
     // Calculate how many game cycles make one gametime minute,
     // so that one gametime day lasts rt_minutes realtime minutes.

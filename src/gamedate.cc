@@ -28,7 +28,7 @@
 u_int32 gamedate::Time = 0;
 
 // number of game cycles since the last gametime minute passed
-u_int32 gamedate::Ticks = 0;
+float gamedate::Ticks = 0.0;
 
 // Increase gametime 
 void gamedate::update ()
@@ -38,7 +38,7 @@ void gamedate::update ()
     Ticks += gametime::frames_to_skip ();
 
     // check whether a in-game minute has passed
-    if (Ticks >= gametime::minute ())
+    while (Ticks >= gametime::minute ())
     {
         Ticks -= gametime::minute ();
         Time++;

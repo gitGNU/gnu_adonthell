@@ -23,7 +23,7 @@
 #define TIME_EVENT_HANDLER_H__
 
 #include <vector>
-#include "event.h"
+#include "event_handler_base.h"
 
 using std::vector;
 
@@ -33,7 +33,7 @@ using std::vector;
  * sorted by the time they need to be raised, so that only one
  * comparison decides upon whether an %event is to be raised.
  */
-class time_event_handler
+class time_event_handler : public event_handler_base
 {
 public:
     /**
@@ -62,7 +62,7 @@ public:
      * @param evnt An %event structure with the current %game time in 
      *      minutes.
      */
-    void raise_event (event &evnt);
+    void raise_event (const event &evnt);
     
 private:
     // storage for registered time events.

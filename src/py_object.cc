@@ -87,12 +87,20 @@ bool py_object::instanciate (PyObject *module, string file, string classname, Py
 
     PyObject * classobj = PyObject_GetAttrString (module, (char *) classname.c_str ());
     Py_DECREF (module);
-    if (!classobj) return false;
+    if (!classobj)
+    {
+        python::show_traceback ();
+        return false;
+    }
 
     // Create the instance
     Instance = PyObject_CallObject (classobj, args);
     Py_DECREF (classobj);
-    if (!Instance) return false;
+    if (!Instance)
+    {
+        python::show_traceback ();
+        return false;
+    }
 
     Classname = classname;
     Filename = file;

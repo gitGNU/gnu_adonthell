@@ -28,11 +28,13 @@
 #include <vector>
 #include "event.h"
 
+#ifndef SWIG
 /**
  * Pointer to a function returning a newly allocated %event
  */
 typedef event* (*new_event)();
 
+#endif // SWIG
 
 /**
  * Base class for objects that want to register events. It keeps track of
@@ -111,16 +113,11 @@ private:
      * Array with callbacks that return a newly allocated instance of an event.
      * The event's type is the postion of the according callback in the array.
      */
-    static new_event instanciate_event[MAX_EVENT];
+    static new_event instanciate_event[MAX_EVENTS];
 #endif // SWIG
 };
 
 #ifndef SWIG
-/**
- * A function that returns a new instance of an event.
- */
-#define NEW_EVENT(evt)\
-    event* new_ ## evt () { return (event*) new evt; }
 /**
  * Registers an event with the event_list, allowing it to load this event
  * without knowing about it at compile time.
@@ -128,6 +125,11 @@ private:
 #define REGISTER_EVENT(type,evt)\
     event_list::register_event (type, (new_event) &new_ ## evt);
 
-#endif // SWIG
+/**
+ * A function that returns a new instance of an event.
+ */
+#define NEW_EVENT(evt)\
+    event* new_ ## evt () { return (event*) new evt; }
 
+#endif // SWIG
 #endif // EVENT_LIST_H__

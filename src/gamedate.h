@@ -99,7 +99,7 @@ private:
     static u_int32 Time;
 
     // number of game cycles since the last gametime minute passed
-    static u_int32 Ticks;
+    static float Ticks;
 #endif // SWIG
 };
 

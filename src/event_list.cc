@@ -25,7 +25,7 @@
 #include "event_handler.h"
  
 // Array with callbacks to return a newly instanciated event
-new_event event_list::instanciate_event[MAX_EVENT];
+new_event event_list::instanciate_event[MAX_EVENTS];
 
 // destructor
 event_list::~event_list ()
@@ -57,7 +57,7 @@ void event_list::add_event (event* ev)
 // Register an event for loading
 void event_list::register_event (u_int8 type, new_event e)
 {
-    if (type < MAX_EVENT)
+    if (type < MAX_EVENTS)
         instanciate_event[type] = e;
 }
 
@@ -87,7 +87,7 @@ bool event_list::get_state (igzstream& in)
         type << in;
         
         // Instanciate an event of the given type
-        if (type < MAX_EVENT && instanciate_event[type] != NULL)
+        if (type < MAX_EVENTS && instanciate_event[type] != NULL)
             e = instanciate_event[type]();
  
         // try to load it, ...

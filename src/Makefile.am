@@ -8,7 +8,7 @@ moddatadir = $(gamedatadir)/modules
 
 #moddata_DATA = adonthell.pyc
 
-bin_PROGRAMS = alextest joltest pytest
+bin_PROGRAMS = alextest joltest pytest schedtest
 
 EXTRA_DIST = .indent.pro prefs.l # py_adonthell.i adonthell.py
 
@@ -24,7 +24,7 @@ libbase_a_SOURCES = \
         event_handler.cc \
         event_list.cc \
         fileops.cc \
-	game.cc \
+        game.cc \
         gamedate.cc \
         gametime.cc \
         py_base_wrap.cc \
@@ -38,15 +38,16 @@ libbase_a_SOURCES = \
         character_base.h \
         event.h \
         event_handler.h \
+        event_handler_base.h \
         event_list.h \
-	fileops.h \
-	game.h \
+        fileops.h \
+        game.h \
         gamedate.h \
         gametime.h \
         quest.h \
         schedule.h \
         storage.h \
-	str_hash.h \
+        str_hash.h \
         time_event.h \
         time_event_handler.h \
         types.h \
@@ -115,11 +116,15 @@ joltest_SOURCES = joltest.cc
 
 pytest_SOURCES = pytest.cc
 
+schedtest_SOURCES = schedtest.cc
+
 joltest_LDADD = libgui.a libgfx.a libinput.a libbase.a $(libbase_LDADD) $(libgui_LDADD)
 
 alextest_LDADD = libmap.a libgfx.a libinput.a libbase.a $(libbase_LDADD)
 
 pytest_LDADD = libbase.a libpython.a libgfx.a libinput.a $(libbase_LDADD) $(libpython_LDADD)
+
+schedtest_LDADD = libbase.a libpython.a libgfx.a libinput.a $(libbase_LDADD) $(libpython_LDADD)
 
 # Note: .py files are also built by this target.
 py_%_wrap.cc : py_%.i *.h

@@ -97,14 +97,13 @@ void python::show_traceback(void)
     }
 }
 
-/* Import a module, return module ptr */
+// Import a module, return module ptr
 PyObject *python::import_module (string filename)
 {
     PyObject *result = PyImport_ImportModule ((char *) filename.c_str ());
-    
-#ifdef PY_DEBUG
-    show_traceback ();
-#endif
+
+    if (result == NULL) show_traceback ();
+
     return result;
 }
 

@@ -40,7 +40,7 @@ enum
     LEAVE_EVENT     = 1,            // Characters leave a tile
     TIME_EVENT      = 2,            // Certain point in gametime reached
     ACTION_EVENT    = 3,            // Character "acts" on a square 
-    MAX_EVENT       = 4
+    MAX_EVENTS      = 4
 };
 
 /**

@@ -21,39 +21,35 @@
  * 
  */
  
-#include <algorithm>
 #include "event_handler.h"
+#include "event_list.h"
+#include "time_event.h"
+#include "time_event_handler.h"
 
-// Array with the registered events; each type of event is kept in
-// a vector of its own for faster access
-vector<event*> event_handler::handlers[MAX_EVENT];
+// Array with registered event handlers
+event_handler_base* event_handler::Handler[MAX_EVENTS];
 
-// See whether a matching event is registered and execute the
-// according script(s) 
-void event_handler::raise_event (const event& e)
+// functions that return newly instanciated events
+// of a certain type
+NEW_EVENT (time_event)
+
+// Initialize the game event system
+void event_handler::init ()
 {
-    vector<event*>::iterator i;
-    // Search through all registered events with the type of the raised event
-    for (i = handlers[e.type ()].begin (); i != handlers[e.type ()].end (); i++)
-        // Execute the script; pass recieved event on to get event data
-        if ((*i)->equals (e)) (*i)->execute (e); 
-}
+    // register event handlers
+    Handler[ENTER_EVENT] = NULL;
+    Handler[LEAVE_EVENT] = NULL;
+    Handler[ACTION_EVENT] = NULL;
+    Handler[TIME_EVENT] = new time_event_handler;
 
-
-// Unregister an event
-void event_handler::remove_event (event *e)
-{
-    vector<event*>::iterator i;
-
-    // Search for the event we want to remove
-    i = find (handlers[e->type ()].begin (), handlers[e->type ()].end (), e);
-
-    // found? -> get rid of it :)
-    if (i != handlers[e->type ()].end ()) handlers[e->type ()].erase(i);
+    // register events
+    REGISTER_EVENT (TIME_EVENT, time_event)
 }
 
 // Register a event with it's script
-void event_handler::register_event (event *e)
+void event_handler::cleanup ()
 {
-    handlers[e->type ()].push_back (e);
+    for (int i; i < MAX_EVENTS; i++)
+        if (Handler[i] != NULL)
+            delete Handler[i];
 }

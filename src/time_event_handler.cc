@@ -20,12 +20,14 @@
  */
 
 #include <algorithm>
-#include "time_event_handler.h"
 #include "time_event.h"
+#include "time_event_handler.h"
+
+// function returning a new time event
 
 // See whether a matching event is registered and execute the
 // according script(s) 
-void time_event_handler::raise_event (event& e)
+void time_event_handler::raise_event (const event& e)
 {
     // no time event registered
     if (Events.empty ()) return;

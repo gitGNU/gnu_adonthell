@@ -99,7 +99,7 @@ public:
     bool equals (const event & evnt)
     {
         time_event e = (time_event &) evnt;
-        return Time == e.time ();
+        return Time <= e.time ();
     }
     
     /**
