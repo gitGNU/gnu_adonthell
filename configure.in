@@ -90,6 +90,10 @@ AM_PATH_SDL($SDL_VERSION,
 	    AC_MSG_ERROR([*** SDL version $SDL_VERSION not found!])
 )
 
+dnl Check for FreeType2
+FTT2_LIBS=`freetype-config --libs`
+FTT2_CFLAGS=`freetype-config --cflags`
+
 
 dnl********************
 dnl Check for OggVorbis
@@ -298,6 +302,8 @@ AC_SUBST(PY_CFLAGS)
 AC_SUBST(PY_LIBS)
 AC_SUBST(P_SWIG)
 AC_SUBST(gamedatadir)
+AC_SUBST(FTT2_LIBS)
+AC_SUBST(FTT2_CFLAGS)
   
 AC_OUTPUT([
 Makefile

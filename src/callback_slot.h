@@ -24,73 +24,56 @@
 #ifndef CALLBACK_SLOT_H_
 #define CALLBACK_SLOT_H_
  
-#if __GNUG__ > 2
-#include <ext/hash_map>
-#else
-#include <hash_map>
-#endif
-
-#include <string>
-#include "str_hash.h"
 #include "callback.h"
 
-
-
-
 /**
- * Callback manipulation class
- * This class is currently designed to work with callback with 0 arguments and 0 return
- * You can connect and disconnect several event at this object. Next you connect events
- * you can call update method with the name of event, If the name of event is connected
- * on slot so the callback is executed.  
+ * Callback slot store callback and data parameters of the callback. With this,  callback is very powerfull. <BR>
+ * Callback slot is created to be used with %callback_sig. <BR>  
+ * Important callback slot doesn't support callback with a return value.
+ * As now, there are only callback with 0 and 1 argument supported.
  *
- * Just a little example
- * class A{
- * 
- * public:
- *  void  print(){
- *   cout << "Adonthell\n";
- *  }
- * };
+ * Exemple :
+ *   If you want create a callback slot with no parameters :
+ *       callback_slot cb_slot (makeFunctor (classinstance, &classname::method));
  *
+ *   With 1 parameters :
+ *       callback_slot1 <type> (makeFunctor (classinstance, &classname::method), parameter);
  *
- * void main()
- * {
- * callback_slot0 cb;
- * 
- * A a;
- * 
- * cb.connect ("essai", makeFunctor (a, &A::print));
- * 
- *
- * cb.update("essai");
- * cb.update("essai2"); //nothing, because event "essai2" is not define
- * 
- * }
+ *  For a better exemple see %callback_sig
  */
 
-class callback_slot0 : private std::hash_map<std::string, Functor0 >
+class callback_slot
 {
- public:
-  
+public :
+    callback_slot () {}
+    
+    callback_slot (const Functor0 & f) : F(f) {}
+    
+    virtual void operator () () { F (); }
+    
+private :
+    Functor0 F; 
+}; 
 
-  /** Connect a callback for a specific event.
-   * @param name_event The name of the specific event
-   * @param func The callback function
-   */
-  void connect (const std::string & name_event, const Functor0 & func);
 
-  /** Disconnect a callback for a specific event.
-   * @param name_event The name of the specific event to remove
-   */
-  void disconnect (const std::string & name_event);
+template <class T >
+class callback_slot1 : public callback_slot
+{
+public : 
+    
+    callback_slot1 () {}
+    
+    callback_slot1 (const Functor1 <T > & f, T & p1) : F (f), P1 (p1) {}
+    
+    void operator () () { F (P1); }
+    
+private :
+    Functor1 <T > F;  
+    
+    T & P1; 
+}; 
 
-  
-  
-  /** Update, try to execute callback associated at the event_name.
-   * @param name_event The name of the specific event to execute some callback.
-   */
-  void update (const std::string & name_event);
-};
 
 #endif
+
+

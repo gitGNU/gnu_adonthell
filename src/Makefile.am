@@ -8,11 +8,11 @@ moddatadir = $(gamedatadir)/modules
 
 #moddata_DATA = adonthell.pyc
 
-bin_PROGRAMS = alextest
+bin_PROGRAMS = alextest joltest
 
 EXTRA_DIST = .indent.pro prefs.l py_adonthell.i adonthell.py
 
-CPPFLAGS += $(SDL_DEFS) $(OGG_DEFS) $(SDL_CFLAGS) $(OGG_CFLAGS) $(PY_CFLAGS)
+CPPFLAGS += $(SDL_DEFS) $(OGG_DEFS) $(SDL_CFLAGS) $(OGG_CFLAGS) $(PY_CFLAGS) $(FTT2_CFLAGS)
 
 noinst_LIBRARIES = libadonthell.a
 
@@ -67,11 +67,15 @@ libadonthell_a_SOURCES = animation.cc drawable.cc drawing_area.cc fileops.cc \
 	callback.h py_callback.h python_class.h py_object.h \
 	str_hash.h win_font.h win_image.h win_label.h win_mapview.h label.h label_input.h \
 	win_scrollbar.h win_scroll.h win_select.h win_theme.h win_keys.h win_event.h win_types.h \
-	win_write.h win_manager.h win_object.h window.h callback_slot.cc \
-	callback_slot.h
+	win_write.h win_manager.h win_object.h window.h callback_sig.cc callback_sig.h\
+	callback_slot.h atk_font.h atk_font.cc
 
 
 alextest_SOURCES = main.cc
+
+joltest_SOURCES = joltest.cc
+
+joltest_LDADD = libadonthell.a $(SDL_LIBS) $(FTT2_LIBS)
 
 alextest_LDADD = libadonthell.a $(SDL_LIBS)
 
