@@ -1,7 +1,7 @@
 /*
    $Id$
 
-   Copyright (C) 2002 Kai Sterker <kaisterker@linuxgames.com>
+   Copyright (C) 2002/2003 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -28,9 +28,17 @@
 #include <fstream>
 #include "dlg_node_gfx.h"
 
+/*
+ * Function to read the next token from dialogue source file
+ * @param str used to return string values
+ * @param i used to return numeric values
+ * @return Type of token read as defined in dlg_types.h
+ */
+extern int parse_dlgfile (std::string &str, int &i);
 
-// Definitions needed for the dialogue source file parser
-extern int parse_dlgfile (std::string&, int&);
+/**
+ * File pointer for dialogue source files being parsed.
+ */
 extern FILE *loadlgin;
 
 

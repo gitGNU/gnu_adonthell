@@ -1,7 +1,7 @@
 /*
    $Id$
 
-   Copyright (C) 2002 Kai Sterker <kaisterker@linuxgames.com>
+   Copyright (C) 2002/2003 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -40,11 +40,22 @@
 #include "gui_dlgedit.h"
 #include "gui_dlgedit_events.h"
 
-struct yy_buffer_state;
-extern void loadlg_switch_to_buffer (yy_buffer_state*);
-extern yy_buffer_state* loadlg_create_buffer (FILE*, int);
-        
-// Icon of the main window
+/**
+ * Point parser to another file to load sub-dialogue.
+ * Defined in loadlg.l
+ */
+extern void parser_switch_input ();
+
+/**
+ * Return to previous input file after loading sub-dialogue - or 
+ * after failing to do so.
+ * Defined in loadlg.l
+ */
+extern void parser_restore_input ();
+
+/**
+ * Icon of the main window
+ */
 static char * icon_xpm[] = {
 "16 16 13 1",
 " 	c None",
@@ -77,10 +88,14 @@ static char * icon_xpm[] = {
 "-%.   =%-*=$.   ",
 "=*.   @=+..>    "};
 
-// Global pointer to the main window
+/**
+ * Global pointer to the main window
+ */
 GuiDlgedit *GuiDlgedit::window = NULL;
 
-// Strings describing the various program states
+/**
+ * Strings describing the various program states
+ */
 char *GuiDlgedit::progState[NUM_MODES] = 
     { " IDLE", " SELECTED", " HIGHLIGHTED", " DRAGGED", " PREVIEW" };
 
@@ -474,14 +489,14 @@ DlgModule* GuiDlgedit::loadSubdialogue (std::string file)
     // the sub-dialogue
     DlgModule *module = new DlgModule (directory_, filename, "", "");
 
-    // loading successful
-    // loadlg_switch_to_buffer (loadlg_create_buffer (loadlgin, 16384));
+    // parser needs to read from sub-dialogue source file
+    parser_switch_input ();
 
     // try to load from file
     if (!module->load ())
     {
         delete module;
-        message->display (-3, filename.c_str ());
+        parser_restore_input ();
         return NULL;
     }
 
@@ -786,20 +801,21 @@ void GuiDlgedit::exitPreview ()
 bool GuiDlgedit::checkDialogue (std::string file)
 {
     // first, open the file
-    loadlgin = fopen (file.c_str (), "rb");
+    FILE *test = fopen (file.c_str (), "rb");
 
-    if (!loadlgin)
+    if (!test)
         return false;
     
     // check if it's a regular file
     struct stat statbuf;
-    fstat (fileno (loadlgin), &statbuf);
+    fstat (fileno (test), &statbuf);
     if (!S_ISREG (statbuf.st_mode))
     {
-        fclose (loadlgin);
+        fclose (test);
         return false;
     }
     
+    loadlgin = test;
     return true;
 }
 

@@ -2,7 +2,7 @@
 /*
    $Id$
 
-   Copyright (C) 2000 Kai Sterker <kaisterker@linuxgames.com>
+   Copyright (C) 2000/2002/2003 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -19,9 +19,24 @@
 
 #define YY_DECL int parse_dlgfile (std::string &mytext, int &mynum)
 
+// definitions for using 'includes'
 #define MAX_INCLUDE_DEPTH 10
 YY_BUFFER_STATE include_stack[MAX_INCLUDE_DEPTH];
 int include_stack_ptr = 0;
+
+// switch to another file for input
+void parser_switch_input ()
+{
+    include_stack[include_stack_ptr++] = YY_CURRENT_BUFFER;
+    yy_switch_to_buffer (yy_create_buffer (yyin, YY_BUF_SIZE));
+}
+
+// return to previous file
+void parser_restore_input ()
+{
+    yy_delete_buffer (YY_CURRENT_BUFFER);
+    yy_switch_to_buffer (include_stack[include_stack_ptr]);
+}
 %}
 
 digit  [0-9]
@@ -71,9 +86,6 @@ Module          mytext = ""; BEGIN(module); return LOAD_MODULE;
                     return LOAD_UNKNOWN;
                 }
                 
-                include_stack[include_stack_ptr++] = YY_CURRENT_BUFFER;
-                
-                yy_switch_to_buffer (yy_create_buffer (yyin, YY_BUF_SIZE));
                 return LOAD_STR;
                 }
 
@@ -85,8 +97,7 @@ Module          mytext = ""; BEGIN(module); return LOAD_MODULE;
                 }
                 else
                 {
-                    yy_delete_buffer (YY_CURRENT_BUFFER);
-                    yy_switch_to_buffer (include_stack[include_stack_ptr]);
+                    parser_restore_input ();
                     return 0;
                 }
                 }

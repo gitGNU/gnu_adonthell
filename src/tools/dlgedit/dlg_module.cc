@@ -1,7 +1,7 @@
 /*
    $Id$
 
-   Copyright (C) 2002 Kai Sterker <kaisterker@linuxgames.com>
+   Copyright (C) 2002/2003 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -423,6 +423,9 @@ bool DlgModule::load ()
             default: break;
         }
     }
+    
+    // set serial of version 1 dialogues
+    if (serial_ < id) serial_ = id;
     
     return true;
 }

@@ -462,7 +462,7 @@ char *yytext;
 /*
    $Id$
 
-   Copyright (C) 2000 Kai Sterker <kaisterker@linuxgames.com>
+   Copyright (C) 2000/2002/2003 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -479,15 +479,30 @@ char *yytext;
 
 #define YY_DECL int parse_dlgfile (std::string &mytext, int &mynum)
 
+// definitions for using 'includes'
 #define MAX_INCLUDE_DEPTH 10
 YY_BUFFER_STATE include_stack[MAX_INCLUDE_DEPTH];
 int include_stack_ptr = 0;
+
+// switch to another file for input
+void parser_switch_input ()
+{
+    include_stack[include_stack_ptr++] = YY_CURRENT_BUFFER;
+    yy_switch_to_buffer (yy_create_buffer (yyin, YY_BUF_SIZE));
+}
+
+// return to previous file
+void parser_restore_input ()
+{
+    yy_delete_buffer (YY_CURRENT_BUFFER);
+    yy_switch_to_buffer (include_stack[include_stack_ptr]);
+}
 #define text 1
 #define module 2
 
 #define YY_NO_UNPUT 1
 #define YY_NEVER_INTERACTIVE 1
-#line 491 "lex.loadlg.cc"
+#line 506 "lex.loadlg.cc"
 
 /* Macros after this point can all be overridden by user definitions in
  * section 1.
@@ -638,10 +653,10 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
 
-#line 33 "loadlg.l"
+#line 48 "loadlg.l"
 
 
-#line 645 "lex.loadlg.cc"
+#line 660 "lex.loadlg.cc"
 
 	if ( yy_init )
 		{
@@ -726,137 +741,137 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 35 "loadlg.l"
+#line 50 "loadlg.l"
 ;    /* Eat up comments */
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 37 "loadlg.l"
+#line 52 "loadlg.l"
 return LOAD_CIRCLE;
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 38 "loadlg.l"
+#line 53 "loadlg.l"
 return LOAD_ARROW;
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 39 "loadlg.l"
+#line 54 "loadlg.l"
 return LOAD_END;
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 40 "loadlg.l"
+#line 55 "loadlg.l"
 return LOAD_TYPE;
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 41 "loadlg.l"
+#line 56 "loadlg.l"
 return LOAD_PREV;
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 42 "loadlg.l"
+#line 57 "loadlg.l"
 return LOAD_NEXT;
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 43 "loadlg.l"
+#line 58 "loadlg.l"
 return LOAD_LINK;
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 44 "loadlg.l"
+#line 59 "loadlg.l"
 return LOAD_POS;
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 45 "loadlg.l"
+#line 60 "loadlg.l"
 return LOAD_NOTE;
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 46 "loadlg.l"
+#line 61 "loadlg.l"
 return LOAD_TEXT;
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 47 "loadlg.l"
+#line 62 "loadlg.l"
 return LOAD_COND;
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 48 "loadlg.l"
+#line 63 "loadlg.l"
 return LOAD_VARS;
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 49 "loadlg.l"
+#line 64 "loadlg.l"
 return LOAD_FUNC;
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 50 "loadlg.l"
+#line 65 "loadlg.l"
 return LOAD_NPC;
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 51 "loadlg.l"
+#line 66 "loadlg.l"
 return LOAD_NAME;
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 52 "loadlg.l"
+#line 67 "loadlg.l"
 return LOAD_RACE;
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 53 "loadlg.l"
+#line 68 "loadlg.l"
 return LOAD_GENDER;
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 54 "loadlg.l"
+#line 69 "loadlg.l"
 return LOAD_LOOP;
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 55 "loadlg.l"
+#line 70 "loadlg.l"
 return LOAD_PROJECT;
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 56 "loadlg.l"
+#line 71 "loadlg.l"
 return LOAD_IMPORTS;
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 57 "loadlg.l"
+#line 72 "loadlg.l"
 return LOAD_DTOR;
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 58 "loadlg.l"
+#line 73 "loadlg.l"
 return LOAD_CTOR;
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 59 "loadlg.l"
+#line 74 "loadlg.l"
 return LOAD_ID;
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 61 "loadlg.l"
+#line 76 "loadlg.l"
 mytext = ""; BEGIN(module); return LOAD_MODULE;
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 63 "loadlg.l"
+#line 78 "loadlg.l"
 /* Eat whitespace */
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 64 "loadlg.l"
+#line 79 "loadlg.l"
 {
                 mytext += yytext;
                 BEGIN(INITIAL);
@@ -867,16 +882,13 @@ YY_RULE_SETUP
                     return LOAD_UNKNOWN;
                 }
                 
-                include_stack[include_stack_ptr++] = YY_CURRENT_BUFFER;
-                
-                yy_switch_to_buffer (yy_create_buffer (yyin, YY_BUF_SIZE));
                 return LOAD_STR;
                 }
 	YY_BREAK
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(text):
 case YY_STATE_EOF(module):
-#line 80 "loadlg.l"
+#line 92 "loadlg.l"
 {
                 if (--include_stack_ptr < 0)
                 {
@@ -885,48 +897,47 @@ case YY_STATE_EOF(module):
                 }
                 else
                 {
-                    yy_delete_buffer (YY_CURRENT_BUFFER);
-                    yy_switch_to_buffer (include_stack[include_stack_ptr]);
+                    parser_restore_input ();
                     return 0;
                 }
                 }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 94 "loadlg.l"
+#line 105 "loadlg.l"
 mytext = ""; BEGIN(text);
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 95 "loadlg.l"
+#line 106 "loadlg.l"
 BEGIN(INITIAL); return LOAD_STR;
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 96 "loadlg.l"
+#line 107 "loadlg.l"
 mytext += yytext;
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 98 "loadlg.l"
+#line 109 "loadlg.l"
 mynum = atoi (yytext); return LOAD_NUM;
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 100 "loadlg.l"
+#line 111 "loadlg.l"
 ;
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 101 "loadlg.l"
+#line 112 "loadlg.l"
 return LOAD_UNKNOWN;
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 102 "loadlg.l"
+#line 113 "loadlg.l"
 ECHO;
 	YY_BREAK
-#line 930 "lex.loadlg.cc"
+#line 941 "lex.loadlg.cc"
 
 	case YY_END_OF_BUFFER:
 		{
@@ -1810,4 +1821,4 @@ int main()
 	return 0;
 	}
 #endif
-#line 102 "loadlg.l"
+#line 113 "loadlg.l"
