@@ -753,6 +753,12 @@ private:
     string action_file_;
     
     string filename_; 
+    
+    /**
+     * Mapcharacter locales, available from Python.
+     * 
+     */ 
+    PyObject * locals;
 
 #ifndef SWIG
     friend class landmap; 

@@ -159,7 +159,7 @@ public:
 
 
 /**
- * The global container for access to all the different game objects 
+ * The global container for access to all the different %game objects 
  * from within a script
  */ 
 class objects

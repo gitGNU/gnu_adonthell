@@ -24,7 +24,6 @@
 
 using namespace std; 
 
-// functions that return a newly allocated event
 /** 
  * Returns a newly allocated enter_event.
  *  

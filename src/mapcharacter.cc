@@ -47,19 +47,24 @@ mapcharacter::mapcharacter () : mapsquare_walkable_area (), character_base ()
         anim[i] = new animation;
     current_move = STAND_NORTH;
     ask_move = NO_MOVE;
+
+    locals=PyDict_New();
+    PyDict_SetItemString(locals,"myself",pass_instance(this,"mapcharacter"));
 }
  
 mapcharacter::~mapcharacter ()
 {
     clear ();
-    for (u_int16 i = 0; i < NBR_MOVES; i++)
+    for (u_int16 i = 0; i < anim.size (); i++)
         delete anim[i];
     anim.clear (); 
+
+    Py_DECREF(locals);
 }
 
 void mapcharacter::clear ()
 {
-    for (u_int16 i = 0; i < NBR_MOVES; i++)
+    for (u_int16 i = 0; i < anim.size (); i++)
         anim[i]->clear ();
     
     mapsquare_walkable_area::clear (); 
@@ -160,7 +165,8 @@ s_int8 mapcharacter::put_state (ogzstream& file) const
 }
 
 void mapcharacter::set_map (landmap * m) 
-{ 
+{
+    
     if (mymap ()) return;
 
     m->mapchar.push_back (this);

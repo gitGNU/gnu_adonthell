@@ -31,11 +31,8 @@ character::character()
  : character_base ()
 #endif
 {
-  locals=PyDict_New();
-  PyDict_SetItemString(locals,"myself",pass_instance(this,"character"));
 }
 
 character::~character()
 {
-  Py_DECREF(locals);
 }

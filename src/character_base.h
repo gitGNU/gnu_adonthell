@@ -37,8 +37,6 @@
 #include "storage.h"
 #include "fileops.h"
 
-#include "py_inc.h"
-
 /**
  * Race enumeration.
  * 
@@ -142,14 +140,7 @@ class character_base : public storage
      * @param out file where to save.
      */
     void put_state (ogzstream& out);
-    
-protected:
-    /**
-     * Characters locales, available from Python.
-     * 
-     */ 
-    PyObject * locals;
-    
+         
 private:
     string name;
     string dialogue;
