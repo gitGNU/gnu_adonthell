@@ -88,7 +88,7 @@ bool py_object::instanciate (PyObject *module, string file, string classname, Py
     Py_DECREF (classobj);
     if (!instance) return false;
 
-    script_file_ = file;
+    script_file_ = classname;
 
     return true;
 }

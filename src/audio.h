@@ -69,11 +69,13 @@ public:
 
     static bool is_initialized () { return audio_initialized; }
     static bool is_schedule_activated () { return schedule_active; }
-    static py_object& get_schedule () { return schedule; }
+    static bool is_background_finished () { return !background_on; }
+
     static void set_schedule_active (bool a) { schedule_active = a; }
-    static int get_current_background () { return current_background; }
-    
+    static void set_background_finished (bool b) { background_on = !b; }
+
     static void set_schedule (string file, PyObject * args = NULL);
+    static void run_schedule ();
 
 #ifdef OGG_MUSIC
     // static loop_info *loop[NUM_MUSIC];

@@ -24,6 +24,7 @@
 #include "win_manager.h"
 #include "gametime.h"
 #include "adonthell.h"
+#include "audio.h"
 
 // Pointer to the active main loop
 adonthell *data::engine = NULL; 
@@ -66,7 +67,10 @@ void adonthell::main (win_base *wnd, const string name)
 void adonthell::main_loop ()
 {
     input::update ();
-    
+
+    // check whether music has finished playing
+    if (audio::is_background_finished ()) audio::run_schedule ();
+
     // on slower machines, we update several times before drawing,
     // i.e. we are skipping frames to keep the game's speed constant
     for (int i = 0; i < gametime::frames_to_skip (); i++)

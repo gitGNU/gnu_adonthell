@@ -20,7 +20,7 @@
 
 // #include "audio_loop.h"
 
-bool audio::audio_initialized=false;
+bool audio::audio_initialized = false;
 
 int audio::background_volume;
 int audio::effects_volume;
@@ -30,7 +30,7 @@ int audio::effects_volume;
 Mix_Music *audio::music[NUM_MUSIC];
 string audio::music_file[NUM_MUSIC];
 Mix_Chunk *audio::sounds[NUM_WAVES];
-bool audio::background_on;
+bool audio::background_on = false;
 int audio::current_background;
 bool audio::background_paused;
 int audio::audio_rate;
@@ -46,12 +46,7 @@ PyObject *audio::schedule_args = NULL;
 // callback to get notified when music finished playing
 void on_music_finished ()
 {
-    PyObject *song = Py_BuildValue ("(i)", audio::get_current_background ());
-    audio::unload_background (audio::get_current_background ());
-    
-    if (audio::is_schedule_activated ()) 
-        audio::get_schedule ().call_method ("music_finished", song);
-    Py_DECREF (song); 
+    audio::set_background_finished (true);
 }
 
 void audio::init (config *myconfig) {
@@ -200,6 +195,7 @@ void audio::unload_background(int slot) {
     
     if (current_background == slot)
         current_background = -1;
+        background_on = false;
 #ifdef OGG_MUSIC
     // delete loop[slot];
 #endif
@@ -323,6 +319,14 @@ void audio::set_schedule (string file, PyObject * args)
         Py_XINCREF (schedule_args); 
         schedule.create_instance ("schedules/audio/" + file, file, args);
     }
+}
+
+// run the audio control schedule
+void audio::run_schedule ()
+{
+    PyObject *song = Py_BuildValue ("(i)", current_background);
+    if (schedule_active) schedule.call_method ("music_finished", song);
+    Py_DECREF (song);
 }
 
 // save state
