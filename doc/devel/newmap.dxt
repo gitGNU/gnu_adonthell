@@ -82,7 +82,7 @@ class landmap
     vector<landsubmap*> submap;
     vector<mapcharacter*> mapchar;
     vector<mapobject*> mobj;
-}
+};
 \endverbatim
 
 Using such a structure, we have the following advantages:
@@ -129,14 +129,122 @@ So our structure for \e landsubmap will be:
 class landsubmap
 {
     vector<mapsquare_area> area;
-}
+};
 \endverbatim
 
 Although things have quite quite simple until now, I fear the next
-sections will give you a few more headache.
+sections will give you a little more headache.
 
 \subsection p10mapsquare_area The mapsquare_area class
 Serious matters starts now, as this class represents a bit more than
 arrays of things.
+
+First, it seems sensible that all areas on the map aren't necessarly
+the same size. Obviously, the ground will be larger than a bridge, so
+the different areas can be differently sized. That's why their
+position is precisely set by an \e offset, which sets which %mapsquare
+this area starts on. ONLY for the \e first %mapsquare_area (0 indexed)
+this offset parameter won't make sense, as others are placed
+relatively to this one. Also, the area indexed \e n must ALWAYS be
+higher than the one indexed \e n-1, for renderer performance reasons.
+
+%Mapsquare_areas will also have (excepted, once again, for the layer
+0) an altitude parameter. The layer will be drawn \e alt pixels higher
+than the ground layer, \e alt being the altitude of that layer. Also,
+having the altitude we can make characters fall from a layer to
+another and, why not, jump from a lower layer to an higher one if the
+%character can jump high enough.
+
+Apart from that, the %mapsquare_area will also contain a
+two-dimensional array of %mapsquares. Hang on for details about
+%mapsquares.
+
+\verbatim
+class mapsquare_area
+{
+    vector<vector<mapsquare>> area;
+
+    u_int16 xoffset;
+    u_int16 yoffset;
+    
+    u_int16 altitude;
+};
+\endverbatim
+
+\subsection p10mapsquare The mapsquare class
+Although this class just represents a basic square of a level of a
+map, it's structure is much more complex than what we've seen until
+now.
+
+A %mapsquare contains informations about the following things:
+<ul>
+<li>The %mapobjects that are on it. Their number is virtually unlimited.
+<li>The %mapcharacters that are on it. Unlimited number of %mapcharacters
+too.
+<li>The walkability of this square. Actually, this information is
+indirectly determined from the %mapobjects that are on it (as
+%mapobjects have their own walkability information).
+</ul>
+
+The easiest way to handle such freedom in the number of %mapobjects
+and %mapcharacters that can be placed on a %mapsquare is to use a
+dynamic structure, the best candidate being a linked list.
+
+That's at this level that we have to think about rendering
+issues. Actually, there is only one, but huge issue: having in mind
+that some %objects are totally flat (carpets) and that they must then
+be drawn BEFORE %characters, while others (tree, houses) have an
+"height" and therefore must be drawn before the %characters that are
+in front of them, and after the characters that are behind them, how
+can we correctly handle that without making things too much complex
+and eating CPU time finding out what to draw before what? Having the
+%data structure well organised can deadly accelerate things by having
+simplier algorithms, and that's what we'll try to do with the
+%mapsquare class.
+
+As we only have two particular cases with %mapobjects (flat ones and
+non-flat ones), let's separate their %storage in memory: we'll have one
+list (not especially linked, as you will see after) for flat %objects,
+and another one for non-flat %objects. That way we can easily draw flat
+%objects before all.
+
+<b>Handling flat %objects</b>
+
+So, we have our list of flat %objects for this %mapsquare. But even if
+these %objects are flat, some can be upper than others, for example two
+carpets that superimposed on each others. Which one to draw first, the
+red or the blue? The renderer will perform as follows: it will first
+draw the first element of each %mapsquare, then perform another pass
+to draw the second, and so on until all "layers" are done. This has
+the following consequences:
+<ul>
+<li>The renderer have to perform one pass per "layer" of flat
+%objects. This is the price for having such freedom in %objects
+placement. 
+<li>We can add an additionnal information to the %mapsquare_area,
+about the number of layers of flat %objects it has. That way, the
+renderer won't have to perform a pass for nothing when we have drawn
+all the layers.
+<li>We can't reasonnably use a linked list for these %objects, as the
+renderer will perform the layer 0 of all mapsquares, then the layer
+1, etc. We need a container that has constant access time. A vector
+seems to be the best candidate here, as anyway it's size won't be
+changed, or very occasionally, and the reallocations won't be too huge
+(actually, they will rather be very small ones).
+</ul>
+
+<b>Handling non-flat %objects</b>
+
+With non-flat %objects it is ok to use linked lists, and the renderer
+will only have to perform one pass to draw the entire thing, non-flat
+%objects and %mapcharacters, provided the linked lists are correctly
+organized. The details about this will be discussed into the renderer
+section.
+
+\section p10dyn Map dynamic: how to make things move correctly
+
+\subsection p10levchan Handling characters map level change
+
+\section p10renderer Renderer details
 
 */
