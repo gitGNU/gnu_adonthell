@@ -857,7 +857,7 @@ void mapobject::draw_editor()
 void mapobject::update_and_draw()
 {
   static u_int16 i;
-  for(i=0;i<screen::frames_to_do;i++) update_editor();
+  for(i=0;i<screen::frames_to_do();i++) update_editor();
   draw_editor();
 }
 
@@ -890,7 +890,7 @@ void mapobject::editor()
       static u_int16 i;
       input::update();
       resize_grid();
-      for(i=0;i<screen::frames_to_do;i++) update_editor_keys();
+      for(i=0;i<screen::frames_to_do();i++) update_editor_keys();
       update_and_draw();
       screen::show();
     }

@@ -53,7 +53,9 @@ void mapsquare_tile::draw(mapview * mv)
       rx=(mv->posx>mv->ctrx)?x-(mv->posx-mv->ctrx):x;
       ry=(mv->posy>mv->ctry)?y-(mv->posy-mv->ctry):y;
       mv->m_map->pattern[objnbr]->draw
-	(rx*MAPSQUARE_SIZE-mv->offx,ry*MAPSQUARE_SIZE-mv->offy,mv->da);
+	((rx*MAPSQUARE_SIZE-mv->offx)+mv->x,
+	 (ry*MAPSQUARE_SIZE-mv->offy)+mv->y,
+	 mv->da);
     }
   else
     base_tile->draw(mv);
@@ -698,14 +700,13 @@ void landmap::remove_obj_from_square(u_int16 smap,
 		it!=submap[smap]->land[i][j].tiles.end() && 
 		  *(it->base_tile)<*it;it++);
 	    submap[smap]->land[i][j].base_begin=it;
-	    list<mapsquare_tile>::iterator it2;
-	    //	    bool w=true;
-	    it2=submap[smap]->land[i][j].tiles.begin();
-	    while(it2!=submap[smap]->land[i][j].tiles.end())
-	      {
-		// Calculate if walkable must be set to true or false
-	      }
-	    
+	    /*	    list<mapsquare_tile>::iterator it2;
+		    bool w=true;
+		    it2=submap[smap]->land[i][j].tiles.begin();
+		    while(it2!=submap[smap]->land[i][j].tiles.end())
+		    {
+		    // Calculate if walkable must be set to true or false
+		    }*/	    
 	  }  
       }
 }
@@ -809,7 +810,7 @@ s_int8 landmap::delete_mapobject(u_int16 pos)
 	  submap[k]->land[i][j].base_begin=it;
 	}
   vector<string>::iterator itv=&objsrc[pos];
-  objsrc.insert(itv);
+  objsrc.erase(itv);
 #ifdef _DEBUG_
   cout << "Removed mapobject: " << nbr_of_patterns << " total in landmap.\n";
 #endif

@@ -76,6 +76,7 @@ class mapview
 
   void attach_map(landmap * m);
   void detach_map();
+  void set_screen_pos(u_int16 nx, u_int16 ny);
   s_int8 set_current_submap(u_int16 sm);
   s_int8 set_pos(u_int16 x, u_int16 y);
   void scroll_right();

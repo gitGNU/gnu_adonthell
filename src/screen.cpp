@@ -21,10 +21,10 @@
 #include "prefs.h"
 #include "input.h"
 
-u_int16 screen::width;
-u_int16 screen::height;
+u_int16 screen::l;
+u_int16 screen::h;
 u_int32 screen::SDL_flags=0;
-u_int8 screen::frames_to_do;
+u_int8 screen::ftd;
 u_int8 screen::bytes_per_pixel;
 u_int32 screen::trans;
 u_int32 screen::trans_pix;
@@ -34,7 +34,7 @@ SDL_Surface * screen::vis;
 const u_int32 screen::CYCLE_LENGTH = 13;
 
 
-void screen::set_video_mode(u_int16 w, u_int16 h, config * myconfig=NULL)
+void screen::set_video_mode(u_int16 nl, u_int16 nh, config * myconfig=NULL)
 {
   u_int8 bpp;
   SDL_flags |= SDL_HWSURFACE;
@@ -47,36 +47,36 @@ void screen::set_video_mode(u_int16 w, u_int16 h, config * myconfig=NULL)
   }
   
   atexit (SDL_Quit);
-  bpp = SDL_VideoModeOK(w, h, 16, SDL_flags);
+  bpp = SDL_VideoModeOK(nl, nh, 16, SDL_flags);
 
   switch (bpp)
     {
     case 0:
-      fprintf(stderr, "Video mode %dx%d unavailable. Exiting.. \n",w, h);
+      fprintf(stderr, "Video mode %dx%d unavailable. Exiting.. \n",nl, nh);
       exit (1);
       break;
     case 16:
-      printf ("Using 16bpp depth: %dx%d.\n",w,h);
+      printf ("Using 16bpp depth: %dx%d.\n",nl,nh);
       bytes_per_pixel = 2;
       trans=0xF81F;  
       break;
     case 24:
-      printf ("Using 24bpp depth: %dx%d.\n",w,h);
+      printf ("Using 24bpp depth: %dx%d.\n",nl,nh);
       bytes_per_pixel = 3;
       trans=0xFF00FF;  
       break;
     default:
-      printf ("Emulating 16bpp depth in %dbpp mode: %dx%d.\n",bpp,w,h);
+      printf ("Emulating 16bpp depth in %dbpp mode: %dx%d.\n",bpp,nl,nh);
       bpp=16;
       bytes_per_pixel = 2;
       trans=0xF81F;
       break;
     }
-  width=w;
-  height=h;
+  l=nl;
+  h=nh;
 
   // Set the video mode
-  vis=SDL_SetVideoMode(w, h, bpp, SDL_HWSURFACE | SDL_flags);
+  vis=SDL_SetVideoMode(nl, nh, bpp, SDL_HWSURFACE | SDL_flags);
   if (vis == NULL) 
     {
       fprintf (stderr, "error: %s\n", SDL_GetError ());
@@ -94,7 +94,7 @@ void screen::set_video_mode(u_int16 w, u_int16 h, config * myconfig=NULL)
 #else
   trans_pix=SDL_MapRGB(vis->format,0xFF,0x00,0xFF);
 #endif
-  frames_to_do=1;
+  ftd=1;
 }
 
 void screen::set_fullscreen(bool mode)
@@ -107,7 +107,7 @@ void screen::set_fullscreen(bool mode)
     {
       SDL_flags-=SDL_FULLSCREEN;
     }
-  vis=SDL_SetVideoMode(width,height,bytes_per_pixel*8,SDL_flags);
+  vis=SDL_SetVideoMode(l,h,bytes_per_pixel*8,SDL_flags);
 }
 
 bool screen::get_fullscreen()
@@ -133,8 +133,8 @@ void screen::show()
     SDL_Flip (vis);
 
     // How slow is our machine? :)
-    frames_to_do = timer2 / CYCLE_LENGTH;
-    if (frames_to_do > 20) frames_to_do = 20;
+    ftd = timer2 / CYCLE_LENGTH;
+    if (ftd > 20) ftd = 20;
 
     if ((SDL_GetModState()&KMOD_ALT)&&(input::is_pushed(SDLK_RETURN)))
     {
@@ -165,6 +165,10 @@ void screen::drawbox(u_int16 x, u_int16 y, u_int16 w, u_int16 h,
   SDL_FillRect(vis, &dr, color);
 }
 
+void screen::clear()
+{
+  drawbox(0,0,l,h,0);
+}
 
 void screen::makesquare(u_int16 px,u_int16 py, u_int16 fact)
 {
@@ -182,14 +186,4 @@ void screen::mouse_cursor_off()
 void screen::mouse_cursor_on()
 {
   SDL_ShowCursor(1);
-}
-
-u_int16 screen::get_width()
-{
-  return width;
-}
-
-u_int16 screen::get_height()
-{
-  return height;
 }

@@ -31,7 +31,7 @@ win_base::win_base(s_int16 tx,s_int16 ty,u_int16 tl,u_int16 th,win_theme * wth)
   draw_brightness_=false;
   type_obj_=WIN_OBJ_BASE;
   wb_father_=NULL;
-  level_trans_back_=180;
+  level_trans_back_=128;
   level_brightness_=200;
   mode_select_=WIN_SELECT_MODE_BORDER;
   border_size_=WIN_SIZE_NORMAL;

@@ -19,7 +19,7 @@ void mapview::init()
 {
   length=height=d_length=d_height=currentsubmap=posx=posy=0;
   m_map=NULL;
-  x=y=offx=offy=0;
+  x=y=offx=offy=ctrx=ctry=0;
 #ifdef _EDIT_
   currentobj=0;
   walkimg=new image(MAPSQUARE_SIZE, MAPSQUARE_SIZE);
@@ -76,6 +76,13 @@ void mapview::detach_map()
 #ifdef _EDIT_
   mapselect::resize(0,0);
 #endif
+}
+
+void mapview::set_screen_pos(u_int16 nx, u_int16 ny)
+{
+  x=nx;
+  y=ny;
+  if(da) da->move(x,y);
 }
 
 s_int8 mapview::set_current_submap(u_int16 sm)
@@ -152,7 +159,6 @@ void mapview::resize(u_int16 d_l, u_int16 d_h)
 #endif
 }
 
-
 void mapview::update()
 {
 #ifdef _EDIT_
@@ -168,9 +174,11 @@ void mapview::draw(u_int16 x, u_int16 y, drawing_area * da_opt=NULL)
   static landsubmap * l;
   if(!m_map) return;
 
+  set_screen_pos(x,y);
+
   l=m_map->submap[currentsubmap];
   if(!l->length || !l->height) return;
-  if(da) da->move(x,y);
+  //  if(da) da->move(x,y);
 
   i0=posx-ctrx;
   j0=posy-ctry;
@@ -867,7 +875,7 @@ void mapview::editor()
   while(!input::has_been_pushed(SDLK_ESCAPE))
     {
       input::update();
-      for(i=0;i<screen::frames_to_do;i++) 
+      for(i=0;i<screen::frames_to_do();i++) 
 	{
 	  update_editor_keys();
 	  update_editor();

@@ -12,7 +12,25 @@
    See the COPYING file for more details.
 */
 
+#include "input.h"
 #include "game.h"
+#include "landmap.h"
+#include "mapview.h"
+
+// This is nice but very long! `:/
+#include "win_types.h"
+#include "win_base.h"
+#include "win_font.h"
+#include "win_label.h"
+#include "win_write.h"
+#include "win_border.h"
+#include "win_image.h"
+#include "win_anim.h"
+#include "win_container.h"
+#include "win_select.h"
+#include "win_theme.h"
+#include "win_background.h"
+
 
 int main(int argc, char * argv[])
 {
@@ -25,20 +43,86 @@ int main(int argc, char * argv[])
     // All this map-loading should go somewhere else and the mapname should
     // come from the dynamic gamedata instead of the configuration file!
     // - Kai
-    /*
-    landmap * map1 = new landmap;
-    if (map1->load ("maptest.map"))
-    {
-        printf("Error loading map %s!\n", "maptest.map");
-        return 1;
-    }
 
-    map1->load_map_data();
-
-    // Set focus to the map
-    // game::engine = map1;
+    // Alright... a little map tour!
+    // We need a map, and a map view or we won't see anything!
+    landmap mymap;
+    mapview mview;
     
-    mapengine::map_engine(map1);
-    */
+    // Trying to load the map
+    if(mymap.load("smallmap.map"))
+      {
+	printf("Sorry, I can't load the map!\n");
+	exit(1);
+      }
+    
+    // The map view will display 16 squares horizontally and 12 vertically
+    // This is perfect for a 320x240 display, as 16*20=320 and 12*20=240
+    mview.resize(16,12);
+    // The map view will display "mymap"
+    mview.attach_map(&mymap);
+
+    // Now a little window tour!
+    win_font * font=new win_font(WIN_THEME_ELFE);
+    win_theme * theme=new win_theme(WIN_THEME_ELFE);
+    win_container * container=new win_container(50,11,150,80,theme);
+    win_label * label=new win_label(0,7,0,0,theme,font);
+    image im;
+    if(im.load_pnm("yeti.pnm"))
+      {
+	printf("Sorry, I can't load the cute Yeti image!\n");
+	exit(1);
+      }
+    im.set_mask(true);
+    win_image * img=new win_image(50,20,&im,theme);
+    label->set_text("Adonthell Powered By ");
+    label->set_auto_size(true);
+    container->add(label);
+    container->add(img);
+    container->set_justify(WIN_JUSTIFY_CENTER);
+    container->set_space_between_border(5);
+    container->set_border_visible(true);
+    container->set_background_visible(true);
+    container->set_visible_all(true);
+
+    // This is quite self-explicit...
+    while(1)
+      {
+	input::update();
+	if(input::has_been_pushed(SDLK_ESCAPE)) break;
+	if(input::is_pushed(SDLK_RIGHT)) mview.scroll_right();
+	if(input::is_pushed(SDLK_LEFT)) mview.scroll_left();
+	if(input::is_pushed(SDLK_UP)) mview.scroll_up();
+	if(input::is_pushed(SDLK_DOWN)) mview.scroll_down();
+	for(int i=0;i<screen::frames_to_do();i++)
+	  {
+	    mymap.update();
+	    container->update();
+	    // Updating the label position
+	    {
+	      static s_int8 xfac=1, yfac=1;
+	      if((container->x()+container->length()+10>=screen::length()) ||
+		 (container->x()<=10))
+		xfac=-xfac;
+	      
+     	      if((container->y()+container->height()+10>=screen::height()) ||
+		 (container->y()<=10))
+		yfac=-yfac;
+
+	      container->move(container->x()+xfac,container->y()+yfac);
+	    }
+	  }
+	screen::clear();
+	mview.draw(0,0);
+	// FIXME: there should be a draw(u_int16, u_int16) method to comply
+	// to the programming style. It would move the container then draw
+	// it.
+	container->draw();
+	screen::show();
+      }
+    // Cleaning up things...
+    delete container;
+    delete font;
+    delete theme;
     return 0;
 }
