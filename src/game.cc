@@ -20,7 +20,7 @@
 #include "game.h"
 #include "character.h"
 #include "quest.h"
-#include "mapengine.h"
+// #include "mapengine.h"
 
 #include "python_class.h"
  
@@ -153,14 +153,14 @@ void game::cleanup ()
 
 void game::init_data ()
 {
-    data::map_engine = new mapengine;
+    data::engine = new adonthell;
     data::the_player = NULL;
 }
 
 void game::cleanup_data () 
 {
-    delete data::map_engine;
-    data::map_engine = NULL;
+    delete data::engine;
+    data::engine = NULL;
 
     if (data::the_player)
     { 

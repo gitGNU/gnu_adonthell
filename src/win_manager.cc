@@ -1,5 +1,7 @@
 /*
-   (C) Copyright 2000 Joel Vennin
+   $Id$
+    
+   (C) Copyright 2000/2001 Joel Vennin
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -10,30 +12,69 @@
    See the COPYING file for more details
 */
 
+/** 
+ * @file win_theme.cc
+ *
+ * @author Joel Vennin
+ * @brief Implements the win_theme class.
+ */
+
 #include "types.h"
 #include "image.h"
 #include "win_types.h"
-#include "win_base.h"
 #include "win_manager.h"
 
-list<win_base*> win_manager::lmanage;
-win_base * win_manager::wc=NULL;
 
+// Pointer to the active window(s)
+win_manager* win_manager::active = NULL;
+// List of loaded themes
 hash_map<string, win_theme *> win_manager::theme;
+// List of loaded fonts
 hash_map<string, win_font *> win_manager::font; 
 
 using namespace std; 
 
 
+win_manager::win_manager ()
+{
+    // save a pointer to the parent window(s)
+    prev = active;
+    
+    // make the current window(s) active
+    active = this;
+    
+    // no window in focus at that point
+    wnd_focus = NULL;
+    
+    // we're not iterating over the window_list
+    current = wnd_list.end ();
+}
+
+win_manager::~win_manager ()
+{
+    // restore parent window(s)
+    active = prev;
+}
+
+// Close and delete all windows
+void win_manager::destroy()
+{
+    list<win_base *>::iterator i;
+    
+    for (i = wnd_list.begin(); i != wnd_list.end(); i++)
+        delete *i;
+  
+    wnd_list.clear ();
+    wnd_focus = NULL;
+}
+
 void win_manager::init () 
 {
 }
 
+// Delete all fonts and themes
 void win_manager::cleanup () 
 {
-    // Close all windows
-    destroy ();
-    
     // Cleaning up themes
     for (hash_map <string, win_theme *>::iterator it = theme.begin ();
          it != theme.end (); it++)
@@ -47,107 +88,105 @@ void win_manager::cleanup ()
     font.clear (); 
 }
 
-//add a container 
-void win_manager::add(win_base * tmp)
+// add a window 
+void win_manager::add (win_base *tmp)
 {
-    lmanage.push_back(tmp);
+    wnd_list.push_back (tmp);
 }
 
-void win_manager::add_after (win_base * toadd, win_base * after)
+/*
+bool win_manager::exist(win_base *tmp)
 {
-    for(list<win_base *>::iterator i=lmanage.begin();i!=lmanage.end();i++)
+    for (list<win_base *>::iterator i = wnd_list.begin ();
+        i != wnd_list.end(); i++)
+        if (*i == tmp) return true;
+
+    return false;
+}
+*/
+        
+// remove a window 
+void win_manager::remove (win_base *tmp)
+{
+    // if the window has focus take it away
+    if (tmp->is_focus ()) 
     {
-        if (*i == after) 
-        {
-            i++; 
-            lmanage.insert (i, toadd);
-            break; 
-        }
+        tmp->set_focus (false);
+        wnd_focus = NULL;
     }
-}
-
-bool win_manager::exist(win_base * tmp)
-{
-  for(list<win_base *>::iterator i=lmanage.begin();i!=lmanage.end();i++)
+    
+    // be careful if the iterator points to the element 
+    // we want to remove. This may happen if remove() is called
+    // from a window's update() method or from win_manager::update().
+    if (tmp == *current)
     {
-      if(*i==tmp) return true;
+        // make sure that the iterator remains valid
+        current--;
     }
-  return false;
+    
+    // remove it from the window list
+    wnd_list.remove (tmp);
+    
+    // if no window has the focus, give it to the topmost window
+    if (!wnd_focus) set_focus (wnd_list.back ());
 }
 
-//Remove base 
-void win_manager::remove(win_base * tmp)
+// draw all windows
+void win_manager::draw ()
 {
-  //if tmp has focus on, we set focus off and put ilm at nothing
-  if(tmp->is_focus()) 
-    {
-      tmp->set_focus(false);
-      wc=NULL;
-    }
-  lmanage.remove(tmp);
-  if (!wc) set_focus (lmanage.back ());
+    // first descent recursively down the list of parents 
+    if (prev != NULL) prev->draw ();
+  
+    // on the way up, draw every window
+    for (list<win_base *>::iterator i = wnd_list.begin();
+        i != wnd_list.end(); i++)
+        (*i)->draw ();
 }
 
-
-void win_manager::destroy()
-{
-  for(list<win_base *>::iterator i=lmanage.begin();i!=lmanage.end();i++)
-    delete *i;
-  lmanage.clear();
-  wc = NULL;
-}
-
-void win_manager::draw()
-{
-  for(list<win_base *>::iterator i=lmanage.begin();i!=lmanage.end();i++)
-      (*i)->draw();
-}
-
-
-void win_manager::input_update()
+// grab keyboard input
+void win_manager::input_update ()
 {  
-  if(wc) {wc->input_update();} 
+    // only the window with the focus may recieve input
+    if (wnd_focus) wnd_focus->input_update (); 
 }
 
-void win_manager::update()
+// update the state of the topmost window(s)
+void win_manager::update ()
 {
-    list<win_base *>::iterator i=lmanage.begin();
-    while (i!=lmanage.end())
-    {
-        if(!(*i)->update())
+    for (current = wnd_list.begin (); current != wnd_list.end (); current++)
+        // a window signals that it wants to be closed by returning 0 here
+        if (!(*current)->update ())
         {
-            if(*i==wc) wc=NULL;
+            // remove and delete it
+            win_base *tmp = *current;
             
-            if((*i)->is_focus()) 
-            {
-                (*i)->set_focus(false);
-                wc=NULL;
-            }
-            win_base * s = *i; 
-            i = lmanage.erase(i);
-            delete s; 
-            if (!wc) set_focus (lmanage.back ());
+            remove (tmp);
+            delete tmp;
         }
-        else i++; 
-    }
-    if (!wc) set_focus (lmanage.back ());
 }
 
-void win_manager::set_focus(win_base * tmp)
+// give the focus to a window 
+void win_manager::set_focus (win_base *tmp)
 {
-    if(!lmanage.empty())
+    // but only if there are any windows at all
+    if (!wnd_list.empty ())
     {
-        if(wc) wc->set_focus(false);
-        wc=tmp;
-        wc->set_focus(true);
+        // remove focus from the old window
+        if (wnd_focus) wnd_focus->set_focus (false);
+        
+        // and give it to the new one
+        wnd_focus = tmp;
+        wnd_focus->set_focus (true);
     }   
 }
 
+// load a theme from disk
 void win_manager::add_theme (string name)
 {
     theme[name] = new win_theme ((char *) name.c_str ()); 
 }
 
+// remove a theme
 bool win_manager::remove_theme (string name)
 {
     hash_map <string, win_theme *>::iterator it = theme.find (name);
@@ -158,9 +197,12 @@ bool win_manager::remove_theme (string name)
     return true; 
 }
 
+// return a pointer to a theme
 win_theme * win_manager::get_theme (string name)
 {
     hash_map <string, win_theme *>::iterator it = theme.find (name); 
+    
+    // try to load it if it's not in memory yet 
     if (it == theme.end ())
     {
         add_theme (name);
@@ -169,11 +211,13 @@ win_theme * win_manager::get_theme (string name)
     else return it->second; 
 }
 
+// load a font from disk
 void win_manager::add_font (string name)
 {
     font[name] = new win_font ((char *) name.c_str ());
 }
 
+// remove a font
 bool win_manager::remove_font (string name)
 {
     hash_map <string, win_font *>::iterator it = font.find (name);
@@ -184,9 +228,12 @@ bool win_manager::remove_font (string name)
     return true; 
 }
 
+// return a pointer to a font
 win_font * win_manager::get_font (string name)
 {
     hash_map <string, win_font *>::iterator it = font.find (name);
+    
+    // try to load the font if it's not in memory yet
     if (it == font.end ())
     {
         add_font (name);

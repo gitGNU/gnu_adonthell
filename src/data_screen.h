@@ -72,6 +72,18 @@ public:
      */ 
     bool update ();
 
+    /**
+     * Returns the player's action
+     *
+     * @return
+     *      @li true if a game has been loaded/saved
+     *      @li false if the action has been cancelled
+     */
+    bool get_result ()
+    {
+        return !aborted;
+    }
+    
 private:
     /** 
      * GUI initialisation.
@@ -97,14 +109,14 @@ private:
      */
     void save_preview (string);
 
-    win_font *font;                         // the font
-    win_theme *theme;                       // the theme
-    win_write *entry;                       // for entering a description of the game
-    win_select *image_list;                 // list of thumbnails
+    win_font *font;                 // the font
+    win_theme *theme;               // the theme
+    win_write *entry;               // for entering a description of the game
+    win_select *image_list;         // list of thumbnails
 
-    vector<win_write*> entry_list;          // list of game descriptions
-    int mode;                               // Whether we're saving or loading
-    bool quit;                              // Tells the window to close
+    vector<win_write*> entry_list;  // list of game descriptions
+    int mode;                       // Whether we're saving or loading
+    bool aborted;                   // Indicates whether action has been cancelled
 };
 
 #endif // DATA_SCREEN_H__

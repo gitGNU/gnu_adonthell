@@ -186,7 +186,8 @@ void config::parse_arguments (int argc, char * argv[])
         
         if (!found) 
         {
-            cerr << "Game " << argv[optind] << " can't be found.\n"; 
+            cerr << "Game '" << argv[optind] << "' can't be found.\n"
+                 << "Run '" << argv[0] << " -l' for a list of available games.\n"; 
             exit (1); 
         }
         
@@ -258,7 +259,6 @@ int config::read_adonthellrc ()
 {
     int n, i = 1;
     string s, fname = adonthellrc + "/adonthellrc";
-    //     config *c;
 
     // try to create that directory in case it dosn't exist
 #ifdef WIN32
@@ -325,4 +325,3 @@ int config::read_adonthellrc ()
          
     return 1;
 }
-

@@ -20,7 +20,7 @@
 
 u_int32 gametime::timer1;
 u_int32 gametime::timer2;
-u_int8 gametime::ftd = 0;
+u_int8 gametime::fts = 0;
 bool gametime::running = false; 
 
 NEW_EVENT(time_event)
@@ -30,7 +30,7 @@ gametime::gametime (u_int32 start, float ratio)
     ticks = 0;
     time = start;
     
-    ftd = 0; 
+    fts = 0; 
     timer1 = 0;
     timer2 = 0;
     
@@ -57,31 +57,26 @@ void gametime::tick (u_int32 val)
     }
 }
 
-
+// Synchronize the game's speed to the machine it's running on.
 void gametime::update () 
 {
-    static u_int16 frame_rate = 1000 / 50;
-    
-    // Syncronize the game's speed to the machine it's running on.
     while (1)
     {
         timer2 = SDL_GetTicks () - timer1;
         
-        if (timer2 >= frame_rate)
-            break;
-        else
-            //             if (timer2 < (u_int32) (frame_rate - 3))
-        {
-            SDL_Delay (3);
-        }
+        // if the mainloop was performed faster than one frame
+        // should take, we sleep for the time remaining
+        if (timer2 >= CYCLE_LENGTH) break;
+        else SDL_Delay (3);
     }
     
     timer1 = SDL_GetTicks () - (timer2 % CYCLE_LENGTH);
     
-    // Calculate the number of frames to perform.
-    ftd = timer2 / CYCLE_LENGTH;
-    if (ftd > FTD_LIMIT)
-        ftd = FTD_LIMIT;
+    // Calculate the number of frames to skip (if the mainloop
+    // takes longer than allowed, we drop frames (up to a certain
+    // limit) to keep the game's speed constant.)
+    fts = timer2 / CYCLE_LENGTH;
+    if (fts > FTS_LIMIT) fts = FTS_LIMIT;
 }
 
 time_event::time_event ()

@@ -108,8 +108,11 @@ bool base_map_event::load (igzstream& f)
     map << f;
 
     s << f;
-    if (s != "") 
-        c = (mapcharacter*) data::characters[s.c_str ()];
+    if (s != "")
+    {
+        if (s == "Player") c = data::the_player;
+        else c = (mapcharacter*) data::characters[s.c_str ()];
+    }
     else c = NULL; 
     
     event::get_script_state (f); 
@@ -117,7 +120,7 @@ bool base_map_event::load (igzstream& f)
     return true;
 }
 
-// Save enter_event to file
+// Save map event to file
 void base_map_event::save (ogzstream& out) const
 {
     type >> out;
@@ -126,7 +129,11 @@ void base_map_event::save (ogzstream& out) const
     y >> out;
     dir >> out;
     map >> out;
-    if (c) c->get_name () >> out;
+    if (c)
+    {
+        if (c != data::the_player) c->get_name () >> out;
+        else "Player" >> out;
+    }
     else 
     {
         string s = ""; 
@@ -139,7 +146,7 @@ void base_map_event::save (ogzstream& out) const
 landmap::landmap () : event_list () 
 {
     // doing this here means some slight overhead, but at least
-    // its save and we don't have additional dependencies.
+    // its safe and we don't have additional dependencies.
     REGISTER_EVENT (ENTER_EVENT, enter_event)
     REGISTER_EVENT (LEAVE_EVENT, leave_event) 
     REGISTER_EVENT (ACTION_EVENT, action_event) 
@@ -323,12 +330,47 @@ s_int8 landmap::save (string fname)
 
 s_int8 landmap::get_state (igzstream& file)
 {
-    return event_list::load (file); 
+    u_int16 nbr_of;
+    string name;
+    
+    // try to load event list
+    if (!event_list::load (file))
+        return false;
+    
+    // Load the mapcharacters
+    nbr_of << file; 
+
+    for (u_int16 i = 0; i < nbr_of; i++)
+    {
+        name << file;
+        mapcharacter *mc = (mapcharacter *) data::characters[name.c_str ()];
+        
+        mc->set_map (this);
+        mc->get_state (file);
+    }
+
+    return true;    
 }
 
 s_int8 landmap::put_state (ogzstream& file) const
 {
+    u_int16 nbr_of = nbr_of_mapcharacters ();
+    string name;
+    
+    // save all events attached to this map
     event_list::save (file); 
+    
+    // Save the mapcharacters and their status
+    nbr_of >> file; 
+
+    for (u_int16 i = 0; i < nbr_of; i++)
+    {
+        mapcharacter *mc = mapchar[i]; 
+        name = mc->get_name ();
+        name >> file; 
+        mc->put_state (file);
+    }
+    
     return 0; 
 }
 

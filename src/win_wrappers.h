@@ -8,8 +8,9 @@
    %include "win_image.h"
    %include "win_scrolled.h"
    %include "win_select.h"
-   %include "win_manager.h"
-*/ 
+*/
+%include "win_manager.h"
+ 
 
 class win_font{
 
@@ -686,48 +687,6 @@ public:
   void pack(); 
   void set_auto_refresh(bool b);   
 }; 
-
- 
-class win_manager
-{
- public:
-  static void init ();
-  
-  static void cleanup ();
-  
-  static void add(win_base *);
-
-  static void add_after (win_base *, win_base *);
-    
-  static bool exist(win_base *);
-  
-  static void remove(win_base *);
-  
-  static void update();
-  
-  static void input_update();
-  
-  static void draw();
-  
-  static void set_focus(win_base*);
-  
-  static void destroy();
-
-  static void add_theme (string name); 
-  static bool remove_theme (string name); 
-  static win_theme * get_theme (string name); 
-  static void add_font (string name); 
-  static bool remove_font (string name); 
-  static win_font * get_font (string name); 
-
- private:
-  
-  static list<win_base *> lmanage;
-  //static list<win_container *> ::iterator ilm;
-  static win_base * wc;
-};
-
-
 
 class win_scrollbar
 {

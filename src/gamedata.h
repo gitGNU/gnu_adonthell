@@ -33,7 +33,7 @@
 
 #include "quest.h"
 #include "character.h"
-#include "mapengine.h"
+#include "adonthell.h"
 
 /**
  * Contains all the attributes related to a saved %game and the
@@ -326,14 +326,14 @@ public:
     }
 
     /** 
-     * Returns a pointer to the global mapengine.
+     * Returns a pointer to the global game engine.
      * 
      * 
-     * @return Pointer to the global mapengine.
+     * @return Pointer to the global game engine.
      */
-    static mapengine* map_engine ()
+    static adonthell* engine ()
     {
-        return data::map_engine;
+        return data::engine;
     }
 
 private:

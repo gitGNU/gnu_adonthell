@@ -32,20 +32,20 @@
 #include "input.h"
 #include "window.h"
 #include "data_screen.h"
-#include "mapengine.h"
+#include "adonthell.h"
 #include "gametime.h"
 #include "win_manager.h"
 
 data_screen::data_screen (int m)
 {
     mode = m;
-    quit = false;
+    aborted = false;
 
     entry = NULL;
 
     //Init Position and Size
-    win_container::move(30,15);
-    win_container::resize(260,210);
+    win_container::move (30, 15);
+    win_container::resize (260, 210);
     
     // Create GUI
     font = win_manager::get_font ("original");
@@ -96,10 +96,6 @@ data_screen::data_screen (int m)
 
 data_screen::~data_screen ()
 {
-    gametime::start_action (); 
-
-    data::map_engine->draw (0, 0);
-    data::map_engine->fade_in ();
 }
 
 void data_screen::init ()
@@ -220,10 +216,13 @@ void data_screen::init ()
 
 bool data_screen::update ()
 {
-    if (!win_container::update() || input::has_been_pushed (SDLK_ESCAPE)) 
-        return false;
-  
-    return !quit;
+    if (!win_container::update() || input::has_been_pushed (SDLK_ESCAPE))
+    {
+        aborted = true;
+        data::engine->main_quit ();
+    }
+    
+    return true;
 }
 
 // Select a game
@@ -234,11 +233,9 @@ void data_screen::on_select ()
     // loading
     if (mode == LOAD_SCREEN)
     {
-        data::map_engine->fade_out ();
-
+        data::engine->fade_out ();
         gamedata::load (pos);
-        set_return_code (1);
-        quit = true;
+        data::engine->main_quit ();
     }
     // saving
     else
@@ -276,9 +273,8 @@ void data_screen::on_save ()
         filepath += "/preview.pnm";
         save_preview (filepath);
     }
-
-    set_return_code (1);
-    quit = true;
+    
+    data::engine->main_quit ();
 }
 
 // Save the small thumbnail image
@@ -288,8 +284,8 @@ void data_screen::save_preview (string path)
     image temp (da.length (), da.height());
     image preview (72, 54);
 
-    mapview *view = data::map_engine->get_mapview ();
-    mapsquare_area *area = data::map_engine->get_landmap ()->get_submap
+    mapview *view = data::engine->get_mapview ();
+    mapsquare_area *area = data::engine->get_landmap ()->get_submap
         (data::the_player->submap ());
 
     u_int16 offx = 0;
@@ -320,7 +316,7 @@ void data_screen::save_preview (string path)
     else if (y - height < 0) y = 0;
     else y = height - y;
 
-    data::map_engine->draw (x, y, &da, &temp);
+    data::engine->draw (x, y, &da, &temp);
     preview.zoom (temp); 
     preview.save_pnm (path);     
 }

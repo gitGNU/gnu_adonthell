@@ -185,7 +185,7 @@ bool gamedata::load_mapengine (u_int32 pos)
     if (!fileops::get_version (in, 1, 1, filepath))
         return false;
 
-    if (!data::map_engine->get_state(in))
+    if (!data::engine->get_state(in))
     {
         cerr << "Couldn't load \"" << filepath << " - stopping\n" << endl;
         return false;
@@ -334,7 +334,7 @@ bool gamedata::save (u_int32 pos, string desc)
     }
 
     fileops::put_version (file, 1);
-    data::map_engine->put_state(file);
+    data::engine->put_state(file);
     file.close (); 
 
     // save gamedata

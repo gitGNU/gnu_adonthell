@@ -18,19 +18,24 @@
 #include "event.h"
 
 
-/** The %game slows down if there are more than FTD_LIMIT numbers of frames
- *  to calculate before displaying, in which case it calculates exactly
- *  FTD_LIMIT frames.
- */ 
-#define FTD_LIMIT 100
-
 /**
- * Length of a %game cycle, in milliseconds.
- * Decrease it to speed up the %game, increase it
- * to slow the %game down.
+ * Length of a %game cycle, in milliseconds. Decrease it to speed up
+ * the %game, increase it to slow the %game down.
+ * This constant implicitly defines the maximum number of frames per 
+ * second (FPS): FPS = 1000 / CYCLE_LENGTH.
  */ 
-#define CYCLE_LENGTH 13
+#define CYCLE_LENGTH 20
 
+/** 
+ * Defines the maximum number of frames to skip in order to keep the %game's
+ * speed constant on slow machines. If updating the %game state and
+ * drawing everything on %screen takes longer than CYCLE_LENGTH, we
+ * skip frames so that the correct number of updates can be performed,
+ * thus keeping the speed constant. However, we can't skip too many
+ * frames, since that would perform in jerky animations and eventually
+ * render the %game unplayable.
+ */ 
+#define FTS_LIMIT 20
 
 class gametime
 {
@@ -40,7 +45,7 @@ public:
 
     static void start_action ()
     {
-        ftd = 1;
+        fts = 0;
         running = true; 
     }
     
@@ -50,16 +55,31 @@ public:
     }
 
     /** 
-     * Returns the number of frames that must be calculated before
-     * displaying the %game.
+     * Returns the number of updates to perform before drawing
+     * the next frame. That is, it returns the number of frames to skip.
+     * If the box Adonthell runs on is sufficiently fast, this number
+     * will be 0. On slower machines, it can be as high as FTS_LIMIT.   
      * 
-     * @return number of frames to calculate before displaying the %game.
+     * @return number of updates to perform before drawing a frame.
+     * @see FTS_LIMIT
      */ 
-    static u_int8 frames_to_do ()
+    static u_int8 frames_to_skip ()
     {
-        return ftd;
+        return fts;
     }
 
+    /**
+      * Call this after each run of the main loop to sync the %game's
+      * speed to the machine it is running on. On faster machines it
+      * delays the execution and for slower boxes it calculates the
+      * number of frames to skip. If the engine should do 50 frames per
+      * second, for example, but the main loop takes 40ms to perform,
+      * every second frame will be skipped to keep the %game' speed
+      * constant.
+      * It also updates the internal clock.
+      * 
+      * @see frames_to_skip ()
+      */
     static void update (); 
     
 private:
@@ -69,12 +89,11 @@ private:
 
     static bool running; 
     
-    /// Frames to do.
-    static u_int8 ftd; 
+    // Frames to skip.
+    static u_int8 fts; 
     
-    /// Timers used to calculate the delay between 2 show () calls.
+    // Timers used to calculate the delay between 2 update() calls.
     static u_int32 timer1, timer2;
-
 };
 
 // To notify at a certain time
