@@ -18,11 +18,11 @@
 #include "types.h"
 #include "SDL_mixer.h"
 #include "prefs.h"
-#include "audio_loop.h"
+// #include "audio_loop.h"
 
 // We'll only load five waves into memory
 #define NUM_WAVES 5
-// We'll only load three .it files into memory
+// We'll only load three .ogg files into memory
 #define NUM_MUSIC 3
 // We can play four SFX at once
 #define NUM_CHANNELS 4
@@ -80,13 +80,13 @@ public:
     static bool is_initialized() { return audio_initialized; }
 
 #ifdef OGG_MUSIC
-    static loop_info *loop[NUM_MUSIC];
+    // static loop_info *loop[NUM_MUSIC];
 
-    static int get_loop_start() { return loop[current_background]->start; }
-    static int get_loop_end() { return loop[current_background]->end; }
-    static int get_start_page_pcm() { return loop[current_background]->start_page_pcm; }
-    static int get_start_page_raw() { return loop[current_background]->start_page_raw; }
-    static OggVorbis_File* get_vorbisfile();
+    // static int get_loop_start() { return loop[current_background]->start; }
+    // static int get_loop_end() { return loop[current_background]->end; }
+    // static int get_start_page_pcm() { return loop[current_background]->start_page_pcm; }
+    // static int get_start_page_raw() { return loop[current_background]->start_page_raw; }
+    // static OggVorbis_File* get_vorbisfile();
 #endif
 };
 

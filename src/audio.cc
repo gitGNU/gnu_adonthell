@@ -17,14 +17,14 @@
 #include <stdio.h>
 #include "SDL.h"
 #include "audio.h"
-#include "audio_loop.h"
+// #include "audio_loop.h"
 
 bool audio::audio_initialized=false;
 
 int audio::background_volume;
 int audio::effects_volume;
 #ifdef OGG_MUSIC
-loop_info *audio::loop[NUM_MUSIC];
+// loop_info *audio::loop[NUM_MUSIC];
 #endif
 Mix_Music *audio::music[NUM_MUSIC];
 Mix_Chunk *audio::sounds[NUM_WAVES];
@@ -156,10 +156,10 @@ int audio::load_background(int slot, char *filename) {
 
 #ifdef OGG_MUSIC
   // read loop points and ...
-  loop[slot] = new loop_info (&music[slot]->ogg_data.ogg->vf);
+  // loop[slot] = new loop_info (&music[slot]->ogg_data.ogg->vf);
   
   // ... enable looping
-  music[slot]->ogg_data.ogg->vf.callbacks.read_func = &ogg_read_callback;
+  // music[slot]->ogg_data.ogg->vf.callbacks.read_func = &ogg_read_callback;
 #endif
   return(0);
 }
@@ -169,7 +169,7 @@ void audio::unload_background(int slot) {
     Mix_FreeMusic(music[slot]);
     music[slot] = NULL;
 #ifdef OGG_MUSIC
-    delete loop[slot];
+    // delete loop[slot];
 #endif
   }
 }
@@ -248,7 +248,7 @@ void audio::fade_out_background(int time) {
   if (background_on == true) {
     Mix_FadeOutMusic(time);
 #ifdef OGG_MUSIC
-    music[current_background]->ogg_data.ogg->vf.callbacks.read_func = &fread_wrap;
+    // music[current_background]->ogg_data.ogg->vf.callbacks.read_func = &fread_wrap;
 #endif
     background_on = false;
     current_background = -1;
@@ -270,8 +270,8 @@ void audio::change_background(int slot, int time) {
 }
 
 #ifdef OGG_MUSIC
-OggVorbis_File* audio::get_vorbisfile ()
-{
-    return &music[current_background]->ogg_data.ogg->vf;
-}
+// OggVorbis_File* audio::get_vorbisfile ()
+// {
+//     return &music[current_background]->ogg_data.ogg->vf;
+// }
 #endif

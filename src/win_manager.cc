@@ -121,7 +121,7 @@ void win_manager::remove (win_base *tmp)
     if (tmp == *current)
     {
         // make sure that the iterator remains valid
-        current--;
+        current++;
     }
     
     // remove it from the window list
@@ -138,7 +138,7 @@ void win_manager::draw ()
     if (prev != NULL) prev->draw ();
   
     // on the way up, draw every window
-    for (list<win_base *>::iterator i = wnd_list.begin();
+    for (list<win_base *>::iterator i = wnd_list.begin ();
         i != wnd_list.end(); i++)
         (*i)->draw ();
 }
@@ -153,7 +153,7 @@ void win_manager::input_update ()
 // update the state of the topmost window(s)
 void win_manager::update ()
 {
-    for (current = wnd_list.begin (); current != wnd_list.end (); current++)
+    for (current = wnd_list.begin (); current != wnd_list.end ();)
         // a window signals that it wants to be closed by returning 0 here
         if (!(*current)->update ())
         {
@@ -163,6 +163,7 @@ void win_manager::update ()
             remove (tmp);
             delete tmp;
         }
+        else current++;
 }
 
 // give the focus to a window 

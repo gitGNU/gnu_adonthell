@@ -16,7 +16,7 @@ CPPFLAGS += $(SDL_DEFS) $(OGG_DEFS) $(SDL_CFLAGS) $(OGG_CFLAGS) $(PY_CFLAGS)
 
 noinst_LIBRARIES = libadonthell.a
 
-libadonthell_a_SOURCES = adonthell.cc animation.cc audio.cc audio_loop.cc \
+libadonthell_a_SOURCES = adonthell.cc animation.cc audio.cc \
 character_base.cc character.cc gamedata.cc data_screen.cc dialog.cc \
 dialog_screen.cc drawable.cc drawing_area.cc event.cc fileops.cc game.cc \
 gametime.cc image.cc input.cc landmap.cc lex.prefs.cc \
@@ -27,7 +27,7 @@ screen.cc surface.cc storage.cc text_bubble.cc win_background.cc win_base.cc win
 win_container.cc win_font.cc win_keys.cc\
 win_manager.cc win_scrollbar.cc win_scroll.cc win_select.cc win_theme.cc \
 label.cc  label_input.cc win_event.cc yarg.cc \
-adonthell.h animation.h audio.h audio_loop.h callback.h py_callback.h \
+adonthell.h animation.h audio.h callback.h py_callback.h \
 character_base.h character.h gamedata.h data_screen.h dialog.h dialog_screen.h \
 drawable.h drawing_area.h event.h fileops.h game.h gametime.h image.h input.h inventory.h \
 item.h landmap.h mapsquare.h mapsquare_walkable.h mapcharacter.h mapobject.h mapview.h \
