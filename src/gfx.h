@@ -1,10 +1,6 @@
 #ifndef _gfx_h
 #define _gfx_h
 
-#ifdef USE_GGI
-#include "ggi.h"
-#endif
-
 #ifdef SDL
 #include "types.h"
 #include <SDL/SDL.h>
@@ -21,9 +17,6 @@ class screen
   static u_int8 sizefactor;
   static u_int32 trans;
  public:
-#ifdef USE_GGI
-  static ggi_visual_t vis;
-#endif
 
 #ifdef SDL
   static SDL_Surface * vis;
@@ -48,38 +41,9 @@ class image
 {
   u_int16 lenght, height;
   static u_int8 bytes_per_pixel, sizefactor;
-#ifdef USE_GGI
-  void * data;
-  static void * fxbuffer;
-  static void * maskbuffer;
-  static void * getbuffer;
-#endif
 
 #ifdef SDL
   SDL_Surface * data;
-#endif
-
-#ifdef USE_GGI
-  // these private functions are not intented to be used directly, excepted
-  // perhaps in very specific cases
-  void getscr(u_int16 x, u_int16 y);
-  // get a part of the current screen and put it into getbuffer
-  // the size of the part is the same than the image
-  void getscr_size(u_int16 x, u_int16 y, u_int16 w, u_int16 h);
-  // get a part of the current screen of specified size and put it into 
-  // getbuffer  
-  void mask(void * source=NULL);
-  // mask the image with getbuffer and put the result into maskbuffer 
-  // if source is not specified, it will by default point to the data of
-  // the image
-  void part(u_int16 bw, u_int16 bh, u_int16 xo, u_int16 yo, void * dest=NULL);
-  // cut a part of the image and put it into dest
-  // if dest is not specified, it will by default point getbuffer 
- void trans(u_int8 alpha, void * source=NULL);
-  // apply a translucency on the image with getbuffer, put the result into
-  // fxbuffer
-  // if source is not specified, it will by default point to the data of 
-  // the image
 #endif
 
  public:
