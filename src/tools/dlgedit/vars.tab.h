@@ -14,6 +14,7 @@
 #define	_NEG	268
 #define	_OR	269
 #define	_AND	270
+#define	_RAND	271
 
 
 extern YYSTYPE varslval;

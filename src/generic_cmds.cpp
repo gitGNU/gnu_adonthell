@@ -14,6 +14,7 @@
 
 #include "generic_cmds.h"
 #include "storage.h"
+#include "yarg.h"
 #include <string.h>
 
 binary_cmd::binary_cmd ()
@@ -210,10 +211,10 @@ void binary_cmd::write (FILE *out)
 // write command in human readable form
 void binary_cmd::ascii (ofstream &out)
 {
-    char* ops[] = { "LET", "ADD", "SUB", "MUL", "DIV",
-                    "EQ ", "NEQ", "LT ", "LEQ", "GT ", "GEQ", "AND", "OR " };
+    char* ops[] = { "LET ", "ADD ", "SUB ", "MUL ", "DIV ", "EQ  ", "NEQ ",
+                    "LT  ", "LEQ ", "GT  ", "GEQ ", "AND ", "OR  ", "RAND" };
 
-    out << ops[type - LET] << "     ";
+    out << ops[type - LET] << "    ";
 
     if (c_param1 != NULL) out << param1_location << "." << c_param1 << " ";
     else out << i_param1 << " ";
@@ -338,6 +339,17 @@ s_int32 or_cmd::run (u_int32 &PC, void *data)
     return 1;
 }
 
+// target = random number out of interval (param1, param2)
+s_int32 rand_cmd::run (u_int32 &PC, void *data)
+{
+    read_game_state ();
+
+    yarg rand (" ", i_param1, i_param2);
+    rand.randomize ();
+
+    objects::get (target_location)->set (target, rand.get (5));
+    return 1;
+}
 
 // Read the commands arguments from the buffer
 void jmp_cmd::init (s_int32 *buffer, u_int32 &i, void *data)

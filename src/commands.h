@@ -55,6 +55,9 @@ enum
     JMP = 20,       // JMP <offset>                 PC += offset
     BRANCH = 21,    // BRANCH <bool> <offset>       bool == true ? PC++ : PC += offset
 
+    // Functions
+    RAND = 22,      // RAND <min> <max> <id>        id = random number out of [min; max]
+
     // Those five are used during parsing only. They are defined here to avoid
     // conflicts with other commands, but are only used internally by the 
     // dialogue compiler.

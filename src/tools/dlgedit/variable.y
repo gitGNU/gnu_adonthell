@@ -50,7 +50,7 @@ vector<command*> v_scrpt;
 %token _NUM
 %token '(' ')'
 %token '{' '}'
-%token ';'
+%token ';' ','
 %nonassoc _EQ _NEQ '<' '>' _LEQ _GEQ
 %right '='
 %left '+' '-'
@@ -58,6 +58,7 @@ vector<command*> v_scrpt;
 %left _NEG
 %left _OR
 %left _AND
+%right _RAND
 
 %start input
 
@@ -89,6 +90,7 @@ expr:     val                       { $$ = $1; }
         | expr '*' expr             { $$ = string(1, MUL) + $1 + $3; }
         | expr '/' expr             { $$ = string(1, DIV) + $1 + $3; }       
         | '(' expr ')'              { $$ = $2; }
+        | _RAND '(' expr ',' expr ')' { $$ = string(1, RAND) + $3 + $5; }
 ;
 
 val:      _NUM                      { $$ = NUM; vars.push_back ($1); }

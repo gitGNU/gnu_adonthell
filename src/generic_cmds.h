@@ -232,4 +232,11 @@ public:
     s_int32 run (u_int32&, void*);
 };
 
+// target = random number out of interval (param1, param2)
+class rand_cmd : public binary_cmd
+{
+public:
+    s_int32 run (u_int32&, void*);
+};
+
 #endif // __GENERIC_CMDS_H__

@@ -46,6 +46,7 @@ NEW_CMD (jmp_cmd)
 NEW_CMD (branch_cmd)
 NEW_CMD (switch_dlg_cmd)
 NEW_CMD (loop_cmd)
+NEW_CMD (rand_cmd)
 
 // Add the registration of your commands to this function
 void init_interpreter ()
@@ -68,6 +69,7 @@ void init_interpreter ()
     REGISTER_CMD (LET, let_cmd)
     REGISTER_CMD (JMP, jmp_cmd)
     REGISTER_CMD (BRANCH, branch_cmd)
+    REGISTER_CMD (RAND, rand_cmd)
 
     // Dialoge Engine Commands:
     REGISTER_CMD (IMPORT, import_cmd)

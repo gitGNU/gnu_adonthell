@@ -96,6 +96,7 @@ void create_code (string &prog, vector<command*> &script)
             case SUB:
             case MUL:
             case DIV:
+            case RAND:
             {
                 // if both arguments are registers, one of them is no longer needed afterwards
                 if (prog[i+1] == char(REG) && prog[i+2] == char(REG)) regs--;

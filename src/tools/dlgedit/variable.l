@@ -36,6 +36,7 @@ num    {digit}+
 
 if          { return _IF; }
 else        { return _ELSE; }
+rand        { return _RAND; }
 {ident}     { varslval = varstext; return _ID; }
 {num}       { varslval = varstext; return _NUM; }
 "++"        { return _INC; }
@@ -58,5 +59,6 @@ else        { return _ELSE; }
 "&&"        { return _AND; }
 "||"        { return _OR; }
 ";"         { return ';'; }
+","         { return ','; }
 
 .           { printf("Illegal character.\n"); return yytext[0]; }
