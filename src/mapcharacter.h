@@ -39,7 +39,6 @@ class mapcharacter
   u_int8 mapcharnbr;
 
  public:
-  image *portrait;
   image * frame;
   u_int16 currentframe;
   character *data;

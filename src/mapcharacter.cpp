@@ -25,7 +25,6 @@
 #include "map.h"
 #include "event.h"
 #include "game.h"
-#include "py_inc.h"
 #include "mapcharacter.h"
 
 mapcharacter::mapcharacter ()
@@ -57,7 +56,6 @@ mapcharacter::~mapcharacter ()
     free (frame);
     frame = NULL;
     nbr_of_frames = 0;
-    delete portrait;
 }
 
 s_int8 mapcharacter::get (SDL_RWops * file)

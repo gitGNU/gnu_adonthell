@@ -67,7 +67,9 @@ class landmap : public game_engine
   lstr * mapcharname;
   char toplayername[100];
   u_int8 status; /* Quitting? */
-  
+
+    character* is_NPC_near (u_int8);  // Is a NPC next to the player?
+      
  public:
   mappattern * pattern;
   //  window win;          /* status window */

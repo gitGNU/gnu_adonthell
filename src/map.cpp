@@ -356,6 +356,8 @@ void landmap::update_all_characters()
 
 void landmap::update_keyboard()
 {
+    static u_int8 dir = 0;
+    
   if(status==MAP_STATUS_FADE) return;
   if (input::is_pushed(SDLK_ESCAPE)) {
     status=MAP_STATUS_QUIT;
@@ -374,24 +376,50 @@ void landmap::update_keyboard()
      (heroe.get_movtype()==DOWN&&!input::is_pushed(SDLK_DOWN)))
     heroe.set_movtype(0);
   if(input::is_pushed(SDLK_RIGHT)&&heroe.get_movtype()==0)
+  {
     heroe.set_movtype(RIGHT);
+    dir = RIGHT;
+  }
   if(input::is_pushed(SDLK_LEFT)&&heroe.get_movtype()==0)
+  {
     heroe.set_movtype(LEFT);
+    dir = LEFT;
+  }
   if(input::is_pushed(SDLK_UP)&&heroe.get_movtype()==0)
+  {
     heroe.set_movtype(UP);
+    dir = UP;
+  }
   if(input::is_pushed(SDLK_DOWN)&&heroe.get_movtype()==0)
+  {
     heroe.set_movtype(DOWN);
-
-  /* HACK -- Test for inventory */
-  if (input::is_pushed(SDLK_i))
-	  test_inventory(this);
-
+    dir = DOWN;
+  }
+  
     if (input::has_been_pushed(SDLK_SPACE))
     {
         // when starting a dialogue
-        // game::engine = new dialog_engine (&othermapchar[0], this);
-        ((npc*) othermapchar[0].data)->talk ();
+        npc *mynpc = (npc *) is_NPC_near (dir);
+        if (mynpc) mynpc->talk ();
     }
+}
+
+character* landmap::is_NPC_near (u_int8 dir)
+{
+    u_int16 i;
+    u_int16 x = heroe.data->posx;
+    u_int16 y = heroe.data->posy;
+
+    if (dir == RIGHT) x++;
+    if (dir == LEFT) x--;
+    if (dir == DOWN) y++;
+    if (dir == UP) y--;
+
+    for (i = 0; i <  nbr_of_mapcharacters; i++)
+        if (othermapchar[i].data->posx == x && othermapchar[i].data->posy == y)
+            return othermapchar[i].data;
+
+    return NULL;
 }
 
 bool landmap::is_ready()
