@@ -31,7 +31,10 @@ map_event::map_event () : event ()
 // compare two map events
 bool map_event::equals (const event* e)
 {
-    // we know that we've got an enter_event :)
+    // if our event is paused, this will prevent it from getting executed
+    if (Paused) return false;
+    
+    // we know that we've got a map_event :)
     map_event *t = (map_event *) e;
 
     if (submap != -1 && t->submap != submap) return false;

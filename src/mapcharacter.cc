@@ -595,6 +595,18 @@ void mapcharacter::time_callback_string (string delay, string cb, PyObject *args
     Py_XDECREF (callback);
 }
 
+void mapcharacter::pause ()
+{
+    for (vector<event*>::iterator i = Events.begin (); i != Events.end (); i++)
+        (*i)->pause ();
+}
+
+void mapcharacter::resume ()
+{
+    for (vector<event*>::iterator i = Events.begin (); i != Events.end (); i++)
+        (*i)->resume ();
+}
+
 bool mapcharacter::follow_path () 
 {
     //  If a movment is engaged, let it finish first.
@@ -804,7 +816,7 @@ bool mapcharacter::update ()
         schedule.run ();
 
     // if we have a goal, then go there!
-    if (get_id () != "Player" && !goal_reached ()) 
+    if (!goal_reached ()) 
         follow_path ();
 
     if (previous_move != NO_MOVE && previous_move != current_move) 

@@ -27,6 +27,7 @@ time_event::time_event (const string & time, bool absolute) : event ()
 {
     Repeat = 1;
     Type = TIME_EVENT;
+    Absolute = absolute;
     Time = gamedate::parse_time (time);
     if (!absolute) Time += gamedate::time ();
 }
@@ -72,6 +73,24 @@ s_int32 time_event::execute (const event * evnt)
     return do_repeat ();
 }
 
+// disable the event temporarily
+void time_event::pause ()
+{
+    event::pause ();
+    
+    // save time 'til relative event is raised
+    if (!Absolute) Time -= gamedate::time ();
+}
+
+// enable a previously paused event
+void time_event::resume ()
+{
+    event::resume ();
+    
+    // restore alarm time for relative event
+    if (!Absolute) Time += gamedate::time ();
+}
+
 // Save time event to file
 void time_event::put_state (ogzstream& out) const
 {
@@ -81,6 +100,7 @@ void time_event::put_state (ogzstream& out) const
     // save time event data
     Time >> out;
     Interval >> out;
+    Absolute >> out;
 }
 
 // load time event from file
@@ -92,6 +112,7 @@ bool time_event::get_state (igzstream& in)
     // get time event data
     Time << in;
     Interval << in;
+    Absolute << in;
     
     return true;
 }

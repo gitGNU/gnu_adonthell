@@ -12,13 +12,11 @@
    See the COPYING file for more details.
 */
 
-
 /**
  * @file   event.cc
  * @author Kai Sterker <kaisterker@linuxgames.com>
  * 
  * @brief  Defines the base event class.
- * 
  */
 
 #include "event.h"
@@ -27,12 +25,13 @@
 // constructor
 event::event ()
 {
-    Repeat = -1;
+    Action = ACTION_NOTHING;
     Registered = false;
+    Paused = false;
+    Repeat = -1;
     Script = NULL;
     PyFunc = NULL;
     Args = NULL;
-    Action = ACTION_NOTHING;
     List = NULL;
 }
 
@@ -138,6 +137,7 @@ void event::put_state (ogzstream & file) const
 {
     Type >> file;
     Repeat >> file;
+    Paused >> file;
     Action >> file;
     
     switch (Action)
@@ -174,6 +174,7 @@ bool event::get_state (igzstream & file)
     // Note that »Type« is already read by event_list::load to
     // determine what event subclass to instanciate
     Repeat << file;
+    Paused << file;
     Action << file;
     
     switch (Action)

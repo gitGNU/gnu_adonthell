@@ -67,8 +67,8 @@ enum
  * this class.
  *
  * Events are used to notify when certain things happen during the game.
- * They may either execute the "run" method of an exclusive python script
- * or a simple python callback defined elsewhere.
+ * They may either execute the "run" method of an exclusive %python script
+ * or a simple %python callback defined elsewhere.
  */ 
 class event
 {
@@ -207,6 +207,30 @@ public:
 #endif // SWIG
 
     /**
+     * @name Pausing / Resuming execution
+     */
+    //@{
+    
+    /**
+     * Disable the %event temporarily. As long as it in this state, the
+     * event will neither be executed, nor will its repeat-count change.
+     */
+    virtual void pause ()
+    {
+        Paused = true;
+    }
+    
+    /**
+     * Re-enable an %event that has been paused. 
+     */
+    virtual void resume ()
+    {
+        Paused = false;
+    }
+    
+    //@}
+
+    /**
      * @name Loading / Saving
      */
     //@{
@@ -260,6 +284,11 @@ protected:
      * Whether the %event is registered with the %event handler.
      */
     bool Registered;
+    
+    /**
+     * Whether the %event temporarily disabled or not. 
+     */
+    bool Paused;
     
     /**
      * Defines how often the %event should be repeated. <b>0</b> means

@@ -657,6 +657,19 @@ public:
     }
 
     /**
+     * Disable any events associated with this character. This will
+     * effectively stop all of its actions (at least if its schedule
+     * is event-driven as it should be.
+     */
+    void pause ();
+    
+    /**
+     * Re-enable the events associated with the character, thus
+     * 'awaking' it to life again. 
+     */
+    void resume ();
+
+    /**
      * Tell the character to do something. Will execute the given method
      * of the current schedule with the given arguments.
      *

@@ -276,13 +276,11 @@ string dialog::scan_string (const char *s)
         if (strncmp (start, "$name", 5) == 0)
         {
             begin = newstr.length () - strlen (start);
-            tmp = new char[newstr.length () - 4 + strlen (the_player->get_name().c_str ())];
-            strncpy (tmp, newstr.c_str (), begin);
-            tmp[begin] = 0;
-            strcat (tmp, the_player->get_name().c_str ());
-            strcat (tmp, start+5);
-            newstr = tmp;
-
+            string t (newstr, 0, begin);
+            t += the_player->get_name ();
+            t += (start+5);
+            
+            newstr = t;
             continue;
         }
 

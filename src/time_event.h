@@ -102,7 +102,7 @@ public:
     bool equals (const event * evnt)
     {
         time_event *e = (time_event *) evnt;
-        return Time <= e->time ();
+        return Time <= e->time () && !Paused;
     }
     
     /**
@@ -140,6 +140,30 @@ public:
     //@}
 
     /**
+     * @name Pausing / Resuming execution
+     */
+    //@{
+    
+    /**
+     * Disable the %event temporarily. As long as it in this state, the
+     * event will neither be executed, nor will its repeat-count change.
+     *
+     * The alarm time of relative time events will be prolongued be the
+     * time the event was paused. Absolute events will only be deferred
+     * until they are resumed.
+     */
+    void pause ();
+    
+    /**
+     * Re-enable an %event that has been paused. 
+     *
+     * Absolute events that are past their alarm time are executed at once.
+     */
+    void resume ();
+    
+    //@}
+    
+    /**
      * Get the event's "alarm" time, i.e. the time when it needs to be
      * executed.
      *
@@ -157,6 +181,9 @@ private:
 
     // time that lies between two occurances of the event
     u_int32 Interval;
+    
+    // whether the alarm time is relative or absolute
+    bool Absolute;
 #endif // SWIG
 };
 
