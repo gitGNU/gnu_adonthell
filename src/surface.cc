@@ -160,10 +160,10 @@ void surface::get_pix (u_int16 x, u_int16 y, u_int32& col) const
     switch (vis->format->BytesPerPixel) 
     {
         case 1:
-            (Uint8)col = *((Uint8 *)(offset));
+            col = *((Uint8 *)(offset));
             break;
         case 2:
-             (Uint16)col = *((Uint16 *)(offset));
+            col = *((Uint16 *)(offset));
             break;
         case 3:
         {
@@ -185,7 +185,7 @@ void surface::get_pix (u_int16 x, u_int16 y, u_int32& col) const
             break;
         }
         case 4:
-            *((Uint32 *)(offset)) = (Uint32)col;
+            col = *((Uint32 *)(offset));
             break;
     }
     
