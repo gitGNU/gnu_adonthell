@@ -22,7 +22,8 @@ class dlg_text                          // Contains a line of text & its attribu
 {
 public:
     dlg_text (u_int32 i, s_int32 o) : id (i), offset (o) { }
-    
+    dlg_text (dlg_text *d) : id (d->id), offset (d->offset) { }  
+        
     u_int32 id;                         // Id of the string
     s_int32 offset;                     // offset to next command in dialogue
 };

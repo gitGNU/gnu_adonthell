@@ -29,12 +29,12 @@ on_dialogue_list_select_child (GtkList * list, GtkWidget * widget, gpointer user
     dialog *dlg = ((run_dlg *) user_data)->dat;
     GtkWidget *npc_text; 
     char *str;
-    
-    gtk_widget_hide ((GtkWidget*) list);
-    
+        
     // Set the answer the player has chosen
     dlg->answer = GPOINTER_TO_INT (gtk_object_get_user_data (GTK_OBJECT (widget)));
     pos -= dlg->answer;
+
+    cout << "\npos: " << pos << ", answer: " << dlg->answer << flush;
     
     npc_text = (GtkWidget *) g_list_nth_data (items, pos-1);
 
@@ -55,7 +55,7 @@ on_dialogue_list_select_child (GtkList * list, GtkWidget * widget, gpointer user
     }
 
     gtk_list_append_items (list, new_items);
-    gtk_widget_show ((GtkWidget*) list);
+    gtk_list_scroll_vertical (list, GTK_SCROLL_JUMP, 0);
 
     // continue the dialogue
     ((run_dlg *) user_data)->run ();    

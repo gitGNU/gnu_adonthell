@@ -15,6 +15,7 @@
 #ifndef __DIALOG_CMDS_H__
 #define __DIALOG_CMDS_H__
 
+#include <iostream.h>
 #include <fstream>
 #include "commands.h"
 #include "interpreter.h"
@@ -76,14 +77,14 @@ class text_cmd : public command
 {
 public:
     text_cmd () { type = TEXT; }
-    text_cmd (u_int32 t, u_int32 p) : text(t), pc_off(p) { type = TEXT; }
+    text_cmd (u_int32 t, s_int32 p) : text(t), pc_off(p) { type = TEXT; }
     
     void init (s_int32*, u_int32&, void*);
     s_int32 run (u_int32&, void*);
 
     void write (FILE*);
     void ascii (ofstream&);   
-    void setjmp (s_int32 p) { pc_off = p; }
+    void setjmp (s_int32);
 
 private:
     u_int32 text;               // Id of the dialogue text

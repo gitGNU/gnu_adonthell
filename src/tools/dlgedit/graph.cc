@@ -21,6 +21,7 @@ class dialog;
 #include <string>
 #include <gtk/gtk.h>
 #include <vector>
+#include <time.h>
 
 #include "../../types.h"
 #include "../../interpreter.h"

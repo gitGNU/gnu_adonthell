@@ -102,11 +102,6 @@ void dlg_compiler::write_import ()
     
     // write string - file 
     str = fopen (sf.c_str (), "wb");
-    if (!str) 
-    {
-        printf ("\n\nError opening file %s!\n", sf.c_str ());
-        return;
-    }
     
     fwrite (&index, sizeof (index), 1, str);
     fwrite (offset, sizeof (offset[0]), index, str);
@@ -198,8 +193,8 @@ void dlg_compiler::write_npc ()
         // Else we add this one to todo_nodes to have it handled later
         else todo_nodes.push_back (data);
 
-        // if there was a condition, this is the line we have to jump to is it
-        // isn't met 
+        // if there was a condition, this is the line we have to jump to if
+        // it isn't met 
         if (cur_crcle->conditions != "") cmd->setjmp (code.size () - pos);
     }
 
@@ -285,6 +280,7 @@ void dlg_compiler::write_condition ()
 
 void dlg_compiler::write_text ()
 {
+    cout << "\nDoing node " << text_lookup[cur_crcle->number];
     text_cmd *cmd = new text_cmd (text_lookup[cur_crcle->number], 0);
     code.push_back (cmd);
 }
@@ -368,14 +364,16 @@ void dlg_compiler::get_cur_nodes ()
     if (todo_nodes.empty ()) return;
 
     // Here we can take one of the todo_nodes and continue with it
-    data = todo_nodes[0];
+    // data = todo_nodes[0];
+    data = todo_nodes.back ();
 
     // First, we have to check wether the childs of this (player-) node
     // have already been compiled. If so, we can update the command with
     // the proper jump target. (That's done in the isdone(...) function)
     // Else we can safely add the child to the cur_nodes 
 
-    // The chosen command continues in the next line
+    // Assume that the chosen command continues in the next line
+    // In case it doesn't this is corrected in the  isdone()  function
     ((text_cmd *) data->cmd)->setjmp (code.size () - data->line);
 
     // For all following direct links (arrows) ...
@@ -390,26 +388,30 @@ void dlg_compiler::get_cur_nodes ()
         if (!isdone (data->node->link[i]->next[0], data))
             cur_nodes.push_back (data->node->link[i]->next[0]);
 
-    // What followa here isn't too good -> correct
+    // What follows here isn't too good -> correct
     // The End of dialogue follows:
     if (cur_nodes.empty ())
     {
         cur_crcle = (Circle *) data->node;
-        if (end_follows ()) write_end ();
+        if (end_follows ()) 
+        {
+            // ((text_cmd *) data->cmd)->setjmp (code.size() - data->line);
+            write_end ();
+        }
         
         done_nodes.push_back (data);
-        if (todo_nodes.size () > 1) todo_nodes.erase (todo_nodes.begin ());
-        else todo_nodes.clear ();
+        todo_nodes.pop_back ();
 
         get_cur_nodes ();
-    }
 
+        // If we don't return here,  todo_node.pop_back  would be called
+        // twice when the recursion is over
+        return;
+    }
+    
     // Move the node from the todo- to the done_nodes    
     done_nodes.push_back (data);
-
-    // If vector::size () == 1 then vector::erase(vector::begin()) will segfault
-    if (todo_nodes.size () > 1) todo_nodes.erase (todo_nodes.begin ());
-    else todo_nodes.clear ();
+    todo_nodes.pop_back ();
 }
 
 // Check wether node was already compiled and set the proper link

@@ -58,7 +58,7 @@ s_int32 import_cmd::run (u_int32 &pc, void *data)
         str = new char[dialog::length[text[i]] + 1];
 
         fseek (txt, dialog::offset[text[i]], SEEK_SET);
-        fgets (str, dialog::length[text[i]], txt);
+        fread (str, dialog::length[text[i]], 1, txt);
         str[dialog::length[text[i]]] = '\0';
 
         dlg->strings.push_back (str);
@@ -149,10 +149,10 @@ s_int32 text_cmd::run (u_int32 &pc, void *data)
     if (find (dlg->used_text.begin(), dlg->used_text.end(), pc + pc_off) == dlg->used_text.end ())
     {
         // The offset given with the TEXT command is relative to the current line
-        // That is:  current_line + pc_off + 1  gives the line where the dialogue
-        // will continue when this text is chosen. Note that pc == current_line + 1
-        // at this point!
-        t = new dlg_text (text, pc + pc_off);
+        // That is:  current_line + pc_off  gives the line where the dialogue will
+        // continue when this text is chosen. Note that pc == current_line + 1 at
+        // this point!
+        t = new dlg_text (text, pc + pc_off - 1);
 
         // Assign this line of dialogue to the current speaker (who has been set
         // by the SPEAKER command). We only have to distinguish between player and
@@ -160,7 +160,7 @@ s_int32 text_cmd::run (u_int32 &pc, void *data)
         if (dlg->speaker == 0) dlg->player_text.push_back (t);
         else dlg->npc_text.push_back (t);
     }
-
+    
     return 1;
 }
 
@@ -181,6 +181,10 @@ void text_cmd::ascii (ofstream &out)
     out << "TEXT    " << text << " " << pc_off;
 }
 
+void text_cmd::setjmp (s_int32 p)
+{
+    pc_off = p;
+}
 
 speaker_cmd::speaker_cmd (u_int32 s, u_int32 m) : speaker(s), mood(m)
 {

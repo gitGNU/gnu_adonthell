@@ -90,8 +90,8 @@ void run_dlg::run ()
     {
         // We trick a bit and make the interpreter think he has a Player-
         // text to continue the dialogue (that saves us from some ugly 
-        // if-statements)        
-        dat->player_text.push_back (dat->npc_text[npc_answer]);
+        // if-statements) (make hard copy!!!)
+        dat->player_text.push_back (new dlg_text(dat->npc_text[npc_answer]));
 
         // Now fill the list with the text (i.e add an empty line and then the
         // clickable NPC text
