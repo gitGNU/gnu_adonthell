@@ -663,13 +663,14 @@ bool DlgCompiler::checkConditions (DlgCircle *circle)
     for (; child != NULL; child = circle->child (NEXT), k1 = k2)
     {
         k2 = getKeyword (child->entry ()->condition ());
+        if (k2 == NONE) continue;
         
         // 'elif' may only follow 'if' or 'elif'
-        if (k2 == ELIF && (k1 != IF || k1 != ELIF))
+        if (k2 == ELIF && (k1 != IF && k1 != ELIF))
             error = "*** Error: 'elif' without preceeding 'if' in node\n    \"";
         
         // 'else' may only follow 'if' or 'elif'
-        else if (k2 == ELSE && (k1 != IF || k1 != ELIF))
+        else if (k2 == ELSE && (k1 != IF && k1 != ELIF))
             error = "*** Error: 'else' without preceeding 'if' in node\n    \"";
 
         // display error if there is any

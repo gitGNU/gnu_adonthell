@@ -28,6 +28,10 @@
 // ctor
 DlgModule::DlgModule (std::string n, std::string d)
 {
+    // get the serial number from the name
+    unsigned int pos = n.rfind ("-");
+    if (pos != n.npos) serial_ = n.substr (pos);
+    
     description_ = d;
     setName (n);
     init ();
@@ -48,10 +52,13 @@ void DlgModule::setName (const std::string &filename)
 {
     name_ = filename;
     
+    // remove file extension
     unsigned int pos = name_.rfind (".adlg");
     if (pos != name_.npos) name_.erase (pos, 5);
     
-    // TODO: handle serial number
+    // set serial number
+    pos = name_.rfind (serial_);
+    if (pos == name_.npos) name_ += serial_;
 }
 
 // select a given node

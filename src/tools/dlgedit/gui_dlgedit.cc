@@ -415,7 +415,6 @@ void GuiDlgedit::saveDialogue (std::string file)
         message->display (201);
         
         // update the dialogue's name in case it has changed
-        module->setName (file);
         initTitle ();
         initMenu ();
     }  
