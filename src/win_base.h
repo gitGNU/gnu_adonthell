@@ -37,7 +37,7 @@
 class win_container;
 class win_scroll;
 class win_select;
-
+class win_manager;
 
 /**
  * Common properties for each win_base's object
@@ -244,7 +244,9 @@ class win_base: public win_event, public win_border, public drawing_area, public
   virtual bool input_update();
 
   virtual ~win_base();
-  
+
+  void set_manager (win_manager*);
+    
   static const u_int8 ALIGN_NONE = 0;
   static const u_int8 ALIGN_LEFT = 1;
   static const u_int8 ALIGN_CENTER = 2;
@@ -290,6 +292,7 @@ class win_base: public win_event, public win_border, public drawing_area, public
 
   win_container * wb_father_;
   
+  win_manager * manager_;
 };
 
 

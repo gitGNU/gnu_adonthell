@@ -52,6 +52,8 @@ win_manager::win_manager ()
 
 win_manager::~win_manager ()
 {
+    destroy ();
+    
     // restore parent window(s)
     active = prev;
 }
@@ -62,8 +64,11 @@ void win_manager::destroy()
     list<win_base *>::iterator i;
     
     for (i = wnd_list.begin(); i != wnd_list.end(); i++)
-        delete *i;
-  
+    {
+        (*i)->set_manager (NULL);
+        // delete *i;
+    }
+    
     wnd_list.clear ();
     wnd_focus = NULL;
 }
@@ -92,6 +97,7 @@ void win_manager::cleanup ()
 void win_manager::add (win_base *tmp)
 {
     wnd_list.push_back (tmp);
+    tmp->set_manager (this);
 }
 
 /*
@@ -126,6 +132,7 @@ void win_manager::remove (win_base *tmp)
     
     // remove it from the window list
     wnd_list.remove (tmp);
+    tmp->set_manager (NULL);
     
     // if no window has the focus, give it to the topmost window
     if (!wnd_focus) set_focus (wnd_list.back ());
@@ -165,7 +172,7 @@ void win_manager::update ()
         else current++;
 }
 
-// give the focus to a window 
+// give the focus to a window
 void win_manager::set_focus (win_base *tmp)
 {
     // but only if there are any windows at all

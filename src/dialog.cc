@@ -361,6 +361,7 @@ string dialog::scan_string (const char *s)
         // Cleanup
         Py_XDECREF (result);
         delete[] str;
+        delete[] tmp;
     }
 
     return newstr;

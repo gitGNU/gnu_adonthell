@@ -14,10 +14,13 @@
 
 
 #include "win_base.h"
+#include "win_manager.h"
 #include "win_container.h"
 
 win_base::win_base(): win_border(this),win_background(this)
 {
+  manager_ = NULL;
+  
   wb_father_= NULL;
   
   pad_y_ = pad_x_ = 0;
@@ -41,6 +44,8 @@ win_base::win_base(): win_border(this),win_background(this)
 
 win_base::~win_base()
 {
+    if (manager_) manager_->remove (this);
+    manager_ = NULL;
 }
 
 void win_base::set_container(win_container * wc)
@@ -127,8 +132,10 @@ void win_base::update_align()
     }
 }
 
-
-
+void win_base::set_manager (win_manager *m)
+{
+    manager_ = m;
+}
 
 
 
