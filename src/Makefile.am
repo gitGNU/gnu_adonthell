@@ -31,7 +31,7 @@ win_manager.cc win_scrollbar.cc win_scroll.cc win_select.cc win_theme.cc \
 label.cc  label_input.cc win_event.cc yarg.cc \
 adonthell.h animation.h audio.h callback.h py_callback.h \
 character_base.h character.h gamedata.h data_screen.h dialog.h dialog_screen.h \
-drawable.h drawing_area.h event.h fileops.h game.h gametime.h image.h input.h inventory.h \
+drawable.h drawing_area.h event.h fileops.h game.h gametime.h gettext.h image.h input.h inventory.h \
 item.h landmap.h mapsquare.h mapsquare_walkable.h nls.h mapcharacter.h mapobject.h mapview.h \
 path.h pnm.h prefs.h python_class.h py_object.h quest.h screen.h surface.h storage.h \
 types.h text_bubble.h win_background.h win_base.h win_border.h win_container.h \
