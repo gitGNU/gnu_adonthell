@@ -58,7 +58,9 @@ bool game::init ()
     screen::set_fullscreen (configuration->screen_mode);
 
     // set the theme
-    win_theme::theme = strdup (configuration->window_theme.c_str ());
+    win_theme::theme = new char[strlen(configuration->window_theme.c_str ())];
+    strcpy (win_theme::theme, configuration->window_theme.c_str ());
+    strcat (win_theme::theme,"/");
 
     // init audio subsystem
 #if defined SDL_MIXER && !defined _EDIT_
