@@ -97,37 +97,75 @@ tidy::
 clean:: tidy
 	@${RM} dlgedit
 
+#
+# dependencies, finally ;-)
+#
+./callbacks.o: ../../character.h ../../dialog.h ../../interpreter.h ../../types.h ../../yarg.h ./compile.h ./dlgnode.h ./geometrie.h ./graph.h ./interface.h ./main.h ./pjt_interface.h ./preset.h ./ps_dlg.h ./run.h /usr/include/gdk/gdktypes.h /usr/include/gtk/gtk.h /usr/include/gtk/gtkentry.h /usr/include/gtk/gtkradiobutton.h /usr/include/gtk/gtkstyle.h /usr/include/stdio.h
 
-./callbacks.o:
-../../character.o:
-../../commands.o:
-./circle.o:
-./compile.o:
-./cond.tab.o:
-./crcle_callbacks.o:
-./crcle_interface.o:
-./create_code.o:
-./dlgnode.o:
-./events.o:
-../../generic_cmds.o:
-./geometrie.o:
-./graph.o:
-./interface.o:
-../../interpreter.o:
-../../dialog_cmds.o:
-./lex.cond.o:
-./lex.loadlg.o:
-./lex.vars.o:
-./main.o:
-./pjt_interface.o:
-./pjt_callbacks.o:
-./preset.o:
-./project.o:
-./pset_callbacks.o:
-./pset_interface.o:
-./run.o:
-./run_callbacks.o:
-./run_interface.o:
-../../storage.o:
-./vars.tab.o:
-../../yarg.o:
+./circle.o: ../../interpreter.h ../../types.h ./circle.h ./crcle_interface.h ./dlgnode.h /usr/include/gdk/gdktypes.h /usr/include/gtk/gtk.h /usr/include/gtk/gtkstyle.h
+
+./compile.o: ../../commands.h ../../dialog_cmds.h ../../generic_cmds.h ../../interpreter.h ../../types.h ./compile.h ./dlgnode.h /usr/include/gdk/gdktypes.h /usr/include/stdio.h /usr/include/stdlib.h
+
+./cond.tab.o: ../../commands.h ../../interpreter.h /usr/include/alloca.h /usr/include/malloc.h /usr/include/stdio.h
+
+./crcle_callbacks.o: ../../types.h ./circle.h ./crcle_callbacks.h ./crcle_interface.h ./dlgnode.h /usr/include/gdk/gdktypes.h /usr/include/gtk/gtk.h /usr/include/gtk/gtkstyle.h
+
+./crcle_interface.o: ../../types.h ./callbacks.h ./circle.h ./crcle_callbacks.h ./crcle_interface.h ./dlgnode.h /usr/include/gdk/gdktypes.h /usr/include/gtk/gtk.h /usr/include/gtk/gtkstyle.h
+
+./create_code.o: ../../commands.h ../../generic_cmds.h ../../interpreter.h
+
+../../dialog.o: /usr/include/stdio.h
+
+../../dialog_cmds.o: /usr/include/stdio.h
+
+./dlgnode.o: ../../types.h ./dlgnode.h /usr/include/gdk/gdktypes.h
+
+./events.o: ../../character.h ../../types.h ./dlgnode.h ./graph.h ./main.h /usr/include/gdk/gdkkeysyms.h /usr/include/gdk/gdktypes.h /usr/include/gtk/gtk.h /usr/include/gtk/gtkstyle.h /usr/include/stdio.h
+
+../../generic_cmds.o: /usr/include/string.h
+
+./geometrie.o: ../../types.h /usr/include/gtk/gtk.h
+
+./graph.o: ../../character.h ../../interpreter.h ../../types.h ./circle.h ./compile.h ./dlgnode.h ./geometrie.h ./graph.h ./interface.h ./main.h /usr/include/gdk/gdktypes.h /usr/include/gtk/gtk.h /usr/include/gtk/gtkstyle.h /usr/include/stdio.h /usr/include/stdlib.h /usr/include/string.h /usr/include/time.h
+
+./interface.o: ../../character.h ../../interpreter.h ../../types.h ./callbacks.h ./dlgnode.h ./events.h ./interface.h ./main.h /usr/include/gdk/gdkkeysyms.h /usr/include/gdk/gdktypes.h /usr/include/gtk/gtk.h /usr/include/gtk/gtkstyle.h /usr/include/string.h
+
+../../interpreter.o: /usr/include/stdio.h
+
+./lex.cond.o: ./cond.tab.h /usr/include/stdio.h /usr/include/stdlib.h /usr/include/unistd.h
+
+./lex.loadlg.o: ../../types.h ./dlgnode.h /usr/include/gdk/gdktypes.h /usr/include/math.h /usr/include/stdio.h /usr/include/stdlib.h /usr/include/unistd.h
+
+./lex.vars.o: ./vars.tab.h /usr/include/stdio.h /usr/include/stdlib.h /usr/include/unistd.h
+
+./linked_list.o: ../../types.h ./linked_list.h /usr/include/stdlib.h
+
+./main.o: ../../character.h ../../commands.h ../../interpreter.h ../../types.h ./dlgnode.h ./graph.h ./interface.h ./main.h /usr/include/gdk/gdktypes.h /usr/include/gtk/gtk.h /usr/include/gtk/gtkstyle.h /usr/include/stdio.h
+
+./pjt_callbacks.o: ./pjt_callbacks.h ./pjt_interface.h /usr/include/gtk/gtk.h
+
+./pjt_interface.o: ./pjt_callbacks.h ./pjt_interface.h /usr/include/gdk/gdkkeysyms.h /usr/include/gtk/gtk.h
+
+./preset.o: ../../interpreter.h ./preset.h ./pset_interface.h /usr/include/gtk/gtkstyle.h
+
+./project.o: ../../types.h ./project.h /usr/include/gtk/gtk.h /usr/include/stdio.h /usr/include/string.h
+
+./ps_callbacks.o: ../../character.h ./ps_callbacks.h ./ps_dlg.h ./ps_interface.h /usr/include/gtk/gtk.h /usr/include/gtk/gtkentry.h /usr/include/gtk/gtkradiobutton.h /usr/include/gtk/gtkstyle.h
+
+./ps_dlg.o: ../../character.h ./ps_dlg.h ./ps_interface.h /usr/include/gtk/gtkentry.h /usr/include/gtk/gtkradiobutton.h /usr/include/gtk/gtkstyle.h
+
+./ps_interface.o: ../../character.h ./callbacks.h ./ps_callbacks.h ./ps_dlg.h ./ps_interface.h /usr/include/gdk/gdkkeysyms.h /usr/include/gtk/gtk.h /usr/include/gtk/gtkentry.h /usr/include/gtk/gtkradiobutton.h /usr/include/gtk/gtkstyle.h
+
+./pset_callbacks.o: ./preset.h ./pset_callbacks.h ./pset_interface.h /usr/include/gtk/gtk.h /usr/include/gtk/gtkstyle.h
+
+./pset_interface.o: ./callbacks.h ./preset.h ./pset_callbacks.h ./pset_interface.h /usr/include/gdk/gdkkeysyms.h /usr/include/gtk/gtk.h /usr/include/gtk/gtkstyle.h
+
+./run.o: ../../character.h ../../dialog.h ../../generic_cmds.h ../../interpreter.h ../../storage.h ../../yarg.h ./run.h ./run_interface.h /usr/include/gtk/gtk.h /usr/include/gtk/gtkstyle.h /usr/include/string.h
+
+./run_callbacks.o: ../../character.h ../../dialog.h ../../interpreter.h ../../yarg.h ./run.h ./run_callbacks.h ./run_interface.h /usr/include/gtk/gtk.h /usr/include/gtk/gtkstyle.h
+
+./run_interface.o: ../../character.h ../../dialog.h ../../interpreter.h ../../yarg.h ./callbacks.h ./run.h ./run_callbacks.h ./run_interface.h /usr/include/gtk/gtk.h /usr/include/gtk/gtkstyle.h
+
+./vars.tab.o: ../../commands.h ../../interpreter.h /usr/include/alloca.h /usr/include/malloc.h /usr/include/stdio.h
+
+../../yarg.o: /usr/include/time.h

@@ -55,6 +55,7 @@ interpreter::interpreter ()
 interpreter::interpreter (const char *file, void *data) : user_data (data)
 {
     PC = 0;
+    code = NULL;
     load (file);
 
     sprintf (id, "%p", this);
