@@ -65,6 +65,9 @@ public:
     bool operator <= (const map_coordinates & mc); 
     bool operator > (const map_coordinates & mc); 
     bool operator >= (const map_coordinates & mc); 
+
+    map_coordinates & operator + (const map_coordinates & mc); 
+    map_coordinates & operator - (const map_coordinates & mc); 
 }; 
 
 

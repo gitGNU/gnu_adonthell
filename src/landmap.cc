@@ -104,20 +104,24 @@ bool landmap::put (map_placeable * obj, map_coordinates & pos, bool flat = false
     u_int16 sy = pos.y () < state->base.y () ? 0 :
         pos.y () - state->base.y (); 
     
-    u_int16 fx = pos.x () + state->area_length () - state->base.x (); 
-    u_int16 fy = pos.y () + state->area_height () - state->base.y () ; 
+    u_int16 fx = pos.x () + state->area_length () - state->base.x ();
+    u_int16 fy = pos.y () + state->area_height () - state->base.y (); 
 
-//     if (pos.ox ()) fx++;
-//     if (pos.oy ()) fy++; 
+    if (pos.ox ()) fx++;
+    if (pos.oy ()) fy++; 
     
+    if (fx >= length()) fx = length() - 1;
+    if (fy >= height()) fy = height() - 1;
+
     mapsquare * msqr; 
     
-    for (j = sy; j < fy; j++) 
-        for (i = sx; i < fx; i++) 
+    for (j = sy; j <= fy; j++) 
+        for (i = sx; i <= fx; i++) 
         {
             msqr = get (i, j);
             msqr->add (obj, pos, flat); 
         }
+
     return true; 
 }
 
@@ -138,16 +142,19 @@ bool landmap::remove (map_placeable * obj, map_coordinates & pos, bool flat = fa
     u_int16 sy = pos.y () < state->base.y () ? 0 :
         pos.y () - state->base.y (); 
     
-    u_int16 fx = pos.x () + state->area_length () - state->base.x (); 
-    u_int16 fy = pos.y () + state->area_height () - state->base.y () ; 
+    u_int16 fx = pos.x () + state->area_length () - state->base.x ();
+    u_int16 fy = pos.y () + state->area_height () - state->base.y (); 
 
-//     if (pos.ox ()) fx++;
-//     if (pos.oy ()) fy++; 
+    if (pos.ox ()) fx++;
+    if (pos.oy ()) fy++; 
     
+    if (fx >= length()) fx = length() - 1;
+    if (fy >= height()) fy = height() - 1;
+
     mapsquare * msqr; 
     
-    for (j = sy; j < fy; j++) 
-        for (i = sx; i < fx; i++) 
+    for (j = sy; j <= fy; j++) 
+        for (i = sx; i <= fx; i++) 
         {
             msqr = get (i, j);
             msqr->remove (obj, pos, flat); 

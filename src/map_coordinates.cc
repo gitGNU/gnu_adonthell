@@ -83,3 +83,48 @@ bool map_coordinates::operator >= (const map_coordinates & mc)
     if (Ox >= mc.Ox) return true;
     return false; 
 }
+
+map_coordinates & map_coordinates::operator + (const map_coordinates & mc)
+{
+    X += mc.X;
+    Y += mc.Y;
+    Ox += mc.Ox;
+    Oy += mc.Oy;
+
+    while (Ox >= 40)
+    {
+        X++;
+        Ox -= 40;
+    }
+
+    while (Oy >= 40)
+    {
+        Y++;
+        Oy -= 40;
+    }
+
+    return *this;
+}
+
+map_coordinates & map_coordinates::operator - (const map_coordinates & mc)
+{
+    if (X < mc.X) X -= mc.X;
+    else X = 0;
+
+    if (Y < mc.Y) Y -= mc.Y;
+    else Y = 0;
+
+    while (Ox >= 40)
+    {
+        if (X) X--;
+        Ox -= 40;
+    }
+
+    while (Oy >= 40)
+    {
+        if (Y) Y--;
+        Oy -= 40;
+    }
+    
+    return *this;
+}

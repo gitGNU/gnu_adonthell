@@ -59,6 +59,7 @@ void map_moving::set_limits (u_int16 mx, u_int16 my)
 bool map_moving::update ()
 {
     Has_moved = 0; 
+
     Mymap.remove(this);
     
     if (vx ()) 

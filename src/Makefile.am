@@ -50,6 +50,8 @@ CLEANFILES = $(moddata_SCRIPTS)
 libbase_a_SOURCES = fileops.cc gametime.cc \
 	types.h fileops.h gametime.h callback.h
 
+libbase_LDADD = $(SDL_LIBS)
+
 libinput_a_SOURCES = input_event.cc joystick_event.cc mouse_event.cc \
 	keyboard_event.cc control_event.cc input_listener.cc input_manager.cc \
 	input_manager_SDL.cc \
@@ -63,8 +65,12 @@ libgfx_a_SOURCES = drawable.cc drawing_area.cc screen.cc surface.cc pnm.cc \
 
 libaudio_a_SOURCES = 
 
+#libaudio_LDADD = $(OGG_LIBS)
+
 libpython_a_SOURCES = python_class.cc py_object.cc py_callback.cc \
 	python_class.h py_object.h py_callback.h
+
+#libpython_LDADD = $(PY_LIBS)
 
 libmap_a_SOURCES = map_coordinates.cc map_placeable_area.cc \
 	map_placeable_area_gfx.cc map_placeable_model.cc \
@@ -82,6 +88,8 @@ libgui_a_SOURCES = atk_box.cc atk_misc.cc atk_container.cc atk_label.cc \
 	callback_slot.h atk_box.h atk_misc.h atk_container.h \
 	atk_label.h atk_font.h atk_widget.h atk_fixed.h \
 	callback_sig.h
+
+libgui_LDADD = $(FT2_LIBS)
 
 liboldwin_a_SOURCES = win_background.cc win_base.cc win_border.cc \
 	win_container.cc win_font.cc win_keys.cc \
@@ -102,9 +110,9 @@ alextest_SOURCES = main.cc
 
 joltest_SOURCES = joltest.cc
 
-joltest_LDADD = libgfx.a libgui.a libbase.a $(SDL_LIBS) $(FT2_LIBS)
+joltest_LDADD = libgfx.a libgui.a libbase.a $(libbase_LDADD) $(libgui_LDADD)
 
-alextest_LDADD = libmap.a libgfx.a libinput.a libbase.a $(SDL_LIBS)
+alextest_LDADD = libmap.a libgfx.a libinput.a libbase.a $(libbase_LDADD)
 
 # Note: adonthell.py is also built by this target. 
 py_adonthell_wrap.cc : py_adonthell.i *.h

@@ -188,12 +188,27 @@ int main (int argc, char * argv[])
     gc.mchar->set_position (6, 8); 
     gc.mchar->set_limits (16, 12);
     gc.mchar->set_speed (1.0);
+    
+//     gc.mchar->get_state("s_stand")->get(0, 1).set_walkable(0);
+//     gc.mchar->get_state("n_stand")->get(0, 1).set_walkable(0);
+//     gc.mchar->get_state("e_stand")->get(0, 1).set_walkable(0);
+//     gc.mchar->get_state("w_stand")->get(0, 1).set_walkable(0);
+//     gc.mchar->get_state("s_walk")->get(0, 1).set_walkable(0);
+//     gc.mchar->get_state("n_walk")->get(0, 1).set_walkable(0);
+//     gc.mchar->get_state("e_walk")->get(0, 1).set_walkable(0);
+//     gc.mchar->get_state("w_walk")->get(0, 1).set_walkable(0);
+//     gc.mchar->get_state("s_run")->get(0, 1).set_walkable(0);
+//     gc.mchar->get_state("n_run")->get(0, 1).set_walkable(0);
+//     gc.mchar->get_state("e_run")->get(0, 1).set_walkable(0);
+//     gc.mchar->get_state("w_run")->get(0, 1).set_walkable(0);
 
-    gc.mchar2 = (map_character_with_gfx *)lmap.add_map_character();
-    gc.mchar2->load("adontest/nakedguy.mchar");
-    gc.mchar2->set_position (10, 7); 
-    gc.mchar2->set_limits (16, 12);
-    gc.mchar2->set_speed (1.1);
+//     gc.mchar->save("adontest/chrono.mdl");
+
+//     gc.mchar2 = (map_character_with_gfx *)lmap.add_map_character();
+//     gc.mchar2->load("adontest/nakedguy.mchar");
+//     gc.mchar2->set_position (10, 7); 
+//     gc.mchar2->set_limits (16, 12);
+//     gc.mchar2->set_speed (1.1);
 
     // Adding map objects
     map_object_with_gfx * mobj;
@@ -207,11 +222,18 @@ int main (int argc, char * argv[])
     mobj = (map_object_with_gfx *)lmap.add_map_object();
     mobj->load("adontest/rug.mobj");
 
+//     mobj->get_state("default")->get(0, 0).set_walkable(0);
+//     mobj->get_state("default")->get(1, 0).set_walkable(0);
+//     mobj->get_state("default")->get(2, 0).set_walkable(0);
+//     mobj->get_state("default")->get(3, 0).set_walkable(0);
+    //    cout << mobj->get_state("default")->get(0, 0).is_walkable() << endl;
+//     mobj->save("adontest/rug.mobj");
+
     for (int i = 0; i < lmap.length(); i++)
         for (int j = 0; j < lmap.height(); j++)
         {
             map_coordinates mc(i, j, 0, 0);
-            lmap.put_map_object(1, mc, true); 
+            lmap.put_map_object(1, mc); 
         }
 
 

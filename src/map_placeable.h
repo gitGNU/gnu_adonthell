@@ -61,7 +61,7 @@ public:
     
     map_placeable(landmap & mymap);
     
-    placeable_type type () 
+    placeable_type type () const
     {
         return Type; 
     }
