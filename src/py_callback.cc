@@ -24,6 +24,8 @@
 
 
 #include "py_callback.h"
+#include "python.h"
+#include <iostream.h>
 
 py_callback::py_callback (PyObject *func, PyObject *args)
 {
@@ -42,7 +44,7 @@ py_callback::~py_callback ()
 // calls the python function without argument
 void py_callback::callback_func0 ()
 {
-    PyObject *py_arg = Py_BuildValue ("(O)",arguments);
+    PyObject *py_arg = arguments ? Py_BuildValue ("(O)",arguments) : NULL;
     PyObject_CallObject (function, py_arg);
     Py_XDECREF (py_arg);
 }
@@ -52,7 +54,7 @@ bool py_callback::callback_func0ret ()
 {
     int retval = 1;
     
-    PyObject *py_arg = Py_BuildValue ("(O)",arguments);
+    PyObject *py_arg = arguments ? Py_BuildValue ("(O)",arguments) : NULL;
     PyObject* val = PyObject_CallObject (function, py_arg);
 
     if (val) retval = PyInt_AsLong (val);

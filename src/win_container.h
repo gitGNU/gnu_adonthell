@@ -1,5 +1,7 @@
 /*
-   (C) Copyright 2000 Joel Vennin
+   $Id$
+
+   (C) Copyright 2000/2001 Joel Vennin
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
