@@ -38,6 +38,42 @@
 
 using namespace std; 
 
+/*
+ * SWIG init prototypes. Should we use dynamic linking??? 
+ */
+extern "C"
+{
+    /** 
+     * SWIG init prototype.
+     * 
+     */
+    void initadonthellc (void);
+}
+
+bool init_python()
+{
+    // Initialise the import path.
+    // Shared modules path 
+    python::insert_path (DATA_DIR"/modules"); 
+    
+    // Game specific path
+    string t = game::game_data_dir () + "/scripts/modules"; 
+    python::insert_path ((char *) t.c_str ());
+    t = game::game_data_dir () + "/scripts"; 
+    python::insert_path ((char *) t.c_str ());
+    
+    // Initialise SWIG module. This should go if we ever switch 
+    // to dynamic linking
+    initadonthellc ();
+    
+    python::module = python::import_module ("adonthell"); 
+    if (!python::module) return false;     
+    
+    data::globals = PyModule_GetDict (python::module);
+    
+    return true; 
+}
+
 /**
  * Game's main function.
  * It simply initialises the game and runs the "init.py" file in the game
@@ -50,7 +86,6 @@ using namespace std;
  * @return 0 in case of success, error code otherwise.
  * 
  */
-
 int main(int argc, char * argv[])
 {
 #ifdef MEMORY_LEAKS
@@ -86,6 +121,7 @@ int main(int argc, char * argv[])
     // init python interpreter
     python::init (); 
 
+    init_python();
     // init the game data
     data::engine = new adonthell;
     data::the_player = NULL;
@@ -115,6 +151,10 @@ int main(int argc, char * argv[])
         delete data::the_player;
 
     // shutdown python
+    // Cleanup the global namespace of python interpreter
+    // Note that we don't have to DECREF data::globals, because they're a
+    // borrowed reference of py_module.
+    Py_DECREF (python::module); 
     python::cleanup ();     
 
     // shutdown video and SDL

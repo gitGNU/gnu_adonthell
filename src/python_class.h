@@ -49,7 +49,7 @@ public:
      * 
      * @return true in case of success, false otherwise.
      */
-    static bool init ();
+    static void init ();
 
     /**
      * Cleanup Python.
@@ -125,14 +125,13 @@ public:
      */
     static void put_tuple (PyObject * tuple, ogzstream & file);  
 
+    static PyObject *module;
 private:
     /**
      * Convert a Pointer to a String, like SWIG 1.3.7+ does
      *
      */
     static char *python::ptr_to_string (char *c, void *ptr, int sz);
-
-    static PyObject *module;
 };
 
 #ifndef SWIG

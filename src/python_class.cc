@@ -32,53 +32,15 @@ PyObject * python::module;
 using namespace std;
 
 /*
- * SWIG init prototypes. Should we use dynamic linking??? 
- */
-extern "C"
-{
-    /** 
-     * SWIG init prototype.
-     * 
-     */
-    void initadonthellc (void);
-}
-
-/*
  * Start Python
  */
-bool python::init ()
+void python::init ()
 {
     Py_Initialize ();
-    
-    // Initialise the import path.
-    // Shared modules path 
-    insert_path (DATA_DIR"/modules"); 
-
-    // Game specific path
-    string t = game::game_data_dir () + "/scripts/modules"; 
-    insert_path ((char *) t.c_str ());
-    t = game::game_data_dir () + "/scripts"; 
-    insert_path ((char *) t.c_str ());
-
-    // Initialise SWIG module. This should go if we ever switch 
-    // to dynamic linking
-    initadonthellc ();
-        
-    module = import_module ("adonthell"); 
-    if (!module) return false;     
-    
-    data::globals = PyModule_GetDict (module);
-
-    return true; 
 }
 
 void python::cleanup () 
-{     
-    // Cleanup the global namespace of python interpreter
-    // Note that we don't have to DECREF data::globals, because they're a
-    // borrowed reference of py_module.
-    Py_DECREF (module); 
-
+{
     Py_Finalize ();
 }
 
