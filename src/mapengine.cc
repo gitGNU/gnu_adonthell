@@ -21,6 +21,9 @@
 
 #include "gamedata.h"
 
+#include <sys/time.h>
+#include <unistd.h>
+
 mapengine * data::map_engine; 
 
 mapengine::mapengine ()
@@ -62,9 +65,6 @@ void mapengine::run ()
 //             cout << "Loaded " << ++lcpt << " times\n"; 
 //         }
         mainloop ();
-//         ima.set_mask (true); 
-//         ima.set_alpha (100);
-//         ima.draw (10, 10); 
         screen::show ();
         gametime::update (); 
     }

@@ -626,7 +626,7 @@ bool mapcharacter::update ()
 {
     update_move ();
     schedule.run (); 
-
+    
     if (previous_move != NO_MOVE && previous_move != current_move) 
     {
         anim[previous_move]->stop ();

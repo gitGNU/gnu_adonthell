@@ -182,7 +182,7 @@ void landmap::update ()
     for (io = mobj.begin (); io != mobj.end (); io++)
         (*io)->update (); 
 
-    // Update landmaps
+    // Update mapcharacters
     vector <mapcharacter *>::iterator ic; 
     for (ic = mapchar.begin (); ic != mapchar.end (); ic++)
         (*ic)->update ();  
