@@ -284,6 +284,14 @@ void create_mainframe (MainFrame * MainWnd)
     gdk_colormap_alloc_color (gtk_widget_get_colormap (MainWnd->wnd), &color, TRUE, TRUE);
     gdk_gc_set_foreground (MainWnd->color[GC_PURPLE], &color);
 
+    // Grey
+    MainWnd->color[GC_GREY] = gdk_gc_new (gtk_widget_get_parent_window (MainWnd->graph));
+    color.red = 40000;
+    color.green = 40000;
+    color.blue = 40000;
+    gdk_colormap_alloc_color (gtk_widget_get_colormap (MainWnd->wnd), &color, TRUE, TRUE);
+    gdk_gc_set_foreground (MainWnd->color[GC_GREY], &color);
+
     return;
 }
 

@@ -44,7 +44,8 @@ enum
     GC_DARK_GREEN = 4,
     GC_PURPLE = 5,
     GC_YELLOW = 6,
-    MAX_GC = 7
+    GC_GREY = 7,
+    MAX_GC = 8
 };
 
 // Dialogue Editor Data

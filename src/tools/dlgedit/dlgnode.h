@@ -81,27 +81,6 @@ public:
     virtual void save (ofstream&, u_int32*) { }   // Save DlgNode
 };
 
-// Circle
-class Circle : public DlgNode
-{
-public:
-    Circle ();
-    Circle (u_int32, u_int8, s_int32, s_int32);
-    virtual ~Circle () { }
-    
-    u_int32 mood;                       // This characters mood
-                        
-    string text;                        // text of node
-    string comment;                     // User's annotation
-    string conditions;                  // Condition script
-    string variables;                   // Variable script
-    string actions;                     // further actions
-    string character;                   // Who's characters text is this?
-    
-    void save (ofstream&, u_int32*);    // Save Circle
-    void load (u_int32);                // Load Circle
-}; 
-
 // Arrow
 class Arrow : public DlgNode
 {
@@ -116,5 +95,28 @@ public:
     void save (ofstream&, u_int32*);    // Save Arrow
     void load (u_int32, vector<DlgNode*>&);// Load Arrow
 };
+
+// Circle
+class Circle : public DlgNode
+{
+public:
+    Circle ();
+    Circle (u_int32, u_int8, s_int32, s_int32);
+    ~Circle ();
+    
+    u_int32 mood;                       // This characters mood
+                        
+    string text;                        // text of node
+    string comment;                     // User's annotation
+    string conditions;                  // Condition script
+    string variables;                   // Variable script
+    string actions;                     // further actions
+    string character;                   // Who's characters text is this?
+
+    vector<Arrow*> draw;                // For drawing symlinks
+    
+    void save (ofstream&, u_int32*);    // Save Circle
+    void load (u_int32);                // Load Circle
+}; 
 
 #endif // __DLGNODE_H__

@@ -149,6 +149,7 @@ int
 new_link (MainFrame * wnd, GdkPoint point)
 {
     DlgNode *arrow = get_cur_selection (wnd, point);
+    Arrow *gfx;
     u_int32 i;
 
     // exit function, if
@@ -177,9 +178,20 @@ new_link (MainFrame * wnd, GdkPoint point)
     // Add circle to arrows links 
     arrow->link.push_back (wnd->selected_node);
 
+    // Create graphical representation of the link
+    gfx = new Arrow (0, LINK);
+    gfx->prev.push_back (wnd->selected_node);
+    gfx->next.push_back (arrow->next[0]);
+    gfx->link.push_back (arrow);
+    
+    ((Circle *) wnd->selected_node)->draw.push_back (gfx);
+    redraw_arrow (wnd, gfx);
+
     // update graph 
     draw_circle (wnd, wnd->selected_node, 1);
     draw_arrow (wnd, (Arrow *) arrow, 2);
+    draw_arrow (wnd, gfx, 4);
+    
     show_preview (wnd);
     wnd->set_changed ();
 
@@ -191,7 +203,8 @@ int
 remove_link (MainFrame * wnd, GdkPoint point)
 {
     DlgNode *arrow = get_cur_selection (wnd, point);
-
+    vector<Arrow*>::iterator i;
+        
     // exit function, if
     //   - marked node is no circle 
     //   - no node has been selected
@@ -209,6 +222,18 @@ remove_link (MainFrame * wnd, GdkPoint point)
     // remove circle from arrows links 
     remove_data (arrow->link, wnd->selected_node);
 
+    // remove graphical representation of the link
+    for (i = ((Circle *) wnd->selected_node)->draw.begin ();
+         i < ((Circle *) wnd->selected_node)->draw.end (); i++)
+        if ((*i)->link[0] == arrow)
+        {
+            draw_arrow (wnd, *i, 5);
+            ((Circle *) wnd->selected_node)->draw.erase (i);
+
+            delete *i;
+            break;
+        }
+    
     // update graph 
     draw_circle (wnd, wnd->selected_node, 1);
     draw_arrow (wnd, (Arrow *) arrow, 0);
@@ -452,7 +477,7 @@ new_mover (MainFrame * wnd, GdkPoint point)
 void 
 move_node (MainFrame * wnd, GdkPoint point)
 {
-    u_int32 i;
+    u_int32 i, j;
 
     // move node 
     wnd->dragged_node->position.x = point.x;
@@ -465,6 +490,20 @@ move_node (MainFrame * wnd, GdkPoint point)
     for (i = 0; i < wnd->dragged_node->next.size (); i++)
         redraw_arrow (wnd, (Arrow *) wnd->dragged_node->next[i]);
 
+    if (wnd->dragged_node->type == MOVER) return;
+
+    // update symlinks
+    for (i = 0; i < ((Circle *) wnd->dragged_node)->draw.size (); i++)
+        redraw_arrow (wnd, ((Circle *) wnd->dragged_node)->draw[i]);
+
+    for (i = 0; i < wnd->nodes.size (); i++)
+    {
+        if (wnd->nodes[i]->type == LINK) break;
+        for (j = 0; j < ((Circle *) wnd->nodes[i])->draw.size (); j++)
+            if (((Circle *) wnd->nodes[i])->draw[j]->next[0] == wnd->dragged_node)
+                redraw_arrow (wnd, ((Circle *) wnd->nodes[i])->draw[j]);
+    }
+    
     return;
 }
 
@@ -498,6 +537,10 @@ end_moving (MainFrame * wnd, GdkPoint point)
         // arrows tail was moved 
         if (wnd->dragged_node->number == 0)
         {
+            // do not link two player nodes
+            if (node->type == PLAYER && arrow->next[0]->type == PLAYER)
+                circle = old_circle;
+                
             // remove arrow from old circle 
             remove_data (old_circle->next, arrow);
 
@@ -510,6 +553,13 @@ end_moving (MainFrame * wnd, GdkPoint point)
         // arrows tip was moved 
         else
         {
+            // do not link two player nodes
+            if (node->type == PLAYER && arrow->prev[0]->type == PLAYER)
+                circle = old_circle;
+
+            vector<DlgNode*>::iterator j;
+            vector<Arrow*>::iterator i;
+            
             // remove arrow from old circle 
             remove_data (old_circle->prev, arrow);
 
@@ -517,6 +567,21 @@ end_moving (MainFrame * wnd, GdkPoint point)
             circle->prev.push_back (arrow);
             arrow->next.erase (arrow->next.begin ());
             arrow->next.push_back (circle);
+
+            // update symlinks
+            for (j = wnd->nodes.begin (); j != wnd->nodes.end (); j++)
+                if ((*j)->type != LINK)
+                    for (i = ((Circle *) *j)->draw.begin ();
+                         i != ((Circle *) *j)->draw.end (); i++)
+                        if ((*i)->link[0] == arrow)
+                        {
+                            remove_data (((Circle *) *j)->draw, *i);
+                            ((Circle *) circle)->draw.push_back (*i);
+                            (*i)->next.erase ((*i)->next.begin ());
+                            (*i)->next.push_back (circle);
+                            redraw_arrow (wnd, *i);
+                            break;
+                        }
         }
 
         // redraw arrow 
@@ -763,6 +828,18 @@ draw_arrow (MainFrame * wnd, Arrow * arrow, int highlite)
             break;
         }
 
+    case 4:                    // Link
+        {
+            gc = wnd->color[GC_GREY];
+            break;
+        }
+
+    case 5:                   // Remove arrow
+        {
+            gc = wnd->graph->style->white_gc;
+            break;
+        }
+        
     default:
         return;
     }
@@ -788,10 +865,10 @@ draw_arrow (MainFrame * wnd, Arrow * arrow, int highlite)
 void 
 redraw_graph (MainFrame * wnd)
 {
-    u_int32 i;
-    DlgNode *node;
     GdkRectangle t;
-
+    vector<DlgNode*>::iterator i;
+    vector<Arrow*>::iterator j;
+    
     // get visible part of graph 
     t.x = -wnd->x_offset;
     t.y = -wnd->y_offset;
@@ -802,16 +879,21 @@ redraw_graph (MainFrame * wnd)
     gdk_draw_rectangle (wnd->pixmap, wnd->graph->style->white_gc, TRUE, 0, 0, t.width, t.height);
 
     // check for each node, wether it is visible 
-    for (i = 0; i < wnd->number; i++)
+    for (i = wnd->nodes.begin (); i != wnd->nodes.end (); i++)
     {
-        node = wnd->nodes[i];
+        // draw symlinks
+        if ((*i)->type != LINK)
+            for (j = ((Circle *) (*i))->draw.begin (); j != ((Circle *) (*i))->draw.end (); j++)
+                if (rect_in_rect (t, (*j)->position))
+                    draw_arrow (wnd, *j, 4);
 
-        if (rect_in_rect (t, node->position))
+        // draw nodes and arrows
+        if (rect_in_rect (t, (*i)->position))
         {
-            if (node->type == LINK)
-                draw_arrow (wnd, (Arrow *) node, node->highlite);
+            if ((*i)->type == LINK)
+                draw_arrow (wnd, (Arrow *) *i, (*i)->highlite);
             else
-                draw_circle (wnd, node, node->highlite);
+                draw_circle (wnd, *i, (*i)->highlite);
         }
     }
 
@@ -877,6 +959,8 @@ load_dialogue (MainFrame * wnd, const char *file)
     string s;
     Circle *circle;
     Arrow *arrow;
+    vector<DlgNode*>::iterator j;
+    vector<Arrow*>::iterator k;
  
     // Was load cancelled? 
     if (file == NULL)
@@ -936,11 +1020,12 @@ load_dialogue (MainFrame * wnd, const char *file)
             }
             
             case LOAD_CIRCLE:
-            {
+            { 
                 circle = new Circle;
                 circle->load (wnd->number++);
 
                 wnd->nodes.push_back (circle);
+ 
                 break;
             }
 
@@ -961,6 +1046,14 @@ load_dialogue (MainFrame * wnd, const char *file)
     // set number of nodes
     wnd->number = wnd->nodes.size ();
 
+    // set shape of all the symlinks
+    for (j = wnd->nodes.begin (); j != wnd->nodes.end (); j++) 
+    {
+        if ((*j)->type == LINK) break;
+        for (k = ((Circle *) (*j))->draw.begin (); k != ((Circle *) (*j))->draw.end (); k++)
+            redraw_arrow (wnd, *k); 
+    }
+    
     // center view on first node
     if (wnd->number > 0)
     {

@@ -44,6 +44,14 @@ Circle::Circle (u_int32 num, u_int8 tp, s_int32 x, s_int32 y)
     position.height = 21;
 }
 
+Circle::~Circle ()
+{
+    vector<Arrow*>::iterator i;
+
+    for (i = draw.begin (); i < draw.end (); i++)
+        delete *i;
+}
+
 // Save all data neccessary to restore the circle
 void Circle::save (ofstream &file, u_int32* table)
 {
@@ -250,8 +258,14 @@ void Arrow::load (u_int32 num, vector<DlgNode*> &nodes)
             {
                 if (parse_dlgfile (str, n) == LOAD_NUM) 
                 {
+                    Arrow *gfx = new Arrow (0, LINK);
                     circle = nodes[n];
 
+                    gfx->prev.push_back (circle);
+                    gfx->next.push_back (next[0]);
+                    gfx->link.push_back (this);
+                    
+                    ((Circle *) circle)->draw.push_back (gfx);
                     circle->link.push_back (this);
                     link.push_back (circle);
                 }
