@@ -25,11 +25,9 @@
 #include "map.h"
 #include "mapengine.h"
 #include "globals.h"
-#ifdef SDL
 #include "SDL.h"
 #include "SDL_thread.h"
 #include "keyboard.h"
-#endif
 #ifdef SDL_MIXER
 #include "SDL_mixer.h"
 #include "audio_thread.h"
@@ -48,7 +46,6 @@ int main(int argc, char * argv[])
   else screen::init_display(0);
   if(map1->load(argv[1])) {printf("Error loading %s!\n",argv[1]);return(1);}
 
-#ifdef SDL
   SDL_Thread *input_thread;
 
   input_thread = SDL_CreateThread(keyboard_init, NULL);
@@ -58,7 +55,6 @@ int main(int argc, char * argv[])
      fprintf(stderr, "Couldn't create input thread: %s\n", SDL_GetError());
      return(0);
   }
-#endif
 
 #ifdef SDL_MIXER
   SDL_Thread *audio_thread;
@@ -71,10 +67,8 @@ int main(int argc, char * argv[])
   }
 #endif
   mapengine::map_engine(map1);
-#ifdef SDL
   fprintf(stderr, "Killing threads...\n");
   if (input_thread != NULL) SDL_KillThread(input_thread);
-#endif
 
 #ifdef SDL_MIXER
   if (audio_thread != NULL) {
@@ -83,8 +77,6 @@ int main(int argc, char * argv[])
   }
 #endif
   //  delete map1;
-#ifdef SDL
   SDL_Quit();
-#endif
 return(0);
 }

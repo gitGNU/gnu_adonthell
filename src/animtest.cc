@@ -1,4 +1,5 @@
-// $Id
+// $Id$
+
 /*
    Copyright (C) 1999   The Adonthell Project
    Part of the Adonthell Project http://adonthell.linuxgames.com
@@ -17,11 +18,9 @@
 #include "keyboard.h"
 #include "gfx.h"
 #include "globals.h"
-#ifdef SDL
 #include "SDL.h"
 #include "SDL_thread.h"
 #include "keyboard.h"
-#endif
 #ifdef SDL_MIXER
 #include "SDL_mixer.h"
 #include "audio_thread.h"
@@ -34,7 +33,6 @@ int main(int argc, char * argv[])
 
   screen::init_display(0);
 
-#ifdef SDL
   SDL_Thread *input_thread;
 
    input_thread = SDL_CreateThread((void*)keyboard_init, NULL);
@@ -44,7 +42,6 @@ int main(int argc, char * argv[])
      fprintf(stderr, "Couldn't create input thread: %s\n", SDL_GetError());
      return(0);
   }
-#endif
 
   anim.load_frame("test1.pnm");
   anim.set_delay(0,20);

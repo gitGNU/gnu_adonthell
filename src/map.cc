@@ -289,7 +289,7 @@ void map::update_keyboard()
   }
 
   if (heroe.get_scridx()) return;
-#ifdef SDL
+
   if((heroe.get_movtype()==RIGHT&&!keyboard::is_pushed(275))||
      (heroe.get_movtype()==LEFT&&!keyboard::is_pushed(276))||
      (heroe.get_movtype()==UP&&!keyboard::is_pushed(273))||
@@ -303,21 +303,6 @@ void map::update_keyboard()
     heroe.set_movtype(UP);
   if(keyboard::is_pushed(274)&&heroe.get_movtype()==0)
     heroe.set_movtype(DOWN);
-#else
-  if((heroe.get_movtype()==RIGHT&&!keyboard::is_pushed(Right_Key))||
-     (heroe.get_movtype()==LEFT&&!keyboard::is_pushed(Left_Key))||
-     (heroe.get_movtype()==UP&&!keyboard::is_pushed(Up_Key))||
-     (heroe.get_movtype()==DOWN&&!keyboard::is_pushed(Down_Key)))
-    heroe.set_movtype(0);
-  if(keyboard::is_pushed(Right_Key)&&heroe.get_movtype()==0) 
-    heroe.set_movtype(RIGHT);
-  if(keyboard::is_pushed(Left_Key)&&heroe.get_movtype()==0) 
-    heroe.set_movtype(LEFT);
-  if(keyboard::is_pushed(Up_Key)&&heroe.get_movtype()==0) 
-    heroe.set_movtype(UP);
-  if(keyboard::is_pushed(Down_Key)&&heroe.get_movtype()==0) 
-    heroe.set_movtype(DOWN);
-#endif
 
 #ifdef SDL_MIXER
   // Sound effects tied to keyboard

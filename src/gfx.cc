@@ -18,10 +18,8 @@ u_int8 image::bytes_per_pixel, image::sizefactor;
 SDL_Rect image::sr;
 SDL_Rect image::dr;
 
-#ifdef SDL
 SDL_Surface * screen::vis;
 SDL_Surface * screen::getbuffer;
-#endif
 
 image::image ()
 {
@@ -52,7 +50,6 @@ void image::set_sizefactor(u_int8 x)
   sizefactor=x;
 }
 
-#ifdef SDL
 void image::putbox (u_int16 x, u_int16 y)
 {
   x*=sizefactor;
@@ -547,7 +544,6 @@ s_int8 image::get(FILE * file)
   if (!data) return(-1);
   return(0);
 }
-#endif
 
 s_int8 image::load(char * fname)
 {
@@ -564,7 +560,6 @@ u_int8 image::get_sizefactor()
   return(sizefactor);
 }
 
-#ifdef SDL
 s_int8 image::simpleget(FILE * file)
 {
   u_int8 bpp = screen::get_bytes_per_pixel() * 8;
@@ -574,7 +569,6 @@ s_int8 image::simpleget(FILE * file)
   if (data) return(0);
   return(-1);
 }
-#endif
 
 s_int8 image::simpleload(char * fname)
 {
@@ -586,7 +580,6 @@ s_int8 image::simpleload(char * fname)
   return(res);
 }
 
-#ifdef SDL
 void image::adapttodepth()
 {
   // nothing needs to be done here, as SDL will 
@@ -685,7 +678,6 @@ void screen::show()
   frames_to_do=timer3/cycle_length;
   if(frames_to_do>20) frames_to_do=20;
 }
-#endif
 
 inline u_int8 screen::get_bytes_per_pixel()
 {
@@ -717,12 +709,10 @@ u_int8 screen::get_screenwidth()
   return(screenwidth);
 }
 
-#ifdef SDL
 void screen::init_gfx_buffers()
 {
  getbuffer=SDL_ConvertSurface(vis, vis->format, SDL_HWSURFACE);
 }
-#endif
 
 
 void screen::drawbox(u_int16 x, u_int16 y, u_int16 w, u_int16 h, u_int32 color)
@@ -732,14 +722,12 @@ void screen::drawbox(u_int16 x, u_int16 y, u_int16 w, u_int16 h, u_int32 color)
   w*=sizefactor;
   h*=sizefactor;
 
-#ifdef SDL
   static SDL_Rect dr;
   dr.x=x;
   dr.y=y;
   dr.w=w;
   dr.h=h;
   SDL_FillRect(vis, &dr, color);
-#endif
 }
 
 

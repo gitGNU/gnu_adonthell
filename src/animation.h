@@ -1,4 +1,4 @@
-// $Id
+// $Id$
 
 /*
     Copyright (C) 2000 Alexandre Courbot.

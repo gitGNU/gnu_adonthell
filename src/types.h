@@ -13,7 +13,6 @@
 
  */
 
-#ifdef SDL
 #include <SDL/SDL.h>
 
 #define u_int8 Uint8
@@ -23,16 +22,12 @@
 #define s_int16 Sint16
 #define s_int32 Sint32
 
-#else
-
-#define u_int8 unsigned char
-#define u_int16 unsigned short int
-#define u_int32 unsigned long int
-#define s_int8 signed char
-#define s_int16 signed short int
-#define s_int32 signed long int
-
-#endif
+//#define u_int8 unsigned char
+//#define u_int16 unsigned short int
+//#define u_int32 unsigned long int
+//#define s_int8 signed char
+//#define s_int16 signed short int
+//#define s_int32 signed long int
 
 #define RIGHT 1
 #define LEFT 2

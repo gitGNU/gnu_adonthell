@@ -12,11 +12,7 @@ class keyboard
   static bool is_pushed(u_int16 key);
 };
 
-#ifdef SDL
 int keyboard_init(void *data);
-#endif
-
-#endif
 
 #define Left_Key 57396
 #define Right_Key 57397
@@ -95,4 +91,4 @@ int keyboard_init(void *data);
 #define CtrlC_Combo 3
 #define CtrlV_Combo 22
 
-
+#endif

@@ -1,10 +1,8 @@
 #ifndef _gfx_h
 #define _gfx_h
 
-#ifdef SDL
 #include "types.h"
 #include <SDL/SDL.h>
-#endif
 
 #define DEBUG 0
 
@@ -18,10 +16,8 @@ class screen
   static u_int32 trans;
  public:
 
-#ifdef SDL
   static SDL_Surface * vis;
   static SDL_Surface * getbuffer;
-#endif
 
   static void init_display(u_int8 vidmode = 0);
   static void show();
@@ -44,11 +40,9 @@ class image
   static u_int8 bytes_per_pixel, sizefactor;
   static SDL_Rect sr,dr;
 
-#ifdef SDL
   SDL_Surface * data;
   bool mask_on;
   bool trans_on;
-#endif
 
  public:
   image();
