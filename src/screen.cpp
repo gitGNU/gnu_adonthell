@@ -27,6 +27,7 @@ u_int32 screen::SDL_flags=0;
 u_int8 screen::frames_to_do;
 u_int8 screen::bytes_per_pixel;
 u_int32 screen::trans;
+u_int32 screen::trans_pix;
 
 SDL_Surface * screen::vis;
 
@@ -68,7 +69,6 @@ void screen::set_video_mode(u_int16 w, u_int16 h, config * myconfig=NULL)
       trans=0xF81F;
       break;
     }
-
   width=w;
   height=h;
 
@@ -85,6 +85,12 @@ void screen::set_video_mode(u_int16 w, u_int16 h, config * myconfig=NULL)
   
   SDL_WM_SetCaption ("Adonthell", NULL);
   
+  trans=SDL_MapRGB(vis->format,0xFF,0x00,0xFF);
+#ifdef _EDIT_
+  trans_pix=0xFF00FF;
+#else
+  trans_pix=SDL_MapRGB(vis->format,0xFF,0x00,0xFF);
+#endif
   frames_to_do=1;
 }
 
@@ -129,7 +135,6 @@ void screen::show()
   timer1=SDL_GetTicks();
   timer1-=(timer3%cycle_length);
   SDL_Flip(vis);
-  //  SDL_UpdateRect (vis, 0, 0, 0, 0);
   // How slow is our machine? :)
   frames_to_do=timer3/cycle_length;
   if(frames_to_do>20) frames_to_do=20;

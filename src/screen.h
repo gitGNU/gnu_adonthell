@@ -31,6 +31,7 @@ class screen
   static u_int8 bytes_per_pixel;
   static u_int8 frames_to_do;
   static u_int32 trans;
+  static u_int32 trans_pix;
 
   static SDL_Surface * vis;
 

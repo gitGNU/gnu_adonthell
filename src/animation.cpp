@@ -18,12 +18,20 @@
 #include "animation.h"
 
 #ifdef _DEBUG_
+u_int16 animation_frame::a_d_diff=0;
+#else ifdef _EDIT_
+u_int16 animation_frame::a_d_diff=0;
+#endif
+
+#ifdef _DEBUG_
 u_int16 animation::a_d_diff=0;
 #else ifdef _EDIT_
 u_int16 animation::a_d_diff=0;
 #endif
 
 #ifdef _EDIT_
+image * animation::clipboard;
+animation_frame animation::f_clipboard;
 win_font * animation::font;
 win_border * animation::border;
 image * animation::bg;
@@ -33,11 +41,7 @@ void animation_frame::init()
 {
   imagenbr=0;
   is_masked=false;
-#ifdef REVERSE_ALPHA
-  alpha=255;
-#else
-  alpha=0;
-#endif
+  set_alpha(255);
   gapx=0;
   gapy=0;
   delay=0;
@@ -47,20 +51,36 @@ void animation_frame::init()
 animation_frame::animation_frame()
 {
   init();
+#ifdef _DEBUG_
+  cout << "animation_frame() called, "<< ++a_d_diff
+       << " objects currently allocated\n";
+#endif
 }
 
 animation_frame::~animation_frame()
 {
+#ifdef _DEBUG_
+  cout << "~animation_frame() called, "<< --a_d_diff
+       << " objects currently allocated\n";
+#endif
 }
 
 u_int8 animation_frame::get_alpha()
 {
+#ifdef REVERSE_ALPHA
   return alpha;
+#else
+  return 255-alpha;
+#endif
 }
 
 void animation_frame::set_alpha(u_int8 a)
 {
+#ifdef REVERSE_ALPHA
   alpha=a;
+#else
+  alpha=255-a;
+#endif
 }
 
 bool animation_frame::get_mask()
@@ -108,6 +128,7 @@ s_int8 animation_frame::get(gzFile file)
   gzread(file,&imagenbr,sizeof(imagenbr));
   gzread(file,&is_masked,sizeof(is_masked));
   gzread(file,&alpha,sizeof(alpha));
+  set_alpha(alpha);
   gzread(file,&gapx,sizeof(gapx));
   gzread(file,&gapy,sizeof(gapy));
   gzread(file,&delay,sizeof(delay));
@@ -131,7 +152,9 @@ s_int8 animation_frame::put(gzFile file)
 {
   gzwrite(file,&imagenbr,sizeof(imagenbr));
   gzwrite(file,&is_masked,sizeof(is_masked));
+  set_alpha(alpha);
   gzwrite(file,&alpha,sizeof(alpha));
+  set_alpha(alpha);
   gzwrite(file,&gapx,sizeof(gapx));
   gzwrite(file,&gapy,sizeof(gapy));
   gzwrite(file,&delay,sizeof(delay));
@@ -172,6 +195,7 @@ void animation::init()
   t+=WIN_BACKGROUND_FILE;
   if(!a_d_diff)
     {
+      clipboard=new image;
       temp.load_pnm(t.data());
       bg=new image(320,240);
       bg->putbox_tile_img(&temp);
@@ -207,6 +231,7 @@ void animation::clear()
       delete bg;
       delete border;
       delete font;
+      delete clipboard;
     }
 #endif
 
@@ -701,7 +726,7 @@ void animation::update_editor_keys()
       if((mode==FRAME)&&(!play_flag)) 
 	if(!SDL_GetModState()&&KMOD_LSHIFT)
 	  {currentframe=increase_frame(currentframe);}
-      else frame[currentframe].gapx++;
+      //      else frame[currentframe].gapx++;
     }
 
   if(testkey(SDLK_LEFT))
@@ -710,7 +735,7 @@ void animation::update_editor_keys()
       if((mode==FRAME)&&(!play_flag))
 	if(!SDL_GetModState()&&KMOD_LSHIFT)
 	  {currentframe=decrease_frame(currentframe);}
-	else frame[currentframe].gapx--;
+      //	else frame[currentframe].gapx--;
     }
 
   if(input::has_been_pushed(SDLK_a))
@@ -719,6 +744,67 @@ void animation::update_editor_keys()
       if((mode==FRAME)&&(!play_flag)) add_frame();
     }
   
+  if(input::has_been_pushed(SDLK_r))
+    {
+      if(mode==IMAGE)
+	{
+	  image im;
+	  im=t_frame[currentimage];
+	  t_frame[currentimage].reverse_lr(&im);
+	}
+    }
+
+  if(input::has_been_pushed(SDLK_t))
+    {
+      if(mode==IMAGE)
+	{
+	  image im;
+	  im=t_frame[currentimage];
+	  t_frame[currentimage].reverse_ud(&im);
+	}
+    }
+
+  if(input::has_been_pushed(SDLK_c))
+    {
+      if(SDL_GetModState()&&KMOD_LCTRL)
+	{
+	  if(mode==IMAGE)
+	    *clipboard=t_frame[currentimage];
+	  if(mode==FRAME)
+	    f_clipboard=frame[currentframe];
+	}
+    }
+
+  if(input::has_been_pushed(SDLK_v))
+    {
+      if(SDL_GetModState()&&KMOD_LCTRL)
+	{
+	  if(mode==IMAGE)
+	    t_frame[currentimage]=*clipboard;
+	  if(mode==FRAME)
+	    {
+	      frame[currentframe].is_masked=f_clipboard.is_masked;
+	      frame[currentframe].alpha=f_clipboard.alpha;
+	    }
+	}
+    }
+
+  if(input::has_been_pushed(SDLK_b))
+    {
+      if(SDL_GetModState()&&KMOD_LCTRL)
+	{
+	  if(mode==IMAGE)
+	    insert_image(*clipboard,nbr_of_images);
+	  if(mode==FRAME)
+	    {
+	      animation_frame af;
+	      af.is_masked=f_clipboard.is_masked;
+	      af.alpha=f_clipboard.alpha;
+	      insert_frame(af,nbr_of_frames);
+	    }
+	}
+    }
+
   if(input::has_been_pushed(SDLK_d))
     {
       if(mode==IMAGE) delete_image(currentimage);
@@ -729,33 +815,34 @@ void animation::update_editor_keys()
   if(input::has_been_pushed(SDLK_o)) stop();
   if(input::has_been_pushed(SDLK_i)) rewind();
 
-  if(testkey(SDLK_KP_PLUS)&&mode==FRAME)
+  if(testkey(SDLK_KP_PLUS)&&mode==FRAME&&!play_flag)
     frame[currentframe].imagenbr=increase_image(frame[currentframe].imagenbr);
 
-  if(testkey(SDLK_KP_MINUS)&&mode==FRAME)
+  if(testkey(SDLK_KP_MINUS)&&mode==FRAME&&!play_flag)
     frame[currentframe].imagenbr=decrease_image(frame[currentframe].imagenbr);
 
-  if(testkey(SDLK_UP)&&mode==FRAME) 
+  if(testkey(SDLK_UP)&&mode==FRAME&&!play_flag) 
     if(!SDL_GetModState()&&KMOD_LSHIFT)
       {frame[currentframe].delay++;}
-    else frame[currentframe].gapy--;
+  //    else frame[currentframe].gapy--;
 
-  if(testkey(SDLK_DOWN)&&mode==FRAME) 
+  if(testkey(SDLK_DOWN)&&mode==FRAME&&!play_flag) 
     if(!SDL_GetModState()&&KMOD_LSHIFT)
       {frame[currentframe].delay--;}
-    else frame[currentframe].gapy++;
+  //    else frame[currentframe].gapy++;
 
-  if(testkey(SDLK_PAGEUP)&&mode==FRAME) frame[currentframe].alpha++;
-  if(testkey(SDLK_PAGEDOWN)&&mode==FRAME) frame[currentframe].alpha--;
-  
-  if(testkey(SDLK_HOME)&&mode==FRAME)
+  if(testkey(SDLK_PAGEUP)&&mode==FRAME&&!play_flag) 
+    frame[currentframe].set_alpha(frame[currentframe].get_alpha()+1);
+  if(testkey(SDLK_PAGEDOWN)&&mode==FRAME&&!play_flag) 
+    frame[currentframe].set_alpha(frame[currentframe].get_alpha()-1);
+  if(testkey(SDLK_HOME)&&mode==FRAME&&!play_flag)
     frame[currentframe].nextframe=
       increase_frame(frame[currentframe].nextframe);
-  if(testkey(SDLK_END)&&mode==FRAME) 
+  if(testkey(SDLK_END)&&mode==FRAME&&!play_flag) 
     frame[currentframe].nextframe=
       decrease_frame(frame[currentframe].nextframe);
   
-  if(testkey(SDLK_INSERT)&&mode==FRAME) 
+  if(testkey(SDLK_INSERT)&&mode==FRAME&&!play_flag) 
     frame[currentframe].is_masked=frame[currentframe].is_masked==true?
       false:true;
 }
@@ -841,13 +928,15 @@ void animation::update_and_draw()
 
 void animation::editor()
 {
+  u_int16 i;
   while(!input::has_been_pushed(SDLK_ESCAPE))
     {
       input::update();
-      update_editor_keys();
+      for(i=0;i<screen::frames_to_do;i++) update_editor_keys();
       update_and_draw();
       screen::show();
     }
+  input::clear_keys_queue();
 }
 
 #endif

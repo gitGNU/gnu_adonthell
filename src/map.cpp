@@ -138,8 +138,6 @@ s_int8 landmap::get(SDL_RWops * file)
   SDL_RWread(file,&length,sizeof(length),1);
   SDL_RWread(file,&height,sizeof(height),1);
 
-  cout << length << " " << height << endl;
-
   SDL_RWread(file,&posx,sizeof(posx),1);
   SDL_RWread(file,&posy,sizeof(posy),1);
 
@@ -150,8 +148,6 @@ s_int8 landmap::get(SDL_RWops * file)
   for(j=0;j<height;j++)
     for(i=0;i<length;i++)
       maparea[i][j].get(file);
-
-  cout << "Ok got mapsquares\n";
 
   heroe.get_heroe_stat(file);
 

@@ -98,6 +98,8 @@ class image
 			  drawing_area * da_opt=NULL);
   void get_from_screen(s_int16 x, s_int16 y);
   void zoom(image * src);
+  void reverse_lr(image * src);
+  void reverse_ud(image * src);
   void brightness(image * src, u_int16 cont);
 
   void putbox_tile_img(image * source);

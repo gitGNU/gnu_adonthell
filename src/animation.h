@@ -42,6 +42,11 @@
 
 class animation_frame
 {
+#ifdef _DEBUG_
+  static u_int16 a_d_diff;
+#else ifdef _EDIT_
+  static u_int16 a_d_diff;
+#endif
   u_int16 imagenbr;
   bool is_masked;
   u_int8 alpha;
@@ -86,6 +91,8 @@ class animation
 #endif
 
 #ifdef _EDIT_
+  static image * clipboard;
+  static animation_frame f_clipboard;
   bool mode;
   static win_font * font;
   static win_border * border;

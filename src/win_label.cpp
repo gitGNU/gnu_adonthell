@@ -261,10 +261,7 @@ void win_label::draw_text(u_int16 i)
  
   for(u_int16 k=0;k<height;k++)
     for(u_int16 j=0;j<length;j++)
-      tmp_draw->put_pix(j,k,screen::trans);
-  /*#warning Alex FIXME 
-  tmp_draw->putbox(0,0);
-  #warning end problem  */
+      tmp_draw->put_pix(j,k,screen::trans_pix);
   
   while(i<size_texte && texte[i]!='\0' && tmp_y<height)
     {

@@ -133,7 +133,7 @@ void image::init()
   data = NULL;
   length=height=0;
   mask_on=false;
-  alpha=255;
+  set_alpha(255);
   draw_to=NULL;
 #ifdef _EDIT_
   simpledata=NULL;
@@ -155,6 +155,7 @@ image::image (u_int16 l, u_int16 h)
   cout << "image(u_int16, u_int16) called, "<< ++a_d_diff
        << " objects currently allocated\n";
 #endif
+  init();
   length=l;
   height=h;
   bytes_per_pixel=screen::bytes_per_pixel;
@@ -163,9 +164,6 @@ image::image (u_int16 l, u_int16 h)
 #ifdef _EDIT_
   simpledata=(void*)calloc(length*height,3);
 #endif
-  mask_on=false;
-  alpha=255;
-  draw_to=NULL;
 }
 
 image::~image()
@@ -259,13 +257,22 @@ void image::set_mask(bool m)
 
 u_int8 image::get_alpha()
 {
-  return(alpha);
+#ifdef REVERSE_ALPHA
+  return alpha;
+#else
+  return 255-alpha;
+#endif
 }    
 
 void image::set_alpha(u_int8 t)
 {
-  if((t==255)&&(alpha!=255)) SDL_SetAlpha(data,0,0);
+#ifdef REVERSE_ALPHA
+  if((t==255)&&(alpha!=255)&&data) SDL_SetAlpha(data,0,0);
   alpha=t;
+#else
+  if((t==0)&&(alpha!=0)&&data) SDL_SetAlpha(data,0,0);
+  alpha=255-t;
+#endif
 }
 
 void image::draw(s_int16 x, s_int16 y, drawing_area * da_opt=NULL)
@@ -281,7 +288,7 @@ void image::draw(s_int16 x, s_int16 y, drawing_area * da_opt=NULL)
 
   get_rects(x,y);
   if(!dr.w||!dr.h) return;
-  if(alpha!=255) SDL_SetAlpha(data, SDL_SRCALPHA, alpha);
+  if(get_alpha()!=255) SDL_SetAlpha(data, SDL_SRCALPHA, alpha);
   SDL_BlitSurface(data, &sr, screen::vis, &dr);
   if(da_opt) draw_to=oldda;  
 }
@@ -415,8 +422,11 @@ s_int8 image::get(gzFile file)
   gzread(file,&alpha,sizeof(alpha));   
   ret=get_raw(file);
   if(!ret)
-    if(mask_on)
-      SDL_SetColorKey(data, SDL_SRCCOLORKEY|SDL_RLEACCEL, screen::trans);
+    {
+      if(mask_on)
+	SDL_SetColorKey(data, SDL_SRCCOLORKEY|SDL_RLEACCEL, screen::trans);
+      set_alpha(alpha);
+    }
   return ret;
 }
 
@@ -499,7 +509,9 @@ s_int8 image::load_pnm(const char * fname)
 s_int8 image::put(gzFile file)
 {
   gzwrite(file,&mask_on,sizeof(mask_on));
+  set_alpha(alpha);
   gzwrite(file,&alpha,sizeof(alpha));
+  set_alpha(alpha);
   return(put_raw(file));
 }
 
@@ -551,9 +563,10 @@ s_int8 image::save_pnm(char * fname)
 
 u_int32 image::get_pix(u_int16 x, u_int16 y)
 {
-  const u_int32 offset=((y*((length%2?length+1:length)))+x);
   static u_int32 retvalue;
 
+#ifndef _EDIT_
+  const u_int32 offset=((y*((length%2?length+1:length)))+x);
   switch (bytes_per_pixel)
     {
     case 1: return *((u_int8*)data->pixels+offset);
@@ -567,11 +580,29 @@ u_int32 image::get_pix(u_int16 x, u_int16 y)
       return retvalue;
       break;
     }
+#else
+  memcpy(&retvalue,(char*)simpledata+((x+(y*length))*3),3);
+  return(retvalue);
+#endif
 }
 
 void image::put_pix(u_int16 x, u_int16 y, u_int32 col)
 {
   const u_int32 offset=((y*((length%2?length+1:length)))+x);
+
+#ifdef _EDIT_
+  u_int8 r,g,b; 
+  char * c;
+  c=(char*)&col;
+  memcpy(&r,c,1);
+  memcpy(&g,c+1,1);
+  memcpy(&b,c+2,1);
+  memcpy((char*)simpledata+((x+(y*length))*3),&col,3);
+  /*  col=SDL_MapRGB(data->format,*(char*)(&col+2),
+		 *(char*)(&col+2),
+		 *(char*)(&col+2));*/
+  col=SDL_MapRGB(data->format,r,g,b);
+#endif
 
   switch (bytes_per_pixel)
     {
@@ -590,25 +621,44 @@ void image::put_pix(u_int16 x, u_int16 y, u_int32 col)
 void image::zoom(image * src)
 {
   static u_int16 i,j;
-  static u_int32 temp;
   SDL_LockSurface(src->data);
   SDL_LockSurface(data);
-  SDL_LockSurface(screen::vis);
+  for(j=0;j<height;j++)
+    for(i=0;i<length;i++)
+       	put_pix(i,j,src->get_pix(i*src->length/length,j*src->height/height));
+  SDL_UnlockSurface(src->data);
+  SDL_UnlockSurface(data);
+}
+
+void image::reverse_lr(image * src)
+{
+  static u_int16 i,j;
+  if((length!=src->length)||(height!=src->height))
+    resize(src->length,src->height);
+  SDL_LockSurface(src->data);
+  SDL_LockSurface(data);
   for(j=0;j<height;j++)
     for(i=0;i<length;i++)
       {
-	//  cout << (float)src->length/length << " " << (int) src->length/length << endl;
-	//cout << (float)src->height/height << " " << (int) src->height/height << endl;
-       	temp=src->get_pix(i*src->length/length,j*src->height/height);
-	//  	*((u_int16*)screen::vis->pixels+((j*320)+i))=(u_int16)temp;
-	//      	*((u_int16*)data->pixels+((j*86)+i))=(u_int16)temp;
-       	put_pix(i,j,temp);
+	//	cout << src->get_pix(i,j) << endl;
+	put_pix(length-i,j,src->get_pix(i,j));
       }
-  SDL_UnlockSurface(screen::vis);
   SDL_UnlockSurface(src->data);
   SDL_UnlockSurface(data);
-  //  screen::show();
-  //  getchar();
+}
+
+void image::reverse_ud(image * src)
+{
+  static u_int16 i,j;
+  if((length!=src->length)||(height!=src->height))
+    resize(src->length,src->height);
+  SDL_LockSurface(src->data);
+  SDL_LockSurface(data);
+  for(j=0;j<height;j++)
+    for(i=0;i<length;i++)
+      put_pix(i,height-(j+1),src->get_pix(i,j));
+  SDL_UnlockSurface(src->data);
+  SDL_UnlockSurface(data);
 }
 
 void image::brightness(image * src, u_int16 cont)

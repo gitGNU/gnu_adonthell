@@ -58,7 +58,7 @@ s_int8 mappattern::get (SDL_RWops * file)
     {
       if ((res=frame[i].get_pnm(file))) return (res);
       frame[i].set_mask(true);
-      frame[i].set_alpha(0);
+      frame[i].set_alpha(255);
     }
   return (0);
 }
