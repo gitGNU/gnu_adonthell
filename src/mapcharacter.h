@@ -20,6 +20,7 @@
 #include "animation_off.h"
 #include "maptpl.h"
 #include "landmap.h"
+#include "data.h"
 #include "py_inc.h"
 
 #ifdef _EDIT_
@@ -70,17 +71,42 @@ class mapcharacter : public maptpl
   s_int8 load(const char * fname);
 
   // Positioning
-  void set_on_map(landmap * m) {refmap=m;}
-  void remove_from_map() {refmap=NULL;}
+  u_int16 get_posx() { return posx; }
+  u_int16 get_posy() { return posy; }
+  s_int8 get_offx() { return offx; }
+  s_int8 get_offy() { return offy; }
+
+  void set_on_map(landmap * m) 
+    {
+      refmap=m;
+#ifndef _EDIT_
+      PyDict_SetItemString(locals,"mymap",pass_instance(refmap,"landmap"));
+#endif
+    }
+
+  void remove_from_map() 
+    {
+      refmap=NULL;
+#ifndef _EDIT_
+      PyDict_DelItemString(locals,"mymap");
+#endif
+    }
   void set_pos(u_int16 smap,u_int16 x,u_int16 y);
   void set_offset(s_int8 x, s_int8 y) {offx=x; offy=y;}
   
   // Getting which movment the character is doing
   u_int16 move() {return current_move;}
   
+#ifndef _EDIT_
+  void set_schedule(char * file);
+
+  bool is_schedule_activated() { return schedule_activated; }
+  void set_schedule_active(bool a) { schedule_activated=a; }
+#endif
+  void update_move();
   void update();
-  void draw(s_int16 x, s_int16 y, drawing_area * da_opt=NULL);
   void draw(mapview * mv);
+  void draw(s_int16 x, s_int16 y, drawing_area * da_opt=NULL);
 
   // Testing if a move is possible
   bool can_go_north();
@@ -106,13 +132,16 @@ class mapcharacter : public maptpl
   u_int16 submap;
   u_int16 posx, posy;
   s_int8 offx, offy;
+  bool schedule_activated;
   vector<animation_off*> anim;
   landmap * refmap;
   
   u_int16 length, height;
 
+#ifndef _EDIT_
   PyObject * locals;         // Locals that belong to that character
   PyCodeObject * schedule;   // The character's schedule
+#endif
 
 #ifdef _EDIT_
   char label_txt[500];

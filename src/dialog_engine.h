@@ -29,6 +29,7 @@ public:
     void set_npc (char*);           // Changes the whole NPC
 
 #ifndef SWIG
+    dialog_engine();
     dialog_engine (npc*, win_theme*, u_int8=1); // Constructor
     ~dialog_engine ();              // Destructor
     

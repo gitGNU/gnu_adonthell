@@ -16,6 +16,8 @@
 #define _py_inc_h
 
 #include "Python.h"
+#include "compile.h"
+#include "eval.h"
 
 extern void insert_path( char * );
 extern void exec_string(char * s);

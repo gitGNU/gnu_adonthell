@@ -29,6 +29,11 @@ void mapview::init()
   walkimg->set_alpha(110);
 #endif
   da=new drawing_area();
+#ifndef _EDIT_
+  locals=PyDict_New();
+  PyDict_SetItemString(locals,"myself",pass_instance(this,"mapview"));
+  schedule=NULL;
+#endif
 }
 
 mapview::mapview()
@@ -42,6 +47,10 @@ mapview::mapview()
 mapview::~mapview()
 {
   delete da;
+#ifndef _EDIT_
+  Py_DECREF(locals);
+  if(schedule) delete schedule;
+#endif
 #ifdef _EDIT_
   delete walkimg;
 #endif
@@ -51,6 +60,9 @@ void mapview::attach_map(landmap * m)
 {
   m_map=m;
   currentsubmap=0;
+#ifndef _EDIT_
+  PyDict_SetItemString(locals,"mymap",pass_instance(m_map,"landmap"));
+#endif
 #ifdef _EDIT_
   currentobj=0;
 #endif
@@ -73,6 +85,9 @@ void mapview::attach_map(landmap * m)
 void mapview::detach_map()
 {
   m_map=NULL;
+#ifndef _EDIT_
+  PyDict_DelItemString(locals,"mymap");
+#endif
 #ifdef _EDIT_
   mapselect::resize(0,0);
 #endif
@@ -105,7 +120,7 @@ s_int8 mapview::set_current_submap(u_int16 sm)
   return 0;
 }
 
-s_int8 mapview::set_pos(u_int16 px, u_int16 py, u_int16 ox=0, u_int16 oy=0)
+s_int8 mapview::set_pos(u_int16 px, u_int16 py, s_int16 ox=0, s_int16 oy=0)
 {
   if(!m_map->nbr_of_submaps) return -1;
   px+=ox/MAPSQUARE_SIZE; ox%=MAPSQUARE_SIZE;
@@ -113,11 +128,37 @@ s_int8 mapview::set_pos(u_int16 px, u_int16 py, u_int16 ox=0, u_int16 oy=0)
   if(px>=m_map->submap[currentsubmap]->length || 
      py>=m_map->submap[currentsubmap]->height) return -1;
 
+  if(ox<0) { px--; ox=MAPSQUARE_SIZE+ox; }
+  if(oy<0) { py--; oy=MAPSQUARE_SIZE+oy; }
+
   posx=px;
   posy=py;
   offx=ox;
   offy=oy;
   return 0;
+}
+
+s_int8 mapview::center_on(u_int16 px, u_int16 py, s_int16 ox=0, s_int16 oy=0)
+{
+  s_int32 npx=px-(d_length>>1);
+  s_int32 npy=py-(d_height>>1);
+
+  if(!(d_length%2)) ox+=MAPSQUARE_SIZE/2;
+  if(!(d_height%2)) oy+=MAPSQUARE_SIZE/2;
+
+  if(ox<0) { npx--; ox=MAPSQUARE_SIZE+ox; }
+  if(oy<0) { npy--; oy=MAPSQUARE_SIZE+oy; }
+  if(npx<0 || (!npx && ox<0)) { npx=0; ox=0; }
+  if(npy<0 || (!npy && oy<0)) { npy=0; oy=0; }
+
+  if(npx>m_map->submap[currentsubmap]->length-d_length ||
+     (npx==m_map->submap[currentsubmap]->length-d_length && ox))
+    { npx=m_map->submap[currentsubmap]->length-d_length; ox=0; }
+  if(npy>m_map->submap[currentsubmap]->height-d_height ||
+     (npy==m_map->submap[currentsubmap]->height-d_height && oy))
+    { npy=m_map->submap[currentsubmap]->height-d_height; oy=0; }
+
+  return set_pos(npx,npy,ox,oy);
 }
 
 void mapview::scroll_right()
@@ -162,8 +203,44 @@ void mapview::resize(u_int16 l, u_int16 h)
 #endif
 }
 
+#ifndef _EDIT_
+void mapview::set_schedule(char * file)
+{
+  char script[255];
+  strcpy (script, "scripts/schedules/");
+  strcat (script, file);
+  strcat (script, ".py");
+  
+  FILE *f = fopen (script, "r");
+  
+  // See whether the script exists at all
+  if (f)
+    {
+      // Compile the script into a PyCodeObject for quicker execution
+      _node *n = PyParser_SimpleParseFile (f, script, Py_file_input);
+      if (n)
+        {
+	  // If no errors occured update schedule code ...
+	  if (schedule) delete schedule;
+	  schedule = PyNode_Compile (n, file);
+	}
+      else
+        {
+	  cout << "\n*** Cannot set schedule: Error in" << flush;
+	  show_traceback ();
+        }
+      fclose (f);
+    }
+  else cout << "\n*** Cannot open schedule: file \"" << script
+	    << "\" not found!" << flush;
+}
+#endif
+
 void mapview::update()
 {
+#ifndef _EDIT_
+  if(schedule) PyEval_EvalCode(schedule,data::globals,locals);
+#endif
 #ifdef _EDIT_
   mapselect::update();
 #endif
@@ -373,11 +450,6 @@ void mapview::draw(u_int16 x, u_int16 y, drawing_area * da_opt=NULL)
     }
   critical_draw.clear();
   characters_draw.clear();
-}
-
-void mapview::set_schedule(char * file)
-{
-  
 }
 
 #ifdef _EDIT_

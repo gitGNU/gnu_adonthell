@@ -22,6 +22,11 @@
 #include "dialog_engine.h"
 
 // Init the dialogue engine
+
+dialog_engine::dialog_engine() : win_container (20, 120, 280, 100, NULL)
+{
+}
+
 dialog_engine::dialog_engine (npc *mynpc, win_theme *th, u_int8 size) :
     win_container (20, 120, 280, 100, th)
 {

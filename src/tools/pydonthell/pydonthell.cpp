@@ -16,6 +16,8 @@
 
 #include "game.h"
 #include "py_inc.h"
+#include "data.h"
+#include "landmap.h"
 
 extern "C" {
 extern int Py_Main(int, char **);
@@ -32,6 +34,21 @@ int main(int argc, char * argv[])
     if (!the_game.init ()) 
         return 1;
 
+    /*    landmap mymap;
+    
+    PyObject * locals=PyDict_New();
+    
+    PyDict_SetItemString(locals,"mymap",pass_instance(&mymap,"landmap"));
+
+    PyRun_String("print mymap.get_nbr_of_patterns();",Py_file_input,
+		 data::globals,locals);
+    
+    mymap.load("smallmap.map");
+
+    PyRun_String("print mymap.get_nbr_of_patterns();",Py_file_input,
+		 data::globals,locals);
+    */
+  
     if (argc > 1 && argv[1][0] != '/') 
     {
         sprintf (tmp, "%s/%s", cwd, argv[1]);
@@ -39,4 +56,5 @@ int main(int argc, char * argv[])
     }
 
     return Py_Main(argc,argv);
+    
 }

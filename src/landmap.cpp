@@ -551,34 +551,6 @@ s_int8 landmap::save(const char * fname)
 
 #endif
 
-void landmap::mapchar_occupy(mapcharacter * mchar, u_int16 smap, 
-			       u_int16 px, u_int16 py)
-{
-  mapsquare_char mschar;
-  list<mapsquare_char>::iterator it;
-  u_int16 sx=(px-mchar->basex<0)?0:px-mchar->basex;
-  u_int16 sy=(py-mchar->basey<0)?0:py-mchar->basey;
-  u_int16 ex=(sx+mchar->maptpl::length>submap[smap]->length)?
-    submap[smap]->length:sx+mchar->maptpl::length;
-  u_int16 ey=(sy+mchar->maptpl::height>submap[smap]->height)?
-    submap[smap]->height:sy+mchar->maptpl::height;
-  u_int16 i,j;
-
-  for(it=submap[smap]->land[mchar->posx][mchar->posy].mapchars.begin();
-      it!=submap[smap]->land[mchar->posx][mchar->posy].mapchars.end() &&
-	it->mchar!=mchar;it++);
-  mschar.mchar=mchar;
-  mschar.base_tile=it;
-  mschar.is_base=false;
-  for(i=sx;i<ex;i++)
-    for(j=sy;j<ey;j++)
-      {
-	mschar.x=i;
-	mschar.y=j;
-	submap[smap]->land[i][j].mapchars.push_back(mschar);
-      }
-}
-
 void landmap::put_mapchar(mapcharacter * mchar, u_int16 smap, 
 			       u_int16 px, u_int16 py)
 {
@@ -595,6 +567,8 @@ void landmap::put_mapchar(mapcharacter * mchar, u_int16 smap,
   mschar.mchar=mchar;
   mschar.is_base=true;
   mschar.x=px;mschar.y=py;
+  mschar.walkable=
+    mchar->maptpl::placetpl[mchar->basex][mchar->basey].walkable==ALL_WALKABLE;
   submap[smap]->land[px][py].mapchars.push_back(mschar);
   it=--submap[smap]->land[px][py].mapchars.end();
   it->base_tile=it;
@@ -607,6 +581,9 @@ void landmap::put_mapchar(mapcharacter * mchar, u_int16 smap,
 	{
 	  mschar.x=i;
 	  mschar.y=j;
+	  mschar.walkable=
+	    mchar->maptpl::placetpl[sx+mchar->basex-px][sy+mchar->basey-py].
+	    walkable==ALL_WALKABLE;
 	  submap[smap]->land[i][j].mapchars.push_back(mschar);
 	}
   //  submap[smap]->land[px][py].mapchars.push_back(mchar);

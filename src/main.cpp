@@ -68,11 +68,22 @@ int main(int argc, char * argv[])
     heroe->stand_south();
     heroe->set_on_map(&mymap);
     heroe->set_pos(0,3,3);
-    
+    heroe->set_schedule("keyboard_control");
+
+    mapcharacter * mychar=new mapcharacter;
+    mychar->load("servant1.mchar");
+    mymap.add_mapcharacter(mychar);
+    mychar->stand_south();
+    mychar->set_on_map(&mymap);
+    mychar->set_pos(0,5,3);
+    mychar->set_schedule("random_move");
+
     // The map view should cover the entire screen
     mview.resize(320,240);
     // The map view will display "mymap"
     mview.attach_map(&mymap);
+
+    mview.set_schedule("center_player");
 
     screen::init_frame_counter();
     // This is quite self-explicit...
@@ -83,17 +94,7 @@ int main(int argc, char * argv[])
 	for(int i=0;i<screen::frames_to_do();i++)
 	  {
 	    if (!ds && !de) 
-	      {
-		if(input::is_pushed(SDLK_RIGHT)) mview.scroll_right();
-		if(input::is_pushed(SDLK_LEFT)) mview.scroll_left();
-		if(input::is_pushed(SDLK_UP)) mview.scroll_up();
-		if(input::is_pushed(SDLK_DOWN)) mview.scroll_down();
-		
-		if(input::is_pushed(SDLK_d)) heroe->go_north();
-		if(input::is_pushed(SDLK_c)) heroe->go_south();
-		if(input::is_pushed(SDLK_x)) heroe->go_west();
-		if(input::is_pushed(SDLK_v)) heroe->go_east();
-		
+	      {		
 		if (input::is_pushed(SDLK_l)) ds = new data_screen (LOAD_SCREEN);
 		if (input::is_pushed(SDLK_s)) ds = new data_screen (SAVE_SCREEN);
 
@@ -104,6 +105,7 @@ int main(int argc, char * argv[])
          }
 	      }
 	    mymap.update();
+	    mview.update();
         if (de && !de->update ())
         {
             delete de;

@@ -18,12 +18,10 @@
 #include "screen.h"
 #include "game.h"
 
-#ifndef _EDIT_
 #include "Python.h"
 #include "py_modules.h"
 #include "py_inc.h"
 #include "data.h"
-#endif
 
 #ifdef SDL_MIXER
 #include "audio.h"
@@ -57,36 +55,15 @@ bool game::init ()
     // init video subsystem
     screen::set_video_mode (320, 240, configuration);
 
-    // init audio subsystem
-#ifdef SDL_MIXER
-#ifndef _EDIT_
-    audio::init (configuration);
-
-    /*    if (audio::is_initialized())
-        audio_thread = SDL_CreateThread (audio::update, NULL);
-
-    if (audio_thread == NULL) 
-    {
-        printf ("Couldn't create audio thread: %s\n", SDL_GetError ());
-        printf ("Audio will not be used\n");
-	}*/
-#endif
-#endif  
-
     // init input subsystem
     input::init();
 
     // init python interpreter
 #ifndef _EDIT_
-	init_python ();
+    init_python ();
 
     // init the data subsystem
     data::init (configuration->get_adonthellrc ());
-
-#ifdef SDL_MIXER
-    // Make audio_in available to python
-    //  pass_instance(&audio_in,"audio");
-#endif
 #endif
 
     // voila :)
@@ -100,22 +77,12 @@ game::~game ()
     configuration->write_adonthellrc ();
     delete configuration;
     
-    // shutdown audio
-#ifdef SDL_MIXER
-#ifndef _EDIT_
-    /*    if (audio_thread != NULL) 
-    {
-    SDL_KillThread (audio_thread);*/
-        audio::cleanup ();
-	//    }
-#endif
-#endif
     // shutdown Python
 #ifndef _EDIT_
-	Py_Finalize ();
+    Py_Finalize ();
 
     // delete all data
-	data::cleanup ();
+    data::cleanup ();
 #endif
 
     // shutdown video

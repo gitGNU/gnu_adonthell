@@ -9,7 +9,7 @@ LDADD = ../../animation.o ../../animation_off.o ../../audio.o \
 ../../drawing_area.o ../../event.o ../../fileops.o ../../game.o ../../gametime.o \
 ../../image.o ../../input.o ../../lex.prefs.o \
 ../../mapselect.o ../../maptpl.o ../../mapobject.o ../../mapcharacter.o ../../landmap.o ../../mapview.o \
-../../pnm.o ../../prefs.o ../../py_character_wrap.o ../../py_landmap_wrap.o ../../py_input_wrap.o \
+../../pnm.o ../../prefs.o ../../py_character_wrap.o ../../py_landmap_wrap.o ../../py_input_wrap.o ../../py_mapcharacter_wrap.o \
 ../../py_mapview_wrap.o ../../py_dialog_engine_wrap.o \
 ../../py_inc.o ../../py_modules.o ../../py_quest_wrap.o \
 ../../py_screen_wrap.o ../../py_image_wrap.o ../../quest.o ../../screen.o ../../storage.o \
@@ -83,4 +83,5 @@ py_baseitem_wrap.cpp : py_baseitem.i
 lex.prefs.cpp : prefs.l
 	flex -olex.prefs.cpp $<
 
- 
+%.o: %.cpp
+	$(CXXCOMPILE) -c $< -o $@

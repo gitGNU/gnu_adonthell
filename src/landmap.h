@@ -27,6 +27,8 @@
 
 class mapview;
 
+#ifndef SWIG
+
 class mapsquare_tile
 {
   u_int16 objnbr;
@@ -58,6 +60,7 @@ class mapsquare_char
 {
   mapcharacter * mchar;
   bool is_base;
+  bool walkable;
   list<mapsquare_char>::iterator base_tile;
   u_int16 x,y;
 
@@ -100,10 +103,17 @@ class mapsquare
   // Draw takes only a mapview as argument.
   void draw(s_int16 x, s_int16 y, mapobject ** pattern, 
 	    drawing_area * da_opt=NULL);
-  bool is_walkable_left() { return walkable & WALKABLE_LEFT; }
-  bool is_walkable_right() { return walkable & WALKABLE_RIGHT; }
-  bool is_walkable_up() { return walkable & WALKABLE_UP; }
-  bool is_walkable_down() { return walkable & WALKABLE_DOWN; }
+  bool is_free() 
+    { 
+      list<mapsquare_char>::iterator i;
+      for(i=mapchars.begin();i!=mapchars.end();i++)
+	if(!i->walkable) return false;
+      return true;
+    }
+  bool is_walkable_left() { return (walkable & WALKABLE_LEFT); }
+  bool is_walkable_right() { return (walkable & WALKABLE_RIGHT); }
+  bool is_walkable_up() { return (walkable & WALKABLE_UP); }
+  bool is_walkable_down() { return (walkable & WALKABLE_DOWN); }
   void set_walkable_left(bool w)
     {
       if(!w) walkable&=(ALL_WALKABLE-WALKABLE_LEFT);
@@ -177,6 +187,7 @@ class landsubmap
   friend class mapcharacter;
 };  // landsubmap
 
+#endif
 
 class landmap
 {
@@ -186,6 +197,7 @@ class landmap
   static u_int16 a_d_diff;
 #endif
 
+#ifndef SWIG
 #ifdef _EDIT_
   mapobject ** mini_pattern;
   
@@ -199,16 +211,17 @@ class landmap
   void reset_objs();
 
 #endif
-
+#endif
 
  public:
+#ifndef SWIG
   vector<mapcharacter*> mapchar;
   mapobject ** pattern;
-  u_int16 nbr_of_patterns;
-
   vector<string> objsrc;
-
   landsubmap ** submap;
+#endif
+
+  u_int16 nbr_of_patterns;
   u_int16 nbr_of_submaps;
 
  public:
@@ -218,6 +231,9 @@ class landmap
 
   landmap& operator =(const landmap& lm);
 
+  u_int16 get_nbr_of_patterns() { return nbr_of_patterns; }
+  u_int16 get_nbr_of_submaps() { return nbr_of_submaps; }
+
   s_int8 get(gzFile file);
   s_int8 load(const char * fname);
 #ifdef _EDIT_
@@ -225,8 +241,6 @@ class landmap
   s_int8 save(const char * fname);
 #endif
 
-  void mapchar_occupy(mapcharacter * mchar, u_int16 smap, 
-		      u_int16 px, u_int16 py);
   void put_mapchar(mapcharacter * mchar, u_int16 smap, u_int16 px, u_int16 py);
   void remove_mapchar(mapcharacter * mchar, u_int16 smap, u_int16 px,
 		      u_int16 py);
@@ -234,6 +248,8 @@ class landmap
   // number is nbr_of_submaps-1)
   void add_mapcharacter(mapcharacter * m)
     {mapchar.push_back(m);}
+  mapcharacter * get_mapchar(u_int16 nbr) { return mapchar[nbr]; }
+
 
   s_int8 add_submap();
   s_int8 add_submap(u_int16 l, u_int16 h);
@@ -245,13 +261,15 @@ class landmap
   s_int8 set_square_pattern(u_int16 smap, u_int16 px, u_int16 py, 
 			    u_int16 patnbr);
 
+#ifndef SWIG
   void remove_obj_from_square(u_int16 smap,
 			      list<mapsquare_tile>::iterator obj);  
-  void update();
-
   s_int8 insert_mapobject(mapobject &an, u_int16 pos,
 			  const char * srcfile="");
   s_int8 delete_mapobject(u_int16 pos);
+#endif
+
+  void update();
 
   void draw_square(u_int16 smap, u_int16 x, u_int16 y, u_int16 px, u_int16 py,
 		   drawing_area * da_opt=NULL);

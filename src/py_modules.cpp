@@ -33,6 +33,7 @@ extern "C"
 	void initcharacterc (void);
 	void initquestc (void);
 	void initlandmapc (void);
+	void initmapcharacterc (void);
 	void initmapviewc (void);
 }
 
@@ -62,6 +63,7 @@ bool init_python (void)
 	initdialog_enginec ();
 	initquestc ();
 	initlandmapc();
+	initmapcharacterc();
 	initmapviewc();
 	return true;
 }

@@ -13,16 +13,5 @@
 #define u_int32 unsigned long
 #define s_int32 signed long
 
-class landmap 
-{
-public:
-  landmap();
-  void clear();
-  ~landmap();
-
-  landmap& operator =(const landmap& lm);
-
-  s_int8 get(gzFile file);
-  s_int8 load(const char * fname);
-  void update();
-}
+%include "mapcharacter.h"
+%include "landmap.h"

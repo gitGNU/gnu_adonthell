@@ -270,7 +270,7 @@ distdir: $(DISTFILES)
 	@for file in $(DISTFILES); do \
 	  d=$(srcdir); \
 	  if test -d $$d/$$file; then \
-	    cp -pr $$/$$file $(distdir)/$$file; \
+	    cp -pr $$d/$$file $(distdir)/$$file; \
 	  else \
 	    test -f $(distdir)/$$file \
 	    || ln $$d/$$file $(distdir)/$$file 2> /dev/null \
@@ -401,134 +401,14 @@ mostlyclean-generic distclean-generic clean-generic \
 maintainer-clean-generic clean mostlyclean distclean maintainer-clean
 
 
-animation.o : ../../animation.cpp
+%.o : ../../%.cpp
 	$(CXXCOMPILE) -c $< -o $@
 
-animation_off.o : ../../animation_off.cpp
-	$(CXXCOMPILE) -c $< -o $@
-
-audio.o : ../../audio.cpp
-	$(CXXCOMPILE) -c $< -o $@
-
-data.o : ../../data.cpp
-	$(CXXCOMPILE) -c $< -o $@
-
-event.o : ../../event.cpp
-	$(CXXCOMPILE) -c $< -o $@
-
-drawing_area.o : ../../drawing_area.cpp
-	$(CXXCOMPILE) -c $< -o $@
-
-fileops.o : ../../fileops.cpp
-	$(CXXCOMPILE) -c $< -o $@
-
-game.o : ../../game.cpp
-	$(CXXCOMPILE) -c $< -o $@
-
-gametime.o : ../../gametime.cpp
-	$(CXXCOMPILE) -c $< -o $@
-
-image.o : ../../image.cpp
-	$(CXXCOMPILE) -c $< -o $@
-
-input.o : ../../input.cpp
-	$(CXXCOMPILE) -c $< -o $@
-
-lex.prefs.o : ../../lex.prefs.cpp
+yarg.o: ../../yarg.cc
 	$(CXXCOMPILE) -c $< -o $@
 
 ../../lex.prefs.o : ../../prefs.l
 	flex -o../../lex.prefs.cpp $<
-
-mapselect.o : ../../mapselect.cpp
-	$(CXXCOMPILE) -c $< -o $@
-
-maptpl.o : ../../maptpl.cpp
-	$(CXXCOMPILE) -c $< -o $@
-
-mapobject.o : ../../mapobject.cpp
-	$(CXXCOMPILE) -c $< -o $@
-
-mapcharacter.o : ../../mapcharacter.cpp
-	$(CXXCOMPILE) -c $< -o $@
-
-character.o : ../../character.cpp
-	$(CXXCOMPILE) -c $< -o $@
-
-landmap.o : ../../landmap.cpp
-	$(CXXCOMPILE) -c $< -o $@
-
-mapview.o : ../../mapview.cpp
-	$(CXXCOMPILE) -c $< -o $@
-
-pnm.o : ../../pnm.cpp
-	$(CXXCOMPILE) -c $< -o $@
-
-prefs.o : ../../prefs.cpp
-	$(CXXCOMPILE) -c $< -o $@
-
-screen.o : ../../screen.cpp
-	$(CXXCOMPILE) -c $< -o $@
-
-storage.o : ../../storage.cpp
-	$(CXXCOMPILE) -c $< -o $@
-
-py_inc.o : ../../py_inc.cpp
-	$(CXXCOMPILE) -c $< -o $@
-
-quest.o : ../../quest.cpp
-	$(CXXCOMPILE) -c $< -o $@
-
-win_base.o : ../../win_base.cpp
-	$(CXXCOMPILE) -c $< -o $@
-
-win_border.o : ../../win_border.cpp
-	$(CXXCOMPILE) -c $< -o $@
-
-win_container.o : ../../win_container.cpp
-	$(CXXCOMPILE) -c $< -o $@
-
-win_font.o : ../../win_font.cpp
-	$(CXXCOMPILE) -c $< -o $@
-
-win_theme.o : ../../win_theme.cpp
-	$(CXXCOMPILE) -c $< -o $@
-
-win_scrolled.o : ../../win_scrolled.cpp
-	$(CXXCOMPILE) -c $< -o $@
-
-win_background.o : ../../win_background.cpp
-	$(CXXCOMPILE) -c $< -o $@
-
-win_scrollbar.o : ../../win_scrollbar.cpp
-	$(CXXCOMPILE) -c $< -o $@
-
-win_file.o : ../../win_file.cpp
-	$(CXXCOMPILE) -c $< -o $@
-
-win_image.o : ../../win_image.cpp
-	$(CXXCOMPILE) -c $< -o $@
-
-win_label.o : ../../win_label.cpp
-	$(CXXCOMPILE) -c $< -o $@
-
-win_select.o : ../../win_select.cpp
-	$(CXXCOMPILE) -c $< -o $@
-
-win_write.o : ../../win_write.cpp
-	$(CXXCOMPILE) -c $< -o $@
-
-win_query.o : ../../win_query.cpp
-	$(CXXCOMPILE) -c $< -o $@
-
-win_info.o : ../../win_info.cpp
-	$(CXXCOMPILE) -c $< -o $@
-
-win_file_select.o : ../../win_file_select.cpp
-	$(CXXCOMPILE) -c $< -o $@
-
-yarg.o : ../../yarg.cc
-	$(CXXCOMPILE) -c $< -o $@
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

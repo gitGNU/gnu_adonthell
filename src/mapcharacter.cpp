@@ -24,7 +24,12 @@ void mapcharacter::init()
     anim[i]=new animation_off;
   current_move=STAND_NORTH;
   ask_move=NO_MOVE;
-  locals=Py_BuildValue("");
+  schedule_activated=true;
+#ifndef _EDIT_
+  locals=PyDict_New();
+  PyDict_SetItemString(locals,"myself",pass_instance(this,"mapcharacter"));
+  schedule=NULL;
+#endif
 }
 
 void mapcharacter::clear()
@@ -32,6 +37,10 @@ void mapcharacter::clear()
   for(u_int16 i=0;i<NBR_MOVES;i++)
     delete(anim[i]);
   anim.clear();
+#ifndef _EDIT_
+  Py_DECREF(locals);
+  if(schedule) delete schedule;
+#endif
 }
 
 mapcharacter::mapcharacter() : maptpl(0,0,1,1,9,9)
@@ -111,18 +120,21 @@ bool mapcharacter::can_go_north()
   u_int16 i,j;
   u_int16 sx=(posx-basex<0)?0:posx-basex;
   u_int16 sy=(posy-basey<0)?0:posy-basey;
-  u_int16 ex=(posx-basex+mapselect::length>=refmap->submap[submap]->length)?
+  s_int16 ax=sx-(posx-basex);
+  s_int16 ay=sy-(posy-basey);
+  u_int16 ex=(posx-basex+mapselect::length>refmap->submap[submap]->length)?
     refmap->submap[submap]->length-1:posx-basex+mapselect::length;
-  u_int16 ey=(posy-basey+mapselect::height>=refmap->submap[submap]->height)?
+  u_int16 ey=(posy-basey+mapselect::height>refmap->submap[submap]->height)?
     refmap->submap[submap]->height-1:posy-basey+mapselect::height;
 
   for(j=sy;j<ey;j++)
     for(i=sx;i<ex;i++)
       {
-	if(placetpl[i-sx][j-sy].walkable) continue;
+	if(placetpl[i-sx+ax][j-sy+ay].walkable) continue;
 	if(!j) continue;
 	if(!(refmap->submap[submap]->land[i][j].is_walkable_up() &&
-	     refmap->submap[submap]->land[i][j-1].is_walkable_down()))
+	     refmap->submap[submap]->land[i][j-1].is_walkable_down() &&
+	     refmap->submap[submap]->land[i][j-1].is_free()))
 	  return false;
       }
   return true;
@@ -134,18 +146,21 @@ bool mapcharacter::can_go_south()
   u_int16 i,j;
   u_int16 sx=(posx-basex<0)?0:posx-basex;
   u_int16 sy=(posy-basey<0)?0:posy-basey;
-  u_int16 ex=(posx-basex+mapselect::length>=refmap->submap[submap]->length)?
+  s_int16 ax=sx-(posx-basex);
+  s_int16 ay=sy-(posy-basey);
+  u_int16 ex=(posx-basex+mapselect::length>refmap->submap[submap]->length)?
     refmap->submap[submap]->length-1:posx-basex+mapselect::length;
-  u_int16 ey=(posy-basey+mapselect::height>=refmap->submap[submap]->height)?
+  u_int16 ey=(posy-basey+mapselect::height>refmap->submap[submap]->height)?
     refmap->submap[submap]->height-1:posy-basey+mapselect::height;
 
   for(j=sy;j<ey;j++)
     for(i=sx;i<ex;i++)
       {
-	if(placetpl[i-sx][j-sy].walkable) continue;
+	if(placetpl[i-sx+ax][j-sy+ay].walkable) continue;
 	if(j==refmap->submap[submap]->height-1) continue;
 	if(!(refmap->submap[submap]->land[i][j].is_walkable_down() &&
-	     refmap->submap[submap]->land[i][j+1].is_walkable_up()))
+	     refmap->submap[submap]->land[i][j+1].is_walkable_up() &&
+	     refmap->submap[submap]->land[i][j+1].is_free()))
 	  return false;
       }
   return true;
@@ -157,18 +172,21 @@ bool mapcharacter::can_go_east()
   u_int16 i,j;
   u_int16 sx=(posx-basex<0)?0:posx-basex;
   u_int16 sy=(posy-basey<0)?0:posy-basey;
-  u_int16 ex=(posx-basex+mapselect::length>=refmap->submap[submap]->length)?
+  s_int16 ax=sx-(posx-basex);
+  s_int16 ay=sy-(posy-basey);
+  u_int16 ex=(posx-basex+mapselect::length>refmap->submap[submap]->length)?
     refmap->submap[submap]->length-1:posx-basex+mapselect::length;
-  u_int16 ey=(posy-basey+mapselect::height>=refmap->submap[submap]->height)?
+  u_int16 ey=(posy-basey+mapselect::height>refmap->submap[submap]->height)?
     refmap->submap[submap]->height-1:posy-basey+mapselect::height;
 
   for(j=sy;j<ey;j++)
     for(i=sx;i<ex;i++)
       {
-	if(placetpl[i-sx][j-sy].walkable) continue;
+	if(placetpl[i-sx+ax][j-sy+ay].walkable) continue;
 	if(i==refmap->submap[submap]->length-1) continue;
 	if(!(refmap->submap[submap]->land[i][j].is_walkable_right() &&
-	     refmap->submap[submap]->land[i+1][j].is_walkable_left()))
+	     refmap->submap[submap]->land[i+1][j].is_walkable_left() &&
+	     refmap->submap[submap]->land[i+1][j].is_free()))
 	  return false;
       }
   return true;
@@ -180,18 +198,22 @@ bool mapcharacter::can_go_west()
   u_int16 i,j;
   u_int16 sx=(posx-basex<0)?0:posx-basex;
   u_int16 sy=(posy-basey<0)?0:posy-basey;
-  u_int16 ex=(posx-basex+mapselect::length>=refmap->submap[submap]->length)?
+  s_int16 ax=sx-(posx-basex);
+  s_int16 ay=sy-(posy-basey);
+  u_int16 ex=(posx-basex+mapselect::length>refmap->submap[submap]->length)?
     refmap->submap[submap]->length-1:posx-basex+mapselect::length;
-  u_int16 ey=(posy-basey+mapselect::height>=refmap->submap[submap]->height)?
+  u_int16 ey=(posy-basey+mapselect::height>refmap->submap[submap]->height)?
     refmap->submap[submap]->height-1:posy-basey+mapselect::height;
 
   for(j=sy;j<ey;j++)
     for(i=sx;i<ex;i++)
       {
-	if(placetpl[i-sx][j-sy].walkable) continue;
+	if(placetpl[i-sx+ax][j-sy+ay].walkable) continue;
 	if(!i) continue;
+
 	if(!(refmap->submap[submap]->land[i][j].is_walkable_left() &&
-	     refmap->submap[submap]->land[i-1][j].is_walkable_right()))
+	     refmap->submap[submap]->land[i-1][j].is_walkable_right() &&
+	     refmap->submap[submap]->land[i-1][j].is_free()))
 	  return false;
       }
   return true;
@@ -249,7 +271,40 @@ void mapcharacter::go_west()
   ask_move=WALK_WEST;
 }
 
-void mapcharacter::update()
+#ifndef _EDIT_
+void mapcharacter::set_schedule(char * file)
+{
+  char script[255];
+  strcpy (script, "scripts/schedules/");
+  strcat (script, file);
+  strcat (script, ".py");
+  
+  FILE *f = fopen (script, "r");
+  
+  // See whether the script exists at all
+  if (f)
+    {
+      // Compile the script into a PyCodeObject for quicker execution
+      _node *n = PyParser_SimpleParseFile (f, script, Py_file_input);
+      if (n)
+        {
+	  // If no errors occured update schedule code ...
+	  if (schedule) delete schedule;
+	  schedule = PyNode_Compile (n, file);
+	}
+      else
+        {
+	  cout << "\n*** Cannot set schedule: Error in" << flush;
+	  show_traceback ();
+        }
+      fclose (f);
+    }
+  else cout << "\n*** Cannot open schedule: file \"" << script
+	    << "\" not found!" << flush;
+}
+#endif
+
+void mapcharacter::update_move()
 {
   if(refmap) switch(current_move)
     {
@@ -261,7 +316,7 @@ void mapcharacter::update()
 	      stand_north();
 	      break;
 	    }
-	  refmap->mapchar_occupy(this,submap,posx,posy-1);
+	  refmap->put_mapchar(this,submap,posx,posy-1);
 	}
       offy--;
       if(offy==-MAPSQUARE_SIZE)
@@ -281,7 +336,7 @@ void mapcharacter::update()
 	      stand_south();
 	      break;
 	    }
-	  refmap->mapchar_occupy(this,submap,posx,posy);
+	  refmap->put_mapchar(this,submap,posx,posy);
 	  refmap->remove_mapchar(this,submap,posx,posy);
 	  set_pos(submap,posx,posy+1);
 	  set_offset(0,-(MAPSQUARE_SIZE-1));
@@ -304,7 +359,7 @@ void mapcharacter::update()
 	      stand_west();
 	      break;
 	    }
-	  refmap->mapchar_occupy(this,submap,posx-1,posy);
+	  refmap->put_mapchar(this,submap,posx-1,posy);
 	}
       offx--;
       if(offx==-MAPSQUARE_SIZE)
@@ -324,7 +379,7 @@ void mapcharacter::update()
 	      stand_east();
 	      break;
 	    }
-	  refmap->mapchar_occupy(this,submap,posx,posy);
+	  refmap->put_mapchar(this,submap,posx,posy);
 	  refmap->remove_mapchar(this,submap,posx,posy);
 	  set_pos(submap,posx+1,posy);
 	  set_offset(-(MAPSQUARE_SIZE-1),0);
@@ -342,6 +397,15 @@ void mapcharacter::update()
     }
   anim[current_move]->update();
   ask_move=NO_MOVE;
+}
+
+void mapcharacter::update()
+{
+#ifndef _EDIT_
+  if(schedule && schedule_activated) 
+    PyEval_EvalCode(schedule,data::globals,locals);
+#endif
+  update_move();
 }
 
 void mapcharacter::draw(s_int16 x, s_int16 y, drawing_area * da_opt=NULL)
@@ -607,6 +671,11 @@ void mapcharacter::update_editor_keys()
   if(input::has_been_pushed(SDLK_F6))
     load();
   
+  if(testkey(SDLK_RETURN))
+    {
+      anim[current_move]->editor();
+    }
+
   if(testkey(SDLK_KP_PLUS))
     {
       anim[current_move]->stop();

@@ -488,8 +488,11 @@ SWIG_InstallConstants(PyObject *d, swig_const_info constants[]) {
 /* -------- TYPES TABLE (BEGIN) -------- */
 
 #define  SWIGTYPE_p_landmap swig_types[0] 
-#define  SWIGTYPE_p_gzFile swig_types[1] 
-static swig_type_info *swig_types[3];
+#define  SWIGTYPE_p_drawing_area swig_types[1] 
+#define  SWIGTYPE_p_mapcharacter swig_types[2] 
+#define  SWIGTYPE_p_gzFile swig_types[3] 
+#define  SWIGTYPE_p_mapview swig_types[4] 
+static swig_type_info *swig_types[6];
 
 /* -------- TYPES TABLE (END) -------- */
 
@@ -507,6 +510,542 @@ static swig_type_info *swig_types[3];
 #ifdef __cplusplus
 extern "C" {
 #endif
+static PyObject *_wrap_mapcharacter_init(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapcharacter *arg0 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"O:mapcharacter_init",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
+    arg0->init();
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapcharacter_clear(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapcharacter *arg0 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"O:mapcharacter_clear",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
+    arg0->clear();
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_new_mapcharacter(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapcharacter *result ;
+    
+    if(!PyArg_ParseTuple(args,":new_mapcharacter")) return NULL;
+    result = (mapcharacter *)new mapcharacter();
+    resultobj = SWIG_NewPointerObj((void *) result, SWIGTYPE_p_mapcharacter);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_delete_mapcharacter(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapcharacter *arg0 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"O:delete_mapcharacter",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
+    delete arg0;
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapcharacter_get(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapcharacter *arg0 ;
+    gzFile *arg1 ;
+    PyObject * argo0 =0 ;
+    PyObject * argo1 =0 ;
+    signed char result ;
+    
+    if(!PyArg_ParseTuple(args,"OO:mapcharacter_get",&argo0,&argo1)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
+    if ((SWIG_ConvertPtr(argo1,(void **) &arg1,SWIGTYPE_p_gzFile,1)) == -1) return NULL;
+    result = (signed char )arg0->get(*arg1);
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapcharacter_load(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapcharacter *arg0 ;
+    char *arg1 ;
+    PyObject * argo0 =0 ;
+    signed char result ;
+    
+    if(!PyArg_ParseTuple(args,"Os:mapcharacter_load",&argo0,&arg1)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
+    result = (signed char )arg0->load((char const *)arg1);
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapcharacter_get_posx(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapcharacter *arg0 ;
+    PyObject * argo0 =0 ;
+    unsigned short result ;
+    
+    if(!PyArg_ParseTuple(args,"O:mapcharacter_get_posx",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
+    result = (unsigned short )arg0->get_posx();
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapcharacter_get_posy(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapcharacter *arg0 ;
+    PyObject * argo0 =0 ;
+    unsigned short result ;
+    
+    if(!PyArg_ParseTuple(args,"O:mapcharacter_get_posy",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
+    result = (unsigned short )arg0->get_posy();
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapcharacter_get_offx(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapcharacter *arg0 ;
+    PyObject * argo0 =0 ;
+    signed char result ;
+    
+    if(!PyArg_ParseTuple(args,"O:mapcharacter_get_offx",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
+    result = (signed char )arg0->get_offx();
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapcharacter_get_offy(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapcharacter *arg0 ;
+    PyObject * argo0 =0 ;
+    signed char result ;
+    
+    if(!PyArg_ParseTuple(args,"O:mapcharacter_get_offy",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
+    result = (signed char )arg0->get_offy();
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapcharacter_set_on_map(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapcharacter *arg0 ;
+    landmap *arg1 ;
+    PyObject * argo0 =0 ;
+    PyObject * argo1 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"OO:mapcharacter_set_on_map",&argo0,&argo1)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
+    if ((SWIG_ConvertPtr(argo1,(void **) &arg1,SWIGTYPE_p_landmap,1)) == -1) return NULL;
+    arg0->set_on_map(arg1);
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapcharacter_remove_from_map(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapcharacter *arg0 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"O:mapcharacter_remove_from_map",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
+    arg0->remove_from_map();
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapcharacter_set_pos(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapcharacter *arg0 ;
+    unsigned short arg1 ;
+    unsigned short arg2 ;
+    unsigned short arg3 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"Ohhh:mapcharacter_set_pos",&argo0,&arg1,&arg2,&arg3)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
+    arg0->set_pos(arg1,arg2,arg3);
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapcharacter_set_offset(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapcharacter *arg0 ;
+    signed char arg1 ;
+    signed char arg2 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"Obb:mapcharacter_set_offset",&argo0,&arg1,&arg2)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
+    arg0->set_offset(arg1,arg2);
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapcharacter_move(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapcharacter *arg0 ;
+    PyObject * argo0 =0 ;
+    unsigned short result ;
+    
+    if(!PyArg_ParseTuple(args,"O:mapcharacter_move",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
+    result = (unsigned short )arg0->move();
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapcharacter_set_schedule(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapcharacter *arg0 ;
+    char *arg1 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"Os:mapcharacter_set_schedule",&argo0,&arg1)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
+    arg0->set_schedule(arg1);
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapcharacter_is_schedule_activated(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapcharacter *arg0 ;
+    PyObject * argo0 =0 ;
+    bool result ;
+    
+    if(!PyArg_ParseTuple(args,"O:mapcharacter_is_schedule_activated",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
+    result = (bool )arg0->is_schedule_activated();
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapcharacter_set_schedule_active(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapcharacter *arg0 ;
+    bool arg1 ;
+    PyObject * argo0 =0 ;
+    int tempbool1 ;
+    
+    if(!PyArg_ParseTuple(args,"Oi:mapcharacter_set_schedule_active",&argo0,&tempbool1)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
+    arg1 = (bool ) tempbool1;
+    arg0->set_schedule_active(arg1);
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapcharacter_update_move(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapcharacter *arg0 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"O:mapcharacter_update_move",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
+    arg0->update_move();
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapcharacter_update(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapcharacter *arg0 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"O:mapcharacter_update",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
+    arg0->update();
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapcharacter_draw(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapcharacter *arg0 ;
+    mapview *arg1 ;
+    PyObject * argo0 =0 ;
+    PyObject * argo1 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"OO:mapcharacter_draw",&argo0,&argo1)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
+    if ((SWIG_ConvertPtr(argo1,(void **) &arg1,SWIGTYPE_p_mapview,1)) == -1) return NULL;
+    arg0->draw(arg1);
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapcharacter_can_go_north(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapcharacter *arg0 ;
+    PyObject * argo0 =0 ;
+    bool result ;
+    
+    if(!PyArg_ParseTuple(args,"O:mapcharacter_can_go_north",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
+    result = (bool )arg0->can_go_north();
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapcharacter_can_go_south(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapcharacter *arg0 ;
+    PyObject * argo0 =0 ;
+    bool result ;
+    
+    if(!PyArg_ParseTuple(args,"O:mapcharacter_can_go_south",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
+    result = (bool )arg0->can_go_south();
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapcharacter_can_go_east(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapcharacter *arg0 ;
+    PyObject * argo0 =0 ;
+    bool result ;
+    
+    if(!PyArg_ParseTuple(args,"O:mapcharacter_can_go_east",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
+    result = (bool )arg0->can_go_east();
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapcharacter_can_go_west(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapcharacter *arg0 ;
+    PyObject * argo0 =0 ;
+    bool result ;
+    
+    if(!PyArg_ParseTuple(args,"O:mapcharacter_can_go_west",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
+    result = (bool )arg0->can_go_west();
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapcharacter_stand_north(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapcharacter *arg0 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"O:mapcharacter_stand_north",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
+    arg0->stand_north();
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapcharacter_stand_south(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapcharacter *arg0 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"O:mapcharacter_stand_south",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
+    arg0->stand_south();
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapcharacter_stand_east(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapcharacter *arg0 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"O:mapcharacter_stand_east",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
+    arg0->stand_east();
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapcharacter_stand_west(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapcharacter *arg0 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"O:mapcharacter_stand_west",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
+    arg0->stand_west();
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapcharacter_go_north(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapcharacter *arg0 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"O:mapcharacter_go_north",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
+    arg0->go_north();
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapcharacter_go_south(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapcharacter *arg0 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"O:mapcharacter_go_south",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
+    arg0->go_south();
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapcharacter_go_east(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapcharacter *arg0 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"O:mapcharacter_go_east",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
+    arg0->go_east();
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapcharacter_go_west(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapcharacter *arg0 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"O:mapcharacter_go_west",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
+    arg0->go_west();
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_landmap_nbr_of_patterns_set(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    landmap *arg0 ;
+    unsigned short arg1 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"Oh:landmap_nbr_of_patterns_set",&argo0,&arg1)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_landmap,1)) == -1) return NULL;
+    arg0->nbr_of_patterns = arg1;
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_landmap_nbr_of_patterns_get(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    landmap *arg0 ;
+    PyObject * argo0 =0 ;
+    unsigned short result ;
+    
+    if(!PyArg_ParseTuple(args,"O:landmap_nbr_of_patterns_get",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_landmap,1)) == -1) return NULL;
+    result = (unsigned short ) (arg0->nbr_of_patterns);
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_landmap_nbr_of_submaps_set(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    landmap *arg0 ;
+    unsigned short arg1 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"Oh:landmap_nbr_of_submaps_set",&argo0,&arg1)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_landmap,1)) == -1) return NULL;
+    arg0->nbr_of_submaps = arg1;
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_landmap_nbr_of_submaps_get(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    landmap *arg0 ;
+    PyObject * argo0 =0 ;
+    unsigned short result ;
+    
+    if(!PyArg_ParseTuple(args,"O:landmap_nbr_of_submaps_get",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_landmap,1)) == -1) return NULL;
+    result = (unsigned short ) (arg0->nbr_of_submaps);
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+}
+
+
 static PyObject *_wrap_new_landmap(PyObject *self, PyObject *args) {
     PyObject *resultobj;
     landmap *result ;
@@ -546,6 +1085,34 @@ static PyObject *_wrap_delete_landmap(PyObject *self, PyObject *args) {
 }
 
 
+static PyObject *_wrap_landmap_get_nbr_of_patterns(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    landmap *arg0 ;
+    PyObject * argo0 =0 ;
+    unsigned short result ;
+    
+    if(!PyArg_ParseTuple(args,"O:landmap_get_nbr_of_patterns",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_landmap,1)) == -1) return NULL;
+    result = (unsigned short )arg0->get_nbr_of_patterns();
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_landmap_get_nbr_of_submaps(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    landmap *arg0 ;
+    PyObject * argo0 =0 ;
+    unsigned short result ;
+    
+    if(!PyArg_ParseTuple(args,"O:landmap_get_nbr_of_submaps",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_landmap,1)) == -1) return NULL;
+    result = (unsigned short )arg0->get_nbr_of_submaps();
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+}
+
+
 static PyObject *_wrap_landmap_get(PyObject *self, PyObject *args) {
     PyObject *resultobj;
     landmap *arg0 ;
@@ -578,6 +1145,125 @@ static PyObject *_wrap_landmap_load(PyObject *self, PyObject *args) {
 }
 
 
+static PyObject *_wrap_landmap_put_mapchar(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    landmap *arg0 ;
+    mapcharacter *arg1 ;
+    unsigned short arg2 ;
+    unsigned short arg3 ;
+    unsigned short arg4 ;
+    PyObject * argo0 =0 ;
+    PyObject * argo1 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"OOhhh:landmap_put_mapchar",&argo0,&argo1,&arg2,&arg3,&arg4)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_landmap,1)) == -1) return NULL;
+    if ((SWIG_ConvertPtr(argo1,(void **) &arg1,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
+    arg0->put_mapchar(arg1,arg2,arg3,arg4);
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_landmap_remove_mapchar(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    landmap *arg0 ;
+    mapcharacter *arg1 ;
+    unsigned short arg2 ;
+    unsigned short arg3 ;
+    unsigned short arg4 ;
+    PyObject * argo0 =0 ;
+    PyObject * argo1 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"OOhhh:landmap_remove_mapchar",&argo0,&argo1,&arg2,&arg3,&arg4)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_landmap,1)) == -1) return NULL;
+    if ((SWIG_ConvertPtr(argo1,(void **) &arg1,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
+    arg0->remove_mapchar(arg1,arg2,arg3,arg4);
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_landmap_add_mapcharacter(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    landmap *arg0 ;
+    mapcharacter *arg1 ;
+    PyObject * argo0 =0 ;
+    PyObject * argo1 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"OO:landmap_add_mapcharacter",&argo0,&argo1)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_landmap,1)) == -1) return NULL;
+    if ((SWIG_ConvertPtr(argo1,(void **) &arg1,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
+    arg0->add_mapcharacter(arg1);
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_landmap_get_mapchar(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    landmap *arg0 ;
+    unsigned short arg1 ;
+    PyObject * argo0 =0 ;
+    mapcharacter *result ;
+    
+    if(!PyArg_ParseTuple(args,"Oh:landmap_get_mapchar",&argo0,&arg1)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_landmap,1)) == -1) return NULL;
+    result = (mapcharacter *)arg0->get_mapchar(arg1);
+    resultobj = SWIG_NewPointerObj((void *) result, SWIGTYPE_p_mapcharacter);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_landmap_add_submap(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    landmap *arg0 ;
+    PyObject * argo0 =0 ;
+    signed char result ;
+    
+    if(!PyArg_ParseTuple(args,"O:landmap_add_submap",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_landmap,1)) == -1) return NULL;
+    result = (signed char )arg0->add_submap();
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_landmap_remove_submap(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    landmap *arg0 ;
+    unsigned short arg1 ;
+    PyObject * argo0 =0 ;
+    signed char result ;
+    
+    if(!PyArg_ParseTuple(args,"Oh:landmap_remove_submap",&argo0,&arg1)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_landmap,1)) == -1) return NULL;
+    result = (signed char )arg0->remove_submap(arg1);
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_landmap_set_square_pattern(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    landmap *arg0 ;
+    unsigned short arg1 ;
+    unsigned short arg2 ;
+    unsigned short arg3 ;
+    unsigned short arg4 ;
+    PyObject * argo0 =0 ;
+    signed char result ;
+    
+    if(!PyArg_ParseTuple(args,"Ohhhh:landmap_set_square_pattern",&argo0,&arg1,&arg2,&arg3,&arg4)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_landmap,1)) == -1) return NULL;
+    result = (signed char )arg0->set_square_pattern(arg1,arg2,arg3,arg4);
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+}
+
+
 static PyObject *_wrap_landmap_update(PyObject *self, PyObject *args) {
     PyObject *resultobj;
     landmap *arg0 ;
@@ -592,13 +1278,82 @@ static PyObject *_wrap_landmap_update(PyObject *self, PyObject *args) {
 }
 
 
+static PyObject *_wrap_landmap_draw_square(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    landmap *arg0 ;
+    unsigned short arg1 ;
+    unsigned short arg2 ;
+    unsigned short arg3 ;
+    unsigned short arg4 ;
+    unsigned short arg5 ;
+    drawing_area *arg6 = NULL ;
+    PyObject * argo0 =0 ;
+    PyObject * argo6 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"Ohhhhh|O:landmap_draw_square",&argo0,&arg1,&arg2,&arg3,&arg4,&arg5,&argo6)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_landmap,1)) == -1) return NULL;
+    if ((SWIG_ConvertPtr(argo6,(void **) &arg6,SWIGTYPE_p_drawing_area,1)) == -1) return NULL;
+    arg0->draw_square(arg1,arg2,arg3,arg4,arg5,arg6);
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
 static PyMethodDef landmapcMethods[] = {
+	 { "mapcharacter_init", _wrap_mapcharacter_init, METH_VARARGS },
+	 { "mapcharacter_clear", _wrap_mapcharacter_clear, METH_VARARGS },
+	 { "new_mapcharacter", _wrap_new_mapcharacter, METH_VARARGS },
+	 { "delete_mapcharacter", _wrap_delete_mapcharacter, METH_VARARGS },
+	 { "mapcharacter_get", _wrap_mapcharacter_get, METH_VARARGS },
+	 { "mapcharacter_load", _wrap_mapcharacter_load, METH_VARARGS },
+	 { "mapcharacter_get_posx", _wrap_mapcharacter_get_posx, METH_VARARGS },
+	 { "mapcharacter_get_posy", _wrap_mapcharacter_get_posy, METH_VARARGS },
+	 { "mapcharacter_get_offx", _wrap_mapcharacter_get_offx, METH_VARARGS },
+	 { "mapcharacter_get_offy", _wrap_mapcharacter_get_offy, METH_VARARGS },
+	 { "mapcharacter_set_on_map", _wrap_mapcharacter_set_on_map, METH_VARARGS },
+	 { "mapcharacter_remove_from_map", _wrap_mapcharacter_remove_from_map, METH_VARARGS },
+	 { "mapcharacter_set_pos", _wrap_mapcharacter_set_pos, METH_VARARGS },
+	 { "mapcharacter_set_offset", _wrap_mapcharacter_set_offset, METH_VARARGS },
+	 { "mapcharacter_move", _wrap_mapcharacter_move, METH_VARARGS },
+	 { "mapcharacter_set_schedule", _wrap_mapcharacter_set_schedule, METH_VARARGS },
+	 { "mapcharacter_is_schedule_activated", _wrap_mapcharacter_is_schedule_activated, METH_VARARGS },
+	 { "mapcharacter_set_schedule_active", _wrap_mapcharacter_set_schedule_active, METH_VARARGS },
+	 { "mapcharacter_update_move", _wrap_mapcharacter_update_move, METH_VARARGS },
+	 { "mapcharacter_update", _wrap_mapcharacter_update, METH_VARARGS },
+	 { "mapcharacter_draw", _wrap_mapcharacter_draw, METH_VARARGS },
+	 { "mapcharacter_can_go_north", _wrap_mapcharacter_can_go_north, METH_VARARGS },
+	 { "mapcharacter_can_go_south", _wrap_mapcharacter_can_go_south, METH_VARARGS },
+	 { "mapcharacter_can_go_east", _wrap_mapcharacter_can_go_east, METH_VARARGS },
+	 { "mapcharacter_can_go_west", _wrap_mapcharacter_can_go_west, METH_VARARGS },
+	 { "mapcharacter_stand_north", _wrap_mapcharacter_stand_north, METH_VARARGS },
+	 { "mapcharacter_stand_south", _wrap_mapcharacter_stand_south, METH_VARARGS },
+	 { "mapcharacter_stand_east", _wrap_mapcharacter_stand_east, METH_VARARGS },
+	 { "mapcharacter_stand_west", _wrap_mapcharacter_stand_west, METH_VARARGS },
+	 { "mapcharacter_go_north", _wrap_mapcharacter_go_north, METH_VARARGS },
+	 { "mapcharacter_go_south", _wrap_mapcharacter_go_south, METH_VARARGS },
+	 { "mapcharacter_go_east", _wrap_mapcharacter_go_east, METH_VARARGS },
+	 { "mapcharacter_go_west", _wrap_mapcharacter_go_west, METH_VARARGS },
+	 { "landmap_nbr_of_patterns_set", _wrap_landmap_nbr_of_patterns_set, METH_VARARGS },
+	 { "landmap_nbr_of_patterns_get", _wrap_landmap_nbr_of_patterns_get, METH_VARARGS },
+	 { "landmap_nbr_of_submaps_set", _wrap_landmap_nbr_of_submaps_set, METH_VARARGS },
+	 { "landmap_nbr_of_submaps_get", _wrap_landmap_nbr_of_submaps_get, METH_VARARGS },
 	 { "new_landmap", _wrap_new_landmap, METH_VARARGS },
 	 { "landmap_clear", _wrap_landmap_clear, METH_VARARGS },
 	 { "delete_landmap", _wrap_delete_landmap, METH_VARARGS },
+	 { "landmap_get_nbr_of_patterns", _wrap_landmap_get_nbr_of_patterns, METH_VARARGS },
+	 { "landmap_get_nbr_of_submaps", _wrap_landmap_get_nbr_of_submaps, METH_VARARGS },
 	 { "landmap_get", _wrap_landmap_get, METH_VARARGS },
 	 { "landmap_load", _wrap_landmap_load, METH_VARARGS },
+	 { "landmap_put_mapchar", _wrap_landmap_put_mapchar, METH_VARARGS },
+	 { "landmap_remove_mapchar", _wrap_landmap_remove_mapchar, METH_VARARGS },
+	 { "landmap_add_mapcharacter", _wrap_landmap_add_mapcharacter, METH_VARARGS },
+	 { "landmap_get_mapchar", _wrap_landmap_get_mapchar, METH_VARARGS },
+	 { "landmap_add_submap", _wrap_landmap_add_submap, METH_VARARGS },
+	 { "landmap_remove_submap", _wrap_landmap_remove_submap, METH_VARARGS },
+	 { "landmap_set_square_pattern", _wrap_landmap_set_square_pattern, METH_VARARGS },
 	 { "landmap_update", _wrap_landmap_update, METH_VARARGS },
+	 { "landmap_draw_square", _wrap_landmap_draw_square, METH_VARARGS },
 	 { NULL, NULL }
 };
 
@@ -609,11 +1364,17 @@ static PyMethodDef landmapcMethods[] = {
 /* -------- TYPE CONVERSION AND EQUIVALENCE RULES (BEGIN) -------- */
 
 static swig_type_info _swigt__p_landmap[] = {{"_p_landmap", 0, "landmap *"},{"_p_landmap"},{0}};
+static swig_type_info _swigt__p_drawing_area[] = {{"_p_drawing_area", 0, "drawing_area *"},{"_p_drawing_area"},{0}};
+static swig_type_info _swigt__p_mapcharacter[] = {{"_p_mapcharacter", 0, "mapcharacter *"},{"_p_mapcharacter"},{0}};
 static swig_type_info _swigt__p_gzFile[] = {{"_p_gzFile", 0, "gzFile *"},{"_p_gzFile"},{0}};
+static swig_type_info _swigt__p_mapview[] = {{"_p_mapview", 0, "mapview *"},{"_p_mapview"},{0}};
 
 static swig_type_info *swig_types_initial[] = {
 _swigt__p_landmap, 
+_swigt__p_drawing_area, 
+_swigt__p_mapcharacter, 
 _swigt__p_gzFile, 
+_swigt__p_mapview, 
 0
 };
 
@@ -621,6 +1382,16 @@ _swigt__p_gzFile,
 /* -------- TYPE CONVERSION AND EQUIVALENCE RULES (END) -------- */
 
 static swig_const_info swig_const_table[] = {
+    { SWIG_PY_INT,     "STAND_NORTH", (long) 0, 0, 0, 0},
+    { SWIG_PY_INT,     "STAND_SOUTH", (long) 1, 0, 0, 0},
+    { SWIG_PY_INT,     "STAND_WEST", (long) 2, 0, 0, 0},
+    { SWIG_PY_INT,     "STAND_EAST", (long) 3, 0, 0, 0},
+    { SWIG_PY_INT,     "WALK_NORTH", (long) 4, 0, 0, 0},
+    { SWIG_PY_INT,     "WALK_SOUTH", (long) 5, 0, 0, 0},
+    { SWIG_PY_INT,     "WALK_WEST", (long) 6, 0, 0, 0},
+    { SWIG_PY_INT,     "WALK_EAST", (long) 7, 0, 0, 0},
+    { SWIG_PY_INT,     "NBR_MOVES", (long) 8, 0, 0, 0},
+    { SWIG_PY_INT,     "NO_MOVE", (long) 65535, 0, 0, 0},
 {0}};
 
 static PyObject *SWIG_globals;

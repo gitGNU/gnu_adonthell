@@ -13,4 +13,5 @@
 #define u_int32 unsigned long
 #define s_int32 signed long
 
-%include mapview.h
+%include "mapcharacter.h"
+%include "mapview.h"

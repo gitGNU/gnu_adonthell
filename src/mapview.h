@@ -46,6 +46,11 @@ class mapview
   list<mapsquare_tile> critical_draw;
   list<mapsquare_char> characters_draw;
 
+#ifndef _EDIT_
+  PyObject * locals;         // Locals that belong to that mapview
+  PyCodeObject * schedule;   // The mapview's schedule
+#endif
+
 #ifdef _EDIT_
   char file_name[500];
   win_label * info_win_label;
@@ -89,8 +94,8 @@ class mapview
   void detach_map();
   void set_screen_pos(u_int16 nx, u_int16 ny);
   s_int8 set_current_submap(u_int16 sm);
-  s_int8 set_pos(u_int16 x, u_int16 y, u_int16 ox=0, u_int16 oy=0);
-
+  s_int8 set_pos(u_int16 x, u_int16 y, s_int16 ox=0, s_int16 oy=0);
+  s_int8 center_on(u_int16 x, u_int16 y, s_int16 ox=0, s_int16 oy=0);
   bool can_scroll_right()
     { return (posx!=m_map->submap[currentsubmap]->length-d_length); }
   bool can_scroll_left()
@@ -108,10 +113,11 @@ class mapview
   u_int16 get_posx() { return posx; }
   u_int16 get_posy() { return posy; }
   void resize(u_int16 l, u_int16 h);
+#ifndef _EDIT_
+  void set_schedule(char * file);
+#endif
   void update();
   void draw(u_int16 x, u_int16 y, drawing_area * da_opt=NULL);
-
-  void set_schedule(char * file);
 
 #ifdef _EDIT_
   void move_cursor_left();
