@@ -303,6 +303,12 @@ bool config::read_adonthellrc ()
     {
         switch (i = parse_adonthellrc (n, s))
         {
+            case PREFS_LANGUAGE:
+            {
+                if (parse_adonthellrc (n, s) == PREFS_STR) language = s;
+                break;
+            }
+                
             case PREFS_SCREEN_MODE:
             {
                 if (parse_adonthellrc (n, s) == PREFS_NUM) screen_mode = n;
