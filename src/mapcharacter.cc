@@ -21,6 +21,7 @@
  
 #include "mapcharacter.h"
 #include "map_event.h"
+#include "time_event.h"
 #include "event_handler.h"
 #include "landmap.h"
 #include "win_manager.h"
@@ -205,7 +206,9 @@ s_int8 mapcharacter::get_state (igzstream& file)
     b << file;
     set_action_active (b);
 
-    return 0;
+    // get the events
+    py_callback::instance = schedule.get_instance ();
+    return event_list::get_state (file);
 }
 
 s_int8 mapcharacter::put_state (ogzstream& file) const
@@ -246,6 +249,9 @@ s_int8 mapcharacter::put_state (ogzstream& file) const
     }
     else false >> file; 
     is_action_activated () >> file; 
+    
+    // save the events
+    event_list::put_state (file);
     
     return 0;
 }
@@ -553,6 +559,40 @@ void mapcharacter::set_callback (PyObject *cb, PyObject *args)
 {
     if (callback) delete callback;
     callback = new py_callback (cb, args);
+}
+
+void mapcharacter::time_callback (string delay, PyObject *cb, PyObject *args)
+{
+    time_event *ev = new time_event (delay);
+    ev->set_callback (cb, args);
+    add_event (ev);
+}
+
+void mapcharacter::time_callback_string (string delay, string cb, PyObject *args)
+{
+    PyObject *instance = schedule.get_instance ();
+
+    // check that we have a valid instance that contains our callback
+    if (instance == NULL)
+    {
+        fprintf (stderr, "*** error: mapcharacter::time_callback: Invalid instance!");
+        return;
+    }
+     
+    PyObject *callback = PyObject_GetAttrString (instance, (char *) cb.c_str ());
+
+    if (!PyCallable_Check (callback))
+    {
+        fprintf (stderr, "*** error: mapcharacter::time_callback: Setting callback ' %s' failed!", cb.c_str ());
+    }
+    else
+    {
+        time_event *ev = new time_event (delay);
+        ev->set_callback (callback, args);
+        add_event (ev);
+    }
+    
+    Py_XDECREF (callback);
 }
 
 bool mapcharacter::follow_path () 

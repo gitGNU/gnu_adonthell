@@ -140,41 +140,73 @@ void event::put_state (ogzstream & file) const
     Repeat >> file;
     Action >> file;
     
-    if (Action != ACTION_SCRIPT) return;
-        
-    Script->object_file () >> file;
-    
-    if (Args)
+    switch (Action)
     {
-        true >> file;
-        python::put_tuple (Args, file);
+        // save script
+        case ACTION_SCRIPT:
+        {
+            Script->object_file () >> file;
+    
+            if (Args)
+            {
+                true >> file;
+                python::put_tuple (Args, file);
+            }
+            else false >> file;
+            
+            return;
+        }
+        
+        // save python callback
+        case ACTION_PYFUNC:
+        {
+            PyFunc->put_state (file);
+            return;
+        }
+        
+        default: return;
     }
-    else false >> file;
 }
 
 // load the state of the script associated with the event 
 bool event::get_state (igzstream & file) 
 {
-    std::string name;
-    bool has_args;
-    PyObject * args = NULL;
-
     // Note that »Type« is already read by event_list::load to
     // determine what event subclass to instanciate
     Repeat << file;
     Action << file;
     
-    if (Action != ACTION_SCRIPT) return true;
+    switch (Action)
+    {
+        // load script from file
+        case ACTION_SCRIPT:
+        {
+            std::string name;
+            bool has_args;
+            PyObject * args = NULL;
+
+            name << file;
+            has_args << file;
+    
+            if (has_args) args = python::get_tuple (file);
+    
+            set_script (name, args);
+            Py_XDECREF (args);
+    
+            return true;
+        }
         
-    name << file;
-    has_args << file;
+        // load python callback from file
+        case ACTION_PYFUNC:
+        {
+            PyFunc = new py_callback;
+            return PyFunc->get_state (file); 
+        }
+        
+        default: return true;
+    }
     
-    if (has_args) args = python::get_tuple (file);
-    
-    set_script (name, args);
-    Py_XDECREF (args);
-    
-    return true;
+    return false;
 }
 
 // the event_list this event is kept in

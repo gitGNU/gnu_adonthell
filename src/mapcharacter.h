@@ -597,6 +597,8 @@ public:
     bool goal_reached ();
     void stop_moving ();
     
+    void time_callback (string delay, PyObject *cb, PyObject *args = NULL);
+    void time_callback_string (string delay, string cb, PyObject *args = NULL);
     //@}
     
 
