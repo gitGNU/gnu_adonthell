@@ -13,7 +13,8 @@ class mapevent : vector<instruction*>
   //    (mapcharacter*aguy,map*amap,u_int16 x,u_int16 y);
 
    vector<instruction*> program;
-   u_int16 otherevent_val;
+   u_int8 otherevent_val;           // Will switch to u_int16 after the
+                                    // map structure is changed
 
  public:
   mapevent();
