@@ -12,6 +12,7 @@
    See the COPYING file for more details
 */
 
+#include <iostream>
 #include "bin.h"
 
 using namespace gui;
@@ -24,67 +25,75 @@ bin::bin () : child (NULL)
 
 void bin::add (widget * w)
 {
-  //if (child) remove (child); 
   clear();
+  
+  //this container can contain just one widget
+  child = w;
 
-    child = w;
-    w->set_parent (this);
-    
-    w->set_position (0, 0);
-        
-    on_add (); 
+  /* we set this at the parent for w objet */
+  w->set_parent (this);
+
+  on_add (); 
 }
 
 
 
 void bin::remove (widget *w)
 {
-    w->set_parent (NULL);
-
-    child = NULL;
-
-    on_remove (); 
+  w->set_parent (NULL);
+  
+  child = NULL;
+  
+  on_remove (); 
 }
 
 
 void bin::clear ()
 {
-    if (child) 
+  if (child) 
     {
-        delete child; 
-        child = NULL;
+      delete child; 
+      child = NULL;
     }
 }
-
-
 
 
 void bin::update_position()
 {
   container::update_position();
   
+  /* if there is a child update_position of the child */
   if (child) child->update_position (); 
 }
 
-void bin::set_size (u_int32 length, u_int32 height)
+
+void bin::set_size (s_int32 length, s_int32 height)
 {
-    container::set_size (length, height);
-    
-    if (child)
+  /* update container size */
+  container::set_size (length, height);
+  
+  /* if there is a child, we resize it and rebuild it */
+  if (child)
     {
-        child->set_size (get_length () -(border_width_ << 1), get_height () - (border_width_ << 1));
-        child->realize ();
+      /* we center the alone child */
+      std::cout << "bin::set_size " << get_border_width () << "  " <<(get_border_width()<<1) << std::endl;
+      child->set_size (get_length () - ( get_border_width () << 1 ), get_height () - ( get_border_width() << 1));
+      child->realize ();
     }
 }
 
 
+
 bool bin::draw (gfx::drawing_area * da, gfx::surface * sf)
 {
+  /* draw the container */
   if (container::draw (da, sf))
     {
+      /* attach the child at the drawing area */
       assign_drawing_area(da);
       /* draw the contain */ 
       if (child) child->draw (this, sf);
+      /* detach the drawing area */
       detach_drawing_area();
       return true;
     }
@@ -92,21 +101,37 @@ bool bin::draw (gfx::drawing_area * da, gfx::surface * sf)
 }
 
 
+void bin::set_position (s_int16 x, s_int16 y)
+{
+  container::set_position (x, y);
+  if (child) child->set_position (0, 0);
+}
+
 /**
  * input update function
  * @return 1 if this object use the event,  else return 0
-     */
+ */
 int bin::input_update (input::event * ev)
 {
-  if (child) return child->input_update (ev);
-  return 0;
+  /* if this objet is unsensible we return 0 */
+  if ( !is_sensible () || child == NULL) return 0;
+  /* if there is a child we send the event at the child */
+  return child->input_update (ev);
+}
+
+
+
+void bin::realize ()
+{
+  container::realize ();
+  //check size and location of children
+  set_position ( get_x(), get_y());
+  set_size (get_length(), get_height());
+  //WARNING : execute child->realize () ??
 }
 
 
 bin::~bin ()
 {
-    clear (); 
+  clear (); 
 }
-
-
-

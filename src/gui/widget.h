@@ -76,7 +76,7 @@ namespace gui
        * @param x
        * @param y
        */
-      virtual void set_position (s_int32 x, s_int32 y); 
+      virtual void set_position (s_int16 x, s_int16 y); 
       
       
       /** update position
@@ -87,46 +87,46 @@ namespace gui
       /** get x position
        * @return x position in his parent
        */
-      s_int32 get_x () const; 
+      s_int16 get_x () const; 
       
       
       
       /** get y position
        * @return y position in his parent
        */
-      s_int32 get_y () const; 
+      s_int16 get_y () const; 
       
       
       
       /** get x real position
        * @return real x position in the screen 
        */
-      s_int32 get_x_real () const; 
+      s_int16 get_x_real () const; 
       
       
       /** get y real position
        * @return real y position in the screen 
        */
-      s_int32 get_y_real () const; 
+      s_int16 get_y_real () const; 
       
       
       /** set the minimum size of a widget
        * @param length
        * @param height
        */
-      virtual void set_size (u_int32 length, u_int32 height); 
+      virtual void set_size (s_int32 length, s_int32 height); 
       
       
       /** get length
        * @return length 
        */
-      u_int32 get_length () const; 
+      u_int16 get_length () const; 
       
       
       /** get height
        * @return height 
        */
-      u_int32 get_height () const; 
+      u_int16 get_height () const; 
       
       
       /** set is this object is visible.
@@ -248,8 +248,8 @@ namespace gui
       
       
       /* position of the widget, position in the parent */
-      s_int32 x_;
-      s_int32 y_;
+      s_int16 x_;
+      s_int16 y_;
       
       
       /* boolean if this object is visible*/
@@ -276,7 +276,7 @@ namespace gui
       bool has_default_;
     
     };  
-
+  
 };
 #endif
 

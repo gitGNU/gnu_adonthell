@@ -22,7 +22,7 @@ misc::misc () : x_pad_ (0), y_pad_ (0), x_align_ (misc::LEFT), y_align_ (misc::T
 }
 
 
-void misc::set_padding (const u_int32 xp, const u_int32 yp)
+void misc::set_padding (const u_int16 xp, const u_int16 yp)
 {
     x_pad_ = xp;
     y_pad_ = yp; 

@@ -12,7 +12,7 @@
    See the COPYING file for more details
 */
 
-
+#include <iostream>
 #include "border_ui.h"
 
 using namespace gui;
@@ -29,6 +29,8 @@ void border_ui::draw (gfx::drawing_area* da, gfx::surface * sf)
 {
   if (!btempl_ || !container_) return;  
   
+  /* BORDER, to draw border we use the template picture */
+
   img_[border_template::B_TOP]->assign_drawing_area(da);
   btempl_->get_border (border_template::B_TOP)->draw (img_[border_template::B_TOP]->x(),
 							  img_[border_template::B_TOP]->y(),
@@ -54,6 +56,7 @@ void border_ui::draw (gfx::drawing_area* da, gfx::surface * sf)
   img_[border_template::B_RIGHT]->detach_drawing_area();
 
   
+  /* NOW DRAW CORNER */
   img_[border_template::C_TL]->assign_drawing_area(da);
   btempl_->get (border_template::C_TL)->draw (img_[border_template::C_TL]->x(),
 							 img_[border_template::C_TL]->y(),
@@ -84,6 +87,7 @@ void border_ui::move ()
 {
   if (!btempl_ || !container_) return;  
   
+  /* move the border */
   img_[border_template::B_TOP]->move (container_->get_x_real(), container_->get_y_real() - img_[border_template::B_TOP]->height());
   img_[border_template::B_BOTTOM]->move (container_->get_x_real(), container_->get_y_real() + container_->get_height());
   img_[border_template::B_LEFT]->move (container_->get_x_real() - img_[border_template::B_LEFT]->length(), container_->get_y_real());
@@ -106,6 +110,9 @@ void border_ui::move ()
 					  (img_[border_template::B_RIGHT]->length()>>1) + container_->get_length(),
 					  container_->get_y_real() - (img_[border_template::C_BR]->height()>>1) +
 					  (img_[border_template::B_BOTTOM]->height()>>1) + container_->get_height());
+
+  std::cout << "border_ui::move x:" << container_->get_x_real () << " y:" << container_->get_y_real () << " l:" 
+	    << container_->get_length() << " h:" << container_->get_height() << std::endl;
 }
 
 

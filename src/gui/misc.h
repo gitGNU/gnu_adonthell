@@ -48,7 +48,7 @@ namespace gui
        * @param xp x pad
        * @param yp y pad
        */
-      void set_padding (const u_int32 xp, const u_int32 yp); 
+      void set_padding (const u_int16 xp, const u_int16 yp); 
     
 
       /** get x padding
@@ -95,8 +95,8 @@ namespace gui
 	private : 
 
 	/* padding value */
-	u_int32 x_pad_;
-      u_int32 y_pad_;
+	u_int16 x_pad_;
+      u_int16 y_pad_;
 
       /* align value */
       u_int8 x_align_;

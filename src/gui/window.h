@@ -69,35 +69,35 @@ namespace gui
        * @param true if the window is a modal window
        */
       void set_modal (const bool);
-
-
+      
+      
       /**
        * is_modal
        * @return true if the window is a modal window
        */
       bool is_modal ()  const; 
-
-
+      
+      
       /**
        * set deleted with mouse
        * @param true if can be deleted
        */
       void set_deleted (const bool); 
-
-    
+      
+      
       /**
        * @return if this window can be deleted with mouse
        */
       bool is_deleted () const; 
-    
-
+      
+      
       /**
        * set moveable with mouse
        * @param true if can be moved with mouse
        */
       void set_moveable (const bool); 
-
-    
+      
+      
       /**
        * @return if this window can be moved with mouse
        */
@@ -116,19 +116,19 @@ namespace gui
        */
       bool is_resizeable () const; 
     
-    
+      
       /**
        * input update function
        * @return 1 if this object use the event,  else return 0
        */
       int input_update (input::event *); 
-    
-
+      
+      
       /**
        * If this function is call,  alive_ variable become false and update function return  false
        */
       void shutdown ();
-    
+      
     
       /** 
        * update the widget
@@ -188,9 +188,7 @@ namespace gui
       /* mouse range */
       u_int16 mouse_range_x_;
       u_int16 mouse_range_y_; 
-
-    
-
+      
       /* mouse status action */ 
       typedef enum
         {

@@ -72,8 +72,14 @@ namespace gui
        * @param length
        * @param height
        */
-      virtual void set_size (u_int32 length, u_int32 height);
+      virtual void set_size (s_int32 length, s_int32 height);
       
+      /**
+       * Set the location of the widget
+       * @param x : 
+       * @param y:
+       */
+      virtual void set_position (s_int16 x, s_int16 y);
       
       
       /**
@@ -89,11 +95,17 @@ namespace gui
       virtual int input_update (input::event *); 
       
       
+      /**
+       * Realize the bin
+       */
+      virtual void realize ();
+
       
       /**destructor
        * call clear () 
        */
-      ~bin (); 
+      virtual ~bin (); 
+      
       protected :
 	
 	widget * child; 

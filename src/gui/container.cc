@@ -24,7 +24,7 @@ container::container () : border_width_ (5), object_ui_ (NULL)
 
 void container::set_border_width (const u_int16 b)
 {
-    border_width_ = b; 
+  border_width_ = b; 
 }
 
 
@@ -37,6 +37,7 @@ u_int16 container::get_border_width () const
 
 container::~container ()
 {
+  /* destroy the decoration */
   if (object_ui_) delete object_ui_; 
 }
 
@@ -70,6 +71,7 @@ void container::set_size (s_int32 length, s_int32 height)
 void container::update_position ()
 {
   widget::update_position();
+  /* we move the decoration associated at this container*/
   if (object_ui_) object_ui_->move();
 }
 
@@ -77,6 +79,7 @@ void container::update_position ()
 void container::realize()
 {
   widget::realize();
+  /* we call resize for objet_ui */
   if (object_ui_) object_ui_->resize ();
 }
 

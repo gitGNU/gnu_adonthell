@@ -77,9 +77,10 @@ namespace gui
        * No event is called
        */
       void clear (); 
-
-    
-      /** It's used to build the widget.
+      
+      
+      /** 
+       * It's used to build the widget.
        */
       void realize ();
 
@@ -88,8 +89,8 @@ namespace gui
        * @param widget to add,  on_add event is executed
        */
       void add_start (widget * w, bool expand = true, bool fill = true, u_int16 padding = 0); 
-
-    
+      
+      
       /** add widget at the end
        * @param widget to add at the end ,  on_add event is executed
        */
@@ -106,13 +107,13 @@ namespace gui
        * @return space
        */
       u_int16 get_spacing () const; 
-    
-
+      
+      
       /**draw the widget
        */
       virtual bool draw (gfx::drawing_area * da = NULL, gfx::surface * sf = NULL); 
-
-
+      
+      
       /**set_geometry
        * @param g gemotry is VERTICAL or HORIZONTAL (default) .
        */
@@ -123,19 +124,20 @@ namespace gui
        * update position
        */
       void update_position (); 
-
-    
+      
+      
       /**
        * input update function
        * @return 1 if this object use the event,  else return 0
        */
       virtual int input_update (input::event *); 
-    
-    
+      
+      
       ~box (); 
-    
+      
       static const u_int8 VERTICAL = 0;
       static const u_int8 HORIZONTAL = 1; 
+      
       protected : 
 
     
@@ -149,12 +151,13 @@ namespace gui
       /** build the box in horizontal geometry
        */
       void realize_horizontal ();
-
+      
     
       /** build the box in vertical geometry
        */
       void realize_vertical ();
     
+
       struct box_struct
       {
         /* the widget */
@@ -169,24 +172,23 @@ namespace gui
         
         u_int16 padding_; 
       }; 
-
-
+      
+      
       /* HORIZONTAL OR VERTICAL */
       u_int8 geometry_; 
-
-    
+      
+      
       /* if all widget have same size */
       bool homogene_; 
-
+      
     
       /* space between each widget */
       u_int16 spacing_; 
-
-    
+      
+      
       /* contains widget */
       std::deque <box_struct* > v_widget_;   
     }; 
-
 };
 
 
