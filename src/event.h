@@ -1,7 +1,7 @@
 /*
    $Id$
 
-   Copyright (C) 2000/2001 Kai Sterker <kaisterker@linuxgames.com>
+   Copyright (C) 2000/2001/2002 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -12,278 +12,243 @@
    See the COPYING file for more details.
 */
 
-
 /**
  * @file   event.h
  * @author Kai Sterker <kaisterker@linuxgames.com>
  * 
- * @brief  Declares the event_list, event and event_handler class.
- * 
+ * @brief  Declares the %event class.
  * 
  */
- 
 
-#ifndef EVENT_H_
-#define EVENT_H_
+#ifndef EVENT_H__
+#define EVENT_H__
 
-#include <vector> 
-#include "fileops.h" 
+#include "fileops.h"
+#include "callback.h"
 #include "py_object.h"
+#include "py_callback.h"
+
+using std::string;
 
 /**
- * Directory where events scripts resides.
- * 
+ * Directory where %event scripts reside.
  */ 
 #define EVENTS_DIR "game_events."
 
-
-class event_handler;
-
+#ifndef SWIG
 /**
- * Events types.
- * 
+ * Available %event types.
  */ 
 enum
 {
-    ENTER_EVENT = 0,                            // Characters reach a new tile
-    LEAVE_EVENT = 1,                            // Characters leave a tile
-    TIME_EVENT = 2,                             // A minute of gametime passed
-    ACTION_EVENT = 3,                           // Character "acts" on a square 
-    MAX_EVENT = 4
+    ENTER_EVENT     = 0,            // Characters reach a new tile
+    LEAVE_EVENT     = 1,            // Characters leave a tile
+    TIME_EVENT      = 2,            // Certain point in gametime reached
+    ACTION_EVENT    = 3,            // Character "acts" on a square 
+    MAX_EVENTS      = 4
 };
 
 /**
- * Base class for events. You can create your own event types that can
- * be handled by the event list and event handler by inheriting them from
+ * Available 'actions', i.e. what happens when the event occurs
+ */
+enum
+{
+    ACTION_NOTHING  = 0,
+    ACTION_SCRIPT   = 1,
+    ACTION_PYFUNC   = 2,
+    ACTION_CPPFUNC  = 3
+};
+#endif // SWIG
+    
+/**
+ * Base class for events. You can create your own %event types that can
+ * be handled by the event_list and event_handler by inheriting from
  * this class.
- * 
+ *
+ * Events are used to notify when certain things happen during the game.
+ * They may either execute the "run" method of an exclusive python script
+ * or a simple python callback defined elsewhere.
  */ 
 class event
 {
 public:
-
-    /** 
-     * Default constructor.
-     * 
+    /**
+     * Constructor. Needs to be called by any derived class!
      */
-    event (); 
-    
+    event ();
+
     /** 
      * Destructor.
-     *  
      */ 
-     virtual ~event ();
+    virtual ~event ();
 
-    /** 
-     * Returns the file name of the event's script.
-     * 
-     * 
-     * @return file name of the script.
+    /**
+     * Cleanup. Clears script and its arguments. 
      */
-    string script_file () const
-    {
-        return script_file_;
-    }
+    void clear ();    
     
-    /** 
-     * Save the event to a file.
-     * 
-     * @param out file where to save the event.
-     */ 
-    virtual void save (ogzstream& out) const = 0;
-    
-    /** 
-     * Loads an event from a file.
-     * 
-     * @param in file to load the event from.
+    /**
+     * Get the event's type.
      *
-     * @return \e true if the event could be loaded, \e false otherwise
+     * @return type of the event
      */
-    virtual bool load (igzstream& in) = 0;
-
-    /** 
-     * Sets the script for an event.
-     * 
-     * @param filename filename of the script to set.
+    u_int8 type () const
+    { 
+        return Type;
+    }
+     
+    /**
+     * Return whether this event should be repeated.
+     *
+     * @return the number of times this event should be repeated or
+     *      -1 in case it should be repeated unlimited times.
      */
-    void set_script (string filename, PyObject * args = NULL);
+    s_int32 repeat ()
+    {
+        if (Repeat > 0) Repeat--;
+        
+        return Repeat;
+    }
 
-    void get_script_state (igzstream & file); 
-    void put_script_state (ogzstream & file) const; 
+    /**
+     * Set whether this event should be repeated. A number greater than 0
+     * will repeat the event that many times, a number less than 0 will
+     * repeat the event forever. A number equal to 0 won't repeat the event.
+     *
+     *  @param count How often the event should be repeated.
+     */
+    void set_repeat (s_int32 count)
+    {
+        Repeat = count;
+    }
+
+    /**
+     * @name Event Handling
+     */
+    //@{
     
-protected:
     /**
-     * Event type - see enum above.
+     * Execute the associated python script or callback.
      * 
+     * @param evnt The %event that triggered the execution.
      */ 
-    u_int8 type;
-
-    /**
-     * Script object.
-     * 
-     */
-    py_object script; 
-
-    PyObject * script_args; 
-    
-    /**
-     * Script file.
-     * 
-     */
-    string script_file_; 
-
-    /**
-     * Execute the script.
-     * 
-     */ 
-    virtual void execute (event& e) = 0;
+    virtual void execute (const event& evnt) = 0;
 
     /** 
      * Compare two events for equality.
      * 
-     * @param ev pointer to the event to compare with.
-     * 
+     * @param evnt pointer to the %event to compare with.
      * @return \e true if the events are equal, \e false otherwise.
      */
-    virtual bool equals (event& ev) = 0;
+    virtual bool equals (const event& evnt) = 0;
+
+    //@}
     
-#ifndef SWIG
-    friend class event_handler;
-#endif
-    
-};
-
-/**
- * Pointer to a function returning a newly allocated event
- *
- */
-typedef event* (*new_event)();
-
-
-/**
- * Base class for objects that want to register events
- *
- */ 
-class event_list
-{
-public:
-    /**
-     * Destructor - unregisters and deletes all events owned by this list.
-     * 
-     */ 
-    virtual ~event_list ();
-
-    /**
-     * Unregisters and deletes all events owned by this list.
-     * 
-     */ 
-    void clear ();
-
     /** 
-     * Adds an event to this list. The event will be
-     * registered with the event_handler and the list will then
-     * take care of it's deletion.
+     * Sets a script to be executed whenever the event occurs.
      * 
-     * @param ev pointer to the event to add.
+     * @param filename filename of the script to set.
+     * @param args The arguments to pass to the script's constructor
      */
-    void add_event (event* ev);
-
+    void set_script (string filename, PyObject * args = NULL);
+    
     /**
-     * Register an event for loading. Before the event_list can load
-     * an event from file, it needs a callback function that returns
-     * a new instance of the event of the given type.
+     * Sets a python function/method to be executed whenever the
+     * %event occurs.
      *
-     * @param type the type of the event to register
-     * @param e a callback returning a new instance of an event of the given type.
+     * @warning the callback won't be saved with the %event. It
+     * must be restored by the event's owner.
      *
-     * @sa load ()
+     * @param callback The function or method to call.
+     * @param args Additional arguments to pass to the callback.
      */
-    static void register_event (u_int8 type, new_event e);
-    
-    /** 
-     * Save the event_list to a file.
-     * 
-     * @param out file where to save the event_list.
-     */ 
-    void save (ogzstream& out) const;
-    
-    /** 
-     * Loads the event_list from a file and registers all loaded events.
-     * @warning Before the event_list can load an event from file, it needs
-     *          a callback function that returns a new instance of that event.
-     * 
-     * @param in file to load the event_list from.
-     * 
-     * @return \e true if the event_list was loaded successfully, \e false otherwise.
-     * @sa register_event ()
-     */
-    bool load (igzstream& in);
-
+    void set_callback (PyObject *callback, PyObject *args = NULL);
+     
 #ifndef SWIG
+    /**
+     * Sets a C function/C++ method to be executed whenever the
+     * %event occurs.
+     *
+     * @warning the callback won't be saved with the %event. It
+     * must be restored by the event's owner.
+     *
+     * @param callback The callback, a function with no arguments
+     *      returning void
+     */
+    void set_callback (const Functor0 & callback);
+#endif // SWIG
+
+    /**
+     * @name Loading / Saving
+     */
+    //@{
+
+    /** 
+     * Saves the basic %event %data (such as the type or script data)
+     * to a file. Call this method from the derived class.
+     * 
+     * @param out file where to save the %event.
+     */ 
+    virtual void put_state (ogzstream& out) const;
+    
+    /** 
+     * Loads the basic %event %date from a file. Call this method from 
+     * the derived class.
+     * 
+     * @param in file to load the %event from.
+     * @return \e true if the %event could be loaded, \e false otherwise
+     */
+    virtual bool get_state (igzstream& in);
+
+    //@}
+    
 protected:
+#ifndef SWIG
     /**
-     * List of events.
-     * 
-     */ 
-    mutable vector<event*> events;
-
-private:
-    /**
-     * Array with callbacks that return a newly allocated instance of an event.
-     * The event's type is the postion of the according callback in the array.
+     * @name Basic Event Data
      */
-    static new_event instanciate_event[MAX_EVENT];
-#endif // SWIG
-};
-
-/**
- * Keeps track of registered scripts, recieves triggered events 
- * and executes scripts handling those events
- *
- */ 
-class event_handler
-{
-public:
-    /** 
-     * Registers an event.
-     * 
-     * @param ev pointer to the event to register.
-     */
-    static void register_event (event* ev);
-
-    /** 
-     * Unregister an event.
-     * 
-     * @param event* pointer to the event to unregister.
-     */
-    static void remove_event (event* ev);
-
-    /** 
-     * Check if an event corresponding to ev exists, and execute it. 
-     * 
-     * @param ev event to raise.
-     */
-    static void raise_event (event& ev);
+    //@{
     
-private:
-#ifndef SWIG
-    static vector<event*> handlers[MAX_EVENT];      // registered events storage
-#endif
+    /**
+     * Event type - see enum above.
+     */ 
+    u_int8 Type;
+
+    /**
+     * What happens if the event occurs - see enum above.
+     */
+    u_int8 Action;
+    
+    /**
+     * Defines how often the %event should be repeated. <b>0</b> means
+     * never, <b>-1</b> means infinitely and <b>n</b> (n > 0) means 
+     * exactly n times.
+     */
+    s_int32 Repeat;
+    
+    /**
+     * The Python script accociated with this %event. It is executed
+     * whenever the %event gets triggered.
+     */
+    py_object *Script; 
+
+    /**
+     * The arguments passed to the script. This needs to be a PyTuple
+     * or NULL if there are no arguments.
+     */
+    PyObject *Args;
+    
+    /**
+     * Python callback that may be executed instead of the script.
+     */
+    py_callback *PyFunc;
+    
+    /**
+     * C++ callback that may be executed when the %event gets triggered.
+     */
+    Functor0 Callback;
+    //@}
+#endif // SWIG
 };
 
-#ifndef SWIG
-
-/**
- * A function that returns a new instance of an event.
- */
-#define NEW_EVENT(evt)\
-    event* new_ ## evt () { return (event*) new evt; }
-/**
- * Registers an event with the event_list, allowing it to load this event
- * without knowing about it at compile time.
- */
-#define REGISTER_EVENT(type,evt)\
-    event_list::register_event (type, (new_event) &new_ ## evt);
-
-#endif // SWIG
-#endif // EVENT_H_
+#endif // EVENT_H__

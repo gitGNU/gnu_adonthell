@@ -24,125 +24,9 @@
 
 using namespace std; 
 
-/** 
- * Returns a newly allocated enter_event.
- *  
- */ 
-NEW_EVENT(enter_event); 
-
-/** 
- * Returns a newly allocated leave_event.
- *  
- */ 
-NEW_EVENT(leave_event); 
-
-/** 
- * Returns a newly allocated action_event.
- *  
- */ 
-NEW_EVENT(action_event); 
-
-enter_event::enter_event () : base_map_event ()
-{
-    type = ENTER_EVENT; 
-}
-
-leave_event::leave_event () : base_map_event ()
-{
-    type = LEAVE_EVENT; 
-}
-
-action_event::action_event () : base_map_event ()
-{
-    type = ACTION_EVENT; 
-}
-
-base_map_event::base_map_event ()
-{
-    submap = x = y = dir = map = -1;
-    c = NULL;
-}
-
-// compare two enter events
-bool base_map_event::equals (event &e)
-{
-    // we know that we've got an enter_event :)
-    base_map_event tmp = (base_map_event &) e;
-
-    if (submap != -1 && tmp.submap != submap) return false;
-    if (x != -1 && tmp.x != x) return false;
-    if (y != -1 && tmp.y != y) return false;
-    if (dir != -1 && tmp.dir != dir) return false;
-    if (map != -1 && tmp.map != map) return false;
-    if (c && tmp.c != c) return false;
-    
-    return true;
-}
-
-// Execute enter event's script
-void base_map_event::execute (event& e)
-{
-    base_map_event t = (base_map_event&) e; 
-    
-    PyObject * args = Py_BuildValue ("(i, i, i, i, s)", t.submap, t.x, t.y,
-                                     t.dir, t.c->get_id ().c_str ());  
-    
-    // Execute script
-    script.run (args);
-    
-    // Cleanup
-    Py_DECREF (args);
-}
-
-// Load a enter event from file
-bool base_map_event::load (igzstream& f)
-{
-    string name;
-    string s; 
-    
-    submap << f; 
-    x << f;
-    y << f;
-
-    dir << f;
-    map << f;
-
-    s << f;
-    if (s != "") c = (mapcharacter*) data::characters[s.c_str ()];
-    else c = NULL; 
-    
-    event::get_script_state (f); 
-
-    return true;
-}
-
-// Save map event to file
-void base_map_event::save (ogzstream& out) const
-{
-    type >> out;
-    submap >> out; 
-    x >> out;
-    y >> out;
-    dir >> out;
-    map >> out;
-    
-    if (c) c->get_id () >> out;
-    else 
-    {
-        string s = ""; 
-        s >> out;
-    }
-
-    event::put_script_state (out); 
-}  
 
 landmap::landmap () : event_list () 
 {
-    // doing this here means some slight overhead, but at least
-    // its safe and we don't have additional dependencies.
-    REGISTER_EVENT (ENTER_EVENT, enter_event)
-    REGISTER_EVENT (LEAVE_EVENT, leave_event) 
-    REGISTER_EVENT (ACTION_EVENT, action_event) 
 }
 
 landmap::~landmap ()
@@ -327,7 +211,7 @@ s_int8 landmap::get_state (igzstream& file)
     string id;
     
     // try to load event list
-    if (!event_list::load (file))
+    if (!event_list::get_state (file))
         return false;
     
     // Load the mapcharacters
@@ -351,7 +235,7 @@ s_int8 landmap::put_state (ogzstream& file) const
     string id;
     
     // save all events attached to this map
-    event_list::save (file); 
+    event_list::put_state (file); 
     
     // Save the mapcharacters and their status
     nbr_of >> file; 

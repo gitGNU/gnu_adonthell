@@ -1,7 +1,7 @@
 /*
    $Id$
 
-   Copyright (C) 1999/2000/2001   Alexandre Courbot
+   Copyright (C) 1999/2000/2001/2002 Alexandre Courbot
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -12,8 +12,6 @@
    See the COPYING file for more details.
 */
 
-
-
 /** 
  * @file mapcharacter.cc
  *
@@ -21,19 +19,16 @@
  * @brief Defines the mapcharacter class.
  */
  
-
-
-#include "mapcharacter.h" 
+#include "mapcharacter.h"
+#include "map_event.h"
+#include "event_handler.h"
 #include "landmap.h"
 #include "win_manager.h"
 
 using namespace std; 
 
 
-
 // Public methods
-
-
 mapcharacter::mapcharacter () : mapsquare_walkable_area (), character_base ()
 {
     submap_ = posx_ = posy_ = offx_ = offy_ = 0;

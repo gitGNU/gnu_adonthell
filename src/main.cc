@@ -24,8 +24,10 @@
  
 #include "audio.h"
 #include "character.h"
+#include "event_handler.h"
 #include "game.h"
 #include "gamedata.h"
+#include "gametime.h"
 #include "input.h"
 #include "nls.h"
 #include "python_class.h"
@@ -154,6 +156,13 @@ int main(int argc, char * argv[])
 
     // init window manager
     win_manager::init (); 
+
+    // event system
+    event_handler::init ();
+
+    // gametime system
+    // (180 realtime minutes make approx. 1 gametime day)
+    gametime::init (180);
 
     // init random number generator
     yarg::init (myconfig.game_name);

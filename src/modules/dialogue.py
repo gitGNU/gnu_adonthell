@@ -31,8 +31,8 @@ class base:
         self.speaker = []
         result = 0
                 
-        # -- get the code to execute, the hint fot the dialogue engine
-        #    and the list of following dialogue options
+        # -- get the code to execute and the list of following
+        #    dialogue options
         code, followers = self.dlg[index][1:]
         
         # -- if there is code, try to execute it

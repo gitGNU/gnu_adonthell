@@ -1,7 +1,7 @@
 /*
    $Id$
 
-   Copyright (C) 1999/2000/2001   Alexandre Courbot
+   Copyright (C) 1999/2000/2001 Alexandre Courbot
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -27,130 +27,18 @@
 #include "mapobject.h"
 #include "mapcharacter.h"
 #include "mapsquare.h"
-#include "event.h"
+#include "event_list.h"
 
 #include <string>
 #include <vector>
 #include <list>
 
-/// Subdirectory where maps are saved.
+/**
+ * Subdirectory where maps are saved.
+ */
 #define MAPS_DIR "maps/"
 
-
 class mapview;
-
-
-/**
- * Baseclass for map enter/leave/action events.
- * The event will be launched if all the member's data matches.
- *
- */ 
-class base_map_event : public event
-{
-public:
-    /**
-     * Default constructor.
-     * 
-     */ 
-    base_map_event ();
-
-    void save (ogzstream&) const;
-
-    bool load (igzstream&);
-
-    /**
-     * Submap index (-1 for any).
-     * 
-     */
-    s_int32 submap;
-
-    /**
-     * X position (-1 for any).
-     * 
-     */
-    s_int32 x;
-
-    /**
-     * Y position (-1 for any).
-     * 
-     */
-    s_int32 y;
-
-    /**
-     * Direction where the character is looking (-1 for any).
-     * 
-     */ 
-    s_int8 dir;
-
-    /**
-     * Useless (for now).
-     * 
-     */ 
-    s_int32 map;
-
-    /**
-     * Pointer to the mapcharacter that can launch this event (NULL for any).
-     * 
-     */ 
-    mapcharacter *c;
-
-protected:
-
-    void execute (event& e);
-    bool equals (event& ev);
-
-#ifndef SWIG
-    friend class event_list;
-#endif
-};
-
-
-
-/**
- * To notify when a character entered a mapsquare.
- *
- */ 
-class enter_event : public base_map_event
-{
-public:
-    /**
-     * Default constructor.
-     * 
-     */ 
-    enter_event ();
-};
-
-
-
-/**
- * To notify when a mapcharacter left a mapsquare.
- *
- */ 
-class leave_event : public base_map_event
-{
-public:
-    /**
-     * Default constructor.
-     * 
-     */ 
-    leave_event ();
-};
-
-/**
- * To notify when a mapcharacter "act" on a square.
- *
- */ 
-class action_event : public base_map_event
-{
-public:
-    /**
-     * Default constructor.
-     * 
-     */ 
-    action_event ();
-};
-
-
 
 /**
  * Map where the world takes place.

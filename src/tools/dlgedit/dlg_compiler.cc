@@ -188,6 +188,9 @@ void DlgCompiler::writeText ()
 // write loops
 void DlgCompiler::writeLoop ()
 {
+    // nothing to do if there are no loops
+    if (loop.empty ()) return;
+
     file << "\tloop = [";
     
     for (std::vector<int>::iterator i = loop.begin (); i != loop.end (); i++)
