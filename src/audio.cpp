@@ -11,39 +11,15 @@
 
    See the COPYING file for more details.
 */
+
 #ifdef SDL_MIXER
 
 #include <string.h>
 #include <stdlib.h>
+#include "SDL.h"
 #include "prefs.h"
 #include "audio.h"
-#include "SDL.h"
-#include "SDL_mixer.h"
-
-loop_info::loop_info ()
-{
-    start = 0;
-    end = 0;
-}
-
-bool loop_info::load (char *filename)
-{
-    bool retval = true;
-    char *info_file = strdup (filename);
-    memcpy (info_file+strlen(info_file)-4, ".lpp", 4);
-
-    FILE *info = fopen (info_file, "r");
-    if (info)
-    {
-        fread (&start, sizeof(start), 1, info);
-        fread (&end, sizeof(end), 1, info);
-        fclose (info);
-    }
-    else retval = false;
-
-    free (info_file);
-    return retval;
-}
+#include "audio_loop.h"
 
 extern unsigned short md_mode; // This is declared in MikMod
 
@@ -60,72 +36,6 @@ int audio::audio_rate;
 Uint16 audio::buffer_size;
 Uint16 audio::audio_format;
 int audio::audio_channels;
-
-#ifdef OGG_VORBIS
-extern "C" {
-
-// We've got to access internal SDL_mixer data, so here's it's redefiniton
-// from SDL_mixer/music_ogg.h:
-typedef struct {
-	int playing;
-	int volume;
-	OggVorbis_File vf;
-	int section;
-	SDL_AudioCVT cvt;
-	int len_available;
-	Uint8 *snd_available;
-} OGG_music;
-
-// from SDL_mixer/music.c:
-struct _Mix_Music {
-	enum {
-		MUS_CMD,
-		MUS_WAV,
-		MUS_MOD,
-		MUS_MID,
-		MUS_OGG,
-		MUS_MP3
-	} type;
-	union {
-		OGG_music *ogg;
-	} data;
-	Mix_Fading fading;
-	int fade_volume;
-	int fade_step;
-	int fade_steps;
-	int error;
-};
-
-// Callback passed to OggVorbis to read/and loop our background music
-size_t ogg_read_callback (void *ptr, size_t size, size_t nmemb, void *datasource)
-{
-    // get the current position
-    size_t cur_pos = ftell ((FILE*) datasource);
-    u_int32 end_pos = audio::get_loop_end ();
-
-    // check whether we'll reach the looping point with the next read
-    if (cur_pos + nmemb > end_pos)
-    {
-        // In case we do:
-        int read = 0;
-        int to_read = end_pos - cur_pos;
-        nmemb -= to_read;
-
-        // read up to the looping point, ...
-        read = fread (ptr, size, to_read, (FILE*) datasource);
-        // jump back in the stream ...
-        ov_raw_seek (audio::get_vorbisfile (), audio::get_loop_start ());
-        // and read the remaining data from there
-        read += fread (((char*) ptr)+read, size, nmemb, (FILE*) datasource);
-
-        return read;
-    }
-    
-    // otherwise just read the next chunk of data
-    return fread (ptr, size, nmemb, (FILE*) datasource);
-}
-}
-#endif
 
 void audio::init (config *myconfig) {
 
@@ -182,7 +92,7 @@ void audio::init (config *myconfig) {
   } else {
     audio_initialized = true;
     Mix_QuerySpec(&audio_rate, &audio_format, &audio_channels);
-    fprintf(stderr, "Audio started in %d Hz %d bit %s format.\n ", audio_rate,
+    fprintf(stderr, "Audio started in %d Hz %d bit %s format.\n", audio_rate,
      (audio_format&0xFF), (audio_channels > 1) ? "stereo" : "mono");
     set_background_volume (background_volume);
   }
@@ -243,7 +153,7 @@ int audio::load_background(int slot, char *filename) {
   loop[slot] = new loop_info;
 
 #ifdef OGG_VORBIS
-  // reed loop points and ...
+  // read loop points and ...
   if (!loop[slot]->load (filename))
     loop[slot]->end = ov_raw_total (&music[slot]->data.ogg->vf, -1);
 

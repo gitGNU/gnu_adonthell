@@ -37,7 +37,7 @@ int main (int argc, char *argv[]) {
   FILE *oggfile, *infofile;
   double start = 0;
   double end = 0;
-  int i, s, e;
+  int i, s, e, p_raw, p_pcm;
 
   /* open the file, our last argument */
   oggfile = fopen (argv[argc-1], "r");
@@ -70,11 +70,19 @@ int main (int argc, char *argv[]) {
        |------- + ------------ + -------|
          intro        loop        outro
 
-       Get the starting point as raw bytes, since that makes the seeking
-       most efficient */
+       Get the starting point as pcm offset, since that makes the seeking
+       most precise */
     ov_time_seek (&ov, start);
-    s =  ov_raw_tell (&ov);
-    printf ("\nStart (%gs):\t %i (raw bytes)\n", start, s);
+    s = ov_pcm_tell (&ov);
+    printf ("\nStart (%gs):\t %i (pcm offset)\n", start, s);
+
+    /* To allow fast seeking, we'll get the start of the page containing
+       the pcm sample above, we then position the stream manually to the
+       page and skip data until we've found our pcm offset. That's nearly
+       as fast as ov_seek_raw () would be! */
+    ov_time_seek_page (&ov, start);
+    p_pcm = ov_pcm_tell (&ov);
+    p_raw = ov_raw_tell (&ov) - ov.oy.returned;
 
     /* Get the end point as raw bytes */
     ov_time_seek (&ov, end);
@@ -88,6 +96,8 @@ int main (int argc, char *argv[]) {
 
    infofile = fopen (infoname, "w");
    if (infofile) {
+     fwrite (&p_pcm, sizeof(p_pcm), 1, infofile);
+     fwrite (&p_raw, sizeof(p_raw), 1, infofile);
      fwrite (&s, sizeof(s), 1, infofile);
      fwrite (&e, sizeof(e), 1, infofile);
      fclose (infofile);

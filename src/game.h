@@ -27,9 +27,6 @@ public:
 
 private:
     config *configuration;              // The game's configuration data
-#ifdef SDL_MIXER
-    SDL_Thread *audio_thread;           // The audio thread
-#endif
 };
 
 #endif // __GAME_H__

@@ -5,6 +5,7 @@ bin_PROGRAMS = pydonthell
 pydonthell_SOURCES = pydonthell.cpp
 
 LDADD = ../../animation.o ../../animation_off.o ../../audio.o \
+../../audio_loop.o \
 ../../character.o ../../data.o ../../data_screen.o ../../dialog.o ../../dialog_engine.o \
 ../../drawing_area.o ../../event.o ../../fileops.o ../../game.o ../../gametime.o \
 ../../image.o ../../input.o ../../lex.prefs.o \

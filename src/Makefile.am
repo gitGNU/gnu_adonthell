@@ -11,6 +11,7 @@ py_win_label.i py_win_theme.i prefs.l win_query.cpp win_info.cpp \
 win_file_select.cpp .indent.pro
 
 adonthell_SOURCES = animation.cpp animation_off.cpp audio.cpp \
+audio_loop.cpp \
 character.cpp data.cpp data_screen.cpp dialog.cpp dialog_engine.cpp \
 drawing_area.cpp event.cpp fileops.cpp game.cpp gametime.cpp \
 image.cpp input.cpp lex.prefs.cpp main.cpp \

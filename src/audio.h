@@ -19,10 +19,7 @@
 #include "types.h"
 #include "SDL_mixer.h"
 #include "prefs.h"
-
-#ifdef OGG_VORBIS
-#include "vorbis/vorbisfile.h"
-#endif
+#include "audio_loop.h"
 
 // We'll only load two waves into memory
 #define NUM_WAVES 2
@@ -31,16 +28,7 @@
 // We can play four SFX at once
 #define NUM_CHANNELS 4
 
-class loop_info
-{
-public:
-    loop_info ();
-    bool load (char*);
-
-    u_int32 start;
-    u_int32 end;
-};
-
+class loop_info;
 class audio
 {
   static int background_volume;
@@ -95,6 +83,8 @@ public:
 #ifdef OGG_VORBIS
     static int get_loop_start() { return loop[current_background]->start; }
     static int get_loop_end() { return loop[current_background]->end; }
+    static int get_start_page_pcm() { return loop[current_background]->start_page_pcm; }
+    static int get_start_page_raw() { return loop[current_background]->start_page_raw; }
     static OggVorbis_File* get_vorbisfile();
 #endif
 };

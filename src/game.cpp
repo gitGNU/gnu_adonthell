@@ -31,9 +31,6 @@
 game::game (int argc, char **argv)
 {
     configuration = new config (argc > 1 ? argv[1] : "");
-#ifdef SDL_MIXER
-    audio_thread = NULL; 
-#endif
 }
 
 // Initialize all parts of the game engine
@@ -55,8 +52,13 @@ bool game::init ()
     // init video subsystem
     screen::set_video_mode (320, 240, configuration);
 
+    // init audio subsystem
+#if defined SDL_MIXER && !defined _EDIT_
+    audio::init (configuration);
+#endif 
+
     // init input subsystem
-    input::init();
+    input::init ();
 
     // init python interpreter
 #ifndef _EDIT_
@@ -83,6 +85,11 @@ game::~game ()
 
     // delete all data
     data::cleanup ();
+#endif
+
+    // shutdown audio
+#if defined SDL_MIXER && !defined _EDIT_
+    audio::cleanup ();
 #endif
 
     // shutdown video
