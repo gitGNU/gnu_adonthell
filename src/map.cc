@@ -11,6 +11,7 @@
 #include "mapsquare.h"
 #include "window.h"
 #include "map.h"
+#include "audio_thread.h" // For sound effects tied to keyboard
 
 map::map()
 {
@@ -291,6 +292,10 @@ void map::update_keyboard()
     heroe.set_movtype(UP);
   if(keyboard::is_pushed(274)&&heroe.get_movtype()==0)
     heroe.set_movtype(DOWN);
+
+  // Sound effects
+  if(keyboard::is_pushed(49)) audio_in->play_wave(1,0); // '1' Key
+  if(keyboard::is_pushed(50)) audio_in->play_wave(1,1); // '2' Key
 #else
   if((heroe.get_movtype()==RIGHT&&!keyboard::is_pushed(Right_Key))||
      (heroe.get_movtype()==LEFT&&!keyboard::is_pushed(Left_Key))||

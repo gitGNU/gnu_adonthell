@@ -17,6 +17,10 @@
 #include "SDL.h"
 #include "SDL_mixer.h"
 
+#define NUM_WAVES 2
+
+Mix_Chunk *sounds[NUM_WAVES];
+
 audio::audio() {
 
   music = NULL;
@@ -32,6 +36,7 @@ audio::audio() {
     fprintf(stderr, "Audio will not be used.\n");
   } else {
     audio_initialized = true;
+    load_waves();
   }
 }
 
@@ -42,7 +47,8 @@ audio::~audio() {
 void audio::audio_cleanup(void) {
   current_background = 0;
   background_on = false;
-  Mix_FreeMusic(music);
+  unload_waves();
+  unload_background();
   Mix_CloseAudio();
   audio_initialized = false;
 }
@@ -81,6 +87,20 @@ void audio::unpause_music(void) {
 void audio::set_background_volume(int volume) {
   Mix_VolumeMusic(volume);
   background_volume = volume;
+}
+
+void audio::load_waves(void) {
+  sounds[0] = Mix_LoadWAV("audio/at0.wav");
+  sounds[1] = Mix_LoadWAV("audio/at1.wav");
+}
+
+void audio::unload_waves(void) {
+  Mix_FreeChunk(sounds[0]);
+  Mix_FreeChunk(sounds[1]);
+}
+
+void audio::play_wave(int channel, int sound) {
+  Mix_PlayChannel(channel, sounds[sound], 0);
 }
 
 #endif

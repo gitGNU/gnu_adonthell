@@ -43,7 +43,11 @@ public:
     void unpause_music(void);
 
   // Sound Effect functions:
+    // Use these to load/unload wave files
+    void load_waves(void);
+    void unload_waves(void);
 
+    void play_wave(int, int);
 };
 
 #endif
