@@ -35,9 +35,10 @@ public:
     dialog_engine ();
     void update_keyboard ();
     void update (window&);
-    char * run ();
 
 private:
+    void run (window&);
+
     dialog *dlg;
     interpreter *engine;
 };

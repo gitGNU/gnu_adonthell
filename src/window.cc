@@ -1,4 +1,6 @@
 /*
+    $Id$
+    
     Copyright (C) 1999 Joel Vennin.
 
     This program is free software; you can redistribute it and/or modify
@@ -191,7 +193,7 @@ bool window::end_text()
 
 
 
-void window::set_text(char  *string)
+void window::set_text(const char *string)
 { 
   char *tmp;
   delete[] text_window;
@@ -259,7 +261,7 @@ void window::draw_text()
        {k=text_window[text_window_pos_tmp];
         if(k==' ' || k>=NB_TABLE_CHAR) 
 	    {j+=WIN_SPACE_LENGHT; }
-          else
+          else if (tablechar[k].get_height() != 0)
 	    { 
 	      // tablechar[k].putbox_mask(sxtext+j,sytext+i*WIN_FONT_HEIGHT);
 	      tablechar[k].putbox_mask(sxtext+j,sytext+i*WIN_FONT_HEIGHT);

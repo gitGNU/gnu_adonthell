@@ -12,9 +12,8 @@
    See the COPYING file for more details
 */
 
-#include <iostream.h>
 #include <stdio.h>
-#include <string.h>
+#include <string>
 
 #include "types.h"
 #include "gfx.h"
@@ -69,18 +68,16 @@ void dialog_engine::update (window &win)
 {
     if (dlg->answer == 0xFFFF) return;
 
-    cout << dlg->answer << " " << flush;
-
-    win.set_text (run ());
+    run (win);
     dlg->answer = 0xFFFF;
 }
 
-char *dialog_engine::run ()
+void dialog_engine::run (window &win)
 {
     u_int32 i;
     s_int32 result;
     char *abc[8] = { "a", "b", "c", "d", "e", "f", "g", "h" };
-    char *str = NULL;
+    string str;
 
     result = engine->run ();
 
@@ -88,34 +85,39 @@ char *dialog_engine::run ()
     {
         case -1:
         {
-            return "Interpreter returned error";
+            str = "Interpreter returned error";
+            break;
         }
 
         case 0:
         {
             // the end
-            return "";
+            str = "";
+            break;
         }
         
         case 1:
         {
             // Player part 
-            str = strdup (dlg->npc_text);
-            cout << "\n\n - " << str;
-              
-            for (i = 0; i < dlg->player_text.length () ; i++)
-                cout << "\n" << abc[i] << "> " << dlg->player_text.get_element(i) << flush;
+            str = dlg->npc_text;
             
-            return str;
+            for (i = 0; i < dlg->player_text.length () ; i++)
+            {
+                str += " -- ";
+                str += abc[i];
+                str += "> ";
+                str += dlg->player_text.get_element (i);
+            }
+            
+            break;
         }
 
         case 2:
         {
             /* NPC only */
-            cout << "\n\n - " << dlg->npc_text << "\na> continue " << flush;
-            return dlg->npc_text;
+            str = dlg->npc_text;
         }
     }
 
-    return "";   
+    win.set_text (str.c_str ());   
 }

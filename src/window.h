@@ -1,12 +1,15 @@
 /*
+    $Id$
+    
     Copyright (C) 1999 Joel Vennin.
+    Part of the Adonthell Project
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License.
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY.
-    See the COPYING file for more details.
 
+    See the COPYING file for more details.
 */
 #ifndef _window_h_
 #define _window_h_
@@ -75,7 +78,7 @@ class window
     void draw();
     void resize(u_int16 l, u_int16 h);
     void move(u_int16 x, u_int16 y);
-    void set_text(char string[]);
+    void set_text(const char string[]);
     void show();
     void hide();
     void change_mode(u_int8 m);     
