@@ -42,7 +42,10 @@ dialog_engine::dialog_engine (character_base *mynpc, char * dlg_file, u_int8 siz
 
 void dialog_engine::init(character_base *mynpc, char * dlg_file, u_int8 size)
 {
-    audio::play_wave (-1, 0); 
+    string path = dlg_file;
+    string file = strrchr (dlg_file, '/') ? strrchr (dlg_file, '/') + 1 : dlg_file;
+
+    audio::play_wave (-1, 0);
     is_running = true;
     instance = NULL;
 
@@ -138,11 +141,11 @@ void dialog_engine::init(character_base *mynpc, char * dlg_file, u_int8 size)
 
     set_visible (true); 
     set_activate (true);
-    
+
     // Load dialogue
-    if (!dlg->init (dlg_file, strrchr (dlg_file, '/')+1))
+    if (!dlg->init ((char *) path.c_str(), (char *) file.c_str()))
     {
-        cout << "\n*** Error loading dialogue script " << strrchr (dlg_file, '/')+1 << "\n";
+        cout << "\n*** Error loading dialogue script " << file << "\n";
         python::show_traceback ();
         cout << flush;
         answer = -1;	

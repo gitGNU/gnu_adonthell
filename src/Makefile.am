@@ -48,7 +48,7 @@ adonthell_SOURCES = main.cc
 
 # Note: adonthell.py is also built by this target. 
 py_adonthell_wrap.cc : py_adonthell.i *.h
-	swig -python -shadow -I/usr/local/include/SDL -I/usr/include/SDL -I./ -I../ -c++ -make_default -o $*.cc py_adonthell.i
+	swig -python -shadow ${SDL_CFLAGS} -I./ -I../ -c++ -make_default -o $*.cc py_adonthell.i
 
 lex.prefs.cc : prefs.l
 	flex -olex.prefs.cc $<
