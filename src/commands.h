@@ -49,13 +49,12 @@ enum
     JMP = 19,       // JMP <offset>                 PC += offset
     BRANCH = 20,    // BRANCH <bool> <offset>       bool == true ? PC++ : PC += offset
 
-    // Those six are used during parsing only. They are defined here to avoid
+    // Those five are used during parsing only. They are defined here to avoid
     // conflicts with other commands, but are only used internally by the 
     // dialogue compiler.
-    BOOL = 250,     // Specifies a boolean value
-    REG = 251,      // Specifies an internal (integer) register
-    THEN = 252,     // The 'then' part of an if-statement follows
-    ELSE = 253,     // The 'else' part of an if-statement follows
+    ENDIF = 251,    // Specifies the end of an if [- else] statement
+    BOOL = 252,     // Specifies a boolean value
+    REG = 253,      // Specifies an internal (integer) register
     ID = 254,       // Specifies a variable name
     NUM = 255       // Specifies an integer value
 };
