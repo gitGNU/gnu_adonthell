@@ -66,11 +66,14 @@ void win_select::add(win_base * wb)
 {
   //call the add of win_scrolled
   win_scrolled::add(wb);
+
   //prevent the new object is in select
   wb->set_in_select(true);
-  //when you add an object, automatically the index become the first element of the list
-  index_list=list_obj.begin();
   
+  //when you add an object, automatically the index become the first element of the list
+  //index_list=list_obj.begin();
+  set_default();
+
   //a select can have just one mode to select each object in the list
   wb->set_select_mode_(mode_selected_);
 }
@@ -160,107 +163,99 @@ void win_select::next_()
 {
   //test if next is possible 
   if(index_list==list_obj.end() || !activated_) return;
-  
-  //unselect the cur object
+
+  //unselect cur element
   (*index_list)->on_unselect();
-  
-  //set to unselect object
+
   set_select_cur_object(false);
+
+  //create a temporary index
+  list<win_base*>::iterator cur_i=index_list;
   
-  //change to the next
-  index_list++;
+  //to next elements
+  cur_i++;
+
+  //while not a the end, not be selected and different at old object go to the next
+  while(cur_i!=list_obj.end() && !(*cur_i)->is_can_be_selected() && cur_i!=index_list) cur_i++; 
   
-  if(index_list==list_obj.end()) 
-    if(select_circle_) index_list=list_obj.begin();
-    else index_list--;
-     
-  (*index_list)->on_select();
+  //if at end of list and select circle is activate
+  if(cur_i==list_obj.end())
+    {
+      //cur is the begin of list
+      if(select_circle_)
+	{
+	  cur_i=list_obj.begin();
+	  while(cur_i!=list_obj.end() && !(*cur_i)->is_can_be_selected() && cur_i!=index_list) cur_i++;
+	  if(cur_i!=list_obj.end()) index_list=cur_i; 
+	}
+    }else index_list=cur_i;
   
-  //set to select object
   set_select_cur_object(true);
   
-  /*
+  (*index_list)->on_select();
 
-  list<win_base*>::iterator old=index_list;
-  if(select_circle_)
-    {
-      cout << "1\n";
-      //WARNING if old is yet at the end of the list
-      if(old!=list_obj.end()) {old++;cout << "2\n";}
-      
-      while(old!=list_obj.end() && *old!=*index_list && !(*old)->is_can_be_selected()) {old++;cout << "3\n";}
-      if(old==list_obj.end()) 
-	{
-	  cout << "4\n"; 
-	  old=list_obj.begin();
-	  while(old!=list_obj.end() && *old!=*index_list && !(*old)->is_can_be_selected()) {old++;cout << "5\n";}
-	  if(old!=list_obj.end() && old!=index_list)
-	    {
-	      cout << "6\n";
-	      (*index_list)->on_unselect();
-	      if(mode_selected_==WIN_SELECT_MODE_BRIGHTNESS)
-		(*index_list)->set_draw_brightness(true);
-	      index_list=old;
-	      (*index_list)->on_select();
-	      (*index_list)->set_draw_brightness(false); 
-	    }
-	}
-      else
-	{
-	  cout << "7\n";
-	  if(old!=index_list)
-	    {
-	      cout << "8\n";
-	      (*index_list)->on_unselect();
-	      if(mode_selected_==WIN_SELECT_MODE_BRIGHTNESS)
-		(*index_list)->set_draw_brightness(true);
-	      index_list=old;
-	      (*index_list)->on_select();
-	      (*index_list)->set_draw_brightness(false);
-	    }
-	}
-    }
-  else
-    {
-      while(old!=list_obj.end() && !(*old)->is_can_be_selected())
-	old++;
-      
-      if(old!=list_obj.end())
-	{
-	  (*index_list)->on_unselect();
-	  if(mode_selected_==WIN_SELECT_MODE_BRIGHTNESS)
-	    (*index_list)->set_draw_brightness(true);
-	  index_list=old;
-	  (*index_list)->on_select();
-	  (*index_list)->set_draw_brightness(false);
-	}
-    }*/
   update_position();
+  
   on_next();
 }
 
 void win_select::previous_()
 {
   if(index_list==list_obj.end() || !activated_) return;
+  
   (*index_list)->on_unselect();
   
   //set to unselect object
   set_select_cur_object(false);
   
-  if(index_list!=list_obj.begin()) index_list--;
-  else if(select_circle_) 
-    {
+  
+  list<win_base*>::iterator cur_i=index_list;
+  if(cur_i==list_obj.begin()) cur_i=list_obj.end();
+  
+  cur_i--;
+   
+  while(cur_i!=list_obj.begin() && !(*cur_i)->is_can_be_selected() && cur_i!=index_list) cur_i--; 
 
-      index_list=list_obj.end();
-      index_list--;
-    }
+  if(cur_i==list_obj.begin() && !(*cur_i)->is_can_be_selected())
+    {
+      if(select_circle_)
+	{
+	  cur_i=list_obj.end();
+	  cur_i--;
+	  
+	  while(cur_i!=list_obj.begin() && !(*cur_i)->is_can_be_selected() && cur_i!=index_list) cur_i--;
+	  if((*cur_i)->is_can_be_selected()) index_list=cur_i;
+	}
+    } else index_list=cur_i;
+  
   (*index_list)->on_select();
   
   //set to select object
   set_select_cur_object(true);
  
   update_position();
+  
   on_previous();
+}
+
+
+void win_select::set_can_be_selected_all(bool b)
+{
+  for(list<win_base*>::iterator i=list_obj.begin();i!=list_obj.end();i++)
+    (*i)->set_can_be_selected(b);
+}
+
+void win_select::set_default()
+{
+  if(list_obj.size()==0) return;
+
+  if(index_list!=list_obj.end()) set_select_cur_object(false);
+
+  index_list=list_obj.begin();
+
+  while(index_list!=list_obj.end() && !(*index_list)->is_can_be_selected()) index_list++;
+  
+  if(index_list!=list_obj.end()) set_select_cur_object(true);
 }
 
 

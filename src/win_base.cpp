@@ -89,9 +89,10 @@ win_base::win_base(s_int16 tx,s_int16 ty,u_int16 tl,u_int16 th,win_theme * wth)
   da_=new drawing_area();
   
   //create a theme for this object
-  //if(wth) theme_=new win_theme(*wth);
-  //else theme_=NULL;
+  
   theme_=(wth?new win_theme(*wth):NULL);
+  //  theme_=wth;
+
 
   //resize the object
   resize(tl,th);
@@ -119,13 +120,13 @@ void win_base::resize(u_int16 tl,u_int16 th)
   //resize
   length_=tl;
   height_=th;
-
+  
   //resize drawing area too.
   da_->w=tl;
   da_->h=th;
   
   //modify the theme object --> in theme object there are the border, background size  and another .....
-  if(theme_)theme_->update(this);  
+  if(theme_) theme_->update(this);  
 }
 
 

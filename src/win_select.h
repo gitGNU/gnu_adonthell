@@ -70,6 +70,14 @@ class win_select : public win_scrolled
   //set the default object
   void set_default(win_base * wb);
   void set_default(u_int16 ); //set the default object with a number, 1 is the first object 2 is the .....
+  
+  void set_default(); //set the first object which can be selected
+  
+  void set_can_be_selected_all(bool);//set to b all the element which are in the select
+
+ 
+
+
   //set the mode of the selection WIN_SELECT_MODE_BRIGHTNESS, WIN_SELECT_MODE_BORDER, cursor not implemented
   void set_select_mode(u_int8);  
  

@@ -107,7 +107,7 @@ void win_font::load_font(char * rep)
     }
 
   height_=font->get_height()-1;
-  length_=table['A'].get_length();
+  length_=table[' '].get_length();
   
   if(font)delete font;
 }
@@ -149,7 +149,7 @@ void win_font::load(char * rep)
       j++;
     }
   height_=font->get_height();
-  length_=table['A'].get_length();
+  length_=table[' '].get_length();
   if(font)delete font;
 
 
@@ -183,6 +183,8 @@ image & win_font::operator[](int i)
   return table[i];
 }
 
+
+/*
 win_font & win_font::operator=(win_font & tmpfont)
 {
   erase();
@@ -196,6 +198,7 @@ win_font & win_font::operator=(win_font & tmpfont)
   length_=tmpfont.length();
   return * this;
 }
+*/
 
 
 

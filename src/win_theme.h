@@ -31,7 +31,7 @@ class win_theme
   win_background * background;
   win_scrollbar * scrollbar;
 
-  static char* theme;
+  static char * theme;
 
   win_theme(char *);
   win_theme(win_theme &);

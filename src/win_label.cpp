@@ -22,57 +22,90 @@ win_label::win_label(s_int16 tx ,s_int16 ty ,u_int16 tl,u_int16 th,win_theme * w
   :win_base(tx,ty,tl,th,wthem)
 {
 
+  //set blinkcursor_ to false.. no cursor for a label
   blinkcursor_=false;
   blinkcursortimetodraw_=true;
   blinkinc_=0;
   blinkingspeed_=WIN_CURSOR_BLINKING;
 
+  //attach font object
   font_=fo;
+
+  //window propertie
   auto_height_=false;
   auto_size_=false;
+  
+  //template, this image is representation of the contain of the label
   template_ = new image();
   template_->resize(tl,th);
+  
+  //set text to nothing
   set_text("");
 }
 
+
 win_label::~win_label()
 {
+  //destroy the template image
   if(template_) delete template_;
   font_=NULL;
 }
 
-//return real size
+
+//return real size of a word
 s_int16 win_label::word_size(u_int16 begin,u_int16 & length)
 {
+  //if position of index is superior than text_size return -1 : error
   if(begin>=texte_size_)return -1;
+
+  //set size to 0
   u_int16 size=0;
+
+  //length to 0
   length=0;
+  
+  //size is real size of word, length the nb of charactere of the word
+
+  //while size of length + begin word inferior at text size and charatere != '\n' !=' ' continue to calculate size of word
   while(begin+length<texte_size_ && texte_[begin+length]!='\n' && texte_[begin+length]!=' ')
     {
       if(font_->in_table(texte_[begin+length])) 
-	size+=font_->table[texte_[begin+length]].get_length();
-      length++;
+	//size+=font_->table[texte_[begin+length]].get_length();
+	size+=(*font_)[texte_[begin+length]].get_length();
+
+	length++;
     }
+
+  //return real size of the word
   return size;
 } 
+
 
 //0: cut the word
 //1: Ok
 //2: Next Line
+//this fonction determine what we can do with the cur word
+
 s_int8 win_label::word_place(u_int16 cur_line_size,s_int16 w_size)
 {
   if(w_size<0) return -1;
   if(w_size>length_) return 0;
   if(w_size>length_-cur_line_size) return 2;
-  else return 1;
+  return 1;
 }
 
 void win_label::resize(u_int16 tl,u_int16 th)
 {
-  win_base::resize(tl,th); 
-  //template_->init();
+  //resize win_base.....
+  win_base::resize(tl,th);
+
+  //resize template
   template_->resize(tl,th);
+
+  //calculate surface
   init_draw_surface();
+
+  //draw
   init_draw();
 }
 
@@ -102,11 +135,11 @@ void win_label::init_draw_surface()
 		{
 		  if(font_->in_table(texte_[j]))
 		    {
-		      if(curligne_+font_->table[texte_[j]].get_length()>length_) 
+		      if(curligne_+(*font_)[texte_[j]].get_length()>length_) 
 			{
 			  curligne_=0;tmpheight_+=font_->height();
 			}
-		      curligne_+=font_->table[texte_[j]].get_length();
+		      curligne_+=(*font_)[texte_[j]].get_length();
 		    }
 		}
 	      i+=wnbch_;
@@ -141,7 +174,7 @@ void win_label::init_draw_surface()
 	{
 	  while(i<texte_size_)
 	    {
-	      if(texte_[i]!='\n' && texte_[i]!=' ' && font_->in_table(texte_[i])) curligne_+=font_->table[texte_[i]].get_length();
+	      if(texte_[i]!='\n' && texte_[i]!=' ' && font_->in_table(texte_[i])) curligne_+=(*font_)[texte_[i]].get_length();
 	      else if(texte_[i]=='\n')
 		{
 		  tmpheight_+=font_->height();
@@ -201,11 +234,11 @@ void win_label::init_draw()
 	    {
 	      if(font_->in_table(texte_[j]))
 		{
-		  if(curligne_+font_->table[texte_[j]].get_length()>length_) 
+		  if(curligne_+(*font_)[texte_[j]].get_length()>length_) 
 		    {curligne_=0;tmpheight_+=font_->height();}
 		  if(tmpheight_>=template_->get_height()) break;
-		  template_->putbox_img(&(font_->table[texte_[j]]),curligne_,tmpheight_);
-		  curligne_+=font_->table[texte_[j]].get_length(); 
+		  template_->putbox_img(&((*font_)[texte_[j]]),curligne_,tmpheight_);
+		  curligne_+=(*font_)[texte_[j]].get_length(); 
 		}
 	    }
 	  i+=wnbch_;
@@ -215,8 +248,8 @@ void win_label::init_draw()
 	    {  
 	      if(font_->in_table(texte_[j]))
 		{
-		  template_->putbox_img(&(font_->table[texte_[j]]),curligne_,tmpheight_);
-		  curligne_+=font_->table[texte_[j]].get_length();
+		  template_->putbox_img(&((*font_)[texte_[j]]),curligne_,tmpheight_);
+		  curligne_+=(*font_)[texte_[j]].get_length();
 		}
 	    }
 	  i+=wnbch_;
@@ -229,8 +262,8 @@ void win_label::init_draw()
 	    {
 	      if(font_->in_table(texte_[j]))
 		{
-		  template_->putbox_img(&(font_->table[texte_[j]]),curligne_,tmpheight_);
-		  curligne_+=font_->table[texte_[j]].get_length();
+		  template_->putbox_img(&((*font_)[texte_[j]]),curligne_,tmpheight_);
+		  curligne_+=(*font_)[texte_[j]].get_length();
 		}
 	    }
 	  i+=wnbch_;
@@ -257,6 +290,8 @@ void win_label::init_draw()
     }
 }
 
+
+
 bool win_label::draw()
 {
   if(win_base::draw())
@@ -264,7 +299,7 @@ bool win_label::draw()
       assign_drawing_area();
       draw_background();
       if(template_)
-	if(draw_brightness_)
+	if(draw_brightness_)// && (!in_select_ ||(in_select_ && !selected_ && can_be_selected_)))
 	  {
 	    static image imgbright;
 	    imgbright.brightness(template_,level_brightness_);
