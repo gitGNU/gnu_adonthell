@@ -47,15 +47,6 @@ int main(int argc, char * argv[])
 
 #ifdef SDL
   SDL_Thread *input_thread;
-  // Initialize SDL library
-  if (SDL_Init(SDL_INIT_VIDEO) < 0) {
-     fprintf(stderr, "Error initializing SDL: %s\n", SDL_GetError());
-     exit(1);
-  }
-
-  //  init_display(0);
-
-  cout << "Init_display done\n";
 
    input_thread = SDL_CreateThread((void*)keyboard_init, NULL);
   if ( input_thread != NULL) {
