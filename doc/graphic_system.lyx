@@ -1,6 +1,6 @@
 #LyX 1.1 created this file. For more info see http://www.lyx.org/
 \lyxformat 2.15
-\textclass article
+\textclass scrartcl
 \language default
 \inputencoding latin1
 \fontscheme default
@@ -20,7 +20,7 @@
 \quotes_times 2
 \papercolumns 1
 \papersides 1
-\paperpagestyle default
+\paperpagestyle fancy
 
 \layout Title
 
@@ -54,10 +54,55 @@ The image class is the base class.
 the size of the image,
 \layout Itemize
 
-it's depth (actually it's always the same than the screen's depth),
+it's depth (actually it's most likely always the same than the screen's
+ depth),
+\layout Itemize
+
+it's parameters (translucency, mask),
 \layout Itemize
 
 the image's data, as an SDL surface.
+\layout Subsubsection
+
+Declaring and resizing an image
+\layout Standard
+
+Two constructors can be used:
+\layout LyX-Code
+
+image(); 
+\layout LyX-Code
+
+image (u_int16 l, u_int16 h);
+\layout Standard
+
+The first one simply declare an empty image with no data inside ; the second
+ allow you to specify the length and height of the image.
+\layout Standard
+
+When you need to reset your image, call
+\layout LyX-Code
+
+void clear();
+\layout Standard
+
+After calling this function your image will be reinitialized, and it's length
+ and height reseted to 0.
+\layout Standard
+
+To resize it, call
+\layout LyX-Code
+
+void resize(u_int16 l, u_int16 h);
+\layout Standard
+
+Keep in mind that when the function returns, your image's data are totally
+ erased.
+ If you want to scale the image, rather call the 
+\emph on 
+zoom
+\emph default 
+ function.
 \layout Subsubsection
 
 Loading an image
@@ -77,49 +122,213 @@ s_int8 image::get(SDL_RWops * file);
 \layout Standard
 
 to get a PNM encoded image from an open file.
-\layout Standard
-
-There are variants of these functions, which load the image but doesn't
- adapt their depth to the screen's depth (usefull for image editing):
-\layout LyX-Code
-
-s_int8 image::simpleget(SDL_RWops * file); 
-\layout LyX-Code
-
-s_int8 image::simpleput(SDL_RWops * file); 
-\layout LyX-Code
-
-s_int8 image::simpleload(char * fname);
-\layout Standard
-
-Notice the 
-\emph on 
-simpleput
-\emph default 
- function which records an image to an open file in PNM format.
 \layout Subsubsection
 
 Displaying an image
 \layout Standard
 
-Images display is done by the following functions:
-\layout LyX-Code
+There are two ways to display images, choose the one that fits better to
+ your needs.
+\layout Minisec
 
-void image::putbox (s_int16 x, s_int16 y, drawing_area * da_opt=NULL); 
-\layout LyX-Code
-
-void image::putbox_mask (s_int16 x, s_int16 y, drawing_area * da_opt=NULL);
-\layout LyX-Code
-
-void image::putbox_trans (s_int16 x, s_int16 y, u_int8 alpha, drawing_area
- * da_opt=NULL);
-\layout LyX-Code
-
-void image::putbox_mask_trans (s_int16 x, s_int16 y, u_int8 alpha, drawing_area
- * da_opt=NULL);
+Using the 
+\emph on 
+draw
+\emph default 
+ function
 \layout Standard
 
-Never mind the drawing_area parameter for the moment.
+Before displaying an image, you should first set it's properties (usually
+ you'll do this at load time):
+\layout LyX-Code
+
+bool get_mask(); 
+\layout LyX-Code
+
+void set_mask(bool m); 
+\layout LyX-Code
+
+u_int8 get_trans(); 
+\layout LyX-Code
+
+void set_trans(u_int8 t);
+\layout Standard
+
+These functions allow you to set and get the 
+\emph on 
+mask
+\emph default 
+ parameter (whether the pink 0xFF00FF color is displayed or not) and 
+\emph on 
+translucency
+\emph default 
+ parameter, 0 being totally opaque (no translucency) and 255 totally translucent.
+\layout Standard
+
+Image display is done by:
+\layout LyX-Code
+
+void draw(s_int16 x, s_int16 y, drawing_area * da_opt=NULL);
+\layout Standard
+
+Which draws the image with it's current settings at position (x,y).
+ Never mind the drawing_area parameter for the moment.
+\layout Standard
+
+This method should be used when the image's parameter doesn't change often
+ (or better, they doesn't change at all).
+ Good examples are characters, which are usually 
+\emph on 
+masked
+\emph default 
+ but never use 
+\emph on 
+translucency
+\emph default 
+.
+ This method should be preffered in most cases.
+\layout Minisec
+
+Using the 
+\emph on 
+putbox
+\emph default 
+ functions
+\layout Standard
+
+Use them when the image's settings are not fixed at load time and you don't
+ know with which functions it will be drawn.
+ These functions are used for example in the mapengine ; as the settings
+ are not set in the pattern structure but each square has it's own translucency/
+mask properties.
+\layout LyX-Code
+
+void image::putbox (s_int16 x, s_int16 y, 
+\layout LyX-Code
+
+
+\protected_separator 
+ 
+\protected_separator 
+ 
+\protected_separator 
+ 
+\protected_separator 
+ 
+\protected_separator 
+ 
+\protected_separator 
+ 
+\protected_separator 
+ 
+\protected_separator 
+ 
+\protected_separator 
+ 
+\protected_separator 
+ drawing_area * da_opt=NULL); 
+\layout LyX-Code
+
+void image::putbox_mask (s_int16 x, s_int16 y, 
+\layout LyX-Code
+
+
+\protected_separator 
+ 
+\protected_separator 
+ 
+\protected_separator 
+ 
+\protected_separator 
+ 
+\protected_separator 
+ 
+\protected_separator 
+ 
+\protected_separator 
+ 
+\protected_separator 
+ 
+\protected_separator 
+ 
+\protected_separator 
+ 
+\protected_separator 
+ 
+\protected_separator 
+ 
+\protected_separator 
+drawing_area * da_opt=NULL);
+\layout LyX-Code
+
+void image::putbox_trans (s_int16 x, s_int16 y, u_int8 a, 
+\layout LyX-Code
+
+
+\protected_separator 
+ 
+\protected_separator 
+ 
+\protected_separator 
+ 
+\protected_separator 
+ 
+\protected_separator 
+ 
+\protected_separator 
+ 
+\protected_separator 
+ 
+\protected_separator 
+ 
+\protected_separator 
+ 
+\protected_separator 
+ 
+\protected_separator 
+ 
+\protected_separator 
+ 
+\protected_separator 
+ drawing_area * da_opt=NULL);
+\layout LyX-Code
+
+void image::putbox_mask_trans (s_int16 x, s_int16 y, u_int8 a, 
+\layout LyX-Code
+
+
+\protected_separator 
+ 
+\protected_separator 
+ 
+\protected_separator 
+ 
+\protected_separator 
+ 
+\protected_separator 
+ 
+\protected_separator 
+ 
+\protected_separator 
+ 
+\protected_separator 
+ 
+\protected_separator 
+ 
+\protected_separator 
+ 
+\protected_separator 
+ 
+\protected_separator 
+ 
+\protected_separator 
+ 
+\protected_separator 
+ 
+\protected_separator 
+ 
+\protected_separator 
+drawing_area * da_opt=NULL);
 \layout Standard
 
 
@@ -135,12 +344,48 @@ putbox_mask
 \emph on 
 putbox_trans
 \emph default 
- blits the image with an alpha blending (translucency) effect, defined by
- the 
+ blits the image with an alpha blending (translucency) effect.
+\layout Standard
+
+It is 
 \emph on 
-alpha
+not recommended
 \emph default 
- parameter which goes from 0 (solid) to 255 (invisible).
+ to use the two methods at the same time, although the 
+\emph on 
+putbox
+\emph default 
+ functions update the image's settings (i.e after making a 
+\emph on 
+putboxmask
+\emph default 
+ the image will have it's 
+\emph on 
+mask
+\emph default 
+ setting to 
+\emph on 
+true
+\emph default 
+ and it's 
+\emph on 
+trans
+\emph default 
+ setting to 
+\emph on 
+0
+\emph default 
+.
+\layout Standard
+
+The last one do the contrary of all the functions explained above:
+\layout LyX-Code
+
+void get_from_screen(s_int16 x, s_int16 y, s_int16 w, s_int16 h);
+\layout Standard
+
+It will put into your image the portion of the screen located at (x,y) and
+ of size the current size of your image.
 \layout Subsubsection
 
 Drawing Areas
@@ -187,6 +432,165 @@ detach
 attach
 \emph default 
  the old one (of attach nothing if there wasn't any).
+\layout Subsubsection
+
+Special effects
+\layout Standard
+
+The 
+\emph on 
+putbox_img
+\emph default 
+ functions do the same thing as the 
+\emph on 
+putbox
+\emph default 
+ functions excepted that they will draw into another image.
+\layout LyX-Code
+
+void putbox_tile_img(image * source); 
+\layout LyX-Code
+
+void putbox_img(image * source, u_int16 x, u_int16 y); 
+\layout LyX-Code
+
+void putbox_mask_img (image * source, u_int16 x, u_int16 y); 
+\layout LyX-Code
+
+void putbox_part_img (image * source, u_int16 x, u_int16 y, 
+\layout LyX-Code
+
+
+\protected_separator 
+ 
+\protected_separator 
+ 
+\protected_separator 
+ 
+\protected_separator 
+ 
+\protected_separator 
+ 
+\protected_separator 
+ 
+\protected_separator 
+ 
+\protected_separator 
+ 
+\protected_separator 
+ 
+\protected_separator 
+ 
+\protected_separator 
+ u_int16 bw, u_int16 bh, u_int16 xo, 
+\layout LyX-Code
+
+
+\protected_separator 
+ 
+\protected_separator 
+ 
+\protected_separator 
+ 
+\protected_separator 
+ 
+\protected_separator 
+ 
+\protected_separator 
+ 
+\protected_separator 
+ 
+\protected_separator 
+ 
+\protected_separator 
+ 
+\protected_separator 
+ 
+\protected_separator 
+ u_int16 yo);
+\layout Standard
+
+
+\emph on 
+putbox_tile_img
+\emph default 
+ just tile the 
+\emph on 
+source
+\emph default 
+ image into the image object.
+ The others should now be familiar ; 
+\emph on 
+putbox_part_img
+\emph default 
+ is just a bit special as it allow you to copy only a part of the 
+\emph on 
+source
+\emph default 
+ image.
+ When using theses functions, please take care of your image's size!
+\layout Standard
+
+The two last methods are some graphical effects to use with moderation:
+\layout LyX-Code
+
+void zoom(image * src); 
+\layout LyX-Code
+
+void brightness(image * src, u_int16 cont);
+\layout Standard
+
+Which respectively zoom your source image to the current image's size and
+ apply a brightness effect to the source image.
+\layout Subsubsection
+
+Image Edition
+\layout Standard
+
+The 
+\emph on 
+image_edit
+\emph default 
+ class allow you to load and save images.
+ Two new methods are allowed with this class:
+\layout LyX-Code
+
+s_int8 put(SDL_RWops * file); 
+\layout LyX-Code
+
+s_int8 save(char * fname);
+\layout Standard
+
+ONLY use it when you need to save images.
+ This is not only a derivated class from 
+\emph on 
+image
+\emph default 
+ with two new methods.
+ It also has to store the raw image data, which makes its size generally
+ the double of the 
+\emph on 
+image
+\emph default 
+ class size would be.
+\layout Standard
+
+\begin_float fig 
+\layout Caption
+
+UML Diagram of Image Classes
+\layout Standard
+\align center 
+
+\begin_inset Figure size 595 651
+file image.eps
+width 3 100.00
+flags 9
+
+\end_inset 
+
+
+\end_float 
 \layout Subsection
 
 The 
