@@ -161,7 +161,9 @@ int do_cutscene(void) {
 
 
   // Fade in our intro background music
+#ifdef SDL_MIXER
   if (audio_in != NULL) audio_in->fade_in_background(0, 500);
+#endif
 
   // Timing for animation is based on time from this point
   scene->initialize_timer();
@@ -169,7 +171,9 @@ int do_cutscene(void) {
   while(scene->render_scene()!=1)
   {
     if(keyboard::is_pushed(Escape_Key)) {
+#ifdef SDL_MIXER
       if (audio_in != NULL) audio_in->fade_out_background(500);
+#endif
       free(scene);
       free(anim);
       free(anim2);
@@ -179,7 +183,9 @@ int do_cutscene(void) {
       return(1);
     }
     if(keyboard::is_pushed(Enter_Key)) {
+#ifdef SDL_MIXER
       if (audio_in != NULL) audio_in->fade_out_background(500);
+#endif
       screen::drawbox(0,0,320,200,0x000000);
       free(scene);
       free(anim);
@@ -203,7 +209,9 @@ int do_cutscene(void) {
     if (keyboard::is_pushed(Enter_Key)) {
       // Clear all stuff out of the screen buffer
       screen::drawbox(0,0,320,200,0x000000);
+#ifdef SDL_MIXER
       if (audio_in != NULL) audio_in->fade_out_background(500);
+#endif
       free(scene);
       free(anim);
       free(anim2);
@@ -257,7 +265,9 @@ int main(int argc, char * argv[])
       map1 = new map();
       map1->load(argv[1]);
     }
-     if (audio_in != NULL) audio_in->fade_in_background(1,500);
+#ifdef SDL_MIXER
+    if (audio_in != NULL) audio_in->fade_in_background(1,500);
+#endif
     mapengine::map_engine(map1);
     free(map1);
     map1 = NULL;
