@@ -44,7 +44,7 @@ int main(int argc, char * argv[])
 
   init_display(0);
 
-  audio_thread = SDL_CreateThread((void *)audio_init, NULL);
+  audio_thread = SDL_CreateThread((void*)audio_init, NULL);
   if ( audio_thread != NULL) {
      fprintf(stderr, "Audio thread started.\n");
   } else {
@@ -52,7 +52,7 @@ int main(int argc, char * argv[])
      fprintf(stderr, "Audio will not be used\n");
   }
 
-  input_thread = SDL_CreateThread((void *)keyboard_init, NULL);
+  input_thread = SDL_CreateThread((void*)keyboard_init, NULL);
   if ( input_thread != NULL) {
      fprintf(stderr, "User input thread started.\n");
   } else {

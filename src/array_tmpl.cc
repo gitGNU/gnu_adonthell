@@ -12,16 +12,15 @@
 
 #include "types.h"
 #include "array_tmpl.h"
-#include "dialog_cmd.h"
+#include "interpreter.h"
 
 struct _dlgnode;
 
 // Instanciate some Arrays
 template class Array<u_int32>;
 template class Array<char*>;
-template class Array<dialog_cmd*>;
 template class Array<_dlgnode*>;
-template class Array<Array<dialog_cmd*>*>;
+template class Array<CmdNew*>;
 
 // Create Array with space for 5 elements
 template <class T> Array<T>::Array()
@@ -43,7 +42,7 @@ template <class T> Array<T>::~Array ()
 }
 
 // Append another element
- template <class T> inline u_int8 Array<T>::add_element (T data)
+template <class T> inline u_int8 Array<T>::add_element (T data)
 {
     u_int32 i;
 

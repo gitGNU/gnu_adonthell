@@ -10,6 +10,9 @@
    See the COPYING file for more details.
 */
 
+#ifndef _ARRAY_TMPL_
+#define _ARRAY_TMPL_
+
 template <class T> class Array
 {
 public:
@@ -30,3 +33,5 @@ protected:
     u_int32 size;                       // Array size
     u_int32 count;                      // Element count
 };
+
+#endif
