@@ -114,8 +114,6 @@ class path;
 
 class mapview;
 
-struct PyCodeObject;
-
 
 
 /**
