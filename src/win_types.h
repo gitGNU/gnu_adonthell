@@ -45,7 +45,7 @@
 //font filename
 #define WIN_FONT_FILE_IDX "font.idx"
 #define WIN_FONT_FILE_PIC "font.pnm"
-
+#define WIN_FONT_FILE "font.font"
 
 //CURSOR LABEL
 #define WIN_CURSOR_BLINKING 75

@@ -41,6 +41,7 @@ void win_image::set_image(image * tpic)
   picture=new image();
   *picture=*tpic;
   src=tpic;
+  update_image();
 }
 
 void win_image::set_stretch(bool b)
@@ -86,6 +87,7 @@ bool win_image::draw()
     }
   return false;
 }
+
 
 
 

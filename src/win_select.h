@@ -48,6 +48,9 @@ class win_select : public win_scrolled
   void on_activate();
   
   bool activate___();
+
+ 
+  void set_select_cur_object(bool b);
  
  public:
   win_select(s_int16 tx,s_int16 ty,u_int16 tl,u_int16 th,win_theme * wth);

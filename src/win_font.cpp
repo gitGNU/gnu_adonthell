@@ -27,7 +27,7 @@ win_font::win_font(char * fic)
 {
   cursor=NULL;
   table=NULL;
-  load(fic);
+  load_font(fic);
 }
 
 win_font::win_font(win_font & tmpfont)
@@ -44,6 +44,72 @@ void win_font::erase()
   if(cursor) delete cursor;
   if(table) delete [] table;
   table=NULL;
+}
+
+
+void win_font::load_font(char * rep)
+{
+  if(table!=NULL) erase();
+
+  //file which contains font information and cursor
+  gzFile f;
+
+  //path where is the file
+  char path[255];
+
+  //path win directory
+  strcpy(path,WIN_DIRECTORY);
+
+  //add win font directory path
+  strcat(path,WIN_FONT_DIRECTORY);
+
+  //add theme pass
+  strcat(path,rep);
+
+  //add font filename 
+  strcat(path,WIN_FONT_FILE);
+   
+  //open gzfile 
+  if((f=gzopen(path,"rb"))==NULL)
+    { cout << path << " not found !\n";exit(1);}
+
+
+  //create image wich contain the main font image
+  image *font=new image();
+  font->get(f);
+  
+  //get the cursor
+  cursor=new image();
+  cursor->get(f);
+
+  //create a table for each letter
+  table=new image[WIN_NB_TABLE_CHAR];
+
+  //init the boolean table 
+  init_in_table();
+
+  char i;int j=0;
+  u_int16 pos,tl;
+
+
+  while(!gzeof(f))
+    {
+      gzread(f,&i,sizeof(i));
+      gzread(f,&pos,sizeof(pos));
+      gzread(f,&tl,sizeof(tl));
+      if(i>0 && i<WIN_NB_TABLE_CHAR)
+	{
+	  table_core[i]=true;
+	  table[i].resize(tl,font->get_height()-1);
+	  table[i].putbox_part_img(font,0,0,tl,font->get_height()-1,pos,0);
+	} 
+      j++;
+    }
+
+  height_=font->get_height()-1;
+  length_=table['A'].get_length();
+  
+  if(font)delete font;
 }
 
 void win_font::load(char * rep)

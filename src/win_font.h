@@ -33,6 +33,7 @@ class win_font{
   win_font();
   ~win_font();
   void load(char *);
+  void load_font(char *);
   bool in_table(u_int16 tmp);
   image & operator[](int);
   win_font & operator=(win_font &);

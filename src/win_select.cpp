@@ -141,6 +141,18 @@ bool win_select::update()
   return false;
 }
 
+//if b is true, cur object take parameters to an selected object
+void win_select::set_select_cur_object(bool b)
+{
+  switch(mode_selected_)
+    {
+    case WIN_SELECT_MODE_BRIGHTNESS:
+      (*index_list)->set_draw_brightness(!b);
+      break;
+    case WIN_SELECT_MODE_BORDER:
+      (*index_list)->set_border_visible(b);
+    }
+}
 
 
 //WARNING: lots of confuse in next_ and previous maybe rewrite them
@@ -152,12 +164,9 @@ void win_select::next_()
   //unselect the cur object
   (*index_list)->on_unselect();
   
-  //test mode
-  if(mode_selected_==WIN_SELECT_MODE_BRIGHTNESS)
-    (*index_list)->set_draw_brightness(true);
-  else if(mode_selected_==WIN_SELECT_MODE_BORDER)
-    (*index_list)->set_border_visible(false);
-
+  //set to unselect object
+  set_select_cur_object(false);
+  
   //change to the next
   index_list++;
   
@@ -167,10 +176,8 @@ void win_select::next_()
      
   (*index_list)->on_select();
   
-  if(mode_selected_==WIN_SELECT_MODE_BRIGHTNESS)
-    (*index_list)->set_draw_brightness(false);
-  else if(mode_selected_==WIN_SELECT_MODE_BORDER)
-    (*index_list)->set_border_visible(true);
+  //set to select object
+  set_select_cur_object(true);
   
   /*
 
@@ -237,12 +244,9 @@ void win_select::previous_()
   if(index_list==list_obj.end() || !activated_) return;
   (*index_list)->on_unselect();
   
-  if(mode_selected_==WIN_SELECT_MODE_BRIGHTNESS)
-    (*index_list)->set_draw_brightness(true);
-  else if(mode_selected_==WIN_SELECT_MODE_BORDER)
-    (*index_list)->set_border_visible(false);
-
-
+  //set to unselect object
+  set_select_cur_object(false);
+  
   if(index_list!=list_obj.begin()) index_list--;
   else if(select_circle_) 
     {
@@ -252,11 +256,9 @@ void win_select::previous_()
     }
   (*index_list)->on_select();
   
-  if(mode_selected_==WIN_SELECT_MODE_BRIGHTNESS)
-    (*index_list)->set_draw_brightness(false);
-  else if(mode_selected_==WIN_SELECT_MODE_BORDER)
-    (*index_list)->set_border_visible(true);
-  
+  //set to select object
+  set_select_cur_object(true);
+ 
   update_position();
   on_previous();
 }

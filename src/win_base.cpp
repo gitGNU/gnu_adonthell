@@ -157,7 +157,7 @@ void win_base::set_theme(win_theme * th)
   if (theme_ != NULL) 
   {
     if(th) *theme_=*th;
-    else theme_=NULL;// ----> WARNING test if theme is not null before to do a null !!!!
+    else theme_=NULL;
   }
   else if (th) theme_ = new win_theme (*th);
   if (theme_) theme_->update (this);
@@ -167,6 +167,7 @@ void win_base::move(s_int16 tx,s_int16 ty)
 {
   //move the position 
   x_=tx;y_=ty;
+
   //update position, if this object is a child
   update_real_position();
 }
@@ -185,6 +186,7 @@ void win_base::update_real_position()
     {
       //get reference to drawing area of the father
       pda_=wb_father_->get_drawing_area();
+      
       //calcul the real position,---->> WARNING padx, pady maybe not add in realx_,realy_
       realx_=x_+wb_father_->realx()+padx_;
       realy_=y_+wb_father_->realy()+pady_;
@@ -247,8 +249,6 @@ void win_base::on_activate_key()
 {
   if(callback_[WIN_SIG_ACTIVATE_KEY]) (callback_[WIN_SIG_ACTIVATE_KEY])();
 }
-
-
 
 void win_base::set_focus(bool b)
 {
