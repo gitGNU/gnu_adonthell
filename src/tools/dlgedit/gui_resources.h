@@ -54,6 +54,14 @@ public:
      */
     static GdkGC *getColor (mode_type mode, node_type type);
     /**
+     * Retrieve a color to fill drawn objects on a drawing area, 
+     * depending on the given mode and type.
+     * @param mode the mode of a DlgNode
+     * @param type the type of a DlgNode
+     * @return a GdkGC.
+     */
+    static GdkGC *getFill (mode_type mode, node_type type);
+    /**
      * Retrieve the font used to draw text onto a drawing area.
      * @return a GdkFont.
      */

@@ -65,16 +65,17 @@ enum mode_type
  */
 enum
 {
-    GC_RED          = 0,
-    GC_DARK_RED     = 1,
-    GC_DARK_BLUE    = 2,
-    GC_GREEN        = 3,
-    GC_DARK_GREEN   = 4,
-    GC_YELLOW       = 5,
-    GC_GREY         = 6,
-    GC_BLACK        = 7,
-    GC_WHITE        = 8,
-    MAX_GC          = 9
+    GC_BLACK        = 0,
+    GC_GREY         = 1,
+    GC_WHITE        = 2,
+    GC_DARK_RED     = 3,
+    GC_RED          = 4,
+    GC_DARK_GREEN   = 5,
+    GC_GREEN        = 6,
+    GC_BRIGHT_GREEN = 7,
+    GC_DARK_BLUE    = 8,
+    GC_BLUE         = 9,
+    MAX_GC          = 10
 };
 
 /**

@@ -78,17 +78,23 @@ bool DlgCircle::hasChild (DlgNode *child)
 // draw the circle
 void DlgCircle::draw (GdkPixmap *surface, DlgPoint &os, GtkWidget *widget)
 {
-    // get the color for drawing the circle
-    GdkGC *gc = GuiResources::getColor (mode_, type_);
+    // get the color and fill for drawing the circle
+    GdkGC *gc  = GuiResources::getColor  (mode_, type_);
+    GdkGC *fgc = GuiResources::getFill   (mode_, type_);
     
     // offset circle
     DlgPoint position = topLeft ().offset (os);
     DlgRect area (position, width () + 1, height () + 1);
     
-    // draw everything to the surface
-    gdk_draw_arc (surface, GuiResources::getColor (GC_WHITE), TRUE, position.x (), position.y (), 20, 20, 0, 36000);
-    gdk_draw_arc (surface, gc, FALSE, position.x (), position.y (), 20, 20, 0, 36000);
-    
+    // draw everything to the surface - First border 
+    gdk_draw_arc (surface, gc,  TRUE, 
+		  position.x (), position.y (), 
+		  CIRCLE_DIAMETER, CIRCLE_DIAMETER, 0, 360*64);
+    // add a small circle inside that indicates the type (NPC, Player)
+    gdk_draw_arc (surface, fgc, TRUE, 
+		  position.x ()+2, position.y ()+2, 
+		  CIRCLE_DIAMETER-4, CIRCLE_DIAMETER-4, 0, 360*64);
+
     // Indicate whether node contains additional code
     if (hasCode () || entry_->loop ())
     {
