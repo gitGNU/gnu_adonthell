@@ -38,7 +38,7 @@ void create_mainframe (MainFrame * MainWnd)
 
     // Main Window
     MainWnd->wnd = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-    gtk_widget_set_usize (GTK_WIDGET (MainWnd->wnd), 640, 480);
+    gtk_widget_set_usize (GTK_WIDGET (MainWnd->wnd), 800, 600);
     gtk_window_set_title (GTK_WINDOW (MainWnd->wnd), g_strjoin (NULL, "Adonthell Dialogue Editor v", _VERSION_, " - [", strrchr (MainWnd->file_name, '/') + 1, "]", NULL));
     gtk_signal_connect (GTK_OBJECT (MainWnd->wnd), "delete_event", GTK_SIGNAL_FUNC (on_widget_destroy), NULL);
 
@@ -192,7 +192,7 @@ void create_mainframe (MainFrame * MainWnd)
 
     // Drawing Area
     MainWnd->graph = gtk_drawing_area_new ();
-    gtk_drawing_area_size (GTK_DRAWING_AREA (MainWnd->graph), 200, 350);
+    gtk_drawing_area_size (GTK_DRAWING_AREA (MainWnd->graph), 200, 450);
     gtk_paned_add1 (GTK_PANED (paned), MainWnd->graph);
     gtk_widget_show (MainWnd->graph);
 
