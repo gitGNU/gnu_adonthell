@@ -736,6 +736,10 @@ bool mapcharacter::update ()
     if (is_schedule_activated () && schedule.has_attribute ("run")) 
         schedule.run ();
 
+    // if we have a goal, then go there!
+    if (get_id () != "Player" && !goal_reached ()) 
+        follow_path ();
+
     if (previous_move != NO_MOVE && previous_move != current_move) 
     {
         anim[previous_move]->stop ();
@@ -748,10 +752,6 @@ bool mapcharacter::update ()
         delete saying;
         saying = NULL; 
     }
-
-    // if we have a goal, then go there!
-    if (get_id () != "Player" && !goal_reached ()) 
-        follow_path ();
         
     return true;
 }
