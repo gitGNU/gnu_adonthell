@@ -116,9 +116,10 @@ void dialog_screen::init(character_base *mynpc, char * dlg_file, u_int8 size)
                              win_event::ACTIVATE_KEY);
 
     // set the NPC's portrait
+    portrait = "none";
     set_portrait (mynpc->get_portrait ());
     // ... and name
-    set_name (mynpc->get_name());
+    set_name (mynpc->get_name ());
 
     // add everything to our container
     add (face);
@@ -185,6 +186,9 @@ void dialog_screen::run ()
         return;
     }
 
+    // update the NPC's portrait
+    set_portrait (dlg->npc_portrait ());
+
     // Add NPC text and all player reactions to container
     for (string txt = dlg->text (); txt != ""; txt = dlg->text (), i++)
     {
@@ -246,10 +250,13 @@ void dialog_screen::insert_plugin ()
 // Set / change the NPC-portrait
 void dialog_screen::set_portrait (const string & new_portrait)
 {
+    if (new_portrait == portrait) return;
+    else portrait = new_portrait;
+
     if (new_portrait == "")
     {
         face->image::resize (64, 64);
-        face->fillrect (0, 0, 64, 64, 0);
+        face->fillrect (0, 0, 64, 64, 0xff00ff);
         return;
     }
     face->load_pnm(string ("gfx/portraits/") + new_portrait);

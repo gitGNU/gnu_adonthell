@@ -180,6 +180,12 @@ private:
      * 
      */
     bool is_running;
+
+    /**
+     * Image to display next to the NPC text
+     *
+     */
+    string portrait;
 #endif // SWIG
 };
 

@@ -116,6 +116,14 @@ public:
      */
     u_int32 npc_color () { return npc_color_; }
 
+    /**
+     * Returns the image to be displayed next to the NPC's speech.
+     *
+     *
+     * @return name of the image.
+     */
+    string npc_portrait () { return npc_portrait_; }
+
     /** 
      * Returns the number of %text lines available at this point of 
      * the dialoge.
@@ -147,6 +155,7 @@ private:
     vector<string> text_;           // NPC's speech and according Player responses
     vector<string>::iterator i_text;// Iterator for the text_ vector
     u_int32 npc_color_;             // The color of the NPC's text
+    string npc_portrait_;           // Portrait of the NPC currently speaking
 
     vector<s_int32> answers;        // The indices with which to call instance.run () 
     vector<s_int32> choices;        // Strings player can chose from

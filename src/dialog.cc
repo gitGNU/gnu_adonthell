@@ -34,6 +34,7 @@
 dialog::dialog ()
 {
     strings = NULL;
+    npc_portrait_= "Default";
 }
 
 // Destructor
@@ -188,7 +189,14 @@ void dialog::run (u_int32 index)
             if (npc != NULL)
             {
                 if (strcmp ("Narrator", npc) == 0) npc_color_ = 0;
-                else npc_color_ = data::characters[npc]->get_color ();
+                else
+                {
+                    // set color and portrait of the NPC
+                    character_base *mychar = data::characters[npc];
+
+                    npc_color_ = mychar->get_color ();
+                    npc_portrait_ = mychar->get_portrait ();
+                }
             }
             
             // check whether we shall continue or not
