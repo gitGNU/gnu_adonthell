@@ -1,0 +1,8 @@
+# Enter the default attributes of characters here
+
+hitpoints
+mana
+strength
+intelligence
+dexterity
+luck
