@@ -143,100 +143,33 @@ s_int8 animationframe::load(const char * fname)
 
 s_int8 animation::insert_image(image * im, u_int16 pos)
 {
-  //  vector<image *> oldt_frame=t_frame;
   vector<image *>::iterator i;
+  vector<animationframe>::iterator j;
   if(pos>nbr_of_images()) return -2;
   i=t_frame.begin();
   while(pos--) i++;
   t_frame.insert(i,im);
-  /*
-  //  t_frame=new image*[++nbr_of_images];
-  t_frame.clear();
-  for(i=0;i<pos;i++)
-    {
-      t_frame.push_back(NULL);
-      t_frame[i]=oldt_frame[i];
-    }
-  t_frame[pos]=im;
-  for(i=pos+1;i<nbr_of_images;i++)
-    t_frame[i]=oldt_frame[i-1];
-  for(i=0;i<nbr_of_frames();i++)
-    if(frame[i].imagenbr>=pos) frame[i].imagenbr++;
-  //  delete[] oldt_frame;
-  oldt_frame.clear();
-  if(in_editor) 
-    {
-      must_upt_label_frame_nbr=true;
-      must_upt_label_frame_info=true;
-    }
-  */
+  for (j=frame.begin();j!=frame.end();j++)
+    if (j->get_image() >= pos) j->set_image(j->get_image()+1);
 #ifdef _DEBUG_
   cout << "Added image: " << nbr_of_images() << " total in animation.\n";
 #endif
-  return 0;
-}
-
-s_int8 animation::insert_frame(animationframe af, u_int16 pos)
-{
-  vector<animationframe>::iterator i;
-  if(pos>nbr_of_frames()) return -2;
-  i=frame.begin();
-  while(pos--) i++;
-  frame.insert(i,af);
-
-  /*
-  animationframe * oldframe=frame;
-  u_int16 i;
-  if(pos>nbr_of_frames()) return -2;
-  frame=new animationframe[++nbr_of_frames()];
-  for(i=0;i<pos;i++)
-    frame[i]=oldframe[i];
-  frame[pos]=af;
-  for(i=pos+1;i<nbr_of_frames();i++)
-    frame[i]=oldframe[i-1];
-  for(i=0;i<nbr_of_frames();i++)
-    if(frame[i].nextframe>=pos) frame[i].nextframe++; 
-  delete[] oldframe;
-  if(in_editor) 
-    {
-      must_upt_label_frame_nbr=true;
-      must_upt_label_frame_info=true;
-    }
-  */
-#ifdef _DEBUG_
-  cout << "Added frame: " << nbr_of_frames() << " total in animation.\n";
-#endif
+  must_upt_label_frame_nbr=true;
+  must_upt_label_frame_info=true;
   return 0;
 }
 
 s_int8 animation::delete_image(u_int16 pos)
 {
-  //  vector<image *> oldt_frame=t_frame;
   vector<image *>::iterator i;
-  u_int16 j;
+  vector<animationframe>::iterator j;
+
   if(pos>nbr_of_images()-1) return -2;
   i=t_frame.begin();
   while(pos--) i++;
   t_frame.erase(i);
-  //  t_frame=new image*[--nbr_of_images];
-  /*
-  t_frame.clear();
-  for(i=0;i<pos;i++)
-    {
-      t_frame.push_back(NULL);
-      t_frame[i]=oldt_frame[i];
-    }
-  for(i=pos;i<nbr_of_images;i++)
-    t_frame[i]=oldt_frame[i+1];
-  */
-  for(j=0;j<nbr_of_frames();j++)
-    {
-      if((frame[j].imagenbr>=pos)&&(frame[j].imagenbr>0)) frame[j].imagenbr--;
-      if((frame[j].nextframe>=pos)&&(frame[j].nextframe>0)) 
-	frame[j].nextframe--;
-    }
-  //  delete[] oldt_frame;
-  //  oldt_frame.clear();
+  for(j=frame.begin();j!=frame.end();j++)
+    if (j->get_image() >= pos) j->set_image(j->get_image()-1);
 #ifdef _EDIT_
   if(currentimage>=nbr_of_images()) currentimage=nbr_of_images()-1;
   if(in_editor) 
@@ -251,15 +184,25 @@ s_int8 animation::delete_image(u_int16 pos)
 #ifdef _EDIT_
   if(!nbr_of_images())
     {
-      //      t_frame=NULL;
-      //      t_frame.clear();
       currentimage=0;
-      //      delete[] frame;
       frame.clear();
-      //      frame=NULL;
-      //      nbr_of_frames()=0;
       currentframe=0;
     }
+#endif
+  return 0;
+}
+
+s_int8 animation::insert_frame(animationframe af, u_int16 pos)
+{
+  vector<animationframe>::iterator i;
+  if(pos>nbr_of_frames()) return -2;
+  i=frame.begin();
+  while(pos--) i++;
+  frame.insert(i,af);
+  for (i=frame.begin(); i!=frame.end(); i++)
+    if (i->get_nextframe() >= pos) i->set_nextframe(i->get_nextframe()+1);
+#ifdef _DEBUG_
+  cout << "Added frame: " << nbr_of_frames() << " total in animation.\n";
 #endif
   return 0;
 }
@@ -268,24 +211,13 @@ s_int8 animation::delete_frame(u_int16 pos)
 {
   vector<animationframe>::iterator i;
   if(pos>nbr_of_frames()-1) return -2;
+  for (i=frame.begin(); i!=frame.end(); i++)
+    if (i->get_nextframe() >= pos) 
+      i->set_nextframe(frame[i->get_nextframe()].get_nextframe()); 
   i=frame.begin();
   while(pos--) i++;
   frame.erase(i);
 
-  /*
-  animationframe * oldframe=frame;
-  u_int16 i;
-  if(pos>nbr_of_frames()-1) return -2;
-  frame=new animationframe[--nbr_of_frames()];
-  for(i=0;i<pos;i++)
-    frame[i]=oldframe[i];
-  for(i=pos;i<nbr_of_frames();i++)
-    frame[i]=oldframe[i+1];
-  for(i=0;i<nbr_of_frames();i++)
-    if(frame[i].nextframe>=pos && frame[i].nextframe) frame[i].nextframe--; 
-  delete[] oldframe;
-  if(currentframe>=nbr_of_frames()) currentframe=nbr_of_frames()-1;
-  */
 #ifdef _EDIT_
   if(in_editor) 
     {
@@ -297,11 +229,7 @@ s_int8 animation::delete_frame(u_int16 pos)
   cout << "Removed frame: " << nbr_of_frames() << " total in animation.\n";
 #endif
   if(!nbr_of_frames()) 
-    {
-      //      frame=NULL;
-
-      currentframe=0;
-    }
+    currentframe=0;
   return 0;
 }
 
@@ -398,11 +326,6 @@ void animation::update()
   speedcounter++;
   if (speedcounter>=frame[currentframe].delay)
     next_frame();
-}
-
-void animation::set_active_frame(u_int16 framenbr)
-{
-  if(framenbr<nbr_of_frames()) currentframe=framenbr;
 }
 
 void animation::next_frame()
@@ -614,7 +537,7 @@ void animation::save()
 void animation::load()
 {
   animation * t=new animation;
-  win_file_select * wf=new win_file_select(60,20,200,200,th,font,".anim");
+  win_file_select * wf=new win_file_select(60,20,200,200,th,font,".anim","./");
   char * s=wf->wait_for_select(makeFunctor(*this,&animation::update_editor),
 			       makeFunctor(*this,&animation::draw_editor));
   if(!s)
@@ -734,11 +657,12 @@ void animation::ed_add_image()
 {
   image * im=new image;
   u_int16 p;
-  win_file_select * wf=new win_file_select(60,20,200,200,th,font,".pnm");
+  win_file_select * wf=new win_file_select(60,20,200,200,th,font,".pnm","./");
   char * s=wf->wait_for_select(makeFunctor(*this,&animation::update_editor),
 			       makeFunctor(*this,&animation::draw_editor));
   if(!s) { delete wf; return; }
   char st[500];
+  cout << s << endl;
   if(!im->load_pnm(s)) 
     {
       do
@@ -775,11 +699,11 @@ void animation::ed_add_image()
   delete wf;
 }
 
-void animation::add_raw_image()
+void animation::ed_add_raw_image()
 {
   image * im=new image;
   u_int16 p;
-  win_file_select * wf=new win_file_select(60,20,200,200,th,font,".img");
+  win_file_select * wf=new win_file_select(60,20,200,200,th,font,".img","./");
   char * s=wf->wait_for_select(makeFunctor(*this,&animation::update_editor),
 			       makeFunctor(*this,&animation::draw_editor));
   if(!s) { delete wf; return; }
@@ -976,7 +900,7 @@ void animation::update_label_frame_info()
 	}
       else
 	{
-	  sprintf(frame_txt,"No frame, press \"F3\" to add one.");
+	  sprintf(frame_txt,"No frame, press \"F1\" to add one.");
 	  label_frame_info->set_text(frame_txt);
 	}
     }
@@ -991,7 +915,7 @@ void animation::update_label_frame_info()
 	}
       else
 	{
-	  sprintf(frame_txt,"No image, press \"F3\" to add one.");
+	  sprintf(frame_txt,"No image, press \"F1\" to add one.");
 	  label_frame_info->set_text(frame_txt);
 	}
     }
@@ -1009,17 +933,20 @@ void animation::update_label_status()
 
 void animation::update_editor_keys()
 {
-  // Mode switching
-  if(input::has_been_pushed(SDLK_F1)) set_mode(IMAGE);
-  if(input::has_been_pushed(SDLK_F2)) set_mode(FRAME);
+  // Image mode
+  if(input::has_been_pushed(SDLK_i)) set_mode(IMAGE);
+  // Frame mode
+  if(input::has_been_pushed(SDLK_f)) set_mode(FRAME);
 
-  // General functions
+  // Save
   if(input::has_been_pushed(SDLK_F5))
     { 
       if(SDL_GetModState()&KMOD_LSHIFT)
 	quick_save();
       else save(); 
     }
+
+  // Load
   if(input::has_been_pushed(SDLK_F6))
     { 
       if(SDL_GetModState()&KMOD_LSHIFT)
@@ -1027,8 +954,8 @@ void animation::update_editor_keys()
       else load(); 
     }
 
-  // Editor keys
-
+  // Navigate through images and frames
+  // + Shift: set the X offset in frame mode
   if(testkey(SDLK_RIGHT)) 
     {
       if(mode==IMAGE) select_image(increase_image(currentimage));
@@ -1038,6 +965,8 @@ void animation::update_editor_keys()
 	else set_frame_gapx(currentframe,frame[currentframe].gapx+1);	    
     }
   
+  // Navigate through images and frames
+  // + Shift: set the X offset in frame mode
   if(testkey(SDLK_LEFT))
     {
       if(mode==IMAGE) select_image(decrease_image(currentimage));
@@ -1047,28 +976,28 @@ void animation::update_editor_keys()
      	else set_frame_gapx(currentframe,frame[currentframe].gapx-1);
     }
 
-  if(input::has_been_pushed(SDLK_F3))
-    {
-      if(mode==IMAGE) ed_add_image();
-      if((mode==FRAME)&&(!play_flag)) ed_add_frame();
-    }
+  // Increase the frame delay in frame mode
+  // + Shift: set the Y offset in frame mode
+  if(testkey(SDLK_UP)&&mode==FRAME&&!play_flag) 
+    if(!(SDL_GetModState()&KMOD_SHIFT))
+      {set_frame_delay(currentframe,frame[currentframe].delay+1);}
+    else set_frame_gapy(currentframe,frame[currentframe].gapy-1);
 
-  if(input::has_been_pushed(SDLK_F9))
-    {
-      if(mode==IMAGE) save_image();
-    }
+  // Decrease the frame delay in frame mode
+  // + Shift: set the Y offset in frame mode
+  if(testkey(SDLK_DOWN)&&mode==FRAME&&!play_flag) 
+    if(!(SDL_GetModState()&KMOD_SHIFT))
+      {set_frame_delay(currentframe,frame[currentframe].delay-1);}
+    else set_frame_gapy(currentframe,frame[currentframe].gapy+1);
 
-  if(input::has_been_pushed(SDLK_F10))
-    {
-      if(mode==IMAGE) add_raw_image();
-      if((mode==FRAME)&&(!play_flag)) ed_add_frame();
-    }
+  // Start playing
+  if(input::has_been_pushed(SDLK_p)) play();
+  // Stop playing
+  if(input::has_been_pushed(SDLK_o)) stop();
+  // Rewind
+  if(input::has_been_pushed(SDLK_i)) rewind();
 
-  if(input::has_been_pushed(SDLK_F11))
-    {
-      if(mode==IMAGE) save_image_raw();
-    }
-  
+  // Reverse the current image horizontally in image mode
   if(input::has_been_pushed(SDLK_r))
     {
       if(mode==IMAGE)
@@ -1079,6 +1008,7 @@ void animation::update_editor_keys()
 	}
     }
 
+  // Reverse the current image vertically in image mode
   if(input::has_been_pushed(SDLK_t))
     {
       if(mode==IMAGE)
@@ -1089,6 +1019,42 @@ void animation::update_editor_keys()
 	}
     }
 
+  // Loads a PNM image in image mode
+  // Adds a frame in frame mode
+  if(input::has_been_pushed(SDLK_F1))
+    {
+      if(mode==IMAGE) ed_add_image();
+      if((mode==FRAME)&&(!play_flag)) ed_add_frame();
+    }
+
+  // Delete an image in image mode
+  // Delete a frame in frame mode
+  if(input::has_been_pushed(SDLK_F2))
+    {
+      if(mode==IMAGE) delete_image(currentimage);
+      if((mode==FRAME)&&(!play_flag)) delete_frame(currentframe);
+    }
+
+  // Loads an image in game format in image mode
+  if(input::has_been_pushed(SDLK_F3))
+    {
+      if(mode==IMAGE) ed_add_raw_image();
+      if((mode==FRAME)&&(!play_flag)) ed_add_frame();
+    }
+
+  // Save the current image in PNM format
+  if(input::has_been_pushed(SDLK_F9))
+    {
+      if(mode==IMAGE) save_image();
+    }
+
+  // Save the current image in game format
+  if(input::has_been_pushed(SDLK_F10))
+    {
+      if(mode==IMAGE) save_image_raw();
+    }
+  
+  // + Ctrl Copy the current image/frame to the clipboard
   if(input::has_been_pushed(SDLK_c))
     {
       if(SDL_GetModState()&&KMOD_CTRL)
@@ -1100,6 +1066,7 @@ void animation::update_editor_keys()
 	}
     }
 
+  // + Ctrl Paste the clipboard image/frame
   if(input::has_been_pushed(SDLK_v))
     {
       if(SDL_GetModState()&&KMOD_CTRL)
@@ -1114,6 +1081,7 @@ void animation::update_editor_keys()
 	}
     }
 
+  // Inserts the clipboard image/frame at the end
   if(input::has_been_pushed(SDLK_b))
     {
       if(SDL_GetModState()&&KMOD_CTRL)
@@ -1134,46 +1102,32 @@ void animation::update_editor_keys()
 	}
     }
 
-  if(input::has_been_pushed(SDLK_F4))
-    {
-      if(mode==IMAGE) delete_image(currentimage);
-      if((mode==FRAME)&&(!play_flag)) delete_frame(currentframe);
-    }
-
-  if(input::has_been_pushed(SDLK_p)) play();
-  if(input::has_been_pushed(SDLK_o)) stop();
-  if(input::has_been_pushed(SDLK_i)) rewind();
-
+  // Sets next image as frame's image in frame mode
   if(testkey(SDLK_KP_PLUS)&&mode==FRAME&&!play_flag)
     set_frame_imagenbr(currentframe,
 		       increase_image(frame[currentframe].imagenbr));
-  
+    // Sets previous image as frame's image in frame mode
   if(testkey(SDLK_KP_MINUS)&&mode==FRAME&&!play_flag)
     set_frame_imagenbr(currentframe,
 		       decrease_image(frame[currentframe].imagenbr));
 
-  if(testkey(SDLK_UP)&&mode==FRAME&&!play_flag) 
-    if(!(SDL_GetModState()&KMOD_SHIFT))
-      {set_frame_delay(currentframe,frame[currentframe].delay+1);}
-    else set_frame_gapy(currentframe,frame[currentframe].gapy-1);
-
-  if(testkey(SDLK_DOWN)&&mode==FRAME&&!play_flag) 
-    if(!(SDL_GetModState()&KMOD_SHIFT))
-      {set_frame_delay(currentframe,frame[currentframe].delay-1);}
-    else set_frame_gapy(currentframe,frame[currentframe].gapy+1);
-
+  // Increase alpha in frame mode
   if(testkey(SDLK_PAGEUP)&&mode==FRAME&&!play_flag)
     set_frame_alpha(currentframe,frame[currentframe].get_alpha()+1);
+  // Decrease alpha in frame mode
   if(testkey(SDLK_PAGEDOWN)&&mode==FRAME&&!play_flag) 
     set_frame_alpha(currentframe,frame[currentframe].get_alpha()-1);
 
+  // Increase next frame in frame mode
   if(testkey(SDLK_HOME)&&mode==FRAME&&!play_flag)
     set_frame_nextframe(currentframe,
 			increase_frame(frame[currentframe].nextframe));
+  // Decrease next frame in frame mode
   if(testkey(SDLK_END)&&mode==FRAME&&!play_flag) 
     set_frame_nextframe(currentframe,
 			decrease_frame(frame[currentframe].nextframe));
   
+  // Switch mask on/off in frame mode
   if(testkey(SDLK_INSERT)&&mode==FRAME&&!play_flag)
     set_frame_mask(currentframe,frame[currentframe].is_masked==true?
 		   false:true);
@@ -1214,14 +1168,8 @@ void animation::update_editor()
 	  info_win_count=0;
 	}
     }
-}
 
-void animation::draw_editor()
-{
-  bg->draw(0,0);
-  if(mode==FRAME) draw(0,0);
-  else if(nbr_of_images()>0) t_frame[currentimage]->putbox(0,0);
-  container->draw();
+  // Update status
   if(must_upt_label_mode) {update_label_mode(); must_upt_label_mode=false;}
   if(must_upt_label_frame_nbr) {update_label_frame_nbr(); 
   must_upt_label_frame_nbr=false;}
@@ -1229,7 +1177,21 @@ void animation::draw_editor()
   must_upt_label_frame_info=false;}
   if(must_upt_label_status) {update_label_status(); 
   must_upt_label_status=false;}
-  
+}
+
+void animation::draw_editor()
+{
+  // Redraw a blank screen
+  screen::clear();
+
+  // Draw the image to draw
+  if(mode==FRAME) draw(0,0);
+  else if(nbr_of_images()>0) t_frame[currentimage]->putbox(0,0);
+
+  // Draw the status window
+  container->draw();
+
+  // Draw info window
   info_win->draw();
 }
 
@@ -1251,16 +1213,10 @@ void animation::set_info_win(char * text)
 void animation::editor()
 {
   u_int16 i;
-  image temp;
-  string t;
-  t=WIN_DIRECTORY;
-  t+=WIN_BACKGROUND_DIRECTORY;
-  t+=WIN_THEME_ORIGINAL;
-  t+=WIN_BACKGROUND_FILE;
+
   clipboard=new image;
-  temp.load_pnm(t.data());
-  bg=new image(320,240);
-  bg->putbox_tile_img(&temp);
+
+  // Creating the status window
   font=new win_font(WIN_THEME_ORIGINAL);
   th=new win_theme(WIN_THEME_ORIGINAL);
   container=new win_container(200,12,110,216,th);
@@ -1275,6 +1231,7 @@ void animation::editor()
   container->set_visible_all(true);
   container->set_border_visible(true);
 
+  // Creating the info windo
   info_win=new win_container(20,10,280,20,th);
   info_win_label=new win_label(0,5,0,0,th,font);
   info_win->add(info_win_label);
@@ -1284,14 +1241,21 @@ void animation::editor()
   info_win->set_background_visible(false);
   info_win->set_visible_all(false);
 
+  // Defaults settings
+  //Mode label (image/frame)
   must_upt_label_mode=false;
+  // Image/Frame number
   must_upt_label_frame_nbr=false;
+  // Informations (size, etc...)
   must_upt_label_frame_info=false;
+  // Status (playing, ...)
   must_upt_label_status=false;  
   set_mode(IMAGE);
   stop();
   rewind();
   in_editor=true;
+
+  // Main loop
   while(!input::has_been_pushed(SDLK_ESCAPE))
     {
       input::update();
@@ -1299,11 +1263,12 @@ void animation::editor()
       update_and_draw();
       screen::show();
     }
+
+  // Clean things up
   input::clear_keys_queue();
   in_editor=false;
   delete container;
   delete info_win;
-  delete bg;
   delete th;
   delete font;
   delete clipboard;

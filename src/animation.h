@@ -65,6 +65,10 @@ class animationframe
   s_int8 get(gzFile file);
   s_int8 load(const char * fname);
 
+  u_int16 get_offx() { return gapx;}
+  void set_offx(u_int16 ox) { gapx=ox;}
+  u_int16 get_offy() { return gapy;}
+  void set_offy(u_int16 oy) { gapy=oy;}
  private:
   u_int16 imagenbr;
   bool is_masked;
@@ -104,36 +108,33 @@ class animation
   u_int16 get_length();
   u_int16 get_height();
 
-  void update();
-  void set_active_frame(u_int16 framenbr);
-  void next_frame();
   void play();
   void stop();
   void rewind();
-  u_int16 get_currentframe() { return currentframe; };
+
+  void update();
   void draw(s_int16 x, s_int16 y, drawing_area * da_opt=NULL);
+
   s_int8 get(gzFile file);
   s_int8 load(const char * fname);
 
   u_int16 nbr_of_frames() { return frame.size(); }
   u_int16 nbr_of_images() { return t_frame.size(); }
 
-  void zoom(u_int16 sx, u_int16 sy, animation * src);
+  u_int16 get_currentframe() { return currentframe; };
 
-  animationframe * get_frame(u_int16 nbr)
-    {
-      if(nbr>=nbr_of_frames()) return NULL;
-      return &(frame[nbr]);
-    }
-
-  image * get_image(u_int16 nbr)
-    {
-      if(nbr>=nbr_of_images()) return NULL;
-      return t_frame[nbr];
-    }
+  void next_frame();
+  void set_currentframe(u_int16 framenbr) { currentframe=framenbr; }
+  
+  animationframe * get_frame(u_int16 nbr) { return &(frame[nbr]); }
+  animationframe * get_current_frame() 
+    { return get_frame(get_currentframe()); }
+  image * get_image(u_int16 nbr) { return t_frame[nbr]; }
 
   u_int16 add_image(image * im) { insert_image(im, nbr_of_images()); return nbr_of_images()-1;}
   u_int16 add_frame(animationframe af) { insert_frame(af, nbr_of_frames()); return nbr_of_frames()-1;}
+
+  void zoom(u_int16 sx, u_int16 sy, animation * src);
 
  private:
 #ifdef _EDIT_
@@ -148,7 +149,7 @@ class animation
   char frame_txt[500];
   win_font * font;
   win_theme * th;
-  image * bg;
+
   win_container * container;
   win_label * label_mode;
   win_label * label_frame_nbr;
@@ -185,8 +186,10 @@ class animation
 #ifdef _EDIT_
   s_int8 put(gzFile file);
   s_int8 save(const char * fname);
+
   void select_image(u_int16 nbr);
   void select_frame(u_int16 nbr);
+
   void set_frame_gapx(u_int16 nbr, s_int16 gx);
   void set_frame_gapy(u_int16 nbr, s_int16 gy);
   void set_frame_alpha(u_int16 nbr, u_int8 a);
@@ -198,22 +201,28 @@ class animation
   u_int16 decrease_frame(u_int16 c);
   u_int16 increase_image(u_int16 c);
   u_int16 decrease_image(u_int16 c);
-  void add_image();
-  void add_raw_image();
-  void add_frame();
+
+  void ed_add_image();
+  void ed_add_raw_image();
+  void ed_add_frame();
+
   void quick_save();
   void quick_load();
   void save();
   void load();
+
   void save_image();
   void save_image_raw();
+
   void set_mode(anim_editor_mode m);
+
   void update_label_mode();
   void update_label_frame_nbr();
   void update_label_frame_info();
   void update_label_status();
   void update_editor_keys();
   void update_editor();
+
   void draw_editor();
   void update_and_draw();
   void set_info_win(char * text);
