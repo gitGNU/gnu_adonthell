@@ -30,6 +30,7 @@ class main_wnd
     gchar *get_option (GtkOptionMenu *);
     gchar *get_script ();
 
+    GtkWidget *app;
     GtkWidget *name_entry;
     GtkWidget *race_choice;
     GtkWidget *gender_choice;

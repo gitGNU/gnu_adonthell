@@ -108,19 +108,19 @@ void process_character (char *input, FILE *output)
                 case 1:
                 {
                     if (strcmp (vals[0], "name") == 0) mynpc.name = strdup (vals[1]);
-                    if (strcmp (vals[0], "posx") == 0) mynpc.posx = atoi (vals[1]);
-                    if (strcmp (vals[0], "posy") == 0) mynpc.posy = atoi (vals[1]);
-                    if (strcmp (vals[0], "race") == 0)
+                    else if (strcmp (vals[0], "posx") == 0) mynpc.posx = atoi (vals[1]);
+                    else if (strcmp (vals[0], "posy") == 0) mynpc.posy = atoi (vals[1]);
+                    else if (strcmp (vals[0], "race") == 0)
                     {
                         if (strcmp (vals[1], "Elf") == 0) mynpc.set ("race", ELF);
-                        if (strcmp (vals[1], "Half-Elf") == 0) mynpc.set ("race", HALFELF);
-                        if (strcmp (vals[1], "Human") == 0) mynpc.set ("race", HUMAN);
-                        if (strcmp (vals[1], "Dwarf") == 0)  mynpc.set ("race", DWARF);
+                        else if (strcmp (vals[1], "Half-Elf") == 0) mynpc.set ("race", HALFELF);
+                        else if (strcmp (vals[1], "Human") == 0) mynpc.set ("race", HUMAN);
+                        else if (strcmp (vals[1], "Dwarf") == 0)  mynpc.set ("race", DWARF);
                     }
-                    if (strcmp (vals[0], "gender") == 0)
+                    else if (strcmp (vals[0], "gender") == 0)
                     {
                         if (strcmp (vals[1], "Male") == 0) mynpc.set ("gender", MALE);
-                        if (strcmp (vals[1], "Female") == 0) mynpc.set ("gender", FEMALE);
+                        else if (strcmp (vals[1], "Female") == 0) mynpc.set ("gender", FEMALE);
                     }
                     break;
                 }
@@ -146,14 +146,21 @@ void process_character (char *input, FILE *output)
                             mynpc.events.push_back (myevent);
                             event_type = ENTER_EVENT;
                         }
+                        else if (strcmp (vals[1], "Leave") == 0)
+                        {
+                            myevent = new leave_event;
+                            ((leave_event *) myevent)->c = &mynpc;
+                            mynpc.events.push_back (myevent);
+                            event_type = LEAVE_EVENT;
+                        }
                     }
 
                     // set event script
-                    if (strcmp (vals[0], "script") == 0)
+                    else if (strcmp (vals[0], "script") == 0)
                         if (myevent) myevent->script_file = strdup (vals[1]);
 
                     // set event parameters
-                    if (strcmp (vals[0], "parameters") == 0);
+                    else if (strcmp (vals[0], "parameters") == 0);
                     {
                         params = g_strsplit (vals[1], ", ", 0);
 
@@ -163,16 +170,17 @@ void process_character (char *input, FILE *output)
 
                             switch (event_type)
                             {
+                                case LEAVE_EVENT:
                                 case ENTER_EVENT:
                                 {
                                     if (strcmp (pair[0], "x coordinate") == 0) 
-                                        ((enter_event *) myevent)->x = atoi (pair[1]);
-                                    if (strcmp (pair[0], "y coordinate") == 0) 
-                                        ((enter_event *) myevent)->y = atoi (pair[1]);
-                                    if (strcmp (pair[0], "direction") == 0) 
-                                        ((enter_event *) myevent)->dir = atoi (pair[1]);
-                                    if (strcmp (pair[0], "map") == 0) 
-                                        ((enter_event *) myevent)->map = atoi (pair[1]);
+                                        ((base_map_event *) myevent)->x = atoi (pair[1]);
+                                    else if (strcmp (pair[0], "y coordinate") == 0) 
+                                        ((base_map_event *) myevent)->y = atoi (pair[1]);
+                                    else if (strcmp (pair[0], "direction") == 0) 
+                                        ((base_map_event *) myevent)->dir = atoi (pair[1]);
+                                    else if (strcmp (pair[0], "map") == 0) 
+                                        ((base_map_event *) myevent)->map = atoi (pair[1]);
 
                                     break;
                                 }
@@ -192,7 +200,7 @@ void process_character (char *input, FILE *output)
                 case 4:
                 {
                     if (strcmp (vals[0], "dialogue") == 0) mynpc.set_dialogue (vals[1]);
-                    if (strcmp (vals[0], "schedule") == 0) mynpc.set_schedule (vals[1], false);
+                    else if (strcmp (vals[0], "schedule") == 0) mynpc.set_schedule (vals[1], false);
        
                     break;
                 }

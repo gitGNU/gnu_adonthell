@@ -16,6 +16,7 @@
 #include <fstream.h>
 #include <string.h>
 #include <stdio.h>
+#include <unistd.h>
 
 #include "main.h"
 #include "interface.h"
@@ -24,14 +25,16 @@ int
 main (int argc, char *argv[])
 {
     main_wnd wnd;
+    gchar *app_dir = g_dirname (argv[0]);
 
     gtk_init (&argc, &argv);
+    chdir (app_dir);
 
-    GtkWidget *app = create_main_wnd (wnd);
+    wnd.app = create_main_wnd (wnd);
 
     wnd.load_list_defaults (GTK_CLIST (wnd.attribute_list), "attributes.txt", "0");
 
-    gtk_widget_show (app);
+    gtk_widget_show (wnd.app);
     gtk_main ();
 
     return 0;
@@ -145,6 +148,7 @@ main_wnd::write_character_source ()
 
     gchar *name, *dialogue, *schedule, *tmp, *fname;
     gchar *str;
+    char title[256];
     int i = 0;
     ofstream file;
 
@@ -173,6 +177,10 @@ main_wnd::write_character_source ()
         g_free (fname);
         return;
     }
+
+    // update window title
+    sprintf (title, "Adonthell Character Editor - [%s]", g_basename (fname));
+    gtk_window_set_title (GTK_WINDOW (app), title);
 
     // write stuff to file
     file << "# Adonthell character source file\n\n";
@@ -219,7 +227,7 @@ main_wnd::read_character_source (gchar *fname)
     ifstream file;
     gchar **vals, *dummy[3] = { "", "", "" };
     char str[256];
-    int mode = 0, i = 0, j;
+    int mode = 0, i = -1, j;
 
     file.open (fname);
     if (!file)
@@ -228,6 +236,9 @@ main_wnd::read_character_source (gchar *fname)
         gtk_main ();
         return;
     }
+
+    sprintf (str, "Adonthell Character Editor - [%s]", g_basename (fname));
+    gtk_window_set_title (GTK_WINDOW (app), str);
 
     gtk_clist_freeze (GTK_CLIST (attribute_list));
     gtk_clist_freeze (GTK_CLIST (event_list));
@@ -295,13 +306,14 @@ main_wnd::read_character_source (gchar *fname)
                 {
                     if (strcmp (vals[0], "type") == 0)
                     {
+                        i++;
                         gtk_clist_append (GTK_CLIST (event_list), dummy);
                         gtk_clist_set_text (GTK_CLIST (event_list), i, 0, vals[1]);
                     }
                     if (strcmp (vals[0], "script") == 0)
                         gtk_clist_set_text (GTK_CLIST (event_list), i, 1, vals[1]);
                     if (strcmp (vals[0], "parameters") == 0)
-                        gtk_clist_set_text (GTK_CLIST (event_list), i++, 2, vals[1]);
+                        gtk_clist_set_text (GTK_CLIST (event_list), i, 2, vals[1]);
 
                     break;
                 }
