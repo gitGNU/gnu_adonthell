@@ -39,24 +39,27 @@ bool label_input::input_update()
 
     while ((c = input::get_next_unicode ()) > 0)
     {
-        cursor_undraw (); 
+        cursor_undraw ();
         if (c == SDLK_BACKSPACE || c == SDLK_DELETE)
         {            
             if (my_text_.empty () || my_cursor_.idx == 0) return true;
             
             // possibly delete multi-byte utf-8 char
-            if (my_cursor_.idx > 2 && (u_int8) my_text_[my_cursor_.idx-2] >= 0xE0) count = 3;
-            else if (my_cursor_.idx > 1 && (u_int8) my_text_[my_cursor_.idx-1] >= 0x80) count = 2;
+            if (my_cursor_.idx > 2 && (u_int8) my_text_[my_cursor_.idx-3] == 0xEF) count = 3;
+            else if (my_cursor_.idx > 1 && (u_int8) my_text_[my_cursor_.idx-2] == 0xC3) count = 2;
             else count = 1;
             
             my_cursor_.idx -= count;
+            u_int16 idx = my_cursor_.idx;
+            u_int16 glyph = ucd (idx);
             my_text_.erase (my_cursor_.idx, count);
+
             update_cursor ();
             my_old_cursor_ = my_cursor_; 
 
             lock (); 
             fillrect (my_cursor_.pos_x, my_cursor_.pos_y,
-                      (*my_font_) [ucd(my_cursor_.idx)].length (),
+                      (*my_font_) [glyph].length (),
                       my_font_->height (), screen::trans_col ()); 
             unlock (); 
             

@@ -559,20 +559,20 @@ bool label::update ()
 void label::cursor_draw ()
 {
      // draw the cursor
-    if (my_cursor_.idx == my_text_.length () || my_text_[my_cursor_.idx] == '\n')  
+    u_int16 idx = my_cursor_.idx;
+    if (last_letter (idx)  || my_text_[idx] == '\n')  
         my_font_->cursor->draw (my_cursor_.pos_x, my_cursor_.pos_y,NULL, this);  
     else
         my_font_->cursor->draw (my_cursor_.pos_x, my_cursor_.pos_y,0, 0, 
-                                (*my_font_) [ucd (my_cursor_.idx)].length (),
+                                (*my_font_) [ucd (idx)].length (),
                                 my_font_->height (), NULL, this); 
 }
-
-
 
 void label::cursor_undraw ()
 { 
     // draw letter instead  
-    if (my_cursor_.idx == my_text_.length () || my_text_[my_cursor_.idx] == '\n') 
+    u_int16 idx = my_cursor_.idx;
+    if (last_letter (idx) || my_text_[idx] == '\n') 
     {
         lock (); 
         fillrect(my_cursor_.pos_x, my_cursor_.pos_y,
@@ -581,26 +581,31 @@ void label::cursor_undraw ()
                  screen::trans_col());
         unlock (); 
     }
-    else (*my_font_) [ucd (my_cursor_.idx)].draw (my_cursor_.pos_x, my_cursor_.pos_y, NULL, this);
+    else (*my_font_) [ucd (idx)].draw (my_cursor_.pos_x, my_cursor_.pos_y, NULL, this);
 }
 
+bool label::last_letter (u_int16 idx) 
+{
+    if ((u_int8) my_text_[idx] == 0xEF) return my_text_.length () - idx == 2;
+    if ((u_int8) my_text_[idx] == 0xC3) return my_text_.length () - idx == 1;
+    return my_cursor_.idx == my_text_.length ();
+}
 
 bool label::input_update ()
 {
+
     if(input::has_been_pushed(KEY_CURSOR_NEXT)) 
     {
-        if (! (height () && length ())) return true;  
-        cursor_undraw (); 
-        cursor_next (); 
+        if (! (height () && length ())) return false;  
+        // cursor_undraw (); 
+        // cursor_next (); 
     }
     else if (input::has_been_pushed(KEY_CURSOR_PREVIOUS))
     {
         if (! (height () && length ())) return false;  
-        cursor_undraw ();  
-        cursor_previous (); 
+        // cursor_undraw ();  
+        // cursor_previous (); 
     }
-    
-    
     
     return true; 
 }
@@ -611,7 +616,12 @@ void label::cursor_next ()
     if (!moveable_cursor_) return; 
     if (my_cursor_.idx < my_text_.length ()) 
     {
-        my_cursor_.idx++; 
+        u_int8 count;
+        if (my_cursor_.idx < my_text_.length () - 2 && (u_int8) my_text_[my_cursor_.idx+1] == 0xEF) count = 3;
+        else if (my_cursor_.idx < my_text_.length () - 1 && (u_int8) my_text_[my_cursor_.idx+1] == 0xC3) count = 2;
+        else count = 1;
+        
+        my_cursor_.idx += count; 
         update_cursor ();
     }
 }
@@ -620,9 +630,14 @@ void label::cursor_next ()
 void label::cursor_previous ()
 {
     if (!moveable_cursor_) return; 
-    if (my_cursor_.idx >0) 
+    if (my_cursor_.idx > 0) 
     {
-        my_cursor_.idx--;
+        u_int8 count;
+        if (my_cursor_.idx > 2 && (u_int8) my_text_[my_cursor_.idx-3] == 0xEF) count = 3;
+        else if (my_cursor_.idx > 1 && (u_int8) my_text_[my_cursor_.idx-2] == 0xC3) count = 2;
+        else count = 1;
+
+        my_cursor_.idx -= count;
         update_cursor ();
     }
 }
@@ -657,10 +672,4 @@ u_int16 label::ucd (u_int16 & idx)
         |  ((u_int16) (c1 ^ 0x80) << 6)
         |   (u_int16) (c2 ^ 0x80);
 }
-
-
-
-
-
-
 

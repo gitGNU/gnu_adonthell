@@ -208,6 +208,7 @@ protected :
 
     void cursor_undraw (); 
     
+    bool last_letter (u_int16 idx);
     
     // my_font
     win_font * my_font_; 
