@@ -25,6 +25,12 @@ public:
     
     bool update () 
     {
+        if (State_changed)
+        {
+            State_changed = false;
+            map_character_gfx::set_state (map_character::current_state_name()); 
+        }
+
         map_character_gfx::update ();
         return map_character::update ();
     }
@@ -32,7 +38,6 @@ public:
     void set_state (const string & st) 
     {
         map_character::set_state (st);
-        map_character_gfx::set_state (st); 
     }
 
     void update_state () 

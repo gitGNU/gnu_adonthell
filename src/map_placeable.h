@@ -36,6 +36,8 @@ protected:
 
 protected:
     placeable_type Type; 
+
+    bool State_changed;
     
 public:
     map_coordinates base; 
@@ -44,6 +46,7 @@ public:
     {
         Type = UNKNOWN;
         Current_state = States.begin (); 
+        State_changed = false;
     }
     
     map_placeable (u_int16 l, u_int16 h) 
@@ -81,6 +84,7 @@ public:
         if (Current_state != States.end() && Current_state->first == name)
             return;
         Current_state = States.find (name); 
+        State_changed = true;
     }
 };
 
