@@ -12,7 +12,7 @@ bin_PROGRAMS = adonthell
 
 EXTRA_DIST = win_info.cc win_file_select.cc .indent.pro prefs.l win_query.cc py_adonthell.i adonthell.py
 
-CPPFLAGS +=-DUSE_PYTHON -DUSE_MAP $(SDL_DEFS) $(OGG_DEFS) $(SDL_CFLAGS) $(OGG_CFLAGS) $(PY_CFLAGS)
+CPPFLAGS +=-DUSE_PYTHON -DUSE_MAP $(SDL_DEFS) $(OGG_DEFS) $(SDL_CFLAGS) $(OGG_CFLAGS) $(PY_CFLAGS) -DOGG_MUSIC
 
 adonthell_LDADD = $(SDL_LIBS) $(OGG_LIBS) $(PY_LIBS)
 
@@ -34,7 +34,9 @@ mapengine.h pnm.h prefs.h python.h py_script.h quest.h screen.h surface.h storag
 types.h win_anim.h win_background.h win_base.h win_border.h win_container.h \
 win_file.h win_file_select.h win_font.h win_image.h win_info.h win_label.h \
 win_query.h win_scrollbar.h win_scrolled.h win_select.h win_theme.h win_types.h \
-win_write.h win_manager.h window.h yarg.h
+win_write.h win_manager.h window.h yarg.h \
+mixer.c music.c music_cmd.c music_cmd.h music_ogg.c music_ogg.h wave.h \
+wavestream.c wavestream.h
 
 
 # Note: adonthell.py is also built by this target. 

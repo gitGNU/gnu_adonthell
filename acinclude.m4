@@ -1,32 +1,3 @@
-AC_DEFUN(AM_PATH_SDL_MIXER,
-[
-AC_ARG_WITH(sdl_mixer-prefix,[  --with-sdl_mixer-prefix=PFX   Prefix where SDL_mixer is installed (optional)],
-            sdl_mixer_prefix="$withval"
-            if test -e "$sdl_mixer_prefix/lib/libSDL_mixer.so" ; then
-              SDL_CFLAGS="$SDL_CFLAGS -I$sdl_mixer_prefix/include"
-              SDL_LIBS="$SDL_LIBS -I$sdl_mixer_prefix/include -L$sdl_mixer_prefix/lib"
-              LD_LIBRARY_PATH_SAVE="$LD_LIBRARY_PATH"
-              LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$sdl_mixer_prefix/lib"
-              AC_CHECK_LIB(SDL_mixer,Mix_OpenAudio,
-                           SDL_MIXER=yes
-                           SDL_LIBS="$SDL_LIBS -lSDL_mixer"
-                           SDL_DEFS="$SDL_DEFS -DSDL_MIXER",)
-              LD_LIBRARY_PATH="$LD_LIBRARY_PATH_SAVE"
-            else
-              AC_CHECK_LIB(SDL_mixer,Mix_OpenAudio,
-                           SDL_MIXER=yes
-                           SDL_LIBS="$SDL_LIBS -lSDL_mixer"
-                           SDL_DEFS="$SDL_DEFS -DSDL_MIXER",)
-            fi,
-            SDL_MIXER=no
-            AC_CHECK_LIB(SDL_mixer,Mix_OpenAudio,
-                         SDL_MIXER=yes
-                         SDL_LIBS="$SDL_LIBS -lSDL_mixer"
-                         SDL_DEFS="$SDL_DEFS -DSDL_MIXER",)
-            )
-]
-)
-
 AC_DEFUN(AM_PATH_PYTHON,
 [
 AC_ARG_WITH(python-prefix,[  --with-python-prefix=PFX   Prefix where Python is installed (optional)],

@@ -20,12 +20,10 @@
 #include "audio_loop.h"
 
 bool audio::audio_initialized=false;
-#ifdef SDL_MIXER
-extern unsigned short md_mode; // This is declared in MikMod
 
 int audio::background_volume;
 int audio::effects_volume;
-#ifdef OGG_VORBIS
+#ifdef OGG_MUSIC
 loop_info *audio::loop[NUM_MUSIC];
 #endif
 Mix_Music *audio::music[NUM_MUSIC];
@@ -37,10 +35,8 @@ int audio::audio_rate;
 Uint16 audio::buffer_size;
 Uint16 audio::audio_format;
 int audio::audio_channels;
-#endif
 
 void audio::init (config *myconfig) {
-#ifdef SDL_MIXER
   int i;  // Generic counter variable
 
   // Sample rate: 11025, 22050 or 44100 Hz
@@ -80,10 +76,6 @@ void audio::init (config *myconfig) {
   i=Mix_OpenAudio(audio_rate, audio_format,
     audio_channels, buffer_size);
 
-  // Activate sample interpolation to improve quality
-  if (myconfig->audio_interpolation)
-    md_mode |= 0x0200; // 0x0200 is DMODE_INTERP in MikMod
-
   // Now see what we got when opening the audio device
   // If we COULDN'T open the audio...
   if ( i < 0 ) {
@@ -98,11 +90,9 @@ void audio::init (config *myconfig) {
      (audio_format&0xFF), (audio_channels > 1) ? "stereo" : "mono");
     set_background_volume (background_volume);
   }
-#endif
 }
 
 void audio::cleanup(void) {
-#ifdef SDL_MIXER
   int i;
   background_on = false;    // no music is playing
   current_background = -1;  // No music is queued to play
@@ -120,11 +110,9 @@ void audio::cleanup(void) {
   // Close out audio connection
   Mix_CloseAudio();
   audio_initialized = false;
-#endif
 }
 
 int audio::load_background(int slot, char *filename) {
-#ifdef SDL_MIXER
 
   if (!audio_initialized) return(1);
 
@@ -166,45 +154,37 @@ int audio::load_background(int slot, char *filename) {
   // No music in slot, load new tune in, ...
   music[slot] = Mix_LoadMUS(filename);
 
-#ifdef OGG_VORBIS
+#ifdef OGG_MUSIC
   // read loop points and ...
   loop[slot] = new loop_info (&music[slot]->ogg_data.ogg->vf);
   
   // ... enable looping
   music[slot]->ogg_data.ogg->vf.callbacks.read_func = &ogg_read_callback;
 #endif
-#endif
   return(0);
 }
 
 void audio::unload_background(int slot) {
-#ifdef SDL_MIXER
   if (music[slot] != NULL) {
     Mix_FreeMusic(music[slot]);
     music[slot] = NULL;
-#ifdef OGG_VORBIS
+#ifdef OGG_MUSIC
     delete loop[slot];
 #endif
   }
-#endif
 }
 
 void audio::pause_music(void) {
-#ifdef SDL_MIXER
   Mix_PauseMusic();
-#endif
 }
 
 void audio::unpause_music(void) {
-#ifdef SDL_MIXER
   Mix_ResumeMusic();
-#endif
 }
 
 // Accepts a percentage of the maximum volume level
 // and clips out of bounds values to 0-100.
 void audio::set_background_volume(int volume) {
-#ifdef SDL_MIXER
 
   // Check for bad input
   if (volume < 0) {
@@ -216,14 +196,11 @@ void audio::set_background_volume(int volume) {
 
   // Scales 0-100% to 0-128
   Mix_VolumeMusic(int(background_volume * 1.28));
-  //fprintf(stderr, "Volume: %d Mix: %d\n", background_volume, int(background_volume * 1.28));
-#endif
 }
 
 // This should be done better, but I'll wait until
 // I have enough sound effects to play with ;>
 int audio::load_wave(int slot, char *filename) {
-#ifdef SDL_MIXER
 
   if (!audio_initialized) return(1);
  
@@ -244,68 +221,55 @@ int audio::load_wave(int slot, char *filename) {
       
       sounds[slot] = Mix_LoadWAV(filename);
   }
-#endif
   return(0);
 }
 
 void audio::unload_wave(int wave) {
-#ifdef SDL_MIXER
   if (sounds[wave] != NULL) {
     Mix_FreeChunk(sounds[wave]);
     sounds[wave] = NULL;
   }
-#endif
 }
 
 void audio::play_wave(int channel, int slot) {
-#ifdef SDL_MIXER
   if ((slot > -1) && (slot < NUM_CHANNELS))
     if (sounds[slot] != NULL) Mix_PlayChannel(channel, sounds[slot], 0);
-#endif
 }
 
 void audio::play_background(int slot) {
-#ifdef SDL_MIXER
   if (music[slot] != NULL) {
     current_background = slot;
     background_on = true;
     Mix_PlayMusic(music[current_background], 2);
   }
-#endif
 }
 
 void audio::fade_out_background(int time) {
-#ifdef SDL_MIXER
   if (background_on == true) {
     Mix_FadeOutMusic(time);
-#ifdef OGG_VORBIS
+#ifdef OGG_MUSIC
     music[current_background]->ogg_data.ogg->vf.callbacks.read_func = &fread_wrap;
 #endif
     background_on = false;
     current_background = -1;
   }
-#endif
 }
 
 void audio::fade_in_background(int slot, int time) {
-#ifdef SDL_MIXER
   if ((background_on == false) && (music[slot] != NULL)) {
     current_background = slot;
     background_on = true;
     Mix_FadeInMusic(music[slot], 0, time);
   }
-#endif
 }
 
 // Temporary convience function for testing
 void audio::change_background(int slot, int time) {
-#ifdef SDL_MIXER
   fade_out_background(time);
   fade_in_background(slot, time);
-#endif
 }
 
-#ifdef OGG_VORBIS
+#ifdef OGG_MUSIC
 OggVorbis_File* audio::get_vorbisfile ()
 {
     return &music[current_background]->ogg_data.ogg->vf;

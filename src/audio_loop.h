@@ -15,7 +15,7 @@
 #ifndef __AUDIO_LOOP_H__
 #define __AUDIO_LOOP_H__
 
-#ifdef OGG_VORBIS
+#ifdef OGG_MUSIC
 #include "vorbis/vorbisfile.h"
 
 // Class containing the information necessary for looping .ogg files

@@ -16,9 +16,7 @@
 #define __AUDIO_H__
 
 #include "types.h"
-#ifdef SDL_MIXER
 #include "SDL_mixer.h"
-#endif
 #include "prefs.h"
 #include "audio_loop.h"
 
@@ -34,7 +32,6 @@ class audio
 {
 #ifndef SWIG
   static bool audio_initialized;
-#ifdef SDL_MIXER
   static int background_volume;
   static int effects_volume;
   static Mix_Music *music[NUM_MUSIC];
@@ -46,7 +43,6 @@ class audio
   static Uint16 buffer_size;
   static Uint16 audio_format;
   static int audio_channels;
-#endif
 #endif
 public:
 
@@ -83,7 +79,7 @@ public:
 
     static bool is_initialized() { return audio_initialized; }
 
-#ifdef OGG_VORBIS
+#ifdef OGG_MUSIC
     static loop_info *loop[NUM_MUSIC];
 
     static int get_loop_start() { return loop[current_background]->start; }

@@ -24,9 +24,7 @@
 
 #include "python.h"
  
-#ifdef SDL_MIXER
 #include "audio.h"
-#endif
 
 
 /**
@@ -71,15 +69,12 @@ bool game::init (config & configuration, initflags to_init = INIT_ALL)
         screen::set_video_mode (320, 240);
         screen::set_fullscreen (configuration.screen_mode); 
     }
-    
-
-#if defined SDL_MIXER
+     
     // init audio subsystem
     if (to_init & INIT_AUDIO) 
     { 
         audio::init (&configuration);
     }
-#endif 
     
     // init input subsystem
     if (to_init & INIT_INPUT) 
@@ -115,14 +110,12 @@ void game::cleanup ()
     { 
         input::shutdown ();
     }
-#if defined SDL_MIXER
+
     // shutdown audio
     if (initiated & INIT_AUDIO) 
     {
         audio::cleanup ();
     }
-#endif
-
 
     // cleanup the saves
     if (initiated & INIT_SAVES) 

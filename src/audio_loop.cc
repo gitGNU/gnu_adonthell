@@ -16,7 +16,7 @@
    See the COPYING file for more details.
 */
 
-#if defined (SDL_MIXER) && defined (OGG_VORBIS)
+#if defined (OGG_MUSIC)
 
 #include <string.h>
 #include <stdlib.h>
@@ -330,5 +330,5 @@ size_t fread_wrap (void *ptr, size_t size, size_t nmemb, void *datasource)
     return fread (ptr, size, nmemb, (FILE*) datasource);
 }
 }
-#endif // OGG_VORBIS && SDL_MIXER
+#endif // OGG_MUSIC
 

@@ -110,31 +110,18 @@ fi
 
 
 dnl********************
-dnl Check for SDL Mixer
-dnl********************
-
-AM_PATH_SDL_MIXER()
-
-
-dnl********************
 dnl Check for OggVorbis
 dnl********************
 
 OGG_VORBIS=no
-if test x$SDL_MIXER = xyes; then
-	audio="enabled"
-    AM_PATH_VORBIS(
-      OGG_VORBIS="yes"
-      ogg_music="enabled"
-      OGG_LIBS="$VORBIS_LIBS $VORBISFILE_LIBS"
-      OGG_DEFS="-DOGG_VORBIS"
-      OGG_CFLAGS="$VORBIS_CFLAGS",
-      AC_MSG_RESULT(Disabling OggVorbis support)
-      ogg_music="disabled")
-else
-	audio="disabled"	
-        ogg_music="disabled"
-fi
+AM_PATH_VORBIS(
+  OGG_VORBIS="yes"
+  ogg_music="enabled"
+  OGG_LIBS="$VORBIS_LIBS $VORBISFILE_LIBS"
+  OGG_DEFS="-DOGG_MUSIC"
+  OGG_CFLAGS="$VORBIS_CFLAGS",
+  AC_MSG_RESULT(Disabling OggVorbis support)
+  ogg_music="disabled")
 
 
 dnl ********************
@@ -281,10 +268,6 @@ if test x$PTHREADS = xyes; then
    AC_CHECK_HEADERS([pthread.h])
 fi
 
-if test x$SDL_MIXER = xyes; then
-   AC_CHECK_HEADERS([SDL/SDL_mixer.h SDL/SDL_audio.h]) 
-fi 
-
 if test x$OGG_VORBIS = xyes; then
    AC_CHECK_HEADERS([vorbis/vorbisfile.h]) 
    AM_CONDITIONAL(HAVE_OGG_VORBIS, true)
@@ -342,7 +325,6 @@ echo Python .................... : $PY_VERSION
 if test x$havegtk = xyes; then
 echo GTK+ ...................... : `gtk-config --version`
 fi
-echo Audio system .............. : $audio
 echo Ogg music ................. : $ogg_music
 echo Building editors .......... : $tools
 echo Building API doc .......... : $builddoc
