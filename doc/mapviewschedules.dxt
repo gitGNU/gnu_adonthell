@@ -14,26 +14,25 @@
 
 /*!
 
-\page page9 Writing mapviews schedules
+\page page9 Writing mapview schedules
 
-\section mviewsched0 Generalities
+\section mviewsched0 The Basics
 A mapview schedule file should always be placed into the \e
 script/schedules/mapviews directory in the %game hierarchy. It
-must contain a single class, which name is the same as the module
-name. A schedule is affected to a mapview by using the
+should consist of a single class, named like the module itself.
+A schedule is attached to a mapview by using the
 mapview::set_schedule () method. See it's documentation for more
-details, and be particularly carefull about the fact that the
-arguments list passed mapviews::set_schedule () \e must be a
-Python tuple containing ONLY Python strings or integers.
+details. You should be particularly careful that the argument
+list given to mapview::set_schedule () \e has to be a Python
+tuple containing ONLY Python strings or integers.
 
 \section mviewsched1 Arguments passed to __init__ ()
 When you call mapview::set_schedule (), the first argument
 passed to the class constructor is a reference to the mapview
 that called this method. This parameter should be saved as it will
 most likely be used during the run () method to control the
-mapcharacter. Then follows the arguments contained into the
-Python tuple that has (optionally) been passed to
-mapview::set_schedule ().
+mapcharacter. Then follows the arguments stored in the Python
+tuple that has (optionally) been passed to mapview::set_schedule ().
 
 \section mviewsched2 Arguments passed to run ()
 No arguments are passed to the run () method.
@@ -66,7 +65,7 @@ class myschedule:
     # Description of myparameter2
     def __init__ (self, mapviewinstance, myparameter1, myparameter2):
         self.myself = mapviewinstance
-        <do you other initialisation stuff here>
+        <do you other initialisation here>
 
     def run (self):
         <mapcharacter control>
@@ -76,12 +75,11 @@ class myschedule:
 \endverbatim
 
 \section mviewsched4 Storing variables
-It is unsafe to store variables into the class instance others than
-those that are passed to the __init__ method. When a mapview's
-schedule is state-saved, only the schedule filename and it's
-initialisation arguments (the Python tuple passed to
-mapview::set_schedule ()) are saved. So, if you create variables
-in the \e self object, do not expect them to survive to %game
-saving/loading. Usually, a mapview schedule doesn't need persistant
-variables.
+It is unsafe to use class variables different from those that are
+passed to the __init__ method. When a mapview's schedule is
+state-saved, only the schedule filename and it's initialisation
+arguments (the Python tuple passed to mapview::set_schedule ())
+are saved. So, if you create class variables inside the object,
+do not expect them to survive %game saving/loading. However,
+mapview schedules usually don't need persistant variables.
 */

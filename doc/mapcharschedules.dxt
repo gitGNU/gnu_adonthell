@@ -14,26 +14,25 @@
 
 /*!
 
-\page page8 Writing mapcharacters schedules
+\page page8 Writing mapcharacter schedules
 
 \section mcharsched0 Generalities
-A mapcharacter schedule file should always be placed into the \e
+A mapcharacter schedule file should always be placed in the \e
 script/schedules/mapcharacters directory in the %game hierarchy. It
-must contain a single class, which name is the same as the module
-name. A schedule is affected to a mapcharacter by using the
-mapcharacter::set_schedule () method. See it's documentation for more
-details, and be particularly carefull about the fact that the
-arguments list passed mapcharacter::set_schedule () \e must be a
-Python tuple containing ONLY Python strings or integers.
+should contain a single class, named like the module. A schedule is
+attached to a mapcharacter by the mapcharacter::set_schedule ()
+method. See it's documentation for more details. You should be
+particularly careful that the argument list given to
+mapcharacter::set_schedule () \e has to be a Python tuple
+containing ONLY Python strings or integers.
 
 \section mcharsched1 Arguments passed to __init__ ()
 When you call mapcharacter::set_schedule (), the first argument
 passed to the class constructor is a reference to the mapcharacter
 that called this method. This parameter should be saved as it will
 most likely be used during the run () method to control the
-mapcharacter. Then follows the arguments contained into the
-Python tuple that has (optionally) been passed to
-mapcharacter::set_schedule ().
+mapcharacter. Then follow the arguments inside the tuple (optionally)
+passed to mapcharacter::set_schedule ().
 
 \section mcharsched2 Arguments passed to run ()
 No arguments are passed to the run () method.
@@ -66,7 +65,7 @@ class myschedule:
     # Description of myparameter2
     def __init__ (self, mapcharacterinstance, myparameter1, myparameter2):
         self.myself = mapcharacterinstance
-        <do you other initialisation stuff here>
+        <do your other initialisation here>
 
     def run (self):
         <mapcharacter control>
@@ -76,14 +75,14 @@ class myschedule:
 \endverbatim
 
 \section mcharsched4 Storing variables
-It is unsafe to store variables into the class instance others than
-those that are passed to the __init__ method. When a mapcharacter's
+It is unsafe to store variables in the class instance others than
+those passed to the __init__ method. When a mapcharacter's
 schedule is state-saved, only the schedule filename and it's
 initialisation arguments (the Python tuple passed to
 mapcharacter::set_schedule ()) are saved. So, if you create variables
-in the \e self object, do not expect them to survive to %game
-saving/loading. A safe approach is to use the storage class methods,
-which mapcharacter inherits from, and which is saved with the
-mapcharacter's state, to store your persistant variables.
+in the \e self object, do not expect them to survive %game
+saving/loading. A safe approach is to make use of the storage class,
+from which mapcharacter inherits, to store your persistant variables.
+Then they are automatically saved together with the mapcharacter.
 
 */

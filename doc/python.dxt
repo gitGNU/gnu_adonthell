@@ -14,37 +14,36 @@
 
 /*!
 
-\page page7 Using Python to control game elements
+\page page7 Python Scripting
 
-Adonthell make use of Python (http://www.python.org) as a scripting
-language. Small modules of Python code can be used into the %game, for
-controlling %game elements (mapcharacters, mapviews, events, ...) or
-performing some special task (animated cutscenes, ...).
+Adonthell makes use of Python (http://www.python.org) as a scripting
+language. Small modules of Python code are used to controll %game
+elements like mapcharacters, mapviews and events or to perform special
+tasks like animated cutscenes, etc..
 
-\section whypython Why using a scripting language?
-There is an important difference between the %game engine and the %game
-%datas. The goal of Adonthell is to be able to run different %games
-without any modification to the %game engine. This requires that %games
+\section whypython Why use a scripting language?
+There is an important difference between %game engine and %game %data.
+Adonthell's goal is the ability to run different %games without any
+modification to the actual %game engine. This requires that %games
 using the Adonthell engine can be created without writing a single
-line of C++.
+line of C++ code.
 
-Most %game %data can be easily created with the help of a proper editor
-(maps, characters, etc...). But some elements needs to be controlled
-by a program. For example, Non-Player Characters or mapviews. Instead
-of having a limited set of behaviors in C++ and integrating them into
-the engine, it's better to be able to directly program them using a
-easy to use, platform independant interpreted language, and that's
-exactly what Python is for. Using Python, you can easily create your
+Most %game %data (maps, characters, etc...) can be easily created with
+the help of the respective editor. But some elements need to be controlled
+by a program. For example, Non-Player Characters (NPC's) or mapviews. Rather
+than having a limited set of behaviors in the engine, it's better to directly
+program them using a easy to use, platform independant, interpreted language.
+And that is where Python comes in. Using Python, you can easily create your
 own behavior scripts (also called \e schedules) for the characters, as
-well as others %game's parts (cutscenes, etc...). Actually, the entire
+well as other parts of the %game (cutscenes, etc...). Actually, the entire
 C++ API is available from Python - so when you create Python scripts
-you have exactly the same possibilities than if you were writting them
+you have exactly the same possibilities you would have when writting them
 in C++.
 
 \section usingpython Using Python with Adonthell
-ALL the Adonthell API is available through the \e adonthell
+The complete Adonthell API is available through the \e adonthell
 module, which is imported at startup. There is a little customized
-Python interpreter in \e src/tools/pydonthell/ that you can use for testing
+Python interpreter in \e src/tools/pydonthell/ you can use for testing
 purposes: go into a valid %game directory, run \e pydonthell from
 here and try this little example program:
 
@@ -57,15 +56,15 @@ here and try this little example program:
 >>> screen_show ()
 \endverbatim
 
-All the classes and methods used in this little script figures in the
-API reference. Looks at the image and screen classes references to be
-convinced.
+All the classes and methods used in this little script are explained
+in the API reference.
+
 
 \section Running Python scripts
-The py_object class is designed to handle of the Python scripting
-stuff. It imports a Python module that should only contain Python
-classes. An instance of the selected class is then created and you can
-freely call it's methods. See the \link py_object py_object class
-reference page \endlink for more details about it's use.
+The py_object class is designed to handle most of the Python scripting.
+It imports a Python module which should only contain Python classes.
+An instance of the selected class is created and you can freely call
+it's methods. See the \link py_object py_object class reference \endlink
+for more details concerning it's use.
 
 */

@@ -14,26 +14,24 @@
 
 /*! 
 
-\page page6 Saving/Loading games elements and making state saveable classes
+\page page6 Saving/Loading
 
-\section objdatobjst Objects data and objects state
+\section objdatobjst Object data and object state
 
-This is another important part of the %game engine. Quite a lot of %objects should be
- loadable and saveable, but there is a difference between two things 
-that may look like one: the %object %data itself and the %object state.
+This is another important part of the %game engine. Quite a few %objects should
+be loadable and saveable, but there is a difference between two things
+that may look like one: an %object's %data itself and an %object's state.
 
-There may be two cases where you can have to fetch %data from disk for an %object:
-- When you \e load the %object itself. This happens for example when the player 
-  enters a new area: All the %objects must be loaded from the disk (%image %data,
-  etc...)
+But there is a significant difference. Data is all the information that stays
+the same during an %object's lifetime. As a consequence, %data remains persistent
+over the whole %game. An %object's state is the information that changes while the
+%game progresses.
 
-- When you load \e the \e state of a %game %object. This will mostly happen during
-  %game saving/loading. Of course you'll have to \e load the area the player is on,
-  but that's not sufficient. When you saved the %game, characters were certainly not
-  at their initial position, and you have to save/load this too. This is the \e state
-  of the %object, in opposition with the %object \e %data.
+For example, when loading a map, all the actual graphics are persistant %data.
+OTOH, player and NPC's are certainly no longer at their initial position, so
+this information belongs to the map's state.
 
-Let's see how precisely it works with a simple %animation class:
+Let's see precisely how it works with a simple %animation class:
 
 \verbatim
 class animation
