@@ -28,7 +28,7 @@
 /**
  * Data that belongs to an individual project. Usually, a project
  * contains all dialogues that belong to a certain game. The project's
- * name will be the name of the game, i.e. 'wastesedge'.
+ * name will be the name of the game, e.g. 'wastesedge'.
  */
 class CfgProject
 {

@@ -19,6 +19,7 @@
  * @brief dlgedit configuration data
  */
 
+#include <stdio.h>
 #include <algorithm>
 #include "cfg_data.h"
 
@@ -39,9 +40,17 @@ void CfgData::addFile (std::string &file)
     // if that's the case, remove it
     if (i != Files.end ()) Files.erase (i);
     
-    // otherwise test whether there's enough 
-    // room and free some, if neccessary.
-    else if (Files.size () == 15) Files.pop_front ();
+    // otherwise make sure that we can add it 
+    else 
+    {
+        // check whether the file exists at all
+        FILE* test = fopen (file.c_str (), "r");
+        if (!test) return;
+        else fclose (test);
+        
+        // check whether there's enough room
+        if (Files.size () == 15) Files.pop_front ();
+    }
     
     // add file
     Files.push_back (file);

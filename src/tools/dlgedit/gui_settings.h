@@ -48,7 +48,7 @@ public:
     static GuiSettings *dialog;
     
     /**
-     * Show the dialog and display the settings of the given module.
+      * Show the dialog and display the settings of the given module.
      * @param entry the settings of a certain DlgModule to be edited.
      * @param name name of the dialogue whose settings are being edited.
      */
@@ -62,7 +62,9 @@ public:
 private:
     DlgModuleEntry *entry;  // The module's settings
     GtkWidget *window;      // The dialog window
-    GtkWidget *project;     // Text entry for the project
+    GtkWidget *project;     // Dropdown list for the project
+    GtkWidget *description; // Entry for the dialogue's description
+    GtkWidget *basedir;     // Entry for the project's base directory
 };
 
 #endif // GUI_SETTINGS_H
