@@ -81,7 +81,28 @@ void game::init(config &myconfig)
 
     // create character array
     PyObject *chars = PyDict_New ();
-    PyDict_SetItemString (globals, "characters", chars);    
+    PyDict_SetItemString (globals, "characters", chars);
+
+    // load characters from character.data
+    FILE *in = fopen ("character.data", "r");
+    if (!in)
+    {
+        fprintf (stderr, "Couldn't open \"character.data\" - stopping\n");
+        SDL_Quit ();
+        return;
+    }
+
+    npc *mynpc;
+    
+    while (fgetc (in))
+    {
+        mynpc = new npc;
+        mynpc->load (in);
+        PyDict_SetItemString (chars, mynpc->name, pass_instance (mynpc, "npc"));
+        objects::set (mynpc->name, mynpc);
+    }
+    
+    fclose (in);
 }
 
 void game::cleanup()

@@ -50,7 +50,7 @@ public:
     s_int32 get (const char*);
     s_int32& operator[] (const char*);
     
-private:
+protected:
     hash_map <const char*, s_int32, hash<const char*>, equal_key> data;
 };
 

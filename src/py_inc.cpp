@@ -127,7 +127,9 @@ PyObject *pass_instance (void *instance, const char *class_name)
     strcat (strcpy (class_ptr, class_name), "Ptr");
 
     // Construct SWIG's representation of the "instance" pointer
-    sprintf (buffer, "%p_%s_p", instance, class_name);
+    // (unfortunately this has changed from _<address>_<name>_p to 
+    // _<address>_p_<name> as of SWIG 1.3 alpha 5)
+    sprintf (buffer, "%p_p_%s", instance, class_name);
     strcat (class_addr, buffer+2);
 
     // Now create the Python object corresponding to "instance"

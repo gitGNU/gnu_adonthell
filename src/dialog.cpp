@@ -348,8 +348,6 @@ char *dialog::get_substr (const char* string, char* begin, char* end)
 // Init the dialogue engine
 dialog_engine::dialog_engine (mapcharacter *c, game_engine *e) : engine (e)
 {
-    cout << "+" << flush;
-
     npc *mynpc = (npc *) c->data;
 
     // save old keyboard mode
@@ -389,7 +387,6 @@ dialog_engine::dialog_engine (mapcharacter *c, game_engine *e) : engine (e)
 
 dialog_engine::~dialog_engine ()
 {
-    cout << " - " << flush;
     delete wnd;
     delete border;
     delete face;
@@ -409,6 +406,7 @@ void dialog_engine::run ()
         input::set_keyboard_mode (keyboard_mode);
         game::engine = engine;
         delete this;
+        return;
     }
     
     dlg->run (answer);

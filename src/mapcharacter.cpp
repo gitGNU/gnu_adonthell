@@ -114,23 +114,21 @@ void mapcharacter::put_heroe_stat (SDL_RWops * file)
 
 void mapcharacter::get_NPC_stat (SDL_RWops * file, u_int16 nbr)
 {
-    // normally we'd load the character in at the beginning and just set a pointer
-    data = new npc;
-    data->name = new char[16];
-    sprintf (data->name, "Clone_%i", nbr);
-    if (nbr%2) ((npc*) data)->set_schedule ("scripts/follow_player.py");
-    else ((npc*) data)->set_schedule ("scripts/random_walk.py");
-    objects::set (data->name, data);
-    PyObject *chars = PyDict_GetItemString (game::globals, "characters");
-    PyDict_SetItemString (chars, data->name, pass_instance (data, "npc"));
-
+    u_int16 size;
+    char *name;
+    
     // we'd also get the portrait to use from the data
     portrait = new image (64, 64);
     portrait->load_raw ("gfxtree/portraits/lyanna.pnm");
     portrait->set_mask (true);
-    
-    SDL_RWread (file, &data->posx, sizeof (data->posx), 1);
-    SDL_RWread (file, &data->posy, sizeof (data->posy), 1);
+
+    // get the character's data
+    SDL_RWread (file, &size, sizeof (size), 1);
+    name = new char[size];
+    SDL_RWread (file, name, size, 1);
+    data = (character *) objects::get (name);
+    delete name;
+
     SDL_RWread (file, &speeddelay, sizeof (speeddelay), 1);
     SDL_RWread (file, &framefactor, sizeof (framefactor), 1);
     SDL_RWread (file, &movtype, sizeof (movtype), 1);

@@ -19,9 +19,24 @@
 #include "storage.h"
 #include "inventory.h"
 #include "event.h"
-#include <vector>
+
+#include <stdio.h>
 
 struct PyCodeObject;
+
+enum
+{
+    DWARF = 0,
+    ELF = 1,
+    HALFELF = 2,
+    HUMAN = 3
+};
+
+enum
+{
+    FEMALE = 0,
+    MALE = 1
+};
 
 // Base class for all sort of characters, like the player, NPC's, etc.
 #ifdef SWIG
@@ -35,8 +50,10 @@ public:
     u_int16 posx;                   // The x position on the (current?) map
     u_int16 posy;                   // The y position
 
-protected:
-    s_int32 type;                   // The characters type (needed at all?)
+#ifndef SWIG
+    void save (FILE*);              // Save the character to file
+    void load (FILE*);              // Load the character from file
+#endif
 };
 
 // Representation of a NPC
@@ -44,16 +61,23 @@ class npc : public character
 {
 public:
     npc ();                         // Constructor
-
+    ~npc ();                        // Destructor
+    
     void set_schedule (char*);      // Set / change the active schedule
-    void set_dialogue (u_int32);    // Set / change the active dialogue
+    void set_dialogue (char*);      // Set / change the active dialogue
+
     char* talk ();                  // Returns the active dialogue
     u_int8 move (u_int8);           // Run the active schedule
 
+#ifndef SWIG
+    void save (FILE*);              // Save the character to file
+    void load (FILE*);              // Load the character from file
+
 protected:
-    vector<char*> dialogues;        // All the dialogues available to that NPC
-    u_int32 active_dialogue;        // Dialogue to initiate when speaking to the NPC
+    char* dialogue;                 // The NPC's dialogue
+    char* schedule_file;            // The schedule file
     PyCodeObject *schedule;         // The NPC's "behaviour" script
+#endif
 };
 
 // The Player's main character

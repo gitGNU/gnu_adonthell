@@ -179,6 +179,8 @@ main_wnd::write_character_source ()
     file << "name = " << name << "\n";
     file << "race = " << get_option (GTK_OPTION_MENU (race_choice)) << "\n";
     file << "gender = " << get_option (GTK_OPTION_MENU (gender_choice)) << "\n";
+    file << "posx = 0\n";
+    file << "posy = 0\n";
 
     file << "\nattributes:\n";
     while (gtk_clist_get_text (GTK_CLIST (attribute_list), i, 0, &str))

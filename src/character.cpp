@@ -17,42 +17,108 @@
 #include "game.h"
 #include "py_inc.h"
 
+void character::save (FILE *out)
+{
+    hash_map<const char*, s_int32, hash<const char*>, equal_key>::iterator i;
+    int j;
+
+    // Save name
+    j = strlen (name) + 1;
+    fwrite (&j, sizeof (j), 1, out);
+    fwrite (name, j, 1, out);        
+
+    // Save position
+    fwrite (&posx, sizeof(posx), 1, out);
+    fwrite (&posy, sizeof(posy), 1, out);
+
+    // Save all attributes and flags
+    j = data.size ();
+    fwrite (&j, sizeof (j), 1, out);
+    
+    for (i = data.begin (); i != data.end (); i++)
+    {
+        j = strlen ((*i).first) + 1;
+        fwrite (&j, sizeof (j), 1, out);
+        fwrite ((*i).first, j, 1, out);
+        fwrite (&(*i).second, sizeof (s_int32), 1, out);
+    }
+}
+
+void character::load (FILE *in)
+{
+    int i, j, size, value;
+    char *key;
+
+    // load name
+    fread (&size, sizeof(size), 1, in);
+    name = new char[size];
+    fread (name, size, 1, in);
+
+    // Load position
+    fread (&posx, sizeof(posx), 1, in);
+    fread (&posy, sizeof(posy), 1, in);
+
+    // load all attributes and flags
+    fread (&size, sizeof(size), 1, in);
+    for (i = 0; i < size; i++)
+    {
+        fread (&j, sizeof(j), 1, in);
+        key = new char[j];
+        fread (key, j, 1, in);
+        fread (&value, sizeof (value), 1, in);
+
+        set (key, value);
+    }
+}
 
 // Init NPC
 npc::npc ()
 {
     schedule = NULL;
-
-    // test:
-    dialogues.push_back ("dialogues/tomas_hterin");
-    active_dialogue = 0;
+    dialogue = NULL;
+    schedule_file = NULL;
 }
 
-// Returns the active dialogue
-char* npc::talk ()
+// Cleanup NPC
+npc::~npc ()
 {
-    return dialogues[active_dialogue];
+    Py_XDECREF (schedule);
+    if (dialogue) free (dialogue);
+    if (schedule_file) free (schedule_file);
 }
 
-// Set the active dialogue
-void npc::set_dialogue (u_int32 dlg)
+// Set/change active dialogue
+void npc::set_dialogue (char *dlg)
 {
-    active_dialogue = dlg;
+    if (dialogue) free (dialogue);
+    dialogue = strdup (dlg);
 }
 
 // Set/change active schedule
 void npc::set_schedule (char* file)
 {
-    if (schedule) Py_DECREF (schedule);
-
-    FILE *f = fopen (file, "r");
+    char script[255];
+    strcpy (script, "scripts/");
+    strcat (script, file);
+    strcat (script, ".py");
+    
+    FILE *f = fopen (script, "r");
 
     // See whether the script exists at all
     if (f)
     {
         // Compile the script into a PyCodeObject for quicker execution
-        _node *n = PyParser_SimpleParseFile (f, file, Py_file_input);
-        if (n) schedule = PyNode_Compile (n, file);       
+        _node *n = PyParser_SimpleParseFile (f, script, Py_file_input);
+        if (n)
+        {
+            // If no errors occured update schedule code ...
+            Py_XDECREF (schedule);
+            schedule = PyNode_Compile (n, file);
+
+            // ... and the schedule script file
+            if (schedule_file) free (schedule_file);
+            schedule_file = strdup (file);
+        }
         else
         {
             cout << "\n*** Cannot set " << name << "'s schedule: Error in" << flush;
@@ -60,16 +126,70 @@ void npc::set_schedule (char* file)
         }
         fclose (f);
     }
-    else cout << "\n*** Cannot open " << name << "'s schedule: file \"" << file
+    else cout << "\n*** Cannot open " << name << "'s schedule: file \"" << script
               << "\" not found!" << flush;
 }
 
+// Start conversation with the NPC
+char* npc::talk ()
+{
+    char *str = new char[strlen (dialogue) + 11];
+    strcpy (str, "dialogues/");
+    strcat (str, dialogue);
+    
+    return str;
+}
+
+// Execute the active schedule and return the direction of movement
+// or zero if character doesn't move.
 u_int8 npc::move (u_int8 dir)
 {
-    PyObject *locals = Py_BuildValue ("{s:i,s:s}", "the_dir", dir, "name", name);
+    PyObject *locals = Py_BuildValue ("{s:i,s:s}", "direction", dir, "name", name);
     PyEval_EvalCode (schedule, game::globals, locals);
+
 #ifdef _DEBUG_
     show_traceback ();
 #endif // _DEBUG_
-    return PyInt_AsLong (PyDict_GetItemString (locals, "the_dir"));
+
+    dir = PyInt_AsLong (PyDict_GetItemString (locals, "direction"));
+    Py_DECREF (locals);
+
+    return dir;
+}
+
+// save npc to disk
+void npc::save (FILE *out)
+{
+    int i;
+
+    character::save (out);
+
+    if (!dialogue) dialogue = "";
+    i = strlen (dialogue) + 1;
+    fwrite (&i, sizeof (i), 1, out);
+    fwrite (dialogue, i, 1, out);
+    
+    if (!schedule_file) schedule_file = "";
+    i = strlen (schedule_file) + 1;
+    fwrite (&i, sizeof (i), 1, out);
+    fwrite (schedule_file, i, 1, out);
+}
+
+// load npc from disk
+void npc::load (FILE *in)
+{
+    int i;
+
+    character::load (in);
+
+    fread (&i, sizeof (i), 1, in);
+    if (dialogue) free (dialogue);
+    dialogue = (char*) malloc (i);
+    fread (dialogue, i, 1, in);
+    
+    fread (&i, sizeof (i), 1, in);
+    if (schedule_file) free (schedule_file);
+    schedule_file = (char*) malloc (i);
+    fread (schedule_file, i, 1, in);
+    set_schedule (schedule_file);   
 }
