@@ -13,6 +13,9 @@
 */
 
 // yet another random generator :)
+
+#include <string.h>
+
 class yarg
 {
 public:

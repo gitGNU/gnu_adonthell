@@ -16,6 +16,7 @@
 #define _fileops_h
 
 #include <zlib.h>
+#include <string.h>
 
 // void getstringfromfile(char strg[],SDL_RWops * file);
 // void putstringtofile(char strg[],SDL_RWops * file);
