@@ -79,7 +79,7 @@ dlgedit_SOURCES = callbacks.cc circle.cc crcle_callbacks.cc crcle_interface.cc d
 # Evil, but it works...
 CPPFLAGS =  -I../.. -D_DLGEDIT_ -D_DEBUG_ -D_VERSION_=\"0.7\" `gtk-config --cflags`
 
-LDADD = ../../character.o ../../data.o ../../dialog.o ../../event.o ../../fileops.o ../../lex.prefs.o ../../prefs.o ../../py_inc.o  ../../py_quest_wrap.o  ../../quest.o ../../storage.o ../../yarg.o
+LDADD = character.o data.o dialog.o event.o fileops.o lex.prefs.o prefs.o py_inc.o py_quest_wrap.o quest.o storage.o yarg.o
 
 
 LDFLAGS = -lm -lstdc++ `gtk-config --libs`
@@ -98,10 +98,8 @@ interface.o main.o preset.o py_character_wrap.o ps_callbacks.o ps_dlg.o \
 ps_interface.o pset_callbacks.o pset_interface.o run.o run_callbacks.o \
 run_interface.o
 dlgedit_LDADD = $(LDADD)
-dlgedit_DEPENDENCIES =  ../../character.o ../../data.o ../../dialog.o \
-../../event.o ../../fileops.o ../../lex.prefs.o ../../prefs.o \
-../../py_inc.o ../../py_quest_wrap.o ../../quest.o ../../storage.o \
-../../yarg.o
+dlgedit_DEPENDENCIES =  character.o data.o dialog.o event.o fileops.o \
+lex.prefs.o prefs.o py_inc.o py_quest_wrap.o quest.o storage.o yarg.o
 dlgedit_LDFLAGS = 
 CXXFLAGS = @CXXFLAGS@
 CXXCOMPILE = $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
@@ -116,7 +114,7 @@ DIST_COMMON =  Makefile.am Makefile.in
 
 DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 
-TAR = gtar
+TAR = tar
 GZIP_ENV = --best
 DEP_FILES =  .deps/callbacks.P .deps/circle.P .deps/crcle_callbacks.P \
 .deps/crcle_interface.P .deps/dbg_callbacks.P .deps/dbg_interface.P \
@@ -465,40 +463,40 @@ py_character_wrap.cpp : py_character.i
 	swig -python -shadow -c++ -make_default -o $*.cpp $<
 	@rm character.py
 
-../../character.o : ../../character.cpp
+character.o : ../../character.cpp
 	$(CXXCOMPILE) -c $< -o $@
 
-../../data.o : ../../data.cpp
+data.o : ../../data.cpp
 	$(CXXCOMPILE) -c $< -o $@
 
-../../dialog.o : ../../dialog.cpp
+dialog.o : ../../dialog.cpp
 	$(CXXCOMPILE) -c $< -o $@
 
-../../event.o : ../../events.cpp
+event.o : ../../event.cpp
 	$(CXXCOMPILE) -c $< -o $@
 
-../../fileops.o : ../../fileops.cpp
+fileops.o : ../../fileops.cpp
 	$(CXXCOMPILE) -c $< -o $@
 
-../../lex.prefs.o : ../../lex.prefs.cpp
+lex.prefs.o : ../../lex.prefs.cpp
 	$(CXXCOMPILE) -c $< -o $@
 
-../../prefs.o : ../../prefs.cpp
+prefs.o : ../../prefs.cpp
 	$(CXXCOMPILE) -c $< -o $@
 
-../../py_inc.o : ../../py_inc.cpp
+py_inc.o : ../../py_inc.cpp
 	$(CXXCOMPILE) -c $< -o $@
 
-../../py_quest_wrap.o : ../../py_quest_wrap.cpp
+py_quest_wrap.o : ../../py_quest_wrap.cpp
 	$(CXXCOMPILE) -c $< -o $@
 
-../../quest.o : ../../quest.cpp
+quest.o : ../../quest.cpp
 	$(CXXCOMPILE) -c $< -o $@
 
-../../storage.o : ../../storage.cpp
+storage.o : ../../storage.cpp
 	$(CXXCOMPILE) -c $< -o $@
 
-../../yarg.o : ../../yarg.cpp
+yarg.o : ../../yarg.cc
 	$(CXXCOMPILE) -c $< -o $@
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.

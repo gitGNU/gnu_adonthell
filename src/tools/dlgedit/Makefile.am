@@ -21,9 +21,9 @@ pset_interface.h run.h run_callbacks.h run_interface.h
 # Evil, but it works...
 CPPFLAGS +=-I../.. -D_DLGEDIT_ -D_DEBUG_ -D_VERSION_=\"0.7\" `gtk-config --cflags`
 
-LDADD = ../../character.o ../../data.o ../../dialog.o \
-../../event.o ../../fileops.o ../../lex.prefs.o ../../prefs.o ../../py_inc.o \
- ../../py_quest_wrap.o  ../../quest.o ../../storage.o ../../yarg.o
+LDADD = character.o data.o dialog.o \
+event.o fileops.o lex.prefs.o prefs.o py_inc.o \
+py_quest_wrap.o quest.o storage.o yarg.o
  
 
 LDFLAGS=-lm -lstdc++ `gtk-config --libs`
@@ -35,38 +35,38 @@ py_character_wrap.cpp : py_character.i
 	swig -python -shadow -c++ -make_default -o $*.cpp $<
 	@rm character.py
  
-../../character.o : ../../character.cpp
+character.o : ../../character.cpp
 	$(CXXCOMPILE) -c $< -o $@
 
-../../data.o : ../../data.cpp
+data.o : ../../data.cpp
 	$(CXXCOMPILE) -c $< -o $@
 
-../../dialog.o : ../../dialog.cpp
+dialog.o : ../../dialog.cpp
 	$(CXXCOMPILE) -c $< -o $@
 
-../../event.o : ../../events.cpp
+event.o : ../../event.cpp
 	$(CXXCOMPILE) -c $< -o $@
 
-../../fileops.o : ../../fileops.cpp
+fileops.o : ../../fileops.cpp
 	$(CXXCOMPILE) -c $< -o $@
 
-../../lex.prefs.o : ../../lex.prefs.cpp
+lex.prefs.o : ../../lex.prefs.cpp
 	$(CXXCOMPILE) -c $< -o $@
 
-../../prefs.o : ../../prefs.cpp
+prefs.o : ../../prefs.cpp
 	$(CXXCOMPILE) -c $< -o $@
 
-../../py_inc.o : ../../py_inc.cpp
+py_inc.o : ../../py_inc.cpp
 	$(CXXCOMPILE) -c $< -o $@
 
-../../py_quest_wrap.o : ../../py_quest_wrap.cpp
+py_quest_wrap.o : ../../py_quest_wrap.cpp
 	$(CXXCOMPILE) -c $< -o $@
 
-../../quest.o : ../../quest.cpp
+quest.o : ../../quest.cpp
 	$(CXXCOMPILE) -c $< -o $@
 
-../../storage.o : ../../storage.cpp
+storage.o : ../../storage.cpp
 	$(CXXCOMPILE) -c $< -o $@
 
-../../yarg.o : ../../yarg.cpp
+yarg.o : ../../yarg.cc
 	$(CXXCOMPILE) -c $< -o $@
