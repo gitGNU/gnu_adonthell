@@ -2,8 +2,16 @@ The Beginner's Guide to Adonthell
 Written by Andrew Henderson <hendersa@db.erau.edu>
 19 February 2000
 
-Last update by Kai Sterker <kaisterker@linuxgames.com>
-12 January 2002
+
+*******************
+* 0.0 - CHANGELOG *
+*******************
+
+* 08 February 2002 - Kai Sterker <kaisterker@linuxgames.com>
+  Added Building RPM's Howto
+
+* 12 January 2002 - Kai Sterker <kaisterker@linuxgames.com>
+  Added Fullscreen Howto
 
 
 ****************************
@@ -24,7 +32,7 @@ install a few libraries that Adonthell relies on, then build the
 Adonthell game itself.
 
 If you feel that you don't need to have anyone hold your hand during
-the installation process, just read the INSTALLATION file in this
+the installation process, just read the INSTALL file in this
 directory for the standard install information. If you think you
 need a little help or are having problems, then read on.
 
@@ -83,6 +91,8 @@ Adonthell:
 * Questions/Help
 
 * Fullscreen Howto
+
+* Building RPM's Howto
 
 *******************************************
 * 3.0 - INSTALLING THE REQUIRED LIBRARIES *
@@ -383,6 +393,49 @@ Adonthell starts, it will select the mode closest to 320x240.
 Step #4: Restart X11 and, if everything went well, enjoy Adonthell
 truly fullscreen. The first time you use a new mode, you might have 
 to adjust your monitor somewhat, but after that you'll be fine.
+
+****************************
+* 8.0 Building RPM's Howto *
+****************************
+
+Normally, you don't have to do this (as you can download premade
+binaries from our website), but if you want to make your own
+package for some reason or another, here is the procedure.
+
+Adonthell is already prepared for building RPM packages. The only
+requirements you have to meet is the ability to compile Adonthell
+from the sources; the larger part of this Guide deals with that. 
+
+Once you are able to compile Adonthell, there are three more steps
+to complete.
+
+Step #1: Copy adonthell-0.3.x.tar.gz to /usr/src/packages/SOURCES/
+If you do not have the source archive, because you obtained the 
+sources through CVS, you can build it by typing
+
+    make dist
+    
+in the adonthell-0.3.x/ directory.
+
+Step #2: In the adonthell-0.3.x/ directory, run
+
+    configure --prefix=<path>
+    
+where <path> is the directory the RPM shall install to. By default,
+this is /usr/local, but you might want to change it to /usr or /opt
+or whatever.
+
+Step #3: Still in the adonthell-0.3.x/ directory, run
+
+    rpm -bb adonthell.spec
+    
+This command will compile Adonthell from the sources you placed in
+/usr/src/packages/SOURCES/ and then build a RPM package from the
+executables resulting from that compilation. They will end up in
+/usr/src/packages/RPMS/i386/.
+
+Voila, if all went well you'll now have a RPM package you can install
+on your box in the usual way, or distribute among your friends.
 
 
 *********************************************************************
