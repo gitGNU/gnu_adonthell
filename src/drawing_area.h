@@ -55,14 +55,18 @@ public:
      */  
     drawing_area ();
 
+#ifndef SWIG
     /** Builds a drawing_area from the parameters.
      *  @param px X position.
      *  @param py Y position.
      *  @param pw Length.
      *  @param ph Height.
+     *
+     *  @note Not available from Python.
      */  
     drawing_area (s_int16 px, s_int16 py, u_int16 pw, u_int16 ph); 
-
+#endif
+    
     /** Returns the horizontal position of the drawing_area.
      *  @return horizontal position of the drawing_area.
      */  
@@ -144,6 +148,7 @@ public:
         draw_to = NULL;
     }
      
+#ifndef SWIG
     /** 
      * Convert an SDL_Rect into a drawing_area.
      * 
@@ -152,7 +157,8 @@ public:
      * @return drawing_area which has the same dimensions and location as r.
      */
     drawing_area& drawing_area::operator = (SDL_Rect& r); 
-
+#endif
+    
     /** 
      * Gets the real parameters of this drawing_area.
      * 

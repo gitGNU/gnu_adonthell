@@ -14,19 +14,20 @@
 
 
 /**
- * @file   mapsquares.h
+ * @file   mapsquare_walkable.h
  * @author Alexandre Courbot <alexandrecourbot@linuxgames.com>
  * 
- * @brief  Declares the mapsquare_walkable class.
+ * @brief  Declares the mapsquare_walkable and mapsquare_walkable_area classes.
  * 
  * 
  */
 
 
-#ifndef MAPSQUARE_H_
-#define MAPSQUARE_H_ 
+#ifndef MAPSQUARE_WALKABLE_H_
+#define MAPSQUARE_WALKABLE_H_ 
 
 #include "fileops.h"
+#include "drawable.h"
 #include <vector>
 
 
@@ -104,7 +105,7 @@ public:
      * 
      * @return 0 in case of success, error code otherwise.
      */ 
-    s_int8 put (ogzstream& file);
+    s_int8 put (ogzstream& file) const;
 
     /** 
      * Returns whether a mapsquare is walkable from west.
@@ -112,7 +113,7 @@ public:
      * 
      * @return true if the mapsquare is walkable from west, false otherwise.
      */
-    bool is_walkable_west ()
+    bool is_walkable_west () const
     {
         return walkable & WALKABLE_WEST;
     }
@@ -123,7 +124,7 @@ public:
      * 
      * @return true if the mapsquare is walkable from east, false otherwise.
      */
-    bool is_walkable_east ()
+    bool is_walkable_east () const
     {
         return walkable & WALKABLE_EAST;
     }
@@ -134,7 +135,7 @@ public:
      * 
      * @return true if the mapsquare is walkable from north, false otherwise.
      */
-    bool is_walkable_north ()
+    bool is_walkable_north () const
     {
         return walkable & WALKABLE_NORTH;
     }
@@ -145,7 +146,7 @@ public:
      * 
      * @return true if the mapsquare is walkable from south, false otherwise.
      */
-    bool is_walkable_south ()
+    bool is_walkable_south () const
     {
         return walkable & WALKABLE_SOUTH;
     }
@@ -207,7 +208,7 @@ public:
      *
      * @return walkable parameter of this mapsquare.
      */ 
-    u_int8 get_walkable () 
+    u_int8 get_walkable () const
     {
         return walkable; 
     }
@@ -226,5 +227,173 @@ private:
     u_int8 walkable; 
 }; 
 
+
+/** 
+ * Area of mapsquare_walkables, for use with mapcharacter and mapobject classes.
+ * 
+ */
+class mapsquare_walkable_area : public drawable
+{
+public:
+    /** 
+     * Default constructor.
+     * 
+     */
+    mapsquare_walkable_area ();
+    
+    /** 
+     * Destructor.
+     * 
+     */
+    ~mapsquare_walkable_area (); 
+
+    /** 
+     * Totally clears the area.
+     * 
+     */
+    void clear (); 
+
+    virtual void draw (s_int16 x, s_int16 y, const drawing_area * da_opt = NULL,
+                       surface * target = NULL) const = 0;
+
+    /**
+     * @name Area settings.
+     * 
+     */ 
+    //@{ 
+
+    /**
+     * Returns the length of the area.
+     *
+     * @return length (in number of squares) of the area.
+     *
+     */ 
+    u_int16 area_length () const
+    {
+        return area.size (); 
+    }
+
+    /**
+     * Returns the height of the area.
+     *
+     * @return height (in number of squares) of the area.
+     *
+     */ 
+    u_int16 area_height () const
+    {
+        if (area.size ()) return area[0].size (); 
+        else return 0; 
+    }
+
+    /** 
+     * Returns a pointer to a desired square.
+     * 
+     * @param x X position of the square to get.
+     * @param y Y position of the square to get.
+     * 
+     * @return pointer to the (x,y) square.
+     */
+    mapsquare_walkable * get_square (u_int16 x, u_int16 y) const
+    {
+        return &(area[x][y]); 
+    }
+    
+    /** 
+     * Resize the area.
+     * 
+     * @param nl new length (in number of squares) of the area.
+     * @param nh new height (in number of squares) of the area.
+     */
+    void resize_area (u_int16 nl, u_int16 nh); 
+
+    //@}
+    
+      
+    /**
+     * @name Base square settings.
+     * 
+     */ 
+    //@{ 
+    
+    /** 
+     * Returns the X offset of the base square of this object.
+     * 
+     * 
+     * @return X offset of the base square.
+     */
+    u_int16 base_x () const 
+    {
+        return basex; 
+    }
+
+    /** 
+     * Returns the Y offset of the base square of this object.
+     * 
+     * 
+     * @return Y offset of the base square.
+     */
+    u_int16 base_y () const
+    {
+        return basey; 
+    }
+
+    /** 
+     * Sets the base square of this object.
+     * 
+     * @param nx X offset of the new base square.
+     * @param ny Y offset of the new base square.
+     */
+    void set_base (u_int16 nx, u_int16 ny);
+
+    //@}
+
+    /**
+     * Loads an area from an opened file.
+     * @param file the opened file from which to load.
+     * @return 0 in case of success, error code otherwise.
+     *
+     */ 
+    s_int8 get (igzstream & file);
+
+    /**
+     * Saves an area into an opened file.
+     * @param file the opened file where to write.
+     * @return 0 in case of success, error code otherwise.
+     *
+     */ 
+    s_int8 put (ogzstream & file) const;
+
+#ifndef SWIG
+    /**
+     * Area copy (similar to copy ()).
+     *
+     * @attention Not available from Python. Use copy () from Python instead.
+     * @sa copy ()
+     */ 
+    mapsquare_walkable_area & operator = (const mapsquare_walkable_area & mo);
+#endif
+    
+    /**
+     * Synonym of operator = to guarantee its access from Python.
+     *
+     * @sa operator = 
+     */
+    void copy (const mapsquare_walkable_area& src) 
+    {
+        *this = src; 
+    }
+
+private:
+    /**
+     * Forbids value passing.
+     * 
+     */ 
+    mapsquare_walkable_area (const mapsquare_walkable_area & src); 
+
+    mutable vector <vector<mapsquare_walkable> > area;
+    
+    u_int16 basex;
+    u_int16 basey;  
+}; 
 
 #endif

@@ -107,7 +107,7 @@ main (int argc, char *argv[])
         while (tc)
         {
             mynpc = new character;
-            mynpc->load (in);
+            mynpc->get_state (in);
             PyDict_SetItemString (chars, (char *) mynpc->get_name().c_str (), pass_instance (mynpc, "character"));
             tc << in; 
         }

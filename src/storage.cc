@@ -1,7 +1,7 @@
 /*
    $Id$
    
-   Copyright (C) 2000 Kai Sterker <kaisterker@linuxgames.com>
+   Copyright (C) 2000/2001 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -12,7 +12,19 @@
    See the COPYING file for more details.
 */
 
+/**
+ * @file   storage.cc
+ * @author Kai Sterker <kaisterker@linuxgames.com>
+ * 
+ * @brief  Defines the storage and objects classes.
+ * 
+ * 
+ */
+
+#ifdef _DEBUG_
 #include <iostream.h>
+#endif
+
 #include "storage.h"
 
 

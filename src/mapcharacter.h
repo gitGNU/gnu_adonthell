@@ -1,7 +1,7 @@
 /*
    $Id$
 
-   Copyright (C) 1999/2000/2001   The Adonthell Project
+   Copyright (C) 1999/2000/2001   Alexandre Courbot
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -13,264 +13,757 @@
 */
 
 
-#ifndef _MAPCHARACTER_H
-#define _MAPCHARACTER_H
 
+/** 
+ * @file mapcharacter.h
+ *
+ * @author Alexandre Courbot <alexandrecourbot@linuxgames.com>
+ * @brief Declares the mapcharacter class.
+ */
+
+
+
+#ifndef MAPCHARACTER_H_
+#define MAPCHARACTER_H_
+
+/**
+ * Where mapcharacter files resides.
+ * 
+ */ 
 #define MAPCHAR_DIR "gfx/mapcharacters/"
 
 #include <vector>
 #include <string>
-#include "fileops.h"
 #include "animation.h"
-#include "maptpl.h"
-#include "landmap.h"
 #include "character_base.h"
 #include "data.h"
+#include "mapsquare_walkable.h"
+#include "py_script.h"
 
-#ifdef USE_PYTHON
-#include "py_inc.h"
-#endif
 
-#ifdef _EDIT_
-#include "mapselect.h"
-#include "mapobject.h"
+class landmap; 
 
-#include "win_types.h"
-#include "win_base.h"
-#include "win_font.h"
-#include "win_label.h"
-#include "win_write.h"
-#include "win_border.h"
-#include "win_image.h"
-#include "win_anim.h"
-#include "win_container.h"
-#include "win_select.h"
-#include "win_theme.h"
-#include "win_background.h"
-#endif
 
-#define STAND_NORTH 0
-#define STAND_SOUTH 1
-#define STAND_WEST 2
-#define STAND_EAST 3
-#define WALK_NORTH 4
-#define WALK_SOUTH 5
-#define WALK_WEST 6
-#define WALK_EAST 7
-#define NBR_MOVES 8
+/**
+ * @name mapcharacter moves.
+ * 
+ */ 
+//@{
+ 
+/**
+ * Standing North.
+ * 
+ */ 
+const u_int16 STAND_NORTH = 0; 
 
-#define NO_MOVE 65535
+/**
+ * Standing South.
+ * 
+ */ 
+const u_int16 STAND_SOUTH = 1; 
+
+/**
+ * Standing West.
+ * 
+ */ 
+const u_int16 STAND_WEST = 2; 
+
+/**
+ * Standing East.
+ * 
+ */ 
+const u_int16 STAND_EAST = 3; 
+
+/**
+ * Walking North.
+ * 
+ */ 
+const u_int16 WALK_NORTH = 4; 
+
+/**
+ * Walking South.
+ * 
+ */ 
+const u_int16 WALK_SOUTH = 5; 
+
+/**
+ * Walking West.
+ * 
+ */ 
+const u_int16 WALK_WEST = 6; 
+
+/**
+ * Walking East.
+ * 
+ */ 
+const u_int16 WALK_EAST = 7; 
+
+/**
+ * Total number of moves.
+ * 
+ */
+const u_int16 NBR_MOVES = 8; 
+
+/**
+ * No move.
+ * 
+ */
+const u_int16 NO_MOVE = 65535; 
+
+//@}
 
 class mapview;
 
 struct PyCodeObject;
 
-class mapcharacter:public maptpl, public character_base
+
+
+/**
+ * Representation of characters on a landmap.
+ *
+ * Like mapobjects, mapcharacters are a set of animations (one for every movment)
+ * and a grid of mapsquare_walkables. This grid represents the map area the mapcharacter
+ * physically occupies, which means that a mapcharacter can occupies several tiles.
+ *
+ * During the execution of Python scripts, some mapcharacter-local variables are
+ * available:
+ * @li myself is a pointer to the character holding this mapcharacter (can of course
+ * serve as a mapcharacter pointer, as character inheritates from mapcharacter).
+ * @li mymap, if defined, points to the landmap the mapcharacter is on.
+ *
+ * These Python variables are available both for schedules and actions.  
+ *
+ * In supplement, actions have an extra variable available:
+ * @li requester, which points to the mapcharacter that requested the action.
+ * 
+ */ 
+class mapcharacter : public mapsquare_walkable_area, public character_base
 {
 public:
-    // Constructors and init functions
-    void init ();
-    void clear ();
-    mapcharacter ();
+    /** 
+     * Default constructor.
+     * 
+     */ 
+     mapcharacter ();
+
+    /**
+     * Destructor.
+     * 
+     */ 
     ~mapcharacter ();
 
-    // Actions
-#ifndef _EDIT_
-    void talk ();
-#endif
-
-    // Loading
-    s_int8 get (igzstream& file);
-    s_int8 load (string fname);
-
-#ifndef _EDIT_
-    // State saving/loading
-    s_int8 get_state (igzstream& file);
-    s_int8 put_state (ogzstream& file);
-#endif
-
-    // Positioning
-    u_int16 get_submap ()
-    {
-        return submap;
-    }
-    u_int16 get_posx ()
-    {
-        return posx;
-    }
-    u_int16 get_posy ()
-    {
-        return posy;
-    }
-    s_int8 get_offx ()
-    {
-        return offx;
-    }
-    s_int8 get_offy ()
-    {
-        return offy;
-    }
-
-    void set_on_map (landmap * m)
-    { refmap = m;
-#ifndef _EDIT_
-    PyDict_SetItemString (locals, "mymap", pass_instance (refmap,
-                                                          "landmap"));
-#endif
-    } void remove_from_map ()
-    { refmap = NULL;
-#ifndef _EDIT_
-    PyDict_DelItemString (locals, "mymap");
-#endif
-    } void set_pos (u_int16 smap, u_int16 x, u_int16 y);
-    void set_offset (s_int8 x, s_int8 y)
-    {
-        offx = x;
-        offy = y;
-    } void remove_from_pos ();
-
-    void jump (u_int16 smap, u_int16 x, u_int16 y, u_int16 pos = NO_MOVE);
-
-    // Getting which movment the character is doing
-    u_int16 get_move ()
-    {
-        return current_move;
-    }
-
-#ifndef _EDIT_
-    string filename ()
+    /**
+     * Puts the mapcharacter back to it's post-constructor state.
+     * 
+     */ 
+    void clear ();
+    
+    /** 
+     * Returns the current file name of the mapcharacter.
+     * 
+     * 
+     * @return filename of the mapcharacter.
+     */
+    string filename () const
     {
         return filename_;
     }
 
-    void set_schedule (string file);
-
-    string get_schedule ()
-    {
-        return schedule_file;
-    }
-    
-    bool is_schedule_activated ()
-    {
-        return schedule_activated;
-    }
-    
-    void set_schedule_active (bool a)
-    {
-        schedule_activated = a;
-    }
-
-    void set_action (string file);
-
-    string get_action ()
-    {
-        return action_file;
-    }
-    
-    bool is_action_activated ()
-    {
-        return action_activated;
-    }
-    
-    void set_action_active (bool a)
-    {
-        action_activated = a;
-    } void update_move ();
-
-#endif
+    /**
+     * @name State updating
+     * 
+     */ 
+    //@{ 
+         
+    /** 
+     * Updates the mapcharacter's state and launchs his schedule.
+     * 
+     */
     void update ();
-    void launch_action (mapcharacter * requester);
-    void draw (const mapview * mv, u_int16 x, u_int16 y, surface * target = NULL);
-    void draw (s_int16 x, s_int16 y, drawing_area * da_opt = NULL, surface * target = NULL);
 
-    // Testing if a move is possible
-    bool can_go_north ();
-    bool can_go_south ();
-    bool can_go_east ();
-    bool can_go_west ();
+    //@}
 
-    // Giving the character instructions on what it should do
-    void stand ();
+
+    /**
+     * @name Drawing methods
+     * 
+     */ 
+    //@{ 
+
+    void draw (s_int16 x, s_int16 y, const drawing_area * da_opt = NULL, surface * target = NULL) const;
+    
+    //@}
+    
+    
+    /**
+     * @name Loading/Saving methods
+     *
+     * @note You can't save mapcharacters with this class.
+     */
+    //@{
+        
+
+    /**
+     * Loads a mapcharacter from an opened file.
+     * @param file the opened file from which to load.
+     * @return 0 in case of success, error code otherwise.
+     *
+     */ 
+    s_int8 get (igzstream& file);
+ 
+    /** 
+     * Loads a mapcharacter from it's filename.
+     * 
+     * @param fname the name of the file to load.
+     * 
+     * @return 0 in case of success, error code otherwise.
+     */
+    s_int8 load (string fname);
+
+    //@}
+    
+
+    /**
+     * @name State loading/saving methods
+     *
+     */
+    //@{
+
+    /** 
+     * Restore the mapcharacter's state from an opened file.
+     * 
+     * @param file the opened file from which to load the state.
+     * 
+     * @return 0 in case of success, error code otherwise.
+     */
+    s_int8 get_state (igzstream& file);
+
+    /** 
+     * Saves the mapcharacter's state into an opened file.
+     * 
+     * @param file the opened file where to the state.
+     * 
+     * @return 0 in case of success, error code otherwise.
+     */
+    s_int8 put_state (ogzstream& file) const;
+
+    //@}
+
+
+
+    /**
+     * @name Landmap assignment
+     * 
+     */ 
+    //@{
+    
+    /** 
+     * Puts the mapcharacter on a landmap.
+     * This methods can only be applied if the mapcharacter isn't on any landmap
+     * when it is called, otherwise nothing will occur.
+     *
+     * @warning Be aware that once this methods is called, the mapcharacter has NO
+     * position on the landmap. You MUST call jump_to () after this method to actually
+     * have placed the character on the map.
+     * 
+     * @param m pointer to the landmap the mapcharacter should be on.
+     */
+    void set_map (landmap * m); 
+    
+    /** 
+     * Removes the mapcharacter from the landmap he was on (if any).
+     * 
+     */
+    void remove_from_map ();
+    
+    /** 
+     * Returns a pointer to the landmap the mapcharacter is on.
+     * 
+     * 
+     * @return pointer to the landmap the mapcharacter is on (NULL if none).
+     */
+    landmap * mymap () const
+    {
+        return refmap; 
+    }
+    
+    //@}
+    
+    /**
+     * @name High-level control
+     *
+     * These methods provide a simple way to control the mapcharacter on the map he's on.
+     * They cover "normal" moves like walking or looking into a direction, plus tests to
+     * know whether a move is possible or not.
+     *
+     */
+    //@{
+
+    /** 
+     * Look to North.
+     * 
+     */
     void stand_north ();
+
+    /** 
+     * Look to South.
+     * 
+     */
     void stand_south ();
+
+    /** 
+     * Look to East.
+     * 
+     */
     void stand_east ();
+
+    /** 
+     * Look to West.
+     * 
+     */
     void stand_west ();
+
+    /** 
+     * Stand to the current direction.
+     *
+     * @note This method only serves to abord an expected waking movment.
+     * 
+     */
+    void stand ();
+    
+    /** 
+     * Walk to North (if possible).
+     *
+     * This method asks the mapcharacter to walk one square to North. If the
+     * movment isn't possible (non-walkable mapsquare or map limit), the
+     * character will stand_north () instead.
+     *
+     * @note Each time update () is called, the mapcharacter will continue advancing,
+     * until he reaches the next mapsquare.
+     *
+     */
     void go_north ();
+
+    /** 
+     * Walk to South (if possible).
+     *
+     * This method asks the mapcharacter to walk one square to South. If the
+     * movment isn't possible (non-walkable mapsquare or map limit), the
+     * character will stand_south () instead.
+     *
+     * @note Each time update () is called, the mapcharacter will continue advancing,
+     * until he reaches the next mapsquare.
+     *
+     */
     void go_south ();
+
+    /** 
+     * Walk to East (if possible).
+     *
+     * This method asks the mapcharacter to walk one square to East. If the
+     * movment isn't possible (non-walkable mapsquare or map limit), the
+     * character will stand_east () instead.
+     *
+     * @note Each time update () is called, the mapcharacter will continue advancing,
+     * until he reaches the next mapsquare.
+     *
+     */
     void go_east ();
+    
+    /** 
+     * Walk to West (if possible).
+     *
+     * This method asks the mapcharacter to walk one square to West. If the
+     * movment isn't possible (non-walkable mapsquare or map limit), the
+     * character will stand_west () instead.
+     *
+     * @note Each time update () is called, the mapcharacter will continue advancing,
+     * until he reaches the next mapsquare.
+     *
+     */
     void go_west ();
 
+    /** 
+     * Returns whether it is possible or not to go to North from
+     * the current mapcharacter's position.
+     * 
+     * 
+     * @return \c true if it is possible to go to North, \c false otherwise.
+     */
+    bool can_go_north () const;
+    
+    /** 
+     * Returns whether it is possible or not to go to South from
+     * the current mapcharacter's position.
+     * 
+     * 
+     * @return \c true if it is possible to go to South, \c false otherwise.
+     */
+    bool can_go_south () const;
+
+    /** 
+     * Returns whether it is possible or not to go to East from
+     * the current mapcharacter's position.
+     * 
+     * 
+     * @return \c true if it is possible to go to East, \c false otherwise.
+     */
+    bool can_go_east ()const;
+    
+    /** 
+     * Returns whether it is possible or not to go to West from
+     * the current mapcharacter's position.
+     * 
+     * 
+     * @return \c true if it is possible to go to West, \c false otherwise.
+     */
+    bool can_go_west () const; 
+
+    /** 
+     * Look at the opposite position of p.
+     * 
+     * This method is usefull for dialogues, when we want two
+     * characters to face each other.
+     *
+     * 
+     * @param p opposite position of the position to look at. Can be
+     * \c STAND_NORTH, \c STAND_SOUTH, \c STAND_EAST or \c STAND_WEST.
+     */
     void look_invert (u_int16 p);
 
-    mapcharacter *whosnext ();
+    /** 
+     * Return a pointer to the mapcharacter that is right next to this
+     * mapcharacter, i.e the mapcharacter that is on the square this
+     * mapcharacter is looking at.
+     *
+     * If no mapcharacter is next to this one, NULL will be returned.
+     *
+     * 
+     * @return pointer to the mapcharacter next to this mapcharacter.
+     */
+    mapcharacter *whosnext () const;
 
+    /** 
+     * Runs the mapcharacter's dialog.
+     * 
+     */
+    void talk ();
+
+    //@}
+      
+
+    /**
+     * @name Low-level controls
+     *
+     * If you need to do non-conventionnal or special things (like
+     * teleport a character from a position to another), or need
+     * to override the walkable mechanism, use these methods.
+     *
+     * You are also provided with various informative methods.
+     *
+     */ 
+    //@{
+
+    /** 
+     * Sets the offset of the mapcharacter on it's current mapsquare.
+     * 
+     * @param x X offset.
+     * @param y Y offset.
+     */
+    void set_offset (s_int8 x, s_int8 y)
+    {
+        offx_ = x;
+        offy_ = y;
+    }
+
+    /** 
+     * Removes the mapcharacter from the place he was on the map.
+     * 
+     */
+    void remove_from_pos ();
+    
+    /** 
+     * Remove the mapcharacter from it's current place and put him to a new one.
+     * 
+     * @param smap index of the submap to jump to.
+     * @param x X offset to to.
+     * @param y Y offset to to.
+     * @param pos Position to adopt once placed.
+     */
+    void jump_to (u_int16 smap, u_int16 x, u_int16 y, u_int16 pos = NO_MOVE);
+
+    /** 
+     * Returns the index of the submap where the mapcharacter is.
+     * 
+     * 
+     * @return the index of the submap where the mapcharacter is.
+     */
+    u_int16 submap () const
+    {
+        return submap_;
+    }
+    
+    /** 
+     * Returns the X position of the mapcharacter.
+     * 
+     * 
+     * @return the X position of the mapcharacter on his map.
+     */
+    u_int16 posx () const
+    {
+        return posx_;
+    }
+    
+    /** 
+     * Returns the Y position of the mapcharacter.
+     * 
+     * 
+     * @return the Y position of the mapcharacter on his map.
+     */
+    u_int16 posy () const
+    {
+        return posy_;
+    }
+    
+    /** 
+     * Returns the X offset of the mapcharacter.
+     * 
+     * 
+     * @return the X offset of the mapcharacter on his map.
+     */
+    s_int8 offx () const
+    {
+        return offx_;
+    }
+    
+    /** 
+     * Returns the Y offset of the mapcharacter.
+     * 
+     * 
+     * @return the Y offset of the mapcharacter on his map.
+     */
+    s_int8 offy () const
+    {
+        return offy_;
+    }
+
+    /** 
+     * Returns the current move of the mapcharacter.
+     * 
+     * 
+     * @return current mapcharacter's move (STAND_NORTH, WALK_SOUTH, etc...).
+     */
+    u_int16 currentmove () const
+    {
+        return current_move;
+    }
+
+    //@}
+    
+
+    /**
+     * Schedule control.
+     * 
+     */
+
+    //@{
+
+    /** 
+     * Assign a schedule to the mapcharacter.
+     * 
+     * The schedule's filename will be \e "scripts/schedules/<file>.py".
+     * 
+     * @param file name of the schedule to use.
+     */
+    void set_schedule (string file);
+
+    /** 
+     * Returns the name of the mapcharacter's current schedule.
+     * 
+     * 
+     * @return name of the mapcharacter's current schedule.
+     */
+    string schedule_file () const
+    {
+        return schedule_file_;
+    }
+    
+    /** 
+     * Returns whether the schedule is activated or not.
+     * 
+     * 
+     * @return \c true if the schedule is activated, \c false otherwise.
+     */
+    bool is_schedule_activated () const
+    {
+        return schedule.is_activated ();
+    }
+    
+    /** 
+     * Sets whether the schedule is active or not.
+     * 
+     * @param a \c true if the schedule should be activated, \c false otherwise.
+     */
+    void set_schedule_active (bool a)
+    {
+        schedule.set_active (a);
+    }
+
+    //@}
+
+
+
+    /**
+     * Action control.
+     * 
+     */
+
+    //@{
+
+    /** 
+     * Assign a action to the mapcharacter.
+     * 
+     * The action's filename will be \e "scripts/schedules/<file>.py".
+     * 
+     * @param file name of the action to use.
+     */
+    void set_action (string file);
+
+    /** 
+     * Returns the name of the mapcharacter's current action.
+     * 
+     * 
+     * @return name of the mapcharacter's current action.
+     */
+    string action_file () const
+    {
+        return action_file_;
+    }
+    
+    /** 
+     * Returns whether the action is activated or not.
+     * 
+     * 
+     * @return \c true if the action is activated, \c false otherwise.
+     */
+    bool is_action_activated () const
+    {
+        return action.is_activated (); 
+    }
+    
+    /** 
+     * Sets whether the action is active or not.
+     * 
+     * @param a \c true if the action should be activated, \c false otherwise.
+     */
+    void set_action_active (bool a)
+    {
+        action.set_active (a); 
+    }
+
+    /** 
+     * Run the mapcharacter's action, passing requester as the "requester" parameter
+     * for the action's Python script.
+     * 
+     * @param requester pointer to the mapcharacter that requested the action.
+     */
+    void launch_action (mapcharacter * requester);
+
+    //@}
+         
 #ifndef SWIG
-    mapcharacter & operator = (mapcharacter & m);
+    /**
+     * Mapcharacter copy (similar to copy ()).
+     *
+     * @attention Not available from Python. Use copy () from Python instead.
+     * @sa copy ()
+     */ 
+    mapcharacter & operator = (const mapcharacter & m);
 #endif							// SWIG
 
-protected:
+    /**
+     * Synonym of operator = to guarantee its access from Python.
+     *
+     * @sa operator = 
+     */
+    void copy (const mapcharacter& src) 
+    {
+        *this = src; 
+    }
+
+private:
+    /**
+     * Forbid value passing.
+     * 
+     */ 
+    mapcharacter (const mapcharacter & src); 
+    
+    /** 
+     * Makes the mapcharacter physically occupy an area.
+     *
+     * The given parameters are considered to be where
+     * the mapcharacter's base square will be.
+     * 
+     * @param smap submap where to occupy.
+     * @param px X position where to occupy.
+     * @param py Y position where to occupy.
+     */
+    void occupy (u_int16 smap, u_int16 px, u_int16 py);
+
+    /** 
+     * Makes the mapcharacter physically leave an area previously occupied
+     * with occupy ().
+     *
+     * The given parameters are considered to be where
+     * the mapcharacter's base square were be.
+     * 
+     * @param smap submap where to leave.
+     * @param px X position where to leave.
+     * @param py Y position where to leave.
+     */ 
+    void leave (u_int16 smap, u_int16 px, u_int16 py); 
+
+    void leave_position (); 
+    
+    /** 
+     * Sets the position of the mapcharacter on the map.
+     *
+     * This sets the mapcharacter's position to the parameters,
+     * and occupy () the corresponding region.
+     *
+     * @warning Don't forget to leave () the region when moving!
+     * 
+     * @param smap index of the submap where the mapcharacter should be.
+     * @param x X position on the submap.
+     * @param y Y position on the submap.
+     */
+    void set_pos (u_int16 smap, u_int16 x, u_int16 y);
+
+    /** 
+     * Updates the movment of the mapcharacter.
+     * 
+     */
+    void update_move ();
+    
+
     u_int16 current_move;
     u_int16 ask_move;
-    u_int16 submap;
-    u_int16 posx, posy;
-    s_int8 offx, offy;
-    bool schedule_activated;
-    bool action_activated;
-    vector < animation * >anim;
+    u_int16 submap_;
+    u_int16 posx_, posy_;
+    s_int8 offx_, offy_;
+    vector <animation *> anim;
     landmap *refmap;
 
-    u_int16 length, height;
+    py_script schedule; 
+    py_script action; 
+    string schedule_file_;
+    string action_file_;
+    
+    string filename_; 
 
-#ifndef _EDIT_
-    PyCodeObject *schedule;		// The character's schedule
-    PyCodeObject *action;		// The character's action
-    string schedule_file;
-    string action_file;
-    string filename_;
-#endif
-
-#ifdef _EDIT_
-    string label_txt; 
-    image *bg;
-    win_font *font;
-    win_theme *th;
-
-    win_container *container;
-    win_label *label_frame;
-    win_label *label_char;
-
-    bool must_upt_label_frame;
-    bool must_upt_label_char;
-
-    bool show_grid;
-#endif
-    void calculate_dimensions ();
-
-
-#ifdef _EDIT_
-    // Editor specific functions
-public:
-    s_int8 put (ogzstream& file);
-    s_int8 save (string fname);
-
-    void load ();
-    void save ();
-
-    void insert_anim (animation * an, u_int16 pos);
-    void load_anim ();
-    void update_editor ();
-    void set_anim_xoffset (u_int16 p, s_int16 xoff);
-    void set_anim_yoffset (u_int16 p, s_int16 yoff);
-    void update_label_frame ();
-    void update_label_char ();
-    void draw_editor ();
-    void update_and_draw ();
-    void update_editor_keys ();
-    void editor ();
-#endif
 #ifndef SWIG
-    friend class landmap;
-#endif							// SWIG
+    friend class landmap; 
+#endif
 };
 
 #endif

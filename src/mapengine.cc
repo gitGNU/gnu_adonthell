@@ -26,6 +26,7 @@ mapengine::mapengine ()
 
 mapengine::~mapengine ()
 {
+    lmap.clear (); 
     win_manager::destroy ();
 }
 
@@ -86,10 +87,8 @@ s_int8 mapengine::get_state (igzstream& file)
         t << file; 
         mapcharacter *mc = (mapcharacter *) (data::characters.get (t.c_str ()));
         
-        lmap.add_mapcharacter (mc);
+        mc->set_map (&lmap);
         mc->get_state (file);
-        mc->set_on_map (&lmap);
-        mc->set_pos (mc->get_submap (), mc->get_posx (), mc->get_posy ());
     }
     // Load the mapview state
     mv.get_state (file);
@@ -105,14 +104,15 @@ s_int8 mapengine::put_state (ogzstream& file)
     t >> file; 
 
     // Save the mapcharacters and their status
-    nbr_of = lmap.mapchar.size ();
+    nbr_of = lmap.nbr_of_mapcharacters ();
     nbr_of >> file; 
 
     for (i = 0; i < nbr_of; i++)
     {
-        t = lmap.mapchar[i]->get_name ();
+        mapcharacter * mc = lmap.get_mapcharacter (i); 
+        t = mc->get_name ();
         t >> file; 
-        lmap.mapchar[i]->put_state (file);
+        mc->put_state (file);
     }
 
     // Save the mapview state

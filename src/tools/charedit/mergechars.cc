@@ -195,7 +195,7 @@ void process_character (char *input, ogzstream& output)
 //     gzputc (output, 1);
 
     // append the character data
-    mynpc.save (output);
+    mynpc.put_state (output);
 
     cout << " done\n";
 }

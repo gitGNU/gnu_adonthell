@@ -178,6 +178,10 @@ void data::cleanup ()
     for (vector<gamedata*>::iterator i = saves.begin (); i != saves.end (); i++)
       delete *i;
 
+#ifdef USE_MAP
+    delete map_engine;
+#endif
+    
 #if defined (USE_PYTHON)
     // Note that we don't have to DECREF globals, because they're a borrowed
     // reference of py_module
@@ -234,7 +238,7 @@ bool data::load (u_int32 pos)
     while (ctemp << in) 
     {
         mynpc = new character;
-        mynpc->character_base::load (in);
+        mynpc->character_base::get_state (in);
 #if defined (USE_PYTHON)
         // Pass character over to Python interpreter
         PyDict_SetItemString (chars, (char *) mynpc->get_name().c_str (),
@@ -311,21 +315,10 @@ void data::unload ()
     // delete all characters
     while ((mychar = (character *) characters.next ()) != NULL)
     {
-        characters.erase (mychar->get_name().c_str ());
-
-#if defined (USE_MAP)
-        if (map)
-        {
-            map->remove_mapchar (mychar, mychar->get_submap (),
-                mychar->get_posx (), mychar->get_posy ());
-
-            // This might be needed to catch moving characters (???)
-            map->remove_mapchar (mychar, mychar->get_submap (), 
-                mychar->get_posx ()-1, mychar->get_posy ());
-            map->remove_mapchar (mychar, mychar->get_submap (), 
-                mychar->get_posx (), mychar->get_posy ()-1);
-        }
+#ifdef USE_MAP
+        mychar->remove_from_map (); 
 #endif
+        characters.erase (mychar->get_name().c_str ());
         delete mychar;
     }
     
@@ -414,7 +407,7 @@ gamedata* data::save (u_int32 pos, string desc)
         vnbr >> file; 
 
         // append the character data
-        mychar->character_base::save (file);
+        mychar->character_base::put_state (file);
     }
 
     // write EOF

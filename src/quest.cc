@@ -25,7 +25,7 @@ quest::~quest ()
 // Save a quest object
 void quest::save (ogzstream& out)
 {
-    hash_map<const char*, s_int32, hash<const char*>, equal_key>::iterator i;
+    storage::iterator i;
     u_int32 j;
     
     // Save name
@@ -33,11 +33,11 @@ void quest::save (ogzstream& out)
 //     fileops::put_string (out, name);
     
     // Save all variables and flags
-    j = data.size ();
+    j = size ();
     j >> out; 
 //     gzwrite (out, &j, sizeof (j));
     
-    for (i = data.begin (); i != data.end (); i++)
+    for (i = begin (); i != end (); i++)
     {
         string s = (*i).first;
         s >> out;

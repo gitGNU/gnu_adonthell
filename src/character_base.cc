@@ -12,7 +12,17 @@
    See the COPYING file for more details.
 */
 
-#include "fileops.h"
+
+/**
+ * @file   character_base.cc
+ * @author Kai Sterker <kaisterker@linuxgames.com>
+ * 
+ * @brief  Defines the character_base class.
+ * 
+ * 
+ */
+
+
 #include "character_base.h"
 #include "data.h"
 
@@ -39,39 +49,34 @@ void character_base::set_dialogue (const string & newdlg)
     dialogue = newdlg; 
 }
 
-void character_base::save(ogzstream& out)
+void character_base::put_state(ogzstream& out)
 {
-  hash_map<const char*, s_int32, hash<const char*>, equal_key>::iterator i;
-  u_int32 j;
-  
-  // Save name
-  name >> out; 
-  //   fileops::put_string (out, name);
-
-  // save color
-  color >> out; 
-  //   gzwrite (out, &color, sizeof (color));
-  
-  // Save all attributes and flags
-  j = data.size ();
-  j >> out; 
-//   gzwrite (out, &j, sizeof (j));
-  
-  for (i = data.begin (); i != data.end (); i++)
+//   hash_map<const char*, s_int32, hash<const char*>, equal_key>::iterator i;
+    storage::iterator i;
+    
+    u_int32 j;
+    
+    // Save name
+    name >> out; 
+    
+    // save color
+    color >> out; 
+    
+    // Save all attributes and flags
+    j = size ();
+    j >> out; 
+    
+    for (i = begin (); i != end (); i++)
     {
-      string s = (*i).first;
-      s >> out; 
-//       fileops::put_string (out, string);
-//       free (string);
-      (*i).second >> out; 
-//       gzwrite (out, &(*i).second, sizeof (s_int32));
+        string s = (*i).first;
+        s >> out; 
+        (*i).second >> out; 
     }
-
-  dialogue >> out; 
-//   fileops::put_string (out, dialogue);
+    
+    dialogue >> out; 
 }
 
-void character_base::load (igzstream& in)
+void character_base::get_state (igzstream& in)
 {
     u_int32 i, size;
     s_int32 value;

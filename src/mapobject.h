@@ -25,7 +25,7 @@
 #define _MAPOBJECT_H
 
 #include "animation.h"
-#include "mapsquares.h"
+#include "mapsquare_walkable.h"
 
 
 /// Where the mapobjects resides in the data tree.
@@ -34,7 +34,7 @@
 
 
 /**
- * Objects that can be placed on a map.
+ * Objects that can be placed on a landmap.
  *
  * A mapobject is basically a set of animations. Each animation can be freely
  * placed on a resizeable grid which represents the actual land where the
@@ -43,7 +43,7 @@
  * object is placed.
  * 
  */ 
-class mapobject : public drawable
+class mapobject : public mapsquare_walkable_area
 {
 public:
 
@@ -63,102 +63,7 @@ public:
      * Resets the mapobject to its post-constructor state.
      * 
      */ 
-    void clear ();
-
-
-    
-    /**
-     * @name Area settings.
-     * 
-     */ 
-    //@{ 
-
-    /**
-     * Returns the length of the mapobject's area.
-     *
-     * @return length (in number of squares) of the mapobject's area.
-     *
-     */ 
-    u_int16 area_length () const
-    {
-        return area.size (); 
-    }
-
-    /**
-     * Returns the height of the mapobject's area.
-     *
-     * @return height (in number of squares) of the mapobject's area.
-     *
-     */ 
-    u_int16 area_height () const
-    {
-        if (area.size ()) return area[0].size (); 
-        else return 0; 
-    }
-
-    /** 
-     * Returns a pointer to a desired square.
-     * 
-     * @param x X position of the square to get.
-     * @param y Y position of the square to get.
-     * 
-     * @return pointer to the (x,y) square.
-     */
-    mapsquare_walkable * get_square (u_int16 x, u_int16 y)
-    {
-        return &(area[x][y]); 
-    }
-    
-    /** 
-     * Resize the mapobject's area.
-     * 
-     * @param nl new length (in number of squares) of the area.
-     * @param nh new height (in number of squares) of the area.
-     */
-    void resize_area (u_int16 nl, u_int16 nh); 
-
-    //@}
-    
-      
-    /**
-     * @name Base square settings.
-     * 
-     */ 
-    //@{ 
-    
-    /** 
-     * Returns the X offset of the base square of this object.
-     * 
-     * 
-     * @return X offset of the base square.
-     */
-    u_int16 base_x () const 
-    {
-        return basex; 
-    }
-
-    /** 
-     * Returns the Y offset of the base square of this object.
-     * 
-     * 
-     * @return Y offset of the base square.
-     */
-    u_int16 base_y () const
-    {
-        return basey; 
-    }
-
-    /** 
-     * Sets the base square of this object.
-     * 
-     * @param nx X offset of the new base square.
-     * @param ny Y offset of the new base square.
-     */
-    void set_base (u_int16 nx, u_int16 ny);
-
-    //@}
-    
-
+    void clear ();      
  
     /**
      * @name State updating.
@@ -241,7 +146,7 @@ public:
      * 
      * @return the number of animations of this mapobject.
      */
-    u_int16 nbr_of_animations ()
+    u_int16 nbr_of_animations () const
     {
         return anim.size ();
     }
@@ -299,28 +204,20 @@ public:
      *
      * @sa operator = 
      */
-    void copy (mapobject& src) 
+    void copy (const mapobject& src) 
     {
         *this = src; 
     }
 
 private:
-    /** 
-     * Calculate the mapobject's length and height.
-     * 
-     */
-    void calculate_dimensions ();
 
     /**
      * Forbid value passing.
      * 
      */ 
     mapobject (mapobject &src); 
-    mutable vector <animation *> anim;
-    vector <vector<mapsquare_walkable> > area;
 
-    u_int16 basex;
-    u_int16 basey; 
+    mutable vector <animation *> anim;
 };
 
 #endif

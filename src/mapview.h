@@ -1,7 +1,7 @@
 /*
    $Id$
 
-   Copyright (C) 1999/2000   The Adonthell Project
+   Copyright (C) 1999/2000/2001   Alexandre Courbot
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -12,77 +12,50 @@
    See the COPYING file for more details.
 */
 
-#ifndef _MAPVIEW_H_
-#define _MAPVIEW_H_
+
+/**
+ * @file   mapview.h
+ * @author Alexandre Courbot <alexandrecourbot@linuxgames.com>
+ * 
+ * @brief  Declares the mapview class.
+ * 
+ * 
+ */
+
+ 
+
+#ifndef MAPVIEW_H_
+#define MAPVIEW_H_
 
 #include "mapobject.h"
 #include "landmap.h"
 #include "py_inc.h"
 #include <list>
+
 class mapsquare_tile;
 class mapsquare_char;
 class landmap;
 
 class mapview : public drawable
-#ifdef _EDIT_
-    , public mapselect
-#endif
 {
     u_int16 d_length, d_height;	// size of the view in map squares
 
     u_int16 currentsubmap;
-    //  u_int16 x,y;
     u_int16 posx, posy;
     u_int16 offx, offy;
 
     u_int16 draw_offx, draw_offy;
-
-    string schedule_file;
-
+ 
     landmap *m_map;
 
-    //  u_int16 ctrx,ctry;
     drawing_area *da;
 
     mutable list <mapsquare_tile> critical_draw;
     mutable list <mapsquare_char> characters_draw;
 
-#ifndef _EDIT_
     PyObject *locals;			// Locals that belong to that mapview
-    PyCodeObject *schedule;		// The mapview's schedule
-#endif
-
-#ifdef _EDIT_
-    string file_name;
-    win_label *info_win_label;
-    win_container *info_win;
-    u_int8 info_win_count;
-
-    win_font *font;
-    win_theme *th;
-    win_container *container;
-    win_label *label_pos;
-    win_label *label_object;
-    win_label *label_square;
-
-    bool must_upt_label_pos;
-    bool must_upt_label_object;
-    bool must_upt_label_square;
-
-    image *walkimg;
-     
-    list < mapsquare_tile >::iterator current_tile;
-
-    void update_label_pos ();
-    void update_label_object ();
-    void update_label_square ();
-
-    void decrease_obj_here ();
-    void increase_obj_here ();
-    void decrease_currentobj ();
-    void increase_currentobj ();
-    u_int16 currentobj;
-#endif
+    py_script schedule;
+    string schedule_file_; 
 
 public:
     void init ();
@@ -95,10 +68,12 @@ public:
     s_int8 set_current_submap (u_int16 sm);
     s_int8 set_pos (u_int16 x, u_int16 y, s_int16 ox = 0, s_int16 oy = 0);
     s_int8 center_on (u_int16 x, u_int16 y, s_int16 ox = 0, s_int16 oy = 0);
+
     bool can_scroll_right ()
     {
-        return (posx != m_map->submap[currentsubmap]->length - d_length);
+        return (posx != m_map->submap[currentsubmap]->area_length () - d_length);
     }
+    
     bool can_scroll_left ()
     {
         return (posx || offx);
@@ -109,7 +84,7 @@ public:
     }
     bool can_scroll_down ()
     {
-        return (posy != m_map->submap[currentsubmap]->height - d_height);
+        return (posy != m_map->submap[currentsubmap]->area_height () - d_height);
     }
 
     void scroll_right ();
@@ -130,49 +105,26 @@ public:
     }
     void resize (u_int16 l, u_int16 h);
 
-#ifndef _EDIT_
     s_int8 get_state (igzstream& file);
     s_int8 put_state (ogzstream& file);
 
     void set_schedule (string file);
-#endif
+
     void update ();
     void draw (s_int16 x, s_int16 y, const drawing_area * da_opt = NULL,
                surface *target = NULL) const;
+ 
 
-#ifdef _EDIT_
-    void move_cursor_left ();
-    void move_cursor_right ();
-    void move_cursor_up ();
-    void move_cursor_down ();
+private:
+#ifndef SWIG
+    void draw_tile (s_int16 x, s_int16 y, const drawing_area * da_opt, surface * target,
+                    list<mapsquare_tile>::iterator it) const;
+    
+    void draw_mapchar (s_int16 x, s_int16 y, const drawing_area * da_opt,
+                       surface * target, list<mapsquare_char>::iterator itc) const; 
 
-    s_int8 resize_map (u_int16 nbr);
-    void add_mapobject ();
-    void delete_mapobject ();
-
-    void add_submap ();
-    void delete_submap ();
-
-    void quick_save ();
-    void quick_load ();
-    void load_map ();
-    void save_map ();
-
-    void update_current_tile (mapsquare_tile t);
-
-    void update_editor ();
-    void draw_cursor ();
-    void draw_walkable (u_int16 x, u_int16 y, drawing_area * da_opt = NULL);
-    void draw_editor ();
-    void update_editor_keys ();
-    void update_and_draw ();
-    void set_info_win (string text);
-    void editor ();
 #endif
-    friend class mapsquare_tile;
-    friend class mapsquare_char;
-    friend class mapsquare;
-    friend class mapcharacter;
+    
 };
 
 #endif

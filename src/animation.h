@@ -674,7 +674,7 @@ private:
     /**
      * Forbid value passing.
      */
-    animation(animation& src);
+    animation(const animation& src);
 
     /** 
      * Calculate the real dimensions of the animation, depending

@@ -20,11 +20,11 @@
  * Adonthell makes intensive use of C++ advantages, when they can make the code
  * clear and easier and do not slow things down too much. Adonthell tries to
  * respect as much as possible the Object Oriented Programming concepts. In
- * Adonthell, everything are objects, inheritance and templates are used where usefull.
+ * Adonthell, everything are %objects, inheritance and templates are used where usefull.
  *
  * Also, Adonthell heavily uses some templates from the STL Library
- * (http://www.sgi.com/tech/stl/) , especially containers like lists and hash maps,
- * so you'll certainly want to give it a look.
+ * (http://www.sgi.com/tech/stl/) , especially strings and containers like lists and
+ * hash maps, so you'll certainly want to give it a look.
  *
  * @section python Python 
  * In many kind of games, including RPGs, a script language is necessary to command
@@ -124,7 +124,7 @@
  * cycle, we'll draw one frame for 2 games cycles, for example). This is where
  * gametime is usefull: The gametime::update() method calculates the delay between
  * the last call and the current call. It can then calculate if we've been late, and
- * catch the time back by telling to the other objects that we must perform 2 games
+ * catch the time back by telling to the other %objects that we must perform 2 games
  * cycles instead of 1 to be sync (this is the result of the gametime::get_frames_to_do()
  * method). For example, if the last loop took 1/35 of a second to be completed,
  * gametime::get_frames_to_do() will return 2, so the loop will perform 2 game updates
@@ -182,15 +182,15 @@
  * @section args Arguments passing conventions
  *
  * @subsection objcts Objects passing
- * Most often you will work with objects that you or someone else have created.
- * Passing such objects to methods by value must absolutely be avoided,  for
+ * Most often you will work with %objects that you or someone else have created.
+ * Passing such %objects to methods by value must absolutely be avoided,  for
  * performances and bug issues. Passing a big object by value to a function
  * requires memory to be allocated for the function's object, and of course the
  * copy-constructor and destructor to be called. Needless to say, that without
- * a copy-constructor most complicated objects won't be correctly passed, and
+ * a copy-constructor most complicated %objects won't be correctly passed, and
  * this is a source of useless bug tracking.
  *
- * Instead of passing your objects by value, you'll pass them by reference.
+ * Instead of passing your %objects by value, you'll pass them by reference.
  * That way, no memory is allocated, and actions are performed directly on your
  * object. To make it obvious to guess which method modify the object you've
  * passed and which ones doesn't, the following conventions has been set up:
@@ -208,7 +208,7 @@
  * @note Of course, this doesn't apply to your operator overloading functions
  *       which are obviously explicit.
  *
- * And, to make sure nobody will ever pass one of your objects by value,
+ * And, to make sure nobody will ever pass one of your %objects by value,
  * declare the copy-constructor as private:
  * @code
  * class myclass
