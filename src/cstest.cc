@@ -53,20 +53,26 @@ int main(int argc, char * argv[])
   }
 
 #ifdef SDL_MIXER
-  SDL_Thread *audio_thread;
+  SDL_Thread *audio_thread = NULL;
 
-  // Load the intro tune :>
+  // Create our audio manager
   audio_in = new audio();
-  audio_in->load_background(0, "audio/at-1.it");
-  audio_in->fade_in_background(0, 500);
 
-  audio_thread = SDL_CreateThread(audio_update, NULL);
-  if ( audio_thread == NULL) {
-     fprintf(stderr, "Couldn't create audio thread: %s\n", SDL_GetError());
-     fprintf(stderr, "Audio will not be used\n");
-     free(audio_in);
+  if ( audio_in != NULL) {
+    audio_in->load_background(0, "audio/at-1.it");
+    audio_in->fade_in_background(0, 500);
+
+    audio_thread = SDL_CreateThread(audio_update, NULL);
+
+    if ( audio_thread == NULL) {
+      fprintf(stderr, "Couldn't create audio thread: %s\n", SDL_GetError());
+      fprintf(stderr, "Audio will not be used\n");
+      free(audio_in);
+    }
+  } else {
+    fprintf(stderr, "Couldn't create audio thread: Can't create audio pointer\n");
+    fprintf(stderr, "Audio will not be used\n");
   }
-
 #endif
 
   anim->load_frame("gfxtree/cutscene/layer1.png");
