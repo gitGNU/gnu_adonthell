@@ -36,8 +36,6 @@ class win_theme
   
   void destroy();
  
-  static char * theme;
-  
   friend class win_border;
   friend class win_background;
   friend class win_scrollbar;
