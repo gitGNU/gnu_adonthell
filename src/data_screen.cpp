@@ -37,16 +37,16 @@ data_screen::data_screen (int m)
     font = new win_font (win_theme::theme);
     theme = new win_theme (win_theme::theme);
 
-    image_list = new win_select (10, 5, 80, 210, theme);
-    image_list->set_select_mode (WIN_SELECT_MODE_BORDER);
+    image_list = new win_select (10, 0, 250, 210, theme);
+    image_list->set_select_mode (WIN_SELECT_MODE_BRIGHTNESS);
+    image_list->set_layout (WIN_LAYOUT_LIST);
+    image_list->set_space_between_border (9);
+    image_list->set_space_between_object (9);
+    image_list->set_activated (true);
     image_list->set_signal_connect (makeFunctor (*this, &data_screen::on_select),
         WIN_SIG_ACTIVATE_KEY);
 
-    text_list = new win_select (110, 5, 130, 210, theme);
-    text_list->set_select_mode (WIN_SELECT_MODE_BRIGHTNESS);
-
     window = new win_container (30, 15, 260, 210, theme);
-    window->add (text_list);
     window->add (image_list);
 
     // Add all the saved games to the list
@@ -57,11 +57,8 @@ data_screen::data_screen (int m)
     window->set_border_visible (true);
     window->set_visible_all (true);
 
-    text_list->set_visible_all (true);
-
     image_list->set_activate_keyboard (true);
     image_list->set_visible_all (true);
-    image_list->set_activated (true);
 }
 
 data_screen::~data_screen ()
@@ -74,11 +71,12 @@ data_screen::~data_screen ()
 
 void data_screen::init ()
 {
-    int height = 5;
+    int num = 0;
     char filepath[256];
     image *picture;
     win_image *shot;
-    win_write *entry = NULL;    
+    win_write *entry;
+    win_container *box = NULL;
     gamedata *gdata;
 
     // display all the available saved games
@@ -90,14 +88,22 @@ void data_screen::init ()
         picture = new image;
         picture->load_pnm (filepath);
 
-        shot = new win_image (5, height, picture, theme);
-        image_list->add (shot);
+        shot = new win_image (5, 2, picture, theme);
+        shot->set_border_size (WIN_SIZE_MINI);
+        shot->set_border_visible (true);
 
-        entry = new win_write (0, height, 130, 60, theme, font);
+        entry = new win_write (100, 2, 130, 54, theme, font);
         entry->set_text (gdata->get_description ());
-        text_list->add (entry);
+        entry_list.push_back (entry);
 
-        height += 68;
+        box = new win_container (0, 0, 210, 58, theme);
+        box->add (shot);
+        box->add (entry);
+        box->set_visible_all (true);
+
+        image_list->add (box);
+        
+        num++;
     }
 
     // If we're saving the game, add "Empty Slot"
@@ -106,19 +112,33 @@ void data_screen::init ()
         picture = new image;
         picture->load_pnm ("empty_slot.pnm");
 
-        shot = new win_image (5, height, picture, theme);
-        image_list->add (shot);
-        image_list->set_default (shot);
+        shot = new win_image (5, 2, picture, theme);
+        shot->set_border_size (WIN_SIZE_MINI);
+        shot->set_border_visible (true);
 
-        entry = new win_write (0, height, 130, 60, theme, font);
+        entry = new win_write (100, 2, 130, 54, theme, font);
         entry->set_text ("Empty Slot");
-        text_list->add (entry);
-        text_list->set_default (entry);
+        entry_list.push_back (entry);
+        
+        box = new win_container (0, 0, 210, 58, theme);
+        box->add (shot);
+        box->add (entry);
+        box->set_visible_all (true);
+
+        image_list->add (box);
+        image_list->set_default (box);
+
+        num++;
     }
-    else
+    else image_list->set_default (1);
+
+    // display scrollbar if necessary
+    if (num > 3)
     {
-        image_list->set_default (1);
-        text_list->set_default (1);
+        image_list->set_scrollbar_visible (true);
+
+        if (mode == SAVE_SCREEN) 
+            while (num-- >= 0) image_list->down ();
     }
 }
 
@@ -127,11 +147,7 @@ bool data_screen::update ()
     // nothing selected --> broese through available games
     if (!entry)
     {
-        u_int16 old_pos = image_list->get_pos ();
         image_list->update ();
-        u_int16 new_pos = image_list->get_pos ();
-
-        if (old_pos != new_pos) text_list->set_default (new_pos);
     }
     // a slot for saving selected --> enter description of the game
     else
@@ -157,7 +173,7 @@ void data_screen::on_select ()
     else
     {
         // allow to enter a description
-        entry = (win_write *) text_list->get ();
+        entry = entry_list[image_list->get_pos ()-1];
         char *txt = entry->get_text ();
         if (txt && !strncmp (txt, "Empty Slot", 10))
             entry->set_text ("");

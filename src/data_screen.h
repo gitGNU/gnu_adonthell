@@ -47,10 +47,10 @@ private:
     win_font *font;                         // the font
     win_theme *theme;                       // the theme
     win_write *entry;                       // for entering a description of the game
-    win_select *text_list;                  // list of game descriptions
     win_select *image_list;                 // list of thumbnails
     win_container *window;                  // main window
 
+    vector<win_write*> entry_list;          // list of game descriptions
     image *shot;                            // a 72x54 screenshot 
     int mode;                               // Whether we're saving or loading
     bool quit;                              // Tells the window to close

@@ -22,13 +22,15 @@
 #include "data.h"
 
 
-PyObject *data::globals;        // Global namespace for the Python interpreter
-gametime *data::time;           // The gametime
-objects data::characters;       // All the character data
-objects data::quests;           // All the quest data (the state of the gameworld)
-char *data::adonthell_dir=NULL; // The user's private adonthell directory
-vector<gamedata*> data::saves;  // The list of available savegames
-player* data::the_player=NULL;  // The main character
+PyObject *data::globals;            // Global namespace for the Python interpreter
+gametime *data::time;               // The gametime
+player* data::the_player=NULL;      // The main character
+objects data::characters;           // All the NPC data
+objects data::quests;               // All the quest data (the state of the gameworld)
+
+char *data::adonthell_dir=NULL;     // The user's private adonthell directory
+vector<gamedata*> data::saves;      // The list of available savegames
+
 
 gamedata::gamedata ()
 {
@@ -332,13 +334,20 @@ gamedata* data::save (u_int32 pos, char *desc)
 gamedata* data::next_save ()
 {
     static vector<gamedata*>::iterator i = saves.begin ();
+    static u_int32 size = saves.size ();
+
+    if (size != saves.size ())
+    {
+        size = saves.size ();
+        i = saves.begin ();
+    }
 
     if (++i == saves.end ())
     {
         i = saves.begin ();
         return NULL;
     }
-
+    
     return *i;
 }
 
