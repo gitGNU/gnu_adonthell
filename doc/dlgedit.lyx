@@ -1,5 +1,4 @@
-#This file was created by <root> Sun Jan  2 20:58:27 2000
-#LyX 1.0 (C) 1995-1999 Matthias Ettrich and the LyX Team
+#LyX 1.1 created this file. For more info see http://www.lyx.org/
 \lyxformat 2.15
 \textclass article
 \language default
@@ -205,7 +204,7 @@ DISPLAY ends a block and tells the interpreter to return to the calling
 An Example
 \layout Standard
 
-That was a lot of boring theorie, therefore something more practical now.
+That was a lot of boring theory, therefore something more practical now.
 \layout Subsection
 
 The Dialogue
@@ -442,68 +441,284 @@ The Result
 
 Now save and compile the Dialogue.
  You get three files.
- The .dat and .str files are for the Dialogue Engine, interesting to you might
+ The .dlg and .str files are for the Dialogue Engine, interesting to you might
  be the .txt file, wich contains an ASCII representation of the dialogues
  code.
  In our example it looks as following:
 \newline 
 
-\newline 
+\layout Standard
+
 
 \family typewriter 
-18 commands in Dialogue
-\family default 
 
-\newline 
+\protected_separator 
+0
+\protected_separator 
+ Hello, I am Eric.
+\layout Standard
 
-\newline 
 
 \family typewriter 
-0 IMPORT "Hello, I am Eric." 
-\newline 
-1 IMPORT "I am Kai." 
-\newline 
-2 IMPORT "Goodbye!" 
-\newline 
-3 IMPORT "Nice to meet you." 
-\newline 
-4 IMPORT "Fare well."
-\newline 
 
-\newline 
-5 CLEAR 
-\newline 
-6 NPCTEXT 0 
-\newline 
-7 PTEXT 1 10 
-\newline 
-8 PTEXT 2 14 
-\newline 
-9 DISPLAY
-\newline 
+\protected_separator 
+1
+\protected_separator 
+ I am Kai.
+\layout Standard
 
-\newline 
-10 CLEAR 
-\newline 
-11 NPCTEXT 3 
-\newline 
-12 PTEXT 2 14 
-\newline 
-13 DISPLAY
-\newline 
 
-\newline 
-14 CLEAR 
-\newline 
-15 SNPCTEXT 4 17 
-\newline 
-16 DISPLAY
-\newline 
+\family typewriter 
 
-\newline 
-17 END
-\family default 
+\protected_separator 
+2
+\protected_separator 
+ Goodbye!
+\layout Standard
 
+
+\family typewriter 
+
+\protected_separator 
+3
+\protected_separator 
+ Fare well.
+\layout Standard
+
+
+\family typewriter 
+
+\protected_separator 
+4
+\protected_separator 
+ Nice to meet you.
+\layout Standard
+
+
+\family typewriter 
+
+\protected_separator 
+
+\layout Standard
+
+
+\family typewriter 
+
+\protected_separator 
+0
+\protected_separator 
+ IMPORT
+\protected_separator 
+ 0 1 2 3 4 
+\layout Standard
+
+
+\family typewriter 
+
+\protected_separator 
+1
+\protected_separator 
+ SPEAKER 1 0
+\layout Standard
+
+
+\family typewriter 
+
+\protected_separator 
+2
+\protected_separator 
+ TEXT
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ 0 0
+\layout Standard
+
+
+\family typewriter 
+
+\protected_separator 
+3
+\protected_separator 
+ SPEAKER 0 0
+\layout Standard
+
+
+\family typewriter 
+
+\protected_separator 
+4
+\protected_separator 
+ TEXT
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ 1 9
+\layout Standard
+
+
+\family typewriter 
+
+\protected_separator 
+5
+\protected_separator 
+ TEXT
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ 2 3
+\layout Standard
+
+
+\family typewriter 
+
+\protected_separator 
+6
+\protected_separator 
+ RETURN
+\protected_separator 
+ 1
+\layout Standard
+
+
+\family typewriter 
+
+\protected_separator 
+
+\layout Standard
+
+
+\family typewriter 
+
+\protected_separator 
+7
+\protected_separator 
+ CLEAR
+\layout Standard
+
+
+\family typewriter 
+
+\protected_separator 
+8
+\protected_separator 
+ SPEAKER 1 0
+\layout Standard
+
+
+\family typewriter 
+
+\protected_separator 
+9
+\protected_separator 
+ TEXT
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ 3 3
+\layout Standard
+
+
+\family typewriter 
+10
+\protected_separator 
+ RETURN
+\protected_separator 
+ 1
+\layout Standard
+
+
+\family typewriter 
+
+\protected_separator 
+
+\layout Standard
+
+
+\family typewriter 
+11
+\protected_separator 
+ CLEAR
+\layout Standard
+
+
+\family typewriter 
+12
+\protected_separator 
+ RETURN
+\protected_separator 
+ 0
+\layout Standard
+
+
+\family typewriter 
+13
+\protected_separator 
+ SPEAKER 1 0
+\layout Standard
+
+
+\family typewriter 
+14
+\protected_separator 
+ TEXT
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ 4 0
+\layout Standard
+
+
+\family typewriter 
+15
+\protected_separator 
+ SPEAKER 0 0
+\layout Standard
+
+
+\family typewriter 
+16
+\protected_separator 
+ TEXT
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ 2 -8
+\layout Standard
+
+
+\family typewriter 
+17
+\protected_separator 
+ RETURN
+\protected_separator 
+ 1
+\layout Standard
+
+
+\family typewriter 
+
+\protected_separator 
+
+\layout Standard
+
+
+\family typewriter 
+18
+\protected_separator 
+ CLEAR
 \newline 
 
 \layout Standard
