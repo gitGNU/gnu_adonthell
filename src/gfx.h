@@ -17,6 +17,7 @@
 
 #include "types.h"
 #include <SDL/SDL.h>
+#include <SDL/SDL_image.h>
 
 #define DEBUG 0
 
@@ -102,6 +103,7 @@ class image
 				  u_int16 bw, u_int16 bh, u_int16 xo, 
 				  u_int16 yo, u_int8 alpha);
   s_int8 get(FILE * file);
+  s_int8 get(char * file);
   s_int8 load(char * fname);
   s_int8 simpleget(FILE * file);
   s_int8 simpleload(char * fname);

@@ -460,7 +460,7 @@ s_int8 image::get(FILE * file)
   SDL_Surface * tmp2;
 
   tmp=read_pnm(file,&lenght,&height);
-
+ 
   switch(screen::get_bytes_per_pixel())
     {
     case 3:
@@ -483,7 +483,7 @@ s_int8 image::get(FILE * file)
 	      R=*((u_int8*)tmp+(j*3)+(lenght*3*i));
 	      G=*((u_int8*)tmp+(j*3)+(lenght*3*i)+1);
 	      B=*((u_int8*)tmp+(j*3)+(lenght*3*i)+2);
-	      
+		      
 	      if(sizefactor==1) 
 		{		       
 		  *((u_int8*)tmp2->pixels+(i*tmp2->pitch)+(j*3))=R;
@@ -508,11 +508,10 @@ s_int8 image::get(FILE * file)
 		}
 	    }
 	}
-      
+    
       lenght*=sizefactor;
       height*=sizefactor;
       data=SDL_ConvertSurface(tmp2, tmp2->format, SDL_SWSURFACE);
-      //      SDL_SetColorKey(data, SDL_SRCCOLORKEY, 0xFF00FF);
       break;
       
     case 2:
@@ -556,13 +555,100 @@ s_int8 image::get(FILE * file)
   return(0);
 }
 
+s_int8 image::get(char * file)
+{
+  u_int16 i,j;
+
+  SDL_Surface * tmp;
+  SDL_Surface * tmp2=NULL;
+
+  tmp=IMG_Load(file);
+  lenght=tmp->w;
+  height=tmp->h;
+  //  fprintf(stderr,"lenght: %d, height: %d bpp: %d\n",lenght,height,tmp->format->BitsPerPixel);
+  switch(screen::get_bytes_per_pixel())
+    {
+    case 3:
+      if(sizefactor==1) 
+	{
+	  data=SDL_CreateRGBSurface(SDL_SWSURFACE,lenght,height,24,0,0,0,0);
+	  SDL_BlitSurface(tmp, NULL, data, NULL);
+	}else{
+	  tmp2=SDL_CreateRGBSurface(SDL_SWSURFACE,lenght*2,height*2,24,0,0,0,0);
+	  for(i=0;i<height;i++)
+	    {
+	      for(j=0;j<lenght;j++)
+		{
+		  u_int8 R,G,B;
+		  R=*((u_int8*)tmp->pixels+(i*tmp->pitch/4)+(j));
+		  G=*((u_int8*)tmp->pixels+(i*tmp->pitch/4)+(j)+1);
+		  B=*((u_int8*)tmp->pixels+(i*tmp->pitch/4)+(j)+2);
+		  
+		  *((u_int8*)tmp2->pixels+((i*2)*tmp2->pitch)+(j*6))=R;
+		  *((u_int8*)tmp2->pixels+((i*2)*tmp2->pitch)+(j*6)+1)=G;
+		  *((u_int8*)tmp2->pixels+((i*2)*tmp2->pitch)+(j*6)+2)=B;
+		  
+		  *((u_int8*)tmp2->pixels+((i*2)*tmp2->pitch)+(j*6)+3)=R;
+		  *((u_int8*)tmp2->pixels+((i*2)*tmp2->pitch)+(j*6)+4)=G;
+		  *((u_int8*)tmp2->pixels+((i*2)*tmp2->pitch)+(j*6)+5)=B;
+		  
+		  *((u_int8*)tmp2->pixels+((i*2+1)*tmp2->pitch)+(j*6))=R;
+		  *((u_int8*)tmp2->pixels+((i*2+1)*tmp2->pitch)+(j*6)+1)=G;
+		  *((u_int8*)tmp2->pixels+((i*2+1)*tmp2->pitch)+(j*6)+2)=B;
+		  
+		  *((u_int8*)tmp2->pixels+((i*2+1)*tmp2->pitch)+(j*6)+3)=R;
+		  *((u_int8*)tmp2->pixels+((i*2+1)*tmp2->pitch)+(j*6)+4)=G;
+		  *((u_int8*)tmp2->pixels+((i*2+1)*tmp2->pitch)+(j*6)+5)=B;
+		}
+	    }
+	  lenght*=sizefactor;
+	  height*=sizefactor;
+	  if(!data) data=SDL_ConvertSurface(tmp2, tmp2->format, SDL_SWSURFACE);
+	}
+    
+      break;
+      
+    case 2:
+      if(sizefactor==1) 
+	{
+	  data=SDL_CreateRGBSurface(SDL_SWSURFACE,lenght,height,16,0,0,0,0);
+	  SDL_BlitSurface(tmp, NULL, data, NULL);
+	}else{
+	  tmp2=SDL_CreateRGBSurface(SDL_SWSURFACE,lenght*2,height*2,16,0,0,0,0);
+	  u_int8 R,G,B;
+	  for(i=0;i<height;i++)
+	    {      
+	      for(j=0;j<lenght;j++)
+		{
+	     
+		  u_int32 colour = *((u_int32*)tmp->pixels+(i*tmp->pitch/4)+(j));
+		  SDL_GetRGB(colour, tmp->format, &R, &G, &B);
+		  colour =  SDL_MapRGB(tmp2->format, R, G, B);
+		  
+		  *((u_int16 *)tmp2->pixels+((i*2)*tmp2->pitch/2)+(j*2)) = colour;
+		  *((u_int16 *)tmp2->pixels+((i*2)*tmp2->pitch/2)+(j*2)+1) = colour;
+		  *((u_int16 *)tmp2->pixels+((i*2+1)*tmp2->pitch/2)+(j*2)) = colour;
+		  *((u_int16 *)tmp2->pixels+((i*2+1)*tmp2->pitch/2)+(j*2)+1) = colour;
+		
+		}
+	    }
+	
+	  lenght*=sizefactor;
+	  height*=sizefactor;
+	  data=SDL_ConvertSurface(tmp2, tmp2->format, SDL_SWSURFACE);
+	}
+
+      break;
+    }
+  
+  if (!data) return(-1);
+  return(0);
+}
+
 s_int8 image::load(char * fname)
 {
   s_int8 res;
-  FILE * file=fopen(fname,"r");
-  if(!file) return(-1);
-  res=get(file);
-  fclose(file);
+  res=get(fname);
   return(res);
 }
 
