@@ -252,7 +252,6 @@ void
 on_event_add_clicked (GtkButton * button, gpointer user_data)
 {
     main_wnd *wnd = (main_wnd *) user_data;
-    GtkWidget *event_dlg = 0;
     gchar *text[3];
 
     // get the selected event type

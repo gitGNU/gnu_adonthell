@@ -227,7 +227,7 @@ main_wnd::read_character_source (gchar *fname)
     ifstream file;
     gchar **vals, *dummy[3] = { "", "", "" };
     char str[256];
-    int mode = 0, i = -1, j;
+    int mode = 0, i = -1;
 
     file.open (fname);
     if (!file)

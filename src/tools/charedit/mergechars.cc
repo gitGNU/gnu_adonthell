@@ -38,6 +38,7 @@ void show_traceback (void)
 // Also used to avoid linking problems
 PyObject *pass_instance (void *instance, const char *class_name)
 {
+    return NULL;
 }
 
 // read the character source file and append it to the character data file
@@ -45,8 +46,8 @@ void process_character (char *input, gzFile output)
 {
     ifstream in (input);
     gchar str[256], **vals, **params, **pair;
-    event *myevent;
-    int event_type;
+    event *myevent = NULL;
+    int event_type = -1;
     int mode = 0;
     int i = 0;
     
