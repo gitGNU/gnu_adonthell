@@ -49,12 +49,14 @@ void storage::set_val (const char *key, s_int32 value)
     if (!value) data.erase (key);
     else
     {
-        char * s; 
-        if (data.find (key) == data.end ())  
-            s = strdup (key);
-        else s = (char *) key;
-        
-        data[s] = value;
+        hash_map<const char *, s_int32, hash<const char *>, equal_key>::iterator j = data.find (key);
+
+        if (j == data.end ())
+        {
+            char *k = strdup (key);
+            data[k] = value;
+        }
+        else (*j).second = value;
     }
     
     changed = 1;

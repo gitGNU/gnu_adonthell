@@ -342,6 +342,7 @@ char* dialog::scan_string (const char *s)
             
             delete[] string;
             delete[] newstr;
+            delete[] mid;
             newstr = tmp;
 
             continue;

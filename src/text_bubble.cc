@@ -28,7 +28,7 @@ text_bubble::text_bubble (const string & text, const string & textcolor,
     set_background (*theme);
     set_border (*theme, win_border::MINI);
     
-    label::resize (110, 0); 
+    label::resize (len, 0);
     set_form (label::AUTO_HEIGHT); 
     set_text (text);
     set_visible_border (true);

@@ -38,7 +38,7 @@
 // Init the dialogue engine
 dialog_engine::dialog_engine (character_base *mynpc, char * dlg_file, u_int8 size) 
 {
-  init (mynpc, dlg_file, size);
+    init (mynpc, dlg_file, size);
 }
 
 void dialog_engine::init(character_base *mynpc, char * dlg_file, u_int8 size)
@@ -88,7 +88,6 @@ void dialog_engine::init(character_base *mynpc, char * dlg_file, u_int8 size)
 
     // Create dialogue window
     // The NPC's portrait
-    //face = new win_image (5, 5, 64, 64, theme);
     face = new win_image();
     face->move(5,5);
     ((image*)face)->resize(64,64);
@@ -96,7 +95,6 @@ void dialog_engine::init(character_base *mynpc, char * dlg_file, u_int8 size)
     face->set_visible (true); 
     
     // The NPC's name
-    //name = new win_label (5, 74, 64, 0, theme, fonts[0]);
     name = new win_label();
     name->set_font(*(fonts[0]));
     name->move(5,74);
@@ -105,7 +103,6 @@ void dialog_engine::init(character_base *mynpc, char * dlg_file, u_int8 size)
     name->set_visible (true); 
     
     // The list with the dialogue
-    //sel = new win_select (80, 0, 200, height (), theme);
     sel = new win_select();
     sel->set_scrollbar(*theme);
     sel->move(80,0);
@@ -121,16 +118,13 @@ void dialog_engine::init(character_base *mynpc, char * dlg_file, u_int8 size)
     // sel->set_auto_scrollbar (true); 
 
     sel->set_visible (true); 
-    
-
-    
     sel->set_focus(true); //due an error from window system
     
     // Notification when a dialogue item get's selected
     sel->set_signal_connect (makeFunctor (*this,  &dialog_engine::on_select),
                              win_event::ACTIVATE_KEY);
 
-    // set the NPC's portrait (later:  get the portrait to use from the npc data)
+    // set the NPC's portrait
     set_portrait (mynpc->get_portrait ());
     // ... and name
     set_name ((char *) mynpc->get_name().c_str ());
@@ -235,8 +229,8 @@ void dialog_engine::run ()
     // ... or the player's first answer
     else 
     {
-      cur_answers[0]->set_can_be_selected (false);
-      sel->set_default_object (cur_answers [1]);
+        cur_answers[0]->set_can_be_selected (false);
+        sel->set_default_object (cur_answers[1]);
     }
 
     // Center on the NPC answer
@@ -245,16 +239,6 @@ void dialog_engine::run ()
 
 bool dialog_engine::update ()
 {
-  //sel->update ();
-  // not needed, because if your object sel is added at this container
-  
-  
-  /*
-    it is automatic, just by select
-  // catch other keypresses 
-    if (input::is_pushed (SDLK_LEFT)) sel->up ();
-    if (input::is_pushed (SDLK_RIGHT)) sel->down ();
-  */
     return (win_container::update() && is_running);
 }
 
@@ -284,37 +268,29 @@ void dialog_engine::insert_plugin ()
 // Set / change the NPC-portrait
 void dialog_engine::set_portrait (const string & new_portrait)
 {
-  /* image * portrait = new image (64, 64);
-    portrait->load_pnm (new_portrait);
-    portrait->set_mask (true);
-
-    face->set_image (portrait);
-    delete portrait;*/
- 
-  if (new_portrait == "") 
-  {
-      face->image::resize (64, 64);
-      face->fillrect (0, 0, 64, 64, 0);
-      return; 
-  }
-  face->load_pnm(string ("gfx/portraits/") + new_portrait);
-  face->set_mask(true);
-  face->pack();
+    if (new_portrait == "")
+    {
+        face->image::resize (64, 64);
+        face->fillrect (0, 0, 64, 64, 0);
+        return;
+    }
+    face->load_pnm(string ("gfx/portraits/") + new_portrait);
+    face->set_mask(true);
+    face->pack();
 }
 
 // Set / change the NPC-name
 void dialog_engine::set_name (char *new_name)
 {
-  name->set_text (new_name);
-  name->pack (); 
+    name->set_text (new_name);
+    name->pack ();
 }
 
 // Set a different NPC
 void dialog_engine::set_npc (char* new_npc)
 {
-  //     character_base *mynpc = (character_base *) data::characters.get (new_npc);
-  character_base *mynpc = (character_base *) data::characters[new_npc];
+    character_base *mynpc = (character_base *) data::characters[new_npc];
     
-  set_name ((char *) mynpc->get_name().c_str ());
-  set_portrait (mynpc->get_portrait ());
+    set_name ((char *) mynpc->get_name().c_str ());
+    set_portrait (mynpc->get_portrait ());
 }

@@ -235,8 +235,6 @@ void mapcharacter::jump_to (u_int16 smap, u_int16 x, u_int16 y,
 
     switch (pos)
     {
-        case NO_MOVE:
-            break;
         case STAND_NORTH:
             stand_north ();
             break;
@@ -248,6 +246,9 @@ void mapcharacter::jump_to (u_int16 smap, u_int16 x, u_int16 y,
             break;
         case STAND_EAST:
             stand_east ();
+            break;
+        default:
+            stand ();
             break;
     }
 }

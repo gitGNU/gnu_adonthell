@@ -115,8 +115,10 @@ string screen::info ()
          << "Total video memory available:        " << vi->video_mem << " Kb" << endl 
          << ends;
 
-    string ret = temp.str ();
-    
+    char *s = temp.str ();
+    string ret (s);
+    delete[] s;
+
     return ret; 
 }
 

@@ -18,16 +18,16 @@
 #include "event.h"
 
 
-/** The %game slow down if there are more than FTD_LIMIT numbers of frames
+/** The %game slows down if there are more than FTD_LIMIT numbers of frames
  *  to calculate before displaying, in which case it calculates exactly
  *  FTD_LIMIT frames.
  */ 
 #define FTD_LIMIT 100
 
 /**
- * Length of a game cycle, in milliseconds.
- * Decrease it to speed up the game, increase it
- * to slow the game down.
+ * Length of a %game cycle, in milliseconds.
+ * Decrease it to speed up the %game, increase it
+ * to slow the %game down.
  */ 
 #define CYCLE_LENGTH 13
 
@@ -51,9 +51,9 @@ public:
 
     /** 
      * Returns the number of frames that must be calculated before
-     * displaying the game.
+     * displaying the %game.
      * 
-     * @return number of frames to calculate before displaying the game.
+     * @return number of frames to calculate before displaying the %game.
      */ 
     static u_int8 frames_to_do ()
     {
