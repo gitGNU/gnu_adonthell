@@ -13,6 +13,11 @@
 #ifndef __AUDIO_THREAD_H__
 #define __AUDIO_THREAD_H__
 
+// This is our audio 'hook' so audio events can be called
+// from different places
+#include "audio.h"
+static audio *audio_in;
+
 int audio_init();
 void audio_update();
 void audio_cleanup();

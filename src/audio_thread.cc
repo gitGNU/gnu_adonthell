@@ -19,8 +19,6 @@
 #include "SDL_mixer.h"
 #include "SDL_thread.h"
 
-audio *audio_in;
-
 int audio_init() {
 
   // Open the audio device
