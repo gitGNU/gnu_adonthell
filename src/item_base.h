@@ -24,14 +24,16 @@
 #ifndef ITEM_BASE_H
 #define ITEM_BASE_H
 
-#include "character_base.h"
 #include "py_object.h"
 #include "fileops.h"
+#include "slot.h"
 
 using std::string;
 
+class character_base;
+
 /**
- * It is a wrapper for item_base.py, which is the actual item superclass.
+ * It is a wrapper for item.py, which is the actual item superclass.
  * For flexibility, items are implemented on python side. But since they
  * are often used on C++ side, this class provides methods to the most
  * basic item attributes and all possible actions an item might support.
@@ -41,27 +43,44 @@ using std::string;
  * "unequip", "combine" and "use"). Further, an item may have additional
  * attributes. If required, they can be accessed via methods provided by
  * the py_object class.
+ *
+ * There are two 'classes' of items. Of immutable items, only one %object
+ * will be instanciated when loading a saved %game. All copies of such an
+ * item are actually references to the one object. Mutable items however 
+ * will be instanciated as often as copies of that item exist.
  */
 class item_base : public py_object 
 {
 public:
 
     /**
-     * Default constructor. Creates an empty item.
+     * Default constructor. Creates an empty item. For safety reasons
+     * the item's 'class' has to set at construction time. It cannot
+     * be changed ever after.
+     * @param is_mutable whether the item may change its state or not.
+     * @see is_mutable ()
      */
-    item_base () : py_object () {};
+    item_base (bool is_mutable) : py_object () 
+    {
+        Mutable = is_mutable;
+        MaxStack = 1;
+        Next = NULL;
+        Slot = NULL;
+    }
+    
 #ifndef SWIG    
     /**
      * Create a new item from the given item data. 
      * @param item Name of the item data file defining the desired item.
      */
     item_base (const string & item);
-#endif    
+#endif
+        
     /**
      * Destructor.
      */
     ~item_base ();
-    
+     
     /**
      * @name Item Actions
      */
@@ -168,6 +187,60 @@ public:
     { 
         set_attribute_int ("MaxCharge", max_charge); 
     }
+
+    /**
+     * Check whether the item is mutable or immutable. Mutable
+     * items are those that may change their attributes during
+     * livetime. Therefore they need to be treated different
+     * from items that do never change as long as they live.
+     * @return \b true if the item is mutable, \b false otherwise.
+     */
+    bool is_mutable () const
+    {
+        return Mutable;
+    }
+    
+    /**
+     * If the item is kept in an inventory, it will be assigned
+     * to a certain slot. For mutable items, the assignment will be
+     * pertinent. For immutable items however, it will be only temporary
+     * and only valid for the item that is currently manipulated. In
+     * reality, no difference should be notable though.
+     * @return slot holding the item or \c NULL, if it isn't kept in
+     *      an inventory.
+     */
+    slot *get_slot () const
+    {
+        return Slot;
+    }
+    
+    /**
+     * Set the slot this (stack of) item(s) is kept in.
+     * @param s the slot to assign to the item(s).
+     */
+    void set_slot (slot *s)
+    {
+        Slot = s;
+        if (Next != NULL) Next->set_slot (s);
+    }
+    
+    /** 
+     * Check how many items of this kind may be stacked in one slot.
+     * @return maximum size of a stack of this kind of item.
+     */    
+    u_int32 max_stack () const
+    {
+        return MaxStack;
+    }
+    
+    /** 
+     * Set how many items of this kind may be stacked in one slot.
+     * @param max_stack maximum size of a stack of this kind of item.
+     */    
+    void set_max_stack (u_int32 max_stack)
+    {
+        MaxStack = max_stack;
+    }
     //@}
     
     /**
@@ -222,6 +295,58 @@ public:
      */
     bool put_state (ogzstream & file) const;
     //@}
+
+protected:
+#ifndef SWIG
+    /**
+     * The number of items that can be stacked
+     */
+    u_int32 MaxStack;
+            
+    /**
+     * The slot this item is kept in.
+     */
+    slot *Slot;
+
+    /**
+     * Whether the item is mutable or immutable
+     */
+    bool Mutable;
+    
+    /**
+     * If we're dealing with a stack of mutable items, Next will point
+     * to the next item in the stack.
+     */
+    item_base *Next;
+    
+    /**
+     * @name Item Stack handling
+     */
+    //@{
+    friend u_int32 slot::add (item_base * item, const u_int32 & count = 1);
+    friend bool slot::remove (item_base * item, const u_int32 & count = 1);
+
+    /**
+     * Add an item (or stack of items) to this item's stack. We assume
+     * that checks for item equality and number of items on the stack
+     * have been made already. That's why this method is only available 
+     * to friends of %item_base. In fact, it should only be used by
+     * slot::add_item and slot::remove_item.
+     * @param stack Item (stack) to be added to this item. It will be the
+     *      new top of stack.
+     */
+    void stack (item_base *stack);
+    
+    /**
+     * Retrieve number items from this stack. This method will return
+     * the topmost item(s) of the stack. Like item_base::stack, this
+     * method is only available to the slot class.
+     * @param number Number of items to retrieve from the stack.
+     * @return the item(s) remaining in this stack.
+     */
+    item_base *split (u_int32 number = 1);
+    //@}
+#endif SWIG
 };
 
 #endif // ITEM_BASE_H

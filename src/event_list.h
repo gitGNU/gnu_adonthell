@@ -28,6 +28,8 @@
 #include <vector>
 #include "event.h"
 
+using std::string;
+
 #ifndef SWIG
 /**
  * Pointer to a function returning a newly allocated %event
@@ -65,6 +67,10 @@ public:
      */ 
     void clear ();
 
+    /**
+     * @name List Operations
+     */
+    //@{
     /** 
      * Adds an %event to this list. The %event will be
      * registered with the %event_handler and the list will then
@@ -83,6 +89,18 @@ public:
     void remove_event (event* ev);
     
     /**
+     * Try to retrieve the %event with given id from the list.
+     *
+     * @return a pointer to the %event, or \b NULL if it's not in the list.
+     */
+    event *get_event (const string & id);
+    //@}
+    
+    /**
+     * @name Pausing / Resuming execution
+     */
+    //@{
+    /**
      * Disable any events associated with this %event_list. This will
      * effectively stop all actions of the %object the %event_list
      * belongs to, e.g. a NPC.
@@ -96,11 +114,15 @@ public:
     void resume ();
 
     /**
-     * Check whether this %event list is paused.
-     * @return \b true if it is paused, \b false otherwise.
+     * Check whether the %event list is temporarily disabled or not.
+     * @return \b true if it is paused, \b false otherwise.                     
      */
-    bool is_paused () { return Paused; }
-
+    bool is_paused () const
+    {
+        return Paused;
+    }
+    //@}
+    
 #ifndef SWIG    
     /**
      * Register an %event for loading. Before the %event_list can load
@@ -115,7 +137,11 @@ public:
      */
     static void register_event (u_int8 type, new_event e);
 #endif // SWIG
-    
+
+    /**
+     * @name Loading / Saving
+     */
+    //@{
     /** 
      * Save the %event_list to a file.
      * 
@@ -135,6 +161,7 @@ public:
      * @sa register_event ()
      */
     bool get_state (igzstream& in);
+    //@}
 
 #ifndef SWIG
 protected:

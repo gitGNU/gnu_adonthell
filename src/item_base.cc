@@ -24,11 +24,12 @@
 #include <iostream>
 #include <algorithm>
 #include "item_base.h"
+#include "character_base.h"
 
 // ctor
 item_base::item_base (const std::string & item) : py_object ()
 {
-    std::cout << "Item instance of '" << item << "' created" << std::endl;
+    Slot = NULL;
 
     get_state (item);    
 }
@@ -36,7 +37,11 @@ item_base::item_base (const std::string & item) : py_object ()
 // dtor
 item_base::~item_base ()
 {
-    std::cout << "Item instance deleted" << endl;
+    // if the item is still inside an inventory, remove it
+    if (Slot) Slot->remove (this);
+    
+    // if we have a stack of items, delete the whole stack
+    if (Next) delete Next;
     
     py_object::clear ();
 }
@@ -44,8 +49,6 @@ item_base::~item_base ()
 // trigger item's main functionality
 bool item_base::use (character_base *character)
 {
-    std::cout << "Item '" << name () << "' used" << std::endl;
-    
     // can't be used
     if (!has_attribute ("use")) return false;
 
@@ -89,9 +92,13 @@ bool item_base::put_state (ogzstream & file) const
     // do we have a valid item?
     if (!Instance) return false;
     
+    // save the attributes
+    Mutable >> file;
+    MaxStack >> file;
+        
     // save the template this item uses
     class_name () >> file;
-    
+
     // pass file
     PyObject *args = PyTuple_New (1);
     PyTuple_SetItem (args, 0, python::pass_instance (&file, "ogzstream"));
@@ -99,6 +106,14 @@ bool item_base::put_state (ogzstream & file) const
     // save the actual item data
     call_method ("put_state", args);
     Py_DECREF (args);    
+    
+    // recursively save stack
+    if (this->Next)
+    {
+        true >> file;
+        Next->put_state (file);
+    }
+    else false >> file;
     
     return true;
 }
@@ -123,9 +138,14 @@ bool item_base::get_state (const std::string & file)
 bool item_base::get_state (igzstream & file)
 {
     std::string tmpl;
+    bool more;
     
     // clean up, if neccessary
     if (Instance) clear ();
+    
+    // get attributes
+    Mutable << file;
+    MaxStack << file;
     
     // get template to use for item
     tmpl << file;
@@ -140,6 +160,19 @@ bool item_base::get_state (igzstream & file)
     // load actual item data
     call_method ("get_state", args);
     Py_DECREF (args);
+    
+    // add reference to item_base
+    set_attribute ("this", python::pass_instance (this, "item_base"));
+    
+    // recursively get stack
+    more << file;
+    
+    if (more)
+    {
+        Next = new item_base (true);
+        Next->get_state (file);
+    }
+    else Next = NULL;
     
     return true;  
 }
@@ -160,3 +193,32 @@ u_int16 item_base::recharge (u_int16 &charge)
     return charge;
 }
 */
+
+// add item(s) to this stack
+void item_base::stack (item_base *item)
+{
+    item_base *bottom = this;
+    
+    // add given stack on top of our own stack
+    while (bottom->Next) bottom = bottom->Next;
+    bottom->Next = item;
+}
+
+// remove item(s) from this stack
+item_base *item_base::split (u_int32 count)
+{
+    // in case of count = 0, this is a noop
+    if (count == 0) return this;
+    
+    item_base *remaining, *stack = this;
+    
+    // retrieve the topmost items
+    while (--count) stack = stack->Next;
+    remaining = stack->Next;
+    
+    // split this stack
+    stack->Next = NULL;
+    set_slot (NULL);
+    
+    return remaining;    
+}

@@ -79,6 +79,17 @@ void event_list::remove_event (event *ev)
     if (i != Events.end ()) Events.erase (i);
 }
 
+// retrieve event by its id
+event *event_list::get_event (const string & id)
+{
+    vector<event*>::iterator i;
+
+    for (i = Events.begin (); i != Events.end (); i++)
+         if ((*i)->id () == id) return *i;
+    
+    return NULL;   
+}
+
 // disable all events in the list
 void event_list::pause ()
 {

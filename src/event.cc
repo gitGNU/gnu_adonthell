@@ -33,6 +33,7 @@ event::event ()
     PyFunc = NULL;
     Args = NULL;
     List = NULL;
+    Id = "";
 }
 
 // destructor
@@ -136,6 +137,7 @@ void event::set_callback (const Functor0 & callback)
 void event::put_state (ogzstream & file) const
 {
     Type >> file;
+    // Id >> file;
     Repeat >> file;
     Paused >> file;
     Action >> file;
@@ -173,6 +175,7 @@ bool event::get_state (igzstream & file)
 {
     // Note that »Type« is already read by event_list::load to
     // determine what event subclass to instanciate
+    // Id << file;
     Repeat << file;
     Paused << file;
     Action << file;

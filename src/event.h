@@ -89,15 +89,40 @@ public:
     void clear ();    
     
     /**
+     * @name Member access
+     */
+    //@{
+    /**
      * Get the event's type.
      *
-     * @return type of the event
+     * @return type of the %event
      */
     u_int8 type () const
     { 
         return Type;
     }
 
+    /**
+     * Get the event's id.
+     *
+     * @return id of the %event.
+     */
+    const string & id () const
+    {
+        return Id;
+    }
+    
+    /**
+     * Assign an id to the %event, so it may be retrieved from an
+     * event_list later on, without having a pointer to it.
+     *
+     * @param id a string to identify the %event.
+     */
+    void set_id (const string & id)
+    {
+        Id = id;
+    }
+    
     /**
      * Test whether the %event is registered with the %event handler.
      *
@@ -147,7 +172,8 @@ public:
     {
         Repeat = count;
     }
-
+    //@}
+    
     /**
      * @name Event Handling
      */
@@ -227,7 +253,7 @@ public:
 
     /**
      * Check whether the %event is temporarily disabled or not.
-     * @return \b true if it is paused, \b false otherwise.                                                       
+     * @return \b true if it is paused, \b false otherwise.                     
      */
     bool is_paused () const
     {
@@ -280,6 +306,11 @@ protected:
      */ 
     u_int8 Type;
 
+    /**
+     * (Optional) Id of the event
+     */
+    string Id;
+    
     /**
      * What happens if the event occurs - see enum above.
      */
