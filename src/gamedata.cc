@@ -38,6 +38,7 @@
 vector<gamedata*> gamedata::saves;       // The list of available savegames
 string gamedata::user_data_dir_;         // The user's private adonthell directory
 string gamedata::game_data_dir_;         // The adonthell data directory
+string gamedata::game_name;              // The adonthell data directory
 
 
 using namespace std; 
@@ -218,7 +219,7 @@ bool gamedata::save (u_int32 pos, string desc)
             // that's the directory we're going to save to
             sprintf(t,"%03i",pos++);
             filepath = user_data_dir ();
-            filepath += "/adonthell-save-";
+            filepath += "/" + game_name + "-save-";
             filepath += t;
             
             success = mkdir (filepath.c_str(), 0700);
@@ -360,23 +361,23 @@ gamedata* gamedata::next_save ()
 }
 
 
-bool gamedata::init (string udir, string gdir)
+bool gamedata::init (string udir, string gdir, string gname)
 {
     DIR *dir;
     igzstream in;
     struct dirent *dirent;
     struct stat statbuf;
     gamedata *gdata;
-
+ 
     user_data_dir_ = udir; 
     game_data_dir_ = gdir; 
+    game_name = gname; 
     
     // try to change into data directory
     if (chdir (game_data_dir ().c_str ()))
     {
-        cerr << "\nSeems like " << game_data_dir () << " is no valid data directory."; 
-        cerr << "\nIf you have installed the Adonthell data files into a different location,";
-        cerr << "\nplease make sure to update the $HOME/.adonthell/adonthellrc file\n";
+        cerr << "\nSeems like " << game_data_dir () << " is no valid data directory.";
+        cerr << "\nMake sure that your Adonthell installation is correct.\n"; 
         return false;
     }
 
@@ -392,9 +393,11 @@ bool gamedata::init (string udir, string gdir)
         {
             string filepath = user_data_dir () + "/";
             filepath += dirent->d_name; 
- 
+
+            string name_save = game_name + "-save-"; 
+            
             if (stat (filepath.c_str (), &statbuf) != -1 && S_ISDIR (statbuf.st_mode) && 
-                strncmp ("adonthell-save-", dirent->d_name, 15) == 0)
+                strncmp (name_save.c_str (), dirent->d_name, 15) == 0)
             {
                 // found a (possibly) valid saved game directory
                 filepath += "/save.data"; 

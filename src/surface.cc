@@ -47,7 +47,7 @@ void surface::set_mask (bool m)
 {
     if (m != is_masked ())
     {
-        mask_on = m; 
+        mask_on = m;
         changed = true; 
     }
 }

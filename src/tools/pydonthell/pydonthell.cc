@@ -36,7 +36,11 @@ extern "C"
 int main(int argc, char * argv[])
 {
     // Init the game engine
-    if (!game::init (argc, argv)) 
+    config myconfig;
+    myconfig.read_adonthellrc (); 
+    myconfig.gamedir = "."; 
+    
+    if (!game::init (myconfig)) 
         return 1;
 
     

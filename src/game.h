@@ -27,6 +27,7 @@
 #ifndef GAME_H__
 #define GAME_H__
 
+
 #include "prefs.h"
 #include "gamedata.h"
 #include "python.h"
@@ -59,7 +60,7 @@ public:
      *     - false Initialisation failure - don't go any further and
      *             quit.
      */ 
-    static bool init (int argc, char** argv, initflags to_init = INIT_ALL);
+    static bool init (config & configuration, initflags to_init = INIT_ALL);
 
     /** Cleanup everything and quit.
      *  Performs the following:
@@ -71,20 +72,16 @@ public:
      *         -# Shutdown SDL and video.
      */ 
     static void cleanup (); 
-    
+
 private:
+    static string game_name_;
+
     /**
      * Keep trace of initiated subsystems.
      * 
      */ 
     static initflags initiated;
-    
-    /**
-     * The game's configuration data
-     * 
-     */ 
-    static config *configuration;
-    
+         
     /**
      * Initialise the game's data.
      * 

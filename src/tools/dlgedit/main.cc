@@ -43,10 +43,12 @@ main (int argc, char *argv[])
     MainFrame *MainWnd = new MainFrame;
 
     // try to read adonthellrc to get path to script directory
-    config myconf (argc > 1 ? argv[1] : "");
+    config myconf;
     if (!myconf.read_adonthellrc ())
         return 1;
 
+    myconf.gamedir = "."; 
+    
     gtk_init (&argc, &argv);
 
     // Init Python interpreter
@@ -65,11 +67,11 @@ main (int argc, char *argv[])
     free (path);
     
     // Insert our script directory to python's search path
-    sprintf (tmp, "%s/scripts", myconf.datadir.c_str ());
+    sprintf (tmp, "%s/scripts", myconf.gamedir.c_str ());
     python::insert_path (tmp);
     
     // ... and the modules directory as well
-    sprintf (tmp, "%s/scripts/modules", myconf.datadir.c_str ());
+    sprintf (tmp, "%s/scripts/modules", myconf.gamedir.c_str ());
     python::insert_path (tmp);
 
     // Load module
@@ -90,7 +92,7 @@ main (int argc, char *argv[])
     PyObject *chars = PyDict_New ();
     PyDict_SetItemString (data::globals, "characters", chars);
 
-    sprintf (tmp, "%s/character.data", myconf.datadir.c_str ());
+    sprintf (tmp, "%s/character.data", myconf.gamedir.c_str ());
 
     // load characters from character.data
     igzstream in(tmp);
@@ -130,7 +132,7 @@ main (int argc, char *argv[])
     PyDict_SetItemString (data::globals, "quests", quests);
 
     // try to open quest.data
-    sprintf (tmp, "%s/quest.data", myconf.datadir.c_str ());
+    sprintf (tmp, "%s/quest.data", myconf.gamedir.c_str ());
     in.open (tmp); 
 //     in = gzopen (tmp, "r");
 

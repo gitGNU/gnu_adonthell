@@ -49,8 +49,12 @@ int main(int argc, char * argv[])
 #ifdef MEMORY_LEAKS
     mtrace ();
 #endif
+
+    config myconfig;
+    myconfig.read_adonthellrc (); 
+    myconfig.parse_arguments (argc, argv); 
     
-    if (!game::init (argc, argv)) return 1; 
+    if (!game::init (myconfig)) return 1; 
     
     python::exec_file("init.py");
     

@@ -30,14 +30,7 @@ num    {digit}+
 
 "#".*[\n]? ;        /* Eat up comments */
 
-Default             return PREFS_DEFAULT;
-Section             return PREFS_SECTION;
-End                 return PREFS_END;
-Data                return PREFS_DATA;
-Map                 return PREFS_MAP;
-Screen-resolution   return PREFS_SCREEN_RESOLUTION;
 Screen-mode         return PREFS_SCREEN_MODE;
-Window-theme        return PREFS_WINDOW_THEME;
 Audio-channels      return PREFS_AUDIO_CHANNELS;
 Audio-resolution    return PREFS_AUDIO_RESOLUTION;
 Audio-sample-rate   return PREFS_AUDIO_SAMPLE_RATE;

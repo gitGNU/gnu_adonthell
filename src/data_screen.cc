@@ -42,8 +42,8 @@ data_screen::data_screen (int m) : win_container (30, 15, 260, 210, NULL)
     entry = NULL;
 
     // Create GUI
-    font = new win_font (win_theme::theme);
-    theme = new win_theme (win_theme::theme);
+    font = new win_font (WIN_THEME_ORIGINAL);
+    theme = new win_theme (WIN_THEME_ORIGINAL);
     set_theme (theme);
 
     image_list = new win_select (10, 0, 250, 210, theme);

@@ -93,7 +93,7 @@ public:
      * Initialise the saved games array.
      * 
      */
-    static bool init (string udir, string gdir); 
+    static bool init (string udir, string gdir, string gname); 
     
     /** 
      * Cleanup the saved games array.
@@ -146,6 +146,8 @@ private:
     string description_;                      // user supplied description of the game
     string location_;                         // the map or area the player is on
     string time_;                             // the gametime of the save
+    
+    static string game_name; 
     
     /** 
      * Keeps track of available save games.

@@ -21,8 +21,6 @@
 #include "win_scrollbar.h"
 #include "win_theme.h"
 
-char *win_theme::theme = WIN_THEME_ORIGINAL;
-
 win_theme::win_theme(char * theme)
 {
   normal=new win_border(theme,WIN_BORDER_NORMAL_SIZE);

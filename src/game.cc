@@ -41,9 +41,7 @@
 
 
 initflags game::initiated = INIT_NONE;
-config * game::configuration = NULL; 
 PyObject * game::py_module = NULL;
- 
 
 /*
  * SWIG init prototypes. Should we use dynamic linking??? 
@@ -59,32 +57,19 @@ extern "C"
 
 
 // Initialize all parts of the game engine
-bool game::init (int argc, char **argv, initflags to_init = INIT_ALL)
+bool game::init (config & configuration, initflags to_init = INIT_ALL)
 {
-    if (configuration) delete configuration;
-    
-    configuration = new config (argc > 1 ? argv[1] : "");
-    
-    // try to read adonthellrc
-    if (!configuration->read_adonthellrc ())
-        return false;
-
     // init game loading/saving system
     if (to_init & INIT_SAVES) 
     { 
-        gamedata::init (configuration->get_adonthellrc (), configuration->datadir); 
+        gamedata::init (configuration.get_adonthellrc (), configuration.gamedir, configuration.game_name); 
     }
     
     // init video subsystem
     if (to_init & INIT_VIDEO) 
     { 
         screen::set_video_mode (320, 240);
-        screen::set_fullscreen (configuration->screen_mode);
-
-        // set the theme
-        win_theme::theme = new char[strlen(configuration->window_theme.c_str ())];
-        strcpy (win_theme::theme, configuration->window_theme.c_str ());
-        strcat (win_theme::theme,"/");
+        screen::set_fullscreen (configuration.screen_mode); 
     }
     
 
@@ -92,7 +77,7 @@ bool game::init (int argc, char **argv, initflags to_init = INIT_ALL)
     // init audio subsystem
     if (to_init & INIT_AUDIO) 
     { 
-        audio::init (configuration);
+        audio::init (&configuration);
     }
 #endif 
     
@@ -157,14 +142,7 @@ void game::cleanup ()
     if (initiated & INIT_PYTHON) 
     {
         SDL_Quit ();
-        // Delete the theme
-        delete[] win_theme::theme; 
     }
-    
-    // save the config file
-    configuration->write_adonthellrc ();
-    delete configuration;
-    configuration = NULL;  
 }
 
 void game::init_data ()
@@ -216,8 +194,12 @@ void game::cleanup_data ()
 bool game::init_python () 
 {
     // Initialise the import path.
-    python::insert_path("scripts");
-    python::insert_path("scripts/modules");
+    // Shared modules path
+    python::insert_path (DATA_DIR"/modules"); 
+
+    // Game specific path
+    string t = gamedata::game_data_dir () + "/scripts/modules"; 
+    python::insert_path((char *) t.c_str ());
 
     /* Initialise SWIG module. This should go if we ever switch to dynamic 
        link */

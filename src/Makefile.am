@@ -4,9 +4,13 @@ if BUILD_TOOLS
 SUBDIRS = . tools
 endif
 
+moddatadir = $(gamedatadir)/modules
+
+moddata_DATA = adonthell.py
+
 bin_PROGRAMS = adonthell
 
-EXTRA_DIST = win_info.cc win_file_select.cc .indent.pro prefs.l win_query.cc py_adonthell.i
+EXTRA_DIST = win_info.cc win_file_select.cc .indent.pro prefs.l win_query.cc py_adonthell.i adonthell.py
 
 CPPFLAGS +=-DUSE_PYTHON -DUSE_MAP $(SDL_DEFS) $(OGG_DEFS) $(SDL_CFLAGS) $(OGG_CFLAGS) $(PY_CFLAGS)
 
@@ -32,17 +36,19 @@ win_file.h win_file_select.h win_font.h win_image.h win_info.h win_label.h \
 win_query.h win_scrollbar.h win_scrolled.h win_select.h win_theme.h win_types.h \
 win_write.h win_manager.h window.h yarg.h
 
+
+# Note: adonthell.py is also built by this target. 
 py_adonthell_wrap.cc : py_adonthell.i *.h
 	swig -python -shadow -I/usr/local/include/SDL -I/usr/include/SDL -I./ -I../ -c++ -make_default -o $*.cc py_adonthell.i
-	@datapath=`grep '^ *Data' ~/.adonthell/adonthellrc | sed 's/^ *Data *\[\(.*\)\] *$$/\1/'` ;\
-	for subdir in $$datapath ; do \
-	  if test -d "$$subdir" ; then \
-	    echo "Copying adonthell.py to $$subdir/scripts/modules" ; \
-	    cp adonthell.py $$subdir/scripts/modules ; \
-	  else \
-	    echo "$$subdir/scripts/modules isn't a valid directory. Check your config file!" ; \
-	  fi ; \
-	done
+#	@datapath=`grep '^ *Data' ~/.adonthell/adonthellrc | sed 's/^ *Data *\[\(.*\)\] *$$/\1/'` ;\
+#	for subdir in $$datapath ; do \
+#	  if test -d "$$subdir" ; then \
+#	    echo "Copying adonthell.py to $$subdir/scripts/modules" ; \
+#	    cp adonthell.py $$subdir/scripts/modules ; \
+#	  else \
+#	    echo "$$subdir/scripts/modules isn't a valid directory. Check your config file!" ; \
+#	  fi ; \
+#	done
 
 lex.prefs.cc : prefs.l
 	flex -olex.prefs.cc $<

@@ -52,7 +52,7 @@ void dialog_engine::init(character_base *mynpc, char * dlg_file, u_int8 size)
     fonts[4] = new win_font ("blue/");
     fonts[5] = new win_font ("green/");
     
-    theme = new win_theme (win_theme::theme);
+    theme = new win_theme (WIN_THEME_ORIGINAL);
     set_theme (theme);
 
     // Full or half-sized window

@@ -12,44 +12,199 @@
    See the COPYING file for more details.
 */
 
-#include <iostream.h>
+#include <iostream> 
+#include <fstream> 
 #include <sys/stat.h>
+#include <sys/types.h>
+#include <dirent.h>
 #include <fstream.h>
+#include <unistd.h>
+#include <getopt.h>
+
 
 #include "prefs.h"
 
-config::config (string s) : section (s)
+config::config () 
 {
-    alt_configs = NULL;                     // Alternative Configurations
-    defaults = "adonthell";                 // Default configuration
-    
     // set some default values where possible
     datadir = "/usr/local/share/adonthell"; // Directory containing the gamedata
-    mapname = "maptest.map";                // Map to load on startup
-    screen_resolution = 0;                  // 320x240
-    screen_mode = 1;                        // Fullscreen
-    window_theme = "original/";             // Default theme
+    screen_mode = 0;                        // Fullscreen
     audio_channels = 1;                     // Stereo
     audio_resolution = 1;                   // 16 bit
     audio_interpolation = 1;                // Interpolation on
     audio_sample_rate = 2;                  // 11025, 22050 or 44100 Hz
-    audio_volume = 50;                      // 0 - 100%
-
+    audio_volume = 100;                     // 0 - 100%
+    
     // set the path to the adonthellrc file:
     adonthellrc = string (getenv ("HOME")) + "/.adonthell"; 
 }
+ 
+/**
+ * Displays the help message - for internal use only.
+ * 
+ */ 
+void print_help_message (char * argv[]) 
+{
+    cout << "Usage: " << argv[0] << " [OPTIONS] GAME" << endl;
+    cout << endl;
+    cout << "Where [OPTIONS] can be:\n";
+    cout << "-h         print this help message" << endl; 
+    cout << "-d         print the data directory and exit" << endl; 
+    cout << "-v         print version and exit" << endl; 
+    cout << "-l         list installed games and exit" << endl;
+    cout << "-g dir     play the game contained in dir (for development only) " << endl; 
+}
+
+/**
+ * Displays the available games - for internal use only.
+ * 
+ */ 
+void print_available_games () 
+{
+    struct dirent * d;
+    DIR * mydir = opendir (DATA_DIR"/games"); 
+    bool nogames = true; 
+ 
+    if (!mydir) 
+    {
+        cerr << "Cannot open directory " << DATA_DIR"/games!" << endl;
+        exit (1); 
+    }
+
+    while ((d = readdir (mydir)) != NULL)
+    {
+        string s (d->d_name); 
+        if (s != "." && s != "..")
+        {
+            if (nogames) 
+            {
+                nogames = false;
+                cout << "Installed games (Suitable for the GAME parameter):\n"; 
+            }
+            cout << " - " << d->d_name << endl; 
+        }
+    }
+
+    if (nogames) cout << "No games available.\n"; 
+    
+    closedir (mydir); 
+}
+
+void config::parse_arguments (int argc, char * argv[])
+{     
+    int c;
+    
+    // Check for options
+    while (1)
+    {
+        c = getopt (argc, argv, "ldhvg:");
+        if (c == -1)
+            break;
+        
+        switch (c)
+        { 
+            case 'l':
+                print_available_games (); 
+                exit (0); 
+                break;
+                
+            case 'd':
+                cout << DATA_DIR << endl;
+                exit (0); 
+                break;
+                
+            case 'v':
+                cout << VERSION << endl;
+                exit (0); 
+                break;
+                
+            case 'g':
+              { 
+                gamedir = optarg;
+                if (gamedir[gamedir.size () - 1] == '/')
+                  gamedir.erase (gamedir.size () - 1);
+                
+                // Check whether the requested game directory exists
+                DIR * mydir = opendir (gamedir.c_str ()); 
+                
+                if (!mydir) 
+                  {
+                    cerr << "Cannot open directory " << gamedir << "!" << endl;
+                    exit (1); 
+                  }
+                closedir (mydir);
+                
+                break;
+              }
+              
+            case '?':
+            case 'h':
+                print_help_message (argv);
+                exit (0);
+                break;                 
+        }
+    }
+
+    // Check whether the GAME parameter is needed
+    if (gamedir == "")
+      { 
+        
+        // Check whether the GAME parameter is given
+        if (argc - optind != 1)
+          {
+            print_help_message (argv);
+            exit (0);
+          }
+        
+        // Check whether the requested game exists
+        struct dirent * d;
+        DIR * mydir = opendir (DATA_DIR"/games"); 
+        bool found = false; 
+        
+        if (!mydir) 
+          {
+            cerr << "Cannot open directory " << DATA_DIR"/games!" << endl;
+            exit (1); 
+          }
+        
+        while ((d = readdir (mydir)) != NULL)
+          {
+            if (string (d->d_name) == argv[optind]) found = true; 
+          }
+        
+        closedir (mydir); 
+        
+        if (!found) 
+          {
+            cerr << "Game " << argv[optind] << " can't be found.\n"; 
+            exit (1); 
+          }
+        
+        // The game exists, so let the show continue...
+        gamedir = DATA_DIR"/games/"; 
+        gamedir += argv[1];
+      }
+    // Now check whether the directory is a valid game directory
+    string tfile = gamedir + "/gamename.txt"; 
+    ifstream f (tfile.c_str ()); 
+    if (!f.is_open ()) 
+      {
+        cerr << "Directory " << gamedir << " is not a valid game directory.\n";
+        exit (1); 
+      }
+    char t[256];
+    f.getline (t, 256); 
+    game_name = t;
+    f.close ();
+}
+
+
 
 // That's more or less a move operator, as the source is destroyed
 config& config::operator =(const config *c)
 {
-    alt_configs = c->alt_configs;
-    defaults = c->defaults;
-    section = c->section;
     datadir = c->datadir;
-    mapname = c->mapname;
-    screen_resolution = c->screen_resolution;
     screen_mode = c->screen_mode;
-    window_theme = c->window_theme;
     audio_channels = c->audio_channels; 
     audio_resolution = c->audio_resolution;
     audio_interpolation = c->audio_interpolation;
@@ -75,29 +230,8 @@ void config::write_adonthellrc ()
 
     rc << "# Sample Adonthell configuration file;\n"
        << "# edit to your needs!\n\n"
-       << "# Default [section]\n#   Section to load if engine is called"
-       << " without parameter\n"
-       << "Default [" << defaults << "]\n\n";
-
-    save_section (rc);
-    rc.close ();
-}
-
-void config::save_section (ofstream &rc)
-{
-    rc << "Section [" << section << "]\n\n"
-       << "# Data [path]\n#   Path to the games data directory\n"
-       << "    Data [" << datadir << "]\n\n"
-       << "# Map [file]\n#   Filename of the standard map to load\n"
-       << "    Map [" << mapname << "]\n\n"
-// Currently unused
-//       << "# Screen-resolution num\n#   0  Low (320x240) resolution\n"
-//       << "#   1  High (640x480) resolution\n"
-//       << "    Screen-resolution " << (int) screen_resolution << "\n\n"
        << "# Screen-mode num\n#   0  Windowed mode\n"
        << "#   1  Fullscreen mode\n    Screen-mode " << (int) screen_mode << "\n\n"
-       << "# Window-theme [theme]\n#   original   - default Adonthell theme by Cirrus"
-       << "\n#   silverleaf - by Kaiman\n    Window-theme [" << window_theme << "]\n\n"
        << "# Audio-channels num\n#   0  Mono\n#   1  Stereo\n"
        << "    Audio-channels " << (int) audio_channels << "\n\n"
        << "# Audio-resolution num\n#   0  8 bit\n#   1  16 bit\n"
@@ -107,21 +241,19 @@ void config::save_section (ofstream &rc)
        << "# Audio-interpolation num\n#   0  Off\n#   1  On\n"
        << "    Audio-interpolation " << (int) audio_interpolation << "\n\n"
        << "# Audio-volume num\n#   0 - 100 %\n"
-       << "    Audio-volume " << (int) audio_volume << "\n\n"
-       << "End\n\n";
+       << "    Audio-volume " << (int) audio_volume << "\n\n"; 
 
-    // recusively save all the other sections :)
-    if (alt_configs != NULL) alt_configs->save_section (rc);
+    rc.close ();
 }
 
 int config::read_adonthellrc ()
 {
-    int n, i = 1, got_it = 0;
+    int n, i = 1;
     string s, fname = adonthellrc + "/adonthellrc";
-    config *c;
+    //     config *c;
 
     // try to create that directory in case it dosn't exist
-    mkdir (adonthellrc.data (), 0700);
+    mkdir (adonthellrc.c_str (), 0700);
 
     // prefsin is declared in lex.prefs.c
     prefsin = fopen (fname.c_str (), "r");
@@ -129,10 +261,6 @@ int config::read_adonthellrc ()
     // open failed -> try to write new configuration 
     if (!prefsin)
     {
-        // when writing a new configuration, defaults has to match section
-        if (section != "") defaults = section;
-        else section = defaults;
-        
         write_adonthellrc ();
 
         // now try again
@@ -147,111 +275,9 @@ int config::read_adonthellrc ()
     {
         switch (i = parse_adonthellrc (n, s))
         {
-            case PREFS_DEFAULT:
-            {
-                if (parse_adonthellrc (n, s) == PREFS_STR)
-                    defaults = s;
-
-                if (section == "")
-                    section = defaults;
-                        
-                break;
-            }
-
-            case PREFS_SECTION:
-            {
-                if (parse_adonthellrc (n, s) == PREFS_STR)
-                {
-                    // In case no section and no defaults given, load the
-                    // first one
-                    if (section == "") section = s;
-                        
-                    // This is the section we have been given to load, 
-                    if (section == s)
-                    {
-                        load_section ();
-                        got_it = 1;
-                    }
-                    // Load the rest and add them to the list o' sections
-                    else
-                    {
-                        c = new config (s);
-                        c->load_section ();
-                        c->alt_configs = alt_configs;
-                        alt_configs = c;
-                    }
-                }
-
-                break;
-            }
-
-            default: break;
-        }
-    } 
-
-    fclose (prefsin);
-    
-    if (!got_it)
-    {
-        // See if we've got any other section we might use
-        if (alt_configs != NULL)
-        {
-            cout << "\nCan't find the \"" << section << "\" section of the"
-                 << " adonthellrc file.\nLoading \"" << alt_configs->section
-                 << "\" instead.\n" << flush;
-
-            *this = alt_configs;
-            return 1;
-        }
-    
-        // If we arrive here, no configuration has been loaded
-        cout << "\nSorry, could not load the configuration \"" << section << "\".\n"
-             << "Please check the " << adonthellrc << "/adonthellrc file\n"
-             << "for available configurations.\n" << flush;
-        return 0;
-    }
-    
-    return 1;
-}
-
-void config::load_section ()
-{
-    int n, i = 1;
-    string s;
-
-    while (i)
-    {
-        switch (i = parse_adonthellrc (n, s))
-        {
-            case PREFS_END: return;
-            
-            case PREFS_DATA:
-            {
-                if (parse_adonthellrc (n, s) == PREFS_STR) datadir = s;
-                break;
-            }
-
-            case PREFS_MAP:
-            {
-                if (parse_adonthellrc (n, s) == PREFS_STR) mapname = s;
-                break;
-            }
-
-            case PREFS_SCREEN_RESOLUTION:
-            {
-                if (parse_adonthellrc (n, s) == PREFS_NUM) screen_resolution = n;
-                break;
-            }
-
             case PREFS_SCREEN_MODE:
             {
                 if (parse_adonthellrc (n, s) == PREFS_NUM) screen_mode = n;
-                break;
-            }
-
-            case PREFS_WINDOW_THEME:
-            {
-                if (parse_adonthellrc (n, s) == PREFS_STR) window_theme = s;
                 break;
             }
 
@@ -288,4 +314,9 @@ void config::load_section ()
             default: break;
         }
     }    
+
+    fclose (prefsin);
+         
+    return 1;
 }
+

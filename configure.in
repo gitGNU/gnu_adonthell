@@ -7,7 +7,6 @@ AC_INIT(README)
 AM_INIT_AUTOMAKE(adonthell, 0.3pre1)
 
 CFLAGS="-g -Wall"
-#LIBS="-lz"
 DEFS=""
 
 dnl Checks for programs.
@@ -33,7 +32,19 @@ AC_ARG_ENABLE(doc,
 AC_ARG_WITH(ogg,
 [  --with-ogg=DIR         Set where the Ogg library is located]) 
 AC_ARG_WITH(vorbis,
-[  --with-vorbis=DIR      Set where the Vorbis library is located]) 
+[  --with-vorbis=DIR      Set where the Vorbis library is located])
+AC_ARG_WITH(data-dir,
+[  --with-data-dir=DIR    Directory where datas will be installed],
+            gamedatadir="$withval", gamedatadir=none)
+
+
+dnl **********************
+dnl Set the data directory
+dnl **********************
+if test x$gamedatadir = xnone; then
+  gamedatadir="${datadir}/adonthell"
+fi
+DEFS="$DEFS -DDATA_DIR=\"\\\"$gamedatadir\\\"\""
 
 
 dnl **********************
@@ -301,6 +312,7 @@ AC_SUBST(GTK_CFLAGS)
 AC_SUBST(GTK_LIBS)
 AC_SUBST(PY_CFLAGS)
 AC_SUBST(PY_LIBS)
+AC_SUBST(gamedatadir)
   
 AC_OUTPUT([
 Makefile
