@@ -254,6 +254,28 @@ public:
      * 
      */
     ~mapsquare ();
+
+    /** 
+     * Returns the X position of this mapsquare.
+     * 
+     * 
+     * @return X position of this mapsquare.
+     */
+    u_int16 x ()
+    {
+        return x_; 
+    }
+
+    /** 
+     * Returns the Y position of this mapsquare.
+     * 
+     * 
+     * @return Y position of this mapsquare.
+     */
+    u_int16 y ()
+    {
+        return y_; 
+    }
     
     /** 
      * Returns whether the mapsquare is free for a character to go on or not.
@@ -272,6 +294,43 @@ public:
      */
     mapcharacter *whoshere (); 
 
+    /**
+     * @name Pathfinding data members.
+     *
+     * These members are here to allow faster and more efficient
+     * pathfinding. Though they can as well be used for something else,
+     * but their value isn't guaranteed to stay constant. It's safe anyway
+     * to modify them, that's why they are public and uninitialize.
+     * 
+     */ 
+    //@{
+    
+    /**
+     * Distance from the source square.
+     * 
+     */  
+    u_int16 g; 
+
+    /**
+     * Estimated distance to the goal square.
+     * 
+     */  
+    u_int16 h; 
+
+    /**
+     * Sum of g + h.
+     * 
+     */  
+    u_int16 f;
+
+    /**
+     * Parent square for the path
+     * 
+     */
+    mapsquare * parent; 
+
+    //@}
+
 private: 
 #ifndef SWIG
     /// List of mapsquare_tiles.
@@ -286,6 +345,9 @@ private:
     /// List of mapsquare_chars.
     list <mapsquare_char> mapchars;
 
+    /// Coordinates of the square.
+    u_int16 x_, y_; 
+    
     friend class mapcharacter; 
     friend class mapsquare_area; 
     friend class landmap;
@@ -373,8 +435,7 @@ public:
     void resize_area (u_int16 nl, u_int16 nh); 
 
     //@}
-
-    
+     
 private:
     /**
      * Forbids value passing.

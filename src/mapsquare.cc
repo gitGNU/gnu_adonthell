@@ -222,4 +222,12 @@ void mapsquare_area::resize_area (u_int16 nl, u_int16 nh)
     area.resize (nl);
     for (i = area.begin (); i !=  area.end (); i++)
         i->resize (nh);
+
+    u_int16 j, k;
+    for (j = 0; j < nl; j++)
+        for (k = 0; k < nh; k++)
+        {
+            area[j][k].x_ = j; 
+            area[j][k].y_ = k;
+        }
 }

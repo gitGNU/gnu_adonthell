@@ -38,10 +38,10 @@
 #include "character_base.h"
 #include "mapsquare_walkable.h"
 #include "py_script.h"
-
+#include "path.h"
 
 class landmap; 
-
+class path; 
 
 /**
  * @name mapcharacter moves.
@@ -576,7 +576,11 @@ public:
     {
         return current_move;
     }
-
+ 
+    bool set_goal (u_int16 x, u_int16 y);
+    bool follow_path (); 
+    bool goal_reached (); 
+    
     //@}
     
 
@@ -723,7 +727,7 @@ public:
     {
         *this = src; 
     }
-
+      
 private:
     /**
      * Forbid value passing.
@@ -778,6 +782,18 @@ private:
      */
     void update_move ();
     
+
+    /**
+     * Path used for the mapcharacter to have realistic movments.
+     * 
+     */ 
+    path mypath; 
+
+    /**
+     * Used to count the position on the path
+     * 
+     */ 
+    u_int16 pathindex; 
 
     u_int16 current_move;
     u_int16 ask_move;

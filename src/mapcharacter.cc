@@ -479,6 +479,85 @@ void mapcharacter::go_west ()
     ask_move = WALK_WEST;
 }
 
+bool mapcharacter::set_goal (u_int16 x, u_int16 y)
+{
+    mypath.refmap = mymap ();
+    mypath.submap = submap (); 
+    mypath.start.x = posx ();
+    mypath.start.y = posy (); 
+    mypath.goal.x = x;
+    mypath.goal.y = y;  
+    pathindex = 0; 
+    
+    return mypath.calculate (); 
+}
+
+bool mapcharacter::follow_path () 
+{
+    //  If a movment is engaged, let it finish first.
+    if (offx () || offy ()) return false;
+
+    // If the goal isn't reached yet.
+    if (pathindex < mypath.nbr_moves ())
+    {
+        u_int16 dir = mypath.get_move (pathindex);
+        u_int16 success = 0; 
+
+        // Try to follow the direction
+        switch (dir) 
+        {
+            case WALK_NORTH:
+                if (can_go_north ()) 
+                {
+                    go_north ();
+                    success = 1; 
+                }
+                break;
+
+            case WALK_SOUTH:
+                if (can_go_south ()) 
+                {
+                    go_south ();
+                    success = 1; 
+                }
+                break;
+                
+            case WALK_WEST:
+                if (can_go_west ()) 
+                {
+                    go_west ();
+                    success = 1; 
+                }
+                break;
+                
+            case WALK_EAST:
+                if (can_go_east ()) 
+                {
+                    go_east ();
+                    success = 1; 
+                }
+                break;
+        }
+                 
+        // Who the fuck is on my way!!?@! I have to find a new path now!
+        if (!success) 
+        {
+            mypath.start.x = posx ();
+            mypath.start.y = posy ();
+            mypath.calculate ();
+            pathindex = 0; 
+        }
+        else pathindex++; 
+    }
+    else return true;
+    return false; 
+}
+
+bool mapcharacter::goal_reached () 
+{ 
+    return (pathindex >= mypath.nbr_moves () && currentmove () < WALK_NORTH); 
+}
+
 void mapcharacter::look_invert (u_int16 p)
 {
     switch (p)

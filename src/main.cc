@@ -30,6 +30,8 @@
 
 #include "game.h"
 
+#include "path.h"
+
 using namespace std; 
 
 /**
@@ -49,16 +51,49 @@ int main(int argc, char * argv[])
 #ifdef MEMORY_LEAKS
     mtrace ();
 #endif
+     
+     config myconfig;
+     myconfig.read_adonthellrc ();
+     myconfig.parse_arguments (argc, argv); 
+    
+     if (!game::init (myconfig)) return 1;
 
-    config myconfig;
-    myconfig.read_adonthellrc (); 
-    myconfig.parse_arguments (argc, argv); 
+//      landmap lmap;
+//      lmap.load ("test.map");
+
+//      path mypath;
+//      mypath.refmap = &lmap;
+//      mypath.submap = 0;
+//      mypath.start.x = 27; 
+//      mypath.start.y = 21; 
+//      mypath.goal.x = 27; 
+//      mypath.goal.y = 15;
+
+//      mypath.calculate (); 
+
+//      u_int16 i;
+//      for (i = 0; i < mypath.nbr_moves (); i++) 
+//      {
+//          switch (mypath.get_move (i)) 
+//          {
+//              case WALK_NORTH:
+//                  cout << "WALK_NORTH" << endl;
+//                  break; 
+//              case WALK_SOUTH:
+//                  cout << "WALK_SOUTH" << endl;
+//                  break; 
+//              case WALK_WEST:
+//                  cout << "WALK_WEST" << endl;
+//                  break; 
+//              case WALK_EAST:
+//                  cout << "WALK_EAST" << endl;
+//                  break; 
+//          }
+//      }
+     
+     python::exec_file("init.py");
     
-    if (!game::init (myconfig)) return 1; 
+     game::cleanup (); 
     
-    python::exec_file("init.py");
-    
-    game::cleanup (); 
-    
-    return 0;
+     return 0;
 }

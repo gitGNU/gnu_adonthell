@@ -21,7 +21,7 @@ character_base.cc character.cc gamedata.cc data_screen.cc dialog.cc \
 dialog_engine.cc drawable.cc drawing_area.cc event.cc fileops.cc game.cc \
 gametime.cc image.cc input.cc landmap.cc lex.prefs.cc \
 mapsquare_walkable.cc mapcharacter.cc mapengine.cc \
-mapsquare.cc mapobject.cc mapview.cc pnm.cc prefs.cc \
+mapsquare.cc mapobject.cc mapview.cc path.cc pnm.cc prefs.cc \
 py_callback.cc python.cc py_adonthell_wrap.cc py_script.cc quest.cc \
 screen.cc surface.cc storage.cc win_background.cc win_base.cc win_border.cc \
 win_container.cc win_font.cc win_keys.cc\
@@ -31,7 +31,7 @@ animation.h audio.h audio_loop.h callback.h py_callback.h \
 character_base.h character.h gamedata.h data_screen.h dialog.h dialog_engine.h \
 drawable.h drawing_area.h event.h fileops.h game.h gametime.h image.h input.h inventory.h \
 item.h landmap.h mapsquare.h mapsquare_walkable.h mapcharacter.h mapobject.h mapview.h \
-mapengine.h pnm.h prefs.h python.h py_script.h quest.h screen.h surface.h storage.h \
+mapengine.h path.h pnm.h prefs.h python.h py_script.h quest.h screen.h surface.h storage.h \
 types.h win_background.h win_base.h win_border.h win_container.h \
 win_font.h win_image.h win_label.h win_mapview.h label.h label_input.h \
 win_scrollbar.h win_scroll.h win_select.h win_theme.h win_keys.h win_event.h win_types.h \

@@ -5,3 +5,8 @@ config.cache
 config.log
 config.status
 configure
+config.guess
+config.sub
+libtool
+ltconfig
+ltmain.sh
