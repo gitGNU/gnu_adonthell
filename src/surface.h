@@ -228,8 +228,8 @@ public:
      * Draw a line of color col between coordinates (sx, sy) and (ex, ey).
      *
      */ 
-    void draw_line (s_int16 sx, s_int16 sy, s_int16 ex, s_int16 ey, u_int32 col); 
-    
+    void draw_line (s_int16 sx, s_int16 sy, s_int16 ex, s_int16 ey, u_int32 col, 
+                    drawing_area * da_opt = NULL); 
 
     //@}
 

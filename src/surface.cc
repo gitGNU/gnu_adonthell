@@ -106,7 +106,7 @@ void surface::fillrect (s_int16 x, s_int16 y, u_int16 l, u_int16 h, u_int32 col,
     changed = true; 
 }
 
-void surface::draw_line (s_int16 x1, s_int16 y1, s_int16 x2, s_int16 y2, u_int32 color)
+void surface::draw_line(s_int16 x1, s_int16 y1, s_int16 x2, s_int16 y2, u_int32 color, drawing_area * da_opt = NULL)
 {
    int i;
    int x,y;
@@ -115,6 +115,24 @@ void surface::draw_line (s_int16 x1, s_int16 y1, s_int16 x2, s_int16 y2, u_int32
    int Err;
    int inc1,inc2;
    int offset;
+
+   if (da_opt)
+   {
+       u_int16 mx = da_opt->x() + da_opt->length();
+       u_int16 my = da_opt->y() + da_opt->height();
+
+       if (x1 < da_opt->x()) x1 = da_opt->x();
+       if (x2 < da_opt->x()) x2 = da_opt->x();
+
+       if (x1 >= mx) x1 = mx - 1;
+       if (x2 >= mx) x2 = mx - 1;
+
+       if (y1 < da_opt->y()) y1 = da_opt->y();
+       if (y2 < da_opt->y()) y2 = da_opt->y();
+
+       if (y1 >= my) y1 = my - 1;
+       if (y2 >= my) y2 = my - 1;
+   }
 
    x=x1;
    y=y1;

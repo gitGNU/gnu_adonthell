@@ -12,3 +12,4 @@ ltconfig
 ltmain.sh
 stamp-h
 config.h
+config.h.in
