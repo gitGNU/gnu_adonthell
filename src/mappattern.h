@@ -1,6 +1,8 @@
 #ifndef _mappattern_h
 #define _mappattern_h
 
+#include "gfx.h"
+
 class mappattern
 {
     image * frame;

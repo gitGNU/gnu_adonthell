@@ -1,0 +1,18 @@
+INSTALLING:
+
+Simply type the following:
+
+./configure
+./make
+cp src/mapengine .
+
+Then, type the following to have the Adonthell mapengine run
+a demo map:
+
+./mapengine forest.map
+
+For more information, see the README file. Problems? Don't have 
+the right libraries? Please look at our website for answers:
+
+http://adonthell.linuxgames.com
+ 
