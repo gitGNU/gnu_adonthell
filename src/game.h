@@ -29,6 +29,9 @@
 #ifndef GAME_H__
 #define GAME_H__
 
+#ifndef DATA_DIR
+#define DATA_DIR "."
+#endif
 
 #include <string>
 #include "types.h"

@@ -48,15 +48,15 @@ void screen::set_video_mode (u_int16 nl, u_int16 nh, u_int8 depth = 0)
 {
     u_int8 bpp;
     u_int32 SDL_flags = SDL_HWSURFACE | SDL_DOUBLEBUF;
-    u_int8 emulated = depth; 
-    
-    // Default video depth if none chosen.
-    if (!depth) depth = 16; 
-    
-    bpp = SDL_VideoModeOK (nl, nh, depth, SDL_flags);
+    bool emulated = false;
 
-    if ((emulated) && (bpp) && (bpp != depth)) bpp = depth; 
-    
+    bpp = SDL_VideoModeOK (nl, nh, 16, SDL_flags);
+
+    // Default video depth if none chosen.
+    if (!depth) depth = bpp; 
+    else if (depth != 16 && depth != 24) depth = 16;
+    else if (bpp != depth) emulated = true;
+
     switch (bpp)
     {
         case 0:
@@ -67,7 +67,7 @@ void screen::set_video_mode (u_int16 nl, u_int16 nh, u_int8 depth = 0)
         default:
             if (emulated) cout << "Emulating " << (u_int16) depth << "bpp depth in "
                                << (u_int16) bpp << "bpp mode: " << nl << "x" << nh << ".\n";
-            else cout << "Using " << (u_int16) bpp << "bpp depth: " << nl << "x" << nh << ".\n"; 
+            else cout << "Using " << (u_int16) depth << "bpp depth: " << nl << "x" << nh << ".\n"; 
             bytes_per_pixel_ = bpp / 8; 
             break;
     }
@@ -77,15 +77,15 @@ void screen::set_video_mode (u_int16 nl, u_int16 nh, u_int8 depth = 0)
     // surface destructor musn't free the screen surface
     display.not_screen = false; 
 
-    display.vis = SDL_SetVideoMode (nl, nh, bpp, SDL_flags);
+    display.vis = SDL_SetVideoMode (nl, nh, depth, SDL_flags);
     if (display.vis == NULL)
     {
         fprintf (stderr, "error: %s\n", SDL_GetError ());
         exit (1);
     }
-    
+
     // Setting up transparency color
-    trans = SDL_MapRGB (display.vis->format, 0xFF, 0x00, 0xFF);
+    trans = SDL_MapRGB (display.vis->format, 0xF8, 0x00, 0xF8);
 
     // Setting up the window title
     SDL_WM_SetCaption ("Adonthell", NULL);

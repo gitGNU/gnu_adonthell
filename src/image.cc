@@ -25,7 +25,6 @@
 #include "image.h"
 #include "pnm.h"
 
-
 using std::string; 
 
 image::image () : surface ()
@@ -351,7 +350,7 @@ void image::raw2display (void * rawdata, u_int16 l, u_int16 h)
                                                   0x001F, 0);
 
     vis = SDL_DisplayFormat (tmp2);
-    SDL_FreeSurface (tmp2);
+    SDL_FreeSurface (tmp2);    
 }
 
 void image::pnm2display (void * rawdata, u_int16 l, u_int16 h)
@@ -365,6 +364,16 @@ void image::pnm2display (void * rawdata, u_int16 l, u_int16 h)
                                                   0x0000FF, 0x00FF00,
                                                   0xFF0000, 0);
 
-    vis = SDL_DisplayFormat (tmp2);
-    SDL_FreeSurface (tmp2);
+    // We have to downscale to 16bpp in order for the masking to 
+    // perform properly. This is stupid, but that's the way it is!
+    SDL_Surface *tmp3 = SDL_CreateRGBSurface (0, 1, 1, 16, 
+                                              0xF800, 0x07E0,
+                                              0x001F, 0);
+
+    SDL_Surface *tmp4 = SDL_ConvertSurface (tmp2, tmp3->format, 0);
+    SDL_FreeSurface(tmp3);
+    SDL_FreeSurface(tmp2);
+
+    raw2display(tmp4->pixels, length(), height());
+    SDL_FreeSurface(tmp4);
 }
