@@ -246,12 +246,14 @@ void mapview::draw (s_int16 x, s_int16 y, const drawing_area * da_opt = NULL,
     static u_int16 i0, j0, ie, je;
     static list <mapsquare_tile>::iterator it;
     static list <mapsquare_char>::iterator itc;
+    static list <mapcharacter *>::iterator itb;
     static mapsquare_area *l;
     static u_int16 offx, offy; 
 
     static list <mapsquare_tile> critical_draw;
     static list <mapsquare_char> characters_draw;
-
+    static list <mapcharacter *> bubbles_draw; 
+    
     if (!m_map)
         return;
 
@@ -340,13 +342,17 @@ void mapview::draw (s_int16 x, s_int16 y, const drawing_area * da_opt = NULL,
                 }
                 else
                 {
-                    draw_mapchar (x, y, &tda, target, itc); 
+                    draw_mapchar (x, y, &tda, target, itc);
+                    if (itc->mchar->is_speaking ())
+                            bubbles_draw.push_back (itc->mchar); 
                     itc++;
                 }
             }
             else
             {
                 draw_mapchar (x, y, &tda, target, itc); 
+                if (itc->mchar->is_speaking ()) 
+                        bubbles_draw.push_back (itc->mchar); 
                 itc++;
             }
         }
@@ -406,7 +412,11 @@ void mapview::draw (s_int16 x, s_int16 y, const drawing_area * da_opt = NULL,
         // Drawing characters
         for (itc = characters_draw.begin (); itc != characters_draw.end ();
              itc++)
-            draw_mapchar (x, y, &tda, target, itc); 
+          {
+            draw_mapchar (x, y, &tda, target, itc);
+            if (itc->mchar->is_speaking ()) 
+                    bubbles_draw.push_back (itc->mchar); 
+          }
         characters_draw.clear ();
     }
 
@@ -487,12 +497,16 @@ void mapview::draw (s_int16 x, s_int16 y, const drawing_area * da_opt = NULL,
                 else
                 {
                     draw_mapchar (x, y, &tda, target, itc); 
+                    if (itc->mchar->is_speaking ())
+                            bubbles_draw.push_back (itc->mchar); 
                     itc++;
                 }
             }
             else
             {
                 draw_mapchar (x, y, &tda, target, itc); 
+                if (itc->mchar->is_speaking ()) 
+                        bubbles_draw.push_back (itc->mchar); 
                 itc++;
             }
         }
@@ -502,9 +516,14 @@ void mapview::draw (s_int16 x, s_int16 y, const drawing_area * da_opt = NULL,
             it++;
         }
     }
+
+    for (itb = bubbles_draw.begin (); itb != bubbles_draw.end (); itb++)
+        draw_bubble (x, y, &tda, target, itb); 
+ 
     critical_draw.clear ();
     characters_draw.clear ();
-
+    bubbles_draw.clear (); 
+    
     if (da_opt) da.detach_drawing_area ();
 }
 
@@ -534,4 +553,18 @@ void mapview::draw_mapchar (s_int16 x, s_int16 y, const drawing_area * da_opt,
         + itc->mchar->offy () - offy_ + y;
     
     itc->mchar->draw (xdraw, ydraw, da_opt, target);
+}
+
+void mapview::draw_bubble (s_int16 x, s_int16 y, const drawing_area * da_opt,
+                           surface * target, list<mapcharacter *>::iterator itc) const
+{ 
+    u_int16 xdraw =
+        (((*itc)->posx () - posx_ - (*itc)->base_x ()) * MAPSQUARE_SIZE)
+        + (*itc)->offx () - offx_ + x;
+    
+    u_int16 ydraw =
+        (((*itc)->posy () - posy_ - (*itc)->base_y ()) * MAPSQUARE_SIZE)
+        + (*itc)->offy () - offy_ + y;
+    
+    (*itc)->draw_bubble (xdraw, ydraw, da_opt, target);
 }

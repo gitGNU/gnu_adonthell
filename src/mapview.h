@@ -346,6 +346,8 @@ private:
     
     void draw_mapchar (s_int16 x, s_int16 y, const drawing_area * da_opt,
                        surface * target, list<mapsquare_char>::iterator itc) const;  
+    void draw_bubble (s_int16 x, s_int16 y, const drawing_area * da_opt,
+                      surface * target, list<mapcharacter *>::iterator itc) const; 
 #endif
     
     landmap *m_map;

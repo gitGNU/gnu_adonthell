@@ -657,14 +657,25 @@ void mapcharacter::launch_action (mapcharacter * requester)
 void mapcharacter::draw (s_int16 x, s_int16 y, const drawing_area * da_opt = NULL, surface * target = NULL) const
 {
     anim[current_move]->draw (x, y, da_opt, target);
+}
+
+void mapcharacter::draw_bubble (s_int16 x, s_int16 y, const drawing_area * da_opt = NULL,
+                                surface * target = NULL) const
+{
     if (saying) 
     {
-        saying->move (x - (saying->drawing_area::length () >> 1) + (anim[current_move]->length () >> 1),
-                      y - (saying->drawing_area::height ()) + 5);
+        s_int16 dx = x - (saying->drawing_area::length () >> 1) + (anim[current_move]->length () >> 1); 
+        s_int16 dy = y - (saying->drawing_area::height ()) + 5;
+
+        if (dx < 0) dx = 0;
+        else if (dx + saying->drawing_area::length () > da_opt->x () + da_opt->length ())
+            dx = da_opt->x () + da_opt->length () - saying->drawing_area::length (); 
+        
+        saying->move (dx, dy);
         saying->assign_drawing_area (da_opt);
         saying->draw ();
         saying->detach_drawing_area (); 
-    }
+    }     
 }
 
 mapcharacter & mapcharacter::operator = (const mapcharacter & src)

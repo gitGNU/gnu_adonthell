@@ -192,6 +192,7 @@ public:
     //@{ 
 
     void draw (s_int16 x, s_int16 y, const drawing_area * da_opt = NULL, surface * target = NULL) const;
+    void draw_bubble (s_int16 x, s_int16 y, const drawing_area * da_opt = NULL, surface * target = NULL) const;
     
     //@}
     
@@ -470,7 +471,17 @@ public:
      */
     mapcharacter *whosnext () const;
 
-    void speak (string text); 
+    void speak (string text);
+
+    bool is_speaking ()
+    {
+        return (saying != NULL); 
+    }
+
+    text_bubble * get_bubble () 
+    {
+        return saying; 
+    }
     //@}
       
 
