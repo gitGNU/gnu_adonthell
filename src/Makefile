@@ -61,20 +61,17 @@ CXX = c++
 CXXCPP = c++ -E
 MAKEINFO = makeinfo
 PACKAGE = mapengine
+PYPACKAGE = /usr/bin/python
 SDL_CFLAGS = -I/usr/local/include -I/usr/local/include/SDL -D_REENTRANT
 SDL_CONFIG = /usr/local/bin/sdl-config
-SDL_LIBS = -L/usr/local/lib -lSDL -lpthread
+SDL_LIBS = -L/usr/local/lib -Wl,-rpath,/usr/local/lib -lSDL -lpthread
 VERSION = 0.1.1.7
 
-bin_PROGRAMS = mapengine joltest alextest
+SUBDIRS = . tools
 
-mapengine_SOURCES = animation.cpp audio.cpp audio_thread.cpp character.cpp commands.cpp cutscene.cpp dialog_cmds.cpp fileops.cpp game.cpp generic_cmds.cpp image.cpp init.cpp interpreter.cpp input.cpp inventory.cpp lex.prefs.cpp main.cpp map.cpp mapcharacter.cpp mapengine.cpp mapevent.cpp mappattern.cpp mapsquare.cpp pnm.cpp prefs.cpp screen.cpp storage.cpp win_label.cpp win_write.cpp win_container.cpp win_select.cpp win_friend.cpp win_border.cpp win_base.cpp win_font.cpp win_image.cpp yarg.cc
+bin_PROGRAMS = mapengine #alextest joltest
 
-
-joltest_SOURCES = animation.cpp audio.cpp audio_thread.cpp character.cpp commands.cpp cutscene.cpp dialog_cmds.cpp fileops.cpp game.cpp generic_cmds.cpp image.cpp init.cpp interpreter.cpp input.cpp inventory.cpp lex.prefs.cpp pnm.cpp prefs.cpp screen.cpp storage.cpp win_label.cpp win_write.cpp win_container.cpp win_select.cpp win_friend.cpp win_border.cpp win_base.cpp win_font.cpp win_image.cpp joel.cpp yarg.cc
-
-
-alextest_SOURCES = fileops.cpp pnm.cpp screen.cpp image.cpp animation.cpp lex.prefs.cpp prefs.cpp alextest.cpp input.cpp win_label.cpp win_write.cpp win_container.cpp win_select.cpp win_friend.cpp win_border.cpp win_base.cpp win_font.cpp win_image.cpp
+mapengine_SOURCES = animation.cpp audio.cpp audio_thread.cpp character.cpp cutscene.cpp dialog.cpp fileops.cpp game.cpp image.cpp init.cpp input.cpp inventory.cpp lex.prefs.cpp main.cpp map.cpp mapcharacter.cpp mapengine.cpp mapevent.cpp mappattern.cpp mapsquare.cpp pnm.cpp prefs.cpp screen.cpp storage.cpp win_label.cpp win_write.cpp win_container.cpp win_select.cpp win_friend.cpp win_border.cpp win_image.cpp win_base.cpp win_font.cpp mapitem.cpp py_inc.cpp py_player_wrap.cpp py_mapengine_wrap.cpp yarg.cc event.cpp 
 
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = ../header.h
@@ -85,34 +82,18 @@ PROGRAMS =  $(bin_PROGRAMS)
 DEFS = -DHAVE_CONFIG_H -I. -I$(srcdir) -I..
 CPPFLAGS = 
 LDFLAGS = 
-LIBS = -L/usr/local/lib -lSDL -lpthread -lSDL_image -lSDL_mixer
+LIBS = -L/usr/local/lib -Wl,-rpath,/usr/local/lib -lSDL -lpthread -lSDL_image -lSDL_mixer -L/usr/lib/python1.5/config -lpython1.5
 mapengine_OBJECTS =  animation.o audio.o audio_thread.o character.o \
-commands.o cutscene.o dialog_cmds.o fileops.o game.o generic_cmds.o \
-image.o init.o interpreter.o input.o inventory.o lex.prefs.o main.o \
-map.o mapcharacter.o mapengine.o mapevent.o mappattern.o mapsquare.o \
-pnm.o prefs.o screen.o storage.o win_label.o win_write.o \
-win_container.o win_select.o win_friend.o win_border.o win_base.o \
-win_font.o win_image.o yarg.o
+cutscene.o dialog.o fileops.o game.o image.o init.o input.o inventory.o \
+lex.prefs.o main.o map.o mapcharacter.o mapengine.o mapevent.o \
+mappattern.o mapsquare.o pnm.o prefs.o screen.o storage.o win_label.o \
+win_write.o win_container.o win_select.o win_friend.o win_border.o \
+win_image.o win_base.o win_font.o mapitem.o py_inc.o py_player_wrap.o \
+py_mapengine_wrap.o yarg.o event.o
 mapengine_LDADD = $(LDADD)
 mapengine_DEPENDENCIES = 
 mapengine_LDFLAGS = 
-joltest_OBJECTS =  animation.o audio.o audio_thread.o character.o \
-commands.o cutscene.o dialog_cmds.o fileops.o game.o generic_cmds.o \
-image.o init.o interpreter.o input.o inventory.o lex.prefs.o pnm.o \
-prefs.o screen.o storage.o win_label.o win_write.o win_container.o \
-win_select.o win_friend.o win_border.o win_base.o win_font.o \
-win_image.o joel.o yarg.o
-joltest_LDADD = $(LDADD)
-joltest_DEPENDENCIES = 
-joltest_LDFLAGS = 
-alextest_OBJECTS =  fileops.o pnm.o screen.o image.o animation.o \
-lex.prefs.o prefs.o alextest.o input.o win_label.o win_write.o \
-win_container.o win_select.o win_friend.o win_border.o win_base.o \
-win_font.o win_image.o
-alextest_LDADD = $(LDADD)
-alextest_DEPENDENCIES = 
-alextest_LDFLAGS = 
-CXXFLAGS = -O6 -g -Wall -I/usr/local/include -I/usr/local/include/SDL -D_REENTRANT  -DSDL_MIXER  -DDEBUG -D_EDIT
+CXXFLAGS = -O6 -g -Wall -I/usr/local/include -I/usr/local/include/SDL -D_REENTRANT -I/usr/include/python1.5  -DSDL_MIXER 
 CXXCOMPILE = $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
 CXXLD = $(CXX)
 CXXLINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(LDFLAGS) -o $@
@@ -123,19 +104,19 @@ DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 
 TAR = tar
 GZIP_ENV = --best
-DEP_FILES =  .deps/alextest.P .deps/animation.P .deps/audio.P \
-.deps/audio_thread.P .deps/character.P .deps/commands.P \
-.deps/cutscene.P .deps/dialog_cmds.P .deps/fileops.P .deps/game.P \
-.deps/generic_cmds.P .deps/image.P .deps/init.P .deps/input.P \
-.deps/interpreter.P .deps/inventory.P .deps/joel.P .deps/lex.prefs.P \
-.deps/main.P .deps/map.P .deps/mapcharacter.P .deps/mapengine.P \
-.deps/mapevent.P .deps/mappattern.P .deps/mapsquare.P .deps/pnm.P \
-.deps/prefs.P .deps/screen.P .deps/storage.P .deps/win_base.P \
-.deps/win_border.P .deps/win_container.P .deps/win_font.P \
-.deps/win_friend.P .deps/win_image.P .deps/win_label.P \
-.deps/win_select.P .deps/win_write.P .deps/yarg.P
-SOURCES = $(mapengine_SOURCES) $(joltest_SOURCES) $(alextest_SOURCES)
-OBJECTS = $(mapengine_OBJECTS) $(joltest_OBJECTS) $(alextest_OBJECTS)
+DEP_FILES =  .deps/animation.P .deps/audio.P .deps/audio_thread.P \
+.deps/character.P .deps/cutscene.P .deps/dialog.P .deps/event.P \
+.deps/fileops.P .deps/game.P .deps/image.P .deps/init.P .deps/input.P \
+.deps/inventory.P .deps/lex.prefs.P .deps/main.P .deps/map.P \
+.deps/mapcharacter.P .deps/mapengine.P .deps/mapevent.P .deps/mapitem.P \
+.deps/mappattern.P .deps/mapsquare.P .deps/pnm.P .deps/prefs.P \
+.deps/py_inc.P .deps/py_mapengine_wrap.P .deps/py_player_wrap.P \
+.deps/screen.P .deps/storage.P .deps/win_base.P .deps/win_border.P \
+.deps/win_container.P .deps/win_font.P .deps/win_friend.P \
+.deps/win_image.P .deps/win_label.P .deps/win_select.P \
+.deps/win_write.P .deps/yarg.P
+SOURCES = $(mapengine_SOURCES)
+OBJECTS = $(mapengine_OBJECTS)
 
 all: all-redirect
 .SUFFIXES:
@@ -192,18 +173,65 @@ maintainer-clean-compile:
 mapengine: $(mapengine_OBJECTS) $(mapengine_DEPENDENCIES)
 	@rm -f mapengine
 	$(CXXLINK) $(mapengine_LDFLAGS) $(mapengine_OBJECTS) $(mapengine_LDADD) $(LIBS)
-
-joltest: $(joltest_OBJECTS) $(joltest_DEPENDENCIES)
-	@rm -f joltest
-	$(CXXLINK) $(joltest_LDFLAGS) $(joltest_OBJECTS) $(joltest_LDADD) $(LIBS)
-
-alextest: $(alextest_OBJECTS) $(alextest_DEPENDENCIES)
-	@rm -f alextest
-	$(CXXLINK) $(alextest_LDFLAGS) $(alextest_OBJECTS) $(alextest_LDADD) $(LIBS)
 .cc.o:
 	$(CXXCOMPILE) -c $<
 .cpp.o:
 	$(CXXCOMPILE) -c $<
+
+# This directory's subdirectories are mostly independent; you can cd
+# into them and run `make' without going through this Makefile.
+# To change the values of `make' variables: instead of editing Makefiles,
+# (1) if the variable is set in `config.status', edit `config.status'
+#     (which will cause the Makefiles to be regenerated when you run `make');
+# (2) otherwise, pass the desired values on the `make' command line.
+
+
+
+all-recursive install-data-recursive install-exec-recursive \
+installdirs-recursive install-recursive uninstall-recursive  \
+check-recursive installcheck-recursive info-recursive dvi-recursive:
+	@set fnord $(MAKEFLAGS); amf=$$2; \
+	dot_seen=no; \
+	target=`echo $@ | sed s/-recursive//`; \
+	list='$(SUBDIRS)'; for subdir in $$list; do \
+	  echo "Making $$target in $$subdir"; \
+	  if test "$$subdir" = "."; then \
+	    dot_seen=yes; \
+	    local_target="$$target-am"; \
+	  else \
+	    local_target="$$target"; \
+	  fi; \
+	  (cd $$subdir && $(MAKE) $(AM_MAKEFLAGS) $$local_target) \
+	   || case "$$amf" in *=*) exit 1;; *k*) fail=yes;; *) exit 1;; esac; \
+	done; \
+	if test "$$dot_seen" = "no"; then \
+	  $(MAKE) $(AM_MAKEFLAGS) "$$target-am" || exit 1; \
+	fi; test -z "$$fail"
+
+mostlyclean-recursive clean-recursive distclean-recursive \
+maintainer-clean-recursive:
+	@set fnord $(MAKEFLAGS); amf=$$2; \
+	dot_seen=no; \
+	rev=''; list='$(SUBDIRS)'; for subdir in $$list; do \
+	  rev="$$subdir $$rev"; \
+	  test "$$subdir" = "." && dot_seen=yes; \
+	done; \
+	test "$$dot_seen" = "no" && rev=". $$rev"; \
+	target=`echo $@ | sed s/-recursive//`; \
+	for subdir in $$rev; do \
+	  echo "Making $$target in $$subdir"; \
+	  if test "$$subdir" = "."; then \
+	    local_target="$$target-am"; \
+	  else \
+	    local_target="$$target"; \
+	  fi; \
+	  (cd $$subdir && $(MAKE) $(AM_MAKEFLAGS) $$local_target) \
+	   || case "$$amf" in *=*) exit 1;; *k*) fail=yes;; *) exit 1;; esac; \
+	done && test -z "$$fail"
+tags-recursive:
+	list='$(SUBDIRS)'; for subdir in $$list; do \
+	  test "$$subdir" = . || (cd $$subdir && $(MAKE) $(AM_MAKEFLAGS) tags); \
+	done
 
 tags: TAGS
 
@@ -215,9 +243,14 @@ ID: $(HEADERS) $(SOURCES) $(LISP)
 	here=`pwd` && cd $(srcdir) \
 	  && mkid -f$$here/ID $$unique $(LISP)
 
-TAGS:  $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) $(LISP)
+TAGS: tags-recursive $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) $(LISP)
 	tags=; \
 	here=`pwd`; \
+	list='$(SUBDIRS)'; for subdir in $$list; do \
+   if test "$$subdir" = .; then :; else \
+	    test -f $$subdir/TAGS && tags="$$tags -i $$here/$$subdir/TAGS"; \
+   fi; \
+	done; \
 	list='$(SOURCES) $(HEADERS)'; \
 	unique=`for i in $$list; do echo $$i; done | \
 	  awk '    { files[$$0] = 1; } \
@@ -247,11 +280,21 @@ distdir: $(DISTFILES)
 	@for file in $(DISTFILES); do \
 	  d=$(srcdir); \
 	  if test -d $$d/$$file; then \
-	    cp -pr $$d/$$file $(distdir)/$$file; \
+	    cp -pr $$/$$file $(distdir)/$$file; \
 	  else \
 	    test -f $(distdir)/$$file \
 	    || ln $$d/$$file $(distdir)/$$file 2> /dev/null \
 	    || cp -p $$d/$$file $(distdir)/$$file || :; \
+	  fi; \
+	done
+	for subdir in $(SUBDIRS); do \
+	  if test "$$subdir" = .; then :; else \
+	    test -d $(distdir)/$$subdir \
+	    || mkdir $(distdir)/$$subdir \
+	    || exit 1; \
+	    chmod 777 $(distdir)/$$subdir; \
+	    (cd $$subdir && $(MAKE) $(AM_MAKEFLAGS) top_distdir=../$(top_distdir) distdir=../$(distdir)/$$subdir distdir) \
+	      || exit 1; \
 	  fi; \
 	done
 
@@ -325,29 +368,30 @@ maintainer-clean-depend:
 	    >> .deps/$(*F).P; \
 	rm -f .deps/$(*F).pp
 info-am:
-info: info-am
+info: info-recursive
 dvi-am:
-dvi: dvi-am
+dvi: dvi-recursive
 check-am: all-am
-check: check-am
+check: check-recursive
 installcheck-am:
-installcheck: installcheck-am
+installcheck: installcheck-recursive
 install-exec-am: install-binPROGRAMS
-install-exec: install-exec-am
+install-exec: install-exec-recursive
 
 install-data-am:
-install-data: install-data-am
+install-data: install-data-recursive
 
 install-am: all-am
 	@$(MAKE) $(AM_MAKEFLAGS) install-exec-am install-data-am
-install: install-am
+install: install-recursive
 uninstall-am: uninstall-binPROGRAMS
-uninstall: uninstall-am
+uninstall: uninstall-recursive
 all-am: Makefile $(PROGRAMS)
-all-redirect: all-am
+all-redirect: all-recursive
 install-strip:
 	$(MAKE) $(AM_MAKEFLAGS) AM_INSTALL_PROGRAM_FLAGS=-s install
-installdirs:
+installdirs: installdirs-recursive
+installdirs-am:
 	$(mkinstalldirs)  $(DESTDIR)$(bindir)
 
 
@@ -363,17 +407,17 @@ maintainer-clean-generic:
 mostlyclean-am:  mostlyclean-binPROGRAMS mostlyclean-compile \
 		mostlyclean-tags mostlyclean-depend mostlyclean-generic
 
-mostlyclean: mostlyclean-am
+mostlyclean: mostlyclean-recursive
 
 clean-am:  clean-binPROGRAMS clean-compile clean-tags clean-depend \
 		clean-generic mostlyclean-am
 
-clean: clean-am
+clean: clean-recursive
 
 distclean-am:  distclean-binPROGRAMS distclean-compile distclean-tags \
 		distclean-depend distclean-generic clean-am
 
-distclean: distclean-am
+distclean: distclean-recursive
 
 maintainer-clean-am:  maintainer-clean-binPROGRAMS \
 		maintainer-clean-compile maintainer-clean-tags \
@@ -382,20 +426,50 @@ maintainer-clean-am:  maintainer-clean-binPROGRAMS \
 	@echo "This command is intended for maintainers to use;"
 	@echo "it deletes files that may require special tools to rebuild."
 
-maintainer-clean: maintainer-clean-am
+maintainer-clean: maintainer-clean-recursive
 
 .PHONY: mostlyclean-binPROGRAMS distclean-binPROGRAMS clean-binPROGRAMS \
 maintainer-clean-binPROGRAMS uninstall-binPROGRAMS install-binPROGRAMS \
 mostlyclean-compile distclean-compile clean-compile \
-maintainer-clean-compile tags mostlyclean-tags distclean-tags \
-clean-tags maintainer-clean-tags distdir mostlyclean-depend \
-distclean-depend clean-depend maintainer-clean-depend info-am info \
-dvi-am dvi check check-am installcheck-am installcheck install-exec-am \
-install-exec install-data-am install-data install-am install \
-uninstall-am uninstall all-redirect all-am all installdirs \
-mostlyclean-generic distclean-generic clean-generic \
-maintainer-clean-generic clean mostlyclean distclean maintainer-clean
+maintainer-clean-compile install-data-recursive \
+uninstall-data-recursive install-exec-recursive \
+uninstall-exec-recursive installdirs-recursive uninstalldirs-recursive \
+all-recursive check-recursive installcheck-recursive info-recursive \
+dvi-recursive mostlyclean-recursive distclean-recursive clean-recursive \
+maintainer-clean-recursive tags tags-recursive mostlyclean-tags \
+distclean-tags clean-tags maintainer-clean-tags distdir \
+mostlyclean-depend distclean-depend clean-depend \
+maintainer-clean-depend info-am info dvi-am dvi check check-am \
+installcheck-am installcheck install-exec-am install-exec \
+install-data-am install-data install-am install uninstall-am uninstall \
+all-redirect all-am all installdirs-am installdirs mostlyclean-generic \
+distclean-generic clean-generic maintainer-clean-generic clean \
+mostlyclean distclean maintainer-clean
 
+
+py_player_wrap.cpp : py_player.i
+	swig -python -shadow -c++ -make_default -o $*.cpp $< 
+	@mv player.py ../scripts
+
+py_mapengine_wrap.cpp : py_mapengine.i
+	swig -python -shadow -c++ -o $*.cpp $< 
+	@mv mapengine.py ../scripts
+
+py_baseitem_wrap.cpp : py_baseitem.i
+	swig -python -shadow -c++ -o $*.cpp $< 
+	@mv baseitem.py ../scripts
+
+#joltest_SOURCES = animation.cpp audio.cpp audio_thread.cpp \
+#character.cpp commands.cpp cutscene.cpp dialog_cmds.cpp fileops.cpp game.cpp \
+#generic_cmds.cpp image.cpp init.cpp interpreter.cpp input.cpp inventory.cpp \
+#lex.prefs.cpp pnm.cpp prefs.cpp screen.cpp storage.cpp win_label.cpp \
+#win_write.cpp win_container.cpp win_select.cpp win_friend.cpp win_border.cpp \
+#win_base.cpp win_font.cpp win_image.cpp joel.cpp yarg.cc
+
+#alextest_SOURCES = fileops.cpp pnm.cpp screen.cpp image.cpp animation.cpp \
+#lex.prefs.cpp prefs.cpp alextest.cpp input.cpp win_label.cpp \
+#win_write.cpp win_container.cpp win_select.cpp win_friend.cpp win_border.cpp \
+#win_base.cpp win_font.cpp win_image.cpp
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

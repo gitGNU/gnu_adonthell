@@ -22,20 +22,33 @@
 // a delay factor and a gap parameter so images of different sizes can be
 // used in the same animation.
 
-class animation_frame : public image
+class animation_frame
 {
+  u_int16 imagenbr;
+  bool is_masked;
+  u_int8 alpha;
   s_int16 gapx;
   s_int16 gapy;
   // If delay is 0, the delay factor is not taken in account
   // Otherwise the animation will wait "delay" game cycles to switch to
   // the other frame
   u_int16 delay;
-  bool next_nostd;
+  bool lastframe;
   u_int16 nextframe;
  public:
   void init();
   animation_frame();
   ~animation_frame();
+  u_int8 get_alpha();
+  void set_alpha(u_int8 a);
+  bool get_mask();
+  void set_mask(bool mask);
+  u_int16 get_image();
+  void set_image(u_int16 imnbr);
+  u_int16 get_delay();
+  void set_delay(u_int16 d);
+  u_int16 get_nextframe();
+  void set_nextframe(u_int16 nf, bool last_frame=false);
   s_int8 get(SDL_RWops * file);
   s_int8 load(const char * fname);
 #ifdef _EDIT
@@ -60,44 +73,46 @@ class animation
   static u_int16 a_d_diff;
 #endif
  protected:
+  u_int16 nbr_of_images;
   u_int16 nbr_of_frames;
   u_int16 currentframe;
   u_int16 speedcounter;
-  s_int8 factor;
+  //  s_int8 factor;
   bool play_flag;
   //  void init_frame(u_int16 nbr);
 
  public:
+  image * t_frame;
   animation_frame * frame;
-  bool loop;              // Shall the animation loop?
-  bool reverse;  // Shall the animation reverse when reaching the last frame?
+  //  bool loop;              // Shall the animation loop?
+  //  bool reverse;  // Shall the animation reverse when reaching the last frame?
 
   animation();
   ~animation();
 
   // Check if it's time to switch to the next frame
   void update();
-  void draw(u_int16 x, u_int16 y);
   void set_active_frame(u_int16 framenbr);
-  void increase_frame();
-  void decrease_frame();
   void next_frame();
   void play();
   void stop();
   void rewind();
+  void draw(u_int16 x, u_int16 y);
   // Increase nbr_of_frames and load the frame to the last position
-  s_int8 load_frame(const char * fname, u_int16 pos);
-  s_int8 get_frame(SDL_RWops * file, u_int16 pos);
-  s_int8 delete_frame(u_int16 pos);
+  //  s_int8 load_frame(const char * fname, u_int16 pos);
+  //  s_int8 get_frame(SDL_RWops * file, u_int16 pos);
+  //  s_int8 delete_frame(u_int16 pos);
   s_int8 get(SDL_RWops * file);
   s_int8 load(const char * fname);
 #ifdef _EDIT
   s_int8 put(SDL_RWops * file);
   s_int8 save(const char * fname);
 #endif
-  void set_delay(u_int16 framenbr, u_int16 delay);
-  void set_next_frame(u_int16 framenbr, u_int16 next_frame);
-  void set_mask(u_int16 framenbr, bool m);
-  void set_alpha(u_int16 framenbr, bool a, u_int8 value);
+  //  void set_delay(u_int16 framenbr, u_int16 delay);
+  //  void set_next_frame(u_int16 framenbr, u_int16 next_frame);
+  //  void set_mask(u_int16 framenbr, bool m);
+  //  void set_alpha(u_int16 framenbr, bool a, u_int8 value);
+
+  animation &operator =(animation &a);
 };
 #endif

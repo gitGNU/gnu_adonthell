@@ -21,6 +21,7 @@ class input
 {
   static u_int8 charkeys_pushed[65536];
   static u_int8 charkeys_released[65536];
+
  public:
   static void update();
   static bool charkeys[65536];

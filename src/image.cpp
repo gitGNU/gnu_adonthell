@@ -96,6 +96,17 @@ drawing_area &drawing_area::operator = (SDL_Rect & r)
   return *this;
 }
 
+drawing_area drawing_area::operator + (drawing_area & da)
+{
+  drawing_area ret, temp=(*this);
+  SDL_Rect t;
+  temp.assign_drawing_area(&da);
+  t=temp.get_rects();
+  ret=t;
+  ret.draw_to=NULL;
+  return ret;
+}
+
 image &image::operator =(image &im)
 {
   length=im.length;
@@ -246,12 +257,12 @@ void image::set_mask(bool m)
     }
 }
 
-u_int8 image::get_trans()
+u_int8 image::get_alpha()
 {
   return(alpha);
 }    
 
-void image::set_trans(u_int8 t)
+void image::set_alpha(u_int8 t)
 {
   if((!t)&&(alpha)) SDL_SetAlpha(data,0,0);
   alpha=t;
@@ -279,7 +290,7 @@ void image::putbox (s_int16 x, s_int16 y, drawing_area * da_opt)
 {  
   if(data==NULL) return;
   set_mask(false);
-  set_trans(0);
+  set_alpha(0);
   
   draw(x,y,da_opt);
 }
@@ -288,7 +299,7 @@ void image::putbox_mask (s_int16 x, s_int16 y, drawing_area * da_opt)
 {
   if(data==NULL) return;
   set_mask(true);
-  set_trans(0);
+  set_alpha(0);
 
   draw(x,y,da_opt);
 }
@@ -298,7 +309,7 @@ void image::putbox_trans (s_int16 x, s_int16 y, u_int8 a,
 {
   if(data==NULL) return;
   set_mask(false);
-  set_trans(a);
+  set_alpha(a);
 
   draw(x,y,da_opt);
 }
@@ -308,7 +319,7 @@ void image::putbox_mask_trans (s_int16 x, s_int16 y, u_int8 a,
 {
   if(data==NULL) return;
   set_mask(true);
-  set_trans(a);
+  set_alpha(a);
 
   draw(x,y,da_opt);
 }

@@ -32,6 +32,7 @@ class drawing_area : public SDL_Rect
   void assign_drawing_area(drawing_area * da);
   void detach_drawing_area();
   drawing_area &operator = (SDL_Rect & r);
+  drawing_area operator + (drawing_area & da);
 
   friend class image;
 };
@@ -87,8 +88,8 @@ class image
   void detach_drawing_area();
   bool get_mask();
   void set_mask(bool m);
-  u_int8 get_trans();
-  void set_trans(u_int8 t);
+  u_int8 get_alpha();
+  void set_alpha(u_int8 t);
   void draw(s_int16 x, s_int16 y, drawing_area * da_opt=NULL);
   void putbox (s_int16 x, s_int16 y, drawing_area * da_opt=NULL);
   void putbox_mask (s_int16 x, s_int16 y, drawing_area * da_opt=NULL);
