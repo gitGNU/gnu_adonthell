@@ -9,6 +9,7 @@
 
    See the COPYING file for more details.
 */
+#ifdef SDL
 
 #include "audio.h"
 #include "SDL.h"
@@ -79,3 +80,4 @@ void audio::set_background_volume(int volume) {
   background_volume = volume;
 }
 
+#endif
