@@ -12,49 +12,52 @@
    See the COPYING file for more details.
 */
 
-// command types (must not exceed 255)
+// command types (must not exceed 255 - at least those used with the dialogue compiler)
 // Add your own types to this list
 enum
 {
     // Return has to be the first command (see interpreter.cc to find out the reason)
-    RETURN = 0,        // RETURN <retval>           Stop interpreter
+    RETURN = 0,     // RETURN <retval>              Stop interpreter
 
-    // Dialogue
-    IMPORT = 1,        // IMPORT <id>               Load Text
-    SNPCTEXT = 2,      // SNPCTEXT <id> <offset>    NPC Text without player text
-    NPCTEXT = 3,       // NPCTEXT <id>              NPC Text
-    PTEXT = 4,         // PTEXT <id> <offset>       Player Text
-    CLEAR = 5,         // CLEAR                     Reset Text buffers
+    // Dialogue (those five will change in future versions!!!)
+    IMPORT = 1,     // IMPORT <id>                  Load Text
+    SNPCTEXT = 2,   // SNPCTEXT <id> <offset>       NPC Text without player text
+    NPCTEXT = 3,    // NPCTEXT <id>                 NPC Text
+    PTEXT = 4,      // PTEXT <id> <offset>          Player Text
+    CLEAR = 5,      // CLEAR                        Reset Text buffers
 
     // Arithmetic
-    LET = 6,
-    ADD = 7,
-    SUB = 8,
-    MUL = 9,
-    DIV = 10,
+    LET = 6,        // LET <id1> <id2>              id2 = id1
+    ADD = 7,        // ADD <id1> <id2> <id3>        id3 = id1 + id2
+    SUB = 8,        // SUB <id1> <id2> <id3>        id3 = id1 - id2
+    MUL = 9,        // MUL <id1> <id2> <id3>        id3 = id1 * id2
+    DIV = 10,       // DIV <id1> <id2> <id3>        id3 = int (id1 / id2)
 
     // Comparisons
-    EQ = 11,
-    NEQ = 12,
-    LT = 13,
-    LEQ = 14,
-    GT = 15,
-    GEQ = 16,
+    EQ = 11,        // EQ <id1> <id2> <bool>        bool = id1 == id2 ? true : false
+    NEQ = 12,       // NEQ <id1> <id2> <bool>       bool = id1 != id2 ? true : false
+    LT = 13,        // LT <id1> <id2> <bool>        bool = id1 < id2 ? true : false
+    LEQ = 14,       // LEQ <id1> <id2> <bool>       bool = id1 <= id2 ? true : false
+    GT = 15,        // GT <id1> <id2> <bool>        bool = id1 > id2 ? true : false
+    GEQ = 16,       // GEQ <id1> <id2> <bool>       bool = id1 >= id2 ? true : false
 
     // Logic
-    AND = 17,
-    OR = 18,
+    AND = 17,       // AND <bool1> <bool2> <bool3>  bool3 = bool1 && bool2
+    OR = 18,        // OR <bool1> <bool2> <bool3>   bool3 = bool1 || bool2
 
-    // Others
-    JMP = 19,
+    // Program flow
+    JMP = 19,       // JMP <offset>                 PC += offset
+    BRANCH = 20,    // BRANCH <bool> <offset>       bool == true ? PC++ : PC += offset
 
-    // Those four are used for parsing only. They are defined here to avoid
-    //  conflicts with other commands.
-    REG = 251,
-    THEN = 252,
-    ELSE = 253,
-    ID = 254,
-    NUM = 255
+    // Those six are used during parsing only. They are defined here to avoid
+    // conflicts with other commands, but are only used internally by the 
+    // dialogue compiler.
+    BOOL = 250,     // Specifies a boolean value
+    REG = 251,      // Specifies an internal (integer) register
+    THEN = 252,     // The 'then' part of an if-statement follows
+    ELSE = 253,     // The 'else' part of an if-statement follows
+    ID = 254,       // Specifies a variable name
+    NUM = 255       // Specifies an integer value
 };
 
 void init_interpreter ();
