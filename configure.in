@@ -13,7 +13,7 @@ AC_CANONICAL_TARGET
 AM_INIT_AUTOMAKE(adonthell, 0.3.3)
 AM_CONFIG_HEADER(config.h)
 
-CFLAGS="-g -Wall -fno-exceptions -fno-rtti"
+CFLAGS="-g -Wall -fno-exceptions"
 CPPFLAGS=""
 DEFS=""
 
