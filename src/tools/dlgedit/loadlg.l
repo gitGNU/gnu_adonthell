@@ -32,6 +32,7 @@ num    -?{digit}+
 
 Circle          return LOAD_CIRCLE;
 Arrow           return LOAD_ARROW;
+Module          return LOAD_MODULE;
 End             return LOAD_END;
 Type            return LOAD_TYPE;
 Prev            return LOAD_PREV;
@@ -52,6 +53,7 @@ Proj            return LOAD_PROJECT;
 Inc             return LOAD_IMPORTS;
 Dtor            return LOAD_DTOR;
 Ctor            return LOAD_CTOR;
+Id              return LOAD_ID;
 
 §               mytext = ""; BEGIN(text);
 <text>§         BEGIN(INITIAL); return LOAD_STR;

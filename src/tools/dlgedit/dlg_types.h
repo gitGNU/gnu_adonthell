@@ -137,7 +137,9 @@ enum
     LOAD_LOOP       = 25,
     LOAD_FILE       = 26,
     LOAD_BASE_DIR   = 27,
-    LOAD_UNKNOWN    = 28
+    LOAD_MODULE     = 28,
+    LOAD_ID         = 29,
+    LOAD_UNKNOWN    = 30
 };
 
 /**

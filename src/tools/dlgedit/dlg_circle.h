@@ -37,8 +37,23 @@
 class DlgCircle : public DlgNode
 {
 public:
-    DlgCircle () { mode_ = IDLE; entry_ = NULL; }
-    DlgCircle (DlgPoint &p, node_type t, DlgCircleEntry *e = NULL);
+    /**
+     * Create an empty circle. Used when loading a circle.
+     * @param id The id of the module the circle belongs to.
+     */
+    DlgCircle (int id = 0) { mode_ = IDLE; entry_ = NULL; mid_ = id; }
+    /**
+     * Create a circle with basic information. Used to create a new circle.
+     * @param p The point where the circle needs to be created.
+     * @param t The type of the circle (PLAYER, NPC or NARRATOR).
+     * @param nid The unique id of the newly created circle.
+     * @param mid The id of the module the circle belongs to.
+     * @param e The actual contents of the circle.
+     */
+    DlgCircle (DlgPoint &p, node_type t, int nid, int mid, DlgCircleEntry *e = NULL);
+    /**
+     * Standard destructor.
+     */
     ~DlgCircle ();
     
     /** 

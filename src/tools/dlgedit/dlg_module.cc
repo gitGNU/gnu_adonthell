@@ -23,16 +23,17 @@
 #include "dlg_module.h"
 #include "dlg_circle.h"
 #include "dlg_arrow.h"
+#include "gui_dlgedit.h"
 #include "gui_resources.h"
 
 // ctor
-DlgModule::DlgModule (std::string p, std::string n, std::string s, std::string d)
+DlgModule::DlgModule (std::string p, std::string n, std::string u, std::string d)
 {
     entry_.setDescription (d);
-    serial_ = s;
+    uid_ = u;
     path_ = p + "/";
     name_ = n;
-    
+            
     init ();
 }
 
@@ -47,6 +48,8 @@ void DlgModule::init ()
     parent_ = NULL;
     changed_ = false;
     displayed_ = false;
+    nid_ = 0;
+    serial_ = 1;
 }
 
 // reset dialogue to initial state
@@ -63,14 +66,15 @@ void DlgModule::clear ()
 }
 
 // calculate shape of sub-dialogue
-void DlgModule::initShape (DlgPoint &center)
+void DlgModule::initShape (const DlgPoint &center)
 {
     // calculate width of the module icon
     GdkFont *font = GuiResources::font ();
     int width = gdk_string_width (font, name ().c_str ()) + 10;
     
     // align module to the (imaginary) grid and set shape
-    top_left = center.offset (-width/2 - (center.x () % CIRCLE_DIAMETER), -(center.y () % CIRCLE_DIAMETER));
+    top_left = DlgPoint (center.x (), center.y ());
+    top_left.move (-width/2 - (center.x () % CIRCLE_DIAMETER), -(center.y () % CIRCLE_DIAMETER));
     resize (width, 20); 
 }
 
@@ -128,6 +132,50 @@ DlgNode* DlgModule::getNode (DlgPoint &position)
         if (*(*i) == position) return *i;
     
     return NULL;
+}
+
+// get the node with the given module and node ids
+DlgNode* DlgModule::getNode (int mid, int nid)
+{
+    // first, get the module
+    DlgModule *module = getModule (mid);
+
+    // then, get the node
+    if (module) return module->getNode (nid);
+    
+    return NULL;
+}
+
+// get node with the given node id
+DlgNode* DlgModule::getNode (int id)
+{
+    // find the node with the given pos in our array of nodes
+    std::vector<DlgNode*>::iterator i;
+    
+    for (i = nodes.begin (); i != nodes.end (); i++)
+        if ((*i)->node_id () == id && (*i)->type () != MODULE) 
+            return *i;
+    
+    return NULL;
+}
+
+// get module with the given module id   
+DlgModule* DlgModule::getModule (int id)
+{
+    if (id == nid_) return this;
+    
+    std::vector<DlgNode*>::iterator i;
+    DlgModule *module;
+    
+    for (i = nodes.begin (); i != nodes.end (); i++)
+        if ((*i)->type () == MODULE) 
+        {
+            module = getModule (id);
+            if (module) return module;
+        }
+    
+    // nothing found
+    return NULL;    
 }
 
 // add a node to the dialogue
@@ -225,6 +273,16 @@ void DlgModule::draw (GdkPixmap *surface, DlgPoint &offset, GtkWidget *widget)
     update (widget, area);
 }
 
+// get toplevel module
+DlgModule* DlgModule::toplevel ()
+{
+    DlgModule *toplevel = this;
+    
+    while (toplevel->parent () != NULL) toplevel = toplevel->parent ();
+    
+    return toplevel;    
+}
+
 // Get extension of the graph for proper displaying
 void DlgModule::extension (int &min_x, int &max_x, int &y)
 {
@@ -255,6 +313,59 @@ bool DlgModule::load ()
     {
         switch (i = parse_dlgfile (s, n))
         {
+            case LOAD_CIRCLE:
+            {
+                circle = new DlgCircle (nid_);
+                circle->load ();
+
+                nodes.push_back (circle);
+
+                break;
+            }
+
+            case LOAD_ARROW:
+            {
+                arrow = new DlgArrow;
+                
+                if (arrow->load (this->toplevel ()))
+                    nodes.push_back (arrow);
+
+                break;
+            }
+
+            case LOAD_MODULE:
+            {
+                if (parse_dlgfile (s, n) == LOAD_STR)
+                {
+                    // get filename of the submodule
+                    std::string file = path_ + s; 
+                    
+                    // remember position in current file
+                    int filepos = ftell (loadlgin);
+
+                    // and close it
+                    fclose (loadlgin);
+
+                    // load the subdialogue from it's own file
+                    DlgModule *subdlg = GuiDlgedit::window->loadSubdialogue (file);
+
+                    // re-open our dialogue file
+                    loadlgin = fopen (fullName ().c_str (), "rb");
+                    if (!loadlgin) return false;
+
+                    // restore filepointer
+                    fseek (loadlgin, filepos, SEEK_SET);
+                    
+                    // load rest of subdialogue
+                    if (subdlg)
+                    { 
+                        subdlg->loadSubdialogue ();
+                        nodes.push_back (subdlg);
+                    }
+                }
+                break;
+            }
+            
             case LOAD_PROJECT:
             {
                 if (parse_dlgfile (s, n) == LOAD_STR) entry_.setProject (s);
@@ -309,31 +420,58 @@ bool DlgModule::load ()
                 break;
             }
 
-            case LOAD_CIRCLE:
+            case LOAD_ID:
             {
-                circle = new DlgCircle;
-                circle->load ();
-
-                nodes.push_back (circle);
-
+                if (parse_dlgfile (s, n) == LOAD_NUM) serial_ = n;
                 break;
             }
-
-            case LOAD_ARROW:
-            {
-                arrow = new DlgArrow;
-                arrow->load (nodes);
-
-                nodes.push_back (arrow);
-                break;
-            }
-
+            
             default: break;
         }
     }
     
     fclose (loadlgin);
     return true;
+}
+
+// load sub-dialogue
+void DlgModule::loadSubdialogue ()
+{
+    int i = 1, n;
+    std::string s;
+
+    while (i)
+    {
+        switch (i = parse_dlgfile (s, n))
+        {
+            case LOAD_END:
+            {
+                i = 0;
+                break;
+            }
+
+            case LOAD_ID:
+            {
+                if (parse_dlgfile (s, n) == LOAD_NUM) nid_ = n;
+
+                break;
+            }
+
+            case LOAD_POS:
+            {
+                int x, y;
+                GdkFont *font = GuiResources::font ();
+                int width = gdk_string_width (font, name ().c_str ()) + 10;
+                if (parse_dlgfile (s, n) == LOAD_NUM) x = n;
+                if (parse_dlgfile (s, n) == LOAD_NUM) y = n;
+
+                top_left = DlgPoint (x, y);
+                bottom_right = DlgPoint (x + width, y + 20);
+            }
+
+           default: break;
+        }
+    }               
 }
 
 // save dialogue to file
@@ -345,20 +483,19 @@ bool DlgModule::save (std::string &path, std::string &name)
     
     // open file
     std::ofstream out (fullName ().c_str ());
-    int index = 0;
     
     // opening failed for some reasons    
     if (!out) return false;
 
-    // Write Header: Adonthell Dialogue System file version 1
-    out << "# Dlgedit File Format 1\n#\n"
+    // Write Header: Adonthell Dialogue System file version 2
+    out << "# Dlgedit File Format 2\n#\n"
         << "# Produced by Adonthell Dlgedit v" << _VERSION_ << "\n"
         << "# (C) 2000/2001/2002 Kai Sterker\n#\n"
         << "# $I" << "d$\n\n"
         << "Note §" << entry_.description () << "§\n\n";
 
     // Node ID
-    out << "Id " << nid_ << "\n";
+    out << "Id " << serial_ << "\n";
     
     // Save settings and stuff
     if (entry_.project () != "")
@@ -379,10 +516,7 @@ bool DlgModule::save (std::string &path, std::string &name)
     // Save Circles first, as arrows depend on them when loading later on
     for (std::vector<DlgNode*>::iterator i = nodes.begin (); i != nodes.end (); i++)
         if ((*i)->type () != LINK)
-        {
-            (*i)->setIndex (index++);
             (*i)->save (out);
-        }
                 
     // Save Arrows
     for (std::vector<DlgNode*>::iterator i = nodes.begin (); i != nodes.end (); i++)
@@ -393,4 +527,64 @@ bool DlgModule::save (std::string &path, std::string &name)
     changed_ = false;
     
     return true;    
+}
+
+// save a sub-module
+void DlgModule::save (std::ofstream &file)
+{
+    std::string path = relativeName ();
+    
+    // the module's relative filename
+    file << "\nModule §" << path << "§\n";
+            
+    // module's id
+    file << "  Id " << nid_ << "\n";
+        
+    // module's position
+    file << "  Pos " << x () << " " << y () << "\n";
+            
+    file << "End\n";
+}
+
+// return the module's path relative to its parent
+std::string DlgModule::relativeName ()
+{
+    // no parent -> return absolute Name
+    if (parent_ == NULL) return fullName ();
+    
+    std::string p_path = parent_->path ();  // parent path
+    std::string m_path = path_;             // module path
+    std::string r_path = "";                // module's path relative to parent
+    
+    unsigned int pos = 0;
+    
+    // find the part of the filename that matches
+    while (pos < m_path.length () && pos < p_path.length () &&
+        p_path[pos] == m_path[pos]) pos++;
+    
+    // complete module path matched
+    if (pos == m_path.length ())
+    {
+        // so either both files are in the same path, or the sub-dialogue
+        // is on a higher level
+        while ((pos = p_path.find ('/', pos)) != p_path.npos) r_path += "../";
+    }
+
+    // complete parent path matched 
+    else if (pos == p_path.length ())
+    {
+        // so the sub-dialogue is in a sub-directory
+        r_path = m_path.substr (pos);
+    }
+    
+    // none of the paths completely matched
+    else
+    {
+        // sub-dialogue is in a different directory on a higher level
+        unsigned int i = pos;
+        while ((i = p_path.find ('/', i)) != p_path.npos) r_path += "../";
+        r_path += m_path.substr (pos);
+    }
+    
+    return r_path + name_ + FILE_EXT;
 }

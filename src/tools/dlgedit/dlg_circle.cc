@@ -23,9 +23,11 @@
 #include "gui_resources.h"
 
 // Constructor
-DlgCircle::DlgCircle (DlgPoint &p, node_type t, DlgCircleEntry *e)
+DlgCircle::DlgCircle (DlgPoint &p, node_type t, int nid, int mid, DlgCircleEntry *e)
 {
     type_ = t;
+    nid_ = nid;
+    mid_ = mid;
     entry_ = (e ? e : new DlgCircleEntry);
     
     // Align Circle to the (imaginary) grid
@@ -141,6 +143,14 @@ bool DlgCircle::load ()
                 break;
             }
             
+            // Module and Node id of Circle
+            case LOAD_ID:
+            {
+                if (parse_dlgfile (str, n) == LOAD_NUM) nid_ = n;
+                
+                break;
+            }
+            
             // Coordinates of Circle
             case LOAD_POS:
             {
@@ -206,7 +216,10 @@ void DlgCircle::save (std::ofstream &file)
 
     // circle's type
     file << "  Type " << (int) type () << "\n";
-    
+
+    // circle's id
+    file << "  Id " << nid_ << "\n";
+        
     // circle's position
     file << "  Pos " << x () << " " << y () << "\n";
 

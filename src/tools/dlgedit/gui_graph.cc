@@ -122,8 +122,11 @@ bool GuiGraph::newCircle (DlgPoint &point, node_type type)
     // if there is no module assigned to the view, there is nothing to do
     if (module == NULL) return false;
     
+    // get the serial number to use for this node
+    int &serial = module->serial ();
+    
     // create the new node ...
-    DlgCircle *circle = new DlgCircle (point, type);
+    DlgCircle *circle = new DlgCircle (point, type, serial, module->node_id ());
     
     // ... add it to the module ...
     module->addNode (circle);
@@ -139,6 +142,9 @@ bool GuiGraph::newCircle (DlgPoint &point, node_type type)
 
         return false;
     }
+    
+    // node created -> increase serial number for next node
+    serial++;
     
     return true;
 }
@@ -224,6 +230,9 @@ bool GuiGraph::newModule (DlgPoint &point)
         // set parent of the sub-dialogue
         subdlg->setParent (module);
         
+        // set id of the sub-dialogue
+        subdlg->setID ();
+
         // draw the sub-dialogue
         subdlg->initShape (point);
         subdlg->draw (surface, *offset, graph);
@@ -823,9 +832,5 @@ DlgModule *GuiGraph::dialogue ()
     // if there is no module assigned to the view, there is nothing to do
     if (module == NULL) return NULL;
 
-    DlgModule *toplevel = module;
-    
-    while (toplevel->parent () != NULL) toplevel = toplevel->parent ();
-    
-    return toplevel;
+    return module->toplevel ();
 }

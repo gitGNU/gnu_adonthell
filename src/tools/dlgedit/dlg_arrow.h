@@ -22,7 +22,6 @@
 #ifndef DLG_ARROW_H
 #define DLG_ARROW_H
 
-#include <vector>
 #include "dlg_node.h"
 
 /**
@@ -35,7 +34,7 @@ public:
     /**
      * Create a new arrow.
      */
-    DlgArrow () { mode_ = IDLE; type_ = LINK; }
+    DlgArrow () { mode_ = IDLE; type_ = LINK; nid_ = 0; }
     /**
      * Create a new link between two nodes.
      * @param s The node where the link starts.
@@ -65,11 +64,11 @@ public:
     /**
      * Init the Arrow from a file.  The file to load from is a global 
      * variable, as loading is handled by a scanner generated with flex.
-     * @param nodes The rest of the dialogue, to connect this Arrow to
+     * @param module The dialogue this arrow belongs to.
      * @return <b>true</b> if loading was successful, <b>false</b>
      *         otherwise.
      */
-    bool load (std::vector<DlgNode*> &nodes);
+    bool load (DlgNode *module);
 
     /**
      * save an Arrow to a file

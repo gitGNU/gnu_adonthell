@@ -21,6 +21,7 @@
 
 #include <math.h>
 #include "dlg_arrow.h"
+#include "dlg_module.h"
 #include "gui_resources.h"
 
 // Create a new link between two nodes
@@ -28,6 +29,7 @@ DlgArrow::DlgArrow (DlgNode *start, DlgNode *end)
 {
     type_ = LINK;
     mode_ = IDLE;
+    nid_ = 0;
     
     // add the start and end to this arrow
     prev_.push_back (start);
@@ -233,8 +235,9 @@ bool DlgArrow::operator== (DlgPoint &point)
 }
 
 // load an arrow
-bool DlgArrow::load (std::vector<DlgNode*> &nodes)
+bool DlgArrow::load (DlgNode *m)
 {
+    DlgModule *owner, *module = (DlgModule *) m;
     DlgNode *circle;
     std::string str;
     int n;
@@ -259,21 +262,31 @@ bool DlgArrow::load (std::vector<DlgNode*> &nodes)
                 return true;
             }
 
-            // Type of node
-            case LOAD_TYPE:
-            {
-                if (parse_dlgfile (str, n) == LOAD_NUM) type_ = (node_type) n;
-                break;
-            }
-
             // Node prior to arrow
             case LOAD_PREV:
             {
                 if (parse_dlgfile (str, n) == LOAD_NUM)
                 {
-                    circle = nodes[n];
+                    // get the module the node belongs to
+                    owner = (DlgModule *) module->getModule (n);
+                    
+                    // failed
+                    if (owner == NULL || owner->type () != MODULE) 
+                        return false;
+                    
+                    if (parse_dlgfile (str, n) == LOAD_NUM)
+                    {
+                        // get the id of the previous circle
+                        circle = owner->getNode (n);
+                        
+                        // failed
+                        if (circle == NULL) return false;
+                    }
+                    
+                    // everything okay, so add circle
                     prev_.push_back (circle);
                 }
+                
                 break;
             }
 
@@ -282,7 +295,23 @@ bool DlgArrow::load (std::vector<DlgNode*> &nodes)
             {
                 if (parse_dlgfile (str, n) == LOAD_NUM)
                 {
-                    circle = nodes[n];
+                    // get the module the node belongs to
+                    owner = (DlgModule *) module->getModule (n);
+                    
+                    // failed
+                    if (owner == NULL || owner->type () != MODULE) 
+                        return false;
+                    
+                    if (parse_dlgfile (str, n) == LOAD_NUM)
+                    {
+                        // get the id of the previous circle
+                        circle = owner->getNode (n);
+                        
+                        // failed
+                        if (circle == NULL) return false;
+                    }
+                    
+                    // everything okay, so add circle
                     next_.push_back (circle);
                 }
                 break;
@@ -293,9 +322,11 @@ bool DlgArrow::load (std::vector<DlgNode*> &nodes)
             {
                 if (parse_dlgfile (str, n) == LOAD_NUM)
                 {
-                    circle = nodes[n];
+                    circle = module->getNode (n);
+                    if (circle == NULL) break;
+                    
                     DlgArrow *arrow = new DlgArrow (circle, next_.front ());
-                    nodes.push_back (arrow);
+                    module->addNode (arrow);
                 }
                 break;
             }
@@ -314,14 +345,13 @@ void DlgArrow::save (std::ofstream &file)
     // Keyword "Arrow" and arrow's number
     file << "\nArrow\n";
 
-    // arrow's type
-    file << "  Type " << (int) type_ << "\n";
-
     // start circle
-    file << "  Prev " << prev_.front ()->index () << "\n";
+    file << "  Prev " << prev_.front ()->module_id () << " "
+         << prev_.front ()->node_id () << "\n";
 
     // end circle
-    file << "  Next " << next_.front ()->index () << "\n";
+    file << "  Next " << next_.front ()->module_id () << " "
+         << next_.front ()->node_id () << "\n";
 
     file << "End\n";
 }
