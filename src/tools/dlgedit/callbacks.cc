@@ -129,7 +129,9 @@ on_dialogue_compile_activate (GtkMenuItem * menuitem, gpointer user_data)
 void 
 on_dialogue_run_activate (GtkMenuItem * menuitem, gpointer user_data)
 {
-    run_dlg dlg (((MainFrame *) user_data)->file_name);
+    MainFrame *wnd = (MainFrame *) user_data;
+    run_dlg dlg (wnd->file_name, wnd->pset_vars);
+
     dlg.run ();
 
     gtk_main ();

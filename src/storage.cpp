@@ -19,6 +19,9 @@
 // Set a variable to a new value; delete key if value is zero to save space
 void storage::set (const char *key, s_int32 value)
 {
+#ifdef _DEBUG_
+    cout << " storage::set \"" << key << "\" = " << value;
+#endif
     if (!value) data.erase (key);
     else data[key] = value;
 }
@@ -26,6 +29,12 @@ void storage::set (const char *key, s_int32 value)
 // Get the value of a variable; if key not found then variable is zero
 s_int32 storage::get (const char *key)
 {
+#ifdef _DEBUG_
+    if (data.find (key) != data.end ())
+        cout << " storage::get \"" << key << "\" = " << data[key];
+    else
+        cout << " storage::get no such key \"" << key << "\"";
+#endif
     if (data.find (key) == data.end ()) return 0;
     else return data[key];
 }
@@ -59,6 +68,10 @@ void objects::set (const char* key, storage *val)
 
         return;
     }
+
+#ifdef _DEBUG_
+    cout << "\n*** " << key;
+#endif 
     
     data[key] = val;
 }
@@ -84,6 +97,10 @@ storage* objects::get (const char* key)
         // required object, we are in trouble anyway.
         return NULL;
     }
+
+#ifdef _DEBUG_
+    cout << "\n*** " << key;
+#endif 
 
     return data[key];
 }

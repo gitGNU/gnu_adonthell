@@ -396,9 +396,9 @@ void dlg_compiler::get_cur_nodes ()
     cur_crcle = (Circle *) data->node;
 
     // If data is a player node and not done yet write is variable-code
-    if (find (done_nodes.begin (), done_nodes.end (), data) == done_nodes.end ())
-        if (cur_crcle->type == PLAYER)
-            if (cur_crcle->variables != "")
+    if (cur_crcle->type == PLAYER)
+        if (cur_crcle->variables != "")
+            if (find (done_nodes.begin (), done_nodes.end (), data) == done_nodes.end ())
                 write_variables ();
 
     // The End of dialogue follows:

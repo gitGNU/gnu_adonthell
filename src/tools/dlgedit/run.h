@@ -16,17 +16,20 @@
 #define __RUN_H__
 
 #include <gtk/gtkstyle.h>
+#include <vector>
 #include <string>
 
 #include "../../interpreter.h"
 #include "../../dialog.h"
 #include "../../yarg.h"
 
+extern int vars_compile (const char*, string&, vector<command*>&);
+
 // Wrapper class for the Run Dialogue dialog
 class run_dlg
 {
 public:
-    run_dlg (string);
+    run_dlg (string, string);
     ~run_dlg ();
 
     GtkWidget *dlg;             // The actual Dialogue Window

@@ -57,10 +57,7 @@ interpreter::interpreter (const char *file, void *data) : user_data (data)
     PC = 0;
     load (file);
 
-    // Each interpreter needs a unique id; let's just take it's memory adress
     sprintf (id, "%p", this);
-
-    // Now we have to register it with that id
     objects::set (id, (storage *) this);
 }
 

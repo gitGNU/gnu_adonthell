@@ -17,12 +17,16 @@
 #include "run_interface.h"
 #include "../../dialog.h"
 #include "../../storage.h"
+#include "../../generic_cmds.h"
 
-run_dlg::run_dlg (string f)
+run_dlg::run_dlg (string f, string v)
 {
+    interpreter varset;
+    vector<command*> c;
     string sf = f + ".str";
     string df = f + ".dlg";
-    FILE *str;
+    string e;    
+    FILE *str, *tmp;
     u_int32 num;
 
     dlg = create_run_dlg_wnd (this);
@@ -31,6 +35,26 @@ run_dlg::run_dlg (string f)
     storage *game_state = new storage ();
     objects::set ("game_state", game_state);
 
+    // preset variables
+    if (v != "")
+    {
+        tmp = fopen ("/tmp/psetvars.dlg", "w"); 
+
+        vars_compile (v.c_str (), e, c);
+        c.push_back (new return_cmd (0));
+
+        num = c.size ();
+        fwrite (&num, sizeof(num), 1, tmp);
+
+        for (num = 0; num < c.size (); num++)
+            c[num]->write (tmp);
+
+        fclose (tmp);
+
+        varset.load ("/tmp/psetvars.dlg");
+        varset.run ();
+    }
+    
     // load TOC of stringfile
     str = fopen (sf.c_str (), "r");
     fread (&num, sizeof (num), 1, str);
