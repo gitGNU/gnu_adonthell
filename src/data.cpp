@@ -479,9 +479,13 @@ bool data::save_mapcharacter (char *file)
     while ((mychar = (character *) characters.next ()) != NULL)
     {
         if ((fname = mychar->get_anim ()) == NULL) continue;
-        
-        f << "chrctr = characters['" << mychar->get_name () << "']\n"
-          << "chrctr.load ('" << fname << "')\n"
+
+        if (mychar == the_player)
+            f << "chrctr = the_player\n";
+        else
+            f << "chrctr = characters['" << mychar->get_name () << "']\n";
+            
+        f << "chrctr.load ('" << fname << "')\n"
           << "chrctr.set_on_map (map)\n"
           << "chrctr.set_pos (" << mychar->get_submap () << ", " 
           << mychar->get_posx () << ", " << mychar->get_posy () << ")\n";
