@@ -44,14 +44,19 @@ config::config ()
     // set some default values where possible
     datadir = DATA_DIR;             // Directory containing the gamedata
     screen_mode = 0;                // Fullscreen
-    language = "en";                // English
     audio_channels = 1;             // Stereo
     audio_resolution = 1;           // 16 bit
     audio_sample_rate = 2;          // 11025, 22050 or 44100 Hz
     audio_volume = 100;             // 0 - 100%
     
     // set the path to the adonthellrc file:
-    adonthellrc = string (getenv ("HOME")) + "/.adonthell"; 
+    adonthellrc = string (getenv ("HOME")) + "/.adonthell";
+    
+    // try to figure out the language
+    char *lang = getenv ("LANG");
+    if (lang == NULL) lang = getenv ("LC_ALL");
+    if (lang == NULL) lang = getenv ("LC_MESSAGES");
+    language = lang ? lang : "en_EN";
 }
  
 /**
@@ -258,7 +263,7 @@ void config::write_adonthellrc ()
        << "# edit to your needs!\n\n"
        << "# Screen-mode num\n#   0  Windowed mode\n"
        << "#   1  Fullscreen mode\n    Screen-mode " << (int) screen_mode << "\n\n"
-       << "# Language [country code]\n    Language [" << language << "]\n\n"
+       << "# Language [locale]\n    Language [" << language << "]\n\n"
        << "# Audio-channels num\n#   0  Mono\n#   1  Stereo\n"
        << "    Audio-channels " << (int) audio_channels << "\n\n"
        << "# Audio-resolution num\n#   0  8 bit\n#   1  16 bit\n"

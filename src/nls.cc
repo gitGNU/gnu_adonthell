@@ -30,7 +30,7 @@
 // Initialize NLS
 void nls::init (config &myconfig)
 {
-    if (myconfig.language != "en")
+    if (myconfig.language != "en_EN")
         set_language (myconfig.language);
     
     // open the message catalogue
