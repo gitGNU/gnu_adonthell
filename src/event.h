@@ -19,6 +19,8 @@
 #include "character.h"
 #include "types.h"
 
+struct PyCodeObject;
+
 enum
 {
     ENTER_EVENT = 0,
@@ -32,13 +34,14 @@ class event
 {
 friend event_handler;
 
+// Don't grant direct access to these: only event_handler may set/modify
+// event type or script (for safety reasons)
 protected:
-    u_int8 type;
-    char *file;
+    u_int8 type;                        // event type -> see enum above
+    PyCodeObject *script;               // precompiled script
 
-public:
-    virtual void execute (event*) = 0;
-    virtual bool equals (event*) = 0;
+    virtual void execute (event*) = 0;  // execute the script
+    virtual bool equals (event*) = 0;   // compare to events for equality
 };
 
 // To notify when a character entered a maptile
@@ -47,11 +50,11 @@ class enter_event : public event
 public:
     enter_event ();
 
-    s_int32 x;
-    s_int32 y;
-    s_int8 dir;
-    s_int32 map;
-    character *c;
+    s_int32 x;                          // x coordinate
+    s_int32 y;                          // y coordinate
+    s_int8 dir;                         // walking direction
+    s_int32 map;                        // map
+    character *c;                       // character triggering the event
 
     void execute (event*);
     bool equals (event*);
@@ -60,11 +63,11 @@ public:
 class event_handler
 {
 public:
-    static void register_event (event*, const char*);
-    static void raise_event (event*);
+    static void register_event (event*, char*); // register an event
+    static void raise_event (event*);           // event triggered
 
 private:
-    static vector<event*> handlers[MAX_EVENT];
+    static vector<event*> handlers[MAX_EVENT];  // registered events storage
 };
 
 #endif // __EVENT__H_

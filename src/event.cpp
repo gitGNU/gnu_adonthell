@@ -12,26 +12,51 @@
    See the COPYING file for more details.
 */
 
-#include "event.h"
 #include "py_inc.h"
 #include "game.h"
-#include "Python.h"
+#include "compile.h"
+#include "eval.h"
+#include "event.h"
 
+// Array with the registered events; each type of event is kept in
+// a vector of its own for faster access
 vector<event*> event_handler::handlers[MAX_EVENT];
 
+// See whether a matching event is registered and execute the
+// according script(s) 
 void event_handler::raise_event (event *e)
 {
     vector<event*> reg_evs = handlers[e->type];
     vector<event*>::iterator i;
 
+    // Search through all registered events with the type of the raised event
     for (i = reg_evs.begin (); i != reg_evs.end (); i++)
+        // Execute the script; pass recieved event on to get event data
         if (e->equals (*i)) (*i)->execute (e); 
 }
 
-void event_handler::register_event (event *e, const char *f)
+// Register a event with it's script
+void event_handler::register_event (event *e, char *file)
 {
-    e->file = strdup (f);
-    handlers[e->type].push_back (e);
+    FILE *f = fopen (file, "r");
+    // See whether the script exists at all
+    if (f)
+    {
+        // Compile the script into a PyCodeObject for quicker execution
+        _node *n = PyParser_SimpleParseFile (f, file, Py_file_input);
+        if (n)
+        {
+            e->script = PyNode_Compile (n, file);       
+            handlers[e->type].push_back (e);
+        }
+        else
+        {
+            cout << "\n*** Cannot register event: Error in" << flush;
+            show_traceback ();
+        }
+        fclose (f);
+    }
+    else cout << "\n*** Cannot register event: file \"" << file << "\" not found!" << flush;
 }
 
 
@@ -59,16 +84,13 @@ bool enter_event::equals (event *e)
 void enter_event::execute (event *e)
 {
     enter_event *t = (enter_event *) e;
-    FILE *f = fopen (file, "r");
-    if (f)
-    {
-        // PyObject *locals = Py_BuildValue ("{s:i,s:i,s:i,s:i,s:s}", "posx", t->x, 
-        //    "posy", t->y, "dir", t->dir, "map", t->map, "name", t->c->name);
-        PyObject *locals = Py_BuildValue ("{s:i,s:i,s:i,s:i,s:s}", "posx", t->x, 
-            "posy", t->y, "dir", t->dir, "map", t->map, "name", "Kai");
-        PyRun_File (f, file, Py_file_input, game::globals, locals);
-        show_traceback ();
-        fclose (f);
-    }
-    else cout << "\n*** Enter-event: cannot open \"" << file << "\"!" << flush;
+
+    // PyObject *locals = Py_BuildValue ("{s:i,s:i,s:i,s:i,s:s}", "posx", t->x, 
+    //    "posy", t->y, "dir", t->dir, "map", t->map, "name", t->c->name);
+    PyObject *locals = Py_BuildValue ("{s:i,s:i,s:i,s:i,s:s}", "posx", t->x, 
+        "posy", t->y, "dir", t->dir, "map", t->map, "name", "Kai");
+    PyEval_EvalCode (script, game::globals, locals);
+#ifdef _DEBUG_
+    show_traceback ();
+#endif // _DEBUG_
 }
