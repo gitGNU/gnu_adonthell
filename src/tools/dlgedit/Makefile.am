@@ -16,8 +16,10 @@ dlgedit_SOURCES = \
     dlg_node.cc \
     dlg_point.cc \
     dlg_rect.cc \
+    gui_circle.cc \
     gui_dlgedit.cc \
     gui_dlgedit_events.cc \
+    gui_edit.cc \
     gui_file.cc \
     gui_graph.cc \
     gui_graph_events.cc \
@@ -35,8 +37,10 @@ dlgedit_SOURCES = \
     dlg_point.h \
     dlg_rect.h \
     dlg_types.h \
+    gui_circle.h \
     gui_dlgedit.h \
     gui_dlgedit_events.h \
+    gui_edit.h \
     gui_file.h \
     gui_graph.h \
     gui_graph_events.h \
@@ -53,6 +57,7 @@ SWIGFLAGS = -D_DLGEDIT_ -D_DEBUG_
 # $(SDL_LIBS) $(PY_LIBS) $(GTK_LIBS)
 
 dlgedit_LDADD = $(GTK_LIBS)
+#dlgedit_LDFLAGS = -Wl,-E
 
 lex.loadlg.cc: loadlg.l
 	flex -olex.loadlg.cc loadlg.l

@@ -294,6 +294,13 @@ guint key_press_notify_event (GtkWidget * widget, GdkEventKey * event, gpointer 
             if (graph->selectSibling (NEXT)) graph->centerNode ();
             break;
         }
+        
+        // edit selected node
+        case GDK_Return:
+        {
+            graph->editNode ();
+            break;
+        }
     }
 /*
     MainFrame *MainWnd = (MainFrame *) data;

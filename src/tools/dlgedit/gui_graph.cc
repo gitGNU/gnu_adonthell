@@ -22,6 +22,7 @@
 #include <gtk/gtk.h>
 #include "gui_dlgedit.h"
 #include "gui_tooltip.h"
+#include "gui_circle.h"
 #include "gui_graph_events.h"
 
 // Constructor
@@ -266,6 +267,21 @@ bool GuiGraph::centerNode (DlgNode *node)
     }
             
     return false;
+}
+
+// edit selected node
+void GuiGraph::editNode ()
+{
+    if (module == NULL) return;
+    
+    // see if a node is currently selected
+    DlgCircle *selected = (DlgCircle *) module->selected ();
+
+    // if so ...
+    if (selected && selected->type () != LINK)
+    {
+        GuiCircle *edit = new GuiCircle (selected->type (), selected->entry ());
+    }
 }
 
 // resize the drawing area

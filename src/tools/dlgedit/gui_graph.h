@@ -125,6 +125,10 @@ public:
      *         <b>false</b> otherwise.
      */
     bool centerNode (DlgNode *node = NULL);
+    /**
+     * Edit currently selected node.
+     */
+    void editNode ();
     //@}
 
     void mouseMoved (DlgPoint &point);
