@@ -64,14 +64,14 @@ namespace data
 {
     /**
      * All the game's characters, different from the player.
-     * 
-     */ 
-    extern dictionnary <character *>  characters; 
+     *
+     */
+    extern dictionary <character *>  characters;
 
     /**
      * The player character.
-     * 
-     */ 
+     *
+     */
     extern character *the_player;
 }
 #endif

@@ -109,5 +109,6 @@ void py_script::run ()
     if (script && is_activated ())
     {
         PyEval_EvalCode (script, data::globals, locals);
+        python::show_traceback ();
     }
 }

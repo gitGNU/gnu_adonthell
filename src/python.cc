@@ -104,7 +104,10 @@ bool python::exec_file( char *filename )
 void python::show_traceback(void)
 {
     if ( PyErr_Occurred() )
+    {
         PyErr_Print();
+        fflush (stderr);
+    }
 }
 
 /* Import a module, return module ptr */

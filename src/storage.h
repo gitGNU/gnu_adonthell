@@ -248,7 +248,7 @@ struct eqstr
  * 
  */
 template <class mytype>
-class dictionnary : public hash_map<const char *, mytype, hash<const char *>, eqstr>  
+class dictionary : public hash_map<const char *, mytype, hash<const char *>, eqstr>
 {
 };
 

@@ -1,7 +1,7 @@
 /*
    $Id$
    
-   Copyright (C) 2000 Kai Sterker <kaisterker@linuxgames.com>
+   Copyright (C) 2000/2001 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -25,7 +25,7 @@ class quest : public storage
 public:
     quest ();
     ~quest ();
-    
+
 #ifndef SWIG
     void load (igzstream&);
     void save (ogzstream&);
@@ -42,7 +42,7 @@ namespace data
      * All the quests.
      * 
      */ 
-    extern dictionnary <quest *> quests;
+    extern dictionary <quest *> quests;
 } 
 #endif
 

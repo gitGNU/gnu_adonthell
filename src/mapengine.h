@@ -51,7 +51,7 @@ public:
     {
         mv.mapview::draw (x, y, da_opt, target); 
     }
-    
+
 protected:
     landmap lmap;
     win_mapview mv;

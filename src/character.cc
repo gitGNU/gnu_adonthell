@@ -24,7 +24,7 @@
 
 #include "character.h"
  
-dictionnary <character *> data::characters; 
+dictionary <character *> data::characters;
 
 character * data::the_player; 
 

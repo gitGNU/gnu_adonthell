@@ -14,7 +14,7 @@
 
 #include "quest.h"
 
-dictionnary <quest *> data::quests; 
+dictionary <quest *> data::quests;
 
 quest::quest ()
 {

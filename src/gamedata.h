@@ -29,10 +29,12 @@
 #include <zlib.h>
 #include <string> 
 #include <vector>
-#include "fileops.h" 
+#include "fileops.h"
 
+#include "quest.h"
+#include "character.h"
+#include "mapengine.h"
 
- 
 /**
  * Contains all the attributes related to a saved %game.
  * 
@@ -139,7 +141,27 @@ public:
     {
         return saves[pos];
     }
-    
+
+    static dictionary <quest *> quests ()
+    {
+        return data::quests;
+    }
+
+    static character* player ()
+    {
+        return data::the_player;
+    }
+
+    static dictionary<character*> characters ()
+    {
+        return data::characters;
+    }
+
+    static mapengine* map_engine ()
+    {
+        return data::map_engine;
+    }
+
 private:
 #ifndef SWIG
     string directory_;                        // the game's location on the harddisk

@@ -30,9 +30,6 @@
 #include <sys/stat.h>
 
 #include "gamedata.h"
-#include "character.h"
-#include "quest.h"
-#include "mapengine.h"
 #include "python.h"
 
 vector<gamedata*> gamedata::saves;       // The list of available savegames
@@ -255,7 +252,7 @@ bool gamedata::save (u_int32 pos, string desc)
     
     fileops::put_version (file, 2);
 
-    dictionnary <character *>::iterator itc; 
+    dictionary <character *>::iterator itc;
     for (itc = data::characters.begin (); itc != data::characters.end (); itc++) 
     {
         // don't save the player
@@ -287,7 +284,7 @@ bool gamedata::save (u_int32 pos, string desc)
 
     fileops::put_version (file, 1);
 
-    dictionnary <quest *>::iterator itq;
+    dictionary <quest *>::iterator itq;
     for (itq = data::quests.begin (); itq != data::quests.end (); itq++)
     {
         // tell the quest.data loader that another entry follows
@@ -439,7 +436,7 @@ void gamedata::cleanup ()
 void gamedata::unload () 
 {
     // delete all characters
-    dictionnary <character *>::iterator itc; 
+    dictionary <character *>::iterator itc;
     for (itc = data::characters.begin (); itc != data::characters.end (); itc++) 
     {
         itc->second->remove_from_map (); 
@@ -465,7 +462,7 @@ void gamedata::unload ()
     Py_DECREF (the_player); 
 
     // delete all quests
-    dictionnary <quest *>::iterator itq; 
+    dictionary <quest *>::iterator itq;
     for (itq = data::quests.begin (); itq != data::quests.end (); itq++) 
         delete itq->second;
     data::quests.clear (); 
