@@ -32,6 +32,8 @@ void show_preview (MainFrame *);
 void show_tooltip (MainFrame *, DlgNode *);
 void mouse_over (MainFrame *, GdkPoint);
 void redraw_graph (MainFrame *);
+void begin_scrolling (MainFrame *, GdkPoint);
+int scroll_graph (gpointer);
 void new_dialogue (MainFrame *);
 void save_dialogue (MainFrame *);
 void load_dialogue (MainFrame *, const char*);

@@ -788,8 +788,14 @@ redraw_graph (MainFrame * wnd)
     t.x = 0;
     t.y = 0;
 
-    // draw backing image to screen 
-    gtk_widget_draw (wnd->graph, &t);
+    // draw backing image to screen
+    if (wnd->mode == MULTI_SELECT)
+    {
+        wnd->mode = IDLE;
+        gtk_widget_draw (wnd->graph, &t);
+        wnd->mode = MULTI_SELECT;
+    }
+    else gtk_widget_draw (wnd->graph, &t);
 
     // Mark object below cursor if neccessary 
     // if (wnd->mode != OBJECT_DRAGGED)
@@ -1394,6 +1400,59 @@ center_object (MainFrame * wnd, DlgNode * node)
 
         redraw_graph (wnd);
     }
+}
+
+// prepare everything for 'auto-scrolling' (TM) ;-)
+void begin_scrolling (MainFrame *wnd, GdkPoint point)
+{
+    int width = wnd->graph->allocation.width;
+    int height = wnd->graph->allocation.height;
+
+    point.x += wnd->x_offset;
+    point.y += wnd->y_offset;
+
+    wnd->scroll_x = 0;
+    wnd->scroll_y = 0;
+    
+    if (point.x < 20) wnd->scroll_x = 15;
+    if (point.y < 20) wnd->scroll_y = 15;
+    if (point.x + 20 > width) wnd->scroll_x = -15;
+    if (point.y + 20 > height) wnd->scroll_y = -15;
+    
+    if (wnd->scroll_x || wnd->scroll_y)
+    {
+        if (!wnd->scroll)
+        {
+            wnd->scroll = 1;
+            gtk_timeout_add (100, scroll_graph, wnd);
+        }
+    }
+    else wnd->scroll = 0;
+}
+
+// Once 'auto-scrolling' is activated, this function is called every
+// 10th of a second until it returns FALSE
+int scroll_graph (gpointer data)
+{
+    MainFrame *wnd = (MainFrame *) data;
+    int x, y;
+
+    gtk_widget_get_pointer (wnd->graph, &x, &y);
+    
+    // stop scrolling if outside widget or too far from widget's border
+    if (x < 0 || x > wnd->graph->allocation.width || 
+        y < 0 || y > wnd->graph->allocation.height) wnd->scroll = 0;   
+    if (!wnd->scroll) return FALSE;
+    
+    // wait approx. 1 second before starting to scroll
+    if (wnd->scroll++ < 6) return TRUE;
+    
+    wnd->x_offset += wnd->scroll_x;
+    wnd->y_offset += wnd->scroll_y;
+
+    redraw_graph (wnd);
+
+    return TRUE; 
 }
 
 // Removes data from a vector and reports success or failure

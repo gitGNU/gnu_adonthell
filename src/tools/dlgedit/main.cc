@@ -76,6 +76,9 @@ init_app (MainFrame * MainWnd)
     MainWnd->file_name = g_strdup ("./new_dialogue");
     MainWnd->x_offset = 0;
     MainWnd->y_offset = 0;
+    MainWnd->scroll = 0;
+    MainWnd->scroll_x = 0;
+    MainWnd->scroll_y = 0;
     MainWnd->pset_vars = "";
     MainWnd->myplayer->set_name ("Banec");
     MainWnd->myplayer->set ("race", 0);     // Dwarf

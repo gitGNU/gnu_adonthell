@@ -71,9 +71,12 @@ typedef struct
 
     u_int8 mode;                // Program Mode
     u_int32 number;             // Number of Nodes
-    s_int32 x_offset;           // Scrolling
-    s_int32 y_offset;           // Dito
-
+    s_int32 x_offset;           // Offset scrolled in horiz. dir.
+    s_int32 y_offset;           // Offset scrolled in vert. dir.
+    s_int32 scroll_x;           // Auto-scroll rate
+    s_int32 scroll_y;           // Auto-scroll rate
+    u_int8 scroll;              // Auto-scrolling on/off
+    
     string pset_vars;           // Preset variables for running the Dialogue
     player* myplayer;           // A player object
 }

@@ -148,9 +148,11 @@ motion_notify_event (GtkWidget * widget, GdkEventMotion * event, gpointer data)
 {
     MainFrame *MainWnd = (MainFrame *) data;
     GdkPoint point;
-
+    
     point.x = (s_int32) event->x - MainWnd->x_offset;
     point.y = (s_int32) event->y - MainWnd->y_offset;
+
+    begin_scrolling (MainWnd, point);
 
     switch (event->state)
     {
