@@ -93,7 +93,7 @@ dlgedit_SOURCES = callbacks.cc circle.cc crcle_callbacks.cc crcle_interface.cc d
 
 
 # Evil, but it works...
-CPPFLAGS =  -I../.. -DUSE_PYTHON -D_VERSION_=\"0.7\" $(PY_CFLAGS) $(GTK_CFLAGS)
+CPPFLAGS =  -I../.. -DUSE_PYTHON -D_VERSION_=\"0.7\" $(PY_CFLAGS) `gtk-config --cflags`
 
 SWIGFLAGS = -D_DLGEDIT_ -D_DEBUG_
 
