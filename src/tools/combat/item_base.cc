@@ -52,6 +52,7 @@ bool item_base::equip (character_base *c)
     if (abilities & EQUIP == 0) return false;
     
     PyObject* args = PyTuple_New (2);
+    Py_INCREF (self);
     PyTuple_SetItem (args, 0, self);
     PyTuple_SetItem (args, 1, python::pass_instance (c, "character_base"));
     actions.call_method ("equip", args);  
@@ -65,6 +66,7 @@ bool item_base::combine (item_base *i)
     if (abilities & COMBINE == 0) return false;
     
     PyObject* args = PyTuple_New (2);
+    Py_INCREF (self);
     PyTuple_SetItem (args, 0, self);
     PyTuple_SetItem (args, 1, python::pass_instance (i, "item_base"));
     actions.call_method ("combine", args);  
@@ -78,6 +80,7 @@ bool item_base::use ()
     if (abilities & USE == 0) return false;
     
     PyObject* args = PyTuple_New (1);
+    Py_INCREF (self);
     PyTuple_SetItem (args, 0, self);
     actions.call_method ("use", args);  
     Py_DECREF (args);
