@@ -285,7 +285,7 @@ void GuiTree::updateModule (DlgModule *module)
     if (node == selected) selected = NULL;
     
     gchar *project;
-    gtk_ctree_node_get_text (GTK_CTREE (tree), parent, 0, &project);
+    gtk_ctree_get_node_info (GTK_CTREE (tree), parent, &project, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 
     // module still belongs to same project -> insert at old position
     if (module->entry ()->project () == project)
@@ -328,7 +328,7 @@ void GuiTree::addProjects ()
     
     for (i = projects.begin (); i != projects.end (); i++)
     {
-        text = ((char*) (*i).c_str ());
+        text = ((char *) (*i).c_str ());
         node = INSERT_NODE (NULL, NULL, &text, PROJECT, false);
         gtk_ctree_node_set_row_data (GTK_CTREE (tree), node, (gpointer) NULL);
         gtk_ctree_node_set_selectable (GTK_CTREE (tree), node, false);
