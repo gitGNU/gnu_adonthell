@@ -80,7 +80,6 @@ private:
     dialog *dlg;
     game_engine *engine;
     int answer;
-    u_int8 keyboard_mode;
 };
 #endif // __DIALOG_H__
 

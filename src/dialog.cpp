@@ -350,10 +350,6 @@ dialog_engine::dialog_engine (mapcharacter *c, game_engine *e) : engine (e)
 {
     npc *mynpc = (npc *) c->data;
 
-    // save old keyboard mode
-    keyboard_mode = input::get_keyboard_mode ();
-    input::set_keyboard_mode (MODE_PUSHED);
-
     // Init the low level dialogue stuff
     dlg = new dialog;
 
@@ -403,7 +399,6 @@ void dialog_engine::run ()
     // Error occured:
     if (answer < 0)
     {
-        input::set_keyboard_mode (keyboard_mode);
         game::engine = engine;
         delete this;
         return;
@@ -428,9 +423,8 @@ void dialog_engine::realtime_tasks ()
 
 void dialog_engine::update_keyboard ()
 {
-    if (input::is_pushed (SDLK_SPACE))
+    if (input::has_been_pushed (SDLK_SPACE))
     {
-        input::set_keyboard_mode (keyboard_mode);
         game::engine = engine;
         delete this;
     }
