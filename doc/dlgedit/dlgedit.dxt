@@ -258,16 +258,17 @@ of the commands refer to the Python Documentation (http://www.python.org).
 After above example you should be able to start designing
 Dialogues right away. But for your convenience, and because
 some of the advanced editor features are not described yet,
-this section contains the complete refernece guide. 
+this section contains the complete reference guide.
 
 \subsection sec31 The Main Window
+\anchor diaare
 
 <center>
 \image latex dlgedit_main.eps "The main interface"
 \image html dlgedit_main.png "The main interface"
 </center>
 
-\par  1. The Dialogue Area
+\par 1. The Dialogue Area
 This is where you create the outline of the dialogue; what
 lines of text exist and how they are linked to each other.
 Most of the work is done with the mouse, but there are also
@@ -428,10 +429,10 @@ of the cursor. The table below shows all possible constellations:
 </center>
 
 \par
-Further key-commands are c, which centers the view on the
+Further key-commands are \b c, which centers the view on the
 selected Node if it lies in the outer 20% of the Dialogue
-Area, the cursor keys and the numpad to scroll the dialogue
-and finally tab to select the next Node (That is, the next
+Area, the \b Cursor \b Keys and the \b Numpad to scroll the dialogue
+and finally \b Tab to select the next Node (That is, the next
 node in the editors internal data representation, not the
 next node on the screen!). Moving the mouse close to the
 Dialogue Areas border will also scroll the dialogue, and
@@ -442,36 +443,44 @@ at once.
 \par 2. A Node with additional code
 An exclamation mark (!) inside a circle means that the node
 contains commands other than just a line of text. What commands
-that may be in detail is discussed in \ref edit "section 3.2".
+that may be in detail is explained in the \ref edit "Edit Dialog"
+description.
+\anchor indlin
 
 \par 3. An indirect Link
-Whenever a node with indirect links is selected (5), they
-are hilighted in purple. Indirect links are equivalent to
-a normal link between it's start and end, but to avoid arrows
-criss-crossing over the whole Dialogue Area, it's often
-better to use an indirect link. The number inside Circles
-tells how many indirect links they have.
+Whenever a node with indirect links is \ref selcir "selected",
+they are highlighted in purple. Indirect links are equivalent to
+a normal link between selected node and the node the indirect link
+points at, but to avoid arrows criss-crossing over the whole
+Dialogue Area, it's often better to use an indirect link. The
+number inside Circles tells how many indirect links they have.
+\note This feature is deprecated and will be removed soon. Full
+downwards compatibility will be remained by automatically converting
+indirect links when loading old dialogues.
 
-\par 4. Hilighted Node
+\par 4. Highlighted Node
 Nodes below the mousepointer appear in green to give you
 some feedback what action a click will start at this point.
+\anchor selcir
 
 \par 5. Selected Node
 Selected Player nodes are drawn orange, NPC nodes red. Furthermore,
-the Instant preview (8) shows their text as well as that
+the \ref inspre "Instant preview" shows their text as well as that
 of their predecessors and followers.
 
 \par 6. Tooltip
 Whenever a Circle is below the mousepointer, a tooltip with
 its text appears to make it easier for you to find a certain
 position in the dialogue.
+\anchor prenod
 
 \par 7. Text of preceding Nodes
-All the different lines of text that may preceed the selected
-circle (5). The color of the entries gives some information
-of the type: Blue text denotes lines of the Player, black
-text lines of the NPC. Somewhat dimmed lines mean that the
-Circles are connected by indirect links (3).
+All the different lines of text that may preceed the
+\ref selcir "selected circle". The color of the entries gives
+some information of the type: Blue text denotes lines of the Player,
+black text lines of the NPC; the Narrator appears green. Somewhat dimmed
+lines mean that the Circles are connected by \ref indlin "indirect links".
+\anchor inspre
 
 \par 8. The Instant preview
 This shall give a first impression of what the Dialogue will
@@ -485,12 +494,13 @@ that additional code of Nodes won't be taken into account,
 so in the game, the dialogue might be slightly different.
 
 \par 9. Text of selected node
-Again this is color-coded: as in the Dialogue Area (1), orange
-text means a Player line, red text a NPC line.
+Again this is color-coded: as in the \ref diaare "Dialogue Area",
+orange text means a Player line, red text a NPC line and green
+is the Narrator.
 
 \par 10. Text following the selected node
-Text following the selected Node. The colors have the same
-meaning as in (7).
+Text following the selected Node. The colors are the same
+as for the \ref prenod "preceding nodes".
 
 \latexonly
 \newpage
@@ -508,9 +518,10 @@ When you create a new Circle, you should attach some text
 to it. This is done on this page. Simply type the text into
 the entry. Player text will be displayed blue, NPC text
 black and Narrator text in green. You can switch between
-both with (5).
+the three with the \ref radbut "radiobuttons".
+\anchor edit
 
-\anchor edit \par 2. Conditions for the Node
+\par 2. Conditions for the Node
 On this page, you can specifiy a condition which then decides
 whether this line of text will be available in the game
 or not. In fact you may enter any valid Python code, but
@@ -526,6 +537,7 @@ if condition_1 == 1 and (flag_1 + flag_2) <= 10:
 You may also use <tt>elif</tt> and <tt>else</tt> statements, 
 but again the results might be unpredictible, unless you
 restrict yourself to a single <tt>if</tt> and <tt>else</tt>.
+\anchor variab
 
 \par 3. Set and/or change Variables
 Here you can enter a variety of Python code. In contrast
@@ -533,8 +545,9 @@ to the Condition code, where your code decides whether text
 is displayed or not, this code is executed if the line of
 text is displayed (in case of NPC text) or selected as response
 (in case of Player text). Use the code you enter here to
-change quest objects, NPC or Player attributes, etc. How
-this works in detail, will be described in \ref code "section 3.5".
+change quest objects, NPC or Player attributes, etc. See the
+section about additional \ref code "Python code" for a
+description.
 
 \par
 The green page label tells you at a glance that this Circle
@@ -544,9 +557,11 @@ be black, as text isn't really optional.
 
 \par 4. Actions
 Here are just a few shortcuts that create code as you can
-enter in (3). Currently, only the Loop command works. When
-activated, the Node will not be marked as used once it appears
-in the conversation, and thus may be spoken several times.
+enter in the \ref variab "Variables Tab". Currently, only the
+Loop command works. When activated, the Node will not be
+marked as used once it appears in the conversation, and thus
+may occure several times.
+\anchor radbut
 
 \par 5. Assign text to Narrator, NPC or Player
 Use the Radiobuttons to assign the Circle either to the Player,
@@ -679,7 +694,7 @@ The dialogue engine allows to embed a function call into
 a line of text and will insert whatever string this function
 returns in place of the function. This only works for methods
 defined in the custom function window (Dialogue->Functions
-or Ctrl+F). It mustn't take any arguments and should return
+or \b Ctrl+F). It mustn't take any arguments and should return
 a string. For example, the method
 
 \verbatim
@@ -692,6 +707,9 @@ print: {hello_world}"</i> to produce <i>"This
 will print: Hello world!"</i>. Of course
 for this to make sense, such a method should return one
 of several strings according to the current situation.
+Note that this code is always evaluated whenever the line
+of text is displayed, no matter whether it gets selected
+by the player or not
 
 Apart from that, there are the <tt>\$name</tt> and 
 <tt>\$fm{text_a/text_b}</tt> macros. <tt>\$name</tt> will 
@@ -704,10 +722,10 @@ male.
 
 For more advanced dialogues it might be necessary to define
 local variables. They belong to the dialogue class and are
-addressed as self.variable. Local variables are only accessible
-from within the dialogue itself and thus are only available
-as long as the dialogue is running. They won't remember
-their value between two runs of the dialogue.
+addressed as <tt>self.variable</tt>. Local variables are only
+accessible from within the dialogue itself and thus are only
+available as long as the dialogue is running. They are free'd
+at the end of the dialogue.
 
 What for are they then? Basically they can be used to track
 the player's path through the dialogue. Information he may
@@ -732,38 +750,53 @@ Undefined variables are assumed to have the value 0, so
 in above example you needn't do anything about the case
 where the player doesn't get that special information.
 
-But what would happen if the information gained and the enabled
-option aren't part of the same dialogue? That is where persistant
+In many situations, it will be necessary that information
+survives an individual dialogue. That is where persistant
 variables come into play:
 
 <h4>Persistent variables</h4>
 
-The state of the gameworld, of each NPC and the player are
-also accessible from a dialogue script. The full details
-should be discussed in a general scripting doc, but unless
-this has happened, here are the bits relevant for the dialogue
-engine. 
+The state of the gameworld, of each NPC and the player are also
+accessible from a dialogue script. The full details should be
+discussed in a general scripting doc, but unless this has happened,
+here are the bits relevant for the dialogue engine.
 
 The state of the gameworld is conserved in the various quests.
-On Python side, all quests are stored in the global quests
-dictionary. A special quest is retrieved by
+All quests are stored in the <tt>global data::quests</tt> dictionary.
+To retrieve a certain quest you'd write
 
-myquest = quests["quest_name"]
+\verbatim
+myquest = adonthell.gamedata_get_quest("quest_name")
+\endverbatim
 
-and particular attributes of myquest are retrieved via
+Particular attributes of <tt>myquest</tt> are retrieved/set via
 
-myattribute = myquest.get ("attribute_name")
+\verbatim
+myattribute = myquest.get_val ("attribute_name")
+myquest.set_val ("attribute_name", <expression>)
+\endverbatim
 
-and set with
+To save you some writing, dlgedit recognizes the following shortcuts:
 
-myquest.set ("attribute_name",
-myattribute)
+\verbatim
+myattribute = quest_name.attribute_name
+quest_name.attribute_name = <expression>
+\endverbatim
 
-Characters are treated in a similar way, except that they
-are stored in a dictionary called characters. As an addition,
-the global variable the_player always points to the player
-character and the_npc to the npc the dialogue is assigned
-to.
+Characters are treated in the same way. They are retrieved with
+<tt>adonthell.gamedata_get_character()</tt> and their attributes
+are also changed via the <tt>get_val()</tt>/<tt>set_val()</tt>
+functions. Even the shortcuts are the same. Instead of <tt>quest_name</tt>
+you'll have to give the Character's name, e.g.
+
+\verbatim
+# Even character names containing blanks work!
+Bjarn Fingolson.attribute_name = <expression>
+\endverbatim
+
+As an addition, the member variable <tt>the_player</tt> always points
+to the player character and <tt>the_npc</tt> to the npc the dialogue
+is assigned to.
 
 \htmlonly
 <hr>
@@ -820,12 +853,12 @@ player, you might as well leave it away and let the NPC
 go on without interruption. 
 
 \par Keep the player's text neutral
-Bear in mind that different player's will have different
+Bear in mind that different players will have different
 feelings in the same situation. And unless you don't give
 the player the chance to chose an answer that comes close
 to his or her own personality, you should try to leave
 (strong) feelings away. Of course, depending on the underlying
-role playing system, you might present player's with choices
+role playing system, you might present players with choices
 according to their alignment or behaviour in previous
 situations.
 
@@ -833,7 +866,7 @@ situations.
 Since there is only limited space in the game's dialogue window,
 you should limit the amount of text displayed a time. NPC
 text should fit entirely into the window, meaning it should
-not exceed 4 lines in the \ref sec32 "edit window". Longer text 
+not exceed 4 lines in the \ref sec32 "edit dialog". Longer text
 can be distributed over several nodes. Player text should
 take a single line, 2 at most, so that several choices
 fit into the dialogue window.
