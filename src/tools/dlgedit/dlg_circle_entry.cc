@@ -41,11 +41,12 @@ DlgCircleEntry::DlgCircleEntry ()
 // get the dialogue text
 std::string DlgCircleEntry::text ()
 {
-    // usually, we just need to return the text
-    if (GuiDlgedit::window->mode () != L10N_PREVIEW) return text_;
-    
     // in case we are in preview mode, we need to translate the text first
-    return gettext (text_.c_str ());
+    if (GuiDlgedit::window && GuiDlgedit::window->mode () == L10N_PREVIEW) 
+        return gettext (text_.c_str ());
+
+    // usually, we just need to return the text
+    return text_;    
 }
 
 // set the dialogue text

@@ -12,6 +12,7 @@ dlgedit_SOURCES = \
     dlg_arrow.cc \
     dlg_circle.cc \
     dlg_circle_entry.cc \
+    dlg_cmdline.cc \
     dlg_compiler.cc \
     dlg_module.cc \
     dlg_module_entry.cc \
@@ -40,6 +41,7 @@ dlgedit_SOURCES = \
     dlg_arrow.h \
     dlg_circle.h \
     dlg_circle_entry.h \
+    dlg_cmdline.h \
     dlg_compiler.h \
     dlg_module.h \
     dlg_module_entry.h \

@@ -21,6 +21,7 @@
 
 #include <iterator>
 #include <ostream.h>
+#include "dlg_cmdline.h"
 #include "dlg_compiler.h"
 #include "dlg_types.h"
 #include "gui_error.h"
@@ -65,11 +66,14 @@ DlgCompiler::~DlgCompiler ()
 // compile the dialogue into Python script
 void DlgCompiler::run ()
 {
-    // make sure the error console exists
-    if (GuiError::console == NULL)
-        GuiError::console = new GuiError ();
-    else
-        GuiError::console->clear ();
+    if (DlgCmdline::compile == false)
+    {
+        // make sure the error console exists
+        if (GuiError::console == NULL)
+            GuiError::console = new GuiError ();
+        else
+            GuiError::console->clear ();
+    }
     
     // try to open the file
     std::string fname = dialogue->name ();
@@ -104,7 +108,7 @@ void DlgCompiler::run ()
     writeCustomCode ();
     
     // display errors if there were any
-    if (errors > 0)
+    if (DlgCmdline::compile == false && errors > 0)
         GuiError::console->display ();
 }
 
@@ -558,8 +562,9 @@ bool DlgCompiler::addCondition (DlgCircle *circle, int idx)
             error += "\"\n ";
         
             // add error to list
-            GuiError::console->add (error, circle);
-        
+            if (DlgCmdline::compile) cout << error;
+            else GuiError::console->add (error, circle);
+
             errors++;
             return false;
         }
@@ -576,7 +581,8 @@ bool DlgCompiler::addCondition (DlgCircle *circle, int idx)
         error += "\"\n ";
 
         // add error to list
-        GuiError::console->add (error, circle);
+        if (DlgCmdline::compile) cout << error;
+        else GuiError::console->add (error, circle);
         
         errors++;
         retval = false;
@@ -637,7 +643,8 @@ int DlgCompiler::checkFollowers (DlgCircle *circle)
             error += "\"\n ";
             
             // add error to the error console
-            GuiError::console->add (error, circle);            
+            if (DlgCmdline::compile) cout << error;
+            else GuiError::console->add (error, circle);
             
             errors++;
             break;
@@ -679,7 +686,8 @@ bool DlgCompiler::checkConditions (DlgCircle *circle)
             error += child->entry ()->text ();
             error += "\"\n ";
             
-            GuiError::console->add (error, child);
+            if (DlgCmdline::compile) cout << error;
+            else GuiError::console->add (error, child);
             
             errors++;
             error = "";

@@ -138,6 +138,12 @@ public:
      */
     void compileDialogue ();
     /**
+     * Test whether the given filename points to a valid dialogue
+     * @param file path of the dialogue
+     * @return <b>true</b> if the dialogue is valid, <b>false</b> otherwise.
+     */
+    static bool checkDialogue (std::string file);
+    /**
      * Edit the custom code of the current module.
      */
     void customCode ();

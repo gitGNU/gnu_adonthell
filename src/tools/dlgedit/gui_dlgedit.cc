@@ -364,21 +364,10 @@ void GuiDlgedit::newDialogue ()
 // load a new dialogue
 void GuiDlgedit::loadDialogue (std::string file)
 {
-    // first, open the file
-    loadlgin = fopen (file.c_str (), "rb");
-
-    if (!loadlgin)
-    {
+    // test if we have a valid dialogue
+    if (!checkDialogue (file))
+    {        
         message->display (-2, g_basename (file.c_str ()));
-        return;
-    }
-    
-    // check if it's a regular file
-    struct stat statbuf;
-    fstat (fileno (loadlgin), &statbuf);
-    if (!S_ISREG (statbuf.st_mode))
-    {
-        message->display (-2, file.c_str ());
         return;
     }
     
@@ -635,6 +624,23 @@ void GuiDlgedit::exitPreview ()
 
     // clear the statusbar
     message->clear ();
+}
+
+bool GuiDlgedit::checkDialogue (std::string file)
+{
+    // first, open the file
+    loadlgin = fopen (file.c_str (), "rb");
+
+    if (!loadlgin)
+        return false;
+    
+    // check if it's a regular file
+    struct stat statbuf;
+    fstat (fileno (loadlgin), &statbuf);
+    if (!S_ISREG (statbuf.st_mode))
+        return false;
+
+    return true;
 }
 
 DlgModule *GuiDlgedit::initDialogue (std::string name)
