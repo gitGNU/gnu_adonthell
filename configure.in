@@ -155,7 +155,7 @@ if test x$pylibs = xnone; then
 
    if test $PYTHON_VERSION -lt 15; then
 	echo "Sorry, you need to have Python 1.5+ installed - update your version!"
-	AC_MSG_ERROR([Python 1.5 or better required])
+	AC_MSG_ERROR([*** Python 1.5 or better required])
    fi
 
    dnl Find the Python.h header file
@@ -176,27 +176,32 @@ if test x$pylibs = xnone; then
    dnl Find the Python library
 
    AC_MSG_CHECKING(for Python library)
+   PYLIB=""
    changequote(<<, >>)
-   PYLIB=`$PYPACKAGE -c 'import sys; print "%s/lib/python%s/config" % (sys.prefix, sys.version[:3])'`
+   PYPREFIX=`$PYPACKAGE -c 'import sys; print sys.prefix'`
    PYLIBVER=`$PYPACKAGE -c 'import sys; print sys.version[:3]'`
    changequote([, ])
 
-
+   py_paths="$PYPREFIX/lib/python$PYLIBVER/config $PYPREFIX/lib"
+   py_suffix="$PYLIBVER.so $PYLIBVER.a .so .a"
+   
    dnl Try for specific version first, then the generic version, then panic
 
-   if test -r "$PYLIB/libpython$PYLIBVER.so"; then
-       PY_LIBS="-L$PYLIB -lpython$PYLIBVER $PY_LIBS"
-   elif test -r "$PYLIB/libpython$PYLIBVER.a"; then
-       PY_LIBS="-L$PYLIB -lpython$PYLIBVER $PY_LIBS"
-   elif test -r "$PYLIB/libpython.so"; then
-       PY_LIBS="-L$PYLIB -lpython $PY_LIBS"
-   elif test -r "$PYLIB/libpython.a"; then
-       PY_LIBS="-L$PYLIB -lpython $PY_LIBS"
-   else
-       AC_MSG_ERROR([Python library not found in $PYLIB])
-   fi
-   AC_MSG_RESULT(found)
+   for ppath in $py_paths ; do
+     for psuffix in $py_suffix ; do
+        if test -r "$ppath/libpython$psuffix" ; then
+            PYLIB="-L$ppath -lpython$psuffix"
+            break 2
+        fi
+     done
+   done
 
+   if test "x$PYLIB" != x ; then
+      PY_LIBS="$PYLIB $PY_LIBS"
+      AC_MSG_RESULT(found)
+   else
+      AC_MSG_ERROR([*** Python library not found])
+   fi
 
    dnl Get the libraries that python depends on
 
@@ -222,22 +227,13 @@ if test x$pylibs = xnone; then
 
    AC_MSG_RESULT($PY_DEPS)
 
-   dnl only GNU ld seems to knows -E flag
+   dnl only GNU ld seems to know -E flag
    if $LD -v 2>&1 </dev/null | egrep '(GNU|with BFD)' 1>&5; then
        PY_LIBS="-Wl,-E $PY_LIBS $PY_DEPS"
    else
        PY_LIBS="$PY_LIBS $PY_DEPS"
    fi
 
-   dnl See whether we should enable python debugging
-
-   AC_MSG_CHECKING(whether to enable Python debugging)
-   if test x$pydebug = xno; then
-	AC_MSG_RESULT(no)
-   else
-        PY_CFLAGS="$PY_CFLAGS -DPY_DEBUG"
-	AC_MSG_RESULT(yes)
-   fi
 else
    PY_CFLAGS=${pycflags}
    AC_MSG_CHECKING(for Python cflags)
@@ -246,6 +242,16 @@ else
    AC_MSG_CHECKING(for Python library flags)
    AC_MSG_RESULT($PY_LIBS)
    PY_VERSION="Manually specified"   
+fi
+
+dnl See whether we should enable python debugging
+
+AC_MSG_CHECKING(whether to enable Python debugging)
+if test x$pydebug = xno; then
+    AC_MSG_RESULT(no)
+else
+    PY_CFLAGS="$PY_CFLAGS -DPY_DEBUG"
+    AC_MSG_RESULT(yes)
 fi
 
 dnl **************
