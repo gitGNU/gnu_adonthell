@@ -50,6 +50,7 @@ mapsquare_char::~mapsquare_char ()
 mapsquare::mapsquare () : mapsquare_walkable () 
 {
     base_begin = tiles.end ();
+    can_use_for_pathfinding = true; 
 }
 
 mapsquare::mapsquare (const mapsquare& src) : mapsquare_walkable () 
@@ -62,6 +63,7 @@ mapsquare::mapsquare (const mapsquare& src) : mapsquare_walkable ()
     for (it = tiles.begin ();
          it != tiles.end () && *(it->base_tile) < *it; it++);
     base_begin = it;
+    can_use_for_pathfinding = src.can_use_for_pathfinding; 
 }
 
 mapsquare::~mapsquare ()

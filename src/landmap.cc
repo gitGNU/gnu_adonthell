@@ -220,6 +220,7 @@ s_int8 landmap::get (igzstream& file)
         for (l = 0; l < sm->area_height (); l++)
             for (k = 0; k < sm->area_length (); k++) 
             {
+                sm->area[k][l].can_use_for_pathfinding << file; 
                 u_int16 n, t; 
                 // Read the number of mapobjects which have their base tile here
                 n << file;
@@ -278,7 +279,8 @@ s_int8 landmap::put (ogzstream& file) const
         for (l = 0; l < submap[i]->area_height (); l++)
             for (k = 0; k < submap[i]->area_length (); k++) 
             {
-                u_int16 nbr_base = 0; 
+                u_int16 nbr_base = 0;
+                submap[i]->area[k][l].can_use_for_pathfinding >> file; 
                 list <mapsquare_tile>::iterator it = submap[i]->area[k][l].tiles.begin ();
                 while (it != submap[i]->area[k][l].tiles.end ())
                 { 

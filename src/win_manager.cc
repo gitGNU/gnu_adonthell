@@ -60,10 +60,7 @@ void win_manager::destroy()
 void win_manager::draw()
 {
   for(list<win_container *>::iterator i=lmanage.begin();i!=lmanage.end();i++)
-    {
-      if(*i!=wc) (*i)->draw();
-    }
-  if(wc) wc->draw();
+      (*i)->draw();
 }
 
 
@@ -95,9 +92,3 @@ void win_manager::set_focus(win_container * tmp)
       wc->set_focus(true);
     }   
 }
-
-
-
-
-
-

@@ -33,6 +33,7 @@
 #include "window.h"
 #include "data_screen.h"
 #include "mapengine.h"
+#include "gametime.h"
 
 data_screen::data_screen (int m)
 {
@@ -96,6 +97,7 @@ data_screen::~data_screen ()
 {
     delete theme;
     delete font;
+    gametime::start_action (); 
 }
 
 void data_screen::init ()

@@ -114,7 +114,8 @@ bool path::calculate ()
         if (n->x () + 1 < smap->area_length ())
         {
             np = smap->get_square (n->x () + 1, n->y ());
-            if (n->is_walkable_east () && np->is_walkable_west () && np->is_free ())
+            if (n->is_walkable_east () && np->is_walkable_west () && np->is_free () &&
+                (np->can_use_for_pathfinding || (np->x () == goal.x && np->y () == goal.y))) 
             {
                 u_int16 newg = n->g + 1;
                 bool in_opened, in_closed; 
@@ -152,7 +153,8 @@ bool path::calculate ()
         if (n->x () > 0)
         {
             np = smap->get_square (n->x () - 1, n->y ());
-            if (n->is_walkable_west () && np->is_walkable_east () && np->is_free ())
+            if (n->is_walkable_west () && np->is_walkable_east () && np->is_free () &&
+                (np->can_use_for_pathfinding || (np->x () == goal.x && np->y () == goal.y))) 
             {
                 u_int16 newg = n->g + 1;
                 bool in_opened, in_closed; 
@@ -190,8 +192,9 @@ bool path::calculate ()
         if (n->y () > 0)
         {
             np = smap->get_square (n->x (), n->y () - 1);
-            if (n->is_walkable_north () && np->is_walkable_south () && np->is_free ())
-            {
+            if (n->is_walkable_north () && np->is_walkable_south () && np->is_free () &&
+                (np->can_use_for_pathfinding || (np->x () == goal.x && np->y () == goal.y))) 
+              {
                 u_int16 newg = n->g + 1;
                 bool in_opened, in_closed; 
                 in_opened = (find (opened_nodes.begin (), opened_nodes.end (), np) != opened_nodes.end ()); 
@@ -227,7 +230,8 @@ bool path::calculate ()
         if (n->y () + 1 < smap->area_height ())
         {
             np = smap->get_square (n->x (), n->y () + 1);
-            if (n->is_walkable_south () && np->is_walkable_north () && np->is_free ())
+            if (n->is_walkable_south () && np->is_walkable_north () && np->is_free () &&
+                (np->can_use_for_pathfinding || (np->x () == goal.x && np->y () == goal.y))) 
             {
                 u_int16 newg = n->g + 1;
                 bool in_opened, in_closed; 

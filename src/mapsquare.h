@@ -327,7 +327,14 @@ public:
      * Parent square for the path
      * 
      */
-    mapsquare * parent; 
+    mapsquare * parent;
+
+    /**
+     * If == false, then this square will never be considered
+     * as walkable by pathfinding functions.
+     * 
+     */ 
+    bool can_use_for_pathfinding; 
 
     //@}
 

@@ -51,7 +51,15 @@ void mapengine::load_map (string fname)
 void mapengine::run ()
 {
     //     static u_int32 cpt = 0;  
-    letsexit = false; 
+    letsexit = false;
+    win_container * ct = new win_container;
+    ct->move (0, 0);
+    ct->resize (mv.drawable::length (), mv.drawable::height ());
+    ct->add (&mv); 
+    ct->set_visible_all (true);
+    ct->set_visible (true);
+    mv.pack (); 
+    win_manager::add (ct); 
     gametime::start_action (); 
     while (!letsexit)
     {
@@ -69,6 +77,9 @@ void mapengine::run ()
         screen::show ();
         gametime::update (); 
     }
+    win_manager::remove (ct);
+    ct->remove (&mv);
+    delete ct; 
 }
 
 void mapengine::mainloop ()
@@ -78,11 +89,9 @@ void mapengine::mainloop ()
     {
         win_manager::input_update ();
         if (should_update_map ()) lmap.update ();
-        mv.mapview::update ();
         win_manager::update ();
     }
     screen::clear (); 
-    mv.mapview::draw (0, 0);
     win_manager::draw ();
 }
 
