@@ -238,7 +238,7 @@ game executable. Unless you installed it in a directory such as /usr/bin
 or /usr/local/bin, You can run the game only from this directory. 
 Otherwise, you can start it from anywhere by typing:
 
-	./adonthell
+	adonthell
 
 If the game engine and data have been correctly installed, you'll
 find yourself in the main menu. Here you can configure some aspects 
