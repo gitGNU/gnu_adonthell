@@ -56,19 +56,8 @@ void mapengine::run ()
     win_manager::add (&mv); 
     gametime::start_action (); 
 
-    //     static u_int32 cpt = 0;  
     while (!letsexit)
     {
-//         static image ima (300, 200);
-        //         cpt++;
-//         if (cpt == 200) 
-//         {
-//             static u_int32 lcpt = 0; 
-//             cpt = 0; 
-//             gamedata::load (1);
-//             data::characters["Player"]->set_schedule ("random_move");
-//             cout << "Loaded " << ++lcpt << " times\n"; 
-//         }
         mainloop ();
         screen::show ();
         gametime::update (); 

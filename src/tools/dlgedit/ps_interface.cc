@@ -226,11 +226,11 @@ GtkWidget * create_ps_window (ps_dlg *dlg, const char* name, int race, int gende
     for (itc = data::characters.begin (); itc != data::characters.end (); itc++)
     {
         // don't add the player character to the list
-        if (!strcmp ((*itc).first, name))
+        if (!strcmp ((*itc).first.c_str (), name))
             continue;
 
-        glade_menuitem = gtk_menu_item_new_with_label ((*itc).first);
-        gtk_object_set_user_data (GTK_OBJECT (glade_menuitem), (void *) (*itc).first);
+        glade_menuitem = gtk_menu_item_new_with_label ((*itc).first.c_str ());
+        gtk_object_set_user_data (GTK_OBJECT (glade_menuitem), (void *) (*itc).first.c_str ());
         gtk_widget_show (glade_menuitem);
         gtk_menu_append (GTK_MENU (npc_selection_menu), glade_menuitem);
         gtk_option_menu_set_menu (GTK_OPTION_MENU (npc_selection), npc_selection_menu);

@@ -187,14 +187,14 @@ void debug_dlg::update ()
 int debug_dlg::update_children (GtkCTree *tree, GtkCTreeNode *parent, storage *myobj)
 {
     char *text[2], str[32], *key, *val;
-    pair<const char*, s_int32> mypair;
+    pair<string, s_int32> mypair;
     dbg_node_data *data;
     GtkCTreeNode *node;    
     int changed = 0;
 
-    while ((mypair = myobj->next ()).first != NULL)
+    while ((mypair = myobj->next ()).first != "")
     {
-        key = strdup (mypair.first);
+        key = strdup (mypair.first.c_str ());
         sprintf (str, "%i", mypair.second);
 
         // Try to find this attribute in the tree
@@ -342,7 +342,7 @@ void debug_dlg::init ()
 {
     dbg_node_data *data;
     GtkCTreeNode *parent = NULL, *node;
-    pair<const char*, s_int32> mypair;
+    pair<string, s_int32> mypair;
     objects *container;
     storage *myobj;
     char *text[2], str[32];
@@ -360,11 +360,11 @@ void debug_dlg::init ()
         parent = gtk_ctree_insert_node (GTK_CTREE (dlg_tree), NULL, NULL, text, 0, NULL, NULL, NULL, NULL, FALSE, TRUE);
         gtk_ctree_node_set_row_data_full (GTK_CTREE (dlg_tree), parent, data, destroy_data);
 
-        while ((mypair = myobj->next ()).first != NULL)
+        while ((mypair = myobj->next ()).first != "")
         {
             sprintf (str, "%i", mypair.second);
 
-            text[0] = strdup (mypair.first);
+            text[0] = strdup (mypair.first.c_str ());
             text[1] = str;
 
             data = new dbg_node_data (text[0], 0);
@@ -401,11 +401,11 @@ void debug_dlg::init ()
         parent = gtk_ctree_insert_node (GTK_CTREE (char_tree), NULL, NULL, text, 0, NULL, NULL, NULL, NULL, FALSE, FALSE);
         gtk_ctree_node_set_row_data_full (GTK_CTREE (char_tree), parent, data, destroy_data);
 
-        while ((mypair = itc->second->next ()).first != NULL)
+        while ((mypair = itc->second->next ()).first != "")
         {
             sprintf (str, "%i", mypair.second);
 
-            text[0] = strdup (mypair.first);
+            text[0] = strdup (mypair.first.c_str ());
             text[1] = str;
 
             data = new dbg_node_data (text[0], 0);
@@ -429,11 +429,11 @@ void debug_dlg::init ()
         parent = gtk_ctree_insert_node (GTK_CTREE (quest_tree), NULL, NULL, text, 0, NULL, NULL, NULL, NULL, FALSE, FALSE);
         gtk_ctree_node_set_row_data_full (GTK_CTREE (quest_tree), parent, data, destroy_data);
 
-        while ((mypair = itq->second->next ()).first != NULL)
+        while ((mypair = itq->second->next ()).first != "")
         {
             sprintf (str, "%i", mypair.second);
 
-            text[0] = strdup (mypair.first);
+            text[0] = strdup (mypair.first.c_str ());
             text[1] = str;
 
             data = new dbg_node_data (text[0], 0);

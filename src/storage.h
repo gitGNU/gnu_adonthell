@@ -31,6 +31,7 @@
 #include <ext/hash_map>
 #else
 #include <hash_map>
+#include <map>
 #endif
 #include "str_hash.h"
 // #include <map>
@@ -154,70 +155,70 @@ public:
 };
 
 
-// /**
-//  * The global container for access to all the different %game objects 
-//  * from within a script
-//  */ 
-// class objects
-// {
-// public:
-//     /** 
-//      * Default constructor.
-//      * 
-//      */
-//     objects () { changed = 1; }
+/**
+ * The global container for access to all the different %game objects 
+ * from within a script
+ */ 
+class objects
+{
+public:
+    /** 
+     * Default constructor.
+     * 
+     */
+    objects () { changed = 1; }
     
-//     /** 
-//      * Associates an object to a key.
-//      * 
-//      * @param key key.
-//      * @param val storage associated to key.
-//      */
-//     void set_val (const char * key, storage* val);
+    /** 
+     * Associates an object to a key.
+     * 
+     * @param key key.
+     * @param val storage associated to key.
+     */
+    void set_val (const char * key, storage* val);
 
-//     /** 
-//      * Returns a storage associated to a key.
-//      * 
-//      * @param key key to return.
-//      * 
-//      * @return storage associated to key.
-//      */
-//     storage* get_val (const char * key);
+    /** 
+     * Returns a storage associated to a key.
+     * 
+     * @param key key to return.
+     * 
+     * @return storage associated to key.
+     */
+    storage* get_val (const char * key);
 
-//     /** 
-//      * Erases a storage from it's key.
-//      * 
-//      * @param key key to erase.
-//      */
-//     void erase (const char * key);
+    /** 
+     * Erases a storage from it's key.
+     * 
+     * @param key key to erase.
+     */
+    void erase (const char * key);
 
-//     /** 
-//      * Returns the next storage in the object.
-//      * 
-//      * 
-//      * @return next storage in the object.
-//      */
-//     storage* next ();
+    /** 
+     * Returns the next storage in the object.
+     * 
+     * 
+     * @return next storage in the object.
+     */
+    storage* next ();
 
-// private:
-// #ifndef SWIG
-//     /*
-//      * Checks two strings for their order (needed for the map)
-//      *
-//      */
-//     struct ltstr
-//     {
-//         bool operator()(const char* s1, const char* s2) const
-//         {
-//             return strcmp (s1, s2) < 0;
-//         }
-//     };
+private:
+#ifndef SWIG
+    /*
+     * Checks two strings for their order (needed for the map)
+     *
+     */
+    struct ltstr
+    {
+        bool operator()(const char* s1, const char* s2) const
+        {
+            return strcmp (s1, s2) < 0;
+        }
+    };
 
-//     map<const char*, storage*, ltstr> data;
-//     map<const char*, storage*, ltstr>::iterator i;
-//     u_int8 changed; 
-// #endif
-// };
+    map<const char*, storage*, ltstr> data;
+    map<const char*, storage*, ltstr>::iterator i;
+    u_int8 changed; 
+#endif
+};
 
 #ifndef SWIG
 

@@ -768,9 +768,7 @@ class win_scrollbar
   void init();
   
   void refresh();
-
-  win_scrollbar & operator=(win_scrollbar &);
-  
+   
   image * back_bot_;
   image * back_mid_;
   image * back_top_;
@@ -916,11 +914,6 @@ class win_theme
   ~win_theme();
   
   void destroy();
- 
-  friend class win_border;
-  friend class win_background;
-  friend class win_scrollbar;
-
 };
 
 
