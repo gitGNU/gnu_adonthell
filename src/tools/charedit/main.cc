@@ -64,10 +64,9 @@ main_wnd::load_list_defaults (GtkCList * list, gchar * file, gchar * _default)
     char *text[2] = { 0, _default };
     char str[256];
 
-    while (!feof (f))
+    while (fgets (str, 255, f))
     {
-        // read a line and strip all leading/trailing whitespace 
-        fgets (str, 255, f);
+        // strip all leading/trailing whitespace 
         g_strstrip (str);
 
         // add line as long as it isn't empty or a comment
