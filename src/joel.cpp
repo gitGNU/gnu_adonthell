@@ -35,8 +35,8 @@ int main(int argc,char **argv)
   image background;
   image ti;
   
-  background.load("gfxtree/window/editor/back_test.pnm");
-  ti.load("gfxtree/window/editor/testimage.pnm");
+  background.load_raw("gfxtree/window/editor/back_test.pnm");
+  ti.load_raw("gfxtree/window/editor/testimage.pnm");
   
   //load font
   win_font * testfont = new win_font(WIN_THEME_ORIGINAL);

@@ -74,7 +74,8 @@ mapengine_SOURCES = animation.cpp audio.cpp audio_thread.cpp character.cpp comma
 joltest_SOURCES = animation.cpp audio.cpp audio_thread.cpp character.cpp commands.cpp cutscene.cpp dialog_cmds.cpp fileops.cpp game.cpp generic_cmds.cpp image.cpp init.cpp interpreter.cpp input.cpp inventory.cpp lex.prefs.cpp pnm.cpp prefs.cpp screen.cpp storage.cpp win_label.cpp win_write.cpp win_container.cpp win_select.cpp win_friend.cpp win_border.cpp win_base.cpp win_font.cpp win_image.cpp joel.cpp yarg.cc
 
 
-alextest_SOURCES = fileops.cpp pnm.cpp screen.cpp image.cpp animation.cpp lex.prefs.cpp prefs.cpp alextest.cpp input.cpp
+alextest_SOURCES = fileops.cpp pnm.cpp screen.cpp image.cpp animation.cpp lex.prefs.cpp prefs.cpp alextest.cpp input.cpp win_label.cpp win_write.cpp win_container.cpp win_select.cpp win_friend.cpp win_border.cpp win_base.cpp win_font.cpp win_image.cpp
+
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = ../header.h
 CONFIG_CLEAN_FILES = 
@@ -105,11 +106,13 @@ joltest_LDADD = $(LDADD)
 joltest_DEPENDENCIES = 
 joltest_LDFLAGS = 
 alextest_OBJECTS =  fileops.o pnm.o screen.o image.o animation.o \
-lex.prefs.o prefs.o alextest.o input.o
+lex.prefs.o prefs.o alextest.o input.o win_label.o win_write.o \
+win_container.o win_select.o win_friend.o win_border.o win_base.o \
+win_font.o win_image.o
 alextest_LDADD = $(LDADD)
 alextest_DEPENDENCIES = 
 alextest_LDFLAGS = 
-CXXFLAGS = -O6 -g -Wall -I/usr/local/include -I/usr/local/include/SDL -D_REENTRANT  -DSDL_MIXER 
+CXXFLAGS = -O6 -g -Wall -I/usr/local/include -I/usr/local/include/SDL -D_REENTRANT  -DSDL_MIXER  -DDEBUG -D_EDIT
 CXXCOMPILE = $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
 CXXLD = $(CXX)
 CXXLINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(LDFLAGS) -o $@

@@ -63,7 +63,7 @@ s_int8 mapcharacter::get(SDL_RWops * file)
   frame=new image[nbr_of_frames];
   for (i=0;i<nbr_of_frames;i++)
     {
-      if ((res=frame[i].get(file))) return res;
+      if ((res=frame[i].get_raw(file))) return res;
       frame[i].set_mask(true);
       frame[i].set_trans(0);
     }

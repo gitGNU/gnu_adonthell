@@ -15,4 +15,6 @@ lex.prefs.cpp pnm.cpp prefs.cpp screen.cpp storage.cpp win_label.cpp \
 win_write.cpp win_container.cpp win_select.cpp win_friend.cpp win_border.cpp \
 win_base.cpp win_font.cpp win_image.cpp joel.cpp yarg.cc
 
-alextest_SOURCES = fileops.cpp pnm.cpp screen.cpp image.cpp animation.cpp lex.prefs.cpp prefs.cpp alextest.cpp input.cpp
+alextest_SOURCES = fileops.cpp pnm.cpp screen.cpp image.cpp animation.cpp lex.prefs.cpp prefs.cpp alextest.cpp input.cpp win_label.cpp \
+win_write.cpp win_container.cpp win_select.cpp win_friend.cpp win_border.cpp \
+win_base.cpp win_font.cpp win_image.cpp

@@ -67,12 +67,21 @@ class image
   ~image();
   void clear();
   void resize(u_int16 l, u_int16 h);
-  s_int8 get(SDL_RWops * file);
   s_int8 get(char * file);
+
+  s_int8 get(SDL_RWops * file);
   s_int8 load(char * fname);
+  s_int8 get_raw(SDL_RWops * file);
+  s_int8 load_raw(char * fname);
+  s_int8 get_pnm(SDL_RWops * file);
+  s_int8 load_pnm(char * fname);
 #ifdef _EDIT
   s_int8 put(SDL_RWops * file);
   s_int8 save(char * fname);
+  s_int8 put_raw(SDL_RWops * file);
+  s_int8 save_raw(char * fname);
+  s_int8 put_pnm(SDL_RWops * file);
+  s_int8 save_pnm(char * fname);
 #endif
   void assign_drawing_area(drawing_area * da);
   void detach_drawing_area();

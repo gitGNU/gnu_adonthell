@@ -72,7 +72,7 @@ void * read_pnm(SDL_RWops * file, u_int16 * lenght, u_int16 * height)
   return(image);
 }
 
-void put_pnm(SDL_RWops * file, void * image, u_int16 lenght, u_int16 height)
+void pnmput(SDL_RWops * file, void * image, u_int16 lenght, u_int16 height)
 {
   char s[30];
   sprintf(s,"P6\n%d %d\n255\n",lenght,height);
@@ -87,7 +87,7 @@ int write_pnm(char * filename, void * image, u_int16 lenght, u_int16 height)
   if(!file) return(1);
   else
     {
-      put_pnm(file,image,lenght,height);
+      pnmput(file,image,lenght,height);
       SDL_RWclose(file);
       return(0);
     }

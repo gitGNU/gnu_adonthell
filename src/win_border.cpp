@@ -53,17 +53,17 @@ void win_border::load(char * rep)
   h_border_template=new image();
   strcpy(tmp,path);
   strcat(tmp,WIN_H_BORDER_TEMPLATE_FILE);
-  h_border_template->load(tmp);
+  h_border_template->load_raw(tmp);
   
   v_border_template=new image();
   strcpy(tmp,path);
   strcat(tmp,WIN_V_BORDER_TEMPLATE_FILE);
-  v_border_template->load(tmp);
+  v_border_template->load_raw(tmp);
   
   corner=new image();
   strcpy(tmp,path);
   strcat(tmp,WIN_CORNER_FILE);
-  corner->load(tmp);
+  corner->load_raw(tmp);
 }
 
 
@@ -89,6 +89,6 @@ void win_background::load(char *rep)
   strcat(path,rep);
   strcat(path,WIN_BACKGROUND_FILE);
   background_template=new image();
-  background_template->load(path);
+  background_template->load_raw(path);
 }
 

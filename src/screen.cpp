@@ -91,7 +91,8 @@ void screen::init_display()
 
 void screen::show()
 {
-  // Lenght of a game cycle. Decreasing it will increase the speed.
+  // Lenght of a game cycle (milliseconds). Decreasing it will increase 
+  // the game's speed.
   const u_int32 cycle_length=13;
   static Uint32 timer1, timer2, timer3;
 
@@ -101,6 +102,7 @@ void screen::show()
       timer2=SDL_GetTicks();
       timer3=timer2-timer1;
       if(timer3>=cycle_length) break;
+      else if(timer3>3) SDL_Delay(timer3-2);
     }
   timer1=SDL_GetTicks();
   timer1-=(timer3%cycle_length);

@@ -17,10 +17,16 @@
 #include <stdlib.h>
 #include "animation.h"
 
+#ifdef DEBUG
+u_int16 animation::a_d_diff=0;
+#endif
+
 void animation_frame::init()
 {
   gapx=0;
   gapy=0;
+  next_nostd=false;
+  nextframe=0;
   image::init();
 }
 
@@ -38,6 +44,8 @@ s_int8 animation_frame::get(SDL_RWops * file)
   SDL_RWread(file,&gapx,sizeof(gapx),1);
   SDL_RWread(file,&gapy,sizeof(gapy),1);
   SDL_RWread(file,&delay,sizeof(delay),1);
+  SDL_RWread(file,&next_nostd,sizeof(next_nostd),1);
+  SDL_RWread(file,&nextframe,sizeof(nextframe),1);
   image::get(file);
   return(0);
 }
@@ -59,6 +67,8 @@ s_int8 animation_frame::put(SDL_RWops * file)
   SDL_RWwrite(file,&gapx,sizeof(gapx),1);
   SDL_RWwrite(file,&gapy,sizeof(gapy),1);
   SDL_RWwrite(file,&delay,sizeof(delay),1);
+  SDL_RWwrite(file,&next_nostd,sizeof(next_nostd),1);
+  SDL_RWwrite(file,&nextframe,sizeof(nextframe),1);
   image::put(file);
   return(0);
 }
@@ -77,6 +87,10 @@ s_int8 animation_frame::save(char * fname)
 
 animation::animation()
 {
+#ifdef DEBUG
+  cout << "animation() called, "<< ++a_d_diff
+       << " objects currently allocated\n";
+#endif
   frame=NULL;
   nbr_of_frames=0;
   currentframe=0;
@@ -89,6 +103,10 @@ animation::animation()
 animation::~animation()
 {
   delete[] frame;
+#ifdef DEBUG
+  cout << "~animation() called, "<< --a_d_diff
+       << " objects currently allocated\n";
+#endif
 }
 
 void animation::update()
@@ -108,16 +126,21 @@ void animation::set_active_frame(u_int16 framenbr)
 
 void animation::next_frame()
 {
-  currentframe+=factor;
-  if (currentframe == nbr_of_frames)
+  if(frame[currentframe].next_nostd)
+    currentframe=frame[currentframe].nextframe;
+  else
     {
-      if(loop)
-	currentframe = 0;
-      else if(reverse)
-	{ factor=-1; currentframe-=2; }
-      else currentframe-=factor;
+      currentframe+=factor;
+      if (currentframe == nbr_of_frames)
+	{
+	  if(loop)
+	    currentframe = 0;
+	  else if(reverse)
+	    { factor=-1; currentframe-=2; }
+	  else currentframe-=factor;
+	}
+      else if((currentframe==0)&&(reverse)) factor=1;
     }
-  else if((currentframe==0)&&(reverse)) factor=1;
   speedcounter = 0;
 }
 
@@ -130,33 +153,20 @@ s_int8 animation::load_frame(char * fname)
 {
   animation_frame * oldframe=frame;
   int i;
-  cout << "ok\n";
   frame=new animation_frame[++nbr_of_frames];
-  cout << "1\n";
-  memcpy(frame,oldframe,(nbr_of_frames-1)*sizeof(animation_frame));
-  cout << "ok2\n";
-  for (i=0;i<nbr_of_frames;i++)
+  for (i=0;i<nbr_of_frames-1;i++)
     {
       frame[i]=oldframe[i];
     }
-  cout << "2\n";
 
-  //  frame=(animation_frame*)realloc(frame,
-  //			  ++nbr_of_frames*sizeof(animation_frame));
-  //  frame[nbr_of_frames-1].init();
-  //  init_frame(nbr_of_frames-1);
-  if(frame[nbr_of_frames-1].image::load(fname))
+  if(frame[nbr_of_frames-1].image::load_raw(fname))
     {
       --nbr_of_frames;
       delete[] frame;
       frame=oldframe;
-      //      frame=(animation_frame*)realloc(frame,
-      //			      --nbr_of_frames*sizeof(animation_frame));
       return(-1);
     }
-  cout << "3\n";
   delete[] oldframe;
-  cout << "4\n";
   return(0);
 }
 
@@ -228,4 +238,15 @@ s_int8 animation::save(char * fname)
 void animation::set_delay(u_int16 framenbr, u_int16 delay)
 {
   frame[framenbr].delay=delay;
+}
+
+void animation::set_next_frame(u_int16 framenbr, u_int16 next_frame)
+{
+  frame[framenbr].next_nostd=true;
+  frame[framenbr].nextframe=next_frame;
+}
+
+void animation::set_mask(u_int16 framenbr, bool m)
+{
+  frame[framenbr].set_mask(true);
 }

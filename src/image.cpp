@@ -159,11 +159,11 @@ image::image (u_int16 l, u_int16 h)
 
 image::~image()
 {
+  clear();
 #ifdef DEBUG
   cout << "~image() called, "<< --a_d_diff
        << " objects currently allocated\n";
 #endif
-  clear();
 }
 
 void image::clear()
@@ -381,7 +381,45 @@ void image::get_from_screen(s_int16 x, s_int16 y)
   SDL_BlitSurface(screen::vis,&sr,data,&dr);
 }
 
+s_int8 image::get(char * file)
+{
+  SDL_Surface * tmp;
+
+  tmp=IMG_Load(file);
+  length=tmp->w;
+  height=tmp->h;
+  
+  data=SDL_DisplayFormat(tmp);
+  SDL_FreeSurface(tmp);
+  if (!data) return(-1);
+  bytes_per_pixel=data->format->BytesPerPixel;
+  return(0);
+}
+
+
 s_int8 image::get(SDL_RWops * file)
+{
+  s_int8 ret;
+  SDL_RWread(file,&mask_on,sizeof(mask_on),1);
+  SDL_RWread(file,&alpha,sizeof(alpha),1);   
+  ret=get_raw(file);
+  if(!ret)
+    if(mask_on)
+      SDL_SetColorKey(data, SDL_SRCCOLORKEY|SDL_RLEACCEL, screen::trans);
+  return ret;
+}
+
+s_int8 image::load(char * fname)
+{
+  SDL_RWops * file;
+  file=SDL_RWFromFile(fname,"r"); 
+  if(!file) return(1);
+  get(file);
+  SDL_RWclose(file);
+  return(0);
+}
+
+s_int8 image::get_raw(SDL_RWops * file)
 {
 #ifndef _EDIT
   void * simpledata;
@@ -402,36 +440,32 @@ s_int8 image::get(SDL_RWops * file)
   return(0);
 }
 
-s_int8 image::get(char * file)
-{
-  SDL_Surface * tmp;
-
-  tmp=IMG_Load(file);
-  length=tmp->w;
-  height=tmp->h;
-  
-  data=SDL_DisplayFormat(tmp);
-  SDL_FreeSurface(tmp);
-  if (!data) return(-1);
-  bytes_per_pixel=data->format->BytesPerPixel;
-  return(0);
-}
-
-s_int8 image::load(char * fname)
+s_int8 image::load_raw(char * fname)
 {
   SDL_RWops * file;
   file=SDL_RWFromFile(fname,"r"); 
   if(!file) return(1);
-  get(file);
+  get_raw(file);
   SDL_RWclose(file);
   return(0);
+}
+
+s_int8 image::get_pnm(SDL_RWops * file)
+{
+  return(get_raw(file));
+}
+
+s_int8 image::load_pnm(char * fname)
+{
+  return(load_raw(fname));
 }
 
 #ifdef _EDIT
 s_int8 image::put(SDL_RWops * file)
 {
-  put_pnm(file,simpledata,length,height);
-  return(0);
+  SDL_RWwrite(file,&mask_on,sizeof(mask_on),1);
+  SDL_RWwrite(file,&alpha,sizeof(alpha),1);
+  return(put_raw(file));
 }
 
 s_int8 image::save(char * fname)
@@ -443,6 +477,33 @@ s_int8 image::save(char * fname)
   SDL_RWclose(file);
   return(0);
 }
+
+s_int8 image::put_raw(SDL_RWops * file)
+{
+  pnmput(file,simpledata,length,height);
+  return(0);
+}
+
+s_int8 image::save_raw(char * fname)
+{
+  SDL_RWops * file;
+  file=SDL_RWFromFile(fname,"w"); 
+  if(!file) return(1);
+  put_raw(file);
+  SDL_RWclose(file);
+  return(0);
+}
+
+s_int8 image::put_pnm(SDL_RWops * file)
+{
+  return(put_raw(file));
+}
+
+s_int8 image::save_pnm(char * fname)
+{
+  return(save_raw(fname));
+}
+
 #endif
 
 inline u_int32 image::get_pix(u_int16 x, u_int16 y)

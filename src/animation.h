@@ -30,6 +30,8 @@ class animation_frame : public image
   // Otherwise the animation will wait "delay" game cycles to switch to
   // the other frame
   u_int16 delay;
+  bool next_nostd;
+  u_int16 nextframe;
  public:
   void init();
   animation_frame();
@@ -51,6 +53,9 @@ class animation_frame : public image
 
 class animation
 {
+#ifdef DEBUG
+  static u_int16 a_d_diff;
+#endif
   u_int16 nbr_of_frames;
   u_int16 currentframe;
   u_int16 speedcounter;
@@ -80,6 +85,7 @@ class animation
   s_int8 save(char * fname);
 #endif
   void set_delay(u_int16 framenbr, u_int16 delay);
+  void set_next_frame(u_int16 framenbr, u_int16 next_frame);
   void set_mask(u_int16 framenbr, bool m);
   void set_alpha(u_int16 framenbr, bool a, u_int8 value);
 };

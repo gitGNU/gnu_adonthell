@@ -46,7 +46,7 @@ void win_font::load(char * rep)
   strcat(path,WIN_FONT_DIRECTORY);
   strcat(path,rep);
   strcat(path,WIN_FONT_FILE_PIC);
-  font->load(path);
+  font->load_raw(path);
   //delete [] path;
   //create a table for each letter
   table=new image[NB_TABLE_CHAR];
