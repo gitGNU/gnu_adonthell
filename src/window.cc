@@ -55,7 +55,7 @@ void window::init_table_char()
   u_int16 pos,tl;
 
   image * font = new image();
-  u_int16 lenght,height;
+  // u_int16 lenght,height;
 
   FILE *f;
   if((f=fopen("gfxtree/window/font.idx","rb"))==NULL)
@@ -157,6 +157,7 @@ void window::draw()
 window::window()
 {
   // init(50,10,150,100,WIN_NORMAL);
+  visible = 0;
 }
 
 
