@@ -16,6 +16,8 @@ u_int8 screen::sizefactor;
 u_int32 screen::trans;
 
 u_int8 image::bytes_per_pixel, image::sizefactor;
+SDL_Rect image::sr;
+SDL_Rect image::dr;
 
 #ifdef SDL
 SDL_Surface * screen::vis;
@@ -51,7 +53,6 @@ void image::set_sizefactor(u_int8 x)
 #ifdef SDL
 void image::putbox (u_int16 x, u_int16 y)
 {
-  static SDL_Rect dr;
   x*=sizefactor;
   y*=sizefactor;
   dr.x=x;
@@ -63,7 +64,6 @@ void image::putbox (u_int16 x, u_int16 y)
 
 void image::putbox_mask (u_int16 x, u_int16 y)
 {
-  static SDL_Rect dr;
   x*=sizefactor;
   y*=sizefactor;
   dr.x=x;
@@ -76,13 +76,15 @@ void image::putbox_mask (u_int16 x, u_int16 y)
 void image::putbox_part (u_int16 x, u_int16 y, u_int16 bw, u_int16 bh,
 			 u_int16 xo, u_int16 yo)
 {
-  static SDL_Rect sr,dr;
-  x*=sizefactor;
-  y*=sizefactor;
-  bw*=sizefactor;
-  bh*=sizefactor;
-  xo*=sizefactor;
-  yo*=sizefactor;
+  if(sizefactor!=1)
+    {
+      x*=sizefactor;
+      y*=sizefactor;
+      bw*=sizefactor;
+      bh*=sizefactor;
+      xo*=sizefactor;
+      yo*=sizefactor;
+    }
   sr.x=xo;
   sr.y=yo;
   sr.w=bw;
@@ -96,7 +98,6 @@ void image::putbox_part (u_int16 x, u_int16 y, u_int16 bw, u_int16 bh,
 
 void image::putbox_trans (u_int16 x, u_int16 y, u_int8 alpha)
 {
-  static SDL_Rect dr;
   x*=sizefactor;
   y*=sizefactor;
   dr.x=x;
@@ -112,13 +113,15 @@ void image::putbox_trans (u_int16 x, u_int16 y, u_int8 alpha)
 void image::putbox_mask_part (u_int16 x, u_int16 y, u_int16 bw, u_int16 bh,
 			      u_int16 xo, u_int16 yo)
 {
-  static SDL_Rect sr,dr;
-  x*=sizefactor;
-  y*=sizefactor;
-  bw*=sizefactor;
-  bh*=sizefactor;
-  xo*=sizefactor;
-  yo*=sizefactor;
+  if(sizefactor!=1)
+    {
+      x*=sizefactor;
+      y*=sizefactor;
+      bw*=sizefactor;
+      bh*=sizefactor;
+      xo*=sizefactor;
+      yo*=sizefactor;
+    }
   sr.x=xo;
   sr.y=yo;
   sr.w=bw;
@@ -133,7 +136,6 @@ void image::putbox_mask_part (u_int16 x, u_int16 y, u_int16 bw, u_int16 bh,
 
 void image::putbox_mask_trans (u_int16 x, u_int16 y, u_int8 alpha)
 {
-  static SDL_Rect dr;
   x*=sizefactor;
   y*=sizefactor;
   dr.x=x;
@@ -149,13 +151,15 @@ void image::putbox_part_trans (u_int16 x, u_int16 y, u_int16 bw,
 			       u_int16 bh, u_int16 xo, u_int16 yo, 
 			       u_int8 alpha)
 {
-  static SDL_Rect sr,dr;
-  x*=sizefactor;
-  y*=sizefactor;
-  bw*=sizefactor;
-  bh*=sizefactor;
-  xo*=sizefactor;
-  yo*=sizefactor;
+  if(sizefactor!=1)
+    {
+      x*=sizefactor;
+      y*=sizefactor;
+      bw*=sizefactor;
+      bh*=sizefactor;
+      xo*=sizefactor;
+      yo*=sizefactor;
+    }
   sr.x=xo;
   sr.y=yo;
   sr.w=bw;
@@ -174,13 +178,15 @@ void image::putbox_mask_part_trans (u_int16 x, u_int16 y, u_int16 bw,
 				    u_int16 bh, u_int16 xo, u_int16 yo, 
 				    u_int8 alpha)
 {
-  static SDL_Rect sr,dr;
-  x*=sizefactor;
-  y*=sizefactor;
-  bw*=sizefactor;
-  bh*=sizefactor;
-  xo*=sizefactor;
-  yo*=sizefactor;
+  if(sizefactor!=1)
+    {
+      x*=sizefactor;
+      y*=sizefactor;
+      bw*=sizefactor;
+      bh*=sizefactor;
+      xo*=sizefactor;
+      yo*=sizefactor;
+    }
   sr.x=xo;
   sr.y=yo;
   sr.w=bw;
@@ -234,8 +240,7 @@ void image::putbox_tile_img(image * source)
 
 void image::putbox_img(image * source, u_int16 x, u_int16 y)
 {
-  static SDL_Rect sr,dr;
-
+ 
   sr.x=0;
   sr.y=0;
   sr.w=lenght;
@@ -271,13 +276,15 @@ void image::putbox_mask_img (image * source, u_int16 x, u_int16 y)
 void image::putbox_part_img (image * source, u_int16 x, u_int16 y, u_int16 bw, 
 			     u_int16 bh,u_int16 xo, u_int16 yo)
 {
-  SDL_Rect sr,dr;
-  x*=sizefactor;
-  y*=sizefactor;
-  bw*=sizefactor;
-  bh*=sizefactor;
-  xo*=sizefactor;
-  yo*=sizefactor;
+  if(sizefactor!=1)
+    {
+      x*=sizefactor;
+      y*=sizefactor;
+      bw*=sizefactor;
+      bh*=sizefactor;
+      xo*=sizefactor;
+      yo*=sizefactor;
+    }
   sr.x=xo;
   sr.y=yo;
   sr.w=bw;

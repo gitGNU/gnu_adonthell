@@ -41,6 +41,7 @@ class image
 {
   u_int16 lenght, height;
   static u_int8 bytes_per_pixel, sizefactor;
+  static SDL_Rect sr,dr;
 
 #ifdef SDL
   SDL_Surface * data;
