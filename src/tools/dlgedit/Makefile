@@ -18,7 +18,7 @@ SEARCHDIRS := -I- -I${MYCODEDIR}
 
 # makemake variables
 
-DEPENDFLAGS := -g -Wall -Werror -D_DLGEDIT_ `gtk-config --cflags`
+DEPENDFLAGS := -g -Wall -Werror -D_DEBUG_ -D_DLGEDIT_ `gtk-config --cflags`
 
 # C preprocessor (C, C++, FORTRAN)
 

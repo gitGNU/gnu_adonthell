@@ -33,9 +33,7 @@ on_dialogue_list_select_child (GtkList * list, GtkWidget * widget, gpointer user
     // Set the answer the player has chosen
     dlg->answer = GPOINTER_TO_INT (gtk_object_get_user_data (GTK_OBJECT (widget)));
     pos -= dlg->answer;
-
-    cout << "\npos: " << pos << ", answer: " << dlg->answer << flush;
-    
+  
     npc_text = (GtkWidget *) g_list_nth_data (items, pos-1);
 
     // Player text available!?

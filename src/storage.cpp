@@ -38,7 +38,7 @@ s_int32& storage::operator[] (const char *key)
 
 
 // The container for access to certain objects via a keyword
-map<const char*, storage*> objects::data;
+map<const char*, storage*, ltstr> objects::data;
 
 // Insert a new object for access from the interpreter
 void objects::set (const char* key, storage *val)
@@ -46,10 +46,10 @@ void objects::set (const char* key, storage *val)
     // Check wether that key already exists -> if so, that is bad!
     if (data.find (key) != data.end ())
     {
-        cout << "*** objects::set: key already exists: " << key << endl;
+        cout << "\n*** objects::set: key already exists: " << key;
 
 #ifdef _DEBUG_
-        cout << "*** container contents: ";
+        cout << "\n*** container contents: ";
 
         for (map<const char*, storage*>::iterator i = data.begin (); i != data.end (); i++)
             cout << (*i).first << ", ";
@@ -69,10 +69,10 @@ storage* objects::get (const char* key)
     // Check wether the key exists
     if (data.find (key) == data.end ())
     {
-        cout << "*** objects::get: key does not exist: " << key << endl;
+        cout << "\n*** objects::get: key does not exist: " << key;
 
 #ifdef _DEBUG_
-        cout << "*** container contents: ";
+        cout << "\n*** container contents: ";
 
         for (map<const char*, storage*>::iterator i = data.begin (); i != data.end (); i++)
             cout << (*i).first << ", ";

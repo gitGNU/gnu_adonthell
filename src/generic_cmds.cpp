@@ -46,14 +46,14 @@ binary_cmd::binary_cmd (u_int32 tp, string st, string sp1, string sp2)
         strncpy (target_location, t, i);
         target_location[i] = '\0';
 
-        if (!strcmp (target_location, "local")) ptype = ptype | TARGET_LOCAL;
+        if (!strcmp (target_location, "local")) ptype += TARGET_LOCAL;
         target = strdup (t + strcspn (t, ".") + 1);
     }
     else
     {
         target_location = strdup ("game_state");
         target = strdup (t);
-        ptype = ptype | TARGET_GLOBAL;
+        ptype += TARGET_GLOBAL;
     }
 
     if (strchr (p1, '.'))
@@ -62,7 +62,7 @@ binary_cmd::binary_cmd (u_int32 tp, string st, string sp1, string sp2)
         strncpy (param1_location, p1, i);
         param1_location[i] = '\0';
 
-        if (!strcmp (param1_location, "locall")) ptype = ptype | PARAM1_LOCAL;
+        if (!strcmp (param1_location, "local")) ptype += PARAM1_LOCAL;
         c_param1 = strdup (p1 + strcspn (p1, ".") + 1);
     }
     else
@@ -70,13 +70,13 @@ binary_cmd::binary_cmd (u_int32 tp, string st, string sp1, string sp2)
         if (isdigit (p1[0]) || p1[0] == '-')
         {
             i_param1 = atoi (p1);
-            ptype = ptype | PARAM1_NUMBER;
+            ptype += PARAM1_NUMBER;
         }
         else
         {
             param1_location = strdup ("game_state");
             c_param1 = strdup (p1);
-            ptype = ptype | PARAM1_GLOBAL;
+            ptype += PARAM1_GLOBAL;
         }
     }
     
@@ -86,7 +86,7 @@ binary_cmd::binary_cmd (u_int32 tp, string st, string sp1, string sp2)
         strncpy (param2_location, p2, i);
         param2_location[i] = '\0';
 
-        if (!strcmp (param2_location, "local")) ptype = ptype | PARAM2_LOCAL;
+        if (!strcmp (param2_location, "local")) ptype += PARAM2_LOCAL;
         c_param2 = strdup (p2 + strcspn (p2, ".") + 1);
     }
     else
@@ -94,13 +94,13 @@ binary_cmd::binary_cmd (u_int32 tp, string st, string sp1, string sp2)
         if (isdigit (p2[0]) || p2[0] == '-')
         {
             i_param2 = atoi (p2);
-            ptype = ptype | PARAM2_NUMBER;
+            ptype += PARAM2_NUMBER;
         }
         else
         {
             param2_location = strdup ("game_state");
             c_param2 = strdup (p2);
-            ptype = ptype | PARAM2_GLOBAL;
+            ptype += PARAM2_GLOBAL;
         }
     }
 }
@@ -121,7 +121,8 @@ void binary_cmd::init (s_int32 *buffer, u_int32 &i, void *data)
     ptype = buffer[i++];
 
     // read target
-    target = strread (buffer, i); 
+    target = strread (buffer, i);
+    // ... and target location
     if (ptype & TARGET_GLOBAL) target_location = strdup ("game_state");
     else if (ptype & TARGET_LOCAL) target_location = interpreter;
     else target_location = strread (buffer, i);
@@ -150,36 +151,40 @@ void binary_cmd::init (s_int32 *buffer, u_int32 &i, void *data)
 // write the commands code to file
 void binary_cmd::write (FILE *out)
 {
-    u_int32 l;
+    u_int32 l, i;
 
     fwrite (&type, sizeof(type), 1, out);
     fwrite (&ptype, sizeof(ptype), 1, out);
 
     // Target
-    l = strlen (target) + 1;
+    l = strlen (target);
     fwrite (&l, sizeof (l), 1, out);
     fwrite (target, l, 1, out);
+    for (i = 4; i > l%4; i--) fputc (0, out);
     
-    if (ptype & (TARGET_LOCAL | TARGET_GLOBAL)) 
+    if (!ptype & (TARGET_LOCAL | TARGET_GLOBAL)) 
     {
-        l = strlen (target_location) + 1;
+        l = strlen (target_location);
         fwrite (&l, sizeof (l), 1, out);
         fwrite (target_location, l, 1, out);
+        for (i = 4; i > l%4; i--) fputc (0, out);
     }
     
     // Param 1
     if (ptype & PARAM1_NUMBER) fwrite (&i_param1, sizeof(i_param1), 1, out);
     else
     {
-        l = strlen (c_param1) + 1;
+        l = strlen (c_param1);
         fwrite (&l, sizeof (l), 1, out);
         fwrite (c_param1, l, 1, out);
+        for (i = 4; i > l%4; i--) fputc (0, out);
 
-        if (ptype & (PARAM1_LOCAL | PARAM1_GLOBAL))
+        if (!ptype & (PARAM1_LOCAL | PARAM1_GLOBAL))
         {
-            l = strlen (param1_location) + 1;
+            l = strlen (param1_location);
             fwrite (&l, sizeof (l), 1, out);
             fwrite (param1_location, l, 1, out);    
+            for (i = 4; i > l%4; i--) fputc (0, out);
         }
     }
 
@@ -190,12 +195,14 @@ void binary_cmd::write (FILE *out)
         l = strlen (c_param2) + 1;
         fwrite (&l, sizeof (l), 1, out);
         fwrite (c_param2, l, 1, out);
+        for (i = 4; i > l%4; i--) fputc (0, out);
 
-        if (ptype & (PARAM2_LOCAL | PARAM2_GLOBAL))
+        if (!ptype & (PARAM2_LOCAL | PARAM2_GLOBAL))
         {
             l = strlen (param2_location) + 1;
             fwrite (&l, sizeof (l), 1, out);
             fwrite (param2_location, l, 1, out);    
+            for (i = 4; i > l%4; i--) fputc (0, out);
         } 
     }
 } 
@@ -375,12 +382,13 @@ s_int32 branch_cmd::run (u_int32 &PC, void *data)
 
 void branch_cmd::write (FILE* out)
 {
-    int l = strlen (condition) + 1;
+    int i, l = strlen (condition);
     
     fwrite (&type, sizeof(type), 1, out);
     fwrite (&offset, sizeof(offset), 1, out);
     fwrite (&l, sizeof (l), 1, out);
     fwrite (condition, sizeof (condition[0]), l, out);
+    for (i = 4; i > l%4; i--) fputc (0, out);
 }
 
 void branch_cmd::ascii (ofstream &out)

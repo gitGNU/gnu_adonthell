@@ -36,8 +36,6 @@ void import_cmd::init (s_int32 *buffer, u_int32 &i, void *data)
     u_int32 j;
 
     sz = buffer[i++];
-
-    cout << ": " << sz << " Strings";
     
     text = new u_int32[sz];
 

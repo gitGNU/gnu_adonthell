@@ -12,7 +12,6 @@
    See the COPYING file for more details.
 */
 
-#include <iostream.h>
 #include <stdio.h>
 #include "types.h"
 #include "interpreter.h"
@@ -26,13 +25,14 @@ map<int, CmdNew> interpreter::callbacks;
 char* command::strread (s_int32 *buffer, u_int32 &i)
 {
     // Hopefully the first number in buffer holds the strings length
-    char *tmp = new char[buffer[i++]];
+    char *tmp = new char[buffer[i]+1];
 
     // copy the string's contents
-    memcpy (tmp, buffer+i, buffer[i-1]);
+    memcpy (tmp, buffer+i+1, buffer[i]);
+    tmp[buffer[i]] = 0;
 
     // let i point after the string
-    i += buffer[i-1];
+    i += 1 + strlen (tmp)/4 + strlen (tmp)%4;
 
     return tmp;
 }
@@ -118,8 +118,6 @@ u_int8 interpreter::load (const char *file)
     {
         // Call the registered function to create a instance
         // of the Command with type = buffer[j]
-        cout << "\nLoading Command " << buffer[j] << flush;
-
         cmd = (*callbacks[buffer[j]])();
 
         // Tell the command to which interpreter it belongs

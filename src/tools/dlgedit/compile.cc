@@ -111,7 +111,7 @@ void dlg_compiler::write_import ()
     {
         node = (Circle *) dlg[i];
         if (node->type != LINK)
-            fputs (node->text.c_str (), str);
+            fwrite (node->text.c_str (), strlen (node->text.c_str ()), 1, str);
     }
 
     // Clean up (DON'T delete 'text'! It's still needed!)
@@ -393,16 +393,18 @@ void dlg_compiler::get_cur_nodes ()
         if (!isdone (data->node->link[i]->next[0], data))
             cur_nodes.push_back (data->node->link[i]->next[0]);
 
-    // What follows here isn't too good -> correct
+    cur_crcle = (Circle *) data->node;
+
+    // If data is a player node and not done yet write is variable-code
+    if (find (done_nodes.begin (), done_nodes.end (), data) == done_nodes.end ())
+        if (cur_crcle->type == PLAYER)
+            if (cur_crcle->variables != "")
+                write_variables ();
+
     // The End of dialogue follows:
     if (cur_nodes.empty ())
     {
-        cur_crcle = (Circle *) data->node;
-        if (end_follows ()) 
-        {
-            // ((text_cmd *) data->cmd)->setjmp (code.size() - data->line);
-            write_end ();
-        }
+        if (end_follows ()) write_end ();
         
         done_nodes.push_back (data);
         todo_nodes.pop_back ();
@@ -413,7 +415,7 @@ void dlg_compiler::get_cur_nodes ()
         // twice when the recursion is over
         return;
     }
-    
+
     // Move the node from the todo- to the done_nodes    
     done_nodes.push_back (data);
     todo_nodes.pop_back ();

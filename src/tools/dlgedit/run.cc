@@ -16,6 +16,7 @@
 #include "run.h"
 #include "run_interface.h"
 #include "../../dialog.h"
+#include "../../storage.h"
 
 run_dlg::run_dlg (string f)
 {
@@ -23,24 +24,22 @@ run_dlg::run_dlg (string f)
     string df = f + ".dlg";
     FILE *str;
     u_int32 num;
-    u_int32 i;
 
     dlg = create_run_dlg_wnd (this);
+
+    // create game_state array
+    storage *game_state = new storage ();
+    objects::set ("game_state", game_state);
 
     // load TOC of stringfile
     str = fopen (sf.c_str (), "r");
     fread (&num, sizeof (num), 1, str);
-
-    cout << "\nNum: " << num << " -- ";
 
     dialog::offset = new s_int32[num];
     dialog::length = new s_int32[num];
 
     fread (dialog::offset, num, sizeof (dialog::offset[0]), str);
     fread (dialog::length, num, sizeof (dialog::length[0]), str);
-
-    for (i = 0; i < num; i++)
-        cout << dialog::offset[i] << " (" << dialog::length[i] << "), ";
 
     fclose (str);
 
@@ -55,8 +54,12 @@ run_dlg::run_dlg (string f)
 
 run_dlg::~run_dlg ()
 {
+    delete objects::get ("game_state");
+    objects::erase ("game_state");
+    
     delete[] dialog::offset;
     delete[] dialog::length;
+
     delete dat;
     delete vm;
 }

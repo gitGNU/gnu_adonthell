@@ -22,7 +22,7 @@
 #include "types.h"
 
 
-// Checks two strings for equality
+// Checks two strings for equality (needed for the hash_map)
 struct equal_key
 {
     bool operator() (const char* s1, const char* s2) const
@@ -31,6 +31,14 @@ struct equal_key
     } 
 };
 
+// Checks two strings for their order (needed for the map)
+struct ltstr
+{
+    bool operator()(const char* s1, const char* s2) const
+    {
+        return strcmp (s1, s2) < 0;
+    }
+};
 
 // Base storage class. If you want to access attributes of an object of yours
 // you have to derive that object's class from 'storage' and store the attributes
@@ -57,7 +65,7 @@ public:
     static void erase (const char*);
 
 private:
-    static map<const char*, storage*> data;
+    static map<const char*, storage*, ltstr> data;
 };
 
 #endif // __STORAGE_H__
