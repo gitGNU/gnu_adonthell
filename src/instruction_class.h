@@ -10,8 +10,8 @@ class instruction
 {
    u_int16 type;
    u_int16 param_val[9];
-   char *string_val;
-   u_int16 otherevent_val;
+   char string_val[30];
+   u_int8 otherevent_val;
 
   public:
   instruction();

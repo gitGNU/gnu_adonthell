@@ -41,8 +41,9 @@ int main(int argc, char * argv[])
     if(!strcmp(argv[2],"-m0")) screen::init_display(0);
   }
   else screen::init_display(0);
+  printf("1\n");
   if(map1.load(argv[1])) {printf("Error loading %s!\n",argv[1]);return(1);}
-
+  printf("Ok\n");
 
 #ifdef SDL
   SDL_Thread *input_thread;

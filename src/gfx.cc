@@ -454,7 +454,6 @@ void screen::init_display(u_int8 vidmode = 0)
 {
   u_int16 i;
   ggi_mode sgmode;
-  
   switch (vidmode)
     {
     case 0:
