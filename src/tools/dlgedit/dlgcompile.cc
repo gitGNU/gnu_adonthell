@@ -275,6 +275,8 @@ void dlg_compiler::write_start ()
             if ((*i)->prev.empty ())
                 cur_nodes.push_back (*i);
 
+    sort (cur_nodes);
+    
     script << "\n    def start (self):";
     write_answer ();
 

@@ -90,7 +90,8 @@ public:
     string pset_vars;           // Preset variables for running the Dialogue
     string cust_func;           // Custom functions of the Dialogue
     player *myplayer;           // A player object
-
+    npc *mynpc;                 // A NPC object
+    
     void set_changed ();        // Update the title bar when dialogue changes
 };
 

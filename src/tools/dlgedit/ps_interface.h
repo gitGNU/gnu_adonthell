@@ -12,4 +12,4 @@
    See the COPYING file for more details
 */
 
-GtkWidget *create_ps_window (ps_dlg*, const char*, int, int);
+GtkWidget *create_ps_window (ps_dlg*, const char*, int, int, const char*);

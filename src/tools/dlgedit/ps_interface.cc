@@ -19,11 +19,16 @@
 #include "ps_callbacks.h"
 #include "ps_interface.h"
 #include "callbacks.h"
+#include "../../data.h"
+#include "../../character.h"
 
-GtkWidget * create_ps_window (ps_dlg *dlg, const char* name, int race, int gender)
+extern void set_option (GtkOptionMenu*, const gchar *);
+
+GtkWidget * create_ps_window (ps_dlg *dlg, const char* name, int race, int gender, const char* the_npc)
 {
     GtkWidget *window1;
     GtkWidget *vbox1;
+    GtkWidget *vbox2;
     GtkWidget *frame1;
     GtkWidget *alignment1;
     GtkWidget *ps_name;
@@ -34,7 +39,6 @@ GtkWidget * create_ps_window (ps_dlg *dlg, const char* name, int race, int gende
     GtkWidget *ps_half;
     GtkWidget *ps_human;
     GtkWidget *ps_dwarf;
-    GtkWidget *frame3;
     GtkWidget *hbox1;
     GSList *gender_group = NULL;
     GtkWidget *ps_female;
@@ -42,11 +46,16 @@ GtkWidget * create_ps_window (ps_dlg *dlg, const char* name, int race, int gende
     GtkWidget *hbuttonbox1;
     GtkWidget *ps_ok;
     GtkWidget *ps_cancel;
+    GtkWidget *label;
+    GtkWidget *hseparator1;
+    GtkWidget *npc_selection;
+    GtkWidget *npc_selection_menu;
+    GtkWidget *glade_menuitem;
 
     window1 = gtk_window_new (GTK_WINDOW_DIALOG);
     gtk_object_set_data (GTK_OBJECT (window1), "window1", window1);
-    gtk_widget_set_usize (window1, 400, 220);
-    gtk_window_set_title (GTK_WINDOW (window1), "Player Settings");
+    gtk_widget_set_usize (window1, 400, 300);
+    gtk_window_set_title (GTK_WINDOW (window1), "Dialogue Settings");
     gtk_window_set_position (GTK_WINDOW (window1), GTK_WIN_POS_MOUSE);
     gtk_window_set_modal (GTK_WINDOW (window1), TRUE);
     gtk_window_set_policy (GTK_WINDOW (window1), FALSE, FALSE, FALSE);
@@ -57,19 +66,42 @@ GtkWidget * create_ps_window (ps_dlg *dlg, const char* name, int race, int gende
     gtk_widget_show (vbox1);
     gtk_container_add (GTK_CONTAINER (window1), vbox1);
     gtk_container_set_border_width (GTK_CONTAINER (vbox1), 8);
+    gtk_box_set_spacing (GTK_BOX (vbox1), 4);
 
-    frame1 = gtk_frame_new ("Name");
+    frame1 = gtk_frame_new ("Player");
     gtk_widget_ref (frame1);
     gtk_object_set_data_full (GTK_OBJECT (window1), "frame1", frame1, (GtkDestroyNotify) gtk_widget_unref);
     gtk_widget_show (frame1);
     gtk_box_pack_start (GTK_BOX (vbox1), frame1, FALSE, TRUE, 0);
 
+    vbox2 = gtk_vbox_new (FALSE, 0);
+    gtk_widget_ref (vbox2);
+    gtk_object_set_data_full (GTK_OBJECT (window1), "vbox2", vbox2, (GtkDestroyNotify) gtk_widget_unref);
+    gtk_widget_show (vbox2);
+    gtk_container_add (GTK_CONTAINER (frame1), vbox2);
+    gtk_container_set_border_width (GTK_CONTAINER (vbox2), 4);
+    gtk_box_set_spacing (GTK_BOX (vbox2), 4);
+
+    hbox1 = gtk_hbox_new (FALSE, 0);
+    gtk_widget_ref (hbox1);
+    gtk_object_set_data_full (GTK_OBJECT (window1), "hbox1", hbox1, (GtkDestroyNotify) gtk_widget_unref);
+    gtk_widget_show (hbox1);
+    gtk_container_add (GTK_CONTAINER (vbox2), hbox1);
+
+    label = gtk_label_new ("Name:");
+    gtk_widget_ref (label);
+    gtk_label_set_justify ((GtkLabel *) label, GTK_JUSTIFY_LEFT);
+    gtk_misc_set_alignment (GTK_MISC (label), 0.0, 0.5);
+    gtk_object_set_data_full (GTK_OBJECT (window1), "label", label, (GtkDestroyNotify) gtk_widget_unref);
+    gtk_container_add (GTK_CONTAINER (hbox1), label);
+    gtk_widget_show (label);
+
     alignment1 = gtk_alignment_new (0, 0, 1, 1);
     gtk_widget_ref (alignment1);
     gtk_object_set_data_full (GTK_OBJECT (window1), "alignment1", alignment1, (GtkDestroyNotify) gtk_widget_unref);
     gtk_widget_show (alignment1);
-    gtk_container_add (GTK_CONTAINER (frame1), alignment1);
-    gtk_container_set_border_width (GTK_CONTAINER (alignment1), 10);
+    gtk_container_add (GTK_CONTAINER (hbox1), alignment1);
+    gtk_container_set_border_width (GTK_CONTAINER (alignment1), 4);
 
     ps_name = gtk_entry_new ();
     gtk_widget_ref (ps_name);
@@ -81,17 +113,24 @@ GtkWidget * create_ps_window (ps_dlg *dlg, const char* name, int race, int gende
     gtk_entry_set_text ((GtkEntry *) ps_name, name);
     dlg->name = (GtkEntry *) ps_name;
     
-    frame2 = gtk_frame_new ("Race");
-    gtk_widget_ref (frame2);
-    gtk_object_set_data_full (GTK_OBJECT (window1), "frame2", frame2, (GtkDestroyNotify) gtk_widget_unref);
-    gtk_widget_show (frame2);
-    gtk_box_pack_start (GTK_BOX (vbox1), frame2, FALSE, TRUE, 0);
+    hseparator1 = gtk_hseparator_new ();
+    gtk_widget_ref (hseparator1);
+    gtk_object_set_data_full (GTK_OBJECT (window1), "hseparator1", hseparator1, (GtkDestroyNotify) gtk_widget_unref);
+    gtk_widget_show (hseparator1);
+    gtk_box_pack_start (GTK_BOX (vbox2), hseparator1, FALSE, TRUE, 0);
+
+    label = gtk_label_new ("Race:");
+    gtk_widget_ref (label);
+    gtk_misc_set_alignment (GTK_MISC (label), 0.0, 0.5);
+    gtk_object_set_data_full (GTK_OBJECT (window1), "label", label, (GtkDestroyNotify) gtk_widget_unref);
+    gtk_widget_show (label);
+    gtk_box_pack_start (GTK_BOX (vbox2), label, FALSE, TRUE, 0);
 
     table1 = gtk_table_new (2, 2, TRUE);
     gtk_widget_ref (table1);
     gtk_object_set_data_full (GTK_OBJECT (window1), "table1", table1, (GtkDestroyNotify) gtk_widget_unref);
     gtk_widget_show (table1);
-    gtk_container_add (GTK_CONTAINER (frame2), table1);
+    gtk_container_add (GTK_CONTAINER (vbox2), table1);
 
     ps_human = gtk_radio_button_new_with_label (race_group, "Human");
     race_group = gtk_radio_button_group (GTK_RADIO_BUTTON (ps_human));
@@ -125,17 +164,24 @@ GtkWidget * create_ps_window (ps_dlg *dlg, const char* name, int race, int gende
     gtk_toggle_button_set_active ((GtkToggleButton *) g_slist_nth_data (race_group, race), TRUE);
     dlg->race = (GtkRadioButton *) ps_elf;
     
-    frame3 = gtk_frame_new ("Gender");
-    gtk_widget_ref (frame3);
-    gtk_object_set_data_full (GTK_OBJECT (window1), "frame3", frame3, (GtkDestroyNotify) gtk_widget_unref);
-    gtk_widget_show (frame3);
-    gtk_box_pack_start (GTK_BOX (vbox1), frame3, FALSE, FALSE, 0);
+    hseparator1 = gtk_hseparator_new ();
+    gtk_widget_ref (hseparator1);
+    gtk_object_set_data_full (GTK_OBJECT (window1), "hseparator1", hseparator1, (GtkDestroyNotify) gtk_widget_unref);
+    gtk_widget_show (hseparator1);
+    gtk_box_pack_start (GTK_BOX (vbox2), hseparator1, FALSE, TRUE, 0);
+
+    label = gtk_label_new ("Gender:");
+    gtk_widget_ref (label);
+    gtk_misc_set_alignment (GTK_MISC (label), 0.0, 0.5);
+    gtk_object_set_data_full (GTK_OBJECT (window1), "label", label, (GtkDestroyNotify) gtk_widget_unref);
+    gtk_widget_show (label);
+    gtk_box_pack_start (GTK_BOX (vbox2), label, FALSE, FALSE, 0);
 
     hbox1 = gtk_hbox_new (FALSE, 0);
     gtk_widget_ref (hbox1);
     gtk_object_set_data_full (GTK_OBJECT (window1), "hbox1", hbox1, (GtkDestroyNotify) gtk_widget_unref);
     gtk_widget_show (hbox1);
-    gtk_container_add (GTK_CONTAINER (frame3), hbox1);
+    gtk_container_add (GTK_CONTAINER (vbox2), hbox1);
 
     ps_male = gtk_radio_button_new_with_label (gender_group, "Male");
     gender_group = gtk_radio_button_group (GTK_RADIO_BUTTON (ps_male));
@@ -154,6 +200,44 @@ GtkWidget * create_ps_window (ps_dlg *dlg, const char* name, int race, int gende
     // activate the correct radiobutton
     gtk_toggle_button_set_active ((GtkToggleButton *) g_slist_nth_data (gender_group, gender), TRUE);
     dlg->gender = (GtkRadioButton *) ps_female;
+
+    frame2 = gtk_frame_new ("NPC");
+    gtk_widget_ref (frame2);
+    gtk_object_set_data_full (GTK_OBJECT (window1), "frame2", frame2, (GtkDestroyNotify) gtk_widget_unref);
+    gtk_widget_show (frame2);
+    gtk_box_pack_start (GTK_BOX (vbox1), frame2, FALSE, TRUE, 0);
+
+    alignment1 = gtk_alignment_new (0, 0, 1, 1);
+    gtk_widget_ref (alignment1);
+    gtk_object_set_data_full (GTK_OBJECT (window1), "alignment1", alignment1, (GtkDestroyNotify) gtk_widget_unref);
+    gtk_widget_show (alignment1);
+    gtk_container_add (GTK_CONTAINER (frame2), alignment1);
+    gtk_container_set_border_width (GTK_CONTAINER (alignment1), 8);
+
+    npc_selection = gtk_option_menu_new ();
+    dlg->npc_menu = npc_selection;
+    gtk_widget_ref (npc_selection);
+    gtk_object_set_data_full (GTK_OBJECT (window1), "npc_selection", npc_selection, (GtkDestroyNotify) gtk_widget_unref);
+    gtk_widget_show (npc_selection);
+    gtk_container_add (GTK_CONTAINER (alignment1), npc_selection);
+
+    npc_selection_menu = gtk_menu_new ();
+
+    character *mychar;
+    while ((mychar = (character *) data::characters.next ()) != NULL)
+    {
+        // don't add plyer to the list
+        if (!strcmp (mychar->name, ((character *) data::characters.get ("the_player"))->name)) continue;
+        
+        glade_menuitem = gtk_menu_item_new_with_label (mychar->name);
+        gtk_object_set_user_data (GTK_OBJECT (glade_menuitem), mychar->name);
+        gtk_widget_show (glade_menuitem);
+        gtk_menu_append (GTK_MENU (npc_selection_menu), glade_menuitem);
+        gtk_option_menu_set_menu (GTK_OPTION_MENU (npc_selection), npc_selection_menu);
+    }
+    gtk_option_menu_set_menu (GTK_OPTION_MENU (npc_selection), npc_selection_menu);
+
+    if (the_npc != NULL) set_option (GTK_OPTION_MENU (npc_selection), the_npc);
 
     hbuttonbox1 = gtk_hbutton_box_new ();
     gtk_widget_ref (hbuttonbox1);

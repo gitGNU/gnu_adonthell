@@ -102,9 +102,9 @@ void create_mainframe (MainFrame * MainWnd)
     menu = gtk_menu_new ();
     
     // Player Settings
-    menuitem = gtk_menu_item_new_with_label ("Player");
+    menuitem = gtk_menu_item_new_with_label ("Settings");
     gtk_container_add (GTK_CONTAINER (menu), menuitem);
-    gtk_widget_add_accelerator (menuitem, "activate", accel_group, GDK_p, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
+    gtk_widget_add_accelerator (menuitem, "activate", accel_group, GDK_t, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
     gtk_signal_connect (GTK_OBJECT (menuitem), "activate", GTK_SIGNAL_FUNC (on_dialogue_player_activate), (gpointer) MainWnd);
     gtk_widget_show (menuitem);
 

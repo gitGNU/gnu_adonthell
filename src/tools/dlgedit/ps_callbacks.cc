@@ -18,12 +18,16 @@
 #include "ps_dlg.h"
 #include "ps_callbacks.h"
 #include "ps_interface.h"
+#include "../../py_inc.h"
+#include "../../data.h"
 
+extern gchar *get_option (GtkOptionMenu*);
 
 void
 on_ps_ok_pressed (GtkButton * button, gpointer user_data)
 {
     int i, race = 0, gender = 0;
+    char *the_npc;
     ps_dlg* dlg = (ps_dlg *) user_data;
     GSList* group = gtk_radio_button_group (dlg->race);
 
@@ -36,7 +40,11 @@ on_ps_ok_pressed (GtkButton * button, gpointer user_data)
         if (gtk_toggle_button_get_active ((GtkToggleButton *) g_slist_nth_data (group, i)))
             gender = i;     
 
-    dlg->on_ok (gtk_entry_get_text (dlg->name), race, gender);
+    the_npc = get_option (GTK_OPTION_MENU (dlg->npc_menu));
+    PyDict_SetItemString (data::globals, "the_npc", 
+        pass_instance (data::characters.get (the_npc), "npc"));
+
+    dlg->on_ok (gtk_entry_get_text (dlg->name), race, gender, the_npc);
 
     gtk_widget_destroy (dlg->wnd);
     gtk_main_quit ();

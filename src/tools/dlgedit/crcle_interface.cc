@@ -44,6 +44,16 @@ void set_option (GtkOptionMenu * o, const gchar * label)
     }
 }
 
+// returns selected option
+gchar *get_option (GtkOptionMenu * o)
+{
+    GtkMenu *m = (GtkMenu *) gtk_option_menu_get_menu (o);
+    GtkMenuItem *i = (GtkMenuItem *) gtk_menu_get_active (m);
+    gchar *s = (gchar *) gtk_object_get_user_data (GTK_OBJECT (i));
+
+    return s ? s : s = "";
+}
+
 GtkWidget*
 create_dlg_node_window (Circle *circle, crcle_dlg *dlg)
 {

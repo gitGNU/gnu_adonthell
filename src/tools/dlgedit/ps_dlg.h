@@ -23,18 +23,21 @@
 class ps_dlg
 {
 public:
-    ps_dlg (player*);
+    ps_dlg (player*, npc*);
 
     void run ();
-    void on_ok (char*, int, int);
+    npc *get_npc ();                        // Return selected NPC
+    void on_ok (char*, int, int, char*);    // OK-Button pressed
 
-    GtkEntry *name;
-    GtkRadioButton *race;
-    GtkRadioButton *gender;
-    GtkWidget *wnd;
+    GtkEntry *name;                         // Set player's name
+    GtkRadioButton *race;                   // Select the player's race
+    GtkRadioButton *gender;                 // Select the player's gender
+    GtkWidget *npc_menu;                    // The "chose NPC" option-menu
+    GtkWidget *wnd;                         // The dialog window
     
 private:
-    player *myplayer;
+    player *myplayer;                       // The player object
+    npc *mynpc;                             // The NPC object attached to the dialogue
 };
 
 #endif // __PSDLG_H__

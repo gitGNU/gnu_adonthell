@@ -54,8 +54,15 @@ main (int argc, char *argv[])
 	initcharacterc ();
 	initquestc ();
 
-    insert_path (getcwd (tmp, 256));
-
+    char *path = g_dirname (argv[0]);
+    if (path[0] != '/') 
+    {
+        sprintf (tmp, "%s/%s", getcwd (NULL, 255-strlen (path)), path);
+        insert_path (tmp);
+    }
+    else insert_path (path);
+    free (path);
+    
     // Insert our script directory to python's search path
     sprintf (tmp, "%s/scripts", myconf.datadir.c_str ());
     insert_path (tmp);
@@ -66,6 +73,7 @@ main (int argc, char *argv[])
 
     // Load module
     PyObject *m = import_module ("ins_dlgedit_modules");
+    if (m == NULL) return 1;
         
     // Create a player
     MainWnd->myplayer = new player;
@@ -96,9 +104,16 @@ main (int argc, char *argv[])
             PyDict_SetItemString (chars, mynpc->name, pass_instance (mynpc, "npc"));
         }
 
+        if (mynpc == NULL)
+        {
+            mynpc = new npc ();
+            mynpc->name = strdup ("Dummy Character");
+        }
+        
         // set a shortcut to one of the NPC's
         PyDict_SetItemString (data::globals, "the_npc", pass_instance (mynpc, "npc"));
-    
+        MainWnd->mynpc = mynpc;
+
         gzclose (in);
     }
 

@@ -136,10 +136,14 @@ on_dialogue_functions_activate (GtkMenuItem * menuitem, gpointer user_data)
 void 
 on_dialogue_player_activate (GtkMenuItem * menuitem, gpointer user_data)
 {
-    ps_dlg dlg (((MainFrame *) user_data)->myplayer);
+    MainFrame *wnd = (MainFrame *) user_data;
+
+    ps_dlg dlg (wnd->myplayer, wnd->mynpc);
     dlg.run ();
     
     gtk_main ();
+
+    wnd->mynpc = dlg.get_npc ();
 }
 
 // Dialogue Menu: Run

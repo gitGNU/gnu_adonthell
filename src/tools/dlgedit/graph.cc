@@ -25,6 +25,8 @@ class dialog;
 
 #include "../../types.h"
 #include "../../character.h"
+#include "../../data.h"
+#include "../../py_inc.h"
 #include "dlgnode.h"
 #include "main.h"
 #include "geometrie.h"
@@ -1034,7 +1036,21 @@ load_dialogue (MainFrame * wnd, const char *file)
                 if (parse_dlgfile (s, n) == LOAD_NUM) wnd->myplayer->set ("gender", n);
                 break;
             }
-            
+
+            case LOAD_NPC:
+            {
+                npc *mynpc = NULL;
+
+                if (parse_dlgfile (s, n) == LOAD_STR)
+                    mynpc = (npc *) data::characters.get (s.c_str ());
+
+                if (mynpc == NULL) mynpc = (npc *) data::characters.next (); 
+
+                PyDict_SetItemString (data::globals, "the_npc", pass_instance (mynpc, "npc"));
+                wnd->mynpc = mynpc;
+                break;            
+            }
+
             case LOAD_CIRCLE:
             { 
                 circle = new Circle;
@@ -1160,7 +1176,10 @@ save_dialogue (MainFrame * wnd)
         out << "\nRace " << wnd->myplayer->get ("race");
     if (wnd->myplayer->get ("gender") != 1)
         out << "\nGender " << wnd->myplayer->get ("gender");
-    
+
+    // NPC name
+    out << "\nNPC §" << wnd->mynpc->name << "§";
+
     // Save Circles and create position-table 
     for (i = 0; i < wnd->number; i++)
         if (wnd->nodes[i]->type != LINK)
