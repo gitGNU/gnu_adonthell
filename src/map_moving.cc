@@ -12,6 +12,14 @@
    See the COPYING file for more details.
 */
 
+/**
+ * @file   map_moving.cc
+ * @author Alexandre Courbot <alexandrecourbot@linuxgames.com>
+ * 
+ * @brief  Defines the map_moving class.
+ * 
+ * 
+ */
 
 #include "map_moving.h"
 #include "landmap.h"

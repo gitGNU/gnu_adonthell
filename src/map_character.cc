@@ -12,6 +12,14 @@
    See the COPYING file for more details.
 */
 
+/**
+ * @file   map_character.cc
+ * @author Alexandre Courbot <alexandrecourbot@linuxgames.com>
+ * 
+ * @brief  Defines the map_character class.
+ * 
+ * 
+ */
 
 #include "map_character.h"
 #include <math.h>

@@ -12,6 +12,15 @@
    See the COPYING file for more details.
 */
 
+/**
+ * @file   map_placeable_area.h
+ * @author Alexandre Courbot <alexandrecourbot@linuxgames.com>
+ * 
+ * @brief  Declares the map_placeable_area class.
+ * 
+ * 
+ */
+
 
 #ifndef MAP_PLACEABLE_AREA_H_
 #define MAP_PLACEABLE_AREA_H_
@@ -22,6 +31,10 @@
 
 const int mapsquare_size = 40;
 
+/**
+ * Walkability info class.
+ * 
+ */
 class mapsquare_walkable_info
 {
 private:
@@ -54,6 +67,11 @@ public:
     }
 }; 
 
+/**
+ * Area of squares that represents the occupation of a placeable
+ * on the map.
+ * 
+ */
 class map_placeable_area
 {
 private:

@@ -190,7 +190,7 @@ int main (int argc, char * argv[])
     gc.mchar->set_speed (1.0);
 
     gc.mchar2 = (map_character_with_gfx *)lmap.add_map_character();
-    gc.mchar2->load("adontest/nakedguy.mdl");
+    gc.mchar2->load("adontest/nakedguy.mchar");
     gc.mchar2->set_position (10, 7); 
     gc.mchar2->set_limits (16, 12);
     gc.mchar2->set_speed (1.1);

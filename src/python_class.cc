@@ -17,7 +17,7 @@
  * @file   python_class.cc
  * @author Kai Sterker <kaisterker@linuxgames.com>
  * 
- * @brief  Declares the python class.
+ * @brief  Defines the python class.
  * 
  * 
  */

@@ -12,6 +12,14 @@
    See the COPYING file for more details.
 */
 
+/**
+ * @file   map_placeable_gfx.cc
+ * @author Alexandre Courbot <alexandrecourbot@linuxgames.com>
+ * 
+ * @brief  Defines the map_placeable_gfx class.
+ * 
+ * 
+ */
 
 #include "map_placeable_gfx.h"
 

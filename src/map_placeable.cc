@@ -12,6 +12,15 @@
    See the COPYING file for more details.
 */
 
+/**
+ * @file   map_placeable.cc
+ * @author Alexandre Courbot <alexandrecourbot@linuxgames.com>
+ * 
+ * @brief  Defines the map_placeable class.
+ * 
+ * 
+ */
+
 #include "map_placeable.h"
 #include "landmap.h"
 

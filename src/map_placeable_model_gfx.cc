@@ -12,6 +12,14 @@
    See the COPYING file for more details.
 */
 
+/**
+ * @file   map_placeable_model_gfx.cc
+ * @author Alexandre Courbot <alexandrecourbot@linuxgames.com>
+ * 
+ * @brief  Defines the map_placeable_model_gfx class.
+ * 
+ * 
+ */
 
 #include "map_placeable_model_gfx.h"
 
@@ -62,6 +70,14 @@ map_placeable_area_gfx * map_placeable_model_gfx::add_gfx(const string & name)
     
     return (Gfxs.insert(pair<const string, map_placeable_area_gfx *>
                         (name, newmpa))).first->second;
+}
+
+bool map_placeable_model_gfx::del_gfx(const string & name)
+{
+    map <const string, map_placeable_area_gfx *>::iterator it = Gfxs.find(name);
+    if (it == Gfxs.end()) return false;
+    delete it->second;
+    return true;
 }
 
 bool map_placeable_model_gfx::update() 

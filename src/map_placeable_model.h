@@ -12,6 +12,16 @@
    See the COPYING file for more details.
 */
 
+/**
+ * @file   map_placeable_model.h
+ * @author Alexandre Courbot <alexandrecourbot@linuxgames.com>
+ * 
+ * @brief  Declares the map_placeable_model class.
+ * 
+ * 
+ */
+
+
 #ifndef MAP_PLACEABLE_MODEL_H
 #define MAP_PLACEABLE_MODEL_H
 
@@ -19,6 +29,16 @@
 #include <map>
 #include "fileops.h"
 
+/**
+ * Represents a placeable, i.e. something (character, object, ...)
+ * that can be placed on a map and occupies some space on it.
+ *
+ * This class is separated from map_placeable to allow easy edition
+ * without depending on the whole map stuff. While it is suitable
+ * for edition, it can't be actually placed on a map. Use map_placeable
+ * for that instead.
+ * 
+ */
 class map_placeable_model
 {
 protected:
@@ -37,6 +57,8 @@ public:
     const string current_state_name();
     
     map_placeable_area * add_state (const string & name);
+
+    bool del_state (const string & name);
     
     void set_state (const string & name);
 

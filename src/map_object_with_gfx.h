@@ -12,12 +12,26 @@
    See the COPYING file for more details.
 */
 
+/**
+ * @file   map_object_with_gfx.h
+ * @author Alexandre Courbot <alexandrecourbot@linuxgames.com>
+ * 
+ * @brief  Declares the map_object_with_gfx class.
+ * 
+ * 
+ */
+
+
 #ifndef MAP_OBJECT_WITH_GFX
 #define MAP_OBJECT_WITH_GFX
 
 #include "map_object.h"
 #include "map_placeable_gfx.h"
 
+/**
+ * A map_object associated with it's graphical representation.
+ * 
+ */
 class map_object_with_gfx : public map_object, public map_placeable_gfx
 {
 public:

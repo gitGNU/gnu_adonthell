@@ -12,9 +12,17 @@
    See the COPYING file for more details.
 */
 
+/**
+ * @file   map_placeable.h
+ * @author Alexandre Courbot <alexandrecourbot@linuxgames.com>
+ * 
+ * @brief  Declares the map_placeable class.
+ * 
+ * 
+ */
+
 #ifndef MAP_PLACEABLE_H
 #define MAP_PLACEABLE_H
-
 
 #include "map_placeable_model.h"
 #include <string>
@@ -30,6 +38,16 @@ typedef enum
     ITEM
 } placeable_type; 
 
+/**
+ * Class representing a placeable, i.e. something (character, object, ...)
+ * that can be placed on a map and occupies some space on it.
+ *
+ * What makes this class different from map_placeable_model is that it has a type,
+ * that higher-level class can overwrite to indicate what kind of placeable it is,
+ * and a reference to the map the placeable belongs to, so update functions can
+ * check the terrain around the placeable.
+ * 
+ */
 class map_placeable : public map_placeable_model
 {
 protected:

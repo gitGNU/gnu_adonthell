@@ -17,7 +17,7 @@
  * @file   input_manager.cc
  * @author Alexandre Courbot <alexandrecourbot@linuxgames.com
  * 
- * @brief  Declares the input_manager class members that are
+ * @brief  Defines the input_manager class members that are
  *         system-independant.
  * 
  * 

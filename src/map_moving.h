@@ -12,11 +12,29 @@
    See the COPYING file for more details.
 */
 
+/**
+ * @file   map_moving.h
+ * @author Alexandre Courbot <alexandrecourbot@linuxgames.com>
+ * 
+ * @brief  Declares the map_moving class.
+ * 
+ * 
+ */
+
+
 #ifndef MAP_MOVING_H
 #define MAP_MOVING_H
 
 #include "map_placeable.h"
 
+/**
+ * Implements a map moving object.
+ *
+ * While map_placeable can occupy space on a map, it has not the ability to move.
+ * Objects inheriting from this class can be placed on a map and be given a certain
+ * velocity, that they will follow each time they are updated.
+ * 
+ */
 class map_moving : public map_placeable, public map_coordinates
 {
 private:

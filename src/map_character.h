@@ -12,11 +12,29 @@
    See the COPYING file for more details.
 */
 
+/**
+ * @file   map_character.h
+ * @author Alexandre Courbot <alexandrecourbot@linuxgames.com>
+ * 
+ * @brief  Declares the map_character class.
+ * 
+ * 
+ */
+
 #ifndef MAP_CHARACTER_H
 #define MAP_CHARACTER_H
 
 #include "map_moving.h"
 
+/**
+ * Map representation of a character.
+ *
+ * This class implements all that you need to represent a character
+ * on the map. It mostly defines some additionnal functions on map_moving
+ * to set the correct state according to the map_character move, and limits 
+ * it's speed.
+ * 
+ */
 class map_character : public map_moving
 {
 public:

@@ -12,6 +12,15 @@
    See the COPYING file for more details.
 */
 
+/**
+ * @file   map_placeable_area_gfx.h
+ * @author Alexandre Courbot <alexandrecourbot@linuxgames.com>
+ * 
+ * @brief  Declares the map_placeable_area_gfx class.
+ * 
+ * 
+ */
+
 #ifndef MAP_PLACEABLE_AREA_GFX
 #define MAP_PLACEABLE_AREA_GFX
 
@@ -19,6 +28,11 @@
 #include "map_placeable_area.h"
 #include "fileops.h"
 
+
+/**
+ * Graphics representing a state of a map_placeable_model.
+ * 
+ */
 class map_placeable_area_gfx : public drawable
 {
 private:

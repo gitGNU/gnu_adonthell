@@ -12,6 +12,14 @@
    See the COPYING file for more details.
 */
 
+/**
+ * @file   map_object_with_gfx.cc
+ * @author Alexandre Courbot <alexandrecourbot@linuxgames.com>
+ * 
+ * @brief  Defines the map_object_with_gfx class.
+ * 
+ * 
+ */
 
 #include "map_object_with_gfx.h"
 

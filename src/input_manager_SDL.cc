@@ -17,7 +17,7 @@
  * @file   input_manager_SDL.cc
  * @author Alexandre Courbot <alexandrecourbot@linuxgames.com
  * 
- * @brief  Declares the input_manager class.
+ * @brief  Defines the input_manager class.
  *         This file is dependant of SDL.
  * 
  * 

@@ -12,12 +12,26 @@
    See the COPYING file for more details.
 */
 
+/**
+ * @file   map_character_with_gfx.h
+ * @author Alexandre Courbot <alexandrecourbot@linuxgames.com>
+ * 
+ * @brief  Declares the map_character_with_gfx class.
+ * 
+ * 
+ */
+
+
 #ifndef MAP_CHARACTER_WITH_GFX_H
 #define MAP_CHARACTER_WITH_GFX_H
 
 #include "map_character.h"
 #include "map_placeable_gfx.h"
 
+/**
+ * A map_character along with it's graphical representation.
+ * 
+ */
 class map_character_with_gfx : public map_character, public map_placeable_gfx
 {
 public:

@@ -12,6 +12,15 @@
    See the COPYING file for more details.
 */
 
+/**
+ * @file   map_object.cc
+ * @author Alexandre Courbot <alexandrecourbot@linuxgames.com>
+ * 
+ * @brief  Defines the map_object class.
+ * 
+ * 
+ */
+
 #include "map_object.h"
 
 

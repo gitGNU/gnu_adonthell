@@ -4,7 +4,6 @@
 #include "landmap.h"
 #include "image.h"
 #include "screen.h"
-#include "input.h"
 #include "atk_font.h"
 
 #include "atk_widget.h"
@@ -32,7 +31,6 @@ int main (int argc, char * argv[])
     }
    */ 
     screen::init (); 
-    input::init ();  
     screen::set_video_mode (640, 480, 16); 
     screen::clear (); 
 
@@ -122,7 +120,6 @@ int main (int argc, char * argv[])
     
     screen::show ();
      
-    input::shutdown (); 
        
        /***************************************/
     /***************************************/

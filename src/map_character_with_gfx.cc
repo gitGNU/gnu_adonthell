@@ -12,6 +12,15 @@
    See the COPYING file for more details.
 */
 
+/**
+ * @file   map_character_with_gfx.cc
+ * @author Alexandre Courbot <alexandrecourbot@linuxgames.com>
+ * 
+ * @brief  Defines the map_character_with_gfx class.
+ * 
+ * 
+ */
+
 #include "map_character_with_gfx.h"
 
 map_character_with_gfx::map_character_with_gfx (landmap & mymap) : map_character (mymap),

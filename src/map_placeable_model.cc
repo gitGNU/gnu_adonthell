@@ -12,6 +12,15 @@
    See the COPYING file for more details.
 */
 
+/**
+ * @file   map_placeable_model.cc
+ * @author Alexandre Courbot <alexandrecourbot@linuxgames.com>
+ * 
+ * @brief  Defines the map_placeable_model class.
+ * 
+ * 
+ */
+
 
 #include "map_placeable_model.h"
 
@@ -46,6 +55,11 @@ const string map_placeable_model::current_state_name()
 map_placeable_area * map_placeable_model::add_state (const string & name) 
 {
     return &((States.insert(pair<const string, const map_placeable_area> (name, map_placeable_area()))).first->second);
+}
+
+bool map_placeable_model::del_state (const string & name)
+{
+    return States.erase(name);
 }
 
 void map_placeable_model::set_state (const string & name) 

@@ -12,6 +12,14 @@
    See the COPYING file for more details.
 */
 
+/**
+ * @file   map_placeable_area.cc
+ * @author Alexandre Courbot <alexandrecourbot@linuxgames.com>
+ * 
+ * @brief  Defines the map_placeable_area class.
+ * 
+ * 
+ */
 
 #include "map_placeable_area.h"
 

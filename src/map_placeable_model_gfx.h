@@ -12,6 +12,16 @@
    See the COPYING file for more details.
 */
 
+/**
+ * @file   map_placeable_model_gfx.h
+ * @author Alexandre Courbot <alexandrecourbot@linuxgames.com>
+ * 
+ * @brief  Declares the map_placeable_model_gfx class.
+ * 
+ * 
+ */
+
+
 #ifndef MAP_PLACEABLE_MODEL_GFX_H
 #define MAP_PLACEABLE_MODEL_GFX_H
 
@@ -20,6 +30,13 @@
 #include <map>
 #include "fileops.h"
 
+/**
+ * The graphical representation of a map_placeable_model.
+ *
+ * Each object of this class has to be associated at constructor
+ * time with a map_placeable_model that it will stick to all life long.
+ * 
+ */
 class map_placeable_model_gfx : public drawable
 {
 protected:
@@ -40,6 +57,7 @@ public:
     map_placeable_area_gfx * get_gfx(const string & name);
 
     map_placeable_area_gfx * add_gfx(const string & name);
+    bool del_gfx(const string & name);
     
     bool update ();
     

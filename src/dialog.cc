@@ -18,7 +18,7 @@
  * @file   dialog.cc
  * @author Kai Sterker <kaisterker@linuxgames.com>
  * 
- * @brief  Declares the dialog class.
+ * @brief  Defines the dialog class.
  * 
  * 
  */
