@@ -44,8 +44,8 @@ class mapview
     //  u_int16 ctrx,ctry;
     drawing_area *da;
 
-    list < mapsquare_tile > critical_draw;
-    list < mapsquare_char > characters_draw;
+    list <mapsquare_tile> critical_draw;
+    list <mapsquare_char> characters_draw;
 
 #ifndef _EDIT_
     PyObject *locals;			// Locals that belong to that mapview
@@ -53,7 +53,7 @@ class mapview
 #endif
 
 #ifdef _EDIT_
-    char file_name[500];
+    string file_name;
     win_label *info_win_label;
     win_container *info_win;
     u_int8 info_win_count;
@@ -70,9 +70,7 @@ class mapview
     bool must_upt_label_square;
 
     image *walkimg;
-
-    char tmps[500];
-
+     
     list < mapsquare_tile >::iterator current_tile;
 
     void update_label_pos ();
@@ -142,10 +140,10 @@ public:
     void resize (u_int16 l, u_int16 h);
 
 #ifndef _EDIT_
-    s_int8 get_state (gzFile file);
-    s_int8 put_state (gzFile file);
+    s_int8 get_state (igzstream& file);
+    s_int8 put_state (ogzstream& file);
 
-    void set_schedule (char *file);
+    void set_schedule (string file);
 #endif
     void update ();
     void draw (u_int16 x, u_int16 y, drawing_area * da_opt = NULL);
@@ -176,7 +174,7 @@ public:
     void draw_editor ();
     void update_editor_keys ();
     void update_and_draw ();
-    void set_info_win (char *text);
+    void set_info_win (string text);
     void editor ();
 #endif
     friend class mapsquare_tile;

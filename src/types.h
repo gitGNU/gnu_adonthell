@@ -1,6 +1,3 @@
-#ifndef _types_h
-#define _types_h
-
 // $Id$
 /*
    Copyright (C) 1999 Alexandre Courbot.
@@ -13,15 +10,38 @@
 
  */
 
+
+/** @file types.h
+ *  Declares some basic types.
+ *  Please use these types instead of ints, because they
+ *  have the advantage to always be the same size no matter
+ *  what platform they are compiled in.
+ */ 
+
+ 
+#ifndef _types_h
+#define _types_h 
+
 #include <SDL/SDL.h>
 
 // We should put ifdefs here to put the correct int values accordingly to the system type
 
+/// 8 bits long unsigned integer
 #define u_int8 unsigned char
+
+/// 16 bits long unsigned integer
 #define u_int16 unsigned short
+
+/// 32 bits long unsigned integer
 #define u_int32 unsigned int
+
+/// 8 bits long signed integer
 #define s_int8 signed char
+
+/// 16 bits long signed integer
 #define s_int16 signed short
+
+/// 32 bits long signed integer
 #define s_int32 signed int
 
 /*

@@ -27,24 +27,24 @@ u_int16 image::a_d_diff = 0;
 
 image & image::operator = (const image & im)
 {
-	length_ = im.length_;
-	height_ = im.height_;
-	draw_to = im.draw_to;
-	bytes_per_pixel = im.bytes_per_pixel;
-	mask_on = im.mask_on;
-	alpha_ = im.alpha_;
-	if (data)
-		SDL_FreeSurface (data);
+    length_ = im.length_;
+    height_ = im.height_;
+    draw_to = im.draw_to;
+    bytes_per_pixel = im.bytes_per_pixel;
+    mask_on = im.mask_on;
+    alpha_ = im.alpha_;
+    if (data)
+        SDL_FreeSurface (data);
 #ifdef _EDIT_
-	if (simpledata)
-            free (simpledata);
+    if (simpledata)
+        free (simpledata);
 #endif
-	data = SDL_ConvertSurface (im.data, im.data->format, im.data->flags);
+    data = SDL_ConvertSurface (im.data, im.data->format, im.data->flags);
 #ifdef _EDIT_
-	simpledata = (void *) calloc (length () * height (), 3);
-	memcpy (simpledata, im.simpledata, length () * height () * 3);
+    simpledata = (void *) calloc (length () * height (), 3);
+    memcpy (simpledata, im.simpledata, length () * height () * 3);
 #endif
-	return *this;
+    return *this;
 }
 
 void image::init ()
@@ -143,7 +143,7 @@ void image::get_rects (s_int16 x, s_int16 y)
         rect tdr;
         drawing_area da_int, im_zone (x, y, length (), height ());
         rect t = draw_to->get_rects ();
-
+        
         da_int = t;
         im_zone.assign_drawing_area (&da_int);
         tdr = im_zone.get_rects ();
@@ -168,12 +168,7 @@ void image::get_rects (s_int16 x, s_int16 y)
         dr.h = height ();
     }
 }
-
-bool image::is_masked ()
-{
-    return (mask_on);
-}
-
+ 
 void image::set_mask (bool m)
 {
     if ((m) && (!mask_on))
@@ -335,12 +330,13 @@ void image::get_from_screen (s_int16 x, s_int16 y)
     SDL_BlitSurface (screen::vis, &sr, data, &dr);
 }
 
-s_int8 image::get (gzFile file)
+s_int8 image::get (igzstream& file)
 {
     s_int8 ret;
 
-    gzread (file, &mask_on, sizeof (mask_on));
-    gzread (file, &alpha_, sizeof (alpha_));
+    mask_on << file; 
+    alpha_ << file;
+    
     ret = get_raw (file);
     if (!ret)
     {
@@ -351,29 +347,30 @@ s_int8 image::get (gzFile file)
     return ret;
 }
 
-s_int8 image::load (const char *fname)
+s_int8 image::load (string fname)
 {
-    gzFile file;
+    igzstream file (fname);
 
-    file = gzopen (fname, "r");
-    if (!file)
+    if (!file.is_open ())
         return (1);
     get (file);
-    gzclose (file);
+    file.close (); 
     return (0);
 }
 
-s_int8 image::get_raw (gzFile file)
+s_int8 image::get_raw (igzstream& file)
 {
 #ifndef _EDIT_
     void *simpledata;
 #endif
     SDL_Surface *tmp2;
 
-    gzread (file, &length_, sizeof (length_));
-    gzread (file, &height_, sizeof (height_));
-    simpledata = calloc (length () * height (), 3);
-    gzread (file, simpledata, length () * height () * 3);
+    length_ << file;
+    height_ << file; 
+
+    simpledata = new char[length () * height () * 3]; 
+    //     simpledata = calloc (length () * height (), 3);
+    gzread (file.file, simpledata, length () * height () * 3);
 
     tmp2 = SDL_CreateRGBSurfaceFrom (simpledata, length (), height (), 24,
                                      length () * 3, 0x0000FF, 0x00FF00, 0xFF0000, 0);
@@ -382,22 +379,21 @@ s_int8 image::get_raw (gzFile file)
     SDL_FreeSurface (tmp2);
 
 #ifndef _EDIT_
-    free (simpledata);
+    delete[] (char *) simpledata;
 #endif
     if (!data)
         return (-1);
     return (0);
 }
 
-s_int8 image::load_raw (const char *fname)
+s_int8 image::load_raw (string fname)
 {
-    gzFile file;
+    igzstream file (fname);
 
-    file = gzopen (fname, "rb");
-    if (!file)
+    if (!file.is_open ())
         return (1);
     get_raw (file);
-    gzclose (file);
+    file.close (); 
     return (0);
 }
 
@@ -424,11 +420,11 @@ s_int8 image::get_pnm (SDL_RWops * file)
     return (0);
 }
 
-s_int8 image::load_pnm (const char *fname)
+s_int8 image::load_pnm (string fname)
 {
     SDL_RWops *file;
 
-    file = SDL_RWFromFile (fname, "r");
+    file = SDL_RWFromFile (fname.c_str (), "r");
     if (!file)
         return (1);
     get_pnm (file);
@@ -467,44 +463,48 @@ void image::screen_shot ()
 }
 
 #ifdef _EDIT_
-s_int8 image::put (gzFile file)
+s_int8 image::put (ogzstream& file)
 {
-    gzwrite (file, &mask_on, sizeof (mask_on));
-    set_alpha (alpha_);
-    gzwrite (file, &alpha_, sizeof (alpha_));
-    set_alpha (alpha_);
+    mask_on >> file; 
+    //     gzwrite (file, &mask_on, sizeof (mask_on));
+    //     set_alpha (alpha_);
+    alpha_ >> file; 
+    //     gzwrite (file, &alpha_, sizeof (alpha_));
+    //     set_alpha (alpha_);
     return (put_raw (file));
 }
 
-s_int8 image::save (char *fname)
+s_int8 image::save (string fname)
 {
-    gzFile file;
+    ogzstream file (fname);
 
-    file = gzopen (fname, "wb6");
-    if (!file)
+    //     file = gzopen (fname.c_str (), "wb6");
+    if (!file.is_open ())
         return (1);
     put (file);
-    gzclose (file);
+    file.close (); 
     return (0);
 }
 
-s_int8 image::put_raw (gzFile file)
+s_int8 image::put_raw (ogzstream& file)
 {
-    gzwrite (file, &length_, sizeof (length_));
-    gzwrite (file, &height_, sizeof (height_));
-    gzwrite (file, simpledata, length () * height () * 3);
+    length_ >> file;
+    height_ >> file;
+    
+    //     gzwrite (file, &length_, sizeof (length_));
+    // gzwrite (file, &height_, sizeof (height_));
+    gzwrite (file.file, simpledata, length () * height () * 3);
     return (0);
 }
 
-s_int8 image::save_raw (char *fname)
+s_int8 image::save_raw (string fname)
 {
-    gzFile file;
-
-    file = gzopen (fname, "w6");
-    if (!file)
+    ogzstream file (fname); 
+    
+    if (!file.is_open ())
         return (1);
     put_raw (file);
-    gzclose (file);
+    file.close (); 
     return (0);
 }
 
@@ -514,45 +514,16 @@ s_int8 image::put_pnm (SDL_RWops * file)
     return (0);
 }
 
-s_int8 image::save_pnm (char *fname)
+s_int8 image::save_pnm (string fname)
 {
     SDL_RWops *file;
 
-    file = SDL_RWFromFile (fname, "w");
+    file = SDL_RWFromFile (fname.c_str (), "w");
     if (!file)
         return (1);
     put_pnm (file);
     SDL_RWclose (file);
     return (0);
-}
-
-#endif
-
-u_int32 image::get_pix (u_int16 x, u_int16 y)
-{
-    static u_int32 retvalue;
-
-    const u_int32 offset =
-        ((y * ((length () % 2 ? length () + 1 : length ()))) + x);
-
-    switch (bytes_per_pixel)
-    {
-        case 1:
-            return *((u_int8 *) data->pixels + offset);
-            break;
-        case 2:
-            return *((u_int16 *) data->pixels + offset);
-            break;
-        case 4:
-            return *((u_int32 *) data->pixels + offset);
-            break;
-        default:
-            memcpy (&retvalue,
-                    (char *) data->pixels + (offset * bytes_per_pixel),
-                    bytes_per_pixel);
-            return retvalue;
-            break;
-    }
 }
 
 u_int32 image::get_rgb_pix (u_int16 x, u_int16 y)
@@ -582,6 +553,51 @@ u_int32 image::get_rgb_pix (u_int16 x, u_int16 y)
     }
 }
 
+void image::put_rgb_pix (u_int16 x, u_int16 y, u_int32 col)
+{
+    u_int8 r, g, b;
+    u_int8 *c = (u_int8 *) col;
+
+    r = *c;
+    g = *(c + 1);
+    b = *(c + 2);
+    col = SDL_MapRGB (data->format, r, g, b);
+
+    put_pix (x, y, col);
+
+#ifdef _EDIT_
+    memcpy ((u_int8 *) simpledata + ((x + (y * length ())) * 3), &col, 3);
+#endif
+}
+#endif
+
+u_int32 image::get_pix (u_int16 x, u_int16 y)
+{
+    static u_int32 retvalue;
+
+    const u_int32 offset =
+        ((y * ((length () % 2 ? length () + 1 : length ()))) + x);
+
+    switch (bytes_per_pixel)
+    {
+        case 1:
+            return *((u_int8 *) data->pixels + offset);
+            break;
+        case 2:
+            return *((u_int16 *) data->pixels + offset);
+            break;
+        case 4:
+            return *((u_int32 *) data->pixels + offset);
+            break;
+        default:
+            memcpy (&retvalue,
+                    (char *) data->pixels + (offset * bytes_per_pixel),
+                    bytes_per_pixel);
+            return retvalue;
+            break;
+    }
+}
+ 
 void image::put_pix (u_int16 x, u_int16 y, u_int32 col)
 {
     const u_int32 offset =
@@ -604,24 +620,7 @@ void image::put_pix (u_int16 x, u_int16 y, u_int32 col)
             break;
     }
 }
-
-void image::put_rgb_pix (u_int16 x, u_int16 y, u_int32 col)
-{
-    u_int8 r, g, b;
-    u_int8 *c = (u_int8 *) col;
-
-    r = *c;
-    g = *(c + 1);
-    b = *(c + 2);
-    col = SDL_MapRGB (data->format, r, g, b);
-
-    put_pix (x, y, col);
-
-#ifdef _EDIT_
-    memcpy ((u_int8 *) simpledata + ((x + (y * length ())) * 3), &col, 3);
-#endif
-}
-
+ 
 void image::zoom (image * src)
 {
     static u_int16 i, j;

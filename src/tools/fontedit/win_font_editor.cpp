@@ -1,4 +1,5 @@
-#include<list>
+#include <list>
+#include "fileops.h"
 #include "types.h"
 #include "image.h"
 #include "input.h"
@@ -95,20 +96,23 @@ bool win_font_editor::update()
 void win_font_editor::write()
 {
 
-  //open a gzFILE
-  gzFile dest=gzopen(destfile_,"wb");
-  //put font file
-  newfont_->put(dest);
-  //put cursor
-  cursor_->put(dest);
-  //put font's information
-  for(list<Tinode_*> ::iterator i=l_.begin();i!=l_.end();i++)
+    //open a gzFILE
+    ogzstream dest (destfile_); 
+    //put font file
+    newfont_->put(dest);
+    //put cursor
+    cursor_->put(dest);
+    //put font's information
+    for(list<Tinode_*> ::iterator i=l_.begin();i!=l_.end();i++)
     {
-      gzwrite(dest,&((*i)->letter),sizeof(char));
-      gzwrite(dest,&((*i)->pos),sizeof(u_int16));
-      gzwrite(dest,&((*i)->length),sizeof(u_int16));
+        (*i)->letter >> dest;
+        (*i)->pos >> dest;
+        (*i)->length >> dest;
+//         gzwrite(dest,&((*i)->letter),sizeof(char));
+//         gzwrite(dest,&((*i)->pos),sizeof(u_int16));
+//         gzwrite(dest,&((*i)->length),sizeof(u_int16));
     }
-  gzclose(dest);
+    dest.close (); 
 }
 
 bool win_font_editor::update_next_letter()

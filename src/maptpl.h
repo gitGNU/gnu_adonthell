@@ -16,6 +16,7 @@
 #ifndef _MAPTPL_H
 #define _MAPTPL_H
 
+#include "fileops.h"
 #include "mapselect.h"
 
 #define ALL_WALKABLE 15
@@ -26,70 +27,96 @@
 #define NONE_WALKABLE 0
 
 class mapsquaretpl
-{
- public:
-  u_int8 walkable;
+{ public:
+    u_int8 walkable;
 
-  mapsquaretpl();
-  s_int8 get(gzFile file);
-  s_int8 put(gzFile file);
-  bool is_walkable_west() { return walkable & WALKABLE_WEST; }
-  bool is_walkable_east() { return walkable & WALKABLE_EAST; }
-  bool is_walkable_north() { return walkable & WALKABLE_NORTH; }
-  bool is_walkable_south() { return walkable & WALKABLE_SOUTH; }
+    mapsquaretpl ();
+    s_int8 get (igzstream& file);
+    s_int8 put (ogzstream& file);
+    bool is_walkable_west ()
+    {
+        return walkable & WALKABLE_WEST;
+    }
 
-  void set_walkable_west(bool w)
+    bool is_walkable_east ()
     {
-      if(!w) walkable&=(ALL_WALKABLE-WALKABLE_WEST);
-      else walkable|=WALKABLE_WEST;
+        return walkable & WALKABLE_EAST;
     }
-  void set_walkable_east(bool w)
+    
+    bool is_walkable_north ()
     {
-      if(!w) walkable&=(ALL_WALKABLE-WALKABLE_EAST);
-      else walkable|=WALKABLE_EAST;
-    }  
-  void set_walkable_north(bool w)
-    {
-      if(!w) walkable&=(ALL_WALKABLE-WALKABLE_NORTH);
-      else walkable|=WALKABLE_NORTH;
-    }  
-  void set_walkable_south(bool w)
-    {
-      if(!w) walkable&=(ALL_WALKABLE-WALKABLE_SOUTH);
-      else walkable|=WALKABLE_SOUTH;
+        return walkable & WALKABLE_NORTH;
     }
-  
-  friend class maptpl;
-  
+    
+    bool is_walkable_south ()
+    {
+        return walkable & WALKABLE_SOUTH;
+    }
+
+    void set_walkable_west (bool w)
+    {
+        if (!w)
+            walkable &= (ALL_WALKABLE - WALKABLE_WEST);
+        else
+            walkable |= WALKABLE_WEST;
+    }
+    
+    void set_walkable_east (bool w)
+    {
+        if (!w)
+            walkable &= (ALL_WALKABLE - WALKABLE_EAST);
+        else
+            walkable |= WALKABLE_EAST;
+    }
+    
+    void set_walkable_north (bool w)
+    {
+        if (!w)
+            walkable &= (ALL_WALKABLE - WALKABLE_NORTH);
+        else
+            walkable |= WALKABLE_NORTH;
+    }
+    
+    void set_walkable_south (bool w)
+    {
+        if (!w)
+            walkable &= (ALL_WALKABLE - WALKABLE_SOUTH);
+        else
+            walkable |= WALKABLE_SOUTH;
+    }
+
+    friend class maptpl;
+    
 };
 
-class maptpl : public mapselect
+class maptpl:public mapselect
 {
- public:
-  mapsquaretpl ** placetpl;
-  u_int16 basex, basey;
+public:
+    mapsquaretpl ** placetpl;
+    u_int16 basex, basey;
+    
+#ifdef _EDIT_
+    image *selimg;
+    image *selbaseimg;
+#endif
+    
+    maptpl (u_int16 x, u_int16 y, u_int16 l, u_int16 h,
+            u_int16 d_l, u_int16 d_h);
+    ~maptpl ();
+    
+    maptpl & operator = (const maptpl & mt);
+    
+    s_int8 get (igzstream& file);
+    s_int8 put (ogzstream& file);
+    void resize (u_int16 l, u_int16 h);
+    void set_base_tile (u_int16 x, u_int16 y);
 
-  // FIXME: should to go mapselect!
-  image * selimg;
-  image * selbaseimg;
+    void toggle_walkable ();
 
-  maptpl(u_int16 x, u_int16 y, u_int16 l, u_int16 h,
-	 u_int16 d_l, u_int16 d_h);
-  ~maptpl();
-  
-  maptpl& operator =(const maptpl& mt);
-
-  s_int8 get(gzFile file);
-  s_int8 put(gzFile file);
-  void resize(u_int16 l, u_int16 h);
-  void set_base_tile(u_int16 x, u_int16 y);
-
-  void toggle_walkable();
-
-  void draw_walkables();
-  void draw_base_tile();
-  void draw_base_tile(u_int16 x, u_int16 y, drawing_area * da_opt=NULL);
-  void draw();
+    void draw_walkables ();
+    void draw_base_tile ();
+    void draw_base_tile (u_int16 x, u_int16 y, drawing_area * da_opt = NULL);
+    void draw ();
 };
 
 #endif

@@ -22,22 +22,27 @@
 #include "mapview.h"
 
 class mapengine
-{ public:
+{
+public:
     mapengine ();
     ~mapengine ();
+    
+    void set_mapview_schedule (string s);
+    void load_map (string fname);
 
-    void set_mapview_schedule (char *s);
-    void load_map (const char *fname);
     landmap *get_landmap ()
     {
         return &lmap;
     }
-    void run ();
+    
+    void run (); 
     void quit ()
     {
         letsexit = true;
-    } s_int8 get_state (gzFile file);
-    s_int8 put_state (gzFile file);
+    }
+
+    s_int8 get_state (igzstream& file);
+    s_int8 put_state (ogzstream& file);
 
     void mainloop ();
 

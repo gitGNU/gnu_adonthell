@@ -17,6 +17,7 @@
 #include "mapview.h"
 #include "mapengine.h"
 #include "fileops.h"
+#include <strstream>
 
 #ifndef _EDIT_
 #include "dialog_engine.h"
@@ -65,7 +66,7 @@ mapcharacter::~mapcharacter ()
     clear ();
 }
 
-s_int8 mapcharacter::get (gzFile file)
+s_int8 mapcharacter::get (igzstream& file)
 {
     int i;
 
@@ -79,24 +80,19 @@ s_int8 mapcharacter::get (gzFile file)
     return 0;
 }
 
-s_int8 mapcharacter::load (const char *fname)
+s_int8 mapcharacter::load (string fname)
 {
     string s = MAPCHAR_DIR;
 
     s += fname;
-    gzFile file = gzopen (s.c_str (), "r");
-
-    //    igzstream file (s);
-    //    bool t = file.is_opened ();
-    //    if (!t) return -1;
-    if (!file)
+    igzstream file (s);
+    if (!file.is_open ())
         return -1;
-    s_int8 retvalue = -1;
-
-    if (fileops::get_version (file, 1, 1, s.c_str ()))
+    
+    s_int8 retvalue; 
+    if (fileops::get_version (file, 1, 1, s))
         retvalue = get (file);
-    //    file.close ();
-    gzclose (file);
+    file.close ();
 #if defined(USE_PYTHON)
     filename_ = fname;
 #endif
@@ -105,53 +101,50 @@ s_int8 mapcharacter::load (const char *fname)
 }
 
 #ifndef _EDIT_
-s_int8 mapcharacter::get_state (gzFile file)
+s_int8 mapcharacter::get_state (igzstream& file)
 {
     // Load the schedule's and graphical data
-    char *t;
+    string t; 
 
-    t = fileops::get_string (file);
+    t << file; 
     load (t);
-    if (t)
-        delete[]t;
-    t = fileops::get_string (file);
+    t << file; 
     set_schedule (t);
-    if (t)
-        delete[]t;
-    t = fileops::get_string (file);
+    t << file; 
     set_action (t);
-    if (t)
-        delete[]t;
+
     // Reads the data members
-    gzread (file, &current_move, sizeof (current_move));
-    gzread (file, &ask_move, sizeof (ask_move));
-    gzread (file, &submap, sizeof (submap));
-    gzread (file, &posx, sizeof (posx));
-    gzread (file, &posy, sizeof (posy));
-    gzread (file, &offx, sizeof (offx));
-    gzread (file, &offy, sizeof (offy));
-    gzread (file, &schedule_activated, sizeof (schedule_activated));
-    gzread (file, &action_activated, sizeof (action_activated));
+    current_move << file;
+    ask_move << file;
+    submap << file;
+    posx << file;
+    posy << file;
+    offx << file;
+    offy << file;
+    schedule_activated << file;
+    action_activated << file; 
+
     return 0;
 }
 
-s_int8 mapcharacter::put_state (gzFile file)
+s_int8 mapcharacter::put_state (ogzstream& file)
 {
     // Write the schedule's and data file name
-    fileops::put_string (file, filename_.c_str ());
-    fileops::put_string (file, schedule_file.c_str ());
-    fileops::put_string (file, action_file.c_str ());
+    filename_ >> file;
+    schedule_file >> file;
+    action_file >> file; 
 
     // Write the data members
-    gzwrite (file, &current_move, sizeof (current_move));
-    gzwrite (file, &ask_move, sizeof (ask_move));
-    gzwrite (file, &submap, sizeof (submap));
-    gzwrite (file, &posx, sizeof (posx));
-    gzwrite (file, &posy, sizeof (posy));
-    gzwrite (file, &offx, sizeof (offx));
-    gzwrite (file, &offy, sizeof (offy));
-    gzwrite (file, &schedule_activated, sizeof (schedule_activated));
-    gzwrite (file, &action_activated, sizeof (action_activated));
+    current_move >> file;
+    ask_move >> file;
+    submap >> file;
+    posx >> file;
+    posy >> file;
+    offx >> file;
+    offy >> file;
+    schedule_activated >> file;
+    action_activated >> file; 
+
     return 0;
 }
 
@@ -485,30 +478,29 @@ mapcharacter *mapcharacter::whosnext ()
 }
 
 #ifndef _EDIT_
-void mapcharacter::set_schedule (char *file)
+void mapcharacter::set_schedule (string file)
 {
-    if (!file || !strcmp (file, ""))
+    if (file == "")
     {
         schedule_file = "";
         if (schedule)
             delete schedule;
-
+        
         schedule = NULL;
         return;
     }
-    char script[255];
+    
+    string script = "scripts/schedules/";
+    script += file;
+    script += ".py"; 
 
-    strcpy (script, "scripts/schedules/");
-    strcat (script, file);
-    strcat (script, ".py");
-
-    FILE *f = fopen (script, "r");
+    FILE *f = fopen (script.c_str (), "r");
 
     // See whether the script exists at all
     if (f)
     {
         // Compile the script into a PyCodeObject for quicker execution
-        _node *n = PyParser_SimpleParseFile (f, script, Py_file_input);
+        _node *n = PyParser_SimpleParseFile (f, (char *) script.c_str (), Py_file_input);
 
         if (n)
         {
@@ -516,7 +508,7 @@ void mapcharacter::set_schedule (char *file)
             if (schedule)
                 delete schedule;
 
-            schedule = PyNode_Compile (n, file);
+            schedule = PyNode_Compile (n, (char *)file.c_str ());
             PyNode_Free (n);
 
             schedule_file = file;
@@ -533,9 +525,9 @@ void mapcharacter::set_schedule (char *file)
              << "\" not found!" << flush;
 }
 
-void mapcharacter::set_action (char *file)
+void mapcharacter::set_action (string file)
 {
-    if (!file || !strcmp (file, ""))
+    if (file == "")
     {
         action_file = "";
         if (action)
@@ -544,19 +536,17 @@ void mapcharacter::set_action (char *file)
         action = NULL;
         return;
     }
-    char script[255];
-
-    strcpy (script, "scripts/schedules/");
-    strcat (script, file);
-    strcat (script, ".py");
-
-    FILE *f = fopen (script, "r");
+    string script = "scripts/schedules/";
+    script += file;
+    script += ".py";
+    
+    FILE *f = fopen (script.c_str (), "r");
 
     // See whether the script exists at all
     if (f)
     {
         // Compile the script into a PyCodeObject for quicker execution
-        _node *n = PyParser_SimpleParseFile (f, script, Py_file_input);
+        _node *n = PyParser_SimpleParseFile (f, (char *) script.c_str (), Py_file_input);
 
         if (n)
         {
@@ -564,7 +554,7 @@ void mapcharacter::set_action (char *file)
             if (action)
                 delete action;
 
-            action = PyNode_Compile (n, file);
+            action = PyNode_Compile (n, (char *) file.c_str ());
             PyNode_Free (n);
 
             action_file = file;
@@ -707,7 +697,7 @@ void mapcharacter::update_move ()
                 }
                 break;
         }
-    anim[current_move]->update ();
+    anim[current_move]->update ();     
     ask_move = NO_MOVE;
 }
 #endif
@@ -718,6 +708,8 @@ void mapcharacter::update ()
     if (schedule && schedule_activated)
         PyEval_EvalCode (schedule, data::globals, locals);
     update_move ();
+#else
+    anim[current_move]->update ();     
 #endif
 }
 
@@ -737,6 +729,8 @@ void mapcharacter::launch_action (mapcharacter * requester)
 void mapcharacter::draw (s_int16 x, s_int16 y, drawing_area * da_opt = NULL)
 {
     anim[current_move]->draw (x, y, da_opt);
+//     cout << anim[current_move]->currentframe () << endl;
+//     cout << anim[current_move]->playstate () << endl; 
 }
 
 void mapcharacter::draw (mapview * mv, u_int16 x, u_int16 y)
@@ -825,7 +819,7 @@ void mapcharacter::calculate_dimensions ()
 
 
 #ifdef _EDIT_
-s_int8 mapcharacter::put (gzFile file)
+s_int8 mapcharacter::put (ogzstream& file)
 {
     int i;
 
@@ -840,20 +834,16 @@ s_int8 mapcharacter::put (gzFile file)
     return 0;
 }
 
-s_int8 mapcharacter::save (const char *fname)
+s_int8 mapcharacter::save (string fname)
 {
-    gzFile file;
+    ogzstream file (MAPCHAR_DIR + fname); 
     u_int8 retvalue;
-    char fdef[strlen (fname) + strlen (MAPCHAR_DIR) + 1];
-
-    strcpy (fdef, MAPCHAR_DIR);
-    strcat (fdef, fname);
-    file = gzopen (fdef, "wb6");
-    if (!file)
+    
+    if (!file.is_open ())
         return (-1);
     retvalue = put (file);
-    gzclose (file);
-    return 0;
+    file.close (); 
+    return retvalue;
 }
 
 // New inserting method, much faster: the animation pointed by an must
@@ -871,12 +861,12 @@ void mapcharacter::insert_anim (animation * an, u_int16 pos)
 void mapcharacter::load_anim ()
 {
     win_query *qw = new win_query (70, 40, th, font, "Load animation:");
-    char *s = qw->wait_for_text (makeFunctor (*this,
-                                              &mapcharacter::update_editor),
-                                 makeFunctor (*this,
-                                              &mapcharacter::draw_editor));
+    string s = qw->wait_for_text (makeFunctor (*this,
+                                               &mapcharacter::update_editor),
+                                  makeFunctor (*this,
+                                               &mapcharacter::draw_editor));
 
-    if (!s)
+    if (s == "Aborded")
         return;
     animation a;
 
@@ -903,17 +893,17 @@ void mapcharacter::load_anim ()
 void mapcharacter::save ()
 {
     win_query *qw = new win_query (70, 40, th, font, "Save character as:");
-    char *s = qw->wait_for_text (makeFunctor (*this,
-                                              &mapcharacter::update_editor),
-                                 makeFunctor (*this,
-                                              &mapcharacter::draw_editor));
-
-    if (!s)
+    string s = qw->wait_for_text (makeFunctor (*this,
+                                               &mapcharacter::update_editor),
+                                  makeFunctor (*this,
+                                               &mapcharacter::draw_editor));
+    
+    if (s == "Aborded")
         return;
     if (save (s))
     {
         win_info *wi = new win_info (70, 40, th, font, "Error saving!");
-
+        
         wi->wait_for_keypress (makeFunctor (*this,
                                             &mapcharacter::update_editor), makeFunctor (*this,
                                                                                         &mapcharacter::draw_editor));
@@ -926,22 +916,22 @@ void mapcharacter::load ()
 {
     mapcharacter *t = new mapcharacter;
     win_query *qw = new win_query (70, 40, th, font, "Load character:");
-    char *s = qw->wait_for_text (makeFunctor (*this,
-                                              &mapcharacter::update_editor),
-                                 makeFunctor (*this,
-                                              &mapcharacter::draw_editor));
-
-    if (!s)
+    string s = qw->wait_for_text (makeFunctor (*this,
+                                               &mapcharacter::update_editor),
+                                  makeFunctor (*this,
+                                               &mapcharacter::draw_editor));
+    
+    if (s == "Aborded")
     {
         delete t;
         delete qw;
-
+        
         return;
     }
     if (t->load (s))
     {
         win_info *wi = new win_info (70, 40, th, font, "Error loading!");
-
+        
         wi->wait_for_keypress (makeFunctor (*this,
                                             &mapcharacter::update_editor), makeFunctor (*this,
                                                                                         &mapcharacter::draw_editor));
@@ -995,8 +985,11 @@ void mapcharacter::update_label_frame ()
 
 void mapcharacter::update_label_char ()
 {
-    sprintf (label_txt, "Character:\nLength: %d\nHeight:%d", length, height);
-    label_char->set_text (label_txt);
+    ostrstream temp; 
+    temp << "Character :\nLength: " << length << "\nHeight: "
+         << height << ends;
+    label_txt = temp.str (); 
+    label_char->set_text (label_txt.c_str ());
     must_upt_label_char = false;
 }
 

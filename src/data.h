@@ -16,7 +16,8 @@
 #define __DATA_H__
 
 #include <zlib.h>
-
+#include <string> 
+#include "fileops.h" 
 #include "storage.h"
 #include "gametime.h"
 
@@ -36,25 +37,25 @@ class gamedata
 {
 public:
     gamedata ();
-    gamedata (const char *desc, const char *dir);
+    gamedata (string desc, string dir);
     ~gamedata ();
     
-    void save (gzFile);                     // save a record to disk
-    bool load (gzFile);                     // load a record from disk
+    void save (ogzstream&);                     // save a record to disk
+    bool load (igzstream&);                     // load a record from disk
 
     // a bunch of methods to access the private attributes
-    const char* get_directory () { return directory; }
-    char* get_description () { return description; }
-    char* get_location () { return location; }
-    char* get_time () { return time; }
-    void set_description (char*);
-    void set_directory (char*);
+    const char* get_directory () { return directory.c_str (); }
+    const char* get_description () { return description.c_str (); }
+    const char* get_location () { return location.c_str (); }
+    const char* get_time () { return time.c_str (); }
+    void set_description (string);
+    void set_directory (string);
     
 private:
-    char *directory;                        // the game's location on the harddisk
-    char *description;                      // user supplied description of the game
-    char *location;                         // the map or area the player is on
-    char *time;                             // the gametime of the save
+    string directory;                        // the game's location on the harddisk
+    string description;                      // user supplied description of the game
+    string location;                         // the map or area the player is on
+    string time;                             // the gametime of the save
 };
 #endif
 
@@ -63,13 +64,13 @@ private:
 class data
 {
 public:
-    static bool init (char*);               // Data initialisation
+    static bool init (string);               // Data initialisation
     static void cleanup ();                 // Delete everything
     static bool load (u_int32);             // Load a game
-    static gamedata* save (u_int32, char*); // Save the game
+    static gamedata* save (u_int32, string); // Save the game
     static gamedata* next_save ();          // Iterate over saved game descriptions
     static const char* get_adonthell_dir () // Return the user's adonthell directory
-      { return (const char*) adonthell_dir; }
+      { return (const char*) adonthell_dir.c_str (); }
 
 #if defined(USE_PYTHON)
     static PyObject *globals;               // Global namespace to use in scripts
@@ -86,10 +87,9 @@ public:
 private:
 #ifndef SWIG
     static void unload ();                  // Unload the game
-    static bool save_mapcharacter (char*);  // Save mapcharacter hack
 
     static vector<gamedata*> saves;         // Keeps track of available save games 
-    static char *adonthell_dir;             // The $HOME/.adonthell/ directory
+    static string adonthell_dir;             // The $HOME/.adonthell/ directory
 #endif
 };
 

@@ -28,15 +28,14 @@ mapengine::~mapengine ()
     win_manager::destroy ();
 }
 
-void mapengine::set_mapview_schedule (char *s)
+void mapengine::set_mapview_schedule (string s)
 {
     mv.set_schedule (s);
 }
 
-void mapengine::load_map (const char *fname)
+void mapengine::load_map (string fname)
 {
     lmap.load (fname);
-    //  mv.detach_map();
     mv.attach_map (&lmap);
 }
 
@@ -65,26 +64,23 @@ void mapengine::mainloop ()
     win_manager::draw ();
 }
 
-s_int8 mapengine::get_state (gzFile file)
+s_int8 mapengine::get_state (igzstream& file)
 {
-    //  char * t;
     u_int16 nbr_of, i;
     string t;
 
-    // Load the map from the filename
-
-    t = fileops::get_string2 (file);
-    load_map (t.c_str ());
-    //  delete[] t;
+    // Load the map from the filename 
+    t << file; 
+    load_map (t);
 
     // Load the mapcharacters
-    gzread (file, &nbr_of, sizeof (nbr_of));
+    nbr_of << file; 
+
     for (i = 0; i < nbr_of; i++)
     {
-        char *t = fileops::get_string (file);
-        mapcharacter *mc = (mapcharacter *) (data::characters.get (t));
-
-        delete[]t;
+        t << file; 
+        mapcharacter *mc = (mapcharacter *) (data::characters.get (t.c_str ()));
+        
         lmap.add_mapcharacter (mc);
         mc->get_state (file);
         mc->set_on_map (&lmap);
@@ -95,19 +91,22 @@ s_int8 mapengine::get_state (gzFile file)
     return 0;
 }
 
-s_int8 mapengine::put_state (gzFile file)
+s_int8 mapengine::put_state (ogzstream& file)
 {
     u_int16 nbr_of, i;
-
+    
     // Save the map filename
-    fileops::put_string (file, lmap.filename ().c_str ());
+    string t = lmap.filename ();
+    t >> file; 
 
     // Save the mapcharacters and their status
     nbr_of = lmap.mapchar.size ();
-    gzwrite (file, &nbr_of, sizeof (nbr_of));
+    nbr_of >> file; 
+
     for (i = 0; i < nbr_of; i++)
     {
-        fileops::put_string (file, lmap.mapchar[i]->get_name ());
+        t = lmap.mapchar[i]->get_name ();
+        t >> file; 
         lmap.mapchar[i]->put_state (file);
     }
 

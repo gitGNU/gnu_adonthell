@@ -31,7 +31,7 @@ public:
     bool open (string fname, gz_type t);
     void close ();
 
-    bool is_opened () { return opened; }
+    bool is_open () { return opened; }
 
     gzFile file;
 protected:
@@ -47,14 +47,35 @@ public:
 
     bool open (string);
 
-    friend char& operator << (char&, gz_file&);
-    friend u_int8& operator << (u_int8&, gz_file&);
-    friend s_int8& operator << (s_int8&, gz_file&);
-    friend u_int16& operator << (u_int16&, gz_file&);
-    friend s_int16& operator << (s_int16&, gz_file&);
-    friend u_int32& operator << (u_int32&, gz_file&);
-    friend s_int32& operator << (s_int32&, gz_file&);
+    friend bool& operator << (bool&, igzstream&);
+    friend char& operator << (char&, igzstream&);
+    friend u_int8& operator << (u_int8&, igzstream&);
+    friend s_int8& operator << (s_int8&, igzstream&);
+    friend u_int16& operator << (u_int16&, igzstream&);
+    friend s_int16& operator << (s_int16&, igzstream&);
+    friend u_int32& operator << (u_int32&, igzstream&);
+    friend s_int32& operator << (s_int32&, igzstream&);
     friend string& operator << (string& s, igzstream& gfile);
+};
+
+class ogzstream : public gz_file
+{
+public:
+    ogzstream ();
+    ogzstream (string);
+    ~ogzstream ();
+
+    bool open (string);
+
+    friend bool& operator >> (bool&, ogzstream&);
+    friend char& operator >> (char&, ogzstream&);
+    friend u_int8& operator >> (u_int8&, ogzstream&);
+    friend s_int8& operator >> (s_int8&, ogzstream&);
+    friend u_int16& operator >> (u_int16&, ogzstream&);
+    friend s_int16& operator >> (s_int16&, ogzstream&);
+    friend u_int32& operator >> (u_int32&, ogzstream&);
+    friend s_int32& operator >> (s_int32&, ogzstream&);
+    friend string& operator >> (string& s, ogzstream& gfile);
 };
 
 // some file related functions
@@ -66,8 +87,9 @@ public:
     static string get_string2 (gzFile);           // Load a string
 
     static void put_version (gzFile, u_int16);  // Set version of a file
+    static void put_version (ogzstream&, u_int16);  // Set version of a file
     static bool get_version (gzFile, u_int16, u_int16, const char*); // Check version
-    static bool get_version (igzstream, u_int16, u_int16, string&); // Check version
+    static bool get_version (igzstream&, u_int16, u_int16, string); // Check version
 };
 
 

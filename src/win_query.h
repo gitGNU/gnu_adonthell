@@ -31,16 +31,16 @@
 #include "win_scrolled.h"
 #include "win_select.h"
 
-class win_query : public win_container
+class win_query:public win_container
 {
-  win_label * label;
-  win_write * entry;
- public:
-  win_query(u_int16 x, u_int16 y, win_theme * th, win_font * font,
-	    const char * mytext);
+    win_label *label;
+    win_write *entry;
+public:
+    win_query (u_int16 x, u_int16 y, win_theme * th, win_font * font,
+               const char *mytext);
 
-  char * wait_for_text(const Functor0 & updatefunc,
-		       const Functor0 & drawfunc);
+    string wait_for_text (const Functor0 & updatefunc,
+                          const Functor0 & drawfunc);
 };
 
 #endif

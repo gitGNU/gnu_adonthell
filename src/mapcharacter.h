@@ -20,6 +20,7 @@
 
 #include <vector>
 #include <string>
+#include "fileops.h"
 #include "animation.h"
 #include "maptpl.h"
 #include "landmap.h"
@@ -79,13 +80,13 @@ public:
 #endif
 
     // Loading
-    s_int8 get (gzFile file);
-    s_int8 load (const char *fname);
+    s_int8 get (igzstream& file);
+    s_int8 load (string fname);
 
 #ifndef _EDIT_
     // State saving/loading
-    s_int8 get_state (gzFile file);
-    s_int8 put_state (gzFile file);
+    s_int8 get_state (igzstream& file);
+    s_int8 put_state (ogzstream& file);
 #endif
 
     // Positioning
@@ -142,27 +143,35 @@ public:
         return filename_;
     }
 
-    void set_schedule (char *file);
+    void set_schedule (string file);
+
     string get_schedule ()
     {
         return schedule_file;
     }
+    
     bool is_schedule_activated ()
     {
         return schedule_activated;
     }
+    
     void set_schedule_active (bool a)
     {
         schedule_activated = a;
-    } void set_action (char *file);
+    }
+
+    void set_action (string file);
+
     string get_action ()
     {
         return action_file;
     }
+    
     bool is_action_activated ()
     {
         return action_activated;
     }
+    
     void set_action_active (bool a)
     {
         action_activated = a;
@@ -221,7 +230,7 @@ protected:
 #endif
 
 #ifdef _EDIT_
-    char label_txt[500];
+    string label_txt; 
     image *bg;
     win_font *font;
     win_theme *th;
@@ -241,8 +250,8 @@ protected:
 #ifdef _EDIT_
     // Editor specific functions
 public:
-    s_int8 put (gzFile file);
-    s_int8 save (const char *fname);
+    s_int8 put (ogzstream& file);
+    s_int8 save (string fname);
 
     void load ();
     void save ();

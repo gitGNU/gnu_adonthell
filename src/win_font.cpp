@@ -53,27 +53,34 @@ void win_font::load_font(char * rep)
   if(table!=NULL) erase();
 
   //file which contains font information and cursor
-  gzFile f;
+  igzstream f; 
+  //   gzFile f;
 
   //path where is the file
-  char path[255];
-
+  string path = WIN_DIRECTORY; 
+  //   char path[255]; 
   //path win directory
-  strcpy(path,WIN_DIRECTORY);
+  //   strcpy(path,WIN_DIRECTORY);
 
   //add win font directory path
-  strcat(path,WIN_FONT_DIRECTORY);
+  path += WIN_FONT_DIRECTORY; 
+  //   strcat(path,WIN_FONT_DIRECTORY);
 
   //add theme pass
-  strcat(path,rep);
+  path += rep; 
+  //   strcat(path,rep);
 
   //add font filename 
-  strcat(path,WIN_FONT_FILE);
+  path += WIN_FONT_FILE; 
+  //   strcat(path,WIN_FONT_FILE);
    
   //open gzfile 
-  if((f=gzopen(path,"rb"))==NULL)
-    { cout << path << " not found !\n";exit(1);}
-
+  //   if((f=gzopen(path,"rb"))==NULL)
+  if (!f.open (path)) 
+  {
+      cout << path << " not found !\n";
+      exit(1);
+  } 
 
   //create image wich contain the main font image
   image *font=new image();
@@ -93,11 +100,15 @@ void win_font::load_font(char * rep)
   u_int16 pos,tl;
 
 
-  while(!gzeof(f))
-    {
-      gzread(f,&i,sizeof(i));
-      gzread(f,&pos,sizeof(pos));
-      gzread(f,&tl,sizeof(tl));
+  while(!gzeof(f.file))
+  {
+
+      i << f;
+      pos << f;
+      tl << f; 
+//       gzread(f,&i,sizeof(i));
+//       gzread(f,&pos,sizeof(pos));
+//       gzread(f,&tl,sizeof(tl));
       if(i>0 && i<WIN_NB_TABLE_CHAR)
 	{
 	  table_core[i]=true;
@@ -111,7 +122,8 @@ void win_font::load_font(char * rep)
   length_=table[' '].length();
   
   if(font)delete font;
-  gzclose (f);
+  //   gzclose (f);
+  f.close (); 
 }
 
 void win_font::load(char * rep)

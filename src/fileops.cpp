@@ -27,7 +27,7 @@ gz_file::gz_file (string fname, gz_type t)
 
 gz_file::~gz_file ()
 {
-    if (is_opened ()) gzclose (file);
+    if (is_open ()) gzclose (file);
 }
 
 bool gz_file::open (string fname, gz_type t)
@@ -41,7 +41,7 @@ bool gz_file::open (string fname, gz_type t)
 
 void gz_file::close ()
 {
-    if (is_opened ()) gzclose (file);
+    if (is_open ()) gzclose (file);
     opened = false;
 }
 
@@ -62,6 +62,11 @@ bool igzstream::open (string fname)
     return gz_file::open (fname, READ);
 }
 
+bool& operator << (bool& n, igzstream& gfile)
+{
+    gzread (gfile.file, &n, sizeof (n));
+    return n;
+}
 char& operator << (char& n, igzstream& gfile)
 {
     gzread (gfile.file, &n, sizeof (n));
@@ -108,6 +113,7 @@ string& operator << (string& s, igzstream& gfile)
 {
     u_int16 strl;
     char c;
+    s = ""; 
     strl << gfile;
     while (strl)
     {
@@ -115,6 +121,80 @@ string& operator << (string& s, igzstream& gfile)
 	s += c;
 	strl --;
     }
+    return s;
+}
+
+ogzstream::ogzstream () : gz_file ()
+{
+}
+
+ogzstream::ogzstream (string fname) : gz_file (fname, WRITE)
+{
+}
+
+ogzstream::~ogzstream ()
+{
+}
+
+bool ogzstream::open (string fname)
+{
+    return gz_file::open (fname, WRITE);
+}
+
+bool& operator >> (bool& n, ogzstream& gfile)
+{
+    gzwrite (gfile.file, &n, sizeof (n));
+    return n;
+}
+char& operator >> (char& n, ogzstream& gfile)
+{
+    gzwrite (gfile.file, &n, sizeof (n));
+    return n;
+}
+
+u_int8& operator >> (u_int8& n, ogzstream& gfile)
+{
+    gzwrite(gfile.file, &n, sizeof (n));
+    return n;
+}
+
+s_int8& operator >> (s_int8& n, ogzstream& gfile)
+{
+    gzwrite(gfile.file, &n, sizeof (n));
+    return n;
+}
+
+u_int16& operator >> (u_int16& n, ogzstream& gfile)
+{
+    gzwrite(gfile.file, &n, sizeof (n));
+    return n;
+}
+
+s_int16& operator >> (s_int16& n, ogzstream& gfile)
+{
+    gzwrite(gfile.file, &n, sizeof (n));
+    return n;
+}
+
+u_int32& operator >> (u_int32& n, ogzstream& gfile)
+{
+    gzwrite(gfile.file, &n, sizeof (n));
+    return n;
+}
+
+s_int32& operator >> (s_int32& n, ogzstream& gfile)
+{
+    gzwrite(gfile.file, &n, sizeof (n));
+    return n;
+}
+
+string& operator >> (string& s, ogzstream& gfile)
+{
+    u_int16 strl = s.length ();
+    string::iterator i; 
+    strl >>  gfile;
+    for (i = s.begin (); i != s.end (); i++) 
+        (*i) >>  gfile;
     return s;
 }
 
@@ -174,6 +254,13 @@ void fileops::put_version (gzFile file, u_int16 version)
     gzwrite (file, &version, sizeof (version));
 }
 
+void fileops::put_version (ogzstream& file, u_int16 version)
+{
+    char c = 'v'; 
+    c >> file;
+    version >> file; 
+}
+
 // read version info from file and check whether we can handle it
 bool fileops::get_version (gzFile file, u_int16 min, u_int16 max, const char *name = NULL)
 {
@@ -211,7 +298,7 @@ bool fileops::get_version (gzFile file, u_int16 min, u_int16 max, const char *na
 }
 
 // read version info from file and check whether we can handle it
-bool fileops::get_version (igzstream file, u_int16 min, u_int16 max, string& name)
+bool fileops::get_version (igzstream& file, u_int16 min, u_int16 max, string name)
 {
     char vinfo;
     u_int16 version;
@@ -245,6 +332,5 @@ bool fileops::get_version (igzstream file, u_int16 min, u_int16 max, string& nam
 
         return false;
     } 
-    cout << "Got version " << version << " and vinfo " << vinfo << endl;
     return true;
 }

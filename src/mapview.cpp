@@ -15,6 +15,7 @@
 #include "fileops.h"
 #include "mapview.h"
 #include "landmap.h"
+#include <strstream>
 
 void mapview::init ()
 {
@@ -263,61 +264,67 @@ void mapview::resize (u_int16 l, u_int16 h)
 }
 
 #ifndef _EDIT_
-s_int8 mapview::get_state (gzFile file)
+s_int8 mapview::get_state (igzstream& file)
 {
     // Read the mapview's schedule
-    char *t = fileops::get_string (file);
-
+    string t;
+    t << file;
     set_schedule (t);
-    if (t)
-        delete[]t;
 
     u_int16 a, b, c, d;
 
     // Read the mapview's dimensions
     // Length and height
-    gzread (file, &a, sizeof (a));
-    gzread (file, &b, sizeof (b));
+    a << file;
+    b << file; 
     resize (a, b);
+
     // Currentsubmap
-    gzread (file, &a, sizeof (a));
+    a << file; 
     set_current_submap (a);
+
     // Screen position (FIXME: obsolete!)
-    gzread (file, &a, sizeof (a));
-    gzread (file, &b, sizeof (b));
+    a << file;
+    b << file; 
+
     // Position on map
-    gzread (file, &a, sizeof (a));
-    gzread (file, &b, sizeof (b));
-    gzread (file, &c, sizeof (c));
-    gzread (file, &d, sizeof (d));
+    a << file;
+    b << file;
+    c << file;
+    d << file; 
     set_pos (a, b, c, d);
+
     return 0;
 }
 
-s_int8 mapview::put_state (gzFile file)
+s_int8 mapview::put_state (ogzstream& file)
 {
     u_int16 b = 0;
 
     // Write the mapview's schedule
-    fileops::put_string (file, schedule_file.c_str ());
+    schedule_file >> file; 
 
     // Write the mapview's dimensions
-    gzwrite (file, &length_, sizeof (length_));
-    gzwrite (file, &height_, sizeof (height_));
-    gzwrite (file, &currentsubmap, sizeof (currentsubmap));
+    length_ >> file;
+    height_ >> file; 
+    currentsubmap >> file; 
+
     // FIXME: Obsolete x and y members - Fire them!
-    gzwrite (file, &b, sizeof (b));
-    gzwrite (file, &b, sizeof (b));
-    gzwrite (file, &posx, sizeof (posx));
-    gzwrite (file, &posy, sizeof (posy));
-    gzwrite (file, &offx, sizeof (offx));
-    gzwrite (file, &offy, sizeof (offy));
+    b >> file;
+    b >> file;
+
+    // Position
+    posx >> file;
+    posy >> file;
+    offx >> file;
+    offy >> file; 
+    
     return 0;
 }
 
-void mapview::set_schedule (char *file)
+void mapview::set_schedule (string file)
 {
-    if (!file || !strcmp (file, ""))
+    if (file == "")
     {
         schedule_file = "";
         if (schedule)
@@ -326,19 +333,17 @@ void mapview::set_schedule (char *file)
         schedule = NULL;
         return;
     }
-    char script[255];
-
-    strcpy (script, "scripts/schedules/");
-    strcat (script, file);
-    strcat (script, ".py");
-
-    FILE *f = fopen (script, "r");
-
+    string script = "scripts/schedules/";
+    script += file;
+    script += ".py";
+    
+    FILE *f = fopen (script.c_str (), "r");
+    
     // See whether the script exists at all
     if (f)
     {
         // Compile the script into a PyCodeObject for quicker execution
-        _node *n = PyParser_SimpleParseFile (f, script, Py_file_input);
+        _node *n = PyParser_SimpleParseFile (f, (char *) script.c_str (), Py_file_input);
 
         if (n)
         {
@@ -346,7 +351,7 @@ void mapview::set_schedule (char *file)
             if (schedule)
                 delete schedule;
 
-            schedule = PyNode_Compile (n, file);
+            schedule = PyNode_Compile (n, (char *) file.c_str ());
             PyNode_Free (n);
             schedule_file = file;
         }
@@ -625,11 +630,15 @@ void mapview::update_label_pos ()
 {
     if (m_map->nbr_of_submaps)
     {
-        sprintf (tmps, "Submap: %d/%d\n%d/%d  %d/%d", currentsubmap + 1,
-                 m_map->nbr_of_submaps, mapselect::posx + 1,
-                 m_map->submap[currentsubmap]->length,
-                 mapselect::posy + 1, m_map->submap[currentsubmap]->height);
-        label_pos->set_text (tmps);
+        string tmps; 
+        ostrstream temp;
+        temp << "Submap: " << (currentsubmap + 1) << "/"
+             << m_map->nbr_of_submaps << "\n" << (mapselect::posx + 1)
+             << "/" << m_map->submap[currentsubmap]->length
+             << " " << (mapselect::posy + 1) << "/"
+             << (mapselect::posy + 1) << ends;
+        tmps = temp.str (); 
+        label_pos->set_text (tmps.c_str ());
     }
     else
         label_pos->set_text ("No submaps yet!");
@@ -638,12 +647,17 @@ void mapview::update_label_pos ()
 
 void mapview::update_label_object ()
 {
+    string tmps;
     if (!m_map->nbr_of_patterns)
-        sprintf (tmps, "No objects yet!");
+        tmps = "No objects yet!";
     else
-        sprintf (tmps, "Selected Obj:\n%d/%d", currentobj + 1,
-                 m_map->nbr_of_patterns);
-    label_object->set_text (tmps);
+    {
+        ostrstream temp;
+        temp << "Selected Obj:\n" << (currentobj + 1)
+             << "/" << m_map->nbr_of_patterns << ends;
+        tmps = temp.str (); 
+    }
+    label_object->set_text (tmps.c_str ());
     must_upt_label_object = false;
 }
 
@@ -654,6 +668,9 @@ void mapview::update_label_square ()
         must_upt_label_square = false;
         return;
     }
+    
+    string tmps; 
+
     if (!m_map->submap[currentsubmap]->
         land[mapselect::posx][mapselect::posy].tiles.empty ())
     {
@@ -667,14 +684,17 @@ void mapview::update_label_square ()
             cpt++;
             i++;
         }
-        sprintf (tmps, "Obj. here:\n%d/%d %s", cpt + 1,
-                 m_map->submap[currentsubmap]->land[mapselect::posx]
-                 [mapselect::posy].tiles.size (),
-                 current_tile->is_base ? "(Base tile)" : "");
+        ostrstream temp;
+        temp << "Obj here:\n " << (cpt + 1) << "/"
+             << m_map->submap[currentsubmap]->land[mapselect::posx]
+            [mapselect::posy].tiles.size ()
+             << (current_tile->is_base ? "(Base tile)" : "") << ends;              
+        tmps = temp.str (); 
     }
     else
-        sprintf (tmps, "No object here!");
-    label_square->set_text (tmps);
+        tmps = "No object here!";
+    
+    label_square->set_text (tmps.c_str ());
     must_upt_label_square = false;
 }
 
@@ -682,12 +702,12 @@ s_int8 mapview::resize_map (u_int16 nbr)
 {
     u_int16 l, h;
     win_query *qw = new win_query (70, 40, th, font, "New length:");
-    char *s = qw->wait_for_text (makeFunctor (*this, &mapview::update_editor),
-                                 makeFunctor (*this, &mapview::draw_editor));
-
-    if (!s)
+    string s = qw->wait_for_text (makeFunctor (*this, &mapview::update_editor),
+                                  makeFunctor (*this, &mapview::draw_editor));
+    
+    if (s == "Aborded")
         return -2;
-    l = atoi (s);
+    l = atoi (s.c_str ());
     if (!l)
         l = 1;
     delete qw;
@@ -695,13 +715,13 @@ s_int8 mapview::resize_map (u_int16 nbr)
     qw = new win_query (70, 40, th, font, "New height:");
     s = qw->wait_for_text (makeFunctor (*this, &mapview::update_editor),
                            makeFunctor (*this, &mapview::draw_editor));
-    if (!s)
+    if (s == "Aborded")
         return -2;
-    h = atoi (s);
+    h = atoi (s.c_str ());
     if (!h)
         h = 1;
     delete qw;
-
+    
     m_map->submap[nbr]->resize (l, h);
     return 0;
 }
@@ -713,35 +733,38 @@ void mapview::add_mapobject ()
     win_file_select *wf =
         new win_file_select (60, 20, 200, 200, th, font, ".mobj",
                              MAPOBJECTS_DIR);
-    char *s =
+    string s =
         wf->wait_for_select (makeFunctor (*this, &mapview::update_editor),
                              makeFunctor (*this, &mapview::draw_editor));
 
-    if (!s)
+    if (s == "Aborded")
         return;
-    char st[500];
+
+    string st;
 
     if (mobj->load (s))
     {
-        sprintf (st, "Error loading %s!", s);
+        st = "Error loading " + s; 
+        set_info_win (st); 
         delete wf;
         delete mobj;
 
         return;
     }
-    sprintf (st, "%s loaded successfully!", s);
+    st = s + " loaded successfully!"; 
+
     do
     {
-        char tmp[255];
-        char *s2;
+        ostrstream temp;
+        temp << "Insert at pos(0-" << m_map->nbr_of_patterns
+             << "): (Default " << m_map->nbr_of_patterns << ")" << ends;
+        string tmp = temp.str ();
 
-        sprintf (tmp, "Insert at pos(0-%d): (Default %d)",
-                 m_map->nbr_of_patterns, m_map->nbr_of_patterns);
-        win_query *qw2 = new win_query (70, 40, th, font, tmp);
-
-        s2 = qw2->wait_for_text (makeFunctor (*this, &mapview::update_editor),
-                                 makeFunctor (*this, &mapview::draw_editor));
-        if (!s2)
+        win_query *qw2 = new win_query (70, 40, th, font, tmp.c_str ());
+        
+        string s2 = qw2->wait_for_text (makeFunctor (*this, &mapview::update_editor),
+                                        makeFunctor (*this, &mapview::draw_editor));
+        if (s2 == "Aborded")
         {
             delete qw2;
             delete wf;
@@ -749,14 +772,14 @@ void mapview::add_mapobject ()
 
             return;
         }
-        if (!s2[0])
+        if (s2 == "")
             p = m_map->nbr_of_patterns;
         else
-            p = atoi (s2);
+            p = atoi (s2.c_str ());
         delete qw2;
     }
     while (p > m_map->nbr_of_patterns);
-    m_map->insert_mapobject (mobj, p, s);
+    m_map->insert_mapobject (mobj, p, s.c_str ());
     set_info_win (st);
     delete wf;
 
@@ -770,20 +793,21 @@ void mapview::delete_mapobject ()
     {
         win_query *qw =
             new win_query (70, 40, th, font, "Really delete object?");
-        char *s =
+        string s =
             qw->wait_for_text (makeFunctor (*this, &mapview::update_editor),
                                makeFunctor (*this, &mapview::draw_editor));
-
-        if (!s)
+        
+        if (s == "Aborded")
             return;
-        int i = 0;
 
-        while (s[i])
+        unsigned int i = 0;
+        
+        while (i < s.size ())
         {
             s[i] = toupper (s[i]);
             i++;
         }
-        if (!(strcmp (s, "Y") || strcmp (s, "YES")))
+        if (!(s == "Y" ||s == "YES"))
         {
             set_info_win ("Object not deleted!");
             return;
@@ -841,20 +865,22 @@ void mapview::delete_submap ()
     {
         win_query *qw =
             new win_query (70, 40, th, font, "Really delete submap?");
-        char *s =
+        string s =
             qw->wait_for_text (makeFunctor (*this, &mapview::update_editor),
                                makeFunctor (*this, &mapview::draw_editor));
 
-        if (!s)
+        if (s == "Aborded")
             return;
-        int i = 0;
 
-        while (s[i])
+        unsigned int i = 0;
+
+        while (i < s.size ())
         {
             s[i] = toupper (s[i]);
             i++;
         }
-        if (!(strcmp (s, "Y") || strcmp (s, "YES")))
+
+        if (!(s == "Y" ||s == "YES"))
         {
             set_info_win ("Submap not deleted");
             return;
@@ -884,28 +910,28 @@ void mapview::load_map ()
     win_file_select *wf =
         new win_file_select (60, 20, 200, 200, th, font, ".map",
                              MAPS_DIR);
-    char *s =
+    string s =
         wf->wait_for_select (makeFunctor (*this, &mapview::update_editor),
                              makeFunctor (*this, &mapview::draw_editor));
-
-    if (!s)
+    
+    if (s == "Aborded")
         return;
     if (m_map->load (s))
     {
         win_info *wi = new win_info (70, 40, th, font, "Error loading!");
-
+        
         wi->wait_for_keypress (makeFunctor (*this, &mapview::update_editor),
                                makeFunctor (*this, &mapview::draw_editor));
         delete wi;
         delete wf;
-
+        
         return;
     }
     landmap *t = m_map;
-
+    
     detach_map ();
     attach_map (t);
-    strcpy (file_name, s);
+    file_name = s; 
     delete wf;
 
     must_upt_label_pos = true;
@@ -915,38 +941,38 @@ void mapview::load_map ()
 
 void mapview::quick_save ()
 {
-    char s[500];
-
-    if (!strcmp (file_name, ""))
+    string s;
+    
+    if (file_name == "")
     {
-        sprintf (s, "You should save (F5) before calling this...");
+        s = "You should save (F5) before calling this...";
     }
     else if (m_map->save (file_name))
     {
-        sprintf (s, "Error saving %s!", file_name);
+        s = "Error saving " + file_name + "!";  
     }
     else
     {
-        sprintf (s, "%s saved successfully!", file_name);
+        s = file_name + " saved successfully!"; 
     }
     set_info_win (s);
 }
 
 void mapview::quick_load ()
 {
-    char s[500];
-
-    if (!strcmp (file_name, ""))
+    string s;
+    
+    if (file_name == "")
     {
-        sprintf (s, "You should load (F6) before calling this...");
+        s = "You should load (F6) before calling this..."; 
     }
     else if (m_map->load (file_name))
     {
-        sprintf (s, "Error saving %s!", file_name);
+        s = "Error loading " + file_name + "!"; 
     }
     else
     {
-        sprintf (s, "%s loaded successfully!", file_name);
+        s = file_name + " loaded successfully!"; 
     }
     set_info_win (s);
 }
@@ -954,10 +980,10 @@ void mapview::quick_load ()
 void mapview::save_map ()
 {
     win_query *qw = new win_query (70, 40, th, font, "Save map as:");
-    char *s = qw->wait_for_text (makeFunctor (*this, &mapview::update_editor),
+    string s = qw->wait_for_text (makeFunctor (*this, &mapview::update_editor),
                                  makeFunctor (*this, &mapview::draw_editor));
 
-    if (!s)
+    if (s == "Aborded")
         return;
     if (m_map->save (s))
     {
@@ -970,7 +996,7 @@ void mapview::save_map ()
 
         return;
     }
-    strcpy (file_name, s);
+    file_name = s; 
     delete qw;
 
     must_upt_label_pos = true;
@@ -1365,9 +1391,9 @@ void mapview::update_and_draw ()
     draw_editor ();
 }
 
-void mapview::set_info_win (char *text)
+void mapview::set_info_win (string text)
 {
-    info_win_label->set_text (text);
+    info_win_label->set_text (text.c_str ());
     info_win_label->set_auto_size (true);
     info_win->set_align_all (WIN_ALIGN_CENTER);
     info_win_count = 1;

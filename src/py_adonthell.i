@@ -35,12 +35,48 @@
 #include "data_screen.h"
 #include "data.h"
 
+// This enum allows clearer ownership operation:
+// obj.thisown = Python (Python will destroy the object)
+// obj.thisown = C (C have to destroy the object)
+enum {Python = 1, C = 0};
+
 %}
+
+// This enum allows clearer ownership operation:
+// obj.thisown = Python (Python will destroy the object)
+// obj.thisown = C (C have to destroy the object)
+enum {Python = 1, C = 0};
 
 #define SDL_MIXER
 #define SDL_HAS_64BIT_TYPE int
 #define USE_MAP
 #define USE_PYTHON
+
+%typemap(python,in) string
+{
+    if (PyString_Check ($source))
+    {
+        $target = new string (PyString_AsString($source));
+    }
+    else
+    {
+        PyErr_SetString (PyExc_TypeError, "not a String");
+        return NULL;
+    }
+}
+
+%typemap(python,out) string
+{
+    $target = PyString_FromString((const char *)$source->c_str()); 
+}
+
+%typemap (python, freearg) string
+{
+    if ($source != NULL)
+    {
+        delete $source;
+    }
+}
 
 %typemap (python,in) PyObject *pyfunc 
 { 

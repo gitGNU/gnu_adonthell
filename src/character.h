@@ -21,11 +21,11 @@
 #include "character_base.h"
 #endif
 
-class character :
+class character
 #if defined(USE_MAP)
- public mapcharacter
+ : public mapcharacter
 #else
- public character_base
+ : public character_base
 #endif
 {
  public:
