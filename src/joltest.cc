@@ -6,8 +6,10 @@
 #include "screen.h"
 #include "input.h"
 #include "atk_font.h"
+
 #include "atk_widget.h"
 #include "atk_box.h"
+#include "atk_fixed.h"
 #include "callback.h"
 #include "callback_slot.h"
 #include "callback_sig.h"
@@ -39,6 +41,7 @@ int main (int argc, char * argv[])
     im.resize (640, 480);
     im.fillrect (0, 0, 640, 480, 127, 127, 127);
     im.draw (0, 0); 
+
     /* 
        atk_font font;     
        if (!font.load (argv[1])) exit (1);  
@@ -77,11 +80,20 @@ int main (int argc, char * argv[])
     
 
     atk_box * box = new atk_box;
+
+    atk_fixed * fixed = new atk_fixed;
+
+    fixed->set_size (100, 100);
+    fixed->set_position (300, 300); 
+    fixed->set_visible(true);	
+    fixed->draw (); 
     
-    box->set_spacing (5); 
+    box->set_border_width (10); 
+    box->set_spacing (3); 
     box->set_visible (true); 
     box->set_size (200, 60);
     box->set_position (50, 50); 
+    box->set_geometry (atk_box::VERTICAL); 
     
     atk_widget * wid;
 
@@ -101,7 +113,8 @@ int main (int argc, char * argv[])
     wid->set_size (10, 50);
     wid->set_visible (true);
     wid->realize (); 
-    box->add_start (wid, false, false, 15); 
+    box->add_end (wid, true, true, 15) ; 
+
 
     box->realize (); 
     box->draw ();  

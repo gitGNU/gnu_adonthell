@@ -22,6 +22,9 @@
  * 
  */
 
+#ifndef ATK_BOX_H_
+#define ATK_BOX_H_
+
 #include <deque>  
 #include "atk_widget.h"
 #include "atk_container.h"
@@ -100,12 +103,18 @@ public :
      */
     u_int16 get_spacing () const; 
     
-    
-    /*draw the widget
+
+    /**draw the widget
      */
     virtual void draw (drawing_area * da = NULL, surface * sf = NULL); 
+
+
+    /**set_geometry
+     * @param g gemotry is VERTICAL or HORIZONTAL (default) .
+     */
+    void set_geometry (const u_int8 g); 
     
-    
+
     ~atk_box (); 
     
     static const u_int8 VERTICAL = 0;
@@ -164,3 +173,4 @@ private :
 
 
 
+#endif
