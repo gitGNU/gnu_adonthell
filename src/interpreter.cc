@@ -28,12 +28,25 @@ interpreter::interpreter ()
     cmd_num = 0;
     code = NULL;
     user_data = NULL;
+
+    // Each interpreter needs a unique id; let's just take it's memory adress
+    sprintf (id, "%p\0", this);
+
+    // Now we have to register it with that id
+    objects[id] = (storage *) this;
 }
 
 interpreter::interpreter (const char *file, void *data) : user_data (data)
 {
     PC = 0;
     load (file);
+
+    // Each interpreter needs a unique id; let's just take it's memory adress
+    sprintf (id, "%p\0", this);
+
+    // Now we have to register it with that id
+    objects[id] = (storage *) this;
+
 }
 
 // Destructor
@@ -48,6 +61,9 @@ interpreter::~interpreter ()
 
         delete[] code;
     }
+
+    // Unregister the interpreter, since it's destroyed
+    objects.erase(id);
 }
 
 // Load a Program
@@ -91,6 +107,7 @@ u_int8 interpreter::load (const char *file)
         // you recieve a pointer to its first argument and should
         // return the number of bytes you read (Failure to do so
         // may even result in a SEGFAULT, so take care!)
+        strcpy (cmd->interpreter, id);
         cmd->type = buffer[j];
         cmd->init (buffer, ++j, user_data);
 

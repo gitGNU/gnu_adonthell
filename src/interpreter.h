@@ -12,8 +12,14 @@
    See the COPYING file for more details.
 */
 
-#include "array_tmpl.h"
+#ifndef __INTERPRETER_H__
+#define __INTERPRETER_H__
 
+#include "array_tmpl.h"
+#include "storage.h"
+
+
+// Base class for commands to be used with the interpreter
 class command
 {
 public:
@@ -25,11 +31,19 @@ public:
 
     // type of your command
     u_int32 type;
+
+    // ID of the interpreter that spawns the command; used for access to the 
+    // interpreter's local storage
+    char interpreter[11];
 };
 
+
+// Pointer to a function returning a newly allocated command
 typedef command* (*CmdNew)();
 
-class interpreter
+
+// Interpreter for running various scripts
+class interpreter : public storage
 {
 friend command run (void*);
 
@@ -60,6 +74,9 @@ private:
 
     // Length of Program
     u_int32 cmd_num;
+
+    // Interpreters unique id, namely it's memory address
+    char id[11];
 };
 
 #define NEW_CMD(cmd) command* new_ ## cmd () { return (command*) new cmd; }
@@ -70,3 +87,5 @@ private:
         return;\
     }\
     interpreter::callbacks.add_element ((CmdNew)&new_ ## cmd);
+
+#endif // __INTERPRETER_H__
