@@ -1,7 +1,7 @@
 /*
    $Id$
 
-   Copyright (C) 1999   The Adonthell Project
+   Copyright (C) 1999/2000/2001   The Adonthell Project
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -24,8 +24,8 @@
  
 #include "fileops.h"
 #include "screen.h"
-#include <zlib.h>
-#include "pnm.h" 
+#include "pnm.h"
+#include "drawable.h"
 
 
 /** Image manipulation class.
@@ -41,7 +41,7 @@
  *  When compiled with the _EDIT_ flag, image provides lots of other methods
  *  for image editing and saving.
  */
-class image
+class image : public drawable
 {
  public:
 
@@ -76,24 +76,6 @@ class image
      *  @sa zoom ()
      */ 
     void resize (u_int16 l, u_int16 h);
-
-    /** Returns the length of the image.
-     *  @return the image's length.
-     *  @sa height ()
-     */ 
-    u_int16 length ()
-    {
-        return length_;
-    }
-    
-    /** Returns the height of the image.
-     *  @return the image's height.
-     *  @sa length () 
-     */ 
-    u_int16 height ()
-    {
-        return height_;
-    }
     
     /** Return whether the image is masked or not.
      *  @return
@@ -250,18 +232,6 @@ class image
     */ 
     void zoom (image * src);
 
-    /** Reverse an image horizontally.
-     *  Reverse the src image horizontally into this image.
-     *  @param src the source image to reverse.
-     */ 
-    void reverse_lr (image * src);
-
-    /** Reverse an image vertically.
-     *  Reverse the src image vertically into this image.
-     *  @param src the source image to reverse.
-     */ 
-    void reverse_ud (image * src);
-
     /** Apply a "brightness" to an image.
      *  Lighten (or darken) the src image and put the result into this image.
      *  @param src the source image to lighten/darken.
@@ -331,9 +301,6 @@ class image
 #endif
     /// Actual image.
     SDL_Surface *data;
-
-    /// Length and height.
-    u_int16 length_, height_;
 
     /// Bytes per pixel (image depth).
     u_int8 bytes_per_pixel;
@@ -409,30 +376,12 @@ class image
      */
     s_int8 save_pnm (string fname);
 
-    /** Get a pixel from the image in RGB format.
-     *  Return the pixel at position (x, y) of the image, in RGB format,
-     *  suitable for use with put_pix_rgb () 
-     *  @param x X coordinate of the pixel to return.
-     *  @param y Y coordinate of the pixel to return.
-     *  @sa put_pix ()
-     */ 
-    u_int32 get_rgb_pix (u_int16 x, u_int16 y);
-
-    /** Put a pixel to the image in RGB format.
-     *  Put the col RGB format pixel to position (x, y) of the image,
-     *  suitable for (slowly) modifying images which have to be
-     *  saved.
-     *  @param x X coordinate where to put the pixel.
-     *  @param y Y coordinate where to put the pixel.
-     *  @param col pixel in RGB format.
-     *  @sa get_pix_rgb ()
-     */ 
-    void put_rgb_pix (u_int16 x, u_int16 y, u_int32 col);
 #endif
 
 #ifndef SWIG
     /// Image copy.
-    image & operator = (const image & im);
+    image & operator = (image & im);
+    friend class drawable; 
     friend class data_screen;
 #endif
 };

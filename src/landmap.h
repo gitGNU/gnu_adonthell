@@ -594,6 +594,8 @@ public:
      * @return
      * @li 0 in case of success.
      * @li -1 in case of failure.
+     * @todo Replace the lame string loading function with a better one
+     * (need format change)
      */
     s_int8 get (igzstream& file);
 

@@ -23,11 +23,11 @@ class mapsquare_tile;
 class mapsquare_char;
 class landmap;
 
-class mapview
+class mapview : public drawable
 #ifdef _EDIT_
-    :public mapselect
+    , public mapselect
 #endif
-{ u_int16 length_, height_;		// size of the view in pixels
+{
     u_int16 d_length, d_height;	// size of the view in map squares
 
     u_int16 currentsubmap;
@@ -88,16 +88,7 @@ public:
     void init ();
     mapview ();
     ~mapview ();
-
-    u_int16 length ()
-    {
-        return length_;
-    };
-    u_int16 height ()
-    {
-        return height_;
-    };
-
+ 
     void attach_map (landmap * m);
     void detach_map ();
 
@@ -146,7 +137,7 @@ public:
     void set_schedule (string file);
 #endif
     void update ();
-    void draw (u_int16 x, u_int16 y, drawing_area * da_opt = NULL);
+    void draw (s_int16 x, s_int16 y, drawing_area * da_opt = NULL);
 
 #ifdef _EDIT_
     void move_cursor_left ();

@@ -16,7 +16,7 @@
 /** @file screen.h
  *  @brief Declares the screen class.
  *  @todo drawbox, etc... must be capable of converting the argument given
- *        color from a hex triplet to the screen format using SDL_MapRGB.
+ *        color from a hex triplet to the %screen format using SDL_MapRGB.
  */ 
 
 #ifndef _screen_h
@@ -188,6 +188,7 @@ private:
     static SDL_Surface *vis;
     
 #ifndef SWIG
+    friend class drawable; 
     friend class image;
 #endif
 };

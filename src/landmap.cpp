@@ -258,8 +258,6 @@ s_int8 landsubmap::get (igzstream& file)
 
     length << file;
     height << file; 
-//     gzread (file, &length, sizeof (length));
-//     gzread (file, &height, sizeof (height));
     allocmap (length, height);
     for (j = 0; j < height; j++)
         for (i = 0; i < length; i++)
@@ -267,11 +265,9 @@ s_int8 landsubmap::get (igzstream& file)
             u_int16 k, t;
 
             k << file; 
-//             gzread (file, &k, sizeof (k));
             while (k)
             {
                 t << file; 
-//                 gzread (file, &t, sizeof (t));
                 put_mapobject (i, j, t);
                 k--;
             }
@@ -286,8 +282,6 @@ s_int8 landsubmap::put (ogzstream& file)
 
     length >> file;
     height >> file; 
-//     gzwrite (file, &length, sizeof (length));
-//     gzwrite (file, &height, sizeof (height));
     for (j = 0; j < height; j++)
         for (i = 0; i < length; i++)
         {
@@ -299,12 +293,10 @@ s_int8 landsubmap::put (ogzstream& file)
                 if (it->is_base)
                     k++;
             k >> file; 
-//             gzwrite (file, &k, sizeof (k));
             for (it = land[i][j].tiles.begin ();
                  it != land[i][j].tiles.end (); it++)
                 if (it->is_base)
                     it->objnbr >> file; 
-//                     gzwrite (file, &(it->objnbr), sizeof (it->objnbr));
         }
     return 0;
 }
@@ -461,7 +453,6 @@ landmap & landmap::operator = (const landmap & lm)
 
     clear ();
     nbr_of_patterns = lm.nbr_of_patterns;
-    //  if(pattern) delete[] pattern;
     pattern = new (mapobject *)[nbr_of_patterns];
     for (i = 0; i < nbr_of_patterns; i++)
     {
@@ -469,12 +460,6 @@ landmap & landmap::operator = (const landmap & lm)
         *(pattern[i]) = *(lm.pattern[i]);
     }
     nbr_of_submaps = lm.nbr_of_submaps;
-    /*  if(submap) 
-        {
-        for(i=0;i<nbr_of_submaps;i++)
-        delete submap[i];
-        delete[] submap;
-        } */
     submap = new (landsubmap *)[nbr_of_submaps];
     for (i = 0; i < nbr_of_submaps; i++)
     {
@@ -482,7 +467,6 @@ landmap & landmap::operator = (const landmap & lm)
         *(submap[i]) = *(lm.submap[i]);
     }
 #ifdef _EDIT_
-    //  if(mini_pattern) delete[] mini_pattern;
     mini_pattern = new (mapobject *)[nbr_of_patterns];
     for (i = 0; i < nbr_of_patterns; i++)
     {
@@ -497,27 +481,23 @@ s_int8 landmap::get (igzstream& file)
 {
     u_int16 i, j;
     mapobject *tobj;
-//     char tstr[500];
     string tstr; 
     
     clear ();
     // Getting all mapobjects
-//     gzread (file, &i, sizeof (i));
     i << file; 
     for (; i; i--)
     {
         u_int16 j = 0;
         char c; 
-        ///  @todo replace this string loading function with the normal one!
+        //  FIXME:  replace this string loading function with the normal one!
         tstr = ""; 
         do
         {
             c << file;
             tstr += c; 
             j++; 
-            //             gzread (file, &tstr[j], sizeof (tstr[j]));
         }
-//         while (tstr[j++]);
         while (c); 
         tobj = new mapobject;
         tobj->load (tstr);
@@ -525,7 +505,6 @@ s_int8 landmap::get (igzstream& file)
     }
     // Getting all submaps
     i << file; 
-//     gzread (file, &i, sizeof (i));
     for (j = 0; j < i; j++)
     {
         add_submap ();
@@ -536,23 +515,17 @@ s_int8 landmap::get (igzstream& file)
 
 s_int8 landmap::load (string fname)
 {
-    //   gzFile file;
     igzstream file;
     s_int8 retvalue = -1;
     string fdef;
 
-    //   char fdef[strlen(fname)+strlen(MAPS_DIR)+1];
     fdef = MAPS_DIR;
     fdef += fname;
-    /*  strcpy(fdef,MAPS_DIR);
-        strcat(fdef,fname); */
     file.open (fdef);
-    //     file=gzopen(fdef,"rb"); 
     if (!file.is_open ())
         return -1;
     if (fileops::get_version (file, 1, 1, fdef))
         retvalue = get (file);
-    //     gzclose(file);
     file.close ();
     filename_ = fname;
     return retvalue;
@@ -566,9 +539,8 @@ s_int8 landmap::put (ogzstream& file)
     // version information 
     fileops::put_version (file, 1);
 
-    // Putting all mapobjects
+    // Put all mapobjects
     nbr_of_patterns >> file; 
-    //     gzwrite (file, &nbr_of_patterns, sizeof (nbr_of_patterns));
     for (i = 0; i < nbr_of_patterns; i++)
     {
         char c = 0;
@@ -577,15 +549,12 @@ s_int8 landmap::put (ogzstream& file)
         while (j < objsrc[i].size ())
         {
             objsrc[i][j] >> file; 
-            //             gzwrite (file, &objsrc[i][j], sizeof (objsrc[i][j]));
             j++;
         }
         c >> file; 
-//         gzwrite (file, &c, sizeof (c));
     }
-    // Putting all submaps
+    // Put all submaps
     nbr_of_submaps >> file; 
-//     gzwrite (file, &nbr_of_submaps, sizeof (nbr_of_submaps));
     for (i = 0; i < nbr_of_submaps; i++)
     {
         submap[i]->put (file);
@@ -647,8 +616,6 @@ void landmap::put_mapchar (mapcharacter * mchar, u_int16 smap,
                                                                     mchar->basey - py].walkable == ALL_WALKABLE;
                 submap[smap]->land[i][j].mapchars.push_back (mschar);
             }
-    //  submap[smap]->land[px][py].mapchars.push_back(mchar);
-    //  mchar->set_pos(smap,px,py);
 }
 
 void landmap::remove_mapchar (mapcharacter * mchar, u_int16 smap,
@@ -791,13 +758,6 @@ void landmap::remove_mapobject (u_int16 smap,
                      it != submap[smap]->land[i][j].tiles.end () &&
                          *(it->base_tile) < *it; it++);
                 submap[smap]->land[i][j].base_begin = it;
-                /*      list<mapsquare_tile>::iterator it2;
-                        bool w=true;
-                        it2=submap[smap]->land[i][j].tiles.begin();
-                        while(it2!=submap[smap]->land[i][j].tiles.end())
-                        {
-                        // Calculate if walkable must be set to true or false
-                        } */
             }
         }
 }
@@ -815,7 +775,6 @@ s_int8 landmap::insert_mapobject (mapobject * an, u_int16 pos,
     pattern = new (mapobject *)[++nbr_of_patterns];
     for (i = 0; i < pos; i++)
         pattern[i] = oldpat[i];
-    //  pattern[pos]=new mapobject;
     pattern[pos] = an;
     pattern[pos]->play ();
     for (i = pos + 1; i < nbr_of_patterns; i++)

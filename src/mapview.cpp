@@ -19,7 +19,9 @@
 
 void mapview::init ()
 {
-    length_ = height_ = d_length = d_height = currentsubmap = posx = posy = 0;
+    drawable::set_length (0);
+    drawable::set_height (0); 
+    d_length = d_height = currentsubmap = posx = posy = 0;
     m_map = NULL;
     offx = offy = draw_offx = draw_offy = 0;
 #ifdef _EDIT_
@@ -251,13 +253,13 @@ void mapview::scroll_up ()
 
 void mapview::resize (u_int16 l, u_int16 h)
 {
-    length_ = l;
-    height_ = h;
+    drawable::set_length (l);
+    drawable::set_height (h); 
     draw_offx = (l % MAPSQUARE_SIZE);
     draw_offy = (h % MAPSQUARE_SIZE);
     d_length = (l / MAPSQUARE_SIZE) + (l % MAPSQUARE_SIZE != 0);
     d_height = (h / MAPSQUARE_SIZE) + (h % MAPSQUARE_SIZE != 0);
-    da->resize (length (), height ());
+    da->resize (drawable::length (), drawable::height ());
 #ifdef _EDIT_
     mapselect::resize_view (d_length, d_height);
 #endif
@@ -299,14 +301,16 @@ s_int8 mapview::get_state (igzstream& file)
 
 s_int8 mapview::put_state (ogzstream& file)
 {
-    u_int16 b = 0;
+    u_int16 b;
 
     // Write the mapview's schedule
     schedule_file >> file; 
 
     // Write the mapview's dimensions
-    length_ >> file;
-    height_ >> file; 
+    b = length (); 
+    b >> file;
+    b = height (); 
+    b >> file; 
     currentsubmap >> file; 
 
     // FIXME: Obsolete x and y members - Fire them!
@@ -379,7 +383,7 @@ void mapview::update ()
 #endif
 }
 
-void mapview::draw (u_int16 x, u_int16 y, drawing_area * da_opt = NULL)
+void mapview::draw (s_int16 x, s_int16 y, drawing_area * da_opt = NULL)
 {
     static u_int16 i, j;
     static u_int16 i0, j0, ie, je;
@@ -783,7 +787,6 @@ void mapview::add_mapobject ()
     set_info_win (st);
     delete wf;
 
-    //  m_map->init_mapobjects();
     must_upt_label_object = true;
 }
 
@@ -1430,7 +1433,6 @@ void mapview::editor ()
     if (m_map->nbr_of_submaps)
         current_tile = m_map->submap[currentsubmap]->land[mapselect::posx]
             [mapselect::posy].tiles.begin ();
-    //  update_current_tile();
     while (!input::has_been_pushed (SDLK_ESCAPE))
     {
         input::update ();
@@ -1438,7 +1440,6 @@ void mapview::editor ()
         {
             update_editor_keys ();
             update_editor ();
-            //      if(m_map) m_map->update();
         }
         draw_editor ();
         screen::show ();

@@ -12,7 +12,7 @@
    See the COPYING file for more details.
 */
 
-#include <string.h>
+#include <string>
 
 void * read_pnm(SDL_RWops * file, u_int16 * length, u_int16 * height);
 void pnmput(SDL_RWops * file, void * image, u_int16 length, u_int16 height);

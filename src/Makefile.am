@@ -13,7 +13,7 @@ adonthell_LDADD = $(SDL_LIBS) $(OGG_LIBS) $(PY_LIBS)
 
 adonthell_SOURCES = animation.cpp audio.cpp audio_loop.cpp character_base.cpp \
 character.cpp data.cpp data_screen.cpp dialog.cpp dialog_engine.cpp \
-drawing_area.cpp event.cpp fileops.cpp game.cpp gametime.cpp image.cpp \
+drawable.cc drawing_area.cpp event.cpp fileops.cpp game.cpp gametime.cpp image.cpp \
 input.cpp landmap.cpp lex.prefs.cpp main.cpp mapcharacter.cpp mapengine.cpp \
 mapobject.cpp mapselect.cpp maptpl.cpp mapview.cpp pnm.cpp prefs.cpp \
 py_callback.cpp py_inc.cpp py_modules.cpp py_adonthell_wrap.cpp quest.cpp \
@@ -23,7 +23,7 @@ win_manager.cpp win_scrollbar.cpp win_scrolled.cpp win_select.cpp win_theme.cpp 
 win_write.cpp yarg.cc \
 animation.h audio.h audio_loop.h callback.h py_callback.h \
 character_base.h character.h data.h data_screen.h dialog.h dialog_engine.h \
-drawing_area.h event.h fileops.h game.h gametime.h image.h input.h inventory.h \
+drawable.h drawing_area.h event.h fileops.h game.h gametime.h image.h input.h inventory.h \
 item.h landmap.h mapcharacter.h mapobject.h mapselect.h maptpl.h mapview.h \
 mapengine.h pnm.h prefs.h py_inc.h py_modules.h quest.h screen.h storage.h \
 types.h win_anim.h win_background.h win_base.h win_border.h win_container.h \

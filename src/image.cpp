@@ -25,10 +25,10 @@ SDL_Rect dr;
 u_int16 image::a_d_diff = 0;
 #endif
 
-image & image::operator = (const image & im)
+image & image::operator = (image & im)
 {
-    length_ = im.length_;
-    height_ = im.height_;
+    set_length (im.length ());
+    set_height (im.height ()); 
     draw_to = im.draw_to;
     bytes_per_pixel = im.bytes_per_pixel;
     mask_on = im.mask_on;
@@ -51,7 +51,8 @@ void image::init ()
 {
     bytes_per_pixel = 0;
     data = NULL;
-    length_ = height_ = 0;
+    set_length (0);
+    set_height (0); 
     mask_on = false;
     set_alpha (255);
     draw_to = NULL;
@@ -60,7 +61,7 @@ void image::init ()
 #endif
 }
 
-image::image ()
+image::image () : drawable ()
 {
 #ifdef _DEBUG_
     cout << "image() called, " << ++a_d_diff
@@ -69,15 +70,15 @@ image::image ()
     init ();
 }
 
-image::image (u_int16 l, u_int16 h)
+image::image (u_int16 l, u_int16 h) : drawable ()
 {
 #ifdef _DEBUG_
     cout << "image(u_int16, u_int16) called, " << ++a_d_diff
          << " objects currently allocated\n";
 #endif
     init ();
-    length_ = l;
-    height_ = h;
+    set_length (l);
+    set_height (h); 
     bytes_per_pixel = screen::bytes_per_pixel;
     data = SDL_CreateRGBSurface (SDL_SWSURFACE, length (), height (),
                                  bytes_per_pixel * 8, 0, 0, 0, 0);
@@ -110,13 +111,13 @@ void image::resize (u_int16 l, u_int16 h)
 {
     set_mask (false);
     set_alpha (255);
-    if ((length_ == l) && (height_ == h))
+    if ((length () == l) && (height () == h))
         return;
     if (data)
         SDL_FreeSurface (data);
     bytes_per_pixel = screen::bytes_per_pixel;
-    length_ = l;
-    height_ = h;
+    set_length (l);
+    set_height (h);
     data = SDL_CreateRGBSurface (SDL_SWSURFACE, length (), height (),
                                  bytes_per_pixel * 8, 0, 0, 0, 0);
 #ifdef _EDIT_
@@ -325,8 +326,8 @@ void image::get_from_screen (s_int16 x, s_int16 y)
     sr.h = height ();
     dr.x = 0;
     dr.y = 0;
-    dr.w = length_;
-    dr.h = height_;
+    dr.w = length ();
+    dr.h = height ();
     SDL_BlitSurface (screen::vis, &sr, data, &dr);
 }
 
@@ -364,12 +365,14 @@ s_int8 image::get_raw (igzstream& file)
     void *simpledata;
 #endif
     SDL_Surface *tmp2;
-
-    length_ << file;
-    height_ << file; 
-
+    u_int16 temp; 
+    
+    temp << file;
+    set_length (temp); 
+    temp << file; 
+    set_height (temp);
+    
     simpledata = new char[length () * height () * 3]; 
-    //     simpledata = calloc (length () * height (), 3);
     gzread (file.file, simpledata, length () * height () * 3);
 
     tmp2 = SDL_CreateRGBSurfaceFrom (simpledata, length (), height (), 24,
@@ -403,9 +406,11 @@ s_int8 image::get_pnm (SDL_RWops * file)
     void *simpledata;
 #endif
     SDL_Surface *tmp2;
-
-    simpledata = read_pnm (file, &length_, &height_);
-
+    u_int16 l, h; 
+    simpledata = read_pnm (file, &l, &h);
+    set_length (l);
+    set_height (h);
+    
     tmp2 = SDL_CreateRGBSurfaceFrom (simpledata, length (), height (), 24,
                                      length () * 3, 0x0000FF, 0x00FF00, 0xFF0000, 0);
     data = SDL_DisplayFormat (tmp2);
@@ -437,8 +442,8 @@ void image::screen_shot ()
     clear ();
     init ();
     bytes_per_pixel = 3;
-    length_ = screen::length ();
-    height_ = screen::height ();
+    set_length (screen::length ());
+    set_height (screen::height ());
 
 
     // We need a 24bpp image to save it as PNM afterwards
@@ -466,11 +471,7 @@ void image::screen_shot ()
 s_int8 image::put (ogzstream& file)
 {
     mask_on >> file; 
-    //     gzwrite (file, &mask_on, sizeof (mask_on));
-    //     set_alpha (alpha_);
     alpha_ >> file; 
-    //     gzwrite (file, &alpha_, sizeof (alpha_));
-    //     set_alpha (alpha_);
     return (put_raw (file));
 }
 
@@ -478,7 +479,6 @@ s_int8 image::save (string fname)
 {
     ogzstream file (fname);
 
-    //     file = gzopen (fname.c_str (), "wb6");
     if (!file.is_open ())
         return (1);
     put (file);
@@ -488,11 +488,12 @@ s_int8 image::save (string fname)
 
 s_int8 image::put_raw (ogzstream& file)
 {
-    length_ >> file;
-    height_ >> file;
+    u_int16 t; 
+    t = length ();
+    t >> file;
+    t = height ();
+    t >> file;
     
-    //     gzwrite (file, &length_, sizeof (length_));
-    // gzwrite (file, &height_, sizeof (height_));
     gzwrite (file.file, simpledata, length () * height () * 3);
     return (0);
 }
@@ -526,49 +527,6 @@ s_int8 image::save_pnm (string fname)
     return (0);
 }
 
-u_int32 image::get_rgb_pix (u_int16 x, u_int16 y)
-{
-    u_int32 retvalue;
-
-    const u_int32 offset =
-        ((y * ((length () % 2 ? length () + 1 : length ()))) + x);
-
-    switch (bytes_per_pixel)
-    {
-        case 1:
-            return *((u_int8 *) data->pixels + offset);
-            break;
-        case 2:
-            return *((u_int16 *) data->pixels + offset);
-            break;
-        case 4:
-            return *((u_int32 *) data->pixels + offset);
-            break;
-        default:
-            memcpy (&retvalue,
-                    (char *) data->pixels + (offset * bytes_per_pixel),
-                    bytes_per_pixel);
-            return retvalue;
-            break;
-    }
-}
-
-void image::put_rgb_pix (u_int16 x, u_int16 y, u_int32 col)
-{
-    u_int8 r, g, b;
-    u_int8 *c = (u_int8 *) col;
-
-    r = *c;
-    g = *(c + 1);
-    b = *(c + 2);
-    col = SDL_MapRGB (data->format, r, g, b);
-
-    put_pix (x, y, col);
-
-#ifdef _EDIT_
-    memcpy ((u_int8 *) simpledata + ((x + (y * length ())) * 3), &col, 3);
-#endif
-}
 #endif
 
 u_int32 image::get_pix (u_int16 x, u_int16 y)
@@ -620,7 +578,7 @@ void image::put_pix (u_int16 x, u_int16 y, u_int32 col)
             break;
     }
 }
- 
+
 void image::zoom (image * src)
 {
     static u_int16 i, j;
@@ -634,37 +592,7 @@ void image::zoom (image * src)
     SDL_UnlockSurface (src->data);
     SDL_UnlockSurface (data);
 }
-
-void image::reverse_lr (image * src)
-{
-    static u_int16 i, j;
-
-    if ((length () != src->length ()) || (height () != src->height ()))
-        resize (src->length (), src->height ());
-    SDL_LockSurface (src->data);
-    SDL_LockSurface (data);
-    for (j = 0; j < height (); j++)
-        for (i = 0; i < length (); i++)
-            put_pix (length () - i, j, src->get_pix (i, j));
-    SDL_UnlockSurface (src->data);
-    SDL_UnlockSurface (data);
-}
-
-void image::reverse_ud (image * src)
-{
-    static u_int16 i, j;
-
-    if ((length () != src->length ()) || (height () != src->height ()))
-        resize (src->length (), src->height ());
-    SDL_LockSurface (src->data);
-    SDL_LockSurface (data);
-    for (j = 0; j < height (); j++)
-        for (i = 0; i < length (); i++)
-            put_pix (i, height () - (j + 1), src->get_pix (i, j));
-    SDL_UnlockSurface (src->data);
-    SDL_UnlockSurface (data);
-}
-
+ 
 void image::brightness (image * src, u_int16 cont, bool proceed_mask = false)
 {
     u_int16 i, j;

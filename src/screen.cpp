@@ -73,7 +73,7 @@ void screen::set_video_mode (u_int16 nl, u_int16 nh)
     h = nh;
 
     // Set the video mode
-    vis = SDL_SetVideoMode (nl, nh, bpp, SDL_HWSURFACE | SDL_flags);
+    vis = SDL_SetVideoMode (nl, nh, bpp, SDL_flags);
     if (vis == NULL)
     {
         fprintf (stderr, "error: %s\n", SDL_GetError ());

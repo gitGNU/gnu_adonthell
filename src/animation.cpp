@@ -71,14 +71,6 @@ s_int8 animationframe::get (igzstream& file)
     delay_ << file;
     nextframe_ << file; 
     
- /*    gzread (file, &imagenbr, sizeof (imagenbr));
-    gzread (file, &is_masked_, sizeof (is_masked_));
-    gzread (file, &alpha_, sizeof (alpha_));
-    set_alpha (alpha_);
-    gzread (file, &gapx, sizeof (gapx));
-    gzread (file, &gapy, sizeof (gapy));
-    gzread (file, &delay_, sizeof (delay_));
-    gzread (file, &nextframe_, sizeof (nextframe_));*/ 
     return (0);
 }
 
@@ -214,15 +206,7 @@ s_int8 animationframe::put (ogzstream& file)
     gapy >> file;
     delay_ >> file;
     nextframe_ >> file; 
-    //     gzwrite (file, &imagenbr, sizeof (imagenbr));
-//     gzwrite (file, &is_masked_, sizeof (is_masked_));
-//     set_alpha (alpha_);
-//     gzwrite (file, &alpha_, sizeof (alpha_));
-//     set_alpha (alpha_);
-//     gzwrite (file, &gapx, sizeof (gapx));
-//     gzwrite (file, &gapy, sizeof (gapy));
-//     gzwrite (file, &delay_, sizeof (delay_));
-//     gzwrite (file, &nextframe_, sizeof (nextframe_));
+
     return (0);
 }
 
@@ -245,8 +229,9 @@ void animation::init ()
     t_frame.clear ();
     currentframe_ = 0;
     speedcounter = 0;
-    play_flag = false;
-    length_ = height_ = 0;
+    play_flag = STOP;
+    set_length (0);
+    set_height (0); 
     xoffset_ = 0;
     yoffset_ = 0;
 #ifdef _EDIT_
@@ -255,7 +240,7 @@ void animation::init ()
 #endif
 }
 
-animation::animation ()
+animation::animation () : drawable () 
 {
     init ();
 #ifdef _DEBUG_
@@ -321,7 +306,6 @@ void animation::draw (s_int16 x, s_int16 y, drawing_area * da_opt = NULL)
     if (!nbr_of_frames ())
         return;
 #endif
-
     t_frame[frame[currentframe ()].image_nbr ()]->
         set_mask (frame[currentframe ()].is_masked ());
     t_frame[frame[currentframe ()].image_nbr ()]->
@@ -353,8 +337,9 @@ s_int8 animation::get (igzstream& file)
 
     clear ();
     // TODO: Remove this! (length and height are calculated later)
-    length_ << file;
-    height_ << file; 
+    u_int16 dummy;
+    dummy << file;
+    dummy << file;
 
     // Read images
     nbr_images << file; 
@@ -382,12 +367,12 @@ s_int8 animation::get (igzstream& file)
         if ((tl =
              t_frame[frame[i].imagenbr]->length () + frame[i].gapx) >
             length ())
-            length_ = tl;
+            set_length (tl);
 
         if ((th =
              t_frame[frame[i].imagenbr]->height () + frame[i].gapy) >
             height ())
-            height_ = th;
+            set_height (th); 
     }
     currentframe_ = 0;
     return (0);
@@ -458,12 +443,12 @@ s_int8 animation::put (ogzstream& file)
     u_int16 nbr_images = (u_int16) nbr_of_images ();
     u_int16 nbr_frames = (u_int16) nbr_of_frames ();
 
-    length_ >> file;
-    height_ >> file;
+    i = length (); 
+    i >> file;
+    i = height (); 
+    i >> file;
     nbr_images >> file; 
-    //     gzwrite (file, &length_, sizeof (length_));
-    //     gzwrite (file, &height_, sizeof (height_));
-    //     gzwrite (file, &nbr_images, sizeof (nbr_images));
+    
     for (i = 0; i < nbr_images; i++)
         t_frame[i]->put_raw (file);
     nbr_frames >> file; 
@@ -622,8 +607,9 @@ animation & animation::operator = (animation & a)
         delete t_frame[i];
 
     t_frame.clear ();
-    length_ = a.length_;
-    height_ = a.height_;
+    set_length (a.length ());
+    set_height (a.height ()); 
+    
     currentframe_ = a.currentframe_;
     speedcounter = a.speedcounter;
     play_flag = a.play_flag;
@@ -1158,31 +1144,7 @@ void animation::update_editor_keys ()
     // Rewind
     if (input::has_been_pushed (SDLK_i))
         rewind ();
-
-    // Reverse the current image horizontally in image mode
-    if (input::has_been_pushed (SDLK_r))
-    {
-        if (mode == IMAGE)
-        {
-            image im;
-
-            im = *(t_frame[currentimage]);
-            t_frame[currentimage]->reverse_lr (&im);
-        }
-    }
-
-    // Reverse the current image vertically in image mode
-    if (input::has_been_pushed (SDLK_t))
-    {
-        if (mode == IMAGE)
-        {
-            image im;
-
-            im = *(t_frame[currentimage]);
-            t_frame[currentimage]->reverse_ud (&im);
-        }
-    }
-
+ 
     // Loads a PNM image in image mode
     // Adds a frame in frame mode
     if (input::has_been_pushed (SDLK_F1))
@@ -1314,8 +1276,9 @@ void animation::update_editor ()
     update ();
     u_int16 i;
 
-    length_ = 0;
-    height_ = 0;
+    set_length (0);
+    set_height (0); 
+    
     for (i = 0; i < nbr_of_frames (); i++)
     {
         u_int16 tl, th;
@@ -1323,12 +1286,12 @@ void animation::update_editor ()
         if ((tl =
              t_frame[frame[i].imagenbr]->length () + frame[i].gapx) >
             length ())
-            length_ = tl;
+            set_length (tl);
 
         if ((th =
              t_frame[frame[i].imagenbr]->height () + frame[i].gapy) >
             height ())
-            height_ = th;
+            set_height (th);
     }
     if (info_win_count)
     {

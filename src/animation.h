@@ -166,22 +166,36 @@ public:
  */ 
 typedef enum { PLAY = true, STOP = false } play_state; 
 
-class animation
+
+
+/**
+ * Class that handles animated objects, their update and their playback.
+ * Most often, you will want your drawn objects to be animated. Then you'll
+ * probably want to use this class. An animation contains:
+ *   - A set of images arranged in an indexed array.
+ *   - A set of animation_frames.
+ *   - A position offset.
+ * @todo is the position offset usefull?
+ *
+ * During playback, the animation look at the first animation_frame. Each
+ * animation_frame refers to an image of the animation, and give it special
+ * mask and alpha parameters, as well as a position offset. It also have
+ * a delay parameter, telling how many %game cycles this frame should stay.
+ * Once the delay expired, the animation jumps to the next frame, which
+ * is pointed by the current frame. That way, you can easily performs loops or
+ * others effects. Each image, as well as each animation_frame, can be accessed
+ * individually, thought you'd better try to avoid as much as possible to mess
+ * with that.
+ * 
+ */ 
+class animation : public drawable
 {
 public:
     animation ();
     void clear ();
     ~animation ();
     bool is_empty ();
-    u_int16 length ()
-    {
-        return length_;
-    }
-    u_int16 height ()
-    {
-        return height_;
-    }
-    
+
     void play ()
     {
         play_flag = PLAY;
@@ -200,7 +214,7 @@ public:
 #endif
     }
 
-    bool playstate ()
+    play_state playstate ()
     {
         return play_flag; 
     }
@@ -215,6 +229,11 @@ public:
     void draw (s_int16 x, s_int16 y, drawing_area * da_opt = NULL);
     void draw_border (u_int16 x, u_int16 y, drawing_area * da_opt = NULL);
     
+    /**
+     * @todo length and height are loaded while they are calculated later.
+     *       Remove this when format will change.
+     * 
+     */ 
     s_int8 get (igzstream& file);
     s_int8 load (string fname);
     s_int8 get_off (igzstream& file);
@@ -323,10 +342,9 @@ private:
 #endif
     vector < image * >t_frame;
     vector < animationframe > frame;
-    u_int16 length_, height_;
     u_int16 currentframe_;
     u_int16 speedcounter;
-    bool play_flag;
+    play_state play_flag;
     s_int16 xoffset_, yoffset_;
 
     s_int8 insert_image (image * im, u_int16 pos);
