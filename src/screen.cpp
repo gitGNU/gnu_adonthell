@@ -12,7 +12,7 @@
 */
 
 #include <iostream>
-#include <unistd.h>
+#include <stdlib.h>
 #include "screen.h"
 
 using namespace std;
