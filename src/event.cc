@@ -145,7 +145,8 @@ void event::set_script (string filename, PyObject * args = NULL)
             PyTuple_SetItem (theargs, i, intref); 
         }
         script.create_instance (EVENTS_DIR + filename, filename, theargs);
-        Py_DECREF (theargs); 
+        Py_DECREF (theargs);
+        Py_XDECREF (args);
     }
     script_file_ = filename;
 }
@@ -172,7 +173,6 @@ void event::get_script_state (igzstream & file)
     if (bo) args = python::get_tuple (file);
     set_script (t, args);      
     Py_XDECREF (args); 
-
 }
 
 // Array with the registered events; each type of event is kept in

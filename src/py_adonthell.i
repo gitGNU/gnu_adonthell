@@ -25,7 +25,6 @@
 #include "path.h"
 #include "landmap.h"
 #include "mapview.h"
-#include "adonthell.h"
 #include "character.h"
 #include "label_input.h"
 #include "win_types.h"

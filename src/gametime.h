@@ -12,6 +12,13 @@
    See the COPYING file for more details.
 */
 
+/**
+ * @file gametime.h
+ *
+ * @author Kai Sterker
+ * @brief Declares the gametime class.
+ */
+
 #ifndef GAMETIME_H_
 #define GAMETIME_H_
 

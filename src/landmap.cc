@@ -163,10 +163,9 @@ void landmap::clear ()
     event_list::clear (); 
     
     // Remove all mapcharacters from this map.
-
     while (mapchar.size ())
         mapchar.front ()->remove_from_map ();  
-    
+
     // Delete all mapobjects
     vector <mapobject *>::iterator io;
     for (io = mobj.begin (); io != mobj.end (); io++)
@@ -330,6 +329,7 @@ s_int8 landmap::save (string fname)
 
 s_int8 landmap::get_state (igzstream& file)
 {
+    mapcharacter *mc = NULL;
     u_int16 nbr_of;
     string name;
     
@@ -343,7 +343,8 @@ s_int8 landmap::get_state (igzstream& file)
     for (u_int16 i = 0; i < nbr_of; i++)
     {
         name << file;
-        mapcharacter *mc = (mapcharacter *) data::characters[name.c_str ()];
+        if (name == "Player") mc = (mapcharacter *) data::the_player;
+        else mc = (mapcharacter *) data::characters[name.c_str ()];
         
         mc->set_map (this);
         mc->get_state (file);
@@ -366,8 +367,11 @@ s_int8 landmap::put_state (ogzstream& file) const
     for (u_int16 i = 0; i < nbr_of; i++)
     {
         mapcharacter *mc = mapchar[i]; 
-        name = mc->get_name ();
-        name >> file; 
+
+        if (mc == data::the_player) name = "Player";
+        else name = mc->get_name ();
+
+        name >> file;
         mc->put_state (file);
     }
     

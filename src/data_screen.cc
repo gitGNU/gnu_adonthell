@@ -32,7 +32,6 @@
 #include "input.h"
 #include "window.h"
 #include "data_screen.h"
-#include "adonthell.h"
 #include "gametime.h"
 #include "win_manager.h"
 

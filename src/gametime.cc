@@ -12,6 +12,13 @@
    See the COPYING file for more details.
 */
 
+/**
+ * @file gametime.cc
+ *
+ * @author Kai Sterker
+ * @brief Implements the gametime class.
+ */
+
 #include <string>
 #include "event.h"
 #include "gametime.h"

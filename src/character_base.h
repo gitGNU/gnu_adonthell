@@ -81,10 +81,9 @@ class character_base : public storage
     /** 
      * Returns the name of the %character.
      * 
-     * 
      * @return the name of the %character.
      */
-    string get_name() const { return name; }
+    string get_name () const { return name; }
 
     /** 
      * Sets the name of the %character.
@@ -93,10 +92,9 @@ class character_base : public storage
      */
     void set_name(string newname);
 
-    /** 
+    /**
      * Returns the color representing the %character.
-     * 
-     * 
+     *
      * @return the color representing the %character.
      */
     u_int32 get_color() const { return color; } 
@@ -111,7 +109,6 @@ class character_base : public storage
     /** 
      * Returns the current portrait of the %character.
      * 
-     * 
      * @return the current portrait of the %character.
      */
     string get_portrait() const { return portrait; } 
@@ -125,7 +122,6 @@ class character_base : public storage
     
     /** 
      * Return the file name of the current %character's dialog.
-     * 
      * 
      * @return file name of the dialog currently assigned to this %character.
      */
@@ -154,6 +150,7 @@ class character_base : public storage
     void put_state (ogzstream& out);
          
 private:
+    string id;
     string name;
     string dialogue;
     string portrait; 
