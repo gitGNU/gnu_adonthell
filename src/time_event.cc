@@ -25,7 +25,7 @@
 // create a new time event
 time_event::time_event (const string & time, bool absolute) : event ()
 {
-    Repeat = 0;
+    Repeat = 1;
     Type = TIME_EVENT;
     Time = gamedate::parse_time (time);
     if (!absolute) Time += gamedate::time ();
@@ -39,7 +39,7 @@ void time_event::set_repeat (const string & interval, s_int32 count)
 }
 
 // execute the time event
-void time_event::execute (const event & evnt)
+s_int32 time_event::execute (const event * evnt)
 {
     // nothing needs be passed to the script; it can get the
     // current time from the gametime class if it is needed.
@@ -63,11 +63,13 @@ void time_event::execute (const event & evnt)
             break;
         }
         
-        default: return;
+        default: break;
     }
     
     // when the script needs be repeated, do so.
-    if (Repeat != 0) Time += Interval;
+    if (Repeat > 1) Time += Interval;
+    
+    return do_repeat ();
 }
 
 // Save time event to file

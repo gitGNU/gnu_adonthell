@@ -23,28 +23,26 @@
 #include "map_event.h"
 #include "map_event_handler.h"
 
-// cleanup
-void map_event_handler::clear ()
-{
-    Events.clear ();    
-}
 
 // See whether a matching event is registered and execute the
 // according script(s) 
-void map_event_handler::raise_event (const event& e)
+void map_event_handler::raise_event (const event* e)
 {
-    // As long as matching events are in the list
-    for (vector<event*>::iterator i = Events.begin (); i != Events.end (); i++)
-        if ((*i)->equals (e))
-        {
-            // execute the event
-            (*i)->execute (e);
-        
-            // if it does not repeat, remove it
-            if ((*i)->repeat () == 0)
-                Events.erase (i);
-        }
+    vector<event*>::iterator j;
     
+    // As long as matching events are in the list
+    for (vector<event*>::iterator i = Events.begin (); i != Events.end ();)
+    {
+        j = i;
+        j++;
+        
+        if ((*i)->equals (e))
+            // execute them. Note that events that use up their repeat
+            // count are automatically deleted and unregistered.
+            (*i)->execute (e);
+    
+        i = j;    
+    }
     return;
 }
 

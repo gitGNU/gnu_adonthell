@@ -24,15 +24,10 @@
 #include "time_event.h"
 #include "time_event_handler.h"
 
-// cleanup
-void time_event_handler::clear ()
-{
-    Events.clear ();    
-}
 
 // See whether a matching event is registered and execute the
 // according script(s) 
-void time_event_handler::raise_event (const event& e)
+void time_event_handler::raise_event (const event * e)
 {
     s_int32 repeat;
     event *evt;
@@ -42,14 +37,13 @@ void time_event_handler::raise_event (const event& e)
     {
         evt = Events.front ();
 
-        // Note: we need to get the value of 'repeat' here, as
-        // executing the event might destroy it
-        repeat = evt->repeat ();
-
-        // remove event before executing (see above)
+        // we remove the event in any case, as it needs to be
+        // re-registered at a new position if it repeats
         Events.erase (Events.begin ());
+        evt->set_registered (false);
 
-        evt->execute (e);
+        // events that don't repeat are destroyed automatically
+        repeat = evt->execute (e);
 
         // re-register event if it needs be repeated
         if (repeat) register_event (evt);

@@ -40,14 +40,15 @@ void gamedate::update ()
     // call to gamedate::update
     Ticks += gametime::frames_to_skip ();
 
-    // check whether a in-game minute has passed
+    // check whether an in-game minute has passed
     while (Ticks >= tenth_minute)
     {
         Ticks -= tenth_minute;
         Time++;
         
         // raise time event
-        event_handler::raise_event (time_event (Time));
+        time_event evt (Time);
+        event_handler::raise_event (&evt);
     }
 }
 

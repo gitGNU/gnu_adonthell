@@ -40,11 +40,6 @@ public:
      */
     virtual ~event_handler_base () {}
 
-    /**
-     * Cleamup. Removes all events registered with the handler.
-     */
-    virtual void clear () = 0;
-    
     /** 
      * Registers an %event.
      * 
@@ -64,7 +59,7 @@ public:
      * 
      * @param ev %event to raise.
      */
-    virtual void raise_event (const event& ev) = 0;
+    virtual void raise_event (const event* ev) = 0;
 };
 
 #endif // EVENT_HANDLER_BASE_H__

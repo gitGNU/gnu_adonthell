@@ -29,6 +29,7 @@
 #include "py_callback.h"
 
 using std::string;
+class event_list;
 
 /**
  * Directory where %event scripts reside.
@@ -96,26 +97,51 @@ public:
     { 
         return Type;
     }
-     
+
+    /**
+     * Test whether the %event is registered with the %event handler.
+     *
+     * @return \c true if this is the case, \c false otherwise.
+     */
+    bool registered () const
+    {
+        return Registered;
+    }
+#ifndef SWIG    
+    /**
+     * Set whether the %event is registered with the %event handler.
+     *
+     * @param reg Set to \c true if it is, to \c false otherwise.
+     */
+    void set_registered (bool reg)
+    {
+        Registered = reg;
+    }
+    
+    /**
+     * Tell the whether it is kept in an %event_list.
+     *
+     * @param list The %event_list this event has been added to.
+     */
+    void set_list (event_list *list);
+#endif // SWIG    
     /**
      * Return whether this event should be repeated.
      *
      * @return the number of times this event should be repeated or
      *      -1 in case it should be repeated unlimited times.
      */
-    s_int32 repeat ()
+    s_int32 repeat () const
     {
-        if (Repeat > 0) Repeat--;
-        
         return Repeat;
     }
-
+    
     /**
      * Set whether this event should be repeated. A number greater than 0
-     * will repeat the event that many times, a number less than 0 will
+     * will execute the event that many times, a number less than 0 will
      * repeat the event forever. A number equal to 0 won't repeat the event.
      *
-     *  @param count How often the event should be repeated.
+     * @param count How often the event should be repeated.
      */
     void set_repeat (s_int32 count)
     {
@@ -131,8 +157,10 @@ public:
      * Execute the associated python script or callback.
      * 
      * @param evnt The %event that triggered the execution.
+     *
+     * @return The number of times the %event needs to be repeated.
      */ 
-    virtual void execute (const event& evnt) = 0;
+    virtual s_int32 execute (const event* evnt) = 0;
 
     /** 
      * Compare two events for equality.
@@ -140,7 +168,7 @@ public:
      * @param evnt pointer to the %event to compare with.
      * @return \e true if the events are equal, \e false otherwise.
      */
-    virtual bool equals (const event& evnt) = 0;
+    virtual bool equals (const event* evnt) = 0;
 
     //@}
     
@@ -205,6 +233,15 @@ public:
 protected:
 #ifndef SWIG
     /**
+     * Decrease the event's repeat count and return the number of repeats 
+     * left. If the repeat-count reaches 0, the %event will be destroyed.
+     *
+     * @return the number of times this event should be repeated or
+     *      -1 in case it should be repeated unlimited times.
+     */
+    s_int32 do_repeat ();
+
+    /**
      * @name Basic Event Data
      */
     //@{
@@ -218,6 +255,11 @@ protected:
      * What happens if the event occurs - see enum above.
      */
     u_int8 Action;
+    
+    /**
+     * Whether the %event is registered with the %event handler.
+     */
+    bool Registered;
     
     /**
      * Defines how often the %event should be repeated. <b>0</b> means
@@ -247,6 +289,11 @@ protected:
      * C++ callback that may be executed when the %event gets triggered.
      */
     Functor0 Callback;
+    
+    /**
+     * The event_list this event is kept in.
+     */
+    event_list *List;
     //@}
 #endif // SWIG
 };

@@ -37,11 +37,6 @@ class time_event_handler : public event_handler_base
 {
 public:
     /**
-     * Cleamup. Removes all events registered with the handler.
-     */
-    void clear ();
-
-    /**
      * Register a time %event with the %event handler. It is inserted
      * into the vector of registered events depending on its "alarm"
      * time. The %event needs to be removed before it can be safely
@@ -67,7 +62,7 @@ public:
      * @param evnt An %event structure with the current %game time in 
      *      minutes.
      */
-    void raise_event (const event &evnt);
+    void raise_event (const event *evnt);
     
 private:
     // storage for registered time events.

@@ -41,6 +41,7 @@
 #include "py_callback.h"
 #include "path.h"
 #include "text_bubble.h"
+#include "event_list.h"
 
 class landmap; 
 class path; 
@@ -136,7 +137,7 @@ class mapview;
  * @li requester, which points to the mapcharacter that requested the action.
  * 
  */ 
-class mapcharacter : public mapsquare_walkable_area, public character_base
+class mapcharacter : public mapsquare_walkable_area, public character_base, public event_list
 {
 public:
     
@@ -593,7 +594,8 @@ public:
     bool set_goal (u_int16 x, u_int16 y, u_int16 dir = NO_MOVE);
     void set_callback (PyObject *callback, PyObject *args = NULL);
     bool follow_path (); 
-    bool goal_reached (); 
+    bool goal_reached ();
+    void stop_moving ();
     
     //@}
     
@@ -652,6 +654,16 @@ public:
         schedule_activated = a; 
     }
 
+    /**
+     * Tell the character to do something. Will execute the given method
+     * of the current schedule with the given arguments.
+     *
+     * @param method The method of the schedule to call.
+     * @param args The arguments to pass to the method.
+     *
+     * @return \c true if the method has been called, \c false otherwise.
+     */
+    bool do_stuff (string method, PyObject *args = NULL); 
     //@}
 
 

@@ -61,21 +61,29 @@ public:
     void clear ();
 
     /** 
-     * Adds an event to this list. The event will be
-     * registered with the event_handler and the list will then
+     * Adds an %event to this list. The %event will be
+     * registered with the %event_handler and the list will then
      * take care of it's deletion.
      * 
-     * @param ev pointer to the event to add.
+     * @param ev pointer to the %event to add.
      */
     void add_event (event* ev);
 
     /**
-     * Register an event for loading. Before the event_list can load
-     * an event from file, it needs a callback function that returns
-     * a new instance of the event of the given type.
+     * Removes an %event from the list. This is usually called when an
+     * %event is destroyed.
      *
-     * @param type the type of the event to register
-     * @param e a callback returning a new instance of an event of the 
+     * @param ev pointer to the %event to remove.
+     */
+    void remove_event (event* ev);
+    
+    /**
+     * Register an %event for loading. Before the %event_list can load
+     * an %event from file, it needs a callback function that returns
+     * a new instance of the %event of the given type.
+     *
+     * @param type the type of the %event to register
+     * @param e a callback returning a new instance of an %event of the 
      *      given type.
      *
      * @sa load ()
@@ -83,20 +91,21 @@ public:
     static void register_event (u_int8 type, new_event e);
     
     /** 
-     * Save the event_list to a file.
+     * Save the %event_list to a file.
      * 
-     * @param out file where to save the event_list.
+     * @param out file where to save the %event_list.
      */ 
     void put_state (ogzstream& out) const;
     
     /** 
-     * Loads the event_list from a file and registers all loaded events.
-     * @warning Before the event_list can load an event from file, it needs
-     *          a callback function that returns a new instance of that event.
+     * Loads the %event_list from a file and registers all loaded events.
+     * @warning Before the %event_list can load an %event from file, it needs
+     *     a callback function that returns a new instance of that %event.
      * 
-     * @param in file to load the event_list from.
+     * @param in file to load the %event_list from.
      * 
-     * @return \e true if the event_list was loaded successfully, \e false otherwise.
+     * @return \e true if the %event_list was loaded successfully, \e false
+     *     otherwise.
      * @sa register_event ()
      */
     bool get_state (igzstream& in);
@@ -106,11 +115,11 @@ protected:
     /**
      * List of events.
      */ 
-    mutable std::vector<event*> events;
+    mutable std::vector<event*> Events;
 
 private:
     /**
-     * Array with callbacks that return a newly allocated instance of an event.
+     * Array with callbacks that return a newly allocated instance of an %event.
      * The event's type is the postion of the according callback in the array.
      */
     static new_event instanciate_event[MAX_EVENTS];
@@ -119,14 +128,14 @@ private:
 
 #ifndef SWIG
 /**
- * Registers an event with the event_list, allowing it to load this event
+ * Registers an %event with the %event_list, allowing it to load this %event
  * without knowing about it at compile time.
  */
 #define REGISTER_EVENT(type,evt)\
     event_list::register_event (type, (new_event) &new_ ## evt);
 
 /**
- * A function that returns a new instance of an event.
+ * A function that returns a new instance of an %event.
  */
 #define NEW_EVENT(evt)\
     event* new_ ## evt () { return (event*) new evt; }

@@ -564,7 +564,4 @@ void gamedata::unload ()
     for (itq = data::quests.begin (); itq != data::quests.end (); itq++) 
         delete itq->second;
     data::quests.clear ();
-    
-    // remove any events that are left over
-    event_handler::clear ();
 }

@@ -35,11 +35,6 @@ class map_event_handler : public event_handler_base
 {
 public:
     /**
-     * Cleamup. Removes all events registered with the handler.
-     */
-    void clear ();
-
-    /**
      * Register a map %event with the %event handler. The %event 
      * needs to be removed before it can be safely deleted.
      *
@@ -62,7 +57,7 @@ public:
      *
      * @param evnt A map_event structure.
      */
-    void raise_event (const event &evnt);
+    void raise_event (const event *evnt);
     
 private:
     // storage for registered time events.

@@ -61,6 +61,8 @@ mapcharacter::~mapcharacter ()
 
 void mapcharacter::clear ()
 {
+    event_list::clear ();
+    
     if (saying) delete saying;
 
     for (u_int16 i = 0; i < anim.size (); i++)
@@ -300,6 +302,14 @@ void mapcharacter::jump_to (u_int16 smap, u_int16 x, u_int16 y,
             stand ();
             break;
     }
+
+    enter_event evt; 
+    evt.submap = submap ();
+    evt.x = posx ();
+    evt.y = posy ();
+    evt.c = this;
+    evt.dir = pos; 
+    event_handler::raise_event (&evt);
 }
 
 void mapcharacter::stand ()
@@ -615,10 +625,14 @@ bool mapcharacter::follow_path ()
     return false;
 }
 
+void mapcharacter::stop_moving ()
+{
+    set_goal (posx (), posy ());
+}
+
 bool mapcharacter::goal_reached () 
 { 
     return goal_reached_;
-    // return (pathindex >= mypath.nbr_moves () && currentmove () < WALK_NORTH); 
 }
 
 void mapcharacter::look_invert (u_int16 p)
@@ -666,6 +680,14 @@ mapcharacter *mapcharacter::whosnext () const
             break;
     }
     return NULL;
+}
+
+bool mapcharacter::do_stuff (string method, PyObject *args)
+{
+    if (!schedule.has_attribute (method)) return false;
+    else schedule.call_method (method, args);
+    
+    return true;
 }
 
 void mapcharacter::set_schedule (string file, PyObject * args)
@@ -943,7 +965,7 @@ void mapcharacter::update_move ()
                     evt.y = posy ();
                     evt.c = this;
                     evt.dir = WALK_NORTH; 
-                    event_handler::raise_event (evt);
+                    event_handler::raise_event (&evt);
                     
                     occupy (submap (), posx (), posy () - 1);
                     set_offset (offx (), offy () - 1);
@@ -966,7 +988,7 @@ void mapcharacter::update_move ()
                     evt.y = posy ();
                     evt.c = this;
                     evt.dir = WALK_NORTH; 
-                    event_handler::raise_event (evt);
+                    event_handler::raise_event (&evt);
                 }
                 break;
             case WALK_SOUTH:
@@ -984,7 +1006,7 @@ void mapcharacter::update_move ()
                     evt.y = posy ();
                     evt.c = this;
                     evt.dir = WALK_SOUTH; 
-                    event_handler::raise_event (evt);
+                    event_handler::raise_event (&evt);
 
                     leave (submap (), posx (), posy ());
                     occupy (submap (), posx (), posy ());
@@ -1006,7 +1028,7 @@ void mapcharacter::update_move ()
                         evt.y = posy ();
                         evt.c = this;
                         evt.dir = WALK_SOUTH; 
-                        event_handler::raise_event (evt);
+                        event_handler::raise_event (&evt);
                     }
                 }
                 break;
@@ -1025,7 +1047,7 @@ void mapcharacter::update_move ()
                     evt.y = posy ();
                     evt.c = this;
                     evt.dir = WALK_WEST; 
-                    event_handler::raise_event (evt);
+                    event_handler::raise_event (&evt);
 
                     occupy (submap (), posx () - 1, posy ()); 
                 }
@@ -1044,7 +1066,7 @@ void mapcharacter::update_move ()
                     evt.y = posy ();
                     evt.c = this;
                     evt.dir = WALK_WEST; 
-                    event_handler::raise_event (evt);
+                    event_handler::raise_event (&evt);
                 }
                 break;
             case WALK_EAST:
@@ -1062,7 +1084,7 @@ void mapcharacter::update_move ()
                     evt.y = posy ();
                     evt.c = this;
                     evt.dir = WALK_EAST; 
-                    event_handler::raise_event (evt);
+                    event_handler::raise_event (&evt);
 
                     leave (submap (), posx (), posy ());
                     occupy (submap (), posx (), posy ());
@@ -1083,7 +1105,7 @@ void mapcharacter::update_move ()
                         evt.y = posy ();
                         evt.c = this;
                         evt.dir = WALK_EAST; 
-                        event_handler::raise_event (evt);
+                        event_handler::raise_event (&evt);
                     }
                 }
                 break;

@@ -23,7 +23,7 @@
  
 #include <algorithm>
 #include <iostream>
-#include <string>
+#include <string.h>
 
 #include "character.h"
 #include "dialog.h"
@@ -257,32 +257,30 @@ void dialog::run (u_int32 index)
 
 // execute embedded functions and replace shortcuts
 // yeah, the c string library hurts, but at least it's fast ;)
-char* dialog::scan_string (const char *s)
+string dialog::scan_string (const char *s)
 {
     u_int32 begin, end, len;
     PyObject *result;
-    char *start, *mid, *string = NULL;
-    char *tmp, *newstr = new char[strlen (s)+1];
+    char *tmp, *start, *mid, *str = NULL;
     character *the_player = data::the_player;
-    strcpy (newstr, s); 
+    string newstr (s); 
 
     // replace $... shortcuts
     while (1)
     {
         // check wether the string contains shortcut code at all
-        start = strchr (newstr, '$');
+        start = strchr (newstr.c_str (), '$');
         if (start == NULL) break;
 
         // replace "$name"
         if (strncmp (start, "$name", 5) == 0)
         {
-            begin = strlen (newstr) - strlen (start);
-            tmp = new char[strlen (newstr) - 4 + strlen (the_player->get_name().c_str ())];
-            strncpy (tmp, newstr, begin);
+            begin = newstr.length () - strlen (start);
+            tmp = new char[newstr.length () - 4 + strlen (the_player->get_name().c_str ())];
+            strncpy (tmp, newstr.c_str (), begin);
             tmp[begin] = 0;
             strcat (tmp, the_player->get_name().c_str ());
             strcat (tmp, start+5);
-            delete[] newstr;
             newstr = tmp;
 
             continue;
@@ -293,24 +291,23 @@ char* dialog::scan_string (const char *s)
         {
             // extract the "$fm{.../...} part
             end = strcspn (start, "}");
-            string = new char[end];
-            string[end-1] = 0;        
-            strncpy (string, start+3, end);
+            str = new char[end];
+            str[end-1] = 0;        
+            strncpy (str, start+3, end);
 
             if (the_player->storage::get_val ("gender") == FEMALE)
-                mid = get_substr (string, "{", "/");
+                mid = get_substr (str, "{", "/");
             else
-                mid = get_substr (string, "/", "}");
+                mid = get_substr (str, "/", "}");
 
-            begin = strlen(newstr) - strlen(start);
-            tmp = new char[strlen(newstr) - end + strlen (mid)];
-            strncpy (tmp, newstr, begin);
+            begin = newstr.length () - strlen(start);
+            tmp = new char[newstr.length () - end + strlen (mid)];
+            strncpy (tmp, newstr.c_str (), begin);
             tmp[begin] = 0;
             strcat (tmp, mid);
             strcat (tmp, start+end+1);
             
-            delete[] string;
-            delete[] newstr;
+            delete[] str;
             delete[] mid;
             newstr = tmp;
 
@@ -326,19 +323,19 @@ char* dialog::scan_string (const char *s)
     while (1)
     {
         // check wether the string contains python code at all
-        start = strchr (newstr, '{');
+        start = strchr (newstr.c_str (), '{');
         if (start == NULL) break;
 
         end = strcspn (start, "}");
 
-        string = new char[end];
-        string[end-1] = 0;        
+        str = new char[end];
+        str[end-1] = 0;        
 
         // extract the code without the brackets
-        strncpy (string, start+1, end-1);
+        strncpy (str, start+1, end-1);
 
         // run the string
-        result = PyObject_CallMethod (dialogue.get_instance (), string, NULL);
+        result = PyObject_CallMethod (dialogue.get_instance (), str, NULL);
 #ifdef PY_DEBUG
         python::show_traceback ();
 #endif
@@ -350,23 +347,22 @@ char* dialog::scan_string (const char *s)
         
         // Replace existing with new, changed string
         // 1. Calculate string's length
-        len = strlen (newstr);
+        len = newstr.length ();
         begin = len - strlen (start);
-        tmp = new char[(mid ? strlen(mid) : 0) + len - strlen(string)];
+        tmp = new char[(mid ? strlen(mid) : 0) + len - strlen(str)];
 
         // 2. Merge prefix, resulting string and postfix into new string
-        strncpy (tmp, newstr, begin);
+        strncpy (tmp, newstr.c_str (), begin);
         tmp[begin] = 0;
         if (mid) strcat (tmp, mid);
         strcat (tmp, start+end+1);
 
         // 3. Exchange strings
-        delete[] newstr;
         newstr = tmp;
 
         // Cleanup
         Py_XDECREF (result);
-        delete[] string;
+        delete[] str;
     }
 
     return newstr;

@@ -83,22 +83,23 @@ public:
      */ 
     mapcharacter *c;
 
-protected:
     /**
      * Compare two map events for equality.
      *
      * @param evnt The map event to compare this to.
      * @return <b>True</b> if the two events equal, <b>false</b> otherwise.
      */
-    bool equals (const event& evnt);
+    bool equals (const event* evnt);
 
     /**
      * Executes the script associated with this map %event. If the
      * event does not repeat it is removed from the %event handler.
      *
      * @param evnt The %event that triggered this map %event.
+     *
+     * @return The number of times the %event needs to be repeated.
      */
-    void execute (const event& evnt);
+    s_int32 execute (const event* evnt);
 };
 
 

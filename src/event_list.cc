@@ -21,6 +21,7 @@
  * 
  */
 
+#include <algorithm>
 #include "event_list.h"
 #include "event_handler.h"
  
@@ -36,21 +37,35 @@ event_list::~event_list ()
 // Unregisters and deletes all events.
 void event_list::clear () 
 {
-    event *e;
+    event *ev;
     
-    while (!events.empty ())
+    while (!Events.empty ())
     {
-        e = events.back ();
-        events.pop_back ();
-        delete e;    
+        ev = Events.back ();
+        ev->set_list (NULL);
+        Events.pop_back ();
+        delete ev;    
     }    
 }
 
 // Adds an event to the list and register it with the event_handler.
 void event_list::add_event (event* ev)
 {
-    events.push_back (ev);
+    ev->set_list (this);
+    Events.push_back (ev);
     event_handler::register_event (ev); 
+}
+
+// Remove an event from the list
+void event_list::remove_event (event *ev)
+{
+    vector<event*>::iterator i;
+
+    // Search for the event we want to remove
+    i = find (Events.begin (), Events.end (), ev);
+
+    // found? -> get rid of it :)
+    if (i != Events.end ()) Events.erase (i);
 }
 
 // Register an event for loading
@@ -64,11 +79,11 @@ void event_list::register_event (u_int8 type, new_event e)
 void event_list::put_state (ogzstream& out) const
 {
     std::vector <event *>::iterator i;
-    u_int32 nbr_events = events.size ();
+    u_int32 nbr_events = Events.size ();
     
     nbr_events >> out; 
 
-    for (i = events.begin (); i != events.end (); i++)
+    for (i = Events.begin (); i != Events.end (); i++)
         (*i)->put_state (out); 
 }
 
@@ -77,21 +92,22 @@ bool event_list::get_state (igzstream& in)
 {
     u_int32 nbr_events;
     u_int8 type;
+    event *ev;
 
     nbr_events << in;
     
     while (nbr_events--) 
     {
-        event * e = NULL;
+        ev = NULL;
         type << in;
         
         // Instanciate an event of the given type
         if (type < MAX_EVENTS && instanciate_event[type] != NULL)
-            e = instanciate_event[type]();
+            ev = instanciate_event[type]();
  
         // try to load it, ...
-        if (e != NULL && e->get_state (in))
-            add_event (e);
+        if (ev != NULL && ev->get_state (in))
+            add_event (ev);
         
         // ... otherwise fail.
         else

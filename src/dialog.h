@@ -174,7 +174,7 @@ private:
     
     void clear ();                  // Cleanup
     bool setup ();                  // Further dialogue initialisation
-    char* scan_string (const char*);// Look for enclosed code and execute it
+    string scan_string (const char*);// Look for enclosed code and execute it
     char* get_substr (const char*, char*, char*); 
 };
 

@@ -29,32 +29,32 @@ map_event::map_event () : event ()
 }
 
 // compare two map events
-bool map_event::equals (const event &e)
+bool map_event::equals (const event* e)
 {
     // we know that we've got an enter_event :)
-    map_event tmp = (map_event &) e;
+    map_event *t = (map_event *) e;
 
-    if (submap != -1 && tmp.submap != submap) return false;
-    if (x != -1 && tmp.x != x) return false;
-    if (y != -1 && tmp.y != y) return false;
-    if (dir != -1 && tmp.dir != dir) return false;
-    if (map != -1 && tmp.map != map) return false;
-    if (c && tmp.c != c) return false;
+    if (submap != -1 && t->submap != submap) return false;
+    if (x != -1 && t->x != x) return false;
+    if (y != -1 && t->y != y) return false;
+    if (dir != -1 && t->dir != dir) return false;
+    if (map != -1 && t->map != map) return false;
+    if (c && t->c != c) return false;
     
     return true;
 }
 
 // Execute map event's script
-void map_event::execute (const event& e)
+s_int32 map_event::execute (const event* e)
 {
     switch (Action)
     {
         case ACTION_SCRIPT:
         {
-            map_event t = (map_event&) e; 
+            map_event *t = (map_event *) e; 
     
             PyObject *args = Py_BuildValue ("(i, i, i, i, s)", 
-                t.submap, t.x, t.y, t.dir, t.c->get_id ().c_str ());  
+                t->submap, t->x, t->y, t->dir, t->c->get_id ().c_str ());  
     
             Script->run (args);
             
@@ -74,8 +74,10 @@ void map_event::execute (const event& e)
             break;
         }
         
-        default: return;
+        default: break;
     }
+    
+    return do_repeat ();
 }
 
 // Load a map event from file

@@ -28,18 +28,23 @@
 event::event ()
 {
     Repeat = -1;
+    Registered = false;
     Script = NULL;
     PyFunc = NULL;
     Args = NULL;
     Action = ACTION_NOTHING;
+    List = NULL;
 }
 
 // destructor
 event::~event ()
 {
     // automatically remove myself from the event_handler
-    event_handler::remove_event (this);
+    if (Registered) event_handler::remove_event (this);
     
+    // ... and from the event_list
+    if (List) List->remove_event (this);
+        
     clear ();
 }
 
@@ -170,4 +175,21 @@ bool event::get_state (igzstream & file)
     Py_XDECREF (args);
     
     return true;
+}
+
+// the event_list this event is kept in
+void event::set_list (event_list *l)
+{
+    List = l;
+}
+
+// repeat an event
+s_int32 event::do_repeat ()
+{
+    s_int32 count = -1;
+    
+    if (Repeat > 0) count = --Repeat;
+    if (count == 0) delete this;
+    
+    return count;
 }

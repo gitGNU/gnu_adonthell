@@ -25,6 +25,7 @@
 #define EVENT_HANDLER_H__
 
 #include "event_handler_base.h"
+#include "event_list.h"
 
 /**
  * It ensures global access to the individual %event handlers.
@@ -44,21 +45,6 @@ public:
      */
     static void cleanup ();
 
-    /**
-     * Remove all events from all handlers
-     */
-    static void clear ();
-    
-    /** 
-     * Registers an %event.
-     * 
-     * @param ev pointer to the %event to register.
-     */
-    static void register_event (event* ev)
-    {
-        Handler[ev->type ()]->register_event (ev);
-    }
-
     /** 
      * Unregister an %event.
      * 
@@ -66,6 +52,7 @@ public:
      */
     static void remove_event (event* ev)
     {
+        ev->set_registered (false);
         Handler[ev->type ()]->remove_event (ev);
     }
 
@@ -74,10 +61,28 @@ public:
      * 
      * @param ev %event to raise.
      */
-    static void raise_event (const event& ev)
+    static void raise_event (const event* ev)
     {
-        Handler[ev.type ()]->raise_event (ev);
+        Handler[ev->type ()]->raise_event (ev);
     }
+
+protected:
+    /** 
+     * Registers an %event.
+     * 
+     * @param ev pointer to the %event to register.
+     */
+    static void register_event (event* ev)
+    {
+        ev->set_registered (true);
+        Handler[ev->type ()]->register_event (ev);
+    }
+
+    /**
+     * Only %event_list is allowed to register events with the
+     * %event_handler.
+     */
+    friend void event_list::add_event (event* ev);
 
 private:
     /**

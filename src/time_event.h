@@ -60,6 +60,7 @@ public:
     time_event () : event ()
     {
         Type = TIME_EVENT;
+        Repeat = 1;
     }
      
     /**
@@ -72,6 +73,7 @@ public:
     {
         Type = TIME_EVENT;
         Time = time;
+        Repeat = 1;
     }
 #endif // SWIG
     
@@ -96,10 +98,10 @@ public:
      * @param evnt The time event to compare this to.
      * @return <b>True</b> if the two events equal, <b>false</b> otherwise.
      */
-    bool equals (const event & evnt)
+    bool equals (const event * evnt)
     {
-        time_event e = (time_event &) evnt;
-        return Time <= e.time ();
+        time_event *e = (time_event *) evnt;
+        return Time <= e->time ();
     }
     
     /**
@@ -107,8 +109,10 @@ public:
      * event repeats it is re-registered with the %event handler.
      *
      * @param evnt The %event that triggered this time %event.
+     *
+     * @return The number of times the %event needs to be repeated.
      */
-    void execute (const event & evnt);
+    s_int32 execute (const event * evnt);
     //@}
     
     /**
