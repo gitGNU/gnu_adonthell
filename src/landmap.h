@@ -57,7 +57,7 @@ class mapsquare_tile
   bool operator == (const mapsquare_tile & mt)
     {  return (mt.y==y && mt.x==x); }
 
-  void draw(mapview * mv);
+  void draw(mapview * mv, u_int16 x, u_int16 y);
   void draw_border(mapview * mv);
   void draw_base_tile(mapview * mv);
   friend class mapsquare;
@@ -86,7 +86,7 @@ class mapsquare_char
   bool operator == (const mapsquare_char & mt)
     {  return (mt.y==y && mt.x==x); }
   
-  void draw(mapview * mv);
+  void draw(mapview * mv, u_int16 x, u_int16 y);
   /*  void draw_border(mapview * mv);
       void draw_base_tile(mapview * mv);*/
   friend class mapsquare;
@@ -292,7 +292,6 @@ class landmap
 
   friend class mapview;
   friend class mapcharacter;
-  friend class mapengine;
 #endif // SWIG
 
 #ifdef _EDIT_

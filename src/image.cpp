@@ -132,11 +132,16 @@ void image::get_rects(s_int16 x, s_int16 y)
 {
   if(draw_to)
     {
+      rect tdr;
       drawing_area da_int, im_zone(x,y,length(), height());
-      SDL_Rect t=draw_to->get_rects();
+      rect t=draw_to->get_rects();
       da_int=t;
       im_zone.assign_drawing_area(&da_int);
-      dr=im_zone.get_rects();
+      tdr=im_zone.get_rects();
+      dr.x=tdr.x();
+      dr.y=tdr.y();
+      dr.w=tdr.length();
+      dr.h=tdr.height();
       sr=dr;
       sr.x=x<dr.x?dr.x-x:0;
       sr.y=y<dr.y?dr.y-y:0;

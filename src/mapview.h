@@ -28,11 +28,11 @@ class mapview
 : public mapselect
 #endif
 {
-  u_int16 length,height;      // size of the view in pixels
+  u_int16 length_,height_;      // size of the view in pixels
   u_int16 d_length,d_height;  // size of the view in map squares
 
   u_int16 currentsubmap;
-  u_int16 x,y;
+  //  u_int16 x,y;
   u_int16 posx, posy;
   u_int16 offx, offy;
 
@@ -92,9 +92,12 @@ class mapview
   mapview();
   ~mapview();
 
+  u_int16 length() { return length_; };
+  u_int16 height() { return height_; };
+
   void attach_map(landmap * m);
   void detach_map();
-  void set_screen_pos(u_int16 nx, u_int16 ny);
+
   s_int8 set_current_submap(u_int16 sm);
   s_int8 set_pos(u_int16 x, u_int16 y, s_int16 ox=0, s_int16 oy=0);
   s_int8 center_on(u_int16 x, u_int16 y, s_int16 ox=0, s_int16 oy=0);
@@ -118,7 +121,7 @@ class mapview
 
   s_int8 get_state(gzFile file);
   s_int8 put_state(gzFile file);
-  
+
 #ifndef _EDIT_
   void set_schedule(char * file);
 #endif

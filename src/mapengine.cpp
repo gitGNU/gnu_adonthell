@@ -19,7 +19,7 @@
 
 mapengine::mapengine()
 {
-  mv.resize(320,240);
+  mv.resize(screen::length(),screen::height());
   letsexit=false;
 }
 

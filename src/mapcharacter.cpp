@@ -88,7 +88,10 @@ s_int8 mapcharacter::load(const char * fname)
   if(fileops::get_version (file, 1, 1, fdef))
     retvalue=get(file);
   gzclose(file);
+
+#if defined(USE_PYTHON)
   filename_=fname;
+#endif
 
   return 0;
 }
@@ -466,9 +469,9 @@ void mapcharacter::set_schedule(char * file)
 	  // If no errors occured update schedule code ...
 	  if (schedule) delete schedule;
 	  schedule = PyNode_Compile (n, file);
-	  PyNode_Free (n);
-	  
-	  schedule_file=file;
+      PyNode_Free (n);
+
+      schedule_file=file;
 	}
       else
         {
@@ -671,10 +674,10 @@ void mapcharacter::draw(s_int16 x, s_int16 y, drawing_area * da_opt=NULL)
   anim[current_move]->draw(x,y,da_opt);
 }
 
-void mapcharacter::draw(mapview * mv)
+void mapcharacter::draw(mapview * mv, u_int16 x, u_int16 y)
 {
-  u_int16 xdraw=((posx-mv->posx-basex)*MAPSQUARE_SIZE)+offx-mv->offx+mv->x-mv->draw_offx;
-  u_int16 ydraw=((posy-mv->posy-basey)*MAPSQUARE_SIZE)+offy-mv->offy+mv->y-mv->draw_offy;
+  u_int16 xdraw=((posx-mv->posx-basex)*MAPSQUARE_SIZE)+offx-mv->offx+x-mv->draw_offx;
+  u_int16 ydraw=((posy-mv->posy-basey)*MAPSQUARE_SIZE)+offy-mv->offy+y-mv->draw_offy;
   draw(xdraw,ydraw,mv->da);
 }
 
@@ -774,7 +777,6 @@ s_int8 mapcharacter::save(const char * fname)
   if(!file) return(-1);
   retvalue=put(file);
   gzclose(file);
-  filename_=fname;
   return 0;
 }
 

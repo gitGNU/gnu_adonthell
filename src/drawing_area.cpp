@@ -13,44 +13,28 @@
 
 #include "drawing_area.h"
 
-drawing_area::drawing_area(u_int16 px, u_int16 py, u_int16 pw, u_int16 ph)
+drawing_area::drawing_area(s_int16 px, s_int16 py, s_int16 pw, s_int16 ph)
 {
-  x=px;
-  y=py;
-  w=pw;
-  h=ph;
+  move(px,py);
+  resize(pw,ph);
   draw_to=NULL;
 }
 
 drawing_area::drawing_area()
 {
-  x=0;
-  y=0;
-  w=0;
-  h=0;
+  move(0,0);
+  resize(0,0);
   draw_to=NULL;
-}
-
-void drawing_area::resize(u_int16 dl, u_int16 dh)
-{
-  w=dl;
-  h=dh;
-}
-
-void drawing_area::move(u_int16 dx, u_int16 dy)
-{
-  x=dx;
-  y=dy;
 }
 
 bool drawing_area::is_x_in(s_int16 px)
 {
-  return((px-x>0)&&(px-(x+w)<0));
+  return((px-x()>0)&&(px-(x()+length())<0));
 }
 
 bool drawing_area::is_y_in(s_int16 py)
 {
-  return((py-y>0)&&(py-(y+h)<0));
+  return((py-y()>0)&&(py-(y()+height())<0));
 }
 
 bool drawing_area::is_point_in(s_int16 px, s_int16 py)
@@ -58,48 +42,34 @@ bool drawing_area::is_point_in(s_int16 px, s_int16 py)
   return(is_x_in(px) && is_y_in(py));
 }
 
-void drawing_area::assign_drawing_area(drawing_area * da)
-{
-  draw_to=da;
-}
-
-void drawing_area::detach_drawing_area()
-{
-  draw_to=NULL;
-}
-
-SDL_Rect drawing_area::get_rects()
+rect drawing_area::get_rects()
 {
   if(draw_to)
     {
-      SDL_Rect ret;
-      SDL_Rect temp=draw_to->get_rects();
-      ret.x=temp.x>x?temp.x:x;
-      ret.y=temp.y>y?temp.y:y;
-      ret.w=(temp.x+temp.w)<(x+w)?
-	temp.x+temp.w-ret.x>0?temp.x+temp.w-ret.x:0:
-	x+w-ret.x>0?x+w-ret.x:0;
-      ret.h=(temp.y+temp.h)<(y+h)?
-	temp.y+temp.h-ret.y>0?temp.y+temp.h-ret.y:0:
-	y+h-ret.y>0?y+h-ret.y:0;
+      rect ret;
+      rect temp=draw_to->get_rects();
+      ret.move(temp.x()>x()?temp.x():x(),temp.y()>y()?temp.y():y());
+      ret.resize((temp.x()+temp.length())<(x()+length())?temp.x()+temp.length()-ret.x()>0?
+		 temp.x()+temp.length()-ret.x():0:x()+length()-ret.x()>0?x()+length()-ret.x():0,
+		 (temp.y()+temp.height())<(y()+height())?temp.y()+temp.height()-ret.y()>0?
+		 temp.y()+temp.height()-ret.y():0:y()+height()-ret.y()>0?y()+height()-ret.y():0);
       return ret;
     }
   else return *this;
 }
 
-drawing_area &drawing_area::operator = (const SDL_Rect & r)
+drawing_area &drawing_area::operator = (const rect & r)
 {
-  x=r.x;
-  y=r.y;
-  w=r.w;
-  h=r.h;
+  rect & t=(rect&)r;
+  move(t.x(),t.y());
+  resize(t.length(),t.height());
   return *this;
 }
 
 drawing_area drawing_area::operator + (drawing_area & da)
 {
   drawing_area ret, temp=(*this);
-  SDL_Rect t;
+  rect t;
   temp.assign_drawing_area(&da);
   t=temp.get_rects();
   ret=t;

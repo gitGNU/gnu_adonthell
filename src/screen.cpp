@@ -140,9 +140,14 @@ void screen::drawbox(u_int16 x, u_int16 y, u_int16 w, u_int16 h,
   static SDL_Rect dr;
   if(da_opt)
     {
+      rect tdr;
       drawing_area da_tmp(x,y,w,h);
       da_tmp.assign_drawing_area(da_opt);
-      dr=da_tmp.get_rects();
+      tdr=da_tmp.get_rects();
+      dr.x=tdr.x();
+      dr.y=tdr.y();
+      dr.w=tdr.length();
+      dr.h=tdr.height();
     }
   else
     {
@@ -158,10 +163,6 @@ void screen::clear()
 {
   drawbox(0,0,l,h,0);
 }
-
-/*
-
-*/
 
 void screen::makesquare(u_int16 px,u_int16 py, u_int16 fact)
 {

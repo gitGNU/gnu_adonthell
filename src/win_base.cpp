@@ -142,8 +142,7 @@ void win_base::resize(u_int16 tl,u_int16 th)
   height_=th;
   
   //resize drawing area too.
-  da_->w=tl;
-  da_->h=th;
+  da_->resize(tl,th);
   
   //modify the theme object --> in theme object there are the border, background size  and another .....
   if(theme_) theme_->update(this);  
@@ -196,8 +195,7 @@ void win_base::move(s_int16 tx,s_int16 ty)
 void win_base::update_drawing_area_position()
 {
   //update drawing area to the real position
-  da_->x=realx_;
-  da_->y=realy_;
+  da_->move(realx_,realy_);
 }
 
 void win_base::update_real_position()

@@ -18,9 +18,9 @@
 
 void mapview::init()
 {
-  length=height=d_length=d_height=currentsubmap=posx=posy=0;
+  length_=height_=d_length=d_height=currentsubmap=posx=posy=0;
   m_map=NULL;
-  x=y=offx=offy=draw_offx=draw_offy=0;
+  offx=offy=draw_offx=draw_offy=0;
 #ifdef _EDIT_
   currentobj=0;
   walkimg=new image(MAPSQUARE_SIZE, MAPSQUARE_SIZE);
@@ -59,21 +59,10 @@ mapview::~mapview()
 
 void mapview::attach_map(landmap * m)
 {
-  cout << "Attaching " << m << " to instance " << this << endl;
   m_map=m;
   currentsubmap=0;
 #ifndef _EDIT_
-  // Pass the mapview (succeed)
-  PyDict_SetItemString(locals,"test",pass_instance(this,"mapview"));
-  // Pass a mapcharacter of the map instance we want to pass (succeed)
-  cout << "Passing the map object...\n";
-  PyDict_SetItemString(locals,"testgain",pass_instance(m_map->pattern[0],"mapobject"));
-  cout << "Done!\n";
-  cout << "Is the map correctly allocated and loaded? " << m_map->nbr_of_submaps << " Yes!" << endl;
-  // Pass the map instance (FAILURE!)
-  cout << "Trying to pass the map...\n";
   PyDict_SetItemString(locals,"mymap",pass_instance(m_map,"landmap"));
-  cout << "Succeed! Champagne!\n";
 #endif
 #ifdef _EDIT_
   currentobj=0;
@@ -96,7 +85,6 @@ void mapview::attach_map(landmap * m)
 
 void mapview::detach_map()
 {
-  cout << "Detaching instance " << this << endl;
   m_map=NULL;
 #ifndef _EDIT_
   PyDict_DelItemString(locals,"mymap");
@@ -104,13 +92,6 @@ void mapview::detach_map()
 #ifdef _EDIT_
   mapselect::resize(0,0);
 #endif
-}
-
-void mapview::set_screen_pos(u_int16 nx, u_int16 ny)
-{
-  x=nx;
-  y=ny;
-  if(da) da->move(x,y);
 }
 
 s_int8 mapview::set_current_submap(u_int16 sm)
@@ -170,7 +151,7 @@ s_int8 mapview::center_on(u_int16 px, u_int16 py, s_int16 ox=0, s_int16 oy=0)
   if(npy>m_map->submap[currentsubmap]->height-d_height ||
      (npy==m_map->submap[currentsubmap]->height-d_height && oy))
     { npy=m_map->submap[currentsubmap]->height-d_height; oy=0; }
-  
+
   return set_pos(npx,npy,ox,oy);
 }
 
@@ -204,13 +185,13 @@ void mapview::scroll_up()
 
 void mapview::resize(u_int16 l, u_int16 h)
 {
-  length=l;
-  height=h;
+  length_=l;
+  height_=h;
   draw_offx=(l%MAPSQUARE_SIZE);
   draw_offy=(h%MAPSQUARE_SIZE);
   d_length=(l/MAPSQUARE_SIZE)+(l%MAPSQUARE_SIZE!=0);
   d_height=(h/MAPSQUARE_SIZE)+(h%MAPSQUARE_SIZE!=0);
-  da->resize(length,height);
+  da->resize(length(),height());
 #ifdef _EDIT_
   mapselect::resize_view(d_length,d_height);
 #endif
@@ -239,7 +220,6 @@ s_int8 mapview::get_state(gzFile file)
   // Screen position (FIXME: obsolete!)
   gzread(file,&a,sizeof(a));
   gzread(file,&b,sizeof(b));
-  set_screen_pos(a,b);
   // Position on map
   gzread(file,&a,sizeof(a));
   gzread(file,&b,sizeof(b));
@@ -254,22 +234,23 @@ s_int8 mapview::get_state(gzFile file)
 
 s_int8 mapview::put_state(gzFile file)
 {
+  u_int16 b=0;
   // Write the mapview's schedule
   fileops::put_string(file,schedule_file.c_str());
 
   // Write the mapview's dimensions
-  gzwrite(file,&length,sizeof(length));
-  gzwrite(file,&height,sizeof(height));
+  gzwrite(file,&length_,sizeof(length_));
+  gzwrite(file,&height_,sizeof(height_));
   gzwrite(file,&currentsubmap,sizeof(currentsubmap));
-  gzwrite(file,&x,sizeof(x));
-  gzwrite(file,&y,sizeof(y));
+  // FIXME: Obsolete x and y members - Fire them!
+  gzwrite(file,&b,sizeof(b));
+  gzwrite(file,&b,sizeof(b));
   gzwrite(file,&posx,sizeof(posx));
   gzwrite(file,&posy,sizeof(posy));
   gzwrite(file,&offx,sizeof(offx));
   gzwrite(file,&offy,sizeof(offy));
   return 0;
 }
-
 
 #ifndef _EDIT_
 void mapview::set_schedule(char * file)
@@ -332,7 +313,7 @@ void mapview::draw(u_int16 x, u_int16 y, drawing_area * da_opt=NULL)
   static landsubmap * l;
   if(!m_map) return;
 
-  set_screen_pos(x,y);
+  da->move(x,y);
 
   l=m_map->submap[currentsubmap];
   if(!l->length || !l->height) return;
@@ -393,14 +374,14 @@ void mapview::draw(u_int16 x, u_int16 y, drawing_area * da_opt=NULL)
 	    {
 	      if(it->base_tile->y<=itc->base_tile->y)
 		{
-		  it->draw(this);
+		  it->draw(this,x,y);
 		  it++;
 		}
-       	      else { itc->base_tile->mchar->draw(this); itc++; }
+       	      else { itc->base_tile->mchar->draw(this,x,y); itc++; }
 	    }
-    	  else { itc->base_tile->mchar->draw(this); itc++; }
+    	  else { itc->base_tile->mchar->draw(this,x,y); itc++; }
 	}
-	else { it->draw(this); it++;}
+	else { it->draw(this,x,y); it++;}
     }
   critical_draw.clear();
   characters_draw.clear();
@@ -412,7 +393,7 @@ void mapview::draw(u_int16 x, u_int16 y, drawing_area * da_opt=NULL)
       for(it=l->land[i0][j].tiles.begin();it!=l->land[i0][j].tiles.end()
 	    && *(it->base_tile)<=*it;it++)
 	if(it->y==it->base_tile->y && it->x>it->base_tile->x)
-	  it->base_tile->draw(this);
+	  it->base_tile->draw(this,x,y);
       
       for(itc=l->land[i0][j].mapchars.begin();
 	  itc!=l->land[i0][j].mapchars.end();itc++)
@@ -425,7 +406,7 @@ void mapview::draw(u_int16 x, u_int16 y, drawing_area * da_opt=NULL)
 	  for(it=l->land[i][j].base_begin;
 	      it!=l->land[i][j].tiles.end() && *(it->base_tile)<*it;it++);  
 	  for(;it!=l->land[i][j].tiles.end() && *(it->base_tile)==*it;it++) 
-	    it->draw(this);
+	    it->draw(this,x,y);
 	  
 	  for(itc=l->land[i][j].mapchars.begin();
 	      itc!=l->land[i][j].mapchars.end();itc++)
@@ -436,7 +417,7 @@ void mapview::draw(u_int16 x, u_int16 y, drawing_area * da_opt=NULL)
       for(it=l->land[ie-1][j].tiles.begin();it!=l->land[ie-1][j].tiles.end();
 	  it++)
 	if(it->y==it->base_tile->y && it->x<it->base_tile->x)
-	  it->base_tile->draw(this);      
+	  it->base_tile->draw(this,x,y);      
 
       for(itc=l->land[ie-1][j].mapchars.begin();
 	  itc!=l->land[ie-1][j].mapchars.end();itc++)
@@ -444,7 +425,7 @@ void mapview::draw(u_int16 x, u_int16 y, drawing_area * da_opt=NULL)
 	  characters_draw.push_back(*itc);
 
       for(itc=characters_draw.begin();itc!=characters_draw.end();itc++)
-	  itc->mchar->draw(this);
+	  itc->mchar->draw(this,x,y);
       characters_draw.clear();
     }
 
@@ -516,14 +497,14 @@ void mapview::draw(u_int16 x, u_int16 y, drawing_area * da_opt=NULL)
 	    {
 	      if(it->base_tile->y<=itc->base_tile->y)
 		{
-		  it->draw(this);
+		  it->draw(this,x,y);
 		  it++;
 		}
-       	      else { itc->base_tile->mchar->draw(this); itc++; }
+       	      else { itc->base_tile->mchar->draw(this,x,y); itc++; }
 	    }
-    	  else { itc->base_tile->mchar->draw(this); itc++; }
+    	  else { itc->base_tile->mchar->draw(this,x,y); itc++; }
 	}
-	else { it->draw(this); it++;}
+	else { it->draw(this,x,y); it++;}
     }
   critical_draw.clear();
   characters_draw.clear();

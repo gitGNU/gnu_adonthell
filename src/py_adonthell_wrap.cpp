@@ -4318,6 +4318,19 @@ static PyObject *_wrap_mapcharacter_get_move(PyObject *self, PyObject *args) {
 }
 
 
+static PyObject *_wrap_mapcharacter_filename(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapcharacter *arg0 ;
+    PyObject * argo0 =0 ;
+    string *result ;
+    
+    if(!PyArg_ParseTuple(args,"O:mapcharacter_filename",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
+    result = new string (arg0->filename());    resultobj = SWIG_NewPointerObj((void *)result, SWIGTYPE_p_string);
+    return resultobj;
+}
+
+
 static PyObject *_wrap_mapcharacter_set_schedule(PyObject *self, PyObject *args) {
     PyObject *resultobj;
     mapcharacter *arg0 ;
@@ -4450,19 +4463,6 @@ static PyObject *_wrap_mapcharacter_update_move(PyObject *self, PyObject *args) 
 }
 
 
-static PyObject *_wrap_mapcharacter_filename(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    mapcharacter *arg0 ;
-    PyObject * argo0 =0 ;
-    string *result ;
-    
-    if(!PyArg_ParseTuple(args,"O:mapcharacter_filename",&argo0)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
-    result = new string (arg0->filename());    resultobj = SWIG_NewPointerObj((void *)result, SWIGTYPE_p_string);
-    return resultobj;
-}
-
-
 static PyObject *_wrap_mapcharacter_update(PyObject *self, PyObject *args) {
     PyObject *resultobj;
     mapcharacter *arg0 ;
@@ -4498,13 +4498,15 @@ static PyObject *_wrap_mapcharacter_draw(PyObject *self, PyObject *args) {
     PyObject *resultobj;
     mapcharacter *arg0 ;
     mapview *arg1 ;
+    unsigned short arg2 ;
+    unsigned short arg3 ;
     PyObject * argo0 =0 ;
     PyObject * argo1 =0 ;
     
-    if(!PyArg_ParseTuple(args,"OO:mapcharacter_draw",&argo0,&argo1)) return NULL;
+    if(!PyArg_ParseTuple(args,"OOhh:mapcharacter_draw",&argo0,&argo1,&arg2,&arg3)) return NULL;
     if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
     if ((SWIG_ConvertPtr(argo1,(void **) &arg1,SWIGTYPE_p_mapview,1)) == -1) return NULL;
-    arg0->draw(arg1);
+    arg0->draw(arg1,arg2,arg3);
     Py_INCREF(Py_None);
     resultobj = Py_None;
     return resultobj;
@@ -5252,6 +5254,34 @@ static PyObject *_wrap_delete_mapview(PyObject *self, PyObject *args) {
 }
 
 
+static PyObject *_wrap_mapview_length(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapview *arg0 ;
+    PyObject * argo0 =0 ;
+    unsigned short result ;
+    
+    if(!PyArg_ParseTuple(args,"O:mapview_length",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapview,1)) == -1) return NULL;
+    result = (unsigned short )arg0->length();
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapview_height(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapview *arg0 ;
+    PyObject * argo0 =0 ;
+    unsigned short result ;
+    
+    if(!PyArg_ParseTuple(args,"O:mapview_height",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapview,1)) == -1) return NULL;
+    result = (unsigned short )arg0->height();
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+}
+
+
 static PyObject *_wrap_mapview_attach_map(PyObject *self, PyObject *args) {
     PyObject *resultobj;
     mapview *arg0 ;
@@ -5277,22 +5307,6 @@ static PyObject *_wrap_mapview_detach_map(PyObject *self, PyObject *args) {
     if(!PyArg_ParseTuple(args,"O:mapview_detach_map",&argo0)) return NULL;
     if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapview,1)) == -1) return NULL;
     arg0->detach_map();
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
-static PyObject *_wrap_mapview_set_screen_pos(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    mapview *arg0 ;
-    unsigned short arg1 ;
-    unsigned short arg2 ;
-    PyObject * argo0 =0 ;
-    
-    if(!PyArg_ParseTuple(args,"Ohh:mapview_set_screen_pos",&argo0,&arg1,&arg2)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapview,1)) == -1) return NULL;
-    arg0->set_screen_pos(arg1,arg2);
     Py_INCREF(Py_None);
     resultobj = Py_None;
     return resultobj;
@@ -8790,6 +8804,7 @@ static PyMethodDef adonthellcMethods[] = {
 	 { "mapcharacter_remove_from_pos", _wrap_mapcharacter_remove_from_pos, METH_VARARGS },
 	 { "mapcharacter_jump", _wrap_mapcharacter_jump, METH_VARARGS },
 	 { "mapcharacter_get_move", _wrap_mapcharacter_get_move, METH_VARARGS },
+	 { "mapcharacter_filename", _wrap_mapcharacter_filename, METH_VARARGS },
 	 { "mapcharacter_set_schedule", _wrap_mapcharacter_set_schedule, METH_VARARGS },
 	 { "mapcharacter_get_schedule", _wrap_mapcharacter_get_schedule, METH_VARARGS },
 	 { "mapcharacter_is_schedule_activated", _wrap_mapcharacter_is_schedule_activated, METH_VARARGS },
@@ -8799,7 +8814,6 @@ static PyMethodDef adonthellcMethods[] = {
 	 { "mapcharacter_is_action_activated", _wrap_mapcharacter_is_action_activated, METH_VARARGS },
 	 { "mapcharacter_set_action_active", _wrap_mapcharacter_set_action_active, METH_VARARGS },
 	 { "mapcharacter_update_move", _wrap_mapcharacter_update_move, METH_VARARGS },
-	 { "mapcharacter_filename", _wrap_mapcharacter_filename, METH_VARARGS },
 	 { "mapcharacter_update", _wrap_mapcharacter_update, METH_VARARGS },
 	 { "mapcharacter_launch_action", _wrap_mapcharacter_launch_action, METH_VARARGS },
 	 { "mapcharacter_draw", _wrap_mapcharacter_draw, METH_VARARGS },
@@ -8856,9 +8870,10 @@ static PyMethodDef adonthellcMethods[] = {
 	 { "mapview_init", _wrap_mapview_init, METH_VARARGS },
 	 { "new_mapview", _wrap_new_mapview, METH_VARARGS },
 	 { "delete_mapview", _wrap_delete_mapview, METH_VARARGS },
+	 { "mapview_length", _wrap_mapview_length, METH_VARARGS },
+	 { "mapview_height", _wrap_mapview_height, METH_VARARGS },
 	 { "mapview_attach_map", _wrap_mapview_attach_map, METH_VARARGS },
 	 { "mapview_detach_map", _wrap_mapview_detach_map, METH_VARARGS },
-	 { "mapview_set_screen_pos", _wrap_mapview_set_screen_pos, METH_VARARGS },
 	 { "mapview_set_current_submap", _wrap_mapview_set_current_submap, METH_VARARGS },
 	 { "mapview_set_pos", _wrap_mapview_set_pos, METH_VARARGS },
 	 { "mapview_center_on", _wrap_mapview_center_on, METH_VARARGS },

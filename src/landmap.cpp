@@ -40,20 +40,20 @@ mapsquare_tile::~mapsquare_tile()
 #endif
 }
 
-void mapsquare_tile::draw(mapview * mv)
+void mapsquare_tile::draw(mapview * mv, u_int16 x, u_int16 y)
 {
   if(is_base)
     {
       u_int16 rx, ry;
-      rx=(mv->posx>0)?x-mv->posx:x;
-      ry=(mv->posy>0)?y-mv->posy:y;
+      rx=(mv->posx>0)?this->x-mv->posx:this->x;
+      ry=(mv->posy>0)?this->y-mv->posy:this->y;
       mv->m_map->pattern[objnbr]->draw
-	((rx*MAPSQUARE_SIZE-mv->offx)+mv->x-mv->draw_offx,
-	 (ry*MAPSQUARE_SIZE-mv->offy)+mv->y-mv->draw_offy,
+	((rx*MAPSQUARE_SIZE-mv->offx)+x-mv->draw_offx,
+	 (ry*MAPSQUARE_SIZE-mv->offy)+y-mv->draw_offy,
 	 mv->da);
     }
   else
-    base_tile->draw(mv);
+    base_tile->draw(mv,x,y);
 }
 
 void mapsquare_tile::draw_border(mapview * mv)
@@ -112,20 +112,20 @@ bool mapsquare_char::operator <= (const mapsquare_char & m)
   return (m.y>y || (m.y==y && m.x>=x));
 }
 
-void mapsquare_char::draw(mapview * mv)
+void mapsquare_char::draw(mapview * mv, u_int16 x, u_int16 y)
 {
   if(is_base)
     {
       u_int16 rx, ry;
-      rx=(mv->posx>0)?x-mv->posx:x;
-      ry=(mv->posy>0)?y-mv->posy:y;
+      rx=(mv->posx>0)?this->x-mv->posx:this->x;
+      ry=(mv->posy>0)?this->y-mv->posy:this->y;
       mchar->draw
-	((rx*MAPSQUARE_SIZE-mv->offx)+mv->x,
-	 (ry*MAPSQUARE_SIZE-mv->offy)+mv->y,
+	((rx*MAPSQUARE_SIZE-mv->offx)+x,
+	 (ry*MAPSQUARE_SIZE-mv->offy)+y,
 	 mv->da);
     }
   else
-    base_tile->draw(mv);
+    base_tile->draw(mv,x,y);
 }
 
 mapsquare::mapsquare()
@@ -666,7 +666,9 @@ void landmap::update()
 #endif
     }
   for(i=0;i<mapchar.size();i++)
-    mapchar[i]->update();
+    {
+      mapchar[i]->update();
+    }
 }
 
 s_int8 landmap::put_mapobject(u_int16 smap, u_int16 px, u_int16 py, 

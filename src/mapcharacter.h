@@ -18,8 +18,8 @@
 
 #define MAPCHAR_DIR "gfx/mapcharacters/"
 
-#include <string>
 #include <vector>
+#include <string>
 #include "animation.h"
 #include "maptpl.h"
 #include "landmap.h"
@@ -119,6 +119,8 @@ class mapcharacter : public maptpl, public character_base
   u_int16 get_move() {return current_move;}
   
 #ifndef _EDIT_
+  string filename() { return filename_; }
+
   void set_schedule(char * file);
   string get_schedule() { return schedule_file; }
   bool is_schedule_activated() { return schedule_activated; }
@@ -130,11 +132,10 @@ class mapcharacter : public maptpl, public character_base
   void set_action_active(bool a) { action_activated=a; }
   void update_move();
 
-  string filename() { return filename_; }
 #endif
   void update();
   void launch_action(mapcharacter * requester);
-  void draw(mapview * mv);
+  void draw(mapview * mv, u_int16 x, u_int16 y);
   void draw(s_int16 x, s_int16 y, drawing_area * da_opt=NULL);
 
   // Testing if a move is possible
@@ -163,7 +164,6 @@ class mapcharacter : public maptpl, public character_base
 #endif // SWIG
 
  protected:
-  string filename_;
   u_int16 current_move;
   u_int16 ask_move;
   u_int16 submap;
@@ -181,6 +181,7 @@ class mapcharacter : public maptpl, public character_base
   PyCodeObject * action;     // The character's action
   string schedule_file;
   string action_file;
+  string filename_;
 #endif
 
 #ifdef _EDIT_
