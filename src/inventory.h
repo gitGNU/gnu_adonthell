@@ -117,6 +117,8 @@ class inventory
   u_int32 getMaxItems() const; /* returns the maximum number of item objects
 				  that may be stored in the inventory (the
 				  default is 200) */
+  u_int32 getDispItems() const; /* returns the number of items and placeholders
+				   in the display vector */
   u_int32 getWeight() const; /* returns the total weight of all items
 				contained in the inventory */
   item* getItem( const u_int32 i ); /* returns a pointer to the item at
@@ -199,18 +201,18 @@ class inventory
   bool setWeight( const u_int32 tw ); /* sets the total weight of all
 					 items in the inventory */
   u_int32 hashcode( const string name ); // generates a hashcode given a name
-  bool getHash( const string name, u_int32& i, u_int32& d );
+  bool getHash( const string name, u_int32& i, u_int32& d, u_int32& di );
                               /* for a given name 'name', sets the index 'i'
 				 and depth 'd' of the item's location in the
-				 hash table or returns false is the item is not
+				 hash table and index in the display vector
+				 'di' or returns false if the item is not
 				 found in the table */
   bool removeDisp( const string nm, const u_int16 n, const u_int32 i );
                               /* removes 'n' of the item with the index
 				 'i' from the display list; 'nm' is just passed
 				 as a precaution against accidental deletion */
   bool removeHash( const string nm, u_int16 n, 
-		   const u_int32 i, const u_int32 d,   
-		   u_int32& di );                      /* removes n of the item
+		   const u_int32 i, const u_int32 d ); /* removes n of the item
 							  at index 'i', depth
 							  'd' from the hash and
 							  sets 'di' to the
@@ -222,6 +224,20 @@ class inventory
 							  accidentally 
 							  deleted */
   item* getPlaceholder() const; // returns a pointer to the placeholder item
+  bool binarySearch( const u_int target, u_int32 first,
+		     u_int32 last, u_int32& posi ); /* the good old binary
+						       search algorithm, acting
+						       on the placeholder
+						       position stack */
+  bool binaryPairSearch( const u_int target, u_int32 first,
+			 u_int32 last, u_int32& posi ); /* the modified binary
+							   search algorithm
+							   that operates on the
+							   placeholder position
+							   stack and returns
+							   the place to stick
+							   the new placeholder
+							   position */
 
   // ========================================================================
 
@@ -246,6 +262,8 @@ class inventory
   item* inv[HASH_SIZE]; // hash table
   vector< item* > disp; // display list
   item* pl; // The placeholder item for the display vector
+  vector< u_int32 > pl_pos; /* the positions of all placeholders in the display
+			       vector */
 };
 
 #endif
