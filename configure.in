@@ -169,21 +169,34 @@ AC_MSG_RESULT(found)
 
 dnl Get the libraries that python depends on
 
+AC_PATH_PROG(haveldd, ldd)
 AC_MSG_CHECKING(for Python's dependencies)
 
-changequote(<<, >>)
-py_deps=`ldd $PYPACKAGE | sed 's/\( *lib\([^\/]*\)\.so.*=.*$\)/-l\2/p; d'`
-for py_lib in $py_deps ; do
-    if test "$py_lib" != "-lm" && test "$py_lib" != "-lc" ; then
-        PY_DEPS="$PY_DEPS $py_lib"
-    fi
-done
-changequote([, ])
+if test x$haveldd != x ; then
+    changequote(<<, >>)
+    py_deps=`ldd $PYPACKAGE | sed 's/\( *lib\([^\/]*\)\.so.*=.*$\)/-l\2/p; d'`
+    for py_lib in $py_deps ; do
+        if test "$py_lib" != "-lm" && test "$py_lib" != "-lc" ; then
+            PY_DEPS="$PY_DEPS $py_lib"
+        fi
+    done
+    changequote([, ])
+fi
+
+case $target in
+    *-sun-solaris*)
+        PY_DEPS="$PY_DEPS -lsocket -lnsl -ldl"
+        ;;
+esac
 
 AC_MSG_RESULT($PY_DEPS)
 
-PY_LIBS="-Wl,-E $PY_LIBS $PY_DEPS"
-
+dnl only GNU ld seems to knows -E flag
+if test x$ac_cv_prog_gnu_ld = xyes ; then
+    PY_LIBS="-Wl,-E $PY_LIBS $PY_DEPS"
+else
+    PY_LIBS="$PY_LIBS $PY_DEPS"
+fi
 
 dnl See whether we should enable python debugging
 
