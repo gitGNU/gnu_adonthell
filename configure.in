@@ -119,10 +119,10 @@ dnl *******************
 dnl Check for FreeType2
 dnl *******************
 
-AC_CHECK_FT2(6.0.0,
-    :,
-    AC_MSG_ERROR([*** Freetype version >= 6.0.0 not found!])
-)
+dnl AC_CHECK_FT2(6.0.0,
+dnl     :,
+dnl     AC_MSG_ERROR([*** Freetype version >= 6.0.0 not found!])
+dnl )
 
 dnl *******************
 dnl Check for OggVorbis
@@ -400,8 +400,8 @@ AC_SUBST(PY_CFLAGS)
 AC_SUBST(PY_LIBS)
 AC_SUBST(P_SWIG)
 AC_SUBST(gamedatadir)
-AC_SUBST(FT2_LIBS)
-AC_SUBST(FT2_CFLAGS)
+dnl AC_SUBST(FT2_LIBS)
+dnl AC_SUBST(FT2_CFLAGS)
 
 AC_OUTPUT([
 adonthell.spec
@@ -433,7 +433,7 @@ echo
 echo "SDL ....................... : `$SDL_CONFIG --version`"
 echo "Python .................... : $PY_VERSION"
 echo "Python debugging .......... : $pydebug"
-echo "Freetype .................. : `freetype-config --version`"
+dnl echo "Freetype .................. : `freetype-config --version`"
 if test x$haveswig = xyes; then
 echo "SWIG ...................... : $SWIG_VERSION"
 fi
