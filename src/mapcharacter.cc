@@ -753,14 +753,11 @@ void mapcharacter::leave_position ()
     switch (current_move) 
     {
         case WALK_NORTH: 
-            leave (submap (), posx (), posy () + 1);
-            break;
         case WALK_SOUTH:
             leave (submap (), posx (), posy () - 1);
             break;
+            
         case WALK_WEST:
-            leave (submap (), posx () + 1, posy ());
-            break;
         case WALK_EAST:
             leave (submap (), posx () - 1, posy ());
             break;
