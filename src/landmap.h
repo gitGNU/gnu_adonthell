@@ -30,20 +30,16 @@ public:
     bool operator < (const mapsquare_info & mi) const
     {
         if (z() + obj->current_state()->zsize <= mi.z()) return true;
-        if (mi.z() + mi.obj->current_state()->zsize <= z()) return false;
-//         if (z() + obj->current_state()->zsize >= mi.z()) return false;
+        if (z() >= mi.z() + mi.obj->current_state()->zsize) return false;
         if (y() < mi.y()) return true;
         if (y() > mi.y()) return false;
-//         if (z() + obj->current_state()->zsize <= mi.z() + mi.obj->current_state()->zsize) return false;
-//         if (y() != mi.y()) return false;
         if (oy() < mi.oy()) return true;
-        if (oy() >= mi.oy()) return false;
+        return false;
         // If the objects are at the same y position, we better
         // make an arbitrary test to make sure a moving object
         // won't go from behind to before another object when
         // their y coordinates are the same and the x coordinate
         // of the moving object become greater than the other object.
-        cout << "not good\n";
         if (obj > mi.obj) return true;
         return false;
     }
@@ -60,7 +56,6 @@ class mapsquare
 {
 private:
     vector <mapsquare_info> objects; 
-    vector <mapsquare_info> flat_objects; 
 
 public:
     typedef vector <mapsquare_info>::iterator iterator;
@@ -75,19 +70,9 @@ public:
         return objects.end (); 
     }
 
-    u_int32 nbr_flat()
-    {
-        return flat_objects.size();
-    }
-
-    mapsquare_info * get_flat(int nbr)
-    {
-        return &flat_objects[nbr];
-    }
-
-    bool add (map_placeable * obj, map_coordinates & pos, bool flat = false); 
-    bool remove (map_placeable * obj, map_coordinates & pos, bool flat = false); 
-    bool exist (map_placeable * obj, map_coordinates & pos, bool flat = false); 
+    bool add (map_placeable * obj, map_coordinates & pos); 
+    bool remove (map_placeable * obj, map_coordinates & pos); 
+    bool exist (map_placeable * obj, map_coordinates & pos); 
 }; 
 
 class landmap
@@ -186,9 +171,9 @@ private:
 
     vector <vector <mapsquare> > area;
 
-    bool put (map_placeable * obj, map_coordinates & pos, bool flat = false); 
+    bool put (map_placeable * obj, map_coordinates & pos); 
     bool put (map_moving * obj); 
-    bool remove (map_placeable * obj, map_coordinates & pos, bool flat = false); 
+    bool remove (map_placeable * obj, map_coordinates & pos); 
     bool remove (map_moving * obj); 
 
 public:
@@ -251,7 +236,7 @@ public:
      */
     map_character * add_map_character();
 
-    bool put_map_object(u_int32 index, map_coordinates & pos, bool flat = false);
+    bool put_map_object(u_int32 index, map_coordinates & pos);
 
     void output_occupation();
 

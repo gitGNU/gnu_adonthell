@@ -22,6 +22,7 @@
  */
 
 #include "map_character_with_gfx.h"
+#include "landmap.h"
 
 map_character_with_gfx::map_character_with_gfx (landmap & mymap) : map_character (mymap),
                                                                    map_placeable_gfx((map_placeable &)*this),
@@ -211,6 +212,7 @@ s_int8 map_character_with_gfx::save(string fname) const
         return 1;
     put (file);
     file.close (); 
+    Filename = fname;
     return ret;
 }
 
@@ -223,13 +225,59 @@ s_int8 map_character_with_gfx::load(string fname)
         return 1;
     get (file);
     file.close (); 
+    Filename = fname;
     return ret;
 }
 
 void map_character_with_gfx::draw (s_int16 x, s_int16 y, const drawing_area * da_opt = NULL,
-                                   surface * target = NULL) const
+                                   surface * target = NULL)
 {
-    shadow.draw(x, y + 25, da_opt, target);
+    draw_shadow(x, y, da_opt, target);
     y -= z();
     map_placeable_model_gfx::draw(x, y, da_opt, target);
+}
+
+void map_character_with_gfx::draw_shadow (s_int16 x, s_int16 y, const drawing_area * da_opt = NULL,
+                                   surface * target = NULL)
+{
+    s_int32 maxheight;
+    bool draw_it = false;
+
+    map_placeable_area * state = current_state();
+
+    for (int j = 0; j < state->area_height(); j++)
+        for (int i = 0; i < state->area_length(); i++)
+        {
+            if (state->get(i, j).is_walkable()) continue;
+            u_int16 px = this->x() - state->base.x() + i;
+            u_int16 py = this->y() - state->base.y() + j;
+            
+            u_int16 nbx = 1 + (ox() != 0);
+            u_int16 nby = 1 + (oy() != 0);
+
+            for (u_int16 l = 0; l < nby; l++)
+                for (u_int16 k = 0; k < nbx; k++)
+                {
+                    mapsquare * msqr = Mymap.get(px + k, py + l);
+                    for (mapsquare::iterator it = msqr->begin(); it != msqr->end(); ++it)
+                    {
+                        if (it->obj == this) continue;
+                        if (it->z() + it->obj->current_state()->zsize > z()) continue;
+
+                        if (!it->obj->current_state()->get(px + k - it->x() + it->obj->current_state()->base.x(),
+                                                           py + l - it->y() + it->obj->current_state()->base.y())
+                            .is_walkable()) 
+                        {
+                            if (!draw_it) 
+                            {
+                                draw_it = true;
+                                maxheight = it->obj->current_state()->zsize + it->z();
+                            }
+                            else if (maxheight < it->obj->current_state()->zsize + it->z())
+                                maxheight = it->obj->current_state()->zsize + it->z();
+                        }
+                    }
+                }
+        }
+    if (draw_it) shadow.draw(x, y + 25 - maxheight, da_opt, target);    
 }

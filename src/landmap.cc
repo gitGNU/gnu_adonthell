@@ -21,50 +21,35 @@ mapsquare_info::mapsquare_info (map_coordinates & pos)
 {
 }
 
-bool mapsquare::add (map_placeable * obj, map_coordinates & pos, bool flat = false)
+bool mapsquare::add (map_placeable * obj, map_coordinates & pos)
 {
     mapsquare_info mi (pos);
     mi.obj = obj; 
-    if (!flat) objects.push_back(mi);
-    else flat_objects.push_back(mi);
+    vector<mapsquare_info>::iterator it = objects.begin();
+    while(it != objects.end() && mi.z() + mi.obj->current_state()->zsize < 
+          it->z() + it->obj->current_state()->zsize) ++it;
+    objects.insert(it, mi);
     return true; 
 }
 
-bool mapsquare::remove (map_placeable * obj, map_coordinates & pos, bool flat = false)
+bool mapsquare::remove (map_placeable * obj, map_coordinates & pos)
 {
     mapsquare_info mi (pos);
     mi.obj = obj; 
     vector <mapsquare_info>::iterator er;
-    if (!flat) 
-    {
-        er = find (objects.begin (), objects.end (), mi);
-        if (er == objects.end ()) return false;
-        objects.erase (er);
-    }
-    else 
-    {
-        er = find (flat_objects.begin (), flat_objects.end (), mi);
-        if (er == flat_objects.end ()) return false;
-        flat_objects.erase (er);
-    }
+    er = find (objects.begin (), objects.end (), mi);
+    if (er == objects.end ()) return false;
+    objects.erase (er);
     return true; 
 }
 
-bool mapsquare::exist (map_placeable * obj, map_coordinates & pos, bool flat = false)
+bool mapsquare::exist (map_placeable * obj, map_coordinates & pos)
 {
     mapsquare_info mi (pos);
     mi.obj = obj; 
     vector <mapsquare_info>::iterator er;
-    if (!flat)
-    {
-        er = find (objects.begin (), objects.end (), mi); 
-        if (er == objects.end ()) return false;
-    }
-    else
-    {
-        er = find (flat_objects.begin (), flat_objects.end (), mi); 
-        if (er == flat_objects.end ()) return false;
-    }
+    er = find (objects.begin (), objects.end (), mi); 
+    if (er == objects.end ()) return false;
     return true; 
 }
 
@@ -92,7 +77,7 @@ mapsquare * landmap::get (const u_int16 x, const u_int16 y)
     return (&area[x][y]); 
 }
 
-bool landmap::put (map_placeable * obj, map_coordinates & pos, bool flat = false)
+bool landmap::put (map_placeable * obj, map_coordinates & pos)
 {
     u_int16 i, j;
     map_placeable_area * state = obj->current_state ();
@@ -119,7 +104,7 @@ bool landmap::put (map_placeable * obj, map_coordinates & pos, bool flat = false
         for (i = sx; i < fx; i++) 
         {
             msqr = get (i, j);
-            msqr->add (obj, pos, flat); 
+            msqr->add (obj, pos); 
         }
 
     return true; 
@@ -130,7 +115,7 @@ bool landmap::put (map_moving * obj)
     return put (obj, *obj); 
 }
 
-bool landmap::remove (map_placeable * obj, map_coordinates & pos, bool flat = false) 
+bool landmap::remove (map_placeable * obj, map_coordinates & pos) 
 {
     u_int16 i, j;
     map_placeable_area * state = obj->current_state ();
@@ -157,7 +142,7 @@ bool landmap::remove (map_placeable * obj, map_coordinates & pos, bool flat = fa
         for (i = sx; i < fx; i++) 
         {
             msqr = get (i, j);
-            msqr->remove (obj, pos, flat); 
+            msqr->remove (obj, pos); 
         }
     return true; 
 }
@@ -183,9 +168,9 @@ map_character * landmap::add_map_character()
     return characters.add(*this);
 }
 
-bool landmap::put_map_object(u_int32 index, map_coordinates & pos, bool flat = false)
+bool landmap::put_map_object(u_int32 index, map_coordinates & pos)
 {
-    put(objects[index], pos, flat);
+    put(objects[index], pos);
     return true;
 }
 

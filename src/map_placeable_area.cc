@@ -50,6 +50,8 @@ void map_placeable_area::put(ogzstream & file)
     base.y() >> file;
     base.ox() >> file;
     base.oy() >> file;
+
+    zsize >> file;
 }
 
 void map_placeable_area::get(igzstream & file)
@@ -71,4 +73,6 @@ void map_placeable_area::get(igzstream & file)
     oy << file;
     base.set_position(x, y);
     base.set_offset(ox, oy);
+
+    zsize << file;
 }

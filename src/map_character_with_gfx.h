@@ -43,8 +43,10 @@ public:
     s_int8 save(string fname) const;
     s_int8 load(string fname);
 
-    void draw (s_int16 x, s_int16 y, const drawing_area * da_opt = NULL,
-               surface * target = NULL) const;
+    void draw(s_int16 x, s_int16 y, const drawing_area * da_opt = NULL,
+               surface * target = NULL);
+    void draw_shadow(s_int16 x, s_int16 y, const drawing_area * da_opt = NULL,
+                     surface * target = NULL);
 private:
     image shadow;
 

@@ -26,8 +26,9 @@
 #define MAP_PLACEABLE_MODEL_H
 
 #include "map_placeable_area.h"
-#include <map>
 #include "fileops.h"
+#include <map>
+#include <string>
 
 /**
  * Represents a placeable, i.e. something (character, object, ...)
@@ -42,6 +43,8 @@
 class map_placeable_model
 {
 protected:
+    mutable string Filename;
+
     mutable map <string, map_placeable_area> States;
     map <string, map_placeable_area>::iterator Current_state;
 
@@ -77,6 +80,11 @@ public:
     void put(ogzstream & file) const;
 
     void get(igzstream & file);
+
+    const string & filename()
+    {
+        return Filename;
+    }
 
     /**
      * This friendship is needed so map_placeable_model_gfx

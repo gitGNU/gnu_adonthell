@@ -44,6 +44,8 @@ protected:
     bool Is_falling;
 
     u_int16 Lx, Ly;
+
+    static const u_int16 climb_capability = 5;
     
 public:
 
@@ -82,9 +84,13 @@ public:
 
     void set_vertical_velocity(float vz);
 
+    /** 
+     * 
+     * 
+     * @bug When reaching an unreacheable area, the PREVIOUS position is restored
+     *      instead of taking the position nearest to the unreacheable square.
+     */
     void update_pos();
-
-    bool should_fall(s_int32 prevz);
 
     bool update(); 
 }; 

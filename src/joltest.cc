@@ -1,7 +1,6 @@
 #include <iostream>
 #include <stdio.h>
 
-#include "landmap.h"
 #include "image.h"
 #include "screen.h"
 #include "atk_font.h"

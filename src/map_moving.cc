@@ -72,80 +72,163 @@ void map_moving::update_pos()
 
     if (vx ()) 
     {
+        u_int16 nX = X;
+        float nfox = fox;
+
         Has_moved = 1;
         
-        fox += vx ();
+        nfox += vx ();
         
-        while (fox < 0) 
+        while (nfox < 0) 
         {
-            if (X > 0)
+            if (nX > 0)
             {
-                X--;
-                fox += mapsquare_size;
+                nX--;
+                nfox += mapsquare_size;
             }
-            else fox = 0.0; 
+            else nfox = 0.0; 
         }
 
-        while (fox >= mapsquare_size) 
+        while (nfox >= mapsquare_size) 
         {
-            if (X < Lx) 
+            if (nX < Lx) 
             {
-                X++; 
-                fox -= mapsquare_size;
+                nX++; 
+                nfox -= mapsquare_size;
             }
             else
             {
-                X = Lx - 1;
-                fox = 39; 
+                nX = Lx - 1;
+                nfox = 39; 
             }
         }
-        if (X == Lx - 1) 
+        if (nX == Lx - 1) 
         {
-            X--;
-            fox = 39;
+            nX--;
+            nfox = 39;
         }
+
+        // Now check for walkability
+        u_int16 nbr_sqr = nX > X ? nX - X : X - nX;
+        map_placeable_area * state = current_state();
+        
+        for (u_int16 j = 0; j < state->area_height(); j++)
+            for (u_int16 i = 0; i < state->area_length(); i++)
+            {
+                if (state->get(i, j).is_walkable()) continue;
+
+                u_int16 px = x() - state->base.x() + i - (vx() < 0 ? nbr_sqr : 0);
+                u_int16 py = y() - state->base.y() + j;
+                
+                u_int16 nbx = 1 + (ox() != 0) + (vx() > 0 ? nbr_sqr : 0);
+                u_int16 nby = 1 + (oy() != 0);
+
+                for (u_int16 l = 0; l < nby; l++)
+                    for (u_int16 k = 0; k < nbx; k++)
+                    {
+                        mapsquare * msqr = Mymap.get(px + k, py + l);
+                        for (mapsquare::iterator it = msqr->begin(); it != msqr->end(); it++)
+                        {
+                            if (it->obj->current_state()->get(px + k - it->x() + it->obj->current_state()->base.x(),
+                                                               py + l - it->y() + it->obj->current_state()->base.y())
+                                .is_walkable()) continue;
+
+                            if (z() + climb_capability < it->z() + it->obj->current_state()->zsize && 
+                                z() + state->zsize > it->z())
+                                goto ytest;
+                        }
+                    }
+            }
+
+        X = nX;
+        fox = nfox;
         Ox = (u_int16) fox;
     }
 
+ ytest:
+
     if (vy ()) 
     {
+        u_int16 nY = Y;
+        float nfoy = foy;
+
         Has_moved = 1; 
 
-        foy += vy ();
-        while (foy < 0) 
+        nfoy += vy ();
+        while (nfoy < 0) 
         {
-            if (Y > 0)
+            if (nY > 0)
             {
-                foy += mapsquare_size;
-                Y--;
+                nfoy += mapsquare_size;
+                nY--;
             }
-            else foy = 0.0; 
+            else nfoy = 0.0; 
         }
         
-        while (foy >= mapsquare_size) 
+        while (nfoy >= mapsquare_size) 
         {
-            if (Y < Ly) 
+            if (nY < Ly) 
             {
-                foy -= mapsquare_size;
-                Y++;
+                nfoy -= mapsquare_size;
+                nY++;
             }
             else 
             {
-                Y = Ly - 1;
-                foy = 39; 
+                nY = Ly - 1;
+                nfoy = 39; 
             }
         }
-        if (Y == Ly - 1) 
+        if (nY == Ly - 1) 
         {
-            Y--;
-            foy = 39; 
+            nY--;
+            nfoy = 39; 
         }
-        Oy = (u_int16) foy; 
+
+        // Now check for walkability
+        u_int16 nbr_sqr = nY > Y ? nY - Y : Y - nY;
+        map_placeable_area * state = current_state();
+        
+        for (u_int16 j = 0; j < state->area_height(); j++)
+            for (u_int16 i = 0; i < state->area_length(); i++)
+            {
+                if (state->get(i, j).is_walkable()) continue;
+
+                u_int16 px = x() - state->base.x() + i;
+                u_int16 py = y() - state->base.y() + j - (vy() < 0 ? nbr_sqr : 0);
+                
+                u_int16 nbx = 1 + (ox() != 0);
+                u_int16 nby = 1 + (oy() != 0) + (vy() > 0 ? nbr_sqr : 0);
+
+                for (u_int16 l = 0; l < nby; l++)
+                    for (u_int16 k = 0; k < nbx; k++)
+                    {
+                        mapsquare * msqr = Mymap.get(px + k, py + l);
+                        for (mapsquare::iterator it = msqr->begin(); it != msqr->end(); it++)
+                        {
+                            if (it->obj->current_state()->get(px + k - it->x() + it->obj->current_state()->base.x(),
+                                                               py + l - it->y() + it->obj->current_state()->base.y())
+                                .is_walkable()) continue;
+
+                            if (z() + climb_capability < it->z() + it->obj->current_state()->zsize && 
+                                z() + state->zsize > it->z())
+                                goto ztest;
+                        }
+                    }
+            }
+
+        Y = nY;
+        foy = nfoy;
+        Oy = (u_int16) foy;
     }
+
+ ztest:
+
+    s_int32 prevz = z();
 
     if (vz())
     {
         Has_moved = 1;
+
         foz += vz();
         while (foz <= -1.0)
         {
@@ -158,12 +241,11 @@ void map_moving::update_pos()
             foz -= 1.0;
         }
     }
-}
 
-bool map_moving::should_fall(s_int32 prevz)
-{
     map_placeable_area * state = current_state();
 
+    Is_falling = true;
+    
     for (int j = 0; j < state->area_height(); j++)
         for (int i = 0; i < state->area_length(); i++)
         {
@@ -180,46 +262,46 @@ bool map_moving::should_fall(s_int32 prevz)
                     mapsquare * msqr = Mymap.get(px + k, py + l);
                     for (mapsquare::iterator it = msqr->begin(); it != msqr->end(); it++)
                     {
-                        s_int32 objz = it->z() + it->obj->current_state()->zsize;
-                        if ( objz < z() || objz > prevz) continue;
-
-                        if (!it->obj->current_state()->get(px + k - it->x() + it->obj->current_state()->base.x(),
-                                                           py + l - it->y() + it->obj->current_state()->base.y())
-                            .is_walkable()) 
+                        if (vz() > 0)
                         {
-                            set_altitude(objz);
-                            return false;
+                            s_int32 objz = it->z();
+                            if (objz > z() + current_state()->zsize || objz < prevz + current_state()->zsize) continue;
+
+                            if (!it->obj->current_state()->get(px + k - it->x() + it->obj->current_state()->base.x(),
+                                                               py + l - it->y() + it->obj->current_state()->base.y())
+                                .is_walkable()) 
+                            {
+                                set_altitude(objz - (current_state()->zsize + 1));
+                                set_vertical_velocity(0.0);
+                                break;
+                            }
+                        }
+                        else
+                        {
+                            s_int32 objz = it->z() + it->obj->current_state()->zsize;
+                            if (objz < z() || objz > prevz + climb_capability) continue;
+                            
+                            if (!it->obj->current_state()->get(px + k - it->x() + it->obj->current_state()->base.x(),
+                                                               py + l - it->y() + it->obj->current_state()->base.y())
+                                .is_walkable()) 
+                            {
+                                set_altitude(objz);
+                                Is_falling = false;
+                                set_vertical_velocity(0.0);
+                                break;
+                            }
                         }
                     }
                 }
         }
-
-    return true;
 }
 
 bool map_moving::update()
 {
-//     map_coordinates prevpos = *this;
-//     float prevfox = fox;
-//     float prevfoy = foy;
-//     float prevfoz = foz;
-    s_int32 prevz = z();
-
     Mymap.remove(this);
 
     update_pos();
 
-//     {
-//         fox = prevfox;
-//         foy = prevfoy;
-//         *((map_coordinates*)this) = prevpos;
-//     }
-
-    if (!should_fall(prevz))
-    {
-        Is_falling = false;
-    }else Is_falling = true;
-    
     Mymap.put(this);
     return true; 
 }

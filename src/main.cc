@@ -41,6 +41,10 @@ public:
             {
                 mchar->run();
             }            
+            if (cev->button() == control_event::B_BUTTON)
+            {
+                mchar->jump();
+            }            
             if (cev->button() == control_event::LEFT_BUTTON)
             {
                 mchar->add_direction(mchar->WEST);
@@ -105,11 +109,6 @@ public:
                 lmap.output_occupation();
             }            
 
-            if (kev->key() == keyboard_event::E_KEY)
-            {
-                mchar->jump();
-            }            
-
             if (kev->key() == keyboard_event::J_KEY)
             {
                 mchar2->add_direction(mchar2->SOUTH);
@@ -154,6 +153,98 @@ public:
 
         return true;
     }
+
+    void create_map()
+    {
+        lmap.resize (16, 12);
+        
+        // Adding the map characters
+        mchar = (map_character_with_gfx *)lmap.add_map_character();
+        mchar->load("adontest/chrono.mdl");
+        mchar->set_speed(1.0);
+        mchar->set_position(6, 8);
+
+        // Adding map objects
+        map_object_with_gfx * mobj;
+        
+        mobj = (map_object_with_gfx *)lmap.add_map_object();
+        mobj->load("adontest/tree.mobj");
+        
+        mobj = (map_object_with_gfx *)lmap.add_map_object();
+        mobj->load("adontest/sandy.mobj");
+        
+        mobj = (map_object_with_gfx *)lmap.add_map_object();
+        mobj->load("adontest/rug.mobj");
+        
+        mobj = (map_object_with_gfx *)lmap.add_map_object();
+        mobj->load("adontest/platform.mobj");
+        
+        mobj = (map_object_with_gfx *)lmap.add_map_object();
+        mobj->load("adontest/pillar_l.mobj");
+        
+        mobj = (map_object_with_gfx *)lmap.add_map_object();
+        mobj->load("adontest/pillar_r.mobj");
+        
+        
+        map_coordinates mc;
+        
+        for (int i = 0; i < lmap.length(); i++)
+            for (int j = 0; j < lmap.height(); j++)
+            {
+                map_coordinates mc(i, j, 0, 0, 0);
+                lmap.put_map_object(1, mc); 
+            }
+        
+        mc.set_position(10, 5);
+        lmap.put_map_object(4, mc); 
+        mc.set_position(11, 5);
+        lmap.put_map_object(5, mc); 
+        mc.set_position(10, 3);
+        lmap.put_map_object(4, mc); 
+        mc.set_position(11, 3);
+        lmap.put_map_object(5, mc); 
+
+        for (int i = 10; i < 12; i++)
+            for (int j = 4; j < 6; j++)
+            {
+                map_coordinates mc(i, j, 40);
+                lmap.put_map_object(3, mc); 
+            }
+        
+        mc.set_position(7, 6);
+        lmap.put_map_object(4, mc); 
+        mc.set_altitude(40);
+        lmap.put_map_object(4, mc); 
+        mc.set_position(7, 3);
+        mc.set_altitude(0);
+        lmap.put_map_object(4, mc); 
+        mc.set_altitude(40);
+        lmap.put_map_object(4, mc); 
+        
+        mc.set_altitude(0);
+        mc.set_position(8, 6);
+        lmap.put_map_object(5, mc); 
+        mc.set_altitude(40);
+        lmap.put_map_object(5, mc); 
+        mc.set_position(8, 3);
+        mc.set_altitude(0);
+        lmap.put_map_object(5, mc); 
+        mc.set_altitude(40);
+        lmap.put_map_object(5, mc); 
+        
+        for (int i = 7; i < 9; i++)
+            for (int j = 4; j < 7; j++)
+            {
+                map_coordinates mc(i, j, 80);
+                lmap.put_map_object(3, mc); 
+            }
+        
+        for (int i = 0; i < 13; i++)
+        {
+            map_coordinates mc(i + 1, 9, 5 * (i + 1));
+            lmap.put_map_object(3, mc); 
+        }        
+    }
 };
 
 int main (int argc, char * argv[]) 
@@ -172,6 +263,9 @@ int main (int argc, char * argv[])
     control_event::map_keyboard_key(keyboard_event::R_KEY, control_event::A_BUTTON);
     control_event::map_joystick_button(0, joystick_event::BUTTON_0, control_event::A_BUTTON);
     control_event::map_mouse_button(mouse_event::RIGHT_BUTTON, control_event::A_BUTTON);
+
+    control_event::map_keyboard_key(keyboard_event::E_KEY, control_event::B_BUTTON);
+    control_event::map_joystick_button(0, joystick_event::BUTTON_1, control_event::B_BUTTON);
 
     control_event::map_keyboard_key(keyboard_event::UP_KEY, control_event::UP_BUTTON);
     control_event::map_keyboard_key(keyboard_event::DOWN_KEY, control_event::DOWN_BUTTON);
@@ -193,100 +287,9 @@ int main (int argc, char * argv[])
     fwr = makeFunctor(&fwr, gc, &game_client::callback_func);
     il.connect_function(input_event::KEYBOARD_EVENT, 
                         fwr);
-    
-    gc.lmap.resize (16, 12);
 
-    // Adding the map characters
-    gc.mchar = (map_character_with_gfx *)gc.lmap.add_map_character();
-    gc.mchar->load("adontest/chrono.mdl");
-    gc.mchar->set_position (6, 8); 
-    gc.mchar->set_limits (16, 12);
-    gc.mchar->set_speed (1.0);
-    
-    for (map_placeable::iterator it = gc.mchar->begin(); it != gc.mchar->end(); it++)
-        it->second.zsize = 39;
-    
-//     gc.mchar->get_state("s_stand")->get(0, 1).set_walkable(0);
-//     gc.mchar->get_state("n_stand")->get(0, 1).set_walkable(0);
-//     gc.mchar->get_state("e_stand")->get(0, 1).set_walkable(0);
-//     gc.mchar->get_state("w_stand")->get(0, 1).set_walkable(0);
-//     gc.mchar->get_state("s_walk")->get(0, 1).set_walkable(0);
-//     gc.mchar->get_state("n_walk")->get(0, 1).set_walkable(0);
-//     gc.mchar->get_state("e_walk")->get(0, 1).set_walkable(0);
-//     gc.mchar->get_state("w_walk")->get(0, 1).set_walkable(0);
-//     gc.mchar->get_state("s_run")->get(0, 1).set_walkable(0);
-//     gc.mchar->get_state("n_run")->get(0, 1).set_walkable(0);
-//     gc.mchar->get_state("e_run")->get(0, 1).set_walkable(0);
-//     gc.mchar->get_state("w_run")->get(0, 1).set_walkable(0);
+    gc.create_map();
 
-//     gc.mchar->save("adontest/chrono.mdl");
-
-//     gc.mchar2 = (map_character_with_gfx *)gc.lmap.add_map_character();
-//     gc.mchar2->load("adontest/nakedguy.mchar");
-//     gc.mchar2->set_position (10, 7); 
-//     gc.mchar2->set_limits (16, 12);
-//     gc.mchar2->set_speed (1.1);
-
-    // Adding map objects
-    map_object_with_gfx * mobj;
-
-    mobj = (map_object_with_gfx *)gc.lmap.add_map_object();
-    mobj->load("adontest/tree.mobj");
-    mobj->current_state()->zsize = 150;
-
-    mobj = (map_object_with_gfx *)gc.lmap.add_map_object();
-    mobj->load("adontest/sandy.mobj");
-    mobj->current_state()->get(0,0).set_walkable(false);
-    mobj->current_state()->zsize = 0;
-
-    mobj = (map_object_with_gfx *)gc.lmap.add_map_object();
-    mobj->load("adontest/rug.mobj");
-    mobj->current_state()->zsize = 0;
-
-    mobj = (map_object_with_gfx *)gc.lmap.add_map_object();
-    mobj->load("adontest/sandy.mobj");
-    mobj->current_state()->get(0,0).set_walkable(false);
-    mobj->current_gfx()->get_animation()->get_image(0)->fillrect(0, 0, 40, 40, 0xffffff);
-    mobj->current_state()->zsize = 0;
-
-//     mobj->get_state("default")->get(0, 0).set_walkable(0);
-//     mobj->get_state("default")->get(1, 0).set_walkable(0);
-//     mobj->get_state("default")->get(2, 0).set_walkable(0);
-//     mobj->get_state("default")->get(3, 0).set_walkable(0);
-    //    cout << mobj->get_state("default")->get(0, 0).is_walkable() << endl;
-//     mobj->save("adontest/rug.mobj");
-
-    for (int i = 0; i < gc.lmap.length(); i++)
-        for (int j = 0; j < gc.lmap.height(); j++)
-        {
-            map_coordinates mc(i, j, 0, 0, 0);
-            gc.lmap.put_map_object(1, mc); 
-        }
-
-    for (int i = 10; i < 12; i++)
-        for (int j = 4; j < 6; j++)
-        {
-            map_coordinates mc(i, j, 40);
-            gc.lmap.put_map_object(3, mc); 
-        }
-
-    for (int i = 8; i < 10; i++)
-        for (int j = 4; j < 6; j++)
-        {
-            map_coordinates mc(i, j, 80);
-            gc.lmap.put_map_object(3, mc); 
-        }
-
-
-//     map_coordinates rmc(7, 4, 0);
-//     gc.lmap.put_map_object(2, rmc);
-
-    map_coordinates mobjmc (6, 6, 1); 
-    gc.lmap.put_map_object (0, mobjmc); 
-
-    mobjmc.set_position (8, 7);
-    gc.lmap.put_map_object (0, mobjmc); 
-        
     while (!gc.letsexit) 
     {
         u_int16 i, j;

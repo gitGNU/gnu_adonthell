@@ -62,6 +62,7 @@ s_int8 map_object_with_gfx::save(string fname) const
         return 1;
     put (file);
     file.close (); 
+    Filename = fname;
     return ret;
 }
 
@@ -74,6 +75,7 @@ s_int8 map_object_with_gfx::load(string fname)
         return 1;
     get (file);
     file.close (); 
+    Filename = fname;
     return ret;
 }
 
