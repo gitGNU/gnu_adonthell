@@ -214,8 +214,9 @@ dnl Check for SWIG
 dnl **************
 
 haveswig=no
+
 AC_PATH_PROG(P_SWIG,swig,no)
-if test "$SDL_CONFIG" != "no" ; then
+if test "$P_SWIG" != "no" ; then
     $P_SWIG -version &> swig.ver
 
     changequote(<<, >>)
@@ -233,6 +234,20 @@ if test "$SDL_CONFIG" != "no" ; then
             $swig_major_ver -eq 1 -a $swig_minor_ver -eq 3 -a $swig_micro_ver -gt 9 ;
     then
         haveswig=yes
+    fi
+fi
+
+dnl SWIG is needed to compile the code from CVS
+dnl or after making changes to the distributed code
+
+if test x$haveswig = xno ; then
+    if test -d "CVS"; then
+        echo "*** To compile Adonthell from CVS, you will need SWIG 1.3.10 or higher."
+        echo "*** You can obtain the most recent version from http://www.swig.org."
+        exit 1;
+    else
+        echo "*** NOTE: If you plan to make changes to the code you will need"
+        echo "*** SWIG 1.3.10 or higher. SWIG can be found at http://www.swig.org."
     fi
 fi
 
