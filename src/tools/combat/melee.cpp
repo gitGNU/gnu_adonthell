@@ -157,9 +157,9 @@ void melee::calc_stats() {
 	* See docs on the list for explanation
 	*/
 	a_attack_range = (a_dex + a_attack_skill) / 200 * .6;
-	a_defense_range = (a_dex + a_defense_skill) / 200 * .3;
+	a_defense_range = (a_dex + a_defense_skill) / 200 * .4;
 	b_attack_range = (b_dex + b_attack_skill) / 200 * .6;
-	b_defense_range = (b_dex + b_defense_skill) / 200 * .3;
+	b_defense_range = (b_dex + b_defense_skill) / 200 * .4;
 	a_attack_total_allotment = (a_attack_range + b_defense_range) / .9;
 	b_attack_total_allotment = (b_attack_range + a_defense_range) / .9;
 	a_attack_luck_allotment = a_attack_total_allotment - (a_attack_range + b_defense_range);
@@ -187,9 +187,9 @@ void melee::calc_stats() {
 	if ( (parity % 2) > 0) {
 		switch (method) {
 		case  0:			//thrust
-			a_modifier = (weapons[a_weapon].base + a_str  + armors[b_armor].dexhit) * a_attack_range;
+			a_modifier = (weapons[a_weapon].base + a_str  + armors[b_armor].dexhit) * (a_attack_range / .6);
 			printf("\na_modifier: %3.4f\n", a_modifier);
-			b_modifier = (armors[b_armor].ar + armors[b_armor].thrust + b_dex) * b_defense_range * .5;	
+			b_modifier = (armors[b_armor].ar * .5 + armors[b_armor].thrust + b_dex) * (b_defense_range / .4);	
    			printf("b_modifier: %3.4f\n", b_modifier);
 			a_ratio = a_modifier / (a_modifier + b_modifier) ;
 			printf("a_ratio: %3.4f\n", a_ratio);

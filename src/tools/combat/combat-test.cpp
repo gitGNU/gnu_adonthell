@@ -36,7 +36,7 @@ int b_hit = 0;
 //Main test loop
 
 int main (void) {
-
+   int random_chars = 2;
 	int rounds = 0;	
 	char seed;
    //Initialize roller for first 1000 random numbers
@@ -64,17 +64,57 @@ int main (void) {
 	cin >> test.b_weapon;
 	garbage = getc(stdin);
 	printf("\n\n*****\nNOTE: Consult items.h for Armor properties, I'm not going to list them here.\n*****\n");
-   printf("Current Armor IDs range from 1 to %d\n", ARMOR_MAX);
+   printf("Current Armor IDs range from 0 to %d\n", ARMOR_MAX - 1);
 	printf("Enter Armor ID for character A:");
 	cin >> test.a_armor;
-	cout << "test.a_armor\n";
 	garbage = getc(stdin);
 	printf("Enter Armor ID for Character B:");
    cin >> test.b_armor;
 	garbage = getc(stdin);
-   	while (1) {
+   	while (random_chars != 0 && random_chars != 1){
+		printf("\nCreate random character stats?[0/1]:");
+		cin >> random_chars;
+	}
+	if (random_chars == 0) {
+		// get char A's stats
+		cout << "\na_luck:";
+	   	cin >> test.a_luck;
+		garbage = getc(stdin);
+		cout << "\na_str:";
+		cin >> test.a_str;
+		garbage = getc(stdin);
+		cout << "\na_sdex:";
+		cin >> test.a_dex;
+		garbage = getc(stdin);
+		cout << "\na_attack_skill:";
+		cin >> test.a_attack_skill;
+		garbage = getc(stdin);
+		cout << "\na_defense_skill:";
+		cin >> test.a_defense_skill;
+	 	garbage = getc(stdin);
+		
+		//get char B's stats:
+		cout << "\nb_luck:";
+	   	cin >> test.b_luck;
+		garbage = getc(stdin);
+		cout << "\nb_str:";
+		cin >> test.b_str;
+		garbage = getc(stdin);
+		cout << "\nb_sdex:";
+		cin >> test.b_dex;
+		garbage = getc(stdin);
+		cout << "\nb_attack_skill:";
+		cin >> test.b_attack_skill;
+		garbage = getc(stdin);
+		cout << "\nb_defense_skill:";
+		cin >> test.b_defense_skill;
+	 	garbage = getc(stdin);
+	}
+	while (1) {
         	//create 2 random characters, crunch players stats, show results.
-		test.create_characters();
+		if (random_chars == 1) {
+			test.create_characters();
+		}
 		test.calc_stats();
 		
 		do {
