@@ -156,7 +156,7 @@ std::vector<std::string> CfgData::projectsFromDatadir ()
     std::vector<std::string> projects;
     
     // default project
-    projects.push_back (string ("none"));
+    projects.push_back (std::string ("none"));
     
     // no such directory
     if (!mydir) return projects;

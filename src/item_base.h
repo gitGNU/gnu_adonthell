@@ -397,7 +397,7 @@ protected:
      */
     item_base *split (u_int32 number = 1);
     //@}
-#endif SWIG
+#endif // SWIG
 };
 
 #endif // ITEM_BASE_H

@@ -20,6 +20,7 @@
  */
 
 #include <math.h>
+#include <iostream>
 #include "dlg_arrow.h"
 #include "dlg_module.h"
 #include "gui_resources.h"
@@ -107,11 +108,11 @@ DlgPoint DlgArrow::getIntersection (DlgPoint &start, DlgPoint &end, DlgRect &sha
     DlgPoint p;    
     
     // gradient of line
-    double x = end.x () - start.x ();
-    double y = end.y () - start.y ();
+    int x = end.x () - start.x ();
+    int y = end.y () - start.y ();
 
     // tangens of angle between line(start, end) and x-axis
-    double m = x == 0 ? 1.0 : y / x;
+    double m = x == 0 ? 1.0 : double (y) / x;
     
     // direction where line(start, end) intersects with border of start
     enum { NORTH, EAST, SOUTH, WEST };
@@ -275,8 +276,8 @@ bool DlgArrow::load (DlgNode *m)
                     // failed
                     if (!owner || owner->type () != MODULE)
                     {
-                        cout << "DlgArrow::load: failed to getModule (" 
-                             << n << ")!" << endl;
+                        std::cout << "DlgArrow::load: failed to getModule (" 
+                             << n << ")!" << std::endl;
                         
                         return false;
                     }
