@@ -32,9 +32,8 @@ win_write::win_write(s_int16 x,s_int16 y,u_int16 l,u_int16 h,win_font *fo,win_co
 {
   tmp_input[0]='\0';
   tmp_input[1]='\0';
+  text_get[0]='\0';
   ok_text=false;
-  begin_text=0;
-  end_text=0;
 }
 
 
@@ -49,7 +48,7 @@ char * win_write::get_text_entry()
     {
       u_int16 j=0;
       ok_text=false;
-      for(int i=begin_text;i<end_text;i++)
+      for(int i=0;i<size_texte;i++)
 	text_get[j++]=texte[i];
       text_get[j]='\0';
       return text_get;
@@ -60,6 +59,8 @@ char * win_write::get_text_entry()
 void win_write::write()
 {
   static s_int32 c;
+  //  cout << "size_texte: " << size_texte << endl; 
+  //  cout << "tmp_text: " << tmp_input << endl;
   while((c=input::get_next_unicode())>0)
     {
 #ifdef _DEBUG_
@@ -79,9 +80,6 @@ void win_write::write()
 		  {
 		    if(c == SDLK_RETURN) 
 		      {
-			if(end_text==0) begin_text=end_text;
-			else begin_text=end_text+1;
-			end_text=size_texte;
 			ok_text=true;
 			tmp_input[0]='\n';
 		      }

@@ -538,6 +538,7 @@ void image::zoom(image * src)
   for(j=0;j<height;j++)
     for(i=0;i<length;i++)
       {
+	//	cout << "Getting " << (i*src->length/length) << " " << (j*src->height/height) << " for " << i << " " << j << endl;
 	temp=src->get_pix(i*src->length/length,j*src->height/height);
 	put_pix(i,j,temp);
       }

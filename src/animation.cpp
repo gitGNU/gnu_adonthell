@@ -273,10 +273,12 @@ s_int8 animation::get(SDL_RWops * file)
 {
   u_int16 i;
   SDL_RWread(file,&nbr_of_images,sizeof(nbr_of_images),1);
+  delete[] t_frame;
   t_frame=new image[nbr_of_images];
   for(i=0;i<nbr_of_images;i++)
     t_frame[i].get_raw(file);
   SDL_RWread(file,&nbr_of_frames,sizeof(nbr_of_frames),1);
+  delete[] frame;
   frame=new animation_frame[nbr_of_frames];
   for(i=0;i<nbr_of_frames;i++)
       frame[i].get(file);
@@ -627,7 +629,9 @@ u_int16 animation::decrease_image(u_int16 c)
 
 inline bool testkey(SDLKey k)
 {
-  return ((input::has_been_pushed(k)));//&&(SDL_GetModState()&&KMOD_LCTRL)));
+  if(SDL_GetModState()&&KMOD_LCTRL)
+    return((input::is_pushed(k)));
+  else return ((input::has_been_pushed(k)));//&&(SDL_GetModState()&&KMOD_LCTRL)));
 }
 
 void animation::update_editor()

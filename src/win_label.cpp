@@ -36,6 +36,7 @@ win_label::win_label (s_int16 x, s_int16 y, u_int16 l, u_int16 h, win_font * fo,
     cur_text_pos = 0;
     tmp_image = new image ();
     tmp_draw = new image ();
+    set_text("");
 }
 
 win_label::~win_label ()
@@ -57,7 +58,7 @@ win_label::set_font (win_font * tmp)
 }
 
 void
-win_label::set_text (char *tmp)
+win_label::set_text (const char *tmp)
 {
     if (font)
     {
@@ -73,12 +74,12 @@ win_label::set_text (char *tmp)
 }
 
 bool
-win_label::add_text (char *tmp)
+win_label::add_text (const char *tmp)
 {
     if (strlen (tmp) + strlen (texte) < WIN_TEXT_MAX_LENGTH)
     {
-        strcat (texte, tmp);
-        set_text (texte);
+      strcat (texte, tmp);
+      set_text (texte);
         return true;
     }
     else

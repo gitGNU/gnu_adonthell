@@ -45,14 +45,14 @@ class win_label : public win_base
   void init_draw();
   
   u_int16 cur_text_pos; //cur position of the text
-  u_int16 last_text_pos; //derniere position of the text
+  u_int16 last_text_pos; //last position of the text
 
   u_int16 x_pad_l; //x start for the text
   win_label(s_int16,s_int16,u_int16,u_int16,win_font * fo,win_container *);
   
   ~win_label();
-  void set_text(char * tmp);
-  bool add_text(char *tmp); //return true if text added
+  void set_text(const char * tmp);
+  bool add_text(const char *tmp); //return true if text added
   void clear_text();
   char * get_text();//get full text of the label
   

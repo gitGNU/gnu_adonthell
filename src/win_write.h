@@ -28,8 +28,6 @@ class win_write : public win_label
   char tmp_input[2];
   char text_get[WIN_TEXT_MAX_LENGTH]; 
   bool ok_text;
-  u_int16 begin_text;
-  u_int16 end_text;
   
   void write();
  
