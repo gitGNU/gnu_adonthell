@@ -30,8 +30,6 @@
 
 #include "game.h"
 
-#include "path.h"
-
 using namespace std; 
 
 /**
@@ -71,6 +69,6 @@ int main(int argc, char * argv[])
 
     // shut down the different parts of the engine
     game::cleanup ();
-    
+
     return 0;
 }

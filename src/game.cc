@@ -113,7 +113,10 @@ void game::cleanup ()
 {
     // close all windows
     // delete all themes and fonts
-    win_manager::cleanup (); 
+    if (initiated & INIT_WIN)
+    { 
+        win_manager::cleanup (); 
+    }
     
     // shutdown input subsystem
     if (initiated & INIT_INPUT) 
@@ -145,7 +148,7 @@ void game::cleanup ()
     if (initiated & INIT_VIDEO)
     {
         SDL_Quit ();
-    }
+    }     
 }
 
 void game::init_data ()
