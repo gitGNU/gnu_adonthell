@@ -16,7 +16,7 @@
 // This is our audio 'hook' so audio events can be called
 // from different places
 #include "audio.h"
-static audio *audio_in;
+static audio *audio_in = NULL;
 
 int audio_init();
 void audio_update();

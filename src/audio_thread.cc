@@ -23,15 +23,27 @@ int audio_init() {
 
   // Open the audio device
   audio_in = new audio;
-  audio_in->load_background(1);
+  audio_in->load_background(0);
+  audio_in->load_wave(); // This should be done elsewhere...
+  audio_in->play_background(0);
   return(0);
 }
 
 void audio_update()
 {
-  // Keep looping music
+
+  // Keep audio up-to-date
   while (1==1) {
-    if ( ! Mix_PlayingMusic() ) Mix_PlayMusic(audio_in->music, 0);
+
+    // Keep busy until the audio device is connected
+    while (audio_in == NULL) SDL_Delay(100);
+
+    // Once the audio is connected, keep updating the audio stream
+    if (audio_in->background_on == true) {
+      if ( ! Mix_PlayingMusic() ) {
+        Mix_PlayMusic(audio_in->music[audio_in->current_background], 2);
+      }
+    }
     SDL_Delay(100);
   }
 }

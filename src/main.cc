@@ -68,14 +68,12 @@ int main(int argc, char * argv[])
 
 #ifdef SDL_MIXER
   SDL_Thread *audio_thread;
-  
+
   audio_init();
-
-  cout << "Audio init done\n";
-
   audio_thread = SDL_CreateThread((void*)audio_update, NULL);
+
   if ( audio_thread != NULL) {
-     fprintf(stderr, "Audio thread started.\n");
+    NULL;
   } else {
      fprintf(stderr, "Couldn't create audio thread: %s\n", SDL_GetError());
      fprintf(stderr, "Audio will not be used\n");

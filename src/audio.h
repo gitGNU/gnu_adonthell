@@ -16,15 +16,25 @@
 
 #include "SDL_mixer.h"
 
+// We'll only load two waves into memory
+#define NUM_WAVES 2
+// We'll only load one .it file into memory
+#define NUM_MUSIC 1
+
 class audio
 {
 public:
-   int background_volume;
-   Mix_Music *music;
-   bool background_on;
-   int current_background;
-   bool background_paused;
-   bool audio_initialized;
+  int background_volume;
+  int effects_volume;
+  Mix_Music *music[NUM_MUSIC];
+  Mix_Chunk *sounds[NUM_WAVES];
+  bool background_on;
+  int current_background;
+  bool background_paused;
+  bool audio_initialized;
+  int audio_rate;
+  Uint16 audio_format;
+  int audio_channels;
 
   // Use these to initialize/destroy sound connection
   audio();
@@ -33,8 +43,8 @@ public:
 
   // Background Music functions:
     // Use these to load/unload background music
-    void load_background(int);
-    void unload_background(void);
+    int load_background(int);
+    void unload_background(int);
 
     void set_background_volume(int);
 
@@ -44,10 +54,11 @@ public:
 
   // Sound Effect functions:
     // Use these to load/unload wave files
-    void load_waves(void);
-    void unload_waves(void);
+    void load_wave(void);
+    void unload_wave(int wave);
 
-    void play_wave(int, int);
+    void play_wave(int channel, int sound);
+    void play_background(int background);
 };
 
 #endif
