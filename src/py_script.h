@@ -84,7 +84,7 @@ public:
      */
     void set_script (string file);
 
-    /** 
+    /**
      * Returns the file name of this script.
      * 
      * 

@@ -1,4 +1,6 @@
 /*
+   $Id$
+
    (C) Copyright 2000/2001 Joel Vennin
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
@@ -188,8 +190,6 @@ void label::form_auto_height()
   
   while (i < text_size_)
     {
-      cout << "Toto\n";
-      
       if(text_[i] == '\n')
 	{
 	  tmp_length_pix = 0;

@@ -34,7 +34,12 @@ public:
     {
         return &lmap;
     }
-    
+
+    mapview *get_mapview ()
+    {
+        return (mapview*) &mv;
+    }
+
     void run (); 
     void quit ()
     {

@@ -55,24 +55,18 @@ void py_script::clear ()
 
 void py_script::set_script (string file)
 {
+    if (script)
+    {
+        Py_DECREF (script);
+        script = NULL;
+    }
+
     if (file == "")
     {
         script_file_ = "";
-
-        if (script) 
-        {
-            Py_DECREF (script); 
-            script = NULL; 
-        }
-        
         return;
     } 
-    else if (script) 
-    {
-        Py_DECREF (script); 
-        script = NULL; 
-    }
-    
+
     FILE *f = fopen (file.c_str (), "r");
 
     // See whether the script exists at all
@@ -84,9 +78,6 @@ void py_script::set_script (string file)
         if (n)
         {
             // If no errors occured update script code ...
-            if (script)
-                delete script;
-
             script = PyNode_Compile (n, (char *)file.c_str ());
             PyNode_Free (n);
 
