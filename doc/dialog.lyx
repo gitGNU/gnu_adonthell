@@ -1,0 +1,1222 @@
+#This file was created by <root> Sun Jan  2 20:35:59 2000
+#LyX 1.0 (C) 1995-1999 Matthias Ettrich and the LyX Team
+\lyxformat 2.15
+\textclass article
+\language default
+\inputencoding default
+\fontscheme default
+\graphics default
+\paperfontsize 11
+\spacing single 
+\papersize Default
+\paperpackage widemarginsa4
+\use_geometry 0
+\use_amsmath 0
+\paperorientation portrait
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\defskip medskip
+\quotes_language english
+\quotes_times 2
+\papercolumns 1
+\papersides 1
+\paperpagestyle headings
+
+\layout Title
+
+The Adonthell Dialogue Engine
+\layout Author
+
+by Kai Sterker
+\layout Section
+
+Motivation
+\layout Standard
+
+One thing we need to create a realistic environment for our game is a sophistica
+ted mechanism to communicate with NPC`s.
+ To make dialogues more than a simple sequence of questions and answers,
+ we have to pay attention to a few things.
+ 
+\layout Itemize
+
+The player should not only have the possibilities to direct the conversation
+ to different subjects, but also to treat his vis-
+\backslash 
+`a-vis in different ways.
+ 
+\layout Itemize
+
+On the other hand should the NPC have various possibilities to react to
+ the players treatment.
+\layout Itemize
+
+Topics available for talking have to depend on the context and the players
+ progress in the game 
+\layout Standard
+
+These three points should enable the player to decide himself how to speek
+ to other characters and thus lead the game in different directions.
+ But the greater the players choice shall be, the more work has to go into
+ dialogue design.
+\layout Standard
+
+But dialogues are not only for enhancing the interaction between player
+ and game world, they serve also for the plot's development.
+ Often, progress is achieved by collecting information from a NPC and then
+ confronting someone else with this new knowledge.
+ That makes dialogue design real difficult.
+ On the one hand, gameplay shall not consist of the player running from
+ one NPC to the next, but on the other hand, this is the preferred way to
+ provide information neccessary for solving the game.
+ 
+\layout Standard
+
+Dialogues are also used for showing an NPC`s character, wether he/she is
+ friendly or egoistic and so on.
+ This can be influenced by the players behaviour, so we have to make sure
+ that there are no dead ends, just because some of the NPC`s won`t help
+ the player (any more).
+\layout Standard
+
+All in all, dialogues have to make the player aware of common customs and
+ provide other information related to the gameworld; they should help him
+ to judge the worlds inhabitants and last but not least have to lead the
+ way to success.
+ Only a well balanced combination of these three parts makes the dialogues
+ more than a boring interruption and extends the games whole atmosphere.
+\layout Section
+
+The Dialogue Language
+\layout Standard
+
+To create such variable dialogues, we have to be very flexible.
+ Therefore, it is best to split the Dialogue system into a program and a
+ data part.
+ The program, of course is the Dialogue Engine, wich gets described in detail
+ later.
+ Now we want to concentrate on the data.
+ It soon gets obvious, that conversations are determined by two factors:
+ (1) The lines of speech made by every person, and (2) the flaw of the conversat
+ion.
+ Of course, in the end a conversation is deterministic, but at a given point,
+ you could well think about different subjects to raise, or different tones
+ to use, which would lead to a very different result.
+\layout Subsection
+
+Structure
+\layout Standard
+
+To represent the conversations flaw, an assembler like language seems to
+ fit best.
+ It can do everything any higher level language could do, but can be interpreted
+ fast and efficient.
+ Following structure is currently implemented:
+\newline 
+
+\newline 
+
+\family typewriter 
+conversation: 
+\layout Standard
+
+
+\family typewriter 
+[ IMPORT ] 
+\layout Standard
+
+
+\family typewriter 
+[ block | END ]
+\newline 
+
+\newline 
+block: 
+\layout Standard
+
+
+\family typewriter 
+CLEAR 
+\layout Standard
+
+
+\family typewriter 
+monologue | [ dialogue ] 
+\layout Standard
+
+
+\family typewriter 
+DISPLAY
+\newline 
+
+\newline 
+monologue: 
+\layout Standard
+
+
+\family typewriter 
+[ SNPCTEXT ]
+\newline 
+
+\newline 
+dialogue: 
+\layout Standard
+
+
+\family typewriter 
+NPCTEXT 
+\layout Standard
+
+
+\family typewriter 
+[ PTEXT ]
+\newline 
+
+\layout Standard
+
+What currently is missing is the ability to react according to the current
+ situation of the game.
+ For this, the ability to read, write and compare the game's variables is
+ needed.
+ That means we need to Load and Store variables in/from registers and to
+ do basic condional and arithmetic operations on those registers.
+ In the end, it will look similar to that:
+\newline 
+
+\newline 
+
+\family typewriter 
+conversation:
+\layout Standard
+
+
+\family typewriter 
+[ IMPORT ] 
+\layout Standard
+
+
+\family typewriter 
+[ block | END ]
+\newline 
+
+\newline 
+block:
+\layout Standard
+
+
+\family typewriter 
+CLEAR 
+\layout Standard
+
+
+\family typewriter 
+[ speech ]
+\layout Standard
+
+
+\family typewriter 
+DISPLAY
+\newline 
+
+\newline 
+speech:
+\layout Standard
+
+
+\family typewriter 
+{ LOAD } 
+\layout Standard
+
+
+\family typewriter 
+{ conditional_expression } 
+\layout Standard
+
+
+\family typewriter 
+{ arithmetic_expression } 
+\layout Standard
+
+
+\family typewriter 
+SNPCTEXT | [ dialogue ] 
+\layout Standard
+
+
+\family typewriter 
+{ STORE } 
+\layout Standard
+
+
+\family typewriter 
+{ JUMP }
+\newline 
+
+\newline 
+conditional_expression: 
+\layout Standard
+
+
+\family typewriter 
+EQ | EQI | NEQ | NEQI | GT | GTI | LT | LTI
+\newline 
+
+\newline 
+arithmetic_expression: 
+\layout Standard
+
+
+\family typewriter 
+ADD | ADDI | SUB | SUBI | SET
+\newline 
+
+\newline 
+dialogue:
+\layout Standard
+
+
+\family typewriter 
+NPCTEXT 
+\layout Standard
+
+
+\family typewriter 
+[ PTEXT ]
+\layout Subsection
+\added_space_top 0.3cm \added_space_bottom 0.3cm \pagebreak_top 
+Commands
+\layout Standard
+\added_space_top 0.3cm \added_space_bottom 0.3cm 
+The engines commands are those that apear in capital letters in above structures.
+ Probably, you can think of what most of them do, but to make sure, I will
+ describe them in more detail.
+\layout Standard
+\added_space_top 0.3cm \added_space_bottom 0.3cm \align center \LyXTable
+multicol5
+29 5 0 0 -1 0 -1 -1
+0 1 0 0
+0 0 0 0
+0 0 0 0
+0 0 0 0
+0 0 0 0
+0 0 0 0
+0 0 0 0
+0 0 0 1
+0 0 0 0
+0 0 0 0
+0 0 0 0
+0 0 0 0
+0 0 0 0
+0 0 0 0
+0 0 0 0
+0 0 0 0
+0 0 0 0
+0 0 0 1
+0 0 0 0
+0 0 0 0
+0 0 0 0
+0 0 0 0
+0 0 0 0
+0 0 0 0
+0 0 0 0
+0 0 0 0
+0 0 0 0
+0 1 0 0
+0 0 0 0
+2 0 0 "" ""
+2 0 0 "" ""
+2 0 0 "" ""
+2 0 0 "" ""
+2 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+1 2 0 1 0 0 0 "" ""
+2 8 1 1 0 0 0 "" ""
+2 8 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+1 2 0 0 0 0 0 "" ""
+2 2 0 0 0 0 0 "" ""
+2 8 1 1 0 0 0 "" ""
+2 8 1 0 0 0 0 "" ""
+2 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+1 2 0 0 0 0 0 "" ""
+2 2 1 0 0 0 0 "" ""
+2 2 1 0 0 0 0 "" ""
+2 2 1 0 0 0 0 "" ""
+2 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 0 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+1 2 0 0 0 0 0 "" ""
+2 2 1 0 0 0 0 "" ""
+2 2 1 0 0 0 0 "" ""
+2 2 1 0 0 0 0 "" ""
+2 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+1 2 0 0 0 0 0 "" ""
+2 2 1 0 0 0 0 "" ""
+2 2 1 0 0 0 0 "" ""
+2 2 1 0 0 0 0 "" ""
+2 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 1 0 0 "" ""
+
+Command
+\newline 
+Arguments 
+\newline 
+Description
+\newline 
+
+\series bold 
+Arithmetic Commands
+\series default 
+
+\newline 
+ADD
+\newline 
+Reg i
+\newline 
+Reg j
+\newline 
+
+\newline 
+value (Register i) += value (Register i)
+\newline 
+ADDI
+\newline 
+Reg i
+\newline 
+Int j
+\newline 
+
+\newline 
+value (Register i) += j
+\newline 
+SUB
+\newline 
+Reg i
+\newline 
+Reg j
+\newline 
+
+\newline 
+value (Register i) -= value (Register j)
+\newline 
+SUBI
+\newline 
+Reg i
+\newline 
+Int j
+\newline 
+
+\newline 
+value (Register i) -= j
+\newline 
+SET
+\newline 
+Reg i 
+\newline 
+Int j
+\newline 
+
+\newline 
+value (Register i) = j
+\newline 
+
+\series bold 
+Conditional Commands
+\series default 
+
+\newline 
+EQ
+\newline 
+Reg i
+\newline 
+Reg j
+\newline 
+PC k
+\newline 
+if (value (Register i) == value (Register j)) goto k
+\newline 
+EQI
+\newline 
+Reg i
+\newline 
+Int j
+\newline 
+PC k
+\newline 
+if (value (Register i) == j) goto k
+\newline 
+NEQ
+\newline 
+Reg i
+\newline 
+Reg j
+\newline 
+PC k
+\newline 
+if (value (Register i) != value (Register j)) goto k
+\newline 
+NEQI
+\newline 
+Reg i
+\newline 
+Int j
+\newline 
+PC k
+\newline 
+if (value (Register i) != j) goto k
+\newline 
+GT
+\newline 
+Reg i
+\newline 
+Reg j
+\newline 
+PC k
+\newline 
+if (value (Register i) > value (Register j)) goto k
+\newline 
+GTI
+\newline 
+Reg i
+\newline 
+Int j
+\newline 
+PC k
+\newline 
+if (value (Register i) > j) goto k
+\newline 
+LT
+\newline 
+Reg i
+\newline 
+Reg j
+\newline 
+PC k
+\newline 
+if (value (Register i) < value (Register j)) goto k
+\newline 
+LTI
+\newline 
+Reg i
+\newline 
+Int j
+\newline 
+PC k
+\newline 
+if (value (Register i) < j) goto k
+\newline 
+JUMP 
+\newline 
+PC i
+\newline 
+
+\newline 
+
+\newline 
+goto i
+\newline 
+
+\series bold 
+Data manipulation
+\series default 
+
+\newline 
+LOAD
+\newline 
+Reg i
+\newline 
+Var j
+\newline 
+
+\newline 
+value (Register i) = value (Variable j)
+\newline 
+STORE
+\newline 
+Var i
+\newline 
+Reg j
+\newline 
+
+\newline 
+value (Variable i) = value (Register j)
+\newline 
+
+\series bold 
+Dialogue commands
+\series default 
+
+\newline 
+IMPORT
+\newline 
+Int i
+\newline 
+
+\newline 
+
+\newline 
+Load i-th string from string file
+\newline 
+CLEAR
+\newline 
+
+\newline 
+
+\newline 
+
+\newline 
+Reset NPC and player text
+\newline 
+SNPCTEXT
+\newline 
+Int i
+\newline 
+PC j
+\newline 
+
+\newline 
+Set NPC text to i-th string, goto j when resuming
+\newline 
+NPCTEXT
+\newline 
+Int i
+\newline 
+
+\newline 
+
+\newline 
+Set NPC text to i-th string
+\newline 
+PTEXT
+\newline 
+Int i
+\newline 
+PC j
+\newline 
+
+\newline 
+Set Player text to i-th string, goto j when chosen
+\newline 
+DISPLAY
+\newline 
+
+\newline 
+
+\newline 
+
+\newline 
+Display current NPC and Player text
+\newline 
+END
+\newline 
+
+\newline 
+
+\newline 
+
+\newline 
+Exits Sub / Dialogue
+\newline 
+
+\newline 
+
+\newline 
+
+\newline 
+
+\newline 
+
+\layout Standard
+
+We have to decide yet, what commands to really implement, as you can replace
+ some of them by others (like JUMP i with EQ 0 0 i, or GT i j k with LT
+ j i k and so on).
+ Another thing that might still change are the command names.
+ As I am not familiar with Assembler, I might use commands in a fashion
+ not expected by someone who knows ASM.
+ On the other, as any dialogue designer will, in the best case, never see
+ those commands, it is not that important.
+\layout Section
+
+Variable Text
+\layout Standard
+
+With the interpreted Dialogue Language, we can do some nice things already.
+ But there are a few things that have to be done in a different way: one
+ of those is to make parts of the text variable.
+ Think about the players name that has to be inserted at run-time, or the
+ different pronouns when adressing male / female players.
+\layout Standard
+
+The basic idea is, to have variables that are inserted into the text and
+ are later replaced with the correct value.
+ To distinguish them from normal text, they begin with a $-sign, like $name,
+ $time, \SpecialChar \ldots{}
+ .
+ Each string gets parsed when it is needed, that should be fast enough to
+ avoid unwanted breaks during the program execution.
+ If it should be neccessary, every string might start with a flag that indicates
+ wether it contains variables or not, so only those (few) strings that really
+ have to be parsed are parsed.
+\layout Standard
+
+One problem that remains is how to get a pointer to a variable when given
+ a string.
+ Since we've got the sme problem with the variables referenced from within
+ the Dialogue's Code, the solution we find should work in both cases.
+ Probably a hash-table with the variable-names as keys could work.
+\layout Section
+
+Interface
+\layout Standard
+
+If you just want to use the dialogue engine in your code, this is the most
+ important section, since it describes what functions and members the Dialogue
+ Engine has.
+ (As the code will change from C to C++ in the near future, you have to
+ be careful) The Engine is encapsulated in the 
+\family typewriter 
+dialog
+\family default 
+ class.
+ It has the following methods:
+\layout Paragraph
+
+
+\family typewriter 
+u_int8 init_dialog (const char *, u_int32 = 0)
+\layout Standard
+
+Loads the dialogue from file and initializes all internal variables.
+ Currently you have to pass the name of the program and of the text file
+ and the position where to start the dialogue (should be 0 at the moment).
+ Later on, when all strings are in onw file (and maybe the programs too)
+ that will change.
+ It returns 1 if everything was fine, 0 if there were errors.
+\layout Paragraph
+
+
+\family typewriter 
+s_int32 run_dialog (u_int32)
+\layout Standard
+
+Call that every time you wish to continue the Dialogue execution.
+ Pass the index of the Player Text the player has selected.
+ It then continues the dialogue at the appropriate position and initializes
+ the new text of NPC and Player.
+ It returns the number of lines of the Player Text if everything went fine,
+ -2 in case an error occured and -1 if the Dialogue is finished.
+\newline 
+
+\newline 
+Apart from those functions, the dialogue object contains four variables
+ that are of interest.
+\layout Paragraph
+
+
+\family typewriter 
+char *npc_text
+\layout Standard
+
+The string to display as the players text.
+\layout Paragraph
+
+
+\family typewriter 
+char
+\family default 
+ 
+\family typewriter 
+*error_text
+\layout Standard
+
+In case of an error, a more detailed (not neccessarily useful ;-)) description.
+\layout Paragraph
+
+
+\family typewriter 
+Array<char*> player_text
+\layout Standard
+
+A list of the players possible reactions.
+ You can retrieve them either by 
+\family typewriter 
+(char
+\protected_separator 
+*)
+\protected_separator 
+player_text.get_element
+\protected_separator 
+(index)
+\family default 
+, 0 <= index < m_Num, or can get the array by a call to 
+\family typewriter 
+(char
+\protected_separator 
+**)
+\protected_separator 
+player_text.get_array
+\protected_separator 
+().
+\layout Paragraph
+
+
+\family typewriter 
+Array<char*> plugin_text
+\layout Standard
+
+(Not implemented yet) Contains additional Player Text.
+ Get the number of strings with 
+\family typewriter 
+(u_int32)
+\protected_separator 
+plugin_text.length
+\protected_separator 
+()
+\family default 
+ and the actual text in the same fashion as explained above.
+\layout Section
+\pagebreak_top 
+File Formats
+\layout Standard
+
+Just for the sake of completeness :-)
+\layout Subsection
+
+String File
+\layout Standard
+
+All strings are (well, will be) stored in a single file and can be used
+ in every dialogue.
+ Its format is the following:
+\layout Standard
+\added_space_top 0.3cm \added_space_bottom 0.3cm \align left \LyXTable
+multicol5
+13 2 0 0 -1 -1 -1 -1
+0 0 0 0
+0 0 0 0
+0 0 0 0
+0 0 0 0
+0 0 0 0
+0 0 0 0
+0 0 0 0
+0 0 0 0
+0 0 0 0
+0 0 0 0
+0 0 0 0
+0 0 0 0
+0 0 0 0
+2 0 0 "" ""
+2 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+
+
+\family typewriter 
+Number of strings
+\family default 
+ 
+\newline 
+
+\family typewriter 
+- 4 bytes
+\family default 
+
+\newline 
+
+\family typewriter 
+Offset of string #1
+\family default 
+ 
+\newline 
+
+\family typewriter 
+- 4 bytes
+\family default 
+
+\newline 
+
+\family typewriter 
+Offset of string #2
+\family default 
+ 
+\newline 
+
+\family typewriter 
+- 4 bytes
+\family default 
+
+\newline 
+
+\family typewriter 
+\SpecialChar \ldots{}
+
+\family default 
+
+\newline 
+
+\newline 
+
+\family typewriter 
+Offset of last string
+\family default 
+ 
+\newline 
+
+\family typewriter 
+- 4 bytes
+\family default 
+
+\newline 
+
+\family typewriter 
+Length of string #1
+\family default 
+ 
+\newline 
+
+\family typewriter 
+- 4 bytes
+\family default 
+
+\newline 
+
+\family typewriter 
+Length of string #2
+\family default 
+ 
+\newline 
+
+\family typewriter 
+- 4 bytes
+\family default 
+
+\newline 
+
+\family typewriter 
+\SpecialChar \ldots{}
+
+\family default 
+
+\newline 
+
+\newline 
+
+\family typewriter 
+Length of last string
+\family default 
+ 
+\newline 
+
+\family typewriter 
+- 4 bytes
+\family default 
+
+\newline 
+
+\family typewriter 
+String #1
+\family default 
+ 
+\newline 
+
+\family typewriter 
+- sizeof (String #1) bytes
+\family default 
+
+\newline 
+
+\family typewriter 
+String #2
+\family default 
+ 
+\newline 
+
+\family typewriter 
+- sizeof (String #2) bytes
+\family default 
+
+\newline 
+
+\family typewriter 
+\SpecialChar \ldots{}
+
+\family default 
+
+\newline 
+
+\newline 
+
+\family typewriter 
+Last string
+\family default 
+ 
+\newline 
+
+\family typewriter 
+- sizeof (Last string) bytes
+\layout Standard
+
+Currently, strings are stored in their ASCII representation, but to prevent
+ players from cheating they should be encoded with a simple and fast method,
+ like a bytewise AND with the first character of the string.
+\layout Subsection
+
+Program File
+\layout Standard
+
+Its not decided yet, wether to have all Dialogue programs in a single file.
+ If that would be the case, it would probably look much like the string
+ file.
+ One Dialogue is stored as follows:
+\layout Standard
+\added_space_top 0.3cm \added_space_bottom 0.3cm \align left \LyXTable
+multicol5
+13 2 0 0 -1 -1 -1 -1
+0 0 0 0
+0 0 0 0
+0 0 0 0
+0 0 0 0
+0 0 0 0
+0 0 0 0
+0 0 0 0
+0 0 0 0
+0 0 0 0
+0 0 0 0
+0 0 0 0
+0 0 0 0
+0 0 0 0
+2 0 0 "" ""
+2 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+
+
+\family typewriter 
+Length of Dialogue
+\newline 
+- 4 bytes
+\newline 
+Number of Commands
+\newline 
+- 4 bytes
+\newline 
+Command #1 
+\newline 
+- 4 bytes
+\newline 
+Parameter #1
+\newline 
+- 4 bytes
+\newline 
+Parameter #2
+\newline 
+- 4 bytes
+\newline 
+\SpecialChar \ldots{}
+
+\newline 
+
+\newline 
+Last parameter 
+\newline 
+- 4 bytes
+\newline 
+\SpecialChar \ldots{}
+
+\newline 
+
+\newline 
+Last command
+\newline 
+- 4 bytes
+\newline 
+Parameter #1
+\newline 
+- 4 bytes
+\newline 
+Parameter #2 
+\newline 
+- 4 bytes
+\newline 
+\SpecialChar \ldots{}
+
+\newline 
+
+\newline 
+Last parameter
+\newline 
+- 4 bytes
+\layout Standard
+
+Since the number of parameters that follow a command are known as soon as
+ we read the command, we don't have to store that.
+ Of course, some commands may have no parameters at all; then the next command
+ follows immediately.
+\the_end

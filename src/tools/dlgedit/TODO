@@ -1,0 +1,24 @@
+v 0.3
++ Project management, that allows to store all dialogues
+  of one project into a single data and string file.
++ Replace GtkCList of RunDialogue dialog by GtkList to
+  allow multiline entries.
++ Code clean up (don´t use GPtrList, ptr_list, int_list
+  and Array<T>, but only one of those) I already tried
+  but it did not really work :( .
++ Includes are a mess :( - Have to do this better!
+
+v 0.4
++ Allowing variables among the text that get replaced at
+  runtime with the according string, for example $name
++ Allowing arrows to have condition that decide if the 
+  attached circle is selected or not.
+
+  Both of this requires that program variables can be
+  accessed through the Dialogue Engine.
+
++ Adding a dialog to preset above variables, in order
+  to test dialogues under various conditions from within
+  the Dialogue Editor.
++ Encoding the Strings, so players can´t cheat by simply
+  reading the Dialogue texts.

@@ -1,0 +1,20 @@
+Adonthell Dialogue Editor INSTALLATION
+
+Requirements:
+This tool depends on GTK 1.2.6 or higher. You may compile it with a lower version, but don´t complain if it SEGFAULTS every other minute. The bugs are in GTK, not in the Dialogue Editor ;-)
+
+To test what version of GTK is installed on your machine, type
+> gtk-config --version
+
+If you have GTK not installed, get it from http://www.gtk.org
+
+
+Installation:
+cd into the dlgedit/ directory and
+> make
+
+Thats all. Have fun :)
+
+_____________________________________________________________________________
+Part of the Adonthell project                 http://adonthell.linuxgames.com 
+(C) 1999 by Kai Sterker                             kaisterker@linuxgames.com
