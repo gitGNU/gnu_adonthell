@@ -258,7 +258,7 @@ string dlg_compiler::inflate (string code)
 
     while (pos != code.npos)
     {
-        if (pos > 4 && strncmp (code.substr (pos-5, pos).c_str(), "self.", 5))
+        if (pos < 5 || strncmp (code.substr (pos-5, pos).c_str(), "self.", 5))
         {
             code.insert (pos, "self.");
             pos += 5;
