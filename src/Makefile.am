@@ -2,11 +2,11 @@ SUBDIRS = . tools
 
 bin_PROGRAMS = adonthell
 
-mapengine_SOURCES = animation.cpp audio.cpp audio_thread.cpp \
+adonthell_SOURCES = animation.cpp audio.cpp audio_thread.cpp \
 character.cpp cutscene.cpp data.cpp dialog.cpp dialog_engine.cpp \
 drawing_area.cpp event.cpp fileops.cpp game.cpp gametime.cpp \
 image.cpp input.cpp lex.prefs.cpp main.cpp \
-mapselect.o mapobject.cpp mapcharacter.cpp landmap.cpp mapview.cpp \
+mapselect.cpp mapobject.cpp mapcharacter.cpp landmap.cpp mapview.cpp \
 pnm.cpp prefs.cpp py_character_wrap.cpp\
 py_dialog_engine_wrap.cpp py_inc.cpp py_modules.cpp py_quest_wrap.cpp \
 quest.cpp screen.cpp storage.cpp \
