@@ -192,6 +192,15 @@ Insert Toggle mask on/off.
 PageUp/PageDown Increase/decrease the alpha value.
  Please note that a alpha value > 0 eats quite some CPU, so be carefull
  while using it, as an alpha value of 1 of nearly as opaque as a 0.
+\layout Description
+
+P Plays the animation, allowing you to see the result.
+\layout Description
+
+O Stop the animation.
+\layout Description
+
+I Rewind the animation.
 \layout Standard
 
 All these control can be accelerated by pushing the Left Ctrl key while

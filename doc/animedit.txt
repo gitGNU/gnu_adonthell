@@ -92,6 +92,12 @@ PageUp/PageDown Increase/decrease the alpha value. Please note that
   a alpha value > 0 eats quite some CPU, so be carefull while using
   it, as an alpha value of 1 of nearly as opaque as a 0.
 
+P Plays the animation, allowing you to see the result.
+
+O Stop the animation.
+
+I Rewind the animation.
+
 All these control can be accelerated by pushing the Left Ctrl key while
 pushing them.
 

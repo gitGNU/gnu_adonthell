@@ -509,8 +509,8 @@ void animation::update_editor()
   else
     {
       if(input::get_nbr_pushed(SDLK_p)) play();
-      if(input::get_nbr_pushed(SDLK_s)) stop();
-      if(input::get_nbr_pushed(SDLK_r)) rewind();
+      if(input::get_nbr_pushed(SDLK_o)) stop();
+      if(input::get_nbr_pushed(SDLK_i)) rewind();
 
       if(input::get_nbr_pushed(SDLK_a)) add_frame();
       if(input::get_nbr_pushed(SDLK_d)) delete_frame(currentframe);
