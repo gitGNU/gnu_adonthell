@@ -24,7 +24,7 @@ void storage::set (const char *key, s_int32 value)
 #endif
     if (!value) data.erase (key);
     else data[key] = value;
-
+    
     changed = 1;
 }
 

@@ -23,6 +23,9 @@
 class quest : public storage
 {
 public:
+    quest ();
+    ~quest ();
+    
 #ifndef SWIG
     void load (gzFile);
     void save (gzFile);

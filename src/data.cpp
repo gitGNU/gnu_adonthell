@@ -320,7 +320,7 @@ void data::unload ()
 #endif
         delete mychar;
     }
-
+    
     // delete all quests
     while ((myquest = (quest *) data::quests.next ()) != NULL)
     {

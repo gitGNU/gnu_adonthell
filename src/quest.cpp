@@ -15,6 +15,16 @@
 #include "fileops.h"
 #include "quest.h"
 
+quest::quest ()
+{
+    name = NULL;
+}
+
+quest::~quest ()
+{
+    if (name) delete[] name;
+}
+
 // Save a quest object
 void quest::save (gzFile out)
 {
@@ -46,6 +56,7 @@ void quest::load (gzFile in)
     char *key;
 
     // load name
+    if (name) delete[] name;
     name = fileops::get_string (in);
     
     // load all variables and flags
@@ -54,7 +65,6 @@ void quest::load (gzFile in)
     {
         key = fileops::get_string (in);
         gzread (in, &value, sizeof (value));
-
         set (key, value);
     }
 }

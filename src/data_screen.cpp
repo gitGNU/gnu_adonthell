@@ -106,6 +106,7 @@ void data_screen::init ()
 
         image_list->add (box);
         
+        delete picture;
         num++;
     }
 
@@ -131,6 +132,7 @@ void data_screen::init ()
         image_list->add (box);
         image_list->set_default (box);
 
+        delete picture;
         num++;
     }
     else image_list->set_default (1);

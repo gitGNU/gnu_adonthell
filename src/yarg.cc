@@ -14,7 +14,6 @@
 
 #include <string.h>
 #include <time.h>
-#include <string.h>
 #include "yarg.h"
 
 yarg::yarg ()

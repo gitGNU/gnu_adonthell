@@ -33,7 +33,7 @@ character_base::~character_base ()
 
 void character_base::set_name (const char * newname)
 {
-  if (name) delete name;
+  if (name) delete[] name;
   if (newname==NULL) name=NULL;
   else
     {
@@ -88,6 +88,7 @@ void character_base::load (gzFile in)
     char *key;
 
     // load name
+    if (name) delete[] name; 
     name = fileops::get_string (in);
 
     // load color
@@ -107,5 +108,6 @@ void character_base::load (gzFile in)
         set (key, value);
     }
 
+    if (dialogue) delete[] dialogue;
     dialogue = fileops::get_string (in);
 }

@@ -110,6 +110,7 @@ void win_font::load_font(char * rep)
   length_=table[' '].length();
   
   if(font)delete font;
+  gzclose (f);
 }
 
 void win_font::load(char * rep)
