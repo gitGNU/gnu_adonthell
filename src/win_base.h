@@ -94,7 +94,6 @@ class win_base
   //return if selected
   bool is_select(){return selected_;}
 
-  
 
 
   /*******************************************************************/
@@ -193,7 +192,8 @@ class win_base
   
   void set_in_select(bool b){in_select_=b;}
   void set_select(bool b){(selected_=b)?on_select():on_unselect();}
-  void set_select_mode_(u_int8 mode) {mode_select_=mode;set_draw_brightness(mode==WIN_SELECT_MODE_BRIGHTNESS);}
+  void set_select_mode_(u_int8 mode); 
+   
   
   //execute the callback function
   virtual void on_activate();

@@ -146,19 +146,33 @@ bool win_select::update()
 //WARNING: lots of confuse in next_ and previous maybe rewrite them
 void win_select::next_()
 {
+  //test if next is possible 
   if(index_list==list_obj.end() || !activated_) return;
+  
+  //unselect the cur object
   (*index_list)->on_unselect();
-     if(mode_selected_==WIN_SELECT_MODE_BRIGHTNESS)
-     (*index_list)->set_draw_brightness(true);
-     index_list++;
- 
-     if(index_list==list_obj.end()) 
-     if(select_circle_) index_list=list_obj.begin();
-     else index_list--;
+  
+  //test mode
+  if(mode_selected_==WIN_SELECT_MODE_BRIGHTNESS)
+    (*index_list)->set_draw_brightness(true);
+  else if(mode_selected_==WIN_SELECT_MODE_BORDER)
+    (*index_list)->set_border_visible(false);
+
+  //change to the next
+  index_list++;
+  
+  if(index_list==list_obj.end()) 
+    if(select_circle_) index_list=list_obj.begin();
+    else index_list--;
      
-     (*index_list)->on_select();
-     (*index_list)->set_draw_brightness(false);
-     /*
+  (*index_list)->on_select();
+  
+  if(mode_selected_==WIN_SELECT_MODE_BRIGHTNESS)
+    (*index_list)->set_draw_brightness(false);
+  else if(mode_selected_==WIN_SELECT_MODE_BORDER)
+    (*index_list)->set_border_visible(true);
+  
+  /*
 
   list<win_base*>::iterator old=index_list;
   if(select_circle_)
@@ -222,8 +236,12 @@ void win_select::previous_()
 {
   if(index_list==list_obj.end() || !activated_) return;
   (*index_list)->on_unselect();
+  
   if(mode_selected_==WIN_SELECT_MODE_BRIGHTNESS)
     (*index_list)->set_draw_brightness(true);
+  else if(mode_selected_==WIN_SELECT_MODE_BORDER)
+    (*index_list)->set_border_visible(false);
+
 
   if(index_list!=list_obj.begin()) index_list--;
   else if(select_circle_) 
@@ -233,7 +251,12 @@ void win_select::previous_()
       index_list--;
     }
   (*index_list)->on_select();
-  (*index_list)->set_draw_brightness(false);
+  
+  if(mode_selected_==WIN_SELECT_MODE_BRIGHTNESS)
+    (*index_list)->set_draw_brightness(false);
+  else if(mode_selected_==WIN_SELECT_MODE_BORDER)
+    (*index_list)->set_border_visible(true);
+  
   update_position();
   on_previous();
 }
@@ -280,6 +303,9 @@ void win_select::set_default(u_int16 nb)
   (*index_list)->set_select(false);
   if(mode_selected_==WIN_SELECT_MODE_BRIGHTNESS)
     (*index_list)->set_draw_brightness(true);
+  else if(mode_selected_==WIN_SELECT_MODE_BORDER)
+    (*index_list)->set_border_visible(false);
+
   index_list=list_obj.begin();
   while(index_list!=list_obj.end() && j++<nb) index_list++;
   if(index_list!=list_obj.end()) 
@@ -287,6 +313,8 @@ void win_select::set_default(u_int16 nb)
       (*index_list)->set_select(true);
       if(mode_selected_==WIN_SELECT_MODE_BRIGHTNESS)
 	(*index_list)->set_draw_brightness(false);
+      else if(mode_selected_==WIN_SELECT_MODE_BORDER)
+	(*index_list)->set_border_visible(true);
     }
 }
 
@@ -294,8 +322,12 @@ void win_select::set_default(win_base * wb)
 {
   if(index_list==list_obj.end()) return;
   (*index_list)->set_select(false);
+
   if(mode_selected_==WIN_SELECT_MODE_BRIGHTNESS)
     (*index_list)->set_draw_brightness(true);
+  else if(mode_selected_==WIN_SELECT_MODE_BORDER)
+    (*index_list)->set_border_visible(false);
+
   index_list=list_obj.begin();
   while(index_list != list_obj.end() && (*index_list)!=wb) index_list++;
   if(index_list!=list_obj.end()) 
@@ -303,6 +335,8 @@ void win_select::set_default(win_base * wb)
       (*index_list)->set_select(true);
       if(mode_selected_==WIN_SELECT_MODE_BRIGHTNESS)
 	(*index_list)->set_draw_brightness(false);
+      else if(mode_selected_==WIN_SELECT_MODE_BORDER)
+	(*index_list)->set_border_visible(true);
     }
 }
 

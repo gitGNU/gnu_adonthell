@@ -256,6 +256,13 @@ void win_base::set_focus(bool b)
 }
 
 
+void win_base::set_select_mode_(u_int8 mode)
+{
+  mode_select_=mode;
+  if(mode==WIN_SELECT_MODE_BRIGHTNESS) set_draw_brightness(true);
+  else if(mode==WIN_SELECT_MODE_BORDER) set_border_visible(false);
+} 
+
 
 /*******************************************************/
 /************************ DRAW *************************/
@@ -266,52 +273,18 @@ void win_base::draw_border()
 #define WB_CORNER_MIDY (border->corner_top_left->height>>1)
 #define WB_VBORDERX (border->v_border_template->length>>1)
 #define WB_HBORDERY (border->h_border_template->height>>1) 
-  
   //if no theme, drawing nothing
-  if(!theme_) return;
+  if(!theme_ || !visible_border_) return;
+  
   //create a temp border
   win_border * border=NULL;
-  //if border size is mini, border take the minborder of the theme
+  
+  //if border size is mini, border take the minborder of the theme, is normal tka normal border
   if(border_size_==WIN_SIZE_MINI) border=theme_->mini;
   else if(border_size_==WIN_SIZE_NORMAL) border=theme_->normal;
- 
-  //if this object is in a select object 
-  if(in_select_)
-    {
-      //if in select object but not selected
-      if(!selected_)
-	{
-	  //if curmode of the select is win_border so draw nothing
-	  if(mode_select_==WIN_SELECT_MODE_BORDER)
-	  {
-        visible_border_ = false;
-	    return;
-      }
-	  //if mode is brightness draw the border on brigthness mode
-	  else if(mode_select_==WIN_SELECT_MODE_BRIGHTNESS) draw_brightness_=true;
-	}
-      else
-	{
-	  //if the object is in select and the object is selected
-	  //if selection is border ----> WARNING  I MUST CHECK WHY theme_->mini, why not use the cur size of border ????
-	  if(mode_select_==WIN_SELECT_MODE_BORDER) 
-	  {
-        visible_border_ = true;
-	    border=theme_->mini;
-      }
-	  //if mode is brightness this object must not drawing with brightness
-	  else if(mode_select_==WIN_SELECT_MODE_BRIGHTNESS) 
-	    {draw_brightness_=false;	    
-	    }   
-	}
-    }
-
-  //if the is not in win_select and i not visible return 
-  if (!visible_border_) return;
-
-  //create a static image to draw border
-  static image imgbright;
   
+  //create a static image to draw border
+  static image imgbright;  
   
   switch(draw_brightness_)
     {
@@ -351,7 +324,6 @@ void win_base::draw_border()
       break;
     }
 }
-
 
 
 void win_base::draw_background()
