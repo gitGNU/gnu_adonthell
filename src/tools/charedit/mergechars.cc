@@ -200,7 +200,7 @@ void process_character (char *input, FILE *output)
                 case 4:
                 {
                     if (strcmp (vals[0], "dialogue") == 0) mynpc.set_dialogue (vals[1]);
-                    else if (strcmp (vals[0], "schedule") == 0) mynpc.set_schedule (vals[1], false);
+                    else if (strcmp (vals[0], "schedule") == 0) mynpc.set_schedule (strdup (vals[1]), false);
        
                     break;
                 }
