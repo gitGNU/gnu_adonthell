@@ -2,11 +2,11 @@ CPP = g++
 CPPFLAGS = -D_EDIT_ -DREVERSE_ALPHA -g -Wall -I../../ -I/usr/local/include/SDL -I../mapcharedit `sdl-config --cflags` -I/home/maitrise/MAITRISE/include
 LIBS = -lz -g `sdl-config --cflags` `sdl-config --libs` -L/home/maitrise/MAITRISE/lib
 OBJECTS = pnm.o drawing_area.o image.o screen.o animation.o game.o \
-	prefs.o lex.prefs.o input.o mapselect.o win_label.o win_write.o win_query.o \
+	prefs.o lex.prefs.o input.o mapselect.o win_label.o win_write.o \
+	win_query.o \
 	win_info.o win_container.o win_select.o win_file.o \
 	win_border.o win_base.o win_font.o win_image.o \
 	win_background.o win_scrolled.o win_scrollbar.o win_theme.o
-
 
 MOBJEDOBJ=mapobject.o mapobjedit.o
 MEDOBJ=mapobject.o landmap.o mapview.o mapedit.o
@@ -157,6 +157,15 @@ win_theme.o: ../../win_theme.cpp
 
 mapselect.o: ../../mapselect.cpp
 	$(CPP) -c $(CPPFLAGS) ../../mapselect.cpp -o mapselect.o
+
+mapobject.o: ../../mapobject.cpp
+	$(CPP) -c $(CPPFLAGS) ../../mapobject.cpp -o mapobject.o
+
+landmap.o: ../../landmap.cpp
+	$(CPP) -c $(CPPFLAGS) ../../landmap.cpp -o landmap.o
+
+mapview.o: ../../mapview.cpp
+	$(CPP) -c $(CPPFLAGS) ../../mapview.cpp -o mapview.o
 
 clean:
 	rm -rf *.o

@@ -12,13 +12,6 @@
    See the COPYING file for more details.
 */
 
-#include "image.h"
-#include "mappattern.h"
-#include "mapcharacter.h"
-#include "mapsquare.h"
-#include "mapevent.h"
-#include "map.h"
-#include "mapengine.h"
 #include "game.h"
 
 int main(int argc, char * argv[])
