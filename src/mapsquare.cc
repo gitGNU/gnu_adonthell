@@ -176,24 +176,21 @@ void mapsquare_area::remove_mapobject (u_int16 px, u_int16 py, mapobject * mobj)
     u_int16 j0 = py - mobj->base_y () < 0 ? 0 : py - mobj->base_y (); 
     
     u_int16 ie = px + (mobj->area_length ()) - mobj->base_x () > area_length () ?
-        area_length () - 1 : px + (mobj->area_length ()) - mobj->base_x () - 1;  
+        area_length () : px + (mobj->area_length ()) - mobj->base_x ();  
     u_int16 je = py + (mobj->area_height ()) - mobj->base_y () > area_height () ?
-        area_height () - 1 : py + (mobj->area_height ()) - mobj->base_y () - 1; 
+        area_height () : py + (mobj->area_height ()) - mobj->base_y (); 
     
-    // Find the base tile, get it's reference (to remove others) and erase it.
+    // Find the base tile, get it's reference (to remove others).
     for (it = area[px][py].tiles.begin (); it != area[px][py].tiles.end () &&
-             (it->is_base ==  true && it->mapobj == mobj); it++);
-
+           !(it->is_base == true && it->mapobj == mobj); it++); 
+    
     // Base tile not found - better to return now...
     if (it == area[px][py].tiles.end ()) return;
-
+    
     // Keep the iterator available for further comparison
     list <mapsquare_tile>::iterator the_base = it;
-
-    // Erase the base tile
-    area[px][py].tiles.erase (it);
-    
-    // And now erase all the others tiles of this object.
+     
+    // And now erase all the others tiles of this object. 
     for (j = j0; j < je; j++)
         for (i = i0; i < ie; i++)
         {
@@ -201,7 +198,11 @@ void mapsquare_area::remove_mapobject (u_int16 px, u_int16 py, mapobject * mobj)
             {
                 mapsquare & s = area[i][j]; 
                 
-                for (it = s.tiles.begin (); it->base_tile != the_base; it++); 
+                for (it = s.tiles.begin (); it != s.tiles.end () && it->base_tile != the_base; it++); 
+
+                // Not found?? Weird - let's not mess with it then!
+                if (it == s.tiles.end ()) continue; 
+
                 s.tiles.erase (it);
                 
                 // Recalculate the walkability of this square.
@@ -215,6 +216,8 @@ void mapsquare_area::remove_mapobject (u_int16 px, u_int16 py, mapobject * mobj)
                 }
             }
         } 
+    // Erase the base tile
+    area[px][py].tiles.erase (the_base);
 }
 
 void mapsquare_area::resize_area (u_int16 nl, u_int16 nh)
