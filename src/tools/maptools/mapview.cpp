@@ -450,7 +450,7 @@ void mapview::draw(u_int16 x, u_int16 y, drawing_area * da_opt=NULL)
 	it->y<it->base_tile->y;it--)
       {
 	if(it->x>it->base_tile->x && it->y<it->base_tile->y)
-	  critical_draw.push_back(*(it->base_tile));
+	  critical_draw.push_front(*(it->base_tile));
 	if(it==l->land[i0][je-1].tiles.begin()) break;
       }
   // Bottom line
@@ -460,7 +460,7 @@ void mapview::draw(u_int16 x, u_int16 y, drawing_area * da_opt=NULL)
 	  it->y<it->base_tile->y;it--)
 	{
 	  if(it->x==it->base_tile->x && it->y<it->base_tile->y)
-	    critical_draw.push_back(*(it->base_tile));
+	    critical_draw.push_front(*(it->base_tile));
 	  if(it==l->land[i][je-1].tiles.begin()) break;
 	}
 
@@ -470,7 +470,7 @@ void mapview::draw(u_int16 x, u_int16 y, drawing_area * da_opt=NULL)
 	it->y<it->base_tile->y;it--)
       {
 	if(it->x<it->base_tile->x && it->y<it->base_tile->y)
-	  critical_draw.push_back(*(it->base_tile));
+	  critical_draw.push_front(*(it->base_tile));
 	if(it==l->land[ie-1][je-1].tiles.begin()) break;
       }
   // Drawing bottom overflowing gfx
@@ -590,6 +590,7 @@ void mapview::update_editor_keys()
 	resize_map();
 	mapselect::resize(m_map->submap[currentsubmap]->length,
 			  m_map->submap[currentsubmap]->height);
+	must_upt_label_pos=true;
       }
 
     if(input::has_been_pushed(SDLK_d))

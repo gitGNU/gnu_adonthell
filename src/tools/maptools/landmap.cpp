@@ -281,39 +281,27 @@ void landsubmap::resize(u_int16 l, u_int16 h)
 {
   u_int16 i,j;
   list<mapsquare_tile>::iterator it;
-  cout << "resize called\n";
   if(length==l && height==h) return;
-  mapsquare ** ltemp=new (mapsquare*)[l];
+  mapsquare ** ltemp=land;
+  mapsquare ** newland=new (mapsquare*)[l];
+
   for(i=0;i<l;i++)
-    ltemp[i]=new mapsquare[h];
+    newland[i]=new mapsquare[h];
+
+  land=newland;
 
   for(i=0;i<l && i<length;i++)
     for(j=0;j<h && j<height;j++)
-      for(it=land[i][j].tiles.begin();it!=land[i][j].tiles.end();it++)
+      for(it=ltemp[i][j].tiles.begin();it!=ltemp[i][j].tiles.end();it++)
       {
-	if(it->is_base) /* Deplacer place_obj dans landsubmap et faire 
-			   un wrapper pour map ; appeler place_obj ici */;
+	if(it->is_base) set_square_pattern(i,j,it->objnbr);
       }
   
   for(i=0;i<length;i++)
-    delete[] land[i];
-  delete[] land;
-  
-  land=ltemp;
+    delete[] ltemp[i];
+  delete[] ltemp;
   length=l;
   height=h;
-  /*  landsubmap tmp(length,height);
-      tmp=*this;*/
-  /*  landsubmap * tmp=new landsubmap(l,h);
-  destroymap();
-  *this=*tmp;
-  cout << "ok\n";*/
-  /*
-  for(i=0;i<l && i<tmp.length;i++)
-    for(j=0;j<h && j<tmp.height;j++)
-      {
-	land[i][j]=tmp.land[i][j];
-	}*/
 }
 
 s_int8 landsubmap::get(gzFile file)
