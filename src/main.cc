@@ -193,10 +193,6 @@ int main(int argc, char * argv[])
     event_handler::cleanup ();
     
     // shutdown python
-    // Cleanup the global namespace of python interpreter
-    // Note that we don't have to DECREF data::globals, because they're a
-    // borrowed reference of py_module.
-    Py_DECREF (python::module); 
     python::cleanup ();     
 
     // shutdown video and SDL

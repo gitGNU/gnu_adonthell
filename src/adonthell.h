@@ -47,7 +47,7 @@ class adonthell
      * Standard constructor
      */
     adonthell ();
-    
+   
     /**
      * @name The engine's main loop
      * 
