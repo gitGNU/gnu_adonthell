@@ -27,7 +27,6 @@ void event_1::exec(mapcharacter*aguy,map*amap,u_int16 x,u_int16 y)
       if(param(6)!=255) amap->set_scrolltype(param(6));
       amap->set_movtype(0);
     }
-  amap->run_event(otherevent(),aguy,x,y);
   if((param(7))&&(aguy->get_nbr()==255)) mapengine::fade_in(amap);
 }
 
@@ -39,19 +38,16 @@ void event_2::exec(mapcharacter*aguy,map*amap,u_int16 x,u_int16 y)
       if (amap->get_scrolltype()==1) amap->set_scrolltype(2);
       else if (amap->get_scrolltype()==2) amap->set_scrolltype(1);
     }
-  amap->run_event(otherevent(),aguy,x,y);
 }
 
 void event_3::exec(mapcharacter*aguy,map*amap,u_int16 x,u_int16 y)
 {
   if (aguy->get_nbr()==255) amap->set_scrolltype(1);
-  amap->run_event(otherevent(),aguy,x,y);
 }
 
 void event_4::exec(mapcharacter*aguy,map*amap,u_int16 x,u_int16 y)
 {
   if (aguy->get_nbr()==255) amap->set_scrolltype(2);
-  amap->run_event(otherevent(),aguy,x,y);
 }
 
 void event_5::exec(mapcharacter*aguy,map*amap,u_int16 x,u_int16 y)
@@ -64,7 +60,6 @@ void event_5::exec(mapcharacter*aguy,map*amap,u_int16 x,u_int16 y)
       amap->init_for_scrolling();
       if (param(7)) mapengine::fade_in(amap);
     }
-  amap->run_event(otherevent(),aguy,x,y);
 }
 
 void event_6::exec(mapcharacter*aguy,map*amap,u_int16 x,u_int16 y)
@@ -84,7 +79,6 @@ void event_6::exec(mapcharacter*aguy,map*amap,u_int16 x,u_int16 y)
       amap->init_for_scrolling();
       if(param(7)) mapengine::fade_in(amap);
     }
-  amap->run_event(otherevent(),aguy,x,y);
 }
 
 void event_7::exec(mapcharacter*aguy,map*amap,u_int16 x,u_int16 y)
@@ -99,7 +93,6 @@ void event_7::exec(mapcharacter*aguy,map*amap,u_int16 x,u_int16 y)
 	}
       amap->enable_horizontal_scrolling();
     }
-  amap->run_event(otherevent(),aguy,x,y);
 }
 
 void event_8::exec(mapcharacter*aguy,map*amap,u_int16 x,u_int16 y)
@@ -114,7 +107,6 @@ void event_8::exec(mapcharacter*aguy,map*amap,u_int16 x,u_int16 y)
 	}
       amap->disable_horizontal_scrolling();
     }
-  amap->run_event(otherevent(),aguy,x,y);
 }
 
 void event_9::exec(mapcharacter*aguy,map*amap,u_int16 x,u_int16 y)
@@ -129,7 +121,6 @@ void event_9::exec(mapcharacter*aguy,map*amap,u_int16 x,u_int16 y)
 	}
       amap->enable_vertical_scrolling();
     }
-  amap->run_event(otherevent(),aguy,x,y);
 }
 
 void event_10::exec(mapcharacter*aguy,map*amap,u_int16 x,u_int16 y)
@@ -144,7 +135,6 @@ void event_10::exec(mapcharacter*aguy,map*amap,u_int16 x,u_int16 y)
 	}
       amap->disable_vertical_scrolling();
     }
-  amap->run_event(otherevent(),aguy,x,y);
 }
 
 void event_11::exec(mapcharacter*aguy,map*amap,u_int16 x,u_int16 y)
@@ -157,11 +147,61 @@ void event_11::exec(mapcharacter*aguy,map*amap,u_int16 x,u_int16 y)
   // Launch mapengine on tmap
   //  update_mapkeyboard(amap);
   mapengine::fade_in(amap);
-  amap->run_event(otherevent(),aguy,x,y);
 }
 
 void event_255::exec(mapcharacter*aguy,map*amap,u_int16 x,u_int16 y)
 {
   if (aguy->get_nbr()==255) amap->set_status(1);
-  amap->run_event(otherevent(),aguy,x,y);
+}
+/*
+void event_item::exec (mapcharacter * aguy, map * amap, u_int16 x, u_int16 y)
+// This events occurs when the hero walks on an object
+{
+    int ev_walk;
+
+    ev_walk = amap->items[amap->themap[x][y].item].event_walk;
+    if (amap->themap[x][y].item == 0)
+    {
+        printf ("Error: event_object function called where there is no object\n");
+        exit (1);
+    }
+    if (ev_walk == 0)
+        return;
+    //printf("Calling event %i of type %i\n",ev_walk,amap->event[ev_walk].type);
+    event[ev_walk].run();
+} */
+
+void action_key::exec (mapcharacter * aguy, map * amap, u_int16 x, u_int16 y)
+{
+}
+
+void modif_pict::exec (mapcharacter * aguy, map * amap, u_int16 x, u_int16 y)
+{
+}
+
+void get_item::exec (mapcharacter * aguy, map * amap, u_int16 x, u_int16 y)
+{
+}
+
+void get_key::exec (mapcharacter * aguy, map * amap, u_int16 x, u_int16 y)
+{
+}
+
+void open_item::exec (mapcharacter * aguy, map * amap, u_int16 x, u_int16 y)
+{
+}
+
+void walk_flag::exec (mapcharacter * aguy, map * amap, u_int16 x, u_int16 y)
+{
+}
+
+void place_item::exec (mapcharacter * aguy, map * amap, u_int16 x, u_int16 y)
+{
+}
+
+void framefactor::exec (mapcharacter * aguy, map * amap, u_int16 x, u_int16 y)
+{
+    // changes the frame factor to the one specified as param1
+    if (param(1) != 255)
+        aguy->set_framefactor(param(1));
 }

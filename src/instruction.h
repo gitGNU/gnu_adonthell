@@ -25,5 +25,14 @@ cinstr(event_9);
 cinstr(event_10);
 cinstr(event_11);
 cinstr(event_255);
+cinstr(event_item);
+cinstr(action_key);
+cinstr(modif_pict);
+cinstr(get_item);
+cinstr(get_key);
+cinstr(open_item);
+cinstr(walk_flag);
+cinstr(place_item);
+cinstr(framefactor);
 
 #endif
