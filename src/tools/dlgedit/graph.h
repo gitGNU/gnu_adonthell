@@ -31,7 +31,7 @@ void new_dialogue (MainFrame *);
 void save_dialogue (MainFrame *);
 void save_circle (DlgNode *, FILE *, int);
 void save_arrow (DlgNode *, FILE *, int, int *);
-void load_dialogue (MainFrame *);
+void load_dialogue (MainFrame *, const char*);
 void load_circle (MainFrame *, FILE *, int);
 void load_arrow (MainFrame *, FILE *);
 void new_mover (MainFrame *, GdkPoint);

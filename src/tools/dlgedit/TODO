@@ -7,6 +7,8 @@ v 0.3
   and Array<T>, but only one of those) I already tried
   but it did not really work :( .
 + Includes are a mess :( - Have to do this better!
++ Replace the dlg_io stuff with the probably faster
+  fread () / fwrite () function calls
 
 v 0.4
 + Allowing variables among the text that get replaced at

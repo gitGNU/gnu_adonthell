@@ -852,34 +852,22 @@ new_dialogue (MainFrame * wnd)
 
 /* load a dialogue from disk */
 void 
-load_dialogue (MainFrame * wnd)
+load_dialogue (MainFrame * wnd, const char *file)
 {
     int i, type;
     gchar str[31];
-    GString *file = g_string_new (NULL);
     FILE *in;
-    GtkWidget *fs = create_fileselection (file, 1);
-
-    gtk_file_selection_set_filename ((GtkFileSelection *) fs, wnd->file_name);
-
-    /* chose file */
-    gtk_widget_show (fs);
-    gtk_main ();
 
     /* Was load cancelled? */
-    if (file->str == NULL)
-    {
-        g_string_free (file, TRUE);
+    if (file == NULL)
         return;
-    }
 
     /* open File */
-    in = fopen (file->str, "rb");
+    in = fopen (file, "rb");
 
     if (!in)
     {
-        g_message ("could not open file %s", file->str);
-        g_string_free (file, TRUE);
+        g_message ("could not open file %s", file);
         return;
     }
 
@@ -889,8 +877,7 @@ load_dialogue (MainFrame * wnd)
 
     if (g_strcasecmp ("Adonthell Dialogue System v0.1", str))
     {
-        g_message ("%s is no valid dialogue file", file->str);
-        g_string_free (file, TRUE);
+        g_message ("%s is no valid dialogue file", file);
         return;
     }
 
@@ -915,7 +902,7 @@ load_dialogue (MainFrame * wnd)
     redraw_graph (wnd);
 
     /* set new window - title */
-    wnd->file_name = g_strdup (file->str);
+    wnd->file_name = g_strdup (file);
     gtk_window_set_title (GTK_WINDOW (wnd->wnd), g_strjoin (NULL, "Adonthell Dialogue Editor v0.2 - [", strrchr (wnd->file_name, '/') + 1, "]", NULL));
 
     /* look wether compiled dlg exists and set Run - Menuitem accordingly
@@ -923,7 +910,6 @@ load_dialogue (MainFrame * wnd)
     gtk_widget_set_sensitive (wnd->dialogue_run, FALSE);
 
     /* clean up */
-    g_string_free (file, TRUE);
     fclose (in);
 }
 

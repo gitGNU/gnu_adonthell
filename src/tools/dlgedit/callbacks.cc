@@ -170,10 +170,10 @@ on_file_project_activate (GtkMenuItem *menuitem, gpointer user_data)
     }
 
     // Bring the window to the front
-    gtk_widget_grab_focus (wnd->project);
+    gdk_window_raise (gtk_widget_get_parent_window (wnd->project));
 }
 
-/* File Menu: Load */
+/* File Menu: New */
 void 
 on_file_new_activate (GtkMenuItem * menuitem, gpointer user_data)
 {
@@ -184,7 +184,21 @@ on_file_new_activate (GtkMenuItem * menuitem, gpointer user_data)
 void 
 on_file_load_activate (GtkMenuItem * menuitem, gpointer user_data)
 {
-    load_dialogue ((MainFrame *) user_data);
+    MainFrame *wnd = (MainFrame *) user_data;
+
+    GString *file = g_string_new (NULL);
+    GtkWidget *fs = create_fileselection (file, 1);
+    gtk_file_selection_set_filename ((GtkFileSelection *) fs, wnd->file_name);
+
+    // chose file
+    gtk_widget_show (fs);
+    gtk_main ();
+
+    // Try to load file
+    load_dialogue ((MainFrame *) user_data, file->str);
+
+    // Clean up
+    g_string_free (file, TRUE);
 }
 
 /* File Menu: Save */
