@@ -14,6 +14,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 #include "../../types.h"
 #include "../../commands.h"
@@ -28,508 +29,315 @@ dlg_compiler::dlg_compiler (vector<DlgNode*> &d, string f)
     filename = f;
 
     text_lookup = new u_int32[dlg.size ()];
+    jump_lookup = new u_int32[dlg.size ()];
 }
 
 // Compile the Dialogue
 void dlg_compiler::run ()
 {
-    // Write the Dialogue's text
-    write_import ();
+    script.open ((filename + ".py").c_str ());
+    
+    // write the strings used in the dialogue
+    write_strings ();
 
-    get_cur_nodes ();
+    // write the dialogue functions
+    write_dialogue ();
+    
+    // this creates the scripts "entry function"
+    write_entry_func ();
 
-    // Write the rest
-    while (!cur_nodes.empty ())
+    // write start
+    write_start ();
+
+    // write all the others
+    while (!todo_nodes.empty ())
     {
-       write_npc ();
-       get_cur_nodes ();
+        get_cur_nodes ();
+        write_answer ();
     }
-
-    // output everything
-    output_script ();
+    
+    script.close ();
 }
 
-// Sort and write the Dialogue's text
-void dlg_compiler::write_import ()
+// Write the strings used in the dialogue
+void dlg_compiler::write_strings ()
 {
-    // We use a 'FILE*' here instead of a 'ofstream', as it makes writing 
-    // binary data a lot easier (at least I think so ;) )
-    FILE* str = NULL;
-    Circle *node;
-    string sf = filename + ".str";
-    string tf = filename + ".txt";
-    ofstream txt (tf.c_str ());
-    
-    command *cmd;               // The Import-command
-    
-    u_int32 *offset;            // Those two make the Table of
-    u_int32 *length;            // Contents of the string file
-    u_int32 *text;              // Tells the Import-Command which strings to load
+    vector<DlgNode*>::iterator i;
+    u_int32 j = 0;
 
-    u_int32 cur_offset;         // Those three are 
-    u_int32 index = 0;          // just some temporary
-    u_int32 i;                  // variables
+    // write the class name
+    script << "class " << strrchr (filename.c_str (), '/') + 1 << ":\n";
+    script << "    strings = [";
 
-    // Count number of Circles 
-    for (i = 0; i < dlg.size (); i++)
-        if (dlg[i]->type != LINK)
-            index++;
-
-    cur_offset = 4 + 8 * index;
-    offset = new u_int32[index];
-    length = new u_int32[index];
-    text = new u_int32[dlg.size ()];
-    index = 0;
-
-    // Add IMPORT command; init offset & length 
-    for (i = 0; i < dlg.size (); i++)
-    {
-        node = (Circle *) dlg[i];
-        text[i] = i;
-
-        if (node->type != LINK)
+    // write all strings and build lookup table to get index when given
+    // the number of the node
+    for (i = dlg.begin (); i != dlg.end (); i++)
+        if ((*i)->type != LINK)
         {
-            text_lookup[node->number] = index;
-            offset[index] = cur_offset;
-            length[index] = node->text.length ();
-
-            cur_offset += length[index];
-            index++;
+            script << "\""<< ((Circle *)(*i))->text.c_str () << "\", ";
+            text_lookup[(*i)->number] = j++;
         }
-    }
 
-    // Make Import command and add it to script
-    cmd = new import_cmd (text, index);
-    code.push_back (cmd);
-    
-    // write string - file 
-    str = fopen (sf.c_str (), "wb");
-    
-    fwrite (&index, sizeof (index), 1, str);
-    fwrite (offset, sizeof (offset[0]), index, str);
-    fwrite (length, sizeof (length[0]), index, str);
+    // with a last, empty string we don't have to care about the final comma
+    script << "\"\"]\n";
 
-    index = 0;
-    
-    for (i = 0; i < dlg.size (); i++)
-    {
-        node = (Circle *) dlg[i];
-        if (node->type != LINK)
-        {
-            fwrite (node->text.c_str (), strlen (node->text.c_str ()), 1, str);
-            txt.width (3);
-            txt << index++ << "  " << node->text << "\n";
-        }
-    }
-
-    txt << "\n";
-    
-    // Clean up (DON'T delete 'text'! It's still needed!)
-    txt.close ();
-    fclose (str);
-    delete[] offset;
-    delete[] length;    
+    return;
 }
 
-// Write the "NPC part" of the current block:  
-// SPEAKER
-// CONDITON
-// TEXT
-// VARIABLES
-//   Player Part
-// SPEAKER 
-// ...
-// DISPLAY
-void dlg_compiler::write_npc ()
+// Write the dialogue functions
+void dlg_compiler::write_dialogue ()
 {
-    u_int32 i;
-    u_int32 pos;
-    branch_cmd *cmd = NULL;
-    cmp_data *data, *todo_data;
-    int speaker_changed = 1;
+    vector<DlgNode*>::iterator i;
+    u_int32 j = 0;
 
-    // Look wether multiple NPC nodes with multiple parents exist
-    // --> handle differently
+    // write the dialogue functions
+    script << "\n    dialogue = [self.start, ";
 
-    // All possible NPC-texts of this block are stored in cur_nodes
-    for (i = 0; i < cur_nodes.size (); i++)
-    {
-        // cur_crcle is the Node all subsequent functions work on
-        cur_crcle = (Circle *) cur_nodes[i];
-
-        // Set the NPC that will speak
-        if (speaker_changed) write_speaker ();
-
-        // Here's the line of the script that preceeding nodes must link to
-        data = new cmp_data (cur_crcle, NULL, code.size ());
-
-        // write the condition and memorize the command so we can set the
-        // branch target later in this function
-        if (cur_crcle->conditions != "") 
+    // write answer-function-array and build lookup table to get index when given
+    // the number of the node
+    for (i = dlg.begin (); i != dlg.end (); i++)
+        if ((*i)->type != LINK && npc_follows ((Circle*)*i))
         {
-            pos = code.size ();
-            write_condition ();
-            if (code.size () > pos)
-            {
-                cmd = (branch_cmd *) code.back ();
-                pos = code.size ();
-            }
+            script << "self.answer" << (*i)->number << ", ";
+            jump_lookup[(*i)->number] = ++j;
         }
+        else jump_lookup[(*i)->number] = 0;
 
-        // Write the text that will be spoken by the NPC
-        write_text ();
+    // with a last, empty string we don't have to care about the final comma
+    script << "None]\n";
 
-        todo_data = new cmp_data (cur_crcle, code.back (), code.size () - 1);
+    return;
+}
+
+void dlg_compiler::write_entry_func ()
+{
+    script << "\n    def run (self, answer):";
+    script << "\n        self.npc = []";
+    script << "\n        self.player = []";
+    script << "\n        self.continue = []";
+    script << "\n        self.dialogue[answer]()\n";
+}
+
+// Write a NPC part 
+void dlg_compiler::write_npc (Circle *circle)
+{
+    u_int32 i = 0, j;
+    char *space;
+
+    script << "\n    def npc" << circle->number << " (self):";
+
+    // write circle's condition (if any)
+    if (circle->conditions != "") 
+    {
+        script << "\n        " << circle -> conditions;
+        space = "            ";
+    }
+    else space = "        "; 
+
+    // write circle's text and "jump target"
+    script << "\n" << space << "self.npc.append (" << text_lookup[circle->number] << ")";
+    script << "\n" << space << "self.continue.append (" << jump_lookup[circle->number] << ")";
+
+    // write circle's additional code (if any)
+    if (circle->variables != "")
+    {
+        circle->variables += '\n';
         
-        // Here is the command whose target we have to set later on
-        data->cmd = code.back ();
+        while ((j = circle->variables.find ('\n', i)) < circle->variables.size ())
+        {
+            script << "\n" << space << circle->variables.substr (i,j);
+            i = ++j;  
+        }
+    }
 
-        // This line of dialogue may be used several times
-        if (cur_crcle->actions[0] != '0') write_loop ();
+    script << "\n";
+}
+
+// Write a player part
+void dlg_compiler::write_player (Circle *circle)
+{
+    char *space;
+
+    script << "\n    def player" << circle->number << " (self):";
+
+    // write circle's condition (if any)
+    if (circle->conditions != "") 
+    {
+        script << "\n        " << circle -> conditions;
+        space = "            ";
+    }
+    else space = "        "; 
+
+    // write circle's text and "jump target"
+    script << "\n" << space << "self.player.append (" << text_lookup[circle->number] << ")";
+    script << "\n" << space << "self.continue.append (" << jump_lookup[circle->number] << ")";
+    script << "\n";
+}
+
+void dlg_compiler::write_start ()
+{
+    vector<DlgNode*>::iterator i;
+
+    for (i = dlg.begin(); i != dlg.end (); i++)
+        if ((*i)->type != LINK)
+        {
+            if ((*i)->type == PLAYER) write_player ((Circle*)*i);
+            else write_npc ((Circle*)*i);
         
-        // Do any operation on (gamestate) variables before we display the
-        // players text, because player-conditions may depend on those 
-        // new values already
-        if (cur_crcle->variables != "") write_variables (); 
-
-        // If player-text follows, write that immediately
-        if ((speaker_changed = ptext_follows ()))
-        {
-            write_player ();
-
-            // furtermore we're done with that NPC node
-            done_nodes.push_back (data);
-
-            // Have to reinit cur_crcle as it was changed in write_player ()
-            cur_crcle = (Circle *) cur_nodes[i];
+            if ((*i)->prev.empty ())
+                cur_nodes.push_back (*i);
         }
-        // Else if dialogue ends afterwards        
-        else if (end_follows())
-        {
-            // Node is done already ...
-            done_nodes.push_back (todo_data);
-            // ... but we also have to write the end
-            todo_nodes.push_back (todo_data);
-        }
-        // Else we add this one to todo_nodes to have it handled later
-        else todo_nodes.push_back (todo_data);
 
-        // if there was a condition, this is the line we have to jump to if
-        // it isn't met 
-        if (cmd != NULL) cmd->setjmp (code.size () - pos);
-    }
+    script << "\n    def start (self):";
+    write_answer ();
 
-    // That tells the dialoge engine to update the conversation with the
-    // new text of NPC and player
-    write_display ();
-
-    // Reinit the dialogue engine for the next block
-    write_clear ();
+    return;
 }
 
-// Write the "Player Part" of the current block:
-// SPEAKER
-// CONDITION
-// TEXT
-// CONDITION
-// ...
-void dlg_compiler::write_player ()
+// all the NPC->nodes to add to the function are stored in cur_nodes
+// at that moment
+void dlg_compiler::write_answer ()
 {
-    Circle *npc = cur_crcle;
-    u_int32 i, pos;
-    branch_cmd *cmd;
-    cmp_data *data;
+    vector<DlgNode*>::iterator i;
+    char *space = "        ";
 
-    // Set the cur_circle to a PLAYER-node to write the correct speaker
-    if (!npc->next.empty ()) cur_crcle = (Circle *) npc->next[0]->next[0];
-    else cur_crcle = (Circle *) npc->link[0]->next[0];
-    
-    write_speaker ();
-
-    // First handle all the direct followers
-    for (i = 0; i < npc->next.size (); i++)
+    // write npc node & followers (if any)
+    for (i = cur_nodes.begin (); i != cur_nodes.end (); i++)
     {
-        cur_crcle = (Circle *) npc->next[i]->next[0];
+#ifdef _DEBUG_
+        if ((*i)->type != NPC) cout << "\n***Compiler error: NPC node expected!"; 
+#endif _DEBUG_
 
-        // write the condition and branch after the text command
-        if (cur_crcle->conditions != "") 
-        {
-            pos = code.size ();
-            write_condition ();
-            cmd = (branch_cmd *) code.back ();
-            if (code.size () > pos) cmd->setjmp (1);
-        }
+        script << "\n" << space << "self.npc" << (*i)->number << " ()";
 
-        write_text ();
+        // write following player nodes (if any)
+        if (player_follows (*i))
+            write_player_answer (*i);
+            
+        // if npc node(s) follow instead, add node for further actions
+        if (npc_follows (*i))
+            if (find (todo_nodes.begin(), todo_nodes.end (), *i) == todo_nodes.end () &&
+                find (done_nodes.begin(), done_nodes.end (), *i) == done_nodes.end ())
+                todo_nodes.push_back (*i);
 
-        // This line of dialogue may be used several times
-        if (cur_crcle->actions[0] != '0') write_loop ();
-
-        // Here's the line of the script that preceeding nodes must link to
-        data = new cmp_data (cur_crcle, code.back (), code.size ()-1);
-        todo_nodes.push_back (data);
+        // add a delimiter to distinguish between player text's following
+        // different NPC answers
+        if (i + 1 != cur_nodes.end ())
+            script << "\n" << space << "self.continue.append (-1)";
     }
 
-    // Now the same with the links
-    for (i = 0; i < npc->link.size (); i++)
+    script << "\n";
+
+    return;
+}
+
+// write the player's text following a npc node
+void dlg_compiler::write_player_answer (DlgNode *npc)
+{
+    vector<DlgNode*>::iterator i;
+    char *space = "        ";
+    DlgNode *player;
+
+    // first look at the direct links
+    for (i = npc->next.begin (); i != npc->next.end (); i++)
     {
-        cur_crcle = (Circle *) npc->link[i]->next[0];
+        // get the player node the arrow (*j) is pointing to
+        player = (*i)->next[0];
 
-        if (cur_crcle->conditions != "") 
-        {
-            pos = code.size ();
-            write_condition ();
-            cmd = (branch_cmd *) code.back ();
-            if (code.size () > pos) cmd->setjmp (1);
-        }
+        // instead of writing the function call, we could also call
+        // writer_player (player) to create inline code instead
+        script << "\n" << space << "self.player" << player->number << " ()";
 
-        write_text ();
-
-        data = new cmp_data (cur_crcle, code.back (), code.size ()-1);
-        todo_nodes.push_back (data);
+        // if node isn't already handled or queued for handling,
+        // add it to todo_nodes to have it handled later
+        if (find (todo_nodes.begin(), todo_nodes.end (), player) == todo_nodes.end () &&
+            find (done_nodes.begin(), done_nodes.end (), player) == done_nodes.end ())
+            todo_nodes.push_back (player);
     }
-}
 
-void dlg_compiler::write_speaker ()
-{
-    command *cmd = new speaker_cmd (cur_crcle->character, cur_crcle->mood);
-    code.push_back (cmd);
-}
-
-void dlg_compiler::write_condition ()
-{
-    string error;
-
-    // This compiles the condition-code and adds it to the end of script
-    cond_compile (cur_crcle->conditions.c_str (), error, code);
-}
-
-void dlg_compiler::write_text ()
-{
-    text_cmd *cmd = new text_cmd (text_lookup[cur_crcle->number], 0);
-    code.push_back (cmd);
-}
-
-void dlg_compiler::write_variables ()
-{
-    string error;
-
-    // This compiles the condition-code and adds it to the end of script
-    vars_compile (cur_crcle->variables.c_str (), error, code);
-}
-
-void dlg_compiler::write_display ()
-{
-    return_cmd *cmd = new return_cmd (1);
-    code.push_back (cmd);    
-}
-
-void dlg_compiler::write_clear ()
-{
-    clear_cmd *cmd = new clear_cmd;
-    code.push_back (cmd);
-}
-
-void dlg_compiler::write_end ()
-{
-    return_cmd *cmd = new return_cmd (0);
-    code.push_back (cmd);    
-}
-
-void dlg_compiler::write_loop ()
-{
-    loop_cmd *cmd = new loop_cmd (text_lookup[cur_crcle->number]);
-    code.push_back (cmd);
-}
-
-// write the script for the interpreter as well as an ASCII version 
-void dlg_compiler::output_script ()
-{
-    u_int32 i;
-    string af = filename + ".txt";
-    string sf = filename + ".dlg";
-    
-    ofstream ascii (af.c_str (), ios::ate);
-    FILE* script = fopen (sf.c_str (), "wb");
-
-    i = code.size ();
-    fwrite (&i, sizeof (i), 1, script);
-
-    for (i = 0; i < code.size (); i++)
+    // now the same with the indirect links
+    for (i = npc->link.begin (); i != npc->link.end (); i++)
     {
-        if (code[i]->type == CLEAR) ascii << "\n";
-        
-        ascii.width (3);
-        ascii << i << "  ";
+        player = (*i)->next[0];
 
-        code[i]->write (script);
-        code[i]->ascii (ascii);
+        script << "\n" << space << "self.player" << player->number << " ()";
 
-        ascii << "\n";
+        if (find (todo_nodes.begin(), todo_nodes.end (), player) == todo_nodes.end () &&
+            find (done_nodes.begin(), done_nodes.end (), player) == done_nodes.end ())
+        todo_nodes.push_back (player);               
     }
 
-    fclose (script);
-    ascii.close ();
+    return;
 }
 
-// Fill the cur_nodes array with the NPC-nodes which will be used to create
-// the next block
+// Get the nodes that make the next answer
 void dlg_compiler::get_cur_nodes ()
 {
-    u_int32 i, pos;
-    s_int32 line;
-    command *cmd;
-    cmp_data *data;
+    vector<DlgNode*>::iterator i;
+    Circle *circle = (Circle *) todo_nodes.back ();
+    char *space = "        ";
+    u_int32 j = 0, k;
 
-    // Make sure all the old NPC nodes are removed
     cur_nodes.clear ();
-
-    // On startup, we've got to find all nodes without a father   
-    if (todo_nodes.empty () && done_nodes.empty ())
-    {
-        for (i = 0; i < dlg.size (); i++)
-            if (dlg[i]->prev.empty ())
-                cur_nodes.push_back (dlg[i]);
-
-        return;
-    }
-
-    // In case only todo_nodes is empty, we're finished
-    if (todo_nodes.empty ()) return;
-
-    // Here we can take one of the todo_nodes and continue with it
-    // data = todo_nodes[0];
-    data = todo_nodes.back ();
-
-    // Assume that the chosen command continues in the next line
-    // In case it doesn't this is corrected in the  isdone()  function
-    ((text_cmd *) data->cmd)->setjmp (code.size () - data->line);
-
-    cur_crcle = (Circle *) data->node;
-
-    // Write the PLAYER node's variable-code. We write it more than
-    // once, in case different nodes with variable code link to the 
-    // same NPC node
-    if (cur_crcle->type == PLAYER)
-        if (cur_crcle->variables != "")
-        {
-            pos = code.size ();
-            write_variables ();
-            
-            if (pos < code.size ())
-            {
-                // save line and command
-                pos -= code.size ();
-                cmd = data->cmd;
-                line = data->line;
-
-                code.push_back (new jmp_cmd (0));
-
-                // Let the block end with the jmp_cmd instead of text_cmd
-                data->cmd = code.back ();
-                data->line = code.size ();
-            }
-        }
-
-    // First, we have to check wether the childs of this (player-) node
-    // have already been compiled. If so, we can update the command with
-    // the proper jump target. (That's done in the isdone(...) function)
-    // Else we can safely add the child to the cur_nodes 
+    todo_nodes.pop_back ();
+    done_nodes.push_back (circle);
 
     // For all following direct links (arrows) ...
-    for (i = 0; i < data->node->next.size (); i++)
+    for (i = circle->next.begin (); i != circle->next.end (); i++)
         // If following NPC-node (circle) wasn't already compiled ...
-        if (!isdone (data->node->next[i]->next[0], data))
+        if (find (done_nodes.begin (), done_nodes.end (), (*i)->next[0]) == done_nodes.end ())
             // Add the NPC-node to the nodes to compile next
-            cur_nodes.push_back (data->node->next[i]->next[0]);
+            cur_nodes.push_back ((*i)->next[0]);
         
-    // Now the same with the indirect links
-    for (i = 0; i < data->node->link.size (); i++)
-        if (!isdone (data->node->link[i]->next[0], data))
-            cur_nodes.push_back (data->node->link[i]->next[0]);
-        
-    // Note that the call to  isdone()  is important, as it sets the target
-    // of PLAYER nodes that were handled earlier to the right position.
-    // Without the call, it would either point after the variable-code, or
-    // to the last NPC-line of a multi-NPC-block.
-    isdone (data->node, data);
+    // Now the same for the indirect followers
+    for (i = circle->link.begin (); i != circle->link.end (); i++)
+        if (find (done_nodes.begin (), done_nodes.end (), (*i)->next[0]) == done_nodes.end ())
+            cur_nodes.push_back ((*i)->next[0]);
 
-    // The End of dialogue follows:
-    if (cur_nodes.empty ())
+    script << "\n    def answer" << circle->number << " (self):";
+
+    // write player's additional code
+    if (circle->type == PLAYER && circle->variables != "")
     {
-        // Only write RETURN 0 once for each node. Was it already written,
-        // the offset to the follower will be negative.
-        if (end_follows ())
-            if (((text_cmd *) data->cmd)->getjmp () > 0)
-                write_end ();
-        
-        done_nodes.push_back (data);
-        todo_nodes.pop_back ();
-
-        get_cur_nodes ();
-
-        // If we don't return here,  todo_node.pop_back  would be called
-        // twice when the recursion is over
-        return;
+        circle->variables += '\n';
+    
+        while ((k = circle->variables.find ('\n', j)) < circle->variables.size ())
+        {
+            script << "\n" << space << circle->variables.substr (j, k);
+            j = ++k;  
+        }
     }
 
-    // In case the PLAYER variable-code is right before the following
-    // NPC node, we can remove the JMP command, as it is not needed.
-    if (cur_crcle->type == PLAYER)
-        if (cur_crcle->variables != "")
-            if (((jmp_cmd *) code.back ())->getjmp () == 0)
-            {
-                code.pop_back ();
-
-                // restore the target
-                data->cmd = cmd;
-                data->line = line - pos;
-            }
-
-    // Move the node from the todo- to the done_nodes    
-    done_nodes.push_back (data);
-    todo_nodes.pop_back ();
-}
-
-// Check wether node was already compiled and set the proper link
-u_int8 dlg_compiler::isdone (DlgNode *node, cmp_data *data)
-{
-    u_int32 i;
-
-    for (i = 0; i < done_nodes.size (); i++)
-        if (done_nodes[i]->node == node)
-        {
-            if (data->node != node)
-            {
-                if (!isdone (data->node, data)) return 0;
-                ((text_cmd *) data->cmd)->setjmp (done_nodes[i]->line - data->line - 1);
-            }
-            else
-                ((text_cmd *) data->cmd)->setjmp (done_nodes[i]->line + ((text_cmd *) done_nodes[i]->cmd)->getjmp () - data->line);
-
-            return 1;
-        }
-
-    return 0;
+    return;
 }
 
 // Check wether player text follows after that NPC node
-u_int8 dlg_compiler::ptext_follows ()
+u_int8 dlg_compiler::player_follows (DlgNode *circle)
 {
     // Check immediate followers
-    if (cur_crcle->next.size () > 0)
-        if (cur_crcle->next[0]->next[0]->type == PLAYER)
+    if (circle->next.size () > 0)
+        if (circle->next[0]->next[0]->type == PLAYER)
             return 1;
 
     // Check linked followers
-    if (cur_crcle->link.size () > 0)
-        if (cur_crcle->link[0]->next[0]->type == PLAYER)
+    if (circle->link.size () > 0)
+        if (circle->link[0]->next[0]->type == PLAYER)
             return 1;
 
     return 0;
 }
 
-u_int8 dlg_compiler::end_follows ()
+u_int8 dlg_compiler::npc_follows (DlgNode *circle)
 {
-    return (cur_crcle->next.empty () && cur_crcle->link.empty ());
+    // Check immediate followers
+    if (circle->next.size () > 0)
+        if (circle->next[0]->next[0]->type == NPC)
+            return 1;
+
+    // Check linked followers
+    if (circle->link.size () > 0)
+        if (circle->link[0]->next[0]->type == NPC)
+            return 1;
+
+    return 0;
 }
