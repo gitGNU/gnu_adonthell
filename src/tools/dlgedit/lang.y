@@ -1,4 +1,18 @@
 %{
+/*
+   $Id$
+   
+   Copyright (C) 2000 Kai Sterker <kaisterker@linuxgames.com>
+   Part of the Adonthell Project http://adonthell.linuxgames.com
+
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License.
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY.
+
+   See the COPYING file for more details.
+*/
+
 #include <iostream.h>
 #include <string>
 #include <vector>
@@ -65,8 +79,8 @@ expr:     val                       { $$ = $1; }
         | _LPAREN expr _RPAREN      { $$ = $2; }
 ;
 
-if_stat:  _IF _LPAREN comp _RPAREN block    { $$ = $3 + string (1,THEN) + $5; }
-	    | _IF _LPAREN comp _RPAREN block _ELSE block  { $$ = $3 + string(1,THEN) + $5 + string(1,ELSE) + $7; }
+if_stat:  _IF _LPAREN comp _RPAREN block    { $$ = string (1,BRANCH) + $3 + string (1,THEN) + $5; }
+	    | _IF _LPAREN comp _RPAREN block _ELSE block  { $$ = string (1,BRANCH) + $3 + string(1,THEN) + $5 + string(1,ELSE) + $7; }
 ;
 
 block:    _LBRACE assign_list _RBRACE   { $$ = $2; }
@@ -100,24 +114,6 @@ int main()
   yyparse();
 }
 
-int get_concat (string &prog, int index)
-{
-    int i, opcode;
-    
-    for (i = index; i >= 0; i--)
-    {
-        opcode = prog[i];
-          
-        if (opcode == AND || opcode == OR)
-        {
-            prog.erase (prog.begin () + i);
-            return opcode;
-        }
-    }
-    
-    return 0;
-}
-
 // Transform the scanned and parsed code into the ASM-like script understandable 
 // by the interpreter. Since the code isn't quite in the right order, we have to
 // use a bit of recursion :)
@@ -134,7 +130,7 @@ int get_concat (string &prog, int index)
 //
 // results in the following _p_rogram and _a_rgument stacks:
 //
-// p: or lt sub id num sub num id then let add id mul mul id id sub id
+// p: branch or lt sub id num sub num id then let add id mul mul id id sub id
 //    div id id id let id id else let num id
 // a: e 2 5 a b c d e f g x h y 0 z
 //
@@ -142,7 +138,8 @@ int get_concat (string &prog, int index)
 //
 // sub 5 a reg1
 // sub e 2 reg2
-// lt reg2 reg1 9
+// lt reg2 reg1 bool1
+// branch bool1 9
 //
 // div f g reg1
 // sub e reg1 reg1
@@ -162,7 +159,8 @@ void create_code (string &prog)
     int i, j = vars.size ();
     unsigned char opcode;
     char regs = '0';
-
+    char bools = '0';
+    
     static int then_length, else_length = 0;
     static int num_cmds = 0;
     static int rec = 1;
@@ -184,6 +182,7 @@ void create_code (string &prog)
             case ID:
             case NUM:
             case REG:
+            case BOOL:
             {
                 j--;
                 continue;
@@ -227,12 +226,14 @@ void create_code (string &prog)
 
                 i = prog.size ();
                 j = vars.size ();
+
+                break;
             }
 
             case THEN:
             {
                 then_length = num_cmds;
-                num_cmds = 0;
+                num_cmds = 0;               
                 prog.erase (prog.begin () + i);
                 continue;
             }
@@ -252,34 +253,48 @@ void create_code (string &prog)
             case GT:
             case GEQ:
             {
-                // Look wether AND or OR follows
-                switch (get_concat (prog, i))
-                {
-                    case AND:
-                    {
-                        cout << "[" << rec << "] " << ops[opcode] << " " << vars[j] << " "<< vars[j+1] << " else\n" << flush;
-                        i--;
-                        break;
-                    }
-                    case OR:
-                    {
-                        cout << "[" << rec << "] " << ops[opcode] << " " << vars[j] << " "<< vars[j+1] << " 2\nJmp then\n" << flush;
-                        i--;
-                        break;
-                    }
-                    default:
-                    {
-                        cout << "[" << rec << "] " << ops[opcode] << " " << vars[j] << " "<< vars[j+1] << " else\n" << flush;
-                        break;
-                    }
-                }
+                bools++;
+
+                cout << "[" << rec << "] " << ops[opcode] << " " << vars[j] << " "<< vars[j+1] << " bool" << bools << "\n";
                 
-                prog.erase (prog.begin () + i, prog.begin () + i + 3);
+                prog.replace (prog.begin () + i, prog.begin () + i + 3, 1, BOOL);
                 vars.erase (vars.begin () + j, vars.begin () + j + 2);
+                vars.insert (vars.begin () + j, ("bool"+string(1, bools)));
 
                 i = prog.size ();
                 j = vars.size ();
-                regs = '0';
+
+                break;
+            }
+
+            case AND:
+            case OR:
+            {
+                if (bools > '0') bools--;
+                
+                cout << "[" << rec << "] " << ops[opcode] << " " << vars[j] << " " << vars[j+1] << " bool" << bools << "\n";
+
+                prog.replace (prog.begin () + i, prog.begin () + i + 3, 1, BOOL);
+                vars.erase (vars.begin () + j, vars.begin () + j + 2);
+                vars.insert (vars.begin () + j, ("bool"+string(1, bools)));
+
+                i = prog.size ();
+                j = vars.size ();
+
+                break;
+            }
+
+            case BRANCH:
+            {
+                cout << "[" << rec << "] branch " << vars[j] << " " << then_length+1 << "\n";
+
+                prog.erase (prog.begin () + i, prog.begin () + i + 2);
+                vars.erase (vars.begin () + j, vars.begin () + j + 1);            
+
+                i = prog.size ();
+                j = vars.size ();
+
+                break;
             }
         }
     }
