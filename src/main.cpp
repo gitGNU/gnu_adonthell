@@ -82,30 +82,30 @@ int main(int argc, char * argv[])
 	for(int i=0;i<screen::frames_to_do();i++)
 	  {
 	    if (!ds) 
-	    {
-	    if(input::is_pushed(SDLK_RIGHT)) mview.scroll_right();
-	    if(input::is_pushed(SDLK_LEFT)) mview.scroll_left();
-	    if(input::is_pushed(SDLK_UP)) mview.scroll_up();
-	    if(input::is_pushed(SDLK_DOWN)) mview.scroll_down();
-
-	    if(input::is_pushed(SDLK_d)) heroe->go_north();
-	    if(input::is_pushed(SDLK_c)) heroe->go_south();
-	    if(input::is_pushed(SDLK_x)) heroe->go_west();
-	    if(input::is_pushed(SDLK_v)) heroe->go_east();
-
-        if (input::is_pushed(SDLK_l)) ds = new data_screen (LOAD_SCREEN);
-        if (input::is_pushed(SDLK_s)) ds = new data_screen (SAVE_SCREEN);
-        }
+	      {
+		if(input::is_pushed(SDLK_RIGHT)) mview.scroll_right();
+		if(input::is_pushed(SDLK_LEFT)) mview.scroll_left();
+		if(input::is_pushed(SDLK_UP)) mview.scroll_up();
+		if(input::is_pushed(SDLK_DOWN)) mview.scroll_down();
+		
+		if(input::is_pushed(SDLK_d)) heroe->go_north();
+		if(input::is_pushed(SDLK_c)) heroe->go_south();
+		if(input::is_pushed(SDLK_x)) heroe->go_west();
+		if(input::is_pushed(SDLK_v)) heroe->go_east();
+		
+		if (input::is_pushed(SDLK_l)) ds = new data_screen (LOAD_SCREEN);
+		if (input::is_pushed(SDLK_s)) ds = new data_screen (SAVE_SCREEN);
+	      }
 	    mymap.update();
 	    if (ds && ds->update ())
-	    {
-	       delete ds;
-	       ds = NULL;
-	    }
+	      {
+		delete ds;
+		ds = NULL;
+	      }
 	  }
 	//      	screen::clear();
 	mview.draw(10,10);
-    if (ds) ds->draw ();
+	if (ds) ds->draw ();
 	screen::show();
       }
     return 0;

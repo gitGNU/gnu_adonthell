@@ -103,68 +103,148 @@ void mapcharacter::stand_west()
   anim[current_move]->play();
 }
 
+bool mapcharacter::can_go_north()
+{
+  if(!posy) return false;
+  u_int16 i,j;
+  u_int16 sx=(posx-basex<0)?0:posx-basex;
+  u_int16 sy=(posy-basey<0)?0:posy-basey;
+  u_int16 ex=(posx-basex+mapselect::length>=refmap->submap[submap]->length)?
+    refmap->submap[submap]->length-1:posx-basex+mapselect::length;
+  u_int16 ey=(posy-basey+mapselect::height>=refmap->submap[submap]->height)?
+    refmap->submap[submap]->height-1:posy-basey+mapselect::height;
+
+  for(j=sy;j<ey;j++)
+    for(i=sx;i<ex;i++)
+      {
+	if(placetpl[i-sx][j-sy].walkable) continue;
+	if(!j) continue;
+	if(!(refmap->submap[submap]->land[i][j].is_walkable_up() &&
+	     refmap->submap[submap]->land[i][j-1].is_walkable_down()))
+	  return false;
+      }
+  return true;
+}
+
+bool mapcharacter::can_go_south()
+{
+  if(posy==refmap->submap[submap]->height-1) return false;
+  u_int16 i,j;
+  u_int16 sx=(posx-basex<0)?0:posx-basex;
+  u_int16 sy=(posy-basey<0)?0:posy-basey;
+  u_int16 ex=(posx-basex+mapselect::length>=refmap->submap[submap]->length)?
+    refmap->submap[submap]->length-1:posx-basex+mapselect::length;
+  u_int16 ey=(posy-basey+mapselect::height>=refmap->submap[submap]->height)?
+    refmap->submap[submap]->height-1:posy-basey+mapselect::height;
+
+  for(j=sy;j<ey;j++)
+    for(i=sx;i<ex;i++)
+      {
+	if(placetpl[i-sx][j-sy].walkable) continue;
+	if(j==refmap->submap[submap]->height-1) continue;
+	if(!(refmap->submap[submap]->land[i][j].is_walkable_down() &&
+	     refmap->submap[submap]->land[i][j+1].is_walkable_up()))
+	  return false;
+      }
+  return true;
+}
+
+bool mapcharacter::can_go_east()
+{
+  if(posx==refmap->submap[submap]->length-1) return false;
+  u_int16 i,j;
+  u_int16 sx=(posx-basex<0)?0:posx-basex;
+  u_int16 sy=(posy-basey<0)?0:posy-basey;
+  u_int16 ex=(posx-basex+mapselect::length>=refmap->submap[submap]->length)?
+    refmap->submap[submap]->length-1:posx-basex+mapselect::length;
+  u_int16 ey=(posy-basey+mapselect::height>=refmap->submap[submap]->height)?
+    refmap->submap[submap]->height-1:posy-basey+mapselect::height;
+
+  for(j=sy;j<ey;j++)
+    for(i=sx;i<ex;i++)
+      {
+	if(placetpl[i-sx][j-sy].walkable) continue;
+	if(i==refmap->submap[submap]->length-1) continue;
+	if(!(refmap->submap[submap]->land[i][j].is_walkable_right() &&
+	     refmap->submap[submap]->land[i+1][j].is_walkable_left()))
+	  return false;
+      }
+  return true;
+}
+
+bool mapcharacter::can_go_west()
+{
+  if(!posx) return false;
+  u_int16 i,j;
+  u_int16 sx=(posx-basex<0)?0:posx-basex;
+  u_int16 sy=(posy-basey<0)?0:posy-basey;
+  u_int16 ex=(posx-basex+mapselect::length>=refmap->submap[submap]->length)?
+    refmap->submap[submap]->length-1:posx-basex+mapselect::length;
+  u_int16 ey=(posy-basey+mapselect::height>=refmap->submap[submap]->height)?
+    refmap->submap[submap]->height-1:posy-basey+mapselect::height;
+
+  for(j=sy;j<ey;j++)
+    for(i=sx;i<ex;i++)
+      {
+	if(placetpl[i-sx][j-sy].walkable) continue;
+	if(!i) continue;
+	if(!(refmap->submap[submap]->land[i][j].is_walkable_left() &&
+	     refmap->submap[submap]->land[i-1][j].is_walkable_right()))
+	  return false;
+      }
+  return true;
+}
+
 void mapcharacter::go_north() 
 {
-  if(!posy) 
+  if(current_move<WALK_NORTH)
     {
-      if(current_move>=WALK_NORTH && current_move!=WALK_NORTH) return;
-      stand_north(); 
+      anim[current_move]->stop();
+      anim[current_move]->rewind();
+      current_move=WALK_NORTH;
+      anim[current_move]->play();
       return;
     }
   ask_move=WALK_NORTH;
-  if(current_move>=WALK_NORTH) return;
-  anim[current_move]->stop();
-  anim[current_move]->rewind();
-  current_move=WALK_NORTH;
-  anim[current_move]->play();
 }
 
 void mapcharacter::go_south() 
 {
-  if(posy==refmap->submap[submap]->height-1 && !offy)
+  if(current_move<WALK_NORTH)
     {
-      if(current_move>=WALK_NORTH && current_move!=WALK_SOUTH) return;
-      stand_south();
+      anim[current_move]->stop();
+      anim[current_move]->rewind();
+      current_move=WALK_SOUTH;
+      anim[current_move]->play();
       return;
     }
   ask_move=WALK_SOUTH;
-  if(current_move>=WALK_NORTH) return;
-  anim[current_move]->stop();
-  anim[current_move]->rewind();
-  current_move=WALK_SOUTH;
-  anim[current_move]->play();
 }
 
 void mapcharacter::go_east() 
 {
-  if(posx==refmap->submap[submap]->length-1 && !offx)
+  if(current_move<WALK_NORTH)
     {
-      if(current_move>=WALK_NORTH && current_move!=WALK_EAST) return;
-      stand_east();
+      anim[current_move]->stop();
+      anim[current_move]->rewind();
+      current_move=WALK_EAST;
+      anim[current_move]->play();
       return;
     }
   ask_move=WALK_EAST;
-  if(current_move>=WALK_NORTH) return;
-  anim[current_move]->stop();
-  anim[current_move]->rewind();
-  current_move=WALK_EAST;
-  anim[current_move]->play();
 }
 
 void mapcharacter::go_west() 
 {
-  if(!posx) 
+  if(current_move<WALK_NORTH)
     {
-      if(current_move>=WALK_NORTH && current_move!=WALK_WEST) return;
-      stand_west(); 
+      anim[current_move]->stop();
+      anim[current_move]->rewind();
+      current_move=WALK_WEST;
+      anim[current_move]->play();
       return;
     }
   ask_move=WALK_WEST;
-  if(current_move>=WALK_NORTH) return;
-  anim[current_move]->stop();
-  anim[current_move]->rewind();
-  current_move=WALK_WEST;
-  anim[current_move]->play();
 }
 
 void mapcharacter::update()
@@ -172,7 +252,15 @@ void mapcharacter::update()
   if(refmap) switch(current_move)
     {
     case WALK_NORTH:
-      if(!offy) refmap->mapchar_occupy(this,submap,posx,posy-1);
+      if(!offy) 
+	{
+	  if(!can_go_north())
+	    {
+	      stand_north();
+	      break;
+	    }
+	  refmap->mapchar_occupy(this,submap,posx,posy-1);
+	}
       offy--;
       if(offy==-MAPSQUARE_SIZE)
 	{
@@ -186,6 +274,11 @@ void mapcharacter::update()
     case WALK_SOUTH:
       if(!offy)
 	{
+	  if(!can_go_south())
+	    {
+	      stand_south();
+	      break;
+	    }
 	  refmap->mapchar_occupy(this,submap,posx,posy);
 	  refmap->remove_mapchar(this,submap,posx,posy);
 	  set_pos(submap,posx,posy+1);
@@ -202,7 +295,15 @@ void mapcharacter::update()
 	}
       break;
     case WALK_WEST:
-      if(!offx) refmap->mapchar_occupy(this,submap,posx-1,posy);
+      if(!offx) 
+	{
+	  if(!can_go_west())
+	    {
+	      stand_west();
+	      break;
+	    }
+	  refmap->mapchar_occupy(this,submap,posx-1,posy);
+	}
       offx--;
       if(offx==-MAPSQUARE_SIZE)
 	{
@@ -216,6 +317,11 @@ void mapcharacter::update()
     case WALK_EAST:
       if(!offx)
 	{
+	  if(!can_go_east())
+	    {
+	      stand_east();
+	      break;
+	    }
 	  refmap->mapchar_occupy(this,submap,posx,posy);
 	  refmap->remove_mapchar(this,submap,posx,posy);
 	  set_pos(submap,posx+1,posy);
@@ -552,7 +658,7 @@ void mapcharacter::update_editor_keys()
     toggle_walkable();
   if(input::has_been_pushed(SDLK_b))
     if(show_grid)
-      set_base_tile(posx,posy);
+      set_base_tile(mapselect::posx,mapselect::posy);
 
   if(input::has_been_pushed(SDLK_F1)) load_anim();
 }

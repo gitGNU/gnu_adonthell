@@ -16,7 +16,7 @@
 
 mapsquaretpl::mapsquaretpl()
 {
-  walkable=true;
+  walkable=ALL_WALKABLE;
 }
 
 s_int8 mapsquaretpl::get(gzFile file)
@@ -123,7 +123,8 @@ void maptpl::set_base_tile(u_int16 x, u_int16 y)
 
 void maptpl::toggle_walkable()
 {
-  placetpl[posx][posy].walkable=placetpl[posx][posy].walkable?false:true;
+  placetpl[posx][posy].walkable=placetpl[posx][posy].walkable?NONE_WALKABLE:
+    ALL_WALKABLE;
 }
 
 void maptpl::draw_walkables()
@@ -133,22 +134,22 @@ void maptpl::draw_walkables()
     for(j=d_posy;(j<d_posy+dh)&&(j<height);j++)
       {
 	const u_int32 col=0x0ff000;
-	if(placetpl[i][j].is_walkable_left())
+	if(!placetpl[i][j].is_walkable_left())
 	  screen::drawbox(s_posx+((i-d_posx)*MAPSQUARE_SIZE+1),
 			  s_posy+((j-d_posy)*MAPSQUARE_SIZE+1),
 			  1,MAPSQUARE_SIZE-2,col);
 
-	if(placetpl[i][j].is_walkable_right())
+	if(!placetpl[i][j].is_walkable_right())
 	  screen::drawbox(s_posx+((i-d_posx)*MAPSQUARE_SIZE)+MAPSQUARE_SIZE-1,
 			  s_posy+((j-d_posy)*MAPSQUARE_SIZE+1),
 			  1,MAPSQUARE_SIZE-2,col);
 	
-	if(placetpl[i][j].is_walkable_up())
+	if(!placetpl[i][j].is_walkable_up())
 	  screen::drawbox(s_posx+((i-d_posx)*MAPSQUARE_SIZE+1),
 			  s_posy+((j-d_posy)*MAPSQUARE_SIZE+1),
 			  MAPSQUARE_SIZE-2,1,col);
 	
-	if(placetpl[i][j].is_walkable_down())
+	if(!placetpl[i][j].is_walkable_down())
 	  screen::drawbox(s_posx+((i-d_posx)*MAPSQUARE_SIZE)+1,
 			  s_posy+((j-d_posy)*MAPSQUARE_SIZE)+MAPSQUARE_SIZE-1,
 			  MAPSQUARE_SIZE-2,1,col);

@@ -66,6 +66,8 @@ class mapsquare_char
   
   bool operator < (const mapsquare_char & mt);
   bool operator <= (const mapsquare_char & mt);
+  bool operator == (const mapsquare_char & mt)
+    {  return (mt.y==y && mt.x==x); }
   
   void draw(mapview * mv);
   /*  void draw_border(mapview * mv);
@@ -172,6 +174,7 @@ class landsubmap
 		   mapobject ** pattern, drawing_area * da_opt=NULL);
   //  void draw(mapobject * pattern, drawing_area * da_opt=NULL);
   friend class mapview;
+  friend class mapcharacter;
 };  // landsubmap
 
 
@@ -253,6 +256,7 @@ class landmap
   void draw_square(u_int16 smap, u_int16 x, u_int16 y, u_int16 px, u_int16 py,
 		   drawing_area * da_opt=NULL);
   friend class mapview;
+  friend class mapcharacter;
 };  // landmap
 
 #endif

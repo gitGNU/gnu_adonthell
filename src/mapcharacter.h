@@ -78,6 +78,12 @@ class mapcharacter : public maptpl
   void draw(s_int16 x, s_int16 y, drawing_area * da_opt=NULL);
   void draw(mapview * mv);
 
+  // Testing if a move is possible
+  bool can_go_north();
+  bool can_go_south();
+  bool can_go_east();
+  bool can_go_west();
+
   // Giving the character instructions on what it should do
   void stand_north();
   void stand_south();
@@ -140,6 +146,7 @@ class mapcharacter : public maptpl
   void update_editor_keys();
   void editor();
 #endif
+  friend class landmap;
 };
 
 #endif

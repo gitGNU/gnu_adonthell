@@ -26,6 +26,7 @@ class mapsquaretpl
 #define WALKABLE_UP 2
 #define WALKABLE_RIGHT 4
 #define WALKABLE_LEFT 8
+#define NONE_WALKABLE 0
   u_int8 walkable;
 
   mapsquaretpl();
