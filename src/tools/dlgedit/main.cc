@@ -71,10 +71,11 @@ main (int argc, char *argv[])
     PyDict_SetItemString (d, "ELF", PyInt_FromLong (1));
     PyDict_SetItemString (d, "HALFELF", PyInt_FromLong (2));
     PyDict_SetItemString (d, "DWARF", PyInt_FromLong (0));
-        
+
     // Misc initialization
     init_app (MainWnd);
 
+    MainWnd->dict = d;
     MainWnd->wnd = NULL;
     MainWnd->text_dlg = NULL;
     MainWnd->pixmap = NULL;

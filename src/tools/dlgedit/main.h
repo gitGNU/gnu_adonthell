@@ -18,6 +18,7 @@
 #include <gtk/gtkstyle.h>
 #include <string>
 #include <vector>
+#include "Python.h"
 #include "dlgnode.h"
 #include "../../character.h"
 
@@ -47,6 +48,8 @@ enum
 // Dialogue Editor Data
 typedef struct
 {
+    PyObject *dict;             // Interpreter's global dictionary
+
     GtkWidget *wnd;             // Main Window
     GtkWidget *menu;            // Menubar
     GtkWidget *graph;           // Drawing Area

@@ -130,7 +130,7 @@ void
 on_dialogue_run_activate (GtkMenuItem * menuitem, gpointer user_data)
 {
     MainFrame *wnd = (MainFrame *) user_data;
-    run_dlg dlg (wnd->file_name, wnd->pset_vars, wnd->myplayer);
+    run_dlg dlg (wnd);
 
     dlg.run ();
 

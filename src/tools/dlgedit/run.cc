@@ -18,13 +18,12 @@
 #include "run.h"
 #include "run_interface.h"
 #include "../../dialog.h"
-#include "../../character.h"
 #include "../../py_inc.h"
 
-run_dlg::run_dlg (string f, string v, player *p)
+run_dlg::run_dlg (MainFrame *wnd)
 {
-    char *file = g_basename (f.c_str ());
-    char *path = g_dirname (f.c_str ());
+    char *file = g_basename (wnd->file_name);
+    char *path = g_dirname (wnd->file_name);
 
     dlg = create_run_dlg_wnd (this);
     dat = new dialog;
@@ -36,10 +35,17 @@ run_dlg::run_dlg (string f, string v, player *p)
         cout << "\n*** Error loading dialogue script!" << flush;
         answer = -1;
     }
-    
+
     // The start of the dialogue
     else answer = 0;
 
+    if (wnd->pset_vars != "")    
+    {
+        char *tmp = strdup (wnd->pset_vars.c_str ());
+        PyRun_String (tmp, Py_file_input, wnd->dict, wnd->dict);
+        delete tmp;
+    }
+    
     free (path);
 }
 

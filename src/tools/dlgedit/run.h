@@ -21,15 +21,15 @@
 
 #include "Python.h"
 
-#include "../../character.h"
 #include "../../dialog.h"
 #include "../../types.h"
+#include "main.h"
 
 // Wrapper class for the Run Dialogue dialog
 class run_dlg
 {
 public:
-    run_dlg (string, string, player*);
+    run_dlg (MainFrame*);
     ~run_dlg ();
 
     GtkWidget *dlg;             // The actual Dialogue Window
