@@ -65,7 +65,7 @@ public:
     /**
      * @name Member access
      */
-    //@{}
+    //@{            
     /**
      * Set the base directory according to selected project. Call this
      * method whenever the user assigns a different project.

@@ -90,18 +90,19 @@ enum menu_item
     COMPILE         = 5,
     PREVIEW         = 6,
     RUN             = 7,
-    MAX_ITEM        = 8
+    OPEN_RECENT     = 8,
+    MAX_ITEM        = 9
 };
 
 /**
  * Load node of file selction box.
  */
-#define LOAD    1
+#define FS_LOAD     1
 
 /**
  * Save mode of file selction box.
  */
-#define SAVE    2
+#define FS_SAVE     2
 
 /**
  * Defines for the various parts of a dialogue source file.

@@ -37,15 +37,27 @@ void on_file_new_activate (GtkMenuItem * menuitem, gpointer user_data)
     dlgedit->newDialogue ();
 }
 
-// File Menu: Load
+ // File Menu: Load
 void on_file_load_activate (GtkMenuItem * menuitem, gpointer user_data)
 {
     GuiDlgedit *dlgedit = (GuiDlgedit *) user_data;
-    GuiFile fs (LOAD, "Load dialogue source", dlgedit->directory ());
+    GuiFile fs (FS_LOAD, "Load dialogue source", dlgedit->directory ());
 
     // File selection closed with OK
     if (fs.run ()) dlgedit->loadDialogue (fs.getSelection ());
 }
+
+// File Menu: Load Recent
+void on_file_load_recent_activate (GtkMenuItem * menuitem, gpointer user_data)
+{
+    // get file
+    const char *file = (const char*) gtk_object_get_user_data (GTK_OBJECT (menuitem));
+
+    // load
+    GuiDlgedit *dlgedit = (GuiDlgedit *) user_data;
+    dlgedit->loadDialogue (file);
+}
+
 
 // File Menu: Save
 void on_file_save_activate (GtkMenuItem * menuitem, gpointer user_data)
@@ -58,7 +70,7 @@ void on_file_save_activate (GtkMenuItem * menuitem, gpointer user_data)
 void on_file_save_as_activate (GtkMenuItem * menuitem, gpointer user_data)
 {
     GuiDlgedit *dlgedit = (GuiDlgedit *) user_data;
-    GuiFile fs (SAVE, "Save dialogue source", dlgedit->filename ());
+    GuiFile fs (FS_SAVE, "Save dialogue source", dlgedit->filename ());
 
     // File selection closed with OK
     if (fs.run ()) dlgedit->saveDialogue (fs.getSelection ());
@@ -93,7 +105,7 @@ void on_dialogue_functions_activate (GtkMenuItem * menuitem, gpointer user_data)
 void on_dialogue_preview_activate (GtkMenuItem * menuitem, gpointer user_data)
 {
     GuiDlgedit *dlgedit = (GuiDlgedit *) user_data;
-    GuiFile fs (LOAD, "Select message catalogue (.mo)", dlgedit->directory ());
+    GuiFile fs (FS_LOAD, "Select message catalogue (.mo)", dlgedit->directory ());
 
     // start translation preview
     if (dlgedit->mode () != L10N_PREVIEW)

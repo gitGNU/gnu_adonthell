@@ -24,6 +24,7 @@
 
 #include <vector>
 #include <deque>
+#include <list>
 #include "cfg_project.h"
 
 /**
@@ -56,6 +57,12 @@ public:
      */
     void addFile (std::string & file);
     /**
+     * Get the list of files, sorted alphabetically.
+     * @return list of previously opened files.                                            
+     */
+    std::list<std::string> getFiles ();
+    
+    /**
      * Adds a project to the list of projects and loads all project
      * specific data. The number of projects isn't limited.
      * @param project name of the project to add.
@@ -80,7 +87,7 @@ public:
      * Save data to disk.
      * @param file file to save data to.
      */
-    void save (ofstream & file);
+    void save (std::ofstream & file);
     
     /**
      * Global access to the dlgedit configuration

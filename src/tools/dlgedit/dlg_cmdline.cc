@@ -19,7 +19,7 @@
  * @brief Methods to parse the dlgedit commandline.
  */
  
-#include <iostream.h> 
+#include <iostream> 
 #include <dirent.h>
 #include <getopt.h>
 #include "dlg_cmdline.h"
@@ -48,13 +48,13 @@ bool DlgCmdline::parse (int argc, char* argv[])
         {
             case 'd':
             {
-                cout << datadir << std::endl;
+                std::cout << datadir << std::endl;
                 return false;
             }
                 
             case 'v':
             {
-                cout << _VERSION_ << std::endl;
+                std::cout << _VERSION_ << std::endl;
                 return false; 
             }
                 
@@ -82,7 +82,7 @@ bool DlgCmdline::parse (int argc, char* argv[])
                 
                 if (!mydir) 
                 {
-                    cerr << "No such directory " << datadir << "!" << endl;
+                    std::cerr << "No such directory " << datadir << "!" << std::endl;
                     return false;
                 }
                 closedir (mydir);
@@ -106,13 +106,13 @@ bool DlgCmdline::parse (int argc, char* argv[])
 // prints the help message
 void DlgCmdline::help (const std::string &program)
 {
-    cout << "Usage: " << program << " [OPTIONS] [SOURCES]" << endl;
-    cout << endl;
-    cout << "Where [OPTIONS] can be:\n";
-    cout << "-h         print this help message and exit" << endl; 
-    cout << "-d         print the project directory and exit" << endl; 
-    cout << "-v         print version and exit" << endl; 
-    cout << "-c         compile all SOURCES and exit" << endl;
-    cout << "-p dir     specify a custom project directory" << endl;
-    cout << "-j project specify a default project" << endl;   
+    std::cout << "Usage: " << program << " [OPTIONS] [SOURCES]" << std::endl;
+    std::cout << std::endl;
+    std::cout << "Where [OPTIONS] can be:\n";
+    std::cout << "-h         print this help message and exit" << std::endl; 
+    std::cout << "-d         print the project directory and exit" << std::endl; 
+    std::cout << "-v         print version and exit" << std::endl; 
+    std::cout << "-c         compile all SOURCES and exit" << std::endl;
+    std::cout << "-p dir     specify a custom project directory" << std::endl;
+    std::cout << "-j project specify a default project" << std::endl;
 }

@@ -93,7 +93,7 @@ void CfgIO::save ()
     if (!out) return;
     
     // write header
-    out << "# Adonthell Dialogue Editor configuration file\n" << endl;
+    out << "# Adonthell Dialogue Editor configuration file\n" << std::endl;
             
     // save data
     Data.save (out);

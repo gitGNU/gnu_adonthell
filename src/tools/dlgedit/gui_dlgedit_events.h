@@ -27,6 +27,7 @@ void on_widget_destroy (GtkWidget *, gpointer);
 // Menu Callbacks
 void on_file_new_activate (GtkMenuItem *, gpointer);
 void on_file_load_activate (GtkMenuItem *, gpointer);
+void on_file_load_recent_activate (GtkMenuItem *, gpointer);
 void on_file_save_activate (GtkMenuItem *, gpointer);
 void on_file_save_as_activate (GtkMenuItem *, gpointer);
 void on_file_close_activate (GtkMenuItem *, gpointer);

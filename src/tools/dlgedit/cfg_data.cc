@@ -70,6 +70,18 @@ void CfgData::addFile (std::string &file)
     Files.push_back (file);
 }
 
+// get list of previously opened files
+std::list<std::string> CfgData::getFiles ()
+{
+    // copy contents of Files into the list
+    std::list<std::string> files (Files.begin (), Files.end ());
+
+    // sort the list
+    files.sort ();
+
+    return files;
+}
+
 // add entry to list of projects
 void CfgData::addProject (std::string &project)
 {
@@ -126,7 +138,7 @@ void CfgData::setBasedir (const std::string & project, const std::string & based
 }
 
 // save configuration data
-void CfgData::save (ofstream &out)
+void CfgData::save (std::ofstream &out)
 {
     // save list of files
     for (std::deque<std::string>::iterator i = Files.begin (); i != Files.end (); i++)

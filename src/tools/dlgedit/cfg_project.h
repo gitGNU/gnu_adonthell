@@ -49,7 +49,7 @@ public:
      * Save project specific data to disk.
      * @param file file to save data to.
      */
-    void save (ofstream & file);
+    void save (std::ofstream & file);
     
     /**
      * Get the project's name.

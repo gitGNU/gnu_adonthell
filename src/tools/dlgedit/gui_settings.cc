@@ -52,7 +52,7 @@ void on_browse_basedir_clicked (GtkButton * button, gpointer user_data)
     // otherwise revert to directory last opened
     if (dir == "") dir = GuiDlgedit::window->directory ();
     
-    GuiFile fs (LOAD, "Select base directory", dir + "/");
+    GuiFile fs (FS_LOAD, "Select base directory", dir + "/");
 
     // File selection closed with OK
     if (fs.run ())

@@ -182,6 +182,10 @@ private:
      */
     void initMenu ();
     /**
+     * (Re)build the 'open recent' sub-menu.                      
+     */
+    void initRecentFiles ();
+    /**
      * Display the correct window title
      */
     void initTitle ();

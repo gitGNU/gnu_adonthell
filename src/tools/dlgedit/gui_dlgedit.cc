@@ -31,6 +31,7 @@
 #include <unistd.h>
 #include <stdio.h>
 #include "gettext.h"
+#include "cfg_data.h"
 #include "dlg_cmdline.h"
 #include "dlg_compiler.h"
 #include "gui_code.h"
@@ -133,7 +134,7 @@ GuiDlgedit::GuiDlgedit ()
     gtk_signal_connect (GTK_OBJECT (menuitem), "activate", GTK_SIGNAL_FUNC (on_file_new_activate), (gpointer) this);
     gtk_widget_show (menuitem);
 
-    // Load
+    // Open
     menuitem = gtk_menu_item_new_with_label ("Open ...");
     gtk_container_add (GTK_CONTAINER (submenu), menuitem);
     gtk_widget_add_accelerator (menuitem, "activate", accel_group, GDK_o, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
@@ -143,6 +144,15 @@ GuiDlgedit::GuiDlgedit ()
     gtk_signal_connect (GTK_OBJECT (menuitem), "activate", GTK_SIGNAL_FUNC (on_file_load_activate), (gpointer) this);
     gtk_widget_show (menuitem);
 
+    // Open Previous >
+    menuitem = gtk_menu_item_new_with_label ("Open Previous");
+    gtk_container_add (GTK_CONTAINER (submenu), menuitem);
+    gtk_object_set_data (GTK_OBJECT (menuitem), "help-id", GINT_TO_POINTER (2));
+    gtk_signal_connect (GTK_OBJECT (menuitem), "enter-notify-event", GTK_SIGNAL_FUNC (on_display_help), message);
+    gtk_signal_connect (GTK_OBJECT (menuitem), "leave-notify-event", GTK_SIGNAL_FUNC (on_clear_help), message);
+    gtk_widget_show (menuitem);
+    menuItem[OPEN_RECENT] = menuitem;
+    
     // Save
     menuitem = gtk_menu_item_new_with_label ("Save");
     gtk_container_add (GTK_CONTAINER (submenu), menuitem);
@@ -242,7 +252,7 @@ GuiDlgedit::GuiDlgedit ()
 
     // Preview i18n
 #ifdef ENABLE_NLS 
-    menuitem = gtk_menu_item_new_with_label ("Preview Localization ...");
+    menuitem = gtk_menu_item_new_with_label ("Preview L10n ...");
     gtk_container_add (GTK_CONTAINER (submenu), menuitem);
     gtk_widget_add_accelerator (menuitem, "activate", accel_group, GDK_l, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
     gtk_object_set_data (GTK_OBJECT (menuitem), "help-id", GINT_TO_POINTER (13));
@@ -339,6 +349,9 @@ GuiDlgedit::GuiDlgedit ()
     // init the colors we need for drawing
     initColors (graph_->drawingArea ());
 
+    // init list of previously opened files
+    initRecentFiles ();
+    
     // get the current working directory
     directory_ = g_get_current_dir ();
     
@@ -377,6 +390,9 @@ void GuiDlgedit::loadDialogue (std::string file)
         message->display (-2, g_basename (file.c_str ()));
         return;
     }
+
+    // make sure that file has an absolute path
+    if (file[0] != '/') file = directory_ + std::string ("/") + file;
     
     // remember the current directory for later use
     directory_ = g_dirname (file.c_str ());
@@ -386,7 +402,7 @@ void GuiDlgedit::loadDialogue (std::string file)
     
     // remove file extension
     unsigned int pos = filename.rfind (FILE_EXT);
-    if (pos != filename.npos) filename.erase (pos, -1);
+    if (pos != filename.npos) filename.erase (pos);
 
     // the new dialogue
     DlgModule *module = initDialogue (filename);
@@ -401,6 +417,9 @@ void GuiDlgedit::loadDialogue (std::string file)
     // Display the dialogue
     else 
     {
+        // update list of previously opened files
+        CfgData::data->addFile (file);
+
         message->display (200);      
         showDialogue (module, true);
     }
@@ -420,7 +439,7 @@ void GuiDlgedit::saveDialogue (std::string file)
     
     // remove file extension
     unsigned int pos = filename.rfind (FILE_EXT);
-    if (pos != filename.npos) filename.erase (pos, -1);
+    if (pos != filename.npos) filename.erase (pos);
 
     // try to save file
     if (!module->save (directory_, filename)) 
@@ -429,6 +448,9 @@ void GuiDlgedit::saveDialogue (std::string file)
     {
         message->display (201);
         
+        // update list of previously opened files
+        CfgData::data->addFile (file);
+
         // update the dialogue's name in case it has changed
         initTitle ();
         initMenu ();
@@ -457,6 +479,9 @@ void GuiDlgedit::closeDialogue ()
     
     // rebuild the 'windows' menu
     initMenu ();
+    
+    // update list of previously opened files
+    initRecentFiles ();
     
     // delete the dialogue
     delete module;
@@ -731,6 +756,35 @@ void GuiDlgedit::initMenu ()
             gtk_widget_add_accelerator (menuitem, "activate", accel_group, 
                 GDK_1 + position, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
     }
+}
+
+// initialize the list of recently opened files
+void GuiDlgedit::initRecentFiles ()
+{
+    GtkWidget *submenu = GTK_MENU_ITEM(menuItem[OPEN_RECENT])->submenu;
+    GtkWidget *menuitem;
+    
+    // first, remove everything from the submenu
+    if (submenu != NULL)
+        gtk_container_foreach (GTK_CONTAINER (submenu), (GtkCallback) gtk_widget_destroy, NULL);
+    else
+        submenu = gtk_menu_new ();
+
+    // get list of files
+    std::list<std::string> files = CfgData::data->getFiles ();
+    
+    // now recreate the recent files list
+    for (std::list<std::string>::iterator i = files.begin (); i != files.end (); i++)
+    {
+        menuitem = gtk_menu_item_new_with_label ((*i).c_str ());
+        gtk_container_add (GTK_CONTAINER (submenu), menuitem);
+        gtk_object_set_user_data (GTK_OBJECT (menuitem), (void *) (*i).c_str ());
+        gtk_signal_connect (GTK_OBJECT (menuitem), "activate", GTK_SIGNAL_FUNC (on_file_load_recent_activate), (gpointer) this);
+        gtk_widget_show (menuitem);          
+    }
+
+    // append submenu
+    gtk_menu_item_set_submenu (GTK_MENU_ITEM(menuItem[OPEN_RECENT]), submenu);
 }
 
 // Prepare some colors for later use

@@ -36,7 +36,7 @@ GuiFile::GuiFile (int type, const std::string &title, const std::string &file) :
     gtk_window_set_policy (GTK_WINDOW (window), FALSE, FALSE, FALSE);
 
     // hide new/delete/rename directory buttons if we're loading a file
-    if (type == LOAD) gtk_file_selection_hide_fileop_buttons (GTK_FILE_SELECTION (window));
+    if (type == FS_LOAD) gtk_file_selection_hide_fileop_buttons (GTK_FILE_SELECTION (window));
 
     // open the directory browsed last 
     gtk_file_selection_set_filename (GTK_FILE_SELECTION (window), file.c_str ());

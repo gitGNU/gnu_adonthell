@@ -59,9 +59,9 @@ bool CfgProject::load ()
 }
 
 // save project data
-void CfgProject::save (ofstream &out)
+void CfgProject::save (std::ofstream &out)
 {
     out << "\nProject [" << Name << "]\n"
         << "  BaseDir [" << BaseDir << "]\n"
-        << "End" << endl;
+        << "End" << std::endl;
 }
