@@ -14,7 +14,6 @@
 
 #include <map>
 #include <string.h>
-#include <iostream.h>
 #include <gtk/gtk.h>
 
 #include "../../types.h"
@@ -123,6 +122,12 @@ void function::down ()
     }
 }
 
+// keep changes
+void function::ok ()
+{
+    // add the contents of the function-list to the node
+}
+
 // Select function in function-list
 void function::select (s_int32 row)
 {
@@ -179,7 +184,6 @@ void function::set_function ()
     GtkWidget *menu_item = gtk_menu_get_active ((GtkMenu *) menu);
     thefunction = GPOINTER_TO_INT(gtk_object_get_user_data (GTK_OBJECT (menu_item)));
 
-    cout << "fct " << thefunction << "\n"; 
     set_operators ();
 }
 
@@ -189,10 +193,7 @@ void function::set_operation ()
     GtkWidget *menu = gtk_option_menu_get_menu ((GtkOptionMenu *) operation);
     GtkWidget *menu_item = gtk_menu_get_active ((GtkMenu *) menu);
     theoperation = GPOINTER_TO_INT(gtk_object_get_user_data (GTK_OBJECT (menu_item)));
-
-    cout << "op  " << theoperation << "\n"; 
 }
-
 
 // Change the accessible operations
 void function::set_operators ()
@@ -212,7 +213,7 @@ void function::set_operators ()
             gtk_widget_show (menuitem);
             gtk_menu_append (GTK_MENU (menu), menuitem);
             gtk_object_set_user_data (GTK_OBJECT (menuitem), (gpointer) GINT_TO_POINTER(ASSIGN));
-
+            
             // add
             menuitem = gtk_menu_item_new_with_label ("+=");
             gtk_widget_show (menuitem);
@@ -266,6 +267,8 @@ void function::set_operators ()
 
     gtk_option_menu_remove_menu ((GtkOptionMenu *) operation);
     gtk_option_menu_set_menu ((GtkOptionMenu *) operation, menu);
+    gtk_signal_connect (GTK_OBJECT (menu), "deactivate", GTK_SIGNAL_FUNC (on_operation_released), (gpointer) this);
+
 }
 
 // Create the GUI
@@ -273,7 +276,6 @@ void function::create_function_dialog ()
 {
     GtkWidget *vbox1;
     GtkWidget *hbox1;
-    GtkWidget *function;
     GtkWidget *function_menu;
     GtkWidget *glade_menuitem;
     GtkWidget *add_button;
@@ -322,14 +324,17 @@ void function::create_function_dialog ()
     gtk_widget_show (function);
     gtk_box_pack_start (GTK_BOX (hbox1), function, FALSE, FALSE, 0);
     function_menu = gtk_menu_new ();
+
     glade_menuitem = gtk_menu_item_new_with_label ("LET");
     gtk_object_set_user_data (GTK_OBJECT (glade_menuitem), (gpointer) GINT_TO_POINTER(LET));
     gtk_widget_show (glade_menuitem);
     gtk_menu_append (GTK_MENU (function_menu), glade_menuitem);
+
     glade_menuitem = gtk_menu_item_new_with_label ("IF");
     gtk_object_set_user_data (GTK_OBJECT (glade_menuitem), (gpointer) GINT_TO_POINTER(IF));
     gtk_widget_show (glade_menuitem);
     gtk_menu_append (GTK_MENU (function_menu), glade_menuitem);
+
     gtk_option_menu_set_menu (GTK_OPTION_MENU (function), function_menu);
     gtk_option_menu_set_history (GTK_OPTION_MENU (function), thefunction);
 
@@ -492,6 +497,7 @@ void function::create_function_dialog ()
     fct_ok_buttpn = gtk_button_new_with_label ("OK");
     gtk_widget_ref (fct_ok_buttpn);
     gtk_object_set_data_full (GTK_OBJECT (function_dialog), "fct_ok_buttpn", fct_ok_buttpn,
+
         (GtkDestroyNotify) gtk_widget_unref);
     gtk_widget_show (fct_ok_buttpn);
     gtk_container_add (GTK_CONTAINER (hbuttonbox1), fct_ok_buttpn);
@@ -519,13 +525,11 @@ void function::create_function_dialog ()
     gtk_signal_connect (GTK_OBJECT (fct_ok_buttpn), "clicked",
         GTK_SIGNAL_FUNC (on_fct_ok_buttpn_clicked), (gpointer) this);
     gtk_signal_connect (GTK_OBJECT (fct_cancel_button), "clicked",
-        GTK_SIGNAL_FUNC (on_fct_cancel_button_clicked), (gpointer) this);
+        GTK_SIGNAL_FUNC (on_widget_destroy), (gpointer) NULL);
     gtk_signal_connect (GTK_OBJECT (function_list), "select_row",
         GTK_SIGNAL_FUNC (on_fct_select_row), (gpointer) this);
     gtk_signal_connect (GTK_OBJECT (function_list), "unselect_row",
         GTK_SIGNAL_FUNC (on_fct_unselect_row), (gpointer) this);
-    gtk_signal_connect (GTK_OBJECT (function), "released",
-        GTK_SIGNAL_FUNC (on_function_released), (gpointer) this);
-    gtk_signal_connect (GTK_OBJECT (operation), "released",
-        GTK_SIGNAL_FUNC (on_operation_released), (gpointer) this);
+    gtk_signal_connect (GTK_OBJECT (GTK_OPTION_MENU (function)->menu), 
+        "deactivate", GTK_SIGNAL_FUNC (on_function_released), (gpointer) this);
 }

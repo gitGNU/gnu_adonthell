@@ -44,6 +44,5 @@ void on_remove_button_clicked (GtkButton *, gpointer);
 void on_up_button_clicked (GtkButton *, gpointer);
 void on_down_button_clicked (GtkButton *, gpointer);
 void on_fct_ok_buttpn_clicked (GtkButton *, gpointer);
-void on_fct_cancel_button_clicked (GtkButton *, gpointer);
 void on_fct_select_row (GtkWidget *, gint , gint , GdkEventButton *, gpointer);
 void on_fct_unselect_row (GtkWidget *, gint , gint , GdkEventButton *, gpointer);

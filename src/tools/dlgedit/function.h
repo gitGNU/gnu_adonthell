@@ -62,10 +62,11 @@ public:
     function (DlgNode*);            // Thats indeed a constructor ;>
     ~function ();                   // destructor
 
-    void add ();
-    void remove ();
-    void up ();
-    void down ();
+    void add ();                    // Handlers
+    void remove ();                 // for the
+    void up ();                     // equally
+    void down ();                   // labeled
+    void ok ();                     // buttons.
     void select (s_int32);          // Change selection state of the list                 
     void set_function ();           // Change the function
     void set_operation ();          // Change the operation

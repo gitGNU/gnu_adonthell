@@ -16,7 +16,6 @@ class dialog;
 
 #include <gtk/gtk.h>
 #include <stdio.h>
-#include <iostream.h>
 
 #include "../../types.h"
 #include "linked_list.h"
@@ -251,14 +250,12 @@ on_list_select (GtkList *list, GtkWidget *widget, gpointer user_data)
 // function changed -> set available operators
 void on_function_released (GtkButton *button, gpointer user_data)
 {
-    cout << "funtion ";
     ((function *) user_data)->set_function ();
 }
 
 // operation changed -> set available operators
 void on_operation_released (GtkButton *button, gpointer user_data)
 {
-    cout << "operation ";
     ((function *) user_data)->set_operation ();    
 }
 
@@ -298,15 +295,8 @@ void on_down_button_clicked (GtkButton * button, gpointer user_data)
     ((function *) user_data)->down ();
 }
 
-//
+// Accept the changes
 void on_fct_ok_buttpn_clicked (GtkButton * button, gpointer user_data)
 {
-
-}
-
-
-void
-on_fct_cancel_button_clicked (GtkButton * button, gpointer user_data)
-{
-
+    ((function *) user_data)->ok ();
 }
