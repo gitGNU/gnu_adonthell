@@ -44,7 +44,7 @@ win_base::win_base(s_int16 tx,s_int16 ty,u_int16 tl,u_int16 th,win_theme * wth)
   //not have a father, -> window in(depend on) another window.
   wb_father_=NULL;
   //value used to transluency
-  level_trans_back_=128;
+  level_trans_back_=170;
   //value used to brightness
   level_brightness_=200;
   //by default the current object is selected by the border

@@ -175,6 +175,7 @@ class animation
   u_int16 increase_image(u_int16 c);
   u_int16 decrease_image(u_int16 c);
   void add_image();
+  void add_raw_image();
   s_int8 delete_image(u_int16 pos);
   s_int8 delete_frame(u_int16 pos);
   void add_frame();
@@ -182,6 +183,8 @@ class animation
   void quick_load();
   void save();
   void load();
+  void save_image();
+  void save_image_raw();
   void set_mode(anim_editor_mode m);
   void update_label_mode();
   void update_label_frame_nbr();

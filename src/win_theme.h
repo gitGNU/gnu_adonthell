@@ -33,8 +33,8 @@ class win_theme
 
   static char* theme;
 
-  win_theme(win_theme &);
   win_theme(char *);
+  win_theme(win_theme &);
   win_theme & operator=(win_theme &);
   void destroy();
   void update(win_base * wb=NULL);

@@ -108,8 +108,6 @@ class mapview
   u_int16 get_posy() { return posy; }
   void resize(u_int16 l, u_int16 h);
   void update();
-  void draw_cursor();
-  void draw_walkable(u_int16 x, u_int16 y, drawing_area * da_opt=NULL);
   void draw(u_int16 x, u_int16 y, drawing_area * da_opt=NULL);
 
 #ifdef _EDIT_
@@ -133,6 +131,8 @@ class mapview
   void update_current_tile(mapsquare_tile t);
 
   void update_editor();
+  void draw_cursor();
+  void draw_walkable(u_int16 x, u_int16 y, drawing_area * da_opt=NULL);
   void draw_editor();
   void update_editor_keys();
   void update_and_draw();

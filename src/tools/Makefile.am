@@ -1,3 +1,3 @@
-SUBDIRS=dlgedit
+SUBDIRS=dlgedit pydonthell
 
-all: dlgedit
+all: dlgedit pydonthell

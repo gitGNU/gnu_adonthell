@@ -33,7 +33,6 @@ class input
   static void shutdown();
   static void update();
   static u_int16 last_key;
-  static u_int16 getkeypressed();
   static bool is_pushed(SDLKey key);
   static bool has_been_pushed(SDLKey key);
 
@@ -43,14 +42,7 @@ class input
   static s_int32 get_next_key();
   static s_int32 get_next_unicode();
 
-  /*#define MODE_CHAR 1
-    #define MODE_STATE 2
-    #define MODE_PUSHED 3*/
-  //  static void set_keyboard_mode(u_int8 mode);
-  //  static u_int8 get_keyboard_mode();
   static void set_key_repeat(int delay=SDL_DEFAULT_REPEAT_DELAY, int interval=SDL_DEFAULT_REPEAT_INTERVAL);
-  /*  static void set_unicode(bool u);
-      static bool get_unicode();*/
   static void clear_keys_queue();
 
 #define LEFT_BUTTON 0

@@ -5,7 +5,7 @@ dnl **************************************************************
 AC_INIT(README)
 
 AM_CONFIG_HEADER(header.h)
-AM_INIT_AUTOMAKE(mapengine, 0.1.1.7)
+AM_INIT_AUTOMAKE(adonthell, 0.3pre1)
 AC_PREFIX_PROGRAM(gcc)
 
 CFLAGS="-O6 -g -Wall"
@@ -168,4 +168,5 @@ Makefile
 src/Makefile
 src/tools/Makefile
 src/tools/dlgedit/Makefile
+src/tools/pydonthell/Makefile
 ])

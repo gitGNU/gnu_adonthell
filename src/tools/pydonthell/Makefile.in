@@ -38,7 +38,7 @@ pkgdatadir = $(datadir)/@PACKAGE@
 pkglibdir = $(libdir)/@PACKAGE@
 pkgincludedir = $(includedir)/@PACKAGE@
 
-top_builddir = ..
+top_builddir = ../../..
 
 ACLOCAL = @ACLOCAL@
 AUTOCONF = @AUTOCONF@
@@ -67,37 +67,45 @@ SDL_CONFIG = @SDL_CONFIG@
 SDL_LIBS = @SDL_LIBS@
 VERSION = @VERSION@
 
-SUBDIRS = . tools
+bin_PROGRAMS = pydonthell
 
-bin_PROGRAMS = adonthell
+pydonthell_SOURCES = pydonthell.cpp
 
-adonthell_SOURCES = animation.cpp animation_off.cpp audio.cpp audio_thread.cpp character.cpp data.cpp data_screen.cpp dialog.cpp dialog_engine.cpp drawing_area.cpp event.cpp fileops.cpp game.cpp gametime.cpp image.cpp input.cpp lex.prefs.cpp main.cpp mapselect.cpp maptpl.cpp mapobject.cpp mapcharacter.cpp landmap.cpp mapview.cpp pnm.cpp prefs.cpp py_character_wrap.cpp py_landmap_wrap.cpp py_input_wrap.cpp py_mapview_wrap.cpp py_dialog_engine_wrap.cpp py_inc.cpp py_modules.cpp py_quest_wrap.cpp py_screen_wrap.cpp py_image_wrap.cpp quest.cpp screen.cpp storage.cpp win_base.cpp win_border.cpp win_container.cpp win_font.cpp win_theme.cpp win_scrolled.cpp win_background.cpp win_scrollbar.cpp win_file.cpp win_image.cpp win_label.cpp win_select.cpp win_write.cpp yarg.cc py_win_font_wrap.cpp py_win_theme_wrap.cpp py_win_base_wrap.cpp py_win_label_wrap.cpp py_win_container_wrap.cpp
+LDADD = ../../animation.o ../../animation_off.o ../../audio.o ../../audio_thread.o ../../character.o ../../data.o ../../data_screen.o ../../dialog.o ../../dialog_engine.o ../../drawing_area.o ../../event.o ../../fileops.o ../../game.o ../../gametime.o ../../image.o ../../input.o ../../lex.prefs.o ../../mapselect.o ../../maptpl.o ../../mapobject.o ../../mapcharacter.o ../../landmap.o ../../mapview.o ../../pnm.o ../../prefs.o ../../py_character_wrap.o ../../py_landmap_wrap.o ../../py_input_wrap.o ../../py_mapview_wrap.o ../../py_dialog_engine_wrap.o ../../py_inc.o ../../py_modules.o ../../py_quest_wrap.o ../../py_screen_wrap.o ../../py_image_wrap.o ../../quest.o ../../screen.o ../../storage.o ../../win_base.o ../../win_border.o ../../win_container.o ../../win_font.o ../../win_theme.o ../../win_scrolled.o ../../win_background.o ../../win_scrollbar.o ../../win_file.o ../../win_image.o ../../win_label.o ../../win_select.o ../../win_write.o ../../yarg.cc ../../py_win_font_wrap.o ../../py_win_theme_wrap.o ../../py_win_base_wrap.o ../../py_win_label_wrap.o ../../py_win_container_wrap.o
 
+
+# Evil, but it works...
+CPPFLAGS =  -I../..
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
-CONFIG_HEADER = ../header.h
+CONFIG_HEADER = ../../../header.h
 CONFIG_CLEAN_FILES = 
 PROGRAMS =  $(bin_PROGRAMS)
 
 
-DEFS = @DEFS@ -I. -I$(srcdir) -I..
-CPPFLAGS = @CPPFLAGS@
+DEFS = @DEFS@ -I. -I$(srcdir) -I../../..
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
-adonthell_OBJECTS =  animation.o animation_off.o audio.o audio_thread.o \
-character.o data.o data_screen.o dialog.o dialog_engine.o \
-drawing_area.o event.o fileops.o game.o gametime.o image.o input.o \
-lex.prefs.o main.o mapselect.o maptpl.o mapobject.o mapcharacter.o \
-landmap.o mapview.o pnm.o prefs.o py_character_wrap.o py_landmap_wrap.o \
-py_input_wrap.o py_mapview_wrap.o py_dialog_engine_wrap.o py_inc.o \
-py_modules.o py_quest_wrap.o py_screen_wrap.o py_image_wrap.o quest.o \
-screen.o storage.o win_base.o win_border.o win_container.o win_font.o \
-win_theme.o win_scrolled.o win_background.o win_scrollbar.o win_file.o \
-win_image.o win_label.o win_select.o win_write.o yarg.o \
-py_win_font_wrap.o py_win_theme_wrap.o py_win_base_wrap.o \
-py_win_label_wrap.o py_win_container_wrap.o
-adonthell_LDADD = $(LDADD)
-adonthell_DEPENDENCIES = 
-adonthell_LDFLAGS = 
+pydonthell_OBJECTS =  pydonthell.o
+pydonthell_LDADD = $(LDADD)
+pydonthell_DEPENDENCIES =  ../../animation.o ../../animation_off.o \
+../../audio.o ../../audio_thread.o ../../character.o ../../data.o \
+../../data_screen.o ../../dialog.o ../../dialog_engine.o \
+../../drawing_area.o ../../event.o ../../fileops.o ../../game.o \
+../../gametime.o ../../image.o ../../input.o ../../lex.prefs.o \
+../../mapselect.o ../../maptpl.o ../../mapobject.o ../../mapcharacter.o \
+../../landmap.o ../../mapview.o ../../pnm.o ../../prefs.o \
+../../py_character_wrap.o ../../py_landmap_wrap.o ../../py_input_wrap.o \
+../../py_mapview_wrap.o ../../py_dialog_engine_wrap.o ../../py_inc.o \
+../../py_modules.o ../../py_quest_wrap.o ../../py_screen_wrap.o \
+../../py_image_wrap.o ../../quest.o ../../screen.o ../../storage.o \
+../../win_base.o ../../win_border.o ../../win_container.o \
+../../win_font.o ../../win_theme.o ../../win_scrolled.o \
+../../win_background.o ../../win_scrollbar.o ../../win_file.o \
+../../win_image.o ../../win_label.o ../../win_select.o \
+../../win_write.o ../../yarg.cc ../../py_win_font_wrap.o \
+../../py_win_theme_wrap.o ../../py_win_base_wrap.o \
+../../py_win_label_wrap.o ../../py_win_container_wrap.o
+pydonthell_LDFLAGS = 
 CXXFLAGS = @CXXFLAGS@
 CXXCOMPILE = $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
 CXXLD = $(CXX)
@@ -109,32 +117,15 @@ DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 
 TAR = gtar
 GZIP_ENV = --best
-DEP_FILES =  .deps/animation.P .deps/animation_off.P .deps/audio.P \
-.deps/audio_thread.P .deps/character.P .deps/data.P .deps/data_screen.P \
-.deps/dialog.P .deps/dialog_engine.P .deps/drawing_area.P .deps/event.P \
-.deps/fileops.P .deps/game.P .deps/gametime.P .deps/image.P \
-.deps/input.P .deps/landmap.P .deps/lex.prefs.P .deps/main.P \
-.deps/mapcharacter.P .deps/mapobject.P .deps/mapselect.P .deps/maptpl.P \
-.deps/mapview.P .deps/pnm.P .deps/prefs.P .deps/py_character_wrap.P \
-.deps/py_dialog_engine_wrap.P .deps/py_image_wrap.P .deps/py_inc.P \
-.deps/py_input_wrap.P .deps/py_landmap_wrap.P .deps/py_mapview_wrap.P \
-.deps/py_modules.P .deps/py_quest_wrap.P .deps/py_screen_wrap.P \
-.deps/py_win_base_wrap.P .deps/py_win_container_wrap.P \
-.deps/py_win_font_wrap.P .deps/py_win_label_wrap.P \
-.deps/py_win_theme_wrap.P .deps/quest.P .deps/screen.P .deps/storage.P \
-.deps/win_background.P .deps/win_base.P .deps/win_border.P \
-.deps/win_container.P .deps/win_file.P .deps/win_font.P \
-.deps/win_image.P .deps/win_label.P .deps/win_scrollbar.P \
-.deps/win_scrolled.P .deps/win_select.P .deps/win_theme.P \
-.deps/win_write.P .deps/yarg.P
-SOURCES = $(adonthell_SOURCES)
-OBJECTS = $(adonthell_OBJECTS)
+DEP_FILES =  .deps/pydonthell.P
+SOURCES = $(pydonthell_SOURCES)
+OBJECTS = $(pydonthell_OBJECTS)
 
 all: all-redirect
 .SUFFIXES:
-.SUFFIXES: .S .c .cc .cpp .o .s
+.SUFFIXES: .S .c .cpp .o .s
 $(srcdir)/Makefile.in: Makefile.am $(top_srcdir)/configure.in $(ACLOCAL_M4) 
-	cd $(top_srcdir) && $(AUTOMAKE) --gnu src/Makefile
+	cd $(top_srcdir) && $(AUTOMAKE) --gnu src/tools/pydonthell/Makefile
 
 Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status $(BUILT_SOURCES)
 	cd $(top_builddir) \
@@ -182,68 +173,11 @@ distclean-compile:
 
 maintainer-clean-compile:
 
-adonthell: $(adonthell_OBJECTS) $(adonthell_DEPENDENCIES)
-	@rm -f adonthell
-	$(CXXLINK) $(adonthell_LDFLAGS) $(adonthell_OBJECTS) $(adonthell_LDADD) $(LIBS)
-.cc.o:
-	$(CXXCOMPILE) -c $<
+pydonthell: $(pydonthell_OBJECTS) $(pydonthell_DEPENDENCIES)
+	@rm -f pydonthell
+	$(CXXLINK) $(pydonthell_LDFLAGS) $(pydonthell_OBJECTS) $(pydonthell_LDADD) $(LIBS)
 .cpp.o:
 	$(CXXCOMPILE) -c $<
-
-# This directory's subdirectories are mostly independent; you can cd
-# into them and run `make' without going through this Makefile.
-# To change the values of `make' variables: instead of editing Makefiles,
-# (1) if the variable is set in `config.status', edit `config.status'
-#     (which will cause the Makefiles to be regenerated when you run `make');
-# (2) otherwise, pass the desired values on the `make' command line.
-
-@SET_MAKE@
-
-all-recursive install-data-recursive install-exec-recursive \
-installdirs-recursive install-recursive uninstall-recursive  \
-check-recursive installcheck-recursive info-recursive dvi-recursive:
-	@set fnord $(MAKEFLAGS); amf=$$2; \
-	dot_seen=no; \
-	target=`echo $@ | sed s/-recursive//`; \
-	list='$(SUBDIRS)'; for subdir in $$list; do \
-	  echo "Making $$target in $$subdir"; \
-	  if test "$$subdir" = "."; then \
-	    dot_seen=yes; \
-	    local_target="$$target-am"; \
-	  else \
-	    local_target="$$target"; \
-	  fi; \
-	  (cd $$subdir && $(MAKE) $(AM_MAKEFLAGS) $$local_target) \
-	   || case "$$amf" in *=*) exit 1;; *k*) fail=yes;; *) exit 1;; esac; \
-	done; \
-	if test "$$dot_seen" = "no"; then \
-	  $(MAKE) $(AM_MAKEFLAGS) "$$target-am" || exit 1; \
-	fi; test -z "$$fail"
-
-mostlyclean-recursive clean-recursive distclean-recursive \
-maintainer-clean-recursive:
-	@set fnord $(MAKEFLAGS); amf=$$2; \
-	dot_seen=no; \
-	rev=''; list='$(SUBDIRS)'; for subdir in $$list; do \
-	  rev="$$subdir $$rev"; \
-	  test "$$subdir" = "." && dot_seen=yes; \
-	done; \
-	test "$$dot_seen" = "no" && rev=". $$rev"; \
-	target=`echo $@ | sed s/-recursive//`; \
-	for subdir in $$rev; do \
-	  echo "Making $$target in $$subdir"; \
-	  if test "$$subdir" = "."; then \
-	    local_target="$$target-am"; \
-	  else \
-	    local_target="$$target"; \
-	  fi; \
-	  (cd $$subdir && $(MAKE) $(AM_MAKEFLAGS) $$local_target) \
-	   || case "$$amf" in *=*) exit 1;; *k*) fail=yes;; *) exit 1;; esac; \
-	done && test -z "$$fail"
-tags-recursive:
-	list='$(SUBDIRS)'; for subdir in $$list; do \
-	  test "$$subdir" = . || (cd $$subdir && $(MAKE) $(AM_MAKEFLAGS) tags); \
-	done
 
 tags: TAGS
 
@@ -255,14 +189,9 @@ ID: $(HEADERS) $(SOURCES) $(LISP)
 	here=`pwd` && cd $(srcdir) \
 	  && mkid -f$$here/ID $$unique $(LISP)
 
-TAGS: tags-recursive $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) $(LISP)
+TAGS:  $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) $(LISP)
 	tags=; \
 	here=`pwd`; \
-	list='$(SUBDIRS)'; for subdir in $$list; do \
-   if test "$$subdir" = .; then :; else \
-	    test -f $$subdir/TAGS && tags="$$tags -i $$here/$$subdir/TAGS"; \
-   fi; \
-	done; \
 	list='$(SOURCES) $(HEADERS)'; \
 	unique=`for i in $$list; do echo $$i; done | \
 	  awk '    { files[$$0] = 1; } \
@@ -281,14 +210,14 @@ maintainer-clean-tags:
 
 distdir = $(top_builddir)/$(PACKAGE)-$(VERSION)/$(subdir)
 
-subdir = src
+subdir = src/tools/pydonthell
 
 distdir: $(DISTFILES)
 	here=`cd $(top_builddir) && pwd`; \
 	top_distdir=`cd $(top_distdir) && pwd`; \
 	distdir=`cd $(distdir) && pwd`; \
 	cd $(top_srcdir) \
-	  && $(AUTOMAKE) --include-deps --build-dir=$$here --srcdir-name=$(top_srcdir) --output-dir=$$top_distdir --gnu src/Makefile
+	  && $(AUTOMAKE) --include-deps --build-dir=$$here --srcdir-name=$(top_srcdir) --output-dir=$$top_distdir --gnu src/tools/pydonthell/Makefile
 	@for file in $(DISTFILES); do \
 	  d=$(srcdir); \
 	  if test -d $$d/$$file; then \
@@ -297,16 +226,6 @@ distdir: $(DISTFILES)
 	    test -f $(distdir)/$$file \
 	    || ln $$d/$$file $(distdir)/$$file 2> /dev/null \
 	    || cp -p $$d/$$file $(distdir)/$$file || :; \
-	  fi; \
-	done
-	for subdir in $(SUBDIRS); do \
-	  if test "$$subdir" = .; then :; else \
-	    test -d $(distdir)/$$subdir \
-	    || mkdir $(distdir)/$$subdir \
-	    || exit 1; \
-	    chmod 777 $(distdir)/$$subdir; \
-	    (cd $$subdir && $(MAKE) $(AM_MAKEFLAGS) top_distdir=../$(top_distdir) distdir=../$(distdir)/$$subdir distdir) \
-	      || exit 1; \
 	  fi; \
 	done
 
@@ -342,25 +261,6 @@ maintainer-clean-depend:
 	    >> .deps/$(*F).P; \
 	rm -f .deps/$(*F).pp
 
-%.o: %.cc
-	@echo '$(CXXCOMPILE) -c $<'; \
-	$(CXXCOMPILE) -Wp,-MD,.deps/$(*F).pp -c $<
-	@-cp .deps/$(*F).pp .deps/$(*F).P; \
-	tr ' ' '\012' < .deps/$(*F).pp \
-	  | sed -e 's/^\\$$//' -e '/^$$/ d' -e '/:$$/ d' -e 's/$$/ :/' \
-	    >> .deps/$(*F).P; \
-	rm .deps/$(*F).pp
-
-%.lo: %.cc
-	@echo '$(LTCXXCOMPILE) -c $<'; \
-	$(LTCXXCOMPILE) -Wp,-MD,.deps/$(*F).pp -c $<
-	@-sed -e 's/^\([^:]*\)\.o[ 	]*:/\1.lo \1.o :/' \
-	  < .deps/$(*F).pp > .deps/$(*F).P; \
-	tr ' ' '\012' < .deps/$(*F).pp \
-	  | sed -e 's/^\\$$//' -e '/^$$/ d' -e '/:$$/ d' -e 's/$$/ :/' \
-	    >> .deps/$(*F).P; \
-	rm -f .deps/$(*F).pp
-
 %.o: %.cpp
 	@echo '$(CXXCOMPILE) -c $<'; \
 	$(CXXCOMPILE) -Wp,-MD,.deps/$(*F).pp -c $<
@@ -380,30 +280,29 @@ maintainer-clean-depend:
 	    >> .deps/$(*F).P; \
 	rm -f .deps/$(*F).pp
 info-am:
-info: info-recursive
+info: info-am
 dvi-am:
-dvi: dvi-recursive
+dvi: dvi-am
 check-am: all-am
-check: check-recursive
+check: check-am
 installcheck-am:
-installcheck: installcheck-recursive
+installcheck: installcheck-am
 install-exec-am: install-binPROGRAMS
-install-exec: install-exec-recursive
+install-exec: install-exec-am
 
 install-data-am:
-install-data: install-data-recursive
+install-data: install-data-am
 
 install-am: all-am
 	@$(MAKE) $(AM_MAKEFLAGS) install-exec-am install-data-am
-install: install-recursive
+install: install-am
 uninstall-am: uninstall-binPROGRAMS
-uninstall: uninstall-recursive
+uninstall: uninstall-am
 all-am: Makefile $(PROGRAMS)
-all-redirect: all-recursive
+all-redirect: all-am
 install-strip:
 	$(MAKE) $(AM_MAKEFLAGS) AM_INSTALL_PROGRAM_FLAGS=-s install
-installdirs: installdirs-recursive
-installdirs-am:
+installdirs:
 	$(mkinstalldirs)  $(DESTDIR)$(bindir)
 
 
@@ -419,17 +318,17 @@ maintainer-clean-generic:
 mostlyclean-am:  mostlyclean-binPROGRAMS mostlyclean-compile \
 		mostlyclean-tags mostlyclean-depend mostlyclean-generic
 
-mostlyclean: mostlyclean-recursive
+mostlyclean: mostlyclean-am
 
 clean-am:  clean-binPROGRAMS clean-compile clean-tags clean-depend \
 		clean-generic mostlyclean-am
 
-clean: clean-recursive
+clean: clean-am
 
 distclean-am:  distclean-binPROGRAMS distclean-compile distclean-tags \
 		distclean-depend distclean-generic clean-am
 
-distclean: distclean-recursive
+distclean: distclean-am
 
 maintainer-clean-am:  maintainer-clean-binPROGRAMS \
 		maintainer-clean-compile maintainer-clean-tags \
@@ -438,34 +337,20 @@ maintainer-clean-am:  maintainer-clean-binPROGRAMS \
 	@echo "This command is intended for maintainers to use;"
 	@echo "it deletes files that may require special tools to rebuild."
 
-maintainer-clean: maintainer-clean-recursive
+maintainer-clean: maintainer-clean-am
 
 .PHONY: mostlyclean-binPROGRAMS distclean-binPROGRAMS clean-binPROGRAMS \
 maintainer-clean-binPROGRAMS uninstall-binPROGRAMS install-binPROGRAMS \
 mostlyclean-compile distclean-compile clean-compile \
-maintainer-clean-compile install-data-recursive \
-uninstall-data-recursive install-exec-recursive \
-uninstall-exec-recursive installdirs-recursive uninstalldirs-recursive \
-all-recursive check-recursive installcheck-recursive info-recursive \
-dvi-recursive mostlyclean-recursive distclean-recursive clean-recursive \
-maintainer-clean-recursive tags tags-recursive mostlyclean-tags \
-distclean-tags clean-tags maintainer-clean-tags distdir \
-mostlyclean-depend distclean-depend clean-depend \
-maintainer-clean-depend info-am info dvi-am dvi check check-am \
-installcheck-am installcheck install-exec-am install-exec \
-install-data-am install-data install-am install uninstall-am uninstall \
-all-redirect all-am all installdirs-am installdirs mostlyclean-generic \
-distclean-generic clean-generic maintainer-clean-generic clean \
-mostlyclean distclean maintainer-clean
+maintainer-clean-compile tags mostlyclean-tags distclean-tags \
+clean-tags maintainer-clean-tags distdir mostlyclean-depend \
+distclean-depend clean-depend maintainer-clean-depend info-am info \
+dvi-am dvi check check-am installcheck-am installcheck install-exec-am \
+install-exec install-data-am install-data install-am install \
+uninstall-am uninstall all-redirect all-am all installdirs \
+mostlyclean-generic distclean-generic clean-generic \
+maintainer-clean-generic clean mostlyclean distclean maintainer-clean
 
-
-#joltest_SOURCES = animation.cpp animation_off.cpp audio.cpp audio_thread.cpp \
-# drawing_area.cpp  fileops.cpp  \
-#image.cpp input.cpp lex.prefs.cpp joel.cpp \
-#pnm.cpp prefs.cpp \
-# screen.cpp  \
-#win_base.cpp win_border.cpp win_container.cpp win_font.cpp win_theme.cpp win_scrolled.cpp win_background.cpp win_scrollbar.cpp \
-#win_file.cpp win_image.cpp win_label.cpp win_select.cpp win_write.cpp yarg.cc
 
 py_input_wrap.cpp : py_input.i
 	swig -python -shadow -c++ -make_default -o $*.cpp $< 

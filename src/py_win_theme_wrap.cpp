@@ -487,301 +487,230 @@ SWIG_InstallConstants(PyObject *d, swig_const_info constants[]) {
 
 /* -------- TYPES TABLE (BEGIN) -------- */
 
-#define  SWIGTYPE_p_SDL_Surface swig_types[0] 
-#define  SWIGTYPE_p_drawing_area swig_types[1] 
-#define  SWIGTYPE_p_image swig_types[2] 
-#define  SWIGTYPE_p_screen swig_types[3] 
-#define  SWIGTYPE_p_config swig_types[4] 
+#define  SWIGTYPE_p_win_base swig_types[0] 
+#define  SWIGTYPE_p_win_scrollbar swig_types[1] 
+#define  SWIGTYPE_p_win_theme swig_types[2] 
+#define  SWIGTYPE_p_win_background swig_types[3] 
+#define  SWIGTYPE_p_win_border swig_types[4] 
 static swig_type_info *swig_types[6];
 
 /* -------- TYPES TABLE (END) -------- */
 
 
 /*-----------------------------------------------
-              @(target):= screenc.so
+              @(target):= win_themec.so
   ------------------------------------------------*/
-#define SWIG_init    initscreenc
+#define SWIG_init    initwin_themec
 
-#define SWIG_name    "screenc"
+#define SWIG_name    "win_themec"
 
 
-#include "types.h"
-#include "screen.h"
+#include "win_types.h"
+#include "win_base.h"
+#include "win_theme.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-static int _wrap_screen__bytes_per_pixel_set(PyObject *val) {
-    unsigned char  tval ;
+static PyObject *_wrap_win_theme_normal_set(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_theme *arg0 ;
+    win_border *arg1 ;
+    PyObject * argo0 =0 ;
+    PyObject * argo1 =0 ;
     
-    tval = (unsigned char ) PyInt_AsLong(val);
+    if(!PyArg_ParseTuple(args,"OO:win_theme_normal_set",&argo0,&argo1)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_theme,1)) == -1) return NULL;
+    if ((SWIG_ConvertPtr(argo1,(void **) &arg1,SWIGTYPE_p_win_border,1)) == -1) return NULL;
+    arg0->normal = arg1;
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_theme_normal_get(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_theme *arg0 ;
+    PyObject * argo0 =0 ;
+    win_border *result ;
+    
+    if(!PyArg_ParseTuple(args,"O:win_theme_normal_get",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_theme,1)) == -1) return NULL;
+    result = (win_border *) (arg0->normal);
+    resultobj = SWIG_NewPointerObj((void *) result, SWIGTYPE_p_win_border);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_theme_mini_set(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_theme *arg0 ;
+    win_border *arg1 ;
+    PyObject * argo0 =0 ;
+    PyObject * argo1 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"OO:win_theme_mini_set",&argo0,&argo1)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_theme,1)) == -1) return NULL;
+    if ((SWIG_ConvertPtr(argo1,(void **) &arg1,SWIGTYPE_p_win_border,1)) == -1) return NULL;
+    arg0->mini = arg1;
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_theme_mini_get(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_theme *arg0 ;
+    PyObject * argo0 =0 ;
+    win_border *result ;
+    
+    if(!PyArg_ParseTuple(args,"O:win_theme_mini_get",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_theme,1)) == -1) return NULL;
+    result = (win_border *) (arg0->mini);
+    resultobj = SWIG_NewPointerObj((void *) result, SWIGTYPE_p_win_border);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_theme_background_set(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_theme *arg0 ;
+    win_background *arg1 ;
+    PyObject * argo0 =0 ;
+    PyObject * argo1 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"OO:win_theme_background_set",&argo0,&argo1)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_theme,1)) == -1) return NULL;
+    if ((SWIG_ConvertPtr(argo1,(void **) &arg1,SWIGTYPE_p_win_background,1)) == -1) return NULL;
+    arg0->background = arg1;
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_theme_background_get(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_theme *arg0 ;
+    PyObject * argo0 =0 ;
+    win_background *result ;
+    
+    if(!PyArg_ParseTuple(args,"O:win_theme_background_get",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_theme,1)) == -1) return NULL;
+    result = (win_background *) (arg0->background);
+    resultobj = SWIG_NewPointerObj((void *) result, SWIGTYPE_p_win_background);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_theme_scrollbar_set(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_theme *arg0 ;
+    win_scrollbar *arg1 ;
+    PyObject * argo0 =0 ;
+    PyObject * argo1 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"OO:win_theme_scrollbar_set",&argo0,&argo1)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_theme,1)) == -1) return NULL;
+    if ((SWIG_ConvertPtr(argo1,(void **) &arg1,SWIGTYPE_p_win_scrollbar,1)) == -1) return NULL;
+    arg0->scrollbar = arg1;
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_theme_scrollbar_get(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_theme *arg0 ;
+    PyObject * argo0 =0 ;
+    win_scrollbar *result ;
+    
+    if(!PyArg_ParseTuple(args,"O:win_theme_scrollbar_get",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_theme,1)) == -1) return NULL;
+    result = (win_scrollbar *) (arg0->scrollbar);
+    resultobj = SWIG_NewPointerObj((void *) result, SWIGTYPE_p_win_scrollbar);
+    return resultobj;
+}
+
+
+static int _wrap_win_theme__theme_set(PyObject *val) {
+    char * tval;
+    
+    tval = (char *) PyString_AsString(val);
     if (PyErr_Occurred()) {
-        PyErr_SetString(PyExc_TypeError,"C variable 'screen_bytes_per_pixel'(unsigned char )");
+        PyErr_SetString(PyExc_TypeError,"C variable 'win_theme_theme'(char *)");
         return 1; 
     }
-    screen::bytes_per_pixel = tval;
+    if (win_theme::theme) delete [] win_theme::theme;
+    win_theme::theme = new char[strlen(tval)+1];
+    strcpy((char *)win_theme::theme,tval);
     return 0;
 }
 
 
-static PyObject *_wrap_screen__bytes_per_pixel_get() {
+static PyObject *_wrap_win_theme__theme_get() {
     PyObject *pyobj;
     
-    pyobj = PyInt_FromLong((long) screen::bytes_per_pixel);
+    if (win_theme::theme)
+    pyobj = PyString_FromString(win_theme::theme);
+    else pyobj = PyString_FromString("(NULL)");
     return pyobj;
 }
 
 
-static int _wrap_screen__trans_set(PyObject *val) {
-    unsigned long  tval ;
-    
-    tval = (unsigned long ) PyInt_AsLong(val);
-    if (PyErr_Occurred()) {
-        PyErr_SetString(PyExc_TypeError,"C variable 'screen_trans'(unsigned long )");
-        return 1; 
-    }
-    screen::trans = tval;
-    return 0;
-}
-
-
-static PyObject *_wrap_screen__trans_get() {
-    PyObject *pyobj;
-    
-    pyobj = PyInt_FromLong((long) screen::trans);
-    return pyobj;
-}
-
-
-static int _wrap_screen__trans_pix_set(PyObject *val) {
-    unsigned long  tval ;
-    
-    tval = (unsigned long ) PyInt_AsLong(val);
-    if (PyErr_Occurred()) {
-        PyErr_SetString(PyExc_TypeError,"C variable 'screen_trans_pix'(unsigned long )");
-        return 1; 
-    }
-    screen::trans_pix = tval;
-    return 0;
-}
-
-
-static PyObject *_wrap_screen__trans_pix_get() {
-    PyObject *pyobj;
-    
-    pyobj = PyInt_FromLong((long) screen::trans_pix);
-    return pyobj;
-}
-
-
-static int _wrap_screen__vis_set(PyObject *val) {
-    SDL_Surface * temp ;
-    
-    if ((SWIG_ConvertPtr(val,(void **) &temp,SWIGTYPE_p_SDL_Surface,1)) == -1) return 1;
-    screen::vis = temp;
-    return 0;
-}
-
-
-static PyObject *_wrap_screen__vis_get() {
-    PyObject *pyobj;
-    
-    pyobj = SWIG_NewPointerObj((void *)screen::vis, SWIGTYPE_p_SDL_Surface);
-    return pyobj;
-}
-
-
-static PyObject *_wrap_screen_set_video_mode(PyObject *self, PyObject *args) {
+static PyObject *_wrap_new_win_theme(PyObject *self, PyObject *args) {
     PyObject *resultobj;
-    unsigned short arg0 ;
-    unsigned short arg1 ;
-    config *arg2 = NULL ;
-    PyObject * argo2 =0 ;
+    char *arg0 ;
+    win_theme *result ;
     
-    if(!PyArg_ParseTuple(args,"hh|O:screen_set_video_mode",&arg0,&arg1,&argo2)) return NULL;
-    if ((SWIG_ConvertPtr(argo2,(void **) &arg2,SWIGTYPE_p_config,1)) == -1) return NULL;
-    screen::set_video_mode(arg0,arg1,arg2);
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
+    if(!PyArg_ParseTuple(args,"s:new_win_theme",&arg0)) return NULL;
+    result = (win_theme *)new win_theme(arg0);
+    resultobj = SWIG_NewPointerObj((void *) result, SWIGTYPE_p_win_theme);
     return resultobj;
 }
 
 
-static PyObject *_wrap_screen_set_fullscreen(PyObject *self, PyObject *args) {
+static PyObject *_wrap_win_theme_destroy(PyObject *self, PyObject *args) {
     PyObject *resultobj;
-    bool arg0 ;
-    int tempbool0 ;
-    
-    if(!PyArg_ParseTuple(args,"i:screen_set_fullscreen",&tempbool0)) return NULL;
-    arg0 = (bool ) tempbool0;
-    screen::set_fullscreen(arg0);
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
-static PyObject *_wrap_screen_get_fullscreen(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    bool result ;
-    
-    if(!PyArg_ParseTuple(args,":screen_get_fullscreen")) return NULL;
-    result = (bool )screen::get_fullscreen();
-    resultobj = PyInt_FromLong((long)result);
-    return resultobj;
-}
-
-
-static PyObject *_wrap_screen_init_frame_counter(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    
-    if(!PyArg_ParseTuple(args,":screen_init_frame_counter")) return NULL;
-    screen::init_frame_counter();
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
-static PyObject *_wrap_screen_show(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    
-    if(!PyArg_ParseTuple(args,":screen_show")) return NULL;
-    screen::show();
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
-static PyObject *_wrap_screen_frames_to_do(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    unsigned char result ;
-    
-    if(!PyArg_ParseTuple(args,":screen_frames_to_do")) return NULL;
-    result = (unsigned char )screen::frames_to_do();
-    resultobj = PyInt_FromLong((long)result);
-    return resultobj;
-}
-
-
-static PyObject *_wrap_screen_drawbox(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    unsigned short arg0 ;
-    unsigned short arg1 ;
-    unsigned short arg2 ;
-    unsigned short arg3 ;
-    unsigned long arg4 ;
-    drawing_area *arg5 = NULL ;
-    PyObject * argo5 =0 ;
-    
-    if(!PyArg_ParseTuple(args,"hhhhl|O:screen_drawbox",&arg0,&arg1,&arg2,&arg3,&arg4,&argo5)) return NULL;
-    if ((SWIG_ConvertPtr(argo5,(void **) &arg5,SWIGTYPE_p_drawing_area,1)) == -1) return NULL;
-    screen::drawbox(arg0,arg1,arg2,arg3,arg4,arg5);
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
-static PyObject *_wrap_screen_shot(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    image *result ;
-    
-    if(!PyArg_ParseTuple(args,":screen_shot")) return NULL;
-    result = (image *)screen::shot();
-    resultobj = SWIG_NewPointerObj((void *) result, SWIGTYPE_p_image);
-    return resultobj;
-}
-
-
-static PyObject *_wrap_screen_clear(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    
-    if(!PyArg_ParseTuple(args,":screen_clear")) return NULL;
-    screen::clear();
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
-static PyObject *_wrap_screen_makesquare(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    unsigned short arg0 ;
-    unsigned short arg1 ;
-    unsigned short arg2 ;
-    
-    if(!PyArg_ParseTuple(args,"hhh:screen_makesquare",&arg0,&arg1,&arg2)) return NULL;
-    screen::makesquare(arg0,arg1,arg2);
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
-static PyObject *_wrap_screen_mouse_cursor_off(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    
-    if(!PyArg_ParseTuple(args,":screen_mouse_cursor_off")) return NULL;
-    screen::mouse_cursor_off();
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
-static PyObject *_wrap_screen_mouse_cursor_on(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    
-    if(!PyArg_ParseTuple(args,":screen_mouse_cursor_on")) return NULL;
-    screen::mouse_cursor_on();
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
-static PyObject *_wrap_screen_length(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    unsigned short result ;
-    
-    if(!PyArg_ParseTuple(args,":screen_length")) return NULL;
-    result = (unsigned short )screen::length();
-    resultobj = PyInt_FromLong((long)result);
-    return resultobj;
-}
-
-
-static PyObject *_wrap_screen_height(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    unsigned short result ;
-    
-    if(!PyArg_ParseTuple(args,":screen_height")) return NULL;
-    result = (unsigned short )screen::height();
-    resultobj = PyInt_FromLong((long)result);
-    return resultobj;
-}
-
-
-static PyObject *_wrap_new_screen(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    screen *result ;
-    
-    if(!PyArg_ParseTuple(args,":new_screen")) return NULL;
-    result = (screen *)new screen();
-    resultobj = SWIG_NewPointerObj((void *) result, SWIGTYPE_p_screen);
-    return resultobj;
-}
-
-
-static PyObject *_wrap_delete_screen(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    screen *arg0 ;
+    win_theme *arg0 ;
     PyObject * argo0 =0 ;
     
-    if(!PyArg_ParseTuple(args,"O:delete_screen",&argo0)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_screen,1)) == -1) return NULL;
+    if(!PyArg_ParseTuple(args,"O:win_theme_destroy",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_theme,1)) == -1) return NULL;
+    arg0->destroy();
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_theme_update(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_theme *arg0 ;
+    win_base *arg1 = NULL ;
+    PyObject * argo0 =0 ;
+    PyObject * argo1 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"O|O:win_theme_update",&argo0,&argo1)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_theme,1)) == -1) return NULL;
+    if ((SWIG_ConvertPtr(argo1,(void **) &arg1,SWIGTYPE_p_win_base,1)) == -1) return NULL;
+    arg0->update(arg1);
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_delete_win_theme(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_theme *arg0 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"O:delete_win_theme",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_theme,1)) == -1) return NULL;
     delete arg0;
     Py_INCREF(Py_None);
     resultobj = Py_None;
@@ -789,23 +718,19 @@ static PyObject *_wrap_delete_screen(PyObject *self, PyObject *args) {
 }
 
 
-static PyMethodDef screencMethods[] = {
-	 { "screen_set_video_mode", _wrap_screen_set_video_mode, METH_VARARGS },
-	 { "screen_set_fullscreen", _wrap_screen_set_fullscreen, METH_VARARGS },
-	 { "screen_get_fullscreen", _wrap_screen_get_fullscreen, METH_VARARGS },
-	 { "screen_init_frame_counter", _wrap_screen_init_frame_counter, METH_VARARGS },
-	 { "screen_show", _wrap_screen_show, METH_VARARGS },
-	 { "screen_frames_to_do", _wrap_screen_frames_to_do, METH_VARARGS },
-	 { "screen_drawbox", _wrap_screen_drawbox, METH_VARARGS },
-	 { "screen_shot", _wrap_screen_shot, METH_VARARGS },
-	 { "screen_clear", _wrap_screen_clear, METH_VARARGS },
-	 { "screen_makesquare", _wrap_screen_makesquare, METH_VARARGS },
-	 { "screen_mouse_cursor_off", _wrap_screen_mouse_cursor_off, METH_VARARGS },
-	 { "screen_mouse_cursor_on", _wrap_screen_mouse_cursor_on, METH_VARARGS },
-	 { "screen_length", _wrap_screen_length, METH_VARARGS },
-	 { "screen_height", _wrap_screen_height, METH_VARARGS },
-	 { "new_screen", _wrap_new_screen, METH_VARARGS },
-	 { "delete_screen", _wrap_delete_screen, METH_VARARGS },
+static PyMethodDef win_themecMethods[] = {
+	 { "win_theme_normal_set", _wrap_win_theme_normal_set, METH_VARARGS },
+	 { "win_theme_normal_get", _wrap_win_theme_normal_get, METH_VARARGS },
+	 { "win_theme_mini_set", _wrap_win_theme_mini_set, METH_VARARGS },
+	 { "win_theme_mini_get", _wrap_win_theme_mini_get, METH_VARARGS },
+	 { "win_theme_background_set", _wrap_win_theme_background_set, METH_VARARGS },
+	 { "win_theme_background_get", _wrap_win_theme_background_get, METH_VARARGS },
+	 { "win_theme_scrollbar_set", _wrap_win_theme_scrollbar_set, METH_VARARGS },
+	 { "win_theme_scrollbar_get", _wrap_win_theme_scrollbar_get, METH_VARARGS },
+	 { "new_win_theme", _wrap_new_win_theme, METH_VARARGS },
+	 { "win_theme_destroy", _wrap_win_theme_destroy, METH_VARARGS },
+	 { "win_theme_update", _wrap_win_theme_update, METH_VARARGS },
+	 { "delete_win_theme", _wrap_delete_win_theme, METH_VARARGS },
 	 { NULL, NULL }
 };
 
@@ -815,18 +740,18 @@ static PyMethodDef screencMethods[] = {
 
 /* -------- TYPE CONVERSION AND EQUIVALENCE RULES (BEGIN) -------- */
 
-static swig_type_info _swigt__p_SDL_Surface[] = {{"_p_SDL_Surface", 0, "SDL_Surface *"},{"_p_SDL_Surface"},{0}};
-static swig_type_info _swigt__p_drawing_area[] = {{"_p_drawing_area", 0, "drawing_area *"},{"_p_drawing_area"},{0}};
-static swig_type_info _swigt__p_image[] = {{"_p_image", 0, "image *"},{"_p_image"},{0}};
-static swig_type_info _swigt__p_screen[] = {{"_p_screen", 0, "screen *"},{"_p_screen"},{0}};
-static swig_type_info _swigt__p_config[] = {{"_p_config", 0, "config *"},{"_p_config"},{0}};
+static swig_type_info _swigt__p_win_base[] = {{"_p_win_base", 0, "win_base *"},{"_p_win_base"},{0}};
+static swig_type_info _swigt__p_win_scrollbar[] = {{"_p_win_scrollbar", 0, "win_scrollbar *"},{"_p_win_scrollbar"},{0}};
+static swig_type_info _swigt__p_win_theme[] = {{"_p_win_theme", 0, "win_theme *"},{"_p_win_theme"},{0}};
+static swig_type_info _swigt__p_win_background[] = {{"_p_win_background", 0, "win_background *"},{"_p_win_background"},{0}};
+static swig_type_info _swigt__p_win_border[] = {{"_p_win_border", 0, "win_border *"},{"_p_win_border"},{0}};
 
 static swig_type_info *swig_types_initial[] = {
-_swigt__p_SDL_Surface, 
-_swigt__p_drawing_area, 
-_swigt__p_image, 
-_swigt__p_screen, 
-_swigt__p_config, 
+_swigt__p_win_base, 
+_swigt__p_win_scrollbar, 
+_swigt__p_win_theme, 
+_swigt__p_win_background, 
+_swigt__p_win_border, 
 0
 };
 
@@ -834,26 +759,88 @@ _swigt__p_config,
 /* -------- TYPE CONVERSION AND EQUIVALENCE RULES (END) -------- */
 
 static swig_const_info swig_const_table[] = {
+    { SWIG_PY_INT,     "WIN_NB_TABLE_CHAR", (long) 255, 0, 0, 0},
+    { SWIG_PY_INT,     "WIN_TEXT_MAX_LENGTH", (long) 5000, 0, 0, 0},
+    { SWIG_PY_INT,     "WIN_FONT_HEIGHT", (long) 8, 0, 0, 0},
+    { SWIG_PY_INT,     "WIN_FONT_LENGHT", (long) 8, 0, 0, 0},
+    { SWIG_PY_INT,     "WIN_SPACE_LENGHT", (long) 8, 0, 0, 0},
+    { SWIG_PY_INT,     "WIN_JUSTIFY_LEFT", (long) 0, 0, 0, 0},
+    { SWIG_PY_INT,     "WIN_JUSTIFY_RIGHT", (long) 1, 0, 0, 0},
+    { SWIG_PY_INT,     "WIN_JUSTIFY_CENTER", (long) 2, 0, 0, 0},
+    { SWIG_PY_INT,     "WIN_JUSTIFY_NO", (long) 3, 0, 0, 0},
+    { SWIG_PY_INT,     "WIN_LAYOUT_NO", (long) 0, 0, 0, 0},
+    { SWIG_PY_INT,     "WIN_LAYOUT_LIST", (long) 1, 0, 0, 0},
+    { SWIG_PY_STRING, "WIN_DIRECTORY", 0, 0, (void *) "gfxtree/window/", 0 }, 
+    { SWIG_PY_STRING, "WIN_FONT_DIRECTORY", 0, 0, (void *) "font/", 0 }, 
+    { SWIG_PY_STRING, "WIN_BORDER_DIRECTORY", 0, 0, (void *) "border/", 0 }, 
+    { SWIG_PY_STRING, "WIN_BACKGROUND_DIRECTORY", 0, 0, (void *) "background/", 0 }, 
+    { SWIG_PY_STRING, "WIN_SCROLLBAR_DIRECTORY", 0, 0, (void *) "scrollbar/", 0 }, 
+    { SWIG_PY_STRING, "WIN_CURSOR_DIRECTORY", 0, 0, (void *) "cursor/", 0 }, 
+    { SWIG_PY_STRING, "WIN_FONT_FILE_IDX", 0, 0, (void *) "font.idx", 0 }, 
+    { SWIG_PY_STRING, "WIN_FONT_FILE_PIC", 0, 0, (void *) "font.pnm", 0 }, 
+    { SWIG_PY_INT,     "WIN_CURSOR_BLINKING", (long) 75, 0, 0, 0},
+    { SWIG_PY_STRING, "WIN_V_BORDER_TEMPLATE_FILE", 0, 0, (void *) "v_border.pnm", 0 }, 
+    { SWIG_PY_STRING, "WIN_H_BORDER_TEMPLATE_FILE", 0, 0, (void *) "h_border.pnm", 0 }, 
+    { SWIG_PY_STRING, "WIN_CORNER_TOP_LEFT_FILE", 0, 0, (void *) "corner_top_left.pnm", 0 }, 
+    { SWIG_PY_STRING, "WIN_CORNER_TOP_RIGHT_FILE", 0, 0, (void *) "corner_top_right.pnm", 0 }, 
+    { SWIG_PY_STRING, "WIN_CORNER_BOTTOM_LEFT_FILE", 0, 0, (void *) "corner_bottom_left.pnm", 0 }, 
+    { SWIG_PY_STRING, "WIN_CORNER_BOTTOM_RIGHT_FILE", 0, 0, (void *) "corner_bottom_right.pnm", 0 }, 
+    { SWIG_PY_STRING, "WIN_BACKGROUND_FILE", 0, 0, (void *) "background.pnm", 0 }, 
+    { SWIG_PY_STRING, "WIN_SCROLLBAR_BAR_TOP", 0, 0, (void *) "scroll_bar_top.pnm", 0 }, 
+    { SWIG_PY_STRING, "WIN_SCROLLBAR_BAR_MID", 0, 0, (void *) "scroll_bar_mid.pnm", 0 }, 
+    { SWIG_PY_STRING, "WIN_SCROLLBAR_BAR_BOT", 0, 0, (void *) "scroll_bar_bot.pnm", 0 }, 
+    { SWIG_PY_STRING, "WIN_SCROLLBAR_BAR_FLEX", 0, 0, (void *) "scroll_bar_flex.pnm", 0 }, 
+    { SWIG_PY_STRING, "WIN_SCROLLBAR_BACK_TOP", 0, 0, (void *) "scroll_back_top.pnm", 0 }, 
+    { SWIG_PY_STRING, "WIN_SCROLLBAR_BACK_MID", 0, 0, (void *) "scroll_back_mid.pnm", 0 }, 
+    { SWIG_PY_STRING, "WIN_SCROLLBAR_BACK_BOT", 0, 0, (void *) "scroll_back_bot.pnm", 0 }, 
+    { SWIG_PY_STRING, "WIN_CURSOR_FILE", 0, 0, (void *) "cursor.pnm", 0 }, 
+    { SWIG_PY_STRING, "WIN_BORDER_NORMAL_SIZE", 0, 0, (void *) "normal/", 0 }, 
+    { SWIG_PY_STRING, "WIN_BORDER_MINI_SIZE", 0, 0, (void *) "mini/", 0 }, 
+    { SWIG_PY_STRING, "WIN_THEME_ORIGINAL", 0, 0, (void *) "original/", 0 }, 
+    { SWIG_PY_STRING, "WIN_THEME_ELFE", 0, 0, (void *) "silverleaf/", 0 }, 
+    { SWIG_PY_INT,     "WIN_OBJ_BASE", (long) 0, 0, 0, 0},
+    { SWIG_PY_INT,     "WIN_OBJ_LABEL", (long) 1, 0, 0, 0},
+    { SWIG_PY_INT,     "WIN_OBJ_WRITE", (long) 2, 0, 0, 0},
+    { SWIG_PY_INT,     "WIN_OBJ_IMAGE", (long) 3, 0, 0, 0},
+    { SWIG_PY_INT,     "WIN_OBJ_CONTAINER", (long) 4, 0, 0, 0},
+    { SWIG_PY_INT,     "WIN_OBJ_SCROLLED", (long) 5, 0, 0, 0},
+    { SWIG_PY_INT,     "WIN_OBJ_SELECT", (long) 6, 0, 0, 0},
+    { SWIG_PY_INT,     "WIN_SIG_ACTIVATE", (long) 0, 0, 0, 0},
+    { SWIG_PY_INT,     "WIN_SIG_UNACTIVATE", (long) 1, 0, 0, 0},
+    { SWIG_PY_INT,     "WIN_SIG_UPDATE", (long) 2, 0, 0, 0},
+    { SWIG_PY_INT,     "WIN_SIG_DRAW", (long) 3, 0, 0, 0},
+    { SWIG_PY_INT,     "WIN_SIG_ACTIVATE_KEY", (long) 4, 0, 0, 0},
+    { SWIG_PY_INT,     "WIN_SIG_NEXT_KEY", (long) 5, 0, 0, 0},
+    { SWIG_PY_INT,     "WIN_SIG_PREVIOUS_KEY", (long) 6, 0, 0, 0},
+    { SWIG_PY_INT,     "WIN_SIG_SCROLL_UP", (long) 7, 0, 0, 0},
+    { SWIG_PY_INT,     "WIN_SIG_SCROLL_DOWN", (long) 8, 0, 0, 0},
+    { SWIG_PY_INT,     "WIN_SIG_SELECT", (long) 9, 0, 0, 0},
+    { SWIG_PY_INT,     "WIN_SIG_UNSELECT", (long) 10, 0, 0, 0},
+    { SWIG_PY_INT,     "WIN_SELECT_MODE_BRIGHTNESS", (long) 0, 0, 0, 0},
+    { SWIG_PY_INT,     "WIN_SELECT_MODE_BORDER", (long) 1, 0, 0, 0},
+    { SWIG_PY_INT,     "WIN_SELECT_MODE_CURSOR", (long) 2, 0, 0, 0},
+    { SWIG_PY_INT,     "WIN_SIZE_NORMAL", (long) 0, 0, 0, 0},
+    { SWIG_PY_INT,     "WIN_SIZE_MINI", (long) 1, 0, 0, 0},
+    { SWIG_PY_INT,     "WIN_SCROLLBAR_PAD_DEFAULT", (long) 10, 0, 0, 0},
+    { SWIG_PY_INT,     "WIN_SPACE_BETWEEN_BORDER", (long) 10, 0, 0, 0},
+    { SWIG_PY_INT,     "WIN_SPACE_BETWEEN_OBJECT", (long) 5, 0, 0, 0},
 {0}};
 
 static PyObject *SWIG_globals;
 #ifdef __cplusplus
 extern "C" 
 #endif
-SWIGEXPORT(void) initscreenc(void) {
+SWIGEXPORT(void) initwin_themec(void) {
     PyObject *m, *d;
     int i;
     SWIG_globals = SWIG_newvarlink();
-    m = Py_InitModule("screenc", screencMethods);
+    m = Py_InitModule("win_themec", win_themecMethods);
     d = PyModule_GetDict(m);
     for (i = 0; swig_types_initial[i]; i++) {
         swig_types[i] = SWIG_TypeRegister(swig_types_initial[i]);
     }
     PyDict_SetItemString(d,"cvar", SWIG_globals);
-    SWIG_addvarlink(SWIG_globals,"screen_bytes_per_pixel",_wrap_screen__bytes_per_pixel_get, _wrap_screen__bytes_per_pixel_set);
-    SWIG_addvarlink(SWIG_globals,"screen_trans",_wrap_screen__trans_get, _wrap_screen__trans_set);
-    SWIG_addvarlink(SWIG_globals,"screen_trans_pix",_wrap_screen__trans_pix_get, _wrap_screen__trans_pix_set);
-    SWIG_addvarlink(SWIG_globals,"screen_vis",_wrap_screen__vis_get, _wrap_screen__vis_set);
+    SWIG_addvarlink(SWIG_globals,"win_theme_theme",_wrap_win_theme__theme_get, _wrap_win_theme__theme_set);
     SWIG_InstallConstants(d,swig_const_table);
 }
 

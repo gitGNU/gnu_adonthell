@@ -28,9 +28,8 @@ class win_font{
   u_int8 length_; //just for space bar
  public:
     
-  win_font();
-  win_font(win_font &);
   win_font(char *);
+  win_font(win_font &);
   ~win_font();
   void load(char *);
   bool in_table(u_int16 tmp);

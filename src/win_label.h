@@ -24,7 +24,7 @@ class win_label : public win_base
   win_font * font_;
   win_font * src_font_;
   char texte_[5000];
-  u_int8 texte_size_;
+  u_int16 texte_size_;
   bool auto_height_;
   bool auto_size_;
 

@@ -652,6 +652,98 @@ void animation::add_image()
   delete wf;
 }
 
+void animation::add_raw_image()
+{
+  image im;
+  u_int16 p;
+  win_file_select * wf=new win_file_select(60,20,200,200,th,font,".img");
+  char * s=wf->wait_for_select(makeFunctor(*this,&animation::update_editor),
+			       makeFunctor(*this,&animation::draw_editor));
+  if(!s) { delete wf; return; }
+  char st[500];
+  if(!im.load(s)) 
+    {
+      do
+	{
+	  char tmp[255];
+	  char * s2;
+	  sprintf(tmp,"Insert at pos(0-%d): (Default %d)",nbr_of_images,
+		  nbr_of_images);
+	  win_query * qw2=new win_query(70,40,th,font,tmp);
+	  s2=qw2->wait_for_text(makeFunctor(*this,
+					    &animation::update_editor),
+				makeFunctor(*this,
+					    &animation::draw_editor));
+	  if(!s2)
+	    { 
+	      delete qw2;
+	      delete wf;
+	      return;
+	    }
+	  if(!s2[0]) p=nbr_of_images;
+	  else p=atoi(s2);
+	  delete qw2;
+	}
+      while(p>nbr_of_images);
+      insert_image(im,p);
+      sprintf(st,"%s loaded successfuly!",s);
+    }
+  else
+    {
+      sprintf(st,"Error loading %s!",s);
+    }
+  set_info_win(st);
+  delete wf;
+}
+
+void animation::save_image()
+{
+  if(!nbr_of_images)
+    {
+      set_info_win("There are no image to save!");
+      return;
+    }
+  win_query * qw=new win_query(70,40,th,font,"Save image as:");
+  char * s=qw->wait_for_text(makeFunctor(*this,
+					 &animation::update_editor),
+			     makeFunctor(*this,
+					 &animation::draw_editor));
+  if(!s) return;
+  char st[500];
+  if(t_frame[currentimage].save_pnm(s))
+    {
+      sprintf(st,"Error saving %s!",s);
+    }
+  else sprintf(st,"%s saved successfully!",s);
+  strcpy(file_name,s);
+  set_info_win(st);
+  delete qw;
+}
+
+void animation::save_image_raw()
+{
+  if(!nbr_of_images)
+    {
+      set_info_win("There are no image to save!");
+      return;
+    }
+  win_query * qw=new win_query(70,40,th,font,"Save raw image as:");
+  char * s=qw->wait_for_text(makeFunctor(*this,
+					 &animation::update_editor),
+			     makeFunctor(*this,
+					 &animation::draw_editor));
+  if(!s) return;
+  char st[500];
+  if(t_frame[currentimage].save(s))
+    {
+      sprintf(st,"Error saving %s!",s);
+    }
+  else sprintf(st,"%s saved successfully!",s);
+  strcpy(file_name,s);
+  set_info_win(st);
+  delete qw;
+}
+
 s_int8 animation::delete_image(u_int16 pos)
 {
   image * oldt_frame=t_frame;
@@ -836,7 +928,7 @@ void animation::update_label_frame_info()
     {
       if(nbr_of_images>0)
 	{
-	  sprintf(frame_txt,"Image info:\nLength: %d\nHeight:%d\n\nAnimation info:\nLength:%d\nHeight:%d",
+	  sprintf(frame_txt,"Image info:\nLength: %d\nHeight: %d\n\nAnimation info:\nLength:%d\nHeight:%d",
 		  t_frame[currentimage].length,t_frame[currentimage].height,
 		  length,height);
 	  label_frame_info->set_text(frame_txt);
@@ -903,6 +995,22 @@ void animation::update_editor_keys()
     {
       if(mode==IMAGE) add_image();
       if((mode==FRAME)&&(!play_flag)) add_frame();
+    }
+
+  if(input::has_been_pushed(SDLK_F9))
+    {
+      if(mode==IMAGE) save_image();
+    }
+
+  if(input::has_been_pushed(SDLK_F10))
+    {
+      if(mode==IMAGE) add_raw_image();
+      if((mode==FRAME)&&(!play_flag)) add_frame();
+    }
+
+  if(input::has_been_pushed(SDLK_F11))
+    {
+      if(mode==IMAGE) save_image_raw();
     }
   
   if(input::has_been_pushed(SDLK_r))

@@ -27,6 +27,7 @@ class screen
   static u_int32 SDL_flags;         // Used for fullscreen and other flags
   static const u_int32 CYCLE_LENGTH;// Length of a game cycle in milliseconds 
   static u_int8 ftd;
+  static u_int32 timer1, timer2;
 
  public:
 
@@ -39,6 +40,7 @@ class screen
   static void set_video_mode(u_int16 nl, u_int16 nh, config * myconfig=NULL);
   static void set_fullscreen(bool mode);
   static bool get_fullscreen();
+  static void init_frame_counter();
   static void show();
   static u_int8 frames_to_do() { return ftd; }
   // update the screen.

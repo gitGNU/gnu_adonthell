@@ -1,32 +1,22 @@
-SUBDIRS = . tools
+bin_PROGRAMS = pydonthell
 
-bin_PROGRAMS = adonthell
+pydonthell_SOURCES = pydonthell.cpp
 
-adonthell_SOURCES = animation.cpp animation_off.cpp audio.cpp audio_thread.cpp \
-character.cpp data.cpp data_screen.cpp dialog.cpp dialog_engine.cpp \
-drawing_area.cpp event.cpp fileops.cpp game.cpp gametime.cpp \
-image.cpp input.cpp lex.prefs.cpp main.cpp \
-mapselect.cpp maptpl.cpp mapobject.cpp mapcharacter.cpp landmap.cpp mapview.cpp \
-pnm.cpp prefs.cpp py_character_wrap.cpp py_landmap_wrap.cpp py_input_wrap.cpp \
-py_mapview_wrap.cpp \
-py_dialog_engine_wrap.cpp py_inc.cpp py_modules.cpp py_quest_wrap.cpp \
-py_screen_wrap.cpp py_image_wrap.cpp quest.cpp screen.cpp storage.cpp \
-win_base.cpp win_border.cpp win_container.cpp win_font.cpp win_theme.cpp win_scrolled.cpp win_background.cpp win_scrollbar.cpp \
-win_file.cpp win_image.cpp win_label.cpp win_select.cpp win_write.cpp yarg.cc \
-py_win_font_wrap.cpp py_win_theme_wrap.cpp py_win_base_wrap.cpp py_win_label_wrap.cpp py_win_container_wrap.cpp
+LDADD = ../../animation.o ../../animation_off.o ../../audio.o ../../audio_thread.o \
+../../character.o ../../data.o ../../data_screen.o ../../dialog.o ../../dialog_engine.o \
+../../drawing_area.o ../../event.o ../../fileops.o ../../game.o ../../gametime.o \
+../../image.o ../../input.o ../../lex.prefs.o \
+../../mapselect.o ../../maptpl.o ../../mapobject.o ../../mapcharacter.o ../../landmap.o ../../mapview.o \
+../../pnm.o ../../prefs.o ../../py_character_wrap.o ../../py_landmap_wrap.o ../../py_input_wrap.o \
+../../py_mapview_wrap.o \
+../../py_dialog_engine_wrap.o ../../py_inc.o ../../py_modules.o ../../py_quest_wrap.o \
+../../py_screen_wrap.o ../../py_image_wrap.o ../../quest.o ../../screen.o ../../storage.o \
+../../win_base.o ../../win_border.o ../../win_container.o ../../win_font.o ../../win_theme.o ../../win_scrolled.o ../../win_background.o ../../win_scrollbar.o \
+../../win_file.o ../../win_image.o ../../win_label.o ../../win_select.o ../../win_write.o ../../yarg.cc \
+../../py_win_font_wrap.o ../../py_win_theme_wrap.o ../../py_win_base_wrap.o ../../py_win_label_wrap.o ../../py_win_container_wrap.o
 
-
-
-#joltest_SOURCES = animation.cpp animation_off.cpp audio.cpp audio_thread.cpp \
-# drawing_area.cpp  fileops.cpp  \
-#image.cpp input.cpp lex.prefs.cpp joel.cpp \
-#pnm.cpp prefs.cpp \
-# screen.cpp  \
-#win_base.cpp win_border.cpp win_container.cpp win_font.cpp win_theme.cpp win_scrolled.cpp win_background.cpp win_scrollbar.cpp \
-#win_file.cpp win_image.cpp win_label.cpp win_select.cpp win_write.cpp yarg.cc
-
-
-
+# Evil, but it works...
+CPPFLAGS +=-I../..
 
 py_input_wrap.cpp : py_input.i
 	swig -python -shadow -c++ -make_default -o $*.cpp $< 
@@ -87,3 +77,4 @@ py_baseitem_wrap.cpp : py_baseitem.i
 lex.prefs.cpp : prefs.l
 	flex -olex.prefs.cpp $<
 
+ 

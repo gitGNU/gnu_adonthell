@@ -62,9 +62,7 @@ class win_base
   
   void set_in_select(bool b){in_select_=b;}
   void set_select(bool b){if(b) on_select(); else on_unselect();}
-  void set_select_mode_(u_int8 mode) {mode_select_=mode;set_draw_brightness(mode==WIN_SELECT_MODE_BRIGHTNESS);}
-  win_base(s_int16 tx,s_int16 ty,u_int16 tl,u_int16 th,win_theme * wth);
-  
+  void set_select_mode_(u_int8 mode) {mode_select_=mode;set_draw_brightness(mode==WIN_SELECT_MODE_BRIGHTNESS);}  
 
   //execute the callback function
   virtual void on_activate();
@@ -77,6 +75,7 @@ class win_base
 
  public:
   //constructor, parameter x,y,length,height, and a win_theme
+  win_base(s_int16 tx,s_int16 ty,u_int16 tl,u_int16 th,win_theme * wth);
   
   virtual ~win_base();
   

@@ -21,6 +21,8 @@
 #include "prefs.h"
 #include "input.h"
 
+#define FTD_LIMIT 100
+
 u_int16 screen::l;
 u_int16 screen::h;
 u_int32 screen::SDL_flags=0;
@@ -29,6 +31,7 @@ u_int8 screen::bytes_per_pixel;
 u_int32 screen::trans;
 u_int32 screen::trans_pix;
 SDL_Surface * screen::vis;
+u_int32 screen::timer1, screen::timer2;
 
 // Decrease this to speed up the game
 const u_int32 screen::CYCLE_LENGTH = 13;
@@ -95,6 +98,7 @@ void screen::set_video_mode(u_int16 nl, u_int16 nh, config * myconfig=NULL)
   trans_pix=SDL_MapRGB(vis->format,0xFF,0x00,0xFF);
 #endif
   ftd=1;
+  init_frame_counter();
 }
 
 void screen::set_fullscreen(bool mode)
@@ -115,10 +119,13 @@ bool screen::get_fullscreen()
   return(SDL_flags&SDL_FULLSCREEN);
 }
 
+void screen::init_frame_counter()
+{
+  timer1=SDL_GetTicks();
+}
+
 void screen::show()
 {
-    static u_int32 timer1, timer2;
-
     // Syncronize the game's speed to the machine it's running on
     while (1)
     {
@@ -134,7 +141,7 @@ void screen::show()
 
     // How slow is our machine? :)
     ftd = timer2 / CYCLE_LENGTH;
-    if (ftd > 20) ftd = 20;
+    if (ftd > FTD_LIMIT) ftd = FTD_LIMIT;
 
     if ((SDL_GetModState()&(KMOD_ALT|KMOD_META))&&(input::has_been_pushed(SDLK_RETURN)))
     {

@@ -19,11 +19,19 @@
  */
 extern "C"
 {
+	void initinputc (void);
 	void initscreenc (void);
 	void initimagec (void);
+	void initwin_fontc (void);
+	void initwin_themec (void);
+	void initwin_basec (void);
+	void initwin_labelc (void);
+	void initwin_containerc (void);
 	void initdialog_enginec (void);
 	void initcharacterc (void);
 	void initquestc (void);
+	void initlandmapc (void);
+	void initmapviewc (void);
 }
 
 /*
@@ -38,12 +46,19 @@ bool init_python (void)
 
 	/* Initialise SWIG modules. This should go if we ever switch to dynamic 
 	   link */
+	initinputc();
 	initscreenc();
 	initimagec();
+	initwin_fontc();
+	initwin_themec();
+	initwin_basec();
+	initwin_labelc();
+	initwin_containerc();
 	initcharacterc ();
 	initdialog_enginec ();
 	initquestc ();
-	
+	initlandmapc();
+	initmapviewc();
 	return true;
 }
 

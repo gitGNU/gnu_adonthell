@@ -346,7 +346,7 @@ s_int8 image::get(gzFile file)
 s_int8 image::load(const char * fname)
 {
   gzFile file;
-  file=SDL_RWFromFile(fname,"r"); 
+  file=gzopen(fname,"r"); 
   if(!file) return(1);
   get(file);
   gzclose(file);
@@ -552,10 +552,7 @@ void image::reverse_lr(image * src)
   SDL_LockSurface(data);
   for(j=0;j<height;j++)
     for(i=0;i<length;i++)
-      {
-	//	cout << src->get_pix(i,j) << endl;
-	put_pix(length-i,j,src->get_pix(i,j));
-      }
+      put_pix(length-i,j,src->get_pix(i,j));
   SDL_UnlockSurface(src->data);
   SDL_UnlockSurface(data);
 }

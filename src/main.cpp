@@ -70,6 +70,7 @@ int main(int argc, char * argv[])
     // The map view will display "mymap"
     mview.attach_map(&mymap);
 
+    screen::init_frame_counter();
     // This is quite self-explicit...
     while(1)
       {

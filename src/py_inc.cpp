@@ -37,6 +37,14 @@ void insert_path( char *name )
  */
 
 /*
+ * Executes the Python statements in the string
+ */
+void exec_string(char * s)
+{
+  PyRun_SimpleString(s);
+}
+
+/*
  * Execute the file given by 'filename'
  */
 bool exec_file( char *filename )

@@ -487,301 +487,59 @@ SWIG_InstallConstants(PyObject *d, swig_const_info constants[]) {
 
 /* -------- TYPES TABLE (BEGIN) -------- */
 
-#define  SWIGTYPE_p_SDL_Surface swig_types[0] 
+#define  SWIGTYPE_p_landmap swig_types[0] 
 #define  SWIGTYPE_p_drawing_area swig_types[1] 
-#define  SWIGTYPE_p_image swig_types[2] 
-#define  SWIGTYPE_p_screen swig_types[3] 
-#define  SWIGTYPE_p_config swig_types[4] 
-static swig_type_info *swig_types[6];
+#define  SWIGTYPE_p_mapview swig_types[2] 
+static swig_type_info *swig_types[4];
 
 /* -------- TYPES TABLE (END) -------- */
 
 
 /*-----------------------------------------------
-              @(target):= screenc.so
+              @(target):= mapviewc.so
   ------------------------------------------------*/
-#define SWIG_init    initscreenc
+#define SWIG_init    initmapviewc
 
-#define SWIG_name    "screenc"
+#define SWIG_name    "mapviewc"
 
 
-#include "types.h"
-#include "screen.h"
+#include "mapview.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-static int _wrap_screen__bytes_per_pixel_set(PyObject *val) {
-    unsigned char  tval ;
-    
-    tval = (unsigned char ) PyInt_AsLong(val);
-    if (PyErr_Occurred()) {
-        PyErr_SetString(PyExc_TypeError,"C variable 'screen_bytes_per_pixel'(unsigned char )");
-        return 1; 
-    }
-    screen::bytes_per_pixel = tval;
-    return 0;
-}
-
-
-static PyObject *_wrap_screen__bytes_per_pixel_get() {
-    PyObject *pyobj;
-    
-    pyobj = PyInt_FromLong((long) screen::bytes_per_pixel);
-    return pyobj;
-}
-
-
-static int _wrap_screen__trans_set(PyObject *val) {
-    unsigned long  tval ;
-    
-    tval = (unsigned long ) PyInt_AsLong(val);
-    if (PyErr_Occurred()) {
-        PyErr_SetString(PyExc_TypeError,"C variable 'screen_trans'(unsigned long )");
-        return 1; 
-    }
-    screen::trans = tval;
-    return 0;
-}
-
-
-static PyObject *_wrap_screen__trans_get() {
-    PyObject *pyobj;
-    
-    pyobj = PyInt_FromLong((long) screen::trans);
-    return pyobj;
-}
-
-
-static int _wrap_screen__trans_pix_set(PyObject *val) {
-    unsigned long  tval ;
-    
-    tval = (unsigned long ) PyInt_AsLong(val);
-    if (PyErr_Occurred()) {
-        PyErr_SetString(PyExc_TypeError,"C variable 'screen_trans_pix'(unsigned long )");
-        return 1; 
-    }
-    screen::trans_pix = tval;
-    return 0;
-}
-
-
-static PyObject *_wrap_screen__trans_pix_get() {
-    PyObject *pyobj;
-    
-    pyobj = PyInt_FromLong((long) screen::trans_pix);
-    return pyobj;
-}
-
-
-static int _wrap_screen__vis_set(PyObject *val) {
-    SDL_Surface * temp ;
-    
-    if ((SWIG_ConvertPtr(val,(void **) &temp,SWIGTYPE_p_SDL_Surface,1)) == -1) return 1;
-    screen::vis = temp;
-    return 0;
-}
-
-
-static PyObject *_wrap_screen__vis_get() {
-    PyObject *pyobj;
-    
-    pyobj = SWIG_NewPointerObj((void *)screen::vis, SWIGTYPE_p_SDL_Surface);
-    return pyobj;
-}
-
-
-static PyObject *_wrap_screen_set_video_mode(PyObject *self, PyObject *args) {
+static PyObject *_wrap_mapview_init(PyObject *self, PyObject *args) {
     PyObject *resultobj;
-    unsigned short arg0 ;
-    unsigned short arg1 ;
-    config *arg2 = NULL ;
-    PyObject * argo2 =0 ;
-    
-    if(!PyArg_ParseTuple(args,"hh|O:screen_set_video_mode",&arg0,&arg1,&argo2)) return NULL;
-    if ((SWIG_ConvertPtr(argo2,(void **) &arg2,SWIGTYPE_p_config,1)) == -1) return NULL;
-    screen::set_video_mode(arg0,arg1,arg2);
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
-static PyObject *_wrap_screen_set_fullscreen(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    bool arg0 ;
-    int tempbool0 ;
-    
-    if(!PyArg_ParseTuple(args,"i:screen_set_fullscreen",&tempbool0)) return NULL;
-    arg0 = (bool ) tempbool0;
-    screen::set_fullscreen(arg0);
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
-static PyObject *_wrap_screen_get_fullscreen(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    bool result ;
-    
-    if(!PyArg_ParseTuple(args,":screen_get_fullscreen")) return NULL;
-    result = (bool )screen::get_fullscreen();
-    resultobj = PyInt_FromLong((long)result);
-    return resultobj;
-}
-
-
-static PyObject *_wrap_screen_init_frame_counter(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    
-    if(!PyArg_ParseTuple(args,":screen_init_frame_counter")) return NULL;
-    screen::init_frame_counter();
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
-static PyObject *_wrap_screen_show(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    
-    if(!PyArg_ParseTuple(args,":screen_show")) return NULL;
-    screen::show();
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
-static PyObject *_wrap_screen_frames_to_do(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    unsigned char result ;
-    
-    if(!PyArg_ParseTuple(args,":screen_frames_to_do")) return NULL;
-    result = (unsigned char )screen::frames_to_do();
-    resultobj = PyInt_FromLong((long)result);
-    return resultobj;
-}
-
-
-static PyObject *_wrap_screen_drawbox(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    unsigned short arg0 ;
-    unsigned short arg1 ;
-    unsigned short arg2 ;
-    unsigned short arg3 ;
-    unsigned long arg4 ;
-    drawing_area *arg5 = NULL ;
-    PyObject * argo5 =0 ;
-    
-    if(!PyArg_ParseTuple(args,"hhhhl|O:screen_drawbox",&arg0,&arg1,&arg2,&arg3,&arg4,&argo5)) return NULL;
-    if ((SWIG_ConvertPtr(argo5,(void **) &arg5,SWIGTYPE_p_drawing_area,1)) == -1) return NULL;
-    screen::drawbox(arg0,arg1,arg2,arg3,arg4,arg5);
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
-static PyObject *_wrap_screen_shot(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    image *result ;
-    
-    if(!PyArg_ParseTuple(args,":screen_shot")) return NULL;
-    result = (image *)screen::shot();
-    resultobj = SWIG_NewPointerObj((void *) result, SWIGTYPE_p_image);
-    return resultobj;
-}
-
-
-static PyObject *_wrap_screen_clear(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    
-    if(!PyArg_ParseTuple(args,":screen_clear")) return NULL;
-    screen::clear();
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
-static PyObject *_wrap_screen_makesquare(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    unsigned short arg0 ;
-    unsigned short arg1 ;
-    unsigned short arg2 ;
-    
-    if(!PyArg_ParseTuple(args,"hhh:screen_makesquare",&arg0,&arg1,&arg2)) return NULL;
-    screen::makesquare(arg0,arg1,arg2);
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
-static PyObject *_wrap_screen_mouse_cursor_off(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    
-    if(!PyArg_ParseTuple(args,":screen_mouse_cursor_off")) return NULL;
-    screen::mouse_cursor_off();
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
-static PyObject *_wrap_screen_mouse_cursor_on(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    
-    if(!PyArg_ParseTuple(args,":screen_mouse_cursor_on")) return NULL;
-    screen::mouse_cursor_on();
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
-static PyObject *_wrap_screen_length(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    unsigned short result ;
-    
-    if(!PyArg_ParseTuple(args,":screen_length")) return NULL;
-    result = (unsigned short )screen::length();
-    resultobj = PyInt_FromLong((long)result);
-    return resultobj;
-}
-
-
-static PyObject *_wrap_screen_height(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    unsigned short result ;
-    
-    if(!PyArg_ParseTuple(args,":screen_height")) return NULL;
-    result = (unsigned short )screen::height();
-    resultobj = PyInt_FromLong((long)result);
-    return resultobj;
-}
-
-
-static PyObject *_wrap_new_screen(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    screen *result ;
-    
-    if(!PyArg_ParseTuple(args,":new_screen")) return NULL;
-    result = (screen *)new screen();
-    resultobj = SWIG_NewPointerObj((void *) result, SWIGTYPE_p_screen);
-    return resultobj;
-}
-
-
-static PyObject *_wrap_delete_screen(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    screen *arg0 ;
+    mapview *arg0 ;
     PyObject * argo0 =0 ;
     
-    if(!PyArg_ParseTuple(args,"O:delete_screen",&argo0)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_screen,1)) == -1) return NULL;
+    if(!PyArg_ParseTuple(args,"O:mapview_init",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapview,1)) == -1) return NULL;
+    arg0->init();
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_new_mapview(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapview *result ;
+    
+    if(!PyArg_ParseTuple(args,":new_mapview")) return NULL;
+    result = (mapview *)new mapview();
+    resultobj = SWIG_NewPointerObj((void *) result, SWIGTYPE_p_mapview);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_delete_mapview(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapview *arg0 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"O:delete_mapview",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapview,1)) == -1) return NULL;
     delete arg0;
     Py_INCREF(Py_None);
     resultobj = Py_None;
@@ -789,23 +547,312 @@ static PyObject *_wrap_delete_screen(PyObject *self, PyObject *args) {
 }
 
 
-static PyMethodDef screencMethods[] = {
-	 { "screen_set_video_mode", _wrap_screen_set_video_mode, METH_VARARGS },
-	 { "screen_set_fullscreen", _wrap_screen_set_fullscreen, METH_VARARGS },
-	 { "screen_get_fullscreen", _wrap_screen_get_fullscreen, METH_VARARGS },
-	 { "screen_init_frame_counter", _wrap_screen_init_frame_counter, METH_VARARGS },
-	 { "screen_show", _wrap_screen_show, METH_VARARGS },
-	 { "screen_frames_to_do", _wrap_screen_frames_to_do, METH_VARARGS },
-	 { "screen_drawbox", _wrap_screen_drawbox, METH_VARARGS },
-	 { "screen_shot", _wrap_screen_shot, METH_VARARGS },
-	 { "screen_clear", _wrap_screen_clear, METH_VARARGS },
-	 { "screen_makesquare", _wrap_screen_makesquare, METH_VARARGS },
-	 { "screen_mouse_cursor_off", _wrap_screen_mouse_cursor_off, METH_VARARGS },
-	 { "screen_mouse_cursor_on", _wrap_screen_mouse_cursor_on, METH_VARARGS },
-	 { "screen_length", _wrap_screen_length, METH_VARARGS },
-	 { "screen_height", _wrap_screen_height, METH_VARARGS },
-	 { "new_screen", _wrap_new_screen, METH_VARARGS },
-	 { "delete_screen", _wrap_delete_screen, METH_VARARGS },
+static PyObject *_wrap_mapview_attach_map(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapview *arg0 ;
+    landmap *arg1 ;
+    PyObject * argo0 =0 ;
+    PyObject * argo1 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"OO:mapview_attach_map",&argo0,&argo1)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapview,1)) == -1) return NULL;
+    if ((SWIG_ConvertPtr(argo1,(void **) &arg1,SWIGTYPE_p_landmap,1)) == -1) return NULL;
+    arg0->attach_map(arg1);
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapview_detach_map(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapview *arg0 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"O:mapview_detach_map",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapview,1)) == -1) return NULL;
+    arg0->detach_map();
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapview_set_screen_pos(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapview *arg0 ;
+    unsigned short arg1 ;
+    unsigned short arg2 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"Ohh:mapview_set_screen_pos",&argo0,&arg1,&arg2)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapview,1)) == -1) return NULL;
+    arg0->set_screen_pos(arg1,arg2);
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapview_set_current_submap(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapview *arg0 ;
+    unsigned short arg1 ;
+    PyObject * argo0 =0 ;
+    signed char result ;
+    
+    if(!PyArg_ParseTuple(args,"Oh:mapview_set_current_submap",&argo0,&arg1)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapview,1)) == -1) return NULL;
+    result = (signed char )arg0->set_current_submap(arg1);
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapview_set_pos(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapview *arg0 ;
+    unsigned short arg1 ;
+    unsigned short arg2 ;
+    unsigned short arg3 = 0 ;
+    unsigned short arg4 = 0 ;
+    PyObject * argo0 =0 ;
+    signed char result ;
+    
+    if(!PyArg_ParseTuple(args,"Ohh|hh:mapview_set_pos",&argo0,&arg1,&arg2,&arg3,&arg4)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapview,1)) == -1) return NULL;
+    result = (signed char )arg0->set_pos(arg1,arg2,arg3,arg4);
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapview_can_scroll_right(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapview *arg0 ;
+    PyObject * argo0 =0 ;
+    bool result ;
+    
+    if(!PyArg_ParseTuple(args,"O:mapview_can_scroll_right",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapview,1)) == -1) return NULL;
+    result = (bool )arg0->can_scroll_right();
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapview_can_scroll_left(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapview *arg0 ;
+    PyObject * argo0 =0 ;
+    bool result ;
+    
+    if(!PyArg_ParseTuple(args,"O:mapview_can_scroll_left",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapview,1)) == -1) return NULL;
+    result = (bool )arg0->can_scroll_left();
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapview_can_scroll_up(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapview *arg0 ;
+    PyObject * argo0 =0 ;
+    bool result ;
+    
+    if(!PyArg_ParseTuple(args,"O:mapview_can_scroll_up",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapview,1)) == -1) return NULL;
+    result = (bool )arg0->can_scroll_up();
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapview_can_scroll_down(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapview *arg0 ;
+    PyObject * argo0 =0 ;
+    bool result ;
+    
+    if(!PyArg_ParseTuple(args,"O:mapview_can_scroll_down",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapview,1)) == -1) return NULL;
+    result = (bool )arg0->can_scroll_down();
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapview_scroll_right(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapview *arg0 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"O:mapview_scroll_right",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapview,1)) == -1) return NULL;
+    arg0->scroll_right();
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapview_scroll_left(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapview *arg0 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"O:mapview_scroll_left",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapview,1)) == -1) return NULL;
+    arg0->scroll_left();
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapview_scroll_down(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapview *arg0 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"O:mapview_scroll_down",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapview,1)) == -1) return NULL;
+    arg0->scroll_down();
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapview_scroll_up(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapview *arg0 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"O:mapview_scroll_up",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapview,1)) == -1) return NULL;
+    arg0->scroll_up();
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapview_get_current_submap(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapview *arg0 ;
+    PyObject * argo0 =0 ;
+    unsigned short result ;
+    
+    if(!PyArg_ParseTuple(args,"O:mapview_get_current_submap",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapview,1)) == -1) return NULL;
+    result = (unsigned short )arg0->get_current_submap();
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapview_get_posx(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapview *arg0 ;
+    PyObject * argo0 =0 ;
+    unsigned short result ;
+    
+    if(!PyArg_ParseTuple(args,"O:mapview_get_posx",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapview,1)) == -1) return NULL;
+    result = (unsigned short )arg0->get_posx();
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapview_get_posy(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapview *arg0 ;
+    PyObject * argo0 =0 ;
+    unsigned short result ;
+    
+    if(!PyArg_ParseTuple(args,"O:mapview_get_posy",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapview,1)) == -1) return NULL;
+    result = (unsigned short )arg0->get_posy();
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapview_resize(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapview *arg0 ;
+    unsigned short arg1 ;
+    unsigned short arg2 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"Ohh:mapview_resize",&argo0,&arg1,&arg2)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapview,1)) == -1) return NULL;
+    arg0->resize(arg1,arg2);
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapview_update(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapview *arg0 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"O:mapview_update",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapview,1)) == -1) return NULL;
+    arg0->update();
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapview_draw(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapview *arg0 ;
+    unsigned short arg1 ;
+    unsigned short arg2 ;
+    drawing_area *arg3 = NULL ;
+    PyObject * argo0 =0 ;
+    PyObject * argo3 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"Ohh|O:mapview_draw",&argo0,&arg1,&arg2,&argo3)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapview,1)) == -1) return NULL;
+    if ((SWIG_ConvertPtr(argo3,(void **) &arg3,SWIGTYPE_p_drawing_area,1)) == -1) return NULL;
+    arg0->draw(arg1,arg2,arg3);
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyMethodDef mapviewcMethods[] = {
+	 { "mapview_init", _wrap_mapview_init, METH_VARARGS },
+	 { "new_mapview", _wrap_new_mapview, METH_VARARGS },
+	 { "delete_mapview", _wrap_delete_mapview, METH_VARARGS },
+	 { "mapview_attach_map", _wrap_mapview_attach_map, METH_VARARGS },
+	 { "mapview_detach_map", _wrap_mapview_detach_map, METH_VARARGS },
+	 { "mapview_set_screen_pos", _wrap_mapview_set_screen_pos, METH_VARARGS },
+	 { "mapview_set_current_submap", _wrap_mapview_set_current_submap, METH_VARARGS },
+	 { "mapview_set_pos", _wrap_mapview_set_pos, METH_VARARGS },
+	 { "mapview_can_scroll_right", _wrap_mapview_can_scroll_right, METH_VARARGS },
+	 { "mapview_can_scroll_left", _wrap_mapview_can_scroll_left, METH_VARARGS },
+	 { "mapview_can_scroll_up", _wrap_mapview_can_scroll_up, METH_VARARGS },
+	 { "mapview_can_scroll_down", _wrap_mapview_can_scroll_down, METH_VARARGS },
+	 { "mapview_scroll_right", _wrap_mapview_scroll_right, METH_VARARGS },
+	 { "mapview_scroll_left", _wrap_mapview_scroll_left, METH_VARARGS },
+	 { "mapview_scroll_down", _wrap_mapview_scroll_down, METH_VARARGS },
+	 { "mapview_scroll_up", _wrap_mapview_scroll_up, METH_VARARGS },
+	 { "mapview_get_current_submap", _wrap_mapview_get_current_submap, METH_VARARGS },
+	 { "mapview_get_posx", _wrap_mapview_get_posx, METH_VARARGS },
+	 { "mapview_get_posy", _wrap_mapview_get_posy, METH_VARARGS },
+	 { "mapview_resize", _wrap_mapview_resize, METH_VARARGS },
+	 { "mapview_update", _wrap_mapview_update, METH_VARARGS },
+	 { "mapview_draw", _wrap_mapview_draw, METH_VARARGS },
 	 { NULL, NULL }
 };
 
@@ -815,18 +862,14 @@ static PyMethodDef screencMethods[] = {
 
 /* -------- TYPE CONVERSION AND EQUIVALENCE RULES (BEGIN) -------- */
 
-static swig_type_info _swigt__p_SDL_Surface[] = {{"_p_SDL_Surface", 0, "SDL_Surface *"},{"_p_SDL_Surface"},{0}};
+static swig_type_info _swigt__p_landmap[] = {{"_p_landmap", 0, "landmap *"},{"_p_landmap"},{0}};
 static swig_type_info _swigt__p_drawing_area[] = {{"_p_drawing_area", 0, "drawing_area *"},{"_p_drawing_area"},{0}};
-static swig_type_info _swigt__p_image[] = {{"_p_image", 0, "image *"},{"_p_image"},{0}};
-static swig_type_info _swigt__p_screen[] = {{"_p_screen", 0, "screen *"},{"_p_screen"},{0}};
-static swig_type_info _swigt__p_config[] = {{"_p_config", 0, "config *"},{"_p_config"},{0}};
+static swig_type_info _swigt__p_mapview[] = {{"_p_mapview", 0, "mapview *"},{"_p_mapview"},{0}};
 
 static swig_type_info *swig_types_initial[] = {
-_swigt__p_SDL_Surface, 
+_swigt__p_landmap, 
 _swigt__p_drawing_area, 
-_swigt__p_image, 
-_swigt__p_screen, 
-_swigt__p_config, 
+_swigt__p_mapview, 
 0
 };
 
@@ -840,20 +883,15 @@ static PyObject *SWIG_globals;
 #ifdef __cplusplus
 extern "C" 
 #endif
-SWIGEXPORT(void) initscreenc(void) {
+SWIGEXPORT(void) initmapviewc(void) {
     PyObject *m, *d;
     int i;
     SWIG_globals = SWIG_newvarlink();
-    m = Py_InitModule("screenc", screencMethods);
+    m = Py_InitModule("mapviewc", mapviewcMethods);
     d = PyModule_GetDict(m);
     for (i = 0; swig_types_initial[i]; i++) {
         swig_types[i] = SWIG_TypeRegister(swig_types_initial[i]);
     }
-    PyDict_SetItemString(d,"cvar", SWIG_globals);
-    SWIG_addvarlink(SWIG_globals,"screen_bytes_per_pixel",_wrap_screen__bytes_per_pixel_get, _wrap_screen__bytes_per_pixel_set);
-    SWIG_addvarlink(SWIG_globals,"screen_trans",_wrap_screen__trans_get, _wrap_screen__trans_set);
-    SWIG_addvarlink(SWIG_globals,"screen_trans_pix",_wrap_screen__trans_pix_get, _wrap_screen__trans_pix_set);
-    SWIG_addvarlink(SWIG_globals,"screen_vis",_wrap_screen__vis_get, _wrap_screen__vis_set);
     SWIG_InstallConstants(d,swig_const_table);
 }
 

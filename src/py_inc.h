@@ -18,6 +18,7 @@
 #include "Python.h"
 
 extern void insert_path( char * );
+extern void exec_string(char * s);
 extern bool exec_file( char *filename );
 extern PyObject *import_module( char *);
 extern void show_traceback( void );

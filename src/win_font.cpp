@@ -17,12 +17,6 @@
 #include "win_types.h"
 #include "win_font.h"
 
-win_font::win_font()
-{
-  table=NULL;
-  cursor=NULL;
-}
-
 win_font::win_font(char * fic)
 {
   cursor=NULL;
