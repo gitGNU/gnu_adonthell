@@ -31,6 +31,10 @@ run_dlg::run_dlg (MainFrame *w) : wnd (w)
     dlg = create_run_dlg_wnd (this);
     gtk_window_set_transient_for (GTK_WINDOW (dlg), GTK_WINDOW (wnd->wnd));
 
+    char *path = g_dirname (wnd->file_name);
+    insert_path (path);
+    free (path);
+
     start ();
 }
 
@@ -43,13 +47,11 @@ run_dlg::~run_dlg ()
 void run_dlg::start ()
 {
     char *file = g_basename (wnd->file_name);
-    char *path = g_dirname (wnd->file_name);
 
     if (dat) delete dat;
     dat = new dialog;
 
     // Import module
-    insert_path (path);
     if (!dat->init (file, file))
     {
         cout << "\n*** Error loading dialogue script! ";
@@ -60,8 +62,6 @@ void run_dlg::start ()
 
     // The start of the dialogue
     else answer = 0;
-
-    free (path);
 }
 
 PyObject *run_dlg::get_instance ()

@@ -99,7 +99,7 @@ void debug_dlg::update ()
     data = (dbg_node_data *) gtk_ctree_node_get_row_data (tree, parent);
 
     gtk_clist_freeze (GTK_CLIST (dlg_tree));
-    if ((myobj = (storage *) container->get ("Local Variables")) != NULL)
+    if ((myobj = (storage *) container->next ()) != NULL)
     {
         // No loacal variables available so far, so add some
         if (!strcmp ("No Local Variables available", data->attribute))
@@ -138,6 +138,7 @@ void debug_dlg::update ()
     }
     // Now check whether some variables were removed
     check_removed (tree);
+    delete container;
     gtk_clist_thaw (GTK_CLIST (dlg_tree));
 
     // update character tree
@@ -148,7 +149,7 @@ void debug_dlg::update ()
     {
         parent = gtk_ctree_find_by_row_data_custom (tree, NULL, mychar->name, (GCompareFunc) strcompare);
 
-        // See whether the current nodes children have changed
+        // See whether the current node's children have changed
         if (update_children (tree, parent, mychar))
             // if so, also highlight the parent
             gtk_ctree_node_set_foreground (tree, parent, &green);
@@ -167,7 +168,7 @@ void debug_dlg::update ()
     {
         parent = gtk_ctree_find_by_row_data_custom (tree, NULL, myquest->name, (GCompareFunc) strcompare);
 
-        // See whether the current nodes children have changed
+        // See whether the current node's children have changed
         if (update_children (tree, parent, myquest))
             // if so, also highlight the parent
             gtk_ctree_node_set_foreground (tree, parent, &green);
@@ -340,7 +341,8 @@ void debug_dlg::init ()
     // Init Dialogue page
     container = get_dlg_vars ();
     gtk_clist_freeze (GTK_CLIST (dlg_tree));
-    if ((myobj = (storage *) container->get ("Local Variables")) != NULL)
+
+    if ((myobj = (storage *) container->next ()) != NULL)
     {
         text[0] = "Local Variables";
         text[1] = "";
