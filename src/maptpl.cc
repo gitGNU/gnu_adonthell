@@ -100,9 +100,10 @@ s_int8 maptpl::get (igzstream& file)
     delete[]placetpl;
     length_ << file;
     height_ << file;     placetpl = new (mapsquaretpl *)[length ()];
+    u_int16 h = height ();
     for (i = 0; i < length (); i++)
     {
-        placetpl[i] = new mapsquaretpl[height ()];
+        placetpl[i] = new mapsquaretpl[h];
         for (j = 0; j < height (); j++)
             placetpl[i][j].get (file);
     }

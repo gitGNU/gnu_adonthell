@@ -64,10 +64,7 @@ config& config::operator =(const config *c)
 
 char *config::get_adonthellrc ()
 {
-    char *string = new char[adonthellrc.length () + 1];
-    strcpy (string, adonthellrc.c_str ());
-
-    return string;
+    return (char *) adonthellrc.c_str ();
 }
 
 // write a default configuration file
