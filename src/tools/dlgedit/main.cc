@@ -77,13 +77,13 @@ main (int argc, char *argv[])
     if (m == NULL) return 1;
         
     // Create a player
+	data::globals = PyModule_GetDict(m);
     MainWnd->myplayer = new character;
 
     // Add the player to the character array
     data::the_player = MainWnd->myplayer;
 
     // Make "the_player" available to the interpreter 
-	data::globals = PyModule_GetDict(m);
     PyDict_SetItemString (data::globals, "the_player", pass_instance (MainWnd->myplayer, "character"));
 
     // create character array
