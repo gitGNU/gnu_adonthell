@@ -94,21 +94,11 @@ image::~image()
 
 void image::clear()
 {
-  SDL_FreeSurface(data);
-  data=NULL;
+  if(data) SDL_FreeSurface(data);
 #ifdef _EDIT_
-  free(simpledata);
+  if(simpledata) free(simpledata);
 #endif
-}
-
-u_int16 image::get_length()
-{
-  return length;
-}
-
-u_int16 image::get_height()
-{
-  return height;
+  init();
 }
 
 void image::resize(u_int16 l, u_int16 h)
@@ -174,7 +164,7 @@ void image::set_mask(bool m)
 {
   if((m)&&(!mask_on))
     {
-      SDL_SetColorKey(data, SDL_SRCCOLORKEY, screen::trans);
+      SDL_SetColorKey(data, SDL_SRCCOLORKEY, screen::get_trans_col());
       mask_on=true;
     }
   else if((!m)&&(mask_on))
@@ -416,6 +406,36 @@ s_int8 image::load_pnm(const char * fname)
   get_pnm(file);
   SDL_RWclose(file);
   return(0);
+}
+
+void image::screen_shot ()
+{
+    clear();
+    init();
+    bytes_per_pixel = 3;
+    length = screen::get_length();
+    height = screen::get_height();
+    
+
+    // We need a 24bpp image to save it as PNM afterwards
+    data = SDL_CreateRGBSurface (SDL_SWSURFACE, length, height, 24,
+				 0x000000FF, 0x0000FF00, 0x00FF0000, 0);
+    
+    // Copy the contents of the screen over to our image
+    if (data != NULL)
+      {
+	SDL_Rect bounds;
+	
+	bounds.x = 0;
+	bounds.y = 0;
+	bounds.w = length;
+	bounds.h = height;
+	
+	if (SDL_LowerBlit (screen::vis, &bounds, data, &bounds) < 0)
+	  {
+	    SDL_FreeSurface (data);
+	  }
+      }
 }
 
 #ifdef _EDIT_

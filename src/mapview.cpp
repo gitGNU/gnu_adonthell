@@ -1148,7 +1148,7 @@ void mapview::editor()
   while(!input::has_been_pushed(SDLK_ESCAPE))
     {
       input::update();
-      for(i=0;i<screen::frames_to_do();i++) 
+      for(i=0;i<screen::get_frames_to_do();i++) 
 	{
 	  update_editor_keys();
 	  update_editor();

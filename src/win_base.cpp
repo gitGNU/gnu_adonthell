@@ -269,10 +269,10 @@ void win_base::set_select_mode_(u_int8 mode)
 /*******************************************************/
 void win_base::draw_border()
 {
-#define WB_CORNER_MIDX (border->corner_top_left->length>>1)
-#define WB_CORNER_MIDY (border->corner_top_left->height>>1)
-#define WB_VBORDERX (border->v_border_template->length>>1)
-#define WB_HBORDERY (border->h_border_template->height>>1) 
+#define WB_CORNER_MIDX (border->corner_top_left->get_length()>>1)
+#define WB_CORNER_MIDY (border->corner_top_left->get_height()>>1)
+#define WB_VBORDERX (border->v_border_template->get_length()>>1)
+#define WB_HBORDERY (border->h_border_template->get_height()>>1) 
   //if no theme, drawing nothing
   if(!theme_ || !visible_border_) return;
   
@@ -290,37 +290,37 @@ void win_base::draw_border()
     {
     case true:
       imgbright.brightness(border->h_border,level_brightness_);
-      imgbright.putbox_mask(realx_,realy_-border->h_border->height,pda_);
+      imgbright.putbox_mask(realx_,realy_-border->h_border->get_height(),pda_);
       imgbright.putbox_mask(realx_,+realy_+height_,pda_);
       imgbright.brightness(border->v_border,level_brightness_);
-      imgbright.putbox_mask(realx_-border->v_border->length,realy_,pda_);
+      imgbright.putbox_mask(realx_-border->v_border->get_length(),realy_,pda_);
       imgbright.putbox_mask(realx_+length_,realy_,pda_);
       imgbright.brightness(border->corner_top_left,level_brightness_);
-      imgbright.putbox_mask(realx_-WB_CORNER_MIDX-((border->v_border->length)>>1),
-			    realy_-WB_CORNER_MIDY-(border->h_border->height>>1),pda_);   
+      imgbright.putbox_mask(realx_-WB_CORNER_MIDX-((border->v_border->get_length())>>1),
+			    realy_-WB_CORNER_MIDY-(border->h_border->get_height()>>1),pda_);   
       imgbright.brightness(border->corner_top_right,level_brightness_);
-      imgbright.putbox_mask(realx_+length_-WB_CORNER_MIDX+(border->v_border->length>>1),
-			    realy_-WB_CORNER_MIDY-(border->h_border->height>>1),pda_); 
+      imgbright.putbox_mask(realx_+length_-WB_CORNER_MIDX+(border->v_border->get_length()>>1),
+			    realy_-WB_CORNER_MIDY-(border->h_border->get_height()>>1),pda_); 
       imgbright.brightness(border->corner_bottom_left,level_brightness_);
-      imgbright.putbox_mask(realx_-WB_CORNER_MIDX-((border->v_border->length)>>1),
-			    realy_+height_-WB_CORNER_MIDY+(border->h_border->height>>1),pda_);
+      imgbright.putbox_mask(realx_-WB_CORNER_MIDX-((border->v_border->get_length())>>1),
+			    realy_+height_-WB_CORNER_MIDY+(border->h_border->get_height()>>1),pda_);
       imgbright.brightness(border->corner_bottom_right,level_brightness_);
-      imgbright.putbox_mask(realx_+length_-WB_CORNER_MIDX+(border->v_border->length>>1),
-			    realy_+height_-WB_CORNER_MIDY+(border->h_border->height>>1),pda_);
+      imgbright.putbox_mask(realx_+length_-WB_CORNER_MIDX+(border->v_border->get_length()>>1),
+			    realy_+height_-WB_CORNER_MIDY+(border->h_border->get_height()>>1),pda_);
       break;
     case false:
-      border->h_border->putbox_mask(realx_,realy_-border->h_border->height,pda_);
+      border->h_border->putbox_mask(realx_,realy_-border->h_border->get_height(),pda_);
       border->h_border->putbox_mask(realx_,+realy_+height_,pda_);
-      border->v_border->putbox_mask(realx_-border->v_border->length,realy_,pda_);
+      border->v_border->putbox_mask(realx_-border->v_border->get_length(),realy_,pda_);
       border->v_border->putbox_mask(realx_+length_,realy_,pda_);
-      border->corner_top_left->putbox_mask(realx_-WB_CORNER_MIDX-((border->v_border->length)>>1),
-					   realy_-WB_CORNER_MIDY-(border->h_border->height>>1),pda_);   
-      border->corner_top_right->putbox_mask(realx_+length_-WB_CORNER_MIDX+(border->v_border->length>>1),
-					    realy_-WB_CORNER_MIDY-(border->h_border->height>>1),pda_);
-      border->corner_bottom_left->putbox_mask(realx_-WB_CORNER_MIDX-((border->v_border->length)>>1),
-					      realy_+height_-WB_CORNER_MIDY+(border->h_border->height>>1),pda_); 
-      border->corner_bottom_right->putbox_mask(realx_+length_-WB_CORNER_MIDX+(border->v_border->length>>1),
-					       realy_+height_-WB_CORNER_MIDY+(border->h_border->height>>1),pda_);
+      border->corner_top_left->putbox_mask(realx_-WB_CORNER_MIDX-((border->v_border->get_length())>>1),
+					   realy_-WB_CORNER_MIDY-(border->h_border->get_height()>>1),pda_);   
+      border->corner_top_right->putbox_mask(realx_+length_-WB_CORNER_MIDX+(border->v_border->get_length()>>1),
+					    realy_-WB_CORNER_MIDY-(border->h_border->get_height()>>1),pda_);
+      border->corner_bottom_left->putbox_mask(realx_-WB_CORNER_MIDX-((border->v_border->get_length())>>1),
+					      realy_+height_-WB_CORNER_MIDY+(border->h_border->get_height()>>1),pda_); 
+      border->corner_bottom_right->putbox_mask(realx_+length_-WB_CORNER_MIDX+(border->v_border->get_length()>>1),
+					       realy_+height_-WB_CORNER_MIDY+(border->h_border->get_height()>>1),pda_);
       break;
     }
 }

@@ -47,9 +47,6 @@ typedef enum anim_editor_mode {IMAGE, FRAME};
 
 class animationframe
 {
-#ifdef _DEBUG_
-  static u_int16 a_d_diff;
-#endif
   u_int16 imagenbr;
   bool is_masked;
   u_int8 alpha;
@@ -59,6 +56,9 @@ class animationframe
   u_int16 nextframe;
 
  public:
+#ifdef _DEBUG_
+  static u_int16 a_d_diff;
+#endif
   void init();
   animationframe();
   ~animationframe();
@@ -89,10 +89,6 @@ class animationframe
 
 class animation
 {
-#ifdef _DEBUG_
-  static u_int16 a_d_diff;
-#endif
-
 #ifdef _EDIT_
   char file_name[500];
   win_label * info_win_label;
@@ -128,6 +124,9 @@ class animation
   u_int16 speedcounter;
   bool play_flag;
  public:
+#ifdef _DEBUG_
+  static u_int16 a_d_diff;
+#endif
 
   image * t_frame;
   animationframe * frame;

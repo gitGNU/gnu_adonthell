@@ -1,0 +1,1068 @@
+#LyX 1.2 created this file. For more info see http://www.lyx.org/
+\lyxformat 218
+\textclass docbook-book
+\language english
+\inputencoding latin1
+\fontscheme default
+\graphics default
+\paperfontsize default
+\spacing single 
+\papersize Default
+\paperpackage a4
+\use_geometry 0
+\use_amsmath 0
+\paperorientation portrait
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\defskip medskip
+\quotes_language english
+\quotes_times 2
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+
+\layout Title
+
+Adonthell Developer Reference
+\layout Date
+
+Last updated: 2001/04/28
+\layout Author
+
+\begin_deeper 
+\layout FirstName
+
+Alexandre
+\layout Surname
+
+Courbot
+\end_deeper 
+\layout Abstract
+
+This document is intended to be the reference both for long-time programmers
+ who need informations about a function or a class and for new developers
+ willing to have a look at the existing interfaces and classes.
+\layout Abstract
+
+This document is written in order to be accessible to new developers, who
+ should read it from the beginning.
+\layout Chapter
+
+
+\begin_inset LatexCommand \label{C-Introduction-Concepts}
+
+\end_inset 
+
+Introduction & Concepts
+\layout Standard
+
+Allright, ready for a quick tour of what makes Adonthell? Reading this chapter
+ will especially be usefull for new developers who want to see what awaits
+ for them.
+\layout Section
+
+
+\begin_inset LatexCommand \label{S-Cpp}
+
+\end_inset 
+
+C++
+\layout Standard
+
+Adonthell makes intensive use of C++ advantages, when they can make the
+ code clear and easier and do not slow things down too much.
+ Adonthell tries to respect as much as possible the Object Oriented Programming
+ concepts.
+ In Adonthell, everything are objects, inheritance and templates are used
+ where usefull.
+\layout Standard
+
+Also, Adonthell heavily uses some templates from the 
+\begin_inset LatexCommand \url[STL C++ library]{http://www.sgi.com/tech/stl/}
+
+\end_inset 
+
+
+\begin_inset Info
+STL url is not correct!
+\end_inset 
+
+, especially containers like lists and hash maps, so you'll certainly want
+ to give it a look.
+\layout Section
+
+
+\begin_inset LatexCommand \label{S-Python}
+
+\end_inset 
+
+Python
+\layout Standard
+
+In many kind of games, including RPGs, a script language is necessary to
+ command characters, build complex actions, cutscenes, etc...
+ As we want modularity and reusability, in-game actions must be real-time
+ interpreted and executed from a script language, which interacts with the
+ C++ interface and can of course share variables with it.
+ 
+\begin_inset LatexCommand \url[Python]{http://www.python.org}
+
+\end_inset 
+
+ has proven it was very efficient at this - moreover it's a fully object-oriente
+d language which takes into account things like inheritance, and there is
+ a great utility, 
+\begin_inset LatexCommand \url[SWIG]{http://www.swig.org}
+
+\end_inset 
+
+, which can automate the process of building Python include files from C++
+ ones.
+ Thanks to the great design of Python, everything in this document that
+ applies to the C++ interface also applies to the Python one, making script
+ building much easier.
+ The only difference is that from Python you can only use one constructor
+ - the one that is listed first in the class methods listing.
+ Also, operator redefinition isn't supported.
+\layout Section
+
+
+\begin_inset LatexCommand \label{S-Source-code-organisation}
+
+\end_inset 
+
+Source code organisation
+\layout Standard
+
+Adonthell make use of 
+\emph on 
+autoconf
+\emph default 
+ and 
+\emph on 
+automake
+\emph default 
+ to be built.
+ Each subdirectory has a 
+\emph on 
+Makefile.am
+\emph default 
+ file that describes building rules.
+ Running
+\emph on 
+ 
+\emph default 
+
+\begin_inset Quotes eld
+\end_inset 
+
+automake
+\begin_inset Quotes erd
+\end_inset 
+
+ in the root directory build 
+\emph on 
+Makefile.in
+\emph default 
+ files from 
+\emph on 
+Makefile.am
+\emph default 
+ in each subdirectory.
+ 
+\begin_inset Quotes eld
+\end_inset 
+
+autoconf
+\begin_inset Quotes erd
+\end_inset 
+
+ builds the configure script from 
+\emph on 
+configure.in
+\emph default 
+.
+ Finally, running 
+\begin_inset Quotes eld
+\end_inset 
+
+./configure
+\begin_inset Quotes erd
+\end_inset 
+
+ generates all the 
+\emph on 
+Makefile
+\emph default 
+s from 
+\emph on 
+Makefile.in
+\emph default 
+s, making the package ready for a 
+\begin_inset Quotes eld
+\end_inset 
+
+make
+\begin_inset Quotes erd
+\end_inset 
+
+.
+\layout Standard
+
+Here is what the source tree does look like:
+\layout Description
+
+doc/ The user and developer documentation
+\layout Description
+
+src/ Source code for Adonthell engine - this is where the 
+\emph on 
+adonthell
+\emph default 
+ executable is built
+\begin_deeper 
+\layout Description
+
+tools Various development tools
+\begin_deeper 
+\layout Description
+
+dlgedit The dialogue editor (requires GTK+)
+\layout Description
+
+charedit The character editor (requires GTK+)
+\layout Description
+
+questedit The quest editor (requires GTK+)
+\layout Description
+
+maptools The map building tools
+\layout Description
+
+pydonthell A custom Python interpreter with Adonthell Python modules inside
+\layout Description
+
+oggloop Ogg music looping utility
+\layout Description
+
+combat Tests about fighting rules
+\end_deeper 
+\end_deeper 
+\layout Standard
+
+Each class that is documented here is generally implemented by 
+\emph on 
+classname.h
+\emph default 
+ and 
+\emph on 
+classname.cpp
+\emph default 
+, unless it is explicitely specified in the class section.
+\layout Section
+
+Data types
+\layout Standard
+
+Adonthell can run on several platforms, which all have different characteristics.
+ One of these differences can reside in the way the basic C types (char,
+ ints, ...) are encoded.
+ A 32 bits operating system will code it's 
+\emph on 
+int
+\emph default 
+s with 32 bits, while a 64 bits operating system will use 64 bits for 
+\emph on 
+int
+\emph default 
+s.
+ For several operations (like reading an 
+\emph on 
+int
+\emph default 
+ from a file) this can result in different behavior, and catastrophic consequenc
+es (most likely protection fault).
+ That's why some of the most basic types have been redifined according to
+ the architecture in 
+\emph on 
+types.h
+\emph default 
+:
+\layout Itemize
+
+u_int8: unsigned 8 bits integer
+\layout Itemize
+
+s_int8: signed 8 bits integer
+\layout Itemize
+
+u_int16: unsigned 16 bits integer
+\layout Itemize
+
+s_int16: signed 16 bits integer
+\layout Itemize
+
+u_int32: unsigned 32 bits integer
+\layout Itemize
+
+s_int32: signed 32 bits integer
+\begin_inset Info
+Types.h only takes x86 architecture into account
+\end_inset 
+
+
+\layout Chapter
+
+
+\begin_inset LatexCommand \label{C-Initialisation-Cleanup}
+
+\end_inset 
+
+Initialisation & Cleanup
+\layout Section
+
+
+\begin_inset LatexCommand \label{S-The-game-class}
+
+\end_inset 
+
+The game class
+\layout Subsection
+
+
+\begin_inset LatexCommand \label{SS-Game-Description}
+
+\end_inset 
+
+Description
+\layout Description
+
+Implemented\SpecialChar ~
+in: game.h, game.cpp
+\layout Description
+
+Access\SpecialChar ~
+method: static
+\layout Standard
+
+This class is responsible for game initialisation and finalisation.
+ It is static, and needs two parameters which are the arguments passed to
+ the program.
+ This class has only two methods, however they are critical as they are
+ responsible for all the game initialisation and cleanup - so they must
+ ABSOLUTELY be called as the first and last functions called in the main
+ program.
+\layout Standard
+
+Usually you'll never have to call these functions yourself - this class
+ is only here for reference.
+\layout Subsection
+
+
+\begin_inset LatexCommand \label{SS-Game-Methods}
+
+\end_inset 
+
+Methods
+\layout Standard
+
+They are rather self-explicit:
+\layout Code
+
+void init(int argc, char ** argv);
+\layout Standard
+
+Read the configuration file, check the validity of the data directory and
+ initialize the display, input, sound, data and Python systems.
+\layout Code
+
+void cleanup(void);
+\layout Standard
+
+Write configuration file and shutdown the display, input, sound, data and
+ Python systems.
+\layout Chapter
+
+
+\begin_inset LatexCommand \label{C-Low-level-graphics}
+
+\end_inset 
+
+Low level graphics
+\layout Section
+
+
+\begin_inset LatexCommand \label{S-The-drawing-area-class}
+
+\end_inset 
+
+The drawing_area class
+\layout Subsection
+
+
+\begin_inset LatexCommand \label{SS-Drawing-area-Description}
+
+\end_inset 
+
+Description
+\layout Description
+
+Implemented\SpecialChar ~
+in: drawing_area.h, drawing_area.cpp
+\layout Description
+
+Access\SpecialChar ~
+method: dynamic
+\layout Standard
+
+During some drawing operation, you may want to limit the blits to a certain
+ area of the screen.
+ For example, if you want to draw an image into a window, and tha image
+ is larger than this window, you don't want the entire image to appear,
+ only the part that fits the window.
+ This is exactly what drawing areas are for.
+ A drawing area is a square that can be any size and located anywhere on
+ the screen.
+ If you 
+\emph on 
+assign
+\emph default 
+ a drawing area to a drawable object (for example, an 
+\begin_inset LatexCommand \ref[image]{S-The-image-class}
+
+\end_inset 
+
+), and then draw the image on the screen, the part of the image that doesn't
+ fit the drawing area limits isn't displayed.
+ A drawing area can be assigned to any drawable, but also to another drawing
+ area, in which case the result of blitting operations from object that
+ are assigned to the second drawing area will be limited to the intersection
+ of the two drawing areas.
+\layout Subsection
+
+
+\begin_inset LatexCommand \label{SS-Drawing-area-Methods}
+
+\end_inset 
+
+Methods
+\layout Code
+
+drawing_area();
+\layout Standard
+
+The default constructor.
+\layout Code
+
+drawing_area(u_int16 px, u_int16 py, u_int16 pw, u_int16 ph);
+\layout Standard
+
+Constructor for creating a drawing area of size 
+\emph on 
+(pw,ph)
+\emph default 
+ at position 
+\emph on 
+(px,py)
+\emph default 
+.
+\layout Code
+
+void resize(u_int16 dl, u_int16 dh);
+\layout Standard
+
+Resize the drawing area to 
+\emph on 
+(dl,dh)
+\emph default 
+.
+\layout Code
+
+void move(u_int16 dx, u_int16 dy);
+\layout Standard
+
+Move the drawing area to 
+\emph on 
+(dx,dy)
+\emph default 
+.
+\layout Code
+
+void assign_drawing_area(drawing_area * da);
+\layout Standard
+
+Assign the 
+\emph on 
+da
+\emph default 
+ drawing area to this drawing area.
+\layout Code
+
+void detach_drawing_area();
+\layout Standard
+
+Detach the drawing area (if any) previously assigned to this drawing area.
+\layout Section
+
+
+\begin_inset LatexCommand \label{S-The-screen-class}
+
+\end_inset 
+
+The screen class
+\layout Subsection
+
+
+\begin_inset LatexCommand \label{SS-screen-Description}
+
+\end_inset 
+
+Description
+\layout Description
+
+Implemented\SpecialChar ~
+in: screen.cpp, screen.h
+\layout Description
+
+Access\SpecialChar ~
+method: static
+\layout Standard
+
+This static class sets video modes, 
+\begin_inset Info
+temporisation done in screen::show() should go
+somewhere else (gametime seems a good
+candidate)
+init_frame_counter should disappear too.
+get_frames_to_do should move to gametime too.
+\end_inset 
+
+flush the frame buffer to the physical screen and make abstraction of the
+ real screen depth to ease the graphic programmer's task.
+\layout Subsection
+
+
+\begin_inset LatexCommand \label{SS-screen-Methods}
+
+\end_inset 
+
+Methods
+\layout Code
+
+void set_video_mode(u_int16 nl, u_int16 nh);
+\layout Standard
+
+Sets the video mode at the right depth according to the 
+\emph on 
+nl
+\emph default 
+ and 
+\emph on 
+nh
+\emph default 
+ parameters.
+\layout Description
+
+u_int16\SpecialChar ~
+nl: The desired screen resolution's length.
+\layout Description
+
+u_int16\SpecialChar ~
+nh: The desired screen resolution's height.
+\layout Code
+
+void set_fullscreen(bool mode);
+\layout Standard
+
+Sets/unsets fullscreen mode.
+\layout Code
+
+bool get_fullscreen();
+\layout Standard
+
+Returns whether fullscreen mode is on or not.
+\layout Code
+
+void show();
+\layout Standard
+
+Copies the screen buffer to the physical screen (actually displays the screen).
+ This function must be called after all your graphical operations, when
+ you want the changes made to be visibles.
+\layout Code
+
+void drawbox(u_int16 x, u_int16 y, u_int16 w, u_int16 h,
+\layout Code
+
+u_int32 color, drawing_area * da_opt=NULL);
+\layout Standard
+
+Draw a box at coordinates 
+\emph on 
+(x,y)
+\emph default 
+, of size 
+\emph on 
+(w,h)
+\emph default 
+ with the color 
+\emph on 
+color
+\emph default 
+, into the (optionnal) drawing_area 
+\emph on 
+da_opt
+\emph default 
+.
+\layout Code
+
+void clear();
+\layout Standard
+
+Fills the screen with black.
+\layout Code
+
+void set_mouse_cursor_visible(bool b);
+\layout Standard
+
+Enable/disable mouse cursor.
+\layout Code
+
+bool mouse_cursor_visible();
+\layout Standard
+
+Returns whether the mouse cursor is visible or not.
+\layout Code
+
+u_int16 get_length();
+\layout Standard
+
+Returns the screen length, in pixels.
+\layout Code
+
+u_int16 get_height();
+\layout Standard
+
+Returns the screen height, in pixels.
+\layout Code
+
+u_int32 get_trans_col();
+\layout Standard
+
+Returns the color that will appear as transparent.
+\layout Section
+
+
+\begin_inset LatexCommand \label{S-The-image-class}
+
+\end_inset 
+
+The image class
+\layout Description
+
+Implemented\SpecialChar ~
+in: image.cpp, image.h
+\layout Description
+
+Access\SpecialChar ~
+method: dynamic
+\layout Subsection
+
+
+\begin_inset LatexCommand \label{SS-image-Description}
+
+\end_inset 
+
+Description
+\layout Standard
+
+
+\begin_inset Info
+get_pix and put_pix MUST work with hex triplets!
+putbox must disappear!
+\end_inset 
+
+Designed to work with single images, without having to care about the bit
+ depth.
+ This class is widely used through the game - in fact it handles everything
+ that is displayed on the screen.
+\layout Standard
+
+Each image has two parameters - a 
+\emph on 
+mask
+\emph default 
+ parameter, defining whether the transparent color ( which hex triplet is
+ FF00FF) should be displayed or no, allowing to display images that doesn't
+ look like squares, and an 
+\emph on 
+alpha
+\emph default 
+ parameter that define the opacity of the image.
+ It's a 8 bits long unsigned integer, so correct values for it go from 0
+ (invisible) to 255 (totally opaque).
+\layout Subsection
+
+
+\begin_inset LatexCommand \label{SS-image-Methods}
+
+\end_inset 
+
+Methods
+\layout Code
+
+void image();
+\layout Standard
+
+Default constructor, initialize the image so it can safely be used.
+ The image's length and height are then 0.
+\layout Code
+
+void image(u_int16 l, u_int16 h);
+\layout Standard
+
+Creates an image of size 
+\emph on 
+(l,h)
+\emph default 
+.
+\layout Code
+
+~image();
+\layout Standard
+
+Destructor.
+\layout Code
+
+void clear();
+\layout Standard
+
+Erase your image, making it exactly the same as a newly created, (0,0) sized
+ image.
+\layout Code
+
+void resize(u_int16 l, u_int16 h);
+\layout Standard
+
+Resize the image to dimensions 
+\emph on 
+(l,h)
+\emph default 
+.
+ All the content of the image is then lost.
+\layout Code
+
+u_int16 get_length();
+\layout Standard
+
+Returns the length of the image.
+\layout Code
+
+u_int16 get_height();
+\layout Standard
+
+Returns the height of the image.
+\layout Code
+
+s_int8 get(gzFile file);
+\layout Standard
+
+Loads an image from an opened file, with it's transparency and alpha parameters.
+\layout Description
+
+Return\SpecialChar ~
+value:
+\begin_deeper 
+\layout Itemize
+
+0 in case of success,
+\layout Itemize
+
+-1 in case of memory allocation error.
+\end_deeper 
+\layout Code
+
+s_int8 load(const char * fname);
+\layout Standard
+
+Loads an image from a non-opened file, with it's transparency and alpha
+ parameters.
+\layout Description
+
+Return\SpecialChar ~
+value:
+\begin_deeper 
+\layout Itemize
+
+0 in case of success,
+\layout Itemize
+
+-1 in case of memory allocation error.
+\end_deeper 
+\layout Code
+
+s_int8 get_raw(gzFile file);
+\layout Standard
+
+Loads an image from an opened file, without it's transparency and alpha
+ parameters.
+\layout Description
+
+Return\SpecialChar ~
+value:
+\begin_deeper 
+\layout Itemize
+
+0 in case of success,
+\layout Itemize
+
+-1 in case of memory allocation error.
+\end_deeper 
+\layout Code
+
+s_int8 load_raw(const char * fname);
+\layout Standard
+
+Loads an image from a non-opened file, without it's transparency and alpha
+ parameters.
+\layout Description
+
+Return\SpecialChar ~
+value:
+\begin_deeper 
+\layout Itemize
+
+0 in case of success,
+\layout Itemize
+
+-1 in case of memory allocation error.
+\end_deeper 
+\layout Code
+
+s_int8 get_pnm(gzFile file);
+\layout Standard
+
+Loads an image encoded in PNM raw format from an opened file, without it's
+ transparency and alpha parameters.
+\layout Description
+
+Return\SpecialChar ~
+value:
+\begin_deeper 
+\layout Itemize
+
+0 in case of success,
+\layout Itemize
+
+-1 in case of memory allocation error.
+\end_deeper 
+\layout Code
+
+s_int8 load_pnm(const char * fname);
+\layout Standard
+
+Loads an image encoded in PNM raw format from a non-opened file, without
+ it's transparency and alpha parameters.
+\layout Description
+
+Return\SpecialChar ~
+value:
+\begin_deeper 
+\layout Itemize
+
+0 in case of success,
+\layout Itemize
+
+-1 in case of memory allocation error.
+\end_deeper 
+\layout Code
+
+void screen_shot();
+\layout Standard
+
+Takes a screenshot and put it in the image.
+\layout Code
+
+void assign_drawing_area(drawing_area * da);
+\layout Standard
+
+Assign a drawing area to the image.
+\layout Code
+
+void detach_drawing_area();
+\layout Standard
+
+Detach the drawing area (if any) previously assigned to the image.
+\layout Code
+
+bool get_mask();
+\layout Standard
+
+Returns whether the image is masked or not.
+\layout Code
+
+void set_mask(bool m);
+\layout Standard
+
+Sets whether the image is masked or not.
+\layout Code
+
+u_int8 get_alpha();
+\layout Standard
+
+Returns the alpha parameter of the image.
+\layout Code
+
+void set_alpha(u_int8 t);
+\layout Standard
+
+Sets the alpha parameter of the image.
+\layout Code
+
+void draw(s_int16 x, s_int16 y, drawing_area * 
+\layout Code
+
+da_opt=NULL);
+\layout Standard
+
+Draw the image at position 
+\emph on 
+(x,y)
+\emph default 
+ on the screen, eventually temporarly assigning it to the 
+\emph on 
+da_opt
+\emph default 
+ optionnal drawing_area.
+\layout Code
+
+void get_from_screen(s_int16 x, s_int16 y);
+\layout Standard
+
+Gets from the screen a shot from coordinates 
+\emph on 
+(x,y)
+\emph default 
+ which size is the current size of the image.
+\layout Code
+
+void zoom(image * src);
+\layout Standard
+
+Zoom the 
+\emph on 
+src
+\emph default 
+ image to the dimensions of the image.
+\layout Code
+
+void reverse_lr(image * src);
+\layout Standard
+
+Reverse the 
+\emph on 
+src 
+\emph default 
+image horizontally, and put it into the image.
+\layout Code
+
+void reverse_ud(image * src);
+\layout Standard
+
+Reverse the 
+\emph on 
+src 
+\emph default 
+image vertically, and put it into the image.
+\layout Code
+
+void brightness(image * src, u_int16 cont, bool proceed_mask=false);
+\layout Standard
+
+Brighten the image (actually, darken it if 
+\emph on 
+cont
+\emph default 
+ < 32768, brighten it if 
+\emph on 
+cont
+\emph default 
+ > 32768), according to the 
+\emph on 
+cont
+\emph default 
+ parameter.
+ If 
+\emph on 
+proceed_mask
+\emph default 
+ is set to true, the transparent color will be brightened too, otherwise
+ it won't.
+\layout Code
+
+void putbox_tile_img(image * source);
+\layout Standard
+
+Tile the 
+\emph on 
+source
+\emph default 
+ img to the img, until it is filled.
+\layout Code
+
+void draw_img(image * source, u_int16 x, u_int16 y);
+\layout Standard
+
+Does the same as draw(), but instead of drawing on the screen, draw the
+ 
+\emph on 
+source 
+\emph default 
+on the image.
+\layout Code
+
+void draw_part_img (image * source, u_int16 x, u_int16 y, 
+\layout Code
+
+u_int16 bw, u_int16 bh, u_int16 xo, u_int16 yo);
+\layout Standard
+
+Draw the 
+\emph on 
+source
+\emph default 
+ image to the image, starting at pixel 
+\emph on 
+(xo,yo)
+\emph default 
+, and taking an area that is 
+\emph on 
+(bw,bh)
+\emph default 
+ sized.
+\layout Code
+
+u_int32 get_pix(u_int16 x, u_int16 y);
+\layout Standard
+
+Returns the pixel at position 
+\emph on 
+(x,y)
+\emph default 
+.
+\layout Code
+
+void put_pix(u_int16 x, u_int16 y, u_int32 col);
+\layout Standard
+
+Put the 
+\emph on 
+col
+\emph default 
+ pixel at position 
+\emph on 
+(x,y)
+\emph default 
+.
+\the_end

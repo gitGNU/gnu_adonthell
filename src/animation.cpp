@@ -334,8 +334,8 @@ void animation::zoom(u_int16 sx, u_int16 sy, animation * src)
   t_frame=new image[nbr_of_images];
   for(i=0;i<nbr_of_images;i++)
     {
-      t_frame[i].resize((src->t_frame[i].length*sx)/src->length,
-			(src->t_frame[i].height*sy)/src->height);
+      t_frame[i].resize((src->t_frame[i].get_length()*sx)/src->length,
+			(src->t_frame[i].get_height()*sy)/src->height);
       t_frame[i].zoom(&src->t_frame[i]);
     }
   
@@ -908,8 +908,8 @@ void animation::update_label_frame_info()
 		  "Next Frame: %d\nMasked: %s\nAlpha: %d\n"
 		  "\nAnimation info:\nLength: %d\nHeight:%d\n",
 		  frame[currentframe].imagenbr,
-		  t_frame[frame[currentframe].imagenbr].length,
-		  t_frame[frame[currentframe].imagenbr].height,
+		  t_frame[frame[currentframe].imagenbr].get_length(),
+		  t_frame[frame[currentframe].imagenbr].get_height(),
 		  frame[currentframe].delay==0?"Infinite":s_delay,
 		  frame[currentframe].gapx,frame[currentframe].gapy,
 		  frame[currentframe].nextframe,
@@ -929,7 +929,7 @@ void animation::update_label_frame_info()
       if(nbr_of_images>0)
 	{
 	  sprintf(frame_txt,"Image info:\nLength: %d\nHeight: %d\n\nAnimation info:\nLength:%d\nHeight:%d",
-		  t_frame[currentimage].length,t_frame[currentimage].height,
+		  t_frame[currentimage].get_length(),t_frame[currentimage].get_height(),
 		  length,height);
 	  label_frame_info->set_text(frame_txt);
 	}
@@ -1176,7 +1176,7 @@ void animation::draw_editor()
 void animation::update_and_draw()
 {
   static u_int16 i;
-  for(i=0;i<screen::frames_to_do();i++) update_editor();
+  for(i=0;i<screen::get_frames_to_do();i++) update_editor();
   draw_editor();
 }
 
@@ -1235,7 +1235,7 @@ void animation::editor()
   while(!input::has_been_pushed(SDLK_ESCAPE))
     {
       input::update();
-      for(i=0;i<screen::frames_to_do();i++) update_editor_keys();
+      for(i=0;i<screen::get_frames_to_do();i++) update_editor_keys();
       update_and_draw();
       screen::show();
     }

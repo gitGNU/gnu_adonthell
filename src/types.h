@@ -15,6 +15,8 @@
 
 #include <SDL/SDL.h>
 
+// We should put ifdefs here to put the correct int values accordingly to the system type
+
 #define u_int8 unsigned char
 #define u_int16 unsigned short
 #define u_int32 unsigned int

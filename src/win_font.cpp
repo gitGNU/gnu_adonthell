@@ -78,12 +78,12 @@ void win_font::load(char * rep)
       fread(&pos,sizeof(pos),1,f);
       fread(&tl,sizeof(tl),1,f);
       table_core[i]=true;
-      table[i].resize(tl,font->height);
-      table[i].putbox_part_img(font,0,0,tl,font->height,pos,0);
+      table[i].resize(tl,font->get_height());
+      table[i].putbox_part_img(font,0,0,tl,font->get_height(),pos,0);
       j++;
     }
-  height_=font->height;
-  length_=table['A'].length;
+  height_=font->get_height();
+  length_=table['A'].get_length();
   if(font)delete font;
 
 

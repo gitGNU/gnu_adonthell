@@ -21,34 +21,16 @@
 
 class image
 {
-#ifdef _DEBUG_
-  static u_int16 a_d_diff;
-#endif
- protected:
-
-#ifdef _EDIT_
-  void * simpledata;
-#endif
-  drawing_area * draw_to;
-
-  inline void get_rects(s_int16 x, s_int16 y);
-
  public:
-  SDL_Surface * data;
-  u_int16 length, height;
-  u_int8 bytes_per_pixel;
-  bool mask_on;
-  u_int8 alpha;
-
-  image &operator =(const image &im);
-  void init();
   image();
+#ifndef SWIG
   image (u_int16 l, u_int16 h);
+#endif
   ~image();
   void clear();
   void resize(u_int16 l, u_int16 h);
-  u_int16 get_length();
-  u_int16 get_height();
+  u_int16 get_length() {return length;}
+  u_int16 get_height() {return height;}
 
   s_int8 get(gzFile file);
   s_int8 load(const char * fname);
@@ -56,14 +38,10 @@ class image
   s_int8 load_raw(const char * fname);
   s_int8 get_pnm(SDL_RWops * file);
   s_int8 load_pnm(const char * fname);
-#ifdef _EDIT_
-  s_int8 put(gzFile file);
-  s_int8 save(char * fname);
-  s_int8 put_raw(gzFile file);
-  s_int8 save_raw(char * fname);
-  s_int8 put_pnm(SDL_RWops * file);
-  s_int8 save_pnm(char * fname);
-#endif
+
+  void screen_shot ();
+  // Take a screenshot
+
   void assign_drawing_area(drawing_area * da);
   void detach_drawing_area();
   bool get_mask();
@@ -90,6 +68,40 @@ class image
 			u_int16 bh, u_int16 xo, u_int16 yo);
   u_int32 get_pix(u_int16 x, u_int16 y);
   void put_pix(u_int16 x, u_int16 y, u_int32 col);
+
+ protected:
+#ifdef _EDIT_
+  void * simpledata;
+#endif
+  drawing_area * draw_to;
+
+  inline void get_rects(s_int16 x, s_int16 y);
+
+#ifdef _DEBUG_
+  static u_int16 a_d_diff;
+#endif
+  SDL_Surface * data;
+  u_int16 length, height;
+  u_int8 bytes_per_pixel;
+  bool mask_on;
+  u_int8 alpha;
+
+  void init();
+
+ public:
+#ifdef _EDIT_
+  s_int8 put(gzFile file);
+  s_int8 save(char * fname);
+  s_int8 put_raw(gzFile file);
+  s_int8 save_raw(char * fname);
+  s_int8 put_pnm(SDL_RWops * file);
+  s_int8 save_pnm(char * fname);
+#endif
+
+#ifndef SWIG
+  image &operator =(const image &im);
+  friend class data_screen;
+#endif
 };
 
 #endif

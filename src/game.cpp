@@ -52,7 +52,7 @@ bool game::init ()
     }
 
     // init video subsystem
-    screen::set_video_mode (320, 240, configuration);
+    screen::set_video_mode (320, 240);
 
     // init audio subsystem
 #if defined SDL_MIXER && !defined _EDIT_

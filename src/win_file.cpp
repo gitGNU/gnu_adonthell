@@ -205,7 +205,7 @@ void win_file::list_directory()
 	      else strcpy(tmpfile,"<D>");
 	      strcat(tmpfile," ");
 	      strcat(tmpfile,dirlist->d_name);
-	      tmplabel=new win_label(0,0,combo_file_->length()-space_between_border_-theme_->scrollbar->back->length,font_->height(),theme_,font_);
+	      tmplabel=new win_label(0,0,combo_file_->length()-space_between_border_-theme_->scrollbar->back->get_length(),font_->height(),theme_,font_);
 	      tmplabel->set_text(tmpfile);
 	      combo_file_->add(tmplabel);
 	      tmplabel=NULL;

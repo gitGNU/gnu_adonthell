@@ -10,6 +10,7 @@
 #include "audio.h"
 #include "character_base.h"
 #include "quest.h"
+#include "drawing_area.h"
 #include "screen.h"
 #include "image.h"
 #include "animation.h"

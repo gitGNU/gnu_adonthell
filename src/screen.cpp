@@ -11,17 +11,10 @@
    See the COPYING file for more details.
 */
 
-#include <iostream.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include "types.h"
+#include <iostream>
 #include "screen.h"
-#include "image.h"
-#include "pnm.h"
-#include "prefs.h"
-#include "input.h"
 
-#define FTD_LIMIT 100
+using namespace std;
 
 u_int16 screen::l;
 u_int16 screen::h;
@@ -32,24 +25,23 @@ u_int32 screen::trans;
 u_int32 screen::trans_pix;
 SDL_Surface * screen::vis;
 u_int32 screen::timer1, screen::timer2;
+bool screen::cur_visible=false;
 
 // Decrease this to speed up the game
 const u_int32 screen::CYCLE_LENGTH = 13;
 
 
-void screen::set_video_mode(u_int16 nl, u_int16 nh, config * myconfig=NULL)
+void screen::set_video_mode(u_int16 nl, u_int16 nh)
 {
   u_int8 bpp;
   SDL_flags |= SDL_HWSURFACE;
   SDL_flags |= SDL_DOUBLEBUF;
-  if(myconfig&&(myconfig->screen_mode == 1)) SDL_flags |= SDL_FULLSCREEN;
 
   if (SDL_Init (SDL_INIT_VIDEO) < 0) {
     fprintf (stderr, "couldn't init SDL: %s\n", SDL_GetError ());
     exit (1);
   }
   
-  atexit (SDL_Quit);
   bpp = SDL_VideoModeOK(nl, nh, 16, SDL_flags);
 
   switch (bpp)
@@ -87,8 +79,8 @@ void screen::set_video_mode(u_int16 nl, u_int16 nh, config * myconfig=NULL)
     }
 
   // Turning off mouse cursor
-  SDL_ShowCursor(0);
-  
+  set_mouse_cursor_visible(false);
+
   SDL_WM_SetCaption ("Adonthell", NULL);
   
   trans=SDL_MapRGB(vis->format,0xFF,0x00,0xFF);
@@ -142,14 +134,6 @@ void screen::show()
     // How slow is our machine? :)
     ftd = timer2 / CYCLE_LENGTH;
     if (ftd > FTD_LIMIT) ftd = FTD_LIMIT;
-
-    if ((SDL_GetModState()&(KMOD_ALT|KMOD_META))&&(input::has_been_pushed(SDLK_RETURN)))
-    {
-        if (screen::get_fullscreen ()) screen::set_fullscreen (false);
-        else screen::set_fullscreen (true);
-
-        input::clear_keys_queue();
-    }
 }
 
 void screen::drawbox(u_int16 x, u_int16 y, u_int16 w, u_int16 h, 
@@ -177,40 +161,9 @@ void screen::clear()
   drawbox(0,0,l,h,0);
 }
 
-image *screen::shot ()
-{
-    image *shot = new image;
-    shot->bytes_per_pixel = 3;
-    shot->length = l;
-    shot->height = h;
-    
-    
-    // We need a 24bpp image to save it as PNM afterwards
-	SDL_Surface *surface = SDL_CreateRGBSurface (SDL_SWSURFACE, l, h, 24,
-		0x000000FF, 0x0000FF00, 0x00FF0000, 0);
+/*
 
-    // Copy the contents of the screen over to our image
-    if (surface != NULL)
-    {
-        SDL_Rect bounds;
-
-        bounds.x = 0;
-	    bounds.y = 0;
-		bounds.w = l;
-		bounds.h = h;
-
-		if (SDL_LowerBlit (vis, &bounds, surface, &bounds) < 0)
-		{
-			SDL_FreeSurface (surface);
-			delete shot;
-            return NULL;
-		}
-    }
-		
-	shot->data = surface;
-
-    return shot;
-}
+*/
 
 void screen::makesquare(u_int16 px,u_int16 py, u_int16 fact)
 {
@@ -220,12 +173,16 @@ void screen::makesquare(u_int16 px,u_int16 py, u_int16 fact)
   drawbox(l-fact-px,0,fact,h,0);
 }
 
-void screen::mouse_cursor_off()
+void screen::set_mouse_cursor_visible(bool b)
 {
-  SDL_ShowCursor(0);
-}
-
-void screen::mouse_cursor_on()
-{
-  SDL_ShowCursor(1);
+  if(b)
+    {
+      cur_visible=true;
+      SDL_ShowCursor(1);
+    }
+  else
+    {
+      cur_visible=false;
+      SDL_ShowCursor(0);
+    }
 }

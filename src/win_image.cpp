@@ -17,7 +17,7 @@
 #include "win_theme.h"
 #include "win_image.h"
 
-win_image::win_image(s_int16 tx,s_int16 ty,image * tpic,win_theme* them):win_base(tx,ty,tpic->length,tpic->height,them)
+win_image::win_image(s_int16 tx,s_int16 ty,image * tpic,win_theme* them):win_base(tx,ty,tpic->get_length(),tpic->get_height(),them)
 {
   picture=new image();
   picture=tpic; //copy image

@@ -132,10 +132,10 @@ void win_scrollbar::update(win_base * wb)
 {
   if(wb)
     {
-      back->resize(back_mid->length,wb->height());
+      back->resize(back_mid->get_length(),wb->height());
       back->putbox_tile_img(back_mid);
       back->putbox_img(back_top,0,0);
-      back->putbox_img(back_bot,0,wb->height()-back_bot->height);
+      back->putbox_img(back_bot,0,wb->height()-back_bot->get_height());
     }
 }
 
@@ -154,20 +154,20 @@ void win_scrollbar::destroy()
 
 void win_scrollbar::update_scroll_bar(win_scrolled * ws)
 {
-  if(ws->height()-ws->amplitude()>bar_top->height+bar_mid->height+bar_bot->height)
+  if(ws->height()-ws->amplitude()>bar_top->get_height()+bar_mid->get_height()+bar_bot->get_height())
     {
-      bar->resize(bar_top->length,ws->height()-ws->amplitude());
+      bar->resize(bar_top->get_length(),ws->height()-ws->amplitude());
       bar->putbox_tile_img(bar_flex);
       bar->putbox_img(bar_top,0,0);
-      bar->putbox_img(bar_bot,0,bar->height-bar_bot->height);
-      bar->putbox_img(bar_mid,0,(bar->height-bar_mid->height)>>1);
+      bar->putbox_img(bar_bot,0,bar->get_height()-bar_bot->get_height());
+      bar->putbox_img(bar_mid,0,(bar->get_height()-bar_mid->get_height())>>1);
     }
   else
     {
-      bar->resize(bar_top->length,bar_top->height+bar_mid->height+bar_bot->height);
+      bar->resize(bar_top->get_length(),bar_top->get_height()+bar_mid->get_height()+bar_bot->get_height());
       bar->putbox_img(bar_top,0,0);
-      bar->putbox_img(bar_bot,0,bar->height-bar_bot->height);
-      bar->putbox_img(bar_mid,0,bar_top->height);
+      bar->putbox_img(bar_bot,0,bar->get_height()-bar_bot->get_height());
+      bar->putbox_img(bar_mid,0,bar_top->get_height());
     }
 }
 

@@ -26,11 +26,18 @@ mapsquare_tile::mapsquare_tile()
 {
   objnbr=0;
   is_base=false;
+#ifdef _DEBUG_
+  cout << "mapsquare_tile() called, "<< ++a_d_diff
+       << " objects currently allocated\n";
+#endif
 }
 
 mapsquare_tile::~mapsquare_tile()
 {
-
+#ifdef _DEBUG_
+  cout << "~mapsquare_tile() called, "<< --a_d_diff
+       << " objects currently allocated\n";
+#endif
 }
 
 void mapsquare_tile::draw(mapview * mv)
@@ -81,10 +88,18 @@ mapsquare_char::mapsquare_char()
 {
   mchar=NULL;
   is_base=false;
+#ifdef _DEBUG_
+  cout << "~mapsquare_char() called, "<< --a_d_diff
+       << " objects currently allocated\n";
+#endif
 }
 
 mapsquare_char::~mapsquare_char()
 {
+#ifdef _DEBUG_
+  cout << "~mapsquare_char() called, "<< --a_d_diff
+       << " objects currently allocated\n";
+#endif
 }
 
 bool mapsquare_char::operator < (const mapsquare_char & m)
@@ -291,7 +306,6 @@ s_int8 landsubmap::put_mapobject(u_int16 px, u_int16 py,
 {
   u_int16 i,j;
   mapsquare_tile t;
-  
   // FIXME: Bad placement when overflowing the map from bottom right when the 
   // base tile isn't at right of the object.
   // Bad initialisation of i0/j0/ie/je ( must be init like remove_obj)

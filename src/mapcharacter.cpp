@@ -843,7 +843,7 @@ void mapcharacter::draw_editor()
 void mapcharacter::update_and_draw()
 {
   static u_int16 i;
-  for(i=0;i<screen::frames_to_do();i++) update_editor();
+  for(i=0;i<screen::get_frames_to_do();i++) update_editor();
   draw_editor();
 }
 
@@ -982,7 +982,7 @@ void mapcharacter::editor()
   while(!input::has_been_pushed(SDLK_ESCAPE))
     {
       input::update();
-      for(i=0;i<screen::frames_to_do();i++) update_editor_keys();
+      for(i=0;i<screen::get_frames_to_do();i++) update_editor_keys();
       update_and_draw();
       screen::show();
     }

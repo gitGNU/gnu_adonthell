@@ -42,6 +42,9 @@ class mapsquare_tile
   u_int16 x,y;
 
  public:
+#ifdef _DEBUG_
+  static u_int16 a_d_diff;
+#endif 
   mapsquare_tile();
   ~mapsquare_tile();
   
@@ -70,6 +73,9 @@ class mapsquare_char
   u_int16 x,y;
 
  public:
+#ifdef _DEBUG_
+  static u_int16 a_d_diff;
+#endif 
   mapsquare_char();
   ~mapsquare_char();
   
@@ -90,11 +96,7 @@ class mapsquare_char
 #endif
 
 class mapsquare
-{
-#if defined _DEBUG_ || defined _EDIT_
-  static u_int16 a_d_diff;
-#endif // _DEBUG_
-  
+{  
   u_int16 type; // Terrain type ; need to be defined later
   u_int8 walkable;
 
@@ -104,7 +106,10 @@ class mapsquare
   list<mapsquare_char> mapchars;
 #endif
  public:
-  mapsquare();
+#if defined _DEBUG_ || defined _EDIT_
+  static u_int16 a_d_diff;
+#endif // _DEBUG_
+ mapsquare();
   ~mapsquare();
 
   bool is_free() 
@@ -161,9 +166,6 @@ class landmap;
 
 class landsubmap
 {
-#if defined _DEBUG_ || defined _EDIT_
-  static u_int16 a_d_diff;
-#endif // _DEBUG_
  private:
   landmap * m_map;
   mapsquare ** land;          // The mapsquares refers to the parent map
@@ -175,6 +177,9 @@ class landsubmap
 		       u_int16 patnbr);
 
  public:
+#if defined _DEBUG_ || defined _EDIT_
+  static u_int16 a_d_diff;
+#endif // _DEBUG_
   landsubmap();
   landsubmap(u_int16 l, u_int16 h);
   ~landsubmap();
@@ -203,10 +208,6 @@ class landmap
 : public event_list
 #endif
 {
-#if defined _DEBUG_ || defined _EDIT_
-  static u_int16 a_d_diff;
-#endif // _DEBUG_
-
 #ifndef SWIG
 #ifdef _EDIT_
   mapobject ** mini_pattern;
@@ -224,6 +225,9 @@ class landmap
 #endif // SWIG
 
  public:
+#if defined _DEBUG_ || defined _EDIT_
+  static u_int16 a_d_diff;
+#endif // _DEBUG_
 #ifndef SWIG
   vector<mapcharacter*> mapchar;
   mapobject ** pattern;
