@@ -47,7 +47,8 @@ crcle_dlg::crcle_dlg (Circle *c, MainFrame *w) : circle (c), wnd (w)
 // Apply changes to Circle
 int crcle_dlg::on_ok ()
 {
-    string error, actions, t1, t2;
+/*
+    string error, t1, t2;
     vector<command*> code;
 
     // Look if code contains errors
@@ -69,12 +70,10 @@ int crcle_dlg::on_ok ()
         return 0;
     }
     else if (wnd->err) wnd->err->display ("Compilation successfull :-)");
+*/
 
     // Indicate that user hit the OK button
     retval = 1;
-
-    // create the action-string
-    actions = string(1, loop) + string("|") + string(1, combat) + string("|0");
 
     // Apply changes to the circle
     circle->type = type;
@@ -82,8 +81,8 @@ int crcle_dlg::on_ok ()
     circle->comment = note;
     circle->conditions = cond;
     circle->variables = vars;
-    circle->actions = actions;
-
+    circle->actions = string(1, loop) + string("|") + string(1, combat) + string("|0");
+ 
     if (type == PLAYER) circle->character = 0;
     else circle->character = 1; // update this line once multiple NPCs are supported
 

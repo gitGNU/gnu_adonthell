@@ -91,7 +91,8 @@ void dlg_compiler::write_dialogue ()
     u_int32 j = 0;
 
     // write the dialogue functions
-    script << "\n    dialogue = [self.start, ";
+    script << "\n    def __init__(self):";
+    script << "\n        self.dialogue = [self.start, ";
 
     // write answer-function-array and build lookup table to get index when given
     // the number of the node
@@ -114,7 +115,7 @@ void dlg_compiler::write_entry_func ()
     script << "\n    def run (self, answer):";
     script << "\n        self.npc = []";
     script << "\n        self.player = []";
-    script << "\n        self.continue = []";
+    script << "\n        self.cont = []";
     script << "\n        self.dialogue[answer]()\n";
 }
 
@@ -136,7 +137,7 @@ void dlg_compiler::write_npc (Circle *circle)
 
     // write circle's text and "jump target"
     script << "\n" << space << "self.npc.append (" << text_lookup[circle->number] << ")";
-    script << "\n" << space << "self.continue.append (" << jump_lookup[circle->number] << ")";
+    script << "\n" << space << "self.cont.append (" << jump_lookup[circle->number] << ")";
 
     // write circle's additional code (if any)
     if (circle->variables != "")
@@ -170,7 +171,7 @@ void dlg_compiler::write_player (Circle *circle)
 
     // write circle's text and "jump target"
     script << "\n" << space << "self.player.append (" << text_lookup[circle->number] << ")";
-    script << "\n" << space << "self.continue.append (" << jump_lookup[circle->number] << ")";
+    script << "\n" << space << "self.cont.append (" << jump_lookup[circle->number] << ")";
     script << "\n";
 }
 
@@ -223,7 +224,7 @@ void dlg_compiler::write_answer ()
         // add a delimiter to distinguish between player text's following
         // different NPC answers
         if (i + 1 != cur_nodes.end ())
-            script << "\n" << space << "self.continue.append (-1)";
+            script << "\n" << space << "self.cont.append (-1)";
     }
 
     script << "\n";

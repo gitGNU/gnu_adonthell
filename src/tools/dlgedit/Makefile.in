@@ -1,4 +1,3 @@
-# Generated automatically from Makefile.in by configure.
 # Makefile.in generated automatically by automake 1.4 from Makefile.am
 
 # Copyright (C) 1994, 1995-8, 1999 Free Software Foundation, Inc.
@@ -12,44 +11,45 @@
 # PARTICULAR PURPOSE.
 
 
-SHELL = /bin/sh
+SHELL = @SHELL@
 
-srcdir = .
-top_srcdir = ../../..
-prefix = /usr
-exec_prefix = ${prefix}
+srcdir = @srcdir@
+top_srcdir = @top_srcdir@
+VPATH = @srcdir@
+prefix = @prefix@
+exec_prefix = @exec_prefix@
 
-bindir = ${exec_prefix}/bin
-sbindir = ${exec_prefix}/sbin
-libexecdir = ${exec_prefix}/libexec
-datadir = ${prefix}/share
-sysconfdir = ${prefix}/etc
-sharedstatedir = ${prefix}/com
-localstatedir = ${prefix}/var
-libdir = ${exec_prefix}/lib
-infodir = ${prefix}/info
-mandir = ${prefix}/man
-includedir = ${prefix}/include
+bindir = @bindir@
+sbindir = @sbindir@
+libexecdir = @libexecdir@
+datadir = @datadir@
+sysconfdir = @sysconfdir@
+sharedstatedir = @sharedstatedir@
+localstatedir = @localstatedir@
+libdir = @libdir@
+infodir = @infodir@
+mandir = @mandir@
+includedir = @includedir@
 oldincludedir = /usr/include
 
 DESTDIR =
 
-pkgdatadir = $(datadir)/mapengine
-pkglibdir = $(libdir)/mapengine
-pkgincludedir = $(includedir)/mapengine
+pkgdatadir = $(datadir)/@PACKAGE@
+pkglibdir = $(libdir)/@PACKAGE@
+pkgincludedir = $(includedir)/@PACKAGE@
 
 top_builddir = ../../..
 
-ACLOCAL = aclocal
-AUTOCONF = autoconf
-AUTOMAKE = automake
-AUTOHEADER = autoheader
+ACLOCAL = @ACLOCAL@
+AUTOCONF = @AUTOCONF@
+AUTOMAKE = @AUTOMAKE@
+AUTOHEADER = @AUTOHEADER@
 
-INSTALL = /usr/bin/install -c
-INSTALL_PROGRAM = ${INSTALL} $(AM_INSTALL_PROGRAM_FLAGS)
-INSTALL_DATA = ${INSTALL} -m 644
-INSTALL_SCRIPT = ${INSTALL_PROGRAM}
-transform = s,x,x,
+INSTALL = @INSTALL@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@ $(AM_INSTALL_PROGRAM_FLAGS)
+INSTALL_DATA = @INSTALL_DATA@
+INSTALL_SCRIPT = @INSTALL_SCRIPT@
+transform = @program_transform_name@
 
 NORMAL_INSTALL = :
 PRE_INSTALL = :
@@ -57,15 +57,15 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-CXX = c++
-CXXCPP = c++ -E
-MAKEINFO = /home/kai/adonthell/missing makeinfo
-PACKAGE = mapengine
-PYPACKAGE = /usr/bin/python
-SDL_CFLAGS = -I/usr/local/include -I/usr/local/include/SDL -D_REENTRANT
-SDL_CONFIG = /usr/local/bin/sdl-config
-SDL_LIBS = -L/usr/local/lib -lSDL -lpthread
-VERSION = 0.1.1.7
+CXX = @CXX@
+CXXCPP = @CXXCPP@
+MAKEINFO = @MAKEINFO@
+PACKAGE = @PACKAGE@
+PYPACKAGE = @PYPACKAGE@
+SDL_CFLAGS = @SDL_CFLAGS@
+SDL_CONFIG = @SDL_CONFIG@
+SDL_LIBS = @SDL_LIBS@
+VERSION = @VERSION@
 
 bin_PROGRAMS = dlgedit
 
@@ -85,8 +85,8 @@ CONFIG_CLEAN_FILES =
 PROGRAMS =  $(bin_PROGRAMS)
 
 
-DEFS = -DHAVE_CONFIG_H -I. -I$(srcdir) -I../../..
-LIBS = -L/usr/local/lib -lSDL -lpthread -lSDL_image -lSDL_mixer -L/usr/lib/python1.5/config -lpython1.5
+DEFS = @DEFS@ -I. -I$(srcdir) -I../../..
+LIBS = @LIBS@
 dlgedit_OBJECTS =  callbacks.o circle.o compile.o cond.tab.o \
 crcle_callbacks.o crcle_interface.o create_code.o dlgnode.o error_dlg.o \
 err_callbacks.o err_interface.o events.o geometrie.o graph.o lex.cond.o \
@@ -98,7 +98,7 @@ dlgedit_LDADD = $(LDADD)
 dlgedit_DEPENDENCIES =  ../../character.o ../../interpreter.o \
 ../../yarg.o ../../storage.o ../../dialog_cmds.o ../../generic_cmds.o
 dlgedit_LDFLAGS = 
-CXXFLAGS = -O6 -g -Wall -I/usr/local/include -I/usr/local/include/SDL -D_REENTRANT -I/usr/include/python1.5  -DSDL_MIXER 
+CXXFLAGS = @CXXFLAGS@
 CXXCOMPILE = $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
 CXXLD = $(CXX)
 CXXLINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(LDFLAGS) -o $@
