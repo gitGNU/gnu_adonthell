@@ -1,3 +1,9 @@
+adonthell (0.3.2-1) unstable; urgency=low
+
+  * using 0.3.2 source code base.
+
+ -- Alexandre Courbot <alexandrecourbot@linuxgames.com>  Thu, 28 Feb 2002 10:34:59 +0100
+
 adonthell (0.3.1-2) unstable; urgency=low
 
   * fixed bad dependencies from libsdl1.2 to libsdl1.2debian
