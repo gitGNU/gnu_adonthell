@@ -67,6 +67,9 @@ s_int32 import_cmd::run (u_int32 &pc, void *data)
 // write command to script file
 void import_cmd::write (FILE *out)
 {
+    // write cmds type
+    fwrite (&type, sizeof (type), 1, out);
+    
     // write number of strings
     fwrite (&sz, sizeof (sz), 1, out);
 
@@ -83,54 +86,82 @@ void import_cmd::ascii (FILE *out)
 // continues dialogue according to players selection
 s_int32 clear_cmd::run (u_int32 &pc, void *data)
 {
+    u_int32 i;
     dialog *dlg = (dialog *) data;
 
+    // Memorize what parts of the dialogue where already used, to avoid loops
     dlg->used_text.push_back (pc);
 
-    // be careful, cause pc is already incremented by one here
+    // ksterker: be careful, cause pc is already incremented by one here
     pc += dlg->player_text[dlg->answer]->offset;
 
     // have to  delete  the contents of the 2 vector's first
+    for (i = 0; i < dlg->player_text.size (); i++)
+        delete dlg->player_text[i];
+
+    for (i = 0; i < dlg->npc_text.size (); i++)
+        delete dlg->npc_text[i];
+
+    // Empty the text-arrays 
     dlg->player_text.clear ();
     dlg->npc_text.clear ();
 
     return 1;
 }
 
-// adds a line to the players list of possible answers
-s_int32 ptext_cmd::run (u_int32 &pc, void *data)
+void clear_cmd::write (FILE *out)
 {
-/*
+    // write cmds type
+    fwrite (&type, sizeof (type), 1, out);
+}
+
+void clear_cmd::ascii (FILE *out)
+{
+}
+
+
+// Initializes the command from the buffer
+void text_cmd::init (s_int32 *buffer, u_int32 &i, void *data)
+{
+    text = buffer[i++];
+    pc_off = buffer[i++];
+    speaker = buffer[i++];
+}
+
+// adds a line to the text arrays
+s_int32 text_cmd::run (u_int32 &pc, void *data)
+{
     dialog *dlg = (dialog *) data;
-     
-    if (dlg->used_text.find (new_pc) != dlg->used_text.end ())
+    dlg_text *t;
+
+    // Look if that part of the conversation was already in use     
+    if (find (dlg->used_text.begin(), dlg->used_text.end(), pc + pc_off) != dlg->used_text.end ())
     {
-        dlg->player_text.add_element (dlg->strings.get_element (text));
-        dlg->cur_cmds.add_element (new_pc);
+        t = new dlg_text (text, pc_off);
+
+        // Assign this line of dialogue either to player or NPC
+        if (speaker == 0) dlg->player_text.push_back (t);
+        else dlg->npc_text.push_back (t);
     }
-*/
+
     return 1;
 }
 
-// adds an npc´s text where no player text follows
-s_int32 snpctext_cmd::run (u_int32 &pc, void *data)
+void text_cmd::write (FILE *out)
 {
-/*
-    dialog *dlg = (dialog *) data;
+    // write cmds type
+    fwrite (&type, sizeof (type), 1, out);
     
-    dlg->npc_text = dlg->strings.get_element (text);
-    dlg->cur_cmds.add_element (new_pc);
-*/
-    return 1;
+    // write text id
+    fwrite (&text, sizeof (text), 1, out);
+
+    // write offset
+    fwrite (&pc_off, sizeof (pc_off), 1, out);
+
+    // write speaker
+    fwrite (&speaker, sizeof (speaker), 1, out);
 }
 
-// sets the npc´s text
-s_int32 npctext_cmd::run (u_int32 &pc, void *data)
+void text_cmd::ascii (FILE *out)
 {
-/*
-    dialog *dlg = (dialog *) data;
-    
-    dlg->npc_text = dlg->strings.get_element (text);
-*/
-    return 1;
 }

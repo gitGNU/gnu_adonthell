@@ -129,35 +129,58 @@ void binary_cmd::init (s_int32 *buffer, u_int32 &i, void *data)
 // write the commands code to file
 void binary_cmd::write (FILE *out)
 {
+    u_int32 l;
+
     fwrite (&type, sizeof(type), 1, out);
     fwrite (&ptype, sizeof(ptype), 1, out);
 
     // Target
-    fwrite (target, strlen(target)+1, 1, out);
+    l = strlen (target) + 1;
+    fwrite (&l, sizeof (l), 1, out);
+    fwrite (target, l, 1, out);
+    
     if (ptype & (TARGET_LOCAL | TARGET_GLOBAL)) 
-        fwrite (target_location, strlen(target_location)+1, 1, out);
-
+    {
+        l = strlen (target_location) + 1;
+        fwrite (&l, sizeof (l), 1, out);
+        fwrite (target_location, l, 1, out);
+    }
+    
     // Param 1
     if (ptype & PARAM1_NUMBER) fwrite (&i_param1, sizeof(i_param1), 1, out);
     else
     {
-        fwrite (c_param1, strlen(c_param1)+1, 1, out);
-        if (ptype & (PARAM1_LOCAL | PARAM1_GLOBAL)) 
-            fwrite (param1_location, strlen(param1_location)+1, 1, out);    
+        l = strlen (c_param1) + 1;
+        fwrite (&l, sizeof (l), 1, out);
+        fwrite (c_param1, l, 1, out);
+
+        if (ptype & (PARAM1_LOCAL | PARAM1_GLOBAL))
+        {
+            l = strlen (param1_location) + 1;
+            fwrite (&l, sizeof (l), 1, out);
+            fwrite (param1_location, l, 1, out);    
+        }
     }
 
     // Param 2
     if (ptype & PARAM2_NUMBER) fwrite (&i_param2, sizeof(i_param2), 1, out);
     else
     {
-        fwrite (c_param2, strlen(c_param2)+1, 1, out);
-        if (ptype & (PARAM2_LOCAL | PARAM2_GLOBAL)) 
-            fwrite (param2_location, strlen(param2_location)+1, 1, out);    
+        l = strlen (c_param2) + 1;
+        fwrite (&l, sizeof (l), 1, out);
+        fwrite (c_param2, l, 1, out);
+
+        if (ptype & (PARAM2_LOCAL | PARAM2_GLOBAL))
+        {
+            l = strlen (param2_location) + 1;
+            fwrite (&l, sizeof (l), 1, out);
+            fwrite (param2_location, l, 1, out);    
+        } 
     }
 } 
 
 // write command in human readable form
-void ascii (FILE *out)
+void binary_cmd::ascii (FILE *out)
 {
     
 }
@@ -167,6 +190,14 @@ void binary_cmd::read_game_state ()
 {
     if (c_param1 != NULL) i_param1 = objects::get (param1_location)->get (c_param1);
     if (c_param2 != NULL) i_param2 = objects::get (param2_location)->get (c_param2);
+}
+
+// target = param1
+s_int32 let_cmd::run (u_int32 &PC, void *data)
+{
+    read_game_state ();
+    objects::get (target_location)->set (target, i_param1);
+    return 1;
 }
 
 // target = param1 + param2 
@@ -263,4 +294,59 @@ s_int32 or_cmd::run (u_int32 &PC, void *data)
     read_game_state ();
     objects::get (target_location)->set (target, i_param1 || i_param2);
     return 1;
+}
+
+
+// Read the commands arguments from the buffer
+void jmp_cmd::init (s_int32 *buffer, u_int32 &i, void *data)
+{
+    offset = buffer[i++];
+}
+
+// Jump to another line in the script
+s_int32 jmp_cmd::run (u_int32 &PC, void *data)
+{
+    PC += offset;
+
+    return 1;
+}
+
+void jmp_cmd::write (FILE* out)
+{
+    fwrite (&type, sizeof(type), 1, out);
+    fwrite (&offset, sizeof(offset), 1, out);
+}
+
+void jmp_cmd::ascii (FILE* out)
+{
+}
+
+
+// Read the commands arguments from the buffer
+void branch_cmd::init (s_int32 *buffer, u_int32 &i, void *data)
+{
+    offset = buffer[i++];
+    condition = strread (buffer, i);
+}
+
+// Branch to another line in the script
+s_int32 branch_cmd::run (u_int32 &PC, void *data)
+{
+    if (objects::get (interpreter)->get (condition)) PC += offset;
+
+    return 1;
+}
+
+void branch_cmd::write (FILE* out)
+{
+    int l = strlen (condition) + 1;
+    
+    fwrite (&type, sizeof(type), 1, out);
+    fwrite (&offset, sizeof(offset), 1, out);
+    fwrite (&l, sizeof (l), 1, out);
+    fwrite (condition, sizeof (condition[0]), l, out);
+}
+
+void branch_cmd::ascii (FILE* out)
+{
 }

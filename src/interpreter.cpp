@@ -15,11 +15,12 @@
 #include <iostream.h>
 #include <stdio.h>
 #include "types.h"
-#include "array_tmpl.h"
 #include "interpreter.h"
 
-// template class Array<CmdNew*>;
-Array<CmdNew> interpreter::callbacks;
+
+// Array with pointers to functions that return a new'd command of a certain type
+map<int, CmdNew> interpreter::callbacks;
+
 
 // Read a string from the int-buffer: just a convenience function
 char* command::strread (s_int32 *buffer, u_int32 &i)
@@ -115,7 +116,7 @@ u_int8 interpreter::load (const char *file)
     {
         // Call the registered function to create a instance
         // of the Command with type = buffer[j]
-        cmd = (*callbacks.get_element (buffer[j]))();
+        cmd = (*callbacks[buffer[j]])();
 
         // Tell the command to which interpreter it belongs
         // This is used to access the interpreters local storage from 

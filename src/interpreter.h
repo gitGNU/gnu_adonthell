@@ -15,8 +15,9 @@
 #ifndef __INTERPRETER_H__
 #define __INTERPRETER_H__
 
+#include <map>
+
 #include "types.h"
-#include "array_tmpl.h"
 #include "storage.h"
 
 
@@ -30,6 +31,12 @@ public:
     // contains the commands code
     virtual s_int32 run (u_int32&, void*) = 0;
 
+    // write the command to a script file
+    virtual void write (FILE *f) { }
+
+    // write the command to a human readable file
+    virtual void ascii (FILE *f) { }
+    
     // type of your command
     u_int32 type;
 
@@ -66,9 +73,8 @@ public:
     // Object to manipulate  
     void *user_data;
 
-    // Array with pointers to functions that return a newly allocated
-    // command
-    static Array<CmdNew> callbacks;
+    // Array with pointers to functions that return a new'd command
+    static map<int, CmdNew> callbacks;
    
 private:
     // Program Counter
@@ -86,11 +92,6 @@ private:
 
 #define NEW_CMD(cmd) command* new_ ## cmd () { return (command*) new cmd; }
 #define REGISTER_CMD(type,cmd)\
-    if ((u_int32)type != interpreter::callbacks.length())\
-    {\
-        cout << "Error registering command " << (u_int32) type << endl;\
-        return;\
-    }\
-    interpreter::callbacks.add_element ((CmdNew)&new_ ## cmd);
+    interpreter::callbacks[type] = (CmdNew)&new_ ## cmd;
 
 #endif // __INTERPRETER_H__

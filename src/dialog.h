@@ -17,6 +17,17 @@
 
 #include <vector>
 
+
+class dlg_text                          // Contains a line of text & its attributes
+{
+public:
+    dlg_text (u_int32 i, s_int32 o) : id (i), offset (o) { }
+    
+    u_int32 id;                         // Id of the string
+    s_int32 offset;                     // offset to next command in dialogue
+};
+
+
 class dialog
 {
 public:
@@ -24,17 +35,11 @@ public:
     static s_int32 *offset;
     static s_int32 *length;
 
-    struct text                         // Contains a line of text & its attributes
-    {
-        u_int32 id;                     // Id of the string
-        s_int32 offset;                 // offset to next command in dialogue
-    };
-    
     u_int32 answer;                     // The text chosen by the player
     char *text_file;                    // The file with the dialogues strings
 
-    vector<text*> npc_text;             // NPC´s part
-    vector<text*> player_text;          // Player´s part
+    vector<dlg_text*> npc_text;         // NPC´s part
+    vector<dlg_text*> player_text;      // Player´s part
     vector<u_int32> used_text;          // Text already spoken -> don´t display again
 
     vector<char*> strings;              // Text data

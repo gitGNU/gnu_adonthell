@@ -21,10 +21,8 @@ enum
 
     // Dialogue (those five will change in future versions!!!)
     IMPORT = 1,     // IMPORT <id>                  Load Text
-    SNPCTEXT = 2,   // SNPCTEXT <id> <offset>       NPC Text without player text
-    NPCTEXT = 3,    // NPCTEXT <id>                 NPC Text
-    PTEXT = 4,      // PTEXT <id> <offset>          Player Text
-    CLEAR = 5,      // CLEAR                        Reset Text buffers
+    TEXT = 2,       // TEXT <id> <offset> <speaker> Line of text
+    CLEAR = 3,      // CLEAR                        Reset Text buffers
 
     // Arithmetic
     LET = 6,        // LET <id1> <id2>              id2 = id1

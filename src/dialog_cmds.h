@@ -32,55 +32,34 @@ private:
     u_int32 sz;
 };
 
+
+// Continues the dialogue after the player made his choice
 class clear_cmd : public command
 {
 public:
-    void init (s_int32 *buffer, u_int32 &i, void *data) 
-    { 
-        return;
-    }
+    void init (s_int32 *buffer, u_int32 &i, void *data) { }
     s_int32 run (u_int32 &PC, void *data);
+
+    void write (FILE*);
+    void ascii (FILE*);   
 };
 
-class npctext_cmd : public command
+
+// adds a line to the text arrays
+class text_cmd : public command
 {
 public:
-    void init (s_int32 *buffer, u_int32 &i, void *data)
-    {
-        text = buffer[i++];
-    }
-    s_int32 run (u_int32 &PC, void *data);
+    text_cmd () { }
+    text_cmd (u_int32 t, u_int32 p, u_int32 s) : text(t), pc_off(p), speaker(s) { }
+    
+    void init (s_int32*, u_int32&, void*);
+    s_int32 run (u_int32&, void*);
+
+    void write (FILE*);
+    void ascii (FILE*);   
 
 private:
-    u_int32 text;
-};
-
-class ptext_cmd : public command
-{
-public:
-    void init (s_int32 *buffer, u_int32 &i, void *data)
-    {
-        text = buffer[i++];
-        new_pc = buffer[i++];
-    }
-    s_int32 run (u_int32 &PC, void *data);
-
-private:
-    u_int32 text;
-    u_int32 new_pc;
-};
-
-class snpctext_cmd : public command
-{
-public:
-    void init (s_int32 *buffer, u_int32 &i, void *data)
-    {
-        text = buffer[i++];
-        new_pc = buffer[i++];
-    }
-    s_int32 run (u_int32 &PC, void *data);
-
-private:
-    u_int32 text;
-    u_int32 new_pc;
+    u_int32 text;               // Id of the dialogue text
+    u_int32 pc_off;             // Program Counter offset - where to continue the dialogue
+    u_int32 speaker;            // Who is speaking?
 };

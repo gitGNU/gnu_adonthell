@@ -37,8 +37,50 @@ private:
     s_int32 retval;
 };
 
+
+// Jump to another line in the script
+class jmp_cmd : public command
+{
+public:
+    jmp_cmd () { }
+    jmp_cmd (s_int32 o) : offset (o) { }
+    
+    void init (s_int32*, u_int32&, void*);
+    s_int32 run (u_int32&, void*);
+
+    void write (FILE*);             // Write the command as script code to file
+    void ascii (FILE*);             // Write cmd as human readable test to file
+
+private:
+    s_int32 offset;
+};
+
+
+// Branch to another line in the script depending on the value of condition
+class branch_cmd : public command
+{
+public:
+    branch_cmd () { condition = NULL; }
+    branch_cmd (s_int32 o, char* c) : offset (o)
+    {
+        condition = strdup(c);
+    }
+    virtual ~branch_cmd () { if (condition) delete[] condition; }
+
+    void init (s_int32*, u_int32&, void*);
+    s_int32 run (u_int32&, void*);
+
+    void write (FILE*);             // Write the command as script code to file
+    void ascii (FILE*);             // Write cmd as human readable test to file
+
+private:
+    s_int32 offset;
+    char* condition;
+};
+
+
 // base class for commands having two parameters, namely
-// add, mul, sub, div, eq, neq, lt, leq, gt, geq, and, or
+// let, add, mul, sub, div, eq, neq, lt, leq, gt, geq, and, or
 class binary_cmd : public command
 {
 public:
@@ -79,88 +121,95 @@ protected:
     };
 };
 
+// target = param1 (here param2 is unused)
+class let_cmd : public binary_cmd
+{
+public:
+    s_int32 run (u_int32&, void*);
+};
+
 // target = param1 + param2 
 class add_cmd : public binary_cmd
 {
 public:
-    inline s_int32 run (u_int32&, void*);
+    s_int32 run (u_int32&, void*);
 };
 
 // target = param1 - param2 
 class sub_cmd : public binary_cmd
 {
 public:
-    inline s_int32 run (u_int32&, void*);
+    s_int32 run (u_int32&, void*);
 };
 
 // target = param1 * param2 
 class mul_cmd : public binary_cmd
 {
 public:
-    inline s_int32 run (u_int32&, void*);
+    s_int32 run (u_int32&, void*);
 };
 
 // target = int (param1 / param2) 
 class div_cmd : public binary_cmd
 {
 public:
-    inline s_int32 run (u_int32&, void*);
+    s_int32 run (u_int32&, void*);
 };
 
 // target = param1 == param2 
 class eq_cmd : public binary_cmd
 {
 public:
-    inline s_int32 run (u_int32&, void*);
+    s_int32 run (u_int32&, void*);
 };
 
 // target = param1 != param2 
 class neq_cmd : public binary_cmd
 {
 public:
-    inline s_int32 run (u_int32&, void*);
+    s_int32 run (u_int32&, void*);
 };
 
 // target = param1 < param2 
 class lt_cmd : public binary_cmd
 {
 public:
-    inline s_int32 run (u_int32&, void*);
+    s_int32 run (u_int32&, void*);
 };
 
 // target = param1 <= param2 
 class leq_cmd : public binary_cmd
 {
 public:
-    inline s_int32 run (u_int32&, void*);
+    s_int32 run (u_int32&, void*);
 };
 
 // target = param1 > param2 
 class gt_cmd : public binary_cmd
 {
 public:
-    inline s_int32 run (u_int32&, void*);
+    s_int32 run (u_int32&, void*);
 };
 
 // target = param1 >= param2 
 class geq_cmd : public binary_cmd
 {
 public:
-    inline s_int32 run (u_int32&, void*);
+    s_int32 run (u_int32&, void*);
 };
 
 // target = param1 && param2 
 class and_cmd : public binary_cmd
 {
 public:
-    inline s_int32 run (u_int32&, void*);
+    s_int32 run (u_int32&, void*);
 };
 
 // target = param1 || param2 
 class or_cmd : public binary_cmd
 {
 public:
-    inline s_int32 run (u_int32&, void*);
+    s_int32 run (u_int32&, void*);
 };
 
 #endif // __GENERIC_CMDS_H__
