@@ -46,18 +46,16 @@ main (int argc, char *argv[])
     if (!myconf.read_adonthellrc ())
         return 1;
 
-    myconf.gamedir = "."; 
-    
-    if (getopt (argc, argv, "g:") != -1)
-    {
-        myconf.gamedir = optarg;
-    }
-    
+    // we need some data files from a game, so make sure we get them
+    myconf.parse_arguments (argc, argv);
+
+    // Init GTK+
     gtk_init (&argc, &argv);
 
     // Init Python interpreter
 	Py_Initialize ();
 
+	// Init the python modules
 	initcharacterc ();
 	initquestc ();
 
