@@ -17,12 +17,12 @@
 
 map_placeable_area_gfx::map_placeable_area_gfx() : drawable()
 {
-    anim = NULL; 
+    anim = new animation(); 
 }
 
 map_placeable_area_gfx::~map_placeable_area_gfx()
 {
-    if (anim) delete anim;
+    delete anim;
 }
 
 void map_placeable_area_gfx::draw(s_int16 x, s_int16 y, const drawing_area * da_opt = NULL,

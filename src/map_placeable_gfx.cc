@@ -14,3 +14,7 @@
 
 
 #include "map_placeable_gfx.h"
+
+map_placeable_gfx::map_placeable_gfx(map_placeable & target) : map_placeable_model_gfx(target), Target(target)
+{
+}    

@@ -78,6 +78,12 @@ public:
     }
 
     void update_state ();
+
+    void put(ogzstream & file) const;
+    void get(igzstream & file);
+
+    s_int8 save(string fname) const;
+    s_int8 load(string fname);
 };
 
 #endif

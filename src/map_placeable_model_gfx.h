@@ -23,66 +23,23 @@
 class map_placeable_model_gfx : public drawable
 {
 protected:
-    mutable map <const string, map_placeable_area_gfx> Gfxs;
-    map <const string, map_placeable_area_gfx>::iterator Current_gfx;
+    mutable map <const string, map_placeable_area_gfx * const> Gfxs;
+    map <const string, map_placeable_area_gfx * const>::iterator Current_gfx;
 
     map_placeable_model & Target;
 
 public:
-    map_placeable_model_gfx (map_placeable_model & target) : Target(target)
-    {
-        Current_gfx = Gfxs.begin (); 
-    }
+    map_placeable_model_gfx (map_placeable_model & target);
+
+    ~map_placeable_model_gfx();
     
-    void set_gfx (const string & name) 
-    {
-        if (Current_gfx != Gfxs.end() && Current_gfx->first == name)
-            return;
+    void set_gfx (const string & name);
 
-        if (Current_gfx != Gfxs.end())
-        {
-            Current_gfx->second.stop();
-            Current_gfx->second.rewind();
-        }
+    map_placeable_area_gfx * get_gfx(const string & name);
 
-        map <const string, map_placeable_area_gfx>::iterator Previous_gfx;
-        Previous_gfx = Current_gfx;
-        Current_gfx = Gfxs.find (name); 
-
-        if (Current_gfx != Gfxs.end())
-            Current_gfx->second.play();
-        else Current_gfx = Previous_gfx;
-    }
-
-    map_placeable_area_gfx * get_gfx(const string & name)
-    {
-        map <const string, map_placeable_area_gfx>::iterator Gfx;
-        Gfx = Gfxs.find (name); 
-
-        if (Gfx != Gfxs.end())
-            return &(Gfx->second);
-        else return NULL;
-    }
-
-    map_placeable_area_gfx * add_gfx(const string & name)
-    {
-        return &((Gfxs.insert(pair<const string, const map_placeable_area_gfx> 
-                              (name, map_placeable_area_gfx()))).first->second);
-    }
+    map_placeable_area_gfx * add_gfx(const string & name);
     
-    bool update () 
-    {
-        if (Target.State_changed)
-        {
-            Target.State_changed = false;
-            set_gfx (Target.current_state_name()); 
-        }
-        
-        if (Current_gfx != Gfxs.end ())
-            Current_gfx->second.update ();
-        
-        return true;
-    }
+    bool update ();
     
     /** 
      * Draws the map_placeable representation.
@@ -96,54 +53,14 @@ public:
      * @param target Optionnal surface to draw to (defaults to the screen)
      */
     void draw (s_int16 x, s_int16 y, const drawing_area * da_opt = NULL,
-               surface * target = NULL) const
-    {
-        if (Current_gfx != Gfxs.end ())
-        {
-            if (Target.Current_state != Target.States.end())
-            {
-                const map_placeable_area & t = Target.Current_state->second;
-                Current_gfx->second.draw (x - (t.base.x()) * 
-                                          mapsquare_size - t.base.ox(), 
-                                          y - (t.base.y()) * 
-                                          mapsquare_size - t.base.oy(), 
-                                          da_opt, target); 
-            }
-            else
-                Current_gfx->second.draw (x, y, da_opt, target); 
-        }
-    }
+               surface * target = NULL) const;
     
-    void put(ogzstream & file) const
-    {
-        u_int32 s = Gfxs.size();
-        s >> file;
-        
-        for (map <const string, map_placeable_area_gfx>::iterator i = Gfxs.begin();
-             i != Gfxs.end(); i++)
-        {
-            i->first >> file;
-            i->second.put(file);
-        }
+    void put(ogzstream & file) const;
 
-    }
+    void get(igzstream & file);
 
-    void get(igzstream & file)
-    {
-        u_int32 size;
-        
-        size << file;
-        
-        for (u_int32 i = 0; i < size; i++)
-        {
-            string s;
-            s << file;
-            
-            map_placeable_area_gfx * mpa = add_gfx(s);
-            mpa->get(file);
-            
-        }
-    }
+private:
+    map_placeable_model_gfx(map_placeable_model_gfx &);
 };
     
 #endif

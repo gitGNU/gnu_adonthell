@@ -67,11 +67,7 @@ public:
         return area.size ();
     }
     
-    u_int16 area_height() const
-    {
-        if (area.size ()) return area[0].size ();
-        else return 0; 
-    }
+    u_int16 area_height() const;
 
     void set_area_size(u_int16 nx, u_int16 ny);
 
@@ -85,41 +81,9 @@ public:
         return true; 
     }
 
-    void put(ogzstream & file)
-    {
-        u_int32 i, j;
-        area_height() >> file;
-        area_length() >> file;
-        for (j = 0; j < area_height(); j++)
-            for (i = 0; i < area_length(); i++)
-                area[i][j].put(file);
+    void put(ogzstream & file);
 
-        base.x() >> file;
-        base.y() >> file;
-        base.ox() >> file;
-        base.oy() >> file;
-    }
-
-    void get(igzstream & file)
-    {
-        u_int16 l, h;
-        u_int32 i, j;
-        h << file;
-        l << file;
-       
-        set_area_size(l, h);
-        for (j = 0; j < area_height(); j++)
-            for (i = 0; i < area_length(); i++)
-                area[i][j].get(file);
-
-        u_int16 x, y, ox, oy;
-        x << file;
-        y << file;
-        ox << file;
-        oy << file;
-        base.set_position(x, y);
-        base.set_offset(ox, oy);
-    }
+    void get(igzstream & file);
 }; 
 
 #endif

@@ -111,3 +111,37 @@ void map_character::update_state()
     set_state(state);
 
 }
+
+void map_character::put(ogzstream & file) const
+{
+    map_placeable_model::put(file);
+}
+
+void map_character::get(igzstream & file)
+{
+    map_placeable_model::get(file);
+}
+
+s_int8 map_character::save(string fname) const
+{
+    ogzstream file (fname);
+    s_int8 ret = 0; 
+    
+    if (!file.is_open ())
+        return 1;
+    put (file);
+    file.close (); 
+    return ret;
+}
+
+s_int8 map_character::load(string fname)
+{
+    igzstream file (fname);
+    s_int8 ret = 0; 
+    
+    if (!file.is_open ())
+        return 1;
+    get (file);
+    file.close (); 
+    return ret;
+}

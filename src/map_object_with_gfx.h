@@ -22,6 +22,12 @@ class map_object_with_gfx : public map_object, public map_placeable_gfx
 {
 public:
     map_object_with_gfx (landmap & mymap); 
+
+    void put(ogzstream & file) const;
+    void get(igzstream & file);
+
+    s_int8 save(string fname) const;
+    s_int8 load(string fname);
 }; 
 
 #endif

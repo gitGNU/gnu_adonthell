@@ -29,6 +29,11 @@ public:
 
     ~map_placeable_area_gfx();
 
+    animation * get_animation()
+    {
+        return anim;
+    }
+
     void play()
     {
         anim->play();
@@ -46,18 +51,13 @@ public:
 
     bool update() 
     {
-        if (anim) anim->update ();
+        anim->update ();
         return true; 
     }
 
     void draw(s_int16 x, s_int16 y, const drawing_area * da_opt = NULL,
               surface * target = NULL) const;
     
-    void set_animation(animation * an) 
-    {
-        anim = an; 
-    }
-
     void set_area_size(u_int16 nx, u_int16 ny);
 
     void put(ogzstream & file) const
@@ -67,8 +67,6 @@ public:
 
     void get(igzstream & file)
     {
-        if (anim) delete anim;
-        anim = new animation;
         anim->get(file);
     }
 }; 

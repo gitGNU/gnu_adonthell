@@ -143,3 +143,39 @@ map_character_with_gfx::map_character_with_gfx (landmap & mymap) : map_character
     load("adontest/chrono.mdl");
     set_state ("s_stand"); 
 }
+
+void map_character_with_gfx::put(ogzstream & file) const
+{
+    map_character::put(file);
+    map_placeable_model_gfx::put(file);
+}
+
+void map_character_with_gfx::get(igzstream & file)
+{
+    map_character::get(file);
+    map_placeable_model_gfx::get(file);
+}
+
+s_int8 map_character_with_gfx::save(string fname) const
+{
+    ogzstream file (fname);
+    s_int8 ret = 0; 
+    
+    if (!file.is_open ())
+        return 1;
+    put (file);
+    file.close (); 
+    return ret;
+}
+
+s_int8 map_character_with_gfx::load(string fname)
+{
+    igzstream file (fname);
+    s_int8 ret = 0; 
+    
+    if (!file.is_open ())
+        return 1;
+    get (file);
+    file.close (); 
+    return ret;
+}
