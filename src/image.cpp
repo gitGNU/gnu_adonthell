@@ -519,16 +519,43 @@ s_int8 image::save_pnm(char * fname)
 
 u_int32 image::get_pix(u_int16 x, u_int16 y)
 {
-  u_int32 offset=((y*length)+x)*bytes_per_pixel;
-  u_int32 retvalue=0;
-  memcpy(&retvalue,(char*)data->pixels+offset,bytes_per_pixel);
-  return(retvalue);
+  const u_int32 offset=((y*length)+x);
+  static u_int32 retvalue;
+  /*  memcpy(&retvalue,(char*)data->pixels+offset,bytes_per_pixel);
+      return(retvalue);*/
+
+  switch (bytes_per_pixel)
+    {
+    case 1: return *((u_int8*)data->pixels+offset);
+      break;
+    case 2: return *((u_int16*)data->pixels+offset);
+      break;
+    case 3: return *((u_int32*)data->pixels+offset);
+      break;
+    default: memcpy(&retvalue,(char*)data->pixels+(offset*bytes_per_pixel),
+		    bytes_per_pixel);
+      return retvalue;
+      break;
+    }
 }
 
 void image::put_pix(u_int16 x, u_int16 y, u_int32 col)
 {
-  u_int32 offset=((y*length)+x)*bytes_per_pixel;
-  memcpy((char*)data->pixels+offset,&col,bytes_per_pixel);
+  const u_int32 offset=((y*length)+x);
+  //  memcpy((char*)data->pixels+offset,&col,bytes_per_pixel);
+
+  switch (bytes_per_pixel)
+    {
+    case 1: *((u_int8*)data->pixels+offset)=(u_int8)col;
+      break;
+    case 2: *((u_int16*)data->pixels+offset)=(u_int16)col;
+      break;
+    case 4: *((u_int32*)data->pixels+offset)=(u_int32)col;
+      break;
+    default: memcpy((char*)data->pixels+(offset*bytes_per_pixel),&col,
+		    bytes_per_pixel);
+      break;
+    }
 }
 
 void image::zoom(image * src)
