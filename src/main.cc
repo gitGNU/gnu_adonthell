@@ -56,10 +56,12 @@ bool init_python()
 {
     // Initialise the import path.
     // Shared modules path 
-    python::insert_path (DATA_DIR"/modules"); 
+    string t;
+    t = game::global_data_dir() + "/modules";
+    python::insert_path ((char *) t.c_str()); 
     
     // Game specific path
-    string t = game::game_data_dir () + "/scripts/modules"; 
+    t = game::game_data_dir () + "/scripts/modules"; 
     python::insert_path ((char *) t.c_str ());
     t = game::game_data_dir () + "/scripts"; 
     python::insert_path ((char *) t.c_str ());

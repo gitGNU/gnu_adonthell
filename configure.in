@@ -65,7 +65,7 @@ dnl **********************
 if test x$gamedatadir = xnone; then
   case "$target" in
     *-*-cygwin* | *-*-mingw32*)
-      gamedatadir="C:\share\adonthell"
+      gamedatadir="C:/share/adonthell"
     ;;
     *-*-beos*)
       gamedatadir="/boot/home/share/adonthell"

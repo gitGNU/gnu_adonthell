@@ -145,7 +145,7 @@ s_int8 image::load_pnm (string fname)
     SDL_RWops *file;
     s_int8 ret = 0; 
 
-    file = SDL_RWFromFile (fname.c_str (), "r"); 
+    file = SDL_RWFromFile (fname.c_str (), "rb"); 
     if (!file)
         return 1;
     ret = get_pnm (file);

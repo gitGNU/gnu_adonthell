@@ -44,7 +44,7 @@ dialog_screen::dialog_screen (character_base *mynpc, char * dlg_file, u_int8 siz
 void dialog_screen::init(character_base *mynpc, char * dlg_file, u_int8 size)
 {
     string path = dlg_file;
-    string file = strrchr (dlg_file, '/') ? strrchr (dlg_file, '/') + 1 : dlg_file;
+    string file = strrchr (dlg_file, '.') ? strrchr (dlg_file, '.') + 1 : dlg_file;
 
     audio::play_wave (-1, 0);
     is_running = true;

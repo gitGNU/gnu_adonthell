@@ -51,7 +51,11 @@ config::config ()
     language = "";                  // Let the user's environment decide
 
     // set the path to the adonthellrc file:
+#ifndef WIN32
     adonthellrc = string (getenv ("HOME")) + "/.adonthell";
+#else
+    adonthellrc = string (".");
+#endif
 }
  
 /**
@@ -250,7 +254,13 @@ char *config::get_adonthellrc ()
 // write a default configuration file
 void config::write_adonthellrc ()
 {
-    string fname = adonthellrc + "/adonthellrc";
+    string fname;
+
+#ifndef WIN32
+    fname = adonthellrc + "/adonthellrc";
+#else
+    fname = adonthellrc + "/adonthell.ini";
+#endif
     
     ofstream rc (fname.c_str ());
 
@@ -275,7 +285,15 @@ void config::write_adonthellrc ()
 bool config::read_adonthellrc ()
 {
     int n, i = 1;
-    string s, fname = adonthellrc + "/adonthellrc", version = "0";
+    string s, fname, version;
+
+#ifndef WIN32
+    fname = adonthellrc + "/adonthellrc";
+#else
+    fname = adonthellrc + "/adonthell.ini";
+#endif
+
+    version = "0";
 
     // try to create that directory in case it dosn't exist
 #ifdef WIN32

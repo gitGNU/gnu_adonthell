@@ -37,7 +37,7 @@ adonthell::adonthell ()
     control_active_ = false;
     
     // load the script taking care of additional game commands
-    control.create_instance ("schedules/control", "control");
+    control.create_instance ("schedules.control", "control");
 }
 
 // start and execute the game's main loop 

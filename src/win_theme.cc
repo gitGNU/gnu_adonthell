@@ -28,7 +28,7 @@ win_theme::win_theme()
 win_theme::win_theme(char * theme)
 {
     string strtheme = string (theme) + "/";
-    
+
   normal=new win_border((char *) strtheme.c_str(), WIN_BORDER_NORMAL_SIZE);
   
   mini=new win_border((char *) strtheme.c_str(), WIN_BORDER_MINI_SIZE);

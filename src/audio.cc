@@ -98,8 +98,6 @@ void audio::init (config *myconfig) {
   } else {
     audio_initialized = true;
     Mix_QuerySpec(&audio_rate, &audio_format, &audio_channels);
-    fprintf(stderr, "Audio started in %d Hz %d bit %s format.\n", audio_rate,
-     (audio_format&0xFF), (audio_channels > 1) ? "stereo" : "mono");
     set_background_volume (background_volume);
   }
 }
@@ -310,7 +308,7 @@ void audio::set_schedule (string file, PyObject * args)
     {
         schedule_args = args; 
         Py_XINCREF (schedule_args); 
-        schedule.create_instance ("schedules/audio/" + file, file, args);
+        schedule.create_instance ("schedules.audio." + file, file, args);
     }
 }
 

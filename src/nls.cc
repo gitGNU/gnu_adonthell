@@ -30,6 +30,7 @@
 // Initialize NLS
 void nls::init (config &myconfig)
 {
+#if ENABLE_NLS
     // if no language specified in the config file, determine
     // the locale from the environment variables 
     if (myconfig.language == "")
@@ -42,26 +43,29 @@ void nls::init (config &myconfig)
     std::string location = myconfig.gamedir + "/locale";
     bindtextdomain (myconfig.game_name.c_str (), location.c_str ());
     textdomain (myconfig.game_name.c_str ());
+#endif
 }
 
 // Set the language to use
 void nls::set_language (const string &language)
-{
+{    
+#if ENABLE_NLS
     setenv ("LANGUAGE", language.c_str (), 1);
-    
-#ifdef ENABLE_NLS
     {
         // tell gettext that the language has changed
         extern int _nl_msg_cat_cntr;
         ++_nl_msg_cat_cntr;
     }
-#endif
-    
     setlocale (LC_MESSAGES, language.c_str ());
+#endif
 }
 
 // Translate some text
 const char* nls::translate (const string &text)
 {
+#if ENABLE_NLS
     return gettext (text.c_str ());
+#else
+    return text.c_str();
+#endif
 }

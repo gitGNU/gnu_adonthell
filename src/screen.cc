@@ -61,9 +61,6 @@ void screen::set_video_mode (u_int16 nl, u_int16 nh, u_int8 depth = 0)
             exit (1);
             break;
         default:
-            if (emulated) cout << "Emulating " << (u_int16) depth << "bpp depth in "
-                               << (u_int16) bpp << "bpp mode: " << nl << "x" << nh << ".\n";
-            else cout << "Using " << (u_int16) bpp << "bpp depth: " << nl << "x" << nh << ".\n"; 
             bytes_per_pixel_ = bpp / 8; 
             break;
     }
