@@ -19,8 +19,12 @@
 #include <dirent.h>
 #include <fstream.h>
 #include <unistd.h>
-#include <getopt.h>
 
+#ifdef HAVE_GETOPT_H
+#include <getopt.h>
+#else
+#include <_getopt.h>
+#endif
 
 #include "prefs.h"
 #include "python_class.h"

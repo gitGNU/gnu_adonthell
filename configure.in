@@ -277,6 +277,7 @@ dnl  Check for required headers
 dnl  **************************
 
 AC_CHECK_HEADERS([SDL/SDL.h zlib.h])
+AC_CHECK_HEADERS(getopt.h _getopt.h)
 
 if test x$PTHREADS = xyes; then
    AC_CHECK_HEADERS([pthread.h])
