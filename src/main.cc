@@ -51,7 +51,7 @@ extern "C"
      * SWIG init prototype.
      * 
      */
-    void initadonthellc (void);
+    void init_adonthell (void);
 }
 
 bool init_python()
@@ -70,7 +70,7 @@ bool init_python()
     
     // Initialise SWIG module. This should go if we ever switch 
     // to dynamic linking
-    initadonthellc ();
+    init_adonthell ();
     
     python::module = python::import_module ("adonthell"); 
     if (!python::module) return false;     

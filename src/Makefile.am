@@ -57,7 +57,7 @@ py_adonthell_wrap.cc : py_adonthell.i $(headers)
 	   ${P_SWIG} -python -shadow ${SDL_CFLAGS} -I$(srcdir) -I$(srcdir)/.. -c++ -make_default -o $(srcdir)/$*.cc $(srcdir)/py_adonthell.i; \
            mv $(srcdir)/adonthell.py modules/adonthell.py; \
 	else \
-	   echo "You need swig >= 1.3.10 in order to re-build this file."; \
+	   echo "You need swig >= ${SWIG_MINVER} in order to re-build this file."; \
 	   exit 1; \
 	fi;
 
