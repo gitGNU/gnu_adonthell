@@ -22,6 +22,11 @@ void mapview::init()
   x=y=offx=offy=0;
 #ifdef _EDIT_
   currentobj=0;
+  walkimg=new image(MAPSQUARE_SIZE, MAPSQUARE_SIZE);
+  for(u_int16 i=0;i<walkimg->get_length();i++)
+    for(u_int16 j=0;j<walkimg->get_height();j++)
+      walkimg->put_pix(i,j,0x0000FF);
+  walkimg->set_alpha(110);
 #endif
   da=new drawing_area();
 }
@@ -37,6 +42,9 @@ mapview::mapview()
 mapview::~mapview()
 {
   delete da;
+#ifdef _EDIT_
+  delete walkimg;
+#endif
 }
 
 void mapview::attach_map(landmap * m)
@@ -64,6 +72,19 @@ s_int8 mapview::set_current_submap(u_int16 sm)
   if(!m_map) return -1;
   if(sm>=m_map->nbr_of_submaps) return -1;
   currentsubmap=sm;
+#ifdef _EDIT_
+  if(m_map->nbr_of_submaps)
+    mapselect::resize(m_map->submap[currentsubmap]->length,
+		      m_map->submap[currentsubmap]->height);
+  set_pos(posx>=m_map->submap[currentsubmap]->length?
+	  m_map->submap[currentsubmap]->length-1:posx,
+	  posy>=m_map->submap[currentsubmap]->height?
+	  m_map->submap[currentsubmap]->height-1:posy);
+  current_tile=m_map->submap[currentsubmap]->land[mapselect::posx]
+    [mapselect::posy].tiles.begin();
+  must_upt_label_pos=true;
+  must_upt_label_square=true;
+#endif  
   return 0;
 }
 
@@ -128,10 +149,10 @@ void mapview::update_label_pos()
 {
   if(m_map && m_map->nbr_of_submaps)
     {
-      sprintf(tmps,"Submap: %d/%d\n%d/%d  %d/%d",currentsubmap,
-	      m_map->nbr_of_submaps,mapselect::posx,
+      sprintf(tmps,"Submap: %d/%d\n%d/%d  %d/%d",currentsubmap+1,
+	      m_map->nbr_of_submaps,mapselect::posx+1,
 	      m_map->submap[currentsubmap]->length,
-	      mapselect::posy,m_map->submap[currentsubmap]->height);
+	      mapselect::posy+1,m_map->submap[currentsubmap]->height);
       label_pos->set_text(tmps);
     }
   else label_pos->set_text("No submaps yet!");
@@ -140,8 +161,8 @@ void mapview::update_label_pos()
 
 void mapview::update_label_object()
 {
-  if(!m_map) sprintf(tmps,"No map attached!");
-  else sprintf(tmps,"Selected Obj:\n%d/%d",currentobj,
+  if(!m_map->nbr_of_patterns) sprintf(tmps,"No objects yet!");
+  else sprintf(tmps,"Selected Obj:\n%d/%d",currentobj+1,
 	       m_map->nbr_of_patterns);
   label_object->set_text(tmps);
   must_upt_label_object=false;
@@ -166,7 +187,7 @@ void mapview::update_label_square()
 	  cpt++;
 	  i++;
 	}
-      sprintf(tmps,"Obj. here:\n%d/%d %s",cpt,
+      sprintf(tmps,"Obj. here:\n%d/%d %s",cpt+1,
 	      m_map->submap[currentsubmap]->land[mapselect::posx]
 	      [mapselect::posy].tiles.size(),
 	      current_tile->is_base?"(Base tile)":"");
@@ -200,20 +221,19 @@ void mapview::add_mapobject()
 {
   mapobject mobj;
   u_int16 p;
-  win_query * qw=new win_query(70,40,th,font,"Load mapobject: (Type \"new\" for editing a new one)");
+  win_query * qw=new win_query(70,40,th,font,"Load mapobject:");
   char * s=qw->wait_for_text(makeFunctor(*this,&mapview::update_editor),
 			     makeFunctor(*this,&mapview::draw_editor));
   if(!s) return;
-  if(strcmp(s,"new"))
-    if(mobj.load(s))
-      {
-	win_info * wi=new win_info(70,40,th,font,"Error loading mapobject!");
-	wi->wait_for_keypress(makeFunctor(*this,&mapview::update_editor),
-			      makeFunctor(*this,&mapview::draw_editor));
-	delete wi;
-	delete qw;
-	return;
-      }
+  if(mobj.load(s))
+    {
+      win_info * wi=new win_info(70,40,th,font,"Error loading mapobject!");
+      wi->wait_for_keypress(makeFunctor(*this,&mapview::update_editor),
+			    makeFunctor(*this,&mapview::draw_editor));
+      delete wi;
+      delete qw;
+      return;
+    }
   do
     {
       char tmp[255];
@@ -222,7 +242,7 @@ void mapview::add_mapobject()
 	      m_map->nbr_of_patterns);
       win_query * qw2=new win_query(70,40,th,font,tmp);
       s2=qw2->wait_for_text(makeFunctor(*this,&mapview::update_editor),
-			   makeFunctor(*this,&mapview::draw_editor));
+			    makeFunctor(*this,&mapview::draw_editor));
       if(!s2)
 	{ 
 	  delete qw2;
@@ -234,7 +254,6 @@ void mapview::add_mapobject()
       delete qw2;
     }
   while(p>m_map->nbr_of_patterns);
-  if(!strcmp(s,"new")) mobj.editor();
   m_map->insert_mapobject(mobj,p,s);
   delete qw;
   //  m_map->init_mapobjects();
@@ -437,6 +456,32 @@ void mapview::draw_cursor()
 
 }
 
+void mapview::draw_walkable(u_int16 x, u_int16 y, drawing_area * da_opt=NULL)
+{
+  static u_int16 i,j;
+  static u_int16 i0,j0,ie,je;
+  static landsubmap * l;
+  if(!m_map) return;
+
+  l=m_map->submap[currentsubmap];
+  if(da) da->move(x,y);
+
+  i0=posx-ctrx;
+  j0=posy-ctry;
+  ie=i0+d_length+(offx!=0)<l->length?i0+d_length+(offx!=0):l->length;
+  je=j0+d_height+(offy!=0)<l->height?j0+d_height+(offy!=0):l->height;
+
+  for(j=j0;j<je;j++)
+    for(i=i0;i<ie;i++)
+      if(!l->land[i][j].walkable)
+	{
+	  u_int16 rx, ry;
+	  rx=(posx>ctrx)?i-(posx-ctrx):i;
+	  ry=(posy>ctry)?j-(posy-ctry):j;
+	  walkimg->draw(rx*MAPSQUARE_SIZE-offx,ry*MAPSQUARE_SIZE-offy,da);
+	}
+}
+
 void mapview::draw(u_int16 x, u_int16 y, drawing_area * da_opt=NULL)
 {
   static u_int16 i,j;
@@ -446,7 +491,8 @@ void mapview::draw(u_int16 x, u_int16 y, drawing_area * da_opt=NULL)
   if(!m_map) return;
 
   l=m_map->submap[currentsubmap];
-  da->move(x,y);
+  if(!l->length || !l->height) return;
+  if(da) da->move(x,y);
 
   i0=posx-ctrx;
   j0=posy-ctry;
@@ -562,10 +608,13 @@ void mapview::draw_editor()
   if(m_map && m_map->nbr_of_submaps) 
     {
       draw(0,0,da);
+      if(input::is_pushed(SDLK_k)) draw_walkable(0,0,da);
       if(m_map->nbr_of_patterns) draw_cursor();
     }
   container->draw();
-  if(m_map && m_map->nbr_of_patterns && m_map->nbr_of_submaps)
+  if(m_map && m_map->nbr_of_patterns && m_map->nbr_of_submaps && 
+     m_map->submap[currentsubmap]->length && 
+     m_map->submap[currentsubmap]->height)
     {
       m_map->mini_pattern[currentobj].draw_free(245,75);
       if(!m_map->submap[currentsubmap]->land[mapselect::posx][mapselect::posy].
@@ -675,6 +724,27 @@ void mapview::update_editor_keys()
 	must_upt_label_object=true;
 	current_tile=m_map->submap[currentsubmap]->land[mapselect::posx]
 	  [mapselect::posy].tiles.begin();
+      }
+    
+    if(input::has_been_pushed(SDLK_F3))
+      {
+	m_map->add_submap();
+	currentsubmap=m_map->nbr_of_submaps-1;
+	resize_map();
+	set_current_submap(currentsubmap);
+	set_pos(0,0);
+      }
+
+    if(input::has_been_pushed(SDLK_HOME))
+      {
+	set_current_submap(currentsubmap?currentsubmap-1:
+			   m_map->nbr_of_submaps-1);
+      }
+
+    if(input::has_been_pushed(SDLK_END))
+      {
+        set_current_submap(currentsubmap!=m_map->nbr_of_submaps-1?
+			   currentsubmap+1:0);
       }
 }
 

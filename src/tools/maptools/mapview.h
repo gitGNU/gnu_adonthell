@@ -51,6 +51,8 @@ class mapview
   bool must_upt_label_object;
   bool must_upt_label_square;
 
+  image * walkimg;
+
   char tmps[500];
 
   list<mapsquare_tile>::iterator current_tile;
@@ -85,6 +87,7 @@ class mapview
   void resize(u_int16 d_l, u_int16 d_h);
   void update();
   void draw_cursor();
+  void draw_walkable(u_int16 x, u_int16 y, drawing_area * da_opt=NULL);
   void draw(u_int16 x, u_int16 y, drawing_area * da_opt=NULL);
 
 #ifdef _EDIT_
