@@ -295,7 +295,7 @@ string dlg_compiler::inflate (string code)
                             code[pos] = ',';
                             code.insert (begin+suffix+1, "\"");
                             code.insert (begin+prefix, "set (\"");
-                            code.push_back (')');
+                            code.append (")");
                             pos += 7;
                         }
                         else
