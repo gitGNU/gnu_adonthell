@@ -65,7 +65,7 @@ void dlg_compiler::write_strings ()
     vector<DlgNode*>::iterator i;
     u_int32 j = 0;
 
-    script << "from player import *\n\n";
+    script << "from character import *\n\n";
 
     // write the class name
     script << "class " << strrchr (filename.c_str (), '/') + 1 << ":\n";

@@ -75,7 +75,7 @@ dlgedit_SOURCES = callbacks.cc circle.cc dlgcompile.cc crcle_callbacks.cc crcle_
 # Evil, but it works...
 CPPFLAGS =  -D_DLGEDIT_ -D_DEBUG_ -D_VERSION_=\"0.6\" `gtk-config --cflags`
 
-LDADD = ../../inventory.o ../../py_mapengine_wrap.o ../../animation.o ../../py_player_wrap.o ../../audio.o ../../lex.prefs.o ../../screen.o ../../audio_thread.o ../../event.o ../../character.o ../../map.o ../../win_base.o ../../mapcharacter.o ../../win_border.o ../../cutscene.o ../../mapengine.o ../../win_container.o ../../mapevent.o ../../win_font.o ../../fileops.o ../../mapitem.o ../../game.o ../../mappattern.o ../../win_image.o ../../mapsquare.o ../../win_label.o ../../image.o ../../pnm.o ../../win_select.o ../../init.o ../../prefs.o ../../win_write.o ../../input.o ../../yarg.o ../../win_anim.o ../../py_inc.o ../../dialog.o ../../storage.o
+LDADD = ../../inventory.o ../../py_mapengine_wrap.o ../../animation.o ../../py_character_wrap.o ../../audio.o ../../lex.prefs.o ../../screen.o ../../audio_thread.o ../../event.o ../../character.o ../../map.o ../../win_base.o ../../mapcharacter.o ../../win_border.o ../../cutscene.o ../../mapengine.o ../../win_container.o ../../mapevent.o ../../win_font.o ../../fileops.o ../../mapitem.o ../../game.o ../../mappattern.o ../../win_image.o ../../mapsquare.o ../../win_label.o ../../image.o ../../pnm.o ../../win_select.o ../../init.o ../../prefs.o ../../win_write.o ../../input.o ../../yarg.o ../../win_anim.o ../../py_inc.o ../../dialog.o ../../storage.o ../../py_quest_wrap.o ../../quest.o
 
 
 LDFLAGS = -lm -lstdc++ `gtk-config --libs`
@@ -95,7 +95,7 @@ ps_dlg.o ps_interface.o pset_callbacks.o pset_interface.o run.o \
 run_callbacks.o run_interface.o interface.o
 dlgedit_LDADD = $(LDADD)
 dlgedit_DEPENDENCIES =  ../../inventory.o ../../py_mapengine_wrap.o \
-../../animation.o ../../py_player_wrap.o ../../audio.o \
+../../animation.o ../../py_character_wrap.o ../../audio.o \
 ../../lex.prefs.o ../../screen.o ../../audio_thread.o ../../event.o \
 ../../character.o ../../map.o ../../win_base.o ../../mapcharacter.o \
 ../../win_border.o ../../cutscene.o ../../mapengine.o \
@@ -104,7 +104,7 @@ dlgedit_DEPENDENCIES =  ../../inventory.o ../../py_mapengine_wrap.o \
 ../../mapsquare.o ../../win_label.o ../../image.o ../../pnm.o \
 ../../win_select.o ../../init.o ../../prefs.o ../../win_write.o \
 ../../input.o ../../yarg.o ../../win_anim.o ../../py_inc.o \
-../../dialog.o ../../storage.o
+../../dialog.o ../../storage.o ../../py_quest_wrap.o ../../quest.o
 dlgedit_LDFLAGS = 
 CXXFLAGS = @CXXFLAGS@
 CXXCOMPILE = $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)

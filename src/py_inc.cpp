@@ -23,8 +23,9 @@
  */
 extern "C"
 {
-	void initplayerc(void);
+	void initcharacterc(void);
 	void initmapenginec(void);
+	void initquestc(void);
 //	void initbaseitemc(void);
 }
 
@@ -56,8 +57,9 @@ bool init_python(void)
 
 	/* Initialise SWIG modules. This should go if we ever switch to dynamic 
 	   link */
-	initplayerc();
+	initcharacterc();
 	initmapenginec();
+	initquestc();
 //	initbaseitemc();
 
 	return true;

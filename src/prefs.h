@@ -30,14 +30,15 @@ enum
     PREFS_MAP = 4,
     PREFS_SCREEN_RESOLUTION = 5,
     PREFS_SCREEN_MODE = 6,
-    PREFS_AUDIO_CHANNELS = 7,
-    PREFS_AUDIO_RESOLUTION = 8,
-    PREFS_AUDIO_SAMPLE_RATE = 9,
-    PREFS_AUDIO_INTERPOLATION = 10,
-    PREFS_AUDIO_VOLUME = 11,
-    PREFS_NUM = 12,
-    PREFS_STR = 13,
-    PREFS_END = 14
+    PREFS_WINDOW_THEME = 7,
+    PREFS_AUDIO_CHANNELS = 8,
+    PREFS_AUDIO_RESOLUTION = 9,
+    PREFS_AUDIO_SAMPLE_RATE = 10,
+    PREFS_AUDIO_INTERPOLATION = 11,
+    PREFS_AUDIO_VOLUME = 12,
+    PREFS_NUM = 13,
+    PREFS_STR = 14,
+    PREFS_END = 15
 };
 
 
@@ -52,6 +53,7 @@ public:
 
     string datadir;                 // Directory containing the gamedata
     string mapname;                 // Map to load on startup
+    string window_theme;            // Theme used by our GUI
     u_int8 screen_resolution;       // 320x240 or 640x480
     u_int8 screen_mode;             // Window or Fullscreen
     u_int8 audio_channels;          // Mono or Stereo

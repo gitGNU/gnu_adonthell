@@ -1,19 +1,23 @@
 SUBDIRS = . tools
 
-bin_PROGRAMS = mapengine #alextest joltest
+bin_PROGRAMS = mapengine 
 
 mapengine_SOURCES = animation.cpp audio.cpp audio_thread.cpp \
-character.cpp cutscene.cpp dialog.cpp fileops.cpp game.cpp \
-image.cpp init.cpp input.cpp inventory.cpp \
-lex.prefs.cpp main.cpp map.cpp mapcharacter.cpp mapengine.cpp mapevent.cpp \
-mappattern.cpp mapsquare.cpp pnm.cpp prefs.cpp screen.cpp storage.cpp win_label.cpp \
-win_write.cpp win_container.cpp win_select.cpp win_friend.cpp win_border.cpp \
-win_image.cpp win_anim.cpp win_base.cpp win_font.cpp mapitem.cpp py_inc.cpp py_player_wrap.cpp \
-py_mapengine_wrap.cpp yarg.cc event.cpp 
+character.cpp cutscene.cpp dialog.cpp event.cpp fileops.cpp game.cpp \
+image.cpp init.cpp input.cpp inventory.cpp lex.prefs.cpp main.cpp \
+map.cpp mapcharacter.cpp mapengine.cpp mapevent.cpp mapitem.cpp \
+mappattern.cpp mapsquare.cpp pnm.cpp prefs.cpp py_inc.cpp py_character_wrap.cpp\
+py_mapengine_wrap.cpp py_quest_wrap.cpp quest.cpp screen.cpp storage.cpp \
+win_anim.cpp win_base.cpp win_border.cpp win_container.cpp win_font.cpp \
+win_friend.cpp win_image.cpp win_label.cpp win_select.cpp win_write.cpp yarg.cc
 
-py_player_wrap.cpp : py_player.i
+py_character_wrap.cpp : py_character.i
 	swig -python -shadow -c++ -make_default -o $*.cpp $< 
-	@mv player.py ../scripts
+	@mv character.py ../scripts
+
+py_quest_wrap.cpp : py_quest.i
+	swig -python -shadow -c++ -make_default -o $*.cpp $< 
+	@mv quest.py ../scripts
 
 py_mapengine_wrap.cpp : py_mapengine.i
 	swig -python -shadow -c++ -o $*.cpp $< 
@@ -23,17 +27,5 @@ py_baseitem_wrap.cpp : py_baseitem.i
 	swig -python -shadow -c++ -o $*.cpp $< 
 	@mv baseitem.py ../scripts
 
-#joltest_SOURCES = animation.cpp audio.cpp audio_thread.cpp \
-#character.cpp commands.cpp cutscene.cpp dialog_cmds.cpp fileops.cpp game.cpp \
-#generic_cmds.cpp image.cpp init.cpp interpreter.cpp input.cpp inventory.cpp \
-#lex.prefs.cpp pnm.cpp prefs.cpp screen.cpp storage.cpp win_label.cpp \
-#win_write.cpp win_container.cpp win_select.cpp win_friend.cpp win_border.cpp \
-#win_base.cpp win_font.cpp win_image.cpp joel.cpp yarg.cc
-
-#alextest_SOURCES = fileops.cpp pnm.cpp screen.cpp image.cpp animation.cpp \
-#lex.prefs.cpp prefs.cpp alextest.cpp input.cpp win_label.cpp \
-#win_write.cpp win_container.cpp win_select.cpp win_friend.cpp win_border.cpp \
-#win_base.cpp win_font.cpp win_image.cpp
-
-
-
+lex.prefs.cpp : prefs.l
+	flex -olex.prefs.cpp $<

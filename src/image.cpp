@@ -245,7 +245,7 @@ void image::set_mask(bool m)
 {
   if((m)&&(!mask_on))
     {
-      SDL_SetColorKey(data, SDL_SRCCOLORKEY, screen::trans);
+      SDL_SetColorKey(data, SDL_SRCCOLORKEY|SDL_RLEACCEL, screen::trans);
       mask_on=true;
     }
   else if((!m)&&(mask_on))

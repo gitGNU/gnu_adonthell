@@ -24,6 +24,7 @@ config::config (string s) : section (s)
     mapname = "maptest.map";                // Map to load on startup
     screen_resolution = 0;                  // 320x240
     screen_mode = 1;                        // Fullscreen
+    window_theme = "original";             // Default theme
     audio_channels = 1;                     // Stereo
     audio_resolution = 1;                   // 16 bit
     audio_interpolation = 1;                // Interpolation on
@@ -60,6 +61,8 @@ void config::write_adonthellrc ()
        << "    Screen-resolution " << (int) screen_resolution << "\n\n"
        << "# Screen-mode num\n#   0  Windowed mode\n"
        << "#   1  Fullscreen mode\n    Screen-mode " << (int) screen_mode << "\n\n"
+       << "# Window-theme [theme]\n#   original   - default Adonthell theme by Cirrus"
+       << "\n#   silverleaf - by Kaiman\n    Window-theme [" << window_theme << "]\n\n"
        << "# Audio-channels num\n#   0  Mono\n#   1  Stereo\n"
        << "    Audio-channels " << (int) audio_channels << "\n\n"
        << "# Audio-resolution num\n#   0  8 bit\n#   1  16 bit\n"
@@ -178,6 +181,12 @@ void config::load_section ()
             case PREFS_SCREEN_MODE:
             {
                 if (parse_adonthellrc (n, s) == PREFS_NUM) screen_mode = n;
+                break;
+            }
+
+            case PREFS_WINDOW_THEME:
+            {
+                if (parse_adonthellrc (n, s) == PREFS_STR) window_theme = s;
                 break;
             }
 

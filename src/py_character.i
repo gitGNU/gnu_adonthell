@@ -1,4 +1,4 @@
-%module player
+%module character
 
 %{
 

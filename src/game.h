@@ -17,6 +17,7 @@
 
 #include "SDL.h"
 #include "SDL_thread.h"
+
 #include "prefs.h"
 #include "Python.h"
 #include "storage.h"
@@ -32,16 +33,23 @@ public:
 
 class game
 {
-  static SDL_Thread *audio_thread;
+#ifdef SDL_MIXER
+    static SDL_Thread *audio_thread;
+#endif  
   
- public:
-  static void init(config&);
-  static void cleanup();
+public:
+    static void init(config&);
+    static void cleanup();
 
-  static PyObject *globals;
-  static char *theme;
-  static game_engine *engine;
-  static objects characters;
+    static void load (const char*, const char*);// Load a game
+    static void save (const char*);             // Save the game
+
+    static PyObject *globals;                   // Global namespace for use in scripts
+    static objects characters;                  // All the characters 
+    static objects quests;                      // All the quests
+  
+    static char *theme;                         // Put somewhere in window code!?    
+    static game_engine *engine;                 // The engine having input focus
 };
 
 #endif

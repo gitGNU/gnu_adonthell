@@ -487,25 +487,23 @@ SWIG_InstallConstants(PyObject *d, swig_const_info constants[]) {
 
 /* -------- TYPES TABLE (BEGIN) -------- */
 
-#define  SWIGTYPE_p_npc swig_types[0] 
+#define  SWIGTYPE_p_quest swig_types[0] 
 #define  SWIGTYPE_p_storage swig_types[1] 
-#define  SWIGTYPE_p_player swig_types[2] 
-#define  SWIGTYPE_p_character swig_types[3] 
-static swig_type_info *swig_types[5];
+static swig_type_info *swig_types[3];
 
 /* -------- TYPES TABLE (END) -------- */
 
 
 /*-----------------------------------------------
-              @(target):= playerc.so
+              @(target):= questc.so
   ------------------------------------------------*/
-#define SWIG_init    initplayerc
+#define SWIG_init    initquestc
 
-#define SWIG_name    "playerc"
+#define SWIG_name    "questc"
 
 
 #include "types.h"
-#include "character.h"
+#include "quest.h"
 #include "storage.h"
 
 #ifdef __cplusplus
@@ -567,111 +565,24 @@ static PyObject *_wrap_delete_storage(PyObject *self, PyObject *args) {
 }
 
 
-static PyObject *_wrap_character_name_set(PyObject *self, PyObject *args) {
+static PyObject *_wrap_new_quest(PyObject *self, PyObject *args) {
     PyObject *resultobj;
-    character *arg0 ;
-    char *arg1 ;
-    PyObject * argo0 =0 ;
+    quest *result ;
     
-    if(!PyArg_ParseTuple(args,"Os:character_name_set",&argo0,&arg1)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_character,1)) == -1) return NULL;
-    arg0->name = arg1;
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
+    if(!PyArg_ParseTuple(args,":new_quest")) return NULL;
+    result = (quest *)new quest();
+    resultobj = SWIG_NewPointerObj((void *) result, SWIGTYPE_p_quest);
     return resultobj;
 }
 
 
-static PyObject *_wrap_character_name_get(PyObject *self, PyObject *args) {
+static PyObject *_wrap_delete_quest(PyObject *self, PyObject *args) {
     PyObject *resultobj;
-    character *arg0 ;
-    PyObject * argo0 =0 ;
-    char *result ;
-    
-    if(!PyArg_ParseTuple(args,"O:character_name_get",&argo0)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_character,1)) == -1) return NULL;
-    result = (char *) (arg0->name);
-    resultobj = PyString_FromString(result);
-    return resultobj;
-}
-
-
-static PyObject *_wrap_character_posx_set(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    character *arg0 ;
-    unsigned short arg1 ;
+    quest *arg0 ;
     PyObject * argo0 =0 ;
     
-    if(!PyArg_ParseTuple(args,"Oh:character_posx_set",&argo0,&arg1)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_character,1)) == -1) return NULL;
-    arg0->posx = arg1;
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
-static PyObject *_wrap_character_posx_get(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    character *arg0 ;
-    PyObject * argo0 =0 ;
-    unsigned short result ;
-    
-    if(!PyArg_ParseTuple(args,"O:character_posx_get",&argo0)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_character,1)) == -1) return NULL;
-    result = (unsigned short ) (arg0->posx);
-    resultobj = PyInt_FromLong((long)result);
-    return resultobj;
-}
-
-
-static PyObject *_wrap_character_posy_set(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    character *arg0 ;
-    unsigned short arg1 ;
-    PyObject * argo0 =0 ;
-    
-    if(!PyArg_ParseTuple(args,"Oh:character_posy_set",&argo0,&arg1)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_character,1)) == -1) return NULL;
-    arg0->posy = arg1;
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
-static PyObject *_wrap_character_posy_get(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    character *arg0 ;
-    PyObject * argo0 =0 ;
-    unsigned short result ;
-    
-    if(!PyArg_ParseTuple(args,"O:character_posy_get",&argo0)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_character,1)) == -1) return NULL;
-    result = (unsigned short ) (arg0->posy);
-    resultobj = PyInt_FromLong((long)result);
-    return resultobj;
-}
-
-
-static PyObject *_wrap_new_character(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    character *result ;
-    
-    if(!PyArg_ParseTuple(args,":new_character")) return NULL;
-    result = (character *)new character();
-    resultobj = SWIG_NewPointerObj((void *) result, SWIGTYPE_p_character);
-    return resultobj;
-}
-
-
-static PyObject *_wrap_delete_character(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    character *arg0 ;
-    PyObject * argo0 =0 ;
-    
-    if(!PyArg_ParseTuple(args,"O:delete_character",&argo0)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_character,1)) == -1) return NULL;
+    if(!PyArg_ParseTuple(args,"O:delete_quest",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_quest,1)) == -1) return NULL;
     delete arg0;
     Py_INCREF(Py_None);
     resultobj = Py_None;
@@ -679,151 +590,13 @@ static PyObject *_wrap_delete_character(PyObject *self, PyObject *args) {
 }
 
 
-static PyObject *_wrap_new_npc(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    npc *result ;
-    
-    if(!PyArg_ParseTuple(args,":new_npc")) return NULL;
-    result = (npc *)new npc();
-    resultobj = SWIG_NewPointerObj((void *) result, SWIGTYPE_p_npc);
-    return resultobj;
-}
-
-
-static PyObject *_wrap_delete_npc(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    npc *arg0 ;
-    PyObject * argo0 =0 ;
-    
-    if(!PyArg_ParseTuple(args,"O:delete_npc",&argo0)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_npc,1)) == -1) return NULL;
-    delete arg0;
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
-static PyObject *_wrap_npc_set_schedule(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    npc *arg0 ;
-    char *arg1 ;
-    bool arg2 = true ;
-    PyObject * argo0 =0 ;
-    int tempbool2 = (int) true ;
-    
-    if(!PyArg_ParseTuple(args,"Os|i:npc_set_schedule",&argo0,&arg1,&tempbool2)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_npc,1)) == -1) return NULL;
-    arg2 = (bool ) tempbool2;
-    arg0->set_schedule(arg1,arg2);
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
-static PyObject *_wrap_npc_set_dialogue(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    npc *arg0 ;
-    char *arg1 ;
-    PyObject * argo0 =0 ;
-    
-    if(!PyArg_ParseTuple(args,"Os:npc_set_dialogue",&argo0,&arg1)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_npc,1)) == -1) return NULL;
-    arg0->set_dialogue(arg1);
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
-static PyObject *_wrap_npc_talk(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    npc *arg0 ;
-    PyObject * argo0 =0 ;
-    
-    if(!PyArg_ParseTuple(args,"O:npc_talk",&argo0)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_npc,1)) == -1) return NULL;
-    arg0->talk();
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
-static PyObject *_wrap_npc_move(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    npc *arg0 ;
-    unsigned char arg1 ;
-    PyObject * argo0 =0 ;
-    unsigned char result ;
-    
-    if(!PyArg_ParseTuple(args,"Ob:npc_move",&argo0,&arg1)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_npc,1)) == -1) return NULL;
-    result = (unsigned char )arg0->move(arg1);
-    resultobj = PyInt_FromLong((long)result);
-    return resultobj;
-}
-
-
-static PyObject *_wrap_new_player(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    player *result ;
-    
-    if(!PyArg_ParseTuple(args,":new_player")) return NULL;
-    result = (player *)new player();
-    resultobj = SWIG_NewPointerObj((void *) result, SWIGTYPE_p_player);
-    return resultobj;
-}
-
-
-static PyObject *_wrap_delete_player(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    player *arg0 ;
-    PyObject * argo0 =0 ;
-    
-    if(!PyArg_ParseTuple(args,"O:delete_player",&argo0)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_player,1)) == -1) return NULL;
-    delete arg0;
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
-static PyMethodDef playercMethods[] = {
+static PyMethodDef questcMethods[] = {
 	 { "storage_set", _wrap_storage_set, METH_VARARGS },
 	 { "storage_get", _wrap_storage_get, METH_VARARGS },
 	 { "new_storage", _wrap_new_storage, METH_VARARGS },
 	 { "delete_storage", _wrap_delete_storage, METH_VARARGS },
-	 { "character_name_set", _wrap_character_name_set, METH_VARARGS },
-	 { "character_name_get", _wrap_character_name_get, METH_VARARGS },
-	 { "character_posx_set", _wrap_character_posx_set, METH_VARARGS },
-	 { "character_posx_get", _wrap_character_posx_get, METH_VARARGS },
-	 { "character_posy_set", _wrap_character_posy_set, METH_VARARGS },
-	 { "character_posy_get", _wrap_character_posy_get, METH_VARARGS },
-	 { "new_character", _wrap_new_character, METH_VARARGS },
-	 { "delete_character", _wrap_delete_character, METH_VARARGS },
-	 { "new_npc", _wrap_new_npc, METH_VARARGS },
-	 { "delete_npc", _wrap_delete_npc, METH_VARARGS },
-	 { "npc_set_schedule", _wrap_npc_set_schedule, METH_VARARGS },
-	 { "npc_set_dialogue", _wrap_npc_set_dialogue, METH_VARARGS },
-	 { "npc_talk", _wrap_npc_talk, METH_VARARGS },
-	 { "npc_move", _wrap_npc_move, METH_VARARGS },
-	 { "npc_name_set", _wrap_character_name_set, METH_VARARGS },
-	 { "npc_name_get", _wrap_character_name_get, METH_VARARGS },
-	 { "npc_posx_set", _wrap_character_posx_set, METH_VARARGS },
-	 { "npc_posx_get", _wrap_character_posx_get, METH_VARARGS },
-	 { "npc_posy_set", _wrap_character_posy_set, METH_VARARGS },
-	 { "npc_posy_get", _wrap_character_posy_get, METH_VARARGS },
-	 { "new_player", _wrap_new_player, METH_VARARGS },
-	 { "delete_player", _wrap_delete_player, METH_VARARGS },
-	 { "player_name_set", _wrap_character_name_set, METH_VARARGS },
-	 { "player_name_get", _wrap_character_name_get, METH_VARARGS },
-	 { "player_posx_set", _wrap_character_posx_set, METH_VARARGS },
-	 { "player_posx_get", _wrap_character_posx_get, METH_VARARGS },
-	 { "player_posy_set", _wrap_character_posy_set, METH_VARARGS },
-	 { "player_posy_get", _wrap_character_posy_get, METH_VARARGS },
+	 { "new_quest", _wrap_new_quest, METH_VARARGS },
+	 { "delete_quest", _wrap_delete_quest, METH_VARARGS },
 	 { NULL, NULL }
 };
 
@@ -833,31 +606,15 @@ static PyMethodDef playercMethods[] = {
 
 /* -------- TYPE CONVERSION AND EQUIVALENCE RULES (BEGIN) -------- */
 
-static void *_p_npcTo_p_storage(void *x) {
-    return (void *)((storage *) ((npc *) x));
+static void *_p_questTo_p_storage(void *x) {
+    return (void *)((storage *) ((quest *) x));
 }
-static void *_p_characterTo_p_storage(void *x) {
-    return (void *)((storage *) ((character *) x));
-}
-static void *_p_playerTo_p_storage(void *x) {
-    return (void *)((storage *) ((player *) x));
-}
-static void *_p_npcTo_p_character(void *x) {
-    return (void *)((character *) ((npc *) x));
-}
-static void *_p_playerTo_p_character(void *x) {
-    return (void *)((character *) ((player *) x));
-}
-static swig_type_info _swigt__p_npc[] = {{"_p_npc", 0, "npc *"},{"_p_npc"},{0}};
-static swig_type_info _swigt__p_storage[] = {{"_p_storage", 0, "storage *"},{"_p_npc", _p_npcTo_p_storage},{"_p_storage"},{"_p_player", _p_playerTo_p_storage},{"_p_character", _p_characterTo_p_storage},{0}};
-static swig_type_info _swigt__p_player[] = {{"_p_player", 0, "player *"},{"_p_player"},{0}};
-static swig_type_info _swigt__p_character[] = {{"_p_character", 0, "character *"},{"_p_npc", _p_npcTo_p_character},{"_p_player", _p_playerTo_p_character},{"_p_character"},{0}};
+static swig_type_info _swigt__p_quest[] = {{"_p_quest", 0, "quest *"},{"_p_quest"},{0}};
+static swig_type_info _swigt__p_storage[] = {{"_p_storage", 0, "storage *"},{"_p_quest", _p_questTo_p_storage},{"_p_storage"},{0}};
 
 static swig_type_info *swig_types_initial[] = {
-_swigt__p_npc, 
+_swigt__p_quest, 
 _swigt__p_storage, 
-_swigt__p_player, 
-_swigt__p_character, 
 0
 };
 
@@ -865,23 +622,17 @@ _swigt__p_character,
 /* -------- TYPE CONVERSION AND EQUIVALENCE RULES (END) -------- */
 
 static swig_const_info swig_const_table[] = {
-    { SWIG_PY_INT,     "DWARF", (long) DWARF, 0, 0, 0},
-    { SWIG_PY_INT,     "ELF", (long) ELF, 0, 0, 0},
-    { SWIG_PY_INT,     "HALFELF", (long) HALFELF, 0, 0, 0},
-    { SWIG_PY_INT,     "HUMAN", (long) HUMAN, 0, 0, 0},
-    { SWIG_PY_INT,     "FEMALE", (long) FEMALE, 0, 0, 0},
-    { SWIG_PY_INT,     "MALE", (long) MALE, 0, 0, 0},
 {0}};
 
 static PyObject *SWIG_globals;
 #ifdef __cplusplus
 extern "C" 
 #endif
-SWIGEXPORT(void) initplayerc(void) {
+SWIGEXPORT(void) initquestc(void) {
     PyObject *m, *d;
     int i;
     SWIG_globals = SWIG_newvarlink();
-    m = Py_InitModule("playerc", playercMethods);
+    m = Py_InitModule("questc", questcMethods);
     d = PyModule_GetDict(m);
     for (i = 0; swig_types_initial[i]; i++) {
         swig_types[i] = SWIG_TypeRegister(swig_types_initial[i]);

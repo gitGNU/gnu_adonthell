@@ -192,7 +192,7 @@ int main(int argc, char * argv[])
     event_handler::register_event (e, "scripts/events/event_test.py");
 
     mapengine::map_engine(map1);
-
+    
     game::cleanup();
   
     return 0;

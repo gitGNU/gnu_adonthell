@@ -57,7 +57,7 @@ main (int argc, char *argv[])
     insert_path (tmp);
 
     // Load module
-    PyObject *m = import_module ("player");
+    PyObject *m = import_module ("character");
         
     // Create a player
     MainWnd->myplayer = new player;

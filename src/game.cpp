@@ -12,7 +12,6 @@
    See the COPYING file for more details.
 */
 
-#include <iostream.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include "types.h"
@@ -21,54 +20,67 @@
 #include "prefs.h"
 #include "character.h"
 #include "py_inc.h"
-#include "win_types.h"
+#include "quest.h"
 #include "game.h"
 
 #ifdef SDL_MIXER
 #include "audio_thread.h"
 #include "audio.h"
-#endif
 
 SDL_Thread *game::audio_thread;
+#endif
+
 PyObject *game::globals;
 char *game::theme;
 game_engine *game::engine;
 objects game::characters;
+objects game::quests;
 
 void game::init(config &myconfig)
 {
-  // Pass on resolution/general display data
-  screen::init_display (&myconfig);
+    // Pass on resolution/general display data
+    screen::init_display (&myconfig);
       
 #ifdef SDL_MIXER
-  
-  audio_init(myconfig);
-  audio_thread = SDL_CreateThread(audio_update, NULL);
-  if ( audio_thread == NULL) {
-    fprintf(stderr, "Couldn't create audio thread: %s\n", SDL_GetError());
-    fprintf(stderr, "Audio will not be used\n");
-  }
+    audio_init(myconfig);
+    audio_thread = SDL_CreateThread(audio_update, NULL);
+    if ( audio_thread == NULL) {
+        fprintf(stderr, "Couldn't create audio thread: %s\n", SDL_GetError());
+        fprintf(stderr, "Audio will not be used\n");
+    }
 #endif  
   
-  input::init();
+    input::init();
 
-    // Set the theme (later: get from config file)
-    theme = WIN_THEME_ORIGINAL;
+    // Initialise Python
+    if (!init_python())
+    {
+	   // This is unlikely to happen
+	   fprintf(stderr, "Couldn't initialise Python - stopping\n");
+	   SDL_Quit();
+    }
+    
+    // Set the theme (later: get theme from config file)
+    theme = "original/"; // strdup ((myconfig.window_theme + "/").c_str ());
 
-  // Initialise Python
-  if (!init_python())
-  {
-	  // This is unlikely to happen
-	  fprintf(stderr, "Couldn't initialise Python - stopping\n");
-	  SDL_Quit();
-  }
+    // load the game (later: continue with the last saved game?!)
+    load (myconfig.datadir.c_str (), myconfig.datadir.c_str ());    
+}
 
-  // Test:
-    // Load module
-    PyObject *m = import_module ("player");
+// Load a game. First try to load all dynamic data from gamedir, then load 
+// everything else from the static data directory.
+void game::load (const char *gamedir, const char *staticdir)
+{
+    FILE *in = NULL;
+    char filepath[256];
+    npc *mynpc;
+    quest *myquest;
+    
+    // Load character module
+    PyObject *m = import_module ("character");
     Py_INCREF(m);
     
-    // Create a player
+    // Create a player (later: load from file or whatever)
     player *myplayer = new player;
     myplayer->name = "Player";
 
@@ -77,7 +89,6 @@ void game::init(config &myconfig)
 
     // Make "myplayer" available to the interpreter 
 	globals = PyModule_GetDict(m);
-
     PyDict_SetItemString (globals, "the_player", pass_instance (myplayer, "player"));
 
     // create character array
@@ -85,25 +96,74 @@ void game::init(config &myconfig)
     PyDict_SetItemString (globals, "characters", chars);
     PyDict_SetItemString (chars, "the_player", pass_instance (myplayer, "player"));
 
-    // load characters from character.data
-    FILE *in = fopen ("character.data", "r");
+    // try to open character.data
+    sprintf (filepath, "%s/character.data", gamedir);
+    in = fopen (filepath, "r");
+
     if (!in)
     {
-        fprintf (stderr, "Couldn't open \"character.data\" - stopping\n");
-        SDL_Quit ();
-        return;
+        // try loading from static data-dir then
+        sprintf (filepath, "%s/character.data", staticdir);
+        in = fopen (filepath, "r");
+        
+        if (!in)
+        {
+            fprintf (stderr, "Couldn't open \"character.data\" - stopping\n");
+            SDL_Quit ();
+            return;
+        }
     }
 
-    npc *mynpc;
-    
+    // load characters     
     while (fgetc (in))
     {
         mynpc = new npc;
         mynpc->load (in);
+
+        // Pass character over to Python interpreter
         PyDict_SetItemString (chars, mynpc->name, pass_instance (mynpc, "npc"));
     }
     
     fclose (in);
+
+    // create quest array
+    PyObject *quests = PyDict_New ();
+    PyDict_SetItemString (globals, "quests", quests);
+
+    // try to open quest.data
+    sprintf (filepath, "%s/quest.data", gamedir);
+    in = fopen (filepath, "r");
+
+    if (!in)
+    {
+        // try loading from static data-dir then
+        sprintf (filepath, "%s/quest.data", staticdir);
+        in = fopen (filepath, "r");
+        
+        if (!in)
+        {
+            fprintf (stderr, "Couldn't open \"quest.data\" - stopping\n");
+            SDL_Quit ();
+            return;
+        }
+    }
+    
+    // load quests
+    while (fgetc (in))
+    {
+        myquest = new quest;
+        myquest->load (in);
+        
+        // Pass quest over to Python interpreter
+        PyDict_SetItemString (quests, myquest->name, pass_instance (myquest, "quest"));
+    }
+    
+    fclose (in);    
+}
+
+// Save all dynamic gamedata to the gamedir
+void game::save (const char* gamedir)
+{
 }
 
 void game::cleanup()
