@@ -1,0 +1,143 @@
+/*
+   $Id$
+
+   Copyright (C) 2001   Alexandre Courbot
+   Copyright (C) 2001   Kai Sterker
+   Part of the Adonthell Project http://adonthell.linuxgames.com
+
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License.
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY.
+
+   See the COPYING file for more details.
+*/
+
+/*!
+ \page page1 Introduction for new programmers
+ \section cpp C++
+
+ Adonthell makes intense use of the features of C++ whenever they make the code
+ clearer and easier and do not slow things down too much. Adonthell tries to
+ respect the concepts of Object Oriented Programming as much as possible. In
+ Adonthell, everything is an %object and inheritance and templates are used 
+ where appropriate. Attributes are usually hidden and may only be accessed
+ through an %object's methods.
+
+ Further, Adonthell makes heavy use of the Standard Template Library (STL)
+ (http://www.sgi.com/tech/stl/), especially of strings and containers 
+ like lists and hash maps. So you'll certainly want to give it a look.
+
+ \section python Python 
+ In many kinds of computer games, including RPGs, a script language is necessary to command
+ characters, build complex actions, cutscenes, etc... As we want modularity and
+ reusability, in-%game actions must be real-time interpreted. Scripts need to
+ interact with the C++ interface and of course they have to share variables with it.
+ Python (http://www.python.org) has proven to be very efficient at both - 
+ moreover it is an object-oriented language and therefore fits well with C++.
+ And with SWIG (http://www.swig.org), a great tool is available to automate the 
+ process of building the Python interface to our C++ classes.
+ Basically, each class and method described in this document is also available
+ from Python scripts, with only a few exceptions:
+ Python allows no method and operator overloading, so only the first of 
+ overloaded methods or constructors and no operators are accessible from
+ Python.
+
+ \section scorg Source code organisation 
+ Adonthell makes use of autoconf and automake to be built. In each subdirectory  
+ resides a Makefile.am file that containes the building rules for the files inside
+ that directory as well as its subdirectories. Running "automake" in the root
+ directory creates a Makefile.in from each Makefile.am. "autoconf" builds the 
+ configure script from configure.in. Finally, running "./configure" generates
+ all the Makefiles from the Makefile.ins, making the package ready for 
+ compilation via "make".
+
+ Here is what the source tree does look like:
+
+ - doc The user and developer documentation  
+ - src Source code for Adonthell engine - this is where the adonthell executable is built
+   - tools Various development tools
+      - dlgedit The dialogue editor (requires GTK+)
+      - charedit The character editor (requires GTK+)
+      - questedit The quest editor (requires GTK+)
+      - maptools The map building tools
+      - pydonthell A custom Python interpreter with Adonthell Python modules inside
+      - oggloop Ogg music looping utility
+
+ Each class that is documented here is usually defined by classname.h and
+ implemented by classname.cc.
+
+ \section datatypes Data types 
+ Adonthell can run on several platforms, which all have different characteristics.
+ One of these differences can reside in the way the basic C types (char, ints, ...)
+ are encoded. A 32 bit operating system will code it's ints with 32 bits, while a
+ 64 bits operating system will use 64 bits for ints. For several operations (like
+ reading an int from a file) this can result in different behavior, and catastrophic
+ consequences (most likely a protection fault). That's why some of the most basic
+ types have been redifined according to the architecture in types.h:
+ - u_int8: unsigned 8 bit integer
+ - s_int8: signed 8 bit integer
+ - u_int16: unsigned 16 bit integer
+ - s_int16: signed 16 bit integer
+ - u_int32: unsigned 32 bit integer
+ - s_int32: signed 32 bit integer
+
+ \section gamedyn Game dynamic
+ As we display animated things, we need to know when they have to change. A %game that
+ runs at a different speed on various machines has nearly no interest, as only
+ a few configurations can make it run at the right speed. So it's very important
+ to have a timing system built into the %game engine.
+ 
+ Adonthell uses it's own timing system. The time unit is the %game cycle, which
+ corresponds to approximatively 1/70 of second. When the %game runs, it performs
+ a loop which looks like this:
+
+ \code
+ while(<condition to quit the engine>) 
+ { 
+     gametime::update();
+
+     for(i=0;i<gametime::get_frames_to_do();i++) 
+     {
+         <update the %game status (%character positions, etc...)> 
+     }
+
+     <perform drawing operations>
+ }
+ \endcode
+
+ Explanations:
+
+ This loop performs what is necessary to update the %screen. Depending on the speed
+ of the CPU, this can take more or less time. You've seen that a %game cycle durate
+ 1/70 of a second. For some machines, this is not enough to perform the entire loop.
+
+ As you've seen, there are two kinds of operations that are in the loop:
+
+ \li Update operations, which actually update the state of the %game, according to
+     user %input, previous %game state, etc... These operations are very fast to
+     perform.
+
+ \li Drawing operations, that is, update the %screen. This is what may slow
+     things down. Some graphic boards simply can't redraw the entire %screen 70
+     times per second. Moreover, even with high-end boards, hardware acceleration may
+     not be used depending on the SDL target used. x11 is know to be unable to use 
+     hardware acceleration, while fbcon does, when possible.
+
+ So the solution to keep the %game running at the same speed on every machine is to
+ draw less frames per second on slow machines (instead of drawing 1 frame every %game
+ cycle, we'll draw one frame for 2 %games cycles, for example). This is where
+ gametime is usefull: The gametime::update() method calculates the delay between
+ the last call and the current call. It can then calculate if we've been late, and
+ catch the time back by telling to the other %objects that we must perform 2 %games
+ cycles instead of 1 to be sync (this is the result of the gametime::get_frames_to_do()
+ method). For example, if the last loop took 1/35 of a second to be completed,
+ gametime::get_frames_to_do() will return 2, so the loop will perform 2 %game updates
+ before drawing the %screen. On the contrary, if the machine is too fast (if it can
+ draw 2 frames for each %game cycle, for example), it will usleep() to stay in sync.
+
+ In a more general manner, every class that get's updated and draw something on
+ the %screen MUST have an update() method, that updates it's state once, and a
+ draw() method to draw it on the %screen.
+ 
+ */

@@ -1,0 +1,112 @@
+/*
+   $Id$
+
+   Copyright (C) 2001   Kai Sterker
+   Part of the Adonthell Project http://adonthell.linuxgames.com
+
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License.
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY.
+
+   See the COPYING file for more details.
+*/
+
+/*! \page page3 The Event System
+ 
+ The %event system is divided into three parts. The %event handler
+ keeps track of all registered %event scripts. Whenever an
+ %event occurs, the %event handler is notified and executes
+ all scripts registered for that particular %event. The %event
+ list keeps track of the %events registered by a certain %object,
+ (e.g. a NPC, a maptile or item) and automatically unregisters
+ these %events when this %object is deleted. Finally, there
+ are the %events themself, used both as message sent to the
+ %event handler whenever an %event occurs and to register an
+ %event script. Each %event has its own data structure with
+ parameters corresponding to its type. These parameters are
+ passed to the %event script, so all infomation regarding
+ an %event is available from within the script as well. The
+ parameters can further be used to specialize the script so it
+ reacts to a smaller range of %events.
+
+ \section event_usage Using the Event System
+ 
+ The %event handler is implemented in the event_handler class.
+ It totally consists of static members and methods, to make it
+ easily accessible from any part of the code. Just include
+ the event.h file. To register a script with the handler that,
+ for example, is executed whenever the player arrives at the
+ coordinates (20, 20) of a map, you'd write:
+
+ \code
+// Create the filter and set it's parameters
+event *filter = new enter_event;
+ 
+filter->x = 20;
+filter->y = 20;
+filter->c = data::the_player;
+
+// Set the script to be executed when the event occurs
+filter->set_script ("a_script.py");
+ 
+// Finally add the filter to the event list. This will register it with the event handler
+add_event (filter);
+ \endcode
+ 
+ For a list of available events with their corresponding parameters
+ see the \link event API documentation \endlink .
+
+ Now we have registered an %event with the %event handler. But that alone
+ won't get the %event triggered. So depending on its type, you'll have to
+ notify the %event handler of an %event's occurance. In case of the \link
+ enter_event enter event \endlink , you'll want to send a message to the
+ %event handler whenever a character reaches a new position on the map.
+         
+ \code
+// Event structures are also used to pass messages to the event_handler
+enter_event message;
+
+// Fill in the parameters
+message.x = mapcharacter::posx ();
+message.y = mapcharacter::posy ();
+message.submap = mapcharacter::submap ();
+message.c = this;
+
+// Notify the event handler
+event_handler::raise_event (message);
+\endcode
+
+The %event handler will then compare all %events of the given type with the
+message it recieved and execute the %event script of the matching %events.         
+
+\section event_new Defining new Events        
+Now that you know how events principly work, you might want to define your own.
+Doing so is quite easy. Take event as the base class, override it's methods with
+your own, and you're nearly done.
+
+There is only one problem remaining: loading your %event from a file. The %event
+list is taking care of that. But to avoid additional dependencies between the
+%event system and your code, the %event list cannot know about your %event at
+compile time. Otherwise, each part of the engine using the %event system had to
+#include every other part doing so, which we'd like to avoid. Basically, this is
+no restriction, since the %event list knows the base class and, thanks to virtual
+methods, can handle any derived %event without problem. The only situation where
+this fails is when a serialized %event list needs to be loaded from disk again.
+To do so, the \link event_list::load loader \endlink needs to be able to
+instanciate every possible %event. The way to go is pretty clear now: we need
+a function that returns a newly allocated %event structure, and we have to
+pass that function to the %event list at runtime, before loading an %event of
+that type. Since these steps are the same for each %event, two macros have been
+defined:
+
+\code
+NEW_EVENT(evt)
+REGISTER_EVENT(type,evt)
+\endcode
+
+%NEW_EVENT() provides the function that will return a newly allocated %event,
+and %REGISTER_EVENT() will pass this function to the %event list. The only
+information the %event system needs to know apart from that is the numerical
+%event ID, i.e. its type. 
+*/

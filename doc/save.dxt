@@ -1,0 +1,203 @@
+/*
+   $Id$
+
+   Copyright (C) 2001   Alexandre Courbot
+   Part of the Adonthell Project http://adonthell.linuxgames.com
+
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License.
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY.
+
+   See the COPYING file for more details.
+*/
+
+/*! 
+
+\page page6 Saving/Loading games elements and making state saveable classes
+
+\section objdatobjst Objects data and objects state
+
+This is another important part of the %game engine. Quite a lot of %objects should be
+ loadable and saveable, but there is a difference between two things 
+that may look like one: the %object %data itself and the %object state.
+
+There may be two cases where you can have to fetch %data from disk for an %object:
+- When you \e load the %object itself. This happens for example when the player 
+  enters a new area: All the %objects must be loaded from the disk (%image %data,
+  etc...)
+
+- When you load \e the \e state of a %game %object. This will mostly happen during
+  %game saving/loading. Of course you'll have to \e load the area the player is on,
+  but that's not sufficient. When you saved the %game, characters were certainly not
+  at their initial position, and you have to save/load this too. This is the \e state
+  of the %object, in opposition with the %object \e %data.
+
+Let's see how precisely it works with a simple %animation class:
+
+\verbatim
+class animation
+{
+public:
+    // Constructor / Destructor.
+    animation ();
+    ~animation ();
+
+    .....
+
+    // Saving / Loading methods.
+    void get (FILE * in);
+    void put (FILE * out);
+
+    // State saving / loading methods.
+    void get_state (FILE * in);
+    void put_state (FILE * out);
+
+private:
+    vector <image> frames;
+
+    u_int32 currentframe;
+}
+\endverbatim
+
+The difference between the %object %data and the %object state is quite obvious here: the
+\e frames vector is an array containing the raw %images - they won't change during 
+gameplay, so they are considered as the %object \e %data, while the \e currentframe
+member will change during the %game, and actually when we load a %game we would like
+it to have the same value than when we saved it. That's why \e get and \e put will
+save the \e frames vector (and maybe put \e currentframe to 0 for \e get, to make sure
+the %object is in a stable state), and \e get_state and \e put_state will save/load the 
+currentframe member. That way, when you load a %game, you can simply get the %object state
+from the save file, while the %object itself will be loaded from the %data directory.
+
+\section convsave Conventions for saving/loading methods
+To reduce the amount of space needed for the %game, loading/saving methods use the igzstream
+and ogzstream classes for disk access. See their own documentation for more details.
+
+The saving methods should be constant - that is, they doesn't change the state of the %object
+itself. The loading methods should always bring the %object into a stable state once they 
+return (think of what would happen if you load an %animation and the \e currenframe member
+remains with a value superior to the actual number of %images in this %animation). The 
+declaration conventions are the following (you can use this template declaration for your
+own classes, as it also shows you the proper way to document your code with sections):
+
+\verbatim
+class myclass
+{
+public:
+
+.....
+
+    /**
+     * @name Loading/Saving methods
+     *
+     */
+    //@{
+        
+    /**
+     * Loads a <myobject> from an opened file.
+     * @param file the opened file from which to load.
+     * @return 0 in case of success, error code otherwise.
+     *
+     * @sa load ()
+     *
+     */ 
+    s_int8 get (igzstream& file);
+
+    /**
+     * Loads a <myobject> from it's filename.
+     * 
+     * @param fname the name of the file to load.
+     * @return 0 in case of success, error code otherwise.
+     *
+     * @sa get ()
+     */
+    s_int8 load (string fname);
+
+    /** 
+     *  Saves a <myobject> into an opened file.
+     *
+     *  @param file opened file where to save into.
+     *  @return 0 in case of success, error code otherwise.
+     *
+     *  @sa save ()
+     */
+    s_int8 put (ogzstream& file) const;
+
+    /** Saves a <myobject> into a file from it's name.
+     *  @param fname file name where to save into.
+     *  @return 0 in case of success, error code otherwise.
+     *
+     *  @sa put ()
+     */
+    s_int8 save (string fname) const;
+    //@}    
+
+
+    /**
+     * @name State loading/saving methods
+     *
+     */
+    //@{
+
+    /** 
+     * Restore the <myobject> state from an opened file.
+     * 
+     * @param file the opened file from which to load the state.
+     * @return 0 in case of success, error code otherwise.
+     */
+    s_int8 get_state (igzstream& file);
+
+    /** 
+     * Saves the <myobject> state into an opened file.
+     * 
+     * @param file the opened file where to the state.
+     * @return 0 in case of success, error code otherwise.
+     */
+    s_int8 put_state (ogzstream& file) const;
+
+    //@}
+
+
+    ....
+
+}
+\endverbatim
+
+\section objreuse Making your objects reusable
+Another issue that can decrease the %game performance is %objects lifetime.
+Take our sample %animation class. Say that I've already loaded an %animation that
+I don't need anymore, and I need to load another one. If my %object doesn't have
+a cleaning method, I'll have to delete my %animation %object and reallocate another
+one. And destructor call + deallocation + allocation + constructor call = a lot of
+time wasted. This can easily be avoided if your %object has a cleaning method, that
+restores it to it's post-constructor state and allow you to reuse it as if it was 
+a new one. The loading method is a good place where to call this cleaning function,
+as you can't expect to load something if your %object isn't empty. In our %animation 
+sample class, the \e clear () method would delete the \e frames vector (cleaning up 
+the %datas) and put \e currentframe to 0 (safe, post-constructor state). And I now 
+can use the same %object multiple times. Most often too, the destructor will be a 
+simple call to clear (), as it also frees all the memory occupied by the %object.
+
+The declaration convention is quite straightforward then:
+\verbatim
+class myclass
+{
+public:
+    ....
+
+    /**
+     * Puts the <myobject> back to it's post-constructor state.
+     * 
+     */ 
+    void clear ();
+
+    ....
+}
+\endverbatim
+
+Note that not every %object int the %game needs to be state-saveable. First, they must
+have a changeable state, and second, they have to be saved/loaded during %game 
+saving/loading.
+
+*/

@@ -1,0 +1,43 @@
+/*
+   $Id$
+
+   Copyright (C) 2001   Kai Sterker
+   Part of the Adonthell Project http://adonthell.linuxgames.com
+
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License.
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY.
+
+   See the COPYING file for more details.
+*/
+
+/*! \page page4 The Map Engine
+
+The map engine consists of several parts that work together to display the
+%game world on %screen.
+
+\section map_data Map Data
+
+The landmap holds the %data of the map: the actual \link mapobject graphics
+\endlink used on that map, and the information how to place them. A single map
+can contain multiple, independent \link mapsquare_area terrains \endlink
+that share the same graphics though. All terrains (or submaps) of a map are
+kept in memory, so transition between them is fast. Therefore it is desirable
+to keep related areas, like different levels of a dungeon or the floors of a
+building, on the same map.
+
+\section map_rendering The Renderer
+
+The %data on its own is only of little use as long as there is no way of displaying
+it. This is the \link mapview mapview's \endlink task. It renders a certain area
+of the map and everything on it onto a surface. That way, it can be as easily
+displayed on %screen as it can be saved to disk.
+
+The %mapview itself is rather dumb and without further instructions it would
+render the same part of the map for the rest of eternity. A \link py_script python
+script \endlink can be used to achieve a dynamic behaviour of the mapview, like
+following the player around the map. This script is called once every cycle of the
+%game and has access to practically all API functions and in-%game data, to permit
+as much flexibility as possible.
+*/
