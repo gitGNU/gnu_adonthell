@@ -20,7 +20,7 @@
  */
 
 #include <string>
-#include "event.h"
+// #include "event.h"
 #include "gametime.h"
 #include <SDL/SDL.h>
 
@@ -30,7 +30,7 @@ u_int32 gametime::timer2;
 u_int8 gametime::fts = 0;
 bool gametime::running = false; 
 
-NEW_EVENT(time_event)
+// NEW_EVENT(time_event)
 
 gametime::gametime (u_int32 start, float ratio)
 {     
@@ -44,25 +44,25 @@ gametime::gametime (u_int32 start, float ratio)
     // This decides how many realtime milliseconds make one gametime minute
     minute = (int) (60000 * ratio);
     
-    REGISTER_EVENT (TIME_EVENT, time_event)
+//     REGISTER_EVENT (TIME_EVENT, time_event)
 }
 
 // Increase gametime 
-void gametime::tick (u_int32 val)
-{
-    ticks += val;
+// void gametime::tick (u_int32 val)
+// {
+//     ticks += val;
 
-    // notify the eventhandler whenever a minute has passed
-    if (ticks >= minute)
-    {
-        ticks -= minute;
-        time++;
+//     // notify the eventhandler whenever a minute has passed
+//     if (ticks >= minute)
+//     {
+//         ticks -= minute;
+//         time++;
 
-        time_event t;
-        t.time = time;
-        event_handler::raise_event (t);
-    }
-}
+//         time_event t;
+//         t.time = time;
+//         event_handler::raise_event (t);
+//     }
+// }
 
 // Synchronize the game's speed to the machine it's running on.
 void gametime::update () 
@@ -92,6 +92,7 @@ void gametime::update ()
     if (fts > FTS_LIMIT) fts = FTS_LIMIT;
 }
 
+/* 
 time_event::time_event ()
 {
     time = minute = hour = day =  0;
@@ -186,3 +187,4 @@ bool time_event::equals (event &e)
     
     return 1;
 }
+*/ 

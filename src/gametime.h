@@ -22,8 +22,9 @@
 #ifndef GAMETIME_H_
 #define GAMETIME_H_
 
-#include "event.h"
-
+// Temporarly commented
+// #include "event.h"
+#include "types.h"
 
 /**
  * Length of a %game cycle, in milliseconds. Decrease it to speed up
@@ -57,7 +58,7 @@ class gametime
 {
 public:
     gametime (u_int32, float);      // constructor
-    void tick (u_int32);            // Increase the gametime
+//     void tick (u_int32);            // Increase the gametime
 
     static void start_action ()
     {
@@ -113,6 +114,7 @@ private:
 };
 
 // To notify at a certain time
+/* 
 class time_event : public event
 {
 public:
@@ -132,5 +134,5 @@ protected:
     bool equals (event&);           // Compare two events
     bool load (igzstream&);         // Load event data
 };
-
+*/ 
 #endif // GAMETIME_H_

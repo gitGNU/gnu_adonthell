@@ -1,74 +1,143 @@
-/*
-   $Id$
- 
-   Copyright (C) 1999/2000/2001 Kai Sterker <kaisterker@linuxgames.com>
-   Part of the Adonthell Project http://adonthell.linuxgames.com
+#include "landmap.h"
+#include "animation.h"
+#include "gametime.h"
+#include "input.h"
 
-   This program is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License.
-   This program is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY.
+#include <algorithm>
 
-   See the COPYING file for more details.
-*/
-
-
-/**
- * @file   main.cc
- * @author Kai Sterker <kaisterker@linuxgames.com>
- * 
- * @brief  Contains the main() function.
- * 
- * 
- */
-
-
-
-#ifdef MEMORY_LEAKS
-#include <mcheck.h>
-#endif
-
-#include "game.h"
-
-using namespace std; 
-
-/**
- * Game's main function.
- * It simply initialises the game and runs the "init.py" file in the game
- * directory given as first argument. Once the execution is finished,
- * it cleans everything up, and exits.
- *
- * @param argc Number of arguments to the program.
- * @param argv Array of strings containing the program's arguments.
- *
- * @return 0 in case of success, error code otherwise.
- * 
- */
-
-int main(int argc, char * argv[])
+struct mipcmp
 {
-#ifdef MEMORY_LEAKS
-    // to debug memory leaks with mtrace. It's better to use
-    // a tool like memprof or mpatrol though.
-    mtrace ();
-#endif
+    bool operator () (const mapsquare_info * mi1,
+                      const mapsquare_info * mi2) 
+    {
+        return (*mi1) < (*mi2); 
+    }
+}; 
 
-    config myconfig;
+mipcmp boah; 
 
-    // read the $HOME/.adonthell/adonthellrc file
-    // and check the arguments we recieved.
-    myconfig.read_adonthellrc ();
-    myconfig.parse_arguments (argc, argv);
+int main (int argc, char * argv[]) 
+{
+    screen::set_video_mode (640, 480, 16);
+    input::init (); 
 
-    // initialise the different parts of the engine
-    // (video, audio, python ...)
-    if (!game::init (myconfig)) return 1;
+    landmap lmap;
+    map_character_with_gfx mchar; 
+    
+    lmap.resize (16, 12);
+    mchar.set_position (6, 8); 
+    lmap.put (&mchar); 
+    mchar.set_limits (15, 11); 
+    
+    mchar.set_speed (1.0); 
 
-    // It's up to the game what happens here
-    python::exec_file ("init");
+    map_object_with_gfx mobj;
+    map_coordinates mobjmc (5, 5, 0, 0); 
 
-    // shut down the different parts of the engine
-    game::cleanup ();
+    lmap.put (&mobj, mobjmc); 
 
-    return 0;
+    mobjmc.set_position (7, 6);
+    mobjmc.set_offset (20, 20);
+    lmap.put (&mobj, mobjmc); 
+    
+    
+    while (!input::has_been_pushed (SDLK_ESCAPE)) 
+    {
+        u_int16 i, j;
+
+        static float v;
+
+        if (input::is_pushed (SDLK_r))
+            v = mchar.speed () * 2;
+        else v = mchar.speed (); 
+        
+        mchar.set_velocity (0.0, 0.0); 
+        if (input::is_pushed (SDLK_LEFT))
+        {
+            mchar.set_velocity (-v, mchar.vy ());
+            mchar.update_state (); 
+        }
+        if (input::is_pushed (SDLK_RIGHT))
+        {
+            mchar.set_velocity (v, mchar.vy ());
+            mchar.update_state (); 
+        }
+        if (input::is_pushed (SDLK_UP))
+        {
+            mchar.set_velocity (mchar.vx (), -v); 
+            mchar.update_state (); 
+        }
+        if (input::is_pushed (SDLK_DOWN))
+        {
+            mchar.set_velocity (mchar.vx (), v); 
+            mchar.update_state (); 
+        }
+
+        lmap.remove (&mchar); 
+        for (int i = 0; i < gametime::frames_to_skip (); i++) mchar.update ();  
+        lmap.put (&mchar); 
+        
+
+        // Rendering phase
+
+        for (j = 0; j < lmap.height (); j++)
+        {
+            vector <const mapsquare_info *> drawqueue; 
+            for (i = 0; i < lmap.length (); i++) 
+            {
+                mapsquare * sq = lmap.get (i, j); 
+                for (vector <mapsquare_info>::iterator it = sq->begin ();
+                     it != sq->end (); it++)
+                {
+                    if (it->x () == i && it->y () == j) 
+                        drawqueue.push_back (&(*it)); 
+                }
+            }
+
+            sort (drawqueue.begin (), drawqueue.end (), boah); 
+            
+            for (vector <const mapsquare_info *>::iterator it = drawqueue.begin ();
+                 it != drawqueue.end (); it++)
+            {
+                switch ((*it)->obj->type ()) 
+                {
+                    case CHARACTER:
+                        ((map_character_with_gfx *)
+                         (*it)->obj)->draw ((*it)->x () * mapsquare_size + (*it)->ox (),
+                                           (*it)->y () * mapsquare_size + (*it)->oy (),
+                                           ((map_character_with_gfx *) (*it)->obj));
+                        break; 
+                        
+                    case OBJECT:
+                        ((map_object_with_gfx *)
+                         (*it)->obj)->draw ((*it)->x () * mapsquare_size + (*it)->ox (),
+                                           (*it)->y () * mapsquare_size + (*it)->oy (),
+                                           ((map_object_with_gfx *) (*it)->obj));
+                        
+                        break;
+
+                    default:
+                        break; 
+                }
+            }
+
+            drawqueue.clear (); 
+        }
+
+
+        
+        for (i = 0; i < screen::length (); i += mapsquare_size) 
+            screen::display.fillrect (i, 0, 1, screen::height (), 0xFFFF00); 
+        for (i = 0; i < screen::height (); i += mapsquare_size) 
+            screen::display.fillrect (0, i, screen::length (), 1, 0xFFFF00); 
+            
+        input::update (); 
+        gametime::update (); 
+        screen::show ();
+        screen::clear (); 
+    }
+    
+    input::shutdown (); 
+    
+    return 0; 
 }
