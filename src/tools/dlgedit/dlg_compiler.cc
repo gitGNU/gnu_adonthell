@@ -24,6 +24,7 @@
 #include "dlg_cmdline.h"
 #include "dlg_compiler.h"
 #include "dlg_types.h"
+#include "dlg_arrow.h"
 #include "gui_error.h"
 
 // Operators that may appear in Python code
@@ -39,6 +40,7 @@ std::string DlgCompiler::fixed[NUM_FXD] = { "self", "quests", "the_npc",
 
 DlgCompiler::DlgCompiler (DlgModule *module)
 {
+    start.type () = PLAYER;
     dialogue = module;
     errors = 0;
     
@@ -61,6 +63,9 @@ DlgCompiler::~DlgCompiler ()
     delete[] codeTable;
     delete[] conditionTable;
     delete[] operationTable;
+    
+    for (DlgNode *next = start.next (FIRST); next != NULL; next = start.next (FIRST))
+        delete (DlgArrow *) next;
 }
 
 // compile the dialogue into Python script
@@ -136,6 +141,7 @@ void DlgCompiler::writeText ()
     std::vector<DlgNode*> nodes = dialogue->getNodes ();
     std::vector<DlgNode*>::iterator i;
     DlgCircleEntry *entry;
+    DlgArrow *arrow;
     unsigned int j = 0;
     
     // the array with the dialogue text
@@ -151,7 +157,7 @@ void DlgCompiler::writeText ()
         
         // see whether this is a start-node
         if ((*i)->prev (FIRST) == NULL)
-            addStart (*i);
+            arrow = new DlgArrow (&start, *i);
                 
         // set index of this node for later use
         (*i)->setIndex (++j);
@@ -431,19 +437,17 @@ std::string DlgCompiler::inflateCode (std::string code)
 // write the start of the dialogue
 void DlgCompiler::writeStart ()
 {
+    // check the conditions of the circle's children
+    checkConditions (&start);
+
     // begin dialogue array
     file << "\t# -- (speaker, code, ((text, operation, condition), ...))"
          << "\n\tdlg = [\\\n"
          << "\t\t(None, -1, (";
     
     // write the "followers" (in this case the start nodes)
-    if (!start.empty ())
-    {
-        std::vector<DlgNode*>::iterator i;
-
-        for (i = start.begin (); i != start.end (); i++)
-            writeFollower (*i);
-    }
+    for (DlgCircle *child = start.child (FIRST); child != NULL; child = start.child (NEXT))
+        writeFollower (child);
 }
 
 // write the actual dialogue data
@@ -509,6 +513,7 @@ void DlgCompiler::writeFollower (DlgNode *node)
 // add node to the dialogue's start nodes
 void DlgCompiler::addStart (DlgNode *node)
 {
+/*
     std::vector<DlgNode*>::iterator i = start.begin ();
 
     // search the proper place for insertion
@@ -520,6 +525,7 @@ void DlgCompiler::addStart (DlgNode *node)
     
     // insert
     start.insert (i, node);
+*/
 }
 
 // add a condition to the list of conditions

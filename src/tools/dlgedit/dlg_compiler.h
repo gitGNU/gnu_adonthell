@@ -134,7 +134,7 @@ private:
     ofstream file;
     DlgModule *dialogue;            // The dialogue to be compiled    
     
-    std::vector<DlgNode*> start;    // Start nodes of the dialogue
+    DlgCircle start;                // Start node of the dialogue
     std::vector<std::string> code;  // Temporary storage for all code
     std::vector<std::string> conditions; // Temporary storage for all conditions
 
