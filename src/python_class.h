@@ -14,7 +14,7 @@
 
 
 /**
- * @file   python.h
+ * @file   python_class.h
  * @author Kai Sterker <kaisterker@linuxgames.com>
  * 
  * @brief  Defines the python class. This file is named this way
@@ -33,6 +33,10 @@
 #include "eval.h"
 #include "node.h"
 
+/**
+ * Grant direct access to the Python interpreter.
+ * 
+ */ 
 class python
 {  
 public:

@@ -21,8 +21,10 @@
 #define TYPES_H__
 
 #include "SDL.h"
+#include "inttypes.h"
 
 // We should put ifdefs here to put the correct int values accordingly to the system type
+
 
 /// 8 bits long unsigned integer
 #define u_int8 unsigned char
@@ -42,12 +44,13 @@
 /// 32 bits long signed integer
 #define s_int32 signed int
 
-/*
-#define u_int8 Uint8
-#define u_int16 Uint16
-#define u_int32 Uint32
-#define s_int8 Sint8
-#define s_int16 Sint16
-#define s_int32 Sint32
-*/
+
+/* 
+typedef Uint8 u_int8;
+typedef Uint16 u_int16;
+typedef Uint32 u_int32;
+typedef Sint8 s_int8;
+typedef Sint16 s_int16;
+typedef Sint32 s_int32;
+*/ 
 #endif

@@ -39,15 +39,7 @@ u_int16 path::goal_estimate (u_int16 x, u_int16 y)
 
     return est; 
 }
-
-struct compare_squarecost
-{
-    bool operator() (const mapsquare * s1, const mapsquare * s2)
-    {
-        return (s1->f > s2->f); 
-    } 
-}; 
-
+ 
 bool path::calculate ()
 { 
     // Sorted Open nodes.

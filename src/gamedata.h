@@ -81,15 +81,60 @@ public:
      * @return true in case of success, false otherwise.
      */
     bool get (igzstream&);
+
+    /**
+     * A bunch of methods to access the private attributes.
+     * 
+     */
+    //@{
     
-    // a bunch of methods to access the private attributes
+    /** 
+     * Returns the directory where the saved game lies.
+     * 
+     * 
+     * @return Directory where the saved game lies.
+     */
     const char* directory () { return directory_.c_str (); }
+
+    /**
+     * Returns the description of the saved game.
+     * 
+     *
+     * @return Description of the saved game.
+     */ 
     const char* description () { return description_.c_str (); }
+
+    /** 
+     * Returns the location of the saved game.
+     * 
+     * 
+     * @return Location of the saved game.
+     */
     const char* location () { return location_.c_str (); }
+
+    /** 
+     * Returns the time of the saved game.
+     * 
+     * 
+     * @return Time of the saved game.
+     */
     const char* time () { return time_.c_str (); }
+
+    /** 
+     * Sets the description for this game.
+     * 
+     * @param string New description for this game.
+     */
     void set_description (string);
+
+    /** 
+     * Sets the directory for this game.
+     * 
+     * @param string New directory for this game.
+     */
     void set_directory (string);
 
+    //@}
 
     /** 
      * Initialise the saved games array.
@@ -103,8 +148,23 @@ public:
      */
     static void cleanup (); 
     
+    /** 
+     * Loads a previously saved game.
+     * 
+     * @param pos Slot number to load.
+     * 
+     * @return \e true in case of success, \e false otherwise.
+     */
     static bool load (u_int32 pos); 
     
+    /** 
+     * Save a game.
+     * 
+     * @param pos Slot number where to save to.
+     * @param desc Description of the game to be saved.
+     * 
+     * @return \e true in case of success, false otherwise.
+     */
     static bool save (u_int32 pos, string desc);
     
     /**
@@ -113,6 +173,12 @@ public:
      */ 
     static void unload (); 
 
+    /** 
+     * Returns a pointer to the next saved game.
+     * 
+     * 
+     * @return Next saved game.
+     */
     static gamedata* next_save ();
     
     /** 
@@ -137,26 +203,57 @@ public:
         return game_data_dir_; 
     }
 
+    /** 
+     * Returns a pointer to a saved game.
+     * 
+     * @param pos Slot number to return.
+     * 
+     * @return Pointer to the saved game at position \pos.
+     */
     static gamedata * get_saved_game (u_int32 pos) 
     {
         return saves[pos];
     }
 
+    /** 
+     * Returns the global quests dictionary.
+     * 
+     * 
+     * @return Global quests dictionary.
+     */
     static dictionary <quest *> quests ()
     {
         return data::quests;
     }
 
+    /** 
+     * Returns the player character.
+     * 
+     * 
+     * @return Player character.
+     */
     static character* player ()
     {
         return data::the_player;
     }
 
+    /** 
+     * Returns the characters dictionary
+     * 
+     * 
+     * @return Characters dictionary.
+     */
     static dictionary<character*> characters ()
     {
         return data::characters;
     }
 
+    /** 
+     * Returns a pointer to the global mapengine.
+     * 
+     * 
+     * @return Pointer to the global mapengine.
+     */
     static mapengine* map_engine ()
     {
         return data::map_engine;

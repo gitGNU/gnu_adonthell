@@ -13,6 +13,17 @@
    See the COPYING file for more details.
 */
 
+
+/**
+ * @file   text_bubble.cc
+ * @author Kai Sterker <kaisterker@linuxgames.com>
+ * @author Alexandre Courbot <alexandrecourbot@linuxgames.com>
+ * 
+ * @brief  Defines the text_bubble class.
+ * 
+ * 
+ */
+
 #include "text_bubble.h"
 #include "win_manager.h"
 

@@ -58,11 +58,6 @@ enum {Python = 1, C = 0};
 // obj.thisown = C (C have to destroy the object)
 enum {Python = 1, C = 0};
 
-#define SDL_MIXER
-#define SDL_HAS_64BIT_TYPE int
-#define USE_MAP
-#define USE_PYTHON
-
 %typemap(python,in) string
 {
     if (PyString_Check ($source))

@@ -32,6 +32,11 @@
 #include "gamedata.h"
 #include "python_class.h"
 
+/**
+ * Flags that can be passed to game::init () in order to select
+ * which subsystems should be initialized.
+ * 
+ */ 
 typedef
 enum
 { INIT_NONE = 0, INIT_VIDEO = 1, INIT_AUDIO = 2, INIT_PYTHON = 4, INIT_DATA = 8, 
