@@ -34,7 +34,8 @@ image::image ()
 
 image::~image()
 {
-  free(data);
+  SDL_FreeSurface(data);
+  data=NULL;
 }
 
 u_int16 image::get_lenght()
@@ -383,7 +384,7 @@ void image::putbox_font_img (void * source, u_int16 xo, u_int16 totlen)
       lenght*=sizefactor;
       height*=sizefactor;
       data=SDL_ConvertSurface(tmp, tmp->format, SDL_SWSURFACE);
-      SDL_SetColorKey(data, SDL_SRCCOLORKEY, 0xFF00FF);
+      //      SDL_SetColorKey(data, SDL_SRCCOLORKEY, 0xFF00FF);
       break;
 
     case 2:
@@ -411,7 +412,7 @@ void image::putbox_font_img (void * source, u_int16 xo, u_int16 totlen)
       lenght*=sizefactor;
       height*=sizefactor;
       data=SDL_ConvertSurface(tmp, tmp->format, SDL_SWSURFACE);
-      SDL_SetColorKey(data, SDL_SRCCOLORKEY, 0xF81F);
+      //      SDL_SetColorKey(data, SDL_SRCCOLORKEY, 0xF81F);
       break;
     }
  
@@ -557,6 +558,11 @@ s_int8 image::load(char * fname)
   res=get(file);
   fclose(file);
   return(res);
+}
+
+u_int8 image::get_sizefactor()
+{
+  return(sizefactor);
 }
 
 #ifdef SDL

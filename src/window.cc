@@ -257,8 +257,9 @@ void window::draw_text()
 	    {j+=WIN_SPACE_LENGHT;}
           else
 	    { 
+	      // tablechar[k].putbox_mask(sxtext+j,sytext+i*WIN_FONT_HEIGHT);
 	      tablechar[k].putbox_mask(sxtext+j,sytext+i*WIN_FONT_HEIGHT);
-              j+= tablechar[k].get_lenght();
+	      j+= (tablechar[k].get_lenght()/tablechar[k].get_sizefactor());
              }
        text_window_pos_tmp++;
        }
