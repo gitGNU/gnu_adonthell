@@ -37,7 +37,7 @@ void *pnm::get (SDL_RWops * file, u_int16 * length, u_int16 * height)
     u_int16 l, h;
     u_int32 i = 0;
 
-    SDL_RWread (file, sign, 2, 1);
+    SDL_RWread (file, sign, 1, 2);
     if ((sign[0] != 'P') || (sign[1] != '6'))
     {
         printf ("Invalid format.\n");
@@ -67,7 +67,7 @@ void *pnm::get (SDL_RWops * file, u_int16 * length, u_int16 * height)
     pnm_gotonextline (file);
     /* Reading the image */
     image = calloc (l * h, 3);
-    SDL_RWread (file, image, 3, l * h);
+    SDL_RWread (file, image, 1, l * h * 3);
     if (length)
         *length = l;
     if (height)
@@ -82,7 +82,7 @@ void pnm::put (SDL_RWops * file, void *image, u_int16 length, u_int16 height)
     sprintf (s, "P6\n%d %d\n255\n", length, height);
     SDL_RWwrite (file, s, sizeof (char), strlen (s));
 
-    SDL_RWwrite (file, image, 3, length * height);
+    SDL_RWwrite (file, image, 1, length * height * 3);
 }
  
 

@@ -55,7 +55,7 @@ s_int8 image::get (igzstream& file)
 {
     s_int8 ret;
 
-    bool m;
+    u_int8 m;
     u_int8 a;
     
     m << file;

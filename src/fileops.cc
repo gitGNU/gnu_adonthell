@@ -23,12 +23,12 @@
  */
 
 
-
 #include <iostream>
+#include <SDL/SDL_endian.h>
 #include "fileops.h"
 
 
-using namespace std; 
+using namespace std;
 
 
 gz_file::gz_file ()
@@ -81,8 +81,9 @@ bool igzstream::open (string fname)
 /// Reads a boolean.
 bool& operator << (bool& n, igzstream& gfile)
 {
-    gzread (gfile.file, &n, sizeof (n));
-    return n;
+    u_int8 b;
+    gzread (gfile.file, &b, sizeof (b));
+    return (n = b);
 }
 
 /// Reads a char.
@@ -115,6 +116,7 @@ s_int8& operator << (s_int8& n, igzstream& gfile)
 u_int16& operator << (u_int16& n, igzstream& gfile)
 {
     gzread(gfile.file, &n, sizeof (n));
+    n = SDL_SwapLE16(n);
     return n;
 }
 
@@ -122,6 +124,7 @@ u_int16& operator << (u_int16& n, igzstream& gfile)
 s_int16& operator << (s_int16& n, igzstream& gfile)
 {
     gzread(gfile.file, &n, sizeof (n));
+    n = SDL_SwapLE16(n);
     return n;
 }
 
@@ -129,6 +132,7 @@ s_int16& operator << (s_int16& n, igzstream& gfile)
 u_int32& operator << (u_int32& n, igzstream& gfile)
 {
     gzread(gfile.file, &n, sizeof (n));
+    n = SDL_SwapLE32(n);
     return n;
 }
 
@@ -136,6 +140,7 @@ u_int32& operator << (u_int32& n, igzstream& gfile)
 s_int32& operator << (s_int32& n, igzstream& gfile)
 {
     gzread(gfile.file, &n, sizeof (n));
+    n = SDL_SwapLE32(n);
     return n;
 }
 
@@ -180,7 +185,8 @@ void ogzstream::put_block (void * to, u_int32 size)
 /// Writes a boolean.
 const bool& operator >> (const bool& n, ogzstream& gfile)
 {
-    gzwrite (gfile.file, (bool *) &n, sizeof (n));
+    u_int8 b = n;
+    gzwrite (gfile.file, &b, sizeof (b));
     return n;
 }
 
@@ -208,28 +214,32 @@ const s_int8& operator >> (const s_int8& n, ogzstream& gfile)
 /// Writes a u_int16.
 const u_int16& operator >> (const u_int16& n, ogzstream& gfile)
 {
-    gzwrite(gfile.file, (u_int16 *) &n, sizeof (n));
+    u_int16 s = SDL_SwapLE16(n);
+    gzwrite(gfile.file, (u_int16 *) &s, sizeof (n));
     return n;
 }
 
 /// Writes a s_int16.
 const s_int16& operator >> (const s_int16& n, ogzstream& gfile)
 {
-    gzwrite(gfile.file, (s_int16 *) &n, sizeof (n));
+    s_int16 s = SDL_SwapLE16(n);
+    gzwrite(gfile.file, (s_int16 *) &s, sizeof (n));
     return n;
 }
 
 /// Writes a u_int32.
 const u_int32& operator >> (const u_int32& n, ogzstream& gfile)
 {
-    gzwrite(gfile.file, (u_int32 *) &n, sizeof (n));
+    u_int32 s = SDL_SwapLE32(n);
+    gzwrite(gfile.file, (u_int32 *) &s, sizeof (n));
     return n;
 }
 
 /// Writes a s_int32.
 const s_int32& operator >> (const s_int32& n, ogzstream& gfile)
 {
-    gzwrite(gfile.file, (u_int32 *) &n, sizeof (n));
+    s_int32 s = SDL_SwapLE32(n);
+    gzwrite(gfile.file, (s_int32 *) &s, sizeof (n));
     return n;
 }
 
