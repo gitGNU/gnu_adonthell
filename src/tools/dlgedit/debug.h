@@ -18,26 +18,31 @@
 #include <gtk/gtkstyle.h>
 
 class MainFrame;
+class objects;
 
 class debug_dlg
 {
 public:
-    debug_dlg ();
+    debug_dlg (MainFrame*);
     ~debug_dlg ();
-    void init ();
-    void update ();
-    void set (char*, char*);
+    
+    void init ();               // Init the trees
+    void update ();             // Update the active tree
+    void set (char*, char*);    // Add/change a variable of the active page
+    objects* get_dlg_vars ();   // Return a Dialogue's debug info
+    void set_dlg_var (char*, int);// Add/Change a dialogue's local variable
+    
+    GtkWidget *quest_tree;      // Contains quest variables 
+    GtkWidget *char_tree;       // Contains character attributes
+    GtkWidget *dlg_tree;        // Contains local dialogue variables
+    GtkWidget *val_entry;       // Textentry for attribute value
+    GtkWidget *attrib_entry;    // Textentry for attribute name
+    GtkWidget *dlg;             // The debug window
+    MainFrame *wnd;             // The main applictation data
 
-    GtkWidget *quest_tree;
-    GtkWidget *char_tree;
-    GtkWidget *val_entry;
-    GtkWidget *attrib_entry;
-    GtkWidget *dlg;
-    MainFrame *wnd;
-
-    static int destroy;
-    int active_page;
-    int selected_row;
+    static int destroy;         // Set to 1 if debug window is open
+    int active_page;            // Whether dialogue, character or quest page is active
+    int selected_row;           // The row selected in the active tree
 };
 
 #endif // __DEBUG_H__

@@ -40,7 +40,6 @@ create_run_dlg_wnd (run_dlg *dlg)
     gtk_widget_set_usize (run_dlg_wnd, 400, 320);
     gtk_window_set_title (GTK_WINDOW (run_dlg_wnd), "Run Dialogue");
     gtk_window_set_position (GTK_WINDOW (run_dlg_wnd), GTK_WIN_POS_MOUSE);
-    gtk_window_set_modal (GTK_WINDOW (run_dlg_wnd), TRUE);
     gtk_window_set_policy (GTK_WINDOW (run_dlg_wnd), FALSE, FALSE, FALSE);
 
     vbox1 = gtk_vbox_new (FALSE, 0);
@@ -97,14 +96,11 @@ create_run_dlg_wnd (run_dlg *dlg)
 
     gtk_signal_connect (GTK_OBJECT (dialogue_list), "select_child", GTK_SIGNAL_FUNC (on_dialogue_list_select_child), dlg);
     gtk_signal_connect (GTK_OBJECT (dialogue_export), "clicked", GTK_SIGNAL_FUNC (on_dialogue_export_pressed), NULL);
-    gtk_signal_connect (GTK_OBJECT (dialogue_close), "clicked", GTK_SIGNAL_FUNC (on_dialogue_close_pressed), run_dlg_wnd);
-    gtk_signal_connect (GTK_OBJECT (run_dlg_wnd), "delete_event", GTK_SIGNAL_FUNC (on_widget_destroy), NULL);
+    gtk_signal_connect (GTK_OBJECT (dialogue_close), "clicked", GTK_SIGNAL_FUNC (on_dialogue_close_pressed), dlg);
+    gtk_signal_connect (GTK_OBJECT (run_dlg_wnd), "destroy", GTK_SIGNAL_FUNC (on_run_destroy), dlg);
 
     gtk_widget_grab_default (dialogue_close);
     gtk_object_set_data (GTK_OBJECT (run_dlg_wnd), "tooltips", tooltips);
-
-    // set the window modal
-    gtk_window_set_modal ((GTK_WINDOW (run_dlg_wnd)), TRUE);
     
     // Show window
     gtk_widget_show (run_dlg_wnd);

@@ -23,7 +23,7 @@ class dlg_compiler
 {
 public:
     dlg_compiler () : text_lookup (NULL), jump_lookup (NULL) {  }
-    dlg_compiler (vector<DlgNode*>&, string, string);
+    dlg_compiler (vector<DlgNode*>&, string, string, u_int8);
     ~dlg_compiler ();
     
     void run ();                    // Start the compile-process
@@ -39,6 +39,7 @@ private:
     string space;                   // For formatting the python output
     ofstream script;                // The script file
 
+    u_int8 debug;                   // Debug enabled or disabled
     u_int32 *text_lookup;           // tells String index when given node-number
     s_int32 *jump_lookup;           // tells Function index when given node-number
     

@@ -30,13 +30,13 @@ on_debug_destroy (GtkWidget * widget, gpointer user_data)
         delete dlg;
     }
 }
-
+/*
 void
 on_character_tree_expand (GtkCTree * ctree, GList * node, gpointer user_data)
 {
 
 }
-
+*/
 void
 on_character_tree_select (GtkWidget * widget, gint row, gint column, GdkEventButton * bevent, gpointer data)
 {
@@ -76,13 +76,13 @@ on_character_tree_select (GtkWidget * widget, gint row, gint column, GdkEventBut
 		}
 	}
 }
-
+/*
 void
 on_quest_tree_expand (GtkCTree * ctree, GList * node, gpointer user_data)
 {
 
 }
-
+*/
 
 void
 on_update_debug_clicked (GtkButton * button, gpointer user_data)

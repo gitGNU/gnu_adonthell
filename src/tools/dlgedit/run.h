@@ -35,10 +35,13 @@ public:
     GtkWidget *dlg;             // The actual Dialogue Window
     GtkWidget *list;            // The List widget that holds the dialogue text
     s_int32 answer;             // The chosen answer
+    static int destroy;         // Set to 1 if debug window is open
 
     void run ();                // Run the dialogue
+    PyObject *get_instance ();  // Returns the (Python) Dialogue instance
     
 private:
+    MainFrame *wnd;             // The main application data
     GList *tmp_list;            // Container for the Text to diaplay
     dialog *dat;                // Data to be used throughout the dialogue
 };

@@ -130,6 +130,8 @@ main (int argc, char *argv[])
     MainWnd->text_dlg = NULL;
     MainWnd->pixmap = NULL;
     MainWnd->dbg_dlg = NULL;
+    MainWnd->test_dlg = NULL;
+    MainWnd->debug = 0;
 
     // Create Top Level Window and Controls
     create_mainframe (MainWnd);

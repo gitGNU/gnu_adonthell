@@ -22,6 +22,7 @@
 #include "../../character.h"
 
 class debug_dlg;
+class run_dlg;
 
 // Internal Editor Modes
 enum
@@ -81,13 +82,15 @@ public:
     s_int32 scroll_y;           // Auto-scroll rate
     u_int8 scroll;              // Auto-scrolling on/off
     u_int8 changed;             // Dialogue un-/changed
+    u_int8 debug;               // Debugging enabled/disabled
 
-    debug_dlg *dbg_dlg;         // For Displaying debug info
+    debug_dlg *dbg_dlg;         // For displaying debug info
+    run_dlg *test_dlg;          // For testing the dialogue
     string pset_vars;           // Preset variables for running the Dialogue
     string cust_func;           // Custom functions of the Dialogue
     player *myplayer;           // A player object
 
-    void set_changed ();
+    void set_changed ();        // Update the title bar when dialogue changes
 };
 
 /* Functions */

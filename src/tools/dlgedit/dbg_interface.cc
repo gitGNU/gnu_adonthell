@@ -26,13 +26,12 @@ create_debug_wnd (debug_dlg * dlg)
     GtkWidget *notebook1;
     GtkWidget *scrolledwindow1;
     GtkWidget *character_tree;
-    GtkWidget *label3;
-    GtkWidget *label4;
     GtkWidget *label1;
     GtkWidget *scrolledwindow2;
+    GtkWidget *scrolledwindow3;
     GtkWidget *quest_tree;
-    GtkWidget *label5;
-    GtkWidget *label6;
+    GtkWidget *dlg_tree;
+    GtkWidget *label7;
     GtkWidget *label2;
     GtkWidget *hbuttonbox1;
     GtkWidget *update_debug;
@@ -57,6 +56,29 @@ create_debug_wnd (debug_dlg * dlg)
     gtk_widget_show (notebook1);
     gtk_box_pack_start (GTK_BOX (vbox1), notebook1, TRUE, TRUE, 0);
 
+    scrolledwindow3 = gtk_scrolled_window_new (0, 0);
+    gtk_widget_ref (scrolledwindow3);
+    gtk_object_set_data_full (GTK_OBJECT (debug_wnd), "scrolledwindow3", scrolledwindow3, (GtkDestroyNotify) gtk_widget_unref);
+    gtk_widget_show (scrolledwindow3);
+    gtk_container_add (GTK_CONTAINER (notebook1), scrolledwindow3);
+    gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolledwindow3), GTK_POLICY_NEVER, GTK_POLICY_ALWAYS);
+
+    dlg_tree = gtk_ctree_new (2, 0);
+    gtk_widget_ref (dlg_tree);
+    gtk_object_set_data_full (GTK_OBJECT (debug_wnd), "dlg_tree", dlg_tree, (GtkDestroyNotify) gtk_widget_unref);
+    gtk_widget_show (dlg_tree);
+    gtk_container_add (GTK_CONTAINER (scrolledwindow3), dlg_tree);
+    gtk_clist_set_column_width (GTK_CLIST (dlg_tree), 0, 200);
+    gtk_clist_set_column_width (GTK_CLIST (dlg_tree), 1, 100);
+    gtk_clist_column_titles_hide (GTK_CLIST (dlg_tree));
+    dlg->dlg_tree = dlg_tree;
+
+    label7 = gtk_label_new ("Dialogue");
+    gtk_widget_ref (label7);
+    gtk_object_set_data_full (GTK_OBJECT (debug_wnd), "label7", label7, (GtkDestroyNotify) gtk_widget_unref);
+    gtk_widget_show (label7);
+    gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook1), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook1), 0), label7);
+
     scrolledwindow1 = gtk_scrolled_window_new (0, 0);
     gtk_widget_ref (scrolledwindow1);
     gtk_object_set_data_full (GTK_OBJECT (debug_wnd), "scrolledwindow1", scrolledwindow1, (GtkDestroyNotify) gtk_widget_unref);
@@ -74,23 +96,11 @@ create_debug_wnd (debug_dlg * dlg)
     gtk_clist_column_titles_hide (GTK_CLIST (character_tree));
     dlg->char_tree = character_tree;
 
-    label3 = gtk_label_new ("");
-    gtk_widget_ref (label3);
-    gtk_object_set_data_full (GTK_OBJECT (debug_wnd), "label3", label3, (GtkDestroyNotify) gtk_widget_unref);
-    gtk_widget_show (label3);
-    gtk_clist_set_column_widget (GTK_CLIST (character_tree), 0, label3);
-
-    label4 = gtk_label_new ("label4");
-    gtk_widget_ref (label4);
-    gtk_object_set_data_full (GTK_OBJECT (debug_wnd), "label4", label4, (GtkDestroyNotify) gtk_widget_unref);
-    gtk_widget_show (label4);
-    gtk_clist_set_column_widget (GTK_CLIST (character_tree), 1, label4);
-
     label1 = gtk_label_new ("Characters");
     gtk_widget_ref (label1);
     gtk_object_set_data_full (GTK_OBJECT (debug_wnd), "label1", label1, (GtkDestroyNotify) gtk_widget_unref);
     gtk_widget_show (label1);
-    gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook1), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook1), 0), label1);
+    gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook1), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook1), 1), label1);
 
     scrolledwindow2 = gtk_scrolled_window_new (0, 0);
     gtk_widget_ref (scrolledwindow2);
@@ -109,23 +119,11 @@ create_debug_wnd (debug_dlg * dlg)
     gtk_clist_column_titles_hide (GTK_CLIST (quest_tree));
     dlg->quest_tree = quest_tree;
 
-    label5 = gtk_label_new ("");
-    gtk_widget_ref (label5);
-    gtk_object_set_data_full (GTK_OBJECT (debug_wnd), "label5", label5, (GtkDestroyNotify) gtk_widget_unref);
-    gtk_widget_show (label5);
-    gtk_clist_set_column_widget (GTK_CLIST (quest_tree), 0, label5);
-
-    label6 = gtk_label_new ("label4");
-    gtk_widget_ref (label6);
-    gtk_object_set_data_full (GTK_OBJECT (debug_wnd), "label6", label6, (GtkDestroyNotify) gtk_widget_unref);
-    gtk_widget_show (label6);
-    gtk_clist_set_column_widget (GTK_CLIST (quest_tree), 1, label6);
-
     label2 = gtk_label_new ("Quests");
     gtk_widget_ref (label2);
     gtk_object_set_data_full (GTK_OBJECT (debug_wnd), "label2", label2, (GtkDestroyNotify) gtk_widget_unref);
     gtk_widget_show (label2);
-    gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook1), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook1), 1), label2);
+    gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook1), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook1), 2), label2);
 
     hbuttonbox1 = gtk_hbutton_box_new ();
     gtk_widget_ref (hbuttonbox1);
@@ -150,9 +148,10 @@ create_debug_wnd (debug_dlg * dlg)
     gtk_container_add (GTK_CONTAINER (hbuttonbox1), close_debug);
     GTK_WIDGET_SET_FLAGS (close_debug, GTK_CAN_DEFAULT);
 
-    gtk_signal_connect (GTK_OBJECT (character_tree), "tree_expand", GTK_SIGNAL_FUNC (on_character_tree_expand), NULL);
+//    gtk_signal_connect (GTK_OBJECT (character_tree), "tree_expand", GTK_SIGNAL_FUNC (on_character_tree_expand), NULL);
     gtk_signal_connect (GTK_OBJECT (character_tree), "select_row", GTK_SIGNAL_FUNC (on_character_tree_select), dlg);
-    gtk_signal_connect (GTK_OBJECT (quest_tree), "tree_expand", GTK_SIGNAL_FUNC (on_quest_tree_expand), NULL);
+    gtk_signal_connect (GTK_OBJECT (dlg_tree), "select_row", GTK_SIGNAL_FUNC (on_character_tree_select), dlg);
+//    gtk_signal_connect (GTK_OBJECT (quest_tree), "tree_expand", GTK_SIGNAL_FUNC (on_quest_tree_expand), NULL);
     gtk_signal_connect (GTK_OBJECT (update_debug), "clicked", GTK_SIGNAL_FUNC (on_update_debug_clicked), NULL);
     gtk_signal_connect (GTK_OBJECT (close_debug), "clicked", GTK_SIGNAL_FUNC (on_close_debug_clicked), dlg);
     gtk_signal_connect (GTK_OBJECT (debug_wnd), "destroy", GTK_SIGNAL_FUNC (on_debug_destroy), dlg);
@@ -242,7 +241,7 @@ create_dbg_edit_wnd (debug_dlg * dlg, char *title, char *attribute, char *value)
     gtk_widget_ref (hseparator1);
     gtk_object_set_data_full (GTK_OBJECT (dbg_edit_wnd), "hseparator1", hseparator1, (GtkDestroyNotify) gtk_widget_unref);
     gtk_widget_show (hseparator1);
-    gtk_box_pack_start (GTK_BOX (vbox1), hseparator1, FALSE, TRUE, 0);
+   gtk_box_pack_start (GTK_BOX (vbox1), hseparator1, FALSE, TRUE, 0);
 
     hbuttonbox1 = gtk_hbutton_box_new ();
     gtk_widget_ref (hbuttonbox1);

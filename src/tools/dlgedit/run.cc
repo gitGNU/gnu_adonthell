@@ -21,8 +21,12 @@
 #include "../../game.h"
 #include "../../py_inc.h"
 
-run_dlg::run_dlg (MainFrame *wnd)
+int run_dlg::destroy = 0;
+
+run_dlg::run_dlg (MainFrame *w) : wnd (w)
 {
+    destroy = 1;
+
     char *file = g_basename (wnd->file_name);
     char *path = g_dirname (wnd->file_name);
 
@@ -54,9 +58,14 @@ run_dlg::run_dlg (MainFrame *wnd)
 
 run_dlg::~run_dlg ()
 {
+    wnd->test_dlg = NULL;
     delete dat;
 }
 
+PyObject *run_dlg::get_instance ()
+{
+    return dat->get_instance ();
+}
 
 void run_dlg::run ()
 {

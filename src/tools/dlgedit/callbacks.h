@@ -28,5 +28,7 @@ void on_dialogue_variables_activate (GtkMenuItem *, gpointer);
 void on_dialogue_functions_activate (GtkMenuItem *, gpointer);
 void on_dialogue_player_activate (GtkMenuItem *, gpointer);
 void on_extras_debug_activate (GtkMenuItem *, gpointer);
+void on_extras_enable_dbg_toggle (GtkCheckMenuItem *, gpointer);
 
+// Instant Preview callbacks
 void on_list_select (GtkList *, GtkWidget *, gpointer);

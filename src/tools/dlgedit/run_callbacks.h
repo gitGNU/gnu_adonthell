@@ -12,6 +12,7 @@
    See the COPYING file for more details.
 */
 
+void on_run_destroy (GtkWidget * , gpointer);
 void on_dialogue_list_select_child (GtkList*, GtkWidget*, gpointer);
 void on_dialogue_export_pressed (GtkButton*, gpointer);
 void on_dialogue_close_pressed (GtkButton*, gpointer);

@@ -30,7 +30,7 @@ class dialog;
 #include "debug.h"
 #include "interface.h"
 
-/* Main Window: on_widget_destroy App */
+// Main Window: on_widget_destroy App
 void 
 on_widget_destroy (GtkWidget * widget, gpointer data)
 {
@@ -39,7 +39,7 @@ on_widget_destroy (GtkWidget * widget, gpointer data)
 }
 
 
-/* File-Selection: ok -> get file name */
+// File-Selection: ok -> get file name
 void 
 on_fs_ok_button_pressed (GtkButton * button, gpointer user_data)
 {
@@ -51,7 +51,7 @@ on_fs_ok_button_pressed (GtkButton * button, gpointer user_data)
     gtk_main_quit ();
 }
 
-/* File-Selection: cancel -> no file name */
+// File-Selection: cancel -> no file name
 void 
 on_fs_cancel_button_pressed (GtkButton * button, gpointer user_data)
 {
@@ -61,14 +61,14 @@ on_fs_cancel_button_pressed (GtkButton * button, gpointer user_data)
     gtk_main_quit ();
 }
 
-/* File Menu: New */
+// File Menu: New
 void 
 on_file_new_activate (GtkMenuItem * menuitem, gpointer user_data)
 {
     new_dialogue ((MainFrame *) user_data);
 }
 
-/* File Menu: Load */
+// File Menu: Load
 void 
 on_file_load_activate (GtkMenuItem * menuitem, gpointer user_data)
 {
@@ -89,38 +89,26 @@ on_file_load_activate (GtkMenuItem * menuitem, gpointer user_data)
     g_string_free (file, TRUE);
 }
 
-/* File Menu: Save */
+// File Menu: Save
 void 
 on_file_save_activate (GtkMenuItem * menuitem, gpointer user_data)
 {
     save_dialogue ((MainFrame *) user_data);
 }
 
-/* Dialogue Menu: Compile */
+// Dialogue Menu: Compile
 void 
 on_dialogue_compile_activate (GtkMenuItem * menuitem, gpointer user_data)
 {
     MainFrame *wnd = (MainFrame *) user_data;
-    dlg_compiler compiler (wnd->nodes, wnd->file_name, wnd->cust_func);
+    dlg_compiler compiler (wnd->nodes, wnd->file_name, wnd->cust_func, wnd->debug);
 
     compiler.run ();
 
     gtk_widget_set_sensitive (wnd->dialogue_run, TRUE);
 }
 
-/* Dialogue Menu: Run */
-void 
-on_dialogue_run_activate (GtkMenuItem * menuitem, gpointer user_data)
-{
-    MainFrame *wnd = (MainFrame *) user_data;
-    run_dlg dlg (wnd);
-
-    dlg.run ();
-
-    gtk_main ();
-}
-
-/* Dialogue Menu: Variables */
+// Dialogue Menu: Variables
 void 
 on_dialogue_variables_activate (GtkMenuItem * menuitem, gpointer user_data)
 {
@@ -132,7 +120,7 @@ on_dialogue_variables_activate (GtkMenuItem * menuitem, gpointer user_data)
     gtk_main ();
 }
 
-/* Dialogue Menu: Functions */
+// Dialogue Menu: Functions
 void 
 on_dialogue_functions_activate (GtkMenuItem * menuitem, gpointer user_data)
 {
@@ -144,7 +132,7 @@ on_dialogue_functions_activate (GtkMenuItem * menuitem, gpointer user_data)
     gtk_main ();
 }
 
-/* Dialogue Menu: Variables */
+// Dialogue Menu: Variables
 void 
 on_dialogue_player_activate (GtkMenuItem * menuitem, gpointer user_data)
 {
@@ -154,22 +142,40 @@ on_dialogue_player_activate (GtkMenuItem * menuitem, gpointer user_data)
     gtk_main ();
 }
 
-/* Extras Menu: Debug */
+// Dialogue Menu: Run
+void 
+on_dialogue_run_activate (GtkMenuItem * menuitem, gpointer user_data)
+{
+    MainFrame *wnd = (MainFrame *) user_data;
+
+    if (wnd->test_dlg == NULL)
+    {
+        wnd->test_dlg = new run_dlg (wnd);
+        wnd->test_dlg->run ();
+    }
+}
+
+// Extras Menu: Debug
 void 
 on_extras_debug_activate (GtkMenuItem * menuitem, gpointer user_data)
 {
     MainFrame *wnd = (MainFrame *) user_data;
 
     if (wnd->dbg_dlg == NULL)
-    {
-        wnd->dbg_dlg = new debug_dlg;
-        wnd->dbg_dlg->wnd = wnd;
-    }
+        wnd->dbg_dlg = new debug_dlg (wnd);
 
     wnd->dbg_dlg->update ();
 }
 
-/* Node selected in preview */
+// Extras Menu: Enable Debugging
+void
+on_extras_enable_dbg_toggle (GtkCheckMenuItem *menuitem, gpointer user_data)
+{
+    MainFrame *wnd = (MainFrame *) user_data;
+    wnd->debug = menuitem->active;
+}
+
+// Node selected in preview
 void
 on_list_select (GtkList *list, GtkWidget *widget, gpointer user_data)
 {

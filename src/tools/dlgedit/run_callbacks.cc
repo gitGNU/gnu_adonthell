@@ -20,6 +20,19 @@
 
 
 void
+on_run_destroy (GtkWidget * widget, gpointer user_data)
+{
+    run_dlg *dlg = (run_dlg *) user_data;
+
+    if (run_dlg::destroy)
+    {
+        run_dlg::destroy = 0;
+        gtk_widget_destroy (widget);
+        delete dlg;
+    }
+}
+
+void
 on_dialogue_list_select_child (GtkList * list, GtkWidget * widget, gpointer user_data)
 {
     GList *new_items = NULL;
@@ -78,6 +91,7 @@ on_dialogue_export_pressed (GtkButton * button, gpointer user_data)
 void
 on_dialogue_close_pressed (GtkButton * button, gpointer user_data)
 {
-    gtk_widget_destroy ((GtkWidget *) user_data);
-    gtk_main_quit ();
+    run_dlg *dlg = (run_dlg *) user_data;
+
+    on_run_destroy (dlg->dlg, user_data);
 }

@@ -25,7 +25,7 @@ class dialog;
 #include "events.h"
 #include "interface.h"
 
-/* Create Top Level Window and Controls */
+// Create Top Level Window and Controls
 void create_mainframe (MainFrame * MainWnd)
 {
     GtkWidget *vbox;
@@ -36,106 +36,106 @@ void create_mainframe (MainFrame * MainWnd)
     GdkColor color;
     GtkAccelGroup *accel_group;
 
-    /* Main Window */
+    // Main Window
     MainWnd->wnd = gtk_window_new (GTK_WINDOW_TOPLEVEL);
     gtk_widget_set_usize (GTK_WIDGET (MainWnd->wnd), 640, 480);
     gtk_window_set_title (GTK_WINDOW (MainWnd->wnd), g_strjoin (NULL, "Adonthell Dialogue Editor v", _VERSION_, " - [", strrchr (MainWnd->file_name, '/') + 1, "]", NULL));
     gtk_signal_connect (GTK_OBJECT (MainWnd->wnd), "delete_event", GTK_SIGNAL_FUNC (on_widget_destroy), NULL);
 
-    /* Menu Accelerators */
+    // Menu Accelerators
     accel_group = gtk_accel_group_new ();
 
-    /* Main Windows Menu */
+    // Main Windows Menu
     MainWnd->menu = gtk_menu_bar_new ();
 
-    /* Attach Menubar */
+    // Attach Menubar
     vbox = gtk_vbox_new (FALSE, 0);
     gtk_container_add (GTK_CONTAINER (MainWnd->wnd), vbox);
     gtk_widget_show (vbox);
 
     gtk_box_pack_start (GTK_BOX (vbox), MainWnd->menu, FALSE, FALSE, 2);
 
-    /* File Menu */
+    // File Menu
     menu = gtk_menu_new ();
 
-    /* New */
+    // New
     menuitem = gtk_menu_item_new_with_label ("New");
     gtk_container_add (GTK_CONTAINER (menu), menuitem);
     gtk_widget_add_accelerator (menuitem, "activate", accel_group, GDK_n, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
     gtk_signal_connect (GTK_OBJECT (menuitem), "activate", GTK_SIGNAL_FUNC (on_file_new_activate), (gpointer) MainWnd);
     gtk_widget_show (menuitem);
 
-    /* Load */
+    // Load
     menuitem = gtk_menu_item_new_with_label ("Open");
     gtk_container_add (GTK_CONTAINER (menu), menuitem);
     gtk_widget_add_accelerator (menuitem, "activate", accel_group, GDK_o, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
     gtk_signal_connect (GTK_OBJECT (menuitem), "activate", GTK_SIGNAL_FUNC (on_file_load_activate), (gpointer) MainWnd);
     gtk_widget_show (menuitem);
 
-    /* Save */
+    // Save
     menuitem = gtk_menu_item_new_with_label ("Save");
     gtk_container_add (GTK_CONTAINER (menu), menuitem);
     gtk_widget_add_accelerator (menuitem, "activate", accel_group, GDK_s, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
     gtk_signal_connect (GTK_OBJECT (menuitem), "activate", GTK_SIGNAL_FUNC (on_file_save_activate), (gpointer) MainWnd);
     gtk_widget_show (menuitem);
 
-    /* Seperator */
+    // Seperator
     menuitem = gtk_menu_item_new ();
     gtk_menu_append (GTK_MENU (menu), menuitem);
     gtk_widget_set_sensitive (menuitem, FALSE);
     gtk_widget_show (menuitem);
 
-    /* Quit */
+    // Quit
     menuitem = gtk_menu_item_new_with_label ("Quit");
     gtk_menu_append (GTK_MENU (menu), menuitem);
     gtk_widget_add_accelerator (menuitem, "activate", accel_group, GDK_q, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
     gtk_signal_connect (GTK_OBJECT (menuitem), "activate", GTK_SIGNAL_FUNC (on_widget_destroy), (gpointer) NULL);
     gtk_widget_show (menuitem);
 
-    /* Attach File Menu */
+    // Attach File Menu
     menuitem = gtk_menu_item_new_with_label ("File");
     gtk_widget_show (menuitem);
     gtk_menu_item_set_submenu (GTK_MENU_ITEM (menuitem), menu);
     gtk_menu_bar_append (GTK_MENU_BAR (MainWnd->menu), menuitem);
 
-    /* Dialogue Menu */
+    // Dialogue Menu
     menu = gtk_menu_new ();
     
-    /* Player Settings */
+    // Player Settings
     menuitem = gtk_menu_item_new_with_label ("Player");
     gtk_container_add (GTK_CONTAINER (menu), menuitem);
     gtk_widget_add_accelerator (menuitem, "activate", accel_group, GDK_p, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
     gtk_signal_connect (GTK_OBJECT (menuitem), "activate", GTK_SIGNAL_FUNC (on_dialogue_player_activate), (gpointer) MainWnd);
     gtk_widget_show (menuitem);
 
-    /* Variables */
+    // Variables
     menuitem = gtk_menu_item_new_with_label ("Variables");
     gtk_container_add (GTK_CONTAINER (menu), menuitem);
     gtk_widget_add_accelerator (menuitem, "activate", accel_group, GDK_v, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
     gtk_signal_connect (GTK_OBJECT (menuitem), "activate", GTK_SIGNAL_FUNC (on_dialogue_variables_activate), (gpointer) MainWnd);
     gtk_widget_show (menuitem);
 
-    /* Custom Functions */
+    // Custom Functions
     menuitem = gtk_menu_item_new_with_label ("Functions");
     gtk_container_add (GTK_CONTAINER (menu), menuitem);
     gtk_widget_add_accelerator (menuitem, "activate", accel_group, GDK_f, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
     gtk_signal_connect (GTK_OBJECT (menuitem), "activate", GTK_SIGNAL_FUNC (on_dialogue_functions_activate), (gpointer) MainWnd);
     gtk_widget_show (menuitem);
 
-    /* Seperator */
+    // Seperator
     menuitem = gtk_menu_item_new ();
     gtk_menu_append (GTK_MENU (menu), menuitem);
     gtk_widget_set_sensitive (menuitem, FALSE);
     gtk_widget_show (menuitem);
 
-    /* Compile */
+    // Compile
     menuitem = gtk_menu_item_new_with_label ("Compile");
     gtk_container_add (GTK_CONTAINER (menu), menuitem);
     gtk_widget_add_accelerator (menuitem, "activate", accel_group, GDK_c, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
     gtk_signal_connect (GTK_OBJECT (menuitem), "activate", GTK_SIGNAL_FUNC (on_dialogue_compile_activate), (gpointer) MainWnd);
     gtk_widget_show (menuitem);
 
-    /* Run */
+    // Run
     menuitem = gtk_menu_item_new_with_label ("Run");
     gtk_container_add (GTK_CONTAINER (menu), menuitem);
     gtk_widget_add_accelerator (menuitem, "activate", accel_group, GDK_r, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
@@ -144,7 +144,7 @@ void create_mainframe (MainFrame * MainWnd)
     gtk_widget_show (menuitem);
     MainWnd->dialogue_run = menuitem;
 
-    /* Attach Dialogue Menu */
+    // Attach Dialogue Menu
     menuitem = gtk_menu_item_new_with_label ("Dialogue");
     gtk_widget_show (menuitem);
     gtk_menu_item_set_submenu (GTK_MENU_ITEM (menuitem), menu);
@@ -152,17 +152,31 @@ void create_mainframe (MainFrame * MainWnd)
 
     gtk_widget_show (MainWnd->menu);
 
-    /* Extras Menu */
+    // Extras Menu
     menu = gtk_menu_new ();
     
-    /* Debug */
+    // Debug
     menuitem = gtk_menu_item_new_with_label ("Debug");
     gtk_container_add (GTK_CONTAINER (menu), menuitem);
     gtk_widget_add_accelerator (menuitem, "activate", accel_group, GDK_d, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
     gtk_signal_connect (GTK_OBJECT (menuitem), "activate", GTK_SIGNAL_FUNC (on_extras_debug_activate), (gpointer) MainWnd);
     gtk_widget_show (menuitem);
 
-    /* Attach Extras Menu */
+    // Seperator
+    menuitem = gtk_menu_item_new ();
+    gtk_menu_append (GTK_MENU (menu), menuitem);
+    gtk_widget_set_sensitive (menuitem, FALSE);
+    gtk_widget_show (menuitem);
+
+    // Enable Debugging
+    menuitem = gtk_check_menu_item_new_with_label ("Enable Debug");
+    gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (menuitem), FALSE);
+    gtk_container_add (GTK_CONTAINER (menu), menuitem);
+    gtk_widget_add_accelerator (menuitem, "toggled", accel_group, GDK_e, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
+    gtk_signal_connect (GTK_OBJECT (menuitem), "toggled", GTK_SIGNAL_FUNC (on_extras_enable_dbg_toggle), (gpointer) MainWnd);
+    gtk_widget_show (menuitem);
+
+    // Attach Extras Menu
     menuitem = gtk_menu_item_new_with_label ("Extras");
     gtk_widget_show (menuitem);
     gtk_menu_item_set_submenu (GTK_MENU_ITEM (menuitem), menu);
@@ -176,13 +190,13 @@ void create_mainframe (MainFrame * MainWnd)
     gtk_paned_set_gutter_size (GTK_PANED (paned), 7);
     gtk_widget_show (paned);
 
-    /* Drawing Area */
+    // Drawing Area
     MainWnd->graph = gtk_drawing_area_new ();
     gtk_drawing_area_size (GTK_DRAWING_AREA (MainWnd->graph), 200, 350);
     gtk_paned_add1 (GTK_PANED (paned), MainWnd->graph);
     gtk_widget_show (MainWnd->graph);
 
-    /* Signals used to handle backing pixmap */
+    // Signals used to handle backing pixmap
     gtk_signal_connect (GTK_OBJECT (MainWnd->graph), "expose_event", (GtkSignalFunc) expose_event, MainWnd);
     gtk_signal_connect (GTK_OBJECT (MainWnd->graph), "configure_event", (GtkSignalFunc) configure_event, MainWnd);
     gtk_signal_connect (GTK_OBJECT (MainWnd->graph), "button_press_event", (GtkSignalFunc) button_press_event, MainWnd);
@@ -195,7 +209,7 @@ void create_mainframe (MainFrame * MainWnd)
 
     gtk_window_add_accel_group (GTK_WINDOW (MainWnd->wnd), accel_group);
 
-    /* List */
+    // List
     scrolled = gtk_scrolled_window_new (NULL, NULL);
     gtk_paned_add2 (GTK_PANED (paned), scrolled);
     gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled), GTK_POLICY_NEVER, GTK_POLICY_ALWAYS);
@@ -207,14 +221,14 @@ void create_mainframe (MainFrame * MainWnd)
     gtk_signal_connect (GTK_OBJECT (MainWnd->list), "select_child", (GtkSignalFunc) on_list_select, MainWnd);
     GTK_WIDGET_UNSET_FLAGS (MainWnd->list, GTK_CAN_FOCUS);
 
-    /* Font */
+    // Font
     MainWnd->font = gdk_font_load ("-*-*-medium-r-normal-sans-12-*-*-*-*-*-iso8859-1");
 
-    /* Display MainWindow */
+    // Display MainWindow
     gtk_widget_show (MainWnd->wnd);
 
-    /* Colors */
-    /* Yellow */
+    // Colors
+    // Yellow
     MainWnd->color[GC_YELLOW] = gdk_gc_new (gtk_widget_get_parent_window (MainWnd->graph));
     color.red = 65535;
     color.green = 32700;
@@ -222,7 +236,7 @@ void create_mainframe (MainFrame * MainWnd)
     gdk_colormap_alloc_color (gtk_widget_get_colormap (MainWnd->wnd), &color, TRUE, TRUE);
     gdk_gc_set_foreground (MainWnd->color[GC_YELLOW], &color);
 
-    /* Orange */
+    // Orange
     MainWnd->color[GC_RED] = gdk_gc_new (gtk_widget_get_parent_window (MainWnd->graph));
     color.red = 65535;
     color.green = 16350;
@@ -230,7 +244,7 @@ void create_mainframe (MainFrame * MainWnd)
     gdk_colormap_alloc_color (gtk_widget_get_colormap (MainWnd->graph), &color, TRUE, TRUE);
     gdk_gc_set_foreground (MainWnd->color[GC_RED], &color);
 
-    /* Dark Red */
+    // Dark Red
     MainWnd->color[GC_DARK_RED] = gdk_gc_new (gtk_widget_get_parent_window (MainWnd->graph));
     color.red = 65535;
     color.green = 0;
@@ -238,7 +252,7 @@ void create_mainframe (MainFrame * MainWnd)
     gdk_colormap_alloc_color (gtk_widget_get_colormap (MainWnd->wnd), &color, TRUE, TRUE);
     gdk_gc_set_foreground (MainWnd->color[GC_DARK_RED], &color);
 
-    /* Dark Blue */
+    // Dark Blue
     MainWnd->color[GC_DARK_BLUE] = gdk_gc_new (gtk_widget_get_parent_window (MainWnd->graph));
     color.red = 0;
     color.green = 0;
@@ -246,7 +260,7 @@ void create_mainframe (MainFrame * MainWnd)
     gdk_colormap_alloc_color (gtk_widget_get_colormap (MainWnd->wnd), &color, TRUE, TRUE);
     gdk_gc_set_foreground (MainWnd->color[GC_DARK_BLUE], &color);
 
-    /* Green */
+    // Green
     MainWnd->color[GC_GREEN] = gdk_gc_new (gtk_widget_get_parent_window (MainWnd->graph));
     color.red = 16000;
     color.green = 50000;
@@ -254,7 +268,7 @@ void create_mainframe (MainFrame * MainWnd)
     gdk_colormap_alloc_color (gtk_widget_get_colormap (MainWnd->wnd), &color, TRUE, TRUE);
     gdk_gc_set_foreground (MainWnd->color[GC_GREEN], &color);
 
-    /* Dark Green */
+    // Dark Green
     MainWnd->color[GC_DARK_GREEN] = gdk_gc_new (gtk_widget_get_parent_window (MainWnd->graph));
     color.red = 0;
     color.green = 27300;
@@ -262,7 +276,7 @@ void create_mainframe (MainFrame * MainWnd)
     gdk_colormap_alloc_color (gtk_widget_get_colormap (MainWnd->wnd), &color, TRUE, TRUE);
     gdk_gc_set_foreground (MainWnd->color[GC_DARK_GREEN], &color);
 
-    /* Purple */
+    // Purple
     MainWnd->color[GC_PURPLE] = gdk_gc_new (gtk_widget_get_parent_window (MainWnd->graph));
     color.red = 35000;
     color.green = 0;
@@ -274,7 +288,7 @@ void create_mainframe (MainFrame * MainWnd)
 }
 
 
-/* Tooltip - like widget */
+// Tooltip - like widget
 GtkWidget *
 create_tooltip (const gchar * text, s_int32 x, s_int32 y)
 {
@@ -300,6 +314,7 @@ create_tooltip (const gchar * text, s_int32 x, s_int32 y)
     gtk_widget_ref (tip);
     gtk_object_set_data_full (GTK_OBJECT (tip_window), "tip", tip, (GtkDestroyNotify) gtk_widget_unref);
     gtk_widget_show (tip);
+
     gtk_container_add (GTK_CONTAINER (frame), tip);
     gtk_label_set_justify (GTK_LABEL (tip), GTK_JUSTIFY_LEFT);
     gtk_label_set_line_wrap (GTK_LABEL (tip), TRUE);
@@ -313,7 +328,7 @@ create_tooltip (const gchar * text, s_int32 x, s_int32 y)
     return tip_window;
 }
 
-/* File - Select -Box */
+// File - Select -Box
 GtkWidget *
 create_fileselection (GString * file, u_int8 type)
 {
@@ -404,15 +419,15 @@ create_list_item (MainFrame *wnd, DlgNode *node, int mode)
         }
     }
 
-    /* Set List_item colors */
+    // Set List_item colors
     style->fg[0] = color;
     style->bg[2] = color;
     
-    /* get width to use for label */
+    // get width to use for label
     list = gtk_widget_get_parent_window (wnd->list);
     gdk_window_get_size (list, &w, &h);
 
-    /* create label */    
+    // create label    
     label = gtk_label_new (label_text.c_str ());
     gtk_widget_set_style (label, style);
     gtk_widget_set_usize (label, w - 10, 0);
@@ -420,7 +435,7 @@ create_list_item (MainFrame *wnd, DlgNode *node, int mode)
     gtk_label_set_line_wrap ((GtkLabel *) label, TRUE);
     gtk_widget_show (label);
 
-    /* add label to list_item */
+    // add label to list_item
     list_item = gtk_list_item_new ();
     gtk_container_add (GTK_CONTAINER(list_item), label);
     gtk_object_set_user_data (GTK_OBJECT (list_item), (gpointer) node);

@@ -19,9 +19,10 @@
 #include "dlgnode.h"
 #include "dlgcompile.h"
 
-dlg_compiler::dlg_compiler (vector<DlgNode*> &d, string f, string c)
+dlg_compiler::dlg_compiler (vector<DlgNode*> &d, string f, string c, u_int8 dbg)
 {
     dlg = d;
+    debug = dbg;
     filename = f;
     cust_func = c;
 
@@ -71,6 +72,8 @@ void dlg_compiler::write_strings ()
     vector<DlgNode*>::iterator i;
     u_int32 j = 0;
 
+    if (debug) script << "from types import *\n\n";
+
     // write the class name
     script << "class " << strrchr (filename.c_str (), '/') + 1 << ":\n"
            << "    loop = []\n"
@@ -99,6 +102,15 @@ void dlg_compiler::write_strings ()
            << "    def set_portrait (self, new_portrait):\n"
            << "        pass\n";
 
+    // This holds debug info
+    if (debug)
+    {
+        script << "\n    debug_info = {}\n\n"
+               << "    def set_var (self, name, val):\n"
+               << "        self.__dict__[name] = val\n"
+               << "        self.debug_info[name] = val\n";
+    }
+    
     return;
 }
 
@@ -132,16 +144,22 @@ void dlg_compiler::write_entry_func ()
 {
     // overwrite __getattr__, so that member variables need not be
     // defined before using them
-    script << "\n    def __getattr__ (self, var):"
+    script << "    def __getattr__ (self, name):";
+    if (debug) script << "\n        print \"*** Warning: \\\"\" + name + \"\\\" not defined!\"";
+    script << "\n        return 0\n";
 
-#ifdef _DEBUG_
-           << "\n        print \"*** Warning: \\\"\" + var + \"\\\" not defined!\""
-#endif _DEBUG_
-
-           << "\n        return 0\n"
-
+    // For debugging, also overwrite __setattr__, so we always know which variables
+    // are defined
+    if (debug)
+    {
+        script << "\n    def __setattr__ (self, name, value):"
+               << "\n        self.__dict__[name] = value"
+               << "\n        if type (value) is IntType:"
+               << "\n            self.debug_info[name] = value\n";
+    }
+    
     // Write the function to start/continue the dialogue
-           << "\n    def run (self, answer):"
+    script << "\n    def run (self, answer):"
            << "\n        self.npc = []"
            << "\n        self.player = []"
            << "\n        self.cont = []"
@@ -196,12 +214,11 @@ void dlg_compiler::write_npc (Circle *circle)
         else script << "characters[\"" << circle->character << "\"].color)";
     }
 
-#ifdef _DEBUG_
-    script << "\n\n" << space << "# " << circle->text.c_str (); 
-#endif
+    if (debug) script << "\n\n" << space << "# " << circle->text.c_str (); 
+
     // write circle's text and "jump target"
-    script << "\n" << space << "self.npc.append (" << text_lookup[circle->number] << ")";
-    script << "\n" << space << "self.cont.append (" << jump_lookup[circle->number] << ")";
+    script << "\n" << space << "self.npc.append (" << text_lookup[circle->number] << ")"
+           << "\n" << space << "self.cont.append (" << jump_lookup[circle->number] << ")";
 
     // write circle's additional code (if any)
     if (circle->variables != "")
@@ -232,13 +249,11 @@ void dlg_compiler::write_player (Circle *circle)
         space += "    ";
     }
 
-#ifdef _DEBUG_
-    script << "\n\n" << space << "# " << circle->text.c_str (); 
-#endif
+    if (debug) script << "\n\n" << space << "# " << circle->text.c_str (); 
 
     // write circle's text and "jump target"
-    script << "\n" << space << "self.player.append (" << text_lookup[circle->number] << ")";
-    script << "\n" << space << "self.cont.append (" << jump_lookup[circle->number] << ")";
+    script << "\n" << space << "self.player.append (" << text_lookup[circle->number] << ")"
+           << "\n" << space << "self.cont.append (" << jump_lookup[circle->number] << ")";
 
     // allow loops
     if (circle->actions[0] == '1')

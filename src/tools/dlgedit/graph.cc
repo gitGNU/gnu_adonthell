@@ -1390,6 +1390,17 @@ show_tooltip (MainFrame *wnd, DlgNode *node)
         y = y + node->position.y + node->position.height + wnd->y_offset;
 
         wnd->tooltip = create_tooltip (str->str, x, y);
+
+        // Show tooltip left of node when in right half of dialogue view
+        if (node->position.x+wnd->x_offset > wnd->graph->allocation.width/2)
+        {
+            gtk_widget_realize (wnd->tooltip);
+            int w = wnd->tooltip->allocation.width;
+
+            x -= node->position.width + w;
+            gtk_widget_set_uposition (wnd->tooltip, x, y);       
+        }
+        
         gtk_widget_show (wnd->tooltip);
 
         g_string_free (str, TRUE);
