@@ -92,6 +92,7 @@ class mapview
   void move_cursor_up();
   void move_cursor_down();
 
+  void resize_map();
   void add_mapobject();
 
   void update_current_tile(mapsquare_tile t);

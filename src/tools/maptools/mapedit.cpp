@@ -40,6 +40,7 @@ int main(int argc, char * argv[])
     lmap.set_square_pattern(0,15,15,1);
     lmap.set_square_pattern(0,14,17,1);
     lmap.set_square_pattern(0,13,12,1);
+
     mview.attach_map(&lmap);
     mview.set_current_submap(0);
     mview.resize(11,11);

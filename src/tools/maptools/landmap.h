@@ -141,6 +141,8 @@ class landmap
   landmap();
   ~landmap();
 
+  landmap& operator =(const landmap& lm);
+
   // Adds a submap to the map. Returns 0 if ok (in this case, the submap
   // number is nbr_of_submaps-1)
   s_int8 add_submap();

@@ -121,7 +121,8 @@ void mapview::resize(u_int16 d_l, u_int16 d_h)
 void mapview::update_label_pos()
 {
   if(!m_map) return;
-  sprintf(tmps,"Submap: %d\n%d/%d  %d/%d",currentsubmap,mapselect::posx,
+  sprintf(tmps,"Submap: %d/%d\n%d/%d  %d/%d",currentsubmap,
+	  m_map->nbr_of_submaps,mapselect::posx,
 	  m_map->submap[currentsubmap].length,
 	  mapselect::posy,m_map->submap[currentsubmap].height);
   label_pos->set_text(tmps);
@@ -164,6 +165,24 @@ void mapview::update_label_square()
   else sprintf(tmps,"No object here!");
   label_square->set_text(tmps);
   must_upt_label_square=false;
+}
+
+void mapview::resize_map()
+{
+  u_int16 l,h;
+  win_query * qw=new win_query(70,40,th,font,"New length:");
+  char * s=qw->wait_for_text(makeFunctor(*this,&mapview::update_editor),
+			     makeFunctor(*this,&mapview::draw_editor));
+  if(!s) return;
+  l=atoi(s);
+  delete qw;
+  qw=new win_query(70,40,th,font,"New height:");
+  s=qw->wait_for_text(makeFunctor(*this,&mapview::update_editor),
+			     makeFunctor(*this,&mapview::draw_editor));
+  if(!s) return;
+  h=atoi(s);
+  delete qw;
+  m_map->submap[currentsubmap].resize(l,h);
 }
 
 void mapview::add_mapobject()
@@ -565,6 +584,13 @@ void mapview::update_editor_keys()
   
     if(input::has_been_pushed(SDLK_a))
       add_mapobject();
+
+    if(input::has_been_pushed(SDLK_s))
+      {
+	resize_map();
+	mapselect::resize(m_map->submap[currentsubmap].length,
+			  m_map->submap[currentsubmap].height);
+      }
 
     if(input::has_been_pushed(SDLK_d))
       {

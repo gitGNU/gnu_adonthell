@@ -99,4 +99,4 @@ mapselect.o: ../../mapselect.cpp
 	$(CPP) -c $(CPPFLAGS) ../../mapselect.cpp -o mapselect.o
 
 clean:
-	rm -rf $(OBJECTS)
+	rm -rf *.o

@@ -249,8 +249,9 @@ landsubmap& landsubmap::operator = (landsubmap & sm)
   allocmap(length,height);
   for(i=0;i<length;i++)
     for(j=0;j<height;j++)
-      land[i][j]=sm.land[i][j];
-  
+     {
+       land[i][j]=sm.land[i][j];
+     }
   return *this;
 }
 
@@ -277,16 +278,40 @@ inline void landsubmap::destroymap()
 void landsubmap::resize(u_int16 l, u_int16 h)
 {
   u_int16 i,j;
+  list<mapsquare_tile>::iterator it;
+  cout << "resize called\n";
   if(length==l && height==h) return;
-  landsubmap tmp(length,height);
-  tmp=*this;
-
-  destroymap();
-  
-  allocmap(l,h);
+  mapsquare ** ltemp=new (mapsquare*)[l];
   for(i=0;i<l;i++)
-    for(j=0;j<h;j++)
-      if(i<tmp.length && j<tmp.height) land[i][j]=tmp.land[i][j];
+    ltemp[i]=new mapsquare[h];
+
+  for(i=0;i<l && i<length;i++)
+    for(j=0;j<h && j<height;j++)
+      for(it=land[i][j].tiles.begin();it!=land[i][j].tiles.end();it++)
+      {
+	if(it->is_base) /* Deplacer place_obj dans landsubmap et faire 
+			   un wrapper pour map ; appeler place_obj ici */;
+      }
+  
+  for(i=0;i<length;i++)
+    delete[] land[i];
+  delete[] land;
+  
+  land=ltemp;
+  length=l;
+  height=h;
+  /*  landsubmap tmp(length,height);
+      tmp=*this;*/
+  /*  landsubmap * tmp=new landsubmap(l,h);
+  destroymap();
+  *this=*tmp;
+  cout << "ok\n";*/
+  /*
+  for(i=0;i<l && i<tmp.length;i++)
+    for(j=0;j<h && j<tmp.height;j++)
+      {
+	land[i][j]=tmp.land[i][j];
+	}*/
 }
 
 u_int16 landsubmap::get_length()
@@ -345,6 +370,30 @@ landmap::~landmap()
   cout << "~landmap() called, "<< --a_d_diff
        << " objects currently allocated\n";
 #endif
+}
+
+landmap& landmap::operator =(const landmap& lm)
+{
+  u_int16 i;
+  
+  nbr_of_patterns=lm.nbr_of_patterns;
+  if(pattern) delete[] pattern;
+  pattern=new mapobject[nbr_of_patterns];
+  for(i=0;i<nbr_of_patterns;i++)
+    pattern[i]=lm.pattern[i];
+  nbr_of_submaps=lm.nbr_of_submaps;
+  if(submap) delete[] submap;
+  submap=new landsubmap[nbr_of_submaps];
+  for(i=0;i<nbr_of_submaps;i++)
+    submap[i]=lm.submap[i];
+
+#ifdef _EDIT_
+  if(mini_pattern) delete[] mini_pattern;
+  mini_pattern=new mapobject[nbr_of_patterns];
+  for(i=0;i<nbr_of_patterns;i++)
+    mini_pattern[i]=lm.mini_pattern[i];
+#endif
+  return *this;
 }
 
 s_int8 landmap::add_submap()
@@ -472,7 +521,7 @@ s_int8 landmap::set_square_pattern(u_int16 smap, u_int16 px, u_int16 py,
 	  }
       }
   for(it=submap[smap].land[px][py].tiles.begin();
-      it!=submap[smap].land[px][py].tiles.end() && *(it->base_tile)<*it;i++);
+      it!=submap[smap].land[px][py].tiles.end() && *(it->base_tile)<*it;it++);
   submap[smap].land[px][py].base_begin=it;
   return 0;
 }
