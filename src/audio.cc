@@ -135,11 +135,14 @@ void audio::unpause_music(void) {
 void audio::set_background_volume(int volume) {
 
   // Check for bad input
-  if (volume < 0) Mix_VolumeMusic(0);
-  if (volume > 50) Mix_VolumeMusic (50);
+  if (volume < 0) {
+    background_volume = 0;
+  } else if (volume > 100) {
+    background_volume = 100;
+  } else
+    background_volume = volume;
 
   Mix_VolumeMusic(volume);
-  background_volume = volume;
 }
 
 // This should be done better, but I'll wait until

@@ -326,8 +326,8 @@ void map::update_keyboard()
   if (keyboard::is_pushed(51)) audio_in->fade_out_background(500); // '3' Key
   if (keyboard::is_pushed(52)) audio_in->fade_in_background(0, 500);  // '4' Key
 
-  if (keyboard::is_pushed(53)) audio_in->set_background_volume(audio_in->background_volume - 2); // '5' Key
-  if (keyboard::is_pushed(54)) audio_in->set_background_volume(audio_in->background_volume + 2); // '6' Key
+  if (keyboard::is_pushed(53)) audio_in->set_background_volume(audio_in->background_volume - 10); // '5' Key
+  if (keyboard::is_pushed(54)) audio_in->set_background_volume(audio_in->background_volume + 10); // '6' Key
 #endif
 }
 
