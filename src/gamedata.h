@@ -264,7 +264,12 @@ public:
     {
         return data::the_player;
     }
-
+ 
+    static character* get_character (string name) 
+    {
+        return data::characters [name]; 
+    }
+    
     /** 
      * Returns the characters dictionary
      * 

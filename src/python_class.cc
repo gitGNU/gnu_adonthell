@@ -23,12 +23,11 @@
  */
 
 #include "python_class.h"
-#include <iostream>
- 
-PyObject * data::globals; 
+#include <iostream> 
+
+PyObject * data::globals;
 
 using namespace std;
-
 
 
 /*
@@ -85,13 +84,13 @@ bool python::exec_file( char *filename )
         return false;
     }
     
-    PyObject * res = PyRun_File (f, fn, Py_file_input, data::globals, NULL);
-    if (res) Py_DECREF (res);
-    else
-    {
-        cout << "exec_file: " << fn << " execution failed!" << endl; 
-        show_traceback (); 
-    }
+    PyRun_SimpleFile (f, fn);
+//     if (res) Py_DECREF (res);
+//     else
+//     {
+//         cout << "exec_file: " << fn << " execution failed!" << endl; 
+//         show_traceback (); 
+//     }
     
     fclose (f);
     delete[] fn;
@@ -111,9 +110,9 @@ void python::show_traceback(void)
 }
 
 /* Import a module, return module ptr */
-PyObject *python::import_module( char *filename )
+PyObject *python::import_module (string filename)
 {
-    PyObject *result = PyImport_ImportModule( filename );
+    PyObject *result = PyImport_ImportModule ((char *) filename.c_str ());
     
     show_traceback ();
     return result;
@@ -147,4 +146,100 @@ PyObject *python::pass_instance (void *instance, const char *class_name)
     
     // Voila: "res" is 'identical' to "instance" :)
     return res;
+}
+
+// Grab a function's code object from a Python module
+PyCodeObject *python::get_function_code (PyObject *module, const char* func_name)
+{
+    PyCodeObject *code = NULL;
+
+    // Try to grab the function object
+    if (PyObject_HasAttrString (module, (char*) func_name))
+    {
+        PyObject *function = PyObject_GetAttrString (module, (char*) func_name);
+
+        // If the function exists, get it's code object
+        if (function && PyCallable_Check (function))
+        {
+            code = (PyCodeObject *) PyObject_GetAttrString (function, "func_code");
+/*
+            cout << "code->co_flags   " << code->co_flags << endl;
+            cout << "code->co_nlocals " << code->co_nlocals << endl;
+            cout << "code->co_names ";
+            PyObject_Print (code->co_names, stdout, 0);	
+            cout << endl << "code->co_varnames ";
+            PyObject_Print (code->co_varnames, stdout, 0);
+            cout << endl << endl;
+*/
+            //if (code->co_flags & CO_NEWLOCALS)
+            //    code->co_flags -= CO_NEWLOCALS;
+            // code->co_flags = 0;
+        }
+
+        // Clean up
+        Py_XDECREF (function);
+    }
+
+    return code;
+}
+
+PyObject * python::get_tuple (igzstream & file)
+{
+    PyObject * tuple; 
+    u_int32 l;
+    l << file;
+
+    tuple = PyTuple_New (l);
+
+    for (u_int32 i = 0; i < l; i++) 
+    {
+        string ms;
+        u_int32 j;
+        char c;
+        
+        c << file;
+        switch (c) 
+        {
+            case 's':
+                ms << file;
+                // Stolen reference
+                PyTuple_SetItem (tuple, i, PyString_FromString (ms.c_str ()));
+                break;
+                
+            case 'i':
+                j << file;
+                // Stolen reference
+                PyTuple_SetItem (tuple, i, PyInt_FromLong (j));
+                break; 
+        }
+    }
+    return tuple; 
+}
+
+void python::put_tuple (PyObject * tuple, ogzstream & file)
+{
+    u_int32 l = PyTuple_Size (tuple);
+    l >> file;
+    for (u_int32 i = 0; i < l; i++) 
+    {
+        // Borrowed reference
+        PyObject * item = PyTuple_GetItem (tuple, i);
+        
+        // Check for the type of this object
+        // String?
+        if (PyString_Check (item)) 
+        {
+            's' >> file;
+            char * s = PyString_AsString (item); 
+            string (s) >> file;
+        }
+        
+        // Integer?
+        else if (PyInt_Check (item)) 
+        {
+            'i' >> file;
+            u_int32 li = PyInt_AsLong (item); 
+            li >> file;
+        }
+    }
 }

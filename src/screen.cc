@@ -88,8 +88,6 @@ void screen::set_video_mode (u_int16 nl, u_int16 nh, u_int8 depth = 0)
 
     // Turn off SDL cursor
     SDL_ShowCursor (0);
-
-    cout << screen::info (); 
 }
 
 void screen::show () 

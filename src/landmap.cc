@@ -83,21 +83,15 @@ bool base_map_event::equals (event &e)
 void base_map_event::execute (event& e)
 {
     base_map_event t = (base_map_event&) e; 
-    // Build the event script's local namespace
-    PyObject *locals = Py_BuildValue ("{s:i,s:i,s:i,s:i,s:s}", "posx", t.x, 
-        "posy", t.y, "dir", t.dir, "map", t.map, "name", t.c->get_name().c_str ());
-
+    
+    PyObject * args = Py_BuildValue ("(i, i, i, i, s)", t.submap, t.x, t.y,
+                                     t.dir, t.c->get_name ().c_str ());  
+    
     // Execute script
-    script.set_locals (locals); 
-    script.run ();
-    script.set_locals (NULL);
+    script.run (args);
     
     // Cleanup
-    Py_DECREF (locals);
-
-#ifdef _DEBUG_
-    show_traceback ();
-#endif
+    Py_DECREF (args);
 }
 
 // Load a enter event from file
@@ -118,8 +112,7 @@ bool base_map_event::load (igzstream& f)
         c = (mapcharacter*) data::characters[s.c_str ()];
     else c = NULL; 
     
-    s << f;
-    set_script (s); 
+    event::get_script_state (f); 
 
     return true;
 }
@@ -133,15 +126,14 @@ void base_map_event::save (ogzstream& out) const
     y >> out;
     dir >> out;
     map >> out;
-    if (c)
-        c->get_name () >> out;
+    if (c) c->get_name () >> out;
     else 
     {
         string s = ""; 
         s >> out;
     }
 
-    script_file () >> out; 
+    event::put_script_state (out); 
 }  
 
 landmap::landmap () : event_list () 

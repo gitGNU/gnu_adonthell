@@ -1,0 +1,25 @@
+/*
+   $Id$
+
+   Copyright (C) 2001   Alexandre Courbot
+   Part of the Adonthell Project http://adonthell.linuxgames.com
+
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License.
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY.
+
+   See the COPYING file for more details.
+*/
+
+/*!
+
+\page 7 Using Python to control games elements
+
+Adonthell make use of the Python scripting language (http://www.python.org)
+as a scripting language. Small modules of Python code can be used into the game,
+for controlling game elements (mapcharacters, mapviews, events, ...) or performing
+some special task (game initialisation). The big advantage of using Python is that
+the whole Adonthell API and global objects is available through a scripting language.
+Moreover, Python has an Object Oriented approach, so the API is exactly the same,
+no matter what 

@@ -70,9 +70,9 @@ void event_list::save (ogzstream& out) const
 {
     vector <event *>::iterator i;
     u_int32 nbr_events = events.size ();
-
-    nbr_events >> out;  
     
+    nbr_events >> out; 
+
     for (i = events.begin (); i != events.end (); i++)
         (*i)->save (out); 
 }
@@ -84,7 +84,7 @@ bool event_list::load (igzstream& in)
     u_int8 type;
 
     nbr_events << in;
-
+    
     while (nbr_events--) 
     {
         event * e = NULL;
@@ -109,15 +109,70 @@ bool event_list::load (igzstream& in)
     return true;
 }
 
+event::event () 
+{
+    script_args = NULL; 
+}
+
 event::~event ()
 {
 }
 
-void event::set_script (string filename)
+void event::set_script (string filename, PyObject * args = NULL)
 {
-    if (filename == "") script.set_script (filename);
-    else script.set_script (EVENTS_DIR + filename + ".py");
+    if (filename == "") 
+    {
+        script.clear ();
+        Py_XDECREF (script_args);
+        script_args = NULL; 
+    }
+    else 
+    {
+        Py_XINCREF (args);
+        script_args = args; 
+        u_int16 argssize = args == NULL ? 1 : PyTuple_Size (args) + 1; 
+        PyObject * theargs;
+        
+        theargs = PyTuple_New (argssize);
+        
+        // We can pass_instance directly 'cause PyTuple_SetItem steals a
+        // reference to the result of pass_instance.
+        PyTuple_SetItem (theargs, 0, python::pass_instance (this, "event"));
+        for (u_int16 i = 1; i < argssize; i++)
+        {
+            PyObject * intref = PyTuple_GetItem (args, i - 1);
+            Py_INCREF (intref); 
+            PyTuple_SetItem (theargs, i, intref); 
+        }
+        script.set_instance (EVENTS_DIR + filename, filename, theargs);
+        Py_DECREF (theargs); 
+    }
     script_file_ = filename;
+}
+
+void event::put_script_state (ogzstream & file) const
+{
+    script_file () >> file;
+    if (script_args) 
+    {
+        true >> file; 
+        python::put_tuple (script_args, file);
+    }
+    else false >> file; 
+}
+
+void event::get_script_state (igzstream & file) 
+{
+    string t;
+    bool bo;
+    
+    PyObject * args = NULL; 
+    t << file;
+    bo << file; 
+    if (bo) args = python::get_tuple (file);
+    set_script (t, args);      
+    Py_XDECREF (args); 
+
 }
 
 // Array with the registered events; each type of event is kept in

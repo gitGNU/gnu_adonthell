@@ -37,9 +37,9 @@ mapengine::~mapengine ()
 {
 }
 
-void mapengine::set_mapview_schedule (string s)
+void mapengine::set_mapview_schedule (string s, PyObject * args = NULL)
 {
-    mv.mapview::set_schedule (s);
+    mv.mapview::set_schedule (s, args);
 }
 
 void mapengine::load_map (string fname)
@@ -56,12 +56,14 @@ void mapengine::run ()
     win_manager::add (&mv); 
     gametime::start_action (); 
 
-    while (!letsexit)
+    while (1) 
     {
         mainloop ();
+        if (letsexit) break; 
         screen::show ();
         gametime::update (); 
     }
+    
     win_manager::remove (&mv);
 }
 

@@ -28,13 +28,13 @@
 
 #include <vector> 
 #include "fileops.h" 
-#include "py_script.h"
+#include "py_object.h"
 
 /**
  * Directory where events scripts resides.
  * 
  */ 
-#define EVENTS_DIR "scripts/events/"
+#define EVENTS_DIR "events/"
 
 
 class event_handler;
@@ -62,6 +62,12 @@ class event
 {
 public:
 
+    /** 
+     * Default constructor.
+     * 
+     */
+    event (); 
+    
     /** 
      * Destructor.
      *  
@@ -100,7 +106,10 @@ public:
      * 
      * @param filename filename of the script to set.
      */
-    void set_script (string filename);
+    void set_script (string filename, PyObject * args = NULL);
+
+    void get_script_state (igzstream & file); 
+    void put_script_state (ogzstream & file) const; 
     
 protected:
     /**
@@ -113,8 +122,10 @@ protected:
      * Script object.
      * 
      */
-    py_script script; 
+    py_object script; 
 
+    PyObject * script_args; 
+    
     /**
      * Script file.
      * 

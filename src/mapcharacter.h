@@ -37,7 +37,7 @@
 #include "animation.h"
 #include "character_base.h"
 #include "mapsquare_walkable.h"
-#include "py_script.h"
+#include "py_object.h"
 #include "path.h"
 #include "text_bubble.h"
 
@@ -612,7 +612,7 @@ public:
      * 
      * @param file name of the schedule to use.
      */
-    void set_schedule (string file);
+    void set_schedule (string file, PyObject * args = NULL);
 
     /** 
      * Returns the name of the mapcharacter's current schedule.
@@ -633,7 +633,7 @@ public:
      */
     bool is_schedule_activated () const
     {
-        return schedule.is_activated ();
+        return schedule_activated; 
     }
     
     /** 
@@ -643,7 +643,7 @@ public:
      */
     void set_schedule_active (bool a)
     {
-        schedule.set_active (a);
+        schedule_activated = a; 
     }
 
     //@}
@@ -664,7 +664,7 @@ public:
      * 
      * @param file name of the action to use.
      */
-    void set_action (string file);
+    void set_action (string file, PyObject * args = NULL);
 
     /** 
      * Returns the name of the mapcharacter's current action.
@@ -685,7 +685,7 @@ public:
      */
     bool is_action_activated () const
     {
-        return action.is_activated (); 
+        return action_activated; 
     }
     
     /** 
@@ -695,7 +695,7 @@ public:
      */
     void set_action_active (bool a)
     {
-        action.set_active (a); 
+        action_activated = a; 
     }
 
     /** 
@@ -817,20 +817,22 @@ private:
     vector <animation *> anim;
     landmap *refmap;
 
-    py_script schedule; 
-    py_script action; 
-    string schedule_file_;
-    string action_file_;
+    py_object schedule; 
+    py_object action; 
     
     string filename_; 
 
     text_bubble * saying; 
-  
-    /**
-     * Mapcharacter locales, available from Python.
-     * 
-     */ 
-    PyObject * locals;
+
+    bool schedule_activated;
+    bool action_activated;
+
+    PyObject * schedule_args;
+    PyObject * action_args; 
+
+    string schedule_file_;
+    string action_file_; 
+    
 #ifndef SWIG
     friend class landmap; 
 #endif
