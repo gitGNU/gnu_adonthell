@@ -6,7 +6,7 @@ pydonthell_SOURCES = pydonthell.cpp
 
 CPPFLAGS +=-I../.. -DUSE_PYTHON -DUSE_MAP $(SDL_CFLAGS) $(OGG_CFLAGS) $(PY_CFLAGS) 
 
-pydonthell_LDADD = ../../animation.o ../../audio.o \
+pydonthell_LDADD = ../../animation.o ../../audio.o ../../drawable.o \
 ../../audio_loop.o ../../py_callback.o \
 ../../character.o ../../character_base.o ../../data.o ../../data_screen.o ../../dialog.o ../../dialog_engine.o \
 ../../drawing_area.o ../../event.o ../../fileops.o ../../game.o ../../gametime.o ../../py_inc.o ../../py_modules.o ../../py_adonthell_wrap.o \

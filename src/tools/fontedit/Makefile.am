@@ -6,7 +6,7 @@ fontedit_SOURCES = font_editor.cpp win_font_editor.cpp \
 	win_font_editor.h
 
 fontedit_LDADD = pnm.o fileops.o drawing_area.o image.o screen.o \
-	prefs.o lex.prefs.o input.o \
+	drawable.o prefs.o lex.prefs.o input.o \
 	win_label.o win_write.o win_query.o win_info.o \
 	win_container.o win_select.o win_file.o win_file_select.o\
 	win_background.o win_border.o win_base.o win_font.o win_image.o \
@@ -15,4 +15,7 @@ fontedit_LDADD = pnm.o fileops.o drawing_area.o image.o screen.o \
 CPPFLAGS +=-I../.. -D_EDIT_ -DUSE_MAP $(SDL_CFLAGS)
 
 %.o : ../../%.cpp
+	$(CXXCOMPILE) -c $< -o $@
+
+%.o : ../../%.cc
 	$(CXXCOMPILE) -c $< -o $@
