@@ -235,7 +235,7 @@ public:
     }
 };
 
-int main (int argc, char * argv[]) 
+int main(int argc, char * argv[]) 
 {
     screen::init (); 
     screen::set_video_mode(640, 480);

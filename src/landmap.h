@@ -27,22 +27,7 @@ public:
     
     mapsquare_info (map_coordinates & pos);
 
-    bool operator < (const mapsquare_info & mi) const
-    {
-        if (z() + obj->current_state()->zsize <= mi.z()) return true;
-        if (z() >= mi.z() + mi.obj->current_state()->zsize) return false;
-        if (y() < mi.y()) return true;
-        if (y() > mi.y()) return false;
-        if (oy() < mi.oy()) return true;
-        return false;
-        // If the objects are at the same y position, we better
-        // make an arbitrary test to make sure a moving object
-        // won't go from behind to before another object when
-        // their y coordinates are the same and the x coordinate
-        // of the moving object become greater than the other object.
-        if (obj > mi.obj) return true;
-        return false;
-    }
+    bool operator < (const mapsquare_info & mi) const;
 
     bool operator == (const mapsquare_info & mi) const
     {

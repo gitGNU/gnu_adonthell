@@ -21,6 +21,36 @@ mapsquare_info::mapsquare_info (map_coordinates & pos)
 {
 }
 
+bool mapsquare_info::operator < (const mapsquare_info & mi) const
+{
+//     if (y() == mi.y() || (y() == mi.y() + 1 && mi.oy()) &&
+//         z() + obj->current_state()->zsize <= mi.z()) return true;
+
+//     if (mi.y() == y() || (mi.y() == y() + 1 && oy()) &&
+//         z() >= mi.z() + mi.obj->current_state()->zsize) return false;
+
+    if (z() + obj->current_state()->zsize <= mi.z()) return true;
+    if (z() >= mi.z() + mi.obj->current_state()->zsize) return false;
+    if (y() < mi.y()) return true;
+    if (y() > mi.y()) return false;
+    if (oy() < mi.oy()) return true;
+    if (oy() > mi.oy()) return false;
+
+//     if ((y() * mapsquare_size) + oy() + mapsquare_size <=
+//         (mi.y() - (mi.obj->current_state()->area_height() - 1)) * mapsquare_size + mi.oy()) return true;
+
+//     if ((y() - (obj->current_state()->area_height() - 1)) * mapsquare_size + oy() >=
+//         mapsquare_size + mi.y() * mapsquare_size + mi.oy()) return false;
+
+//     if (z() + obj->current_state()->zsize < mi.z() + mi.obj->current_state()->zsize) return true;
+    // If the objects are at the same y position, we better
+    // make an arbitrary test to make sure a moving object
+    // won't go from behind to before another object when
+    // their y coordinates are the same and the x coordinate
+    // of the moving object become greater than the other object.
+    return false;
+}
+
 bool mapsquare::add (map_placeable * obj, map_coordinates & pos)
 {
     mapsquare_info mi (pos);
