@@ -67,7 +67,7 @@ bool DlgModuleEntry::loadCharacters ()
     in.open (file);
     
     // version check
-    if (!fileops::get_version (in, 3, 3, file))
+    if (!fileops::get_version (in, 3, 4, file))
         return false;
     
     // load characters
