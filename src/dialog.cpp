@@ -49,10 +49,6 @@ bool dialog::init (char *fpath, char *name)
 
 	Py_DECREF(module);
 
-	// Instantiate! Will we ever need to pass args to class
-	// constructor here?
-	instance = PyObject_CallObject(classobj, NULL);
-
     // add some stuff to the dialogue's global namespace
     PyObject *characters = PyDict_GetItemString (game::globals, "characters");
     PyObject *quests = PyDict_GetItemString (game::globals, "quests");
@@ -64,6 +60,13 @@ bool dialog::init (char *fpath, char *name)
     PyDict_SetItemString (globals, "the_npc", the_npc);
     PyDict_SetItemString (globals, "the_player", the_player);
 
+	// Instantiate! Will we ever need to pass args to class
+	// constructor here?
+	instance = PyObject_CallObject(classobj, NULL);
+
+	if (!instance)
+	    return false;
+    
 	Py_DECREF(classobj);
 
     // extract the dialogue's strings
@@ -407,7 +410,9 @@ dialog_engine::dialog_engine (const char *npc_name)
     // Load dialogue
 	if (!dlg->init (dlg_file, strrchr (dlg_file, '/')+1))
 	{
-        cout << "\n*** Error loading dialogue script " << strrchr (dlg_file, '/')+1 << flush;
+        cout << "\n*** Error loading dialogue script " << strrchr (dlg_file, '/')+1 << "\n";
+        show_traceback ();
+        cout << flush;
         answer = -1;	
 	}
 	else
