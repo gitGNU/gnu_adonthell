@@ -17,20 +17,17 @@
 
 \page page8 Writing character schedules
 
-\section mcharsched0 Introduction
-
 Character schedules provide the means to give life to characters. 
 They define what NPCs will do all day long, allow them to dynamically
 react to events in the gameworld and much more. To accomplish this
 with as little work as possible, there are two kinds of schedules.
 
-The first kind will be called \e manager schedule. This schedule is
+The first kind is the so-called \ref mcharsched2 . This %schedule is
 unique for most, if not all NPCs. It describes what they should do
 in a given situation. However, it does not describe how to do it.
 
-This is the purpose of the second kind, the so-called \e activity
-schedule. Activity schedules describe a single activity as generic
-as possible, so it can be reused by all the different manager scripts.
+This is the purpose of the second kind, the so-called \ref mcharsched3 . Activity schedules describe a single activity as generic as possible, 
+to be reused by different manager scripts and %characters.
 
 
 \section mcharsched1 Script Template
@@ -61,7 +58,7 @@ class myschedule:
     
     # <description of parameters>
     def __init__ (self, character, <parameters>):
-        self.myself = character
+        self.myself = base.gamedata_get_character (character)
         <initialisation>
 
     def run (self):
@@ -72,55 +69,66 @@ class myschedule:
 \endverbatim
 
 
-\section mcharsched2 The Manager Schedule
+The first argument passed to the class constructor is the name of
+the character the %schedule is assigned to. The following arguments
+are optional and can be different for each %schedule. All arguments
+passed to \c __init__ have to be integers or strings. More complex
+%objects are not allowed, as they cannot be saved (yet).  
 
-The manager schedule is responsible for telling a character what to do
+No arguments are passed to the \c run and \c __del__ methods.
+
+
+\section mcharsched2 Manager Schedule
+
+The manager %schedule is responsible for telling a %character what to do
 in a given situation. When an activity has finished (and only then), 
-the manager schedule will be usually executed to decide upon the 
-character's next activity. Therefore, it's \c run method should consist 
+the manager %schedule will be usually executed to decide upon the 
+%character's next activity. Therefore, its \c run method should consist 
 of a number of conditions that decide upon the activity script to use.
 
-Note that the current schedule is cleared before the manager schedule
+Note that the current %schedule is cleared before the manager %schedule
 is executed. Therefore, it \b must set a new activity, otherwise the
-character will freeze (and the manager script will be called over and
+%character will freeze (and the manager script will be called over and
 over again). The new activity can be set with the schedule::set_schedule ()
 method.
 
-The only way run the manager schedule is to quit the current activity.
+The only way to run the manager %schedule is to quit the current activity.
 Everything else is taken care of automatically then.
  
+Note that the manager %schedule can be exchanged any time by a call to
+schedule::set_manager(). This won't have any effect on the current
+activity %schedule at all.
 
-\section mcharsched3 The Activity Schedule
 
-The activity schedule tells a character how to accomplish its current
-task. Unlike the manager schedule, which is only executed to select a
+\section mcharsched3 Activity Schedule
+
+The activity %schedule tells a %character how to accomplish its current
+task. Unlike the manager %schedule, which is only executed to select a
 new activity, activity schedules are executed periodically; once per
-game cycle, i.e. about 75 times per second. Therefore, activity scripts
+%game cycle, i.e. about 75 times per second. Therefore, activity scripts
 should be made as efficient as possible. 
 
-For example, state variables of the character should be copied to local 
-variable in the __init__ method and written back by __del__ instead of 
-accessing them directly while the script runs. As long as those state 
+For example, state variables of the %character should be copied to local 
+variable in the \c __init__ method and written back by \c __del__ instead 
+of accessing them directly while the script runs. As long as those state 
 variables are only accessed by the manager script or a different 
-activity of the same character, this won't cause any problems.
+activity of the same %character, this won't cause any problems.
 
 
 \section mcharsched4 Changing the current Activity
 
-Before a character's activity can be changed, the current one needs to
-be stopped first. Since life-like behaviour of characters depends on the
-interaction of many different activities, there are several ways to switch
-them.
+Since life-like behaviour of characters depends on the interaction of 
+many different activities, there are several ways to switch them.
 
 One thing all of them have in common is that the current activity must be
 stopped before another one can be assigned. The simplest method would be
 some sort of condition within the activity script itself. This works well
 for activities with a well defined outcome. Once that outcome is reached,
 a call to schedule::set_running (false) will stop the activity during the
-next game cycle.
+next %game cycle.
 
 An activity without end (especially one that loops) can't be stopped that
-easily. In that case, the manager schedule (or the activity itself) can 
+easily. In that case, the manager %schedule (or the activity itself) can 
 set an alarm that will quit the script after a certain period. This is 
 done with the schedule::set_alarm () method, which offers two possibilites:
 
@@ -137,8 +145,8 @@ No matter which possibility you chose, no further action is needed. Once
 the set time passed (or is reached), the current activity will be stopped.
 
 The probably most advanced technique to stop an activity is to catch a
-certain event. This could be a character entering a certain room (for 
-a guard for example) or any other possible game event. The following code
+certain event. This could be a %character entering a certain room (for 
+a guard for example) or any other possible %game %event. The following code
 snippet demonstrates how to do this:
 
 \verbatim
@@ -181,7 +189,7 @@ Now we have a few ways to stop the current activity. What we want to do
 now is to set the new one. Again, there are several possibilites:
 
 The easiest way is letting the manager script do it's job. Once the 
-current activity has stopped, the manager script will run to set a the
+current activity has stopped, the manager script will run to set a
 new activity.
 
 However, sometimes only a few sensible activities may follow the 
@@ -190,7 +198,7 @@ manager script, but rather in the activity script itself. This is done
 via the schedule::queue_* methods. schedule::queue_schedule () is the 
 equivalent to set_schedule, schedule::queue_alarm () that of set_alarm. 
 Whenever the current activity stops and another activity is queued, 
-it will be made the next activity and the manager schedule will not 
-be executed. Note that only one schedule/alarm may be queued at a time.
+it will be made the next activity and the manager %schedule will not 
+be executed. Note that only one %schedule/alarm may be queued at a time.
 
 */

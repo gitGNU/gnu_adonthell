@@ -1,0 +1,70 @@
+/*
+   $Id$
+
+   Copyright (C) 2002 Kai Sterker <kaisterker@linuxgames.com>
+   Part of the Adonthell Project http://adonthell.linuxgames.com
+
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License.
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY.
+
+   See the COPYING file for more details.
+*/
+
+/*! \page page10 The Gametime System
+
+The %gametime system represents the %game's internal calendar. Unlike
+real time, %game time only advances while the %game is actually running.
+The smallest fraction of time %gametime measures is a 'minute'. A
+minute of %gametime is usually much shorter than a minute of real time.
+It is defined as a certain number of %game cycles, where one %game cycle 
+is an iteration of the mainloop.
+
+
+\section gt_sec1 Integration with the Engine
+
+Before it can be used, the %gametime system needs to be initialized.
+To determine how many cycles a %game minute will take, you can pass 
+the number of real time minutes a %game day should last approximately
+to gametime::init ().
+
+To advance the internal clock, regular calls to gamedate::update have
+to be made from the mainloop. Every time this function is called, the
+number returned by gametime::frames_to_skip is added to the cycle counter.
+Whenever enough cycles are done to complete one minute, the %game time is
+incremented and a time_event is raised.
+
+
+\section gt_sec2 Services provided
+
+The gamedate class defined in gamedate.h provides a number of services
+for the %gametime system. Apart from giving access to the current time
+in minutes, it also allows to query for the current minute, hour, day 
+and weekday.
+
+It further contains a method to convert a certain time string into
+the minutes it represents. This makes specifying dates and times much
+more convenient, i.e. better readable by humans. The format of the
+time string is described below.
+
+
+\section gt_sec3 The time string format
+
+The time string is composed of a series of number/letter pairs. The number
+specifies the amount, the letter the magnitude. The following letters are
+recognized:
+
+<table>
+<tr><td>\b letter </td><td> \b magnitude </td></tr>
+<tr><td>m</td><td>minute</td></tr>
+<tr><td>h</td><td>hour</td></tr>
+<tr><td>d</td><td>day</td></tr>
+<tr><td>w</td><td>week</td></tr>
+</table>
+
+The different bits of the time string may be arranged in any order.
+\b "2h30m", \b "30m2h" and \b "1h30m1h" are all equivalent and represent
+150 minutes of %gametime (2*60+30).
+
+*/
