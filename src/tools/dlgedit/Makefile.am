@@ -17,7 +17,7 @@ CPPFLAGS += -Werror -D_DLGEDIT_ -D_DEBUG_ -D_VERSION_=\"0.6\" `gtk-config --cfla
 LDADD = ../../inventory.o ../../py_mapengine_wrap.o \
 ../../animation.o ../../py_player_wrap.o \
 ../../audio.o ../../lex.prefs.o ../../screen.o \
-../../audio_thread.o \
+../../audio_thread.o ../../event.o \
 ../../character.o ../../map.o ../../win_base.o \
 ../../mapcharacter.o ../../win_border.o \
 ../../cutscene.o ../../mapengine.o ../../win_container.o \

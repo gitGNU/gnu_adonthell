@@ -18,6 +18,7 @@
 #include "SDL.h"
 #include "SDL_thread.h"
 #include "prefs.h"
+#include "Python.h"
 
 class game
 {
@@ -26,6 +27,8 @@ class game
  public:
   static void init(config&);
   static void cleanup();
+
+  static PyObject *globals;
 };
 
 #endif

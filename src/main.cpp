@@ -36,6 +36,8 @@
 #include "animation.h"
 #include "cutscene.h"
 #include "prefs.h"
+#include "event.h"
+#include "py_inc.h"
 
 /*int do_cutscene(void) {
 
@@ -180,6 +182,10 @@ int main(int argc, char * argv[])
     // Removed because of a segfault - seems to occur when calling
     //   scene->set_imagekey_anim(2,anim3);, line 79
     //    do_cutscene();
+
+    // test:
+    enter_event *e = new enter_event;
+    event_handler::register_event (e, "scripts/event_test.py");
 
     mapengine::map_engine(map1);
 

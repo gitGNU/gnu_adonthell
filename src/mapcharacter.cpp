@@ -23,6 +23,7 @@
 #include "mappattern.h"
 #include "window.h"
 #include "map.h"
+#include "event.h"
 
 mapcharacter::mapcharacter()
 {
@@ -451,6 +452,17 @@ void mapcharacter::update_eventcome(landmap *amap)
       is_event=0;
       amap->launch_event
 	(this,amap->get_square_eventcomenbr(get_posx(),get_posy()));
+
+        // test:
+        enter_event e;
+        e.x = posx;
+        e.y = posy;
+        e.dir = movtype;
+        e.map = 0;
+        e.c = NULL;
+
+        event_handler::raise_event (&e);
+
       return;
     }
 }

@@ -19,8 +19,9 @@
 #include "image.h"
 #include "input.h"
 #include "prefs.h"
-#include "game.h"
+#include "character.h"
 #include "py_inc.h"
+#include "game.h"
 
 #ifdef SDL_MIXER
 #include "audio_thread.h"
@@ -28,6 +29,7 @@
 #endif
 
 SDL_Thread *game::audio_thread;
+PyObject *game::globals;
 
 void game::init(config &myconfig)
 {
@@ -51,6 +53,20 @@ void game::init(config &myconfig)
 	  fprintf(stderr, "Couldn't initialise Python - stopping\n");
 	  SDL_Quit();
   }
+
+  // Test:
+    // Load module
+    PyObject *m = import_module ("player");
+        
+    // Create a player
+    player *myplayer = new player;
+
+    // Add the player to the game objects
+    objects::set ("the_player", myplayer);
+
+    // Make "myplayer" available to the interpreter 
+	globals = PyModule_GetDict(m);
+    PyDict_SetItemString (globals, "the_player", pass_instance (m, myplayer, "player"));
 }
 
 void game::cleanup()
@@ -62,6 +78,7 @@ void game::cleanup()
   }
 #endif
 
+  Py_DECREF (globals);
   kill_python();
 
   SDL_Quit();
