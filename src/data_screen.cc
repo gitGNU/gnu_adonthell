@@ -278,10 +278,43 @@ void data_screen::on_save ()
 // Save the small thumbnail image
 void data_screen::save_preview (string path)
 {
-    image temp (screen::length (), screen::height ()); 
+    drawing_area da (0, 0, screen::length () >> 1, screen::height () >> 1);
+    image temp (da.length (), da.height());
     image preview (72, 54);
-    
-    data::map_engine->draw (0, 0, NULL, &temp); 
+
+    mapview *view = data::map_engine->get_mapview ();
+    mapsquare_area *area = data::map_engine->get_landmap ()->get_submap
+        (data::the_player->submap ());
+
+    u_int16 offx = 0;
+    u_int16 offy = 0;
+
+    // In those cases where the mapview is smaller than the physical screen,
+    // it will be centered on the screen -> get the offset
+    if (area->area_length () * MAPSQUARE_SIZE < view->length ())
+        offx = (view->length () - area->area_length () * MAPSQUARE_SIZE) >> 1;
+    if (area->area_height () * MAPSQUARE_SIZE < view->height ())
+        offy = (view->height () - area->area_height () * MAPSQUARE_SIZE) >> 1;
+
+    // Calculate the player's absolute position on the screen
+    s_int16 x = (data::the_player->posx () - view->posx ()) * MAPSQUARE_SIZE + offx;
+    s_int16 y = (data::the_player->posy () - view->posy ()) * MAPSQUARE_SIZE + offy;
+
+    // this is a quarter of the screen's size.
+    u_int16 length = da.length() >> 1;
+    u_int16 height = da.height() >> 1;
+
+    // If the player is too close to the border, make sure we still stay
+    // within the screen
+    if (x + length > screen::length ()) x = -da.length ();
+    else if (x - length < 0) x = 0;
+    else x = length - x;
+
+    if (y + height > screen::height ()) y = -da.height ();
+    else if (y - height < 0) y = 0;
+    else y = height - y;
+
+    data::map_engine->draw (x, y, &da, &temp);
     preview.zoom (temp); 
     preview.save_pnm (path);     
 }

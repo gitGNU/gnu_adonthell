@@ -71,9 +71,12 @@ bool game::init (config & configuration, initflags to_init = INIT_ALL)
     }
      
     // init audio subsystem
-    if (to_init & INIT_AUDIO) 
-    { 
-        audio::init (&configuration);
+    if (to_init & INIT_AUDIO)
+    {
+        if (configuration.audio_volume > 0)
+            audio::init (&configuration);
+        else
+            to_init = (enum initflags) (to_init ^ INIT_AUDIO);
     }
     
     // init input subsystem
@@ -93,7 +96,7 @@ bool game::init (config & configuration, initflags to_init = INIT_ALL)
         init_data (); 
     }
     
-    initiated = to_init; 
+    initiated = to_init;
     
     // voila :)
     return true;
@@ -112,7 +115,7 @@ void game::cleanup ()
     }
 
     // shutdown audio
-    if (initiated & INIT_AUDIO) 
+    if (initiated & INIT_AUDIO)
     {
         audio::cleanup ();
     }
@@ -132,7 +135,7 @@ void game::cleanup ()
     }
 
     // shutdown video and SDL
-    if (initiated & INIT_PYTHON) 
+    if (initiated & INIT_VIDEO)
     {
         SDL_Quit ();
     }
