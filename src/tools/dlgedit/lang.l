@@ -10,7 +10,8 @@ num    {digit}+
 
 %%
 [ \t\n]+    ;           // Whitespace
-"//".*\n    ;           // C++ style comments
+"//".*[\n]? ;           // C++ style comments (the newline has to be optional, else a
+                        // comment in the last line wouldn't be recognized correctly)
 "/*"(.|[\n])*"*/"   ;   // C style comments
 
 if          { return _IF; }
