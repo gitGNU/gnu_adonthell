@@ -12,46 +12,24 @@
    See the COPYING file for more details.
 */
 
-#ifndef _game_h
-#define _game_h
-
-#include "SDL.h"
-#include "SDL_thread.h"
+#ifndef __GAME_H__
+#define __GAME_H__
 
 #include "prefs.h"
-#include "Python.h"
-#include "storage.h"
-#include "gametime.h"
-
-class game_engine
-{
-public:
-    virtual void realtime_tasks () = 0;
-    virtual void gametime_tasks () = 0;
-    
-    virtual ~game_engine () { }
-};
+#include "SDL_thread.h"
 
 class game
 {
-#ifdef SDL_MIXER
-    static SDL_Thread *audio_thread;
-#endif  
-  
 public:
-    static void init(config&);
-    static void cleanup();
+    game (int, char**);
+    ~game ();                           // Cleanup everything
+    bool init ();                       // Init everything
 
-    static void load (const char*, const char*);// Load a game
-    static void save (const char*);             // Save the game
-
-    static PyObject *globals;                   // Global namespace for use in scripts
-    static objects characters;                  // All the characters 
-    static objects quests;                      // All the quests
-  
-    static char *theme;                         // Put somewhere in window code!?    
-    static game_engine *engine;                 // The engine having input focus
-    static gametime *time;                      // The gametime object
+private:
+    config *configuration;              // The game's configuration data
+#ifdef SDL_MIXER
+    SDL_Thread *audio_thread;           // The audio thread
+#endif
 };
 
-#endif
+#endif // __GAME_H__

@@ -291,11 +291,14 @@ void dlg_compiler::write_answer ()
     // write npc node & followers (if any)
     for (i = cur_nodes.begin (); i != cur_nodes.end (); i++)
     {
-#ifdef _DEBUG_
+        // Two Player nodes following each other isn't allowed
         if ((*i)->type != NPC && (*i)->type != NARRATOR)
-            cout << "\n*** Compile error: NPC node expected!"; 
-#endif _DEBUG_
-
+        {
+            cout << "\n*** Compile error: NPC node expected!"
+                 << "\n Node \"" << ((Circle *) (*i))->text
+                 << "\" may not follow a player node" << flush;
+        }
+        
         // write circle's condition (if any)
         if (((Circle*)(*i))->conditions != "") 
         {

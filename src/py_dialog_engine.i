@@ -3,10 +3,11 @@
 %{
 
 #include "types.h"
-#include "dialog.h"
+#include "character.h"
+#include "dialog_engine.h"
 
 %}
 
 #define u_int32 unsigned long
 
-%include "dialog.h"
+%include "dialog_engine.h"

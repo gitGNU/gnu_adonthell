@@ -123,7 +123,7 @@ int config::read_adonthellrc ()
     // open failed -> try to write new configuration 
     if (!prefsin)
     {
-        // when writing a new configuration, defaults must match section
+        // when writing a new configuration, defaults has to match section
         if (section != "") defaults = section;
         else section = defaults;
         

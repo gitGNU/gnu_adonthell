@@ -20,14 +20,4 @@ public:
     int get (const char*);
 };
 
-%include "character.h"
-
-%addmethods npc {
-    // Start conversation with the NPC
-    void talk ()
-    {
-        dialog_engine *de = new dialog_engine (self);
-        de->run ();
-    }
-}
-
+%include "../../character.h"

@@ -20,13 +20,12 @@
 #include "mapevent.h"
 #include "mappattern.h"
 #include "mapsquare.h"
-#include "game.h"
 
 class mapitem;
 
 typedef char lstr[100];
 
-class landmap : public game_engine
+class landmap /*: public game_engine*/
 {
  protected:
   mapsquare ** maparea;

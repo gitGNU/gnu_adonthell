@@ -14,21 +14,8 @@
 
 #include <iostream>
 
-#include "Python.h"
-#include "game.h"
+#include "data.h"
 #include "py_inc.h"
-
-/*
- * SWIG init prototypes. Should we use dynamic linking??? 
- */
-extern "C"
-{
-	void initdialog_enginec(void);
-	void initcharacterc(void);
-  //	void initmapenginec(void);
-	void initquestc(void);
-//	void initbaseitemc(void);
-}
 
 /*
  * Designed to handle most of the Python <-> Adonthell interfacing
@@ -43,36 +30,6 @@ void insert_path( char *name )
 
 	sprintf( buf, "import sys ; sys.path.insert(0, '%s')", name );
 	PyRun_SimpleString( buf );
-}
-
-/*
- * Start Python
- */
-bool init_python(void)
-{
-	Py_Initialize();
-
-	insert_path("scripts");
-	insert_path("scripts/modules");
-	//exec_file("scripts/init.py");
-
-	/* Initialise SWIG modules. This should go if we ever switch to dynamic 
-	   link */
-	initcharacterc();
-    initdialog_enginec();
-    //	initmapenginec();
-	initquestc();
-//	initbaseitemc();
-
-	return true;
-}
-
-/* 
- * Shut down Python - DO NOT USE PYTHON API FUNCTIONS AFTER THIS POINT!
- */
-void kill_python(void)
-{
-	Py_Finalize();
 }
 
 /*
@@ -116,8 +73,6 @@ PyObject *import_module( char *filename )
 	
 	show_traceback();
 	
-	//Py_XDECREF(result);
-
 	return result;
 }
 
@@ -138,7 +93,7 @@ PyObject *pass_instance (void *instance, const char *class_name)
     strcat (class_addr, buffer+2);
 
     // Now create the Python object corresponding to "instance"
-    PyObject *cls = PyDict_GetItemString(game::globals, class_ptr);
+    PyObject *cls = PyDict_GetItemString (data::globals, class_ptr);
     PyObject *arg = Py_BuildValue ("(s)", class_addr);
     PyObject *res = PyEval_CallObject (cls, arg);
 

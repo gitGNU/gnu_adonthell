@@ -15,7 +15,7 @@
 #include <algorithm>
 
 #include "py_inc.h"
-#include "game.h"
+#include "data.h"
 #include "compile.h"
 #include "eval.h"
 #include "event.h"
@@ -187,7 +187,7 @@ void base_map_event::execute (event *e)
     PyObject *locals = Py_BuildValue ("{s:i,s:i,s:i,s:i,s:s}", "posx", t->x, 
         "posy", t->y, "dir", t->dir, "map", t->map, "name", t->c->name);
     // Execute script
-    PyEval_EvalCode (script, game::globals, locals);
+    PyEval_EvalCode (script, data::globals, locals);
     // Cleanup
     Py_DECREF (locals);
 #ifdef _DEBUG_
@@ -209,7 +209,7 @@ void base_map_event::load (FILE *f)
     fread (&len, sizeof (len), 1, f);
     name = new char[len];
     fread (name, len, 1, f);
-    c = (character*) game::characters.get (name);
+    c = (character*) data::characters.get (name);
 
     fread (&len, sizeof (len), 1, f);
     script_file = new char[len];
@@ -289,7 +289,7 @@ void time_event::execute (event *e)
     PyObject *locals = Py_BuildValue ("{s:i,s:i,s:i}", "minute", (int) t->minute, 
         "hour", (int) t->hour, "day", (int) t->day);
     // Execute script
-    PyEval_EvalCode (script, game::globals, locals);
+    PyEval_EvalCode (script, data::globals, locals);
     // Cleanup
     Py_DECREF (locals);
 #ifdef _DEBUG_

@@ -14,8 +14,7 @@
 
 #include "character.h"
 #include "eval.h"
-#include "game.h"
-#include "dialog.h"
+#include "data.h"
 #include "py_inc.h"
 
 void character::save (FILE *out)
@@ -65,7 +64,7 @@ void character::load (FILE *in, bool reg_event)
     fread (name, size, 1, in);
 
     // We have to insert the character here *before* loading it's events
-    game::characters.set (name, this);
+    data::characters.set (name, this);
 
     // Load position
     fread (&posx, sizeof(posx), 1, in);
@@ -171,20 +170,12 @@ char* npc::get_dialogue ()
     return str;
 }
 
-// Start conversation with the NPC
-void npc::talk ()
-{
-    PyDict_SetItemString (game::globals, "the_npc", pass_instance (this, "npc"));
-    dialog_engine *de = new dialog_engine (name);
-    de->run ();
-}
-
 // Execute the active schedule and return the direction of movement
 // or zero if character doesn't move.
 u_int8 npc::move (u_int8 dir)
 {
     PyObject *locals = Py_BuildValue ("{s:i,s:s}", "direction", dir, "name", name);
-    PyEval_EvalCode (schedule, game::globals, locals);
+    PyEval_EvalCode (schedule, data::globals, locals);
 
 #ifdef _DEBUG_
     show_traceback ();

@@ -69,13 +69,13 @@ VERSION = @VERSION@
 
 bin_PROGRAMS = dlgedit
 
-dlgedit_SOURCES = callbacks.cc circle.cc dlgcompile.cc crcle_callbacks.cc crcle_interface.cc dbg_callbacks.cc dbg_interface.cc debug.cc dlgnode.cc events.cc function.cc geometrie.cc graph.cc lex.loadlg.cc interface.cc main.cc preset.cc ps_callbacks.cc ps_dlg.cc ps_interface.cc pset_callbacks.cc pset_interface.cc run.cc run_callbacks.cc run_interface.cc
+dlgedit_SOURCES = callbacks.cc circle.cc crcle_callbacks.cc crcle_interface.cc dbg_callbacks.cc dbg_interface.cc debug.cc dlgcompile.cc dlgnode.cc events.cc function.cc geometrie.cc graph.cc lex.loadlg.cc interface.cc main.cc preset.cc ps_callbacks.cc ps_dlg.cc ps_interface.cc pset_callbacks.cc pset_interface.cc py_character_wrap.cpp run.cc run_callbacks.cc run_interface.cc
 
 
 # Evil, but it works...
-CPPFLAGS =  -D_DLGEDIT_ -D_DEBUG_ -D_VERSION_=\"0.7\" `gtk-config --cflags`
+CPPFLAGS =  -I../.. -D_DLGEDIT_ -D_DEBUG_ -D_VERSION_=\"0.7\" `gtk-config --cflags`
 
-LDADD = ../../py_mapengine_wrap.o ../../animation.o ../../py_character_wrap.o ../../audio.o ../../lex.prefs.o ../../screen.o ../../audio_thread.o ../../drawing_area.o ../../event.o ../../character.o ../../map.o ../../win_base.o ../../mapcharacter.o ../../win_border.o ../../cutscene.o ../../mapengine.o ../../win_container.o ../../mapevent.o ../../win_font.o ../../win_background.o ../../fileops.o ../../mapitem.o ../../win_theme.o ../../game.o ../../mappattern.o ../../win_image.o ../../mapsquare.o ../../win_label.o ../../image.o ../../pnm.o ../../win_select.o ../../init.o ../../prefs.o ../../win_write.o ../../input.o ../../yarg.o ../../win_scrollbar.o ../../win_scrolled.o ../../py_inc.o ../../dialog.o ../../storage.o ../../py_dialog_engine_wrap.o ../../gametime.o ../../py_quest_wrap.o ../../quest.o
+LDADD = ../../character.o ../../data.o ../../dialog.o ../../event.o  ../../lex.prefs.o ../../prefs.o ../../py_inc.o  ../../py_quest_wrap.o  ../../quest.o  ../../storage.o ../../yarg.o
 
 
 LDFLAGS = -lm -lstdc++ `gtk-config --libs`
@@ -87,26 +87,16 @@ PROGRAMS =  $(bin_PROGRAMS)
 
 DEFS = @DEFS@ -I. -I$(srcdir) -I../../..
 LIBS = @LIBS@
-dlgedit_OBJECTS =  callbacks.o circle.o dlgcompile.o crcle_callbacks.o \
-crcle_interface.o dbg_callbacks.o dbg_interface.o debug.o dlgnode.o \
-events.o function.o geometrie.o graph.o lex.loadlg.o interface.o main.o \
-preset.o ps_callbacks.o ps_dlg.o ps_interface.o pset_callbacks.o \
-pset_interface.o run.o run_callbacks.o run_interface.o
+dlgedit_OBJECTS =  callbacks.o circle.o crcle_callbacks.o \
+crcle_interface.o dbg_callbacks.o dbg_interface.o debug.o dlgcompile.o \
+dlgnode.o events.o function.o geometrie.o graph.o lex.loadlg.o \
+interface.o main.o preset.o ps_callbacks.o ps_dlg.o ps_interface.o \
+pset_callbacks.o pset_interface.o py_character_wrap.o run.o \
+run_callbacks.o run_interface.o
 dlgedit_LDADD = $(LDADD)
-dlgedit_DEPENDENCIES =  ../../py_mapengine_wrap.o ../../animation.o \
-../../py_character_wrap.o ../../audio.o ../../lex.prefs.o \
-../../screen.o ../../audio_thread.o ../../drawing_area.o ../../event.o \
-../../character.o ../../map.o ../../win_base.o ../../mapcharacter.o \
-../../win_border.o ../../cutscene.o ../../mapengine.o \
-../../win_container.o ../../mapevent.o ../../win_font.o \
-../../win_background.o ../../fileops.o ../../mapitem.o \
-../../win_theme.o ../../game.o ../../mappattern.o ../../win_image.o \
-../../mapsquare.o ../../win_label.o ../../image.o ../../pnm.o \
-../../win_select.o ../../init.o ../../prefs.o ../../win_write.o \
-../../input.o ../../yarg.o ../../win_scrollbar.o ../../win_scrolled.o \
-../../py_inc.o ../../dialog.o ../../storage.o \
-../../py_dialog_engine_wrap.o ../../gametime.o ../../py_quest_wrap.o \
-../../quest.o
+dlgedit_DEPENDENCIES =  ../../character.o ../../data.o ../../dialog.o \
+../../event.o ../../lex.prefs.o ../../prefs.o ../../py_inc.o \
+../../py_quest_wrap.o ../../quest.o ../../storage.o ../../yarg.o
 dlgedit_LDFLAGS = 
 CXXFLAGS = @CXXFLAGS@
 CXXCOMPILE = $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
@@ -125,14 +115,14 @@ DEP_FILES =  .deps/callbacks.P .deps/circle.P .deps/crcle_callbacks.P \
 .deps/function.P .deps/geometrie.P .deps/graph.P .deps/interface.P \
 .deps/lex.loadlg.P .deps/main.P .deps/preset.P .deps/ps_callbacks.P \
 .deps/ps_dlg.P .deps/ps_interface.P .deps/pset_callbacks.P \
-.deps/pset_interface.P .deps/run.P .deps/run_callbacks.P \
-.deps/run_interface.P
+.deps/pset_interface.P .deps/py_character_wrap.P .deps/run.P \
+.deps/run_callbacks.P .deps/run_interface.P
 SOURCES = $(dlgedit_SOURCES)
 OBJECTS = $(dlgedit_OBJECTS)
 
 all: all-redirect
 .SUFFIXES:
-.SUFFIXES: .S .c .cc .o .s
+.SUFFIXES: .S .c .cc .cpp .o .s
 $(srcdir)/Makefile.in: Makefile.am $(top_srcdir)/configure.in $(ACLOCAL_M4) 
 	cd $(top_srcdir) && $(AUTOMAKE) --gnu src/tools/dlgedit/Makefile
 
@@ -186,6 +176,8 @@ dlgedit: $(dlgedit_OBJECTS) $(dlgedit_DEPENDENCIES)
 	@rm -f dlgedit
 	$(CXXLINK) $(dlgedit_LDFLAGS) $(dlgedit_OBJECTS) $(dlgedit_LDADD) $(LIBS)
 .cc.o:
+	$(CXXCOMPILE) -c $<
+.cpp.o:
 	$(CXXCOMPILE) -c $<
 
 tags: TAGS
@@ -288,6 +280,25 @@ maintainer-clean-depend:
 	  | sed -e 's/^\\$$//' -e '/^$$/ d' -e '/:$$/ d' -e 's/$$/ :/' \
 	    >> .deps/$(*F).P; \
 	rm -f .deps/$(*F).pp
+
+%.o: %.cpp
+	@echo '$(CXXCOMPILE) -c $<'; \
+	$(CXXCOMPILE) -Wp,-MD,.deps/$(*F).pp -c $<
+	@-cp .deps/$(*F).pp .deps/$(*F).P; \
+	tr ' ' '\012' < .deps/$(*F).pp \
+	  | sed -e 's/^\\$$//' -e '/^$$/ d' -e '/:$$/ d' -e 's/$$/ :/' \
+	    >> .deps/$(*F).P; \
+	rm .deps/$(*F).pp
+
+%.lo: %.cpp
+	@echo '$(LTCXXCOMPILE) -c $<'; \
+	$(LTCXXCOMPILE) -Wp,-MD,.deps/$(*F).pp -c $<
+	@-sed -e 's/^\([^:]*\)\.o[ 	]*:/\1.lo \1.o :/' \
+	  < .deps/$(*F).pp > .deps/$(*F).P; \
+	tr ' ' '\012' < .deps/$(*F).pp \
+	  | sed -e 's/^\\$$//' -e '/^$$/ d' -e '/:$$/ d' -e 's/$$/ :/' \
+	    >> .deps/$(*F).P; \
+	rm -f .deps/$(*F).pp
 info-am:
 info: info-am
 dvi-am:
@@ -363,6 +374,10 @@ maintainer-clean-generic clean mostlyclean distclean maintainer-clean
 
 lex.loadlg.cc: loadlg.l
 	flex -olex.loadlg.cc loadlg.l
+
+py_character_wrap.cpp : py_character.i
+	swig -python -shadow -c++ -make_default -o $*.cpp $<
+	@rm character.py
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

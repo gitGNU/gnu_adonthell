@@ -43,7 +43,7 @@ public:
 
   // Use these to initialize/destroy sound connection
   audio() { } 
-  audio(config&);
+  audio(config*);
   ~audio();
   void audio_cleanup(void);
 

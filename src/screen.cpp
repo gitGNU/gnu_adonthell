@@ -20,7 +20,6 @@
 #include "pnm.h"
 #include "prefs.h"
 #include "input.h"
-#include "game.h"
 
 u_int16 screen::width;
 u_int16 screen::height;
@@ -29,8 +28,11 @@ u_int8 screen::frames_to_do;
 u_int8 screen::bytes_per_pixel;
 u_int32 screen::trans;
 u_int32 screen::trans_pix;
-
 SDL_Surface * screen::vis;
+
+// Decrease this to speed up the game
+const u_int32 screen::CYCLE_LENGTH = 13;
+
 
 void screen::set_video_mode(u_int16 w, u_int16 h, config * myconfig=NULL)
 {
@@ -113,43 +115,33 @@ bool screen::get_fullscreen()
   return(SDL_flags&SDL_FULLSCREEN);
 }
 
-void screen::init_display(config *myconfig)
-{
-  set_video_mode(320,240,myconfig);
-}
-
 void screen::show()
 {
-  // Lenght of a game cycle (milliseconds). Decreasing it will increase 
-  // the game's speed.
-  const u_int32 cycle_length=13;
-  static Uint32 timer1, timer2, timer3;
+    static u_int32 timer1, timer2;
 
-  // Waiting for being sync with a game cycle
-  while(1)
+    // Syncronize the game's speed to the machine it's running on
+    while (1)
     {
-      timer2=SDL_GetTicks();
-      timer3=timer2-timer1;
-      if(timer3>=cycle_length) break;
-      else if(timer3>3) SDL_Delay(timer3-2);
+        timer2 = SDL_GetTicks() - timer1;
+
+        if (timer2 >= CYCLE_LENGTH) break;
+        else if (timer2 > 3) SDL_Delay (timer2 - 2);
     }
-  timer1=SDL_GetTicks();
-  timer1-=timer2=(timer3%cycle_length);
-  SDL_Flip(vis);
 
-  // How slow is our machine? :)
-  frames_to_do=timer3/cycle_length;
+    timer1 = SDL_GetTicks() - (timer2 % CYCLE_LENGTH);
 
-  // Calculate new gametime
-  game::time->tick (timer3-timer2);
-  
-  if(frames_to_do>20) frames_to_do=20;
-  if ((SDL_GetModState()&KMOD_ALT)&&(input::is_pushed(SDLK_RETURN)))
+    SDL_Flip (vis);
+
+    // How slow is our machine? :)
+    frames_to_do = timer2 / CYCLE_LENGTH;
+    if (frames_to_do > 20) frames_to_do = 20;
+
+    if ((SDL_GetModState()&KMOD_ALT)&&(input::is_pushed(SDLK_RETURN)))
     {
-      if(screen::get_fullscreen())
-	screen::set_fullscreen(false);
-      else screen::set_fullscreen(true);
-      input::clear_keys_queue();
+        if (screen::get_fullscreen ()) screen::set_fullscreen (false);
+        else screen::set_fullscreen (true);
+
+        input::clear_keys_queue();
     }
 }
 

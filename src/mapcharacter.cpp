@@ -24,7 +24,7 @@
 #include "window.h"
 #include "map.h"
 #include "event.h"
-#include "game.h"
+#include "data.h"
 #include "mapcharacter.h"
 
 mapcharacter::mapcharacter ()
@@ -94,7 +94,7 @@ s_int8 mapcharacter::load (char *fname)
 
 void mapcharacter::get_heroe_stat (SDL_RWops * file)
 {
-    data = (player*) game::characters.get ("the_player");
+    data = (player*) data::characters.get ("the_player");
     SDL_RWread (file, &data->posx, sizeof (data->posx), 1);
     SDL_RWread (file, &data->posy, sizeof (data->posy), 1);
     SDL_RWread (file, &speeddelay, sizeof (speeddelay), 1);
@@ -119,7 +119,7 @@ void mapcharacter::get_NPC_stat (SDL_RWops * file, u_int16 nbr)
     SDL_RWread (file, &size, sizeof (size), 1);
     name = new char[size];
     SDL_RWread (file, name, size, 1);
-    data = (character *) game::characters.get (name);
+    data = (character *) data::characters.get (name);
     delete name;
 
     SDL_RWread (file, &speeddelay, sizeof (speeddelay), 1);
@@ -256,7 +256,7 @@ void mapcharacter::set_posy (u_int16 y)
 void mapcharacter::update_NPC (landmap * amap)
 {
     // freeze characters too far from the player
-    character *player = (character *) game::characters.get("the_player");
+    character *player = (character *) data::characters.get("the_player");
     if (abs (data->posx - player->posx) > 15) return;
     if (abs (data->posy - player->posy) > 15) return;
 

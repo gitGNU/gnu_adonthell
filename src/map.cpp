@@ -18,14 +18,13 @@
 #include "types.h"
 #include "fileops.h"
 #include "input.h"
-#include "inventory.h"
 #include "image.h"
 #include "mapitem.h"
 #include "mappattern.h"
 #include "mapevent.h"
 #include "mapcharacter.h"
 #include "mapsquare.h"
-#include "window.h"
+#include "dialog_engine.h"
 #include "map.h"
 #ifdef SDL_MIXER
 #include "audio.h"
@@ -400,7 +399,11 @@ void landmap::update_keyboard()
     {
         // when starting a dialogue
         npc *mynpc = (npc *) is_NPC_near (dir);
-        if (mynpc) mynpc->talk ();
+        if (mynpc)
+        {
+            dialog_engine *de = new dialog_engine (mynpc);
+            de->run ();
+        }
     }
 }
 

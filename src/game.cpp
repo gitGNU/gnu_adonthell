@@ -1,7 +1,7 @@
 /*
    $Id$
 
-   Copyright (C) 1999   The Adonthell Project
+   Copyright (C) 1999 The Adonthell Team
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -13,178 +13,94 @@
 */
 
 #include <stdio.h>
-#include <stdlib.h>
-#include "types.h"
-#include "image.h"
+#include <unistd.h>
 #include "input.h"
-#include "prefs.h"
-#include "character.h"
-#include "py_inc.h"
-#include "quest.h"
+#include "screen.h"
 #include "game.h"
+
+#ifndef _EDIT_
+#include "Python.h"
+#include "py_modules.h"
+#endif
 
 #ifdef SDL_MIXER
 #include "audio_thread.h"
 #include "audio.h"
-
-SDL_Thread *game::audio_thread;
 #endif
 
-PyObject *game::globals;
-char *game::theme;
-game_engine *game::engine;
-objects game::characters;
-objects game::quests;
-gametime *game::time;
-
-void game::init(config &myconfig)
+// The game engine
+game::game (int argc, char **argv)
 {
-    // Pass on resolution/general display data
-    screen::init_display (&myconfig);
-      
+    configuration = new config (argc > 1 ? argv[1] : "");
 #ifdef SDL_MIXER
-    audio_init(myconfig);
-    audio_thread = SDL_CreateThread(audio_update, NULL);
-    if ( audio_thread == NULL) {
-        fprintf(stderr, "Couldn't create audio thread: %s\n", SDL_GetError());
-        fprintf(stderr, "Audio will not be used\n");
+    audio_thread = NULL; 
+#endif
+}
+
+// Initialize all parts of the game engine
+bool game::init ()
+{
+    // try to read adonthellrc
+    if (!configuration->read_adonthellrc ())
+        return false;
+    
+    // try to change into data directory
+    if (chdir (configuration->datadir.c_str ()))
+    {
+        printf ("\nSeems like %s is no valid data directory.", configuration->datadir.c_str ());
+        printf ("\nIf you have installed the Adonthell data files into a different location,");
+        printf ("\nplease make sure to update the $HOME/.adonthell/adonthellrc file\n");
+        return false;
+    }
+
+    // init video subsystem
+    screen::set_video_mode (320, 240, configuration);
+
+    // init audio subsystem
+#ifdef SDL_MIXER
+    audio_init (configuration);
+    audio_thread = SDL_CreateThread (audio_update, NULL);
+
+    if (audio_thread == NULL) 
+    {
+        printf ("Couldn't create audio thread: %s\n", SDL_GetError ());
+        printf ("Audio will not be used\n");
     }
 #endif  
-  
+
+    // init input subsystem
     input::init();
 
-    // Initialise Python
-    if (!init_python())
-    {
-	   // This is unlikely to happen
-	   fprintf(stderr, "Couldn't initialise Python - stopping\n");
-	   SDL_Quit();
-    }
-    
-    // Set the theme (later: get theme from config file)
-    theme = strdup ((myconfig.window_theme + "/").c_str ());
-
-    // Init gametime
-    time = new gametime (0, 0.1);
-
-    // load the game (later: continue with the last saved game?!)
-    load (myconfig.datadir.c_str (), myconfig.datadir.c_str ());    
-}
-
-// Load a game. First try to load all dynamic data from gamedir, then load 
-// everything else from the static data directory.
-void game::load (const char *gamedir, const char *staticdir)
-{
-    FILE *in = NULL;
-    char filepath[256];
-    npc *mynpc;
-    quest *myquest;
-    
-    // Load some modules
-    PyObject *m = import_module ("ins_modules");
-    Py_INCREF(m);
-    
-    // Create a player (later: load from file or whatever)
-    player *myplayer = new player;
-    myplayer->name = "Player";
-
-    // Add the player to the game objects
-    characters.set ("the_player", myplayer);
-
-    // Make "myplayer" available to the interpreter 
-	globals = PyModule_GetDict(m);
-    PyDict_SetItemString (globals, "the_player", pass_instance (myplayer, "player"));
-
-    // create character array
-    PyObject *chars = PyDict_New ();
-    PyDict_SetItemString (globals, "characters", chars);
-    PyDict_SetItemString (chars, "the_player", pass_instance (myplayer, "player"));
-
-    // try to open character.data
-    sprintf (filepath, "%s/character.data", gamedir);
-    in = fopen (filepath, "r");
-
-    if (!in)
-    {
-        // try loading from static data-dir then
-        sprintf (filepath, "%s/character.data", staticdir);
-        in = fopen (filepath, "r");
-        
-        if (!in)
-        {
-            fprintf (stderr, "Couldn't open \"character.data\" - stopping\n");
-            SDL_Quit ();
-            return;
-        }
-    }
-
-    // load characters     
-    while (fgetc (in))
-    {
-        mynpc = new npc;
-        mynpc->load (in);
-
-        // Pass character over to Python interpreter
-        PyDict_SetItemString (chars, mynpc->name, pass_instance (mynpc, "npc"));
-    }
-    
-    fclose (in);
-
-    // create quest array
-    PyObject *quests = PyDict_New ();
-    PyDict_SetItemString (globals, "quests", quests);
-
-    // try to open quest.data
-    sprintf (filepath, "%s/quest.data", gamedir);
-    in = fopen (filepath, "r");
-
-    if (!in)
-    {
-        // try loading from static data-dir then
-        sprintf (filepath, "%s/quest.data", staticdir);
-        in = fopen (filepath, "r");
-        
-        if (!in)
-        {
-            fprintf (stderr, "Couldn't open \"quest.data\" - stopping\n");
-            SDL_Quit ();
-            return;
-        }
-    }
-    
-    // load quests
-    while (fgetc (in))
-    {
-        myquest = new quest;
-        myquest->load (in);
-        
-        // Pass quest over to Python interpreter
-        PyDict_SetItemString (quests, myquest->name, pass_instance (myquest, "quest"));
-
-        // Make this quest available to the engine
-        game::quests.set (myquest->name, myquest);
-    }
-
-    fclose (in);
-}
-
-// Save all dynamic gamedata to the gamedir
-void game::save (const char* gamedir)
-{
-}
-
-void game::cleanup()
-{
-#ifdef SDL_MIXER
-  if (audio_thread != NULL) {
-    SDL_KillThread(audio_thread);
-    audio_cleanup();
-  }
+    // init python interpreter
+#ifndef _EDIT_
+	init_python ();
 #endif
 
-  Py_DECREF (globals);
-#warning kill_python make the mapengine segfaults when it quits.
-#warning please fix it (Alex)
-  kill_python();
-  SDL_Quit();
+    // voila :)
+    return true;
+}
+
+// Cleanup everything
+game::~game ()
+{
+    // save the config file
+    configuration->write_adonthellrc ();
+    delete configuration;
+    
+    // shutdown audio
+#ifdef SDL_MIXER
+    if (audio_thread != NULL) 
+    {
+        SDL_KillThread (audio_thread);
+        audio_cleanup ();
+    }
+#endif
+
+    // shutdown Python
+#ifndef _EDIT_
+	Py_Finalize ();
+#endif
+
+    // shutdown video
+    SDL_Quit ();
 }

@@ -18,7 +18,7 @@
 #include "crcle_callbacks.h"
 #include "crcle_interface.h"
 #include "callbacks.h" 
-#include "../../game.h"
+#include "../../data.h"
 #include "../../character.h"
 
 void set_option (GtkOptionMenu * o, const gchar * label)
@@ -275,10 +275,10 @@ create_dlg_node_window (Circle *circle, crcle_dlg *dlg)
     gtk_menu_append (GTK_MENU (npc_selection_menu), glade_menuitem);
     gtk_option_menu_set_menu (GTK_OPTION_MENU (npc_selection), npc_selection_menu);
 
-    while ((mychar = (character *) game::characters.next ()) != NULL)
+    while ((mychar = (character *) data::characters.next ()) != NULL)
     {
         // don't add plyer to the list
-        if (!strcmp (mychar->name, ((character *) game::characters.get ("the_player"))->name)) continue;
+        if (!strcmp (mychar->name, ((character *) data::characters.get ("the_player"))->name)) continue;
         
         glade_menuitem = gtk_menu_item_new_with_label (mychar->name);
         gtk_object_set_user_data (GTK_OBJECT (glade_menuitem), mychar->name);

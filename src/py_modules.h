@@ -1,7 +1,7 @@
 /*
    $Id$
 
-   Copyright (C) 1999   The Adonthell Project
+   Copyright (C) 2001 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -12,11 +12,9 @@
    See the COPYING file for more details.
 */
 
-#include <iostream.h>
-#include <stdio.h>
-#include <stdlib.h>
+#ifndef __PY_MODULES_H__
+#define __PY_MODULES_H__
 
-void
-init_game ()
-{
-}
+bool init_python (void);
+
+#endif // __PY_MODULES_H__

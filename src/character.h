@@ -67,7 +67,6 @@ public:
     void set_schedule (char*, bool b=true); // Set / change the active schedule
     void set_dialogue (char*);              // Set / change the active dialogue
 
-    void talk ();                           // starts conversation with the character
     u_int8 move (u_int8);                   // Executes the schedule script
 
 #ifndef SWIG

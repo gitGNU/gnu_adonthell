@@ -71,7 +71,7 @@ SUBDIRS = . tools
 
 bin_PROGRAMS = mapengine # joltest
 
-mapengine_SOURCES = animation.cpp audio.cpp audio_thread.cpp character.cpp cutscene.cpp dialog.cpp drawing_area.cpp event.cpp fileops.cpp game.cpp gametime.cpp image.cpp init.cpp input.cpp lex.prefs.cpp main.cpp map.cpp mapcharacter.cpp mapengine.cpp mapevent.cpp mapitem.cpp mappattern.cpp mapsquare.cpp pnm.cpp prefs.cpp py_inc.cpp py_character_wrap.cpp py_dialog_engine_wrap.cpp py_mapengine_wrap.cpp py_quest_wrap.cpp quest.cpp screen.cpp storage.cpp win_base.cpp win_border.cpp win_container.cpp win_font.cpp win_theme.cpp win_scrolled.cpp win_background.cpp win_scrollbar.cpp win_file.cpp win_image.cpp win_label.cpp win_select.cpp win_write.cpp yarg.cc
+mapengine_SOURCES = animation.cpp audio.cpp audio_thread.cpp character.cpp cutscene.cpp data.cpp dialog.cpp dialog_engine.cpp drawing_area.cpp event.cpp fileops.cpp game.cpp gametime.cpp image.cpp input.cpp lex.prefs.cpp main.cpp map.cpp mapcharacter.cpp mapengine.cpp mapevent.cpp mapitem.cpp mappattern.cpp mapsquare.cpp pnm.cpp prefs.cpp py_character_wrap.cpp py_dialog_engine_wrap.cpp py_inc.cpp py_modules.cpp py_quest_wrap.cpp quest.cpp screen.cpp storage.cpp win_base.cpp win_border.cpp win_container.cpp win_font.cpp win_theme.cpp win_scrolled.cpp win_background.cpp win_scrollbar.cpp win_file.cpp win_image.cpp win_label.cpp win_select.cpp win_write.cpp yarg.cc
 
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = ../header.h
@@ -84,11 +84,11 @@ CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
 mapengine_OBJECTS =  animation.o audio.o audio_thread.o character.o \
-cutscene.o dialog.o drawing_area.o event.o fileops.o game.o gametime.o \
-image.o init.o input.o lex.prefs.o main.o map.o mapcharacter.o \
-mapengine.o mapevent.o mapitem.o mappattern.o mapsquare.o pnm.o prefs.o \
-py_inc.o py_character_wrap.o py_dialog_engine_wrap.o \
-py_mapengine_wrap.o py_quest_wrap.o quest.o screen.o storage.o \
+cutscene.o data.o dialog.o dialog_engine.o drawing_area.o event.o \
+fileops.o game.o gametime.o image.o input.o lex.prefs.o main.o map.o \
+mapcharacter.o mapengine.o mapevent.o mapitem.o mappattern.o \
+mapsquare.o pnm.o prefs.o py_character_wrap.o py_dialog_engine_wrap.o \
+py_inc.o py_modules.o py_quest_wrap.o quest.o screen.o storage.o \
 win_base.o win_border.o win_container.o win_font.o win_theme.o \
 win_scrolled.o win_background.o win_scrollbar.o win_file.o win_image.o \
 win_label.o win_select.o win_write.o yarg.o
@@ -107,16 +107,17 @@ DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 TAR = tar
 GZIP_ENV = --best
 DEP_FILES =  .deps/animation.P .deps/audio.P .deps/audio_thread.P \
-.deps/character.P .deps/cutscene.P .deps/dialog.P .deps/drawing_area.P \
-.deps/event.P .deps/fileops.P .deps/game.P .deps/gametime.P \
-.deps/image.P .deps/init.P .deps/input.P .deps/lex.prefs.P .deps/main.P \
-.deps/map.P .deps/mapcharacter.P .deps/mapengine.P .deps/mapevent.P \
-.deps/mapitem.P .deps/mappattern.P .deps/mapsquare.P .deps/pnm.P \
-.deps/prefs.P .deps/py_character_wrap.P .deps/py_dialog_engine_wrap.P \
-.deps/py_inc.P .deps/py_mapengine_wrap.P .deps/py_quest_wrap.P \
-.deps/quest.P .deps/screen.P .deps/storage.P .deps/win_background.P \
-.deps/win_base.P .deps/win_border.P .deps/win_container.P \
-.deps/win_file.P .deps/win_font.P .deps/win_image.P .deps/win_label.P \
+.deps/character.P .deps/cutscene.P .deps/data.P .deps/dialog.P \
+.deps/dialog_engine.P .deps/drawing_area.P .deps/event.P \
+.deps/fileops.P .deps/game.P .deps/gametime.P .deps/image.P \
+.deps/input.P .deps/lex.prefs.P .deps/main.P .deps/map.P \
+.deps/mapcharacter.P .deps/mapengine.P .deps/mapevent.P .deps/mapitem.P \
+.deps/mappattern.P .deps/mapsquare.P .deps/pnm.P .deps/prefs.P \
+.deps/py_character_wrap.P .deps/py_dialog_engine_wrap.P .deps/py_inc.P \
+.deps/py_modules.P .deps/py_quest_wrap.P .deps/quest.P .deps/screen.P \
+.deps/storage.P .deps/win_background.P .deps/win_base.P \
+.deps/win_border.P .deps/win_container.P .deps/win_file.P \
+.deps/win_font.P .deps/win_image.P .deps/win_label.P \
 .deps/win_scrollbar.P .deps/win_scrolled.P .deps/win_select.P \
 .deps/win_theme.P .deps/win_write.P .deps/yarg.P
 SOURCES = $(mapengine_SOURCES)
@@ -469,9 +470,9 @@ py_quest_wrap.cpp : py_quest.i
 	swig -python -shadow -c++ -make_default -o $*.cpp $< 
 	@mv quest.py ../scripts
 
-py_mapengine_wrap.cpp : py_mapengine.i
-	swig -python -shadow -c++ -o $*.cpp $< 
-	@mv mapengine.py ../scripts
+#py_mapengine_wrap.cpp : py_mapengine.i
+#	swig -python -shadow -c++ -o $*.cpp $< 
+#	@mv mapengine.py ../scripts
 
 py_baseitem_wrap.cpp : py_baseitem.i
 	swig -python -shadow -c++ -o $*.cpp $< 

@@ -22,7 +22,7 @@
 #include "SDL_mixer.h"
 #include "SDL_thread.h"
 
-int audio_init(config &myconfig) {
+int audio_init(config *myconfig) {
 
   // Open the audio device
   audio_in = new audio (myconfig);

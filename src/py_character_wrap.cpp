@@ -507,6 +507,7 @@ static swig_type_info *swig_types[5];
 #include "types.h"
 #include "character.h"
 #include "storage.h"
+#include "dialog_engine.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -766,20 +767,6 @@ static PyObject *_wrap_npc_set_dialogue(PyObject *self, PyObject *args) {
 }
 
 
-static PyObject *_wrap_npc_talk(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    npc *arg0 ;
-    PyObject * argo0 =0 ;
-    
-    if(!PyArg_ParseTuple(args,"O:npc_talk",&argo0)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_npc,1)) == -1) return NULL;
-    arg0->talk();
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
 static PyObject *_wrap_npc_move(PyObject *self, PyObject *args) {
     PyObject *resultobj;
     npc *arg0 ;
@@ -791,6 +778,28 @@ static PyObject *_wrap_npc_move(PyObject *self, PyObject *args) {
     if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_npc,1)) == -1) return NULL;
     result = (unsigned char )arg0->move(arg1);
     resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+}
+
+
+void  npc_talk(npc *self) {
+    {
+        dialog_engine *de = new dialog_engine (self);
+        de->run ();
+    }
+}
+
+
+static PyObject *_wrap_npc_talk(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    npc *arg0 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"O:npc_talk",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_npc,1)) == -1) return NULL;
+    npc_talk(arg0);
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
     return resultobj;
 }
 
@@ -839,8 +848,8 @@ static PyMethodDef charactercMethods[] = {
 	 { "delete_npc", _wrap_delete_npc, METH_VARARGS },
 	 { "npc_set_schedule", _wrap_npc_set_schedule, METH_VARARGS },
 	 { "npc_set_dialogue", _wrap_npc_set_dialogue, METH_VARARGS },
-	 { "npc_talk", _wrap_npc_talk, METH_VARARGS },
 	 { "npc_move", _wrap_npc_move, METH_VARARGS },
+	 { "npc_talk", _wrap_npc_talk, METH_VARARGS },
 	 { "npc_name_set", _wrap_character_name_set, METH_VARARGS },
 	 { "npc_name_get", _wrap_character_name_get, METH_VARARGS },
 	 { "npc_posx_set", _wrap_character_posx_set, METH_VARARGS },

@@ -17,7 +17,7 @@
 
 #include "../../character.h"
 #include "../../quest.h"
-#include "../../game.h"
+#include "../../data.h"
 #include "run.h"
 #include "debug.h"
 #include "dbg_interface.h"
@@ -145,7 +145,7 @@ void debug_dlg::update ()
     tree = GTK_CTREE (char_tree);
     gtk_clist_freeze (GTK_CLIST (char_tree));
 
-    while ((mychar = (character *) game::characters.next ()) != NULL)
+    while ((mychar = (character *) data::characters.next ()) != NULL)
     {
         parent = gtk_ctree_find_by_row_data_custom (tree, NULL, mychar->name, (GCompareFunc) strcompare);
 
@@ -164,7 +164,7 @@ void debug_dlg::update ()
     tree = GTK_CTREE (quest_tree);
     gtk_clist_freeze (GTK_CLIST (quest_tree));
 
-    while ((myquest = (quest *) game::quests.next ()) != NULL)
+    while ((myquest = (quest *) data::quests.next ()) != NULL)
     {
         parent = gtk_ctree_find_by_row_data_custom (tree, NULL, myquest->name, (GCompareFunc) strcompare);
 
@@ -270,13 +270,13 @@ void debug_dlg::set (char *key, char *val)
         case 1:
         {
             tree = GTK_CTREE (char_tree);
-            container = &game::characters;
+            container = &data::characters;
             break;
         }
         case 2:
         {
             tree = GTK_CTREE (quest_tree);
-            container = &game::quests;
+            container = &data::quests;
             break;
         }
         default: return;
@@ -379,7 +379,7 @@ void debug_dlg::init ()
 
     // Init character page
     gtk_clist_freeze (GTK_CLIST (char_tree));
-    while ((mychar = (character *) game::characters.next ()) != NULL)
+    while ((mychar = (character *) data::characters.next ()) != NULL)
     {
         text[0] = mychar->name;
         text[1] = "";
@@ -404,7 +404,7 @@ void debug_dlg::init ()
 
     // Init quest page
     gtk_clist_freeze (GTK_CLIST (quest_tree));
-    while ((myquest = (quest *) game::quests.next ()) != NULL)
+    while ((myquest = (quest *) data::quests.next ()) != NULL)
     {
         text[0] = myquest->name;
         text[1] = "";

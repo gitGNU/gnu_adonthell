@@ -1,4 +1,6 @@
 /*
+   $Id$
+
    (C) Copyright 2000 Joel Vennin
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
@@ -28,6 +30,8 @@ class win_theme
   win_border * mini;
   win_background * background;
   win_scrollbar * scrollbar;
+
+  static char* theme;
 
   win_theme(win_theme &);
   win_theme(char *);

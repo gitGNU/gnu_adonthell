@@ -18,8 +18,6 @@
 #include "Python.h"
 
 extern void insert_path( char * );
-extern bool init_python( void );
-extern void kill_python( void );
 extern bool exec_file( char *filename );
 extern PyObject *import_module( char *);
 extern void show_traceback( void );

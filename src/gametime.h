@@ -20,7 +20,6 @@
 class gametime
 {
 public:
-
     gametime (u_int32, float);      // constructor
     void tick (u_int32);            // Increase the gametime
 

@@ -16,8 +16,8 @@
 #define __AUDIO_THREAD_H__
 #ifdef SDL_MIXER
 
-int audio_init(config&);
-int audio_update(void* data);
-void audio_cleanup();
+int audio_init (config*);
+int audio_update (void* data);
+void audio_cleanup ();
 #endif
 #endif

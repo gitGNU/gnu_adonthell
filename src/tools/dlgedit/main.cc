@@ -14,13 +14,20 @@
 
 class dialog;
 
+extern "C"
+{
+	void initcharacterc(void);
+	void initquestc(void);
+}
+
 #include <stdio.h>
+#include <unistd.h>
 #include <gtk/gtk.h>
 
 #include "../../types.h"
 #include "../../py_inc.h"
 #include "../../prefs.h"
-#include "../../game.h"
+#include "../../data.h"
 #include "../../quest.h"
 #include "main.h"
 #include "graph.h"
@@ -42,12 +49,12 @@ main (int argc, char *argv[])
     gtk_init (&argc, &argv);
 
     // Init Python interpreter
-    if (!init_python ())
-    {
-        // This is unlikely to happen
-        fprintf(stderr, "Couldn't initialise Python - stopping\n");
-        return 1;
-    }
+	Py_Initialize ();
+
+	initcharacterc ();
+	initquestc ();
+
+    insert_path (getcwd (tmp, 256));
 
     // Insert our script directory to python's search path
     sprintf (tmp, "%s/scripts", myconf.datadir.c_str ());
@@ -58,21 +65,21 @@ main (int argc, char *argv[])
     insert_path (tmp);
 
     // Load module
-    PyObject *m = import_module ("ins_modules");
+    PyObject *m = import_module ("ins_dlgedit_modules");
         
     // Create a player
     MainWnd->myplayer = new player;
 
     // Add the player to the character array
-    game::characters.set ("the_player", MainWnd->myplayer);
+    data::characters.set ("the_player", MainWnd->myplayer);
 
     // Make "the_player" available to the interpreter 
-	game::globals = PyModule_GetDict(m);
-    PyDict_SetItemString (game::globals, "the_player", pass_instance (MainWnd->myplayer, "player"));
+	data::globals = PyModule_GetDict(m);
+    PyDict_SetItemString (data::globals, "the_player", pass_instance (MainWnd->myplayer, "player"));
 
     // create character array
     PyObject *chars = PyDict_New ();
-    PyDict_SetItemString (game::globals, "characters", chars);
+    PyDict_SetItemString (data::globals, "characters", chars);
 
     sprintf (tmp, "%s/character.data", myconf.datadir.c_str ());
 
@@ -90,14 +97,14 @@ main (int argc, char *argv[])
         }
 
         // set a shortcut to one of the NPC's
-        PyDict_SetItemString (game::globals, "the_npc", pass_instance (mynpc, "npc"));
+        PyDict_SetItemString (data::globals, "the_npc", pass_instance (mynpc, "npc"));
     
         fclose (in);
     }
 
     // create quest array
     PyObject *quests = PyDict_New ();
-    PyDict_SetItemString (game::globals, "quests", quests);
+    PyDict_SetItemString (data::globals, "quests", quests);
 
     // try to open quest.data
     sprintf (tmp, "%s/quest.data", myconf.datadir.c_str ());
@@ -117,7 +124,7 @@ main (int argc, char *argv[])
             PyDict_SetItemString (quests, myquest->name, pass_instance (myquest, "quest"));
 
             // Make this quest available to the engine
-            game::quests.set (myquest->name, myquest);
+            data::quests.set (myquest->name, myquest);
         }
         
         fclose (in);    
@@ -140,7 +147,7 @@ main (int argc, char *argv[])
     gtk_main ();
 
     // Clean up
-    kill_python ();
+    Py_Finalize ();
 
     delete_dialogue (MainWnd);
     delete MainWnd->myplayer;

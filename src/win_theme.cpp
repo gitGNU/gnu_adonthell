@@ -1,4 +1,6 @@
 /*
+   $Id$ 
+ 
    (C) Copyright 2000 Joel Vennin
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
@@ -19,6 +21,7 @@
 #include "win_scrollbar.h"
 #include "win_theme.h"
 
+char *win_theme::theme = WIN_THEME_ORIGINAL;
 
 win_theme::win_theme(char * theme)
 {

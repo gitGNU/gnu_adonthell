@@ -487,102 +487,364 @@ SWIG_InstallConstants(PyObject *d, swig_const_info constants[]) {
 
 /* -------- TYPES TABLE (BEGIN) -------- */
 
-#define  SWIGTYPE_p_landmap swig_types[0] 
-#define  SWIGTYPE_p_u_int16 swig_types[1] 
-static swig_type_info *swig_types[3];
+#define  SWIGTYPE_p_npc swig_types[0] 
+#define  SWIGTYPE_p_storage swig_types[1] 
+#define  SWIGTYPE_p_player swig_types[2] 
+#define  SWIGTYPE_p_character swig_types[3] 
+static swig_type_info *swig_types[5];
 
 /* -------- TYPES TABLE (END) -------- */
 
 
 /*-----------------------------------------------
-              @(target):= mapenginec.so
+              @(target):= characterc.so
   ------------------------------------------------*/
-#define SWIG_init    initmapenginec
+#define SWIG_init    initcharacterc
 
-#define SWIG_name    "mapenginec"
+#define SWIG_name    "characterc"
 
 
 #include "types.h"
+#include "character.h"
+#include "storage.h"
+#include "dialog_engine.h"
 
-
-#include "mapengine.h"
-#include "map.h"
 #ifdef __cplusplus
 extern "C" {
 #endif
-static PyObject *_wrap_mapengine_map_engine(PyObject *self, PyObject *args) {
+static PyObject *_wrap_storage_set(PyObject *self, PyObject *args) {
     PyObject *resultobj;
-    landmap *arg0 ;
+    storage *arg0 ;
+    char *arg1 ;
+    int arg2 ;
     PyObject * argo0 =0 ;
     
-    if(!PyArg_ParseTuple(args,"O:mapengine_map_engine",&argo0)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_landmap,1)) == -1) return NULL;
-    mapengine::map_engine(arg0);
+    if(!PyArg_ParseTuple(args,"Osi:storage_set",&argo0,&arg1,&arg2)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_storage,1)) == -1) return NULL;
+    arg0->set((char const *)arg1,arg2);
     Py_INCREF(Py_None);
     resultobj = Py_None;
     return resultobj;
 }
 
 
-static PyObject *_wrap_mapengine_update_and_show(PyObject *self, PyObject *args) {
+static PyObject *_wrap_storage_get(PyObject *self, PyObject *args) {
     PyObject *resultobj;
-    landmap *arg0 ;
+    storage *arg0 ;
+    char *arg1 ;
+    PyObject * argo0 =0 ;
+    int result ;
+    
+    if(!PyArg_ParseTuple(args,"Os:storage_get",&argo0,&arg1)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_storage,1)) == -1) return NULL;
+    result = (int )arg0->get((char const *)arg1);
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_new_storage(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    storage *result ;
+    
+    if(!PyArg_ParseTuple(args,":new_storage")) return NULL;
+    result = (storage *)new storage();
+    resultobj = SWIG_NewPointerObj((void *) result, SWIGTYPE_p_storage);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_delete_storage(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    storage *arg0 ;
     PyObject * argo0 =0 ;
     
-    if(!PyArg_ParseTuple(args,"O:mapengine_update_and_show",&argo0)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_landmap,1)) == -1) return NULL;
-    mapengine::update_and_show(arg0);
+    if(!PyArg_ParseTuple(args,"O:delete_storage",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_storage,1)) == -1) return NULL;
+    delete arg0;
     Py_INCREF(Py_None);
     resultobj = Py_None;
     return resultobj;
 }
 
 
-static PyObject *_wrap_mapengine_fade_out(PyObject *self, PyObject *args) {
+static PyObject *_wrap_character_name_set(PyObject *self, PyObject *args) {
     PyObject *resultobj;
-    landmap *arg0 ;
-    u_int16 *arg1 ;
-    u_int16 *arg2 ;
+    character *arg0 ;
+    char *arg1 ;
     PyObject * argo0 =0 ;
-    PyObject * argo1 =0 ;
-    PyObject * argo2 =0 ;
     
-    if(!PyArg_ParseTuple(args,"OOO:mapengine_fade_out",&argo0,&argo1,&argo2)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_landmap,1)) == -1) return NULL;
-    if ((SWIG_ConvertPtr(argo1,(void **) &arg1,SWIGTYPE_p_u_int16,1)) == -1) return NULL;
-    if ((SWIG_ConvertPtr(argo2,(void **) &arg2,SWIGTYPE_p_u_int16,1)) == -1) return NULL;
-    mapengine::fade_out(arg0,*arg1,*arg2);
+    if(!PyArg_ParseTuple(args,"Os:character_name_set",&argo0,&arg1)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_character,1)) == -1) return NULL;
+    arg0->name = arg1;
     Py_INCREF(Py_None);
     resultobj = Py_None;
     return resultobj;
 }
 
 
-static PyObject *_wrap_mapengine_fade_in(PyObject *self, PyObject *args) {
+static PyObject *_wrap_character_name_get(PyObject *self, PyObject *args) {
     PyObject *resultobj;
-    landmap *arg0 ;
-    u_int16 *arg1 ;
-    u_int16 *arg2 ;
+    character *arg0 ;
     PyObject * argo0 =0 ;
-    PyObject * argo1 =0 ;
-    PyObject * argo2 =0 ;
+    char *result ;
     
-    if(!PyArg_ParseTuple(args,"OOO:mapengine_fade_in",&argo0,&argo1,&argo2)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_landmap,1)) == -1) return NULL;
-    if ((SWIG_ConvertPtr(argo1,(void **) &arg1,SWIGTYPE_p_u_int16,1)) == -1) return NULL;
-    if ((SWIG_ConvertPtr(argo2,(void **) &arg2,SWIGTYPE_p_u_int16,1)) == -1) return NULL;
-    mapengine::fade_in(arg0,*arg1,*arg2);
+    if(!PyArg_ParseTuple(args,"O:character_name_get",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_character,1)) == -1) return NULL;
+    result = (char *) (arg0->name);
+    resultobj = PyString_FromString(result);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_character_posx_set(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    character *arg0 ;
+    unsigned short arg1 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"Oh:character_posx_set",&argo0,&arg1)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_character,1)) == -1) return NULL;
+    arg0->posx = arg1;
     Py_INCREF(Py_None);
     resultobj = Py_None;
     return resultobj;
 }
 
 
-static PyMethodDef mapenginecMethods[] = {
-	 { "mapengine_map_engine", _wrap_mapengine_map_engine, METH_VARARGS },
-	 { "mapengine_update_and_show", _wrap_mapengine_update_and_show, METH_VARARGS },
-	 { "mapengine_fade_out", _wrap_mapengine_fade_out, METH_VARARGS },
-	 { "mapengine_fade_in", _wrap_mapengine_fade_in, METH_VARARGS },
+static PyObject *_wrap_character_posx_get(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    character *arg0 ;
+    PyObject * argo0 =0 ;
+    unsigned short result ;
+    
+    if(!PyArg_ParseTuple(args,"O:character_posx_get",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_character,1)) == -1) return NULL;
+    result = (unsigned short ) (arg0->posx);
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_character_posy_set(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    character *arg0 ;
+    unsigned short arg1 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"Oh:character_posy_set",&argo0,&arg1)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_character,1)) == -1) return NULL;
+    arg0->posy = arg1;
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_character_posy_get(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    character *arg0 ;
+    PyObject * argo0 =0 ;
+    unsigned short result ;
+    
+    if(!PyArg_ParseTuple(args,"O:character_posy_get",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_character,1)) == -1) return NULL;
+    result = (unsigned short ) (arg0->posy);
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_character_color_set(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    character *arg0 ;
+    unsigned long arg1 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"Ol:character_color_set",&argo0,&arg1)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_character,1)) == -1) return NULL;
+    arg0->color = arg1;
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_character_color_get(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    character *arg0 ;
+    PyObject * argo0 =0 ;
+    unsigned long result ;
+    
+    if(!PyArg_ParseTuple(args,"O:character_color_get",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_character,1)) == -1) return NULL;
+    result = (unsigned long ) (arg0->color);
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_new_character(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    character *result ;
+    
+    if(!PyArg_ParseTuple(args,":new_character")) return NULL;
+    result = (character *)new character();
+    resultobj = SWIG_NewPointerObj((void *) result, SWIGTYPE_p_character);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_delete_character(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    character *arg0 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"O:delete_character",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_character,1)) == -1) return NULL;
+    delete arg0;
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_new_npc(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    npc *result ;
+    
+    if(!PyArg_ParseTuple(args,":new_npc")) return NULL;
+    result = (npc *)new npc();
+    resultobj = SWIG_NewPointerObj((void *) result, SWIGTYPE_p_npc);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_delete_npc(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    npc *arg0 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"O:delete_npc",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_npc,1)) == -1) return NULL;
+    delete arg0;
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_npc_set_schedule(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    npc *arg0 ;
+    char *arg1 ;
+    bool arg2 = true ;
+    PyObject * argo0 =0 ;
+    int tempbool2 = (int) true ;
+    
+    if(!PyArg_ParseTuple(args,"Os|i:npc_set_schedule",&argo0,&arg1,&tempbool2)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_npc,1)) == -1) return NULL;
+    arg2 = (bool ) tempbool2;
+    arg0->set_schedule(arg1,arg2);
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_npc_set_dialogue(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    npc *arg0 ;
+    char *arg1 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"Os:npc_set_dialogue",&argo0,&arg1)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_npc,1)) == -1) return NULL;
+    arg0->set_dialogue(arg1);
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_npc_move(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    npc *arg0 ;
+    unsigned char arg1 ;
+    PyObject * argo0 =0 ;
+    unsigned char result ;
+    
+    if(!PyArg_ParseTuple(args,"Ob:npc_move",&argo0,&arg1)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_npc,1)) == -1) return NULL;
+    result = (unsigned char )arg0->move(arg1);
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_new_player(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    player *result ;
+    
+    if(!PyArg_ParseTuple(args,":new_player")) return NULL;
+    result = (player *)new player();
+    resultobj = SWIG_NewPointerObj((void *) result, SWIGTYPE_p_player);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_delete_player(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    player *arg0 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"O:delete_player",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_player,1)) == -1) return NULL;
+    delete arg0;
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyMethodDef charactercMethods[] = {
+	 { "storage_set", _wrap_storage_set, METH_VARARGS },
+	 { "storage_get", _wrap_storage_get, METH_VARARGS },
+	 { "new_storage", _wrap_new_storage, METH_VARARGS },
+	 { "delete_storage", _wrap_delete_storage, METH_VARARGS },
+	 { "character_name_set", _wrap_character_name_set, METH_VARARGS },
+	 { "character_name_get", _wrap_character_name_get, METH_VARARGS },
+	 { "character_posx_set", _wrap_character_posx_set, METH_VARARGS },
+	 { "character_posx_get", _wrap_character_posx_get, METH_VARARGS },
+	 { "character_posy_set", _wrap_character_posy_set, METH_VARARGS },
+	 { "character_posy_get", _wrap_character_posy_get, METH_VARARGS },
+	 { "character_color_set", _wrap_character_color_set, METH_VARARGS },
+	 { "character_color_get", _wrap_character_color_get, METH_VARARGS },
+	 { "new_character", _wrap_new_character, METH_VARARGS },
+	 { "delete_character", _wrap_delete_character, METH_VARARGS },
+	 { "new_npc", _wrap_new_npc, METH_VARARGS },
+	 { "delete_npc", _wrap_delete_npc, METH_VARARGS },
+	 { "npc_set_schedule", _wrap_npc_set_schedule, METH_VARARGS },
+	 { "npc_set_dialogue", _wrap_npc_set_dialogue, METH_VARARGS },
+	 { "npc_move", _wrap_npc_move, METH_VARARGS },
+	 { "npc_name_set", _wrap_character_name_set, METH_VARARGS },
+	 { "npc_name_get", _wrap_character_name_get, METH_VARARGS },
+	 { "npc_posx_set", _wrap_character_posx_set, METH_VARARGS },
+	 { "npc_posx_get", _wrap_character_posx_get, METH_VARARGS },
+	 { "npc_posy_set", _wrap_character_posy_set, METH_VARARGS },
+	 { "npc_posy_get", _wrap_character_posy_get, METH_VARARGS },
+	 { "npc_color_set", _wrap_character_color_set, METH_VARARGS },
+	 { "npc_color_get", _wrap_character_color_get, METH_VARARGS },
+	 { "new_player", _wrap_new_player, METH_VARARGS },
+	 { "delete_player", _wrap_delete_player, METH_VARARGS },
+	 { "player_name_set", _wrap_character_name_set, METH_VARARGS },
+	 { "player_name_get", _wrap_character_name_get, METH_VARARGS },
+	 { "player_posx_set", _wrap_character_posx_set, METH_VARARGS },
+	 { "player_posx_get", _wrap_character_posx_get, METH_VARARGS },
+	 { "player_posy_set", _wrap_character_posy_set, METH_VARARGS },
+	 { "player_posy_get", _wrap_character_posy_get, METH_VARARGS },
+	 { "player_color_set", _wrap_character_color_set, METH_VARARGS },
+	 { "player_color_get", _wrap_character_color_get, METH_VARARGS },
 	 { NULL, NULL }
 };
 
@@ -592,12 +854,31 @@ static PyMethodDef mapenginecMethods[] = {
 
 /* -------- TYPE CONVERSION AND EQUIVALENCE RULES (BEGIN) -------- */
 
-static swig_type_info _swigt__p_landmap[] = {{"_p_landmap", 0, "landmap *"},{"_p_landmap"},{0}};
-static swig_type_info _swigt__p_u_int16[] = {{"_p_u_int16", 0, "u_int16 *"},{"_p_u_int16"},{0}};
+static void *_p_npcTo_p_storage(void *x) {
+    return (void *)((storage *) ((npc *) x));
+}
+static void *_p_characterTo_p_storage(void *x) {
+    return (void *)((storage *) ((character *) x));
+}
+static void *_p_playerTo_p_storage(void *x) {
+    return (void *)((storage *) ((player *) x));
+}
+static void *_p_npcTo_p_character(void *x) {
+    return (void *)((character *) ((npc *) x));
+}
+static void *_p_playerTo_p_character(void *x) {
+    return (void *)((character *) ((player *) x));
+}
+static swig_type_info _swigt__p_npc[] = {{"_p_npc", 0, "npc *"},{"_p_npc"},{0}};
+static swig_type_info _swigt__p_storage[] = {{"_p_storage", 0, "storage *"},{"_p_npc", _p_npcTo_p_storage},{"_p_storage"},{"_p_player", _p_playerTo_p_storage},{"_p_character", _p_characterTo_p_storage},{0}};
+static swig_type_info _swigt__p_player[] = {{"_p_player", 0, "player *"},{"_p_player"},{0}};
+static swig_type_info _swigt__p_character[] = {{"_p_character", 0, "character *"},{"_p_npc", _p_npcTo_p_character},{"_p_player", _p_playerTo_p_character},{"_p_character"},{0}};
 
 static swig_type_info *swig_types_initial[] = {
-_swigt__p_landmap, 
-_swigt__p_u_int16, 
+_swigt__p_npc, 
+_swigt__p_storage, 
+_swigt__p_player, 
+_swigt__p_character, 
 0
 };
 
@@ -605,17 +886,23 @@ _swigt__p_u_int16,
 /* -------- TYPE CONVERSION AND EQUIVALENCE RULES (END) -------- */
 
 static swig_const_info swig_const_table[] = {
+    { SWIG_PY_INT,     "DWARF", (long) DWARF, 0, 0, 0},
+    { SWIG_PY_INT,     "ELF", (long) ELF, 0, 0, 0},
+    { SWIG_PY_INT,     "HALFELF", (long) HALFELF, 0, 0, 0},
+    { SWIG_PY_INT,     "HUMAN", (long) HUMAN, 0, 0, 0},
+    { SWIG_PY_INT,     "FEMALE", (long) FEMALE, 0, 0, 0},
+    { SWIG_PY_INT,     "MALE", (long) MALE, 0, 0, 0},
 {0}};
 
 static PyObject *SWIG_globals;
 #ifdef __cplusplus
 extern "C" 
 #endif
-SWIGEXPORT(void) initmapenginec(void) {
+SWIGEXPORT(void) initcharacterc(void) {
     PyObject *m, *d;
     int i;
     SWIG_globals = SWIG_newvarlink();
-    m = Py_InitModule("mapenginec", mapenginecMethods);
+    m = Py_InitModule("characterc", charactercMethods);
     d = PyModule_GetDict(m);
     for (i = 0; swig_types_initial[i]; i++) {
         swig_types[i] = SWIG_TypeRegister(swig_types_initial[i]);

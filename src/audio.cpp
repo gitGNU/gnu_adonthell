@@ -21,12 +21,12 @@
 
 extern unsigned short md_mode; // This is declared in MikMod
 
-audio::audio (config &myconfig) {
+audio::audio (config *myconfig) {
 
   int i;  // Generic counter variable
 
   // Sample rate: 11025, 22050 or 44100 Hz
-  switch( myconfig.audio_sample_rate ) {
+  switch( myconfig->audio_sample_rate ) {
     case 0: {
       audio_rate = 11025;
       break; }
@@ -39,13 +39,13 @@ audio::audio (config &myconfig) {
   }
   
   // Output in signed 8/16-bit form
-  audio_format = myconfig.audio_resolution == 0 ? AUDIO_S8 : AUDIO_S16; 
+  audio_format = myconfig->audio_resolution == 0 ? AUDIO_S8 : AUDIO_S16; 
 
   // 1 is mono, 2 is stereo
-  audio_channels = myconfig.audio_channels == 0 ? 1 : 2;  
+  audio_channels = myconfig->audio_channels == 0 ? 1 : 2;  
 
   // 100... scales to percentages ;>
-  background_volume = myconfig.audio_volume;   
+  background_volume = myconfig->audio_volume;   
 
   buffer_size = 512;         // Audio buffer size
   effects_volume = 128;	     // Still figuring this one out...
@@ -63,7 +63,7 @@ audio::audio (config &myconfig) {
     audio_channels, buffer_size);
 
   // Activate sample interpolation to improve quality
-  if (myconfig.audio_interpolation)
+  if (myconfig->audio_interpolation)
     md_mode |= 0x0200; // 0x0200 is DMODE_INTERP in MikMod
 
   // Now see what we got when opening the audio device

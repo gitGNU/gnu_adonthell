@@ -1,15 +1,12 @@
 CPP = g++
-CPPFLAGS = -D_EDIT_ -DREVERSE_ALPHA -g -Wall -I../../ -I/usr/local/include/SDL -I../mapcharedit  -I/usr/local/include/python1.6/ `sdl-config --cflags`
-LIBS = -lz -g -L/usr/local/lib/python1.6/config -lpython1.6 `sdl-config --cflags` `sdl-config --libs`
-OBJECTS = pnm.o drawing_area.o image.o screen.o animation.o \
-	prefs.o lex.prefs.o input.o game.o gametime.o event.o py_inc.o \
-	py_character_wrap.o py_dialog_engine_wrap.o py_dialogue.o \
-	py_quest_wrap.o quest.o dialog.o \
-	character.o fileops.o yarg.o \
-	storage.o win_label.o win_write.o win_query.o win_info.o \
-	win_container.o win_select.o win_file.o \
-	win_border.o win_base.o win_font.o win_image.o\
-	win_background.o win_scrolled.o win_scrollbar.o win_theme.o mapselect.o
+CPPFLAGS = -D_EDIT_ -DREVERSE_ALPHA -g -Wall -I../../ -I/usr/local/include/SDL -I../mapcharedit `sdl-config --cflags`
+LIBS = -lz -g `sdl-config --cflags` `sdl-config --libs`
+OBJECTS = pnm.o drawing_area.o image.o screen.o animation.o game.o \
+	prefs.o lex.prefs.o input.o mapselect.o win_label.o win_write.o win_query.o \
+	win_info.o win_container.o win_select.o win_file.o \
+	win_border.o win_base.o win_font.o win_image.o \
+	win_background.o win_scrolled.o win_scrollbar.o win_theme.o
+
 
 MOBJEDOBJ=mapobject.o mapobjedit.o
 MEDOBJ=mapobject.o landmap.o mapview.o mapedit.o
@@ -76,9 +73,6 @@ py_mapengine_wrap.o: ../../py_mapengine_wrap.cpp
 
 py_quest_wrap.o: ../../py_quest_wrap.cpp
 	$(CPP) -c $(CPPFLAGS) ../../py_quest_wrap.cpp -o py_quest_wrap.o
-
-py_dialogue.o: ../../py_dialogue.cpp
-	$(CPP) -c $(CPPFLAGS) ../../py_dialogue.cpp -o py_dialogue.o
 
 quest.o: ../../quest.cpp
 	$(CPP) -c $(CPPFLAGS) ../../quest.cpp -o quest.o
