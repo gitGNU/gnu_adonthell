@@ -15,6 +15,7 @@
 class dialog;
 
 #include <stdio.h>
+#include <unistd.h>
 #include <gtk/gtk.h>
 
 #include "../../types.h"
@@ -28,6 +29,9 @@ class dialog;
 int 
 main (int argc, char *argv[])
 {
+    char tmp[256];
+    char *wd = NULL;
+    
     // The Application Data
     MainFrame *MainWnd = new MainFrame;
 
@@ -35,9 +39,6 @@ main (int argc, char *argv[])
     config myconf (argc > 1 ? argv[1] : "");
     if (!myconf.read_adonthellrc ())
         return 1;
-
-    char script_dir[256];
-    sprintf (script_dir, "%s/scripts", myconf.datadir.c_str ());
 
     gtk_init (&argc, &argv);
 
@@ -50,7 +51,8 @@ main (int argc, char *argv[])
     }
 
     // Insert our script directory to python's search path
-    insert_path (script_dir);
+    sprintf (tmp, "%s/scripts", myconf.datadir.c_str ());
+    insert_path (tmp);
 
     // Load module
     PyObject *m = import_module ("player");
@@ -59,19 +61,48 @@ main (int argc, char *argv[])
     MainWnd->myplayer = new player;
 
     // Add the player to the game objects
-    objects::set ("the_player", MainWnd->myplayer);
+    game::characters.set ("the_player", MainWnd->myplayer);
 
     // Make "myplayer" available to the interpreter 
 	game::globals = PyModule_GetDict(m);
     PyDict_SetItemString (game::globals, "the_player", pass_instance (MainWnd->myplayer, "player"));
 
-    // this is just a hack, have to do it proper in the future:
-    PyDict_SetItemString (game::globals, "FEMALE", PyInt_FromLong (0));
-    PyDict_SetItemString (game::globals, "MALE",  PyInt_FromLong (1));
-    PyDict_SetItemString (game::globals, "HUMAN", PyInt_FromLong (3));
-    PyDict_SetItemString (game::globals, "ELF", PyInt_FromLong (1));
-    PyDict_SetItemString (game::globals, "HALFELF", PyInt_FromLong (2));
-    PyDict_SetItemString (game::globals, "DWARF", PyInt_FromLong (0));
+    // create character array
+    PyObject *chars = PyDict_New ();
+    PyDict_SetItemString (game::globals, "characters", chars);
+
+    // save cwd
+    wd = getcwd (NULL, 0);
+
+    // try to change into data directory
+    if (chdir (myconf.datadir.c_str ()))
+    {
+        printf ("\nSeems like %s is no valid data directory.", myconf.datadir.c_str ());
+        printf ("\nIf you have installed the Adonthell data files into a different location,");
+        printf ("\nplease make sure to update the $HOME/.adonthell/adonthellrc file\n");
+        return 1;
+    }  
+
+    // load characters from character.data
+    FILE *in = fopen ("character.data", "r");
+    if (!in)
+    {
+        fprintf (stderr, "Couldn't open \"character.data\" - stopping\n");
+        return 1;
+    }
+
+    npc *mynpc;
+    
+    while (fgetc (in))
+    {
+        mynpc = new npc;
+        mynpc->load (in);
+        PyDict_SetItemString (chars, mynpc->name, pass_instance (mynpc, "npc"));
+        game::characters.set (mynpc->name, mynpc);
+    }
+    
+    fclose (in);
+    chdir (wd);
 
     // Misc initialization
     init_app (MainWnd);
@@ -94,6 +125,7 @@ main (int argc, char *argv[])
     delete_dialogue (MainWnd);
     delete MainWnd->myplayer;
     delete MainWnd;
+    delete wd;
 
     return 0;
 }
@@ -108,7 +140,7 @@ init_app (MainFrame * MainWnd)
     MainWnd->selected_node = NULL;
     MainWnd->dragged_node = NULL;
     MainWnd->tooltip = NULL;
-    MainWnd->file_name = g_strdup ("./new_dialogue");
+    MainWnd->file_name = g_strdup ("./new_dlg");
     MainWnd->x_offset = 0;
     MainWnd->y_offset = 0;
     MainWnd->scroll = 0;

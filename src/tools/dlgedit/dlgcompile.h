@@ -39,7 +39,7 @@ private:
     ofstream script;                // The script file
 
     u_int32 *text_lookup;           // tells String index when given node-number
-    u_int32 *jump_lookup;           // tells Function index when given node-number
+    s_int32 *jump_lookup;           // tells Function index when given node-number
     
     void write_dialogue ();         // Write the array with the dialogue functions
     void write_npc (Circle*);       // Write NPC part of a script block

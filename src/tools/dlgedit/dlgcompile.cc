@@ -26,7 +26,7 @@ dlg_compiler::dlg_compiler (vector<DlgNode*> &d, string f, string c)
     cust_func = c;
 
     text_lookup = new u_int32[dlg.size ()];
-    jump_lookup = new u_int32[dlg.size ()];
+    jump_lookup = new s_int32[dlg.size ()];
 }
 
 // Compile the Dialogue
@@ -105,7 +105,7 @@ void dlg_compiler::write_dialogue ()
             script << "self.answer" << (*i)->number << ", ";
             jump_lookup[(*i)->number] = ++j;
         }
-        else jump_lookup[(*i)->number] = 0;
+        else jump_lookup[(*i)->number] = -1;
 
     // with a last, empty string we don't have to care about the final comma
     script << "None]\n";

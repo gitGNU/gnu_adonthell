@@ -21,6 +21,7 @@ Circle::Circle ()
     conditions = "";
     variables =	"";
     actions = "0|0|0";
+    character = "";
     mood = 0;
 }
 
@@ -31,6 +32,7 @@ Circle::Circle (u_int32 num, u_int8 tp, s_int32 x, s_int32 y)
     conditions = "";
     variables =	"";
     actions = "0|0|0";
+    character = "";
 
     number = num;
     type = tp;
@@ -59,6 +61,9 @@ void Circle::save (ofstream &file, u_int32* table)
 
     // circle's text
     file << "  Text §" << text << "§\n";
+
+    // circle's character
+    if (character != "") file << "  NPC §" << character << "§\n";
 
     // circle's condition(s)
     if (conditions != "") file << "  Cond §" << conditions << "§\n";
@@ -95,8 +100,6 @@ void Circle::load (u_int32 num)
             case LOAD_TYPE:
             {
                 if (parse_dlgfile (str, n) == LOAD_NUM) type = n;
-                if (type == PLAYER) character = 0;
-                else character = 1;
                 
                 break;
             }
@@ -124,6 +127,13 @@ void Circle::load (u_int32 num)
                 break;
             }
             
+            // The Circle's Character
+            case LOAD_NPC:
+            {
+                if (parse_dlgfile (str, n) == LOAD_STR) character = str;                
+                break;
+            }
+                        
             // The Circle's Conditions
             case LOAD_COND:
             {

@@ -46,9 +46,10 @@ enum
     LOAD_NAME = 15,
     LOAD_RACE = 16,
     LOAD_GENDER = 17,
-    LOAD_STR = 18,
-    LOAD_NUM = 19,
-    LOAD_UNKNOWN = 20
+    LOAD_NPC = 18,
+    LOAD_STR = 19,
+    LOAD_NUM = 20,
+    LOAD_UNKNOWN = 21
 };
 
 // Node Types
@@ -87,7 +88,6 @@ public:
     Circle (u_int32, u_int8, s_int32, s_int32);
     virtual ~Circle () { }
     
-    u_int32 character;                  // Who's characters text is this?
     u_int32 mood;                       // This characters mood
                         
     string text;                        // text of node
@@ -95,6 +95,7 @@ public:
     string conditions;                  // Condition script
     string variables;                   // Variable script
     string actions;                     // further actions
+    string character;                   // Who's characters text is this?
     
     void save (ofstream&, u_int32*);    // Save Circle
     void load (u_int32);                // Load Circle

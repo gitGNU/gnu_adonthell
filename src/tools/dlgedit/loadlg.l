@@ -44,6 +44,7 @@ Cond            return LOAD_COND;
 Vars            return LOAD_VARS;
 Func            return LOAD_FUNC;
 Act             return LOAD_ACT;
+NPC             return LOAD_NPC;
 Name            return LOAD_NAME;
 Race            return LOAD_RACE;
 Gender          return LOAD_GENDER;

@@ -22,12 +22,12 @@ LDADD = ../../inventory.o ../../py_mapengine_wrap.o \
 ../../mapcharacter.o ../../win_border.o \
 ../../cutscene.o ../../mapengine.o ../../win_container.o \
 ../../mapevent.o ../../win_font.o \
-../../fileops.o ../../mapitem.o ../../win_friend.o \
+../../fileops.o ../../mapitem.o \
 ../../game.o ../../mappattern.o ../../win_image.o \
 ../../mapsquare.o ../../win_label.o \
 ../../image.o ../../pnm.o ../../win_select.o \
 ../../init.o ../../prefs.o ../../win_write.o \
-../../input.o ../../yarg.o \
+../../input.o ../../yarg.o ../../win_anim.o \
 ../../py_inc.o ../../dialog.o ../../storage.o
 
 LDFLAGS=-lm -lstdc++ `gtk-config --libs`

@@ -18,6 +18,31 @@
 #include "crcle_callbacks.h"
 #include "crcle_interface.h"
 #include "callbacks.h" 
+#include "../../game.h"
+#include "../../character.h"
+
+void set_option (GtkOptionMenu * o, const gchar * label)
+{
+    GtkMenu *m = (GtkMenu *) gtk_option_menu_get_menu (o);
+    GList *l = gtk_container_children (GTK_CONTAINER (m));
+    gchar *c;
+    int j = 0;
+
+    while (l)
+    { 
+        GtkMenuItem *i = (GtkMenuItem *) l->data;
+        c = (gchar *) gtk_object_get_user_data (GTK_OBJECT (i));
+
+        if (c && strcmp (c, label) == 0)
+        {
+            gtk_option_menu_set_history (o, j);
+            break;
+        }
+        
+        j++;
+        l = g_list_next (l);
+    }
+}
 
 GtkWidget*
 create_dlg_node_window (Circle *circle, crcle_dlg *dlg)
@@ -82,6 +107,7 @@ create_dlg_node_window (Circle *circle, crcle_dlg *dlg)
     GtkTooltips *tooltips;
     GdkColor dark_blue;
     GdkColor green;
+    character *mychar;
 
     GtkStyle *fstyle = gtk_style_copy (gtk_widget_get_default_style ());
     fstyle->font = gdk_font_load ("-*-lucidatypewriter-medium-*-*-*-12-*-*-*-*-*-iso8859-1");
@@ -198,6 +224,7 @@ create_dlg_node_window (Circle *circle, crcle_dlg *dlg)
     GTK_WIDGET_UNSET_FLAGS (npc_button, GTK_CAN_FOCUS);
 
     npc_selection = gtk_option_menu_new ();
+    dlg->npc_menu = npc_selection; 
     gtk_widget_ref (npc_selection);
     gtk_object_set_data_full (GTK_OBJECT (dlg_node_window), "npc_selection", npc_selection, (GtkDestroyNotify) gtk_widget_unref);
     gtk_widget_show (npc_selection);
@@ -205,10 +232,26 @@ create_dlg_node_window (Circle *circle, crcle_dlg *dlg)
     gtk_tooltips_set_tip (tooltips, npc_selection, "Select the speaker", NULL);
     npc_selection_menu = gtk_menu_new ();
     glade_menuitem = gtk_menu_item_new_with_label ("default");
+    gtk_object_set_user_data (GTK_OBJECT (glade_menuitem), NULL);
     gtk_widget_show (glade_menuitem);
     gtk_menu_append (GTK_MENU (npc_selection_menu), glade_menuitem);
     gtk_option_menu_set_menu (GTK_OPTION_MENU (npc_selection), npc_selection_menu);
 
+    while ((mychar = (character *) game::characters.next ()) != NULL)
+    {
+        // don't add plyer to the list
+        if (!strcmp (mychar->name, ((character *) game::characters.get ("the_player"))->name)) continue;
+        
+        glade_menuitem = gtk_menu_item_new_with_label (mychar->name);
+        gtk_object_set_user_data (GTK_OBJECT (glade_menuitem), mychar->name);
+        gtk_widget_show (glade_menuitem);
+        gtk_menu_append (GTK_MENU (npc_selection_menu), glade_menuitem);
+        gtk_option_menu_set_menu (GTK_OPTION_MENU (npc_selection), npc_selection_menu);
+    }
+    
+    if (circle->character != "") 
+        set_option (GTK_OPTION_MENU (npc_selection), circle->character.c_str());
+    
     label5 = gtk_label_new ("Mood: ");
     gtk_widget_ref (label5);
     gtk_object_set_data_full (GTK_OBJECT (dlg_node_window), "label5", label5, (GtkDestroyNotify) gtk_widget_unref);
@@ -447,7 +490,7 @@ create_dlg_node_window (Circle *circle, crcle_dlg *dlg)
     gtk_widget_show_all (glade_menuitem);
     gtk_menu_append (GTK_MENU (optionmenu1_menu), glade_menuitem);
     gtk_option_menu_set_menu (GTK_OPTION_MENU (optionmenu1), optionmenu1_menu);
-    dlg->npc_menu = optionmenu1_menu;
+    // dlg->npc_menu = optionmenu1_menu;
 
     label11 = gtk_label_new (" Dialogue  ");
     gtk_widget_ref (label11);

@@ -17,6 +17,16 @@
 #include "crcle_interface.h"
 #include "error_dlg.h"
 
+// returns selected option
+gchar *get_option (GtkOptionMenu * o)
+{
+    GtkMenu *m = (GtkMenu *) gtk_option_menu_get_menu (o);
+    GtkMenuItem *i = (GtkMenuItem *) gtk_menu_get_active (m);
+    gchar *s = (gchar *) gtk_object_get_user_data (GTK_OBJECT (i));
+
+    return s ? s : s = "";
+}
+
 crcle_dlg::crcle_dlg (Circle *c, MainFrame *w) : circle (c), wnd (w)
 {
     gchar **actions = g_strsplit (circle->actions.c_str (), "|", 2);
@@ -43,31 +53,6 @@ crcle_dlg::crcle_dlg (Circle *c, MainFrame *w) : circle (c), wnd (w)
 // Apply changes to Circle
 int crcle_dlg::on_ok ()
 {
-/*
-    string error, t1, t2;
-    vector<command*> code;
-
-    // Look if code contains errors
-    if (cond != "") cond_compile (cond.c_str (), t1, code);
-    if (t1 != "") error = string ("Error(s) in Condition code:\n") + t1 + "\n\n";  
-    if (vars != "") vars_compile (vars.c_str (), t2, code);
-    if (t2 != "") error += string ("Error(s) in Variables code:\n") + t2;
-
-    // compilation errors found
-    if (error != "")
-    {
-        // Either create a new error_dlg window, or bring it to front
-        if (!wnd->err) wnd->err = new error_dlg (wnd);
-        else wnd->err->to_front ();
-
-        // Display the error message
-        wnd->err->display (error.c_str ());
-            
-        return 0;
-    }
-    else if (wnd->err) wnd->err->display ("Compilation successfull :-)");
-*/
-
     // Indicate that user hit the OK button
     retval = 1;
 
@@ -78,9 +63,7 @@ int crcle_dlg::on_ok ()
     circle->conditions = cond;
     circle->variables = vars;
     circle->actions = string(1, loop) + string("|") + string(1, combat) + string("|0");
- 
-    if (type == PLAYER) circle->character = 0;
-    else circle->character = 1; // update this line once multiple NPCs are supported
+    circle->character = get_option (GTK_OPTION_MENU (npc_menu));
 
     return 1;
 }
