@@ -209,7 +209,6 @@ protected:
     std::string name_;          // Short (file-) name of the dialogue 
     std::string path_;          // Path of the dialogue
     std::string serial_;        // Unique number of the dialogue
-    std::string description_;   // Description of the dialogue
     
     DlgModuleEntry entry_;      // further content of the dialogue
 

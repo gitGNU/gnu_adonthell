@@ -31,6 +31,7 @@
 #include <unistd.h>
 #include <stdio.h>
 #include "gettext.h"
+#include "dlg_cmdline.h"
 #include "dlg_compiler.h"
 #include "gui_code.h"
 #include "gui_settings.h"
@@ -665,6 +666,9 @@ DlgModule *GuiDlgedit::initDialogue (std::string name)
     // the new dialogue
     DlgModule *dlg = new DlgModule (directory_, name, serial, "New Dialogue");
 
+    // set project if dlgedit started with '-j' option
+    dlg->entry()->setProject (DlgCmdline::project);
+    
     // insert into the list of open dialogues
     dialogues_.push_back (dlg);
 

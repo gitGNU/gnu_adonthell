@@ -44,6 +44,11 @@ public:
      */
     std::string project ()          { return project_; }
     /**
+     * Get the description of this module.
+     * @return the module's description.
+     */
+    std::string description ()      { return description_; }
+    /**
      * Get the import statements assigned to this module.
      * @return the module's additional imports.
      */
@@ -71,7 +76,12 @@ public:
      *         <b>false</b> otherwise.
      */
     bool setProject (std::string p);
-
+    
+    /**
+     * Set the description of this module.
+     * @param d some text describing the module.
+     */
+    void setDescription (std::string d) { description_ = d; }
     /**
      * Set the import statements assigned to this module.
      * @param i the module's additional imports.
@@ -132,6 +142,7 @@ private:
     std::string ctor_;              // constructor code
     std::string dtor_;              // destructor code
     std::string methods_;           // user defined methods
+    std::string description_;       // Description of the dialogue
     
     std::vector<std::string> characters;
     std::vector<std::string> quests;

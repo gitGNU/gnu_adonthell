@@ -37,7 +37,7 @@ public:
      * Constructor. Creates an empty project with the given name.
      * @param name The name, or id, of the project.
      */
-    CfgProject (std::string &name);
+    CfgProject (std::string name);
 
     /**
      * Load project specific data from disk.
@@ -55,7 +55,22 @@ public:
      * Get the project's name.
      * @return name (id) of the project
      */
-    std::string name ()             { return Name; }
+    std::string name ()                 { return Name; }
+
+    /**
+     * Get the project's basedir
+     * @return basedir of the project.
+     */
+    std::string basedir ()              { return BaseDir; }
+
+    /**
+     * Assign a base directory to the project. This is the
+     * root of the dialogue sources belonging to this project.
+     * When working with subdialogues, they will be adressed
+     * relative to the base directory.
+     * @param d the new base directory for this project.
+     */
+    void setBasedir (std::string d)     { BaseDir = d; }
     
 private:
     std::string Name;               // Project Id

@@ -23,9 +23,23 @@
 #include <algorithm>
 #include "cfg_data.h"
 
+/**
+ * Global access to the dlgedit configuration
+ */
+CfgData* CfgData::data = NULL;
+
+// ctor
+CfgData::CfgData ()
+{
+    // make this configuration globally available
+    data = this;
+}
+
 // dtor
 CfgData::~CfgData ()
 {
+    data = NULL;
+    
     // delete all projects
     for (std::vector<CfgProject*>::iterator i = Projects.begin (); i != Projects.end (); i++)
         delete *i;
@@ -77,6 +91,38 @@ void CfgData::addProject (std::string &project)
         if (p->load ()) Projects.push_back (p);
         else delete p;
     }
+}
+
+// get basedir associated with a certain project
+std::string CfgData::getBasedir (const std::string & project)
+{
+    std::vector<CfgProject*>::iterator i;
+
+    // try to locate project
+    for (i = Projects.begin (); i != Projects.end (); i++)
+        if ((*i)->name () == project)
+            return (*i)->basedir ();
+
+    return "";
+}
+
+// set basedir of a certain project
+void CfgData::setBasedir (const std::string & project, const std::string & basedir)
+{
+    std::vector<CfgProject*>::iterator i;
+
+    // try to locate project
+    for (i = Projects.begin (); i != Projects.end (); i++)
+        if ((*i)->name () == project)
+        {
+            (*i)->setBasedir (basedir);
+            return;
+        }
+
+    // project does not exist, so create it
+    CfgProject *p = new CfgProject (project);
+    p->setBasedir (basedir);
+    Projects.push_back (p);
 }
 
 // save configuration data

@@ -21,7 +21,10 @@
 
 #include <gtk/gtk.h>
 #include <sys/stat.h>
+#include <dirent.h>
 #include <iostream>
+#include "cfg_data.h"
+#include "dlg_cmdline.h"
 #include "gui_file.h"
 #include "gui_dlgedit.h"
 #include "gui_settings.h"
@@ -29,36 +32,52 @@
 // global pointer to the settings dialog
 GuiSettings * GuiSettings::dialog = NULL;
 
+// the project selection has changed
+void on_project_changed (GtkMenuItem *menuitem, gpointer user_data)
+{
+    // read project from selected item
+    std::string project = (char *) gtk_object_get_user_data (GTK_OBJECT (menuitem));
+
+    // set project basedir accordingly
+    GuiSettings *settings = (GuiSettings *) user_data;
+    settings->setBasedir (project);
+}
+
 // browse the harddisk for a project
 void on_browse_basedir_clicked (GtkButton * button, gpointer user_data)
 {
-    GuiFile fs (LOAD, "Select project directory", DATA_DIR "/games/");
+    // if a project root exists, use that in file selector
+    std::string dir = CfgData::data->getBasedir (GuiSettings::dialog->getProject ());
+
+    // otherwise revert to directory last opened
+    if (dir == "") dir = GuiDlgedit::window->directory ();
+    
+    GuiFile fs (LOAD, "Select base directory", dir + "/");
 
     // File selection closed with OK
     if (fs.run ())
     {
+        GtkEntry *entry = (GtkEntry *) user_data;
+        std::string file = fs.getSelection ();
+        unsigned int len = file.length () - 1;
+
         // check if we have a directory
         struct stat statbuf;
-        std::string file = fs.getSelection ();
         stat (file.c_str (), &statbuf);
 
         if (S_ISDIR (statbuf.st_mode))
         {
-            // extract the projectname from the directory
-            GtkEntry *entry = (GtkEntry *) user_data;
-            unsigned int pos, len = file.length () - 1;
-
-            if (file[len] == '/')
-            {
-                pos = file.rfind ('/', len - 1) + 1;
-                gtk_entry_set_text (entry, file.substr (pos, len - pos).c_str ());
-            }
-            else
-            {
-                pos = file.rfind ('/') + 1;
-                gtk_entry_set_text (entry, file.substr (pos).c_str ());
-            }
+            // have a directory
+            gtk_entry_set_text (entry, file.substr (0, len).c_str ());
         }
+        else
+        {
+            // extract directory from file name
+            unsigned int pos = file.rfind ('/');
+            gtk_entry_set_text (entry, file.substr (0, pos).c_str ());
+        }
+
+        gtk_entry_set_position (entry, -1);
     }
 }
 
@@ -67,6 +86,12 @@ void on_ok_button_clicked (GtkButton * button, gpointer user_data)
 {
     GuiSettings::dialog->applyChanges ();
     delete GuiSettings::dialog;
+}
+
+// Apply button pressed
+void on_apply_button_clicked (GtkButton * button, gpointer user_data)
+{
+    GuiSettings::dialog->applyChanges ();
 }
 
 // callback for closing the window
@@ -127,7 +152,8 @@ GuiSettings::GuiSettings ()
     gtk_box_pack_start (GTK_BOX (vbox1), table, TRUE, TRUE, 0);
     gtk_container_set_border_width (GTK_CONTAINER (table), 4);
     gtk_table_set_col_spacings (GTK_TABLE (table), 8);
-
+    gtk_table_set_row_spacings (GTK_TABLE (table), 4);
+    
     // project
     label = gtk_label_new ("Project");
     gtk_widget_ref (label);
@@ -161,7 +187,9 @@ GuiSettings::GuiSettings ()
     gtk_container_add (GTK_CONTAINER (scrolledwindow), description);
     gtk_tooltips_set_tip (tooltips, description, "Here goes a description of the dialogue", NULL);
     gtk_text_set_editable (GTK_TEXT (description), TRUE);
+    gtk_text_set_word_wrap (GTK_TEXT (description), TRUE);
 
+    // project selection
     project = gtk_option_menu_new ();
     gtk_widget_ref (project);
     gtk_object_set_data_full (GTK_OBJECT (window), "project", project, (GtkDestroyNotify) gtk_widget_unref);
@@ -169,7 +197,9 @@ GuiSettings::GuiSettings ()
     gtk_table_attach (GTK_TABLE (table), project, 1, 2, 0, 1, (GtkAttachOptions) (GTK_FILL), (GtkAttachOptions) (0), 0, 0);
     gtk_tooltips_set_tip (tooltips, project, "The project this dialogue belongs to", NULL);
     project_menu = gtk_menu_new ();
-    gtk_option_menu_set_menu (GTK_OPTION_MENU (project), project_menu);
+    
+    // add available projects to list
+    populateProjects (project_menu);
 
     frame = gtk_frame_new ("Project Settings");
     gtk_widget_ref (frame);
@@ -234,6 +264,14 @@ GuiSettings::GuiSettings ()
     GTK_WIDGET_SET_FLAGS (button, GTK_CAN_DEFAULT);
     gtk_signal_connect (GTK_OBJECT (button), "clicked", GTK_SIGNAL_FUNC (on_close_settings), NULL);
 
+    button = gtk_button_new_with_label ("Apply");
+    gtk_widget_ref (button);
+    gtk_object_set_data_full (GTK_OBJECT (window), "button", button, (GtkDestroyNotify) gtk_widget_unref);
+    gtk_widget_show (button);
+    gtk_container_add (GTK_CONTAINER (hbuttonbox), button);
+    GTK_WIDGET_SET_FLAGS (button, GTK_CAN_DEFAULT);
+    gtk_signal_connect (GTK_OBJECT (button), "clicked", GTK_SIGNAL_FUNC (on_apply_button_clicked), this);
+
     button = gtk_button_new_with_label ("OK");
     gtk_widget_ref (button);
     gtk_object_set_data_full (GTK_OBJECT (window), "button", button, (GtkDestroyNotify) gtk_widget_unref);
@@ -266,7 +304,9 @@ void GuiSettings::display (DlgModuleEntry * e, const std::string & name)
         entry = e;
 
         // display the contents of the module
-        // gtk_entry_set_text (GTK_ENTRY (project), entry->project ().c_str ());
+        setProject (entry->project ());
+        setDescription (entry->description());
+        
     }
 
     // set the title
@@ -280,6 +320,164 @@ void GuiSettings::display (DlgModuleEntry * e, const std::string & name)
 // store the user's entries
 void GuiSettings::applyChanges ()
 {
-    if (!entry->setProject (gtk_entry_get_text (GTK_ENTRY (project))))
+    // project
+    std::string project = getProject ();
+    if (project != "none" && !entry->setProject (project))
         std::cout << "Loading quests/characters failed!\n";
+
+    // description
+    entry->setDescription (getDescription ());
+
+    // basedir
+    if (project != "none") 
+        CfgData::data->setBasedir (project, getBasedir ());
+}
+
+// returns selected option
+std::string GuiSettings::getProject ()
+{
+    GtkMenu *m = (GtkMenu *) gtk_option_menu_get_menu (GTK_OPTION_MENU (project));
+    GtkMenuItem *i = (GtkMenuItem *) gtk_menu_get_active (m);
+    char *s = (char *) gtk_object_get_user_data (GTK_OBJECT (i));
+
+    return s ? s : "none";
+}
+
+// sets a default option
+void GuiSettings::setProject (const std::string & label)
+{
+    GtkMenu *m = (GtkMenu *) gtk_option_menu_get_menu (GTK_OPTION_MENU (project));
+    GList *l = gtk_container_children (GTK_CONTAINER (m));                    
+    char* c;
+    int j = 0;
+
+    while (l)
+    {
+        GtkMenuItem *i = (GtkMenuItem *) l->data;
+        c = (char *) gtk_object_get_user_data (GTK_OBJECT (i));
+
+        if (c && strcmp (c, label.c_str ()) == 0)
+        {
+            // found our entry -> set as default and return
+            gtk_option_menu_set_history (GTK_OPTION_MENU (project), j);
+
+            // update base directory
+            setBasedir (label);
+            
+            return;
+        }
+
+        j++;
+        l = g_list_next (l);
+    }
+
+    if (label != "")
+    {
+        // that project is not available yet, so add it
+        GtkWidget *menuitem = gtk_menu_item_new_with_label (label.c_str ());
+        gtk_object_set_user_data (GTK_OBJECT (menuitem), (void *) strdup (label.c_str ()));
+        gtk_signal_connect (GTK_OBJECT (menuitem), "activate", GTK_SIGNAL_FUNC (on_project_changed), (gpointer) this);
+        gtk_widget_show (menuitem);
+
+        gtk_menu_insert (GTK_MENU (m), menuitem, 0);
+        gtk_option_menu_set_history (GTK_OPTION_MENU (project), 0);
+
+        // update base directory
+        setBasedir (label);
+    }
+    else setProject ("none");
+}
+
+// set the module's description
+void GuiSettings::setDescription (const std::string & desc)
+{
+    int pos = 0;
+    
+    gtk_text_freeze (GTK_TEXT (description));
+    
+    gtk_editable_delete_text (GTK_EDITABLE (description), 0, gtk_text_get_length (GTK_TEXT (description)));
+    gtk_editable_insert_text (GTK_EDITABLE (description), desc.c_str (), desc.length (), &pos);
+    gtk_editable_set_position (GTK_EDITABLE (description), pos);
+
+    gtk_text_thaw (GTK_TEXT (description));
+}                                 
+
+// get the module's description
+std::string GuiSettings::getDescription ()
+{
+    return gtk_editable_get_chars (GTK_EDITABLE (description), 0, -1);
+}
+
+// set project base directory
+void GuiSettings::setBasedir (const std::string & project)
+{
+    // do nothing for project "none"
+    if (project == "none")
+    {
+        gtk_entry_set_text (GTK_ENTRY (basedir), "");
+        return;       
+    }
+    
+    // get base directory of given project from config file
+    std::string dir = CfgData::data->getBasedir (project);
+
+    // update the entry
+    gtk_entry_set_text (GTK_ENTRY (basedir), dir.c_str ());
+    gtk_entry_set_position (GTK_ENTRY (basedir), -1);                                             
+}
+
+// get project base directory
+std::string GuiSettings::getBasedir ()
+{
+    return gtk_entry_get_text (GTK_ENTRY (basedir));
+}
+
+// add available projects to list
+void GuiSettings::populateProjects (GtkWidget *menu)
+{
+    struct dirent * d;
+    struct stat statbuf;
+    GtkWidget *menuitem;
+    DIR * mydir = opendir (DlgCmdline::datadir.c_str());
+    std::string name, filename, path = DlgCmdline::datadir + "/";
+
+    // project 'none'
+    menuitem = gtk_menu_item_new_with_label ("none");
+    gtk_object_set_user_data (GTK_OBJECT (menuitem), (void *) "none");
+    gtk_signal_connect (GTK_OBJECT (menuitem), "activate", GTK_SIGNAL_FUNC (on_project_changed), (gpointer) this);
+    gtk_widget_show (menuitem);
+    gtk_menu_append (GTK_MENU (menu), menuitem);
+
+    // no such directory
+    if (!mydir) return;
+    
+    // get all directories inside
+    while ((d = readdir (mydir)) != NULL)
+    {
+        name = d->d_name;
+        filename = path + name;
+
+        // ignore '.' and '..' directories
+        if (name != "." && name != "..")
+        {
+            stat (filename.c_str (), &statbuf);
+            
+            // fill list with valid entries
+            if (S_ISDIR (statbuf.st_mode))
+            {
+                menuitem = gtk_menu_item_new_with_label (name.c_str ());
+                gtk_object_set_user_data (GTK_OBJECT (menuitem), (void *) strdup (name.c_str ()));
+                gtk_signal_connect (GTK_OBJECT (menuitem), "activate", GTK_SIGNAL_FUNC (on_project_changed), (gpointer) this);
+                gtk_widget_show (menuitem);
+
+                gtk_menu_append (GTK_MENU (menu), menuitem);
+            }
+        }
+    }
+
+    // finally append menu to drop-down list
+    gtk_option_menu_set_menu (GTK_OPTION_MENU (project), menu);
+
+    // cleanup
+    closedir (mydir);
 }

@@ -39,6 +39,10 @@ class CfgData
 {
 public:
     /**
+     * Constructor. Initialize global CfgData::data pointer.
+     */
+    CfgData ();
+    /**
      * Destructor. Delete all Project entries.
      */
     ~CfgData ();
@@ -57,12 +61,32 @@ public:
      * @param project name of the project to add.
      */
     void addProject (std::string & project);
+
+    /**
+     * Assign a (new) base directory to the given project. If no
+     * such project exists yet, it will be created.
+     * @param project name of the project to modify/create.
+     * @param basedir directory to assign to this project.
+     */
+    void setBasedir (const std::string & project, const std::string & basedir);
+    /**
+     * Return the base directory associated with a given project.
+     * In case there is no such project, or no basedir assigned,
+     * return "" (the empty string).
+     */    
+    std::string getBasedir (const std::string & project);
+    
     /**
      * Save data to disk.
      * @param file file to save data to.
      */
     void save (ofstream & file);
     
+    /**
+     * Global access to the dlgedit configuration
+     */
+    static CfgData *data;
+
 private:
     std::deque <std::string> Files;         // list of previously opened files
     std::vector <CfgProject*> Projects;     // list of defined projects

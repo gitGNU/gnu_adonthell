@@ -42,7 +42,7 @@ bool DlgCmdline::parse (int argc, char* argv[])
     int c;
     
     // Check for options
-    while ((c = getopt (argc, argv, "cdhvg:j:")) != -1)
+    while ((c = getopt (argc, argv, "cdhvp:j:")) != -1)
     {
         switch (c)
         {
@@ -70,7 +70,7 @@ bool DlgCmdline::parse (int argc, char* argv[])
                 break;
             }
             
-            case 'g':
+            case 'p':
             {
                 datadir = optarg;
                 

@@ -28,7 +28,7 @@
 // ctor
 DlgModule::DlgModule (std::string p, std::string n, std::string s, std::string d)
 {
-    description_ = d;
+    entry_.setDescription (d);
     serial_ = s;
     path_ = p + "/";
     name_ = n;
@@ -206,7 +206,7 @@ bool DlgModule::load ()
 
             case LOAD_NOTE:
             {
-                if (parse_dlgfile (s, n) == LOAD_STR) description_ = s;
+                if (parse_dlgfile (s, n) == LOAD_STR) entry_.setDescription (s);
                 break;
             }
 
@@ -297,7 +297,7 @@ bool DlgModule::save (std::string &path, std::string &name)
         << "# Produced by Adonthell Dlgedit v" << _VERSION_ << "\n"
         << "# (C) 2000/2001/2002 Kai Sterker\n#\n"
         << "# $I" << "d$\n\n"
-        << "Note §" << description_ << "§\n\n";
+        << "Note §" << entry_.description () << "§\n\n";
 
     // Node ID
     out << "Id " << nid_ << "\n";

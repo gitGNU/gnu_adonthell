@@ -26,8 +26,11 @@
 #include "dlg_module_entry.h"
 
 /**
- * Interface to various generic dialogue settings, like the project it belongs
- * to or the NPC it will be attached to. Most of these settings are optional.
+ * Interface to various generic dialogue and project settings. Currently this
+ * includes
+ * - the project of the dialogue
+ * - the dialogue's description
+ * - the base directory of the above project
  */
 class GuiSettings
 {
@@ -59,7 +62,55 @@ public:
      */
     void applyChanges ();
 
+    /**
+     * @name Member access
+     */
+    //@{}
+    /**
+     * Set the base directory according to selected project. Call this
+     * method whenever the user assigns a different project.
+     * @param project the name of the selected project.
+     */
+    void setBasedir (const std::string & project);
+    /**
+     * Return the basedir associated with the selected project.
+     * @return The basedir of the selected project.
+     */
+    std::string getBasedir ();
+    /**
+     * Set the project list to the project the module is assigned to.
+     * If that module is not in the list yet, it will be added.
+     * @param project name of the module's project.
+     */
+    void setProject (const std::string & project);
+    /**
+     * Return the project the user has selected in the list.
+     * @return The name of the selected project.
+     */
+    std::string getProject ();
+    //@}
+    
 private:
+    /**
+     * Display the module's description. The text area is cleared
+     * if neccessary.
+     * @param desc the module's description.
+     */
+    void setDescription (const std::string & desc);
+    /**
+     * Get the Description the user has entered for the module.
+     * @return the module's description.
+     */
+    std::string getDescription ();
+
+    /**
+     * Read available projects from DlgCmdline::datadir and add
+     * them to the project list. Also add the "none" entry for
+     * modules that do not belong to a project yet.
+     * @param the menu widget of the drop-down list. 
+     */
+    void populateProjects (GtkWidget *menu);
+
     DlgModuleEntry *entry;  // The module's settings
     GtkWidget *window;      // The dialog window
     GtkWidget *project;     // Dropdown list for the project

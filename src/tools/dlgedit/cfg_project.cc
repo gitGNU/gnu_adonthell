@@ -25,7 +25,7 @@
 extern int parse_cfgfile (std::string&, int&);
 
 // ctor
-CfgProject::CfgProject (std::string &name)
+CfgProject::CfgProject (std::string name)
 {
     Name = name;
     BaseDir = "";
@@ -61,7 +61,7 @@ bool CfgProject::load ()
 // save project data
 void CfgProject::save (ofstream &out)
 {
-    out << "Project [" << Name << "]\n"
+    out << "\nProject [" << Name << "]\n"
         << "  BaseDir [" << BaseDir << "]\n"
         << "End" << endl;
 }
