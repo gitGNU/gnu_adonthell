@@ -55,7 +55,7 @@ class DlgRect
      * @param a The first point.
      * @param b The second point. 
      */
-    DlgRect (DlgPoint &a, DlgPoint &b)  { init (a, b); } 
+    DlgRect (DlgPoint &a, DlgPoint &b)      { init (a, b); } 
     /**
      * Create a rectangle from a given origin and it's width and height.
      * @param p The origin (top, left corner) of the new rectangle
@@ -63,6 +63,7 @@ class DlgRect
      * @param height the height
      */
     DlgRect (DlgPoint &p, int width, int height);
+
     /**
      * @name Queries for Attributes
      */ 
@@ -71,44 +72,44 @@ class DlgRect
      * Retrieve the absolute position of the rectangle's top left corner.
      * @return a reference to the top left corner.
      */
-    DlgPoint &topLeft ()    { return top_left; }
+    const DlgPoint &topLeft () const        { return top_left; }
     /**
      * Retrieve the the absolute position of the rectangle's bottom right corner.
      * @return a reference to bottom right corner.
      */
-    DlgPoint &bottomRight (){ return bottom_right; }
+    const DlgPoint &bottomRight () const    { return bottom_right; }
     /**
      * Retrieve the center of the rectangle.
      * @return the absolute position of the rectangle's center.
      */
-    DlgPoint center ()      { return DlgPoint (x () + width ()/2, y () + height ()/2); }
+    DlgPoint center () const                { return DlgPoint (x () + width ()/2, y () + height ()/2); }
     
     /**
      * Retrieve the rectangle's x coordinate, i.e. the absolute x value
      * of it's top left corner.
      * @return the x value of the top left corner.
      */
-    int x ()                { return top_left.x (); }
+    int x () const                          { return top_left.x (); }
     /**
      * Retrieve the rectangle's y coordinate, i.e. the absolute y value
      * of it's top left corner.
      * @return the y value of the top left corner.
      */
-    int y ()                { return top_left.y (); }
+    int y () const                          { return top_left.y (); }
     /**
      * Retrieve the rectangle's width, i.e. the distance between it's 
      * left and right side.
      * @return the width of the rectangle.
      */
-    int width ()            { return bottom_right.x () - x (); }
+    int width () const                      { return bottom_right.x () - x (); }
     /**
      * Retrieve the rectangle's height, i.e. the distance between it's 
      * top and bottom side.
      * @return the height of the rectangle.
      */
-    int height ()           { return bottom_right.y () - y (); }
+    int height () const                     { return bottom_right.y () - y (); }
     //@}
-    
+
     /**
      * @name Various geometrical Tests
      */ 
@@ -119,7 +120,7 @@ class DlgRect
      * @return <b>true</b> when the point lies inside the rectangle, 
      *         <b>false</b> otherwise.
      */
-    bool contains (DlgPoint &point);
+    bool contains (const DlgPoint &point);
 
     /**
      * Test whether a given rectangle lies completely within this rectangle's
@@ -128,7 +129,7 @@ class DlgRect
      * @return <b>true</b> when rect lies (partly) within the rectangle's
      *         boundaries, <b>false</b> otherwise.
      */
-    bool contains (DlgRect &rect);
+    bool contains (const DlgRect &rect);
     //@}
 
     /**
@@ -147,6 +148,12 @@ class DlgRect
      */
     void grow (int x, int y);
 
+    /**
+     * Move the rectangle to a new position.
+     * @param pos The new position of the rectangle
+     */
+    void setPos (const DlgPoint &pos);
+        
     /**
      * Move this rectangle by the specified amount.
      * @param p Point representing the offset this rectangle shall be moved

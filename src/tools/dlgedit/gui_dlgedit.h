@@ -174,6 +174,7 @@ private:
     GdkGC *color[MAX_GC];           // custom Pens
     vector<DlgModule*> dialogues_;  // dialogues currently loaded
     string directory_;              // directory used in last file-selection
+    static char *progState[NUM_MODES]; // Textual program states
 };
 
 #endif // GUI_DLGEDIT_H

@@ -33,7 +33,7 @@ DlgPoint::operator GdkPoint ()
 }
 
 // move the point by a certain offset
-DlgPoint DlgPoint::offset (DlgPoint &p)
+DlgPoint DlgPoint::offset (DlgPoint &p) const
 {
     return DlgPoint (x_ + p.x (), y_ + p.y ());
 }

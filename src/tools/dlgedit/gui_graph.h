@@ -60,6 +60,11 @@ public:
      */
     //@{
     /**
+     * Highlight nodes when hit by the cursor.
+     * @param point Current position of the cursor. 
+     */
+    void mouseMoved (DlgPoint &point);
+    /**
      * Blit a certain area of the graph widget to the screen
      * @param the rectangular area to update.
      */
@@ -143,8 +148,15 @@ public:
     void editNode ();
     //@}
 
-    void mouseMoved (DlgPoint &point);
-        
+    /**
+     * @name Drag'n dropping of DlgNodes
+     */
+    //@{
+    bool prepareDragging (DlgPoint &point);
+    void drag (DlgPoint &point);
+    void stopDragging (DlgPoint &point);
+    //@}
+    
     /**
      * @name Auto-Scrolling (TM) ;) functionality.
      */
@@ -202,6 +214,7 @@ public:
     //@}
     
 private:
+    DlgNode *mover;         // The node currently dragged
     DlgModule *module;      // Module assigned to the graph view
     DlgPoint *offset;       // Module's relative position to the origin
     GtkWidget *graph;       // Drawing Area

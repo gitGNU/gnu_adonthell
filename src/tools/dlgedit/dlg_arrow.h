@@ -75,6 +75,9 @@ public:
      */
     bool operator== (DlgPoint &point);
     
+    DlgPoint getTip ()      { return DlgPoint (line[1]); }
+    DlgPoint getTail ()     { return DlgPoint (line[0]); }
+    
 private:
     GdkPoint line[2];       // the arrow's line
     GdkPoint tip[3];        // the arrow's tip

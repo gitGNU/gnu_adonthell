@@ -38,15 +38,15 @@ public:
     DlgPoint (int x, int y) : x_(x), y_(y) { }
     DlgPoint (GdkPoint &point) : x_(point.x), y_(point.y) { }
     
-    int x ()                        { return x_; }
-    int y ()                        { return y_; }
+    int x () const                  { return x_; }
+    int y () const                  { return y_; }
     
     /**
      * Creates a new point, which is moved by the values of the given point.
      * @param p the distance to offset this point
      * @return this point, offset by the point p
      */
-    DlgPoint offset (DlgPoint &p);
+    DlgPoint offset (DlgPoint &p) const;
     /**
      * Creates a new point, which is moved by the given values.
      * @param x the offset in x direction
@@ -71,7 +71,17 @@ public:
      * Convert a DlgPoint into a GdkPoint.
      */
     operator GdkPoint();
-     
+    
+    /**
+     * Assign another point to this one
+     */
+    DlgPoint &operator= (const DlgPoint &p)  
+    { 
+        x_ = p.x (); 
+        y_ = p.y (); 
+        return *this;
+    }
+    
 private:
     int x_;
     int y_;

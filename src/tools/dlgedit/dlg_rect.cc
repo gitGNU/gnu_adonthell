@@ -58,7 +58,7 @@ DlgRect::DlgRect (DlgPoint &p, int width, int height)
 }
 
 // Test whether point lies within this rectangle's boundaries
-bool DlgRect::contains (DlgPoint &point)
+bool DlgRect::contains (const DlgPoint &point)
 {
     if (point.x () < x () || point.x () > bottom_right.x () ||
         point.y () < y () || point.y () > bottom_right.y ())
@@ -68,7 +68,7 @@ bool DlgRect::contains (DlgPoint &point)
 }
 
 // Test whether the given rectangle overlaps with this one
-bool DlgRect::contains (DlgRect &rect)
+bool DlgRect::contains (const DlgRect &rect)
 {
     if (x () <= rect.x ()) {
         if (bottomRight ().x () >= rect.x ()) {
@@ -105,6 +105,16 @@ void DlgRect::grow (int x, int y)
 {
     top_left = top_left.offset (-x, -y);
     bottom_right = bottom_right.offset (x, y);
+}
+
+// Move this rect to a new position
+void DlgRect::setPos (const DlgPoint &pos)
+{
+    int w = width ();
+    int h = height ();
+    
+    top_left = pos;
+    resize (w, h);
 }
 
 // Move this rect by the given amount

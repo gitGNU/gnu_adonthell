@@ -96,6 +96,22 @@ public:
     //@}
     
     /**
+     * @name Node removal
+     */
+    //@{
+    /**
+     * Remove a node from the list of precedessors.
+     * @param node the DlgNode to remove.
+     */
+    void removePrev (DlgNode *node) { prev_.remove (node); }
+    /**
+     * Remove a node from the list of followers.
+     * @param node the DlgNode to remove.
+     */
+    void removeNext (DlgNode *node) { next_.remove (node); }
+    //@}
+
+    /**
      * Draw this node to the given surface. During drawing, the mode is
      * temporarily changed to the given mode.
      * @param surface the GdkPixmap to draw to
@@ -109,13 +125,13 @@ public:
      * @param surface the GdkPixmap to draw to
      * @param offset the DlgPoint to use as offset
      */
-    virtual void draw (GdkPixmap *surface, DlgPoint &offset) = 0;
+    virtual void draw (GdkPixmap *surface, DlgPoint &offset) { }
     
     /**
      * Save a node to file
      * @param out Stream to the file to save to
      */
-    virtual void save (ofstream &out) = 0; 
+    virtual void save (ofstream &out) { } 
     
     /**
      * Get the type of the node.

@@ -54,7 +54,9 @@ enum mode_type
 {
     IDLE            = 0,
     NODE_SELECTED   = 1,
-    NODE_HILIGHTED  = 2
+    NODE_HILIGHTED  = 2,
+    NODE_DRAGGED    = 3,
+    NUM_MODES       = 4
 };
 
 /**

@@ -20,6 +20,7 @@
  */
 
 #include <gtk/gtk.h>
+#include "dlg_mover.h"
 #include "gui_dlgedit.h"
 #include "gui_tooltip.h"
 #include "gui_circle.h"
@@ -28,7 +29,8 @@
 // Constructor
 GuiGraph::GuiGraph (GtkWidget *paned)
 {
-    // no module attached yet
+    // initialize members to sane values
+    mover = NULL;
     module = NULL;
     offset = NULL;
     surface = NULL;
@@ -140,6 +142,10 @@ bool GuiGraph::selectParent ()
     // if so ...
     if (selected)
     {
+        // see if selected is arrow
+        if (selected->type () == LINK)
+            selected = selected->next (FIRST);
+        
         // ... try to retrieve it's parent
         DlgNode *parent = ((DlgCircle *) selected)->parent (CURRENT);
 
@@ -169,6 +175,10 @@ bool GuiGraph::selectChild ()
     // if so ...
     if (selected)
     {
+        // see if selected is arrow
+        if (selected->type () == LINK)
+            selected = selected->prev (FIRST);
+        
         // ... try to retrieve it's child
         DlgNode *child = ((DlgCircle *) selected)->child (FIRST);
 
@@ -198,6 +208,10 @@ bool GuiGraph::selectSibling (query_type pos)
     // if so ...
     if (selected)
     {
+        // see if selected is arrow
+        if (selected->type () == LINK)
+            selected = selected->next (FIRST);
+        
         // ... try to retrieve it's child
         DlgNode *sibling = ((DlgCircle *) selected)->sibling (pos);
 
@@ -315,6 +329,137 @@ void GuiGraph::editNode ()
     }
 }
 
+// set everything up for moving nodes around
+bool GuiGraph::prepareDragging (DlgPoint &point)
+{
+    // if there is no module assigned to the view, there is nothing to do
+    if (module == NULL) return false;
+
+    // calculate absolute position of the point
+    point.move (-offset->x (), -offset->y ());
+    
+    // see if we're over a node
+    DlgNode *node = module->getNode (point);
+
+    // Not over a node
+    if (node == NULL) return false;
+
+    // if no node selected, select node for dragging
+    if (module->selected () == NULL) selectNode (node);
+
+    // else check whether dragged and selected node are the same
+    else if (node != module->selected ()) return false;
+
+    // Is dragged node circle or arrow?
+    if (node->type () != LINK)
+    {
+        // circles can be dragged directly
+        mover = (DlgCircle *) node;
+        
+        // remove any tooltip, as it only gets in the way
+        if (tooltip)
+        {
+            delete tooltip;
+            tooltip = NULL;
+        }
+    }
+    else
+    {
+        // arrows have to be attached to a (invisible) mover 
+        mover = new DlgMover (point);
+        
+        // try to attach arrow to mover
+        if (!((DlgMover *) mover)->attach ((DlgArrow *) node)) 
+        {
+            // moving of arrow failed, so clean up
+            delete mover;
+            mover = NULL;
+        }
+    }
+    
+    // if we have a mover, update program state
+    if (mover != NULL)
+    {
+        GuiDlgedit::window->setMode (NODE_DRAGGED);
+        module->setMode (NODE_DRAGGED);
+        
+        return true;
+    }
+    
+    return false;    
+}
+
+// drag a node around
+void GuiGraph::drag (DlgPoint &point)
+{
+    // if there is no module assigned to the view, there is nothing to do
+    if (module == NULL) return;
+
+    // calculate absolute position of the point
+    point.move (-offset->x (), -offset->y ());
+    
+    // move node
+    mover->setPos (point);
+        
+    // update arrows
+    for (DlgNode *a = mover->prev (FIRST); a != NULL; a = mover->prev (NEXT))
+        ((DlgArrow *) a)->initShape ();
+
+    for (DlgNode *a = mover->next (FIRST); a != NULL; a = mover->next (NEXT))
+        ((DlgArrow *) a)->initShape ();
+    
+    // update view
+    draw ();
+}
+
+// stop dragging node
+void GuiGraph::stopDragging (DlgPoint &point)
+{
+    // if there is no module assigned to the view, there is nothing to do
+    if (module == NULL || mover == NULL) return;
+
+    // calculate absolute position of the point
+    point.move (-offset->x (), -offset->y ());
+    
+    // see whether arrow was dragged
+    if (mover->type () == MOVER)
+    {
+        // see whether we are over a node
+        DlgNode *node = module->getNode (point);
+        
+        // drop the mover onto the node
+        ((DlgMover *) mover)->drop (node);
+        
+        // cleanup
+        delete mover;
+    }
+    
+    // if circle moved, realign it to the grid
+    else 
+    {
+        mover->setPos ( 
+        DlgPoint (point.x () - (point.x () % CIRCLE_DIAMETER), 
+                  point.y () - (point.y () % CIRCLE_DIAMETER)));
+    
+        // also need to update arrows    
+        for (DlgNode *a = mover->prev (FIRST); a != NULL; a = mover->prev (NEXT))
+            ((DlgArrow *) a)->initShape ();
+
+        for (DlgNode *a = mover->next (FIRST); a != NULL; a = mover->next (NEXT))
+            ((DlgArrow *) a)->initShape ();
+    }
+    
+    // clear mover
+    mover = NULL;
+
+    // update everything    
+    GuiDlgedit::window->list ()->display (module->selected ());
+    GuiDlgedit::window->setMode (NODE_SELECTED);
+    module->setMode (NODE_SELECTED);
+    module->setChanged ();
+    draw ();
+}
+
 // resize the drawing area
 void GuiGraph::resizeSurface (GtkWidget *widget)
 {
@@ -397,13 +542,6 @@ void GuiGraph::draw ()
 
     // draw backing image to screen
     gtk_widget_draw (graph, &t);
-
-    // Mark object below cursor if neccessary
-    // if (wnd->mode != OBJECT_DRAGGED)
-    // {
-    //     wnd->below_pointer = NULL;
-    //     mouse_over (wnd, point);
-    // }
 }
 
 // the mouse has been moved
@@ -428,7 +566,11 @@ void GuiGraph::mouseMoved (DlgPoint &point)
         if (prev != NULL)
         {
             prev->draw (surface, *offset);
-            if (tooltip) delete tooltip;
+            if (tooltip) 
+            {
+                delete tooltip;
+                tooltip = NULL;
+            }
         }
         
         // then highlight the new one

@@ -28,6 +28,10 @@
 // Global pointer to the main window
 GuiDlgedit *GuiDlgedit::window = NULL;
 
+// Strings describing the various program states
+char *GuiDlgedit::progState[NUM_MODES] = 
+    { " IDLE", " SELECTED", " HIGHLIGHTED", " DRAGGED" };
+
 // Create the main window
 GuiDlgedit::GuiDlgedit ()
 {
@@ -495,22 +499,11 @@ void GuiDlgedit::setMode (mode_type mode)
 {
     char *text;
     
-    // get the string to use
-    switch (mode)
-    {
-        case IDLE:
-            text = " IDLE";
-            break;
-        case NODE_SELECTED:
-            text = " SELECTED";
-            break;
-        case NODE_HILIGHTED:
-            text = " HIGHLIGHTED";
-            break;
-        default:
-            text = " ";
-            break;
-    }
+    // get the string representing the current program state   
+    if (mode < IDLE || mode >= NUM_MODES)
+        text = " INVALID MODE";
+    else
+        text = progState[mode];
     
     // some context id the statusbar needs for some reason
     int id = gtk_statusbar_get_context_id (GTK_STATUSBAR (status_mode), "Mode");

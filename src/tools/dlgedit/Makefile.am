@@ -13,6 +13,7 @@ dlgedit_SOURCES = \
     dlg_circle.cc \
     dlg_circle_entry.cc \
     dlg_module.cc \
+    dlg_mover.cc \
     dlg_node.cc \
     dlg_point.cc \
     dlg_rect.cc \
@@ -34,6 +35,7 @@ dlgedit_SOURCES = \
     dlg_circle.h \
     dlg_circle_entry.h \
     dlg_module.h \
+    dlg_mover.h \
     dlg_node.h \
     dlg_node_gfx.h \
     dlg_point.h \

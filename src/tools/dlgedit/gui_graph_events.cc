@@ -123,9 +123,19 @@ gint motion_notify_event (GtkWidget *widget, GdkEventMotion *event, gpointer dat
     // anything else, as the next method(s) change 'point'.
     graph->prepareScrolling (point);
 
+    // Dragging dialogue nodes
+    if (event->state == GDK_BUTTON_PRESS_MASK)
+    {
+        // no node being dragged so far -> start dragging
+        if (graph->mode () != NODE_DRAGGED)
+            graph->prepareDragging (point);
+        // otherwise continue moving
+        else
+            graph->drag (point);
+    }
     // highlight nodes under the cursor and display their 'tooltip'
-    graph->mouseMoved (point);
-    
+    else graph->mouseMoved (point);
+
     return FALSE;
 /*    
     MainFrame *MainWnd = (MainFrame *) data;
@@ -176,6 +186,13 @@ gint button_release_event (GtkWidget *widget, GdkEventButton *event, gpointer da
                 graph->selectNode (point);
             }
             
+            // node dragged
+            case NODE_DRAGGED:
+            {
+                // stop dragging
+                graph->stopDragging (point);
+            }
+                    
             default: break;
         }
     }
@@ -284,6 +301,13 @@ guint key_press_notify_event (GtkWidget * widget, GdkEventKey * event, gpointer 
         case GDK_Return:
         {
             graph->editNode ();
+            break;
+        }
+        
+        // deselect Node
+        case GDK_Escape:
+        {
+            graph->deselectNode ();
             break;
         }
     }
