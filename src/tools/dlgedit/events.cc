@@ -14,7 +14,7 @@
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
 
-#include "../../map/types.h"
+#include "../../types.h"
 #include "linked_list.h"
 #include "dlgnode.h"
 #include "main.h"

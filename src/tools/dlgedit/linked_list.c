@@ -12,7 +12,7 @@
 
 #include <stdlib.h>
 
-#include "../../map/types.h"
+#include "../../types.h"
 #include "linked_list.h"
 
 /* Insert new Element at End of list */

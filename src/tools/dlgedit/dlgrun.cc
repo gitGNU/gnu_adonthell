@@ -17,11 +17,11 @@ class dialog;
 #include <string.h>
 #include <gtk/gtk.h>
 
-#include "../../map/types.h"
-#include "../../dialog/dlg_io.h"
-#include "../../dialog/dialog_cmd.h"
-#include "../../dialog/array_tmpl.h"
-#include "../../dialog/dialog.h"
+#include "../../types.h"
+#include "../../dlg_io.h"
+#include "../../dialog_cmd.h"
+#include "../../array_tmpl.h"
+#include "../../dialog.h"
 #include "linked_list.h"
 #include "dlgnode.h"
 #include "main.h"

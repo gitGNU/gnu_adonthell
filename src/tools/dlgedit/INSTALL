@@ -9,8 +9,6 @@ To test what version of GTK is installed on your machine, type
 If you have GTK not installed, get it from http://www.gtk.org
 
 
-Make also sure you have compiled the dialogue engine, as the editor links with it.
-
 Installation:
 cd into the dlgedit/ directory and
 > make

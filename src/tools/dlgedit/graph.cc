@@ -17,8 +17,8 @@ class dialog;
 #include <string.h>
 #include <gtk/gtk.h>
 
-#include "../../map/types.h"
-#include "../../dialog/dlg_io.h"
+#include "../../types.h"
+#include "../../dlg_io.h"
 #include "linked_list.h"
 #include "dlgnode.h"
 #include "main.h"

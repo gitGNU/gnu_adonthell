@@ -12,7 +12,7 @@
 
 #include <gtk/gtk.h>
 
-#include "../../map/types.h"
+#include "../../types.h"
 
 /* is point inside rect */
 u_int8 

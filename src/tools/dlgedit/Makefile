@@ -26,7 +26,7 @@ CPPFLAGS =
 
 # C compiler
 
-CC     := g++
+CC     := gcc
 CFLAGS  = ${DEPENDFLAGS}
 
 %.o : %.c
@@ -52,7 +52,7 @@ CXXFLAGS  = ${DEPENDFLAGS}
 # linker
 
 LINKER    := gcc
-LDFLAGS    = ../../.objects/dialog.o
+LDFLAGS    = ../../dialog.o ../../dlg_io.o ../../array_tmpl.o
 LOADLIBES := -lm -lstdc++ `gtk-config --libs`
 
 # dlgedit
