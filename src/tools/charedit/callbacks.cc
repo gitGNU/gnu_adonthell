@@ -13,6 +13,7 @@
 */
 
 #include <gtk/gtk.h>
+#include <stdlib.h>
 #include <ctype.h>
 
 #include "callbacks.h"
@@ -87,6 +88,35 @@ on_save_activate (GtkMenuItem * menuitem, gpointer user_data)
     gtk_main ();
 
     wnd->write_character_source ();
+}
+
+// File menu "Merge"
+void
+on_merge_activate (GtkMenuItem * menuitem, gpointer user_data)
+{
+    main_wnd *wnd = (main_wnd *) user_data;
+    gchar *cmd;
+    GString *file = g_string_new ("");
+    GtkWidget *fs = create_fileselection (file, false);
+    GtkWidget *dir_browser;
+
+    gtk_file_selection_set_filename ((GtkFileSelection *) fs, wnd->last_dir);
+    gtk_file_selection_set_filename ((GtkFileSelection *) fs, "character.data");
+    
+    // chose directory to save to
+    dir_browser = xmms_create_dir_browser ("Select character directory", wnd->char_dir, GTK_SELECTION_SINGLE, wnd);
+    gtk_main ();
+
+    // chose output file
+    gtk_window_set_title (GTK_WINDOW (fs), "Select character data file");
+    gtk_widget_show (fs);
+    gtk_main ();
+
+    // create character data file
+    cmd = g_strjoin (" ", "mergechars", wnd->cur_dir, file->str, NULL);
+    system (cmd);
+
+    g_string_free (file, TRUE);
 }
 
 // File menu "Quit"

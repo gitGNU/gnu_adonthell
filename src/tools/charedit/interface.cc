@@ -30,6 +30,7 @@ create_main_wnd (main_wnd & wnd)
     GtkAccelGroup *file_menu_accels;
     GtkWidget *open;
     GtkWidget *save;
+    GtkWidget *merge;
     GtkWidget *separator1;
     GtkWidget *quit;
     GtkWidget *notebook1;
@@ -137,6 +138,13 @@ create_main_wnd (main_wnd & wnd)
     gtk_widget_show (save);
     gtk_container_add (GTK_CONTAINER (file_menu), save);
     gtk_widget_add_accelerator (save, "activate", accel_group, GDK_s, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
+
+    merge = gtk_menu_item_new_with_label ("Merge");
+    gtk_widget_ref (merge);
+    gtk_object_set_data_full (GTK_OBJECT (main_wnd), "merge", merge, (GtkDestroyNotify) gtk_widget_unref);
+    gtk_widget_show (merge);
+    gtk_container_add (GTK_CONTAINER (file_menu), merge);
+    gtk_widget_add_accelerator (merge, "activate", accel_group, GDK_m, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
 
     separator1 = gtk_menu_item_new ();
     gtk_widget_ref (separator1);
@@ -564,6 +572,7 @@ create_main_wnd (main_wnd & wnd)
     gtk_signal_connect (GTK_OBJECT (main_wnd), "delete_event", GTK_SIGNAL_FUNC (on_widget_destroy), NULL);
     gtk_signal_connect (GTK_OBJECT (open), "activate", GTK_SIGNAL_FUNC (on_open_activate), &wnd);
     gtk_signal_connect (GTK_OBJECT (save), "activate", GTK_SIGNAL_FUNC (on_save_activate), &wnd);
+    gtk_signal_connect (GTK_OBJECT (merge), "activate", GTK_SIGNAL_FUNC (on_merge_activate), &wnd);
     gtk_signal_connect (GTK_OBJECT (quit), "activate", GTK_SIGNAL_FUNC (on_widget_destroy), NULL);
     gtk_signal_connect (GTK_OBJECT (attrib_update), "clicked", GTK_SIGNAL_FUNC (on_attrib_update_clicked), &wnd);
     gtk_signal_connect (GTK_OBJECT (attrib_remove), "clicked", GTK_SIGNAL_FUNC (on_attrib_remove_clicked), &wnd);
