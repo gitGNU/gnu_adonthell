@@ -26,105 +26,146 @@ theme::theme ()
 
 void theme::load (const std::string & filename)
 {
-    /* init hash_map border */
-    destroy (); 
-    
-    /* open file with gz stream */
-    igzstream fd;
-    
-    if (!fd.open (filename))
+  /* init hash_map border */
+  destroy (); 
+  
+  /* open file with gz stream */
+  igzstream fd;
+  
+  if (!fd.open (filename))
     {
-        std::cerr << "error theme::load " <<  filename << std::endl;
+      std::cerr << "error theme::load " <<  filename << std::endl;
         return; 
     }
-
-    /* load name */
-    name_ <<  fd; 
-    
-    /* start to read number of border */
-    u_int8 nb_border;
-    nb_border << fd; 
-
-    // std::cout << nb_border << std::endl; 
-    
-    border_template * tmp; 
-    for (u_int8 i = 0; i < nb_border; i++)
+  
+  /* load name */
+  my_name <<  fd; 
+  
+  /* start to read number of border */
+  u_int8 nb_border;
+  nb_border << fd; 
+  
+  // std::cout << nb_border << std::endl; 
+  
+  border_template * tmp; 
+  for (u_int8 i = 0; i < nb_border; i++)
     {
-        tmp =  new border_template ();
-        tmp->load (fd);
-        add_border (tmp); 
+      tmp =  new border_template ();
+      tmp->load (fd);
+      add_border (tmp); 
     }
-    
-    /* close the fd */
-    fd.close (); 
+  
+  /* close the fd */
+  fd.close (); 
 }
 
 
 
 void theme::save (const std::string & filename)
 {
-    /* open a gz output stream */
-    ogzstream fd;
-    if (!fd.open (filename))
+  /* open a gz output stream */
+  ogzstream fd;
+  if (!fd.open (filename))
     {
-        std::cerr << "error theme::save " <<  filename << std::endl;
-        return;  
+      std::cerr << "error theme::save " <<  filename << std::endl;
+      return;  
     }
+  
+  /* save name */
+  my_name >> fd; 
+  
+  /* save number of border */
+  u_int8 nb_border = my_border.size ();
+  nb_border >> fd;
+  
+  /* save the border */
+  for (std::hash_map <std::string, border_template * >::iterator it = my_border.begin (); it  != my_border.end (); it++)
+    it->second->save (fd); 
+  
 
-    /* save name */
-    name_ >> fd; 
-    
-    /* save number of border */
-    u_int8 nb_border = border_.size ();
-    nb_border >> fd;
+  /* save number of button */
+  u_int8 nb_button = my_button.size ();
+  nb_button >> fd; 
+  
+  /* save the button */
+  for (std::hash_map <std::string, button_template * >::iterator ot = my_button.begin (); ot  != my_button.end (); ot++)
+    ot->second->save (fd); 
 
-    for (std::hash_map <std::string, border_template * >::iterator it = border_.begin (); it  != border_.end (); it++)
-        it->second->save (fd); 
-    
-    fd.close (); 
+  fd.close (); 
 }
 
 
 std::string theme::get_name () const
 {
-    return name_; 
+    return my_name; 
 }
 
 
 void theme::set_name (const std::string & name)
 {
-    name_ =  name; 
+    my_name =  name; 
 }
 
 
 void theme::add_border (border_template * border)
 {
-    border_[border->get_name () ] =  border; 
+    my_border[border->get_name () ] =  border; 
 }
 
 
 void theme::remove_border (const std::string & name)
 {
-    std::hash_map <std::string, border_template * >::iterator it = border_.find (name);
-    if ( it ==  border_.end ()) return;
+    std::hash_map <std::string, border_template * >::iterator it = my_border.find (name);
+    if ( it ==  my_border.end ()) return;
     delete it->second;
-    border_.erase (it); 
+    my_border.erase (it); 
 }
 
 
 border_template * theme::get_border (const std::string & name)
 {
-  std::hash_map <std::string, border_template * >::iterator it = border_.find (name);
-  if ( it ==  border_.end ()) return NULL;
+  std::hash_map <std::string, border_template * >::iterator it = my_border.find (name);
+  if ( it ==  my_border.end ()) return NULL;
   return it->second;
 }
+
+
+void theme::add_button (button_template * button)
+{
+    my_button[button->get_name () ] =  button; 
+}
+
+
+void theme::remove_button (const std::string & name)
+{
+    std::hash_map <std::string, button_template * >::iterator it = my_button.find (name);
+    if ( it ==  my_button.end ()) return;
+    delete it->second;
+    my_button.erase (it); 
+}
+
+
+button_template * theme::get_button (const std::string & name)
+{
+  std::hash_map <std::string, button_template * >::iterator it = my_button.find (name);
+  if ( it ==  my_button.end ()) return NULL;
+  return it->second;
+}
+
+
 
 void theme::destroy ()
 {
      // free border
-    for (std::hash_map <std::string, border_template * >::iterator it = border_.begin (); it  != border_.end (); it++)
+    for (std::hash_map <std::string, border_template * >::iterator it = my_border.begin (); it  != my_border.end (); it++)
         delete it->second;
-    border_.clear (); 
+    my_border.clear (); 
+
+    // free button 
+    for (std::hash_map <std::string, button_template * >::iterator it = my_button.begin (); it  != my_button.end (); it++)
+        delete it->second;
+    my_button.clear (); 
+
 }
 
 
@@ -137,12 +178,17 @@ theme::~theme ()
 
 void theme::display_info () 
 {
-    std::cout << "Theme name : " << name_ << std::endl;
+    std::cout << "Theme name : " << my_name << std::endl;
     std::cout << "List of border : \n"; 
 
      
-    for (std::hash_map <std::string, border_template * >::iterator it = border_.begin (); it  != border_.end (); it++)
+    for (std::hash_map <std::string, border_template * >::iterator it = my_border.begin (); it  != my_border.end (); it++)
         it->second->display_info (); 
+
+    std::cout << "List of button : \n";
+    
+    for (std::hash_map <std::string, button_template * >::iterator it = my_button.begin (); it  != my_button.end (); it++)
+      it->second->display_info (); 
 }
 
 

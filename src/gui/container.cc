@@ -17,20 +17,20 @@
 
 using namespace gui;
 
-container::container () : border_width_ (5), object_ui_ (NULL) 
+container::container () : my_border_width (5), my_object_ui (NULL) 
 {  
 }
 
 
 void container::set_border_width (const u_int16 b)
 {
-  border_width_ = b; 
+  my_border_width = b; 
 }
 
 
 u_int16 container::get_border_width () const
 {
-  return border_width_; 
+  return my_border_width; 
 }
 
 
@@ -38,15 +38,15 @@ u_int16 container::get_border_width () const
 container::~container ()
 {
   /* destroy the decoration */
-  if (object_ui_) delete object_ui_; 
+  if (my_object_ui) delete my_object_ui; 
 }
 
 
 void container::set_border_ui (border_template * bd_tmp)
 {
-  if ( object_ui_)  delete object_ui_;
-  object_ui_ = new border_ui (this);
-  ((border_ui*)object_ui_)->set_border (bd_tmp); 
+  if ( my_object_ui)  delete my_object_ui;
+  my_object_ui = new border_ui (this);
+  ((border_ui*)my_object_ui)->set_border (bd_tmp); 
 }
 
 bool container::draw (gfx::drawing_area * da, gfx::surface * sf)
@@ -54,25 +54,25 @@ bool container::draw (gfx::drawing_area * da, gfx::surface * sf)
   if (widget::draw (da, sf) )
     {
       assign_drawing_area (da);
-      if (object_ui_) object_ui_->draw(da, sf);
+      if (my_object_ui) my_object_ui->draw(da, sf);
       detach_drawing_area ();
       return true;
     }
   return false;
 }
 
-
-void container::set_size (s_int32 length, s_int32 height)
+void container::update_size ()
 {
-  widget::set_size (length, height);
-  if (object_ui_) object_ui_->resize();
+  widget::update_size ();
+  
+  if (my_object_ui) my_object_ui->resize();
 }
 
 void container::update_position ()
 {
   widget::update_position();
   /* we move the decoration associated at this container*/
-  if (object_ui_) object_ui_->move();
+  if (my_object_ui) my_object_ui->move();
 }
 
 
@@ -80,7 +80,7 @@ void container::realize()
 {
   widget::realize();
   /* we call resize for objet_ui */
-  if (object_ui_) object_ui_->resize ();
+  if (my_object_ui) my_object_ui->resize ();
 }
 
 

@@ -19,17 +19,45 @@
 
 using namespace gui;
 
+int font::UTF8_to_UNICODE(u_int16 * unicode, const char *utf8, int len)
+{
+	int i, j;
+	Uint16 ch;
+	
+	for ( i=0, j=0; i < len; ++i, ++j ) {
+		ch = ((const unsigned char *)utf8)[i];
+		if ( ch >= 0xF0 ) {
+			ch  =  (Uint16)(utf8[i]&0x07) << 18;
+			ch |=  (Uint16)(utf8[++i]&0x3F) << 12;
+			ch |=  (Uint16)(utf8[++i]&0x3F) << 6;
+			ch |=  (Uint16)(utf8[++i]&0x3F);
+		} else
+		if ( ch >= 0xE0 ) {
+			ch  =  (Uint16)(utf8[i]&0x3F) << 12;
+			ch |=  (Uint16)(utf8[++i]&0x3F) << 6;
+			ch |=  (Uint16)(utf8[++i]&0x3F);
+		} else
+		if ( ch >= 0xC0 ) {
+			ch  =  (Uint16)(utf8[i]&0x3F) << 6;
+			ch |=  (Uint16)(utf8[++i]&0x3F);
+		}
+		unicode[j] = ch;
+	}
+	unicode[j] = 0;
+
+	return j;
+}
+
+
+
 font::font ()
 {
     // by default no file,  so no valid font
-    valid = false;  
-
+    my_valid = false;  
     // init color
     set_color (0, 0, 0);   
-
     // set default size
     set_size (12);
-
     // set_default dpi
     set_dpi (72); 
 }
@@ -38,17 +66,15 @@ font::font ()
 bool font::load (const std::string & filename)
 {
     int error; 
-    
     close (); 
-    free_vector (); 
     
     // copy the new filename
-    this->filename = filename; 
+    my_filename = filename; 
     
-    valid = false; 
+    my_valid = false; 
     
     // Initialise library
-    error = FT_Init_FreeType( &library ); 
+    error = FT_Init_FreeType( &my_library ); 
     if (error) 
     {
         std::cout << "FONT : Initialisation error!\n"; 
@@ -56,7 +82,7 @@ bool font::load (const std::string & filename)
     }
     
     // load TTF font in face
-    error = FT_New_Face( library, filename.c_str () , 0, &face );
+    error = FT_New_Face( my_library, my_filename.c_str () , 0, &my_face );
     if ( error == FT_Err_Unknown_File_Format )
     {
         std::cout << "FONT : Unknown font format\n";
@@ -72,172 +98,171 @@ bool font::load (const std::string & filename)
 
     // Check if the font is no scalable
     // WARNING : Implement in the futur
-    if (face->num_fixed_sizes)
+    if (my_face->num_fixed_sizes)
     {
         std::cout << "FONT : Fixed font not only supported\n"; 
         close ();
         return false; 
     }
     
-    valid = true; 
+    my_valid = true; 
     return true; 
 }
 
 
-inline void font::set_dpi (int i)
-{
-    dpi = i; 
-}
+inline void font::set_dpi (int i) { my_dpi = i; }
 
-inline void font::set_size (int i)
-{
-    size = i; 
-}
+inline void font::set_size (int i) { my_size = i; }
 
 
 bool font::build ()
 {
-    int error;
-    char_info tmp;  
-    
-    if (!valid) return false;
-    
-    // Free memory from vecteur
-    free_vector (); 
-    
-    // set the size
-    FT_Set_Char_Size(face,size << 6,size << 6,dpi,dpi);
-    
-    // copy all characters in the vector
-    for (int i = 0;i < face->num_glyphs; i++)
-    {
-        error = FT_Load_Char( face, i, FT_LOAD_RENDER); 
-        if (error) std::cout << "font : Load char error\n";  
-
-        // create an image
-        tmp.picture = new gfx::image ();
-
-        // size the image
-        tmp.picture->resize (face->glyph->bitmap.width, face->glyph->bitmap.rows);  
-        
-        // copy bitmap to image
-        copy_bitmap_to_image ( face->glyph->bitmap.buffer, tmp.picture);
-
-        tmp.picture->set_mask (true); 
-        
-        // set position font
-        tmp.top = face->glyph->bitmap_top;
-        tmp.left = face->glyph->bitmap_left;
-        tmp.advance_x = face->glyph->advance.x >> 6; 
-        
-        // add image to vector
-        chars.push_back (tmp); 
-    }
-    return true; 
+  FT_Set_Char_Size( my_face, my_size << 6, my_size << 6, my_dpi, my_dpi);
+  return true; 
 }
 
 
 
 void font::close ()
 {
-    if (!valid) return; 
-    FT_Done_Face(face);
-    FT_Done_FreeType(library); 
+    if (!my_valid) return; 
+    FT_Done_Face(my_face);
+    FT_Done_FreeType(my_library); 
 }
 
 
-void font::copy_bitmap_to_image (u_int8 * bitmap_data, gfx::image * dest)
+void font::copy_bitmap_to_image (u_int8 * bitmap_data, gfx::image * dest, s_int16 dx, s_int16 dy)
 {
-    u_int8 * pbmp = bitmap_data; 
-
-    
-    dest->lock ();
-
-    u_int32 pixelcol = gfx::screen::display.map_color (r, g, b); 
-    
-    for (int j = 0; j < dest->height (); j++)
-        for (int i = 0; i < dest->length () ; i++)
-        {
-            if (*pbmp > 128) 
-                dest->put_pix (i, j, pixelcol); 
-            else dest->put_pix (i, j, gfx::screen::trans_col ()); 
-            pbmp++; 
-        } 
-    dest->unlock ();  
+  u_int8 * pbmp = bitmap_data; 
+  
+  dest->lock ();
+  
+  u_int32 pixelcol = gfx::screen::display.map_color (my_r, my_g, my_b); 
+  
+  for (int j = 0; j < dest->height (); j++)
+    for (int i = 0; i < dest->length () ; i++)
+      {
+	if (*pbmp > 128)  dest->put_pix (dx + i, dy +j, pixelcol); 
+	else dest->put_pix (dx + i, dy + j, gfx::screen::trans_col ()); 
+	pbmp++; 
+      } 
+  dest->unlock ();  
 }
 
 void font::info ()
 {
-    std::cout << "Filename : " << filename << std::endl;
-    std::cout << "Number face : " << face->num_faces << std::endl; 
-    std::cout << "Num_glyphs : " << face->num_glyphs << std::endl; 
-    std::cout << "Fixed size : " << face->num_fixed_sizes << std::endl;  
+    std::cout << "Filename : " << my_filename << std::endl;
+    std::cout << "Number face : " << my_face->num_faces << std::endl; 
+    std::cout << "Num_glyphs : " << my_face->num_glyphs << std::endl; 
+    std::cout << "Fixed size : " << my_face->num_fixed_sizes << std::endl;  
+    std::cout << "Num char map: " << my_face->num_charmaps << std::endl;
 }
- 
-void font::draw (const std::string & text, s_int32 x, s_int32 y, gfx::drawing_area * da, gfx::surface * target)
+
+
+void font::draw (const std::string & text, s_int32 x,  s_int32 y, 
+		 gfx::drawing_area * da, gfx::surface * target)
 {
-    s_int32 tmp_x = x; 
-    y+= size;
-    for (u_int32 i = 0; i < text.length (); i++)
+  FT_GlyphSlot  slot = my_face->glyph; /* the slot */
+  u_int16 *unicode_text; /* the unicode pointer text */
+  FT_UInt  glyph_index;
+  int error;
+  u_int32 pixelcol = gfx::screen::display.map_color (my_r, my_g, my_b);
+  u_int8 * pbmp;
+  
+  /* get the surface */
+  if (target == NULL) target = &(gfx::screen::display);
+  
+  /* translate to unicode */
+  unicode_text = new u_int16[ (text.length()+1)*(sizeof *unicode_text) ];
+  int len = UTF8_to_UNICODE(unicode_text, text.c_str(), text.length());
+  
+  s_int16 txx = x;
+  s_int16 tyy = y;
+  
+  for (int n =0; n < len; n++)
     {
-        if ((unsigned) text[i] < chars.size ()) 
-        {
-            if (text[i] != '\n')
-            {                 
-                chars[text[i]].picture->draw (tmp_x + chars[text[i]].left , y - chars[text[i]].top, da, target ); 
-                tmp_x += chars[text[i]].advance_x;
-            }
-            else 
-            {
-                y += size; 
-                tmp_x = x; 
-            }
-        }
-    } 
+      /* retrieve glyph index from character code */
+      glyph_index = FT_Get_Char_Index( my_face, unicode_text[n] );
+      
+      /* load glyph image into the slot (erase previous one) */
+      error = FT_Load_Glyph( my_face, glyph_index, FT_LOAD_DEFAULT );
+      if (error) continue;
+      
+      /* convert to an anti-aliased bitmap */
+      error = FT_Render_Glyph( my_face->glyph, ft_render_mode_normal );
+      if (error) continue;
+      
+      pbmp = slot->bitmap.buffer;
+      for (int j = 0; j < slot->bitmap.rows; j++)
+        for (int i = 0; i < slot->bitmap.width ; i++)
+	  {
+            if (*pbmp > 128) target->put_pix (txx + i, tyy + j - ((slot->metrics.horiBearingY)>>6)
+, pixelcol); 
+	    else target->put_pix (txx + i, tyy + j - ((slot->metrics.horiBearingY)>>6), 
+				  gfx::screen::trans_col ());
+            pbmp++; 
+	  }
+      
+      /* must improve this */
+      txx += (slot->metrics.horiAdvance>>6);
+    }
+  /* delete unicode_text */
+  delete [] unicode_text;
 }
+
+
+
+
 
 u_int32 font::get_length_of (const std::string & text)
 {
-    u_int32 size = 0;
-    for (u_int32 i = 0; i < text.length (); i++)
-        if ((unsigned) text[i] < chars.size ())
-            size += chars[text[i]].advance_x;
-    return size; 
+  u_int32 size = 0;
+  FT_GlyphSlot  slot = my_face->glyph; /* the slot */
+  u_int16 *unicode_text; /* the unicode pointer text */
+  FT_UInt  glyph_index;
+  int error;
+  
+  /* translate to unicode */
+  unicode_text = new u_int16[ (text.length()+1)*(sizeof *unicode_text) ];
+  int len = UTF8_to_UNICODE(unicode_text, text.c_str(), text.length());
+  
+  for (int n =0; n < len; n++)
+    {
+      /* retrieve glyph index from character code */
+      glyph_index = FT_Get_Char_Index( my_face, unicode_text[n] );
+      
+      /* load glyph image into the slot (erase previous one) */
+      error = FT_Load_Glyph( my_face, glyph_index, FT_LOAD_DEFAULT );
+      if (error) continue;
+      
+      size += (slot->metrics.horiAdvance>>6);
+    }
+  
+  delete [] unicode_text;
+  return size; 
 }
 
 
 u_int16 font::get_size()
 {
-  return size;
+  return my_size;
 }
-
-void font::free_vector ()
-{
-    for (std::vector <char_info>::iterator it = chars.begin (); it != chars.end (); it++)
-        delete it->picture; 
-    chars.clear (); 
-}
-
 
 font::~font ()
 {
-    free_vector ();
     close (); 
 }
 
-
-
 void font::set_color (u_int8 r, u_int8 g, u_int8 b)
 {
-    this->r = r; 
-    this->g = g;
-    this->b = b; 
+  my_r = r; 
+  my_g = g;
+  my_b = b; 
 }
-
 
 void font::set_color (u_int32 col)
 {
-    this->r = col & 255; 
-    this->g = (col >> 8) & 255; 
-    this->b = (col >> 16) & 255;
+  my_r = col & 255; 
+  my_g = (col >> 8) & 255; 
+  my_b = (col >> 16) & 255;
 }

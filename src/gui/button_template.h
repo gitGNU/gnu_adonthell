@@ -28,13 +28,14 @@
 
 #include <string>
 #include "fileops.h"
+#include "object_template.h"
 #include "border_template.h"
 #include "background_template.h"
 
 namespace gui
 {
 
-  class button_template
+  class button_template: public object_template
     {
     public:
   
@@ -55,20 +56,6 @@ namespace gui
       void save (ogzstream & os); 
   
   
-      /**
-       * get name of the border
-       * @return name of the border
-       */
-      std::string get_name () const;
-  
-  
-      /**
-       * set name of the border
-       * @param name :  name of the border
-       */
-      void set_name (const std::string & name); 
-
-
       /**
        * set border on released
        */
@@ -104,6 +91,17 @@ namespace gui
       background_template * get_background() const;
 
       /**
+       * display some information
+       */
+      void display_info ();
+
+      /**
+       * build nothing ...
+       */
+      void build ();
+
+
+      /**
        * Destructor
        */
       ~button_template();
@@ -117,7 +115,6 @@ namespace gui
   
       border_template * released_border_;
   
-      std::string name_;
     };
 
 };

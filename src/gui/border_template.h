@@ -27,12 +27,12 @@
 
 #include "fileops.h"
 #include "gfx/image.h"
-
+#include "object_template.h"
 
 namespace gui
 {
 
-  class border_template
+  class border_template : public object_template
     {
       public : 
         
@@ -40,40 +40,19 @@ namespace gui
          * Default constructor,  set all images to null
          */
         border_template (); 
-    
-    
+ 
+      
       /**
        * read a stream to load image
        */
       void load (igzstream & is);  
-    
-    
+      
+      
       /**
        * write image into the stream
        */
       void save (ogzstream & os); 
-    
-    
-    
-      /**
-       * get name of the border
-       * @return name of the border
-       */
-      std::string get_name () const;
-    
-    
-      /**
-       * set name of the border
-       * @param name :  name of the border
-       */
-      void set_name (const std::string & name); 
-    
 
-      /**
-       * Build is automaticly call when you load a border
-       * build create 4 big border
-       */
-      void build();
 
       /**
        * get a image
@@ -108,8 +87,14 @@ namespace gui
       /**
        * write in standart ouput border information 
        */
-      void display_info () const;
+      void display_info ();
     
+		
+      /**
+       * Build is automaticly call when you load a border
+       * build create 4 big border
+       */
+      void build();
 
       /**
        * destructor :  destroy all image
@@ -138,9 +123,6 @@ namespace gui
 
       /* this tab is used to store big border, it is necessary to optimise  resize and to reduce memory use */
       gfx::image * imgborder_[C_TL];
-
-      /* name of the border */
-      std::string name_; 
 
       private : 
     

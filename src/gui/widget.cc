@@ -40,6 +40,7 @@ void widget::set_position (s_int16 x, s_int16 y)
 
 void widget::update_position ()
 {
+  /* if there is a parent, calcul obsolute position with relative position */
   if (parent_) drawing_area::move (parent_->get_x_real () + x_ + parent_->get_border_width (), parent_->get_y_real () + y_ +parent_->get_border_width () );
   else drawing_area::move (x_, y_); 
 }
@@ -76,6 +77,13 @@ void widget::set_size (s_int32 length, s_int32 height)
   else if (length >= 0 ) drawing_area::resize (length, 0);
   else if (height >= 0 ) drawing_area::resize (0, height);
   else drawing_area::resize (0, 0);
+
+  update_size ();
+}
+
+
+void widget::update_size ()
+{
 }
 
 

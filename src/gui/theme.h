@@ -35,8 +35,9 @@
 #include "str_hash.h"
 
 #include <string> 
-#include "border_template.h"
 
+#include "border_template.h"
+#include "button_template.h"
 
 namespace gui
 {
@@ -99,6 +100,30 @@ namespace gui
        */
       border_template * get_border( const std::string & name);
 
+      
+      /**
+       * add a button
+       * @param button :  button to add
+       */
+      void add_button (button_template * button);
+      
+      
+      /**
+       * remove a button
+       * @param name :  name of the button to remove
+       */
+      void remove_button (const std::string & name);  
+
+
+      /**
+       * get button 
+       * @param name : name of the button
+       * @return the button associated with the name
+       */
+      button_template * get_button( const std::string & name);
+
+
+
 
       /**
        * write in standart ouput theme information 
@@ -113,16 +138,19 @@ namespace gui
     
       private :
 	/**
-	 * free memory delete all border from the memory
+	 * free memory delete all object from the memory
 	 */
 	void destroy (); 
     
 
       /* name of the theme */
-      std::string name_;
+      std::string my_name;
 
       /* a hash_map for border */
-      std::hash_map <std::string, border_template* > border_;  
+      std::hash_map <std::string, border_template* > my_border;  
+      
+      /* a hash_map for button */
+      std::hash_map <std::string, button_template* > my_button;  
     }; 
 };
 

@@ -12,11 +12,13 @@
    See the COPYING file for more details
 */
 
+#include <iostream>
+
 #include "button_template.h"
 
 using namespace gui;
 
-button_template::button_template():background_(NULL), pressed_border_(NULL), released_border_(NULL)
+button_template::button_template() :  background_(NULL), pressed_border_(NULL), released_border_(NULL)
 {
   
 }
@@ -28,31 +30,23 @@ void button_template::load (igzstream & is)
   if (pressed_border_) delete pressed_border_;
   if (released_border_) delete released_border_;
   
-  name_ << is;
+  my_name << is;
   background_ = new background_template();
   background_->load (is);
   pressed_border_ = new border_template();
   pressed_border_->load (is);
   released_border_ = new border_template();
   released_border_->load (is);
+
+  build ();
 }
 
 void button_template::save (ogzstream & os)
 {
-  name_ >> os;
+  my_name >> os;
   background_->save (os);
   pressed_border_->save (os);
   released_border_->save (os);
-}
-
-std::string button_template::get_name () const
-{
-  return name_;
-}
-
-void button_template::set_name (const std::string & name)
-{
-  name_ = name;
 }
 
 void button_template::set_released (border_template * bd)
@@ -98,3 +92,15 @@ background_template * button_template::get_background () const
   return background_;
 }
 
+
+
+void button_template::display_info ()
+{
+  std::cout << "Button template: " <<  my_name << std::endl;
+}
+
+
+void button_template::build ()
+{
+  
+}

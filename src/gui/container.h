@@ -86,13 +86,13 @@ namespace gui
       /**
        * draw the container
        */
-      virtual bool draw (gfx::drawing_area * da = NULL, gfx::surface * sf = NULL); 
+      bool draw (gfx::drawing_area * da = NULL, gfx::surface * sf = NULL); 
       
       
       /**
        * Destructor
        */
-      virtual ~container (); 
+      ~container (); 
       
       
       /**
@@ -103,17 +103,17 @@ namespace gui
       void set_border_ui (border_template * bd_tmp); 
       
       
-      /** set the minimum size of a widget
-       * @param length
-       * @param height
+      /**
+       * update size 
        */
-      virtual void set_size (s_int32 length, s_int32 height); 
+      virtual void update_size (); 
       
       
       /**
        * update position
        */
       virtual void update_position();
+      
       
       /** 
        * it's used to build the widget.
@@ -128,13 +128,12 @@ namespace gui
       
       protected :
 	
-	/* the space between container and widgets childs */
-	u_int16 border_width_; 
+      /* the space between container and widgets childs */
+	u_int16 my_border_width; 
       
       
       /* the border used by this container */
-      //border_ui * border_; 
-      object_ui * object_ui_; 
+      object_ui * my_object_ui; 
 
       private : 
 

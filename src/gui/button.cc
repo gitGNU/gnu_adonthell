@@ -21,10 +21,10 @@ bool button::get_pressed() const
 
 void button::set_button_ui (button_template * but)
 {
-  if (object_ui_) delete object_ui_;
+  if (my_object_ui) delete my_object_ui;
   
-  object_ui_ = new button_ui (this);
-  ((button_ui*)object_ui_)->set_button (but);
+  my_object_ui = new button_ui (this);
+  ((button_ui*)my_object_ui)->set_button (but);
 }
 
 

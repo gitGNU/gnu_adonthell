@@ -112,11 +112,11 @@ void box::realize_horizontal ()
   if (v_widget_.size () == 0) return; 
 
   /* init value with border width */
-  u_int16 x_tmp = 0; // border_width_;
-  u_int16 y_tmp = 0; // border_width_;
+  u_int16 x_tmp = 0; // my_border_width;
+  u_int16 y_tmp = 0; // my_border_width;
 
   /* calcul the max length for each widget*/
-  u_int16 max_length = (get_length () - ((v_widget_.size () - 1)  * spacing_) - (border_width_ << 1) ) / v_widget_.size (); 
+  u_int16 max_length = (get_length () - ((v_widget_.size () - 1)  * spacing_) - (my_border_width << 1) ) / v_widget_.size (); 
   
   for (u_int16 i = 0;i < v_widget_.size (); i++)  
     {
@@ -124,7 +124,7 @@ void box::realize_horizontal ()
         {
 	  if (v_widget_[i]->fill_ == true)
             {
-	      v_widget_[i]->widget_->set_size (max_length, get_height () - (border_width_ << 1)); 
+	      v_widget_[i]->widget_->set_size (max_length, get_height () - (my_border_width << 1)); 
 	      v_widget_[i]->widget_->set_position (x_tmp, y_tmp);
 	      x_tmp += max_length; 
             }
@@ -132,7 +132,7 @@ void box::realize_horizontal ()
             {
 	      // before fill just add padding
 	      v_widget_[i]->widget_->set_size ( max_length - (v_widget_[i]->padding_ << 1), 
-						get_height () - (border_width_ << 1) - (v_widget_[i]->padding_ << 1));
+						get_height () - (my_border_width << 1) - (v_widget_[i]->padding_ << 1));
 	      v_widget_[i]->widget_->set_position (x_tmp + v_widget_[i]->padding_, y_tmp + v_widget_[i]->padding_);
 	      x_tmp += max_length; 
             } 
@@ -143,19 +143,19 @@ void box::realize_horizontal ()
 	  v_widget_[i]->widget_->set_position (x_tmp, y_tmp); 
 	  
 	  v_widget_[i]->widget_->set_size ( (v_widget_[i]->widget_->get_length () > max_length) ? max_length : v_widget_[i]->widget_->get_length (),
-					    get_height () - (border_width_ << 1) );   
+					    get_height () - (my_border_width << 1) );   
 	  
 	  x_tmp += v_widget_[i]->widget_->get_length ();
 	  
 	  /* calcul new max_length */
 	  if ((v_widget_.size () - i - 1) != 0) 
-	    max_length = ((get_length () - ((v_widget_.size () - 1)  * spacing_) - border_width_ ) - x_tmp )
+	    max_length = ((get_length () - ((v_widget_.size () - 1)  * spacing_) - my_border_width ) - x_tmp )
 	      / ( v_widget_.size () - i - 1)   ;
 	  else
             {
 	      /*this is the last widget*/
 	      /* we resize the container */
-	      set_size (x_tmp + border_width_, get_height ());  
+	      set_size (x_tmp + my_border_width, get_height ());  
             } 
         }  
         /*add space between each widget */
@@ -173,7 +173,7 @@ void box::realize_vertical ()
   s_int32 y_tmp = 0; 
   
   /* calcul the max height for each widget*/
-  u_int32 max_height = (get_height () - ((v_widget_.size () - 1)  * spacing_) - (border_width_ << 1) ) / v_widget_.size (); 
+  u_int32 max_height = (get_height () - ((v_widget_.size () - 1)  * spacing_) - (my_border_width << 1) ) / v_widget_.size (); 
   
   for (u_int16 i = 0;i < v_widget_.size (); i++)  
     {
@@ -183,14 +183,14 @@ void box::realize_vertical ()
 	  //if fill is false we strect the widget width padding value
 	  if (v_widget_[i]->fill_ == true)
             {
-                v_widget_[i]->widget_->set_size (get_length () - (border_width_ << 1),  max_height); 
+                v_widget_[i]->widget_->set_size (get_length () - (my_border_width << 1),  max_height); 
                 v_widget_[i]->widget_->set_position (x_tmp, y_tmp);
                 y_tmp += max_height; 
             }
             else
             {
 	      // before fill just add padding
-	      v_widget_[i]->widget_->set_size (get_length () - (border_width_ << 1) - (v_widget_[i]->padding_ << 1),
+	      v_widget_[i]->widget_->set_size (get_length () - (my_border_width << 1) - (v_widget_[i]->padding_ << 1),
 					       max_height - (v_widget_[i]->padding_ << 1)); 
 	      v_widget_[i]->widget_->set_position (x_tmp + v_widget_[i]->padding_,
 						   y_tmp + v_widget_[i]->padding_);
@@ -202,7 +202,7 @@ void box::realize_vertical ()
 	  /* move */
 	  v_widget_[i]->widget_->set_position (x_tmp, y_tmp); 
 	  
-	  v_widget_[i]->widget_->set_size (get_length () - (border_width_ << 1),
+	  v_widget_[i]->widget_->set_size (get_length () - (my_border_width << 1),
 					   (v_widget_[i]->widget_->get_height () > max_height) ? max_height : v_widget_[i]->widget_->get_height ()
 					   );   
             
@@ -210,13 +210,13 @@ void box::realize_vertical ()
             
             /* calcul new max_length */
             if ((v_widget_.size () - i - 1) != 0) 
-                max_height = ((get_height () - ((v_widget_.size () - 1)  * spacing_) - border_width_ ) - y_tmp )
+                max_height = ((get_height () - ((v_widget_.size () - 1)  * spacing_) - my_border_width ) - y_tmp )
                     / ( v_widget_.size () - i - 1)   ;
             else
             {
 	      /*this is the last widget*/
 	      /* we resize the container */
-	      set_size (get_length (), y_tmp + border_width_);  
+	      set_size (get_length (), y_tmp + my_border_width);  
             } 
         }  
       /*add space between each widget */

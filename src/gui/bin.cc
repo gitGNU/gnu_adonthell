@@ -67,16 +67,15 @@ void bin::update_position()
 }
 
 
-void bin::set_size (s_int32 length, s_int32 height)
+void bin::update_size ()
 {
   /* update container size */
-  container::set_size (length, height);
+  container::update_size ();
   
   /* if there is a child, we resize it and rebuild it */
   if (child)
     {
       /* we center the alone child */
-      std::cout << "bin::set_size " << get_border_width () << "  " <<(get_border_width()<<1) << std::endl;
       child->set_size (get_length () - ( get_border_width () << 1 ), get_height () - ( get_border_width() << 1));
       child->realize ();
     }
@@ -101,12 +100,6 @@ bool bin::draw (gfx::drawing_area * da, gfx::surface * sf)
 }
 
 
-void bin::set_position (s_int16 x, s_int16 y)
-{
-  container::set_position (x, y);
-  if (child) child->set_position (0, 0);
-}
-
 /**
  * input update function
  * @return 1 if this object use the event,  else return 0
@@ -115,6 +108,7 @@ int bin::input_update (input::event * ev)
 {
   /* if this objet is unsensible we return 0 */
   if ( !is_sensible () || child == NULL) return 0;
+  
   /* if there is a child we send the event at the child */
   return child->input_update (ev);
 }

@@ -124,10 +124,9 @@ namespace gui
        * @param y : y position
        * @param target : draw on target,  if not target,  draw on the screen
        */
-      void draw (const std::string & text, s_int32 x, s_int32 y, gfx::drawing_area * da, gfx::surface * target = NULL);  
+      void draw (const std::string & text, s_int32 x, s_int32 y, gfx::drawing_area * da = NULL, gfx::surface * target = NULL);  
 
-
-    
+      
       /**
        * length_of calcul and return length of text
        * Important : if your text is "foo\nfoo" and length of "foo" is 12 px, this method return 24.
@@ -137,8 +136,6 @@ namespace gui
        */
       u_int32 get_length_of (const std::string & text);
   
-
-
       /**
        *
        */
@@ -146,52 +143,34 @@ namespace gui
 
       private : 
 
-
-	/* a structure which contain all information and image for a char */
-	struct char_info
-	{
-	  s_int32 top;
-
-	  s_int32 left; 
-
-	  s_int32 advance_x;
-
-	  gfx::image * picture; 
-	}; 
-    
-    
-      /* free vector */
-      void free_vector (); 
-
       /* copy bitmap to image */
-      void copy_bitmap_to_image (u_int8 * bitmap_data, gfx::image * dest); 
-
+      void copy_bitmap_to_image (u_int8 * bitmap_data, gfx::image * dest, s_int16 dx, s_int16 dy); 
+      
       /* close the library and face */
       void close (); 
     
+      int UTF8_to_UNICODE(u_int16 * unicode, const char *utf8, int len);
+
       /* filename of the font */
-      std::string filename; 
+      std::string my_filename; 
     
       /* valid font,  true if valid */
-      bool valid; 
-    
+      bool my_valid; 
+      
       /* library FT */
-      FT_Library library; 
-    
+      FT_Library my_library; 
+      
       /* FT_Face */
-      FT_Face face;
-
+      FT_Face my_face;
+      
       /* dpi, dots-per-inch */
-      int dpi;
-    
+      int my_dpi;
+      
       /* size */
-      u_int16 size;
-
-      /* contain all characters */
-      std::vector <char_info> chars;       
+      u_int16 my_size;
 
       /* color variable */
-      u_int8 r, g, b;  
+      u_int8 my_r, my_g, my_b;  
     }; 
 };
 #endif

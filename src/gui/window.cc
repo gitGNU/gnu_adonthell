@@ -114,7 +114,7 @@ int window::input_update (input::event * ev)
       if (deleted_)
 	{ 
 	  if (mouse_action_ == ACTION_NONE && me->type () == input::mouse_event::BUTTON_PUSHED 
-	      && object_ui_ && ((border_ui*)object_ui_)->is_in_ctr (me->x(), me->y()))
+	      && my_object_ui && ((border_ui*)my_object_ui)->is_in_ctr (me->x(), me->y()))
 	    {
 	      on_delete (); 
 	      return 1; 
@@ -124,7 +124,7 @@ int window::input_update (input::event * ev)
       if (moveable_)
 	{
 	  if (mouse_action_ == ACTION_NONE && me->type () == input::mouse_event::BUTTON_PUSHED &&
-	      object_ui_ && ((border_ui*)object_ui_)->is_in_bt (me->x(), me->y()))
+	      my_object_ui && ((border_ui*)my_object_ui)->is_in_bt (me->x(), me->y()))
 	    {
 	      mouse_action_ = ACTION_MOVE;
 	      mouse_range_x_ = me->x () - get_x_real ();
@@ -136,7 +136,7 @@ int window::input_update (input::event * ev)
       if (resizeable_)
 	{
 	  if (mouse_action_ == ACTION_NONE && me->type () == input::mouse_event::BUTTON_PUSHED &&
-	      object_ui_ && ((border_ui*)object_ui_)->is_in_cbr (me->x(), me->y ())) 
+	      my_object_ui && ((border_ui*)my_object_ui)->is_in_cbr (me->x(), me->y ())) 
 	    {
 	      mouse_action_ = ACTION_RESIZE;
 	      return 1; 

@@ -107,7 +107,8 @@ pytest_SOURCES = pytest.cc
 
 schedtest_SOURCES = schedtest.cc
 
-joltest_LDADD = gui/libgui.a gfx/libgfx.a input/libinput.a python/libpython.a libbase.a $(libbase_LDADD) $(libgui_LDADD) $(libpython_LDADD)
+
+joltest_LDADD = gui/libgui.a gfx/libgfx.a input/libinput.a python/libpython.a libbase.a $(libbase_LDADD) $(libgui_LDADD) $(libpython_LDADD) -lstdc++
 
 alextest_LDADD = lmap/libmap.a gfx/libgfx.a input/libinput.a python/libpython.a libbase.a $(libbase_LDADD) $(libpython_LDADD)
 

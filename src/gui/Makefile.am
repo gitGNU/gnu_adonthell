@@ -5,13 +5,13 @@ libgui_a_SOURCES = box.cc misc.cc container.cc label.cc \
 	bin.cc window.cc manager.cc border_template.cc \
 	border_ui.cc theme.cc background_template.cc \
 	button_template.cc button.cc button_ui.cc \
-	background_ui.cc \
+	background_ui.cc object_template.cc\
 	box.h misc.h container.h label.h \
 	font.h widget.h fixed.h \
 	bin.h window.h manager.h border_template.h  \
 	border_ui.h theme.h background_template.h \
 	button_template.h button.h button_ui.h \
-	background_ui.h 
+	background_ui.h object_template.h
 
 
 CPPFLAGS = -I$(srcdir)/.. $(SDL_DEFS) $(SDL_CFLAGS) $(FT2_CFLAGS) $(PY_CFLAGS)

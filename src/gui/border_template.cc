@@ -31,7 +31,7 @@ void border_template::load (igzstream & is)
 {
     // free memory before
     destroy ();
-    name_ << is ; 
+    my_name << is ; 
     
     for (int i = 0; i < _LAST; i++)
     {
@@ -73,7 +73,7 @@ void border_template::build()
 
 void border_template::save (ogzstream & os)
 {
-    name_ >> os; 
+    my_name >> os; 
     for (int i = 0; i < _LAST; i++) 
         img_[i]->put (os); 
 }
@@ -131,21 +131,12 @@ border_template::~border_template ()
 }
 
 
-std::string border_template::get_name () const
+
+
+
+void border_template::display_info ()
 {
-    return name_; 
-}
-
-
-void border_template::set_name (const std::string & name)
-{
-    name_ =  name; 
-}
-
-
-void border_template::display_info () const
-{
-    std::cout << "border name : " << name_ << std::endl;
+    std::cout << "border name : " << my_name << std::endl;
     std::cout << "List of image : \n";
 
     for (int i =  0; i < _LAST;  i++)

@@ -59,12 +59,6 @@ namespace gui
        *  @param parent his new parent
        */ 
       void set_parent (container * parent);  
-
-      
-      /** Set the parent window, parent window 
-       *
-       */
-
       
       /**
        * draw the widget
@@ -76,7 +70,7 @@ namespace gui
        * @param x
        * @param y
        */
-      virtual void set_position (s_int16 x, s_int16 y); 
+      void set_position (s_int16 x, s_int16 y); 
       
       
       /** update position
@@ -114,9 +108,15 @@ namespace gui
        * @param length
        * @param height
        */
-      virtual void set_size (s_int32 length, s_int32 height); 
+      void set_size (s_int32 length, s_int32 height); 
       
       
+      /**
+       * update size
+       */
+      virtual void update_size (); 
+
+
       /** get length
        * @return length 
        */

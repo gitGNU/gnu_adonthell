@@ -22,157 +22,175 @@ using namespace gui;
 int main (int argc, char * argv[]) 
 {
 
-    gfx::screen::init ();
-    gfx::screen::set_video_mode (640, 480, 16); 
-    gfx::screen::clear (); 
+  gfx::screen::init ();
+  gfx::screen::set_video_mode (640, 480, 16); 
+  gfx::screen::clear (); 
     
-    if (argc != 2) 
-      {
-	std::cout << "Please need TTF font as argument\n";
-	exit (1);
-      }
+  if (argc != 2) 
+    {
+      std::cout << "Please need TTF font as argument\n";
+      exit (1);
+    }
     
-    /**
-     * Font 
-     */
-    gui::font font;
-    if (!font.load (argv[1]))
-      {
-	std::cout << "Error in loading font ...\n";
-	exit (1);
-      }
-    font.set_size (12);
-    font.build ();
+  /***********************************************/
+  /*********************FONT  ********************/
+  /***********************************************/
+  gui::font font;
+  if (!font.load (argv[1]))
+    {
+      std::cout << "Error in loading font ...\n";
+      exit (1);
+    }
+  
+  font.set_size (20);
+  font.build ();
+  
+  FILE * fd = fopen ("/home/jol/toto.utf8", "r");
+  char t[255];
+  fgets(t, 255, fd);
+  fclose (fd);
+  
 
-
-    gui::theme theme;
-    theme.load ("adontest/original.theme");  
-    
-    gui::manager manager;  
-
-    /**
-       CREATE BUTTON
-     */
-    gui::border_template * bd_press = new gui::border_template; 
-    bd_press->set_name ("pressed"); 
-    bd_press->set (border_template::B_TOP, "widgets/button_pressed_top.pnm");
-    bd_press->set (border_template::B_RIGHT, "widgets/button_pressed_right.pnm");
-    bd_press->set (border_template::B_LEFT, "widgets/button_pressed_left.pnm");
-    bd_press->set (border_template::B_BOTTOM, "widgets/button_pressed_bot.pnm");
-    bd_press->set (border_template::C_TL, "widgets/button_pressed_tl.pnm");
-    bd_press->set (border_template::C_TR, "widgets/button_pressed_tr.pnm");
-    bd_press->set (border_template::C_BL, "widgets/button_pressed_bl.pnm");
-    bd_press->set (border_template::C_BR, "widgets/button_pressed_br.pnm");
-    bd_press->build();
-    
-    gui::border_template * bd_released = new gui::border_template; 
-    bd_released->set_name ("released"); 
-    bd_released->set (border_template::B_TOP, "widgets/button_top.pnm");
-    bd_released->set (border_template::B_RIGHT, "widgets/button_right.pnm");
-    bd_released->set (border_template::B_LEFT, "widgets/button_left.pnm");
-    bd_released->set (border_template::B_BOTTOM, "widgets/button_bot.pnm");
-    bd_released->set (border_template::C_TL, "widgets/button_tl.pnm");
-    bd_released->set (border_template::C_TR, "widgets/button_tr.pnm");
-    bd_released->set (border_template::C_BL, "widgets/button_bl.pnm");
-    bd_released->set (border_template::C_BR, "widgets/button_br.pnm");
-    bd_released->build();
-
-   
-
-    gui::background_template * ba_tmp = new gui::background_template();
-    ba_tmp->set_color (192, 165, 57);
-
-    button_template bt_tmp;
-    bt_tmp.set_released (bd_released);
-    bt_tmp.set_pressed (bd_press);
-    bt_tmp.set_background (ba_tmp);
-
-
-    
-
-    gui::window * wnd =  new gui::window; 
-    
-    
-    wnd->set_visible (true);
-    wnd->set_position (20, 40);
-    wnd->set_size (350, 200);
-    wnd->on_delete.connect (new callback_slot (makeFunctor (manager, &manager::shutdown))); 
-    wnd->set_border_ui (theme.get_border("normal"));
-    
-    
-
-    gui::box * box = new gui::box; 
-    box->set_border_width (10); 
-    box->set_spacing (3); 
-    box->set_visible (true); 
-    box->set_size (200, 60);
-    box->set_position (50, 50); 
-    box->set_geometry (box::VERTICAL); 
-    box->set_border_ui (theme.get_border("mini"));
-    
-    gui::widget * wid; 
-    
-    wid = new gui::widget;
-    wid->set_size (30, 50);
-    wid->set_visible (true);
-    wid->realize (); 
-    box->add_start (wid, true, true, 0); 
-
-    
-    /*wid = new widget;
-    wid->set_size (30, 20);
-    wid->set_visible (true);
-    wid->realize (); 
-    box->add_start (wid, true, true, 0); 
-*/
-    gui::button * but;
-    but = new gui::button;
-    but->set_size (30, 20);
-    but->set_visible (true);
-    but->realize (); 
-    but->set_button_ui ( &bt_tmp);
-    but->set_text ("Quit ", &font);
-    box->add_start (but, true, true, 0); 
-    
-    wid = new gui::widget;
-    wid->set_size (10, 50);
-    wid->set_visible (true);
-    wid->realize (); 
-    box->add_end (wid, true, true, 15) ; 
+  /***********************************************/
+  /********************* THEME *******************/
+  /***********************************************/
+  gui::theme theme;
+  theme.load ("adontest/original.theme");  
  
-    box->realize ();  
-    
+   /**
+     CREATE BUTTON THEME
+  */
+  gui::border_template * bd_press = new gui::border_template; 
+  bd_press->set_name ("pressed"); 
+  bd_press->set (border_template::B_TOP, "widgets/button_pressed_top.pnm");
+  bd_press->set (border_template::B_RIGHT, "widgets/button_pressed_right.pnm");
+  bd_press->set (border_template::B_LEFT, "widgets/button_pressed_left.pnm");
+  bd_press->set (border_template::B_BOTTOM, "widgets/button_pressed_bot.pnm");
+  bd_press->set (border_template::C_TL, "widgets/button_pressed_tl.pnm");
+  bd_press->set (border_template::C_TR, "widgets/button_pressed_tr.pnm");
+  bd_press->set (border_template::C_BL, "widgets/button_pressed_bl.pnm");
+  bd_press->set (border_template::C_BR, "widgets/button_pressed_br.pnm");
+  bd_press->build();
+  
+  gui::border_template * bd_released = new gui::border_template; 
+  bd_released->set_name ("released"); 
+  bd_released->set (border_template::B_TOP, "widgets/button_top.pnm");
+  bd_released->set (border_template::B_RIGHT, "widgets/button_right.pnm");
+  bd_released->set (border_template::B_LEFT, "widgets/button_left.pnm");
+  bd_released->set (border_template::B_BOTTOM, "widgets/button_bot.pnm");
+  bd_released->set (border_template::C_TL, "widgets/button_tl.pnm");
+  bd_released->set (border_template::C_TR, "widgets/button_tr.pnm");
+  bd_released->set (border_template::C_BL, "widgets/button_bl.pnm");
+  bd_released->set (border_template::C_BR, "widgets/button_br.pnm");
+  bd_released->build();
+  
+   
+  /* create the background associated at the button */
+  gui::background_template * ba_tmp = new gui::background_template();
+  ba_tmp->set_color (192, 165, 57);
+  
+  button_template bt_tmp;
+  bt_tmp.set_released (bd_released);
+  bt_tmp.set_pressed (bd_press);
+  bt_tmp.set_background (ba_tmp);
+  bt_tmp.set_name ("standart");
+  
 
-    wnd->add (box);
-    wnd->set_resizeable (true); 
-    wnd->realize (); 
-    
-    manager.add (wnd); 
-    
-    
-    while (manager.update () )
-      {
-	input::manager::update(); 
-	
-	gametime::update (); 
-        
-	gfx::screen::display.fillrect (0, 0, 640, 480, 127, 127, 127);
-        
+  /***********************************************/
+  /********************* MANAGER******************/
+  /***********************************************/
+  gui::manager manager; 
+  
+  
+  /***********************************************/
+  /********************* INTERFACE ***************/
+  /***********************************************/
+   
+  /* define the window */
+  gui::window * wnd =  new gui::window; 
+  wnd->set_visible (true);
+  wnd->set_position (20, 40);
+  wnd->set_size (350, 200);
+  wnd->on_delete.connect (new callback_slot (makeFunctor (manager, &manager::shutdown))); 
+  wnd->set_border_ui (theme.get_border("normal"));
+  
+  /* create a box */
+  gui::box * box = new gui::box; 
+  box->set_border_width (10); 
+  box->set_spacing (3); 
+  box->set_visible (true); 
+  box->set_size (200, 60);
+  box->set_position (0, 0); 
+  box->set_geometry (box::VERTICAL); 
+  box->set_border_ui (theme.get_border("mini"));
+  
+  
+  /* create some widget and add them at the box */
+  gui::widget * wid; 
+  wid = new gui::widget;
+  wid->set_size (30, 50);
+  wid->set_visible (true);
+  wid->realize (); 
+  box->add_start (wid, true, true, 0); 
+  
+  wid = new widget;
+  wid->set_size (30, 20);
+  wid->set_visible (true);
+  wid->realize (); 
+  box->add_start (wid, true, true, 0); 
 
-	manager.draw (); 
-        
-	gfx::screen::show ();
-        
-	gfx::screen::clear ();     
-      }
+  
+  /* create a button */
+  gui::button * but;
+  but = new gui::button;
+  but->set_size (30, 20);
+  but->set_visible (true);
+  but->set_button_ui ( &bt_tmp);
+  but->set_text ("Quit ", &font);
+  but->realize ();
+  box->add_start (but, false, false); 
 
-    input::manager::cleanup();
-    
-    /**
-     * SAVE A THEME
-     */
-    /*
-      theme theme;
+  /* build the box */
+  box->realize ();  
+  
+  /* add the box and realize the window */
+  wnd->add (box);
+  wnd->set_resizeable (true); 
+  wnd->realize (); 
+  
+  /* add the window to the window manager */
+  manager.add (wnd); 
+  
+  while (manager.update () )
+    {
+      input::manager::update(); 
+      
+      gametime::update (); 
+      
+      gfx::screen::display.fillrect (0, 0, 640, 480, 127, 127, 127);
+      
+      manager.draw (); 
+      
+      gfx::screen::show ();
+      
+      gfx::screen::clear ();     
+    }
+  
+  input::manager::cleanup();
+  
+
+
+
+
+
+
+
+
+  /**
+   * SAVE A THEME
+   */
+  /*
+    theme theme;
     theme.set_name ("silverleaf");
     
     border_template *  border;
@@ -210,23 +228,23 @@ int main (int argc, char * argv[])
 
     theme.display_info (); 
     
-    */
+  */
     
-    /**
-     * load a theme
-     **/
-    /*
-      theme theme;
+  /**
+   * load a theme
+   **/
+  /*
+    theme theme;
 
-      theme.load ("adontest/original.theme");  
-      theme.display_info (); 
+    theme.load ("adontest/original.theme");  
+    theme.display_info (); 
 
-      std::cout << "\n\nLoad another theme\n\n"; 
+    std::cout << "\n\nLoad another theme\n\n"; 
       
-      theme.load ("adontest/silverleaf.theme");
-      theme.display_info (); 
-    */
-    return 0; 
+    theme.load ("adontest/silverleaf.theme");
+    theme.display_info (); 
+  */
+  return 0; 
     
 
 }
