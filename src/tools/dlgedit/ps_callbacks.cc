@@ -18,8 +18,7 @@
 #include "ps_dlg.h"
 #include "ps_callbacks.h"
 #include "ps_interface.h"
-#include "../../py_inc.h"
-#include "../../data.h"
+#include "../../python.h"
 
 extern gchar *get_option (GtkOptionMenu*);
 
@@ -42,7 +41,7 @@ on_ps_ok_pressed (GtkButton * button, gpointer user_data)
 
     the_npc = get_option (GTK_OPTION_MENU (dlg->npc_menu));
     PyDict_SetItemString (data::globals, "the_npc", 
-        pass_instance (data::characters.get (the_npc), "character"));
+        python::pass_instance (data::characters[the_npc], "character"));
 
     dlg->on_ok (gtk_entry_get_text (dlg->name), race, gender, the_npc);
 

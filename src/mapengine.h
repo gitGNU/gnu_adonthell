@@ -58,4 +58,15 @@ protected:
     bool letsexit;
 };
 
+#ifndef SWIG
+namespace data
+{
+    /**
+     * Map engine used during the game.
+     * 
+     */ 
+    extern mapengine * map_engine;
+}
+#endif
+
 #endif

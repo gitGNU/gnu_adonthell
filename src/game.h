@@ -28,6 +28,8 @@
 #define GAME_H__
 
 #include "prefs.h"
+#include "gamedata.h"
+#include "python.h"
 
 /** Responsible for game initialisation and finalisation.
  *  It has only a few methods, however they are critical as they
@@ -64,13 +66,39 @@ public:
      *         -# Shutdown SDL and video.
      */ 
     static void cleanup (); 
-
+    
 private:
     /**
      * The game's configuration data
      * 
      */ 
     static config *configuration;
+    
+    /**
+     * Initialise the game's data.
+     * 
+     */ 
+    static void init_data (); 
+
+    /**
+     * Cleanup the game's data.
+     * 
+     */ 
+    static void cleanup_data (); 
+    
+    /**
+     * The Adonthell Python wrapper.
+     * 
+     */ 
+    static PyObject *py_module;
 };
+
+
+/**
+ * @namespace data
+ * Namespace that holds game data that are publicly available.
+ * 
+ */
+
 
 #endif // GAME_H__

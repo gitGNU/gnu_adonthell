@@ -34,6 +34,7 @@
 #endif
 #include <map>
 #include <vector>
+#include <string>
 #include "types.h"
 
 #ifndef SWIG
@@ -222,5 +223,29 @@ private:
     u_int8 changed; 
 #endif
 };
+
+#ifndef SWIG
+
+struct eqstr
+{
+  bool operator()(const string s1, const string s2) const
+  {
+    return (s1 == s2);
+  }
+};
+
+/**
+ * Stores %objects of any kind.
+ *
+ * Please see the hash_map documentation in STL documentation for a detailed
+ * description of this class.
+ * 
+ */
+template <class mytype>
+class dictionnary : public hash_map<const char *, mytype, hash<const char *>, eqstr>  
+{
+};
+
+#endif
 
 #endif // STORAGE_H_

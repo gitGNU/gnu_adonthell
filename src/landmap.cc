@@ -19,8 +19,10 @@
  */
 
 
-#include "landmap.h"
+#include <iostream>
 
+#include "landmap.h"
+#include "character.h"
 
 using namespace std; 
 
@@ -102,7 +104,7 @@ bool base_map_event::load (igzstream& f)
 
     s << f;
     if (s != "") 
-        c = (mapcharacter*) (character *) data::characters.get (s.c_str ());
+        c = (mapcharacter*) data::characters[s.c_str ()];
     else c = NULL; 
     
     s << f;
@@ -149,9 +151,9 @@ void landmap::clear ()
     event_list::clear (); 
     
     // Remove all mapcharacters from this map.
-    vector <mapcharacter *>::iterator ic;
-    for (ic = mapchar.begin (); ic != mapchar.end (); ic++)
-        (*ic)->remove_from_map (); 
+
+    while (mapchar.size ())
+        mapchar.front ()->remove_from_map ();  
     
     // Delete all mapobjects
     vector <mapobject *>::iterator io;

@@ -25,9 +25,8 @@ extern "C"
 #include <gtk/gtk.h>
 
 #include "../../types.h"
-#include "../../py_inc.h"
+#include "../../python.h"
 #include "../../prefs.h"
-#include "../../data.h"
 #include "../../quest.h"
 #include "../../fileops.h"
 #include "../../character_base.h"
@@ -60,21 +59,21 @@ main (int argc, char *argv[])
     if (path[0] != '/') 
     {
         sprintf (tmp, "%s/%s", getcwd (NULL, 255-strlen (path)), path);
-        insert_path (tmp);
+        python::insert_path (tmp);
     }
-    else insert_path (path);
+    else python::insert_path (path);
     free (path);
     
     // Insert our script directory to python's search path
     sprintf (tmp, "%s/scripts", myconf.datadir.c_str ());
-    insert_path (tmp);
+    python::insert_path (tmp);
     
     // ... and the modules directory as well
     sprintf (tmp, "%s/scripts/modules", myconf.datadir.c_str ());
-    insert_path (tmp);
+    python::insert_path (tmp);
 
     // Load module
-    PyObject *m = import_module ("ins_dlgedit_modules");
+    PyObject *m = python::import_module ("ins_dlgedit_modules");
     if (m == NULL) return 1;
         
     // Create a player
@@ -85,7 +84,7 @@ main (int argc, char *argv[])
     data::the_player = MainWnd->myplayer;
 
     // Make "the_player" available to the interpreter 
-    PyDict_SetItemString (data::globals, "the_player", pass_instance (MainWnd->myplayer, "character"));
+    PyDict_SetItemString (data::globals, "the_player", python::pass_instance (MainWnd->myplayer, "character"));
 
     // create character array
     PyObject *chars = PyDict_New ();
@@ -108,7 +107,7 @@ main (int argc, char *argv[])
         {
             mynpc = new character;
             mynpc->get_state (in);
-            PyDict_SetItemString (chars, (char *) mynpc->get_name().c_str (), pass_instance (mynpc, "character"));
+            PyDict_SetItemString (chars, (char *) mynpc->get_name().c_str (), python::pass_instance (mynpc, "character"));
             tc << in; 
         }
 
@@ -119,7 +118,7 @@ main (int argc, char *argv[])
         }
         
         // set a shortcut to one of the NPC's
-        PyDict_SetItemString (data::globals, "the_npc", pass_instance (mynpc, "character"));
+        PyDict_SetItemString (data::globals, "the_npc", python::pass_instance (mynpc, "character"));
         MainWnd->mynpc = mynpc;
 
 //         gzclose (in);
@@ -151,10 +150,10 @@ main (int argc, char *argv[])
             myquest->load (in);
         
             // Pass quest over to Python interpreter
-            PyDict_SetItemString (quests, (char *) myquest->name.c_str (), pass_instance (myquest, "quest"));
+            PyDict_SetItemString (quests, (char *) myquest->name.c_str (), python::pass_instance (myquest, "quest"));
 
             // Make this quest available to the engine
-            data::quests.set (myquest->name.c_str (), myquest);
+            data::quests[myquest->name.c_str ()] = myquest;
             tc << in; 
         }
         
@@ -165,7 +164,7 @@ main (int argc, char *argv[])
     // Misc initialization
     init_app (MainWnd);
 
-    data::characters.set (MainWnd->myplayer->get_name().c_str (), MainWnd->myplayer);
+    data::characters[MainWnd->myplayer->get_name().c_str ()] = MainWnd->myplayer;
 
     MainWnd->wnd = NULL;
     MainWnd->text_dlg = NULL;

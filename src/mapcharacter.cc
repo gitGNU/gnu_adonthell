@@ -23,13 +23,8 @@
  
 
 
-#include <iostream>
-
 #include "mapcharacter.h" 
 #include "landmap.h"
-#include "data.h"
-#include "mapengine.h"
-
 
 using namespace std; 
 
@@ -48,8 +43,10 @@ mapcharacter::mapcharacter () : mapsquare_walkable_area (), character_base ()
     current_move = STAND_NORTH;
     ask_move = NO_MOVE;
 
-    locals=PyDict_New();
-    PyDict_SetItemString(locals,"myself",pass_instance(this,"mapcharacter"));
+    locals = PyDict_New ();
+    PyObject * objref = python::pass_instance(this,"mapcharacter"); 
+    PyDict_SetItemString (locals,"myself", objref);
+    Py_DECREF (objref); 
 }
  
 mapcharacter::~mapcharacter ()
@@ -58,8 +55,7 @@ mapcharacter::~mapcharacter ()
     for (u_int16 i = 0; i < anim.size (); i++)
         delete anim[i];
     anim.clear (); 
-
-    Py_DECREF(locals);
+    Py_DECREF (locals); 
 }
 
 void mapcharacter::clear ()
@@ -75,6 +71,8 @@ void mapcharacter::clear ()
     schedule_file_ = "";
     
     filename_ = "";
+    
+    PyDict_Clear (locals); 
 }
 
 s_int8 mapcharacter::get (igzstream& file)
@@ -166,13 +164,12 @@ s_int8 mapcharacter::put_state (ogzstream& file) const
 
 void mapcharacter::set_map (landmap * m) 
 {
-    
     if (mymap ()) return;
 
     m->mapchar.push_back (this);
     
     refmap = m;
-    PyDict_SetItemString (locals, "mymap", pass_instance (refmap,"landmap"));
+    PyDict_SetItemString (locals, "mymap", python::pass_instance (refmap,"landmap"));
 }
 
 void mapcharacter::remove_from_map ()
@@ -519,7 +516,7 @@ void mapcharacter::update ()
 void mapcharacter::launch_action (mapcharacter * requester)
 {
     PyDict_SetItemString (locals, "requester",
-                          pass_instance (requester, "mapcharacter"));
+                          python::pass_instance (requester, "mapcharacter"));
     action.run (); 
     PyDict_DelItemString (locals, "requester");
 }

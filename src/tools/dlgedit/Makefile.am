@@ -26,9 +26,9 @@ CPPFLAGS +=-I../.. -DUSE_PYTHON -D_VERSION_=\"0.7\" $(PY_CFLAGS) $(GTK_CFLAGS)
 
 SWIGFLAGS = -D_DLGEDIT_ -D_DEBUG_
 
-dlgedit_LDADD = character.o data.o dialog.o \
-event.o fileops.o lex.prefs.o prefs.o py_inc.o py_script.o \
-quest.o storage.o yarg.o character_base.o $(PY_LIBS) $(GTK_LIBS) -lm -lstdc++
+dlgedit_LDADD = character.o dialog.o \
+fileops.o lex.prefs.o prefs.o python.o \
+quest.o storage.o yarg.o character_base.o $(PY_LIBS) $(GTK_LIBS) -lm -lstdc++ -lpthread
 
 lex.loadlg.cc: loadlg.l
 	flex -olex.loadlg.cc loadlg.l

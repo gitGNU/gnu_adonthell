@@ -18,9 +18,10 @@
 
 #include <iostream>
 #include "../../types.h"
-#include "../../data.h"
 #include "dlgnode.h"
 #include "dlgcompile.h"
+#include "../../quest.h"
+#include "../../character.h"
  
 
 // Operators that may appear in Python code
@@ -271,7 +272,7 @@ string dlg_compiler::inflate (string code)
                     if (i == ACCESS && last_op != ".")
                     {
                         // check whether we access the quest- or character array
-                        if (data::quests.get (stripped.c_str()) != NULL)
+                        if (data::quests[stripped.c_str()] != NULL)
                         {
                             code.insert (begin+prefix, "quests.");
                             begin += 7;
@@ -279,7 +280,7 @@ string dlg_compiler::inflate (string code)
                             is_local = false;
                         }    
 
-                        if (data::characters.get (stripped.c_str()) != NULL)
+                        if (data::characters[stripped.c_str()] != NULL)
                         {
                             code.insert (begin+prefix, "characters.");
                             begin += 11;

@@ -29,8 +29,12 @@
 #endif
 
 #include "game.h"
-#include "py_inc.h"
+#include "python.h"
 
+#include <iostream>
+#include "mapcharacter.h"
+
+using namespace std; 
 
 /**
  * Game's main function.
@@ -42,17 +46,32 @@
  *
  * @return 0 in case of success, error code otherwise.
  * 
- */ 
+ */
+
 int main(int argc, char * argv[])
 {
 #ifdef MEMORY_LEAKS
     mtrace ();
 #endif
+
+//     game::init (argc, argv);
+    
+//     while (1) 
+//     {
+//         mapcharacter * an = new mapcharacter (); 
+//         an->load ("servant1.mchar");
+//         an->draw (0, 0); 
+//         screen::show (); 
+//         delete an; 
+//         getchar (); 
+//     }
+
+//     game::cleanup ();
     
     if (!game::init (argc, argv)) return 1; 
     
-    exec_file("init.py");
-    
+    python::exec_file("init.py");
+
     game::cleanup (); 
     
     return 0;

@@ -27,8 +27,7 @@
 #include <stdio.h>
 
 #include "fileops.h"
-#include "py_inc.h"
-#include "data.h"
+#include "python.h"
 #include "event.h"
 
 // Array with callbacks to return a newly instanciated event

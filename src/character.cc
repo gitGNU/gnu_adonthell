@@ -23,6 +23,10 @@
  */
 
 #include "character.h"
+ 
+dictionnary <character *> data::characters; 
+
+character * data::the_player; 
 
 character::character()
 #ifdef USE_MAP

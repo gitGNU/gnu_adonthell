@@ -25,8 +25,7 @@ class dialog;
 
 #include "../../types.h"
 #include "../../character.h"
-#include "../../data.h"
-#include "../../py_inc.h"
+#include "../../python.h"
 #include "dlgnode.h"
 #include "main.h"
 #include "geometrie.h"
@@ -998,6 +997,7 @@ load_dialogue (MainFrame * wnd, const char *file)
     init_app (wnd);
 
     // ... then load all nodes.
+    dictionnary <character *>::iterator itc = data::characters.begin (); 
     while (i)
     {
         switch (i = parse_dlgfile (s, n))
@@ -1020,7 +1020,7 @@ load_dialogue (MainFrame * wnd, const char *file)
                 {
                     data::characters.erase (wnd->myplayer->get_name().c_str ());
                     wnd->myplayer->set_name (s);
-                    data::characters.set (wnd->myplayer->get_name().c_str (), wnd->myplayer);
+                    data::characters[wnd->myplayer->get_name().c_str ()] = wnd->myplayer;
                 }
                 break;             
             }
@@ -1042,11 +1042,15 @@ load_dialogue (MainFrame * wnd, const char *file)
                 character *mynpc = NULL;
 
                 if (parse_dlgfile (s, n) == LOAD_STR)
-                    mynpc = (character *) data::characters.get (s.c_str ());
+                    mynpc = (character *) data::characters[s.c_str ()];
 
-                if (mynpc == NULL) mynpc = (character *) data::characters.next (); 
-
-                PyDict_SetItemString (data::globals, "the_npc", pass_instance (mynpc, "character"));
+                if (mynpc == NULL) 
+                {
+                    mynpc = itc->second;
+                    itc++;
+                }
+                
+                PyDict_SetItemString (data::globals, "the_npc", python::pass_instance (mynpc, "character"));
                 wnd->mynpc = mynpc;
                 break;            
             }

@@ -13,10 +13,13 @@
 */
 
 
-#include <iostream>
 #include "fileops.h"
 #include "mapengine.h"
 #include "win_manager.h"
+#include "gametime.h"
+#include "character.h"
+
+mapengine * data::map_engine; 
 
 mapengine::mapengine ()
 {
@@ -26,7 +29,6 @@ mapengine::mapengine ()
 
 mapengine::~mapengine ()
 {
-    win_manager::destroy ();
 }
 
 void mapengine::set_mapview_schedule (string s)
@@ -82,8 +84,8 @@ s_int8 mapengine::get_state (igzstream& file)
 
     for (i = 0; i < nbr_of; i++)
     {
-        t << file; 
-        mapcharacter *mc = (mapcharacter *) (data::characters.get (t.c_str ()));
+        t << file;
+        mapcharacter *mc = (mapcharacter *) data::characters[t.c_str ()];
         
         mc->set_map (&lmap);
         mc->get_state (file);

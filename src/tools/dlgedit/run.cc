@@ -20,7 +20,7 @@
 #include "debug.h"
 #include "../../dialog.h"
 #include "../../game.h"
-#include "../../py_inc.h"
+#include "../../python.h"
 
 int run_dlg::destroy = 0;
 
@@ -33,7 +33,7 @@ run_dlg::run_dlg (MainFrame *w) : wnd (w)
     gtk_window_set_transient_for (GTK_WINDOW (dlg), GTK_WINDOW (wnd->wnd));
 
     char *path = g_dirname (wnd->file_name);
-    insert_path (path);
+    python::insert_path (path);
     free (path);
 
     start ();
@@ -56,7 +56,7 @@ void run_dlg::start ()
     if (!dat->init (file, file))
     {
         cout << "\n*** Error loading dialogue script! ";
-        show_traceback ();
+        python::show_traceback ();
         cout << flush;
         answer = -1;
     }

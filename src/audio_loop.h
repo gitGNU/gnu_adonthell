@@ -58,7 +58,7 @@ struct _Mix_Music {
 	} type;
 	union {
 		OGG_music *ogg;
-	} data;
+	} ogg_data;
 	Mix_Fading fading;
 	int fade_volume;
 	int fade_step;

@@ -37,7 +37,8 @@
 #include "win_manager.h"
 #include "dialog_engine.h"
 #include "data_screen.h"
-#include "data.h"
+#include "gamedata.h"
+#include "game.h"
 
 // This enum allows clearer ownership operation:
 // obj.thisown = Python (Python will destroy the object)
@@ -131,4 +132,5 @@ enum {Python = 1, C = 0};
 %include "win_manager.h"
 %include "dialog_engine.h"
 %include "data_screen.h"
-%include "data.h"
+%include "gamedata.h"
+%include "game.h"

@@ -34,4 +34,16 @@ public:
 #endif // SWIG
 };
 
+
+#ifndef SWIG 
+namespace data
+{
+    /**
+     * All the quests.
+     * 
+     */ 
+    extern dictionnary <quest *> quests;
+} 
+#endif
+
 #endif // __QUEST_H__

@@ -36,7 +36,6 @@
 #include <string>
 #include "animation.h"
 #include "character_base.h"
-#include "data.h"
 #include "mapsquare_walkable.h"
 #include "py_script.h"
 
@@ -140,6 +139,7 @@ struct PyCodeObject;
 class mapcharacter : public mapsquare_walkable_area, public character_base
 {
 public:
+    
     /** 
      * Default constructor.
      * 
@@ -759,7 +759,6 @@ private:
      * 
      */ 
     PyObject * locals;
-
 #ifndef SWIG
     friend class landmap; 
 #endif

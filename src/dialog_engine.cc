@@ -26,10 +26,9 @@
 #include <iostream.h>
 #include <string.h>
 #include "character.h"
-#include "data.h"
 #include "input.h"
 #include "image.h"
-#include "py_inc.h"
+#include "python.h"
 #include "input.h"
 #include "dialog_engine.h"
 
@@ -64,7 +63,7 @@ void dialog_engine::init(character_base *mynpc, char * dlg_file, u_int8 size)
     }
 
     // Make the npc available to the dialogue engine
-    PyDict_SetItemString (data::globals, "the_npc", pass_instance (mynpc, "character_base"));
+    PyDict_SetItemString (data::globals, "the_npc", python::pass_instance (mynpc, "character_base"));
     
     // Init the low level dialogue stuff
     dlg = new dialog;
@@ -110,14 +109,14 @@ void dialog_engine::init(character_base *mynpc, char * dlg_file, u_int8 size)
 	if (!dlg->init (dlg_file, strrchr (dlg_file, '/')+1))
 	{
         cout << "\n*** Error loading dialogue script " << strrchr (dlg_file, '/')+1 << "\n";
-        show_traceback ();
+        python::show_traceback ();
         cout << flush;
         answer = -1;	
 	}
 	else
 	{
         // Make the set_portrait/name/npc functions available to the dialogue script
-        instance = pass_instance (this, "dialog_engine");
+        instance = python::pass_instance (this, "dialog_engine");
 
         PyObject *setname = PyObject_GetAttrString (instance, "set_name");
         PyObject *setportrait = PyObject_GetAttrString (instance, "set_portrait");
@@ -248,7 +247,8 @@ void dialog_engine::set_name (char *new_name)
 // Set a different NPC
 void dialog_engine::set_npc (char* new_npc)
 {
-    character_base *mynpc = (character_base *) data::characters.get (new_npc);
+    //     character_base *mynpc = (character_base *) data::characters.get (new_npc);
+    character_base *mynpc = (character_base *) data::characters[new_npc];
     
     set_name ((char *) mynpc->get_name().c_str ());
     set_portrait ("gfx/portraits/lyanna.pnm");

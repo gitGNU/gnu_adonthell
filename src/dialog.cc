@@ -29,9 +29,7 @@
 #include <string>
 #include <algorithm>
 
-#include "py_inc.h"
 #include "yarg.h"
-#include "data.h"
 #include "character.h"
 #include "dialog.h"
 
@@ -45,7 +43,7 @@ bool dialog::init (char *fpath, char *name)
     // First, test if the module has already been imported
     
     // Seems not, so import
-    module = import_module (fpath);
+    module = python::import_module (fpath);
     
     if (!module)
         return false;

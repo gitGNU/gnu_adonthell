@@ -24,10 +24,7 @@
 
 #include "../../character_base.h"
 #include "../../fileops.h"
-#include "../../data.h"
-
-objects data::characters;
-
+ 
 // read the character source file and append it to the character data file
 void process_character (char *input, ogzstream& output)
 {

@@ -51,6 +51,7 @@
 class surface : public drawable
 {
 public:
+
     /**
      * Default constructor.
      * The surface will be totally empty, that is

@@ -36,8 +36,7 @@ config::config (string s) : section (s)
     audio_volume = 50;                      // 0 - 100%
 
     // set the path to the adonthellrc file:
-    adonthellrc = string (getenv ("HOME")) + "/.adonthell";
-
+    adonthellrc = string (getenv ("HOME")) + "/.adonthell"; 
 }
 
 // That's more or less a move operator, as the source is destroyed

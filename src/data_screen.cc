@@ -27,12 +27,14 @@
 
 #include "types.h"
 #include "pnm.h"
-#include "data.h"
+#include "gamedata.h"
 #include "image.h"
 #include "input.h"
 #include "window.h"
 #include "data_screen.h"
 #include "mapengine.h"
+
+#include "game.h"
 
 data_screen::data_screen (int m) : win_container (30, 15, 260, 210, NULL)
 {
@@ -87,7 +89,7 @@ void data_screen::init ()
     gamedata *gdata;
 
     // display all the available saved games
-    while ((gdata = data::next_save ()) != NULL)
+    while ((gdata = gamedata::next_save ()) != NULL)
     {
         sprintf (filepath, "%s/preview.pnm", gdata->get_directory ());
     
@@ -177,7 +179,7 @@ void data_screen::on_select ()
     // loading
     if (mode == LOAD_SCREEN)
     {
-        data::load (pos);
+        gamedata::load (pos);
         set_return_code (1);
         quit = true;
     }
@@ -201,7 +203,8 @@ void data_screen::on_save ()
     char* description = entry->get_text ();
     int pos = image_list->get_pos ();
 
-    gamedata *gdata = data::save (pos, description);
+    gamedata::save (pos, description);
+    gamedata *gdata = gamedata::get_saved_game (pos);
 
     // save sucessful --> save preview
     if (gdata != NULL)

@@ -12,26 +12,21 @@
    See the COPYING file for more details.
 */
 
-#include <stdio.h>
-#include <unistd.h>
+#include <iostream>
 #include "win_manager.h"
 #include "win_theme.h"
 #include "input.h"
 #include "screen.h"
 #include "game.h"
-#include "data.h"
+#include "character.h"
+#include "quest.h"
+#include "mapengine.h"
 
-#if defined(USE_PYTHON)
-#include "Python.h"
-#include "py_modules.h"
-#include "py_inc.h"
-#endif
-
+#include "python.h"
+ 
 #ifdef SDL_MIXER
 #include "audio.h"
 #endif
-
-config * game::configuration = NULL; 
 
 
 /**
@@ -44,52 +39,73 @@ config * game::configuration = NULL;
  */
 
 
+
+config * game::configuration = NULL; 
+PyObject * game::py_module = NULL;
+ 
+
+/*
+ * SWIG init prototypes. Should we use dynamic linking??? 
+ */
+extern "C"
+{
+    /** 
+     * SWIG init prototype.
+     * 
+     */
+    void initadonthellc (void);
+}
+
+
 // Initialize all parts of the game engine
 bool game::init (int argc, char **argv)
 {
     if (configuration) delete configuration;
     
     configuration = new config (argc > 1 ? argv[1] : "");
-
+    
     // try to read adonthellrc
     if (!configuration->read_adonthellrc ())
         return false;
-    
-    // try to change into data directory
-    if (chdir (configuration->datadir.c_str ()))
-    {
-        printf ("\nSeems like %s is no valid data directory.", configuration->datadir.c_str ());
-        printf ("\nIf you have installed the Adonthell data files into a different location,");
-        printf ("\nplease make sure to update the $HOME/.adonthell/adonthellrc file\n");
-        return false;
-    }
 
+    gamedata::init (configuration->get_adonthellrc (), configuration->datadir); 
+    
     // init video subsystem
     screen::set_video_mode (320, 240);
     screen::set_fullscreen (configuration->screen_mode);
-
+    
     // set the theme
     win_theme::theme = new char[strlen(configuration->window_theme.c_str ())];
     strcpy (win_theme::theme, configuration->window_theme.c_str ());
     strcat (win_theme::theme,"/");
 
+#if defined SDL_MIXER
     // init audio subsystem
-#if defined SDL_MIXER && !defined _EDIT_
     //    audio::init (configuration);
 #endif 
 
     // init input subsystem
     input::init ();
-
+    
     // init python interpreter
-#if defined(USE_PYTHON)
-    init_python ();
-#endif
-#if !defined(_EDIT_)
-    // init the data subsystem
-    if (!data::init (configuration->get_adonthellrc ()))
+    python::init (); 
+    python::insert_path("scripts");
+    python::insert_path("scripts/modules");
+
+    /* Initialise SWIG module. This should go if we ever switch to dynamic 
+       link */
+    initadonthellc();
+    
+    // Init the global namespace of the python interpreter 
+    py_module = python::import_module ("ins_modules");
+    if (!py_module)
         return false;
-#endif
+    data::globals = PyModule_GetDict (py_module);
+
+    
+    // init the game data
+    init_data (); 
+    
     // voila :)
     return true;
 }
@@ -98,28 +114,52 @@ bool game::init (int argc, char **argv)
 void game::cleanup () 
 {
     // close all windows
-    win_manager::destroy();
+    win_manager::destroy(); 
+
+    // cleanup the data
+   cleanup_data ();
+    
+    // Cleanup the global namespace of python interpreter
+    // Note that we don't have to DECREF globals, because they're a borrowed
+    // reference of py_module
+    Py_XDECREF (py_module);
+
+    // shutdown input subsystem
+    input::shutdown ();
+
+#if defined SDL_MIXER
+    // shutdown audio
+    //    audio::cleanup ();
+#endif
+
+    // Delete the theme
+    delete[] win_theme::theme; 
+
+    // cleanup the saves
+    gamedata::cleanup (); 
+          
+    // shutdown python
+    python::cleanup ();     
+
+    // shutdown video and SDL
+    SDL_Quit ();
 
     // save the config file
     configuration->write_adonthellrc ();
     delete configuration;
-    
-#if !defined(_EDIT_)
-    // delete all data
-    data::cleanup ();
-#endif
+    configuration = NULL;  
+}
 
-    // shutdown input subsystem
-    input::shutdown ();
-    
-    // shutdown audio
-#if defined SDL_MIXER && !defined _EDIT_
-    //    audio::cleanup ();
-#endif
-    // shutdown Python
-#if defined(USE_PYTHON)
-    Py_Finalize ();
-#endif
-    // shutdown video
-    SDL_Quit ();
+void game::init_data ()
+{
+    data::the_player = NULL;     
+
+    data::map_engine = new mapengine;
+    PyDict_SetItemString (data::globals, "map_engine",
+                          python::pass_instance (data::map_engine, "mapengine"));
+}
+
+void game::cleanup_data () 
+{
+    delete data::map_engine; 
 }

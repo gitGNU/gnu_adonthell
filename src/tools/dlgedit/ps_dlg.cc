@@ -14,7 +14,6 @@
 
 #include "ps_dlg.h"
 #include "ps_interface.h"
-#include "../../data.h"
 
 ps_dlg::ps_dlg (character *p, character *n)
 {
@@ -36,8 +35,8 @@ void ps_dlg::on_ok (char* n, int r, int g, char *the_npc)
     myplayer->set("race", r);
     myplayer->set("gender", g);
 
-    data::characters.set (myplayer->get_name().c_str (), myplayer);
-    mynpc = (character *) data::characters.get (the_npc);
+    data::characters[myplayer->get_name().c_str ()] = myplayer;
+    mynpc = (character *) data::characters[the_npc];
 }
 
 character *ps_dlg::get_npc ()

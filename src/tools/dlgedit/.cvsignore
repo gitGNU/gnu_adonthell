@@ -5,4 +5,5 @@ Makefile.in
 *.pyc
 py_quest_wrap.cc
 py_character_wrap.cc
-
+character.py
+quest.py

@@ -12,12 +12,13 @@
    See the COPYING file for more details.
 */
 
+#include <cstdio>
 #include <unistd.h>
 
 #include "game.h"
-#include "py_inc.h"
-#include "data.h"
-#include "landmap.h"
+#include "python.h"
+
+using namespace std; 
 
 extern "C" {
 extern int Py_Main(int, char **);
@@ -41,5 +42,5 @@ int main(int argc, char * argv[])
     }
 
     return Py_Main(argc,argv);
-    
+//     return PyRun_InteractiveLoop (stdin, NULL); 
 }

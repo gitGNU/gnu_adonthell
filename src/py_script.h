@@ -25,12 +25,12 @@ Part of the Adonthell Project http://adonthell.linuxgames.com
  */
 
 
-#ifndef SCHEDULABLE_H_
-#define SCHEDULABLE_H_
+#ifndef PY_SCRIPT_H_
+#define PY_SCRIPT_H_
 
 
 #include <string>
-#include "py_inc.h"
+#include "python.h"
 
 
 using namespace std; 

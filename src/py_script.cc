@@ -25,7 +25,6 @@
  */
 
 #include <iostream>
-#include "data.h"
 #include "py_script.h"
 
 
@@ -58,7 +57,7 @@ void py_script::set_script (string file)
     {
         script_file_ = "";
         if (script)
-            delete script;
+            free (script);
         
         script = NULL;
         return;
@@ -70,7 +69,7 @@ void py_script::set_script (string file)
     if (f)
     {
         // Compile the script into a PyCodeObject for quicker execution
-        _node *n = PyParser_SimpleParseFile (f, (char *) file.c_str (), Py_file_input);
+        struct _node *n = PyParser_SimpleParseFile (f, (char *) file.c_str (), Py_file_input);
 
         if (n)
         {
@@ -86,7 +85,7 @@ void py_script::set_script (string file)
         else
         {
             cout << "\n*** Cannot set script: Error in" << flush;
-            show_traceback ();
+            python::show_traceback ();
         }
         fclose (f);
     }

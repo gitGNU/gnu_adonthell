@@ -18,7 +18,6 @@
 #include "crcle_callbacks.h"
 #include "crcle_interface.h"
 #include "callbacks.h" 
-#include "../../data.h"
 #include "../../character.h"
 
 void set_option (GtkOptionMenu * o, const gchar * label)
@@ -119,7 +118,6 @@ create_dlg_node_window (Circle *circle, crcle_dlg *dlg)
     GdkColor dark_blue;
     GdkColor green;
     GdkColor dark_green;
-    character *mychar;
 
     GtkStyle *fstyle = gtk_style_copy (gtk_widget_get_default_style ());
     fstyle->font = gdk_font_load ("-*-lucidatypewriter-medium-*-*-*-12-*-*-*-*-*-iso8859-1");
@@ -285,13 +283,15 @@ create_dlg_node_window (Circle *circle, crcle_dlg *dlg)
     gtk_menu_append (GTK_MENU (npc_selection_menu), glade_menuitem);
     gtk_option_menu_set_menu (GTK_OPTION_MENU (npc_selection), npc_selection_menu);
 
-    while ((mychar = (character *) data::characters.next ()) != NULL)
+    dictionnary <character *>::iterator itc; 
+    for (itc = data::characters.begin (); itc != data::characters.end () && itc->second != NULL; itc++) 
+        //     while ((mychar = (character *) data::characters.next ()) != NULL)
     {
         // don't add the player character to the list
-        if (!strcmp (mychar->get_name().c_str (), ((character *) data::the_player)->get_name().c_str ())) continue;
+        if (!strcmp (itc->second->get_name().c_str (), ((character *) data::the_player)->get_name().c_str ())) continue;
         
-        glade_menuitem = gtk_menu_item_new_with_label (mychar->get_name().c_str ());
-        gtk_object_set_user_data (GTK_OBJECT (glade_menuitem), (void *) mychar->get_name().c_str ());
+        glade_menuitem = gtk_menu_item_new_with_label (itc->second->get_name().c_str ());
+        gtk_object_set_user_data (GTK_OBJECT (glade_menuitem), (void *) itc->second->get_name().c_str ());
         gtk_widget_show (glade_menuitem);
         gtk_menu_append (GTK_MENU (npc_selection_menu), glade_menuitem);
         gtk_option_menu_set_menu (GTK_OPTION_MENU (npc_selection), npc_selection_menu);

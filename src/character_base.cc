@@ -24,7 +24,6 @@
 
 
 #include "character_base.h"
-#include "data.h"
 
 
 using namespace std; 
@@ -86,10 +85,7 @@ void character_base::get_state (igzstream& in)
 
     // load color
     color << in; 
-
-    // make the character available from data
-    data::characters.set (name.c_str (), this);
-
+    
     // load all attributes and flags
     size << in; 
     for (i = 0; i < size; i++)

@@ -160,10 +160,10 @@ int audio::load_background(int slot, char *filename) {
 
 #ifdef OGG_VORBIS
   // read loop points and ...
-  loop[slot] = new loop_info (&music[slot]->data.ogg->vf);
+  loop[slot] = new loop_info (&music[slot]->ogg_data.ogg->vf);
   
   // ... enable looping
-  music[slot]->data.ogg->vf.callbacks.read_func = &ogg_read_callback;
+  music[slot]->ogg_data.ogg->vf.callbacks.read_func = &ogg_read_callback;
 #endif
 #endif
   return(0);
@@ -261,7 +261,7 @@ void audio::fade_out_background(int time) {
   if (background_on == true) {
     Mix_FadeOutMusic(time);
 #ifdef OGG_VORBIS
-    music[current_background]->data.ogg->vf.callbacks.read_func = &fread_wrap;
+    music[current_background]->ogg_data.ogg->vf.callbacks.read_func = &fread_wrap;
 #endif
     background_on = false;
     current_background = -1;
@@ -290,6 +290,6 @@ void audio::change_background(int slot, int time) {
 #ifdef OGG_VORBIS
 OggVorbis_File* audio::get_vorbisfile ()
 {
-    return &music[current_background]->data.ogg->vf;
+    return &music[current_background]->ogg_data.ogg->vf;
 }
 #endif

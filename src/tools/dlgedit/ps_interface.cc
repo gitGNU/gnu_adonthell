@@ -19,7 +19,6 @@
 #include "ps_callbacks.h"
 #include "ps_interface.h"
 #include "callbacks.h"
-#include "../../data.h"
 #include "../../character.h"
 
 extern void set_option (GtkOptionMenu*, const gchar *);
@@ -223,14 +222,14 @@ GtkWidget * create_ps_window (ps_dlg *dlg, const char* name, int race, int gende
 
     npc_selection_menu = gtk_menu_new ();
 
-    character *mychar;
-    while ((mychar = (character *) data::characters.next ()) != NULL)
+    dictionnary <character *>::iterator itc; 
+    for (itc = data::characters.begin (); itc != data::characters.end () && itc->second != NULL; itc++) 
     {
         // don't add the player character to the list
-        if (!strcmp (mychar->get_name().c_str (), ((character *) data::the_player)->get_name().c_str ())) continue;
+        if (!strcmp (itc->second->get_name().c_str (), ((character *) data::the_player)->get_name().c_str ())) continue;
         
-        glade_menuitem = gtk_menu_item_new_with_label (mychar->get_name().c_str ());
-        gtk_object_set_user_data (GTK_OBJECT (glade_menuitem), (void *) mychar->get_name().c_str ());
+        glade_menuitem = gtk_menu_item_new_with_label (itc->second->get_name().c_str ());
+        gtk_object_set_user_data (GTK_OBJECT (glade_menuitem), (void *) itc->second->get_name().c_str ());
         gtk_widget_show (glade_menuitem);
         gtk_menu_append (GTK_MENU (npc_selection_menu), glade_menuitem);
         gtk_option_menu_set_menu (GTK_OPTION_MENU (npc_selection), npc_selection_menu);

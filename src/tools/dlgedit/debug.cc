@@ -21,7 +21,6 @@
 
 #include "../../character.h"
 #include "../../quest.h"
-#include "../../data.h"
 #include "run.h"
 #include "debug.h"
 #include "dbg_interface.h"
@@ -91,8 +90,6 @@ void debug_dlg::update ()
     GtkCTree *tree;
     dbg_node_data *data;
     objects *container;
-    character *mychar;
-    quest *myquest;
     storage *myobj;
     char *text[2];
 
@@ -149,13 +146,15 @@ void debug_dlg::update ()
     tree = GTK_CTREE (char_tree);
     gtk_clist_freeze (GTK_CLIST (char_tree));
 
-    while ((mychar = (character *) data::characters.next ()) != NULL)
+    dictionnary <character *>::iterator itc; 
+    for (itc = data::characters.begin (); itc != data::characters.end () && itc->second != NULL; itc++) 
+        //     while ((mychar = (character *) data::characters.next ()) != NULL)
     {
-        parent = gtk_ctree_find_by_row_data_custom (tree, NULL, (void *) mychar->get_name().c_str (),
+        parent = gtk_ctree_find_by_row_data_custom (tree, NULL, (void *) itc->second->get_name().c_str (),
                                                     (GCompareFunc) strcompare);
 
         // See whether the current node's children have changed
-        if (update_children (tree, parent, mychar))
+        if (update_children (tree, parent, itc->second))
             // if so, also highlight the parent
             gtk_ctree_node_set_foreground (tree, parent, &green);
         else gtk_ctree_node_set_foreground (tree, parent, &black);
@@ -169,12 +168,14 @@ void debug_dlg::update ()
     tree = GTK_CTREE (quest_tree);
     gtk_clist_freeze (GTK_CLIST (quest_tree));
 
-    while ((myquest = (quest *) data::quests.next ()) != NULL)
+    dictionnary <quest *>::iterator itq; 
+    for (itq = data::quests.begin (); itq != data::quests.end () && itq->second != NULL; itq++) 
+        //     while ((myquest = (quest *) data::quests.next ()) != NULL)
     {
-        parent = gtk_ctree_find_by_row_data_custom (tree, NULL, (void *) myquest->name.c_str (), (GCompareFunc) strcompare);
+        parent = gtk_ctree_find_by_row_data_custom (tree, NULL, (void *) itq->second->name.c_str (), (GCompareFunc) strcompare);
 
         // See whether the current node's children have changed
-        if (update_children (tree, parent, myquest))
+        if (update_children (tree, parent, itq->second))
             // if so, also highlight the parent
             gtk_ctree_node_set_foreground (tree, parent, &green);
         else gtk_ctree_node_set_foreground (tree, parent, &black);
@@ -257,31 +258,33 @@ void debug_dlg::set (char *key, char *val)
 {
     int ival = atoi (val);
     storage *object;
-    objects *container;
+    dictionnary <character *>  *containerc = NULL;
+    dictionnary <quest *>  *containerq = NULL;
     dbg_node_data *data;
     GtkCTreeRow *tree_row;
 	GtkCTreeNode *parent, *node;
     GtkCTree *tree;
     char *attribute;
     
+    
     switch (active_page)
     {
         case 0:
         {
             tree = GTK_CTREE (dlg_tree);
-            container = NULL;
+            //             container = NULL;
             break;
         }
         case 1:
         {
             tree = GTK_CTREE (char_tree);
-            container = &data::characters;
+            containerc = &data::characters;
             break;
         }
         case 2:
         {
             tree = GTK_CTREE (quest_tree);
-            container = &data::quests;
+            containerq = &data::quests;
             break;
         }
         default: return;
@@ -324,9 +327,14 @@ void debug_dlg::set (char *key, char *val)
         }
     }
     
-    if (container != NULL)
+    if (containerc != NULL)
     {
-        object = container->get (attribute);
+        object = (*containerc)[attribute];
+        object->set (key, ival);
+    }
+    else if (containerq != NULL)
+    {
+        object = (*containerq)[attribute];
         object->set (key, ival);
     }
     else set_dlg_var (key, ival);
@@ -338,8 +346,6 @@ void debug_dlg::init ()
     GtkCTreeNode *parent = NULL, *node;
     pair<const char*, s_int32> mypair;
     objects *container;
-    character *mychar;
-    quest *myquest;
     storage *myobj;
     char *text[2], str[32];
 
@@ -384,16 +390,19 @@ void debug_dlg::init ()
 
     // Init character page
     gtk_clist_freeze (GTK_CLIST (char_tree));
-    while ((mychar = (character *) data::characters.next ()) != NULL)
+
+    dictionnary <character *>::iterator itc; 
+    for (itc = data::characters.begin (); itc != data::characters.end (); itc++) 
+        //     while ((mychar = (character *) data::characters.next ()) != NULL)
     {
-        text[0] = (char *) mychar->get_name().c_str ();
+        text[0] = (char *) itc->second->get_name().c_str ();
         text[1] = "";
 
         data = new dbg_node_data (strdup (text[0]), 2);
         parent = gtk_ctree_insert_node (GTK_CTREE (char_tree), NULL, NULL, text, 0, NULL, NULL, NULL, NULL, FALSE, FALSE);
         gtk_ctree_node_set_row_data_full (GTK_CTREE (char_tree), parent, data, destroy_data);
 
-        while ((mypair = mychar->next ()).first != NULL)
+        while ((mypair = itc->second->next ()).first != NULL)
         {
             sprintf (str, "%i", mypair.second);
 
@@ -409,16 +418,18 @@ void debug_dlg::init ()
 
     // Init quest page
     gtk_clist_freeze (GTK_CLIST (quest_tree));
-    while ((myquest = (quest *) data::quests.next ()) != NULL)
+    dictionnary <quest *>::iterator itq; 
+    for (itq = data::quests.begin (); itq != data::quests.end (); itq++) 
+        //     while ((myquest = (quest *) data::quests.next ()) != NULL)
     {
-        text[0] = (char *) myquest->name.c_str ();
+        text[0] = (char *) itq->second->name.c_str ();
         text[1] = "";
 
         data = new dbg_node_data (strdup (text[0]), 2);
         parent = gtk_ctree_insert_node (GTK_CTREE (quest_tree), NULL, NULL, text, 0, NULL, NULL, NULL, NULL, FALSE, FALSE);
         gtk_ctree_node_set_row_data_full (GTK_CTREE (quest_tree), parent, data, destroy_data);
 
-        while ((mypair = myquest->next ()).first != NULL)
+        while ((mypair = itq->second->next ()).first != NULL)
         {
             sprintf (str, "%i", mypair.second);
 

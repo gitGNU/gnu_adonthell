@@ -26,6 +26,8 @@
 #ifndef CHARACTER_H_
 #define CHARACTER_H_
 
+#include "storage.h"
+
 #ifdef USE_MAP
 #include "mapcharacter.h"
 #else
@@ -56,5 +58,22 @@ public:
      */ 
     ~character();
 };
+
+#ifndef SWIG
+namespace data
+{
+    /**
+     * All the game's characters, different from the player.
+     * 
+     */ 
+    extern dictionnary <character *>  characters; 
+
+    /**
+     * The player character.
+     * 
+     */ 
+    extern character *the_player;
+}
+#endif
 
 #endif // CHARACTER_H_
