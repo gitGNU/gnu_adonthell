@@ -50,21 +50,21 @@ class win_event
   
   void py_signal_connect (PyObject *pyfunc, int signal, PyObject *args = NULL); 
   
-  static const u_int8 ACTIVATE =1 ;
-  static const u_int8 UNACTIVATE = 2;
-  static const u_int8 UPDATE = 3;
-  static const u_int8 DRAW = 4;
-  static const u_int8 DRAW_ON_VISIBLE = 5;
-  static const u_int8 ACTIVATE_KEY = 6;
-  static const u_int8 SELECT = 7;
-  static const u_int8 UNSELECT = 8;
-  static const u_int8 KEYBOARD = 9;
-  static const u_int8 SCROLL_UP = 10;
-  static const u_int8 SCROLL_DOWN = 11;
-  static const u_int8 NEXT = 12;
-  static const u_int8 PREVIOUS = 13;
-  static const u_int8 CLOSE = 14;
-  static const u_int8 DESTROY = 15;
+  const static u_int8 ACTIVATE =1 ;
+  const static u_int8 UNACTIVATE = 2;
+  const static u_int8 UPDATE = 3;
+  const static u_int8 DRAW = 4;
+  const static u_int8 DRAW_ON_VISIBLE = 5;
+  const static u_int8 ACTIVATE_KEY = 6;
+  const static u_int8 SELECT = 7;
+  const static u_int8 UNSELECT = 8;
+  const static u_int8 KEYBOARD = 9;
+  const static u_int8 SCROLL_UP = 10;
+  const static u_int8 SCROLL_DOWN = 11;
+  const static u_int8 NEXT = 12;
+  const static u_int8 PREVIOUS = 13;
+  const static u_int8 CLOSE = 14;
+  const static u_int8 DESTROY = 15;
 
   /*****************************************************/
   /*****************************************************/

@@ -46,21 +46,21 @@ class win_font{
 };
 
 
-#define win_event_ACTIVATE  1 ;
-#define win_event_UNACTIVATE   2;
-#define win_event_UPDATE   3;
-#define win_event_DRAW   4;
-#define win_event_DRAW_ON_VISIBLE   5;
-#define win_event_ACTIVATE_KEY   6;
-#define win_event_SELECT   7;
-#define win_event_UNSELECT   8;
-#define win_event_KEYBOARD   9;
-#define win_event_SCROLL_UP   10;
-#define win_event_SCROLL_DOWN   11;
-#define win_event_NEXT   12;
-#define win_event_PREVIOUS   13;
-#define win_event_CLOSE  14;
-#define win_event_DESTROY  15;
+#define win_event_ACTIVATE  1
+#define win_event_UNACTIVATE   2
+#define win_event_UPDATE   3
+#define win_event_DRAW   4
+#define win_event_DRAW_ON_VISIBLE   5
+#define win_event_ACTIVATE_KEY   6
+#define win_event_SELECT   7
+#define win_event_UNSELECT   8
+#define win_event_KEYBOARD   9
+#define win_event_SCROLL_UP   10
+#define win_event_SCROLL_DOWN   11
+#define win_event_NEXT   12
+#define win_event_PREVIOUS   13
+#define win_event_CLOSE  14
+#define win_event_DESTROY  15
 
 class win_event
 {
@@ -115,8 +115,8 @@ class win_event
 }; 
 
 
-#define win_border_MINI 0;
-#define win_border_NORMAL 1;
+#define win_border_MINI 0
+#define win_border_NORMAL 1
 
 class win_border
 {
@@ -219,10 +219,10 @@ class win_background
 };
 
 
-  #define win_base_ALIGN_NONE  0;
-  #define win_base_ALIGN_LEFT  1;
-  #define win_base_ALIGN_CENTER  2;
-  #define win_base_ALIGN_RIGHT  3;
+  #define win_base_ALIGN_NONE  0
+  #define win_base_ALIGN_LEFT  1
+  #define win_base_ALIGN_CENTER  2
+  #define win_base_ALIGN_RIGHT  3
 
 class win_base: public win_event, public win_border, public drawing_area, public win_background
 {
@@ -457,11 +457,11 @@ class win_base: public win_event, public win_border, public drawing_area, public
   win_container * wb_father_;
   
 }; 
-  #define win_container_SPACE_WITH_BORDER  10;
-  #define win_container_SPACE_WITH_OBJECT  10;
+  #define win_container_SPACE_WITH_BORDER  10
+  #define win_container_SPACE_WITH_OBJECT  10
   
-  #define win_container_LIST_LAYOUT  1;
-  #define win_container_NO_LAYOUT  0;
+  #define win_container_LIST_LAYOUT  1
+  #define win_container_NO_LAYOUT  0
 
 class win_container : public win_base
 {
@@ -541,12 +541,12 @@ public:
 }; 
 
 
-#define label_NOTHING 0;
-#define label_AUTO_HEIGHT 1;
-#define label_AUTO_SIZE 2;
+#define label_NOTHING 0
+#define label_AUTO_HEIGHT 1
+#define label_AUTO_SIZE 2
 
-#define label_KEY_CURSOR_NEXT SDLK_RIGHT;
-#define label_KEY_CURSOR_PREVIOUS SDLK_LEFT;
+#define label_KEY_CURSOR_NEXT SDLK_RIGHT
+#define label_KEY_CURSOR_PREVIOUS SDLK_LEFT
 
 class label: public image
 {
@@ -821,9 +821,9 @@ class win_scroll : public win_container, public win_scrollbar
 
 
 
-#define win_select_MODE_BORDER 0;
+#define win_select_MODE_BORDER 0
   
-#define win_select_MODE_BRIGHTNESS 1;
+#define win_select_MODE_BRIGHTNESS 1
 
 class win_select : public win_scroll
 {

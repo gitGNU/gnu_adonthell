@@ -57,9 +57,9 @@ enum {Python = 1, C = 0};
 
 %typemap(python,in) string
 {
-    if (PyString_Check ($source))
+    if (PyString_Check ($input))
     {
-        $target = new string (PyString_AsString($source));
+        $1 = string (PyString_AsString($input));
     }
     else
     {
@@ -67,43 +67,57 @@ enum {Python = 1, C = 0};
         return NULL;
     }
 }
-%typemap(python,in) string & = string;
 %typemap(python,in) const string = string;
-%typemap(python,in) const string & = string;
+
+%typemap(python,in) string &
+{
+    if (PyString_Check ($input))
+    {
+        $1 = new string (PyString_AsString($input));
+    }
+    else
+    {
+        PyErr_SetString (PyExc_TypeError, "not a String");
+        return NULL;
+    }
+}
+%typemap(python,in) const string & = string &;
 
 %typemap(python,out) string
 {
-    $target = PyString_FromString((const char *)$source->c_str()); 
-    delete $source;
+    $result = PyString_FromString((const char *)$1.c_str()); 
 }
-%typemap(python,out) string & = string;
 %typemap(python,out) const string = string;
-%typemap(python,out) const string & = string;
 
-%typemap (python, freearg) string
+%typemap(python,out) string &
 {
-    if ($source != NULL)
+    $result = PyString_FromString((const char *)$1->c_str());
+    delete $1; 
+}
+%typemap(python,out) const string & = string &;
+
+%typemap (python, freearg) string &
+{
+    if ($1 != NULL)
     {
-        delete $source;
+        delete $1;
     }
 }
- %typemap (python, freearg) string & = string;
-%typemap (python, freearg) const string = string;
-%typemap (python, freearg) const string & = string;
+%typemap (python, freearg) const string & = string &;
 
 %typemap (python,in) PyObject *pyfunc 
 { 
-    if (!PyCallable_Check($source)) 
+    if (!PyCallable_Check($input)) 
     { 
         PyErr_SetString (PyExc_TypeError, "Need a callable object!");
         return NULL;
     }
-    $target = $source; 
+    $1 = $input; 
 }
 
 %typemap (python,in) PyObject*
 { 
-    $target = $source; 
+    $1 = $input; 
 }
 
 %include "types.h"
