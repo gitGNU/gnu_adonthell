@@ -68,7 +68,7 @@ s_int32 time_event::execute (const event * evnt)
     }
     
     // when the script needs be repeated, do so.
-    if (Repeat > 1) Time += Interval;
+    if (Repeat != 0) Time += Interval;
     
     return do_repeat ();
 }
