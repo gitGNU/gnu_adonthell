@@ -123,7 +123,6 @@ dnl ********************************
 
 CXXFLAGS="$CFLAGS $DEFS $INCLUDES"
 
-LIBS="$LIBS -ltcl -ltk -lreadline -lncurses"
 AC_SUBST(CXX) AC_SUBST(CXXFLAGS) AC_SUBST(LIBS) AC_SUBST(SUBDIRS)
   
 AC_OUTPUT([

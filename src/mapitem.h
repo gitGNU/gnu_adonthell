@@ -19,12 +19,13 @@
 #include "types.h"
 #include "mapevent.h"
 
-#include "Python.h"
+//#include "Python.h"
+//class PyObject;
 
 class mapitem
 {
   private:
-	PyObject *python;
+	//PyObject *python;
 
 	u_int16 number;
 	u_int16 pattern;

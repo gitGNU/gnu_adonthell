@@ -1729,7 +1729,6 @@ fi
 
 CXXFLAGS="$CFLAGS $DEFS $INCLUDES"
 
-LIBS="$LIBS -ltcl -ltk -lreadline -lncurses"
    
   
 trap '' 1 2 15
