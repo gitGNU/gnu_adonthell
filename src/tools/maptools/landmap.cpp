@@ -132,7 +132,7 @@ void mapsquare::draw(mapview * mv)
 	  else if(i->x-(mv->posx-mv->ctrx)==0 && 
 	     i->y-(mv->posy-mv->ctry)+1==mv->d_height &&
 	     i->base_tile->x<i->x && i->base_tile->y>i->y)
-	      mv->m_map->submap[mv->currentsubmap].land[i->x][i->base_tile->y].
+	      mv->m_map->submap[mv->currentsubmap]->land[i->x][i->base_tile->y].
 		draw(mv);
 
 	    //	    i->base_tile->draw(mv);
@@ -211,6 +211,7 @@ landsubmap::landsubmap()
 {
   length=height=0;
   land=NULL;
+  m_map=NULL;
 #ifdef _DEBUG_
   cout << "landsubmap() called, "<< ++a_d_diff
        << " objects currently allocated\n";
@@ -220,6 +221,7 @@ landsubmap::landsubmap()
 landsubmap::landsubmap(u_int16 l, u_int16 h)
 {
   allocmap(l,h);
+  m_map=NULL;
 #ifdef _DEBUG_
   cout << "landsubmap() called, "<< ++a_d_diff
        << " objects currently allocated\n";
@@ -314,6 +316,18 @@ void landsubmap::resize(u_int16 l, u_int16 h)
 	}*/
 }
 
+s_int8 landsubmap::get(gzFile file)
+{
+  return 0;
+}
+
+#ifdef _EDIT_
+s_int8 landsubmap::put(gzFile file)
+{
+  return 0;
+}
+#endif
+
 u_int16 landsubmap::get_length()
 {
   return length;
@@ -322,6 +336,65 @@ u_int16 landsubmap::get_length()
 u_int16 landsubmap::get_height()
 {
   return height;
+}
+
+s_int8 landsubmap::set_square_pattern(u_int16 px, u_int16 py, 
+				      u_int16 patnbr)
+{
+  u_int16 i,j;
+  mapsquare_tile t;
+  
+  // FIXME: Bad placement when overflowing the map from bottom right when the 
+  // base tile isn't at right of the object.
+  // Bad initialisation of i0/j0/ie/je ( must be init like remove_obj)
+  
+  u_int16 ie=m_map->pattern[patnbr].maptpl::get_length();
+  u_int16 je=m_map->pattern[patnbr].maptpl::get_height();
+  
+  ie=px-m_map->pattern[patnbr].basex+ie>length?length-px:ie;
+  je=py-m_map->pattern[patnbr].basey+je>height?height-py:je;
+
+  u_int16 i0=(px-m_map->pattern[patnbr].basex)>0?0:m_map->pattern[patnbr].basex-px;
+  u_int16 j0=(py-m_map->pattern[patnbr].basey)>0?0:m_map->pattern[patnbr].basey-py;
+  // Steps:
+  // -Find out where to start/stop placing the object (screen overflow)
+  // -For each square, place it in the right order
+  //  Don't forget to update the base_begin iterator to refer to the
+  //  first base tile that's on the square.
+  list<mapsquare_tile>::iterator it;
+
+  if(patnbr>m_map->nbr_of_patterns) return -1;
+  // First place the base tile, as others refers to it...
+  t.objnbr=patnbr;
+  t.is_base=true;
+  t.x=px;
+  t.y=py;
+  for(it=land[px][py].tiles.begin();
+      it!=land[px][py].tiles.end() && *(it->base_tile)<=t; it++);
+  land[px][py].tiles.insert(it,t);
+  it--;
+  it->base_tile=it;
+
+  // Get the base tile iterator for the others tiles
+  t.base_tile=it;
+  t.is_base=false;
+  for(j=j0;j<je;j++)
+    for(i=i0;i<ie;i++)
+      {
+	t.x=px-m_map->pattern[patnbr].basex+i;
+	t.y=py-m_map->pattern[patnbr].basey+j;
+	if(m_map->pattern[patnbr].basex!=i || m_map->pattern[patnbr].basey!=j)
+	  {
+	    for(it=land[t.x][t.y].tiles.begin();
+		it!=land[t.x][t.y].tiles.end() &&
+		  *(it->base_tile) <= *(t.base_tile);it++);
+	    land[t.x][t.y].tiles.insert(it,t);
+	  }
+      }
+  for(it=land[px][py].tiles.begin();
+      it!=land[px][py].tiles.end() && *(it->base_tile)<*it;it++);
+  land[px][py].base_begin=it;
+  return 0;
 }
 
 void landsubmap::draw_square(u_int16 x, u_int16 y, u_int16 px, u_int16 py,
@@ -361,7 +434,13 @@ landmap::landmap()
 
 landmap::~landmap()
 {
-  if(submap) delete[] submap;
+  u_int16 i;
+  if(submap) 
+    {
+      for(i=0;i<nbr_of_submaps;i++)
+	delete submap[i];
+      delete[] submap;
+    }
   if(pattern) delete[] pattern;
 #ifdef _EDIT_
   if(mini_pattern) delete[] mini_pattern;
@@ -382,11 +461,18 @@ landmap& landmap::operator =(const landmap& lm)
   for(i=0;i<nbr_of_patterns;i++)
     pattern[i]=lm.pattern[i];
   nbr_of_submaps=lm.nbr_of_submaps;
-  if(submap) delete[] submap;
-  submap=new landsubmap[nbr_of_submaps];
+  if(submap) 
+  {
+    for(i=0;i<nbr_of_submaps;i++)
+      delete submap[i];
+    delete[] submap;
+  }
+  submap=new (landsubmap*)[nbr_of_submaps];
   for(i=0;i<nbr_of_submaps;i++)
-    submap[i]=lm.submap[i];
-
+  {
+    submap[i]=new landsubmap;
+    *(submap[i])=*(lm.submap[i]);
+  }
 #ifdef _EDIT_
   if(mini_pattern) delete[] mini_pattern;
   mini_pattern=new mapobject[nbr_of_patterns];
@@ -399,12 +485,14 @@ landmap& landmap::operator =(const landmap& lm)
 s_int8 landmap::add_submap()
 {
   u_int16 i;
-  landsubmap * tmp=submap;
+  landsubmap ** tmp=submap;
   if(nbr_of_submaps==255) return -1;
-  submap=new landsubmap[++nbr_of_submaps];
+  submap=new (landsubmap*)[++nbr_of_submaps];
   for(i=0;i<nbr_of_submaps-1;i++)
     submap[i]=tmp[i];
   if(tmp) delete[] tmp;
+  submap[nbr_of_submaps-1]=new landsubmap;
+  submap[nbr_of_submaps-1]->m_map=this;
   return 0;
 }
 
@@ -412,7 +500,7 @@ s_int8 landmap::add_submap(u_int16 l, u_int16 h)
 {
   s_int8 err=add_submap();
   if(err) return err;
-  submap[nbr_of_submaps-1].resize(l,h);
+  submap[nbr_of_submaps-1]->resize(l,h);
   return 0;
 }
 
@@ -470,60 +558,7 @@ void landmap::reset_objs()
 s_int8 landmap::set_square_pattern(u_int16 smap, u_int16 px, u_int16 py, 
 				   u_int16 patnbr)
 {
-  u_int16 i,j;
-  mapsquare_tile t;
-  
-  // FIXME: Bad placement when overflowing the map from bottom right when the 
-  // base tile isn't at right of the object.
-  // Bad initialisation of i0/j0/ie/je ( must be init like remove_obj)
-
-  u_int16 ie=pattern[patnbr].maptpl::get_length();
-  u_int16 je=pattern[patnbr].maptpl::get_height();
-
-  ie=px-pattern[patnbr].basex+ie>submap[smap].length?submap[smap].length-px:ie;
-  je=py-pattern[patnbr].basey+je>submap[smap].height?submap[smap].height-py:je;
-
-  u_int16 i0=(px-pattern[patnbr].basex)>0?0:pattern[patnbr].basex-px;
-  u_int16 j0=(py-pattern[patnbr].basey)>0?0:pattern[patnbr].basey-py;
-  // Steps:
-  // -Find out where to start/stop placing the object (screen overflow)
-  // -For each square, place it in the right order
-  //  Don't forget to update the base_begin iterator to refer to the
-  //  first base tile that's on the square.
-  list<mapsquare_tile>::iterator it;
-
-  if(patnbr>nbr_of_patterns) return -1;
-  // First place the base tile, as others refers to it...
-  t.objnbr=patnbr;
-  t.is_base=true;
-  t.x=px;
-  t.y=py;
-  for(it=submap[smap].land[px][py].tiles.begin();
-      it!=submap[smap].land[px][py].tiles.end() && *(it->base_tile)<=t; it++);
-  submap[smap].land[px][py].tiles.insert(it,t);
-  it--;
-  it->base_tile=it;
-
-  // Get the base tile iterator for the others tiles
-  t.base_tile=it;
-  t.is_base=false;
-  for(j=j0;j<je;j++)
-    for(i=i0;i<ie;i++)
-      {
-	t.x=px-pattern[patnbr].basex+i;
-	t.y=py-pattern[patnbr].basey+j;
-	if(pattern[patnbr].basex!=i || pattern[patnbr].basey!=j)
-	  {
-	    for(it=submap[smap].land[t.x][t.y].tiles.begin();
-		it!=submap[smap].land[t.x][t.y].tiles.end() &&
-		  *(it->base_tile) <= *(t.base_tile);it++);
-	    submap[smap].land[t.x][t.y].tiles.insert(it,t);
-	  }
-      }
-  for(it=submap[smap].land[px][py].tiles.begin();
-      it!=submap[smap].land[px][py].tiles.end() && *(it->base_tile)<*it;it++);
-  submap[smap].land[px][py].base_begin=it;
-  return 0;
+  return submap[smap]->set_square_pattern(px,py,patnbr);
 }
 
 void landmap::remove_obj_from_square(u_int16 smap,
@@ -539,10 +574,10 @@ void landmap::remove_obj_from_square(u_int16 smap,
   u_int16 j0=(obj->base_tile->y-pattern[obj->objnbr].basey)>0?0:
     pattern[obj->objnbr].basey-obj->base_tile->y;
 
-  ie=obj->base_tile->x-pattern[obj->objnbr].basex+ie>submap[smap].length?
-    submap[smap].length-obj->base_tile->x:ie;
-  je=obj->base_tile->y-pattern[obj->objnbr].basey+je>submap[smap].height?
-    submap[smap].height-obj->base_tile->y:je;
+  ie=obj->base_tile->x-pattern[obj->objnbr].basex+ie>submap[smap]->length?
+    submap[smap]->length-obj->base_tile->x:ie;
+  je=obj->base_tile->y-pattern[obj->objnbr].basey+je>submap[smap]->height?
+    submap[smap]->height-obj->base_tile->y:je;
 
   ie-=i0;
   je-=j0;
@@ -554,18 +589,18 @@ void landmap::remove_obj_from_square(u_int16 smap,
   for(j=j0;j<je;j++)
     for(i=i0;i<ie;i++)
       {
-	it=submap[smap].land[i][j].tiles.begin();
-	while(it!=submap[smap].land[i][j].tiles.end() && 
+	it=submap[smap]->land[i][j].tiles.begin();
+	while(it!=submap[smap]->land[i][j].tiles.end() && 
 	      it->base_tile!=obj->base_tile) it++;
-	if(it!=submap[smap].land[i][j].tiles.end())
+	if(it!=submap[smap]->land[i][j].tiles.end())
 	  {
-	    submap[smap].land[i][j].tiles.erase(it);
-	    for(it=submap[smap].land[i][j].tiles.begin();
-		it!=submap[smap].land[i][j].tiles.end();it++);
-	    for(it=submap[smap].land[i][j].tiles.begin();
-		it!=submap[smap].land[i][j].tiles.end() && 
+	    submap[smap]->land[i][j].tiles.erase(it);
+	    for(it=submap[smap]->land[i][j].tiles.begin();
+		it!=submap[smap]->land[i][j].tiles.end();it++);
+	    for(it=submap[smap]->land[i][j].tiles.begin();
+		it!=submap[smap]->land[i][j].tiles.end() && 
 		  *(it->base_tile)<*it;it++);
-	    submap[smap].land[i][j].base_begin=it;
+	    submap[smap]->land[i][j].base_begin=it;
 	  }  
       }
 }
@@ -598,10 +633,10 @@ s_int8 landmap::insert_mapobject(mapobject &an, u_int16 pos)
   if(pos==nbr_of_patterns-1) return 0;
   
   for(k=0;k<nbr_of_submaps;k++)
-    for(j=0;j<submap[k].height;j++)
-      for(i=0;i<submap[k].length;i++)
-	for(it=submap[k].land[i][j].tiles.begin();
-	    it!=submap[k].land[i][j].tiles.end();it++)
+    for(j=0;j<submap[k]->height;j++)
+      for(i=0;i<submap[k]->length;i++)
+	for(it=submap[k]->land[i][j].tiles.begin();
+	    it!=submap[k]->land[i][j].tiles.end();it++)
 	  if(it->objnbr>=pos) it->objnbr++;
 
 #ifdef _DEBUG_
@@ -636,17 +671,17 @@ s_int8 landmap::delete_mapobject(u_int16 pos)
 #endif
   
   for(k=0;k<nbr_of_submaps;k++)
-    for(j=0;j<submap[k].height;j++)
-      for(i=0;i<submap[k].length;i++)
-	for(it=submap[k].land[i][j].tiles.begin();
-	    it!=submap[k].land[i][j].tiles.end();it++)
+    for(j=0;j<submap[k]->height;j++)
+      for(i=0;i<submap[k]->length;i++)
+	for(it=submap[k]->land[i][j].tiles.begin();
+	    it!=submap[k]->land[i][j].tiles.end();it++)
 	  {
 	  shamegoto:
 	    if(it->objnbr>pos) 
 	      it->objnbr--;
 	    else if(it->objnbr==pos) 
 	      {
-		it=submap[k].land[i][j].tiles.erase(it);
+		it=submap[k]->land[i][j].tiles.erase(it);
 		goto shamegoto;
 	      }
 	  }
@@ -664,5 +699,5 @@ s_int8 landmap::delete_mapobject(u_int16 pos)
 void landmap::draw_square(u_int16 smap, u_int16 x, u_int16 y, u_int16 px, 
 			  u_int16 py, drawing_area * da_opt=NULL)
 {
-  submap[smap].draw_square(x,y,px,py,pattern,da_opt);
+  submap[smap]->draw_square(x,y,px,py,pattern,da_opt);
 }

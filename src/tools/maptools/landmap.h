@@ -73,6 +73,8 @@ class mapsquare
   friend class mapview;
 };  // mapsquare
 
+class landmap;
+
 class landsubmap
 {
 #ifdef _DEBUG_
@@ -81,6 +83,7 @@ class landsubmap
   static u_int16 a_d_diff;
 #endif
  public:
+  landmap * m_map;
   mapsquare ** land;          // The mapsquares refers to the parent map
   // patterns.
   u_int16 length, height;
@@ -97,8 +100,17 @@ class landsubmap
   inline void destroymap();
   void resize(u_int16 l, u_int16 h);
 
+  s_int8 get(gzFile file);
+
+#ifdef _EDIT_
+  s_int8 put(gzFile file);
+#endif
+
   u_int16 get_length();
   u_int16 get_height();
+
+  s_int8 set_square_pattern(u_int16 px, u_int16 py, 
+			    u_int16 patnbr);
 
   void draw_square(u_int16 x, u_int16 y, u_int16 px, u_int16 py, 
 		   mapobject * pattern, drawing_area * da_opt=NULL);
@@ -134,7 +146,7 @@ class landmap
   mapobject * pattern;
   u_int16 nbr_of_patterns;
   
-  landsubmap * submap;
+  landsubmap ** submap;
   u_int16 nbr_of_submaps;
 
  public:
@@ -154,7 +166,7 @@ class landmap
 
   s_int8 add_object(mapobject& an);  
 
-  s_int8 set_square_pattern(u_int16 smap,u_int16 px, u_int16 py, 
+  s_int8 set_square_pattern(u_int16 smap, u_int16 px, u_int16 py, 
 			    u_int16 patnbr);
 
   void remove_obj_from_square(u_int16 smap,
