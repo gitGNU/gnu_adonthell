@@ -1,0 +1,479 @@
+#LyX 1.1 created this file. For more info see http://www.lyx.org/
+\lyxformat 2.15
+\textclass article
+\language default
+\inputencoding latin1
+\fontscheme default
+\graphics default
+\paperfontsize default
+\spacing single 
+\papersize Default
+\paperpackage a4
+\use_geometry 0
+\use_amsmath 0
+\paperorientation portrait
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\defskip medskip
+\quotes_language english
+\quotes_times 2
+\papercolumns 1
+\papersides 1
+\paperpagestyle fancy
+
+\layout Author
+
+VENNIN Joël
+\layout Title
+
+Windows System
+\layout Section
+
+Objects types
+\layout Standard
+
+There are for the moment 5 object types:
+\layout Description
+
+win_base: Is the base object, i.e all other objects inherit from it.
+\layout Description
+
+win_label: Used to display some text.
+\layout Description
+
+win_write: Allow user to write text in real time (input method).
+\layout Description
+
+win_image: Allow to display an image.
+\layout Description
+
+win_container: This object is an 
+\begin_inset Quotes eld
+\end_inset 
+
+object container
+\begin_inset Quotes erd
+\end_inset 
+
+, i.e.
+ it's possible and even necessary to create containers to use all the features
+ of the different objects.
+ Into a container you can place others win_label, win_image, etc...
+ Even others win_container.
+\layout Description
+
+win_select: Selection object, not yet usuable (soon! :))
+\layout Section
+
+gfxtree/window directory structure
+\layout Standard
+
+This structure cannot be changed.
+ Files and directories names must be exactly the same for a good working
+ of the system.
+ A theme system can be used which use the directory name to know which graphics
+ to load.
+ The default theme is the theme 
+\begin_inset Quotes eld
+\end_inset 
+
+original
+\begin_inset Quotes erd
+\end_inset 
+
+.
+ A theme contains the graphics and also information about their sizes.
+\layout Subsection
+
+Structure and file names
+\layout Subsubsection*
+
+Background:
+\layout Itemize
+
+window/background/original/background.pnm
+\layout Subsubsection*
+
+Border:
+\layout Itemize
+
+window/border/original/mini for small borders
+\layout Itemize
+
+window/border/original/normal for normal size borders
+\layout Standard
+
+The files have the same name for each theme: corner.pnm, h_border.pnm and
+ v_border.pnm.
+\layout Subsubsection*
+
+Cursor:
+\layout Itemize
+
+window/cursor/original/cursor.pnm
+\layout Standard
+
+Theme should be able to use different cursors.
+\layout Subsection*
+
+Font:
+\layout Itemize
+
+window/font/original/
+\layout Standard
+
+At the moment there is two files font.idx and font.pnm.
+ In a near future a font editor will allow the creation of different fonts.
+\layout Subsubsection*
+
+Eventual modifications:
+\layout Standard
+
+All the paths and file names can be changed in 
+\begin_inset Quotes eld
+\end_inset 
+
+win_types.h
+\begin_inset Quotes erd
+\end_inset 
+
+.
+\layout Section
+
+Window System Spirit.
+\layout Standard
+
+A large word, but you have to know that the window system has been developped
+ in a certain usage spirit.
+ There are generally different ways to add objects, but often only one is
+ correct for your use.
+ So during the explanation of the system I'll ask you to use them a certain
+ way in order to avoid lots of errors and also our worst common ennemy,
+ I've named the 
+\emph on 
+Segfault
+\emph default 
+.
+\layout Section
+
+Objects usage
+\layout Subsection
+
+win_border:
+\layout Standard
+
+This class is designed to load all what is necessary to build a border.
+\layout Subsubsection*
+
+Creating a win_border
+\layout LyX-Code
+
+win_border * border1 = new win_border (WIN_THEME_ORIGINAL,WIN_BORDER_NORMAL_SIZE
+);
+\layout Standard
+
+The first parameter is the border theme (WIN_THEME_ORIGINAL to use the default),
+ the second is the border's size (WIN_BORDER_MINI_SIZE or WIN_BORDER_NORMAL_SIZE
+).
+\layout Subsection
+
+win_background:
+\layout Standard
+
+This class is designed to load all what is necessary to build a background.
+\layout Subsubsection*
+
+Creating a win_background:
+\layout LyX-Code
+
+win_background * back1 = new win_background(WIN_THEME_ORIGINAL);
+\layout Standard
+
+The parameter is the theme of the background.
+\layout Subsection
+
+win_font:
+\layout Standard
+
+This class is designed to load all what is necessary to display text.
+\layout Subsubsection*
+
+Creation d'un win_font:
+\layout LyX-Code
+
+win_font * font1 = new win_font(WIN_THEME_ORIGINAL);
+\layout Standard
+
+You should now guess what the parameter is for.
+ :)
+\layout Subsection
+
+Common methods for win_label, win_write, win_image and win_container:
+\layout Standard
+
+All these objects inherit from win_base.
+ As a consequence, they have common methods.
+\layout Itemize
+
+get_x() and get_y() return their coordinates in their container.
+\layout Itemize
+
+get_length() and get_height() return their size.
+\layout Itemize
+
+resize(u_int16,u_int16) and move(u_int16,u_int16) allow you to move or resize
+ an object.
+ The 
+\emph on 
+move
+\emph default 
+ parameters are from the container the object is in.
+\layout Itemize
+
+set_border(win_border*) and set_background(win_background*) allow to change
+ the border or background of each object.
+ If the parameter is 
+\emph on 
+NULL
+\emph default 
+ border or background are disabled.
+\layout Itemize
+
+show() and hide() allow to show or hide the object.
+\layout Section*
+
+Les win_container:
+\layout Standard
+
+These objects are the base for a good window system construction.
+ Keep in mind that all the others objects depends of the base container.
+ So the first created object must be a container, and all others objects
+ must be created from it.
+\layout Subsubsection*
+
+Creating the first container:
+\layout LyX-Code
+
+win_container * cont1=new container(10,20,60,60);
+\layout Subsubsection*
+
+Creating a sub-container:
+\layout LyX-Code
+
+win_container * cont2=cont1->add_container(20,20,20,20);
+\layout Subsubsection*
+
+Creation a sub-sub container:
+\layout LyX-Code
+
+win_container * cont3=cont2->add_container(5,5,30,40);
+\layout Standard
+
+To update or draw ALL the objects into a container you just have to call
+ the 
+\emph on 
+update()
+\emph default 
+ or 
+\emph on 
+draw()
+\emph default 
+ function of this container.
+ For exemple:
+\layout LyX-Code
+
+cont1->update();
+\layout LyX-Code
+
+cont1->draw();
+\layout Standard
+
+Will update and draw cont1, cont2 and cont3.
+\layout Subsubsection*
+
+Remove an object from container:
+\layout LyX-Code
+
+cont1->remove(
+\begin_inset Quotes eld
+\end_inset 
+
+object name
+\begin_inset Quotes erd
+\end_inset 
+
+);
+\layout Standard
+
+With this method the parameter object is destroyed, you shouldn't do it
+ manually.
+\layout Standard
+
+If you delete a container, all the objects that belong to it are also destroyed.
+\layout Standard
+
+So for the base container, just do a 
+\emph on 
+delete
+\emph default 
+ and all it's objects will be destroyed.
+\layout Subsubsection*
+
+Visualisation of a container:
+\layout Standard
+
+
+\emph on 
+container::show_all()
+\emph default 
+ show all the objects of a container, and 
+\emph on 
+container::hide_all()
+\emph default 
+ hide them all.
+\layout Section
+
+win_label:
+\layout Standard
+
+This object allow you to place labels into a container.
+\layout Subsubsection*
+
+Creating a win_label:
+\layout LyX-Code
+
+win_container * cont1 = new win_container(10,10,100,100);
+\layout LyX-Code
+
+win_font * font1 = new win_font(WIN_THEME_ORIGINAL);
+\layout LyX-Code
+
+win_label * label1 = cont1->add_label(10,10,20,20,font1);
+\layout Standard
+
+The parameters are the coordinates(x,y) the size(w,h) and the font to use
+ for displaying text.
+\layout Subsubsection*
+
+Changing the font:
+\layout LyX-Code
+
+win_font * font2 = new win_font(WIN_THEME_ANOTHER);
+\layout LyX-Code
+
+label1->set_font(font2);
+\layout Subsubsection*
+
+Inserting text:
+\layout LyX-Code
+
+label1->set_text(
+\begin_inset Quotes eld
+\end_inset 
+
+Urrkk I just hope it will work okay!
+\begin_inset Quotes erd
+\end_inset 
+
+);
+\layout Subsubsection*
+
+Erasing text:
+\layout LyX-Code
+
+label1->erase_text();
+\layout Subsubsection*
+
+Going to next page:
+\layout LyX-Code
+
+label1->next_page();
+\layout Standard
+
+This function allow to go to the next page if the text takes more place
+ than the label.
+\layout Subsubsection*
+
+Testing if the current page is the last:
+\layout LyX-Code
+
+label1->end_text();
+\layout Section
+
+win_write:
+\layout Standard
+
+Their creation is the same as for win_label.
+\layout Subsubsection*
+
+Testing if some text has been entered:
+\layout LyX-Code
+
+write1->is_text();
+\layout Subsubsection*
+
+Getting typed text (if is_text() returns 
+\emph on 
+true
+\emph default 
+):
+\layout LyX-Code
+
+char * recup;
+\layout LyX-Code
+
+if(write1->is_text())
+\layout LyX-Code
+
+
+\protected_separator 
+ 
+\protected_separator 
+ 
+\protected_separator 
+ 
+\protected_separator 
+ recup=strdup(write1->get_text());
+\layout Standard
+
+You MUST use strdup() or beware the Segfault! Also don't forget to delete
+ 
+\emph on 
+recup
+\emph default 
+ as strdup allocates it.
+\layout Section
+
+win_image:
+\layout Subsubsection*
+
+Creating a win_image:
+\layout LyX-Code
+
+win_image * image1 = cont1->add_image(5,5,ima1);
+\layout Standard
+
+ima1 is a pointer to an image.
+\layout Subsubsection*
+
+Changing image:
+\layout LyX-Code
+
+image1->set_image(ima2);
+\layout Section
+
+win_select:
+\layout Standard
+
+They are working! So why doesn't I explain them? Because I'm thinking about
+ some conceptual problems and don't know if I have to change them.
+ Please be patient, they should be available soon.
+\layout Section
+
+Conclusion
+\layout Standard
+
+Please report me bugs or problems.
+ Have fun!
+\the_end
