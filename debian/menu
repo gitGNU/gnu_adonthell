@@ -1,2 +1,0 @@
-?package(adonthell):needs=X11 section="Games/RPG"\
-  title="Adonthell - Waste's Edge" command="/usr/bin/adonthell"
