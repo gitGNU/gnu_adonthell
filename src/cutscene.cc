@@ -21,6 +21,9 @@ cutscene::cutscene()
   keyframes->imagekeys=(imagekey*)calloc(sizeof(imagekey),1);
   keyframes->nextframe->imagekeys=(imagekey*)calloc(sizeof(imagekey),1);
 
+  keyframes->imagekeys->nextimg=NULL;
+  keyframes->nextframe->imagekeys->nextimg=NULL;
+
   num_keyframes=2;
   current_keyframe_ptr=keyframes;
 
@@ -45,6 +48,7 @@ u_int8 cutscene::insert_keyframe(u_int16 key)
       ptr->prevframe->prevframe=NULL;
       ptr->prevframe->imagekeys=(imagekey*)calloc(sizeof(imagekey),1);
       keyframes=ptr->prevframe;
+      current_keyframe_ptr=keyframes;
     }else{
       for(x=0;x<key;x++) ptr=ptr->nextframe; //Find the frame to insert before
       ptr->prevframe->nextframe=(keyframe*)calloc(sizeof(keyframe),1);
@@ -176,10 +180,12 @@ u_int8 cutscene::render_scene()
 
   if(current_keyframe_ptr->nextframe==NULL) return(1);
 
-  ptr2=current_keyframe_ptr->imagekeys;
-  ptr3=ptr->imagekeys;
+  //  ptr2=current_keyframe_ptr->imagekeys;
+  //  ptr3=ptr->imagekeys;
   for(i=0;i<num_anims;i++)
     {
+      ptr2=current_keyframe_ptr->imagekeys;
+      ptr3=ptr->imagekeys;
       for(j=0;j<i;j++) 
 	{
 	  ptr2=ptr2->nextimg;
@@ -187,10 +193,10 @@ u_int8 cutscene::render_scene()
 	}
       if(ptr2->visible==1) 
 	{ 
-	  if((cyclecounter%ptr2->animspeed)==0)ptr2->anim->next_frame();
+	  if((cyclecounter%ptr2->animspeed)==0) ptr2->anim->next_frame();
 	  x=(ptr2->x+(((ptr3->x-ptr2->x)*cyclecounter)/current_keyframe_ptr->cycles));
 	  y=(ptr2->y+(((ptr3->y-ptr2->y)*cyclecounter)/current_keyframe_ptr->cycles));
-	  //	  fprintf(stdout, "cyclecount: %d, x: %d, y: %d\n",cyclecounter,x,y);
+	  //  fprintf(stdout, "cyclecount: %d, x: %d, y: %d\n",cyclecounter,x,y);
 	  ptr2->anim->draw(x,y);
 	}
     }
