@@ -70,8 +70,8 @@ libadonthell_a_SOURCES = animation.cc drawable.cc drawing_area.cc fileops.cc \
 	win_scrollbar.h win_scroll.h win_select.h win_theme.h win_keys.h win_event.h win_types.h \
 	win_write.h win_manager.h win_object.h window.h callback_sig.cc callback_sig.h\
 	callback_slot.h atk_font.h atk_font.cc atk_widget.cc atk_widget.h \
-	atk_container.h atk_misc.cc atk_misc.h \
-	input_manager.h input_event.h input_listener.h keyboard_event.h joystick_event.h mouse_event.h
+	atk_container.h atk_container.cc atk_label.h atk_label.cc atk_box.h atk_box.cc atk_misc.cc atk_misc.h \
+	input_manager.h input_event.h input_listener.h keyboard_event.h joystick_event.h mouse_event.h 	
 
 
 alextest_SOURCES = main.cc

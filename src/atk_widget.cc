@@ -60,6 +60,7 @@ s_int32 atk_widget::get_y_real () const
 
 void atk_widget::set_size (u_int32 length, u_int32 height)
 {
+    if (get_length () == length && get_height () == height) return; 
     resize (length, height); 
 }
 

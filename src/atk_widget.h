@@ -31,9 +31,14 @@
 class atk_container; 
 
 
+
 class atk_window
 {}; 
 
+
+/**
+ * It's the common class for all object in the Adonthell Tool Kit.
+ */
 class atk_widget : protected drawing_area
 {
 public : 
@@ -42,6 +47,10 @@ public :
      */
      atk_widget (); 
 
+    /** This method is abstract, it's used to build the widget.
+     */
+    virtual void realize () = 0; 
+    
 
     /** Set the parent of this widget. A widget can have only one parent
      *  @param parent his new parent
@@ -52,7 +61,7 @@ public :
     /** Set the parent window, parent window 
      *
      */
-
+    
 
     /** set position of this widget (but the layout can change this value) ,  position in his parent
      * @param x
@@ -182,7 +191,7 @@ public :
 
     /** Execute on_destroy callback 
      */
-    ~atk_widget (); 
+    virtual ~atk_widget (); 
 
 
     
