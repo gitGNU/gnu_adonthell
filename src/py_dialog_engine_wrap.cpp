@@ -487,8 +487,22 @@ SWIG_InstallConstants(PyObject *d, swig_const_info constants[]) {
 
 /* -------- TYPES TABLE (BEGIN) -------- */
 
-#define  SWIGTYPE_p_dialog_engine swig_types[0] 
-static swig_type_info *swig_types[2];
+#define  SWIGTYPE_p_drawing_area swig_types[0] 
+#define  SWIGTYPE_p_player swig_types[1] 
+#define  SWIGTYPE_p_win_base swig_types[2] 
+#define  SWIGTYPE_p_win_background swig_types[3] 
+#define  SWIGTYPE_p_dialog_engine swig_types[4] 
+#define  SWIGTYPE_p_win_border swig_types[5] 
+#define  SWIGTYPE_p_Functor0wRet_bool_ swig_types[6] 
+#define  SWIGTYPE_p_u_int16 swig_types[7] 
+#define  SWIGTYPE_p_s_int16 swig_types[8] 
+#define  SWIGTYPE_p_win_container swig_types[9] 
+#define  SWIGTYPE_p_win_scrollbar swig_types[10] 
+#define  SWIGTYPE_p_Functor0 swig_types[11] 
+#define  SWIGTYPE_p_win_theme swig_types[12] 
+#define  SWIGTYPE_p_npc swig_types[13] 
+#define  SWIGTYPE_p_character swig_types[14] 
+static swig_type_info *swig_types[16];
 
 /* -------- TYPES TABLE (END) -------- */
 
@@ -503,12 +517,1185 @@ static swig_type_info *swig_types[2];
 
 #include "types.h"
 #include "character.h"
-#include "dialog_engine.h"
+#include "win_types.h"
+#include "win_theme.h"
+#include "win_base.h"
 #include "win_container.h"
+#include "dialog_engine.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+static PyObject *_wrap_character_name_set(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    character *arg0 ;
+    char *arg1 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"Os:character_name_set",&argo0,&arg1)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_character,1)) == -1) return NULL;
+    arg0->name = arg1;
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_character_name_get(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    character *arg0 ;
+    PyObject * argo0 =0 ;
+    char *result ;
+    
+    if(!PyArg_ParseTuple(args,"O:character_name_get",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_character,1)) == -1) return NULL;
+    result = (char *) (arg0->name);
+    resultobj = PyString_FromString(result);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_character_color_set(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    character *arg0 ;
+    unsigned long arg1 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"Ol:character_color_set",&argo0,&arg1)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_character,1)) == -1) return NULL;
+    arg0->color = arg1;
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_character_color_get(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    character *arg0 ;
+    PyObject * argo0 =0 ;
+    unsigned long result ;
+    
+    if(!PyArg_ParseTuple(args,"O:character_color_get",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_character,1)) == -1) return NULL;
+    result = (unsigned long ) (arg0->color);
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_new_character(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    character *result ;
+    
+    if(!PyArg_ParseTuple(args,":new_character")) return NULL;
+    result = (character *)new character();
+    resultobj = SWIG_NewPointerObj((void *) result, SWIGTYPE_p_character);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_delete_character(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    character *arg0 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"O:delete_character",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_character,1)) == -1) return NULL;
+    delete arg0;
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_new_npc(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    npc *result ;
+    
+    if(!PyArg_ParseTuple(args,":new_npc")) return NULL;
+    result = (npc *)new npc();
+    resultobj = SWIG_NewPointerObj((void *) result, SWIGTYPE_p_npc);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_delete_npc(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    npc *arg0 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"O:delete_npc",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_npc,1)) == -1) return NULL;
+    delete arg0;
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_npc_set_dialogue(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    npc *arg0 ;
+    char *arg1 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"Os:npc_set_dialogue",&argo0,&arg1)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_npc,1)) == -1) return NULL;
+    arg0->set_dialogue(arg1);
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_npc_get_dialogue(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    npc *arg0 ;
+    PyObject * argo0 =0 ;
+    char *result ;
+    
+    if(!PyArg_ParseTuple(args,"O:npc_get_dialogue",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_npc,1)) == -1) return NULL;
+    result = (char *)arg0->get_dialogue();
+    resultobj = PyString_FromString(result);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_new_player(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    player *result ;
+    
+    if(!PyArg_ParseTuple(args,":new_player")) return NULL;
+    result = (player *)new player();
+    resultobj = SWIG_NewPointerObj((void *) result, SWIGTYPE_p_player);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_delete_player(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    player *arg0 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"O:delete_player",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_player,1)) == -1) return NULL;
+    delete arg0;
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_theme_normal_set(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_theme *arg0 ;
+    win_border *arg1 ;
+    PyObject * argo0 =0 ;
+    PyObject * argo1 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"OO:win_theme_normal_set",&argo0,&argo1)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_theme,1)) == -1) return NULL;
+    if ((SWIG_ConvertPtr(argo1,(void **) &arg1,SWIGTYPE_p_win_border,1)) == -1) return NULL;
+    arg0->normal = arg1;
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_theme_normal_get(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_theme *arg0 ;
+    PyObject * argo0 =0 ;
+    win_border *result ;
+    
+    if(!PyArg_ParseTuple(args,"O:win_theme_normal_get",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_theme,1)) == -1) return NULL;
+    result = (win_border *) (arg0->normal);
+    resultobj = SWIG_NewPointerObj((void *) result, SWIGTYPE_p_win_border);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_theme_mini_set(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_theme *arg0 ;
+    win_border *arg1 ;
+    PyObject * argo0 =0 ;
+    PyObject * argo1 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"OO:win_theme_mini_set",&argo0,&argo1)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_theme,1)) == -1) return NULL;
+    if ((SWIG_ConvertPtr(argo1,(void **) &arg1,SWIGTYPE_p_win_border,1)) == -1) return NULL;
+    arg0->mini = arg1;
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_theme_mini_get(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_theme *arg0 ;
+    PyObject * argo0 =0 ;
+    win_border *result ;
+    
+    if(!PyArg_ParseTuple(args,"O:win_theme_mini_get",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_theme,1)) == -1) return NULL;
+    result = (win_border *) (arg0->mini);
+    resultobj = SWIG_NewPointerObj((void *) result, SWIGTYPE_p_win_border);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_theme_background_set(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_theme *arg0 ;
+    win_background *arg1 ;
+    PyObject * argo0 =0 ;
+    PyObject * argo1 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"OO:win_theme_background_set",&argo0,&argo1)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_theme,1)) == -1) return NULL;
+    if ((SWIG_ConvertPtr(argo1,(void **) &arg1,SWIGTYPE_p_win_background,1)) == -1) return NULL;
+    arg0->background = arg1;
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_theme_background_get(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_theme *arg0 ;
+    PyObject * argo0 =0 ;
+    win_background *result ;
+    
+    if(!PyArg_ParseTuple(args,"O:win_theme_background_get",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_theme,1)) == -1) return NULL;
+    result = (win_background *) (arg0->background);
+    resultobj = SWIG_NewPointerObj((void *) result, SWIGTYPE_p_win_background);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_theme_scrollbar_set(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_theme *arg0 ;
+    win_scrollbar *arg1 ;
+    PyObject * argo0 =0 ;
+    PyObject * argo1 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"OO:win_theme_scrollbar_set",&argo0,&argo1)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_theme,1)) == -1) return NULL;
+    if ((SWIG_ConvertPtr(argo1,(void **) &arg1,SWIGTYPE_p_win_scrollbar,1)) == -1) return NULL;
+    arg0->scrollbar = arg1;
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_theme_scrollbar_get(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_theme *arg0 ;
+    PyObject * argo0 =0 ;
+    win_scrollbar *result ;
+    
+    if(!PyArg_ParseTuple(args,"O:win_theme_scrollbar_get",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_theme,1)) == -1) return NULL;
+    result = (win_scrollbar *) (arg0->scrollbar);
+    resultobj = SWIG_NewPointerObj((void *) result, SWIGTYPE_p_win_scrollbar);
+    return resultobj;
+}
+
+
+static int _wrap_win_theme__theme_set(PyObject *val) {
+    char * tval;
+    
+    tval = (char *) PyString_AsString(val);
+    if (PyErr_Occurred()) {
+        PyErr_SetString(PyExc_TypeError,"C variable 'win_theme_theme'(char *)");
+        return 1; 
+    }
+    if (win_theme::theme) delete [] win_theme::theme;
+    win_theme::theme = new char[strlen(tval)+1];
+    strcpy((char *)win_theme::theme,tval);
+    return 0;
+}
+
+
+static PyObject *_wrap_win_theme__theme_get() {
+    PyObject *pyobj;
+    
+    if (win_theme::theme)
+    pyobj = PyString_FromString(win_theme::theme);
+    else pyobj = PyString_FromString("(NULL)");
+    return pyobj;
+}
+
+
+static PyObject *_wrap_new_win_theme(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    char *arg0 ;
+    win_theme *result ;
+    
+    if(!PyArg_ParseTuple(args,"s:new_win_theme",&arg0)) return NULL;
+    result = (win_theme *)new win_theme(arg0);
+    resultobj = SWIG_NewPointerObj((void *) result, SWIGTYPE_p_win_theme);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_theme_destroy(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_theme *arg0 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"O:win_theme_destroy",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_theme,1)) == -1) return NULL;
+    arg0->destroy();
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_theme_update(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_theme *arg0 ;
+    win_base *arg1 = NULL ;
+    PyObject * argo0 =0 ;
+    PyObject * argo1 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"O|O:win_theme_update",&argo0,&argo1)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_theme,1)) == -1) return NULL;
+    if ((SWIG_ConvertPtr(argo1,(void **) &arg1,SWIGTYPE_p_win_base,1)) == -1) return NULL;
+    arg0->update(arg1);
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_delete_win_theme(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_theme *arg0 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"O:delete_win_theme",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_theme,1)) == -1) return NULL;
+    delete arg0;
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_new_win_base(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    s_int16 *arg0 ;
+    s_int16 *arg1 ;
+    u_int16 *arg2 ;
+    u_int16 *arg3 ;
+    win_theme *arg4 ;
+    PyObject * argo0 =0 ;
+    PyObject * argo1 =0 ;
+    PyObject * argo2 =0 ;
+    PyObject * argo3 =0 ;
+    PyObject * argo4 =0 ;
+    win_base *result ;
+    
+    if(!PyArg_ParseTuple(args,"OOOOO:new_win_base",&argo0,&argo1,&argo2,&argo3,&argo4)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_s_int16,1)) == -1) return NULL;
+    if ((SWIG_ConvertPtr(argo1,(void **) &arg1,SWIGTYPE_p_s_int16,1)) == -1) return NULL;
+    if ((SWIG_ConvertPtr(argo2,(void **) &arg2,SWIGTYPE_p_u_int16,1)) == -1) return NULL;
+    if ((SWIG_ConvertPtr(argo3,(void **) &arg3,SWIGTYPE_p_u_int16,1)) == -1) return NULL;
+    if ((SWIG_ConvertPtr(argo4,(void **) &arg4,SWIGTYPE_p_win_theme,1)) == -1) return NULL;
+    result = (win_base *)new win_base(*arg0,*arg1,*arg2,*arg3,arg4);
+    resultobj = SWIG_NewPointerObj((void *) result, SWIGTYPE_p_win_base);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_delete_win_base(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_base *arg0 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"O:delete_win_base",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_base,1)) == -1) return NULL;
+    delete arg0;
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_base_x(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_base *arg0 ;
+    PyObject * argo0 =0 ;
+    s_int16 *result ;
+    
+    if(!PyArg_ParseTuple(args,"O:win_base_x",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_base,1)) == -1) return NULL;
+    result = new s_int16 (arg0->x());    resultobj = SWIG_NewPointerObj((void *)result, SWIGTYPE_p_s_int16);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_base_y(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_base *arg0 ;
+    PyObject * argo0 =0 ;
+    s_int16 *result ;
+    
+    if(!PyArg_ParseTuple(args,"O:win_base_y",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_base,1)) == -1) return NULL;
+    result = new s_int16 (arg0->y());    resultobj = SWIG_NewPointerObj((void *)result, SWIGTYPE_p_s_int16);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_base_length(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_base *arg0 ;
+    PyObject * argo0 =0 ;
+    u_int16 *result ;
+    
+    if(!PyArg_ParseTuple(args,"O:win_base_length",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_base,1)) == -1) return NULL;
+    result = new u_int16 (arg0->length());    resultobj = SWIG_NewPointerObj((void *)result, SWIGTYPE_p_u_int16);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_base_height(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_base *arg0 ;
+    PyObject * argo0 =0 ;
+    u_int16 *result ;
+    
+    if(!PyArg_ParseTuple(args,"O:win_base_height",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_base,1)) == -1) return NULL;
+    result = new u_int16 (arg0->height());    resultobj = SWIG_NewPointerObj((void *)result, SWIGTYPE_p_u_int16);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_base_padx(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_base *arg0 ;
+    PyObject * argo0 =0 ;
+    s_int16 *result ;
+    
+    if(!PyArg_ParseTuple(args,"O:win_base_padx",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_base,1)) == -1) return NULL;
+    s_int16 &_result_ref = arg0->padx();
+    result = (s_int16 *) &_result_ref;
+    resultobj = SWIG_NewPointerObj((void *) result, SWIGTYPE_p_s_int16);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_base_pady(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_base *arg0 ;
+    PyObject * argo0 =0 ;
+    s_int16 *result ;
+    
+    if(!PyArg_ParseTuple(args,"O:win_base_pady",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_base,1)) == -1) return NULL;
+    s_int16 &_result_ref = arg0->pady();
+    result = (s_int16 *) &_result_ref;
+    resultobj = SWIG_NewPointerObj((void *) result, SWIGTYPE_p_s_int16);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_base_realx(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_base *arg0 ;
+    PyObject * argo0 =0 ;
+    s_int16 *result ;
+    
+    if(!PyArg_ParseTuple(args,"O:win_base_realx",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_base,1)) == -1) return NULL;
+    result = new s_int16 (arg0->realx());    resultobj = SWIG_NewPointerObj((void *)result, SWIGTYPE_p_s_int16);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_base_realy(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_base *arg0 ;
+    PyObject * argo0 =0 ;
+    s_int16 *result ;
+    
+    if(!PyArg_ParseTuple(args,"O:win_base_realy",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_base,1)) == -1) return NULL;
+    result = new s_int16 (arg0->realy());    resultobj = SWIG_NewPointerObj((void *)result, SWIGTYPE_p_s_int16);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_base_move(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_base *arg0 ;
+    s_int16 *arg1 ;
+    s_int16 *arg2 ;
+    PyObject * argo0 =0 ;
+    PyObject * argo1 =0 ;
+    PyObject * argo2 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"OOO:win_base_move",&argo0,&argo1,&argo2)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_base,1)) == -1) return NULL;
+    if ((SWIG_ConvertPtr(argo1,(void **) &arg1,SWIGTYPE_p_s_int16,1)) == -1) return NULL;
+    if ((SWIG_ConvertPtr(argo2,(void **) &arg2,SWIGTYPE_p_s_int16,1)) == -1) return NULL;
+    arg0->move(*arg1,*arg2);
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_base_resize(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_base *arg0 ;
+    u_int16 *arg1 ;
+    u_int16 *arg2 ;
+    PyObject * argo0 =0 ;
+    PyObject * argo1 =0 ;
+    PyObject * argo2 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"OOO:win_base_resize",&argo0,&argo1,&argo2)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_base,1)) == -1) return NULL;
+    if ((SWIG_ConvertPtr(argo1,(void **) &arg1,SWIGTYPE_p_u_int16,1)) == -1) return NULL;
+    if ((SWIG_ConvertPtr(argo2,(void **) &arg2,SWIGTYPE_p_u_int16,1)) == -1) return NULL;
+    arg0->resize(*arg1,*arg2);
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_base_set_border_size(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_base *arg0 ;
+    unsigned char arg1 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"Ob:win_base_set_border_size",&argo0,&arg1)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_base,1)) == -1) return NULL;
+    arg0->set_border_size(arg1);
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_base_set_visible(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_base *arg0 ;
+    bool arg1 ;
+    PyObject * argo0 =0 ;
+    int tempbool1 ;
+    
+    if(!PyArg_ParseTuple(args,"Oi:win_base_set_visible",&argo0,&tempbool1)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_base,1)) == -1) return NULL;
+    arg1 = (bool ) tempbool1;
+    arg0->set_visible(arg1);
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_base_is_visible(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_base *arg0 ;
+    PyObject * argo0 =0 ;
+    bool result ;
+    
+    if(!PyArg_ParseTuple(args,"O:win_base_is_visible",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_base,1)) == -1) return NULL;
+    result = (bool )arg0->is_visible();
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_base_set_background_visible(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_base *arg0 ;
+    bool arg1 ;
+    PyObject * argo0 =0 ;
+    int tempbool1 ;
+    
+    if(!PyArg_ParseTuple(args,"Oi:win_base_set_background_visible",&argo0,&tempbool1)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_base,1)) == -1) return NULL;
+    arg1 = (bool ) tempbool1;
+    arg0->set_background_visible(arg1);
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_base_is_background_visible(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_base *arg0 ;
+    PyObject * argo0 =0 ;
+    bool result ;
+    
+    if(!PyArg_ParseTuple(args,"O:win_base_is_background_visible",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_base,1)) == -1) return NULL;
+    result = (bool )arg0->is_background_visible();
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_base_set_border_visible(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_base *arg0 ;
+    bool arg1 ;
+    PyObject * argo0 =0 ;
+    int tempbool1 ;
+    
+    if(!PyArg_ParseTuple(args,"Oi:win_base_set_border_visible",&argo0,&tempbool1)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_base,1)) == -1) return NULL;
+    arg1 = (bool ) tempbool1;
+    arg0->set_border_visible(arg1);
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_base_is_border_visible(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_base *arg0 ;
+    PyObject * argo0 =0 ;
+    bool result ;
+    
+    if(!PyArg_ParseTuple(args,"O:win_base_is_border_visible",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_base,1)) == -1) return NULL;
+    result = (bool )arg0->is_border_visible();
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_base_set_signal_connect(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_base *arg0 ;
+    Functor0 *arg1 ;
+    unsigned char arg2 ;
+    PyObject * argo0 =0 ;
+    PyObject * argo1 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"OOb:win_base_set_signal_connect",&argo0,&argo1,&arg2)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_base,1)) == -1) return NULL;
+    if ((SWIG_ConvertPtr(argo1,(void **) &arg1,SWIGTYPE_p_Functor0,1)) == -1) return NULL;
+    arg0->set_signal_connect((Functor0 const &)*arg1,arg2);
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_base_set_callback_destroy(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_base *arg0 ;
+    Functor0wRet<bool> *arg1 ;
+    PyObject * argo0 =0 ;
+    PyObject * argo1 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"OO:win_base_set_callback_destroy",&argo0,&argo1)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_base,1)) == -1) return NULL;
+    if ((SWIG_ConvertPtr(argo1,(void **) &arg1,SWIGTYPE_p_Functor0wRet_bool_,1)) == -1) return NULL;
+    arg0->set_callback_destroy((Functor0wRet<bool> const &)*arg1);
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_base_set_activated(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_base *arg0 ;
+    bool arg1 ;
+    PyObject * argo0 =0 ;
+    int tempbool1 ;
+    
+    if(!PyArg_ParseTuple(args,"Oi:win_base_set_activated",&argo0,&tempbool1)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_base,1)) == -1) return NULL;
+    arg1 = (bool ) tempbool1;
+    arg0->set_activated(arg1);
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_base_is_activated(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_base *arg0 ;
+    PyObject * argo0 =0 ;
+    bool result ;
+    
+    if(!PyArg_ParseTuple(args,"O:win_base_is_activated",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_base,1)) == -1) return NULL;
+    result = (bool )arg0->is_activated();
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_base_is_in_select(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_base *arg0 ;
+    PyObject * argo0 =0 ;
+    bool result ;
+    
+    if(!PyArg_ParseTuple(args,"O:win_base_is_in_select",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_base,1)) == -1) return NULL;
+    result = (bool )arg0->is_in_select();
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_base_is_select(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_base *arg0 ;
+    PyObject * argo0 =0 ;
+    bool result ;
+    
+    if(!PyArg_ParseTuple(args,"O:win_base_is_select",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_base,1)) == -1) return NULL;
+    result = (bool )arg0->is_select();
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_base_set_draw_brightness(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_base *arg0 ;
+    bool arg1 ;
+    PyObject * argo0 =0 ;
+    int tempbool1 ;
+    
+    if(!PyArg_ParseTuple(args,"Oi:win_base_set_draw_brightness",&argo0,&tempbool1)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_base,1)) == -1) return NULL;
+    arg1 = (bool ) tempbool1;
+    arg0->set_draw_brightness(arg1);
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_base_set_level_brightness(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_base *arg0 ;
+    u_int16 *arg1 ;
+    PyObject * argo0 =0 ;
+    PyObject * argo1 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"OO:win_base_set_level_brightness",&argo0,&argo1)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_base,1)) == -1) return NULL;
+    if ((SWIG_ConvertPtr(argo1,(void **) &arg1,SWIGTYPE_p_u_int16,1)) == -1) return NULL;
+    arg0->set_level_brightness(*arg1);
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_base_set_level_trans_background(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_base *arg0 ;
+    u_int16 *arg1 ;
+    PyObject * argo0 =0 ;
+    PyObject * argo1 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"OO:win_base_set_level_trans_background",&argo0,&argo1)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_base,1)) == -1) return NULL;
+    if ((SWIG_ConvertPtr(argo1,(void **) &arg1,SWIGTYPE_p_u_int16,1)) == -1) return NULL;
+    arg0->set_level_trans_background(*arg1);
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_base_set_theme(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_base *arg0 ;
+    win_theme *arg1 ;
+    PyObject * argo0 =0 ;
+    PyObject * argo1 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"OO:win_base_set_theme",&argo0,&argo1)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_base,1)) == -1) return NULL;
+    if ((SWIG_ConvertPtr(argo1,(void **) &arg1,SWIGTYPE_p_win_theme,1)) == -1) return NULL;
+    arg0->set_theme(arg1);
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_base_get_drawing_area(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_base *arg0 ;
+    PyObject * argo0 =0 ;
+    drawing_area *result ;
+    
+    if(!PyArg_ParseTuple(args,"O:win_base_get_drawing_area",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_base,1)) == -1) return NULL;
+    result = (drawing_area *)arg0->get_drawing_area();
+    resultobj = SWIG_NewPointerObj((void *) result, SWIGTYPE_p_drawing_area);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_base_update(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_base *arg0 ;
+    PyObject * argo0 =0 ;
+    bool result ;
+    
+    if(!PyArg_ParseTuple(args,"O:win_base_update",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_base,1)) == -1) return NULL;
+    result = (bool )arg0->update();
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_base_update_real_position(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_base *arg0 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"O:win_base_update_real_position",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_base,1)) == -1) return NULL;
+    arg0->update_real_position();
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_base_draw(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_base *arg0 ;
+    PyObject * argo0 =0 ;
+    bool result ;
+    
+    if(!PyArg_ParseTuple(args,"O:win_base_draw",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_base,1)) == -1) return NULL;
+    result = (bool )arg0->draw();
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_new_win_container(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    s_int16 *arg0 ;
+    s_int16 *arg1 ;
+    u_int16 *arg2 ;
+    u_int16 *arg3 ;
+    win_theme *arg4 ;
+    PyObject * argo0 =0 ;
+    PyObject * argo1 =0 ;
+    PyObject * argo2 =0 ;
+    PyObject * argo3 =0 ;
+    PyObject * argo4 =0 ;
+    win_container *result ;
+    
+    if(!PyArg_ParseTuple(args,"OOOOO:new_win_container",&argo0,&argo1,&argo2,&argo3,&argo4)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_s_int16,1)) == -1) return NULL;
+    if ((SWIG_ConvertPtr(argo1,(void **) &arg1,SWIGTYPE_p_s_int16,1)) == -1) return NULL;
+    if ((SWIG_ConvertPtr(argo2,(void **) &arg2,SWIGTYPE_p_u_int16,1)) == -1) return NULL;
+    if ((SWIG_ConvertPtr(argo3,(void **) &arg3,SWIGTYPE_p_u_int16,1)) == -1) return NULL;
+    if ((SWIG_ConvertPtr(argo4,(void **) &arg4,SWIGTYPE_p_win_theme,1)) == -1) return NULL;
+    result = (win_container *)new win_container(*arg0,*arg1,*arg2,*arg3,arg4);
+    resultobj = SWIG_NewPointerObj((void *) result, SWIGTYPE_p_win_container);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_delete_win_container(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_container *arg0 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"O:delete_win_container",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_container,1)) == -1) return NULL;
+    delete arg0;
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_container_add(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_container *arg0 ;
+    win_base *arg1 ;
+    PyObject * argo0 =0 ;
+    PyObject * argo1 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"OO:win_container_add",&argo0,&argo1)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_container,1)) == -1) return NULL;
+    if ((SWIG_ConvertPtr(argo1,(void **) &arg1,SWIGTYPE_p_win_base,1)) == -1) return NULL;
+    arg0->add(arg1);
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_container_remove(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_container *arg0 ;
+    win_base *arg1 ;
+    PyObject * argo0 =0 ;
+    PyObject * argo1 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"OO:win_container_remove",&argo0,&argo1)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_container,1)) == -1) return NULL;
+    if ((SWIG_ConvertPtr(argo1,(void **) &arg1,SWIGTYPE_p_win_base,1)) == -1) return NULL;
+    arg0->remove(arg1);
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_container_remove_all(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_container *arg0 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"O:win_container_remove_all",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_container,1)) == -1) return NULL;
+    arg0->remove_all();
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_container_destroy(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_container *arg0 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"O:win_container_destroy",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_container,1)) == -1) return NULL;
+    arg0->destroy();
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_container_update(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_container *arg0 ;
+    PyObject * argo0 =0 ;
+    bool result ;
+    
+    if(!PyArg_ParseTuple(args,"O:win_container_update",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_container,1)) == -1) return NULL;
+    result = (bool )arg0->update();
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_container_draw(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_container *arg0 ;
+    PyObject * argo0 =0 ;
+    bool result ;
+    
+    if(!PyArg_ParseTuple(args,"O:win_container_draw",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_container,1)) == -1) return NULL;
+    result = (bool )arg0->draw();
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_container_move(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_container *arg0 ;
+    s_int16 *arg1 ;
+    s_int16 *arg2 ;
+    PyObject * argo0 =0 ;
+    PyObject * argo1 =0 ;
+    PyObject * argo2 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"OOO:win_container_move",&argo0,&argo1,&argo2)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_container,1)) == -1) return NULL;
+    if ((SWIG_ConvertPtr(argo1,(void **) &arg1,SWIGTYPE_p_s_int16,1)) == -1) return NULL;
+    if ((SWIG_ConvertPtr(argo2,(void **) &arg2,SWIGTYPE_p_s_int16,1)) == -1) return NULL;
+    arg0->move(*arg1,*arg2);
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_container_set_space_between_border(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_container *arg0 ;
+    u_int16 *arg1 ;
+    PyObject * argo0 =0 ;
+    PyObject * argo1 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"OO:win_container_set_space_between_border",&argo0,&argo1)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_container,1)) == -1) return NULL;
+    if ((SWIG_ConvertPtr(argo1,(void **) &arg1,SWIGTYPE_p_u_int16,1)) == -1) return NULL;
+    arg0->set_space_between_border(*arg1);
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_container_set_space_between_object(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_container *arg0 ;
+    u_int16 *arg1 ;
+    PyObject * argo0 =0 ;
+    PyObject * argo1 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"OO:win_container_set_space_between_object",&argo0,&argo1)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_container,1)) == -1) return NULL;
+    if ((SWIG_ConvertPtr(argo1,(void **) &arg1,SWIGTYPE_p_u_int16,1)) == -1) return NULL;
+    arg0->set_space_between_object(*arg1);
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_container_get_space_between_border(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_container *arg0 ;
+    PyObject * argo0 =0 ;
+    u_int16 *result ;
+    
+    if(!PyArg_ParseTuple(args,"O:win_container_get_space_between_border",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_container,1)) == -1) return NULL;
+    result = new u_int16 (arg0->get_space_between_border());    resultobj = SWIG_NewPointerObj((void *)result, SWIGTYPE_p_u_int16);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_container_get_space_between_object(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_container *arg0 ;
+    PyObject * argo0 =0 ;
+    u_int16 *result ;
+    
+    if(!PyArg_ParseTuple(args,"O:win_container_get_space_between_object",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_container,1)) == -1) return NULL;
+    result = new u_int16 (arg0->get_space_between_object());    resultobj = SWIG_NewPointerObj((void *)result, SWIGTYPE_p_u_int16);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_container_set_draw_brightness(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_container *arg0 ;
+    bool arg1 ;
+    PyObject * argo0 =0 ;
+    int tempbool1 ;
+    
+    if(!PyArg_ParseTuple(args,"Oi:win_container_set_draw_brightness",&argo0,&tempbool1)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_container,1)) == -1) return NULL;
+    arg1 = (bool ) tempbool1;
+    arg0->set_draw_brightness(arg1);
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_container_set_visible_all(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_container *arg0 ;
+    bool arg1 ;
+    PyObject * argo0 =0 ;
+    int tempbool1 ;
+    
+    if(!PyArg_ParseTuple(args,"Oi:win_container_set_visible_all",&argo0,&tempbool1)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_container,1)) == -1) return NULL;
+    arg1 = (bool ) tempbool1;
+    arg0->set_visible_all(arg1);
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_container_set_justify(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_container *arg0 ;
+    unsigned char arg1 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"Ob:win_container_set_justify",&argo0,&arg1)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_container,1)) == -1) return NULL;
+    arg0->set_justify(arg1);
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_container_set_layout(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_container *arg0 ;
+    unsigned char arg1 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"Ob:win_container_set_layout",&argo0,&arg1)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_container,1)) == -1) return NULL;
+    arg0->set_layout(arg1);
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_container_update_real_position(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_container *arg0 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"O:win_container_update_real_position",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_container,1)) == -1) return NULL;
+    arg0->update_real_position();
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
 static PyObject *_wrap_dialog_engine_set_portrait(PyObject *self, PyObject *args) {
     PyObject *resultobj;
     dialog_engine *arg0 ;
@@ -556,11 +1743,39 @@ static PyObject *_wrap_dialog_engine_set_npc(PyObject *self, PyObject *args) {
 
 static PyObject *_wrap_new_dialog_engine(PyObject *self, PyObject *args) {
     PyObject *resultobj;
+    npc *arg0 ;
+    win_theme *arg1 ;
+    unsigned char arg2 = 1 ;
+    PyObject * argo0 =0 ;
+    PyObject * argo1 =0 ;
     dialog_engine *result ;
     
-    if(!PyArg_ParseTuple(args,":new_dialog_engine")) return NULL;
-    result = (dialog_engine *)new dialog_engine();
+    if(!PyArg_ParseTuple(args,"OO|b:new_dialog_engine",&argo0,&argo1,&arg2)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_npc,1)) == -1) return NULL;
+    if ((SWIG_ConvertPtr(argo1,(void **) &arg1,SWIGTYPE_p_win_theme,1)) == -1) return NULL;
+    result = (dialog_engine *)new dialog_engine(arg0,arg1,arg2);
     resultobj = SWIG_NewPointerObj((void *) result, SWIGTYPE_p_dialog_engine);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_dialog_engine_init(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    dialog_engine *arg0 ;
+    npc *arg1 ;
+    win_theme *arg2 ;
+    unsigned char arg3 = 1 ;
+    PyObject * argo0 =0 ;
+    PyObject * argo1 =0 ;
+    PyObject * argo2 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"OOO|b:dialog_engine_init",&argo0,&argo1,&argo2,&arg3)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_dialog_engine,1)) == -1) return NULL;
+    if ((SWIG_ConvertPtr(argo1,(void **) &arg1,SWIGTYPE_p_npc,1)) == -1) return NULL;
+    if ((SWIG_ConvertPtr(argo2,(void **) &arg2,SWIGTYPE_p_win_theme,1)) == -1) return NULL;
+    arg0->init(arg1,arg2,arg3);
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
     return resultobj;
 }
 
@@ -579,12 +1794,159 @@ static PyObject *_wrap_delete_dialog_engine(PyObject *self, PyObject *args) {
 }
 
 
+static PyObject *_wrap_dialog_engine_update(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    dialog_engine *arg0 ;
+    PyObject * argo0 =0 ;
+    bool result ;
+    
+    if(!PyArg_ParseTuple(args,"O:dialog_engine_update",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_dialog_engine,1)) == -1) return NULL;
+    result = (bool )arg0->update();
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_dialog_engine_run(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    dialog_engine *arg0 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"O:dialog_engine_run",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_dialog_engine,1)) == -1) return NULL;
+    arg0->run();
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_dialog_engine_is_running_set(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    dialog_engine *arg0 ;
+    bool arg1 ;
+    PyObject * argo0 =0 ;
+    int tempbool1 ;
+    
+    if(!PyArg_ParseTuple(args,"Oi:dialog_engine_is_running_set",&argo0,&tempbool1)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_dialog_engine,1)) == -1) return NULL;
+    arg1 = (bool ) tempbool1;
+    arg0->is_running = arg1;
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_dialog_engine_is_running_get(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    dialog_engine *arg0 ;
+    PyObject * argo0 =0 ;
+    bool result ;
+    
+    if(!PyArg_ParseTuple(args,"O:dialog_engine_is_running_get",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_dialog_engine,1)) == -1) return NULL;
+    result = (bool ) (arg0->is_running);
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+}
+
+
 static PyMethodDef dialog_enginecMethods[] = {
+	 { "character_name_set", _wrap_character_name_set, METH_VARARGS },
+	 { "character_name_get", _wrap_character_name_get, METH_VARARGS },
+	 { "character_color_set", _wrap_character_color_set, METH_VARARGS },
+	 { "character_color_get", _wrap_character_color_get, METH_VARARGS },
+	 { "new_character", _wrap_new_character, METH_VARARGS },
+	 { "delete_character", _wrap_delete_character, METH_VARARGS },
+	 { "new_npc", _wrap_new_npc, METH_VARARGS },
+	 { "delete_npc", _wrap_delete_npc, METH_VARARGS },
+	 { "npc_set_dialogue", _wrap_npc_set_dialogue, METH_VARARGS },
+	 { "npc_get_dialogue", _wrap_npc_get_dialogue, METH_VARARGS },
+	 { "npc_name_set", _wrap_character_name_set, METH_VARARGS },
+	 { "npc_name_get", _wrap_character_name_get, METH_VARARGS },
+	 { "npc_color_set", _wrap_character_color_set, METH_VARARGS },
+	 { "npc_color_get", _wrap_character_color_get, METH_VARARGS },
+	 { "new_player", _wrap_new_player, METH_VARARGS },
+	 { "delete_player", _wrap_delete_player, METH_VARARGS },
+	 { "player_name_set", _wrap_character_name_set, METH_VARARGS },
+	 { "player_name_get", _wrap_character_name_get, METH_VARARGS },
+	 { "player_color_set", _wrap_character_color_set, METH_VARARGS },
+	 { "player_color_get", _wrap_character_color_get, METH_VARARGS },
+	 { "win_theme_normal_set", _wrap_win_theme_normal_set, METH_VARARGS },
+	 { "win_theme_normal_get", _wrap_win_theme_normal_get, METH_VARARGS },
+	 { "win_theme_mini_set", _wrap_win_theme_mini_set, METH_VARARGS },
+	 { "win_theme_mini_get", _wrap_win_theme_mini_get, METH_VARARGS },
+	 { "win_theme_background_set", _wrap_win_theme_background_set, METH_VARARGS },
+	 { "win_theme_background_get", _wrap_win_theme_background_get, METH_VARARGS },
+	 { "win_theme_scrollbar_set", _wrap_win_theme_scrollbar_set, METH_VARARGS },
+	 { "win_theme_scrollbar_get", _wrap_win_theme_scrollbar_get, METH_VARARGS },
+	 { "new_win_theme", _wrap_new_win_theme, METH_VARARGS },
+	 { "win_theme_destroy", _wrap_win_theme_destroy, METH_VARARGS },
+	 { "win_theme_update", _wrap_win_theme_update, METH_VARARGS },
+	 { "delete_win_theme", _wrap_delete_win_theme, METH_VARARGS },
+	 { "new_win_base", _wrap_new_win_base, METH_VARARGS },
+	 { "delete_win_base", _wrap_delete_win_base, METH_VARARGS },
+	 { "win_base_x", _wrap_win_base_x, METH_VARARGS },
+	 { "win_base_y", _wrap_win_base_y, METH_VARARGS },
+	 { "win_base_length", _wrap_win_base_length, METH_VARARGS },
+	 { "win_base_height", _wrap_win_base_height, METH_VARARGS },
+	 { "win_base_padx", _wrap_win_base_padx, METH_VARARGS },
+	 { "win_base_pady", _wrap_win_base_pady, METH_VARARGS },
+	 { "win_base_realx", _wrap_win_base_realx, METH_VARARGS },
+	 { "win_base_realy", _wrap_win_base_realy, METH_VARARGS },
+	 { "win_base_move", _wrap_win_base_move, METH_VARARGS },
+	 { "win_base_resize", _wrap_win_base_resize, METH_VARARGS },
+	 { "win_base_set_border_size", _wrap_win_base_set_border_size, METH_VARARGS },
+	 { "win_base_set_visible", _wrap_win_base_set_visible, METH_VARARGS },
+	 { "win_base_is_visible", _wrap_win_base_is_visible, METH_VARARGS },
+	 { "win_base_set_background_visible", _wrap_win_base_set_background_visible, METH_VARARGS },
+	 { "win_base_is_background_visible", _wrap_win_base_is_background_visible, METH_VARARGS },
+	 { "win_base_set_border_visible", _wrap_win_base_set_border_visible, METH_VARARGS },
+	 { "win_base_is_border_visible", _wrap_win_base_is_border_visible, METH_VARARGS },
+	 { "win_base_set_signal_connect", _wrap_win_base_set_signal_connect, METH_VARARGS },
+	 { "win_base_set_callback_destroy", _wrap_win_base_set_callback_destroy, METH_VARARGS },
+	 { "win_base_set_activated", _wrap_win_base_set_activated, METH_VARARGS },
+	 { "win_base_is_activated", _wrap_win_base_is_activated, METH_VARARGS },
+	 { "win_base_is_in_select", _wrap_win_base_is_in_select, METH_VARARGS },
+	 { "win_base_is_select", _wrap_win_base_is_select, METH_VARARGS },
+	 { "win_base_set_draw_brightness", _wrap_win_base_set_draw_brightness, METH_VARARGS },
+	 { "win_base_set_level_brightness", _wrap_win_base_set_level_brightness, METH_VARARGS },
+	 { "win_base_set_level_trans_background", _wrap_win_base_set_level_trans_background, METH_VARARGS },
+	 { "win_base_set_theme", _wrap_win_base_set_theme, METH_VARARGS },
+	 { "win_base_get_drawing_area", _wrap_win_base_get_drawing_area, METH_VARARGS },
+	 { "win_base_update", _wrap_win_base_update, METH_VARARGS },
+	 { "win_base_update_real_position", _wrap_win_base_update_real_position, METH_VARARGS },
+	 { "win_base_draw", _wrap_win_base_draw, METH_VARARGS },
+	 { "new_win_container", _wrap_new_win_container, METH_VARARGS },
+	 { "delete_win_container", _wrap_delete_win_container, METH_VARARGS },
+	 { "win_container_add", _wrap_win_container_add, METH_VARARGS },
+	 { "win_container_remove", _wrap_win_container_remove, METH_VARARGS },
+	 { "win_container_remove_all", _wrap_win_container_remove_all, METH_VARARGS },
+	 { "win_container_destroy", _wrap_win_container_destroy, METH_VARARGS },
+	 { "win_container_update", _wrap_win_container_update, METH_VARARGS },
+	 { "win_container_draw", _wrap_win_container_draw, METH_VARARGS },
+	 { "win_container_move", _wrap_win_container_move, METH_VARARGS },
+	 { "win_container_set_space_between_border", _wrap_win_container_set_space_between_border, METH_VARARGS },
+	 { "win_container_set_space_between_object", _wrap_win_container_set_space_between_object, METH_VARARGS },
+	 { "win_container_get_space_between_border", _wrap_win_container_get_space_between_border, METH_VARARGS },
+	 { "win_container_get_space_between_object", _wrap_win_container_get_space_between_object, METH_VARARGS },
+	 { "win_container_set_draw_brightness", _wrap_win_container_set_draw_brightness, METH_VARARGS },
+	 { "win_container_set_visible_all", _wrap_win_container_set_visible_all, METH_VARARGS },
+	 { "win_container_set_justify", _wrap_win_container_set_justify, METH_VARARGS },
+	 { "win_container_set_layout", _wrap_win_container_set_layout, METH_VARARGS },
+	 { "win_container_update_real_position", _wrap_win_container_update_real_position, METH_VARARGS },
 	 { "dialog_engine_set_portrait", _wrap_dialog_engine_set_portrait, METH_VARARGS },
 	 { "dialog_engine_set_name", _wrap_dialog_engine_set_name, METH_VARARGS },
 	 { "dialog_engine_set_npc", _wrap_dialog_engine_set_npc, METH_VARARGS },
 	 { "new_dialog_engine", _wrap_new_dialog_engine, METH_VARARGS },
+	 { "dialog_engine_init", _wrap_dialog_engine_init, METH_VARARGS },
 	 { "delete_dialog_engine", _wrap_delete_dialog_engine, METH_VARARGS },
+	 { "dialog_engine_update", _wrap_dialog_engine_update, METH_VARARGS },
+	 { "dialog_engine_run", _wrap_dialog_engine_run, METH_VARARGS },
+	 { "dialog_engine_is_running_set", _wrap_dialog_engine_is_running_set, METH_VARARGS },
+	 { "dialog_engine_is_running_get", _wrap_dialog_engine_is_running_get, METH_VARARGS },
 	 { NULL, NULL }
 };
 
@@ -594,10 +1956,53 @@ static PyMethodDef dialog_enginecMethods[] = {
 
 /* -------- TYPE CONVERSION AND EQUIVALENCE RULES (BEGIN) -------- */
 
+static void *_p_dialog_engineTo_p_win_base(void *x) {
+    return (void *)((win_base *) ((dialog_engine *) x));
+}
+static void *_p_win_containerTo_p_win_base(void *x) {
+    return (void *)((win_base *) ((win_container *) x));
+}
+static void *_p_dialog_engineTo_p_win_container(void *x) {
+    return (void *)((win_container *) ((dialog_engine *) x));
+}
+static void *_p_npcTo_p_character(void *x) {
+    return (void *)((character *) ((npc *) x));
+}
+static void *_p_playerTo_p_character(void *x) {
+    return (void *)((character *) ((player *) x));
+}
+static swig_type_info _swigt__p_drawing_area[] = {{"_p_drawing_area", 0, "drawing_area *"},{"_p_drawing_area"},{0}};
+static swig_type_info _swigt__p_player[] = {{"_p_player", 0, "player *"},{"_p_player"},{0}};
+static swig_type_info _swigt__p_win_base[] = {{"_p_win_base", 0, "win_base *"},{"_p_win_base"},{"_p_dialog_engine", _p_dialog_engineTo_p_win_base},{"_p_win_container", _p_win_containerTo_p_win_base},{0}};
+static swig_type_info _swigt__p_win_background[] = {{"_p_win_background", 0, "win_background *"},{"_p_win_background"},{0}};
 static swig_type_info _swigt__p_dialog_engine[] = {{"_p_dialog_engine", 0, "dialog_engine *"},{"_p_dialog_engine"},{0}};
+static swig_type_info _swigt__p_win_border[] = {{"_p_win_border", 0, "win_border *"},{"_p_win_border"},{0}};
+static swig_type_info _swigt__p_Functor0wRet_bool_[] = {{"_p_Functor0wRet_bool_", 0, "Functor0wRet<bool> *"},{"_p_Functor0wRet_bool_"},{0}};
+static swig_type_info _swigt__p_u_int16[] = {{"_p_u_int16", 0, "u_int16 *"},{"_p_u_int16"},{0}};
+static swig_type_info _swigt__p_s_int16[] = {{"_p_s_int16", 0, "s_int16 *"},{"_p_s_int16"},{0}};
+static swig_type_info _swigt__p_win_container[] = {{"_p_win_container", 0, "win_container *"},{"_p_dialog_engine", _p_dialog_engineTo_p_win_container},{"_p_win_container"},{0}};
+static swig_type_info _swigt__p_win_scrollbar[] = {{"_p_win_scrollbar", 0, "win_scrollbar *"},{"_p_win_scrollbar"},{0}};
+static swig_type_info _swigt__p_Functor0[] = {{"_p_Functor0", 0, "Functor0 *"},{"_p_Functor0"},{0}};
+static swig_type_info _swigt__p_win_theme[] = {{"_p_win_theme", 0, "win_theme *"},{"_p_win_theme"},{0}};
+static swig_type_info _swigt__p_npc[] = {{"_p_npc", 0, "npc *"},{"_p_npc"},{0}};
+static swig_type_info _swigt__p_character[] = {{"_p_character", 0, "character *"},{"_p_npc", _p_npcTo_p_character},{"_p_player", _p_playerTo_p_character},{"_p_character"},{0}};
 
 static swig_type_info *swig_types_initial[] = {
+_swigt__p_drawing_area, 
+_swigt__p_player, 
+_swigt__p_win_base, 
+_swigt__p_win_background, 
 _swigt__p_dialog_engine, 
+_swigt__p_win_border, 
+_swigt__p_Functor0wRet_bool_, 
+_swigt__p_u_int16, 
+_swigt__p_s_int16, 
+_swigt__p_win_container, 
+_swigt__p_win_scrollbar, 
+_swigt__p_Functor0, 
+_swigt__p_win_theme, 
+_swigt__p_npc, 
+_swigt__p_character, 
 0
 };
 
@@ -605,6 +2010,12 @@ _swigt__p_dialog_engine,
 /* -------- TYPE CONVERSION AND EQUIVALENCE RULES (END) -------- */
 
 static swig_const_info swig_const_table[] = {
+    { SWIG_PY_INT,     "DWARF", (long) DWARF, 0, 0, 0},
+    { SWIG_PY_INT,     "ELF", (long) ELF, 0, 0, 0},
+    { SWIG_PY_INT,     "HALFELF", (long) HALFELF, 0, 0, 0},
+    { SWIG_PY_INT,     "HUMAN", (long) HUMAN, 0, 0, 0},
+    { SWIG_PY_INT,     "FEMALE", (long) FEMALE, 0, 0, 0},
+    { SWIG_PY_INT,     "MALE", (long) MALE, 0, 0, 0},
 {0}};
 
 static PyObject *SWIG_globals;
@@ -620,6 +2031,8 @@ SWIGEXPORT(void) initdialog_enginec(void) {
     for (i = 0; swig_types_initial[i]; i++) {
         swig_types[i] = SWIG_TypeRegister(swig_types_initial[i]);
     }
+    PyDict_SetItemString(d,"cvar", SWIG_globals);
+    SWIG_addvarlink(SWIG_globals,"win_theme_theme",_wrap_win_theme__theme_get, _wrap_win_theme__theme_set);
     SWIG_InstallConstants(d,swig_const_table);
 }
 

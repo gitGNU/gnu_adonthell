@@ -128,7 +128,7 @@ void process_character (char *input, gzFile output)
                 case 3:
                 {
                     // create new event and attach it to the npc
-                    if (strcmp (vals[0], "type") == 0)
+		  /*                    if (strcmp (vals[0], "type") == 0)
                     {
                         if (strcmp (vals[1], "Enter") == 0)
                         {
@@ -183,16 +183,17 @@ void process_character (char *input, gzFile output)
                         g_strfreev (params);
                         i = 0;
                     }
-                    
+		  */
                     break;
                 }
 
                 // read schedule/dialogue script
                 case 4:
                 {
+		  /*
                     if (strcmp (vals[0], "dialogue") == 0) mynpc.set_dialogue (vals[1]);
                     else if (strcmp (vals[0], "schedule") == 0) mynpc.set_schedule (strdup (vals[1]), false);
-       
+		  */       
                     break;
                 }
             }

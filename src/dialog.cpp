@@ -272,7 +272,7 @@ char* dialog::scan_string (const char *s)
             string[end-1] = 0;        
             strncpy (string, start+3, end);
 
-            if (the_player->get("gender") == FEMALE) mid = get_substr (string, "{", "/");
+            if (the_player->storage::get("gender") == FEMALE) mid = get_substr (string, "{", "/");
             else mid = get_substr (string, "/", "}");
 
             begin = strlen(newstr) - strlen(start);

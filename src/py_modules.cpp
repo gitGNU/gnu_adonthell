@@ -35,6 +35,8 @@ extern "C"
 	void initlandmapc (void);
 	void initmapcharacterc (void);
 	void initmapviewc (void);
+	void initmapenginec (void);
+	void initeventc (void);
 }
 
 /*
@@ -65,6 +67,8 @@ bool init_python (void)
 	initlandmapc();
 	initmapcharacterc();
 	initmapviewc();
+	initmapenginec();
+	initeventc();
 	return true;
 }
 

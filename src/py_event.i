@@ -1,10 +1,8 @@
-%module landmap
+%module event
 
 %{
 
-#include "character.h"
-#include "landmap.h"
-#include "mapview.h"
+#include "event.h"
 
 %}
 
@@ -16,8 +14,3 @@
 #define s_int32 signed long
 
 %include "event.h"
-%include "mapcharacter.h"
-%include "character.h"
-%include "landmap.h"
-%include "mapview.h"
-

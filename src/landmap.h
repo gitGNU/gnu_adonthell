@@ -17,6 +17,7 @@
 
 #include "mapobject.h"
 #include "mapcharacter.h"
+#include "event.h"
 #include <string>
 #include <vector>
 #include <list>
@@ -101,17 +102,28 @@ class mapsquare
   // Draw takes only a mapview as argument.
   void draw(s_int16 x, s_int16 y, mapobject ** pattern, 
 	    drawing_area * da_opt=NULL);
+
   bool is_free() 
     { 
       list<mapsquare_char>::iterator i;
       for(i=mapchars.begin();i!=mapchars.end();i++)
-	if(!i->walkable) return false;
+	if(i->is_base) return false;
       return true;
     }
+
+  mapcharacter * whoshere()
+    {
+      list<mapsquare_char>::iterator i;
+      for(i=mapchars.begin();i!=mapchars.end();i++)
+	if(i->is_base) return i->mchar;
+      return NULL;
+    }
+
   bool is_walkable_left() { return (walkable & WALKABLE_LEFT); }
   bool is_walkable_right() { return (walkable & WALKABLE_RIGHT); }
   bool is_walkable_up() { return (walkable & WALKABLE_UP); }
   bool is_walkable_down() { return (walkable & WALKABLE_DOWN); }
+
   void set_walkable_left(bool w)
     {
       if(!w) walkable&=(ALL_WALKABLE-WALKABLE_LEFT);
@@ -185,7 +197,7 @@ class landsubmap
 
 #endif // SWIG
 
-class landmap
+class landmap: public event_list
 {
 #if defined _DEBUG_ || defined _EDIT_
   static u_int16 a_d_diff;
@@ -213,6 +225,7 @@ class landmap
   mapobject ** pattern;
   vector<string> objsrc;
   landsubmap ** submap;
+  mapview * myview;
 #endif // SWIG
 
   u_int16 nbr_of_patterns;
@@ -222,6 +235,8 @@ class landmap
   landmap();
   void clear();
   ~landmap();
+
+  mapview * get_mapview() { return myview; }
 
 #ifndef SWIG
   landmap& operator =(const landmap& lm);
@@ -258,10 +273,9 @@ class landmap
   void draw_square(u_int16 smap, u_int16 x, u_int16 y, u_int16 px, u_int16 py,
 		   drawing_area * da_opt=NULL);
 
-  s_int8 add_submap(u_int16 l, u_int16 h);
-
 #ifndef SWIG
   s_int8 add_submap();
+  s_int8 add_submap(u_int16 l, u_int16 h);
   
   void remove_obj_from_square(u_int16 smap,
 			      list<mapsquare_tile>::iterator obj);  

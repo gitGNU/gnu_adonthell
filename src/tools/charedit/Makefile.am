@@ -12,7 +12,7 @@ mergechars_SOURCES = mergechars.cc
 mergechars_LDADD = character.o storage.o event.o fileops.o
 
 # Evil, but it works...
-CPPFLAGS +=-I../.. `gtk-config --cflags`
+CPPFLAGS +=-I../.. -D_DLGEDIT_ `gtk-config --cflags`
 
 LDFLAGS=-lm -lstdc++ `gtk-config --libs`
 

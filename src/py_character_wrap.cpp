@@ -488,10 +488,18 @@ SWIG_InstallConstants(PyObject *d, swig_const_info constants[]) {
 /* -------- TYPES TABLE (BEGIN) -------- */
 
 #define  SWIGTYPE_p_npc swig_types[0] 
-#define  SWIGTYPE_p_storage swig_types[1] 
-#define  SWIGTYPE_p_player swig_types[2] 
-#define  SWIGTYPE_p_character swig_types[3] 
-static swig_type_info *swig_types[5];
+#define  SWIGTYPE_p_equal_key swig_types[1] 
+#define  SWIGTYPE_p_landmap swig_types[2] 
+#define  SWIGTYPE_p_pair_const_char___signed_long_ swig_types[3] 
+#define  SWIGTYPE_p_storage swig_types[4] 
+#define  SWIGTYPE_p_ltstr swig_types[5] 
+#define  SWIGTYPE_p_objects swig_types[6] 
+#define  SWIGTYPE_p_player swig_types[7] 
+#define  SWIGTYPE_p_mapcharacter swig_types[8] 
+#define  SWIGTYPE_p_character swig_types[9] 
+#define  SWIGTYPE_p_gzFile swig_types[10] 
+#define  SWIGTYPE_p_mapview swig_types[11] 
+static swig_type_info *swig_types[13];
 
 /* -------- TYPES TABLE (END) -------- */
 
@@ -505,6 +513,7 @@ static swig_type_info *swig_types[5];
 
 
 #include "types.h"
+#include "mapcharacter.h"
 #include "character.h"
 #include "storage.h"
 #include "dialog_engine.h"
@@ -513,33 +522,52 @@ static swig_type_info *swig_types[5];
 #ifdef __cplusplus
 extern "C" {
 #endif
-static PyObject *_wrap_storage_set(PyObject *self, PyObject *args) {
+static PyObject *_wrap_new_equal_key(PyObject *self, PyObject *args) {
     PyObject *resultobj;
-    storage *arg0 ;
-    char *arg1 ;
-    int arg2 ;
+    equal_key *result ;
+    
+    if(!PyArg_ParseTuple(args,":new_equal_key")) return NULL;
+    result = (equal_key *)new equal_key();
+    resultobj = SWIG_NewPointerObj((void *) result, SWIGTYPE_p_equal_key);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_delete_equal_key(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    equal_key *arg0 ;
     PyObject * argo0 =0 ;
     
-    if(!PyArg_ParseTuple(args,"Osi:storage_set",&argo0,&arg1,&arg2)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_storage,1)) == -1) return NULL;
-    arg0->set((char const *)arg1,arg2);
+    if(!PyArg_ParseTuple(args,"O:delete_equal_key",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_equal_key,1)) == -1) return NULL;
+    delete arg0;
     Py_INCREF(Py_None);
     resultobj = Py_None;
     return resultobj;
 }
 
 
-static PyObject *_wrap_storage_get(PyObject *self, PyObject *args) {
+static PyObject *_wrap_new_ltstr(PyObject *self, PyObject *args) {
     PyObject *resultobj;
-    storage *arg0 ;
-    char *arg1 ;
-    PyObject * argo0 =0 ;
-    int result ;
+    ltstr *result ;
     
-    if(!PyArg_ParseTuple(args,"Os:storage_get",&argo0,&arg1)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_storage,1)) == -1) return NULL;
-    result = (int )arg0->get((char const *)arg1);
-    resultobj = PyInt_FromLong((long)result);
+    if(!PyArg_ParseTuple(args,":new_ltstr")) return NULL;
+    result = (ltstr *)new ltstr();
+    resultobj = SWIG_NewPointerObj((void *) result, SWIGTYPE_p_ltstr);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_delete_ltstr(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    ltstr *arg0 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"O:delete_ltstr",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_ltstr,1)) == -1) return NULL;
+    delete arg0;
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
     return resultobj;
 }
 
@@ -555,6 +583,50 @@ static PyObject *_wrap_new_storage(PyObject *self, PyObject *args) {
 }
 
 
+static PyObject *_wrap_storage_set(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    storage *arg0 ;
+    char *arg1 ;
+    long arg2 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"Osl:storage_set",&argo0,&arg1,&arg2)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_storage,1)) == -1) return NULL;
+    arg0->set((char const *)arg1,arg2);
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_storage_get(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    storage *arg0 ;
+    char *arg1 ;
+    PyObject * argo0 =0 ;
+    long result ;
+    
+    if(!PyArg_ParseTuple(args,"Os:storage_get",&argo0,&arg1)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_storage,1)) == -1) return NULL;
+    result = (long )arg0->get((char const *)arg1);
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_storage_next(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    storage *arg0 ;
+    PyObject * argo0 =0 ;
+    pair<const char*, signed long> *result ;
+    
+    if(!PyArg_ParseTuple(args,"O:storage_next",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_storage,1)) == -1) return NULL;
+    result = new pair<const char*, signed long> (arg0->next());    resultobj = SWIG_NewPointerObj((void *)result, SWIGTYPE_p_pair_const_char___signed_long_);
+    return resultobj;
+}
+
+
 static PyObject *_wrap_delete_storage(PyObject *self, PyObject *args) {
     PyObject *resultobj;
     storage *arg0 ;
@@ -565,6 +637,737 @@ static PyObject *_wrap_delete_storage(PyObject *self, PyObject *args) {
     delete arg0;
     Py_INCREF(Py_None);
     resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_new_objects(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    objects *result ;
+    
+    if(!PyArg_ParseTuple(args,":new_objects")) return NULL;
+    result = (objects *)new objects();
+    resultobj = SWIG_NewPointerObj((void *) result, SWIGTYPE_p_objects);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_objects_set(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    objects *arg0 ;
+    char *arg1 ;
+    storage *arg2 ;
+    PyObject * argo0 =0 ;
+    PyObject * argo2 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"OsO:objects_set",&argo0,&arg1,&argo2)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_objects,1)) == -1) return NULL;
+    if ((SWIG_ConvertPtr(argo2,(void **) &arg2,SWIGTYPE_p_storage,1)) == -1) return NULL;
+    arg0->set((char const *)arg1,arg2);
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_objects_get(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    objects *arg0 ;
+    char *arg1 ;
+    PyObject * argo0 =0 ;
+    storage *result ;
+    
+    if(!PyArg_ParseTuple(args,"Os:objects_get",&argo0,&arg1)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_objects,1)) == -1) return NULL;
+    result = (storage *)arg0->get((char const *)arg1);
+    resultobj = SWIG_NewPointerObj((void *) result, SWIGTYPE_p_storage);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_objects_erase(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    objects *arg0 ;
+    char *arg1 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"Os:objects_erase",&argo0,&arg1)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_objects,1)) == -1) return NULL;
+    arg0->erase((char const *)arg1);
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_objects_next(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    objects *arg0 ;
+    PyObject * argo0 =0 ;
+    storage *result ;
+    
+    if(!PyArg_ParseTuple(args,"O:objects_next",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_objects,1)) == -1) return NULL;
+    result = (storage *)arg0->next();
+    resultobj = SWIG_NewPointerObj((void *) result, SWIGTYPE_p_storage);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_delete_objects(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    objects *arg0 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"O:delete_objects",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_objects,1)) == -1) return NULL;
+    delete arg0;
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapcharacter_get_character(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapcharacter *arg0 ;
+    PyObject * argo0 =0 ;
+    character *result ;
+    
+    if(!PyArg_ParseTuple(args,"O:mapcharacter_get_character",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
+    result = (character *)arg0->get_character();
+    resultobj = SWIG_NewPointerObj((void *) result, SWIGTYPE_p_character);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapcharacter_get_npc(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapcharacter *arg0 ;
+    PyObject * argo0 =0 ;
+    npc *result ;
+    
+    if(!PyArg_ParseTuple(args,"O:mapcharacter_get_npc",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
+    result = (npc *)arg0->get_npc();
+    resultobj = SWIG_NewPointerObj((void *) result, SWIGTYPE_p_npc);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapcharacter_init(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapcharacter *arg0 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"O:mapcharacter_init",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
+    arg0->init();
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapcharacter_clear(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapcharacter *arg0 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"O:mapcharacter_clear",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
+    arg0->clear();
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_new_mapcharacter(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapcharacter *result ;
+    
+    if(!PyArg_ParseTuple(args,":new_mapcharacter")) return NULL;
+    result = (mapcharacter *)new mapcharacter();
+    resultobj = SWIG_NewPointerObj((void *) result, SWIGTYPE_p_mapcharacter);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_delete_mapcharacter(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapcharacter *arg0 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"O:delete_mapcharacter",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
+    delete arg0;
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapcharacter_get(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapcharacter *arg0 ;
+    gzFile *arg1 ;
+    PyObject * argo0 =0 ;
+    PyObject * argo1 =0 ;
+    signed char result ;
+    
+    if(!PyArg_ParseTuple(args,"OO:mapcharacter_get",&argo0,&argo1)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
+    if ((SWIG_ConvertPtr(argo1,(void **) &arg1,SWIGTYPE_p_gzFile,1)) == -1) return NULL;
+    result = (signed char )arg0->get(*arg1);
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapcharacter_load(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapcharacter *arg0 ;
+    char *arg1 ;
+    PyObject * argo0 =0 ;
+    signed char result ;
+    
+    if(!PyArg_ParseTuple(args,"Os:mapcharacter_load",&argo0,&arg1)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
+    result = (signed char )arg0->load((char const *)arg1);
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapcharacter_get_submap(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapcharacter *arg0 ;
+    PyObject * argo0 =0 ;
+    unsigned short result ;
+    
+    if(!PyArg_ParseTuple(args,"O:mapcharacter_get_submap",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
+    result = (unsigned short )arg0->get_submap();
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapcharacter_get_posx(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapcharacter *arg0 ;
+    PyObject * argo0 =0 ;
+    unsigned short result ;
+    
+    if(!PyArg_ParseTuple(args,"O:mapcharacter_get_posx",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
+    result = (unsigned short )arg0->get_posx();
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapcharacter_get_posy(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapcharacter *arg0 ;
+    PyObject * argo0 =0 ;
+    unsigned short result ;
+    
+    if(!PyArg_ParseTuple(args,"O:mapcharacter_get_posy",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
+    result = (unsigned short )arg0->get_posy();
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapcharacter_get_offx(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapcharacter *arg0 ;
+    PyObject * argo0 =0 ;
+    signed char result ;
+    
+    if(!PyArg_ParseTuple(args,"O:mapcharacter_get_offx",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
+    result = (signed char )arg0->get_offx();
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapcharacter_get_offy(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapcharacter *arg0 ;
+    PyObject * argo0 =0 ;
+    signed char result ;
+    
+    if(!PyArg_ParseTuple(args,"O:mapcharacter_get_offy",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
+    result = (signed char )arg0->get_offy();
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapcharacter_set_on_map(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapcharacter *arg0 ;
+    landmap *arg1 ;
+    PyObject * argo0 =0 ;
+    PyObject * argo1 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"OO:mapcharacter_set_on_map",&argo0,&argo1)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
+    if ((SWIG_ConvertPtr(argo1,(void **) &arg1,SWIGTYPE_p_landmap,1)) == -1) return NULL;
+    arg0->set_on_map(arg1);
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapcharacter_remove_from_map(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapcharacter *arg0 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"O:mapcharacter_remove_from_map",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
+    arg0->remove_from_map();
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapcharacter_set_pos(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapcharacter *arg0 ;
+    unsigned short arg1 ;
+    unsigned short arg2 ;
+    unsigned short arg3 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"Ohhh:mapcharacter_set_pos",&argo0,&arg1,&arg2,&arg3)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
+    arg0->set_pos(arg1,arg2,arg3);
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapcharacter_set_offset(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapcharacter *arg0 ;
+    signed char arg1 ;
+    signed char arg2 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"Obb:mapcharacter_set_offset",&argo0,&arg1,&arg2)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
+    arg0->set_offset(arg1,arg2);
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapcharacter_jump(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapcharacter *arg0 ;
+    unsigned short arg1 ;
+    unsigned short arg2 ;
+    unsigned short arg3 ;
+    unsigned short arg4 = 65535 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"Ohhh|h:mapcharacter_jump",&argo0,&arg1,&arg2,&arg3,&arg4)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
+    arg0->jump(arg1,arg2,arg3,arg4);
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapcharacter_move(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapcharacter *arg0 ;
+    PyObject * argo0 =0 ;
+    unsigned short result ;
+    
+    if(!PyArg_ParseTuple(args,"O:mapcharacter_move",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
+    result = (unsigned short )arg0->move();
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapcharacter_set_schedule(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapcharacter *arg0 ;
+    char *arg1 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"Os:mapcharacter_set_schedule",&argo0,&arg1)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
+    arg0->set_schedule(arg1);
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapcharacter_is_schedule_activated(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapcharacter *arg0 ;
+    PyObject * argo0 =0 ;
+    bool result ;
+    
+    if(!PyArg_ParseTuple(args,"O:mapcharacter_is_schedule_activated",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
+    result = (bool )arg0->is_schedule_activated();
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapcharacter_set_schedule_active(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapcharacter *arg0 ;
+    bool arg1 ;
+    PyObject * argo0 =0 ;
+    int tempbool1 ;
+    
+    if(!PyArg_ParseTuple(args,"Oi:mapcharacter_set_schedule_active",&argo0,&tempbool1)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
+    arg1 = (bool ) tempbool1;
+    arg0->set_schedule_active(arg1);
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapcharacter_set_action(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapcharacter *arg0 ;
+    char *arg1 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"Os:mapcharacter_set_action",&argo0,&arg1)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
+    arg0->set_action(arg1);
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapcharacter_is_action_activated(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapcharacter *arg0 ;
+    PyObject * argo0 =0 ;
+    bool result ;
+    
+    if(!PyArg_ParseTuple(args,"O:mapcharacter_is_action_activated",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
+    result = (bool )arg0->is_action_activated();
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapcharacter_set_action_active(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapcharacter *arg0 ;
+    bool arg1 ;
+    PyObject * argo0 =0 ;
+    int tempbool1 ;
+    
+    if(!PyArg_ParseTuple(args,"Oi:mapcharacter_set_action_active",&argo0,&tempbool1)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
+    arg1 = (bool ) tempbool1;
+    arg0->set_action_active(arg1);
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapcharacter_update_move(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapcharacter *arg0 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"O:mapcharacter_update_move",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
+    arg0->update_move();
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapcharacter_update(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapcharacter *arg0 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"O:mapcharacter_update",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
+    arg0->update();
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapcharacter_launch_action(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapcharacter *arg0 ;
+    mapcharacter *arg1 ;
+    PyObject * argo0 =0 ;
+    PyObject * argo1 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"OO:mapcharacter_launch_action",&argo0,&argo1)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
+    if ((SWIG_ConvertPtr(argo1,(void **) &arg1,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
+    arg0->launch_action(arg1);
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapcharacter_draw(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapcharacter *arg0 ;
+    mapview *arg1 ;
+    PyObject * argo0 =0 ;
+    PyObject * argo1 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"OO:mapcharacter_draw",&argo0,&argo1)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
+    if ((SWIG_ConvertPtr(argo1,(void **) &arg1,SWIGTYPE_p_mapview,1)) == -1) return NULL;
+    arg0->draw(arg1);
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapcharacter_can_go_north(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapcharacter *arg0 ;
+    PyObject * argo0 =0 ;
+    bool result ;
+    
+    if(!PyArg_ParseTuple(args,"O:mapcharacter_can_go_north",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
+    result = (bool )arg0->can_go_north();
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapcharacter_can_go_south(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapcharacter *arg0 ;
+    PyObject * argo0 =0 ;
+    bool result ;
+    
+    if(!PyArg_ParseTuple(args,"O:mapcharacter_can_go_south",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
+    result = (bool )arg0->can_go_south();
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapcharacter_can_go_east(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapcharacter *arg0 ;
+    PyObject * argo0 =0 ;
+    bool result ;
+    
+    if(!PyArg_ParseTuple(args,"O:mapcharacter_can_go_east",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
+    result = (bool )arg0->can_go_east();
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapcharacter_can_go_west(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapcharacter *arg0 ;
+    PyObject * argo0 =0 ;
+    bool result ;
+    
+    if(!PyArg_ParseTuple(args,"O:mapcharacter_can_go_west",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
+    result = (bool )arg0->can_go_west();
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapcharacter_stand(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapcharacter *arg0 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"O:mapcharacter_stand",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
+    arg0->stand();
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapcharacter_stand_north(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapcharacter *arg0 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"O:mapcharacter_stand_north",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
+    arg0->stand_north();
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapcharacter_stand_south(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapcharacter *arg0 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"O:mapcharacter_stand_south",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
+    arg0->stand_south();
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapcharacter_stand_east(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapcharacter *arg0 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"O:mapcharacter_stand_east",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
+    arg0->stand_east();
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapcharacter_stand_west(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapcharacter *arg0 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"O:mapcharacter_stand_west",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
+    arg0->stand_west();
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapcharacter_go_north(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapcharacter *arg0 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"O:mapcharacter_go_north",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
+    arg0->go_north();
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapcharacter_go_south(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapcharacter *arg0 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"O:mapcharacter_go_south",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
+    arg0->go_south();
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapcharacter_go_east(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapcharacter *arg0 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"O:mapcharacter_go_east",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
+    arg0->go_east();
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapcharacter_go_west(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapcharacter *arg0 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"O:mapcharacter_go_west",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
+    arg0->go_west();
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapcharacter_look_invert(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapcharacter *arg0 ;
+    unsigned short arg1 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"Oh:mapcharacter_look_invert",&argo0,&arg1)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
+    arg0->look_invert(arg1);
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapcharacter_whosnext(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapcharacter *arg0 ;
+    PyObject * argo0 =0 ;
+    mapcharacter *result ;
+    
+    if(!PyArg_ParseTuple(args,"O:mapcharacter_whosnext",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
+    result = (mapcharacter *)arg0->whosnext();
+    resultobj = SWIG_NewPointerObj((void *) result, SWIGTYPE_p_mapcharacter);
     return resultobj;
 }
 
@@ -594,64 +1397,6 @@ static PyObject *_wrap_character_name_get(PyObject *self, PyObject *args) {
     if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_character,1)) == -1) return NULL;
     result = (char *) (arg0->name);
     resultobj = PyString_FromString(result);
-    return resultobj;
-}
-
-
-static PyObject *_wrap_character_posx_set(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    character *arg0 ;
-    unsigned short arg1 ;
-    PyObject * argo0 =0 ;
-    
-    if(!PyArg_ParseTuple(args,"Oh:character_posx_set",&argo0,&arg1)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_character,1)) == -1) return NULL;
-    arg0->posx = arg1;
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
-static PyObject *_wrap_character_posx_get(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    character *arg0 ;
-    PyObject * argo0 =0 ;
-    unsigned short result ;
-    
-    if(!PyArg_ParseTuple(args,"O:character_posx_get",&argo0)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_character,1)) == -1) return NULL;
-    result = (unsigned short ) (arg0->posx);
-    resultobj = PyInt_FromLong((long)result);
-    return resultobj;
-}
-
-
-static PyObject *_wrap_character_posy_set(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    character *arg0 ;
-    unsigned short arg1 ;
-    PyObject * argo0 =0 ;
-    
-    if(!PyArg_ParseTuple(args,"Oh:character_posy_set",&argo0,&arg1)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_character,1)) == -1) return NULL;
-    arg0->posy = arg1;
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
-static PyObject *_wrap_character_posy_get(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    character *arg0 ;
-    PyObject * argo0 =0 ;
-    unsigned short result ;
-    
-    if(!PyArg_ParseTuple(args,"O:character_posy_get",&argo0)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_character,1)) == -1) return NULL;
-    result = (unsigned short ) (arg0->posy);
-    resultobj = PyInt_FromLong((long)result);
     return resultobj;
 }
 
@@ -735,24 +1480,6 @@ static PyObject *_wrap_delete_npc(PyObject *self, PyObject *args) {
 }
 
 
-static PyObject *_wrap_npc_set_schedule(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    npc *arg0 ;
-    char *arg1 ;
-    bool arg2 = true ;
-    PyObject * argo0 =0 ;
-    int tempbool2 = (int) true ;
-    
-    if(!PyArg_ParseTuple(args,"Os|i:npc_set_schedule",&argo0,&arg1,&tempbool2)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_npc,1)) == -1) return NULL;
-    arg2 = (bool ) tempbool2;
-    arg0->set_schedule(arg1,arg2);
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
 static PyObject *_wrap_npc_set_dialogue(PyObject *self, PyObject *args) {
     PyObject *resultobj;
     npc *arg0 ;
@@ -768,17 +1495,16 @@ static PyObject *_wrap_npc_set_dialogue(PyObject *self, PyObject *args) {
 }
 
 
-static PyObject *_wrap_npc_move(PyObject *self, PyObject *args) {
+static PyObject *_wrap_npc_get_dialogue(PyObject *self, PyObject *args) {
     PyObject *resultobj;
     npc *arg0 ;
-    unsigned char arg1 ;
     PyObject * argo0 =0 ;
-    unsigned char result ;
+    char *result ;
     
-    if(!PyArg_ParseTuple(args,"Ob:npc_move",&argo0,&arg1)) return NULL;
+    if(!PyArg_ParseTuple(args,"O:npc_get_dialogue",&argo0)) return NULL;
     if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_npc,1)) == -1) return NULL;
-    result = (unsigned char )arg0->move(arg1);
-    resultobj = PyInt_FromLong((long)result);
+    result = (char *)arg0->get_dialogue();
+    resultobj = PyString_FromString(result);
     return resultobj;
 }
 
@@ -831,42 +1557,84 @@ static PyObject *_wrap_delete_player(PyObject *self, PyObject *args) {
 
 
 static PyMethodDef charactercMethods[] = {
+	 { "new_equal_key", _wrap_new_equal_key, METH_VARARGS },
+	 { "delete_equal_key", _wrap_delete_equal_key, METH_VARARGS },
+	 { "new_ltstr", _wrap_new_ltstr, METH_VARARGS },
+	 { "delete_ltstr", _wrap_delete_ltstr, METH_VARARGS },
+	 { "new_storage", _wrap_new_storage, METH_VARARGS },
 	 { "storage_set", _wrap_storage_set, METH_VARARGS },
 	 { "storage_get", _wrap_storage_get, METH_VARARGS },
-	 { "new_storage", _wrap_new_storage, METH_VARARGS },
+	 { "storage_next", _wrap_storage_next, METH_VARARGS },
 	 { "delete_storage", _wrap_delete_storage, METH_VARARGS },
+	 { "new_objects", _wrap_new_objects, METH_VARARGS },
+	 { "objects_set", _wrap_objects_set, METH_VARARGS },
+	 { "objects_get", _wrap_objects_get, METH_VARARGS },
+	 { "objects_erase", _wrap_objects_erase, METH_VARARGS },
+	 { "objects_next", _wrap_objects_next, METH_VARARGS },
+	 { "delete_objects", _wrap_delete_objects, METH_VARARGS },
+	 { "mapcharacter_get_character", _wrap_mapcharacter_get_character, METH_VARARGS },
+	 { "mapcharacter_get_npc", _wrap_mapcharacter_get_npc, METH_VARARGS },
+	 { "mapcharacter_init", _wrap_mapcharacter_init, METH_VARARGS },
+	 { "mapcharacter_clear", _wrap_mapcharacter_clear, METH_VARARGS },
+	 { "new_mapcharacter", _wrap_new_mapcharacter, METH_VARARGS },
+	 { "delete_mapcharacter", _wrap_delete_mapcharacter, METH_VARARGS },
+	 { "mapcharacter_get", _wrap_mapcharacter_get, METH_VARARGS },
+	 { "mapcharacter_load", _wrap_mapcharacter_load, METH_VARARGS },
+	 { "mapcharacter_get_submap", _wrap_mapcharacter_get_submap, METH_VARARGS },
+	 { "mapcharacter_get_posx", _wrap_mapcharacter_get_posx, METH_VARARGS },
+	 { "mapcharacter_get_posy", _wrap_mapcharacter_get_posy, METH_VARARGS },
+	 { "mapcharacter_get_offx", _wrap_mapcharacter_get_offx, METH_VARARGS },
+	 { "mapcharacter_get_offy", _wrap_mapcharacter_get_offy, METH_VARARGS },
+	 { "mapcharacter_set_on_map", _wrap_mapcharacter_set_on_map, METH_VARARGS },
+	 { "mapcharacter_remove_from_map", _wrap_mapcharacter_remove_from_map, METH_VARARGS },
+	 { "mapcharacter_set_pos", _wrap_mapcharacter_set_pos, METH_VARARGS },
+	 { "mapcharacter_set_offset", _wrap_mapcharacter_set_offset, METH_VARARGS },
+	 { "mapcharacter_jump", _wrap_mapcharacter_jump, METH_VARARGS },
+	 { "mapcharacter_move", _wrap_mapcharacter_move, METH_VARARGS },
+	 { "mapcharacter_set_schedule", _wrap_mapcharacter_set_schedule, METH_VARARGS },
+	 { "mapcharacter_is_schedule_activated", _wrap_mapcharacter_is_schedule_activated, METH_VARARGS },
+	 { "mapcharacter_set_schedule_active", _wrap_mapcharacter_set_schedule_active, METH_VARARGS },
+	 { "mapcharacter_set_action", _wrap_mapcharacter_set_action, METH_VARARGS },
+	 { "mapcharacter_is_action_activated", _wrap_mapcharacter_is_action_activated, METH_VARARGS },
+	 { "mapcharacter_set_action_active", _wrap_mapcharacter_set_action_active, METH_VARARGS },
+	 { "mapcharacter_update_move", _wrap_mapcharacter_update_move, METH_VARARGS },
+	 { "mapcharacter_update", _wrap_mapcharacter_update, METH_VARARGS },
+	 { "mapcharacter_launch_action", _wrap_mapcharacter_launch_action, METH_VARARGS },
+	 { "mapcharacter_draw", _wrap_mapcharacter_draw, METH_VARARGS },
+	 { "mapcharacter_can_go_north", _wrap_mapcharacter_can_go_north, METH_VARARGS },
+	 { "mapcharacter_can_go_south", _wrap_mapcharacter_can_go_south, METH_VARARGS },
+	 { "mapcharacter_can_go_east", _wrap_mapcharacter_can_go_east, METH_VARARGS },
+	 { "mapcharacter_can_go_west", _wrap_mapcharacter_can_go_west, METH_VARARGS },
+	 { "mapcharacter_stand", _wrap_mapcharacter_stand, METH_VARARGS },
+	 { "mapcharacter_stand_north", _wrap_mapcharacter_stand_north, METH_VARARGS },
+	 { "mapcharacter_stand_south", _wrap_mapcharacter_stand_south, METH_VARARGS },
+	 { "mapcharacter_stand_east", _wrap_mapcharacter_stand_east, METH_VARARGS },
+	 { "mapcharacter_stand_west", _wrap_mapcharacter_stand_west, METH_VARARGS },
+	 { "mapcharacter_go_north", _wrap_mapcharacter_go_north, METH_VARARGS },
+	 { "mapcharacter_go_south", _wrap_mapcharacter_go_south, METH_VARARGS },
+	 { "mapcharacter_go_east", _wrap_mapcharacter_go_east, METH_VARARGS },
+	 { "mapcharacter_go_west", _wrap_mapcharacter_go_west, METH_VARARGS },
+	 { "mapcharacter_look_invert", _wrap_mapcharacter_look_invert, METH_VARARGS },
+	 { "mapcharacter_whosnext", _wrap_mapcharacter_whosnext, METH_VARARGS },
 	 { "character_name_set", _wrap_character_name_set, METH_VARARGS },
 	 { "character_name_get", _wrap_character_name_get, METH_VARARGS },
-	 { "character_posx_set", _wrap_character_posx_set, METH_VARARGS },
-	 { "character_posx_get", _wrap_character_posx_get, METH_VARARGS },
-	 { "character_posy_set", _wrap_character_posy_set, METH_VARARGS },
-	 { "character_posy_get", _wrap_character_posy_get, METH_VARARGS },
 	 { "character_color_set", _wrap_character_color_set, METH_VARARGS },
 	 { "character_color_get", _wrap_character_color_get, METH_VARARGS },
 	 { "new_character", _wrap_new_character, METH_VARARGS },
 	 { "delete_character", _wrap_delete_character, METH_VARARGS },
 	 { "new_npc", _wrap_new_npc, METH_VARARGS },
 	 { "delete_npc", _wrap_delete_npc, METH_VARARGS },
-	 { "npc_set_schedule", _wrap_npc_set_schedule, METH_VARARGS },
 	 { "npc_set_dialogue", _wrap_npc_set_dialogue, METH_VARARGS },
-	 { "npc_move", _wrap_npc_move, METH_VARARGS },
+	 { "npc_get_dialogue", _wrap_npc_get_dialogue, METH_VARARGS },
 	 { "npc_talk", _wrap_npc_talk, METH_VARARGS },
 	 { "npc_name_set", _wrap_character_name_set, METH_VARARGS },
 	 { "npc_name_get", _wrap_character_name_get, METH_VARARGS },
-	 { "npc_posx_set", _wrap_character_posx_set, METH_VARARGS },
-	 { "npc_posx_get", _wrap_character_posx_get, METH_VARARGS },
-	 { "npc_posy_set", _wrap_character_posy_set, METH_VARARGS },
-	 { "npc_posy_get", _wrap_character_posy_get, METH_VARARGS },
 	 { "npc_color_set", _wrap_character_color_set, METH_VARARGS },
 	 { "npc_color_get", _wrap_character_color_get, METH_VARARGS },
 	 { "new_player", _wrap_new_player, METH_VARARGS },
 	 { "delete_player", _wrap_delete_player, METH_VARARGS },
 	 { "player_name_set", _wrap_character_name_set, METH_VARARGS },
 	 { "player_name_get", _wrap_character_name_get, METH_VARARGS },
-	 { "player_posx_set", _wrap_character_posx_set, METH_VARARGS },
-	 { "player_posx_get", _wrap_character_posx_get, METH_VARARGS },
-	 { "player_posy_set", _wrap_character_posy_set, METH_VARARGS },
-	 { "player_posy_get", _wrap_character_posy_get, METH_VARARGS },
 	 { "player_color_set", _wrap_character_color_set, METH_VARARGS },
 	 { "player_color_get", _wrap_character_color_get, METH_VARARGS },
 	 { NULL, NULL }
@@ -887,6 +1655,15 @@ static void *_p_characterTo_p_storage(void *x) {
 static void *_p_playerTo_p_storage(void *x) {
     return (void *)((storage *) ((player *) x));
 }
+static void *_p_npcTo_p_mapcharacter(void *x) {
+    return (void *)((mapcharacter *) ((npc *) x));
+}
+static void *_p_characterTo_p_mapcharacter(void *x) {
+    return (void *)((mapcharacter *) ((character *) x));
+}
+static void *_p_playerTo_p_mapcharacter(void *x) {
+    return (void *)((mapcharacter *) ((player *) x));
+}
 static void *_p_npcTo_p_character(void *x) {
     return (void *)((character *) ((npc *) x));
 }
@@ -894,15 +1671,31 @@ static void *_p_playerTo_p_character(void *x) {
     return (void *)((character *) ((player *) x));
 }
 static swig_type_info _swigt__p_npc[] = {{"_p_npc", 0, "npc *"},{"_p_npc"},{0}};
+static swig_type_info _swigt__p_equal_key[] = {{"_p_equal_key", 0, "equal_key *"},{"_p_equal_key"},{0}};
+static swig_type_info _swigt__p_landmap[] = {{"_p_landmap", 0, "landmap *"},{"_p_landmap"},{0}};
+static swig_type_info _swigt__p_pair_const_char___signed_long_[] = {{"_p_pair_const_char___signed_long_", 0, "pair<const char*, signed long> *"},{"_p_pair_const_char___signed_long_"},{0}};
 static swig_type_info _swigt__p_storage[] = {{"_p_storage", 0, "storage *"},{"_p_npc", _p_npcTo_p_storage},{"_p_storage"},{"_p_player", _p_playerTo_p_storage},{"_p_character", _p_characterTo_p_storage},{0}};
+static swig_type_info _swigt__p_ltstr[] = {{"_p_ltstr", 0, "ltstr *"},{"_p_ltstr"},{0}};
+static swig_type_info _swigt__p_objects[] = {{"_p_objects", 0, "objects *"},{"_p_objects"},{0}};
 static swig_type_info _swigt__p_player[] = {{"_p_player", 0, "player *"},{"_p_player"},{0}};
+static swig_type_info _swigt__p_mapcharacter[] = {{"_p_mapcharacter", 0, "mapcharacter *"},{"_p_npc", _p_npcTo_p_mapcharacter},{"_p_player", _p_playerTo_p_mapcharacter},{"_p_mapcharacter"},{"_p_character", _p_characterTo_p_mapcharacter},{0}};
 static swig_type_info _swigt__p_character[] = {{"_p_character", 0, "character *"},{"_p_npc", _p_npcTo_p_character},{"_p_player", _p_playerTo_p_character},{"_p_character"},{0}};
+static swig_type_info _swigt__p_gzFile[] = {{"_p_gzFile", 0, "gzFile *"},{"_p_gzFile"},{0}};
+static swig_type_info _swigt__p_mapview[] = {{"_p_mapview", 0, "mapview *"},{"_p_mapview"},{0}};
 
 static swig_type_info *swig_types_initial[] = {
 _swigt__p_npc, 
+_swigt__p_equal_key, 
+_swigt__p_landmap, 
+_swigt__p_pair_const_char___signed_long_, 
 _swigt__p_storage, 
+_swigt__p_ltstr, 
+_swigt__p_objects, 
 _swigt__p_player, 
+_swigt__p_mapcharacter, 
 _swigt__p_character, 
+_swigt__p_gzFile, 
+_swigt__p_mapview, 
 0
 };
 
@@ -910,6 +1703,16 @@ _swigt__p_character,
 /* -------- TYPE CONVERSION AND EQUIVALENCE RULES (END) -------- */
 
 static swig_const_info swig_const_table[] = {
+    { SWIG_PY_INT,     "STAND_NORTH", (long) 0, 0, 0, 0},
+    { SWIG_PY_INT,     "STAND_SOUTH", (long) 1, 0, 0, 0},
+    { SWIG_PY_INT,     "STAND_WEST", (long) 2, 0, 0, 0},
+    { SWIG_PY_INT,     "STAND_EAST", (long) 3, 0, 0, 0},
+    { SWIG_PY_INT,     "WALK_NORTH", (long) 4, 0, 0, 0},
+    { SWIG_PY_INT,     "WALK_SOUTH", (long) 5, 0, 0, 0},
+    { SWIG_PY_INT,     "WALK_WEST", (long) 6, 0, 0, 0},
+    { SWIG_PY_INT,     "WALK_EAST", (long) 7, 0, 0, 0},
+    { SWIG_PY_INT,     "NBR_MOVES", (long) 8, 0, 0, 0},
+    { SWIG_PY_INT,     "NO_MOVE", (long) 65535, 0, 0, 0},
     { SWIG_PY_INT,     "DWARF", (long) DWARF, 0, 0, 0},
     { SWIG_PY_INT,     "ELF", (long) ELF, 0, 0, 0},
     { SWIG_PY_INT,     "HALFELF", (long) HALFELF, 0, 0, 0},

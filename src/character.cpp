@@ -20,6 +20,14 @@
 #include "data.h"
 #include "py_inc.h"
 
+character::character()
+{
+#ifndef _EDIT_
+  PyDict_SetItemString(locals,"char_myself",pass_instance(this,"character"));
+#endif
+  char_instance=this;
+}
+
 void character::save (gzFile out)
 {
     hash_map<const char*, s_int32, hash<const char*>, equal_key>::iterator i;
@@ -98,6 +106,10 @@ npc::npc ()
     schedule = NULL;
     dialogue = NULL;
     schedule_file = NULL;
+#ifndef _EDIT_
+    npc_instance=this;
+    PyDict_SetItemString(locals,"npc_myself",pass_instance(this,"npc"));
+#endif
 }
 
 // Cleanup NPC
@@ -115,50 +127,6 @@ void npc::set_dialogue (char *dlg)
     dialogue = strdup (dlg);
 }
 
-// Set/change active schedule
-void npc::set_schedule (char* file, bool load_script)
-{
-    // char- and dlgedit don't have to load the script
-    if (!load_script)
-    {
-        if (schedule_file) free (schedule_file);
-        schedule_file = file;
-        return;
-    }
-    
-    char script[255];
-    strcpy (script, "scripts/schedules/");
-    strcat (script, file);
-    strcat (script, ".py");
-
-    FILE *f = fopen (script, "r");
-
-    // See whether the script exists at all
-    if (f)
-    {
-        // Compile the script into a PyCodeObject for quicker execution
-        _node *n = PyParser_SimpleParseFile (f, script, Py_file_input);
-        if (n)
-        {
-            // If no errors occured update schedule code ...
-            if (schedule) delete schedule;
-            schedule = PyNode_Compile (n, file);
-
-            // ... and the schedule script file
-            if (schedule_file) free (schedule_file);
-            schedule_file = file;
-        }
-        else
-        {
-            cout << "\n*** Cannot set " << name << "'s schedule: Error in" << flush;
-            show_traceback ();
-        }
-        fclose (f);
-    }
-    else cout << "\n*** Cannot open " << name << "'s schedule: file \"" << script
-              << "\" not found!" << flush;
-}
-
 // Returns the NPC's dialogue
 char* npc::get_dialogue ()
 {
@@ -167,23 +135,6 @@ char* npc::get_dialogue ()
     strcat (str, dialogue);
     
     return str;
-}
-
-// Execute the active schedule and return the direction of movement
-// or zero if character doesn't move.
-u_int8 npc::move (u_int8 dir)
-{
-    PyObject *locals = Py_BuildValue ("{s:i,s:s}", "direction", dir, "name", name);
-    PyEval_EvalCode (schedule, data::globals, locals);
-
-#ifdef _DEBUG_
-    show_traceback ();
-#endif // _DEBUG_
-
-    dir = PyInt_AsLong (PyDict_GetItemString (locals, "direction"));
-    Py_DECREF (locals);
-
-    return dir;
 }
 
 // save npc to disk
@@ -203,5 +154,5 @@ void npc::load (gzFile in, bool load_script)
     if (dialogue) free (dialogue);
     dialogue = get_string (in);    
 
-    set_schedule (get_string (in), load_script);   
+    get_string (in);
 }

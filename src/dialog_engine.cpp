@@ -30,11 +30,16 @@ dialog_engine::dialog_engine() : win_container (20, 120, 280, 100, NULL)
 dialog_engine::dialog_engine (npc *mynpc, win_theme *th, u_int8 size) :
     win_container (20, 120, 280, 100, th)
 {
+  init(mynpc,th,size);
+}
+
+void dialog_engine::init(npc *mynpc, win_theme *th, u_int8 size)
+{
     sel_start = 1;
     can_add = true;
     is_running = true;
     instance = NULL;
-
+  
     font = new win_font (win_theme::theme);
     theme = new win_theme (win_theme::theme);
 
@@ -82,7 +87,7 @@ dialog_engine::dialog_engine (npc *mynpc, win_theme *th, u_int8 size) :
         &dialog_engine::on_change_selection), WIN_SIG_PREVIOUS_KEY);
 
     // set the NPC's portrait (later:  get the portrait to use from the npc data)
-    set_portrait ("gfxtree/portraits/lyanna.pnm");
+    set_portrait ("gfx/portraits/lyanna.pnm");
     // ... and name
     set_name (mynpc->name);
 
@@ -249,7 +254,7 @@ void dialog_engine::on_select ()
         can_add = false;
         answer++;
     }
-    
+
     cur_answers.clear ();
     run ();
 }
@@ -280,6 +285,6 @@ void dialog_engine::set_npc (char* new_npc)
     npc *mynpc = (npc *) data::characters.get (new_npc);
     
     set_name (mynpc->name);
-    set_portrait ("gfxtree/portraits/lyanna.pnm");
+    set_portrait ("gfx/portraits/lyanna.pnm");
     can_add = false;
 }

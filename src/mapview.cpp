@@ -60,6 +60,7 @@ void mapview::attach_map(landmap * m)
 {
   m_map=m;
   currentsubmap=0;
+  m->myview=this;
 #ifndef _EDIT_
   PyDict_SetItemString(locals,"mymap",pass_instance(m_map,"landmap"));
 #endif
@@ -84,6 +85,7 @@ void mapview::attach_map(landmap * m)
 
 void mapview::detach_map()
 {
+  m_map->myview=NULL;
   m_map=NULL;
 #ifndef _EDIT_
   PyDict_DelItemString(locals,"mymap");

@@ -214,10 +214,10 @@ image *screen::shot ()
 
 void screen::makesquare(u_int16 px,u_int16 py, u_int16 fact)
 {
-  drawbox(0,py,320,fact,0);
-  drawbox(0,200-fact-py,320,fact,0);
-  drawbox(px,0,fact,200,0);
-  drawbox(320-fact-px,0,fact,200,0);
+  drawbox(0,py,l,fact,0);
+  drawbox(0,h-fact-py,l,fact,0);
+  drawbox(px,0,fact,h,0);
+  drawbox(l-fact-px,0,fact,h,0);
 }
 
 void screen::mouse_cursor_off()

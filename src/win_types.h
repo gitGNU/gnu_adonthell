@@ -35,7 +35,7 @@
 
 
 //directory
-#define WIN_DIRECTORY "gfxtree/window/"
+#define WIN_DIRECTORY "gfx/window/"
 #define WIN_FONT_DIRECTORY "font/"
 #define WIN_BORDER_DIRECTORY "border/"
 #define WIN_BACKGROUND_DIRECTORY "background/"
@@ -75,8 +75,8 @@
 //default key For the selection
 #define WIN_SELECT_DEFAULT_KEY_NEXT SDLK_DOWN
 #define WIN_SELECT_DEFAULT_KEY_PREVIOUS SDLK_UP
-#define WIN_SELECT_DEFAULT_KEY_ACTIVATE SDLK_RETURN
-#define WIN_SELECT_DEFAULT_KEY_BACK SDLK_ESCAPE
+#define WIN_SELECT_DEFAULT_KEY_ACTIVATE SDLK_SPACE
+#define WIN_SELECT_DEFAULT_KEY_BACK SDLK_b
 
 //cursor filename
 #define WIN_CURSOR_FILE "cursor.pnm"

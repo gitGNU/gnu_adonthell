@@ -50,16 +50,18 @@ void exec_string(char * s)
 bool exec_file( char *filename )
 {
 	FILE *f;
-
-	f = fopen(filename, "r");
+	char *fn=new char[strlen("scripts/")+strlen(filename)+1];
+	strcpy(fn,"scripts/");
+	strcat(fn,filename);
+	f = fopen(fn, "r");
 
 	if (!f)
 	{
-		cerr << "exec_module : " << filename << " load failed!" << endl;
+		cerr << "exec_module : " << fn << " load failed!" << endl;
 		return false;
 	}
 
-	PyRun_AnyFile( f, filename);
+	PyRun_File( f, fn, Py_file_input, data::globals, NULL);
 
 	fclose(f);
 	return true;

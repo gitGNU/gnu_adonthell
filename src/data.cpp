@@ -20,13 +20,20 @@
 #include "py_inc.h"
 #include "quest.h"
 #include "data.h"
-
+#include "character.h"
+#ifndef _EDIT_
+#include "mapengine.h"
+#endif
 
 PyObject *data::globals;            // Global namespace for the Python interpreter
 gametime *data::time;               // The gametime
-player* data::the_player=NULL;      // The main character
+character* data::the_player=NULL;   // The main character
+mapcharacter* data::the_map_player=NULL;   // The main character
 objects data::characters;           // All the NPC data
 objects data::quests;               // All the quest data (the state of the gameworld)
+#ifndef _EDIT_
+mapengine * data::map_engine;
+#endif
 
 char *data::adonthell_dir=NULL;     // The user's private adonthell directory
 vector<gamedata*> data::saves;      // The list of available savegames
@@ -111,19 +118,24 @@ void data::init (char* dir)
 
         gzclose (in);
     }
+    the_player=NULL;
+    the_map_player=NULL;
+#ifndef _EDIT_
+    map_engine=new mapengine;
+    PyDict_SetItemString (globals, "map_engine", pass_instance (map_engine, "mapengine"));
+#endif
 }
 
 // Cleanup everything
 void data::cleanup () 
 {
     unload ();
-
     delete adonthell_dir;
     delete time;
     
     for (vector<gamedata*>::iterator i = saves.begin (); i != saves.end (); i++)
-        delete *i;
-
+      delete *i;
+    if(the_player) delete the_player;
     Py_XDECREF (globals);
 }
 
@@ -140,19 +152,20 @@ bool data::load (u_int32 pos)
     unload ();
     
     // Create a player (later: load from file or whatever)
-    the_player = new player;
+    the_player = new character;
     the_player->name = "Player";
 
     // Add the player to the game objects
     characters.set (the_player->name, the_player);
 
     // Make "myplayer" available to the interpreter 
-    PyDict_SetItemString (globals, "the_player", pass_instance (the_player, "player"));
+    PyDict_SetItemString (globals, "the_player", pass_instance (the_player, "character"));
+    PyDict_SetItemString (globals, "the_map_player", pass_instance ((mapcharacter*)the_player, "mapcharacter"));
 
     // create character array
     PyObject *chars = PyDict_New ();
     PyDict_SetItemString (globals, "characters", chars);
-    PyDict_SetItemString (chars, the_player->name, pass_instance (the_player, "player"));
+    PyDict_SetItemString (chars, the_player->name, pass_instance (the_player, "character"));
 
     // try to open character.data
     sprintf (filepath, "%s/%s/character.data", basedir, saves[pos]->get_directory ());
@@ -169,7 +182,6 @@ bool data::load (u_int32 pos)
     {
         mynpc = new npc;
         mynpc->load (in);
-
         // Pass character over to Python interpreter
         PyDict_SetItemString (chars, mynpc->name, pass_instance (mynpc, "npc"));
     }

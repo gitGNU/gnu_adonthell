@@ -487,203 +487,45 @@ SWIG_InstallConstants(PyObject *d, swig_const_info constants[]) {
 
 /* -------- TYPES TABLE (BEGIN) -------- */
 
-#define  SWIGTYPE_p_audio swig_types[0] 
-static swig_type_info *swig_types[2];
+#define  SWIGTYPE_p_npc swig_types[0] 
+#define  SWIGTYPE_p_landmap swig_types[1] 
+#define  SWIGTYPE_p_mapengine swig_types[2] 
+static swig_type_info *swig_types[4];
 
 /* -------- TYPES TABLE (END) -------- */
 
 
 /*-----------------------------------------------
-              @(target):= audioc.so
+              @(target):= mapenginec.so
   ------------------------------------------------*/
-#define SWIG_init    initaudioc
+#define SWIG_init    initmapenginec
 
-#define SWIG_name    "audioc"
+#define SWIG_name    "mapenginec"
 
 
-#include "types.h"
-#include "prefs.h"
-#include "audio.h"
+#include "mapengine.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-static PyObject *_wrap_audio_load_background(PyObject *self, PyObject *args) {
+static PyObject *_wrap_new_mapengine(PyObject *self, PyObject *args) {
     PyObject *resultobj;
-    int arg0 ;
-    char *arg1 ;
-    int result ;
+    mapengine *result ;
     
-    if(!PyArg_ParseTuple(args,"is:audio_load_background",&arg0,&arg1)) return NULL;
-    result = (int )audio::load_background(arg0,arg1);
-    resultobj = PyInt_FromLong((long)result);
+    if(!PyArg_ParseTuple(args,":new_mapengine")) return NULL;
+    result = (mapengine *)new mapengine();
+    resultobj = SWIG_NewPointerObj((void *) result, SWIGTYPE_p_mapengine);
     return resultobj;
 }
 
 
-static PyObject *_wrap_audio_unload_background(PyObject *self, PyObject *args) {
+static PyObject *_wrap_delete_mapengine(PyObject *self, PyObject *args) {
     PyObject *resultobj;
-    int arg0 ;
-    
-    if(!PyArg_ParseTuple(args,"i:audio_unload_background",&arg0)) return NULL;
-    audio::unload_background(arg0);
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
-static PyObject *_wrap_audio_set_background_volume(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    int arg0 ;
-    
-    if(!PyArg_ParseTuple(args,"i:audio_set_background_volume",&arg0)) return NULL;
-    audio::set_background_volume(arg0);
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
-static PyObject *_wrap_audio_pause_music(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    
-    if(!PyArg_ParseTuple(args,":audio_pause_music")) return NULL;
-    audio::pause_music();
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
-static PyObject *_wrap_audio_unpause_music(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    
-    if(!PyArg_ParseTuple(args,":audio_unpause_music")) return NULL;
-    audio::unpause_music();
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
-static PyObject *_wrap_audio_load_wave(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    int arg0 ;
-    char *arg1 ;
-    int result ;
-    
-    if(!PyArg_ParseTuple(args,"is:audio_load_wave",&arg0,&arg1)) return NULL;
-    result = (int )audio::load_wave(arg0,arg1);
-    resultobj = PyInt_FromLong((long)result);
-    return resultobj;
-}
-
-
-static PyObject *_wrap_audio_unload_wave(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    int arg0 ;
-    
-    if(!PyArg_ParseTuple(args,"i:audio_unload_wave",&arg0)) return NULL;
-    audio::unload_wave(arg0);
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
-static PyObject *_wrap_audio_play_wave(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    int arg0 ;
-    int arg1 ;
-    
-    if(!PyArg_ParseTuple(args,"ii:audio_play_wave",&arg0,&arg1)) return NULL;
-    audio::play_wave(arg0,arg1);
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
-static PyObject *_wrap_audio_play_background(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    int arg0 ;
-    
-    if(!PyArg_ParseTuple(args,"i:audio_play_background",&arg0)) return NULL;
-    audio::play_background(arg0);
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
-static PyObject *_wrap_audio_fade_in_background(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    int arg0 ;
-    int arg1 ;
-    
-    if(!PyArg_ParseTuple(args,"ii:audio_fade_in_background",&arg0,&arg1)) return NULL;
-    audio::fade_in_background(arg0,arg1);
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
-static PyObject *_wrap_audio_fade_out_background(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    int arg0 ;
-    
-    if(!PyArg_ParseTuple(args,"i:audio_fade_out_background",&arg0)) return NULL;
-    audio::fade_out_background(arg0);
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
-static PyObject *_wrap_audio_change_background(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    int arg0 ;
-    int arg1 ;
-    
-    if(!PyArg_ParseTuple(args,"ii:audio_change_background",&arg0,&arg1)) return NULL;
-    audio::change_background(arg0,arg1);
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
-static PyObject *_wrap_audio_is_initialized(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    bool result ;
-    
-    if(!PyArg_ParseTuple(args,":audio_is_initialized")) return NULL;
-    result = (bool )audio::is_initialized();
-    resultobj = PyInt_FromLong((long)result);
-    return resultobj;
-}
-
-
-static PyObject *_wrap_new_audio(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    audio *result ;
-    
-    if(!PyArg_ParseTuple(args,":new_audio")) return NULL;
-    result = (audio *)new audio();
-    resultobj = SWIG_NewPointerObj((void *) result, SWIGTYPE_p_audio);
-    return resultobj;
-}
-
-
-static PyObject *_wrap_delete_audio(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    audio *arg0 ;
+    mapengine *arg0 ;
     PyObject * argo0 =0 ;
     
-    if(!PyArg_ParseTuple(args,"O:delete_audio",&argo0)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_audio,1)) == -1) return NULL;
+    if(!PyArg_ParseTuple(args,"O:delete_mapengine",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapengine,1)) == -1) return NULL;
     delete arg0;
     Py_INCREF(Py_None);
     resultobj = Py_None;
@@ -691,22 +533,106 @@ static PyObject *_wrap_delete_audio(PyObject *self, PyObject *args) {
 }
 
 
-static PyMethodDef audiocMethods[] = {
-	 { "audio_load_background", _wrap_audio_load_background, METH_VARARGS },
-	 { "audio_unload_background", _wrap_audio_unload_background, METH_VARARGS },
-	 { "audio_set_background_volume", _wrap_audio_set_background_volume, METH_VARARGS },
-	 { "audio_pause_music", _wrap_audio_pause_music, METH_VARARGS },
-	 { "audio_unpause_music", _wrap_audio_unpause_music, METH_VARARGS },
-	 { "audio_load_wave", _wrap_audio_load_wave, METH_VARARGS },
-	 { "audio_unload_wave", _wrap_audio_unload_wave, METH_VARARGS },
-	 { "audio_play_wave", _wrap_audio_play_wave, METH_VARARGS },
-	 { "audio_play_background", _wrap_audio_play_background, METH_VARARGS },
-	 { "audio_fade_in_background", _wrap_audio_fade_in_background, METH_VARARGS },
-	 { "audio_fade_out_background", _wrap_audio_fade_out_background, METH_VARARGS },
-	 { "audio_change_background", _wrap_audio_change_background, METH_VARARGS },
-	 { "audio_is_initialized", _wrap_audio_is_initialized, METH_VARARGS },
-	 { "new_audio", _wrap_new_audio, METH_VARARGS },
-	 { "delete_audio", _wrap_delete_audio, METH_VARARGS },
+static PyObject *_wrap_mapengine_set_mapview_schedule(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapengine *arg0 ;
+    char *arg1 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"Os:mapengine_set_mapview_schedule",&argo0,&arg1)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapengine,1)) == -1) return NULL;
+    arg0->set_mapview_schedule(arg1);
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapengine_use_map(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapengine *arg0 ;
+    landmap *arg1 ;
+    PyObject * argo0 =0 ;
+    PyObject * argo1 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"OO:mapengine_use_map",&argo0,&argo1)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapengine,1)) == -1) return NULL;
+    if ((SWIG_ConvertPtr(argo1,(void **) &arg1,SWIGTYPE_p_landmap,1)) == -1) return NULL;
+    arg0->use_map(arg1);
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapengine_get_landmap(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapengine *arg0 ;
+    PyObject * argo0 =0 ;
+    landmap *result ;
+    
+    if(!PyArg_ParseTuple(args,"O:mapengine_get_landmap",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapengine,1)) == -1) return NULL;
+    result = (landmap *)arg0->get_landmap();
+    resultobj = SWIG_NewPointerObj((void *) result, SWIGTYPE_p_landmap);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapengine_launch_dialog(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapengine *arg0 ;
+    npc *arg1 ;
+    PyObject * argo0 =0 ;
+    PyObject * argo1 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"OO:mapengine_launch_dialog",&argo0,&argo1)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapengine,1)) == -1) return NULL;
+    if ((SWIG_ConvertPtr(argo1,(void **) &arg1,SWIGTYPE_p_npc,1)) == -1) return NULL;
+    arg0->launch_dialog(arg1);
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapengine_run(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapengine *arg0 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"O:mapengine_run",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapengine,1)) == -1) return NULL;
+    arg0->run();
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapengine_mainloop(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapengine *arg0 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"O:mapengine_mainloop",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapengine,1)) == -1) return NULL;
+    arg0->mainloop();
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyMethodDef mapenginecMethods[] = {
+	 { "new_mapengine", _wrap_new_mapengine, METH_VARARGS },
+	 { "delete_mapengine", _wrap_delete_mapengine, METH_VARARGS },
+	 { "mapengine_set_mapview_schedule", _wrap_mapengine_set_mapview_schedule, METH_VARARGS },
+	 { "mapengine_use_map", _wrap_mapengine_use_map, METH_VARARGS },
+	 { "mapengine_get_landmap", _wrap_mapengine_get_landmap, METH_VARARGS },
+	 { "mapengine_launch_dialog", _wrap_mapengine_launch_dialog, METH_VARARGS },
+	 { "mapengine_run", _wrap_mapengine_run, METH_VARARGS },
+	 { "mapengine_mainloop", _wrap_mapengine_mainloop, METH_VARARGS },
 	 { NULL, NULL }
 };
 
@@ -716,10 +642,14 @@ static PyMethodDef audiocMethods[] = {
 
 /* -------- TYPE CONVERSION AND EQUIVALENCE RULES (BEGIN) -------- */
 
-static swig_type_info _swigt__p_audio[] = {{"_p_audio", 0, "audio *"},{"_p_audio"},{0}};
+static swig_type_info _swigt__p_npc[] = {{"_p_npc", 0, "npc *"},{"_p_npc"},{0}};
+static swig_type_info _swigt__p_landmap[] = {{"_p_landmap", 0, "landmap *"},{"_p_landmap"},{0}};
+static swig_type_info _swigt__p_mapengine[] = {{"_p_mapengine", 0, "mapengine *"},{"_p_mapengine"},{0}};
 
 static swig_type_info *swig_types_initial[] = {
-_swigt__p_audio, 
+_swigt__p_npc, 
+_swigt__p_landmap, 
+_swigt__p_mapengine, 
 0
 };
 
@@ -733,11 +663,11 @@ static PyObject *SWIG_globals;
 #ifdef __cplusplus
 extern "C" 
 #endif
-SWIGEXPORT(void) initaudioc(void) {
+SWIGEXPORT(void) initmapenginec(void) {
     PyObject *m, *d;
     int i;
     SWIG_globals = SWIG_newvarlink();
-    m = Py_InitModule("audioc", audiocMethods);
+    m = Py_InitModule("mapenginec", mapenginecMethods);
     d = PyModule_GetDict(m);
     for (i = 0; swig_types_initial[i]; i++) {
         swig_types[i] = SWIG_TypeRegister(swig_types_initial[i]);

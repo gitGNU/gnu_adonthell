@@ -487,12 +487,14 @@ SWIG_InstallConstants(PyObject *d, swig_const_info constants[]) {
 
 /* -------- TYPES TABLE (BEGIN) -------- */
 
-#define  SWIGTYPE_p_landmap swig_types[0] 
-#define  SWIGTYPE_p_drawing_area swig_types[1] 
-#define  SWIGTYPE_p_mapcharacter swig_types[2] 
-#define  SWIGTYPE_p_gzFile swig_types[3] 
-#define  SWIGTYPE_p_mapview swig_types[4] 
-static swig_type_info *swig_types[6];
+#define  SWIGTYPE_p_npc swig_types[0] 
+#define  SWIGTYPE_p_landmap swig_types[1] 
+#define  SWIGTYPE_p_drawing_area swig_types[2] 
+#define  SWIGTYPE_p_mapcharacter swig_types[3] 
+#define  SWIGTYPE_p_character swig_types[4] 
+#define  SWIGTYPE_p_gzFile swig_types[5] 
+#define  SWIGTYPE_p_mapview swig_types[6] 
+static swig_type_info *swig_types[8];
 
 /* -------- TYPES TABLE (END) -------- */
 
@@ -510,6 +512,34 @@ static swig_type_info *swig_types[6];
 #ifdef __cplusplus
 extern "C" {
 #endif
+static PyObject *_wrap_mapcharacter_get_character(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapcharacter *arg0 ;
+    PyObject * argo0 =0 ;
+    character *result ;
+    
+    if(!PyArg_ParseTuple(args,"O:mapcharacter_get_character",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
+    result = (character *)arg0->get_character();
+    resultobj = SWIG_NewPointerObj((void *) result, SWIGTYPE_p_character);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapcharacter_get_npc(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapcharacter *arg0 ;
+    PyObject * argo0 =0 ;
+    npc *result ;
+    
+    if(!PyArg_ParseTuple(args,"O:mapcharacter_get_npc",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
+    result = (npc *)arg0->get_npc();
+    resultobj = SWIG_NewPointerObj((void *) result, SWIGTYPE_p_npc);
+    return resultobj;
+}
+
+
 static PyObject *_wrap_mapcharacter_init(PyObject *self, PyObject *args) {
     PyObject *resultobj;
     mapcharacter *arg0 ;
@@ -590,6 +620,20 @@ static PyObject *_wrap_mapcharacter_load(PyObject *self, PyObject *args) {
     if(!PyArg_ParseTuple(args,"Os:mapcharacter_load",&argo0,&arg1)) return NULL;
     if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
     result = (signed char )arg0->load((char const *)arg1);
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapcharacter_get_submap(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapcharacter *arg0 ;
+    PyObject * argo0 =0 ;
+    unsigned short result ;
+    
+    if(!PyArg_ParseTuple(args,"O:mapcharacter_get_submap",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
+    result = (unsigned short )arg0->get_submap();
     resultobj = PyInt_FromLong((long)result);
     return resultobj;
 }
@@ -715,6 +759,24 @@ static PyObject *_wrap_mapcharacter_set_offset(PyObject *self, PyObject *args) {
 }
 
 
+static PyObject *_wrap_mapcharacter_jump(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapcharacter *arg0 ;
+    unsigned short arg1 ;
+    unsigned short arg2 ;
+    unsigned short arg3 ;
+    unsigned short arg4 = 65535 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"Ohhh|h:mapcharacter_jump",&argo0,&arg1,&arg2,&arg3,&arg4)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
+    arg0->jump(arg1,arg2,arg3,arg4);
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
 static PyObject *_wrap_mapcharacter_move(PyObject *self, PyObject *args) {
     PyObject *resultobj;
     mapcharacter *arg0 ;
@@ -775,6 +837,52 @@ static PyObject *_wrap_mapcharacter_set_schedule_active(PyObject *self, PyObject
 }
 
 
+static PyObject *_wrap_mapcharacter_set_action(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapcharacter *arg0 ;
+    char *arg1 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"Os:mapcharacter_set_action",&argo0,&arg1)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
+    arg0->set_action(arg1);
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapcharacter_is_action_activated(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapcharacter *arg0 ;
+    PyObject * argo0 =0 ;
+    bool result ;
+    
+    if(!PyArg_ParseTuple(args,"O:mapcharacter_is_action_activated",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
+    result = (bool )arg0->is_action_activated();
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapcharacter_set_action_active(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapcharacter *arg0 ;
+    bool arg1 ;
+    PyObject * argo0 =0 ;
+    int tempbool1 ;
+    
+    if(!PyArg_ParseTuple(args,"Oi:mapcharacter_set_action_active",&argo0,&tempbool1)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
+    arg1 = (bool ) tempbool1;
+    arg0->set_action_active(arg1);
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
 static PyObject *_wrap_mapcharacter_update_move(PyObject *self, PyObject *args) {
     PyObject *resultobj;
     mapcharacter *arg0 ;
@@ -797,6 +905,23 @@ static PyObject *_wrap_mapcharacter_update(PyObject *self, PyObject *args) {
     if(!PyArg_ParseTuple(args,"O:mapcharacter_update",&argo0)) return NULL;
     if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
     arg0->update();
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapcharacter_launch_action(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapcharacter *arg0 ;
+    mapcharacter *arg1 ;
+    PyObject * argo0 =0 ;
+    PyObject * argo1 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"OO:mapcharacter_launch_action",&argo0,&argo1)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
+    if ((SWIG_ConvertPtr(argo1,(void **) &arg1,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
+    arg0->launch_action(arg1);
     Py_INCREF(Py_None);
     resultobj = Py_None;
     return resultobj;
@@ -872,6 +997,20 @@ static PyObject *_wrap_mapcharacter_can_go_west(PyObject *self, PyObject *args) 
     if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
     result = (bool )arg0->can_go_west();
     resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapcharacter_stand(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapcharacter *arg0 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"O:mapcharacter_stand",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
+    arg0->stand();
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
     return resultobj;
 }
 
@@ -984,6 +1123,35 @@ static PyObject *_wrap_mapcharacter_go_west(PyObject *self, PyObject *args) {
     arg0->go_west();
     Py_INCREF(Py_None);
     resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapcharacter_look_invert(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapcharacter *arg0 ;
+    unsigned short arg1 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"Oh:mapcharacter_look_invert",&argo0,&arg1)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
+    arg0->look_invert(arg1);
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_mapcharacter_whosnext(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapcharacter *arg0 ;
+    PyObject * argo0 =0 ;
+    mapcharacter *result ;
+    
+    if(!PyArg_ParseTuple(args,"O:mapcharacter_whosnext",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapcharacter,1)) == -1) return NULL;
+    result = (mapcharacter *)arg0->whosnext();
+    resultobj = SWIG_NewPointerObj((void *) result, SWIGTYPE_p_mapcharacter);
     return resultobj;
 }
 
@@ -1344,12 +1512,15 @@ static PyObject *_wrap_mapview_draw(PyObject *self, PyObject *args) {
 
 
 static PyMethodDef mapviewcMethods[] = {
+	 { "mapcharacter_get_character", _wrap_mapcharacter_get_character, METH_VARARGS },
+	 { "mapcharacter_get_npc", _wrap_mapcharacter_get_npc, METH_VARARGS },
 	 { "mapcharacter_init", _wrap_mapcharacter_init, METH_VARARGS },
 	 { "mapcharacter_clear", _wrap_mapcharacter_clear, METH_VARARGS },
 	 { "new_mapcharacter", _wrap_new_mapcharacter, METH_VARARGS },
 	 { "delete_mapcharacter", _wrap_delete_mapcharacter, METH_VARARGS },
 	 { "mapcharacter_get", _wrap_mapcharacter_get, METH_VARARGS },
 	 { "mapcharacter_load", _wrap_mapcharacter_load, METH_VARARGS },
+	 { "mapcharacter_get_submap", _wrap_mapcharacter_get_submap, METH_VARARGS },
 	 { "mapcharacter_get_posx", _wrap_mapcharacter_get_posx, METH_VARARGS },
 	 { "mapcharacter_get_posy", _wrap_mapcharacter_get_posy, METH_VARARGS },
 	 { "mapcharacter_get_offx", _wrap_mapcharacter_get_offx, METH_VARARGS },
@@ -1358,17 +1529,23 @@ static PyMethodDef mapviewcMethods[] = {
 	 { "mapcharacter_remove_from_map", _wrap_mapcharacter_remove_from_map, METH_VARARGS },
 	 { "mapcharacter_set_pos", _wrap_mapcharacter_set_pos, METH_VARARGS },
 	 { "mapcharacter_set_offset", _wrap_mapcharacter_set_offset, METH_VARARGS },
+	 { "mapcharacter_jump", _wrap_mapcharacter_jump, METH_VARARGS },
 	 { "mapcharacter_move", _wrap_mapcharacter_move, METH_VARARGS },
 	 { "mapcharacter_set_schedule", _wrap_mapcharacter_set_schedule, METH_VARARGS },
 	 { "mapcharacter_is_schedule_activated", _wrap_mapcharacter_is_schedule_activated, METH_VARARGS },
 	 { "mapcharacter_set_schedule_active", _wrap_mapcharacter_set_schedule_active, METH_VARARGS },
+	 { "mapcharacter_set_action", _wrap_mapcharacter_set_action, METH_VARARGS },
+	 { "mapcharacter_is_action_activated", _wrap_mapcharacter_is_action_activated, METH_VARARGS },
+	 { "mapcharacter_set_action_active", _wrap_mapcharacter_set_action_active, METH_VARARGS },
 	 { "mapcharacter_update_move", _wrap_mapcharacter_update_move, METH_VARARGS },
 	 { "mapcharacter_update", _wrap_mapcharacter_update, METH_VARARGS },
+	 { "mapcharacter_launch_action", _wrap_mapcharacter_launch_action, METH_VARARGS },
 	 { "mapcharacter_draw", _wrap_mapcharacter_draw, METH_VARARGS },
 	 { "mapcharacter_can_go_north", _wrap_mapcharacter_can_go_north, METH_VARARGS },
 	 { "mapcharacter_can_go_south", _wrap_mapcharacter_can_go_south, METH_VARARGS },
 	 { "mapcharacter_can_go_east", _wrap_mapcharacter_can_go_east, METH_VARARGS },
 	 { "mapcharacter_can_go_west", _wrap_mapcharacter_can_go_west, METH_VARARGS },
+	 { "mapcharacter_stand", _wrap_mapcharacter_stand, METH_VARARGS },
 	 { "mapcharacter_stand_north", _wrap_mapcharacter_stand_north, METH_VARARGS },
 	 { "mapcharacter_stand_south", _wrap_mapcharacter_stand_south, METH_VARARGS },
 	 { "mapcharacter_stand_east", _wrap_mapcharacter_stand_east, METH_VARARGS },
@@ -1377,6 +1554,8 @@ static PyMethodDef mapviewcMethods[] = {
 	 { "mapcharacter_go_south", _wrap_mapcharacter_go_south, METH_VARARGS },
 	 { "mapcharacter_go_east", _wrap_mapcharacter_go_east, METH_VARARGS },
 	 { "mapcharacter_go_west", _wrap_mapcharacter_go_west, METH_VARARGS },
+	 { "mapcharacter_look_invert", _wrap_mapcharacter_look_invert, METH_VARARGS },
+	 { "mapcharacter_whosnext", _wrap_mapcharacter_whosnext, METH_VARARGS },
 	 { "mapview_init", _wrap_mapview_init, METH_VARARGS },
 	 { "new_mapview", _wrap_new_mapview, METH_VARARGS },
 	 { "delete_mapview", _wrap_delete_mapview, METH_VARARGS },
@@ -1410,16 +1589,20 @@ static PyMethodDef mapviewcMethods[] = {
 
 /* -------- TYPE CONVERSION AND EQUIVALENCE RULES (BEGIN) -------- */
 
+static swig_type_info _swigt__p_npc[] = {{"_p_npc", 0, "npc *"},{"_p_npc"},{0}};
 static swig_type_info _swigt__p_landmap[] = {{"_p_landmap", 0, "landmap *"},{"_p_landmap"},{0}};
 static swig_type_info _swigt__p_drawing_area[] = {{"_p_drawing_area", 0, "drawing_area *"},{"_p_drawing_area"},{0}};
 static swig_type_info _swigt__p_mapcharacter[] = {{"_p_mapcharacter", 0, "mapcharacter *"},{"_p_mapcharacter"},{0}};
+static swig_type_info _swigt__p_character[] = {{"_p_character", 0, "character *"},{"_p_character"},{0}};
 static swig_type_info _swigt__p_gzFile[] = {{"_p_gzFile", 0, "gzFile *"},{"_p_gzFile"},{0}};
 static swig_type_info _swigt__p_mapview[] = {{"_p_mapview", 0, "mapview *"},{"_p_mapview"},{0}};
 
 static swig_type_info *swig_types_initial[] = {
+_swigt__p_npc, 
 _swigt__p_landmap, 
 _swigt__p_drawing_area, 
 _swigt__p_mapcharacter, 
+_swigt__p_character, 
 _swigt__p_gzFile, 
 _swigt__p_mapview, 
 0

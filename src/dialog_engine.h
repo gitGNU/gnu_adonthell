@@ -28,14 +28,16 @@ public:
     void set_name (char*);          // Changes the diaplayed NPC name
     void set_npc (char*);           // Changes the whole NPC
 
-#ifndef SWIG
+    dialog_engine (npc * mynpc, win_theme * th, u_int8 size=1); // Constructor
     dialog_engine();
-    dialog_engine (npc*, win_theme*, u_int8=1); // Constructor
+    void init(npc *mynpc, win_theme *th, u_int8 size=1);
     ~dialog_engine ();              // Destructor
     
     bool update ();                 // React to (keyboard) input
     void run ();                    // Execute one step of the dialogue
 
+    bool is_running;                // True as long as we don't want to quit
+#ifndef SWIG
 private:
     void insert_plugin ();          // 'Merges' a dialogue with the loaded one
     void on_change_selection ();    // Callback when selection has changed
@@ -56,7 +58,6 @@ private:
     u_int16 sel_start;              // The start of the current Dialogue items
 
     bool can_add;                   // Is true while we can concatenate NPC text
-    bool is_running;                // True as long as we don't want to quit
 #endif // SWIG
 };
 

@@ -374,6 +374,7 @@ void landsubmap::draw_square(u_int16 x, u_int16 y, u_int16 px, u_int16 py,
 
 landmap::landmap()
 {
+  myview=NULL;
   pattern=NULL;
 #ifdef _EDIT_
   mini_pattern=NULL;
@@ -405,8 +406,8 @@ void landmap::clear()
       pattern=NULL;
     }
 
-  for(i=0;i<mapchar.size();i++)
-    delete mapchar[i];
+  /*  for(i=0;i<mapchar.size();i++)
+      delete mapchar[i];*/
   mapchar.clear();
 
 #ifdef _EDIT_
@@ -498,13 +499,16 @@ s_int8 landmap::get(gzFile file)
 
 s_int8 landmap::load(const char * fname)
 {
+#define MAPS_DIR ""
   gzFile file;
   u_int8 retvalue;
-  file=gzopen(fname,"rb"); 
+  char fdef[strlen(fname)+strlen(MAPS_DIR)+1];
+  strcpy(fdef,MAPS_DIR);
+  strcat(fdef,fname);
+  file=gzopen(fdef,"rb"); 
   if(!file) return -1;
   retvalue=get(file);
   gzclose(file);
-
   return retvalue;
 }
 

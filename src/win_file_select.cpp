@@ -81,6 +81,8 @@ void win_file_select::list_directory(char * ext)
   DIR *cwd;
   struct dirent *dirlist;
   struct stat buf;
+  static char wdsave[500];
+  getcwd(wdsave,500);
   combo_file_->destroy();
   win_label * tmplabel=NULL;
   if(chdir(cur_dir_)==0)
@@ -114,6 +116,7 @@ void win_file_select::list_directory(char * ext)
 	      tmplabel=NULL;
 	    }
 	}
+      chdir(wdsave);
     }
   curdir_->set_text(cur_dir_);
   combo_file_->set_default(1);

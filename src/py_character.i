@@ -3,6 +3,7 @@
 %{
 
 #include "types.h"
+#include "mapcharacter.h"
 #include "character.h"
 #include "storage.h"
 #include "dialog_engine.h"
@@ -11,16 +12,14 @@
 %}
 
 #define u_int8 unsigned char
+#define s_int8 signed char
 #define u_int16 unsigned short
+#define s_int16 short
 #define u_int32 unsigned long
+#define s_int32 signed long
 
-class storage
-{
-public:
-    void set (const char*, int);
-    int get (const char*);
-};
-
+%include "storage.h"
+%include "mapcharacter.h"
 %include "character.h"
 
 %addmethods npc {

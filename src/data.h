@@ -18,9 +18,10 @@
 #include <zlib.h>
 
 #include "storage.h"
-#include "character.h"
 #include "gametime.h"
 #include "Python.h"
+
+class mapengine;
 
 // all the attributes related to a saved game
 class gamedata
@@ -49,6 +50,10 @@ private:
 
 // that's most of the data needed by the game engine plus methods 
 // to load and save that data
+
+class character;
+class mapcharacter;
+
 class data
 {
 public:
@@ -63,7 +68,11 @@ public:
     static gametime *time;                  // The gametime object
     static objects characters;              // All the characters 
     static objects quests;                  // All the quests
-    static player *the_player;              // The main character
+    static character *the_player;           // The main character
+    static mapcharacter *the_map_player;
+#ifndef _EDIT_
+    static mapengine * map_engine;          // The map engine
+#endif
 
 private:
     static void unload ();                  // Unload the game

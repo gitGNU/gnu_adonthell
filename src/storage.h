@@ -54,9 +54,11 @@ public:
     pair<const char*, s_int32> next ();
     
 protected:
+#ifndef SWIG
     hash_map <const char*, s_int32, hash<const char*>, equal_key> data;
     hash_map<const char*, s_int32, hash<const char*>, equal_key>::iterator i;
     u_int8 changed;
+#endif
 };
 
 
@@ -73,9 +75,11 @@ public:
     storage* next ();
 
 private:
+#ifndef SWIG
     map<const char*, storage*, ltstr> data;
     map<const char*, storage*>::iterator i;
     u_int8 changed;
+#endif
 };
 
 #endif // __STORAGE_H__

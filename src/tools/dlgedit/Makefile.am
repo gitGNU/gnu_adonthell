@@ -21,6 +21,8 @@ pset_interface.h run.h run_callbacks.h run_interface.h
 # Evil, but it works...
 CPPFLAGS +=-I../.. -D_DLGEDIT_ -D_DEBUG_ -D_VERSION_=\"0.7\" `gtk-config --cflags`
 
+SWIGFLAGS = -D_DLGEDIT_ -D_DEBUG_
+
 LDADD = character.o data.o dialog.o \
 event.o fileops.o lex.prefs.o prefs.o py_inc.o \
 py_quest_wrap.o quest.o storage.o yarg.o
@@ -32,7 +34,7 @@ lex.loadlg.cc: loadlg.l
 	flex -olex.loadlg.cc loadlg.l
 
 py_character_wrap.cpp : py_character.i
-	swig -python -shadow -c++ -make_default -o $*.cpp $<
+	swig $(SWIGFLAGS) -python -shadow -c++ -make_default -o $*.cpp $<
 	@rm character.py
  
 character.o : ../../character.cpp

@@ -15,11 +15,15 @@
 #ifndef __CHARACTER_H__
 #define __CHARACTER_H__
 
+#ifdef _DLGEDIT_
+#define _EDIT_
+#endif
+
 #include "types.h"
 #include "storage.h"
 #include "inventory.h"
 #include "event.h"
-
+#include "mapcharacter.h"
 #include <zlib.h>
 
 struct PyCodeObject;
@@ -40,20 +44,29 @@ enum
 
 // Base class for all sort of characters, like the player, NPC's, etc.
 #ifdef SWIG
-class character : public storage
+class character : public storage, public mapcharacter
 #else
+#ifdef _EDIT_
 class character : public storage, public event_list
+#else
+class character : public storage, public mapcharacter
+#endif // _EDIT_
 #endif // SWIG
 {
 public:
     char *name;                             // The character's name (and ID)
-    u_int16 posx;                           // The x position on the (current?) map
-    u_int16 posy;                           // The y position
     u_int32 color;                          // Color of dialogue text
+
+    character();
 
 #ifndef SWIG
     void save (gzFile);                     // Save the character to file
     void load (gzFile, bool b=true);        // Load the character from file
+#endif
+#ifdef _EDIT_
+    u_int16 posx, posy;
+ protected:
+    character * char_instance;
 #endif
 };
 
@@ -64,13 +77,10 @@ public:
     npc ();                                 // Constructor
     ~npc ();                                // Destructor
     
-    void set_schedule (char*, bool b=true); // Set / change the active schedule
     void set_dialogue (char*);              // Set / change the active dialogue
 
-    u_int8 move (u_int8);                   // Executes the schedule script
-
-#ifndef SWIG
     char* get_dialogue ();                  // Returns the character's dialogue
+#ifndef SWIG
     void save (gzFile);                     // Save the character to file
     void load (gzFile, bool b=true);        // Load the character from file
 

@@ -24,12 +24,17 @@ void mapcharacter::init()
     anim[i]=new animation_off;
   current_move=STAND_NORTH;
   ask_move=NO_MOVE;
-  schedule_activated=true;
 #ifndef _EDIT_
+  schedule=NULL;
+  action=NULL;
+  schedule_activated=true;
+  action_activated=true;
   locals=PyDict_New();
   PyDict_SetItemString(locals,"myself",pass_instance(this,"mapcharacter"));
   schedule=NULL;
 #endif
+  char_instance=NULL;
+  npc_instance=NULL;
 }
 
 void mapcharacter::clear()
@@ -68,9 +73,13 @@ s_int8 mapcharacter::get(gzFile file)
 
 s_int8 mapcharacter::load(const char * fname)
 {
+#define MAPCHAR_DIR "" 
   gzFile file;
   u_int8 retvalue;
-  file=gzopen(fname,"rb"); 
+  char fdef[strlen(fname)+strlen(MAPCHAR_DIR)+1];
+  strcpy(fdef,MAPCHAR_DIR);
+  strcat(fdef,fname);
+  file=gzopen(fdef,"rb");
   if(!file) return(-1);
   retvalue=get(file);
   gzclose(file);
@@ -84,18 +93,56 @@ void mapcharacter::set_pos(u_int16 smap,u_int16 x,u_int16 y)
   refmap->put_mapchar(this,smap,x,y);
 }
 
+void mapcharacter::jump(u_int16 smap, u_int16 x, u_int16 y, 
+			u_int16 pos=NO_MOVE)
+{
+  refmap->remove_mapchar(this,get_submap(),get_posx(),get_posy());
+  set_pos(smap,x,y);
+  switch(pos)
+    {
+    case NO_MOVE:
+      break;
+    case STAND_NORTH:
+      stand_north();
+      break;
+    case STAND_SOUTH:
+      stand_south();
+      break;
+    case STAND_WEST:
+      stand_west();
+      break;
+    case STAND_EAST:
+      stand_east();
+      break;
+    }
+}
+
+void mapcharacter::stand()
+{
+  if(current_move>=WALK_NORTH && current_move!=NO_MOVE) 
+    {
+      anim[current_move]->stop();
+      anim[current_move]->rewind();
+      current_move-=WALK_NORTH;
+      anim[current_move]->play();
+    }
+  ask_move=NO_MOVE;
+}
+
 void mapcharacter::stand_north() 
 {
   anim[current_move]->stop();
   anim[current_move]->rewind();
-  current_move=STAND_NORTH;anim[current_move]->play();
+  current_move=STAND_NORTH;
+  anim[current_move]->play();
 }
 
 void mapcharacter::stand_south() 
 {
   anim[current_move]->stop();
   anim[current_move]->rewind();
-  current_move=STAND_SOUTH;anim[current_move]->play();
+  current_move=STAND_SOUTH;
+  anim[current_move]->play();
 }
 
 void mapcharacter::stand_east() 
@@ -122,9 +169,9 @@ bool mapcharacter::can_go_north()
   u_int16 sy=(posy-basey<0)?0:posy-basey;
   s_int16 ax=sx-(posx-basex);
   s_int16 ay=sy-(posy-basey);
-  u_int16 ex=(posx-basex+mapselect::length>refmap->submap[submap]->length)?
+  u_int16 ex=(posx-basex+mapselect::length>=refmap->submap[submap]->length)?
     refmap->submap[submap]->length-1:posx-basex+mapselect::length;
-  u_int16 ey=(posy-basey+mapselect::height>refmap->submap[submap]->height)?
+  u_int16 ey=(posy-basey+mapselect::height>=refmap->submap[submap]->height)?
     refmap->submap[submap]->height-1:posy-basey+mapselect::height;
 
   for(j=sy;j<ey;j++)
@@ -148,9 +195,9 @@ bool mapcharacter::can_go_south()
   u_int16 sy=(posy-basey<0)?0:posy-basey;
   s_int16 ax=sx-(posx-basex);
   s_int16 ay=sy-(posy-basey);
-  u_int16 ex=(posx-basex+mapselect::length>refmap->submap[submap]->length)?
+  u_int16 ex=(posx-basex+mapselect::length>=refmap->submap[submap]->length)?
     refmap->submap[submap]->length-1:posx-basex+mapselect::length;
-  u_int16 ey=(posy-basey+mapselect::height>refmap->submap[submap]->height)?
+  u_int16 ey=(posy-basey+mapselect::height>=refmap->submap[submap]->height)?
     refmap->submap[submap]->height-1:posy-basey+mapselect::height;
 
   for(j=sy;j<ey;j++)
@@ -174,9 +221,9 @@ bool mapcharacter::can_go_east()
   u_int16 sy=(posy-basey<0)?0:posy-basey;
   s_int16 ax=sx-(posx-basex);
   s_int16 ay=sy-(posy-basey);
-  u_int16 ex=(posx-basex+mapselect::length>refmap->submap[submap]->length)?
+  u_int16 ex=(posx-basex+mapselect::length>=refmap->submap[submap]->length)?
     refmap->submap[submap]->length-1:posx-basex+mapselect::length;
-  u_int16 ey=(posy-basey+mapselect::height>refmap->submap[submap]->height)?
+  u_int16 ey=(posy-basey+mapselect::height>=refmap->submap[submap]->height)?
     refmap->submap[submap]->height-1:posy-basey+mapselect::height;
 
   for(j=sy;j<ey;j++)
@@ -200,9 +247,9 @@ bool mapcharacter::can_go_west()
   u_int16 sy=(posy-basey<0)?0:posy-basey;
   s_int16 ax=sx-(posx-basex);
   s_int16 ay=sy-(posy-basey);
-  u_int16 ex=(posx-basex+mapselect::length>refmap->submap[submap]->length)?
+  u_int16 ex=(posx-basex+mapselect::length>=refmap->submap[submap]->length)?
     refmap->submap[submap]->length-1:posx-basex+mapselect::length;
-  u_int16 ey=(posy-basey+mapselect::height>refmap->submap[submap]->height)?
+  u_int16 ey=(posy-basey+mapselect::height>=refmap->submap[submap]->height)?
     refmap->submap[submap]->height-1:posy-basey+mapselect::height;
 
   for(j=sy;j<ey;j++)
@@ -210,7 +257,6 @@ bool mapcharacter::can_go_west()
       {
 	if(placetpl[i-sx+ax][j-sy+ay].walkable) continue;
 	if(!i) continue;
-
 	if(!(refmap->submap[submap]->land[i][j].is_walkable_left() &&
 	     refmap->submap[submap]->land[i-1][j].is_walkable_right() &&
 	     refmap->submap[submap]->land[i-1][j].is_free()))
@@ -271,6 +317,49 @@ void mapcharacter::go_west()
   ask_move=WALK_WEST;
 }
 
+void mapcharacter::look_invert(u_int16 p)
+{
+  switch(p)
+    {
+    case STAND_NORTH:
+      stand_south();
+      break;
+    case STAND_SOUTH:
+      stand_north();
+      break;
+    case STAND_EAST:
+      stand_west();
+      break;
+    case STAND_WEST:
+      stand_east();
+      break;
+    }
+}
+
+mapcharacter * mapcharacter::whosnext()
+{
+  switch(current_move)
+    {
+    case STAND_NORTH:
+      if(posy==0) return NULL;
+      return refmap->submap[submap]->land[posx][posy-1].whoshere();
+      break;
+    case STAND_SOUTH:
+      if(posy==refmap->submap[submap]->height-1) return NULL;
+      return refmap->submap[submap]->land[posx][posy+1].whoshere();
+      break;
+    case STAND_WEST:
+      if(posx==0) return NULL;
+      return refmap->submap[submap]->land[posx-1][posy].whoshere();
+      break;
+    case STAND_EAST:
+      if(posx==refmap->submap[submap]->length-1) return NULL;
+      return refmap->submap[submap]->land[posx+1][posy].whoshere();
+      break;
+    }
+  return NULL;
+}
+
 #ifndef _EDIT_
 void mapcharacter::set_schedule(char * file)
 {
@@ -302,6 +391,37 @@ void mapcharacter::set_schedule(char * file)
   else cout << "\n*** Cannot open schedule: file \"" << script
 	    << "\" not found!" << flush;
 }
+
+void mapcharacter::set_action(char * file)
+{
+  char script[255];
+  strcpy (script, "scripts/schedules/");
+  strcat (script, file);
+  strcat (script, ".py");
+  
+  FILE *f = fopen (script, "r");
+  
+  // See whether the script exists at all
+  if (f)
+    {
+      // Compile the script into a PyCodeObject for quicker execution
+      _node *n = PyParser_SimpleParseFile (f, script, Py_file_input);
+      if (n)
+        {
+	  // If no errors occured update schedule code ...
+	  if (action) delete action;
+	  action = PyNode_Compile (n, file);
+	}
+      else
+        {
+	  cout << "\n*** Cannot set action: Error in" << flush;
+	  show_traceback ();
+        }
+      fclose (f);
+    }
+  else cout << "\n*** Cannot open action: file \"" << script
+	    << "\" not found!" << flush;
+}
 #endif
 
 void mapcharacter::update_move()
@@ -324,8 +444,14 @@ void mapcharacter::update_move()
 	  refmap->remove_mapchar(this,submap,posx,posy);
 	  refmap->remove_mapchar(this,submap,posx,posy-1);
 	  set_pos(submap,posx,posy-1);
-	  if(ask_move!=WALK_NORTH) stand_north();
 	  offy=0;
+	  if(ask_move!=WALK_NORTH) stand_north();
+	  enter_event evt;
+	  evt.submap=submap;
+	  evt.x=posx;
+	  evt.y=posy;
+	  evt.c=this;
+	  event_handler::raise_event(&evt);
 	}
       break;
     case WALK_SOUTH:
@@ -348,6 +474,12 @@ void mapcharacter::update_move()
 	    {
 	      refmap->remove_mapchar(this,submap,posx,posy-1);
 	      if(ask_move!=WALK_SOUTH) stand_south();
+	      enter_event evt;
+	      evt.submap=submap;
+	      evt.x=posx;
+	      evt.y=posy;
+	      evt.c=this;
+	      event_handler::raise_event(&evt);
 	    }
 	}
       break;
@@ -367,8 +499,14 @@ void mapcharacter::update_move()
 	  refmap->remove_mapchar(this,submap,posx,posy);
 	  refmap->remove_mapchar(this,submap,posx-1,posy);
 	  set_pos(submap,posx-1,posy);
-	  if(ask_move!=WALK_WEST) stand_west();
 	  offx=0;
+	  if(ask_move!=WALK_WEST) stand_west();
+	  enter_event evt;
+	  evt.submap=submap;
+	  evt.x=posx;
+	  evt.y=posy;
+	  evt.c=this;
+	  event_handler::raise_event(&evt);
 	}
       break;
     case WALK_EAST:
@@ -391,6 +529,12 @@ void mapcharacter::update_move()
 	    { 
 	      refmap->remove_mapchar(this,submap,posx-1,posy);
 	      if(ask_move!=WALK_EAST) stand_east();
+	      enter_event evt;
+	      evt.submap=submap;
+	      evt.x=posx;
+	      evt.y=posy;
+	      evt.c=this;
+	      event_handler::raise_event(&evt);
 	    }
 	}
       break;
@@ -406,6 +550,17 @@ void mapcharacter::update()
     PyEval_EvalCode(schedule,data::globals,locals);
 #endif
   update_move();
+}
+
+void mapcharacter::launch_action(mapcharacter * requester)
+{
+#ifndef _EDIT_
+  PyDict_SetItemString(locals,"requester",
+		       pass_instance(requester,"mapcharacter"));
+  if(action && action_activated)
+    PyEval_EvalCode(action,data::globals,locals);
+  PyDict_DelItemString(locals,"requester");
+#endif
 }
 
 void mapcharacter::draw(s_int16 x, s_int16 y, drawing_area * da_opt=NULL)

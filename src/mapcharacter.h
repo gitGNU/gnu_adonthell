@@ -21,6 +21,8 @@
 #include "maptpl.h"
 #include "landmap.h"
 #include "data.h"
+#include "event.h"
+#include "data.h"
 #include "py_inc.h"
 
 #ifdef _EDIT_
@@ -57,13 +59,22 @@ class mapview;
 
 struct PyCodeObject;
 
-#ifndef SWIG
-class mapcharacter : public maptpl
-#else
-class mapcharacter
-#endif
+class character;
+class npc;
+
+class mapcharacter : public maptpl, public event_list
 {
  public:
+  character * get_character() 
+    {
+      return char_instance;
+    }
+
+  npc * get_npc() 
+    {
+      return npc_instance;
+    }
+
   // Constructors and init functions
   void init();
   void clear();
@@ -75,6 +86,7 @@ class mapcharacter
   s_int8 load(const char * fname);
 
   // Positioning
+  u_int16 get_submap() { return submap; }
   u_int16 get_posx() { return posx; }
   u_int16 get_posy() { return posy; }
   s_int8 get_offx() { return offx; }
@@ -97,22 +109,26 @@ class mapcharacter
     }
   void set_pos(u_int16 smap,u_int16 x,u_int16 y);
   void set_offset(s_int8 x, s_int8 y) {offx=x; offy=y;}
+
+  void jump(u_int16 smap, u_int16 x, u_int16 y, u_int16 pos=NO_MOVE);
   
   // Getting which movment the character is doing
   u_int16 move() {return current_move;}
   
 #ifndef _EDIT_
   void set_schedule(char * file);
-
   bool is_schedule_activated() { return schedule_activated; }
   void set_schedule_active(bool a) { schedule_activated=a; }
+
+  void set_action(char * file);
+  bool is_action_activated() { return action_activated; }
+  void set_action_active(bool a) { action_activated=a; }
 #endif
   void update_move();
   void update();
+  void launch_action(mapcharacter * requester);
   void draw(mapview * mv);
-#ifndef SWIG
   void draw(s_int16 x, s_int16 y, drawing_area * da_opt=NULL);
-#endif
 
   // Testing if a move is possible
   bool can_go_north();
@@ -121,6 +137,7 @@ class mapcharacter
   bool can_go_west();
 
   // Giving the character instructions on what it should do
+  void stand();
   void stand_north();
   void stand_south();
   void stand_east();
@@ -130,25 +147,33 @@ class mapcharacter
   void go_east();
   void go_west();
 
+  void look_invert(u_int16 p);
+
+  mapcharacter * whosnext();
+
 #ifndef SWIG
   mapcharacter& operator =(mapcharacter &m);
 #endif // SWIG
 
- private:
+ protected:
   u_int16 current_move;
   u_int16 ask_move;
   u_int16 submap;
   u_int16 posx, posy;
   s_int8 offx, offy;
   bool schedule_activated;
+  bool action_activated;
   vector<animation_off*> anim;
   landmap * refmap;
   
   u_int16 length, height;
 
+  character * char_instance;
+  npc * npc_instance;
 #ifndef _EDIT_
   PyObject * locals;         // Locals that belong to that character
   PyCodeObject * schedule;   // The character's schedule
+  PyCodeObject * action;     // The character's action
 #endif
 
 #ifdef _EDIT_

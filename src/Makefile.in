@@ -76,10 +76,10 @@ SUBDIRS = . tools
 
 bin_PROGRAMS = adonthell
 
-EXTRA_DIST = py_audio.i py_character.i py_dialog_engine.i py_image.i py_input.i py_landmap.i py_mapcharacter.i py_mapview.i py_quest.i py_screen.i py_win_base.i py_win_container.i py_win_font.i py_win_image.i py_win_label.i py_win_theme.i prefs.l win_query.cpp win_info.cpp win_file_select.cpp .indent.pro
+EXTRA_DIST = py_audio.i py_character.i py_dialog_engine.i py_image.i py_input.i py_landmap.i py_mapcharacter.i py_mapview.i py_mapengine.i py_quest.i py_screen.i py_win_base.i py_win_container.i py_win_font.i py_win_image.i py_win_label.i py_win_theme.i prefs.l win_query.cpp py_event.i win_info.cpp win_file_select.cpp .indent.pro
 
 
-adonthell_SOURCES = animation.cpp animation_off.cpp audio.cpp audio_loop.cpp character.cpp data.cpp data_screen.cpp dialog.cpp dialog_engine.cpp drawing_area.cpp event.cpp fileops.cpp game.cpp gametime.cpp image.cpp input.cpp lex.prefs.cpp main.cpp mapselect.cpp maptpl.cpp mapobject.cpp mapcharacter.cpp landmap.cpp mapview.cpp pnm.cpp prefs.cpp py_character_wrap.cpp py_landmap_wrap.cpp py_input_wrap.cpp py_mapcharacter_wrap.cpp py_mapview_wrap.cpp py_dialog_engine_wrap.cpp py_inc.cpp py_modules.cpp py_quest_wrap.cpp py_screen_wrap.cpp py_image_wrap.cpp quest.cpp screen.cpp storage.cpp win_base.cpp win_border.cpp win_container.cpp win_font.cpp win_theme.cpp win_scrolled.cpp win_background.cpp win_scrollbar.cpp win_file.cpp win_image.cpp win_label.cpp win_select.cpp win_write.cpp yarg.cc py_win_font_wrap.cpp py_win_theme_wrap.cpp py_win_base_wrap.cpp py_win_label_wrap.cpp py_win_container_wrap.cpp py_audio_wrap.cpp py_win_image_wrap.cpp animation.h animation_off.h audio.h callback.h character.h data.h data_screen.h dialog.h dialog_engine.h drawing_area.h event.h fileops.h game.h gametime.h image.h input.h inventory.h item.h landmap.h mapcharacter.h mapobject.h mapselect.h maptpl.h mapview.h pnm.h prefs.h py_inc.h py_modules.h quest.h screen.h storage.h types.h win_anim.h win_background.h win_base.h win_border.h win_container.h win_file.h win_file_select.h win_font.h win_image.h win_info.h win_label.h win_query.h win_scrollbar.h win_scrolled.h win_select.h win_theme.h win_types.h win_write.h window.h yarg.h
+adonthell_SOURCES = animation.cpp animation_off.cpp audio.cpp audio_loop.cpp character.cpp data.cpp data_screen.cpp dialog.cpp dialog_engine.cpp drawing_area.cpp event.cpp fileops.cpp game.cpp gametime.cpp image.cpp input.cpp lex.prefs.cpp main.cpp mapselect.cpp maptpl.cpp mapobject.cpp mapcharacter.cpp landmap.cpp mapengine.cpp mapview.cpp pnm.cpp prefs.cpp py_character_wrap.cpp py_landmap_wrap.cpp py_input_wrap.cpp py_mapcharacter_wrap.cpp py_mapview_wrap.cpp py_mapengine_wrap.cpp py_dialog_engine_wrap.cpp py_inc.cpp py_event_wrap.cpp py_modules.cpp py_quest_wrap.cpp py_screen_wrap.cpp py_image_wrap.cpp quest.cpp screen.cpp storage.cpp win_base.cpp win_border.cpp win_container.cpp win_font.cpp win_theme.cpp win_scrolled.cpp win_background.cpp win_scrollbar.cpp win_file.cpp win_image.cpp win_label.cpp win_select.cpp win_write.cpp yarg.cc py_win_font_wrap.cpp py_win_theme_wrap.cpp py_win_base_wrap.cpp py_win_label_wrap.cpp py_win_container_wrap.cpp py_audio_wrap.cpp py_win_image_wrap.cpp animation.h animation_off.h audio.h audio_loop.h callback.h character.h data.h data_screen.h dialog.h dialog_engine.h drawing_area.h event.h fileops.h game.h gametime.h image.h input.h inventory.h item.h landmap.h mapcharacter.h mapobject.h mapselect.h maptpl.h mapview.h mapengine.h pnm.h prefs.h py_inc.h py_modules.h quest.h screen.h storage.h types.h win_anim.h win_background.h win_base.h win_border.h win_container.h win_file.h win_file_select.h win_font.h win_image.h win_info.h win_label.h win_query.h win_scrollbar.h win_scrolled.h win_select.h win_theme.h win_types.h win_write.h window.h yarg.h
 
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = ../header.h
@@ -95,13 +95,14 @@ adonthell_OBJECTS =  animation.o animation_off.o audio.o audio_loop.o \
 character.o data.o data_screen.o dialog.o dialog_engine.o \
 drawing_area.o event.o fileops.o game.o gametime.o image.o input.o \
 lex.prefs.o main.o mapselect.o maptpl.o mapobject.o mapcharacter.o \
-landmap.o mapview.o pnm.o prefs.o py_character_wrap.o py_landmap_wrap.o \
-py_input_wrap.o py_mapcharacter_wrap.o py_mapview_wrap.o \
-py_dialog_engine_wrap.o py_inc.o py_modules.o py_quest_wrap.o \
-py_screen_wrap.o py_image_wrap.o quest.o screen.o storage.o win_base.o \
-win_border.o win_container.o win_font.o win_theme.o win_scrolled.o \
-win_background.o win_scrollbar.o win_file.o win_image.o win_label.o \
-win_select.o win_write.o yarg.o py_win_font_wrap.o py_win_theme_wrap.o \
+landmap.o mapengine.o mapview.o pnm.o prefs.o py_character_wrap.o \
+py_landmap_wrap.o py_input_wrap.o py_mapcharacter_wrap.o \
+py_mapview_wrap.o py_mapengine_wrap.o py_dialog_engine_wrap.o py_inc.o \
+py_event_wrap.o py_modules.o py_quest_wrap.o py_screen_wrap.o \
+py_image_wrap.o quest.o screen.o storage.o win_base.o win_border.o \
+win_container.o win_font.o win_theme.o win_scrolled.o win_background.o \
+win_scrollbar.o win_file.o win_image.o win_label.o win_select.o \
+win_write.o yarg.o py_win_font_wrap.o py_win_theme_wrap.o \
 py_win_base_wrap.o py_win_label_wrap.o py_win_container_wrap.o \
 py_audio_wrap.o py_win_image_wrap.o
 adonthell_LDADD = $(LDADD)
@@ -120,20 +121,21 @@ DIST_COMMON =  Makefile.am Makefile.in
 
 DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 
-TAR = tar
+TAR = gtar
 GZIP_ENV = --best
 DEP_FILES =  .deps/animation.P .deps/animation_off.P .deps/audio.P \
 .deps/audio_loop.P .deps/character.P .deps/data.P .deps/data_screen.P \
 .deps/dialog.P .deps/dialog_engine.P .deps/drawing_area.P .deps/event.P \
 .deps/fileops.P .deps/game.P .deps/gametime.P .deps/image.P \
 .deps/input.P .deps/landmap.P .deps/lex.prefs.P .deps/main.P \
-.deps/mapcharacter.P .deps/mapobject.P .deps/mapselect.P .deps/maptpl.P \
-.deps/mapview.P .deps/pnm.P .deps/prefs.P .deps/py_audio_wrap.P \
-.deps/py_character_wrap.P .deps/py_dialog_engine_wrap.P \
+.deps/mapcharacter.P .deps/mapengine.P .deps/mapobject.P \
+.deps/mapselect.P .deps/maptpl.P .deps/mapview.P .deps/pnm.P \
+.deps/prefs.P .deps/py_audio_wrap.P .deps/py_character_wrap.P \
+.deps/py_dialog_engine_wrap.P .deps/py_event_wrap.P \
 .deps/py_image_wrap.P .deps/py_inc.P .deps/py_input_wrap.P \
 .deps/py_landmap_wrap.P .deps/py_mapcharacter_wrap.P \
-.deps/py_mapview_wrap.P .deps/py_modules.P .deps/py_quest_wrap.P \
-.deps/py_screen_wrap.P .deps/py_win_base_wrap.P \
+.deps/py_mapengine_wrap.P .deps/py_mapview_wrap.P .deps/py_modules.P \
+.deps/py_quest_wrap.P .deps/py_screen_wrap.P .deps/py_win_base_wrap.P \
 .deps/py_win_container_wrap.P .deps/py_win_font_wrap.P \
 .deps/py_win_image_wrap.P .deps/py_win_label_wrap.P \
 .deps/py_win_theme_wrap.P .deps/quest.P .deps/screen.P .deps/storage.P \
@@ -501,6 +503,14 @@ py_mapcharacter_wrap.cpp : py_mapcharacter.i mapcharacter.h
 py_mapview_wrap.cpp : py_mapview.i mapview.h
 	swig -python -shadow -c++ -make_default -o $*.cpp $< 
 	@mv mapview.py ../scripts
+
+py_mapengine_wrap.cpp : py_mapengine.i mapengine.h
+	swig -python -shadow -c++ -make_default -o $*.cpp $< 
+	@mv mapengine.py ../scripts
+
+py_event_wrap.cpp : py_event.i event.h
+	swig -python -shadow -c++ -make_default -o $*.cpp $< 
+	@mv event.py ../scripts
 
 py_win_font_wrap.cpp : py_win_font.i
 	swig -python -shadow -c++ -make_default -o $*.cpp $< 

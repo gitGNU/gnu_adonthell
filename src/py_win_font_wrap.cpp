@@ -699,7 +699,7 @@ static swig_const_info swig_const_table[] = {
     { SWIG_PY_INT,     "WIN_JUSTIFY_NO", (long) 3, 0, 0, 0},
     { SWIG_PY_INT,     "WIN_LAYOUT_NO", (long) 0, 0, 0, 0},
     { SWIG_PY_INT,     "WIN_LAYOUT_LIST", (long) 1, 0, 0, 0},
-    { SWIG_PY_STRING, "WIN_DIRECTORY", 0, 0, (void *) "gfxtree/window/", 0 }, 
+    { SWIG_PY_STRING, "WIN_DIRECTORY", 0, 0, (void *) "gfx/window/", 0 }, 
     { SWIG_PY_STRING, "WIN_FONT_DIRECTORY", 0, 0, (void *) "font/", 0 }, 
     { SWIG_PY_STRING, "WIN_BORDER_DIRECTORY", 0, 0, (void *) "border/", 0 }, 
     { SWIG_PY_STRING, "WIN_BACKGROUND_DIRECTORY", 0, 0, (void *) "background/", 0 }, 

@@ -24,8 +24,8 @@ ps_dlg::ps_dlg (player *p, npc *n)
 
 void ps_dlg::run ()
 {
-    wnd = create_ps_window (this, myplayer->name, myplayer->get("race"),
-        myplayer->get("gender"), mynpc->name);
+    wnd = create_ps_window (this, myplayer->name, myplayer->storage::get("race"),
+        myplayer->storage::get("gender"), mynpc->name);
 }
 
 void ps_dlg::on_ok (char* n, int r, int g, char *the_npc)

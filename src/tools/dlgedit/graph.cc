@@ -1174,10 +1174,10 @@ save_dialogue (MainFrame * wnd)
     // Players name, race and gender
     if (strcmp ("Banec", wnd->myplayer->name))
         out << "\nName §" << wnd->myplayer->name << "§";
-    if (wnd->myplayer->get ("race") != 0)
-        out << "\nRace " << wnd->myplayer->get ("race");
-    if (wnd->myplayer->get ("gender") != 1)
-        out << "\nGender " << wnd->myplayer->get ("gender");
+    if (wnd->myplayer->storage::get ("race") != 0)
+        out << "\nRace " << wnd->myplayer->storage::get ("race");
+    if (wnd->myplayer->storage::get ("gender") != 1)
+        out << "\nGender " << wnd->myplayer->storage::get ("gender");
 
     // NPC name
     out << "\nNPC §" << wnd->mynpc->name << "§";

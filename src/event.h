@@ -23,7 +23,7 @@
 #include "types.h"
 
 class event_handler;
-class character;
+class mapcharacter;
 
 enum
 {
@@ -60,18 +60,21 @@ class base_map_event : public event
 public:
     void save (gzFile);                         // Save event data
 
+    s_int32 submap;                              // submap
     s_int32 x;                                  // x coordinate
     s_int32 y;                                  // y coordinate
     s_int8 dir;                                 // walking direction
     s_int32 map;                                // map
-    character *c;                               // character triggering the event
+    mapcharacter *c;                            // character triggering the event
+    base_map_event ();
 
 protected:
-    base_map_event ();
 
     void execute (event*);                      // Run the event's script
     bool equals (event*);                       // Compare two events
     void load (gzFile);                         // Load event data
+
+    friend class event_list;
 };
 
 // To notify when a character entered a maptile
@@ -113,8 +116,14 @@ protected:
 class event_list
 {
 public:
-    vector<event*> events;                      // List of registered events
     ~event_list ();                             // Unregister all events
+
+    void add_event (event* ev);
+    void add_map_event(char * script, u_int16 type, s_int32 esubmap=-1,
+		       s_int32 ex=-1,s_int32 ey=-1, s_int16 edir=-1, 
+		       mapcharacter * ec=NULL);
+    vector<event*> events;                      // List of registered events
+protected:
 };
 
 // Keeps track of registered scripts, recieves triggered events 
@@ -125,10 +134,13 @@ public:
     static void register_event (event*, char*); // register an event
     static void remove_event (event*);          // unregister an event
     static void raise_event (event*);           // event triggered
+#ifndef SWIG
     static event* load_event (gzFile, bool=true);// load an event
-    
+#endif
 private:
+#ifndef SWIG
     static vector<event*> handlers[MAX_EVENT];  // registered events storage
+#endif
 };
 
 #endif // __EVENT__H_

@@ -37,6 +37,27 @@ event_list::~event_list ()
     }    
 }
 
+void event_list::add_event (event* ev)
+{
+  events.push_back(ev);
+}
+
+void event_list::add_map_event(char * script, u_int16 etype, 
+			       s_int32 esubmap=-1,s_int32 ex=-1, 
+			       s_int32 ey=-1, s_int16 edir=-1, 
+			       mapcharacter * ec=NULL)
+{
+  base_map_event * e=new base_map_event();
+  e->submap=esubmap;
+  e->type=etype;
+  e->x=ex;
+  e->y=ey;
+  e->dir=edir;
+  e->c=ec;
+  add_event(e);
+  event_handler::register_event(e,script);
+}
+
 event::~event ()
 {
     if (script_file) delete script_file;
@@ -53,7 +74,6 @@ void event_handler::raise_event (event *e)
 {
     vector<event*> reg_evs = handlers[e->type];
     vector<event*>::iterator i;
-
     // Search through all registered events with the type of the raised event
     for (i = reg_evs.begin (); i != reg_evs.end (); i++)
         // Execute the script; pass recieved event on to get event data
@@ -165,7 +185,7 @@ leave_event::leave_event () : base_map_event ()
 
 base_map_event::base_map_event ()
 {
-    x = y = dir = map = -1;
+    submap = x = y = dir = map = -1;
     c = NULL;
     script_file = NULL;
     script = NULL;
@@ -177,6 +197,7 @@ bool base_map_event::equals (event *e)
     // we know that we've got an enter_event :)
     base_map_event *tmp = (base_map_event *) e;
 
+    if (submap != -1 && tmp->submap != submap) return false;
     if (x != -1 && tmp->x != x) return false;
     if (y != -1 && tmp->y != y) return false;
     if (dir != -1 && tmp->dir != dir) return false;
@@ -193,7 +214,7 @@ void base_map_event::execute (event *e)
 
     // Build the event script's local namespace
     PyObject *locals = Py_BuildValue ("{s:i,s:i,s:i,s:i,s:s}", "posx", t->x, 
-        "posy", t->y, "dir", t->dir, "map", t->map, "name", t->c->name);
+        "posy", t->y, "dir", t->dir, "map", t->map, "name", t->c->get_character()->name);
     // Execute script
     PyEval_EvalCode (script, data::globals, locals);
     // Cleanup
@@ -214,7 +235,7 @@ void base_map_event::load (gzFile f)
     gzread (f, &map, sizeof (map));
 
     name = get_string (f);
-    c = (character*) data::characters.get (name);
+    c = (mapcharacter*) data::characters.get (name);
     delete name;
 
     script_file = get_string (f);
@@ -229,7 +250,7 @@ void base_map_event::save (gzFile out)
     gzwrite (out, &dir, sizeof (dir));
     gzwrite (out, &map, sizeof (map));    
 
-    put_string (out, c->name);
+    put_string (out, c->get_character()->name);
     put_string (out, script_file);    
 }
 

@@ -9,9 +9,9 @@ LDADD = ../../animation.o ../../animation_off.o ../../audio.o \
 ../../character.o ../../data.o ../../data_screen.o ../../dialog.o ../../dialog_engine.o \
 ../../drawing_area.o ../../event.o ../../fileops.o ../../game.o ../../gametime.o \
 ../../image.o ../../input.o ../../lex.prefs.o \
-../../mapselect.o ../../maptpl.o ../../mapobject.o ../../mapcharacter.o ../../landmap.o ../../mapview.o \
-../../pnm.o ../../prefs.o ../../py_character_wrap.o ../../py_landmap_wrap.o ../../py_input_wrap.o ../../py_mapcharacter_wrap.o \
-../../py_mapview_wrap.o ../../py_dialog_engine_wrap.o \
+../../mapselect.o ../../maptpl.o ../../mapobject.o ../../mapcharacter.o ../../landmap.o ../../mapview.o ../../mapengine.o \
+../../pnm.o ../../prefs.o ../../py_character_wrap.o ../../py_landmap_wrap.o ../../py_input_wrap.o ../../py_mapcharacter_wrap.o ../../py_mapengine_wrap.o \
+../../py_mapview_wrap.o ../../py_dialog_engine_wrap.o ../../py_event_wrap.o\
 ../../py_inc.o ../../py_modules.o ../../py_quest_wrap.o \
 ../../py_screen_wrap.o ../../py_image_wrap.o ../../quest.o ../../screen.o ../../storage.o \
 ../../win_base.o ../../win_border.o ../../win_container.o ../../win_font.o ../../win_theme.o ../../win_scrolled.o ../../win_background.o ../../win_scrollbar.o \
