@@ -68,7 +68,7 @@ VERSION = @VERSION@
 
 bin_PROGRAMS = mapengine
 
-mapengine_SOURCES = array_tmpl.cc audio.cc audio_thread.cc commands.cc dialog_cmds.cc fileops.cc 	gfx.cc init.cc instruction.cc instruction_class.cc interpreter.cc input.cc main.cc 	map.cc mapcharacter.cc mapengine.cc mapevent.cc mappattern.cc mapsquare.cc pnm.cc 	window.cc animation.cc dialog.cc cutscene.cc 
+mapengine_SOURCES = animation.cc array_tmpl.cc audio.cc audio_thread.cc commands.cc cutscene.cc dialog.cc dialog_cmds.cc fileops.cc generic_cmds.cc gfx.cc init.cc instruction.cc instruction_class.cc interpreter.cc input.cc main.cc map.cc mapcharacter.cc mapengine.cc mapevent.cc mappattern.cc mapsquare.cc pnm.cc storage.cc window.cc
 
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = ../header.h
@@ -80,11 +80,11 @@ DEFS = @DEFS@ -I. -I$(srcdir) -I..
 CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
-mapengine_OBJECTS =  array_tmpl.o audio.o audio_thread.o commands.o \
-dialog_cmds.o fileops.o gfx.o init.o instruction.o instruction_class.o \
-interpreter.o input.o main.o map.o mapcharacter.o mapengine.o \
-mapevent.o mappattern.o mapsquare.o pnm.o window.o animation.o dialog.o \
-cutscene.o
+mapengine_OBJECTS =  animation.o array_tmpl.o audio.o audio_thread.o \
+commands.o cutscene.o dialog.o dialog_cmds.o fileops.o generic_cmds.o \
+gfx.o init.o instruction.o instruction_class.o interpreter.o input.o \
+main.o map.o mapcharacter.o mapengine.o mapevent.o mappattern.o \
+mapsquare.o pnm.o storage.o window.o
 mapengine_LDADD = $(LDADD)
 mapengine_DEPENDENCIES = 
 mapengine_LDFLAGS = 
@@ -101,11 +101,12 @@ TAR = tar
 GZIP_ENV = --best
 DEP_FILES =  .deps/animation.P .deps/array_tmpl.P .deps/audio.P \
 .deps/audio_thread.P .deps/commands.P .deps/cutscene.P .deps/dialog.P \
-.deps/dialog_cmds.P .deps/fileops.P .deps/gfx.P .deps/init.P \
-.deps/input.P .deps/instruction.P .deps/instruction_class.P \
-.deps/interpreter.P .deps/main.P .deps/map.P .deps/mapcharacter.P \
-.deps/mapengine.P .deps/mapevent.P .deps/mappattern.P .deps/mapsquare.P \
-.deps/pnm.P .deps/window.P
+.deps/dialog_cmds.P .deps/fileops.P .deps/generic_cmds.P .deps/gfx.P \
+.deps/init.P .deps/input.P .deps/instruction.P \
+.deps/instruction_class.P .deps/interpreter.P .deps/main.P .deps/map.P \
+.deps/mapcharacter.P .deps/mapengine.P .deps/mapevent.P \
+.deps/mappattern.P .deps/mapsquare.P .deps/pnm.P .deps/storage.P \
+.deps/window.P
 SOURCES = $(mapengine_SOURCES)
 OBJECTS = $(mapengine_OBJECTS)
 

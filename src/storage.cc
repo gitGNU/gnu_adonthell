@@ -87,3 +87,9 @@ storage* objects::get (const char* key)
 
     return data[key];
 }
+
+// Delete a key from the array
+void objects::erase (const char *key)
+{
+    data.erase (key);
+}

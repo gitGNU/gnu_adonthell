@@ -16,6 +16,7 @@
 #define __GENERIC_CMDS_H__
 
 #include "types.h"
+#include "storage.h"
 #include "interpreter.h"
 
 // base class for commands having two parameters, namely
@@ -24,7 +25,7 @@ class binary_cmd : public command
 {
 public:
     binary_cmd ();
-    ~binary_cmd ();
+    virtual ~binary_cmd ();
     
     void init (s_int32*, u_int32&, void*);
 

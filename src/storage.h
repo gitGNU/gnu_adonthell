@@ -52,8 +52,9 @@ private:
 class objects
 {
 public:
-    static inline void set (const char*, storage*);
-    static inline storage* get (const char*);
+    static void set (const char*, storage*);
+    static storage* get (const char*);
+    static void erase (const char*);
 
 private:
     static map<const char*, storage*> data;
