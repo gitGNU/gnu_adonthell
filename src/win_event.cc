@@ -35,9 +35,7 @@ void win_event::py_signal_connect (PyObject *pyfunc, int signal, PyObject *args)
 	    case DESTROY:
 	    {
 	        set_callback_destroy (
-	        MemberTranslator0wRet<bool, py_callback, bool (py_callback::*)()> (
-	            *callback, &py_callback::callback_func0ret));
-	        // makeFunctor (*callback, &py_callback::callback_func0ret));
+	        makeFunctor (&Functor0wRet<bool>(), *callback, &py_callback::callback_func0ret));
 	        break;
 	    }
 	

@@ -102,7 +102,7 @@ int main(int argc, char * argv[])
 #endif
 
     // init game environment
-#if !defined (WIN32) && !defined (__BEOS__)
+#if !defined (WIN32) 
     game::init(DATA_DIR);
 #else
     char b[500];

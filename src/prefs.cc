@@ -30,11 +30,13 @@
 #include <dirent.h>
 #include <unistd.h>
 
+#ifndef __APPLE__
 #ifdef HAVE__GETOPT_H
 #include <_getopt.h>
 #else
 #include <getopt.h>
 #endif
+#endif // __APPLE__
 
 #include "prefs.h"
 #include "python_class.h"
@@ -61,7 +63,7 @@ config::config ()
     language = "";                  // Let the user's environment decide
 
     // set the path to the adonthellrc file:
-#if !defined (WIN32) && !defined (__BEOS__)
+#ifndef WIN32
     adonthellrc = string (getenv ("HOME")) + "/.adonthell";
 #else
     adonthellrc = string (".");

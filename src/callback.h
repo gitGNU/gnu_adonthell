@@ -64,7 +64,7 @@ class Functor0:public FunctorBase
  public:
   Functor0(){}
   void operator()()const
-    {
+   {
       thunk(*this);
     }
 };
@@ -73,7 +73,7 @@ class Functor0:public FunctorBase
 template <class Callee, class MemFunc>
 class MemberTranslator0:public Functor0{
  public:
-  MemberTranslator0(Callee &c,const MemFunc &m):Functor0(thunk,&c,0,&m,sizeof(MemFunc)){}
+  MemberTranslator0(Callee &c, MemFunc &m):Functor0(thunk,&c,0,&m,sizeof(MemFunc)){}
   static void thunk(const FunctorBase &ftor)
     {
       Callee *callee = (Callee *)ftor.getCallee();
@@ -139,7 +139,7 @@ private:
 template <class RT,class Callee, class MemFunc>
 class MemberTranslator0wRet:public Functor0wRet<RT>{
 public:
-	MemberTranslator0wRet(Callee &c,const MemFunc &m):
+	MemberTranslator0wRet(Callee &c,MemFunc &m):
 		Functor0wRet<RT>(thunk,&c,0,&m,sizeof(MemFunc)){}
 	static RT thunk(const FunctorBase &ftor)
 		{
@@ -209,7 +209,7 @@ template <class P1, class Callee, class MemFunc>
 class MemberTranslator1 : public Functor1<P1>
 {
   public:
-    MemberTranslator1 (Callee & c, const MemFunc & m)
+    MemberTranslator1 (Callee & c, MemFunc & m)
         : Functor1<P1> (thunk, &c, 0, &m, sizeof (MemFunc)) { }
     static void thunk (const FunctorBase & ftor, P1 p1)
     {
@@ -257,7 +257,7 @@ template <class P1, class MemFunc> class MemberOf1stArgTranslator1
 : public Functor1 <P1>
 {
 public:
-    MemberOf1stArgTranslator1 (const MemFunc & m) :
+    MemberOf1stArgTranslator1 (MemFunc & m) :
     Functor1 < P1 > (thunk, (void *)1, 0, &m, sizeof (MemFunc)) { }
     static void thunk (const FunctorBase & ftor, P1 p1)
     {
