@@ -83,16 +83,24 @@ AC_CHECK_LIB(pthread, main,
 
 AC_CHECK_LIB(z, main,,echo "Adonthell requires Zlib. Exitting...";exit 1)
 
+dnl *************
 dnl Check for SDL
+dnl *************
+
 SDL_VERSION=1.2.0
 AM_PATH_SDL($SDL_VERSION,
-            :,
-	    AC_MSG_ERROR([*** SDL version $SDL_VERSION not found!])
+    :,
+	AC_MSG_ERROR([*** SDL version $SDL_VERSION not found!])
 )
 
+dnl *******************
 dnl Check for FreeType2
-FTT2_LIBS=`freetype-config --libs`
-FTT2_CFLAGS=`freetype-config --cflags`
+dnl *******************
+
+AC_CHECK_FT2(8.0.0,
+    :,
+    AC_MSG_ERROR([*** Freetype version >= 8.0.0 not found!])
+)
 
 
 dnl********************
@@ -101,13 +109,14 @@ dnl********************
 
 OGG_VORBIS=no
 AM_PATH_VORBIS(
-  OGG_VORBIS="yes"
-  ogg_music="enabled"
-  OGG_LIBS="$VORBIS_LIBS $VORBISFILE_LIBS"
-  OGG_DEFS="-DOGG_MUSIC"
-  OGG_CFLAGS="$VORBIS_CFLAGS",
-  AC_MSG_RESULT(Disabling OggVorbis support)
-  ogg_music="disabled")
+        OGG_VORBIS="yes"
+        ogg_music="enabled"
+        OGG_LIBS="$VORBIS_LIBS $VORBISFILE_LIBS"
+        OGG_DEFS="-DOGG_MUSIC"
+        OGG_CFLAGS="$VORBIS_CFLAGS",
+        AC_MSG_RESULT(Disabling OggVorbis support)
+        ogg_music="disabled"
+)
 
 
 dnl ********************
@@ -313,6 +322,7 @@ doc/dlgedit/Makefile
 doc/items/Makefile
 src/Makefile
 src/tools/Makefile
+src/tools/animedit/Makefile
 src/tools/charedit/Makefile
 src/tools/combat/Makefile
 src/tools/dlgedit/Makefile
@@ -336,6 +346,7 @@ echo
 echo "SDL ....................... : `$SDL_CONFIG --version`"
 echo "Python .................... : $PY_VERSION"
 echo "Python debugging .......... : $pydebug"
+echo "Freetype .................. : `freetype-config --version`"
 if test x$havegtk = xyes; then
 echo "GTK+ ...................... : `gtk-config --version`"
 fi
