@@ -11,6 +11,9 @@ Written by Andrew Henderson <hendersa@db.erau.edu>
 * 0.0 - CHANGELOG *
 *******************
 
+* 24 October 2004 - Kai Sterker <kaisterker@linuxgames.com>
+  Updated for v0.3.4
+
 * 17 September 2002 - Kai Sterker <kaisterker@linuxgames.com>
   Updated for v0.3.3
 
@@ -102,8 +105,8 @@ Adonthell:
 * 3.0 - INSTALLING THE REQUIRED LIBRARIES *
 *******************************************
 
-There are three libraries that Adonthell depends on. Two of these
-libraries are required, one is optional. The two REQUIRED libraries 
+There are four libraries that Adonthell depends on. Two of these
+libraries are required, one is optional. The three REQUIRED libraries 
 (and where they can be downloaded from) are:
 
 1. The Simple Directmedia Layer (SDL) library, version 1.2 or later.
@@ -114,12 +117,16 @@ libraries are required, one is optional. The two REQUIRED libraries
 
     http://www.python.org/
 
+3. Freetype, version 2.0 or later.
+
+    http://www.freetype.org/
+    
 Sound support under Adonthell is optional (but highly recommended!!).
 We suggest building Adonthell with sound support if you have a sound
 card configured to run under Linux. To do that, you'll need to build
 and install another library:
 
-3. Ogg Vorbis, Version 1.0rc3 or later
+4. Ogg Vorbis, Version 1.0rc3 or later
 
     http://www.xiph.org/ogg/vorbis/download/
 
@@ -141,7 +148,11 @@ For SDL you will need
 for python
     python2-2.2
     python2-devel-2.2
-    
+
+for freetype
+    freetype2
+    freetype2-devel
+
 and for Ogg Vorbis
     libogg-1.0
     libogg-devel-1.0
@@ -153,8 +164,9 @@ and for Ogg Vorbis
 * 3.2 - INSTALLING FROM SOURCE *
 ********************************
 
-The following steps show how to install the Python, SDL, and Ogg Vorbis libraries from source code. You may install Python, the SDL library and
-Ogg Vorbis in any order.
+The following steps show how to install the Python, SDL, Freetype and 
+Ogg Vorbis libraries from source code. You may install Python, the SDL 
+library, Freetype and Ogg Vorbis in any order.
 
 Ogg Vorbis itself consists of two libraries: libogg and libvorbis
 that have to be installed in this order.
@@ -205,7 +217,7 @@ installed and configured in your system.
 
 Now that the required libraries are built and installed on your
 system, you need to build the Adonthell program itself. The
-latest version of Adonthell is 0.3. You can download it from the
+latest version of Adonthell is 0.3.4. You can download it from the
 Adonthell website: http://adonthell.linuxgames.com/download/.
 
 
@@ -217,11 +229,11 @@ a convenient directory.
 
 Step #2: Decompress the tar.gz files. Do this by typing:
 
-	tar -xzf adonthell-0.3.3.tar.gz
-	tar -xzf wastesedge-0.3.3.tar.gz	
+	tar -xzf adonthell-0.3.4.tar.gz
+	tar -xzf wastesedge-0.3.4.tar.gz	
 
 Two new directories will be created in the current directory, named
-"adonthell-0.3.3" and "wastesedge-0.3.3". Complete step #3 and #4 for 
+"adonthell-0.3.4" and "wastesedge-0.3.4". Complete step #3 and #4 for 
 both directories.
 
 Step #3: Build Adonthell. Do this by changing into the newly created 
@@ -232,10 +244,10 @@ directory and typing:
 
 A successful configure will produce an output like this:
 
-	Adonthell v0.3.3
+	Adonthell v0.3.4
 
-    SDL ....................... : 1.2.4
-    Python .................... : 2.2
+    SDL ....................... : 1.2.7
+    Python .................... : 2.3
     Python debugging .......... : no
     Ogg music ................. : enabled
     Building editors .......... : no
@@ -299,7 +311,7 @@ obtained the non-devel/runtime packages.
 
 On some systems, it might be necessary to recreate the configure
 script to work correctly. Do this by typing './autogen.sh' inside
-the adonthell-0.3.3 directory.
+the adonthell-0.3.4 directory.
 
 
 Q: While compiling the Adonthell source code I get an error similar

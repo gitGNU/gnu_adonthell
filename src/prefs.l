@@ -2,7 +2,7 @@
 /*
    $Id$
 
-   Copyright (C) 2000 Kai Sterker <kaisterker@linuxgames.com>
+   Copyright (C) 2000/2004 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -33,6 +33,7 @@ num    {digit}+
 Screen-mode         return PREFS_SCREEN_MODE;
 Double-size         return PREFS_DOUBLE_SCREEN;
 Language            return PREFS_LANGUAGE;
+Font				return PREFS_FONT;
 Quick-load          return PREFS_QUICK_LOAD;
 Audio-channels      return PREFS_AUDIO_CHANNELS;
 Audio-resolution    return PREFS_AUDIO_RESOLUTION;

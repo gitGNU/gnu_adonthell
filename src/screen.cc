@@ -1,7 +1,7 @@
 /*
    $Id$
 
-   Copyright (C) 1999/2000/2001  Alexandre Courbot
+   Copyright (C) 1999/2000/2001/2004  Alexandre Courbot
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -77,6 +77,7 @@ void screen::set_video_mode (u_int16 nl, u_int16 nh, u_int8 depth, bool dbl, boo
             bytes_per_pixel_ = bpp / 8; 
             break;
     }
+    display.set_dbl_mode (dbl);
     display.set_length (nl);
     display.set_height (nh);
     

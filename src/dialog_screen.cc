@@ -1,7 +1,7 @@
 /*
    $Id$
 
-   (C) Copyright 2000/2001 Kai Sterker <kaisterker@linuxgames.com>
+   (C) Copyright 2000/2001/2004 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -51,8 +51,8 @@ void dialog_screen::init(character_base *mynpc, char * dlg_file, u_int8 size)
     portrait = "None";
     
     // Init position & size
-    win_container::move (20, 20);
-    win_container::resize (280, 105);
+    win_container::move (15, 15);
+    win_container::resize (290, 115);
 
     // Load the different fonts
     fonts[0] = win_manager::get_font ("white");
@@ -98,7 +98,7 @@ void dialog_screen::init(character_base *mynpc, char * dlg_file, u_int8 size)
     sel = new win_select ();
     sel->set_scrollbar (*theme);
     sel->move (80, 0);
-    sel->resize (200, height ());
+    sel->resize (210, height ());
     sel->set_mode (win_select::MODE_BRIGHTNESS);
     sel->set_layout (win_container::LIST_LAYOUT);
     sel->set_space_with_border (5);
@@ -191,7 +191,7 @@ void dialog_screen::run ()
         l = new win_label();
         l->set_font (i == 0 ? *fonts[dlg->npc_color ()] : *fonts[1]);
         l->move(0,0);
-        ((label*)l)->resize(180,0);
+        ((label*)l)->resize(190,0);
         l->set_form(label::AUTO_HEIGHT);
         l->set_text (txt);
         l->set_visible (true);

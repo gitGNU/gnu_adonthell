@@ -1,7 +1,7 @@
 /*
    $Id$
 
-   Copyright (C) 1999/2000/2001   Alexandre Courbot
+   Copyright (C) 1999/2000/2001/2004   Alexandre Courbot
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -51,10 +51,17 @@ public:
     /** Creates an image with a specified size.
      *  @param l length of the image.
      *  @param h height of the image.
+     *  @param mode use screen::dblmode or set dbl_mode to false
      *
      *  @attention Not accessible from Python.
      */ 
-    image (u_int16 l, u_int16 h);
+    image (u_int16 l, u_int16 h, bool mode = true);
+    
+    /**
+     * Create image from SDL_Surface.
+     * @param s surface
+     */
+    image (SDL_Surface *s, const SDL_Color & color);
 #endif
     
     /** Destructor.
@@ -334,7 +341,6 @@ public:
      *                     be lightened/darkened too.
      */
     void brightness (const surface& src, u_int8 cont, bool proceed_mask = false); 
- 
     //@} 
 
 

@@ -1,7 +1,7 @@
 /*
    $Id$
  
-   Copyright (C) 1999/2000/2001/2002/2003 Kai Sterker <kaisterker@linuxgames.com>
+   Copyright (C) 1999/2000/2001/2002/2003/2004 Kai Sterker
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -170,7 +170,7 @@ int main(int argc, char * argv[])
     data::the_player = NULL;
 
     // init window manager
-    win_manager::init (); 
+    win_manager::init (myconfig.font); 
 
     // event system
     event_handler::init ();

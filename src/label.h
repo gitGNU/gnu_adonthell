@@ -1,7 +1,7 @@
 /*
+   $Id$
 
-
-   (C) Copyright 2000/2001 Joel Vennin
+   (C) Copyright 2000/2001/2004 Joel Vennin
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -129,11 +129,12 @@ public :
     
 
 protected :
+    u_int16 ucd (u_int16 & idx);
     
     struct Sline_text
     {
         u_int16 idx_beg;
-        s_int16 idx_end; 
+        s_int16 idx_end;
         u_int16 pos_x;
     }; 
     
@@ -214,6 +215,9 @@ protected :
     
     // my text
     string my_text_;
+    
+    // temporary for gathering utf-8 text
+    string new_text_;
     
     // form display
     u_int8 my_form_;  

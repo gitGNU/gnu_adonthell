@@ -15,14 +15,12 @@
 
 win_font::win_font()
 {
-  table=NULL;
   cursor=NULL;
 }
 
 win_font::win_font(char * fic)
 {
   cursor=NULL;
-  table=NULL;
   load(fic);
 }
 
@@ -38,14 +36,13 @@ win_font::~win_font()
 void win_font::erase()
 {
   if(cursor) delete cursor;
-  if(table) delete [] table;
-  table=NULL;
+    glyphs.clear ();
 }
 
 
 void win_font::load(char * rep)
 {
-  if(table!=NULL) erase();
+  erase();
   
   //file which contains font information and cursor
   igzstream f; 
@@ -77,13 +74,7 @@ void win_font::load(char * rep)
   cursor=new image();
   cursor->get(f);
 
-  //create a table for each letter
-  table=new image[WIN_NB_TABLE_CHAR];
-  
-  //init the boolean table 
-  init_in_table();
-  
-  char i;int j=0;
+  char i;
   u_int16 pos,tl;
   
   while(!f.eof())
@@ -94,16 +85,15 @@ void win_font::load(char * rep)
       tl << f; 
       if(i>0 && i<WIN_NB_TABLE_CHAR)
 	{
-          table_core[i]=true;
-	  table[i].resize(tl + 1,font->height()-1);
-	  font->draw (0, 0, pos, 0, tl + 1, font->height () -1, NULL, &(table[i])); 
+        image *glph = new image (tl + 1,font->height()-1);
+        font->draw (0, 0, pos, 0, tl + 1, font->height () -1, NULL, glph);
+        glyphs[i] = glph; 
 	} 
-      j++;
     }
   
   height_=font->height()-1;
   
-  length_=table[' '].length();
+  length_=glyphs[' ']->length();
   
   if(font)delete font;
   
@@ -113,20 +103,14 @@ void win_font::load(char * rep)
 
 bool win_font::in_table(u_int16 tmp)
 {
-  if(tmp>WIN_NB_TABLE_CHAR) return false;
-  return table_core[tmp];
+    if (glyphs.find (tmp) != glyphs.end ()) return true;
+    else return false;
 }
 
-void win_font::init_in_table()
+image & win_font::operator[](u_int16 i)
 {
-  register u_int16 i;
-  for(i=0;i<WIN_NB_TABLE_CHAR;i++)
-    table_core[i]=false;
-}
-
-image & win_font::operator[](int i)
-{
-  return table[i];
+    if (in_table (i)) return *(glyphs[i]);
+    else return *(glyphs[' ']);
 }
 
 

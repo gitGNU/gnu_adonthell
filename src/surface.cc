@@ -1,7 +1,7 @@
 /*
    $Id$
 
-   Copyright (C) 1999/2000/2001   Alexandre Courbot
+   Copyright (C) 1999/2000/2001/2004   Alexandre Courbot
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -55,6 +55,7 @@ void surface::double_size(const surface & src)
     lock ();
     src.lock ();
     
+    dbl_mode = src.is_dbl_mode ();
     resize(src.length(), src.height());
     for (u_int16 j = 0; j < height(); j++)
         for (u_int16 i = 0; i < length(); i++)
@@ -74,6 +75,7 @@ void surface::half_size(const surface & src)
     lock ();
     src.lock ();
 
+    dbl_mode = src.is_dbl_mode ();
     resize_aux(src.length(), src.height());
     for (u_int16 j = 0; j < src.height() - 1; j++)
         for (u_int16 i = 0; i < src.length() - 1; i++)
@@ -133,7 +135,7 @@ void surface::put_pix_aux (u_int16 x, u_int16 y, u_int32 col)
     {
         case 2:
             *((Uint16 *) (offset)) = (Uint16) col;
-            if (screen::dblmode)
+            if (dbl_mode)
             {
                 *((Uint16 *) (offset+vis->format->BytesPerPixel)) = (Uint16) col;
                 *((Uint16 *) (offset+vis->pitch)) = (Uint16) col;
@@ -150,7 +152,7 @@ void surface::put_pix_aux (u_int16 x, u_int16 y, u_int32 col)
             *((offset) + (vis->format->Rshift >> 3)) = r; 
             *((offset) + (vis->format->Gshift >> 3)) = g;
             *((offset) + (vis->format->Bshift >> 3)) = b;
-            if (screen::dblmode)
+            if (dbl_mode)
             {
                 *((offset+vis->format->BytesPerPixel) + (vis->format->Rshift >> 3)) = r; 
                 *((offset+vis->format->BytesPerPixel) + (vis->format->Gshift >> 3)) = g;
@@ -166,7 +168,7 @@ void surface::put_pix_aux (u_int16 x, u_int16 y, u_int32 col)
         }
         case 4:
             *((Uint32 *)(offset)) = (Uint32) col;
-            if (screen::dblmode)
+            if (dbl_mode)
             {
                 *((Uint32 *) (offset+vis->format->BytesPerPixel)) = (Uint32) col;
                 *((Uint32 *) (offset+vis->pitch)) = (Uint32) col;
@@ -178,13 +180,14 @@ void surface::put_pix_aux (u_int16 x, u_int16 y, u_int32 col)
 }
 
 
-surface::surface () : drawable () 
+surface::surface (bool mode) : drawable () 
 { 
     vis = NULL;
     alpha_ = 255; 
     mask_on = false; 
     not_screen = true; 
     changed = false; 
+    dbl_mode = mode ? screen::dbl_mode () : false;
 }
 
 surface::~surface () 
@@ -217,7 +220,7 @@ void surface::draw (s_int16 x, s_int16 y, s_int16 sx, s_int16 sy, u_int16 sl,
 
     setup_rects (x, y, sx, sy, sl, sh, da_opt); 
 
-    if (screen::dblmode)
+    if (screen::dbl_mode())
     {
         x <<= 1;
         y <<= 1;
@@ -269,7 +272,7 @@ void surface::fillrect (s_int16 x, s_int16 y, u_int16 l, u_int16 h, u_int32 col,
         dstrect.h = h;
     }
 
-    if (screen::dblmode)
+    if (screen::dbl_mode ())
     {
         dstrect.x <<= 1;
         dstrect.y <<= 1;
@@ -297,7 +300,7 @@ void surface::unlock () const
 
 void surface::put_pix (u_int16 x, u_int16 y, u_int32 col) 
 {
-    if (screen::dblmode)
+    if (dbl_mode)
     {
         x <<= 1;
         y <<= 1;
@@ -310,7 +313,7 @@ void surface::put_pix (u_int16 x, u_int16 y, u_int32 col)
     {
         case 2:
             *((Uint16 *) (offset)) = (Uint16) col;
-            if (screen::dblmode)
+            if (dbl_mode)
             {
                 *((Uint16 *) (offset+vis->format->BytesPerPixel)) = (Uint16) col;
                 *((Uint16 *) (offset+vis->pitch)) = (Uint16) col;
@@ -327,7 +330,7 @@ void surface::put_pix (u_int16 x, u_int16 y, u_int32 col)
             *((offset) + (vis->format->Rshift >> 3)) = r; 
             *((offset) + (vis->format->Gshift >> 3)) = g;
             *((offset) + (vis->format->Bshift >> 3)) = b;
-            if (screen::dblmode)
+            if (dbl_mode)
             {
                 *((offset+vis->format->BytesPerPixel) + (vis->format->Rshift >> 3)) = r; 
                 *((offset+vis->format->BytesPerPixel) + (vis->format->Gshift >> 3)) = g;
@@ -343,7 +346,7 @@ void surface::put_pix (u_int16 x, u_int16 y, u_int32 col)
         }
         case 4:
             *((Uint32 *)(offset)) = (Uint32) col;
-            if (screen::dblmode)
+            if (dbl_mode)
             {
                 *((Uint32 *) (offset+vis->format->BytesPerPixel)) = (Uint32) col;
                 *((Uint32 *) (offset+vis->pitch)) = (Uint32) col;
@@ -356,7 +359,7 @@ void surface::put_pix (u_int16 x, u_int16 y, u_int32 col)
 
 void surface::get_pix (u_int16 x, u_int16 y, u_int32& col) const
 {
-    if (screen::dblmode)
+    if (dbl_mode)
     {
         x <<= 1;
         y <<= 1;
@@ -400,6 +403,7 @@ surface& surface::operator = (surface& src)
     mask_on = src.mask_on;
     alpha_ = src.alpha_;
     not_screen = src.not_screen;
+    dbl_mode = src.dbl_mode;
     if (vis) SDL_FreeSurface (vis);
     if (!src.vis) 
         vis = NULL;
@@ -423,8 +427,8 @@ void surface::resize (u_int16 l, u_int16 h)
 
     set_length (l);
     set_height (h); 
-
-    if (screen::dblmode)
+    
+    if (screen::dbl_mode ())
     {
         l <<= 1;
         h <<= 1;

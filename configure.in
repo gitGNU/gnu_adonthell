@@ -3,14 +3,14 @@ dnl Process this file with autoconf to produce a configure script.
 dnl **************************************************************
 
 AC_PREREQ(2.50)
-AC_INIT(adonthell, 0.3.3, adonthell@linuxgames.com, adonthell)
+AC_INIT(adonthell, 0.3.4, adonthell-project@linuxgames.com, adonthell)
 dnl AC_PREFIX_PROGRAM(adonthell)
 
 dnl Detect the canonical host and target build environment
 AC_CANONICAL_HOST
 AC_CANONICAL_TARGET
 
-AM_INIT_AUTOMAKE(adonthell, 0.3.3)
+AM_INIT_AUTOMAKE([])
 AM_CONFIG_HEADER(config.h)
 
 CFLAGS="-g -Wall -fno-exceptions"
@@ -32,7 +32,6 @@ dnl ****
 dnl i18n
 dnl ****
 
-ALL_LINGUAS=""
 AM_GNU_GETTEXT([external])
 
 dnl ********************
@@ -76,6 +75,12 @@ if test x$gamedatadir = xnone; then
   if test x$unixinst = xno; then
     gamedatadir=""
     DEFS="$DEFS -DSINGLE_DIR_INST"
+    case "$target" in
+      *-*-darwin*)
+        makebundle="yes"
+        DEFS="$DEFS -Wno-long-double"
+      ;;
+    esac        
   else
     case "$target" in
       *-*-cygwin* | *-*-mingw32*)
@@ -95,6 +100,8 @@ if test x$gamedatadir = xnone; then
 else
   DEFS="$DEFS -DDATA_DIR=\"\\\"$gamedatadir\\\"\""
 fi
+
+AM_CONDITIONAL(MAKE_BUNDLE, test x$makebundle = xyes)
 
 dnl **********************
 dnl Check for memory leaks
@@ -124,14 +131,14 @@ AM_PATH_SDL($SDL_VERSION,
 	AC_MSG_ERROR([*** SDL version $SDL_VERSION not found!])
 )
 
-dnl *******************
-dnl Check for FreeType2
-dnl *******************
+*******************
+Check for FreeType2
+*******************
 
-dnl AC_CHECK_FT2(6.0.0,
-dnl     :,
-dnl     AC_MSG_ERROR([*** Freetype version >= 6.0.0 not found!])
-dnl )
+AC_CHECK_FT2(6.0.0,
+    :,
+    AC_MSG_ERROR([*** Freetype version >= 6.0.0 not found!])
+)
 
 dnl *******************
 dnl Check for OggVorbis
@@ -419,14 +426,15 @@ AC_SUBST(gamedatadir)
 dnl AC_SUBST(FT2_LIBS)
 dnl AC_SUBST(FT2_CFLAGS)
 
-AC_OUTPUT([ m4/Makefile 
-adonthell.spec
+AC_OUTPUT([ 
 Makefile
+adonthell.spec
 doc/Makefile
 doc/devel/Makefile
 doc/dlgedit/Makefile
 doc/dlgedit-api/Makefile
 doc/items/Makefile
+m4/Makefile
 po/Makefile.in 
 src/Makefile
 src/modules/Makefile
@@ -434,7 +442,6 @@ src/tools/Makefile
 src/tools/charedit/Makefile
 src/tools/dlgedit/Makefile
 src/tools/dlgedit/examples/Makefile
-src/tools/pydonthell/Makefile
 ])
 
 
@@ -462,7 +469,7 @@ if test x$memleaks = xyes; then
 echo "Test for Memory Leaks ..... : enabled"
 fi
 if test x$unixinst = xno; then
-    echo "Single Directory install"
+    echo "Data directory ............ : Single Directory install"
 else
     echo "Data directory ............ : $gamedatadir"
 fi

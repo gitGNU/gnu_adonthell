@@ -30,9 +30,9 @@ win_manager* win_manager::active = NULL;
 // List of loaded themes
 hash_map<string, win_theme *> win_manager::theme;
 // List of loaded fonts
-hash_map<string, win_font *> win_manager::font; 
-
-using namespace std; 
+hash_map<string, win_ttf *> win_manager::font; 
+// True type font to use
+string win_manager::font_file;
 
 
 win_manager::win_manager ()
@@ -73,8 +73,10 @@ void win_manager::destroy()
     wnd_focus = NULL;
 }
 
-void win_manager::init () 
+void win_manager::init (const string & font) 
 {
+    font_file = font;
+    TTF_Init ();
 }
 
 // Delete all fonts and themes
@@ -87,10 +89,12 @@ void win_manager::cleanup ()
     theme.clear (); 
 
     // Cleaning up fonts
-    for (hash_map <string, win_font *>::iterator ifo = font.begin ();
+    for (hash_map <string, win_ttf *>::iterator ifo = font.begin ();
          ifo != font.end (); ifo++)
         delete ifo->second;
-    font.clear (); 
+    font.clear ();
+    
+    TTF_Quit ();
 }
 
 // add a window 
@@ -221,13 +225,13 @@ win_theme * win_manager::get_theme (string name)
 // load a font from disk
 void win_manager::add_font (string name)
 {
-    font[name] = new win_font ((char *) name.c_str ());
+    font[name] = new win_ttf ((char *) name.c_str (), font_file);
 }
 
 // remove a font
 bool win_manager::remove_font (string name)
 {
-    hash_map <string, win_font *>::iterator it = font.find (name);
+    hash_map <string, win_ttf *>::iterator it = font.find (name);
     if (it == font.end ()) return false;
 
     delete it->second;
@@ -238,7 +242,7 @@ bool win_manager::remove_font (string name)
 // return a pointer to a font
 win_font * win_manager::get_font (string name)
 {
-    hash_map <string, win_font *>::iterator it = font.find (name);
+    hash_map <string, win_ttf *>::iterator it = font.find (name);
     
     // try to load the font if it's not in memory yet
     if (it == font.end ())

@@ -1,7 +1,7 @@
 /*
    $Id$
 
-   Copyright (C) 2000/2002 Kai Sterker <kaisterker@linuxgames.com>
+   Copyright (C) 2000/2002/2004 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -50,15 +50,16 @@ enum
     PREFS_UNKNOWN = 0,
     PREFS_SCREEN_MODE = 1,
     PREFS_LANGUAGE = 2,
-    PREFS_QUICK_LOAD = 3,
-    PREFS_AUDIO_CHANNELS = 4,
-    PREFS_AUDIO_RESOLUTION = 5,
-    PREFS_AUDIO_SAMPLE_RATE = 6,
-    PREFS_AUDIO_VOLUME = 7,
-    PREFS_VERSION = 8,
-    PREFS_NUM = 9,
-    PREFS_STR = 10,
-    PREFS_DOUBLE_SCREEN = 11,
+    PREFS_FONT = 3,
+    PREFS_QUICK_LOAD = 4,
+    PREFS_AUDIO_CHANNELS = 5,
+    PREFS_AUDIO_RESOLUTION = 6,
+    PREFS_AUDIO_SAMPLE_RATE = 7,
+    PREFS_AUDIO_VOLUME = 8,
+    PREFS_VERSION = 9,
+    PREFS_NUM = 10,
+    PREFS_STR = 11,
+    PREFS_DOUBLE_SCREEN = 12,
 };
 
 
@@ -123,6 +124,7 @@ public:
      * Language to use if NLS was compiled in.
      */
     string language;
+    string font;
     /**
      * Name of the %game that is running at present.
      */

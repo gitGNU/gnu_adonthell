@@ -1,7 +1,7 @@
 /*
    $Id$
    
-   (C) Copyright 2000/2001 Joel Vennin
+   (C) Copyright 2000/2001/2004 Joel Vennin
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -24,7 +24,7 @@
 
 #include "str_hash.h"
 #include "win_theme.h"
-#include "win_font.h"
+#include "win_ttf.h"
 
 #ifndef SWIG
 using namespace std;   
@@ -161,7 +161,7 @@ public:
     /**
      * Empty for now
      */
-    static void init ();
+    static void init (const string & font);
     
     /**
      * Delete all themes and fonts currently loaded.
@@ -225,12 +225,13 @@ public:
  private:
 #ifndef SWIG
     static hash_map<string, win_theme *> theme; 
-    static hash_map<string, win_font *> font; 
+    static hash_map<string, win_ttf *> font; 
     
     list<win_base *> wnd_list;
     list<win_base *>::iterator current;
     win_base *wnd_focus;
     win_manager *prev;
+    static string font_file; 
 #endif // SWIG
 };
 

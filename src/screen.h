@@ -1,7 +1,7 @@
 /*
    $Id$
 
-   Copyright (C) 1999/2000/2001 Alexandre Courbot
+   Copyright (C) 1999/2000/2001/2004 Alexandre Courbot
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -41,8 +41,6 @@ using namespace std;
 class screen
 {
 public:
-
-    static bool dblmode;
 
     /**
      * The actual screen surface.
@@ -136,6 +134,8 @@ public:
      */
     static string info (); 
 
+    static bool dbl_mode () { return dblmode; }
+    
     /** 
      * Make a nice transition effect.
      * 
@@ -151,7 +151,9 @@ private:
     static u_int32 trans; 
 
     /// Whether fullscreen is on or not.
-    static bool fullscreen_; 
+    static bool fullscreen_;
+    
+    static bool dblmode;
 }; 
 
 

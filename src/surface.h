@@ -1,7 +1,7 @@
 /*
    $Id$
 
-   Copyright (C) 1999/2000/2001   Alexandre Courbot
+   Copyright (C) 1999/2000/2001/2004   Alexandre Courbot
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -58,7 +58,7 @@ public:
      * (0, 0) sized, no mask, alpha value of 255 (opaque).
      * 
      */ 
-    surface ();
+    surface (bool mode = true);
 
     /**
      * Destructor.
@@ -111,6 +111,11 @@ public:
      */
     void set_alpha (u_int8 a); 
     
+    
+    bool is_dbl_mode () const { return dbl_mode; }
+
+    void set_dbl_mode (bool mode) { dbl_mode = mode; }
+
     //@}
 
 
@@ -406,6 +411,9 @@ protected:
     void get_pix_aux (u_int16 x, u_int16 y, u_int32& col) const; 
     void put_pix_aux (u_int16 x, u_int16 y, u_int32 col); 
 #endif
+
+    /// double mode
+    bool dbl_mode;    
      
 private:
 

@@ -10,7 +10,7 @@ http://savannah.gnu.org/support/?group_id=702 .
 Requirements:
 =============
 
-There are three libraries that Adonthell depends on:
+There are four libraries that Adonthell depends on:
 
 1. Python, version 1.5.2 or later. 
    
@@ -28,7 +28,12 @@ version of Python by entering the command:
    See http://www.libsdl.org/
 
 
-3. Ogg Vorbis, version 1.0rc3 or later
+3  Freetype, version 2.0 or later.
+
+   See http://www.freetype.org/
+   
+   
+4. Ogg Vorbis, version 1.0rc3 or later
 
    For convenience, the SDL_mixer library is included with the source code;
 it will be replaced by a custom mixer anyway. However, you'll need Ogg Vorbis
@@ -66,7 +71,7 @@ You can automatically get an installable Debian package by typing
 
 $> debuild 
 
-within the adonthell-0.3.3 directory. 'debbuild' is part of the
+within the adonthell-0.3.4 directory. 'debbuild' is part of the
 'devscripts' package. Check carefully that you have the python2.2,
 python2.2-dev, libsdl1.2 and libsdl1.2-dev packages installed (plus 
 libvorbis0 & libvorbis-dev if you want sound), or the build will fail.
@@ -77,7 +82,7 @@ RPM users:
 
 To create an installable RPM package, type
 
-$> rpm -tb adonthell-0.3.3.tar.gz
+$> rpm -tb adonthell-0.3.4.tar.gz
 
 Note that the 4.x versions of rpm are currently unsupported. Feel free
 to change that, if you want. For more information, refer to section 8.0
@@ -189,4 +194,3 @@ Adonthell you can query the data directory with 'adonthell -d'.
 * That's it! Enjoy the game engine and let us know what you think!! *
 *********************************************************************
 					- The Adonthell Team
-

@@ -39,7 +39,7 @@ config::config ()
 #else
     screen_mode = 0;                // Fullscreen
 #endif
-#if defined (QTOPIA) || defined (WIN32)
+#if defined (QTOPIA)
     double_screen = 0;              // Double screen
 #else
     double_screen = 1;              // Double screen
@@ -50,6 +50,7 @@ config::config ()
     audio_sample_rate = 2;          // 11025, 22050 or 44100 Hz
     audio_volume = 100;             // 0 - 100%
     language = "";                  // Let the user's environment decide
+    font = "";						// use default font
 
     // set the path to the adonthellrc file:
 #ifndef SINGLE_DIR_INST
@@ -271,7 +272,10 @@ void config::write_adonthellrc ()
        << "\n\n" << "# Double-size num\n#   0  320x240 mode\n"
        << "#   1  640x480 (double) mode\n    Double-size " 
        << (int) double_screen << "\n\n"
-       << "# Language [locale]\n# Where locale has the form fr_FR or de_DE, etc.\n    Language [" << language << "]\n\n"
+       << "# Language [locale]\n#   Where locale has the form fr_FR or de_DE, etc.\n"
+       << "    Language [" << language << "]\n\n"
+       << "# Font [font.ttf]\n#   Path to a true type font to use. Leave empty for default\n"
+       << "    Font [" << font << "]\n\n"
        << "# Quick-load num\n#   0  off\n#   1  on\n    Quick-load "
        << (int) quick_load << "\n\n"
        << "# Audio-channels num\n#   0  Mono\n#   1  Stereo\n"
@@ -333,7 +337,11 @@ bool config::read_adonthellrc ()
                 if (parse_adonthellrc (n, s) == PREFS_STR) language = s;
                 break;
             }
-                
+            case PREFS_FONT:
+            {
+                if (parse_adonthellrc (n, s) == PREFS_NUM) font = s;
+                break;
+            }
             case PREFS_SCREEN_MODE:
             {
                 if (parse_adonthellrc (n, s) == PREFS_NUM) screen_mode = n;
@@ -395,7 +403,7 @@ bool config::read_adonthellrc ()
     // compare version of config file and engine
     if (major < MAJOR || 
         (major == MAJOR && minor < MINOR) ||
-        (major == MAJOR && minor < MINOR && micro < MICRO) ||
+        (major == MAJOR && minor == MINOR && micro < MICRO) ||
         strcmp (suffix, SUFFIX) != 0)
     {
         // update config file if engine is newer

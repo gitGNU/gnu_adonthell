@@ -17,20 +17,24 @@
 #include <stdlib.h>
 #include <string.h>
 
+#if __GNUG__ > 2
+#include <ext/hash_map>
+using __gnu_cxx::hash_map;
+#else
+#include <hash_map>
+#endif
+
 #include "win_types.h"
 #include "image.h"
 
-
+using namespace std;
 
 class win_font{
 
- private:
+ protected:
   void erase();
-  void init_in_table();
   
-  bool table_core[WIN_NB_TABLE_CHAR];
-
-  image * table;  
+  hash_map<u_int16, image*> glyphs;
   
   u_int8 height_;
   u_int8 length_; //just for space bar
@@ -43,15 +47,15 @@ class win_font{
   
   win_font();
   
-  ~win_font();
+  virtual ~win_font();
   
   void load(char *);
   
   //  void load_font(char *);
   
-  bool in_table(u_int16 tmp);
+  virtual bool in_table(u_int16 tmp);
   
-  image & operator[](int);
+  virtual image & operator[](u_int16);
   
   //win_font & operator=(win_font &);
   

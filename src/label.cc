@@ -1,7 +1,7 @@
 /*
    $Id$
 
-   (C) Copyright 2000/2001 Joel Vennin
+   (C) Copyright 2000/2001/2004 Joel Vennin
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -14,16 +14,16 @@
 
 #include "label.h"
 
-
 u_int16 label::cursor_blink_cycle = 75; 
 
 /**
    Constructor
 */
-label::label ()
+label::label () : image ()
 {
-    // i've no font at the beginning
+    // no font at the beginning
     my_font_ = NULL;
+    new_text_ = "";
     
     // init the cursor and the text vector
     init_vec_cursor (); 
@@ -37,7 +37,7 @@ label::label ()
     
     cursor_cur_blink_ = 0;
 
-    set_mask (true); 
+    set_mask (true);
 }
 
 
@@ -46,7 +46,6 @@ label::label ()
 */
 label::~label ()
 {
-    
 }
 
 
@@ -85,16 +84,24 @@ void label::set_text (const string & text)
 */
 void label::add_text (const string & text)
 {
+    new_text_ += text;
+    
+    // collect more text if we have unfinished utf8
+    int size = new_text_.length ();
+    if (size == 2 && (u_int8) new_text_[0] >= 0xE0) return;
+    if (size == 1 && (u_int8) new_text_[0] >= 0x80) return;
+
     my_old_cursor_ = my_cursor_; 
     
     if (my_old_cursor_.idx == my_text_.length ()) 
     {
-        my_text_ += text;   
+        my_text_ += new_text_;
         my_cursor_.idx = my_text_.length (); 
     }
-    else my_text_.insert (my_cursor_.idx, text);
+    else my_text_.insert (my_cursor_.idx, new_text_);
+    new_text_ = "";
     
-    build (false); 
+    build (false);
 }
 
 
@@ -289,7 +296,8 @@ void label::build_form_nothing ()
                     j = start_idx - word_length;
                     while (j < start_idx)
                     {
-                        if (line_tmp.pos_x + (*my_font_) [my_text_[j]].length ()  > length ())
+                        u_int16 c = ucd (j);
+                        if (line_tmp.pos_x + (*my_font_) [c].length ()  > length ())
                         {
                             line_tmp.idx_end = j - 1;
                             my_vect_.push_back (line_tmp);
@@ -297,7 +305,7 @@ void label::build_form_nothing ()
                             line_tmp.pos_x = 0;
                             line_tmp.idx_beg = j; 
                         }
-                        line_tmp.pos_x += (*my_font_) [my_text_[j]].length (); 
+                        line_tmp.pos_x += (*my_font_) [c].length (); 
                         j++; 
                     }
                     break;  
@@ -322,8 +330,7 @@ void label::build_form_auto_height ()
 
     if (new_size  != height ())
     {
-        image tmp;
-        tmp.resize (length (), new_size);
+        image tmp (length (), new_size);
         tmp.lock (); 
         tmp.fillrect (0, 0, length (), new_size, screen::trans_col ()); 
         tmp.unlock (); 
@@ -361,7 +368,7 @@ void label::build_form_auto_size ()
         }
         else
         {
-            line_tmp.pos_x += (*my_font_) [my_text_[i]].length (); 
+            line_tmp.pos_x += (*my_font_) [ucd (i)].length (); 
         }
         i++; 
     }
@@ -410,11 +417,11 @@ void label::clean_surface (const bool erase_all)
 u_int8 label::find_word (u_int16 & index, u_int16 & wlength, u_int16 & wlengthpix, const u_int16 rlength)
 {
     wlength = 0;
-    wlengthpix = 0; 
+    wlengthpix = 0;
     while (index < my_text_.length ()  && my_text_[index] != ' ' && my_text_[index] != '\n')
     {
+        wlengthpix += (*my_font_) [ucd (index)].length (); 
         wlength++;
-        wlengthpix += (*my_font_) [my_text_[index]].length (); 
         index++; 
     }
 
@@ -454,8 +461,10 @@ void label::update_cursor ()
     my_cursor_.pos_x = 0;
     
     u_int16 j = my_vect_[my_cursor_.line].idx_beg;
-    while (j != my_cursor_.idx) my_cursor_.pos_x+= (*my_font_) [my_text_[j++]].length ();     
-    
+    while (j < my_cursor_.idx) {
+        my_cursor_.pos_x+= (*my_font_) [ucd (j)].length ();     
+        j++;
+    }
     // find y position
     my_cursor_.pos_y = (my_cursor_.line - start_line_) * my_font_->height (); 
 
@@ -474,6 +483,7 @@ void label::draw_string (const bool at_cursor)
     u_int16 tmp_start_line;
     u_int16 tx = 0, ty = 0;
     u_int16 idx_cur_line, j; 
+    u_int16 c;
     
     // if not at cursor, we erase all
     clean_surface (!at_cursor); 
@@ -496,10 +506,11 @@ void label::draw_string (const bool at_cursor)
          j < my_vect_[tmp_start_line].idx_end + 1 ;
          j++)
     {
-        if (my_font_->in_table (my_text_[j]))
+        c = ucd (j);
+        if (c != '\n' && my_font_->in_table (c))
         {
-            (*my_font_) [my_text_[j]].draw (tx, ty, NULL, this);
-            tx += (*my_font_) [my_text_[j]].length (); 
+            (*my_font_) [c].draw (tx, ty, NULL, this);
+            tx += (*my_font_) [c].length ();
         }
     }
     ty += my_font_->height ();
@@ -514,14 +525,15 @@ void label::draw_string (const bool at_cursor)
              j <  my_vect_[tmp_start_line].idx_end + 1 ;
              j++)
         {
-            if (my_font_->in_table (my_text_[j]))
+            c = ucd (j);
+            if (my_font_->in_table (c))
             {
-                (*my_font_) [my_text_[j]].draw (tx, ty, NULL, this);
-                tx += (*my_font_) [my_text_[j]].length (); 
+                (*my_font_) [c].draw (tx, ty, NULL, this);
+                tx += (*my_font_) [c].length (); 
             }
         }
         ty += my_font_->height ();
-        tmp_start_line++; 
+        tmp_start_line++;
     } 
 }
 
@@ -551,7 +563,7 @@ void label::cursor_draw ()
         my_font_->cursor->draw (my_cursor_.pos_x, my_cursor_.pos_y,NULL, this);  
     else
         my_font_->cursor->draw (my_cursor_.pos_x, my_cursor_.pos_y,0, 0, 
-                                (*my_font_) [my_text_[my_cursor_.idx]].length (),
+                                (*my_font_) [ucd (my_cursor_.idx)].length (),
                                 my_font_->height (), NULL, this); 
 }
 
@@ -569,7 +581,7 @@ void label::cursor_undraw ()
                  screen::trans_col());
         unlock (); 
     }
-    else (*my_font_) [my_text_[my_cursor_.idx]].draw (my_cursor_.pos_x, my_cursor_.pos_y, NULL, this);
+    else (*my_font_) [ucd (my_cursor_.idx)].draw (my_cursor_.pos_x, my_cursor_.pos_y, NULL, this);
 }
 
 
@@ -626,10 +638,25 @@ const char * label::text_char () const
     return my_text_.c_str (); 
 }
 
+// utf-8 --> utf-16
+u_int16 label::ucd (u_int16 & idx)
+{
+    u_int8 c = my_text_[idx];
+    if (c < 0x80) return c;
 
-
-
-
+    if (c < 0xe0) 
+    {
+        u_int8 c1 = my_text_[++idx];
+        return ((u_int16) (c & 0x1f) << 6)
+            |   (u_int16) (c1 ^ 0x80);
+    }
+    
+    u_int8 c1 = my_text_[++idx];
+    u_int8 c2 = my_text_[++idx];
+    return ((u_int16) (c & 0x0f) << 12)
+        |  ((u_int16) (c1 ^ 0x80) << 6)
+        |   (u_int16) (c2 ^ 0x80);
+}
 
 
 

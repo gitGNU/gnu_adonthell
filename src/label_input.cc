@@ -1,7 +1,7 @@
 /*
    $Id$
 
-   (C) Copyright 2000/2001/2003 Joel Vennin
+   (C) Copyright 2000/2001/2003/2004 Joel Vennin
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -34,6 +34,7 @@ bool label_input::input_update()
 
     if (my_font_ == NULL) return false; 
     
+    int count;
     static s_int32 c; 
 
     while ((c = input::get_next_unicode ()) > 0)
@@ -43,13 +44,19 @@ bool label_input::input_update()
         {            
             if (my_text_.empty () || my_cursor_.idx == 0) return true;
             
-            my_text_.erase (--my_cursor_.idx, 1);
+            // possibly delete multi-byte utf-8 char
+            if (my_cursor_.idx > 2 && (u_int8) my_text_[my_cursor_.idx-2] >= 0xE0) count = 3;
+            else if (my_cursor_.idx > 1 && (u_int8) my_text_[my_cursor_.idx-1] >= 0x80) count = 2;
+            else count = 1;
+            
+            my_cursor_.idx -= count;
+            my_text_.erase (my_cursor_.idx, count);
             update_cursor ();
             my_old_cursor_ = my_cursor_; 
 
             lock (); 
             fillrect (my_cursor_.pos_x, my_cursor_.pos_y,
-                      (*my_font_) [my_text_[my_cursor_.idx]].length (),
+                      (*my_font_) [ucd(my_cursor_.idx)].length (),
                       my_font_->height (), screen::trans_col ()); 
             unlock (); 
             
@@ -58,8 +65,20 @@ bool label_input::input_update()
         else if (c == SDLK_RETURN) add_text ("\n"); 
         else if (my_font_->in_table (c))
         {
-            string s (1, (char) c);
-            add_text (s); 
+            char r[3];
+            
+            // convert unicode to utf-8
+            if (c < 0x80) count = 1;
+            else if (c < 0x800) count = 2;
+            else if (c < 0x10000) count = 3;
+            
+            switch (count) { /* note: code falls through cases! */
+                case 3: r[2] = 0x80 | (c & 0x3f); c = c >> 6; c |= 0x800;
+                case 2: r[1] = 0x80 | (c & 0x3f); c = c >> 6; c |= 0xc0;
+                case 1: r[0] = c;
+            }
+            
+            add_text (string (r, count)); 
         }
     }  
     return true;

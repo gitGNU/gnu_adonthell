@@ -1,7 +1,7 @@
 /*
    $Id$
 
-   Copyright (C) 1999/2000/2001/2002 Alexandre Courbot
+   Copyright (C) 1999/2000/2001/2002/2004 Alexandre Courbot
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -44,11 +44,28 @@ image::image () : surface ()
 {
 }
 
-image::image (u_int16 l, u_int16 h) : surface () 
+image::image (u_int16 l, u_int16 h, bool mode) : surface (mode) 
 {
     resize (l, h); 
 }
- 
+
+image::image (SDL_Surface *s, const SDL_Color & color) : surface (false)
+{
+    if (screen::dbl_mode ()) {
+        set_length (s->w >> 1);
+        set_height (s->h >> 1);
+    } else {
+        set_length (s->w);
+        set_height (s->h);
+    }
+    
+    vis = SDL_DisplayFormat (s);
+    SDL_SetColorKey (vis, SDL_SRCCOLORKEY | SDL_RLEACCEL, 
+        SDL_MapRGB (vis->format, color.r, color.g, color.b)); 
+    SDL_FreeSurface (s);
+    changed = false;
+}
+
 image::~image () 
 {
 }
@@ -204,7 +221,7 @@ s_int8 image::put_raw (ogzstream& file) const
     image * imt;
     SDL_Surface * toconvert;
     
-    if (screen::dblmode)
+    if (dbl_mode)
     {
         imt = new image();
         imt->double_size(*this);
@@ -230,7 +247,7 @@ s_int8 image::put_raw (ogzstream& file) const
 
     SDL_FreeSurface (temp);
     SDL_FreeSurface (tmp2); 
-    if (screen::dblmode) delete imt;
+    if (dbl_mode) delete imt;
     return 0;
 }
 
@@ -254,7 +271,7 @@ s_int8 image::put_pnm (SDL_RWops * file) const
     
     SDL_Surface * temp;
 
-    if (screen::dblmode)
+    if (dbl_mode)
     {
         image imt;
         imt.half_size(*this);
@@ -338,7 +355,9 @@ void image::brightness (const surface& src, u_int8 cont, bool proceed_mask)
     u_int8 ir, ig, ib;
     u_int32 temp = 0;
     
-    resize (src.length (), src.height ());
+    if (screen::dbl_mode () && !dbl_mode) resize (src.length () << 1, src.height () << 1);
+    else resize (src.length (), src.height ());
+    
     lock ();
     src.lock (); 
     for (j = 0; j < height (); j++)
@@ -386,7 +405,7 @@ void image::raw2display (void * rawdata, u_int16 l, u_int16 h)
                                                   R_MASK, G_MASK,
                                                   B_MASK, 0);
     vis = SDL_DisplayFormat (tmp2);
-    if (screen::dblmode)
+    if (dbl_mode)
     {
         image imt;
         imt.double_size(*this);
