@@ -181,6 +181,37 @@ bool GuiGraph::newArrow (DlgPoint &point)
     return true;
 }
 
+// delete the selected node
+bool GuiGraph::deleteNode ()
+{
+    // if there is no module assigned to the view, there is nothing to select
+    if (module == NULL) return false;
+
+    // try to delete node
+    if (module->deleteNode ())
+    {
+        // update the program state
+        GuiDlgedit::window->setMode (IDLE);
+        
+        // update the instant preview
+        GuiDlgedit::window->list ()->clear ();
+
+        // remove tooltip if it is open        
+        if (tooltip) 
+        {
+            delete tooltip;
+            tooltip = NULL;
+        }
+
+        // redraw the dialogue
+        draw ();
+        
+        return true;
+    }
+    
+    return false;    
+}
+
 // select a node
 bool GuiGraph::selectNode (DlgNode *node)
 {

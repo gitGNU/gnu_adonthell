@@ -108,6 +108,11 @@ public:
      */
     bool editNode ();
     /**
+     * Delete currently selected node.
+     * @return <b>true</b> if deleting was successful, <b>false</b> otherwise.
+     */
+    bool deleteNode ();
+    /**
      * Select the given node and update the instant preview and node editor
      * accordingly.
      * @param node the DlgNode to be selected

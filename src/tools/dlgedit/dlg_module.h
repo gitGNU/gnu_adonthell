@@ -54,8 +54,10 @@ public:
     /**
      * Delete the currently selected node from the dialogue. If the node 
      * is a circle, also deletes all attached arrows.
+     * @return <b>true</b> if the node has been deleted, <b>false</b>
+     *         otherwise.
      */
-    void deleteNode ();
+    bool deleteNode ();
     
     /**
      * Select a node from the list of nodes.

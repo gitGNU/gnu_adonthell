@@ -51,14 +51,14 @@ DlgArrow::~DlgArrow ()
     if (prev_.size () != 0)
     {
         circle = prev_.front ();
-        circle->removePrev (this);
+        circle->removeNext (this);
     }
     
     // remove arrow from following circle
     if (next_.size () != 0)
     {
         circle = next_.front ();
-        circle->removeNext (this);    
+        circle->removePrev (this);    
     }
 }
 

@@ -117,10 +117,10 @@ void DlgModule::addNode (DlgNode *node)
 }
 
 // delete a node from the dialogue
-void DlgModule::deleteNode ()
+bool DlgModule::deleteNode ()
 {
     // if no node is selected, there's nothing to delete
-    if (selected_ == NULL) return;
+    if (selected_ == NULL) return false;
     
     // otherwise, first deselect it
     DlgNode *node = deselectNode ();
@@ -129,23 +129,28 @@ void DlgModule::deleteNode ()
     if (node->type () != LINK)
     {
         // delete all preceding arrows
-        for (DlgNode *i = node->prev (FIRST); i != NULL; i = node->prev (NEXT))
+        for (DlgNode *i = node->prev (FIRST); i != NULL; i = node->prev (FIRST))
         {
             nodes.erase (remove (nodes.begin (), nodes.end (), i), nodes.end ());       
+            if (highlighted_ == i) highlighted_ = NULL;
             delete i;
         }
         
         // delete all following arrows
-        for (DlgNode *i = node->next (FIRST); i != NULL; i = node->next (NEXT))
+        for (DlgNode *i = node->next (FIRST); i != NULL; i = node->next (FIRST))
         {
             nodes.erase (remove (nodes.begin (), nodes.end (), i), nodes.end ());     
+            if (highlighted_ == i) highlighted_ = NULL;
             delete i;
         }
     }
 
     // remove the node itself from the vector
     nodes.erase (remove (nodes.begin (), nodes.end (), node), nodes.end ());       
+    if (highlighted_ == node) highlighted_ = NULL;
     delete node;
+    
+    return true;
 }
 
 // deselect the selected node
@@ -284,7 +289,7 @@ bool DlgModule::save (string &file)
     out << "# Dlgedit File Format 1\n#\n"
         << "# Written by Adonthell Dlgedit v" << _VERSION_ << "\n"
         << "# (C) 2000/2001/2002 Kai Sterker\n#\n"
-        << "# $Id$\n\n"
+        << "# $I" << "d$\n\n"
         << "Note §" << description_ << "§\n\n";
 
     // Save Circles first, as arrows depend on them when loading later on

@@ -271,6 +271,13 @@ guint key_press_notify_event (GtkWidget * widget, GdkEventKey * event, gpointer 
             graph->deselectNode ();
             break;
         }
+        
+        // delete node
+        case GDK_Delete:
+        {
+            graph->deleteNode ();
+            break;
+        }
     }
 /*
     MainFrame *MainWnd = (MainFrame *) data;

@@ -121,6 +121,20 @@ void DlgNode::addPrev (DlgNode *node)
     prev_.insert (i, node);
 }
 
+// remove a node from the list of followers
+void DlgNode::removeNext (DlgNode *node)
+{
+    next_.remove (node);
+    n = next_.begin ();
+}
+
+// remove a node from the list of precedessors
+void DlgNode::removePrev (DlgNode *node)
+{
+    prev_.remove (node);
+    p = prev_.begin ();
+}
+
 // draw the node (with a certain mode)
 void DlgNode::draw (GdkPixmap *surface, DlgPoint &offset, mode_type m)
 {

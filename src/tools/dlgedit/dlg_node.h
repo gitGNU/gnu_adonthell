@@ -103,12 +103,12 @@ public:
      * Remove a node from the list of precedessors.
      * @param node the DlgNode to remove.
      */
-    void removePrev (DlgNode *node) { prev_.remove (node); }
+    void removePrev (DlgNode *node);
     /**
      * Remove a node from the list of followers.
      * @param node the DlgNode to remove.
      */
-    void removeNext (DlgNode *node) { next_.remove (node); }
+    void removeNext (DlgNode *node);
     //@}
 
     /**
