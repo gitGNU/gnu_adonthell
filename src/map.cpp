@@ -540,50 +540,6 @@ void landmap::draw_down(u_int16 depx=56, u_int16 depy=12,
       drawdownsquare((i*16)+depx-addx,
 		     (j*16)+depy-addy,
 		     &maparea[posx-6+i][posy-5+j]);
-  /*
-  if((addx==0)&&(addy==0))
-    {
-      for(i=0;i<length;i++)
-	for(j=0;j<height;j++)
-	  drawdownsquare((i*16)+depx,
-			 (j*16)+depy,
-			 &maparea[posx-6+i][posy-5+j]);
-    }
-  else
-    {
-      if(addx) for(j=0;j<height;j++)
-	{
-	  drawdownsquarepart(depx,
-			     (j*16)+depy,
-			     16-addx,16,
-			     &maparea[posx-6][posy-5+j],
-			     addx,0);
-	  
-	  for(i=1;i<length;i++)
-	    drawdownsquare((i*16)+depx-addx,
-			   (j*16)+depy-addy,
-			   &maparea[posx-6+i][posy-5+j]);
-	  
-	  drawdownsquarepart(depx+(length*16)-addx,
-			     (j*16)+depy,
-			     addx,16,
-			     &maparea[posx+7][posy-5+j],0,0);
-	}
-      if(addy) for(i=0;i<length;i++)
-	{
-	  drawdownsquarepart((i*16)+depx,depy,16,16-addy,
-			     &maparea[posx-6+i][posy-5],0,addy);
-		  
-	  for(j=1;j<height;j++)
-	    drawdownsquare((i*16)+depx-addx,(j*16)+depy-addy,
-			   &maparea[posx-6+i][posy-5+j]);
-	  
-	  drawdownsquarepart((i*16)+depx,
-			     depy+(height*16)-addy,
-			     16,addy,
-			     &maparea[posx-6+i][posy+6],0,0);
-	}
-	}*/
 }
 
 void landmap::draw_up(u_int16 depx=56, u_int16 depy=12,

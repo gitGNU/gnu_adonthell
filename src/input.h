@@ -15,6 +15,7 @@
 #ifndef __INPUT_H__
 #define __INPUT_H__
 
+#include "types.h"
 #include "SDL_keysym.h"
 
 int input_update(void *);

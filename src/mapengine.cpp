@@ -69,6 +69,7 @@ void mapengine::update_and_show(landmap * amap)
   }
   //dlg->update(amap->win);
   amap->update_status();
+  //  screen::drawbox(0,0,320,240,0);
   amap->draw_down();
   amap->draw_all_characters();
   amap->draw_up();

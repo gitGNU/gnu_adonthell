@@ -133,7 +133,7 @@ void image::init()
   data = NULL;
   length=height=0;
   mask_on=false;
-  alpha=0;
+  alpha=255;
   draw_to=NULL;
 #ifdef _EDIT_
   simpledata=NULL;
@@ -164,7 +164,7 @@ image::image (u_int16 l, u_int16 h)
   simpledata=(void*)calloc(length*height,3);
 #endif
   mask_on=false;
-  alpha=0;
+  alpha=255;
   draw_to=NULL;
 }
 
@@ -247,14 +247,14 @@ void image::set_mask(bool m)
 {
   if((m)&&(!mask_on))
     {
-      SDL_SetColorKey(data, SDL_SRCCOLORKEY|SDL_RLEACCEL, screen::trans);
+      SDL_SetColorKey(data, SDL_SRCCOLORKEY, screen::trans);
       mask_on=true;
     }
   else if((!m)&&(mask_on))
     { 
       SDL_SetColorKey(data,0,0); 
       mask_on=false;    
-    }
+      }
 }
 
 u_int8 image::get_alpha()
@@ -264,7 +264,7 @@ u_int8 image::get_alpha()
 
 void image::set_alpha(u_int8 t)
 {
-  if((!t)&&(alpha)) SDL_SetAlpha(data,0,0);
+  if((t==255)&&(alpha!=255)) SDL_SetAlpha(data,0,0);
   alpha=t;
 }
 
@@ -281,7 +281,7 @@ void image::draw(s_int16 x, s_int16 y, drawing_area * da_opt=NULL)
 
   get_rects(x,y);
   if(!dr.w||!dr.h) return;
-  if(alpha) SDL_SetAlpha(data, SDL_SRCALPHA, alpha);
+  if(alpha!=255) SDL_SetAlpha(data, SDL_SRCALPHA, alpha);
   SDL_BlitSurface(data, &sr, screen::vis, &dr);
   if(da_opt) draw_to=oldda;  
 }
@@ -290,7 +290,7 @@ void image::putbox (s_int16 x, s_int16 y, drawing_area * da_opt)
 {  
   if(data==NULL) return;
   set_mask(false);
-  set_alpha(0);
+  set_alpha(255);
   
   draw(x,y,da_opt);
 }
@@ -299,7 +299,7 @@ void image::putbox_mask (s_int16 x, s_int16 y, drawing_area * da_opt)
 {
   if(data==NULL) return;
   set_mask(true);
-  set_alpha(0);
+  set_alpha(255);
 
   draw(x,y,da_opt);
 }
