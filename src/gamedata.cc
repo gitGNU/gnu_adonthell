@@ -413,10 +413,10 @@ bool gamedata::init (string udir, string gdir, string gname)
             string filepath = user_data_dir () + "/";
             filepath += dirent->d_name; 
 
-            string name_save = game_name + "-save-"; 
+            string name_save = game_name + "-save-";
             
             if (stat (filepath.c_str (), &statbuf) != -1 && S_ISDIR (statbuf.st_mode) && 
-                strncmp (name_save.c_str (), dirent->d_name, 15) == 0)
+                strncmp (name_save.c_str (), dirent->d_name, name_save.length ()) == 0)
             {
                 // found a (possibly) valid saved game directory
                 filepath += "/save.data"; 
