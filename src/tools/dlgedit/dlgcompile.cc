@@ -146,6 +146,9 @@ void dlg_compiler::write_dialogue ()
         script << "\n";
     }
     
+    // debugging
+    if (debug) script << "\n        self.__debug__ = 1\n";
+    
     // write user-supplied methods if any
     if (cust_func != "") 
     {
@@ -153,7 +156,7 @@ void dlg_compiler::write_dialogue ()
         write_custom_code (cust_func);
         script << "\n";
     }
-    
+
     return;
 }
 
@@ -173,7 +176,8 @@ void dlg_compiler::write_entry_func ()
                << "\n        self.__dict__[name] = value"
                << "\n        if type (value) is IntType:"
                << "\n            self.debug_info[name] = value\n"
-               << "\n    __debug__ = 1\n";
+               << "\n    def __del__ (self, name):"
+               << "\n        delitem (self.__dict__, name)\n";
     }
     
     // Write the function to start/continue the dialogue
@@ -213,7 +217,7 @@ void dlg_compiler::write_custom_code (string code)
 // that occasion we replace var with 'get ("var")' or set '("var",' 
 // accordingly.
 //
-// Oh, and instead of building an actual tree, we simply use recusion
+// Oh, and instead of building an actual tree, we simply use recursion
 // - that's much more fun! :)
 string dlg_compiler::inflate (string code, int mode)
 {
@@ -304,7 +308,7 @@ string dlg_compiler::inflate (string code, int mode)
                 pos = code.find (' ', pos + 1);
             }
 
-            break;
+            return code + suffix;
         }
 
         // in a right child, we might have a ':' or ')' following the variable
