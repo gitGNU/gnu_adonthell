@@ -185,7 +185,7 @@ s_int8 map::get(FILE * file)
   return(0);
 }
 
-s_int8 map::load(char * fname)
+s_int8 map::load(const char * fname)
 {
   FILE * file;
   u_int8 retvalue;

@@ -78,7 +78,7 @@ class map
   u_int16 get_patternset_to_map(FILE * file, u_int16 startpos);
   u_int16 load_patternset_to_map(char * fname, u_int16 startpos);
   s_int8 get(FILE * file);
-  s_int8 load(char * fname);
+  s_int8 load(const char * fname);
   void init_for_scrolling();
   void follow(mapcharacter*aguy);
   void center_on(mapcharacter*aguy);

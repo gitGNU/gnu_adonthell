@@ -2,7 +2,7 @@
 # Generated automatically by configure.
 # Run this file to recreate the current configuration.
 # This directory was configured as follows,
-# on host penguin:
+# on host damodred:
 #
 # ./configure 
 #
@@ -26,7 +26,7 @@ do
 done
 
 ac_given_srcdir=.
-ac_given_INSTALL="/usr/bin/ginstall -c"
+ac_given_INSTALL="/usr/bin/install -c"
 
 trap 'rm -fr 
 Makefile
@@ -45,7 +45,7 @@ s%@CXXFLAGS@%-O6 -g -Wall -I/usr/local/include -I/usr/local/include/SDL -D_REENT
 s%@FFLAGS@%%g
 s%@DEFS@%-DHAVE_CONFIG_H%g
 s%@LDFLAGS@%%g
-s%@LIBS@%-L/usr/local/lib -lSDL -lpthread -lSDL_image -lSDLmixer%g
+s%@LIBS@%-L/usr/local/lib -lSDL -lpthread -lSDL_image -lSDL_mixer%g
 s%@exec_prefix@%${prefix}%g
 s%@prefix@%/usr%g
 s%@program_transform_name@%s,x,x,%g
@@ -70,7 +70,7 @@ s%@ACLOCAL@%aclocal%g
 s%@AUTOCONF@%autoconf%g
 s%@AUTOMAKE@%automake%g
 s%@AUTOHEADER@%autoheader%g
-s%@MAKEINFO@%makeinfo%g
+s%@MAKEINFO@%/home/kai/adonthell/recent_adonthell/missing makeinfo%g
 s%@SET_MAKE@%%g
 s%@GCC@%/usr/bin/gcc%g
 s%@CXX@%c++%g
