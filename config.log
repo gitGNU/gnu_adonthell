@@ -1,0 +1,35 @@
+This file contains any messages produced by compilers while
+running configure, to aid debugging if configure makes a mistake.
+
+configure:566: checking for a BSD compatible install
+configure:619: checking whether build environment is sane
+configure:676: checking whether make sets ${MAKE}
+configure:722: checking for working aclocal
+configure:735: checking for working autoconf
+configure:748: checking for working automake
+configure:761: checking for working autoheader
+configure:774: checking for working makeinfo
+configure:792: checking for gcc
+configure:837: checking for c++
+configure:869: checking whether the C++ compiler (c++  ) works
+configure:885: c++ -o conftest    conftest.C  1>&5
+configure:911: checking whether the C++ compiler (c++  ) is a cross-compiler
+configure:916: checking whether we are using GNU C++
+configure:944: checking whether c++ accepts -g
+configure:983: checking how to run the C++ preprocessor
+configure:1026: checking whether make sets ${MAKE}
+configure:1055: checking for main in -lpthread
+configure:1099: checking for main in -lSDL
+configure:1185: checking for sdl-config
+configure:1220: checking for SDL - version >= 1.0.1
+configure:1308: c++ -o conftest -g -O2   conftest.C -lSDL -lpthread  -L/usr/local/lib -lSDL -lpthread 1>&5
+In file included from configure:1250:
+/usr/include/stdlib.h:520: warning: declaration of `exit(int)' throws different exceptions
+configure:1246: warning: previous declaration here
+configure:1391: checking for main in -lSDL_image
+configure:1430: checking for Mix_OpenAudio in -lSDLmixer
+configure:1528: checking for pthread.h
+configure:1528: checking for SDL/SDL.h
+configure:1570: checking for SDL/SDL_mixer.h
+configure:1570: checking for SDL/SDL_audio.h
+configure:1610: checking for SDL/SDL_image.h
