@@ -43,19 +43,13 @@ bool dialog::init (char *fpath, char *name)
 	if (!classobj)
 		return false;
 
-    // get the classes dictionary, we'll have use for it later on
-    globals = PyObject_GetAttrString (module, "__dict__");
-
-	// Py_DECREF(module);
+	Py_DECREF(module);
 
 	// Instantiate! Will we ever need to pass args to class
 	// constructor here?
 	instance = PyObject_CallObject(classobj, NULL);
 
 	Py_DECREF(classobj);
-
-    // get the classes dictionary, we'll have use for it later on
-    locals = PyObject_GetAttrString (instance, "__dict__");
 
     // extract the dialogue's strings
     extract_strings ();
@@ -80,23 +74,24 @@ void dialog::extract_strings ()
     for (i = 0; i < index; i++)
     {
         s = PyList_GetItem (list, i);
-        if (s) strings[i] = PyString_AsString (s);
+        if (s) strings[i] = strdup (PyString_AsString (s));
     }
+
+    strings[index-1] = NULL;
 }
 
 dialog::dialog ()
 {
     instance = NULL;
-    locals = NULL;
 }
 
 dialog::~dialog ()
 {
+    u_int32 i = 0;
     Py_XDECREF (instance);
-    Py_XDECREF (locals);
 
-    // Seems we don't have to delete the actual strings, as they are just
-    // references to the strings of the Python dialogue object
+    while (strings[i] != NULL)
+        delete[] strings[i++]; 
     delete[] strings;
 }
 
@@ -217,23 +212,20 @@ void dialog::run (u_int32 index)
 
 void dialog::scan_string (u_int32 index)
 {
-    u_int32 end;
+    u_int32 begin, end, len;
     PyObject *result;
     char *start, *string = NULL;
-    
-   // get the environment to run the string in
-   // PyObject *globals = PyModule_GetDict ();
-   // PyObject *locals = PyModule_GetDict (instance);
+    char *tmp, *newstr;
 
     while (1)
     {
+        // first replace $... macros, then python code
         // check wether the string contains python code at all
         start = strchr (strings[index], '{');
         if (start == NULL) return;
 
         end = strcspn (start, "}");
 
-        if (string) delete[] string;
         string = new char[end];
         string[end-1] = 0;        
 
@@ -241,17 +233,33 @@ void dialog::scan_string (u_int32 index)
         strncpy (string, start+1, end-1);
 
         // run the string
-        result = PyRun_String (string, Py_eval_input, locals, globals);
+        result = PyObject_CallMethod (instance, string, NULL);
 
-        if (result) PyObject_Print (result, stdout, 0);
-        else
-        {
-            cout << "\nHouston, we have a problem! (" << string << ")" << flush;
-            show_traceback ();
-        }
+        tmp = NULL;
+
+        if (result)
+            if (PyString_Check (result))
+                tmp = PyString_AS_STRING (result);    
         
-        // Replace the string with the resulting string (if any)
-        return;
+        // Replace existing with new, changed string
+        // 1. Calculate strings length
+        len = strlen(strings[index]);
+        begin = len - strlen (start);
+        newstr = new char[strlen(tmp) + len - strlen(string)];
+
+        // 2. Merge prefix, resulting string and postfix into new string
+        strncpy (newstr, strings[index], begin);
+        newstr[begin] = 0;
+        strcat (newstr, tmp);
+        strcat (newstr, start+end+1);
+
+        // 3. Exchange strings
+        delete[] strings[index];
+        strings[index] = newstr;
+
+        // Cleanup
+        Py_XDECREF (result);
+        delete[] string;
     }
 }
 
