@@ -134,6 +134,13 @@ public:
      * @param file Opened file where to save the tuple to.
      */
     static void put_tuple (PyObject * tuple, ogzstream & file);  
+
+private:
+    /**
+     * Convert a Pointer to a String, like SWIG 1.3.7 does
+     *
+     */
+    static char *python::ptr_to_string (char *c, void *ptr, int sz);
 };
 
 #ifndef SWIG

@@ -150,14 +150,9 @@ void game::cleanup ()
 
 void game::init_data ()
 {
-    data::the_player = NULL;     
-    
     data::map_engine = new mapengine;
-    PyObject *map_engine = python::pass_instance (data::map_engine, "mapengine"); 
-    PyDict_SetItemString (data::globals, "map_engine", map_engine);
-    Py_DECREF (map_engine); 
-
     data::the_player = new character;
+
     data::the_player->set_name ("Player");
     
     // Add the player to the game objects

@@ -29,7 +29,6 @@ PyObject * data::globals;
 
 using namespace std;
 
-
 /*
  * Start Python
  */
@@ -122,18 +121,18 @@ PyObject *python::import_module (string filename)
 PyObject *python::pass_instance (void *instance, const char *class_name)
 {
     char class_ptr[256];
-    char class_addr[256] = "_";
-    char buffer[256];
-    
+    char class_addr[256];
+    char *buffer = class_addr;
+
     // Construct the python shadow class matching the "instance" class 
     strcat (strcpy (class_ptr, class_name), "Ptr");
     
     // Construct SWIG's representation of the "instance" pointer
-    // (unfortunately this has changed from _<address>_<name>_p to 
-    // _<address>_p_<name> as of SWIG 1.3 alpha 5)
-    sprintf (buffer, "%p_p_%s", instance, class_name);
-    strcat (class_addr, buffer+2);
-    
+    *(buffer++) = '_';
+    buffer = ptr_to_string (buffer, &instance, sizeof (void *));
+    strcpy (buffer, "_p_");
+    strcpy (buffer+3, class_name);
+
     // Now create the Python object corresponding to "instance"
     PyObject *cls = PyDict_GetItemString (data::globals, class_ptr);
     PyObject *arg = Py_BuildValue ("(s)", class_addr);
@@ -147,6 +146,25 @@ PyObject *python::pass_instance (void *instance, const char *class_name)
     // Voila: "res" is 'identical' to "instance" :)
     return res;
 }
+
+// Convert a pointer to a string (like SWIG 1.3.7 does)
+char *python::ptr_to_string (char *c, void *ptr, int sz)
+{
+    static char hex[17] = "0123456789abcdef";
+    int i;
+    unsigned char *u = (unsigned char *) ptr;
+    register unsigned char uu;
+
+    for (i = 0; i < sz; i++,u++)
+    {
+        uu = *u;
+        *(c++) = hex[(uu & 0xf0) >> 4];
+        *(c++) = hex[uu & 0xf];
+    }
+
+    return c;
+}
+
 
 // Grab a function's code object from a Python module
 PyCodeObject *python::get_function_code (PyObject *module, const char* func_name)

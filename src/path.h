@@ -59,7 +59,7 @@ private:
     }; 
     
 public:
-
+#ifndef SWIG
     /** 
      * (x, y) coordinates of a point on a submap.
      * 
@@ -108,6 +108,7 @@ public:
      * 
      */ 
     area_coord goal;
+#endif // SWIG
 
     /** 
      * Totally clears the path.

@@ -17,6 +17,7 @@
 #include "gametime.h"
 #include <SDL/SDL.h>
 
+
 u_int32 gametime::timer1;
 u_int32 gametime::timer2;
 u_int8 gametime::ftd = 0;
@@ -134,7 +135,7 @@ void time_event::execute (event &e)
     // Cleanup
     Py_DECREF (locals);
 #ifdef _DEBUG_
-    show_traceback ();
+    python::show_traceback ();
 #endif // _DEBUG_
 }
 
