@@ -25,7 +25,8 @@ subsection you have.
 ********************************
 
 If you have a slow box, you may want to run Adonthell in 320x240 to
-improve the performance. After changing the $HOME/.adonthell/adonthellrc configuration file accordingly, Adonthell will attempt to run in X11 
+improve the performance. After changing the $HOME/.adonthell/adonthellrc 
+configuration file accordingly, Adonthell will attempt to run in X11 
 Fullscreen mode. However, unless you have configured X for the low 
 resolution Adonthell needs, you'll get a quite small game window with 
 an ugly black border around. In here is described how to get rid of this.

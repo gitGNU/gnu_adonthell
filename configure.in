@@ -129,7 +129,7 @@ dnl Check for OggVorbis
 dnl *******************
 
 OGG_VORBIS=no
-AM_PATH_VORBIS(
+XIPH_PATH_VORBIS(
         OGG_VORBIS="yes"
         ogg_music="enabled"
         OGG_LIBS="$VORBIS_LIBS $VORBISFILE_LIBS"

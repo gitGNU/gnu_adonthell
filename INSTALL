@@ -28,11 +28,11 @@ version of Python by entering the command:
    See http://www.libsdl.org/
 
 
-3. Ogg Vorbis, version 1.0rc1 or later
+3. Ogg Vorbis, version 1.0rc3 or later
 
    For convenience, the SDL_mixer library is included with the source code;
-it will be replaced by a custom mixer anyway. However, you'll need OggVorbis
-1.0rc1 or later to enjoy the music.
+it will be replaced by a custom mixer anyway. However, you'll need Ogg Vorbis
+1.0rc3 or later to enjoy the music.
 
    See http://www.xiph.org/ogg/vorbis/download/
 
