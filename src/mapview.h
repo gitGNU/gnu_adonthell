@@ -137,7 +137,8 @@ public:
     void set_schedule (string file);
 #endif
     void update ();
-    void draw (s_int16 x, s_int16 y, drawing_area * da_opt = NULL);
+    void draw (s_int16 x, s_int16 y, drawing_area * da_opt = NULL,
+               surface *target = NULL);
 
 #ifdef _EDIT_
     void move_cursor_left ();

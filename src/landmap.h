@@ -115,7 +115,7 @@ class mapsquare_tile
      * @param y Y screen offset (typically the mapview::draw () y parameter). 
      * @todo This is a mess! Clean this.
     */
-    void draw (mapview * mv, u_int16 x, u_int16 y);
+    void draw (mapview * mv, u_int16 x, u_int16 y, drawing_area * da_opt = NULL, surface * target = NULL);
 
 #ifdef _EDIT_
     void draw_border (mapview * mv);
@@ -207,7 +207,7 @@ public:
      * @param y Y screen offset (typically the mapview::draw () y parameter). 
      * @todo This is a mess! Clean this.
      */
-    void draw (mapview * mv, u_int16 x, u_int16 y);
+    void draw (mapview * mv, u_int16 x, u_int16 y, drawing_area * da_opt = NULL, surface * target = NULL);
     
 private:
     /// Pointer to the mapcharacter concerned by this mapchar_square.

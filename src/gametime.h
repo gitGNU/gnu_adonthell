@@ -17,16 +17,64 @@
 
 #include "types.h"
 
+
+/** The %game slow down if there are more than FTD_LIMIT numbers of frames
+ *  to calculate before displaying, in which case it calculates exactly
+ *  FTD_LIMIT frames.
+ */ 
+#define FTD_LIMIT 100
+
+/**
+ * Length of a game cycle, in milliseconds.
+ * Decrease it to speed up the game, increase it
+ * to slow the game down.
+ */ 
+#define CYCLE_LENGTH 13
+
+
 class gametime
 {
 public:
     gametime (u_int32, float);      // constructor
     void tick (u_int32);            // Increase the gametime
 
+    static void start_action ()
+    {
+        ftd = 1;
+        running = true; 
+    }
+    
+    static void stop_action () 
+    {
+        running = false; 
+    }
+
+    /** 
+     * Returns the number of frames that must be calculated before
+     * displaying the game.
+     * 
+     * @return number of frames to calculate before displaying the game.
+     */ 
+    static u_int8 frames_to_do ()
+    {
+        return ftd;
+    }
+
+    static void update (); 
+    
 private:
     u_int32 ticks;                  // Realtime in Milliseconds
     u_int32 minute;                 // 1 min gametime in (realtime) milliseconds
     u_int32 time;                   // Gametime in "minutes"
+
+    static bool running; 
+    
+    /// Frames to do.
+    static u_int8 ftd; 
+    
+    /// Timers used to calculate the delay between 2 show () calls.
+    static u_int32 timer1, timer2;
+
 };
 
 #endif // __GAMETIME_H__

@@ -46,6 +46,12 @@ public:
 
     void mainloop ();
 
+    void draw (s_int16 x, s_int16 y, drawing_area * da_opt = NULL,
+               surface * target = NULL)
+    {
+        mv.draw (x, y, da_opt, target); 
+    }
+    
 protected:
     landmap lmap;
     mapview mv;

@@ -1,7 +1,7 @@
 /*
    $Id$
 
-   Copyright (C) 1999 - 2001 The Adonthell Team
+   Copyright (C) 2001 Alexandre Courbot
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -12,84 +12,291 @@
    See the COPYING file for more details.
 */
 
-#ifndef __FILEOPS_H__
-#define __FILEOPS_H__
+
+
+/**
+ * @file   fileops.h
+ * @author Alexandre Courbot <alexandrecourbot@linuxgames.com>
+ * 
+ * @brief  Declares the igzstream, ogzstream and fileops classes.
+ * 
+ */
+
+
+
+
+#ifndef FILEOPS_H_
+#define FILEOPS_H_
 
 #include <zlib.h>
 #include <string>
 #include "types.h"
 
+
+#ifndef SWIG
+using namespace std; 
+#endif
+
+
+/**
+ * Enumeration to know whether a file is read or write opened.
+ * 
+ */ 
 typedef enum { READ, WRITE } gz_type;
 
+
+/**
+ * Base class for igzstream and ogzstream.
+ * 
+ */ 
 class gz_file
 {
 public:
+    /** 
+     * Default constructor.
+     * 
+     */
     gz_file ();
+
+    /** 
+     * 
+     * 
+     * @param fname name of the file to open.
+     * @param t access (READ or WRITE).
+     */
     gz_file (string fname, gz_type t);
+
+    /** 
+     * Destructor.
+     * 
+     */
     ~gz_file ();
     
+    /** 
+     * Opens a file.
+     * 
+     * @param fname name of the file to open.
+     * @param t access (READ or WRITE).
+     * 
+     * @return true if succeed, false otherwise.
+     */
     bool open (string fname, gz_type t);
+
+    /** 
+     * Close the file that was opened.
+     * 
+     */
     void close ();
 
+    /** 
+     * Returns whether the file is opened or not.
+     * 
+     * 
+     * @return true if the file is opened, false otherwise.
+     */
     bool is_open () { return opened; }
 
-    gzFile file;
+    /** 
+     * Returns whether the file is at it's end or not.
+     * 
+     * 
+     * @return true if the end of file is reached, else otherwise.
+     */
+    bool eof () 
+    {
+        return gzeof (file); 
+    }
+    
 protected:
-    bool opened;
+    /** 
+     * The actual gzFile.
+     * 
+     */ 
+    gzFile file;
+
+private:
+    /// NEVER pass this by value.
+    gz_file (gz_file& src); 
+    
+    /// Opened or not?
+    bool opened; 
 };
 
+
+/** 
+ * Class to read data from a Gzip compressed file.
+ */ 
 class igzstream : public gz_file
 {
 public:
+    /**
+     * Default constructor.
+     * 
+     */ 
     igzstream ();
-    igzstream (string);
+
+    /** 
+     * Opens a file for read access.
+     * 
+     * @param fname name of the file to open.
+     * 
+     */ 
+    igzstream (string fname);
+
+    /**
+     * Destructor.
+     * 
+     */ 
     ~igzstream ();
 
-    bool open (string);
+    /** 
+     * Opens a file for read access.
+     * 
+     * @param fname name of the file to open.
+     * 
+     * @return true if succeed, false otherwise.
+     */
+    bool open (string fname);
 
-    friend bool& operator << (bool&, igzstream&);
-    friend char& operator << (char&, igzstream&);
-    friend u_int8& operator << (u_int8&, igzstream&);
-    friend s_int8& operator << (s_int8&, igzstream&);
-    friend u_int16& operator << (u_int16&, igzstream&);
-    friend s_int16& operator << (s_int16&, igzstream&);
-    friend u_int32& operator << (u_int32&, igzstream&);
-    friend s_int32& operator << (s_int32&, igzstream&);
+    /** 
+     * Reads a block of bytes from the file.
+     * 
+     * @param to pointer to the buffer where to read.
+     * @param size number of bytes to read.
+     */
+    void get_block (void * to, u_int32 size); 
+
+    /// Reads a boolean.
+    friend bool& operator << (bool& n, igzstream& gfile);
+
+    /// Reads a char.
+    friend char& operator << (char& n, igzstream& gfile);
+
+    /// Reads a u_int8.
+    friend u_int8& operator << (u_int8& n, igzstream& gfile);
+
+    /// Reads a s_int8.
+    friend s_int8& operator << (s_int8& n, igzstream& gfile);
+
+    /// Reads a u_int16.
+    friend u_int16& operator << (u_int16& n, igzstream& gfile);
+
+    /// Reads a s_int16.
+    friend s_int16& operator << (s_int16& n, igzstream& gfile);
+
+    /// Reads a u_int32.
+    friend u_int32& operator << (u_int32& n, igzstream& gfile);
+
+    /// Reads a s_int32.
+    friend s_int32& operator << (s_int32& n, igzstream& gfile);
+
+    /// Reads a string.
     friend string& operator << (string& s, igzstream& gfile);
+
+private:
+    /// NEVER pass this by value.
+    igzstream (igzstream& src);  
 };
 
+/** 
+ * Class to write data from a Gzip compressed file.
+ */ 
 class ogzstream : public gz_file
 {
 public:
+    /**
+     * Default constructor.
+     * 
+     */ 
     ogzstream ();
-    ogzstream (string);
+
+    /** 
+     * Opens a file for write access.
+     * 
+     * @param fname name of the file to open.
+     * 
+     */ 
+    ogzstream (string fname);
+
+    
+    /**
+     * Destructor.
+     * 
+     */
     ~ogzstream ();
 
-    bool open (string);
+    /** 
+     * Opens a file for write access.
+     * 
+     * @param fname name of the file to open.
+     * 
+     * @return true if succeed, false otherwise.
+     */
+    bool open (string fname);
 
-    friend bool& operator >> (bool&, ogzstream&);
-    friend char& operator >> (char&, ogzstream&);
-    friend u_int8& operator >> (u_int8&, ogzstream&);
-    friend s_int8& operator >> (s_int8&, ogzstream&);
-    friend u_int16& operator >> (u_int16&, ogzstream&);
-    friend s_int16& operator >> (s_int16&, ogzstream&);
-    friend u_int32& operator >> (u_int32&, ogzstream&);
-    friend s_int32& operator >> (s_int32&, ogzstream&);
-    friend string& operator >> (string& s, ogzstream& gfile);
+    /** 
+     * Writes a block of bytes to the file.
+     * 
+     * @param to pointer to the buffer to write.
+     * @param size number of bytes to write.
+     */
+    void put_block (void * to, u_int32 size); 
+
+    /// Writes a boolean.
+    friend const bool& operator >> (const bool& n, ogzstream& gfile);
+
+    /// Writes a char.
+    friend const char& operator >> (const char& n, ogzstream& gfile);
+
+    /// Writes a u_int8.
+    friend const u_int8& operator >> (const u_int8& n, ogzstream& gfile);
+
+    /// Writes a s_int8.
+    friend const s_int8& operator >> (const s_int8& n, ogzstream& gfile);
+
+    /// Writes a u_int16.
+    friend const u_int16& operator >> (const u_int16& n, ogzstream& gfile);
+
+    /// Writes a s_int16.
+    friend const s_int16& operator >> (const s_int16& n, ogzstream& gfile);
+
+    /// Writes a u_int32.
+    friend const u_int32& operator >> (const u_int32& n, ogzstream& gfile);
+
+    /// Writes a s_int32.
+    friend const s_int32& operator >> (const s_int32& n, ogzstream& gfile);
+
+    /// Writes a string.
+    friend string& operator >> (const string& s, ogzstream& gfile);
+
+private:
+    /// NEVER pass this by value.
+    ogzstream (ogzstream& src);   
 };
 
-// some file related functions
+/// File version control class.
 class fileops
 {
 public:
-    static void put_string (gzFile, const char*);     // Save a string
-    static char* get_string (gzFile);           // Load a string
-    static string get_string2 (gzFile);           // Load a string
+    /** 
+     * Sets the version number of a file.
+     * 
+     * @param file file where to write the version number.
+     * @param version version number to write.
+     */
+    static void put_version (ogzstream& file, u_int16 version);  // Set version of a file
 
-    static void put_version (gzFile, u_int16);  // Set version of a file
-    static void put_version (ogzstream&, u_int16);  // Set version of a file
-    static bool get_version (gzFile, u_int16, u_int16, const char*); // Check version
-    static bool get_version (igzstream&, u_int16, u_int16, string); // Check version
+    /** 
+     * 
+     * 
+     * @param file file to check version.
+     * @param min minimum expected version number.
+     * @param max maximum expected version number.
+     * @param name filename of the passed file.
+     * 
+     * @return true if 
+     */
+    static bool get_version (igzstream& file, u_int16 min, u_int16 max, string name); // Check version
 };
 
 

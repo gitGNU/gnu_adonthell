@@ -3,4 +3,4 @@ Makefile
 Makefile.in
 adonthell
 adonthell.py
-py_adonthell_wrap.cpp
+py_adonthell_wrap.cc

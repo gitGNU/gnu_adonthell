@@ -12,8 +12,8 @@ EXTRA_DIST = loadlg.l ins_dlgedit_modules.py py_character.i py_quest.i character
 dlgedit_SOURCES = callbacks.cc circle.cc crcle_callbacks.cc \
 crcle_interface.cc dbg_callbacks.cc dbg_interface.cc debug.cc \
 dlgcompile.cc dlgnode.cc events.cc function.cc geometrie.cc \
-graph.cc lex.loadlg.cc interface.cc main.cc preset.cc py_character_wrap.cpp \
-py_quest_wrap.cpp ps_callbacks.cc ps_dlg.cc ps_interface.cc pset_callbacks.cc \
+graph.cc lex.loadlg.cc interface.cc main.cc preset.cc py_character_wrap.cc \
+py_quest_wrap.cc ps_callbacks.cc ps_dlg.cc ps_interface.cc pset_callbacks.cc \
 pset_interface.cc run.cc run_callbacks.cc run_interface.cc \
 callbacks.h circle.h crcle_callbacks.h crcle_interface.h \
 dbg_callbacks.h dbg_interface.h debug.h dlgcompile.h dlgnode.h \
@@ -33,16 +33,16 @@ quest.o storage.o yarg.o character_base.o $(PY_LIBS) $(GTK_LIBS) -lm -lstdc++
 lex.loadlg.cc: loadlg.l
 	flex -olex.loadlg.cc loadlg.l
 
-py_%_wrap.cpp : py_%.i
-	swig $(SWIGFLAGS) -python -shadow -c++ -make_default -o py_%_wrap.cpp $<
+py_%_wrap.cc : py_%.i
+	swig $(SWIGFLAGS) -python -shadow -c++ -make_default -o py_%_wrap.cc $<
 
-py_quest_wrap.cpp : py_quest.i
-	swig $(SWIGFLAGS) -python -shadow -c++ -make_default -o py_quest_wrap.cpp $<
+py_quest_wrap.cc : py_quest.i
+	swig $(SWIGFLAGS) -python -shadow -c++ -make_default -o py_quest_wrap.cc $<
  
 %.o : %.cc
 	$(CXXCOMPILE) -c $< -o $@
 
-%.o : ../../%.cpp
+%.o : ../../%.cc
 	$(CXXCOMPILE) -c $< -o $@
 
 %.o : ../../%.cc

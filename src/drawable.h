@@ -14,19 +14,23 @@
 
 
 /**
- * @file drawable.h
- * Declares the drawable class.
- */ 
+ * @file   drawable.h
+ * @author Alexandre Courbot <alexandrecourbot@linuxgames.com>
+ * 
+ * @brief  Declares the drawable class.
+ *  
+ */
+
 
 #ifndef DRAWABLE_H_
 #define DRAWABLE_H_
 
 #include "drawing_area.h"
 
-class image; 
+class surface; 
 
 /**
- * Template class for drawable objects manipulation.
+ * Abstract class for drawable objects manipulation.
  *
  * This class is designed to allow flexibility in
  * drawable objects manipulation. It also serves as
@@ -39,11 +43,11 @@ class image;
  *
  * The main advantage of this class is that it allows you to manipulate
  * any drawable object (image, animation, mapview...) without caring
- * about it's type, at the little cost of having to
+ * about it's type, at the little cost of having to use virtual methods.
  *
- * Anyway, there are a few methods that are required to be overloaded
+ * There are a few methods that are required to be overloaded
  * in your class. The draw method is a must-have. Your object must also
- * take care to sets the size of the drawable correctly (the best thing
+ * take care to set the size of the drawable correctly (the best thing
  * being that it should use the drawable's size as it's own and don't
  * overload the length () and height () methods).
  * 
@@ -56,7 +60,8 @@ public:
      * Default constructor.
      * 
      */
-    drawable (); 
+    drawable ();
+    
     /**
      * Destructor.
      */ 
@@ -86,27 +91,30 @@ public:
 
     /** 
      * Virtual update function, provided for objects which
-     * don't need one.
+     * doesn't need one.
      * 
      */
     virtual void update ();
+
+    /** 
+     * Virtual input update function, provided for objects which
+     * doesn't need one.
+     * 
+     */
+    virtual void input_update ();
 
     /** 
      * Draw the object on the %screen.
      * 
      * @param x X position where to draw.
      * @param y Y position where to draw.
-     * @param da_opt Optional drawing_area to temporarly assign during the
-     * drawing operation.
+     * @param da_opt optional drawing_area to use during the drawing operation.
+     * @param target pointer to the surface where to draw the drawable. If NULL,
+     *               draw on the screen.
      */
-    virtual void draw (s_int16 x, s_int16 y, drawing_area * da_opt = NULL) = 0;
+    virtual void draw (s_int16 x, s_int16 y, drawing_area * da_opt = NULL,
+                       surface * target = NULL) = 0;
 
-    /**
-     * Draws the current graphical representation of the drawable.
-     * @param r the image where to draw the drawable.
-     */ 
-    void snapshot (image& r);
-    
 protected:
     
     /** 
@@ -135,4 +143,3 @@ private:
 };
 
 #endif
-

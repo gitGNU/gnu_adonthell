@@ -1,6 +1,6 @@
 // $Id$
 /*
-   Copyright (C) 1999 Alexandre Courbot.
+   Copyright (C) 1999/2000/2001 Alexandre Courbot.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License.
@@ -12,10 +12,8 @@
 
 
 /** @file types.h
- *  Declares some basic types.
- *  Please use these types instead of ints, because they
- *  have the advantage to always be the same size no matter
- *  what platform they are compiled in.
+ *  @author Alexandre Courbot <alexandrecourbot@linuxgames.com>
+ *  @brief Declares some basic types.
  */ 
 
  

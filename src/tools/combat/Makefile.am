@@ -2,5 +2,5 @@
 
 bin_PROGRAMS = combat-test
 
-combat_test_SOURCES = combat-test.cpp melee.cpp yarg.cc combat_classes.h \
+combat_test_SOURCES = combat-test.cc melee.cc yarg.cc combat_classes.h \
 items.h

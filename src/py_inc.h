@@ -1,7 +1,7 @@
 /*
    $Id$
 
-   Copyright (C) 2000   The Adonthell Project
+   Copyright (C) 2000   Kai Sterker
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -12,10 +12,16 @@
    See the COPYING file for more details.
 */
 
+/**
+ * @file py_inc.h
+ * @author Kai Sterker <ksterker@topmail.de>
+ *
+ * @brief Declares some usefull functions for Python.
+ */
+
+
 #ifndef _py_inc_h
 #define _py_inc_h
-
-#ifdef USE_PYTHON
 
 #include "Python.h"
 #include "compile.h"
@@ -29,5 +35,4 @@ extern PyObject *import_module( char *);
 extern void show_traceback( void );
 extern PyObject *pass_instance (void*, const char*);
 
-#endif
 #endif

@@ -17,6 +17,7 @@
 
 #define EVENTS_DIR "scripts/events/"
 
+#include "fileops.h"
 #include <vector>
 #include <zlib.h>
 
@@ -26,6 +27,11 @@
 #endif
 
 #include "types.h"
+
+
+#ifndef SWIG
+using namespace std; 
+#endif
 
 class event_handler;
 class mapcharacter;
@@ -41,11 +47,11 @@ enum
 // Baseclass for event data
 class event
 {
-friend event_handler;
+friend class event_handler;
 
 public:
-    char* script_file;                          // Filename of the event script
-    virtual void save (gzFile) = 0;             // save the event data
+    string script_file;                          // Filename of the event script
+    virtual void save (ogzstream&) = 0;             // save the event data
     virtual ~event ();
     
 // Don't grant direct access to these: only event_handler may set/modify
@@ -56,7 +62,7 @@ protected:
 
     virtual void execute (event*) = 0;          // execute the script
     virtual bool equals (event*) = 0;           // compare two events for equality
-    virtual void load (gzFile) = 0;             // load the event data
+    virtual void load (igzstream&) = 0;             // load the event data
 };
 
 #if defined(USE_MAP)
@@ -64,7 +70,7 @@ protected:
 class base_map_event : public event
 {
 public:
-    void save (gzFile);                         // Save event data
+    void save (ogzstream&);                         // Save event data
 
     s_int32 submap;                              // submap
     s_int32 x;                                  // x coordinate
@@ -78,7 +84,7 @@ protected:
 
     void execute (event*);                      // Run the event's script
     bool equals (event*);                       // Compare two events
-    void load (gzFile);                         // Load event data
+    void load (igzstream&);                         // Load event data
 
     friend class event_list;
 };
@@ -103,7 +109,7 @@ class time_event : public event
 {
 public:
     time_event ();
-    void save (gzFile);                         // Save event data
+    void save (ogzstream&);                         // Save event data
 
     u_int8 minute;                              // 0 - 59
     u_int8 m_step;                              // 0, 1, 2, ...
@@ -116,7 +122,7 @@ public:
 protected:
     void execute (event*);                      // Run the event's script
     bool equals (event*);                       // Compare two events
-    void load (gzFile);                         // Load event data
+    void load (igzstream&);                         // Load event data
 };
 
 // Base class for objects that want to register events
@@ -127,7 +133,7 @@ public:
 
     void add_event (event* ev);
 #if defined(USE_MAP)
-    void add_map_event(char * script, u_int16 type, s_int32 esubmap=-1,
+    void add_map_event(string script, u_int16 type, s_int32 esubmap=-1,
 		       s_int32 ex=-1,s_int32 ey=-1, s_int16 edir=-1, 
 		       mapcharacter * ec=NULL);
 #endif
@@ -144,11 +150,11 @@ public:
     static void remove_event (event*);          // unregister an event
     static void raise_event (event*);           // event triggered
 
-    static s_int8 get_state(gzFile file);         // Save and Load event handler state
-    static s_int8 put_state(gzFile file);
+    static s_int8 get_state(igzstream& file);         // Save and Load event handler state
+    static s_int8 put_state(ogzstream& file);
 
 #ifndef SWIG
-    static event* load_event (gzFile, bool=true);// load an event
+    static event* load_event (igzstream&, bool=true);// load an event
 private:
     static vector<event*> handlers[MAX_EVENT];  // registered events storage
 #endif

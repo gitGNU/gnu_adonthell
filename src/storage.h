@@ -1,7 +1,7 @@
 /*
    $Id$
    
-   Copyright (C) 2000 Kai Sterker <kaisterker@linuxgames.com>
+   Copyright (C) 2000/2001 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -16,11 +16,18 @@
 #define __STORAGE_H__
 
 #include <string.h>
+#ifdef GCC_3
+#include <ext/hash_map>
+#else
 #include <hash_map>
+#endif
 #include <map>
-
+#include <vector>
 #include "types.h"
 
+#ifndef SWIG
+using namespace std; 
+#endif
 
 // Checks two strings for equality (needed for the hash_map)
 struct equal_key

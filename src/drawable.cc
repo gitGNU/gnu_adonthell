@@ -13,14 +13,19 @@
 
 
 /**
- * @file drawable.cc
- * Defines the drawable class.
+ * @file   drawable.cc
+ * @author Alexandre Courbot <alexandrecourbot@linuxgames.com>
+ * 
+ * @brief Defines the drawable class. 
  */
 
 
 #include "drawable.h"
-#include "image.h"
-#include "screen.h"
+ 
+using namespace std; 
+
+// Public methods.
+
 
 drawable::drawable () 
 {
@@ -36,21 +41,6 @@ void drawable::update ()
 {
 }
 
-void drawable::snapshot (image& r)
+void drawable::input_update ()
 {
-    //  Save the screen surface...
-    SDL_Surface * ssave = screen::vis;
-
-    //  Resize correctly the image surface...
-    r.resize (length (), height ());
-    
-    // ...and put it in replacement of the screen's one.
-    screen::vis = r.data;
-    
-    //  Performs the blitting operation which will actually occurs
-    //  on the image
-    draw (0, 0, NULL); 
-    
-    //  Restore the screen's surface.
-    screen::vis = ssave; 
 }

@@ -6,7 +6,7 @@ AC_INIT(README)
 
 AM_INIT_AUTOMAKE(adonthell, 0.3pre1)
 
-CFLAGS="-O6 -g -Wall"
+CFLAGS="-g -Wall"
 LIBS="-lz -ldl"
 DEFS=""
 
@@ -57,6 +57,19 @@ AM_PATH_SDL($SDL_VERSION,
             :,
 	    AC_MSG_ERROR([*** SDL version $SDL_VERSION not found!])
 )
+
+
+dnl*****************************
+dnl Checking the version of GCC.
+dnl*****************************
+
+AC_MSG_CHECKING(the version of GCC)
+gcc_version=`$CXX --version`
+gcc_version_major=`echo $gcc_version | sed 's/\([[0-9]]*\).*/\1/'`
+if test $gcc_version_major -ge 3; then
+   DEFS="$DEFS -DGCC_3"
+fi
+AC_MSG_RESULT($gcc_version)
 
 
 dnl**********************************************

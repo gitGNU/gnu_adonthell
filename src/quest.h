@@ -15,7 +15,7 @@
 #ifndef __QUEST_H__
 #define __QUEST_H__
 
-#include <zlib.h>
+#include "fileops.h"
 #include "storage.h"
 
 // This class stores flags and variables defining the player's
@@ -27,10 +27,10 @@ public:
     ~quest ();
     
 #ifndef SWIG
-    void load (gzFile);
-    void save (gzFile);
+    void load (igzstream&);
+    void save (ogzstream&);
 
-    char* name;
+    string name;
 #endif // SWIG
 };
 

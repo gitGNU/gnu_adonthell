@@ -2,7 +2,7 @@
 
 bin_PROGRAMS = animedit mapobjedit mapcharedit mapedit
 
-animedit_SOURCES = animedit.cpp
+animedit_SOURCES = animedit.cc
 
 animedit_LDADD = animation.o \
 drawable.o drawing_area.o fileops.o game.o image.o \
@@ -13,7 +13,7 @@ win_background.o win_scrollbar.o win_file.o win_image.o \
 win_label.o win_select.o win_write.o win_query.o win_info.o \
 win_file_select.o yarg.o $(SDL_LIBS)
 
-mapobjedit_SOURCES = mapobjedit.cpp
+mapobjedit_SOURCES = mapobjedit.cc
 
 mapobjedit_LDADD =  animation.o \
 drawable.o drawing_area.o fileops.o game.o image.o \
@@ -24,7 +24,7 @@ win_scrolled.o win_background.o win_scrollbar.o win_file.o \
 win_image.o win_label.o win_select.o win_write.o win_query.o \
 win_info.o win_file_select.o yarg.o $(SDL_LIBS)
 
-mapcharedit_SOURCES = mapcharedit.cpp
+mapcharedit_SOURCES = mapcharedit.cc
 
 mapcharedit_LDADD =  animation.o \
 drawable.o drawing_area.o fileops.o game.o image.o \
@@ -36,7 +36,7 @@ win_background.o win_scrollbar.o win_file.o win_image.o \
 win_label.o win_select.o win_write.o win_query.o win_info.o \
 win_file_select.o yarg.o $(SDL_LIBS)
 
-mapedit_SOURCES = mapedit.cpp
+mapedit_SOURCES = mapedit.cc
 
 mapedit_LDADD =  animation.o \
 drawable.o drawing_area.o fileops.o game.o image.o \
@@ -50,14 +50,8 @@ win_file_select.o yarg.o $(SDL_LIBS)
 
 CPPFLAGS +=-I../.. -DREVERSE_ALPHA -D_EDIT_ -DUSE_MAP $(SDL_CFLAGS)
 
-%.o : ../../%.cpp
-	$(CXXCOMPILE) -c $< -o $@
-
 %.o : ../../%.cc
 	$(CXXCOMPILE) -c $< -o $@
 
-yarg.o: ../../yarg.cc
-	$(CXXCOMPILE) -c $< -o $@
-
 ../../lex.prefs.o : ../../prefs.l
-	flex -o../../lex.prefs.cpp $<
+	flex -o../../lex.prefs.cc $<

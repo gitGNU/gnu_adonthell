@@ -49,7 +49,6 @@ private:
     win_select *image_list;                 // list of thumbnails
 
     vector<win_write*> entry_list;          // list of game descriptions
-    image *shot;                            // a 72x54 screenshot 
     int mode;                               // Whether we're saving or loading
     bool quit;                              // Tells the window to close
 };

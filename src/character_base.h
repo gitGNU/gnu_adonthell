@@ -12,18 +12,16 @@
    See the COPYING file for more details.
 */
 
-#ifndef __CHARACTER_BASE_H__
-#define __CHARACTER_BASE_H__
+#ifndef CHARACTER_BASE_H_
+#define CHARACTER_BASE_H_
 
 #define DIALOG_DIR "dialogues/"
 
-#include <zlib.h>
-#include "types.h"
+#include <string>
 #include "storage.h"
+#include "fileops.h"
 
-#if defined(USE_PYTHON)
 #include "py_inc.h"
-#endif
 
 enum
 {
@@ -45,25 +43,23 @@ class character_base : public storage
   character_base();
   ~character_base();
   
-  char * get_name() { return name; }        // Get the character's name
-  void set_name(const char * newname);      // Set the character's name
+  string get_name() { return name; }        // Get the character's name
+  void set_name(const string& newname);      // Set the character's name
   u_int32 get_color() { return color; }     // Return the character's text color 
   void set_color (int c) { color = c; }     // Set the character's text color 
-  char * get_dialogue () { return dialogue; }// Gets the character's active dialogue
-  void set_dialogue (const char * dialogue);// Set the active dialogue
+  string get_dialogue () { return dialogue; }// Gets the character's active dialogue
+  void set_dialogue (const string& dialogue);// Set the active dialogue
 
 #ifndef SWIG
-  void save (gzFile out);                   // Save the character to file
-  void load (gzFile in);                    // Load the character from file
+  void save (ogzstream& out);                   // Save the character to file
+  void load (igzstream& in);                    // Load the character from file
 #endif
 
  protected:
-  char * name;
-  char * dialogue;
+  string name;
+  string dialogue;
   u_int32 color;
-#if defined(USE_PYTHON)
   PyObject * locals;         // Locals that belong to that character
-#endif
 };
 
 #endif // __CHARACTER_BASE_H__

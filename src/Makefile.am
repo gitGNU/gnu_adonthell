@@ -6,33 +6,34 @@ endif
 
 bin_PROGRAMS = adonthell
 
-EXTRA_DIST = win_info.cpp win_file_select.cpp .indent.pro prefs.l win_query.cpp py_adonthell.i
+EXTRA_DIST = win_info.cc win_file_select.cc .indent.pro prefs.l win_query.cc py_adonthell.i
 
 CPPFLAGS +=-DUSE_PYTHON -DUSE_MAP $(SDL_DEFS) $(OGG_DEFS) $(SDL_CFLAGS) $(OGG_CFLAGS) $(PY_CFLAGS)
+
 adonthell_LDADD = $(SDL_LIBS) $(OGG_LIBS) $(PY_LIBS)
 
-adonthell_SOURCES = animation.cpp audio.cpp audio_loop.cpp character_base.cpp \
-character.cpp data.cpp data_screen.cpp dialog.cpp dialog_engine.cpp \
-drawable.cc drawing_area.cpp event.cpp fileops.cpp game.cpp gametime.cpp image.cpp \
-input.cpp landmap.cpp lex.prefs.cpp main.cpp mapcharacter.cpp mapengine.cpp \
-mapobject.cpp mapselect.cpp maptpl.cpp mapview.cpp pnm.cpp prefs.cpp \
-py_callback.cpp py_inc.cpp py_modules.cpp py_adonthell_wrap.cpp quest.cpp \
-screen.cpp storage.cpp win_background.cpp win_base.cpp win_border.cpp \
-win_container.cpp win_file.cpp win_font.cpp win_image.cpp win_label.cpp \
-win_manager.cpp win_scrollbar.cpp win_scrolled.cpp win_select.cpp win_theme.cpp \
-win_write.cpp yarg.cc \
+adonthell_SOURCES = animation.cc audio.cc audio_loop.cc character_base.cc \
+character.cc data.cc data_screen.cc dialog.cc dialog_engine.cc \
+drawable.cc drawing_area.cc event.cc fileops.cc game.cc gametime.cc image.cc \
+input.cc landmap.cc lex.prefs.cc main.cc mapcharacter.cc mapengine.cc \
+mapobject.cc mapselect.cc maptpl.cc mapview.cc pnm.cc prefs.cc \
+py_callback.cc py_inc.cc py_modules.cc py_adonthell_wrap.cc quest.cc \
+screen.cc surface.cc storage.cc win_background.cc win_base.cc win_border.cc \
+win_container.cc win_file.cc win_font.cc win_image.cc win_label.cc \
+win_manager.cc win_scrollbar.cc win_scrolled.cc win_select.cc win_theme.cc \
+win_write.cc yarg.cc \
 animation.h audio.h audio_loop.h callback.h py_callback.h \
 character_base.h character.h data.h data_screen.h dialog.h dialog_engine.h \
 drawable.h drawing_area.h event.h fileops.h game.h gametime.h image.h input.h inventory.h \
 item.h landmap.h mapcharacter.h mapobject.h mapselect.h maptpl.h mapview.h \
-mapengine.h pnm.h prefs.h py_inc.h py_modules.h quest.h screen.h storage.h \
+mapengine.h pnm.h prefs.h py_inc.h py_modules.h quest.h screen.h surface.h storage.h \
 types.h win_anim.h win_background.h win_base.h win_border.h win_container.h \
 win_file.h win_file_select.h win_font.h win_image.h win_info.h win_label.h \
 win_query.h win_scrollbar.h win_scrolled.h win_select.h win_theme.h win_types.h \
 win_write.h win_manager.h window.h yarg.h
 
-py_adonthell_wrap.cpp : py_adonthell.i *.h
-	swig -python -shadow -I/tmp/gnu/include/SDL -I/usr/local/include/SDL -I/usr/include/SDL -I./ -I../ -c++ -make_default -o $*.cpp $< 
+py_adonthell_wrap.cc : py_adonthell.i *.h
+	swig -python -shadow -I/tmp/gnu/include/SDL -I/usr/local/include/SDL -I/usr/include/SDL -I./ -I../ -c++ -make_default -o $*.cc $< 
 	@datapath=`grep '^ *Data' ~/.adonthell/adonthellrc | sed 's/^ *Data *\[\(.*\)\] *$$/\1/'` ;\
 	for subdir in $$datapath ; do \
 	  if test -d "$$subdir" ; then \
@@ -43,5 +44,5 @@ py_adonthell_wrap.cpp : py_adonthell.i *.h
 	  fi ; \
 	done
 
-lex.prefs.cpp : prefs.l
-	flex -olex.prefs.cpp $<
+lex.prefs.cc : prefs.l
+	flex -olex.prefs.cc $<

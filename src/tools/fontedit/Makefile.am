@@ -2,7 +2,7 @@
 
 bin_PROGRAMS = fontedit
 
-fontedit_SOURCES = font_editor.cpp win_font_editor.cpp \
+fontedit_SOURCES = font_editor.cc win_font_editor.cc \
 	win_font_editor.h
 
 fontedit_LDADD = pnm.o fileops.o drawing_area.o image.o screen.o \
@@ -13,9 +13,6 @@ fontedit_LDADD = pnm.o fileops.o drawing_area.o image.o screen.o \
 	win_scrolled.o win_scrollbar.o win_theme.o mapselect.o $(SDL_LIBS)
 
 CPPFLAGS +=-I../.. -D_EDIT_ -DUSE_MAP $(SDL_CFLAGS)
-
-%.o : ../../%.cpp
-	$(CXXCOMPILE) -c $< -o $@
 
 %.o : ../../%.cc
 	$(CXXCOMPILE) -c $< -o $@

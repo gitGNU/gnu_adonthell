@@ -1,7 +1,7 @@
 /*
    $Id$
 
-   Copyright (C) 1999/2000   The Adonthell Project
+   Copyright (C) 1999/2000/2001   Alexandre Courbot
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -13,8 +13,8 @@
 */
 
 
-#ifndef _MAPTPL_H
-#define _MAPTPL_H
+#ifndef MAPTPL_H_
+#define MAPTPL_H_
 
 #include "fileops.h"
 #include "mapselect.h"
@@ -27,9 +27,10 @@
 #define NONE_WALKABLE 0
 
 class mapsquaretpl
-{ public:
+{
+public:
     u_int8 walkable;
-
+    
     mapsquaretpl ();
     s_int8 get (igzstream& file);
     s_int8 put (ogzstream& file);

@@ -19,6 +19,12 @@
 #include <fstream.h>
 #include "types.h"
 
+
+#ifndef SWIG
+using namespace std; 
+#endif
+
+
 extern FILE* prefsin;
 extern int parse_adonthellrc (int&, string&);
 

@@ -16,6 +16,11 @@
 
 #include <list>
 
+
+#ifndef SWIG
+using namespace std; 
+#endif
+
 class win_container;
 
 class win_manager
