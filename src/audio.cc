@@ -32,10 +32,8 @@ audio::audio() {
   current_background = 0;
   background_paused = false;
   audio_initialized = false;
-  cout << "1.2\n";
   // Open the audio device
   i=Mix_OpenAudio(22050, AUDIO_S16, 1, 128);
-  cout << "1.3\n";
   if ( i < 0 ) {
     fprintf(stderr, "Unable to open audio: %s\n", SDL_GetError());
     fprintf(stderr, "Audio will not be used.\n");
