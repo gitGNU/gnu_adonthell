@@ -31,6 +31,8 @@ GuiGraph::GuiGraph (GtkWidget *paned)
     module = NULL;
     offset = NULL;
     surface = NULL;
+    scrolling = false;
+    updateBackground = true;
     
     // create drawing area for the graph
     graph = gtk_drawing_area_new ();
@@ -297,6 +299,8 @@ void GuiGraph::clear ()
 // update the graph widget
 void GuiGraph::update (DlgRect &area)
 {
+    if (updateBackground == false) return;
+    
     GdkRectangle rect = (GdkRectangle) area;
     gtk_widget_draw (graph, &rect);
 }
@@ -319,6 +323,9 @@ void GuiGraph::draw ()
 
     DlgRect rect (t);
 
+    // prevent changes to the drawing are to propagate to the screen
+    updateBackground = false;
+    
     // Clear graph
     gdk_draw_rectangle (surface, GuiDlgedit::window->getColor (GC_WHITE), TRUE, 0, 0, t.width, t.height);
 
@@ -326,14 +333,17 @@ void GuiGraph::draw ()
     t.x = 0;
     t.y = 0;
 
-    // draw backing image to screen
-    gtk_widget_draw (graph, &t);
-
     // check for each node, wether it is visible
     for (i = nodes.rbegin (); i != nodes.rend (); i++)
         // draw nodes and arrows
         if ((*i)->contains (rect))
             (*i)->draw (surface, *offset);
+
+    // allow that again
+    updateBackground = true;
+
+    // draw backing image to screen
+    gtk_widget_draw (graph, &t);
 
     // Mark object below cursor if neccessary
     // if (wnd->mode != OBJECT_DRAGGED)
@@ -346,13 +356,13 @@ void GuiGraph::draw ()
 // the mouse has been moved
 void GuiGraph::mouseMoved (DlgPoint &point)
 {
-    // if there is no module assigned to the view, there is nothing to select
+    // if there is no module assigned to the view, there is nothing to do
     if (module == NULL) return;
 
     // calculate absolute position of the point
     point.move (-offset->x (), -offset->y ());
     
-    // see if we're under a node
+    // see if we're over a node
     DlgNode *node = module->getNode (point);
     
     // get the node that was highlighted before (if any)
@@ -373,9 +383,45 @@ void GuiGraph::mouseMoved (DlgPoint &point)
         {
             node->draw (surface, *offset, NODE_HILIGHTED);
             tooltip = new GuiTooltip (node);
-            tooltip->draw (graph);
+            tooltip->draw (graph, *offset);
         }
     }
     
     return;
+}
+
+// prepare everything for 'auto-scrolling' (TM) ;-)
+void GuiGraph::prepareScrolling (DlgPoint &point)
+{
+    // if there is no module assigned to the view or no nodes
+    // in the module yet, there is nothing to do
+    if (module == NULL || module->getNodes ().empty ()) return;
+
+    int scroll_x = 0;
+    int scroll_y = 0;
+
+    // set scrolling offset and direction    
+    if (point.x () < 20) scroll_x = 15;
+    if (point.y () < 20) scroll_y = 15;
+    if (point.x () + 20 > graph->allocation.width) scroll_x = -15;
+    if (point.y () + 20 > graph->allocation.height) scroll_y = -15;
+
+    // enable scrolling
+    if (scroll_x || scroll_y)
+    {
+        if (!scrolling)
+        {
+            scrolling = true;
+            scroll_offset = DlgPoint (scroll_x, scroll_y);
+            gtk_timeout_add (100, on_scroll_graph, this);
+        }
+    }
+    else scrolling = false;
+}
+
+// the actual scrolling
+void GuiGraph::scroll ()
+{
+    offset->move (scroll_offset);
+    draw ();
 }

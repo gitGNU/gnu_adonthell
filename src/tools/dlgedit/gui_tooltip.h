@@ -35,7 +35,7 @@ public:
     GuiTooltip (DlgNode *node);
     ~GuiTooltip ();
 
-    void draw (GtkWidget *parent);
+    void draw (GtkWidget *parent, DlgPoint &offset);
     
 private:
     DlgNode *node;

@@ -151,6 +151,11 @@ gint motion_notify_event (GtkWidget *widget, GdkEventMotion *event, gpointer dat
     GuiGraph *graph = (GuiGraph *) data;
     DlgPoint point ((int) event->x, (int) event->y);
 
+    // scroll the graph if necessary (this has to happen before 
+    // anything else, as the next method(s) change 'point'.
+    graph->prepareScrolling (point);
+
+    // highlight nodes under the cursor and display their 'tooltip'
     graph->mouseMoved (point);
     
     return FALSE;
@@ -450,4 +455,36 @@ guint key_press_notify_event (GtkWidget * widget, GdkEventKey * event, gpointer 
     }
 */
     return TRUE;
+}
+
+
+// Once 'auto-scrolling' is activated, this function is called every
+// 10th of a second until it returns FALSE
+int on_scroll_graph (gpointer data)
+{
+    int x, y;
+    static int delay = 0;
+    GuiGraph *graph = (GuiGraph *) data;
+    GtkWidget *widget = graph->drawingArea ();
+
+    // get the present cursor position (relative to the graph)    
+    gtk_widget_get_pointer (widget, &x, &y);
+    
+    // stop scrolling if outside widget or too far from widget's border
+    if (x < 0 || x > widget->allocation.width || 
+        y < 0 || y > widget->allocation.height ||
+        !graph->isScrolling ())
+    {
+        graph->stopScrolling ();
+        delay = 0; 
+        return FALSE;
+    }
+    
+    // wait approx. 1 second before starting to scroll
+    if (delay++ < 6) return TRUE;
+    
+    // move the view
+    graph->scroll ();
+    
+    return TRUE; 
 }

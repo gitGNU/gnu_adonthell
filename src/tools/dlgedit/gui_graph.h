@@ -130,9 +130,39 @@ public:
     void mouseMoved (DlgPoint &point);
         
     /**
+     * @name Auto-Scrolling (TM) ;) functionality.
+     */
+    //@{
+    /**
+     * Method deciding whether to start with scrolling. The cursor has to
+     * remain in the outer 20 pixel of the view to enable scrolling.
+     * @param point The current cursor position.
+     */
+    void prepareScrolling (DlgPoint &point);
+    /**
+     * Moves the view in the desired direction.
+     */
+    void scroll ();
+    /**
+     * Check whether we are currently scrolling
+     * @return <b>true</b> if that is the case, <b>false</b> otherwise.
+     */
+    bool isScrolling ()         { return scrolling; }
+    /**
+     * Finish scrolling.
+     */
+    void stopScrolling ()       { scrolling = false; }
+    //@}
+    
+    /**
      * @name Member access methods.
      */
     //@{
+    /** 
+     * Returns the current offset of the attached DlgModule.
+     * @return the absolute position of the view
+     */
+    DlgPoint *position ()       { return offset; }
     /** 
      * Return a pointer to the drawing surface.
      * @return the drawing surface
@@ -156,6 +186,9 @@ private:
     GtkWidget *graph;       // Drawing Area
     GdkPixmap *surface;     // Drawing surface
     GuiTooltip *tooltip;    // Tooltip for displaying node-text
+    bool scrolling;         // Indicates whether autoscrolling is active
+    DlgPoint scroll_offset; // Offset by which the view moves during scrolling
+    bool updateBackground;  // Don't show updates to the drawing area 
 };
 
 #endif // GUI_GRAPH_H

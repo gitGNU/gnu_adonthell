@@ -49,5 +49,9 @@ gint motion_notify_event (GtkWidget *, GdkEventMotion *, gpointer);
  * Callback indicating that a key has been pushed.
  */
 guint key_press_notify_event (GtkWidget *, GdkEventKey *, gpointer);
+/**
+ * Callback for autoscrolling the graph view.
+ */
+int on_scroll_graph (gpointer);
 
 #endif // GUI_GRAPH_EVENTS_H

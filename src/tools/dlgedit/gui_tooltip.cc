@@ -68,12 +68,11 @@ GuiTooltip::~GuiTooltip ()
 }
 
 // draw the tooltip
-void GuiTooltip::draw (GtkWidget *graph)
+void GuiTooltip::draw (GtkWidget *graph, DlgPoint &offset)
 {
     if (node->type () == LINK) return;
     
     int x, y;
-    
     gdk_window_get_origin (gtk_widget_get_parent_window (graph), &x, &y);
     gtk_widget_realize (tooltip);
     
@@ -85,6 +84,6 @@ void GuiTooltip::draw (GtkWidget *graph)
     y += node->y () + node->height ();
     
     // position and display the tooltip
-    gtk_widget_set_uposition (tooltip, x, y);
+    gtk_widget_set_uposition (tooltip, x + offset.x (), y + offset.y ());
     gtk_widget_show (tooltip);
 }
