@@ -1,0 +1,65 @@
+\documentclass[11pt,a4paper,ps2pdf,twoside]{article}
+\usepackage{a4wide}
+\usepackage{makeidx}
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{dlgedit}
+\usepackage{alltt}
+\usepackage{times}
+\usepackage[ps2pdf,
+            pagebackref=true,
+            colorlinks=true,
+            linkcolor=blue,
+            pdftitle={$projectname v$projectnumber},
+            pdfauthor={Kai Sterker},
+            bookmarksopen=True,
+            pdfsubject={Adonthell Designer's Reference}
+           ]{hyperref}
+\makeindex
+\setcounter{tocdepth}{2}
+\setlength{\footrulewidth}{0.4pt}
+\begin{document}
+
+% -- Title
+\title{The Adonthell Dialogue Editor\\{}$projectname v$projectnumber}
+\author{Kai Sterker}
+\date{$date}
+\maketitle
+
+% -- Copyright
+\pagenumbering{roman}
+\newpage
+\pagestyle{empty}
+
+\begin{center}
+{\sc The Adonthell Dialogue Editor} \\
+\vspace*{\stretch{2}}
+This document is part of the Adonthell Designer's Documentation\\
+{\sf http://adonthell.linuxgames.com}\\
+\vspace{1em}
+\copyright 2000/2001 Kai Sterker\\
+{\sf kaisterker@linuxgames.com}\\
+\vspace{1em}
+Created with Doxygen $doxygenversion\\
+{\sf http://www.doxygen.org}\\ 
+Typeset with \LaTeX
+\end{center}
+
+\clearemptydoublepage
+\tableofcontents
+\clearemptydoublepage
+\pagenumbering{arabic}
+% \chapter{Dlgedit Page Index}
+% \input{pages}
+% \chapter{Dlgedit Page Documentation}
+\pagestyle{fancy}
+\input{page1}
+\newpage
+\input{page2}
+\newpage
+\input{page3}
+\newpage
+\input{page4}
+\printindex
+\end{document}

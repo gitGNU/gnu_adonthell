@@ -1,0 +1,763 @@
+/*
+   $Id$
+
+   Copyright (C) 1999/2000/2001 Kai Sterker <kaisterker@linuxgames.com>
+   Part of the Adonthell Project http://adonthell.linuxgames.com
+
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License.
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY.
+
+   See the COPYING file for more details.
+*/
+
+/*! \page page1 Understanding the Dialogue Engine
+
+Before we start designing our first dialogues, it might be
+wise to have a look at the concept of the dialogue engine.
+Once you understand the basic rules, it will help you to
+avoid errors.A dialogue consists of a number of Narrator,
+NPC and Player lines, arranged in a certain order. The rules
+for this are as follows:
+
+-# The dialogue starts with, at least, either one NPC or Narrator
+   line.
+-# Narrator lines may be followed by 0 or more of either lines.
+-# NPC lines may be followed by 0 or more of either lines.
+-# Player lines may be followed by 0 or more NPC or Narrator
+   lines.
+-# The dialogue ends when no more lines follow.
+
+This results in a directed graph which later on is traversed
+by the dialogue engine according to the following rules:
+
+-# Start with those lines that have no predecessor.
+-# Chose randomly between multiple NPC or Narrator lines.
+-# Let the player chose if there are multiple Player lines.
+-# Don't chose lines twice (can be disabled for single lines).
+
+Apart from that, there are a number of additional features
+that influence how the dialogue appears to the player:
+
+-# Each line may be based on conditions, meaning they are
+   only available if a certain condition is met.
+-# NPC lines can be attached to different characters, making
+   conversations with/between multiple NPC's possible.
+
+These 11 points cover most of the Dialogue System's functionality
+and should give you an idea what you can do with it, and
+what you can't. To get you going now, it's time for a brief
+tutorial.
+
+*/
+
+/*! \page page2 An Example
+
+After the theory, something more practical now.
+
+\subsection sec21 The Dialogue
+
+This is a very simplistic Dialogue we want to model, but
+you will see that it is sufficient to demonstrate the basic
+functionality of the Dialogue Editor.
+
+\verbatim
+  Npc:       "Hello, I am Eric."                        
+  Player:    "I am Kai."            or    "Goodbye!"    
+  Npc:       "Nice to meet you."          "Fare well."  
+  Player:    "Goodbye!"                                 
+  Npc:       "Fare well."                               
+\endverbatim
+
+\subsection sec22 Creating the Dialogue
+
+Dialogues start with a NPC line, so that is what we add first.
+Simply left-click on the dialogue area of the Editor. A
+dialog pops up that allows you to enter the text of the
+node. As you see, NPC is the default, so simply enter the
+line of dialogue and press OK. What you will see when moving
+the cursor over the newly appeared node is the following:
+
+<center>
+\image latex step1.eps
+\image html step1.png
+</center>
+
+Now we add the players response. To do this, left-click on
+the circle. It will appear in red to signal that it is the
+selected node. Now left-click on a location a bit further
+down. Again the Text Input Window pops up, this time with
+Player preselected, just as we want it. Enter the Text and
+press OK.
+
+<center>
+\image latex step2.eps
+\image html step2.png
+</center>
+
+Your screen should look like this. The NPC node is still
+selected, therefore drawn red, and the Player node is drawn
+blue, to distinguish it from NPC nodes. The arrow between
+them symbolizes the flaw of the Dialogue .
+
+Since the player shall have two possible responses, we have
+to create another player node, somewhere next to the first
+one. Voila, the first two lines of the dialogue are already
+done. Now right-click on an empty spot to deselect the NPC
+node and then select the first Player node. You see, that
+it appears orange, so you know at the first glance that
+it is a selected Player node. Left-click somewhere below
+it, enter the apropriate Text, confirm with OK and repeat
+the same for the second Player node.
+
+<center>
+\image latex step3.eps
+\image html step3.png
+</center>
+
+If your Display shows something similar, you've done it :-).
+Now lines 4 and 5 of the Dialogue have to follow, but, as
+you have already noticed, they are just the same as a part
+of the existing dialogue. Would be nice if we could reuse
+that part, eh? Well, we can. All we need to do is telling
+the Editor wich part has to follow a node. 
+
+Okay, lets dot it: Deselect the Player node and select the
+bottom left NPC node (or the node correspondenting to that
+one in your work). Then simply left-click on the arrow that
+points to the Player node we want to follow. And this is
+the complete dialogue:
+
+<center>
+\image latex step4.eps 
+\image html step4.png
+</center>
+
+The numbers inside the nodes tell how many such "indirect"
+links start at each node, and when selecting a node with
+indirect links, the apropriate arrows are colored purple.
+
+Of course we could have used a direct link as well, but in
+more complex dialogues, this technique avoids arrows criss-crossing
+all over the screen.
+
+\subsection sec23 The Result
+
+Now save and compile the Dialogue. You'll get a .py file,
+the Python dialogue script. In our example it should look
+similar to the following:
+ 
+\verbatim
+class new_dialogue:
+
+    loop = []
+
+    strings = ["Hello,I'm Eric.","I am Kai.","Goodbye!","Farewell.","Nice to meet you.",""]
+
+    def __init__(self):
+        self.dialogue = [self.start, self.answer2, self.answer4, None]
+ 
+    def __getattr__ (self, var):
+        return 0
+
+    def run (self, answer):
+        self.npc = []
+        self.player = []
+        self.cont = []
+        self.dialogue[answer]()
+
+    def npc0 (self):
+        self.npc.append (0)
+        self.cont.append (0)
+
+    def player2 (self):
+        self.player.append (1)
+        self.cont.append (1)
+
+    def player4 (self):
+        self.player.append (2)
+        self.cont.append (2)
+
+    def npc6 (self):
+        self.npc.append (3)
+        self.cont.append (0)
+
+    def npc8 (self):
+        self.npc.append (4)
+        self.cont.append (0)
+
+    def start (self):
+        self.npc0 ()
+        self.player2 ()
+        self.player4 ()
+        self.player.append (-1)
+
+    def answer4 (self):
+        self.npc6 ()
+        self.player.append (-1)
+
+    def answer2 (self):
+        self.npc8 ()
+        self.player4 ()
+        self.player.append (-1)
+\endverbatim 
+
+You see, its a lot easier to use the Dialogue Editor than
+writing the Code by hand. Of course, if you know what you
+are doing, you can edit this file afterwards. But usually,
+you should do any editing in the editor only. For a description
+of the commands refer to the Python Documentation (http://www.python.org). 
+
+*/
+
+/*! \page page3 The Dialogue Editor
+
+After above example you should be able to start designing
+Dialogues right away. But for your convenience, and because
+some of the advanced editor features are not described yet,
+this section contains the complete refernece guide. 
+
+\subsection sec31 The Main Window
+
+<center>
+\image latex dlgedit_main.eps "The main interface"
+\image html dlgedit_main.png "The main interface"
+</center>
+
+\par  1. The Dialogue Area
+This is where you create the outline of the dialogue; what
+lines of text exist and how they are linked to each other.
+Most of the work is done with the mouse, but there are also
+a few shortcuts on the keyboard and some functionality is
+only available through the keyboard.
+
+\par 
+The actions taken when a mouse- or keypress occurs depend
+on the current selection (none, circle, arrow) and the position
+of the cursor. The table below shows all possible constellations:
+
+<table>
+  <tr>
+    <td>\b Left-click </td>
+    <td>\e Nothing \e selected </td>
+    <td>\e Circle \e selected </td>
+    <td>\e Arrow \e selected </td>
+  </tr>
+  <tr>
+    <td>\e on \e empty \e space </td>
+    <td>Create new Circle </td>
+    <td>Create new Circle \& link with selected </td>
+    <td>-</td>
+  </tr>
+  <tr>
+    <td>\e on \e Circle </td>
+    <td>Select Circle</td>
+    <td>Link with selected</td>
+    <td>-</td>
+  </tr>
+  <tr>
+    <td>\e on \e Arrow </td>
+    <td>Select Arrow </td>
+    <td>Add Arrow as indirect Link</td>
+    <td>-</td>
+  </tr>
+</table>
+<table>
+  <tr>
+    <td>\b Middle-click </td>
+    <td>\e Nothing \e selected </td>
+    <td>\e Circle \e selected </td>
+    <td>\e Arrow \e selected </td>
+  </tr>
+  <tr>
+    <td>\e on \e empty \e space </td>
+    <td>-</td>
+    <td>Edit selected Circle</td>
+    <td>-</td>
+  </tr>
+  <tr>
+    <td>\e on \e Circle </td>
+    <td>Select \& edit Circle</td>
+    <td>Edit selected Circle</td>
+    <td>-</td>
+  </tr>
+  <tr>
+    <td>\e on \e Arrow </td>
+    <td>Select Arrow </td>
+    <td>Edit selected Circle</td>
+    <td>-</td>
+  </tr>
+</table>
+<table>
+  <tr>
+    <td>\b Right-click </td>
+    <td>\e Nothing \e selected </td>
+    <td>\e Circle \e selected </td>
+    <td>\e Arrow \e selected </td>
+  </tr>
+  <tr>
+    <td>\e on \e empty \e space </td>
+    <td>-</td>
+    <td>-</td>
+    <td>-</td>
+  </tr>
+  <tr>
+    <td>\e on \e Circle </td>
+    <td>Deselect Circle</td>
+    <td>Deselect Circle</td>
+    <td>Remove indirect Link</td>
+  </tr>
+  <tr>
+    <td>\e on \e Arrow </td>
+    <td>Deselect Arrow </td>
+    <td>Deselect Arrow </td>
+    <td>Deselect Arrow </td>
+  </tr>
+</table>
+<table>
+  <tr>
+    <td>\b Return </td>
+    <td>\e Nothing \e selected </td>
+    <td>\e Circle \e selected </td>
+    <td>\e Arrow \e selected </td>
+  </tr>
+  <tr>
+    <td>\e on \e empty \e space </td>
+    <td>-</td>
+    <td>Edit Circle</td>
+    <td>-</td>
+  </tr>
+</table>
+<table>
+  <tr>
+    <td>\b Del </td>
+    <td>\e Nothing \e selected </td>
+    <td>\e Circle \e selected </td>
+    <td>\e Arrow \e selected </td>
+  </tr>
+  <tr>
+    <td>\e on \e empty \e space </td>
+    <td>-</td>
+    <td>Delete Circle and its Links</td>
+    <td>Delete Arrow</td>
+  </tr>
+</table>
+<table>
+  <tr>
+    <td>\b Esc </td>
+    <td>\e Nothing \e selected </td>
+    <td>\e Circle \e selected </td>
+    <td>\e Arrow \e selected </td>
+  </tr>
+  <tr>
+    <td>\e on \e empty \e space </td>
+    <td>-</td>
+    <td>Deselect Circle</td>
+    <td>Deselect Arrow</td>
+  </tr>
+</table>
+
+\par
+Further key-commands are c, which centers the view on the
+selected Node if it lies in the outer 20% of the Dialogue
+Area, the cursor keys and the numpad to scroll the dialogue
+and finally tab to select the next Node (That is, the next
+node in the editors internal data representation, not the
+next node on the screen!). Moving the mouse close to the
+Dialogue Areas border will also scroll the dialogue, and
+when dragging the mouse with left button pressed, you can
+select multiple Circles, for example to delete all of them
+at once.
+
+\par 2. A Node with additional code
+An exclamation mark (!) inside a circle means that the node
+contains commands other than just a line of text. What commands
+that may be in detail is discussed in \ref edit "section 3.2".
+
+\par 3. An indirect Link
+Whenever a node with indirect links is selected (5), they
+are hilighted in purple. Indirect links are equivalent to
+a normal link between it's start and end, but to avoid arrows
+criss-crossing over the whole Dialogue Area, it's often
+better to use an indirect link. The number inside Circles
+tells how many indirect links they have.
+
+\par 4. Hilighted Node
+Nodes below the mousepointer appear in green to give you
+some feedback what action a click will start at this point.
+
+\par 5. Selected Node
+Selected Player nodes are drawn orange, NPC nodes red. Furthermore,
+the Instant preview (8) shows their text as well as that
+of their predecessors and followers.
+
+\par 6. Tooltip
+Whenever a Circle is below the mousepointer, a tooltip with
+its text appears to make it easier for you to find a certain
+position in the dialogue.
+
+\par 7. Text of preceding Nodes
+All the different lines of text that may preceed the selected
+circle (5). The color of the entries gives some information
+of the type: Blue text denotes lines of the Player, black
+text lines of the NPC. Somewhat dimmed lines mean that the
+Circles are connected by indirect links (3).
+
+\par 8. The Instant preview
+This shall give a first impression of what the Dialogue will
+look like in the game. Basically it displays the text of
+the selected circle, together with all preceeding and following
+text. With this you should be able to judge wether all the
+combinations of text fit well together. Furthermore, by
+clicking on a line of text, the attached Circle is selected,
+meaning you can browse through the whole dialogue. Note
+that additional code of Nodes won't be taken into account,
+so in the game, the dialogue might be slightly different.
+
+\par 9. Text of selected node
+Again this is color-coded: as in the Dialogue Area (1), orange
+text means a Player line, red text a NPC line.
+
+\par 10. Text following the selected node
+Text following the selected Node. The colors have the same
+meaning as in (7).
+
+\latexonly
+\newpage
+\endlatexonly
+
+\subsection sec32 The Edit Dialog
+
+<center>
+\image latex dlgedit_edit.eps "The Edit dialog"
+\image html dlgedit_edit.png "The Edit dialog"
+</center>
+
+\par 1. Edit Circle's Text
+When you create a new Circle, you should attach some text
+to it. This is done on this page. Simply type the text into
+the entry. Player text will be displayed blue, NPC text
+black and Narrator text in green. You can switch between
+both with (5).
+
+\anchor edit \par 2. Conditions for the Node
+On this page, you can specifiy a condition which then decides
+whether this line of text will be available in the game
+or not. In fact you may enter any valid Python code, but
+the result may be unpredictible; so to be on the safe side,
+the code you write here should be a single if statement:
+
+\par
+\verbatim
+if condition_1 == 1 and (flag_1 + flag_2) <= 10:
+\endverbatim
+
+\par
+You may also use <tt>elif</tt> and <tt>else</tt> statements, 
+but again the results might be unpredictible, unless you
+restrict yourself to a single <tt>if</tt> and <tt>else</tt>.
+
+\par 3. Set and/or change Variables
+Here you can enter a variety of Python code. In contrast
+to the Condition code, where your code decides whether text
+is displayed or not, this code is executed if the line of
+text is displayed (in case of NPC text) or selected as response
+(in case of Player text). Use the code you enter here to
+change quest objects, NPC or Player attributes, etc. How
+this works in detail, will be described in \ref code "section 3.5".
+
+\par
+The green page label tells you at a glance that this Circle
+contains some variable code, but neither Conditions nor
+miscellanous Commands. The Text-page's label will always
+be black, as text isn't really optional.
+
+\par 4. Actions
+Here are just a few shortcuts that create code as you can
+enter in (3). Currently, only the Loop command works. When
+activated, the Node will not be marked as used once it appears
+in the conversation, and thus may be spoken several times.
+
+\par 5. Assign text to Narrator, NPC or Player
+Use the Radiobuttons to assign the Circle either to the Player,
+the Narrator or to a NPC. The Editor tries its best to guess
+to whom this line of text shall belong, but as long as it
+can't read your thoughts, you'll have to correct it sometimes.
+
+\par 6. Set NPC
+You can select the NPC who shall speak here. When using default,
+this will be the NPC this dialogue is assigned to. In case
+of a conversation between multiple NPC's, you might want
+to chose somebody else though. Note that only those NPC's
+are available that are currently in the character.data file
+in your adonthell-data directory. Use charedit to change
+this file.
+
+\par 7. Set NPC's mood
+Here you can specify what picture of the selected NPC the
+player gets to see. This feature needs to be implemented
+yet.
+
+\par 8. Annotation
+Here is some room for personal notes of all kind. Since a
+dialogue can get quite complex, you really should add some
+comments, so that other people as well as you can easier
+understand what is going on.
+
+\latexonly
+\newpage
+\endlatexonly
+
+\subsection sec33 The Run Dialog
+
+<center>
+\image latex dlgedit_run.eps "The Run dialog"
+\image html dlgedit_run.png "The Run dialog"
+</center>
+
+\par 1. The conversation so far
+The top part of the Dialogue test window will display the
+conversation you had so far. As known from the Editor, Player
+lines are displayed blue, NPC lines black.
+
+\par 2. The current NPC line
+The NPC's reaction to your last speech is displayed in red.
+If no responses of the player are available, click on this
+line to continue the conversation.
+
+\par 3. Your possible responses
+Usually, a line of NPC text will be followed by one or more
+responses, the player can chose from. Simply click on the
+text you wish to say and the dialogue will continue.
+
+\par 4. Restart this conversation
+Runs the dialogue from the beginning. This will also reload
+the dialogue in case it has changed on disk.
+
+\par 5. Debug this dialogue
+Opens the debug window if it is not already open.
+
+
+\subsection sec34 The Debug Dialog
+
+<center>
+\image latex dlgedit_debug.eps "The Debug dialog"
+\image html dlgedit_debug.png "The Debug dialog"
+</center>
+
+\par 1. Display local variables
+This tab shows the current dialogue's local variables, if
+that dialogue was compiled with debugging enabled and is
+currently running. Local variables are only available as
+long as the Run window is open. Further they are reinitialized
+when restarting the dialogue.
+
+\par 2. Display character attributes
+Here you can browse through all characters (and their attributes)
+in the character.data file in your adonthell-data directory.
+Unlike local variables, character attributes remain valid
+as long as the dialogue editor is running. Changes made
+to them will survive until the end of the editing session.
+In a future version of dlgedit, it should be possible to
+revert the attribute to those of the character.data.
+
+\par 3. Display quest attributes
+This tab shows all quests available in the quest.data file
+of you adonthell-data directory. The same rules as for the
+character attributes apply here.
+
+\par 4. The debug tree
+The actual attributes are shown in a tree. Unchanged attributes
+are displayed black, changed ones in green and deleted ones
+in red color. You can change an attributes value by leftclicking
+on the attribute's name. To delete an attribute, assign
+a value of zero to it. To add a new attribute, simply click
+on the parent you want to add the attribute to.
+
+\par 5. Run dialogue
+Click here to run the current dialogue. This opens the Run
+Dialogue window in case it isn't open already.
+
+\anchor code \subsection sec35 Additional Python code
+
+From the tutorial you might have seen that each dialogue
+get's compiled into a python class which then is fed into
+Adonthell's Python interpreter to execute it step by step.
+Given the flexibility of Python, it is only sensible to
+use it to achieve more than simple static dialogues. In
+brief, Python makes it possible to reflect the gameworlds
+current state in a dialogue, and also to change that state
+depending on the player's behaviour throughout the dialogue.
+As you have learned above, you can enter additional Python
+code at various places of the dialogue:
+
+- directly into the text. This code has to be enclosed in
+  braces {} and should return a string.
+- as a condition that decides whether a chunk of dialogue
+  is displayed or not, 
+- and finally you can add code that is executed after a piece
+  of dialogue has been displayed.
+
+This section tries to give an overview of the possibilities
+additional Python code offers for the conversation with
+NPC's. One day, there'll be some document discussing the
+general Python scripting available in Adonthell.
+
+<h4>Embedded code</h4>
+
+The dialogue engine allows to embed a function call into
+a line of text and will insert whatever string this function
+returns in place of the function. This only works for methods
+defined in the custom function window (Dialogue->Functions
+or Ctrl+F). It mustn't take any arguments and should return
+a string. For example, the method
+
+\verbatim
+def hello_world (self):
+    return "Hello world!"
+\endverbatim
+
+can be used in the text <i>"This will
+print: {hello_world}"</i> to produce <i>"This
+will print: Hello world!"</i>. Of course
+for this to make sense, such a method should return one
+of several strings according to the current situation.
+
+Apart from that, there are the <tt>\$name</tt> and 
+<tt>\$fm{text_a/text_b}</tt> macros. <tt>\$name</tt> will 
+be replaced with the player's name at runtime, whereas 
+<tt>\$fm{/}</tt> will cause <i>text_a</i> to be displayed
+if the player is female or <i>text_b</i> in case the player is
+male.
+
+<h4>Local variables</h4>
+
+For more advanced dialogues it might be necessary to define
+local variables. They belong to the dialogue class and are
+addressed as self.variable. Local variables are only accessible
+from within the dialogue itself and thus are only available
+as long as the dialogue is running. They won't remember
+their value between two runs of the dialogue.
+
+What for are they then? Basically they can be used to track
+the player's path through the dialogue. Information he may
+or may not have recieved could enable or disable additional
+choices at a later point in the same dialogue, but how does
+the dialogue engine learn about that. The solution is to
+use local variables. So when the player recieves the special
+information you'd add the following variable code
+
+\verbatim
+self.special_info_gained = 1
+\endverbatim
+
+and later on, you base the special choice on following condition:
+
+\verbatim
+if self.special_info_gained == 1:
+\endverbatim
+
+Note that you need not define a variable before you use it.
+Undefined variables are assumed to have the value 0, so
+in above example you needn't do anything about the case
+where the player doesn't get that special information.
+
+But what would happen if the information gained and the enabled
+option aren't part of the same dialogue? That is where persistant
+variables come into play:
+
+<h4>Persistent variables</h4>
+
+The state of the gameworld, of each NPC and the player are
+also accessible from a dialogue script. The full details
+should be discussed in a general scripting doc, but unless
+this has happened, here are the bits relevant for the dialogue
+engine. 
+
+The state of the gameworld is conserved in the various quests.
+On Python side, all quests are stored in the global quests
+dictionary. A special quest is retrieved by
+
+myquest = quests["quest_name"]
+
+and particular attributes of myquest are retrieved via
+
+myattribute = myquest.get ("attribute_name")
+
+and set with
+
+myquest.set ("attribute_name",
+myattribute)
+
+Characters are treated in a similar way, except that they
+are stored in a dictionary called characters. As an addition,
+the global variable the_player always points to the player
+character and the_npc to the npc the dialogue is assigned
+to.
+
+*/
+
+
+/*! \page page4 A Guideline for writing Dialogues
+
+After taking a look at the technical side, it's about time
+to give some hints on the actual dialogue creation. Although
+it might take a little while to get used to the editor itself,
+the real difficulty lies in the writing of high-quality
+dialogues. What follows are mainly personal experiences
+not the ultimate wisdom, but for the sake of consistency
+you should keep these points in mind when doing dialogues
+for Adonthell. You shouldn't consider them as strict rules,
+though. If you have a good reason to break them here and
+there, feel free to do so.
+
+\par Describe the NPC 
+At the beginning of the dialogue, a short description of the 
+NPC's mood or other features that would be obvious to their 
+counterpart but cannot be portrayed by the game engine can give the
+player an idea how to deal with that character. It also
+enables us to give each NPC an individual touch thus adding
+more flavour to the game world.
+
+\par Leave the thinking to the player
+All the information contained in a dialogue should be
+kept in the NPC's part, whereas the player's part should
+contain as little hints as possible, and no information
+the person in front of the screen cannot deduce from previous
+dialogue(s). After all, part of the fun of playing the
+game comes from making connections between information
+given by various NPC's. Therefore, a player's answer may
+reveal the correct result of the thinking process, but
+it shouldn't give any (lengthy) explanations.
+
+\par Avoid single choices 
+A single choice is no choice and rather boring. The reason for
+writing dlgedit is exactly this point. Adonthell is no self-running
+demo, but an interactive game, and interactivity requires that
+the player can choose from different alternatives. That
+doesn't mean that you can't have lengthy monologues of
+the NPC. However, if there is only one choice for the
+player, you might as well leave it away and let the NPC
+go on without interruption. 
+
+\par Keep the player's text neutral
+Bear in mind that different player's will have different
+feelings in the same situation. And unless you don't give
+the player the chance to chose an answer that comes close
+to his or her own personality, you should try to leave
+(strong) feelings away. Of course, depending on the underlying
+role playing system, you might present player's with choices
+according to their alignment or behaviour in previous
+situations.
+
+\par Keep the text short 
+Since there is only limited space in the game's dialogue window,
+you should limit the amount of text displayed a time. NPC
+text should fit entirely into the window, meaning it should
+not exceed 4 lines in the \ref edit "edit window". Longer text 
+can be distributed over several nodes. Player text should
+take a single line, 2 at most, so that several choices
+fit into the dialogue window.
+
+*/
