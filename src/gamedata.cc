@@ -112,6 +112,7 @@ bool gamedata::load_characters (u_int32 pos)
 
     // first, the player
     data::the_player->character_base::get_state (in);
+    data::characters[data::the_player->get_name ().c_str ()] = data::the_player;
 
     // then all the others
     while (ctemp << in)
