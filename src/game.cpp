@@ -158,7 +158,7 @@ void game::load (const char *gamedir, const char *staticdir)
         PyDict_SetItemString (quests, myquest->name, pass_instance (myquest, "quest"));
 
         // Make this quest available to the engine
-        quests.set (myquest->name, myquest);
+        game::quests.set (myquest->name, myquest);
     }
     
     fclose (in);    
