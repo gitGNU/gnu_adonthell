@@ -1,4 +1,6 @@
 /*
+   $Id$
+   
    (C) Copyright 2000 Joel Vennin
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
@@ -76,8 +78,8 @@ bool win_scroll::up()
 
 void win_scroll::set_pos (const u_int8 pos) 
 {
-    cur_amplitude_ = (u_int16)((((float) max_amplitude_) / 255) * pos); 
-    update_amplitude(); 
+    cur_amplitude_ = (max_amplitude_ * pos) / 255; 
+    if (max_amplitude_ != 0) update_amplitude (); 
 }
 
 void win_scroll::update_amplitude()
@@ -88,7 +90,7 @@ void win_scroll::update_amplitude()
       (*i)->update_position();
     }
   
-  cursor_y_=(u_int16) ( (float) ((float)(height() - win_scrollbar::height_bar() ) / max_amplitude_ ) * cur_amplitude_ );
+  cursor_y_= ((height() - win_scrollbar::height_bar()) * cur_amplitude_) / max_amplitude_;
 }
 
 
