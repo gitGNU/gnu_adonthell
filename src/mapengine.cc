@@ -76,8 +76,8 @@ void mapengine::mainloop ()
     for (int i = 0; i < gametime::frames_to_do (); i++)
     {
         win_manager::input_update ();
-        win_manager::update ();
         lmap.update ();
+        win_manager::update ();
         mv.mapview::update ();
     }
     screen::clear (); 
