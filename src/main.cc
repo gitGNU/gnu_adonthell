@@ -184,14 +184,14 @@ int main(int argc, char * argv[])
     // cleanup the saves
     gamedata::cleanup (); 
     
-    // cleanup event system
-    event_handler::cleanup ();
-    
     // cleanup data
     delete data::engine;
     if (data::the_player)
         delete data::the_player;
 
+    // cleanup event system
+    event_handler::cleanup ();
+    
     // shutdown python
     // Cleanup the global namespace of python interpreter
     // Note that we don't have to DECREF data::globals, because they're a

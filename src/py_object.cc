@@ -118,7 +118,17 @@ PyObject* py_object::call_method_ret (const string & name, PyObject * args)
 // Get an attribute of the instance
 PyObject *py_object::get_attribute (const string &name)
 {
-    if (!instance) return NULL;
+    if (instance)
+        return PyObject_GetAttrString (instance, (char *) name.c_str ());
+    else
+        return NULL;
+}
 
-    return PyObject_GetAttrString (instance, (char *) name.c_str ());
+// check for a certain attribute
+bool py_object::has_attribute (const std::string & name)
+{
+    if (instance)
+        return PyObject_HasAttrString (instance, (char *) name.c_str ());
+    else
+        return false;
 }

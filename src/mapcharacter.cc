@@ -43,9 +43,12 @@ mapcharacter::mapcharacter () : mapsquare_walkable_area (), character_base ()
 
     schedule_activated = true;
     action_activated = true; 
+    goal_reached_ = true;
 
     schedule_args = NULL;
-    action_args = NULL; 
+    action_args = NULL;
+    
+    callback = NULL;
 }
  
 mapcharacter::~mapcharacter ()
@@ -76,7 +79,9 @@ void mapcharacter::clear ()
     Py_XDECREF (action_args);
     action_args = NULL; 
     schedule_file_ = "";
-    action_file_ = ""; 
+    action_file_ = "";
+    
+    if (callback) delete callback;
 }
 
 s_int8 mapcharacter::get (igzstream& file)
@@ -527,8 +532,15 @@ bool mapcharacter::set_goal (u_int16 x, u_int16 y, u_int16 dir)
     mypath.goal.y = y;
     mypath.dir = dir;
     pathindex = 0; 
+    goal_reached_ = false;
     
     return mypath.calculate (); 
+}
+
+void mapcharacter::set_callback (PyObject *cb, PyObject *args)
+{
+    if (callback) delete callback;
+    callback = new py_callback (cb, args);
 }
 
 bool mapcharacter::follow_path () 
@@ -592,6 +604,10 @@ bool mapcharacter::follow_path ()
                 break;
         }
 
+        // goal reached -> notify script (as the script might immediately
+        // set the next goal, we gotta set goal_reached_ before that)
+        goal_reached_ = true;
+        if (callback) callback->callback_func0 ();
         return true;
     }
     return false;
@@ -599,7 +615,8 @@ bool mapcharacter::follow_path ()
 
 bool mapcharacter::goal_reached () 
 { 
-    return (pathindex >= mypath.nbr_moves () && currentmove () < WALK_NORTH); 
+    return goal_reached_;
+    // return (pathindex >= mypath.nbr_moves () && currentmove () < WALK_NORTH); 
 }
 
 void mapcharacter::look_invert (u_int16 p)
@@ -715,7 +732,9 @@ void mapcharacter::set_action (string file, PyObject * args)
 bool mapcharacter::update ()
 {
     update_move ();
-    if (is_schedule_activated ()) schedule.run ();
+
+    if (is_schedule_activated () && schedule.has_attribute ("run")) 
+        schedule.run ();
 
     if (previous_move != NO_MOVE && previous_move != current_move) 
     {
@@ -729,7 +748,11 @@ bool mapcharacter::update ()
         delete saying;
         saying = NULL; 
     }
-     
+
+    // if we have a goal, then go there!
+    if (get_id () != "Player" && !goal_reached ()) 
+        follow_path ();
+        
     return true;
 }
 

@@ -38,6 +38,7 @@
 #include "character_base.h"
 #include "mapsquare_walkable.h"
 #include "py_object.h"
+#include "py_callback.h"
 #include "path.h"
 #include "text_bubble.h"
 
@@ -590,6 +591,7 @@ public:
     }
  
     bool set_goal (u_int16 x, u_int16 y, u_int16 dir = NO_MOVE);
+    void set_callback (PyObject *callback, PyObject *args = NULL);
     bool follow_path (); 
     bool goal_reached (); 
     
@@ -835,12 +837,15 @@ private:
 
     bool schedule_activated;
     bool action_activated;
+    bool goal_reached_;
 
     PyObject * schedule_args;
     PyObject * action_args; 
 
     string schedule_file_;
     string action_file_; 
+    
+    py_callback *callback;
     
 #ifndef SWIG
     friend class landmap; 
