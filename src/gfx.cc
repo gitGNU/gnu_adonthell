@@ -359,7 +359,7 @@ void image::putbox_mask_part_trans_img(image * source, u_int16 x, u_int16 y,
 void image::putbox (u_int16 x, u_int16 y)
 {
   if(DEBUG) fprintf(stderr, "Function: image::putbox\n");
-  SDL_Rect dr;
+  static SDL_Rect dr;
   dr.x=x;
   dr.y=y;
   dr.w=lenght;
@@ -370,7 +370,7 @@ void image::putbox (u_int16 x, u_int16 y)
 void image::putbox_mask (u_int16 x, u_int16 y)
 {
   if(DEBUG) fprintf(stderr, "Function: image::putbox_mask\n");
-  SDL_Rect dr;
+  static SDL_Rect dr;
   dr.x=x;
   dr.y=y;
   dr.w=lenght;
@@ -386,7 +386,7 @@ void image::putbox_part (u_int16 x, u_int16 y, u_int16 bw, u_int16 bh,
 			 u_int16 xo, u_int16 yo)
 {
   if(DEBUG) fprintf(stderr, "Function: image::putbox_part\n");
-  SDL_Rect sr,dr;
+  static SDL_Rect sr,dr;
   sr.x=xo;
   sr.y=yo;
   sr.w=bw;
@@ -402,7 +402,7 @@ void image::putbox_part (u_int16 x, u_int16 y, u_int16 bw, u_int16 bh,
 void image::putbox_trans (u_int16 x, u_int16 y, u_int8 alpha)
 {
   if(DEBUG) fprintf(stderr, "Function: image::putbox_trans\n");
-  SDL_Rect dr;
+  static SDL_Rect dr;
   dr.x=x;
   dr.y=y;
   dr.w=lenght;
@@ -419,7 +419,7 @@ void image::putbox_mask_part (u_int16 x, u_int16 y, u_int16 bw, u_int16 bh,
 			      u_int16 xo, u_int16 yo)
 {
   if(DEBUG) fprintf(stderr, "Function: image::putbox_mask_part\n");
-  SDL_Rect sr,dr;
+  static SDL_Rect sr,dr;
   sr.x=xo;
   sr.y=yo;
   sr.w=bw;
@@ -435,7 +435,7 @@ void image::putbox_mask_part (u_int16 x, u_int16 y, u_int16 bw, u_int16 bh,
 void image::putbox_mask_trans (u_int16 x, u_int16 y, u_int8 alpha)
 {
   if(DEBUG) fprintf(stderr, "Function: image::putbox_mask_trans\n");
-  SDL_Rect dr;
+  static SDL_Rect dr;
   dr.x=x;
   dr.y=y;
   dr.w=lenght;
@@ -451,7 +451,7 @@ void image::putbox_part_trans (u_int16 x, u_int16 y, u_int16 bw,
 			       u_int8 alpha)
 {
   if(DEBUG) fprintf(stderr, "Function: image::putbox_part_trans\n");
-  SDL_Rect sr,dr;
+  static SDL_Rect sr,dr;
   sr.x=xo;
   sr.y=yo;
   sr.w=bw;
@@ -471,7 +471,7 @@ void image::putbox_mask_part_trans (u_int16 x, u_int16 y, u_int16 bw,
 				    u_int8 alpha)
 {
   if(DEBUG) fprintf(stderr, "Function: image::putbox_mask_part_trans\n");
-  SDL_Rect sr,dr;
+  static SDL_Rect sr,dr;
   sr.x=xo;
   sr.y=yo;
   sr.w=bw;
@@ -529,7 +529,7 @@ void image::putbox_tile_img(image * source)
 void image::putbox_img(image * source, u_int16 x, u_int16 y)
 {
   if(DEBUG) fprintf(stderr, "Function: image::putbox_img\n");
-  SDL_Rect sr,dr;
+  static SDL_Rect sr,dr;
   sr.x=0;
   sr.y=0;
   sr.w=lenght;
@@ -556,8 +556,6 @@ void image::putbox_mask_img (image * source, u_int16 x, u_int16 y)
       for(j=0;(j<sh)&&(j+y<h);j++)
 	for(i=0;(i<sl)&&(i+x<l);i++)
 	  if((*((u_int16*)source->data->pixels+(j*sl)+i))!=screen::get_trans())
-	    // *((u_int16*)data->pixels+((j+y)*l)+x+i)=
-	    //  *((u_int16*)source->data->pixels+(j*sl)+i);
       break;
     case 3:
       // Think about a good method
@@ -909,21 +907,20 @@ void screen::init_display(u_int8 vidmode = 0)
 void screen::show()
 {
   static struct timeval timer1, timer2, timer3;
-  static struct timezone obso;
 #if 1
   do
     {
-      gettimeofday(&timer2,&obso);
+      gettimeofday(&timer2,NULL);
        timersub(&timer2,&timer1,&timer3);
     }while(timer3.tv_usec<14000);
 #else
   struct timespec timetowait={0,0};
-  gettimeofday(&timer2,&obso);
+  gettimeofday(&timer2,NULL);
   timersub(&timer2,&timer1,&timer3);
   timetowait.tv_nsec=0;
   nanosleep(&timetowait,NULL);
 #endif
-  gettimeofday(&timer1,&obso);
+  gettimeofday(&timer1,NULL);
   timer1.tv_usec-=(timer3.tv_usec%14000);
   /*  ggiPutBox(vis,0,0,320,200,screenbuffer);*/
   ggiFlush(vis);
@@ -942,21 +939,20 @@ void screen::show()
   dr.w=screenwidth;
   dr.h=screenheight;
   static struct timeval timer1, timer2, timer3;
-  static struct timezone obso;
 #if 1
   do
     {
-      gettimeofday(&timer2,&obso);
+      gettimeofday(&timer2,NULL);
        timersub(&timer2,&timer1,&timer3);
     }while(timer3.tv_usec<14000);
 #else
   struct timespec timetowait={0,0};
-  gettimeofday(&timer2,&obso);
+  gettimeofday(&timer2,NULL);
   timersub(&timer2,&timer1,&timer3);
   timetowait.tv_nsec=0;
   nanosleep(&timetowait,NULL);
 #endif
-  gettimeofday(&timer1,&obso);
+  gettimeofday(&timer1,NULL);
   timer1.tv_usec-=(timer3.tv_usec%14000);
 
   SDL_UpdateRect (vis, 0, 0, 0, 0);
@@ -1032,7 +1028,7 @@ void screen::drawbox(u_int16 x, u_int16 y, u_int16 w, u_int16 h, u_int32 color)
 #endif
 
 #ifdef SDL
-  SDL_Rect dr;
+  static SDL_Rect dr;
   dr.x=x;
   dr.y=y;
   dr.w=w;
@@ -1086,7 +1082,3 @@ void sprite::get(FILE * file)
   //					    &amap->toplayer.height);
   //    }
 }
-
-
-
-
