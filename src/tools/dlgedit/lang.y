@@ -160,6 +160,7 @@ void create_code (string &prog)
     unsigned char opcode;
     char regs = '0';
     char bools = '0';
+    int cur_cmds = 0;
     
     static int num_cmds[255];
     static int index = 0;
@@ -211,6 +212,7 @@ void create_code (string &prog)
                 j = vars.size ();
 
                 num_cmds[index]++;
+                cur_cmds++;
                 
                 break;
             }
@@ -222,6 +224,7 @@ void create_code (string &prog)
                 vars.erase (vars.begin () + j, vars.begin () + j + 2);
 
                 num_cmds[index]++;
+                cur_cmds++;
                 rec++;
 
                 // recursion to bring the resulting script into the right order
@@ -243,6 +246,7 @@ void create_code (string &prog)
                 // Comparison of two integer args results in boolean result
                 bools++;
                 num_cmds[index]++;
+                cur_cmds++;
 
                 cout << "[" << rec << "] " << ops[opcode] << " " << vars[j] << " "<< vars[j+1] << " local.bool" << bools << "\n";
                 
@@ -260,6 +264,8 @@ void create_code (string &prog)
             case OR:
             {
                 num_cmds[index]++;
+                cur_cmds++;
+                
                 // Logic operation on two bools results in on bool, which means the
                 // other is no longer needed and thus can be freed
                 bools--;
@@ -268,7 +274,7 @@ void create_code (string &prog)
 
                 prog.replace (prog.begin () + i, prog.begin () + i + 3, 1, BOOL);
                 vars.erase (vars.begin () + j, vars.begin () + j + 2);
-                vars.insert (vars.begin () + j, ("bool"+string(1, bools)));
+                vars.insert (vars.begin () + j, ("local.bool"+string(1, bools)));
 
                 i = prog.size ();
                 j = vars.size ();
@@ -295,7 +301,7 @@ void create_code (string &prog)
             
             case BRANCH:
             {
-                cout << "[" << rec << "] Branch " << vars[j] << " " << num_cmds[index] << "\n";
+                cout << "[" << rec << "] Branch " << vars[j] << " " << num_cmds[index]+1-cur_cmds << "\n";
 
                 prog.erase (prog.begin () + i, prog.begin () + i + 2);
                 vars.erase (vars.begin () + j, vars.begin () + j + 1);            
