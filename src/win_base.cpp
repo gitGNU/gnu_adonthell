@@ -1,5 +1,7 @@
-/*   
-   (C) Copyright 2000 Joel Vennin
+/* 
+   $Id$ 
+
+   (C) Copyright 2000, 2001 Joel Vennin
    Part of the Adonthell Project http://adonthell.linuxgames.com
    
    This program is free software; you can redistribute it and/or modify
@@ -22,6 +24,10 @@
 #include "win_background.h"
 #include "win_base.h"
 #include "win_container.h"
+
+#if defined (USE_PYTHON)
+#include "py_callback.h"
+#endif
 
 #ifdef _DEBUG_WIN
 long win_base::cptw=0;
@@ -111,6 +117,12 @@ win_base::~win_base()
 {
   //notify that window is closing 
   if (callback_quit_) (callback_quit_) (return_code_);
+
+#if defined (USE_PYTHON)
+  //delete any python callbacks
+  for (vector<py_callback *>::iterator i = py_callbacks.begin (); i != py_callbacks.end (); i++)
+    delete *i;
+#endif
 
   //delete cur drawing area
   delete da_;
@@ -216,6 +228,39 @@ void win_base::set_signal_connect(const Functor0 &func, u_int8 signal)
 {
   callback_[signal] = func;
 } 
+
+#if defined (USE_PYTHON)
+// Connect a signal to our window
+void win_base::py_signal_connect (PyObject *pyfunc, int signal, PyObject *args)
+{
+  // create the callback
+  py_callback *callback = new py_callback (pyfunc, args);
+  py_callbacks.push_back (callback);
+
+  // connect the signal
+  switch (signal)
+  {
+    case WIN_SIG_CLOSE:
+    {
+      set_callback_quit (makeFunctor (*callback, &py_callback::callback_func1));
+      break;
+    }
+    case WIN_SIG_DESTROY:
+    {
+      set_callback_destroy (
+        MemberTranslator0wRet<bool, py_callback, bool (py_callback::*)()> (
+          *callback, &py_callback::callback_func0ret));
+        // makeFunctor (*callback, &py_callback::callback_func0ret));
+      break;
+    }
+    default:
+    {
+      set_signal_connect (
+        makeFunctor (*callback, &py_callback::callback_func0), signal);
+    }
+  }
+}
+#endif
 
 //on activate 
 void win_base::on_activate()
@@ -369,25 +414,3 @@ void win_base::draw_background()
   //draw the background
   else if(visible_background_)theme_->background->background->putbox_trans(realx_,realy_,level_trans_back_,da_);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

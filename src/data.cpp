@@ -129,7 +129,8 @@ void data::init (char* d)
 #if defined (USE_PYTHON)
     py_module = import_module ("ins_modules");
  	globals = PyModule_GetDict (py_module);
-#endif    
+#endif
+
     // Read the user's saved games (if any) - they'll be located in
     // $HOME/.adonthell/ and called adonthell-save-xxx
     if ((dir = opendir (adonthell_dir)) != NULL)
@@ -206,7 +207,7 @@ bool data::load (u_int32 pos)
     
     // Create a player (later: load from file or whatever)
     the_player = new character;
-    the_player->set_name("Player");
+    the_player->set_name ("Player");
 
     // Add the player to the game objects
     characters.set (the_player->get_name(), the_player);
@@ -292,6 +293,7 @@ bool data::load (u_int32 pos)
         return false;
     }
 
+    // PyObject_Print (data::globals, stdout, 1);
 	PyRun_File (f, filepath, Py_file_input, data::globals, NULL);
     fclose (f);
 #endif
@@ -481,11 +483,10 @@ bool data::save_mapcharacter (char *file)
         if ((fname = mychar->get_anim ()) == NULL) continue;
 
         if (mychar == the_player)
-            f << "chrctr = the_player\n";
-        else
-            f << "chrctr = characters['" << mychar->get_name () << "']\n";
-            
-        f << "chrctr.load ('" << fname << "')\n"
+            f << "the_player = characters['" << mychar->get_name () << "']\n";
+
+        f << "chrctr = characters['" << mychar->get_name () << "']\n"
+          << "chrctr.load ('" << fname << "')\n"
           << "chrctr.set_on_map (map)\n"
           << "chrctr.set_pos (" << mychar->get_submap () << ", " 
           << mychar->get_posx () << ", " << mychar->get_posy () << ")\n";

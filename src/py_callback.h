@@ -12,22 +12,17 @@
    See the COPYING file for more details.
 */
 
-#ifndef __CALLBACK_WRAP_H__
-#define __CALLBACK_WRAP_H__
+#ifndef __PY_CALLBACK_H__
+#define __PY_CALLBACK_H__
 
-#include <vector>
-#include "callback.h"
 #include "Python.h"
 
-class win_base;
-
-#ifndef SWIG
 // This class stores the C++ <-> Python callback binding
-class Callback
+class py_callback
 {
 public:
-    Callback (PyObject *, PyObject *);   
-    ~Callback ();
+    py_callback (PyObject *, PyObject *);   
+    ~py_callback ();
 
     void callback_func0 ();             // calls the python function w/o argument
     bool callback_func0ret ();          // calls the python function and returns bool
@@ -37,24 +32,5 @@ private:
     PyObject *function;                 // the function to be called
     PyObject *arguments;                // additional arguments passed to the func
 };
-#endif // SWIG
 
-// Enables us to pass a python function to the window system's
-// callback mechanism
-class callback_wrap
-{
-public:
-    callback_wrap (win_base*);          // constructor
-    ~callback_wrap ();                  // destructor
-
-    // Connect a signal to the window
-    void signal_connect (PyObject *pyfunc, int signal, PyObject *args = NULL); 
-
-private:
-#ifndef SWIG
-    vector<Callback *> callbacks;       // the callbacks connected to the window
-    win_base *window;                   // the window we want connect the signal to
-#endif // SWIG
-};
-
-#endif // __CALLBACK_WRAP_H__
+#endif // __PY_CALLBACK_H__

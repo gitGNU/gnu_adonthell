@@ -1,5 +1,7 @@
 /*
-   (C) Copyright 2000 Joel Vennin
+   $Id$
+   
+   (C) Copyright 2000, 2001 Joel Vennin
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -17,6 +19,13 @@ class win_theme;
 class win_draw;
 class win_select;
 
+#if defined (USE_PYTHON)
+class py_callback;
+
+#include "Python.h"
+#endif
+
+#include <vector>
 #include "callback.h"
 #include "drawing_area.h"
 
@@ -79,12 +88,20 @@ class win_base
   /*******************************************************************/
   //Use this function to set a callback function
   void set_return_code (int rc) { return_code_ = rc; }
+#ifndef SWIG
   void set_signal_connect (const Functor0 &func, u_int8 signal);
   void set_callback_destroy (const Functor0wRet<bool> &func)
-    {callback_destroy_=func;}
+  {
+    callback_destroy_ = func; 
+  }
   void set_callback_quit (const Functor1<int> &func)
-    {callback_quit_=func;}
-
+  {
+    callback_quit_=func;
+  }
+#endif
+#if defined (USE_PYTHON)
+  void py_signal_connect (PyObject *pyfunc, int signal, PyObject *args = NULL); 
+#endif
 
 
 
@@ -146,11 +163,16 @@ class win_base
 #ifndef SWIG
   friend class win_container;
   friend class win_select;
-#endif  
+#endif // SWIG
 
 
  protected:
-  
+
+#if defined (USE_PYTHON)
+  // the python callbacks connected to the window
+  vector<py_callback *> py_callbacks;   
+#endif // USE_PYTHON
+
   int level_trans_back_; 
   int return_code_;
   
@@ -222,9 +244,3 @@ class win_base
 #endif
 };
 #endif
-
-
-
-
-
-
