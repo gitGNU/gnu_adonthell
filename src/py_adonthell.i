@@ -44,6 +44,7 @@
 #include "data_screen.h"
 #include "gamedata.h"
 #include "game.h"
+#include "nls.h"
 
 // Workaround for keysym missing in older versions of SDL
 #ifndef SDLK_UNDO
@@ -157,3 +158,4 @@ enum {Python = 1, C = 0};
 %include "data_screen.h"
 %include "gamedata.h"
 %include "game.h"
+%include "nls.h"

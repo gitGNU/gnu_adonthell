@@ -22,17 +22,12 @@
  * 
  */
  
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
-#include <locale.h>
-#include "gettext.h"
 #include "audio.h"
 #include "character.h"
 #include "game.h"
 #include "gamedata.h"
 #include "input.h"
+#include "nls.h"
 #include "python_class.h"
 #include "screen.h"
 #include "yarg.h"
@@ -111,13 +106,9 @@ int main(int argc, char * argv[])
     // init game environment
     game::init (myconfig.gamedir);
     
-    // Init i18n
-    setlocale (LC_MESSAGES, "");
+    // init national language support
+    nls::init (myconfig);
     
-    // open the catalogue
-    bindtextdomain (myconfig.game_name.c_str (), "/usr/local/share/locale");
-    textdomain (myconfig.game_name.c_str ());
-
     // init game loading/saving system
     gamedata::init (myconfig.get_adonthellrc (), myconfig.gamedir, myconfig.game_name); 
     

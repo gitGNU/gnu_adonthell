@@ -12,8 +12,6 @@
    See the COPYING file for more details
 */
 
-
-
 /**
  * @file   dialog.cc
  * @author Kai Sterker <kaisterker@linuxgames.com>
@@ -22,19 +20,15 @@
  * 
  * 
  */
-
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
-#include <gettext.h>
+ 
+#include <algorithm>
 #include <iostream>
 #include <string>
-#include <algorithm>
 
-#include "yarg.h"
 #include "character.h"
 #include "dialog.h"
+#include "nls.h"
+#include "yarg.h"
 
 // Constructor
 dialog::dialog ()
@@ -187,7 +181,7 @@ void dialog::run (u_int32 index)
             
             // get the text
             answer = PyInt_AsLong (PyList_GetItem (speech, rnd));
-            text_.push_back (gettext (scan_string (strings[answer])));
+            text_.push_back (scan_string (nls::gettext (strings[answer])));
             
             // get the NPC color
             char *npc = PyString_AsString (PyList_GetItem (speaker, rnd));
@@ -215,7 +209,7 @@ void dialog::run (u_int32 index)
             {
                 // simply add all text to let the player select an answer
                 answer = PyInt_AsLong (PyList_GetItem (speech, i));
-                text_.push_back (gettext (scan_string (strings[answer])));
+                text_.push_back (scan_string (nls::gettext (strings[answer])));
                 answers.push_back (answer);
             }
             
@@ -324,7 +318,7 @@ char* dialog::scan_string (const char *s)
 
         if (result)
             if (PyString_Check (result))
-                mid = (char*) gettext (PyString_AS_STRING (result));    
+                mid = (char*) nls::gettext (PyString_AS_STRING (result));    
         
         // Replace existing with new, changed string
         // 1. Calculate string's length

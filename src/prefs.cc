@@ -1,7 +1,7 @@
 /*
    $Id$
 
-   Copyright (C) 2000 Kai Sterker <kaisterker@linuxgames.com>
+   Copyright (C) 2000/2001/2002 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -11,6 +11,13 @@
 
    See the COPYING file for more details.
 */
+
+/** 
+ * @file prefs.cc
+ *
+ * @author Kai Sterker
+ * @brief Adonthell's configuration
+ */
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
@@ -35,12 +42,13 @@
 config::config () 
 {
     // set some default values where possible
-    datadir = "/usr/local/share/adonthell"; // Directory containing the gamedata
-    screen_mode = 0;                        // Fullscreen
-    audio_channels = 1;                     // Stereo
-    audio_resolution = 1;                   // 16 bit
-    audio_sample_rate = 2;                  // 11025, 22050 or 44100 Hz
-    audio_volume = 100;                     // 0 - 100%
+    datadir = DATA_DIR;             // Directory containing the gamedata
+    screen_mode = 0;                // Fullscreen
+    language = "en";                // English
+    audio_channels = 1;             // Stereo
+    audio_resolution = 1;           // 16 bit
+    audio_sample_rate = 2;          // 11025, 22050 or 44100 Hz
+    audio_volume = 100;             // 0 - 100%
     
     // set the path to the adonthellrc file:
     adonthellrc = string (getenv ("HOME")) + "/.adonthell"; 
@@ -250,6 +258,7 @@ void config::write_adonthellrc ()
        << "# edit to your needs!\n\n"
        << "# Screen-mode num\n#   0  Windowed mode\n"
        << "#   1  Fullscreen mode\n    Screen-mode " << (int) screen_mode << "\n\n"
+       << "# Language [country code]\n    Language [" << language << "]\n\n"
        << "# Audio-channels num\n#   0  Mono\n#   1  Stereo\n"
        << "    Audio-channels " << (int) audio_channels << "\n\n"
        << "# Audio-resolution num\n#   0  8 bit\n#   1  16 bit\n"
@@ -262,7 +271,7 @@ void config::write_adonthellrc ()
     rc.close ();
 }
 
-int config::read_adonthellrc ()
+bool config::read_adonthellrc ()
 {
     int n, i = 1;
     string s, fname = adonthellrc + "/adonthellrc";
@@ -283,7 +292,7 @@ int config::read_adonthellrc ()
         write_adonthellrc ();
 
         // now try again
-        if (!(prefsin = fopen (fname.c_str (), "r"))) return 0;
+        if (!(prefsin = fopen (fname.c_str (), "r"))) return false;
     }
 
     // adonthellrc opened -> read configuration
@@ -330,5 +339,5 @@ int config::read_adonthellrc ()
 
     fclose (prefsin);
          
-    return 1;
+    return true;
 }
