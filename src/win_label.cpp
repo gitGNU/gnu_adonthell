@@ -71,7 +71,7 @@ s_int16 win_label::word_size(u_int16 begin,u_int16 & length)
     {
       if(font_->in_table(texte_[begin+length])) 
 	//size+=font_->table[texte_[begin+length]].length();
-	size+=(*font_)[texte_[begin+length]].length();
+	size+=(*font_)[texte_[begin+length]].length()+1;
 
 	length++;
     }
@@ -121,7 +121,7 @@ void win_label::init_draw_surface()
 	  if(texte_[i]=='\n') {curligne_=0;tmpheight_+=font_->height();i++;}
 	  else if(texte_[i]==' ')
 	    {
-	      if(curligne_+font_->length()<length_) curligne_+=font_->length();
+	      if(curligne_+font_->length()+1<length_) curligne_+=font_->length()+1;
 	      else {
 		curligne_=0;tmpheight_+=font_->height();
 	      }
@@ -135,11 +135,11 @@ void win_label::init_draw_surface()
 		{
 		  if(font_->in_table(texte_[j]))
 		    {
-		      if(curligne_+(*font_)[texte_[j]].length()>length_) 
+		      if(curligne_+(*font_)[texte_[j]].length()+1>length_) 
 			{
 			  curligne_=0;tmpheight_+=font_->height();
 			}
-		      curligne_+=(*font_)[texte_[j]].length();
+		      curligne_+=(*font_)[texte_[j]].length()+1;
 		    }
 		}
 	      i+=wnbch_;
@@ -174,14 +174,14 @@ void win_label::init_draw_surface()
 	{
 	  while(i<texte_size_)
 	    {
-	      if(texte_[i]!='\n' && texte_[i]!=' ' && font_->in_table(texte_[i])) curligne_+=(*font_)[texte_[i]].length();
+	      if(texte_[i]!='\n' && texte_[i]!=' ' && font_->in_table(texte_[i])) curligne_+=(*font_)[texte_[i]].length()+1;
 	      else if(texte_[i]=='\n')
 		{
 		  tmpheight_+=font_->height();
 		  if(curligne_>tmplength_) tmplength_=curligne_;
 		  curligne_=0;
 		}
-	      else if(texte_[i]==' ') curligne_+=font_->length();
+	      else if(texte_[i]==' ') curligne_+=font_->length()+1;
 	      i++;
 	    }
 	  
@@ -219,7 +219,7 @@ void win_label::init_draw()
       if(texte_[i]=='\n') {curligne_=0;tmpheight_+=font_->height();i++;}
       else if(texte_[i]==' ')
 	{
-	  if(curligne_+font_->length()<length_) curligne_+=font_->length();
+	  if(curligne_+font_->length()+1<length_) curligne_+=font_->length()+1;
 	  else 
 	    {
 	      curligne_=0;tmpheight_+=font_->height();
@@ -234,11 +234,11 @@ void win_label::init_draw()
 	    {
 	      if(font_->in_table(texte_[j]))
 		{
-		  if(curligne_+(*font_)[texte_[j]].length()>length_) 
+		  if(curligne_+(*font_)[texte_[j]].length()+1>length_) 
 		    {curligne_=0;tmpheight_+=font_->height();}
 		  if(tmpheight_>=template_->height()) break;
 		  template_->putbox_img(&((*font_)[texte_[j]]),curligne_,tmpheight_);
-		  curligne_+=(*font_)[texte_[j]].length(); 
+		  curligne_+=(*font_)[texte_[j]].length()+1; 
 		}
 	    }
 	  i+=wnbch_;
@@ -249,7 +249,7 @@ void win_label::init_draw()
 	      if(font_->in_table(texte_[j]))
 		{
 		  template_->putbox_img(&((*font_)[texte_[j]]),curligne_,tmpheight_);
-		  curligne_+=(*font_)[texte_[j]].length();
+		  curligne_+=(*font_)[texte_[j]].length()+1;
 		}
 	    }
 	  i+=wnbch_;
@@ -263,7 +263,7 @@ void win_label::init_draw()
 	      if(font_->in_table(texte_[j]))
 		{
 		  template_->putbox_img(&((*font_)[texte_[j]]),curligne_,tmpheight_);
-		  curligne_+=(*font_)[texte_[j]].length();
+		  curligne_+=(*font_)[texte_[j]].length()+1;
 		}
 	    }
 	  i+=wnbch_;
