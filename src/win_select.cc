@@ -179,7 +179,8 @@ bool win_select::input_update()
       
       if(input::has_been_pushed(win_keys::KEY_NEXT)) next();
       if(input::has_been_pushed(win_keys::KEY_PREVIOUS)) previous();
-      if(input::has_been_pushed(win_keys::KEY_ACTIVATE)) activate();
+      if(input::has_been_pushed(win_keys::KEY_ACTIVATE) ||
+         input::has_been_pushed(win_keys::KEY_ACTIVATE_ENTRY)) activate();
       
       return true;
     }
