@@ -3,7 +3,7 @@ dnl Process this file with autoconf to produce a configure script.
 dnl **************************************************************
 
 AC_INIT(README)
-AM_INIT_AUTOMAKE(adonthell, 0.3)
+AM_INIT_AUTOMAKE(adonthell, 0.3.1)
 
 CFLAGS="-g -Wall -fno-exceptions -fno-rtti"
 DEFS=""
@@ -196,6 +196,9 @@ else
 fi
 
 
+dnl Check for SWIG
+AC_PATH_PROG(P_SWIG,swig)
+
 
 dnl ********************************
 dnl Check whether to build our tools
@@ -293,6 +296,7 @@ AC_SUBST(GTK_CFLAGS)
 AC_SUBST(GTK_LIBS)
 AC_SUBST(PY_CFLAGS)
 AC_SUBST(PY_LIBS)
+AC_SUBST(P_SWIG)
 AC_SUBST(gamedatadir)
   
 AC_OUTPUT([
@@ -319,21 +323,21 @@ dnl Configure Status
 dnl ****************
 
 echo
-echo Adonthell v$VERSION
+echo "Adonthell v$VERSION"
 echo
-echo SDL ....................... : `$SDL_CONFIG --version`
-echo Python .................... : $PY_VERSION
-echo Python debugging .......... : $pydebug
+echo "SDL ....................... : `$SDL_CONFIG --version`"
+echo "Python .................... : $PY_VERSION"
+echo "Python debugging .......... : $pydebug"
 if test x$havegtk = xyes; then
-echo GTK+ ...................... : `gtk-config --version`
+echo "GTK+ ...................... : `gtk-config --version`"
 fi
-echo Ogg music ................. : $ogg_music
-echo Building editors .......... : $tools
-echo Building API doc .......... : $builddoc
+echo "Ogg music ................. : $ogg_music"
+echo "Building editors .......... : $tools"
+echo "Building API doc .......... : $builddoc"
 if test x$memleaks = xyes; then
-echo Test for Memory Leaks ..... : enabled
+echo "Test for Memory Leaks ..... : enabled"
 fi
-echo Data directory ............ : $gamedatadir
+echo "Data directory ............ : $gamedatadir"
 
 echo
 echo "Now type 'make' to build Adonthell"

@@ -6,7 +6,7 @@ endif
 
 moddatadir = $(gamedatadir)/modules
 
-moddata_DATA = adonthell.py
+moddata_SCRIPTS = adonthell.pyc
 
 bin_PROGRAMS = adonthell
 
@@ -15,6 +15,8 @@ EXTRA_DIST = .indent.pro prefs.l py_adonthell.i adonthell.py
 CPPFLAGS += $(SDL_DEFS) $(OGG_DEFS) $(SDL_CFLAGS) $(OGG_CFLAGS) $(PY_CFLAGS)
 
 noinst_LIBRARIES = libadonthell.a
+
+CLEANFILES = $(moddata_SCRIPTS)
 
 libadonthell_a_SOURCES = adonthell.cc animation.cc audio.cc \
 character_base.cc character.cc gamedata.cc data_screen.cc dialog.cc \
@@ -48,7 +50,15 @@ adonthell_SOURCES = main.cc
 
 # Note: adonthell.py is also built by this target. 
 py_adonthell_wrap.cc : py_adonthell.i *.h
-	swig -python -shadow ${SDL_CFLAGS} -I./ -I../ -c++ -make_default -o $*.cc py_adonthell.i
+	@if test "${P_SWIG}"; then \
+	   ${P_SWIG} -python -shadow ${SDL_CFLAGS} -I./ -I../ -c++ -make_default -o $*.cc py_adonthell.i; \
+	else \
+	   echo "You need swig >= 1.3.10 in order to re-build this file."; \
+	   exit 1; \
+	fi;
 
 lex.prefs.cc : prefs.l
 	flex -olex.prefs.cc $<
+
+adonthell.pyc : adonthell.py adonthell
+	./adonthell -c

@@ -32,8 +32,8 @@ SDL_Rect surface::dstrect;
 surface::surface () : drawable () 
 { 
     vis = NULL;
-    set_alpha (255);
-    set_mask (false); 
+    alpha_ = 255; 
+    mask_on = false; 
     not_screen = true; 
     changed = false; 
 }

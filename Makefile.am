@@ -1,7 +1,7 @@
 SUBDIRS = src doc
-EXTRA_DIST = NEWBIE debian/README.Debian debian/changelog debian/control debian/copyright \
-	debian/dirs debian/docs debian/adonthell.1 debian/manpage.sgml debian/menu debian/postinst \
-	debian/postrm debian/rules autogen.sh README.BeOS README.FreeBSD
+EXTRA_DIST = NEWBIE autogen.sh README.BeOS README.FreeBSD autogen.sh \
+	debian/README.debian debian/adonthell.6 debian/changelog debian/control \
+	debian/copyright debian/dirs debian/rules
 
 install-data-local:
 	if test ! -e $(gamedatadir)/games ; then \

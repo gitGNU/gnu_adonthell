@@ -38,6 +38,9 @@ it will be replaced by a custom mixer anyway. However, you'll need OggVorbis
 Installing:
 ===========
 
+From source:
+------------
+
 In the toplevel adonthell-0.3 directory type
 
 $> ./configure
@@ -52,6 +55,16 @@ the right libraries? Please look at the NEWBIE file or our website
 for answers:
 
    http://adonthell.linuxgames.com
+
+
+Debian users:
+-------------
+
+You can automatically get an installable Debian package by typing
+'debuild', which comes in the 'devscripts' package. Check carefully
+that you have the python2.1, python2.1-dev, libsdl1.2 and
+libsdl1.2-dev packages installed (plus libvorbis0 & libvorbis-dev if
+you want sound), or the build will fail.
 
 
 Advanced configure options:

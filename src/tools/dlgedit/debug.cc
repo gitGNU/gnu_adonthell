@@ -13,7 +13,7 @@
  */
 
 #include <gtk/gtk.h>
-#ifdef GCC_3
+#if __GNUG__ > 2
 #include <ext/hash_map>
 #else
 #include <hash_map>
