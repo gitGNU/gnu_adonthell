@@ -238,7 +238,7 @@ void data_screen::on_select ()
         // fade to black before doing the actual work
         data::engine->fade_out ();
         set_visible (false);
-        gamedata::load (pos);
+        if (!gamedata::load (pos)) aborted = true;
         data::engine->main_quit ();
     }
     // saving

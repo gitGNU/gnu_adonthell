@@ -275,7 +275,7 @@ bool fileops::get_version (igzstream& file, u_int16 min, u_int16 max, string nam
     // file contains no version info
     if (vinfo != 'v')
     {
-	cerr << "Version information missing in file \"" << name << endl;
+        cerr << "Version information missing in file \"" << name << endl;
         cerr << "You should get a more recent data package.\n";
         return false;
     }
@@ -285,15 +285,15 @@ bool fileops::get_version (igzstream& file, u_int16 min, u_int16 max, string nam
 
     if (version < min || version > max)
     {
-	cerr << "File \"" << name << "\" has version number " << version << ",\n";
+        cerr << "File \"" << name << "\" has\nversion number " << version << ", ";
         cerr <<  "but I was expecting " << min << " <= version <= " << max << endl;
 	
         // file is newer than code
         if (version > max)
-            cerr << "You should get an up-to-date version of this program.\n";
+            cerr << "You should get an up-to-date version of this program.\n\n";
         // file is older than code
         else
-            cerr << "You should get a more recent data package.\n";
+            cerr << "You should propably get a more recent data package.\n";
 
         return false;
     } 
