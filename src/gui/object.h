@@ -16,13 +16,16 @@
 #ifndef GUI_OBJECT_H_
 #define GUI_OBJECT_H_
 
+#include "gfx/image.h"
+#include "gfx/screen.h"
+
 #include "base.h" 
 #include "container.h"
 
 namespace gui {
   
   template<class T>
-    class object : public win_base, public T
+    class object : public base, public T
     {
     public:
       
@@ -54,8 +57,8 @@ namespace gui {
       
       void refresh();
       
-      image * img_tmp_;
-      image * img_brightness_;
+      gfx::image * img_tmp_;
+      gfx::image * img_brightness_;
       
       bool auto_refresh_;
       
@@ -68,11 +71,11 @@ namespace gui {
 template<class T> 
 object<T>::object()
 {
-  img_tmp_ = new image();
+  img_tmp_ = new gfx::image();
 
   img_tmp_->set_mask(true);
   
-  img_brightness_ = new image();
+  img_brightness_ = new gfx::image();
       
   set_auto_refresh(false);
 }
@@ -187,7 +190,7 @@ object<T>::refresh()
   if(T::length() && T::height())
     {
         img_tmp_->lock (); 
-        img_tmp_->fillrect(0,0,T::length(),T::height(),screen::trans_col());
+        img_tmp_->fillrect(0,0,T::length(),T::height(),gfx::screen::trans_col());
         img_tmp_->unlock (); 
       
       T::draw(0,0,NULL,img_tmp_);

@@ -12,7 +12,7 @@
    See the COPYING file for more details
 */
 
-
+#include <iostream>
 #include "label_input.h"
 
 using namespace gui;
@@ -31,7 +31,8 @@ void label_input::set_editable (const bool b)
  
 bool label_input::input_update()
 {
-    if (!editable_) return false; 
+  //std::cout << "Youhou 1\n";
+  if (!editable_) return false; 
     
     label::input_update();
 
@@ -41,8 +42,14 @@ bool label_input::input_update()
 
     while((c=input::get_next_unicode())>0)
     {
-        cursor_undraw (); 
-        if((c == SDLK_BACKSPACE || c == SDLK_DELETE) && my_text_.size () >0 && my_cursor_.idx > 0)
+      std::cout << "Key code: " << c << std::endl;
+        cursor_undraw ();
+	
+	if (c == SDLK_SPACE) {
+	  add_text (L" ");
+	  std::cout << "Space\n";
+	}
+        else if((c == SDLK_BACKSPACE || c == SDLK_DELETE) && my_text_.size () >0 && my_cursor_.idx > 0)
         {    
             my_text_.erase(--my_cursor_.idx, 1);
             update_cursor ();
@@ -50,18 +57,14 @@ bool label_input::input_update()
 
             lock (); 
             fillrect (my_cursor_.pos_x, my_cursor_.pos_y,
-                      (*my_font_) [my_text_[my_cursor_.idx]].length (),
+                      (*my_font_) [my_text_[my_cursor_.idx]].my_advance,
                       my_font_->height (), gfx::screen::trans_col ()); 
             unlock (); 
             
             build (false);
         }
-        else if(c == SDLK_RETURN) add_text ("\n"); 
-        else if(my_font_->in_table(c)) add_text((char*) &c); 
+        else if(c == SDLK_RETURN) add_text (L"\n"); 
+        else if(my_font_->in_table(c)) add_text((wchar_t*)&c); 
     }  
     return true;
 }
-
- 
-
-

@@ -16,11 +16,12 @@
 #define LABEL_H_
 
 #include <vector> 
+//#include <wstring>
 #include <string>
 
 #include "gfx/image.h"
 #include "input.h"
-#include "font.h"
+#include "ttf.h"
 
 namespace gui {
   
@@ -42,21 +43,28 @@ namespace gui {
        * Set the font
        * @param font: a font 
        */
-      void set_font (font & font);  
+      void set_ttf (ttf & font);  
       
       
       /**
        * Set the text 
        * @param text: set the text
        */
-      void set_text (const std::string & text);
+      void set_text (const std::wstring & text);
       
       
       /**
        * Add text
        */
-      void add_text (const std::string & text);
+      void add_text (const std::wstring & text);
       
+      
+      /**
+       * Add UTF-16
+       */
+      void add_utf16 (u_int16 c);
+
+
       /**
 	 Set the form of the display
 	 NOTHING, AUTO_SIZE, AUTO_HEIGHT
@@ -86,13 +94,13 @@ namespace gui {
       /**
 	 Get the text in string
       */
-      const std::string text_string () const;
+      const std::wstring text_string () const;
       
       /**
 	 Get the text in char
       */
-      const char * text_char () const;
-      
+      /*      const char * text_char () const;
+       */
       /**
 	 Resize the label
       */
@@ -203,11 +211,11 @@ namespace gui {
       
       
       // my_font
-      font * my_font_; 
+      ttf * my_font_; 
       
       
       // my text
-      std::string my_text_;
+      std::wstring my_text_;
       
       // form display
       u_int8 my_form_;  

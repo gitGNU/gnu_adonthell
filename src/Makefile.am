@@ -102,14 +102,14 @@ libgui_LDADD = $(FT2_LIBS)
 
 alextest_SOURCES = main.cc
 
-joltest_SOURCES = joltest.cc
+joltest_SOURCES = joltest.cc input.cc input.h
 
 pytest_SOURCES = pytest.cc
 
 schedtest_SOURCES = schedtest.cc
 
 
-joltest_LDADD =  gui/libgui.a input/libinput.a python/libpython.a libbase.a $(libbase_LDADD) $(libgui_LDADD) $(libpython_LDADD) -lstdc++
+joltest_LDADD =  gui/libgui.a python/libpython.a gfx/libgfx.a libbase.a $(libbase_LDADD) $(libgui_LDADD) $(libpython_LDADD) -lstdc++
 
 alextest_LDADD = lmap/libmap.a gfx/libgfx.a input/libinput.a python/libpython.a libbase.a $(libbase_LDADD) $(libpython_LDADD)
 

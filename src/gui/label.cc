@@ -11,6 +11,7 @@
 
    See the COPYING file for more details
 */
+#include <iostream>
 
 #include "label.h"
 
@@ -55,7 +56,7 @@ label::~label ()
 /**
    Set the font
 */
-void label::set_font (font & font)
+void label::set_ttf (ttf & font)
 {
     my_font_ = &font; 
     //  build (true); 
@@ -65,8 +66,10 @@ void label::set_font (font & font)
 /**
    Set the text 
 */
-void label::set_text (const std::string & text)
+void label::set_text (const std::wstring & text)
 {
+  //  std::cout << "TEXT: " << text << "\n";
+  
     // init the vector and the cursor
     init_vec_cursor ();
     
@@ -81,11 +84,29 @@ void label::set_text (const std::string & text)
 }
 
 
+void label::add_utf16 (u_int16 c)
+{
+  /*
+  my_old_cursor_ = my_cursor_; 
+  
+  if (my_old_cursor_.idx == my_text_.length ()) 
+    {
+      my_text_ += c;   
+      my_cursor_.idx = my_text_.length (); 
+    }
+  else my_text_.insert (my_cursor_.idx, c);
+  
+  build (false); 
+  */
+
+}
+
+
 
 /**
    Add text
 */
-void label::add_text (const std::string & text)
+void label::add_text (const std::wstring & text)
 {
     my_old_cursor_ = my_cursor_; 
     
@@ -156,6 +177,7 @@ void label::build (const bool erase_all)
     switch (my_form_)
     {
         case NOTHING :
+	  std::cout << "label::build\n";
             build_form_nothing (); 
             update_cursor ();
             draw_string (!erase_all); 
@@ -238,7 +260,7 @@ void label::build_form_nothing ()
         }
         else if (my_text_[start_idx] == ' ')
         {
-            if ((*my_font_) [' '].length () + line_tmp.pos_x > length ())
+            if ((*my_font_) [' '].my_advance + line_tmp.pos_x > length ())
             {
                 line_tmp.idx_end = start_idx;
                 
@@ -251,7 +273,7 @@ void label::build_form_nothing ()
                 
             } else 
             {
-                line_tmp.pos_x += (*my_font_) [' '].length ();
+                line_tmp.pos_x += (*my_font_) [' '].my_advance;
                 start_idx++;
             }
         }
@@ -291,7 +313,7 @@ void label::build_form_nothing ()
                     j = start_idx - word_length;
                     while (j < start_idx)
                     {
-                        if (line_tmp.pos_x + (*my_font_) [my_text_[j]].length ()  > length ())
+                        if (line_tmp.pos_x + (*my_font_) [my_text_[j]].my_advance  > length ())
                         {
                             line_tmp.idx_end = j - 1;
                             my_vect_.push_back (line_tmp);
@@ -299,11 +321,12 @@ void label::build_form_nothing ()
                             line_tmp.pos_x = 0;
                             line_tmp.idx_beg = j; 
                         }
-                        line_tmp.pos_x += (*my_font_) [my_text_[j]].length (); 
+                        line_tmp.pos_x += (*my_font_) [my_text_[j]].my_advance; 
                         j++; 
                     }
                     break;  
-            } 
+            }
+	    //	    std::cout << "Word size: " << word_length_pix <<"\n";
         } 
     }
     
@@ -363,7 +386,7 @@ void label::build_form_auto_size ()
         }
         else
         {
-            line_tmp.pos_x += (*my_font_) [my_text_[i]].length (); 
+	  line_tmp.pos_x += (*my_font_) [my_text_[i]].my_advance ; 
         }
         i++; 
     }
@@ -416,7 +439,7 @@ u_int8 label::find_word (u_int16 & index, u_int16 & wlength, u_int16 & wlengthpi
     while (index < my_text_.length ()  && my_text_[index] != ' ' && my_text_[index] != '\n')
     {
         wlength++;
-        wlengthpix += (*my_font_) [my_text_[index]].length (); 
+        wlengthpix += (*my_font_) [my_text_[index]].my_advance; 
         index++; 
     }
 
@@ -456,7 +479,7 @@ void label::update_cursor ()
     my_cursor_.pos_x = 0;
     
     u_int16 j = my_vect_[my_cursor_.line].idx_beg;
-    while (j != my_cursor_.idx) my_cursor_.pos_x+= (*my_font_) [my_text_[j++]].length ();     
+    while (j != my_cursor_.idx) my_cursor_.pos_x+= (*my_font_) [my_text_[j++]].my_advance;     
     
     // find y position
     my_cursor_.pos_y = (my_cursor_.line - start_line_) * my_font_->height (); 
@@ -473,6 +496,8 @@ void label::update_cursor ()
 // if bool is false redraw all,  if bool is true redraw just at beginning of the cursor 
 void label::draw_string (const bool at_cursor)
 { 
+  glyph_info * glyph;
+
     u_int16 tmp_start_line;
     u_int16 tx = 0, ty = 0;
     u_int16 idx_cur_line, j; 
@@ -498,8 +523,9 @@ void label::draw_string (const bool at_cursor)
          j < my_vect_[tmp_start_line].idx_end + 1 ;
          j++)
     {
-        (*my_font_) [my_text_[j]].draw (tx, ty, NULL, this);
-        tx += (*my_font_) [my_text_[j]].length (); 
+      glyph = &((*my_font_) [my_text_[j]]);
+      glyph->my_glyph->draw (tx, ty + glyph->my_yoffset, NULL, this);
+      tx += glyph->my_advance; 
     }
     ty += my_font_->height ();
     tmp_start_line++; 
@@ -513,8 +539,9 @@ void label::draw_string (const bool at_cursor)
              j <  my_vect_[tmp_start_line].idx_end + 1 ;
              j++)
         {
-            (*my_font_) [my_text_[j]].draw (tx, ty, NULL, this);
-            tx += (*my_font_) [my_text_[j]].length (); 
+	  glyph = &((*my_font_) [my_text_[j]]);
+            glyph->my_glyph->draw (tx, ty + glyph->my_yoffset, NULL, this);
+            tx += glyph->my_advance; 
         }
         ty += my_font_->height ();
         tmp_start_line++; 
@@ -544,10 +571,10 @@ void label::cursor_draw ()
 {
      // draw the cursor
     if (my_cursor_.idx == my_text_.length () || my_text_[my_cursor_.idx] == '\n')  
-        my_font_->cursor->draw (my_cursor_.pos_x, my_cursor_.pos_y,NULL, this);  
+        my_font_->get_cursor ().draw (my_cursor_.pos_x, my_cursor_.pos_y,NULL, this);  
     else
-        my_font_->cursor->draw (my_cursor_.pos_x, my_cursor_.pos_y,0, 0, 
-                                (*my_font_) [my_text_[my_cursor_.idx]].length (),
+        my_font_->get_cursor ().draw (my_cursor_.pos_x, my_cursor_.pos_y,0, 0, 
+                                (*my_font_) [my_text_[my_cursor_.idx]].my_advance,
                                 my_font_->height (), NULL, this); 
 }
 
@@ -560,12 +587,12 @@ void label::cursor_undraw ()
     {
         lock (); 
         fillrect(my_cursor_.pos_x, my_cursor_.pos_y,
-                 my_font_->cursor->length () ,
-                 my_font_->cursor->height(),
+                 my_font_->get_cursor ().length() ,
+                 my_font_->get_cursor ().height(),
                  gfx::screen::trans_col());
         unlock (); 
     }
-    else (*my_font_) [my_text_[my_cursor_.idx]].draw (my_cursor_.pos_x, my_cursor_.pos_y, NULL, this);
+    else (*my_font_) [my_text_[my_cursor_.idx]].my_glyph->draw (my_cursor_.pos_x, my_cursor_.pos_y, NULL, this);
 }
 
 
@@ -583,8 +610,6 @@ bool label::input_update ()
         cursor_undraw ();  
         cursor_previous (); 
     }
-    
-    
     
     return true; 
 }
@@ -612,24 +637,12 @@ void label::cursor_previous ()
 }
 
 
-const std::string label::text_string () const
+const std::wstring label::text_string () const
 {
     return my_text_;  
 }
-
+/*
 const char * label::text_char () const
 {
     return my_text_.c_str (); 
-}
-
-
-
-
-
-
-
-
-
-
-
-
+}*/

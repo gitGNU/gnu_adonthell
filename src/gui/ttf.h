@@ -19,13 +19,13 @@
  * 
  * 
  */
-#ifndef TTF__H_
-#define TTF__H_
+#ifndef TTF_H_
+#define TTF_H_
 
 #include <string>  
-#include <vector> 
+#include <map> 
 
-#include <ft2build.h>
+#include "ft2build.h"
 #include FT_FREETYPE_H
 #include "types.h"
 #include "gfx/drawing_area.h"
@@ -33,89 +33,162 @@
 #include "gfx/image.h"
 
 
-class win_ttf
-{
- public:
-  /**
-   * Default constructor 
-   */
-  win_ttf ();
+namespace gui {
 
-  /**
-   * Destructor
-   */
-  ~win_ttf ();
+  class ttf;
 
-  
-  /**
-   * Load a TTF file. But do not a build !
-   */  
-  bool load (const std::string & filename);
-  
+  class glyph_info 
+    {
+    public:
+      glyph_info (ttf & ft, wchar_t ch);
+      
+      ~glyph_info ();
 
-  /**
-   * Build the font with cur configuration (size, color, dpi) 
-   * After build, you can draw some text;) 
-   */
-  bool build ();
+      bool is_ok ();
+      
+      u_int16 height();
 
-  /** Set dots per inch
-   * You must set to 72 or 96,  Why ? see documentation on www.freetype.org
-   *
-   * @param dots per inch
-   */ 
-  inline void set_dpi (int);
+      int my_minx;
+      int my_miny;
+      int my_maxx;
+      int my_maxy;
+      int my_yoffset;
+      int my_advance;
+      gfx::image * my_glyph;
+    };
   
-  
-  /** Set police size
-   *
-   * @param font size 
-   */
-  inline void set_size (int size); 
-  
-  
-  /** Set color
-   *
-   * @param r : red color
-   * @param g : green color
-   * @param b : blue color
-   */
-  void set_color (u_int8 r, u_int8 g, u_int8 b);
-  
+  class ttf
+    {
+    public:
+      /**
+       * Default constructor 
+       */
+      ttf ();
+      
+      /**
+       * Destructor
+       */
+      ~ttf ();
+      
+      
+      /**
+       * Load a TTF file. But do not a build !
+       */  
+      bool load (const std::string & filename);
+      
+      
+      /**
+       * Build the font with cur configuration (size, color, dpi) 
+       * After build, you can draw some text;) 
+       */
+      bool build ();
+      
+      /** Set dots per inch
+       * You must set to 72 or 96,  Why ? see documentation on www.freetype.org
+       *
+       * @param dots per inch
+       */ 
+      inline void set_dpi (int);
+      
+      
+      /** Set police size
+       *
+       * @param font size 
+       */
+      inline void set_size (int size); 
+      
+      
+      /** Set color
+       *
+       * @param r : red color
+       * @param g : green color
+       * @param b : blue color
+       */
+      void set_color (u_int8 r, u_int8 g, u_int8 b);
+      
 
- 
-  private:
-  
+      /**
+       * @return the height of the font
+       */
+      u_int16 height ();
+      
+      
+      /**
+       * Display some font information
+       */
+      void info ();
 
-  /* copy bitmap to image */
-  void copy_bitmap_to_image (u_int8 * bitmap_data, gfx::image * dest, s_int16 dx, s_int16 dy); 
-  
-  /* close the library and face */
-  void close (); 
-  
-  int UTF8_to_UNICODE(u_int16 * unicode, const char *utf8, int len);
-  
-  /* filename of the font */
-  std::string my_filename; 
-  
-  /* valid font,  true if valid */
-  bool my_valid; 
-  
-  /* library FT */
-  FT_Library my_library; 
-  
-  /* FT_Face */
-  FT_Face my_face;
-  
-  /* dpi, dots-per-inch */
-  int my_dpi;
-  
-  /* size */
-  u_int16 my_size;
-  
-  /* color variable */
-  u_int8 my_r, my_g, my_b;  
-};
+      /**
+       * The letter must be in UTF-16 !
+       * Return the gfx::image which correspond at the letter in []
+       */
+      glyph_info & operator[](wchar_t letter);
+	
+      /**
+       * @return the cursor
+       */
+      gfx::image & get_cursor ();
 
+      /**
+       * @return true if the letter is in the ttf
+       */
+      bool in_table (wchar_t letter);
+
+      /* copy bitmap to image */
+      void copy_bitmap_to_image (u_int8 * bitmap_data, gfx::image * dest, s_int16 dx = 0, s_int16 dy = 0); 
+
+      friend class glyph_info;
+    private:
+
+      /* clean cache */
+      void clean_cache ();
+      
+
+      /* close the library and face */
+      void close (); 
+      
+      /**
+       * create a cursor
+       */
+      void create_cursor ();
+
+      /* filename of the font */
+      std::string my_filename; 
+      
+      /* valid font,  true if valid */
+      bool my_valid; 
+      
+      /* library FT */
+      FT_Library my_library; 
+      
+      /* FT_Face */
+      FT_Face my_face;
+      
+      /* dpi, dots-per-inch */
+      int my_dpi;
+      
+      /* size */
+      u_int16 my_size;
+      
+      u_int16 my_height;
+      u_int16 my_ascent;
+      u_int16 my_descent;
+      u_int16 my_lineskip;
+      u_int16 my_underline_offset;
+      u_int16 my_underline_height;
+      
+      int my_style;
+      
+      /* color variable */
+      u_int8 my_r, my_g, my_b;  
+      
+      /* font cache */
+      std::map <u_int16, glyph_info *> my_cache;
+
+      /* this is the cursor */
+      gfx::image * my_cursor;
+    };
+
+}
 
 #endif
