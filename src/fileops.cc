@@ -48,7 +48,7 @@ gz_file::~gz_file ()
 
 bool gz_file::open (string fname, gz_type t)
 {
-    if (t == READ) file = gzopen (fname.c_str (),"r");
+    if (t == READ) file = gzopen (fname.c_str (),"rb6");
     else file = gzopen (fname.c_str (),"wb6");
     if (!file) return false;
     opened = true;

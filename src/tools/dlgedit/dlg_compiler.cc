@@ -432,7 +432,7 @@ std::string DlgCompiler::inflateCode (std::string code)
 void DlgCompiler::writeStart ()
 {
     // begin dialogue array
-    file << "\t# -- (speaker, code, stop, (text, operation, condition, ...))"
+    file << "\t# -- (speaker, code, ((text, operation, condition), ...))"
          << "\n\tdlg = [\\\n"
          << "\t\t(None, -1, (";
     
