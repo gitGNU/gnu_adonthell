@@ -430,20 +430,22 @@ objects *debug_dlg::get_dlg_vars ()
 {
     PyObject *instance, *keys, *values, *vars, *k, *v;
     objects *container = new objects;
-    storage *object = new storage;
+    storage *object;
     int size, i;
 
     if (wnd->test_dlg == NULL) return container;
     instance = wnd->test_dlg->get_instance ();
-    vars = PyObject_GetAttrString (instance, "debug_info");
 
+    vars = PyObject_GetAttrString (instance, "debug_info");
     if (vars == NULL) return container;
-    container->set ("Local Variables", object);
 
     keys = PyDict_Keys (vars);
+    if (keys == NULL) return container;
     values = PyDict_Values (vars);
 
     size = PyList_Size (values);
+    object = new storage;
+    container->set ("Local Variables", object);
 
     for (i = 0; i < size; i++)
     {

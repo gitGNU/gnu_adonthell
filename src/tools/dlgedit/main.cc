@@ -63,10 +63,10 @@ main (int argc, char *argv[])
     // Create a player
     MainWnd->myplayer = new player;
 
-    // Add the player to the game objects
+    // Add the player to the character array
     game::characters.set ("the_player", MainWnd->myplayer);
 
-    // Make "myplayer" available to the interpreter 
+    // Make "the_player" available to the interpreter 
 	game::globals = PyModule_GetDict(m);
     PyDict_SetItemString (game::globals, "the_player", pass_instance (MainWnd->myplayer, "player"));
 
