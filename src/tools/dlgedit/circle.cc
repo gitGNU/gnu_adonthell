@@ -13,6 +13,8 @@
 */
 
 #include <gtk/gtk.h>
+#include <algorithm>
+
 #include "circle.h"
 #include "crcle_interface.h"
 
@@ -55,6 +57,9 @@ int crcle_dlg::on_ok ()
     // Indicate that user hit the OK button
     retval = 1;
 
+    // Make text safe
+    replace (text.begin (), text.end (), '\n', ' ');
+    
     // Apply changes to the circle
     circle->type = type;
     circle->text = text;
