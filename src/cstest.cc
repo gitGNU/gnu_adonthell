@@ -40,8 +40,6 @@ int main(int argc, char * argv[])
   animation *anim4 = new animation();
   window *wnd = new window();
 
-  u_int8 ret=0;
-
   screen::init_display(0);
 
   SDL_Thread *input_thread;
@@ -196,15 +194,14 @@ int main(int argc, char * argv[])
   scene->set_coordinates(2,3,(-494 + 240),137);
   scene->set_coordinates(3,3,(-494 + 240),137);
 
-  while(ret!=1)
+  while(scene->render_scene()!=1)
     {
       if(keyboard::is_pushed(Escape_Key)) break;
-      // Clear the screen
-      screen::drawbox(0,0,320,200,0xFFFFFF);
-      ret=scene->render_scene();
+      // Clear the screen (why hendersa?)
+      // screen::drawbox(0,0,320,200,0xFFFFFF);
       screen::show();
     }
-
+  
   // -- start window code
   wnd->init(40, 20, 240, 160, WIN_NORMAL);
   wnd->show ();

@@ -102,16 +102,16 @@ void melee::calc_stats() {
 	*
 	* See docs on the list for explanation
 	*/
-	a_attack_range = (a_dex + a_attack_skill) / 200 * .6;
-	a_defense_range = (a_dex + a_defense_skill) / 200 * .3;
-	b_attack_range = (b_dex + b_attack_skill) / 200 * .6;
-	b_defense_range = (b_dex + b_defense_skill) / 200 * .3;
+	a_attack_range = (a_dex + a_attack_skill) / 200 * .55;
+	a_defense_range = (a_dex + a_defense_skill) / 200 * .35;
+	b_attack_range = (b_dex + b_attack_skill) / 200 * .55;
+	b_defense_range = (b_dex + b_defense_skill) / 200 * .35;
 	a_attack_total_allotment = (a_attack_range + b_defense_range) / .9;
 	b_attack_total_allotment = (b_attack_range + a_defense_range) / .9;
 	a_attack_luck_allotment = a_attack_total_allotment - (a_attack_range + b_defense_range);
 	b_attack_luck_allotment = b_attack_total_allotment - (b_attack_range + a_defense_range);
 	a_attack_a_real_luck = (a_luck / (a_luck + b_luck)) * a_attack_luck_allotment;
-   a_attack_b_real_luck = a_attack_luck_allotment - a_attack_a_real_luck;
+    a_attack_b_real_luck = a_attack_luck_allotment - a_attack_a_real_luck;
 	b_attack_a_real_luck = (a_luck / (a_luck + b_luck)) * b_attack_luck_allotment;
 	b_attack_b_real_luck = b_attack_luck_allotment - b_attack_a_real_luck;
 }

@@ -28,8 +28,8 @@ int audio_init() {
   audio_in = new audio;
 
   // Load our background music and SFX in
-  audio_in->load_background(0, "audio/at-2.it");
-  audio_in->load_background(1, "audio/at-1.it");
+  audio_in->load_background(0, "audio/at-7.it");
+  audio_in->load_background(1, "audio/at-6-2.it");
   audio_in->load_wave(0, "audio/at0.wav");
   audio_in->load_wave(1, "audio/at1.wav");
 
