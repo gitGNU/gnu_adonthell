@@ -553,6 +553,7 @@ static swig_type_info *swig_types[54];
 #define SWIG_name    "adonthellc"
 
 
+#include <string>
 #include "types.h"
 #include "storage.h"
 #include "event.h"
@@ -1466,12 +1467,14 @@ static PyObject *_wrap_new_event_list(PyObject *self, PyObject *args) {
 static PyObject *_wrap_event_handler_register_event(PyObject *self, PyObject *args) {
     PyObject *resultobj;
     event *arg0 ;
-    char *arg1 ;
+    string *arg1 ;
     PyObject * argo0 =0 ;
+    PyObject * argo1 =0 ;
     
-    if(!PyArg_ParseTuple(args,"Os:event_handler_register_event",&argo0,&arg1)) return NULL;
+    if(!PyArg_ParseTuple(args,"OO:event_handler_register_event",&argo0,&argo1)) return NULL;
     if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_event,1)) == -1) return NULL;
-    event_handler::register_event(arg0,arg1);
+    if ((SWIG_ConvertPtr(argo1,(void **) &arg1,SWIGTYPE_p_string,1)) == -1) return NULL;
+    event_handler::register_event(arg0,*arg1);
     Py_INCREF(Py_None);
     resultobj = Py_None;
     return resultobj;

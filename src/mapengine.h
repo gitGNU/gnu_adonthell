@@ -17,6 +17,7 @@
 
 #include "screen.h"
 #include "input.h"
+#include "fileops.h"
 #include "landmap.h"
 #include "mapview.h"
 

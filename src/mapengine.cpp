@@ -53,29 +53,31 @@ void mapengine::run()
 
 void mapengine::mainloop()
 {
-  input::update();
-  for(int i=0;i<screen::frames_to_do();i++)
+    input::update();
+    for(int i=0;i<screen::frames_to_do();i++)
     {
-      win_manager::update ();
-      lmap.update();
-      mv.update();
+	win_manager::update ();
+	lmap.update();
+	mv.update();
     }
- mv.draw(0,0);
- win_manager::draw ();
+    mv.draw(0,0);
+    win_manager::draw ();
 }
 
 s_int8 mapengine::get_state(gzFile file)
 {
-  char * t;
+    //  char * t;
   u_int16 nbr_of,i;
+  string t;
 
   // Load the map from the filename
-  t=fileops::get_string(file);
+  
+  t = fileops::get_string2(file);
 
   cout << "Loading map: " << t << endl;
 
-  load_map(t);
-  delete[] t;
+  load_map (t.c_str ());
+  //  delete[] t;
 
   // Load the mapcharacters
   gzread(file,&nbr_of,sizeof(nbr_of));

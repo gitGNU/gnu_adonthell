@@ -2,6 +2,7 @@
 
 %{
 
+#include <string>
 #include "types.h"
 #include "storage.h"
 #include "event.h"

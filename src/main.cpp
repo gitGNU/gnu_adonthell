@@ -16,6 +16,7 @@
 #include <mcheck.h>
 #endif
 
+#include "fileops.h"
 #include "game.h"
 #include "data.h"
 #include "py_inc.h"

@@ -15,6 +15,109 @@
 #include "types.h"
 #include "fileops.h"
 
+gz_file::gz_file ()
+{
+    opened = false;
+}
+
+gz_file::gz_file (string fname, gz_type t)
+{
+    open (fname, t);
+}
+
+gz_file::~gz_file ()
+{
+    if (is_opened ()) gzclose (file);
+}
+
+bool gz_file::open (string fname, gz_type t)
+{
+    if (t == READ) file = gzopen (fname.c_str (),"r");
+    else file = gzopen (fname.c_str (),"wb6");
+    if (!file) return false;
+    opened = true;
+    return true;
+}
+
+void gz_file::close ()
+{
+    if (is_opened ()) gzclose (file);
+    opened = false;
+}
+
+igzstream::igzstream () : gz_file ()
+{
+}
+
+igzstream::igzstream (string fname) : gz_file (fname, READ)
+{
+}
+
+igzstream::~igzstream ()
+{
+}
+
+bool igzstream::open (string fname)
+{
+    return gz_file::open (fname, READ);
+}
+
+char& operator << (char& n, igzstream& gfile)
+{
+    gzread (gfile.file, &n, sizeof (n));
+    return n;
+}
+
+u_int8& operator << (u_int8& n, igzstream& gfile)
+{
+    gzread(gfile.file, &n, sizeof (n));
+    return n;
+}
+
+s_int8& operator << (s_int8& n, igzstream& gfile)
+{
+    gzread(gfile.file, &n, sizeof (n));
+    return n;
+}
+
+u_int16& operator << (u_int16& n, igzstream& gfile)
+{
+    gzread(gfile.file, &n, sizeof (n));
+    return n;
+}
+
+s_int16& operator << (s_int16& n, igzstream& gfile)
+{
+    gzread(gfile.file, &n, sizeof (n));
+    return n;
+}
+
+u_int32& operator << (u_int32& n, igzstream& gfile)
+{
+    gzread(gfile.file, &n, sizeof (n));
+    return n;
+}
+
+s_int32& operator << (s_int32& n, igzstream& gfile)
+{
+    gzread(gfile.file, &n, sizeof (n));
+    return n;
+}
+
+string& operator << (string& s, igzstream& gfile)
+{
+    u_int16 strl;
+    char c;
+    strl << gfile;
+    while (strl)
+    {
+	c << gfile;
+	s += c;
+	strl --;
+    }
+    return s;
+}
+
 // write a string to a file
 void fileops::put_string (gzFile file, const char *string)
 {
@@ -44,6 +147,24 @@ char *fileops::get_string (gzFile file)
     }
 
     return string;
+}
+
+// get string from a file
+string fileops::get_string2 (gzFile file)
+{
+    string res;
+    u_int16 length;
+
+    gzread (file, &length, sizeof (length));
+    while (length)
+    {
+	char c;
+        gzread (file, &c, sizeof (c));
+	res+=c;
+	length--;
+    }
+
+    return res;
 }
 
 // write version info to a file
@@ -86,6 +207,44 @@ bool fileops::get_version (gzFile file, u_int16 min, u_int16 max, const char *na
 
         return false;
     } 
+    return true;
+}
 
+// read version info from file and check whether we can handle it
+bool fileops::get_version (igzstream file, u_int16 min, u_int16 max, string& name)
+{
+    char vinfo;
+    u_int16 version;
+
+    vinfo << file;
+
+    if (name == "") name = "<unknown>";
+
+    // file contains no version info
+    if (vinfo != 'v')
+    {
+	cerr << "Version information missing in file \"" << name << endl;
+        cerr << "You should get a more recent data package.\n";
+        return false;
+    }
+    
+    // check whether file has the version we expect
+    version << file;
+
+    if (version < min || version > max)
+    {
+	cerr << "File \"" << name << "\" has version number " << version << ",\n";
+        cerr <<  "but I was expecting " << min << " <= version <= " << max << endl;
+	
+        // file is newer than code
+        if (version > max)
+            cerr << "You should get an up-to-date version of this program.\n";
+        // file is older than code
+        else
+            cerr << "You should get a more recent data package.\n";
+
+        return false;
+    } 
+    cout << "Got version " << version << " and vinfo " << vinfo << endl;
     return true;
 }

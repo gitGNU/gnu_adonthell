@@ -12,6 +12,7 @@
    See the COPYING file for more details.
 */
 
+#include <string>
 #include "event.h"
 #include "gametime.h"
 

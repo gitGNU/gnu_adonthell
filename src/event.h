@@ -140,7 +140,7 @@ protected:
 class event_handler
 {
 public:
-    static void register_event (event*, char*); // register an event
+    static void register_event (event*, string); // register an event
     static void remove_event (event*);          // unregister an event
     static void raise_event (event*);           // event triggered
 

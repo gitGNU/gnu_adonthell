@@ -46,18 +46,18 @@ void event_list::add_map_event(char * script, u_int16 etype,
 			       s_int32 ey=-1, s_int16 edir=-1, 
 			       mapcharacter * ec=NULL)
 {
-  char fdef[strlen(script)+strlen(EVENTS_DIR)+1];
-  base_map_event * e=new base_map_event();
-  strcpy(fdef,EVENTS_DIR);
-  strcat(fdef,script);
-  e->submap=esubmap;
-  e->type=etype;
-  e->x=ex;
-  e->y=ey;
-  e->dir=edir;
-  e->c=ec;
-  add_event(e);
-  event_handler::register_event(e,fdef);
+    char fdef[strlen(script)+strlen(EVENTS_DIR)+1];
+    base_map_event * e=new base_map_event();
+    strcpy(fdef,EVENTS_DIR);
+    strcat(fdef,script);
+    e->submap=esubmap;
+    e->type=etype;
+    e->x=ex;
+    e->y=ey;
+    e->dir=edir;
+    e->c=ec;
+    add_event(e);
+    event_handler::register_event(e,fdef);
 }
 #endif
 
@@ -97,17 +97,17 @@ void event_handler::remove_event (event *e)
 }
 
 // Register a event with it's script
-void event_handler::register_event (event *e, char *file)
+void event_handler::register_event (event *e, string file)
 {
-    FILE *f = fopen (file, "r");
+    FILE *f = fopen (file.c_str (), "r");
     // See whether the script exists at all
     if (f)
     {
         // Compile the script into a PyCodeObject for quicker execution
-        _node *n = PyParser_SimpleParseFile (f, file, Py_file_input);
+        _node *n = PyParser_SimpleParseFile (f, (char *)file.c_str (), Py_file_input);
         if (n)
         {
-            e->script = PyNode_Compile (n, file);       
+            e->script = PyNode_Compile (n, (char *)file.c_str ());       
             handlers[e->type].push_back (e);
             PyNode_Free (n);
         }

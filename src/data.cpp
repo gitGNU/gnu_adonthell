@@ -201,7 +201,7 @@ void data::cleanup ()
 // Load a game from the gamedir directory
 bool data::load (u_int32 pos)
 {
-    gzFile in = NULL;
+    gzFile in;
     char filepath[256];
     string s_filepath;
     character *mynpc;
@@ -295,25 +295,7 @@ bool data::load (u_int32 pos)
     s_filepath += "/mapengine.data";
     in=gzopen(s_filepath.c_str(),"r");
     map_engine->get_state(in);
-    gzclose(in);
-
-    /*
-    // load mapcharacter
-#if defined (USE_PYTHON)
-    sprintf (filepath, "%s/mapchar.py", saves[pos]->get_directory ());
-    FILE *f = fopen (filepath, "r");
-
-    if (!f)
-    {
-        fprintf (stderr, "Couldn't open \"%s\" - stopping\n", filepath);
-        return false;
-    }
-
-    // PyObject_Print (data::globals, stdout, 1);
-	PyRun_File (f, filepath, Py_file_input, data::globals, NULL);
-    fclose (f);
-#endif
-    */    
+    gzclose (in);
     return true;
 }
 

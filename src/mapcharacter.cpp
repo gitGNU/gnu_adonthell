@@ -78,17 +78,18 @@ s_int8 mapcharacter::get(gzFile file)
 
 s_int8 mapcharacter::load(const char * fname)
 {
-  gzFile file;
-  s_int8 retvalue = -1;
-  char fdef[strlen(fname)+strlen(MAPCHAR_DIR)+1];
-  strcpy(fdef,MAPCHAR_DIR);
-  strcat(fdef,fname);
-  file=gzopen(fdef,"rb");
-  if(!file) return(-1);
-  if(fileops::get_version (file, 1, 1, fdef))
-    retvalue=get(file);
-  gzclose(file);
-
+    string s = MAPCHAR_DIR;
+    s += fname;
+    gzFile file = gzopen(s.c_str (),"r");
+    //    igzstream file (s);
+    //    bool t = file.is_opened ();
+    //    if (!t) return -1;
+    if (!file) return -1;
+    s_int8 retvalue = -1;
+    if(fileops::get_version (file, 1, 1, s.c_str ()))
+	retvalue=get(file);
+    //    file.close ();
+    gzclose (file);
 #if defined(USE_PYTHON)
   filename_=fname;
 #endif
