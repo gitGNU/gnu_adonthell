@@ -189,9 +189,9 @@ main_wnd::write_character_source ()
     file << "name = " << name << "\n";
     file << "race = " << get_option (GTK_OPTION_MENU (race_choice)) << "\n";
     file << "gender = " << get_option (GTK_OPTION_MENU (gender_choice)) << "\n";
-    file << "posx = " << posx << "\n";
+    /*    file << "posx = " << posx << "\n";
     file << "posy = " << posy << "\n";
-
+    */
     file << "\nattributes:\n";
     while (gtk_clist_get_text (GTK_CLIST (attribute_list), i, 0, &str))
     {
@@ -201,7 +201,7 @@ main_wnd::write_character_source ()
     }
 
     i = 0;
-    file << "\nevents:\n";
+    /*    file << "\nevents:\n";
     while (gtk_clist_get_text (GTK_CLIST (event_list), i, 0, &str))
     {
         file << "type = " << str << "\n";
@@ -214,7 +214,7 @@ main_wnd::write_character_source ()
     file << "\nactions:\n";
     file << "schedule = " << schedule << "\n";
     file << "dialogue = " << dialogue << "\n";
-
+    */ 
     // clean up
     file.close ();
     g_free (tmp);

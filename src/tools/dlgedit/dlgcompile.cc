@@ -208,7 +208,7 @@ void dlg_compiler::write_npc (Circle *circle)
         changed = 1;
         
         script << "\n" << space << "self.set_npc (";
-        if (circle->character == "") script << "the_npc.name)";
+        if (circle->character == "") script << "the_npc.get_name())";
         else script << "\"" << circle->character << "\")";
     }
 
@@ -220,8 +220,8 @@ void dlg_compiler::write_npc (Circle *circle)
     else
     {
         script << "\n" << space << "self.color = ";
-        if (circle->character == "") script << "the_npc.color";
-        else script << "characters[\"" << circle->character << "\"].color";
+        if (circle->character == "") script << "the_npc.get_color()";
+        else script << "characters[\"" << circle->character << "\"].get_color()";
     }
 
     if (debug) script << "\n\n" << space << "# " << circle->text.c_str (); 

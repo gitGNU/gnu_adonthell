@@ -21,17 +21,18 @@
 #include "quest.h"
 #include "data.h"
 #include "character.h"
-#ifndef _EDIT_
+#if defined(USE_MAP)
 #include "mapengine.h"
 #endif
 
+#if defined(USE_PYTHON)
 PyObject *data::globals;            // Global namespace for the Python interpreter
+#endif
 gametime *data::time;               // The gametime
 character* data::the_player=NULL;   // The main character
-mapcharacter* data::the_map_player=NULL;   // The main character
 objects data::characters;           // All the NPC data
 objects data::quests;               // All the quest data (the state of the gameworld)
-#ifndef _EDIT_
+#if defined(USE_MAP)
 mapengine * data::map_engine;
 #endif
 
@@ -99,9 +100,10 @@ void data::init (char* dir)
     saves.push_back (gdata);
 
     // Init the global namespace of the python interpreter
+#if defined(USE_PYTHON)
     PyObject *m = import_module ("ins_modules");
  	globals = PyModule_GetDict(m);
-    
+#endif    
     // Read the user's saved game records (if any)
     sprintf (filepath, "%s/saves.data", adonthell_dir);
     in = gzopen (filepath, "r");
@@ -119,10 +121,11 @@ void data::init (char* dir)
         gzclose (in);
     }
     the_player=NULL;
-    the_map_player=NULL;
-#ifndef _EDIT_
+#if defined(USE_MAP)
     map_engine=new mapengine;
+#if defined(USE_PYTHON)
     PyDict_SetItemString (globals, "map_engine", pass_instance (map_engine, "mapengine"));
+#endif
 #endif
 }
 
@@ -136,7 +139,9 @@ void data::cleanup ()
     for (vector<gamedata*>::iterator i = saves.begin (); i != saves.end (); i++)
       delete *i;
     if(the_player) delete the_player;
+#if defined(USE_PYTHON)
     Py_XDECREF (globals);
+#endif
 }
 
 // Load a game from the gamedir directory
@@ -145,7 +150,7 @@ bool data::load (u_int32 pos)
     gzFile in = NULL;
     const char *basedir = pos ? adonthell_dir : ".";
     char filepath[256];
-    npc *mynpc;
+    character *mynpc;
     quest *myquest;
 
     // First, unload the current game
@@ -153,20 +158,20 @@ bool data::load (u_int32 pos)
     
     // Create a player (later: load from file or whatever)
     the_player = new character;
-    the_player->name = "Player";
+    the_player->set_name("Player");
 
     // Add the player to the game objects
-    characters.set (the_player->name, the_player);
+    characters.set (the_player->get_name(), the_player);
 
+#if defined(USE_PYTHON)
     // Make "myplayer" available to the interpreter 
     PyDict_SetItemString (globals, "the_player", pass_instance (the_player, "character"));
-    PyDict_SetItemString (globals, "the_map_player", pass_instance ((mapcharacter*)the_player, "mapcharacter"));
 
     // create character array
     PyObject *chars = PyDict_New ();
     PyDict_SetItemString (globals, "characters", chars);
-    PyDict_SetItemString (chars, the_player->name, pass_instance (the_player, "character"));
-
+    PyDict_SetItemString (chars, the_player->get_name(), pass_instance (the_player, "character"));
+#endif
     // try to open character.data
     sprintf (filepath, "%s/%s/character.data", basedir, saves[pos]->get_directory ());
     in = gzopen (filepath, "r");
@@ -180,17 +185,21 @@ bool data::load (u_int32 pos)
     // load characters     
     while (gzgetc (in))
     {
-        mynpc = new npc;
-        mynpc->load (in);
+        mynpc = new character;
+        mynpc->character_base::load (in);
+#if defined(USE_PYTHON)
         // Pass character over to Python interpreter
-        PyDict_SetItemString (chars, mynpc->name, pass_instance (mynpc, "npc"));
+        PyDict_SetItemString (chars, mynpc->get_name(), pass_instance (mynpc, "character"));
+#endif
     }
     
     gzclose (in);
 
+#if defined(USE_PYTHON)
     // create quest array
     PyObject *quests = PyDict_New ();
     PyDict_SetItemString (globals, "quests", quests);
+#endif
 
     // try to open quest.data
     sprintf (filepath, "%s/%s/quest.data", basedir, saves[pos]->get_directory ());
@@ -208,9 +217,10 @@ bool data::load (u_int32 pos)
         myquest = new quest;
         myquest->load (in);
         
+#if defined(USE_PYTHON)
         // Pass quest over to Python interpreter
         PyDict_SetItemString (quests, myquest->name, pass_instance (myquest, "quest"));
-
+#endif
         // Make this quest available to the engine
         data::quests.set (myquest->name, myquest);
     }
@@ -228,7 +238,7 @@ void data::unload ()
     // delete all characters
     while ((mychar = (character *) characters.next ()) != NULL)
     {
-        characters.erase (mychar->name);
+        characters.erase (mychar->get_name());
         delete mychar;
     }
 
@@ -248,7 +258,7 @@ gamedata* data::save (u_int32 pos, char *desc)
 {
     gamedata *gdata;
     char filepath[256];
-    npc *mychar;
+    character *mychar;
     quest *myquest;
 
     // make sure we don't overwrite the default game
@@ -285,7 +295,7 @@ gamedata* data::save (u_int32 pos, char *desc)
         return NULL;
     }
 
-    while ((mychar = (npc *) characters.next ()) != NULL)
+    while ((mychar = (character *) characters.next ()) != NULL)
     {
         // don't save the player
         if ((character*) mychar == (character*) the_player) continue;
@@ -294,7 +304,7 @@ gamedata* data::save (u_int32 pos, char *desc)
         gzputc (file, 1);
 
         // append the character data
-        mychar->save (file);
+        mychar->character_base::save (file);
     }
 
     // write EOF

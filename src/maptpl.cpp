@@ -134,22 +134,22 @@ void maptpl::draw_walkables()
     for(j=d_posy;(j<d_posy+dh)&&(j<height);j++)
       {
 	const u_int32 col=0x0ff000;
-	if(!placetpl[i][j].is_walkable_left())
+	if(!placetpl[i][j].is_walkable_west())
 	  screen::drawbox(s_posx+((i-d_posx)*MAPSQUARE_SIZE+1),
 			  s_posy+((j-d_posy)*MAPSQUARE_SIZE+1),
 			  1,MAPSQUARE_SIZE-2,col);
 
-	if(!placetpl[i][j].is_walkable_right())
+	if(!placetpl[i][j].is_walkable_east())
 	  screen::drawbox(s_posx+((i-d_posx)*MAPSQUARE_SIZE)+MAPSQUARE_SIZE-1,
 			  s_posy+((j-d_posy)*MAPSQUARE_SIZE+1),
 			  1,MAPSQUARE_SIZE-2,col);
 	
-	if(!placetpl[i][j].is_walkable_up())
+	if(!placetpl[i][j].is_walkable_north())
 	  screen::drawbox(s_posx+((i-d_posx)*MAPSQUARE_SIZE+1),
 			  s_posy+((j-d_posy)*MAPSQUARE_SIZE+1),
 			  MAPSQUARE_SIZE-2,1,col);
 	
-	if(!placetpl[i][j].is_walkable_down())
+	if(!placetpl[i][j].is_walkable_south())
 	  screen::drawbox(s_posx+((i-d_posx)*MAPSQUARE_SIZE)+1,
 			  s_posy+((j-d_posy)*MAPSQUARE_SIZE)+MAPSQUARE_SIZE-1,
 			  MAPSQUARE_SIZE-2,1,col);

@@ -131,21 +131,6 @@ mapsquare::~mapsquare()
 #endif
 }
 
-void mapsquare::draw(s_int16 x, s_int16 y, mapobject ** pattern,
-		     drawing_area * da_opt=NULL)
-{
-  list<mapsquare_tile>::iterator i;
-  i=tiles.begin();
-  while(i!=tiles.end())
-    {
-      if(i->is_base) pattern[i->objnbr]->draw(x,y,da_opt);
-      i++;
-    }
-  /*  static u_int16 i;
-  for(i=ground1;i<nbr_of_tiles;i++)
-  if(active[i]) pattern[tile[i]].draw(x,y,da_opt);*/
-}
-
 landsubmap::landsubmap()
 {
   length=height=0;
@@ -239,7 +224,7 @@ void landsubmap::resize(u_int16 l, u_int16 h)
     for(j=0;j<h && j<height;j++)
       for(it=ltemp[i][j].tiles.begin();it!=ltemp[i][j].tiles.end();it++)
       {
-	if(it->is_base) set_square_pattern(i,j,it->objnbr);
+	if(it->is_base) put_mapobject(i,j,it->objnbr);
       }
   
   for(i=0;i<l;i++)
@@ -262,7 +247,7 @@ s_int8 landsubmap::get(gzFile file)
 	while(k)
 	  {
 	    gzread(file,&t,sizeof(t));
-	    set_square_pattern(i,j,t);
+	    put_mapobject(i,j,t);
 	    k--;
 	  }
       }
@@ -300,7 +285,7 @@ u_int16 landsubmap::get_height()
   return height;
 }
 
-s_int8 landsubmap::set_square_pattern(u_int16 px, u_int16 py, 
+s_int8 landsubmap::put_mapobject(u_int16 px, u_int16 py, 
 				      u_int16 patnbr)
 {
   u_int16 i,j;
@@ -366,15 +351,8 @@ s_int8 landsubmap::set_square_pattern(u_int16 px, u_int16 py,
   return 0;
 }
 
-void landsubmap::draw_square(u_int16 x, u_int16 y, u_int16 px, u_int16 py,
-			     mapobject ** pattern, drawing_area * da_opt=NULL)
-{
-  land[px][py].draw(x,y,pattern,da_opt);
-}
-
 landmap::landmap()
 {
-  myview=NULL;
   pattern=NULL;
 #ifdef _EDIT_
   mini_pattern=NULL;
@@ -499,7 +477,6 @@ s_int8 landmap::get(gzFile file)
 
 s_int8 landmap::load(const char * fname)
 {
-#define MAPS_DIR ""
   gzFile file;
   u_int8 retvalue;
   char fdef[strlen(fname)+strlen(MAPS_DIR)+1];
@@ -542,7 +519,10 @@ s_int8 landmap::save(const char * fname)
 {
   gzFile file;
   u_int8 retvalue;
-  file=gzopen(fname,"wb6"); 
+  char fdef[strlen(fname)+strlen(MAPS_DIR)+1];
+  strcpy(fdef,MAPS_DIR);
+  strcat(fdef,fname);
+  file=gzopen(fdef,"wb6"); 
   if(!file) return -1;
   retvalue=put(file);
   gzclose(file);
@@ -668,14 +648,14 @@ void landmap::update()
     }
 }
 
-s_int8 landmap::set_square_pattern(u_int16 smap, u_int16 px, u_int16 py, 
+s_int8 landmap::put_mapobject(u_int16 smap, u_int16 px, u_int16 py, 
 				   u_int16 patnbr)
 {
-  return submap[smap]->set_square_pattern(px,py,patnbr);
+  return submap[smap]->put_mapobject(px,py,patnbr);
 }
 
-void landmap::remove_obj_from_square(u_int16 smap,
-				     list<mapsquare_tile>::iterator obj)
+void landmap::remove_mapobject(u_int16 smap,
+			       list<mapsquare_tile>::iterator obj)
 {
   u_int16 i,j;
   list<mapsquare_tile>::iterator it;
@@ -834,12 +814,6 @@ s_int8 landmap::delete_mapobject(u_int16 pos)
       pattern=NULL;
     }
   return 0;
-}
-
-void landmap::draw_square(u_int16 smap, u_int16 x, u_int16 y, u_int16 px, 
-			  u_int16 py, drawing_area * da_opt=NULL)
-{
-  submap[smap]->draw_square(x,y,px,py,pattern,da_opt);
 }
 
 #ifdef _EDIT_

@@ -25,7 +25,6 @@
 #include "../../event.h"
 #include "../../data.h"
 
-PyObject *data::globals;
 objects data::characters;
 
 // Dump any error information to stderr (same as in ../../py_inc.cpp)
@@ -57,7 +56,7 @@ void process_character (char *input, gzFile output)
         return;
     }
 
-    npc mynpc;
+    character_base mynpc;
         
     // read character data from source file
     while (!in.eof ())
@@ -98,9 +97,7 @@ void process_character (char *input, gzFile output)
                 // read basic attributes
                 case 1:
                 {
-                    if (strcmp (vals[0], "name") == 0) mynpc.name = strdup (vals[1]);
-                    else if (strcmp (vals[0], "posx") == 0) mynpc.posx = atoi (vals[1]);
-                    else if (strcmp (vals[0], "posy") == 0) mynpc.posy = atoi (vals[1]);
+                    if (strcmp (vals[0], "name") == 0) mynpc.set_name(strdup (vals[1]));
                     else if (strcmp (vals[0], "race") == 0)
                     {
                         if (strcmp (vals[1], "Elf") == 0) mynpc.set ("race", ELF);

@@ -32,7 +32,6 @@ dnl ********************
 
 AC_CHECK_LIB(pthread, main,, echo "Adonthell requires Pthreads library.  Exitting..."; exit 1)
 AC_CHECK_LIB(z, main,,echo "Adonthell requires Zlib. Exitting...";exit 1)
-AC_CHECK_LIB(SDL, main,, echo "Adonthell requires the  SDL library.  Exitting..."; exit 1)
 
 dnl Check for SDL
 SDL_VERSION=1.0.1
@@ -69,18 +68,14 @@ dnl********************
 dnl Check for SDL Mixer
 dnl********************
 
-SDL_MIXER=no
-AC_CHECK_LIB(SDLmixer,Mix_OpenAudio,
-  SDL_MIXER=yes
-  LIBS="$LIBS -lSDLmixer"
-  DEFS="$DEFS -DSDL_MIXER",)
+dnl SDL_MIXER=no
 
-if test x$SDL_MIXER = xno; then
-  AC_CHECK_LIB(SDL_mixer,Mix_OpenAudio,
-    SDL_MIXER=yes
-    LIBS="$LIBS -lSDL_mixer"
-    DEFS="$DEFS -DSDL_MIXER",)
-fi
+dnl AC_CHECK_LIB(SDL_mixer,Mix_OpenAudio,
+dnl   SDL_MIXER=yes
+dnl   LIBS="$LIBS -lSDL_mixer"
+dnl   DEFS="$DEFS -DSDL_MIXER",)
+
+AM_PATH_SDL_MIXER()
 
 dnl********************
 dnl Check for OggVorbis
@@ -98,6 +93,8 @@ fi
 dnl ********************
 dnl Check for Python. 
 dnl ********************
+
+AM_PATH_PYTHON()
 
 dnl Find Python executable
 AC_PATH_PROGS(PYPACKAGE, python)

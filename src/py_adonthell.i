@@ -2,14 +2,13 @@
 
 %{
 
-#include "SDL_types.h"
 #include "types.h"
 #include "storage.h"
 #include "event.h"
 #include "SDL_keysym.h"
 #include "input.h"
 #include "audio.h"
-#include "character.h"
+#include "character_base.h"
 #include "quest.h"
 #include "screen.h"
 #include "image.h"
@@ -20,6 +19,7 @@
 #include "landmap.h"
 #include "mapview.h"
 #include "mapengine.h"
+#include "character.h"
 #include "win_types.h"
 #include "win_font.h"
 #include "win_theme.h"
@@ -34,13 +34,13 @@
 #define SDL_MIXER
 #define SDL_HAS_64BIT_TYPE int
 
-%include "SDL_types.h"
 %include "types.h"
 %include "storage.h"
 %include "event.h"
 %include "SDL_keysym.h"
 %include "input.h"
 %include "audio.h"
+%include "character_base.h"
 %include "quest.h"
 %include "screen.h"
 %include "image.h"

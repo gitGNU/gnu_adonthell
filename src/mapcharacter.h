@@ -16,10 +16,13 @@
 #ifndef _MAPCHARACTER_H
 #define _MAPCHARACTER_H
 
+#define MAPCHAR_DIR "gfx/mapcharacters/"
+
 #include <vector>
 #include "animation_off.h"
 #include "maptpl.h"
 #include "landmap.h"
+#include "character_base.h"
 #include "data.h"
 #include "event.h"
 #include "data.h"
@@ -59,22 +62,9 @@ class mapview;
 
 struct PyCodeObject;
 
-class character;
-class npc;
-
-class mapcharacter : public maptpl, public event_list
+class mapcharacter : public maptpl, public character_base
 {
  public:
-  character * get_character() 
-    {
-      return char_instance;
-    }
-
-  npc * get_npc() 
-    {
-      return npc_instance;
-    }
-
   // Constructors and init functions
   void init();
   void clear();
@@ -110,10 +100,12 @@ class mapcharacter : public maptpl, public event_list
   void set_pos(u_int16 smap,u_int16 x,u_int16 y);
   void set_offset(s_int8 x, s_int8 y) {offx=x; offy=y;}
 
+  void remove_from_pos();
+
   void jump(u_int16 smap, u_int16 x, u_int16 y, u_int16 pos=NO_MOVE);
   
   // Getting which movment the character is doing
-  u_int16 move() {return current_move;}
+  u_int16 get_move() {return current_move;}
   
 #ifndef _EDIT_
   void set_schedule(char * file);
@@ -123,8 +115,8 @@ class mapcharacter : public maptpl, public event_list
   void set_action(char * file);
   bool is_action_activated() { return action_activated; }
   void set_action_active(bool a) { action_activated=a; }
-#endif
   void update_move();
+#endif
   void update();
   void launch_action(mapcharacter * requester);
   void draw(mapview * mv);
@@ -168,10 +160,7 @@ class mapcharacter : public maptpl, public event_list
   
   u_int16 length, height;
 
-  character * char_instance;
-  npc * npc_instance;
 #ifndef _EDIT_
-  PyObject * locals;         // Locals that belong to that character
   PyCodeObject * schedule;   // The character's schedule
   PyCodeObject * action;     // The character's action
 #endif

@@ -20,7 +20,7 @@ class win_file_select: public win_container
   void list_directory(char * ext);
 
  public:
-  win_file_select(s_int16 x,s_int16 y,u_int16 l,u_int16 h,win_theme * theme,win_font * wf,char * fext);
+  win_file_select(s_int16 x,s_int16 y,u_int16 l,u_int16 h,win_theme * theme,win_font * wf,char * fext, char * bdir=NULL);
   ~win_file_select();  
   void resize(u_int16,u_int16);
   void set_curdirectory(char *);

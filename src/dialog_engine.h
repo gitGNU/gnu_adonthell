@@ -15,6 +15,8 @@
 #ifndef __DLG_ENGINE_H__
 #define __DLG_ENGINE_H__
 
+#define DIALOG_DIR "dialogues/"
+
 #include "dialog.h"
 #include "character.h"
 #include "window.h"
@@ -25,12 +27,12 @@ class dialog_engine : public win_container
 {
 public:
     void set_portrait (char*);      // Changes the displayed NPC portrait
-    void set_name (char*);          // Changes the diaplayed NPC name
+    void set_name (char*);          // Changes the displayed NPC name
     void set_npc (char*);           // Changes the whole NPC
 
-    dialog_engine (npc * mynpc, win_theme * th, u_int8 size=1); // Constructor
+    dialog_engine (character_base * mynpc, char * dlg_file, win_theme * th, u_int8 size=1); // Constructor
     dialog_engine();
-    void init(npc *mynpc, win_theme *th, u_int8 size=1);
+    void init(character_base *mynpc, char * dlg_file, win_theme *th, u_int8 size=1);
     ~dialog_engine ();              // Destructor
     
     bool update ();                 // React to (keyboard) input

@@ -24,17 +24,13 @@ void mapcharacter::init()
     anim[i]=new animation_off;
   current_move=STAND_NORTH;
   ask_move=NO_MOVE;
-#ifndef _EDIT_
+#if defined(USE_PYTHON)
   schedule=NULL;
   action=NULL;
   schedule_activated=true;
   action_activated=true;
-  locals=PyDict_New();
-  PyDict_SetItemString(locals,"myself",pass_instance(this,"mapcharacter"));
   schedule=NULL;
 #endif
-  char_instance=NULL;
-  npc_instance=NULL;
 }
 
 void mapcharacter::clear()
@@ -42,8 +38,7 @@ void mapcharacter::clear()
   for(u_int16 i=0;i<NBR_MOVES;i++)
     delete(anim[i]);
   anim.clear();
-#ifndef _EDIT_
-  Py_DECREF(locals);
+#if defined(USE_PYTHON)
   if(schedule) delete schedule;
 #endif
 }
@@ -73,7 +68,6 @@ s_int8 mapcharacter::get(gzFile file)
 
 s_int8 mapcharacter::load(const char * fname)
 {
-#define MAPCHAR_DIR "" 
   gzFile file;
   u_int8 retvalue;
   char fdef[strlen(fname)+strlen(MAPCHAR_DIR)+1];
@@ -91,6 +85,11 @@ void mapcharacter::set_pos(u_int16 smap,u_int16 x,u_int16 y)
   submap=smap; 
   posx=x; posy=y; 
   refmap->put_mapchar(this,smap,x,y);
+}
+
+void mapcharacter::remove_from_pos()
+{
+  refmap->remove_mapchar(this,submap,posx,posy);
 }
 
 void mapcharacter::jump(u_int16 smap, u_int16 x, u_int16 y, 
@@ -179,8 +178,8 @@ bool mapcharacter::can_go_north()
       {
 	if(placetpl[i-sx+ax][j-sy+ay].walkable) continue;
 	if(!j) continue;
-	if(!(refmap->submap[submap]->land[i][j].is_walkable_up() &&
-	     refmap->submap[submap]->land[i][j-1].is_walkable_down() &&
+	if(!(refmap->submap[submap]->land[i][j].is_walkable_north() &&
+	     refmap->submap[submap]->land[i][j-1].is_walkable_south() &&
 	     refmap->submap[submap]->land[i][j-1].is_free()))
 	  return false;
       }
@@ -205,8 +204,8 @@ bool mapcharacter::can_go_south()
       {
 	if(placetpl[i-sx+ax][j-sy+ay].walkable) continue;
 	if(j==refmap->submap[submap]->height-1) continue;
-	if(!(refmap->submap[submap]->land[i][j].is_walkable_down() &&
-	     refmap->submap[submap]->land[i][j+1].is_walkable_up() &&
+	if(!(refmap->submap[submap]->land[i][j].is_walkable_south() &&
+	     refmap->submap[submap]->land[i][j+1].is_walkable_north() &&
 	     refmap->submap[submap]->land[i][j+1].is_free()))
 	  return false;
       }
@@ -231,8 +230,8 @@ bool mapcharacter::can_go_east()
       {
 	if(placetpl[i-sx+ax][j-sy+ay].walkable) continue;
 	if(i==refmap->submap[submap]->length-1) continue;
-	if(!(refmap->submap[submap]->land[i][j].is_walkable_right() &&
-	     refmap->submap[submap]->land[i+1][j].is_walkable_left() &&
+	if(!(refmap->submap[submap]->land[i][j].is_walkable_east() &&
+	     refmap->submap[submap]->land[i+1][j].is_walkable_west() &&
 	     refmap->submap[submap]->land[i+1][j].is_free()))
 	  return false;
       }
@@ -257,8 +256,8 @@ bool mapcharacter::can_go_west()
       {
 	if(placetpl[i-sx+ax][j-sy+ay].walkable) continue;
 	if(!i) continue;
-	if(!(refmap->submap[submap]->land[i][j].is_walkable_left() &&
-	     refmap->submap[submap]->land[i-1][j].is_walkable_right() &&
+	if(!(refmap->submap[submap]->land[i][j].is_walkable_west() &&
+	     refmap->submap[submap]->land[i-1][j].is_walkable_east() &&
 	     refmap->submap[submap]->land[i-1][j].is_free()))
 	  return false;
       }
@@ -424,6 +423,7 @@ void mapcharacter::set_action(char * file)
 }
 #endif
 
+#ifndef _EDIT_
 void mapcharacter::update_move()
 {
   if(refmap) switch(current_move)
@@ -542,14 +542,15 @@ void mapcharacter::update_move()
   anim[current_move]->update();
   ask_move=NO_MOVE;
 }
+#endif
 
 void mapcharacter::update()
 {
 #ifndef _EDIT_
   if(schedule && schedule_activated) 
     PyEval_EvalCode(schedule,data::globals,locals);
-#endif
   update_move();
+#endif
 }
 
 void mapcharacter::launch_action(mapcharacter * requester)
@@ -659,7 +660,10 @@ s_int8 mapcharacter::save(const char * fname)
 {
   gzFile file;
   u_int8 retvalue;
-  file=gzopen(fname,"wb6"); 
+  char fdef[strlen(fname)+strlen(MAPCHAR_DIR)+1];
+  strcpy(fdef,MAPCHAR_DIR);
+  strcat(fdef,fname);
+  file=gzopen(fdef,"wb6"); 
   if(!file) return(-1);
   retvalue=put(file);
   gzclose(file);

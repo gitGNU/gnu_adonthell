@@ -178,7 +178,10 @@ s_int8 mapobject::load(const char * fname)
 {
   gzFile file;
   u_int8 retvalue;
-  file=gzopen(fname,"rb"); 
+  char fdef[strlen(fname)+strlen(MAPOBJECTS_DIR)+1];
+  strcpy(fdef,MAPOBJECTS_DIR);
+  strcat(fdef,fname);
+  file=gzopen(fdef,"rb"); 
   if(!file) return -1;
   retvalue=get(file);
   gzclose(file);
@@ -210,7 +213,10 @@ s_int8 mapobject::save(const char * fname)
 {
   gzFile file;
   u_int8 retvalue;
-  file=gzopen(fname,"wb6"); 
+  char fdef[strlen(fname)+strlen(MAPOBJECTS_DIR)+1];
+  strcpy(fdef,MAPOBJECTS_DIR);
+  strcat(fdef,fname);
+  file=gzopen(fdef,"wb6"); 
   if(!file) return -1;
   retvalue=put(file);
   gzclose(file);
@@ -389,7 +395,8 @@ void mapobject::save()
 void mapobject::load()
 {
   mapobject * t=new mapobject;
-  win_file_select * wf=new win_file_select(60,20,200,200,th,font,".mobj");
+  win_file_select * wf=new win_file_select(60,20,200,200,th,font,".mobj",
+					   MAPOBJECTS_DIR);
   char * s=wf->wait_for_select(makeFunctor(*this,&mapobject::update_editor),
 			       makeFunctor(*this,&mapobject::draw_editor));
   if(!s)
@@ -416,26 +423,10 @@ void mapobject::load()
   must_upt_label_part=true;
 }
 
-void mapobject::add_animation()
+void mapobject::new_animation()
 {
   animation anim;
   u_int16 p;
-  win_query * qw=new win_query(70,40,th,font,"Load animation: (Type \"new\" for editing a new one)");
-  char * s=qw->wait_for_text(makeFunctor(*this,
-					 &mapobject::update_editor),
-			     makeFunctor(*this,
-					 &mapobject::draw_editor));
-  if(!s) return;
-  if(strcmp(s,"new"))
-    if(anim.load(s))
-      {
-	win_info * wi=new win_info(70,40,th,font,"Error loading animation!");
-	wi->wait_for_keypress(makeFunctor(*this,&mapobject::update_editor),
-			      makeFunctor(*this,&mapobject::draw_editor));
-	delete wi;
-	delete qw;
-	return;
-      }
   do
     {
       char tmp[255];
@@ -450,7 +441,50 @@ void mapobject::add_animation()
       if(!s2)
 	{ 
 	  delete qw2;
-	  delete qw;
+	  return;
+	}
+      if(!s2[0]) p=nbr_of_parts;
+      else p=atoi(s2);
+      delete qw2;
+    }
+  while(p>nbr_of_parts);
+  insert_animation(anim,p);
+  part[p].editor();
+  init_parts();
+  must_upt_label_part=true;
+}
+
+void mapobject::add_animation()
+{
+  animation anim;
+  u_int16 p;
+  win_file_select * wf=new win_file_select(60,20,200,200,th,font,".anim");
+  char * s=wf->wait_for_select(makeFunctor(*this,&mapobject::update_editor),
+			       makeFunctor(*this,&mapobject::draw_editor));
+  if(!s) return;
+  char st[500];
+  if(anim.load(s))
+    {
+      sprintf(st,"Error loading %s!",s);
+      delete wf;
+      return;
+    }
+  sprintf(st,"%s loaded successfully!",s);
+  do
+    {
+      char tmp[255];
+      char * s2;
+      sprintf(tmp,"Insert at pos(0-%d): (Default %d)",nbr_of_parts,
+	      nbr_of_parts);
+      win_query * qw2=new win_query(70,40,th,font,tmp);
+      s2=qw2->wait_for_text(makeFunctor(*this,
+				       &mapobject::update_editor),
+			   makeFunctor(*this,
+				       &mapobject::draw_editor));
+      if(!s2)
+	{ 
+	  delete qw2;
+	  delete wf;
 	  return;
 	}
       if(!s2[0]) p=nbr_of_parts;
@@ -460,7 +494,7 @@ void mapobject::add_animation()
   while(p>nbr_of_parts);
   insert_animation(anim,p);
   if(!strcmp(s,"new")) part[p].editor();
-  delete qw;
+  delete wf;
   init_parts();
   must_upt_label_part=true;
 }
@@ -570,6 +604,8 @@ void mapobject::update_editor_keys()
     { add_animation(); }
   if(input::has_been_pushed(SDLK_F2))
     { delete_animation(currentpart); }
+  if(input::has_been_pushed(SDLK_F3))
+    { new_animation(); }
 
   if(!nbr_of_parts) return;
 
@@ -673,20 +709,20 @@ void mapobject::update_editor_keys()
 
   if(input::has_been_pushed(SDLK_x))
     if(show_grid)
-      placetpl[posx][posy].set_walkable_left
-	(placetpl[posx][posy].is_walkable_left()?false:true);
+      placetpl[posx][posy].set_walkable_west
+	(placetpl[posx][posy].is_walkable_west()?false:true);
   if(input::has_been_pushed(SDLK_v))
     if(show_grid)
-      placetpl[posx][posy].set_walkable_right
-	(placetpl[posx][posy].is_walkable_right()?false:true);
+      placetpl[posx][posy].set_walkable_east
+	(placetpl[posx][posy].is_walkable_east()?false:true);
   if(input::has_been_pushed(SDLK_c))
     if(show_grid)
-      placetpl[posx][posy].set_walkable_down
-	(placetpl[posx][posy].is_walkable_down()?false:true);
+      placetpl[posx][posy].set_walkable_south
+	(placetpl[posx][posy].is_walkable_south()?false:true);
   if(input::has_been_pushed(SDLK_d))
     if(show_grid)
-      placetpl[posx][posy].set_walkable_up
-	(placetpl[posx][posy].is_walkable_up()?false:true);
+      placetpl[posx][posy].set_walkable_north
+	(placetpl[posx][posy].is_walkable_north()?false:true);
 
   if(input::has_been_pushed(SDLK_b))
     if(show_grid)

@@ -147,7 +147,7 @@ void debug_dlg::update ()
 
     while ((mychar = (character *) data::characters.next ()) != NULL)
     {
-        parent = gtk_ctree_find_by_row_data_custom (tree, NULL, mychar->name, (GCompareFunc) strcompare);
+        parent = gtk_ctree_find_by_row_data_custom (tree, NULL, mychar->get_name(), (GCompareFunc) strcompare);
 
         // See whether the current node's children have changed
         if (update_children (tree, parent, mychar))
@@ -381,7 +381,7 @@ void debug_dlg::init ()
     gtk_clist_freeze (GTK_CLIST (char_tree));
     while ((mychar = (character *) data::characters.next ()) != NULL)
     {
-        text[0] = mychar->name;
+        text[0] = mychar->get_name();
         text[1] = "";
 
         data = new dbg_node_data (strdup (text[0]), 2);

@@ -15,6 +15,8 @@
 #ifndef _LANDMAP_H
 #define _LANDMAP_H
 
+#define MAPS_DIR "maps/"
+
 #include "mapobject.h"
 #include "mapcharacter.h"
 #include "event.h"
@@ -83,6 +85,8 @@ class mapsquare_char
   friend class mapview;
 };
 
+#endif
+
 class mapsquare
 {
 #if defined _DEBUG_ || defined _EDIT_
@@ -92,16 +96,14 @@ class mapsquare
   u_int16 type; // Terrain type ; need to be defined later
   u_int8 walkable;
 
+#ifndef SWIG
   list<mapsquare_tile> tiles;
   list<mapsquare_tile>::iterator base_begin;
   list<mapsquare_char> mapchars;
+#endif
  public:
   mapsquare();
   ~mapsquare();
-
-  // Draw takes only a mapview as argument.
-  void draw(s_int16 x, s_int16 y, mapobject ** pattern, 
-	    drawing_area * da_opt=NULL);
 
   bool is_free() 
     { 
@@ -119,30 +121,30 @@ class mapsquare
       return NULL;
     }
 
-  bool is_walkable_left() { return (walkable & WALKABLE_LEFT); }
-  bool is_walkable_right() { return (walkable & WALKABLE_RIGHT); }
-  bool is_walkable_up() { return (walkable & WALKABLE_UP); }
-  bool is_walkable_down() { return (walkable & WALKABLE_DOWN); }
+  bool is_walkable_west() { return (walkable & WALKABLE_WEST); }
+  bool is_walkable_east() { return (walkable & WALKABLE_EAST); }
+  bool is_walkable_north() { return (walkable & WALKABLE_NORTH); }
+  bool is_walkable_south() { return (walkable & WALKABLE_SOUTH); }
 
-  void set_walkable_left(bool w)
+  void set_walkable_west(bool w)
     {
-      if(!w) walkable&=(ALL_WALKABLE-WALKABLE_LEFT);
-      else walkable|=WALKABLE_LEFT;
+      if(!w) walkable&=(ALL_WALKABLE-WALKABLE_WEST);
+      else walkable|=WALKABLE_WEST;
     }
-  void set_walkable_right(bool w)
+  void set_walkable_east(bool w)
     {
-      if(!w) walkable&=(ALL_WALKABLE-WALKABLE_RIGHT);
-      else walkable|=WALKABLE_RIGHT;
+      if(!w) walkable&=(ALL_WALKABLE-WALKABLE_EAST);
+      else walkable|=WALKABLE_EAST;
     }  
-  void set_walkable_up(bool w)
+  void set_walkable_north(bool w)
     {
-      if(!w) walkable&=(ALL_WALKABLE-WALKABLE_UP);
-      else walkable|=WALKABLE_UP;
+      if(!w) walkable&=(ALL_WALKABLE-WALKABLE_NORTH);
+      else walkable|=WALKABLE_NORTH;
     }  
-  void set_walkable_down(bool w)
+  void set_walkable_south(bool w)
     {
-      if(!w) walkable&=(ALL_WALKABLE-WALKABLE_DOWN);
-      else walkable|=WALKABLE_DOWN;
+      if(!w) walkable&=(ALL_WALKABLE-WALKABLE_SOUTH);
+      else walkable|=WALKABLE_SOUTH;
     }
 
   friend class mapsquare_tile;
@@ -153,18 +155,22 @@ class mapsquare
 
 class landmap;
 
+#ifndef SWIG
+
 class landsubmap
 {
 #if defined _DEBUG_ || defined _EDIT_
   static u_int16 a_d_diff;
 #endif // _DEBUG_
- public:
+ private:
   landmap * m_map;
   mapsquare ** land;          // The mapsquares refers to the parent map
   // patterns.
   u_int16 length, height;
-  u_int16 d_length, d_height; // Number of tiles to draw on the screen. 
-  // MUST BE EVEN! (Must be the same values as the parent's map)
+  inline void allocmap(u_int16 l, u_int16 h);
+  inline void destroymap();
+  s_int8 put_mapobject(u_int16 px, u_int16 py, 
+		       u_int16 patnbr);
 
  public:
   landsubmap();
@@ -172,8 +178,6 @@ class landsubmap
   ~landsubmap();
   
   landsubmap& operator = (landsubmap & sm);
-  inline void allocmap(u_int16 l, u_int16 h);
-  inline void destroymap();
   void resize(u_int16 l, u_int16 h);
 
   s_int8 get(gzFile file);
@@ -185,19 +189,17 @@ class landsubmap
   u_int16 get_length();
   u_int16 get_height();
 
-  s_int8 set_square_pattern(u_int16 px, u_int16 py, 
-			    u_int16 patnbr);
-
-  void draw_square(u_int16 x, u_int16 y, u_int16 px, u_int16 py, 
-		   mapobject ** pattern, drawing_area * da_opt=NULL);
-  //  void draw(mapobject * pattern, drawing_area * da_opt=NULL);
   friend class mapview;
   friend class mapcharacter;
+  friend class landmap;
 };  // landsubmap
 
 #endif // SWIG
 
-class landmap: public event_list
+class landmap
+#ifndef _EDIT_
+: public event_list
+#endif
 {
 #if defined _DEBUG_ || defined _EDIT_
   static u_int16 a_d_diff;
@@ -225,7 +227,6 @@ class landmap: public event_list
   mapobject ** pattern;
   vector<string> objsrc;
   landsubmap ** submap;
-  mapview * myview;
 #endif // SWIG
 
   u_int16 nbr_of_patterns;
@@ -235,8 +236,6 @@ class landmap: public event_list
   landmap();
   void clear();
   ~landmap();
-
-  mapview * get_mapview() { return myview; }
 
 #ifndef SWIG
   landmap& operator =(const landmap& lm);
@@ -265,20 +264,17 @@ class landmap: public event_list
   // an error code.
   s_int8 remove_submap(u_int16 nbr);
 
-  s_int8 set_square_pattern(u_int16 smap, u_int16 px, u_int16 py, 
-			    u_int16 patnbr);
+  s_int8 put_mapobject(u_int16 smap, u_int16 px, u_int16 py, 
+		       u_int16 patnbr);
 
   void update();
-
-  void draw_square(u_int16 smap, u_int16 x, u_int16 y, u_int16 px, u_int16 py,
-		   drawing_area * da_opt=NULL);
 
 #ifndef SWIG
   s_int8 add_submap();
   s_int8 add_submap(u_int16 l, u_int16 h);
   
-  void remove_obj_from_square(u_int16 smap,
-			      list<mapsquare_tile>::iterator obj);  
+  void remove_mapobject(u_int16 smap,
+			list<mapsquare_tile>::iterator obj);  
   s_int8 insert_mapobject(mapobject &an, u_int16 pos,
 			  const char * srcfile="");
   s_int8 delete_mapobject(u_int16 pos);

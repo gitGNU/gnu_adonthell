@@ -32,6 +32,7 @@ extern "C"
 #include "main.h"
 #include "graph.h"
 #include "interface.h"
+#include "../../character.h"
 
 int 
 main (int argc, char *argv[])
@@ -76,14 +77,14 @@ main (int argc, char *argv[])
     if (m == NULL) return 1;
         
     // Create a player
-    MainWnd->myplayer = new player;
+    MainWnd->myplayer = new character;
 
     // Add the player to the character array
     data::the_player = MainWnd->myplayer;
 
     // Make "the_player" available to the interpreter 
 	data::globals = PyModule_GetDict(m);
-    PyDict_SetItemString (data::globals, "the_player", pass_instance (MainWnd->myplayer, "player"));
+    PyDict_SetItemString (data::globals, "the_player", pass_instance (MainWnd->myplayer, "character"));
 
     // create character array
     PyObject *chars = PyDict_New ();
@@ -95,23 +96,23 @@ main (int argc, char *argv[])
     gzFile in = gzopen (tmp, "r");
     if (in)
     {
-        npc *mynpc = NULL;
+        character *mynpc = NULL;
     
         while (gzgetc (in))
         {
-            mynpc = new npc;
-            mynpc->load (in, false);
-            PyDict_SetItemString (chars, mynpc->name, pass_instance (mynpc, "npc"));
+            mynpc = new character;
+            mynpc->load (in);
+            PyDict_SetItemString (chars, mynpc->get_name(), pass_instance (mynpc, "character"));
         }
 
         if (mynpc == NULL)
         {
-            mynpc = new npc ();
-            mynpc->name = strdup ("Dummy Character");
+            mynpc = new character ();
+            mynpc->set_name("Dummy Character");
         }
         
         // set a shortcut to one of the NPC's
-        PyDict_SetItemString (data::globals, "the_npc", pass_instance (mynpc, "npc"));
+        PyDict_SetItemString (data::globals, "the_npc", pass_instance (mynpc, "character"));
         MainWnd->mynpc = mynpc;
 
         gzclose (in);
@@ -148,7 +149,7 @@ main (int argc, char *argv[])
     // Misc initialization
     init_app (MainWnd);
 
-    data::characters.set (MainWnd->myplayer->name, MainWnd->myplayer);
+    data::characters.set (MainWnd->myplayer->get_name(), MainWnd->myplayer);
 
     MainWnd->wnd = NULL;
     MainWnd->text_dlg = NULL;
@@ -202,7 +203,7 @@ init_app (MainFrame * MainWnd)
     MainWnd->cust_func = "";
     MainWnd->changed = 0;
     
-    MainWnd->myplayer->name = strdup ("Banec");
+    MainWnd->myplayer->set_name ("Banec");
     MainWnd->myplayer->set ("race", 0);     // Dwarf
     MainWnd->myplayer->set ("gender", 1);   // Male
 }

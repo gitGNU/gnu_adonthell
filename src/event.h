@@ -15,6 +15,8 @@
 #ifndef __EVENT_H__
 #define __EVENT_H__
 
+#define EVENTS_DIR "scripts/events/"
+
 #include <vector>
 #include <zlib.h>
 
@@ -54,6 +56,7 @@ protected:
     virtual void load (gzFile) = 0;             // load the event data
 };
 
+#if defined(USE_MAP)
 // Baseclass for enter/leave events
 class base_map_event : public event
 {
@@ -90,6 +93,7 @@ class leave_event : public base_map_event
 public:
     leave_event ();
 };
+#endif
 
 // To notify at a certain time
 class time_event : public event
@@ -119,9 +123,11 @@ public:
     ~event_list ();                             // Unregister all events
 
     void add_event (event* ev);
+#if defined(USE_MAP)
     void add_map_event(char * script, u_int16 type, s_int32 esubmap=-1,
 		       s_int32 ex=-1,s_int32 ey=-1, s_int16 edir=-1, 
 		       mapcharacter * ec=NULL);
+#endif
     vector<event*> events;                      // List of registered events
 protected:
 };

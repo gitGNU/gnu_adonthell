@@ -116,7 +116,7 @@ void dialog::run (u_int32 index)
     u_int32 nsz, psz, i, j = 0, k = 0, l = 1;
     yarg randgen;
     s_int32 s;
-    
+
     // Is it sufficient to get those objects only once???
     PyObject *npc, *player, *cont;
 
@@ -135,6 +135,7 @@ void dialog::run (u_int32 index)
     
     // Execute the next part of the dialogue
     PyObject_CallMethod (instance, "run", "i", answers[index]);
+
 #ifdef _DEBUG_
     show_traceback ();
     cout << flush;
@@ -159,6 +160,8 @@ void dialog::run (u_int32 index)
     cont = PyObject_GetAttrString (instance, "cont");
     npc_color = PyInt_AsLong (PyObject_GetAttrString (instance, "color"));
     
+    
+
     // 2. Search the NPC part for used text
     for (i = 0; (int)i < PyList_Size (npc); i++)
     {
@@ -175,7 +178,6 @@ void dialog::run (u_int32 index)
     if (nsz != 0)
     {
         text = new char*[nsz+psz];
-    
         // 3. Randomly chose between possible NPC replies
         randgen.init (" ", 0, nsz-1);
     }
@@ -239,7 +241,7 @@ char* dialog::scan_string (const char *s)
     PyObject *result;
     char *start, *mid, *string = NULL;
     char *tmp, *newstr = strdup (s);
-    player *the_player = (player*) data::the_player;
+    character *the_player = (character*) data::the_player;
 
     // replace $... shortcuts
     while (1)
@@ -252,10 +254,10 @@ char* dialog::scan_string (const char *s)
         if (strncmp (start, "$name", 5) == 0)
         {
             begin = strlen (newstr) - strlen (start);
-            tmp = new char[strlen (newstr) - 4 + strlen (the_player->name)];
+            tmp = new char[strlen (newstr) - 4 + strlen (the_player->get_name())];
             strncpy (tmp, newstr, begin);
             tmp[begin] = 0;
-            strcat (tmp, the_player->name);
+            strcat (tmp, the_player->get_name());
             strcat (tmp, start+5);
             delete newstr;
             newstr = tmp;

@@ -22,39 +22,40 @@ class mapsquaretpl
 {
  public:
 #define ALL_WALKABLE 15
-#define WALKABLE_DOWN 1
-#define WALKABLE_UP 2
-#define WALKABLE_RIGHT 4
-#define WALKABLE_LEFT 8
+#define WALKABLE_SOUTH 1
+#define WALKABLE_NORTH 2
+#define WALKABLE_EAST 4
+#define WALKABLE_WEST 8
 #define NONE_WALKABLE 0
   u_int8 walkable;
 
   mapsquaretpl();
   s_int8 get(gzFile file);
   s_int8 put(gzFile file);
-  bool is_walkable_left() { return walkable & WALKABLE_LEFT; }
-  bool is_walkable_right() { return walkable & WALKABLE_RIGHT; }
-  bool is_walkable_up() { return walkable & WALKABLE_UP; }
-  bool is_walkable_down() { return walkable & WALKABLE_DOWN; }
-  void set_walkable_left(bool w)
+  bool is_walkable_west() { return walkable & WALKABLE_WEST; }
+  bool is_walkable_east() { return walkable & WALKABLE_EAST; }
+  bool is_walkable_north() { return walkable & WALKABLE_NORTH; }
+  bool is_walkable_south() { return walkable & WALKABLE_SOUTH; }
+
+  void set_walkable_west(bool w)
     {
-      if(!w) walkable&=(ALL_WALKABLE-WALKABLE_LEFT);
-      else walkable|=WALKABLE_LEFT;
+      if(!w) walkable&=(ALL_WALKABLE-WALKABLE_WEST);
+      else walkable|=WALKABLE_WEST;
     }
-  void set_walkable_right(bool w)
+  void set_walkable_east(bool w)
     {
-      if(!w) walkable&=(ALL_WALKABLE-WALKABLE_RIGHT);
-      else walkable|=WALKABLE_RIGHT;
+      if(!w) walkable&=(ALL_WALKABLE-WALKABLE_EAST);
+      else walkable|=WALKABLE_EAST;
     }  
-  void set_walkable_up(bool w)
+  void set_walkable_north(bool w)
     {
-      if(!w) walkable&=(ALL_WALKABLE-WALKABLE_UP);
-      else walkable|=WALKABLE_UP;
+      if(!w) walkable&=(ALL_WALKABLE-WALKABLE_NORTH);
+      else walkable|=WALKABLE_NORTH;
     }  
-  void set_walkable_down(bool w)
+  void set_walkable_south(bool w)
     {
-      if(!w) walkable&=(ALL_WALKABLE-WALKABLE_DOWN);
-      else walkable|=WALKABLE_DOWN;
+      if(!w) walkable&=(ALL_WALKABLE-WALKABLE_SOUTH);
+      else walkable|=WALKABLE_SOUTH;
     }
   
   friend class maptpl;

@@ -19,9 +19,14 @@
 
 #include "storage.h"
 #include "gametime.h"
-#include "Python.h"
 
+#if defined(USE_PYTHON)
+#include "Python.h"
+#endif
+
+#if defined(USE_MAP)
 class mapengine;
+#endif
 
 // all the attributes related to a saved game
 class gamedata
@@ -52,7 +57,6 @@ private:
 // to load and save that data
 
 class character;
-class mapcharacter;
 
 class data
 {
@@ -64,13 +68,14 @@ public:
     static gamedata* next_save ();          // Iterate over saved game descriptions
     static char* get_adonthell_dir ();      // Return the user's adonthell directory
 
+#if defined(USE_PYTHON)
     static PyObject *globals;               // Global namespace to use in scripts
+#endif
     static gametime *time;                  // The gametime object
     static objects characters;              // All the characters 
     static objects quests;                  // All the quests
     static character *the_player;           // The main character
-    static mapcharacter *the_map_player;
-#ifndef _EDIT_
+#if defined(USE_MAP)
     static mapengine * map_engine;          // The map engine
 #endif
 

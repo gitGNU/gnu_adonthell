@@ -60,7 +60,6 @@ void mapview::attach_map(landmap * m)
 {
   m_map=m;
   currentsubmap=0;
-  m->myview=this;
 #ifndef _EDIT_
   PyDict_SetItemString(locals,"mymap",pass_instance(m_map,"landmap"));
 #endif
@@ -85,7 +84,6 @@ void mapview::attach_map(landmap * m)
 
 void mapview::detach_map()
 {
-  m_map->myview=NULL;
   m_map=NULL;
 #ifndef _EDIT_
   PyDict_DelItemString(locals,"mymap");
@@ -533,7 +531,8 @@ void mapview::add_mapobject()
 {
   mapobject mobj;
   u_int16 p;
-  win_file_select * wf=new win_file_select(60,20,200,200,th,font,".mobj");
+  win_file_select * wf=new win_file_select(60,20,200,200,th,font,".mobj",
+					   MAPOBJECTS_DIR);
   char * s=wf->wait_for_select(makeFunctor(*this,&mapview::update_editor),
 			       makeFunctor(*this,&mapview::draw_editor));
   if(!s) return;
@@ -675,7 +674,8 @@ void mapview::delete_submap()
 
 void mapview::load_map()
 {
-  win_file_select * wf=new win_file_select(60,20,200,200,th,font,".map");
+  win_file_select * wf=new win_file_select(60,20,200,200,th,font,".map",
+					   MAPS_DIR);
   char * s=wf->wait_for_select(makeFunctor(*this,&mapview::update_editor),
 			       makeFunctor(*this,&mapview::draw_editor));
 
@@ -912,22 +912,22 @@ void mapview::draw_walkable(u_int16 x, u_int16 y, drawing_area * da_opt=NULL)
 	rx=(posx>0)?i-posx:i;
 	ry=(posy>0)?j-posy:j;
 	const u_int32 col=0x0ff000;
-	if(!l->land[i][j].is_walkable_left())
+	if(!l->land[i][j].is_walkable_west())
 	  screen::drawbox(rx*MAPSQUARE_SIZE-offx+1,
 			  ry*MAPSQUARE_SIZE-offy+1,
 			  1,MAPSQUARE_SIZE-2,col);
   
-	if(!l->land[i][j].is_walkable_right())
+	if(!l->land[i][j].is_walkable_east())
 	  screen::drawbox(rx*MAPSQUARE_SIZE-offx+MAPSQUARE_SIZE-1,
 			  ry*MAPSQUARE_SIZE-offy+1,
 			  1,MAPSQUARE_SIZE-2,col);
 	
-	if(!l->land[i][j].is_walkable_up())
+	if(!l->land[i][j].is_walkable_north())
 	  screen::drawbox(rx*MAPSQUARE_SIZE-offx+1,
 			  ry*MAPSQUARE_SIZE-offy+1,
 			  MAPSQUARE_SIZE-2,1,col);
 	
-	if(!l->land[i][j].is_walkable_down())
+	if(!l->land[i][j].is_walkable_south())
 	  screen::drawbox(rx*MAPSQUARE_SIZE-offx+1,
 			  ry*MAPSQUARE_SIZE-offy+MAPSQUARE_SIZE-1,
 			  MAPSQUARE_SIZE-2,1,col);
@@ -1028,8 +1028,8 @@ void mapview::update_editor_keys()
     {
       if(m_map->nbr_of_submaps && m_map->nbr_of_patterns)
 	{
-	  m_map->set_square_pattern(currentsubmap,mapselect::posx,
-				    mapselect::posy,currentobj);
+	  m_map->put_mapobject(currentsubmap,mapselect::posx,
+			       mapselect::posy,currentobj);
 	  update_current_tile(*current_tile);
 	  must_upt_label_square=true;
 	}
@@ -1041,7 +1041,7 @@ void mapview::update_editor_keys()
 	 current_tile!=m_map->submap[currentsubmap]->land
 	 [mapselect::posx][mapselect::posy].tiles.end())
 	{
-	  m_map->remove_obj_from_square(currentsubmap,current_tile);
+	  m_map->remove_mapobject(currentsubmap,current_tile);
 	  current_tile=m_map->submap[currentsubmap]->land[mapselect::posx]
 	    [mapselect::posy].tiles.begin();
 	  must_upt_label_square=true;

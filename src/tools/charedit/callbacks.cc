@@ -62,6 +62,7 @@ on_save_activate (GtkMenuItem * menuitem, gpointer user_data)
         return;
     }
     
+    /*
     // has the character a schedule?
     schedule = g_strstrip (gtk_entry_get_text (GTK_ENTRY (wnd->scl_entry)));
     if (schedule == NULL || !strcmp (schedule, ""))
@@ -72,7 +73,7 @@ on_save_activate (GtkMenuItem * menuitem, gpointer user_data)
         gtk_main ();
         return;
     }
-
+    
     // has the character a dialogue?
     dialogue = g_strstrip (gtk_entry_get_text (GTK_ENTRY (wnd->dlg_entry)));
     if (dialogue == NULL || !strcmp (dialogue, ""))
@@ -83,6 +84,7 @@ on_save_activate (GtkMenuItem * menuitem, gpointer user_data)
         gtk_main ();
         return;
     }
+    */
 
     // chose directory to save to
     dir_browser = xmms_create_dir_browser ("Select character directory", wnd->char_dir, GTK_SELECTION_SINGLE, wnd);

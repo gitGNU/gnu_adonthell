@@ -1,4 +1,4 @@
-# Makefile.in generated automatically by automake 1.4 from Makefile.am
+# Makefile.in generated automatically by automake 1.4a from Makefile.am
 
 # Copyright (C) 1994, 1995-8, 1999 Free Software Foundation, Inc.
 # This Makefile.in is free software; the Free Software Foundation
@@ -9,7 +9,6 @@
 # but WITHOUT ANY WARRANTY, to the extent permitted by law; without
 # even the implied warranty of MERCHANTABILITY or FITNESS FOR A
 # PARTICULAR PURPOSE.
-
 
 SHELL = @SHELL@
 
@@ -46,9 +45,10 @@ AUTOMAKE = @AUTOMAKE@
 AUTOHEADER = @AUTOHEADER@
 
 INSTALL = @INSTALL@
-INSTALL_PROGRAM = @INSTALL_PROGRAM@ $(AM_INSTALL_PROGRAM_FLAGS)
+INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
+INSTALL_STRIP_FLAG =
 transform = @program_transform_name@
 
 NORMAL_INSTALL = :
@@ -57,6 +57,8 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
+AMTAR = @AMTAR@
+AMTARFLAGS = @AMTARFLAGS@
 CC = @CC@
 CXX = @CXX@
 CXXCPP = @CXXCPP@
@@ -72,29 +74,60 @@ VORBISFILE_LIBS = @VORBISFILE_LIBS@
 VORBIS_CFLAGS = @VORBIS_CFLAGS@
 VORBIS_LIBS = @VORBIS_LIBS@
 
+
 bin_PROGRAMS = animedit mapobjedit mapcharedit mapedit
 
 animedit_SOURCES = animedit.cpp
 
-animedit_LDADD = animation.o animation_off.o data.o event.o drawing_area.o fileops.o game.o gametime.o image.o input.o lex.prefs.o pnm.o prefs.o character.o screen.o storage.o py_inc.o quest.o win_base.o win_border.o win_container.o win_font.o win_theme.o win_scrolled.o win_background.o win_scrollbar.o win_file.o win_image.o win_label.o win_select.o win_write.o win_query.o win_info.o win_file_select.o yarg.o
+animedit_LDADD = animation.o animation_off.o \
+drawing_area.o fileops.o game.o image.o \
+input.o lex.prefs.o pnm.o prefs.o \
+screen.o storage.o quest.o win_base.o win_border.o \
+win_container.o win_font.o win_theme.o win_scrolled.o \
+win_background.o win_scrollbar.o win_file.o win_image.o \
+win_label.o win_select.o win_write.o win_query.o win_info.o \
+win_file_select.o yarg.o
 
 
 mapobjedit_SOURCES = mapobjedit.cpp
 
-mapobjedit_LDADD = animation.o animation_off.o data.o event.o drawing_area.o fileops.o game.o gametime.o image.o input.o lex.prefs.o pnm.o prefs.o mapselect.o maptpl.o mapobject.o character.o screen.o storage.o py_inc.o quest.o win_base.o win_border.o win_container.o win_font.o win_theme.o win_scrolled.o win_background.o win_scrollbar.o win_file.o win_image.o win_label.o win_select.o win_write.o win_query.o win_info.o win_file_select.o yarg.o
+mapobjedit_LDADD = animation.o animation_off.o \
+drawing_area.o fileops.o game.o image.o \
+input.o lex.prefs.o pnm.o prefs.o mapselect.o maptpl.o \
+mapobject.o character_base.o screen.o storage.o quest.o \
+win_base.o win_border.o win_container.o win_font.o win_theme.o \
+win_scrolled.o win_background.o win_scrollbar.o win_file.o \
+win_image.o win_label.o win_select.o win_write.o win_query.o \
+win_info.o win_file_select.o yarg.o
 
 
 mapcharedit_SOURCES = mapcharedit.cpp
 
-mapcharedit_LDADD = animation.o animation_off.o data.o event.o drawing_area.o fileops.o game.o gametime.o image.o input.o lex.prefs.o pnm.o prefs.o mapselect.o maptpl.o screen.o storage.o py_inc.o quest.o win_base.o win_border.o win_container.o win_font.o win_theme.o win_scrolled.o mapcharacter.o character.o mapobject.o landmap.o mapview.o win_background.o win_scrollbar.o win_file.o win_image.o win_label.o win_select.o win_write.o win_query.o win_info.o win_file_select.o yarg.o
+mapcharedit_LDADD = animation.o animation_off.o \
+drawing_area.o fileops.o game.o image.o \
+input.o lex.prefs.o pnm.o prefs.o mapselect.o maptpl.o \
+screen.o storage.o quest.o win_base.o win_border.o \
+win_container.o win_font.o win_theme.o win_scrolled.o \
+mapcharacter.o character_base.o mapobject.o landmap.o mapview.o \
+win_background.o win_scrollbar.o win_file.o win_image.o \
+win_label.o win_select.o win_write.o win_query.o win_info.o \
+win_file_select.o yarg.o
 
 
 mapedit_SOURCES = mapedit.cpp
 
-mapedit_LDADD = animation.o animation_off.o data.o event.o drawing_area.o fileops.o game.o gametime.o image.o input.o lex.prefs.o mapselect.o maptpl.o mapobject.o mapcharacter.o landmap.o character.o mapview.o pnm.o prefs.o screen.o storage.o py_inc.o quest.o win_base.o win_border.o win_container.o win_font.o win_theme.o win_scrolled.o win_background.o win_scrollbar.o win_file.o win_image.o win_label.o win_select.o win_write.o win_query.o win_info.o win_file_select.o yarg.o
+mapedit_LDADD = animation.o animation_off.o \
+drawing_area.o fileops.o game.o image.o \
+input.o lex.prefs.o mapselect.o maptpl.o mapobject.o \
+mapcharacter.o landmap.o character_base.o mapview.o pnm.o prefs.o \
+screen.o storage.o quest.o win_base.o win_border.o \
+win_container.o win_font.o win_theme.o win_scrolled.o \
+win_background.o win_scrollbar.o win_file.o win_image.o \
+win_label.o win_select.o win_write.o win_query.o win_info.o \
+win_file_select.o yarg.o
 
 
-CPPFLAGS =  -I../.. -D_EDIT_
+CPPFLAGS =  -I../.. -D_EDIT_ -DUSE_MAP
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = ../../../header.h
 CONFIG_CLEAN_FILES = 
@@ -104,64 +137,66 @@ PROGRAMS =  $(bin_PROGRAMS)
 DEFS = @DEFS@ -I. -I$(srcdir) -I../../..
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
-animedit_OBJECTS =  animedit.o
-animedit_DEPENDENCIES =  animation.o animation_off.o data.o event.o \
-drawing_area.o fileops.o game.o gametime.o image.o input.o lex.prefs.o \
-pnm.o prefs.o character.o screen.o storage.o py_inc.o quest.o \
+am_animedit_OBJECTS =  animedit.o
+animedit_OBJECTS =  $(am_animedit_OBJECTS)
+animedit_DEPENDENCIES =  animation.o animation_off.o drawing_area.o \
+fileops.o game.o image.o input.o lex.prefs.o pnm.o prefs.o screen.o \
+storage.o quest.o win_base.o win_border.o win_container.o win_font.o \
+win_theme.o win_scrolled.o win_background.o win_scrollbar.o win_file.o \
+win_image.o win_label.o win_select.o win_write.o win_query.o win_info.o \
+win_file_select.o yarg.o
+animedit_LDFLAGS = 
+am_mapcharedit_OBJECTS =  mapcharedit.o
+mapcharedit_OBJECTS =  $(am_mapcharedit_OBJECTS)
+mapcharedit_DEPENDENCIES =  animation.o animation_off.o drawing_area.o \
+fileops.o game.o image.o input.o lex.prefs.o pnm.o prefs.o mapselect.o \
+maptpl.o screen.o storage.o quest.o win_base.o win_border.o \
+win_container.o win_font.o win_theme.o win_scrolled.o mapcharacter.o \
+character_base.o mapobject.o landmap.o mapview.o win_background.o \
+win_scrollbar.o win_file.o win_image.o win_label.o win_select.o \
+win_write.o win_query.o win_info.o win_file_select.o yarg.o
+mapcharedit_LDFLAGS = 
+am_mapedit_OBJECTS =  mapedit.o
+mapedit_OBJECTS =  $(am_mapedit_OBJECTS)
+mapedit_DEPENDENCIES =  animation.o animation_off.o drawing_area.o \
+fileops.o game.o image.o input.o lex.prefs.o mapselect.o maptpl.o \
+mapobject.o mapcharacter.o landmap.o character_base.o mapview.o pnm.o \
+prefs.o screen.o storage.o quest.o win_base.o win_border.o \
+win_container.o win_font.o win_theme.o win_scrolled.o win_background.o \
+win_scrollbar.o win_file.o win_image.o win_label.o win_select.o \
+win_write.o win_query.o win_info.o win_file_select.o yarg.o
+mapedit_LDFLAGS = 
+am_mapobjedit_OBJECTS =  mapobjedit.o
+mapobjedit_OBJECTS =  $(am_mapobjedit_OBJECTS)
+mapobjedit_DEPENDENCIES =  animation.o animation_off.o drawing_area.o \
+fileops.o game.o image.o input.o lex.prefs.o pnm.o prefs.o mapselect.o \
+maptpl.o mapobject.o character_base.o screen.o storage.o quest.o \
 win_base.o win_border.o win_container.o win_font.o win_theme.o \
 win_scrolled.o win_background.o win_scrollbar.o win_file.o win_image.o \
 win_label.o win_select.o win_write.o win_query.o win_info.o \
 win_file_select.o yarg.o
-animedit_LDFLAGS = 
-mapobjedit_OBJECTS =  mapobjedit.o
-mapobjedit_DEPENDENCIES =  animation.o animation_off.o data.o event.o \
-drawing_area.o fileops.o game.o gametime.o image.o input.o lex.prefs.o \
-pnm.o prefs.o mapselect.o maptpl.o mapobject.o character.o screen.o \
-storage.o py_inc.o quest.o win_base.o win_border.o win_container.o \
-win_font.o win_theme.o win_scrolled.o win_background.o win_scrollbar.o \
-win_file.o win_image.o win_label.o win_select.o win_write.o win_query.o \
-win_info.o win_file_select.o yarg.o
 mapobjedit_LDFLAGS = 
-mapcharedit_OBJECTS =  mapcharedit.o
-mapcharedit_DEPENDENCIES =  animation.o animation_off.o data.o event.o \
-drawing_area.o fileops.o game.o gametime.o image.o input.o lex.prefs.o \
-pnm.o prefs.o mapselect.o maptpl.o screen.o storage.o py_inc.o quest.o \
-win_base.o win_border.o win_container.o win_font.o win_theme.o \
-win_scrolled.o mapcharacter.o character.o mapobject.o landmap.o \
-mapview.o win_background.o win_scrollbar.o win_file.o win_image.o \
-win_label.o win_select.o win_write.o win_query.o win_info.o \
-win_file_select.o yarg.o
-mapcharedit_LDFLAGS = 
-mapedit_OBJECTS =  mapedit.o
-mapedit_DEPENDENCIES =  animation.o animation_off.o data.o event.o \
-drawing_area.o fileops.o game.o gametime.o image.o input.o lex.prefs.o \
-mapselect.o maptpl.o mapobject.o mapcharacter.o landmap.o character.o \
-mapview.o pnm.o prefs.o screen.o storage.o py_inc.o quest.o win_base.o \
-win_border.o win_container.o win_font.o win_theme.o win_scrolled.o \
-win_background.o win_scrollbar.o win_file.o win_image.o win_label.o \
-win_select.o win_write.o win_query.o win_info.o win_file_select.o \
-yarg.o
-mapedit_LDFLAGS = 
 CXXFLAGS = @CXXFLAGS@
 CXXCOMPILE = $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
 CXXLD = $(CXX)
-CXXLINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(LDFLAGS) -o $@
+CXXLINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
+DIST_SOURCES =  $(animedit_SOURCES) $(mapcharedit_SOURCES) \
+$(mapedit_SOURCES) $(mapobjedit_SOURCES)
 DIST_COMMON =  Makefile.am Makefile.in
 
 
-DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
+DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 
-TAR = gtar
 GZIP_ENV = --best
 DEP_FILES =  .deps/animedit.P .deps/mapcharedit.P .deps/mapedit.P \
 .deps/mapobjedit.P
-SOURCES = $(animedit_SOURCES) $(mapobjedit_SOURCES) $(mapcharedit_SOURCES) $(mapedit_SOURCES)
-OBJECTS = $(animedit_OBJECTS) $(mapobjedit_OBJECTS) $(mapcharedit_OBJECTS) $(mapedit_OBJECTS)
+SOURCES = $(animedit_SOURCES) $(mapcharedit_SOURCES) $(mapedit_SOURCES) $(mapobjedit_SOURCES)
+OBJECTS = $(am_animedit_OBJECTS) $(am_mapcharedit_OBJECTS) $(am_mapedit_OBJECTS) $(am_mapobjedit_OBJECTS)
 
 all: all-redirect
 .SUFFIXES:
-.SUFFIXES: .S .c .cpp .o .s
-$(srcdir)/Makefile.in: Makefile.am $(top_srcdir)/configure.in $(ACLOCAL_M4) 
+.SUFFIXES: .c .cpp .o
+$(srcdir)/Makefile.in: Makefile.am $(top_srcdir)/$(altdir)configure.in $(ACLOCAL_M4) 
 	cd $(top_srcdir) && $(AUTOMAKE) --gnu src/tools/maptools/Makefile
 
 Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status $(BUILT_SOURCES)
@@ -183,22 +218,19 @@ install-binPROGRAMS: $(bin_PROGRAMS)
 	$(mkinstalldirs) $(DESTDIR)$(bindir)
 	@list='$(bin_PROGRAMS)'; for p in $$list; do \
 	  if test -f $$p; then \
-	    echo "  $(INSTALL_PROGRAM) $$p $(DESTDIR)$(bindir)/`echo $$p|sed 's/$(EXEEXT)$$//'|sed '$(transform)'|sed 's/$$/$(EXEEXT)/'`"; \
-	     $(INSTALL_PROGRAM) $$p $(DESTDIR)$(bindir)/`echo $$p|sed 's/$(EXEEXT)$$//'|sed '$(transform)'|sed 's/$$/$(EXEEXT)/'`; \
+	    f="`echo $$p|sed -e 's/$(EXEEXT)$$//' -e '$(transform)' -e 's/$$/$(EXEEXT)/'`"; \
+	    echo "  $(INSTALL_PROGRAM) $(INSTALL_STRIP_FLAG) $$p $(DESTDIR)$(bindir)/$$f"; \
+	     $(INSTALL_PROGRAM) $(INSTALL_STRIP_FLAG) $$p $(DESTDIR)$(bindir)/$$f; \
 	  else :; fi; \
 	done
 
 uninstall-binPROGRAMS:
 	@$(NORMAL_UNINSTALL)
-	list='$(bin_PROGRAMS)'; for p in $$list; do \
-	  rm -f $(DESTDIR)$(bindir)/`echo $$p|sed 's/$(EXEEXT)$$//'|sed '$(transform)'|sed 's/$$/$(EXEEXT)/'`; \
+	@list='$(bin_PROGRAMS)'; for p in $$list; do \
+	  f="`echo $$p|sed -e 's/$(EXEEXT)$$//' -e '$(transform)' -e 's/$$/$(EXEEXT)/'`"; \
+	  echo " rm -f $(DESTDIR)$(bindir)/$$f"; \
+	  rm -f $(DESTDIR)$(bindir)/$$f; \
 	done
-
-.s.o:
-	$(COMPILE) -c $<
-
-.S.o:
-	$(COMPILE) -c $<
 
 mostlyclean-compile:
 	-rm -f *.o core *.core
@@ -209,24 +241,28 @@ distclean-compile:
 	-rm -f *.tab.c
 
 maintainer-clean-compile:
+animedit.o:
 
 animedit: $(animedit_OBJECTS) $(animedit_DEPENDENCIES)
 	@rm -f animedit
 	$(CXXLINK) $(animedit_LDFLAGS) $(animedit_OBJECTS) $(animedit_LDADD) $(LIBS)
-
-mapobjedit: $(mapobjedit_OBJECTS) $(mapobjedit_DEPENDENCIES)
-	@rm -f mapobjedit
-	$(CXXLINK) $(mapobjedit_LDFLAGS) $(mapobjedit_OBJECTS) $(mapobjedit_LDADD) $(LIBS)
+mapcharedit.o:
 
 mapcharedit: $(mapcharedit_OBJECTS) $(mapcharedit_DEPENDENCIES)
 	@rm -f mapcharedit
 	$(CXXLINK) $(mapcharedit_LDFLAGS) $(mapcharedit_OBJECTS) $(mapcharedit_LDADD) $(LIBS)
+mapedit.o:
 
 mapedit: $(mapedit_OBJECTS) $(mapedit_DEPENDENCIES)
 	@rm -f mapedit
 	$(CXXLINK) $(mapedit_LDFLAGS) $(mapedit_OBJECTS) $(mapedit_LDADD) $(LIBS)
+mapobjedit.o:
+
+mapobjedit: $(mapobjedit_OBJECTS) $(mapobjedit_DEPENDENCIES)
+	@rm -f mapobjedit
+	$(CXXLINK) $(mapobjedit_LDFLAGS) $(mapobjedit_OBJECTS) $(mapobjedit_LDADD) $(LIBS)
 .cpp.o:
-	$(CXXCOMPILE) -c $<
+	$(CXXCOMPILE) -c -o $@ $<
 
 tags: TAGS
 
@@ -270,7 +306,7 @@ distdir: $(DISTFILES)
 	@for file in $(DISTFILES); do \
 	  d=$(srcdir); \
 	  if test -d $$d/$$file; then \
-	    cp -pr $$/$$file $(distdir)/$$file; \
+	    cp -pr $$d/$$file $(distdir)/$$file; \
 	  else \
 	    test -f $(distdir)/$$file \
 	    || ln $$d/$$file $(distdir)/$$file 2> /dev/null \
@@ -291,43 +327,24 @@ distclean-depend:
 
 maintainer-clean-depend:
 
-%.o: %.c
-	@echo '$(COMPILE) -c $<'; \
-	$(COMPILE) -Wp,-MD,.deps/$(*F).pp -c $<
-	@-cp .deps/$(*F).pp .deps/$(*F).P; \
-	tr ' ' '\012' < .deps/$(*F).pp \
-	  | sed -e 's/^\\$$//' -e '/^$$/ d' -e '/:$$/ d' -e 's/$$/ :/' \
-	    >> .deps/$(*F).P; \
-	rm .deps/$(*F).pp
-
-%.lo: %.c
-	@echo '$(LTCOMPILE) -c $<'; \
-	$(LTCOMPILE) -Wp,-MD,.deps/$(*F).pp -c $<
-	@-sed -e 's/^\([^:]*\)\.o[ 	]*:/\1.lo \1.o :/' \
-	  < .deps/$(*F).pp > .deps/$(*F).P; \
-	tr ' ' '\012' < .deps/$(*F).pp \
-	  | sed -e 's/^\\$$//' -e '/^$$/ d' -e '/:$$/ d' -e 's/$$/ :/' \
-	    >> .deps/$(*F).P; \
-	rm -f .deps/$(*F).pp
-
 %.o: %.cpp
 	@echo '$(CXXCOMPILE) -c $<'; \
-	$(CXXCOMPILE) -Wp,-MD,.deps/$(*F).pp -c $<
-	@-cp .deps/$(*F).pp .deps/$(*F).P; \
-	tr ' ' '\012' < .deps/$(*F).pp \
+	$(CXXCOMPILE) -Wp,-MD,.deps/$(*D)/$(*F).pp -c $<
+	@-cp .deps/$(*D)/$(*F).pp .deps/$(*D)/$(*F).P; \
+	tr ' ' '\012' < .deps/$(*D)/$(*F).pp \
 	  | sed -e 's/^\\$$//' -e '/^$$/ d' -e '/:$$/ d' -e 's/$$/ :/' \
-	    >> .deps/$(*F).P; \
-	rm .deps/$(*F).pp
+	    >> .deps/$(*D)/$(*F).P; \
+	rm .deps/$(*D)/$(*F).pp
 
 %.lo: %.cpp
 	@echo '$(LTCXXCOMPILE) -c $<'; \
-	$(LTCXXCOMPILE) -Wp,-MD,.deps/$(*F).pp -c $<
+	$(LTCXXCOMPILE) -Wp,-MD,.deps/$(*D)/$(*F).pp -c $<
 	@-sed -e 's/^\([^:]*\)\.o[ 	]*:/\1.lo \1.o :/' \
-	  < .deps/$(*F).pp > .deps/$(*F).P; \
-	tr ' ' '\012' < .deps/$(*F).pp \
+	  < .deps/$(*D)/$(*F).pp > .deps/$(*D)/$(*F).P; \
+	tr ' ' '\012' < .deps/$(*D)/$(*F).pp \
 	  | sed -e 's/^\\$$//' -e '/^$$/ d' -e '/:$$/ d' -e 's/$$/ :/' \
-	    >> .deps/$(*F).P; \
-	rm -f .deps/$(*F).pp
+	    >> .deps/$(*D)/$(*F).P; \
+	rm -f .deps/$(*D)/$(*F).pp
 info-am:
 info: info-am
 dvi-am:
@@ -350,7 +367,7 @@ uninstall: uninstall-am
 all-am: Makefile $(PROGRAMS)
 all-redirect: all-am
 install-strip:
-	$(MAKE) $(AM_MAKEFLAGS) AM_INSTALL_PROGRAM_FLAGS=-s install
+	$(MAKE) $(AM_MAKEFLAGS) INSTALL_STRIP_FLAG=-s install
 installdirs:
 	$(mkinstalldirs)  $(DESTDIR)$(bindir)
 
@@ -396,8 +413,8 @@ clean-tags maintainer-clean-tags distdir mostlyclean-depend \
 distclean-depend clean-depend maintainer-clean-depend info-am info \
 dvi-am dvi check check-am installcheck-am installcheck install-exec-am \
 install-exec install-data-am install-data install-am install \
-uninstall-am uninstall all-redirect all-am all installdirs \
-mostlyclean-generic distclean-generic clean-generic \
+uninstall-am uninstall all-redirect all-am all install-strip \
+installdirs mostlyclean-generic distclean-generic clean-generic \
 maintainer-clean-generic clean mostlyclean distclean maintainer-clean
 
 

@@ -9,21 +9,12 @@ callbacks.h dirbrowser.h interface.h main.h
 
 mergechars_SOURCES = mergechars.cc
 
-mergechars_LDADD = character.o storage.o event.o fileops.o
+mergechars_LDADD = character_base.o storage.o fileops.o
 
 # Evil, but it works...
-CPPFLAGS +=-I../.. -D_DLGEDIT_ `gtk-config --cflags`
+CPPFLAGS +=-I../.. `gtk-config --cflags`
 
 LDFLAGS=-lm -lstdc++ `gtk-config --libs`
 
-fileops.o : ../../fileops.cpp
-	$(CXXCOMPILE) -c $< -o $@
-
-character.o : ../../character.cpp
-	$(CXXCOMPILE) -c $< -o $@
-
-event.o : ../../event.cpp
-	$(CXXCOMPILE) -c $< -o $@
-
-storage.o : ../../storage.cpp
+%.o : ../../%.cpp
 	$(CXXCOMPILE) -c $< -o $@

@@ -18,9 +18,11 @@
 #include "screen.h"
 #include "game.h"
 
+#if defined(USE_PYTHON)
 #include "Python.h"
 #include "py_modules.h"
 #include "py_inc.h"
+#endif
 #include "data.h"
 
 #ifdef SDL_MIXER
@@ -54,20 +56,20 @@ bool game::init ()
 
     // init audio subsystem
 #if defined SDL_MIXER && !defined _EDIT_
-    audio::init (configuration);
+    //    audio::init (configuration);
 #endif 
 
     // init input subsystem
     input::init ();
 
     // init python interpreter
-#ifndef _EDIT_
+#if defined(USE_PYTHON)
     init_python ();
-
+#endif
+#if !defined(_EDIT_)
     // init the data subsystem
     data::init (configuration->get_adonthellrc ());
 #endif
-
     // voila :)
     return true;
 }
@@ -80,16 +82,16 @@ game::~game ()
     delete configuration;
     
     // shutdown Python
-#ifndef _EDIT_
+#if defined(USE_PYTHON)
     Py_Finalize ();
-
+#endif
+#if !defined(_EDIT_)
     // delete all data
     data::cleanup ();
 #endif
-
     // shutdown audio
 #if defined SDL_MIXER && !defined _EDIT_
-    audio::cleanup ();
+    //    audio::cleanup ();
 #endif
 
     // shutdown video

@@ -1,11 +1,10 @@
-%module character
+%module quest
 
 %{
 
 #include "types.h"
-#include "character.h"
 #include "storage.h"
-#include "dialog_engine.h"
+#include "quest.h"
 
 %}
 
@@ -30,5 +29,4 @@ public:
 #define NO_MOVE 65535
 
 %include "../../types.h"
-%include "../../character_base.h"
-%include "../../character.h"
+%include "../../quest.h"

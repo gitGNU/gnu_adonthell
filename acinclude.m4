@@ -1,3 +1,44 @@
+AC_DEFUN(AM_PATH_SDL_MIXER,
+[
+AC_ARG_WITH(sdl_mixer-prefix,[  --with-sdl_mixer-prefix=PFX   Prefix where SDL_mixer is installed (optional)],
+            sdl_mixer_prefix="$withval"
+            if test -e "$sdl_mixer_prefix/lib/libSDL_mixer.so" ; then
+              CFLAGS="$CFLAGS -I$sdl_mixer_prefix/include"
+              LIBS="$LIBS -I$sdl_mixer_prefix/include -L$sdl_mixer_prefix/lib"
+              LD_LIBRARY_PATH_SAVE="$LD_LIBRARY_PATH"
+              LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$sdl_mixer_prefix/lib"
+              AC_CHECK_LIB(SDL_mixer,Mix_OpenAudio,
+                           SDL_MIXER=yes
+                           LIBS="$LIBS -lSDL_mixer"
+                           DEFS="$DEFS -DSDL_MIXER",)
+              LD_LIBRARY_PATH="$LD_LIBRARY_PATH_SAVE"
+            else
+              AC_CHECK_LIB(SDL_mixer,Mix_OpenAudio,
+                           SDL_MIXER=yes
+                           LIBS="$LIBS -lSDL_mixer"
+                           DEFS="$DEFS -DSDL_MIXER",)
+            fi,
+            SDL_MIXER=no
+            AC_CHECK_LIB(SDL_mixer,Mix_OpenAudio,
+                         SDL_MIXER=yes
+                         LIBS="$LIBS -lSDL_mixer"
+                         DEFS="$DEFS -DSDL_MIXER",)
+            )
+]
+)
+
+AC_DEFUN(AM_PATH_PYTHON,
+[
+AC_ARG_WITH(python-prefix,[  --with-python-prefix=PFX   Prefix where Python is installed (optional)],
+            python_prefix="$withval"
+            PYPACKAGE=""
+            if test -e "$python_prefix/bin/python" ; then
+              PYPACKAGE="$python_prefix/bin/python"
+            fi,
+            PYPACKAGE="")
+]
+)
+
 # Configure paths for SDL
 # Sam Lantinga 9/21/99
 # stolen from Manish Singh
@@ -52,7 +93,7 @@ AC_ARG_ENABLE(sdltest, [  --disable-sdltest       Do not try to compile and run 
       ac_save_CFLAGS="$CFLAGS"
       ac_save_LIBS="$LIBS"
       CFLAGS="$CFLAGS $SDL_CFLAGS"
-      LIBS="$LIBS $SDL_LIBS"
+      LIBS="$LIBS $SDL_LIBS $SDL_CFLAGS"
 dnl
 dnl Now check if the installed SDL is sufficiently new. (Also sanity
 dnl checks the results of sdl-config to some extent

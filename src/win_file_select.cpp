@@ -19,12 +19,18 @@
 #include "win_select.h"
 #include "win_file_select.h"
 
-win_file_select::win_file_select(s_int16 tx,s_int16 ty,u_int16 tl,u_int16 th,win_theme * theme,win_font * wf, char * fext):win_container(tx,ty,tl,th,theme)
+win_file_select::win_file_select(s_int16 tx,s_int16 ty,u_int16 tl,u_int16 th,win_theme * theme,win_font * wf, char * fext, char * bdir=NULL):win_container(tx,ty,tl,th,theme)
 {
   font_=wf;
   
   getcwd(cur_dir_,255*sizeof(char));
   strcpy(base_dir_,cur_dir_);
+  if(bdir)
+    {
+      if(cur_dir_[strlen(base_dir_)-1]!='/') strcat(base_dir_,"/");
+      strcat(base_dir_,bdir);
+      strcpy(cur_dir_,base_dir_);
+    }
   strcpy(ext,fext);
 
   curdir_=new win_label(0,0,0,0,theme_,font_);
@@ -70,7 +76,8 @@ void win_file_select::resize(u_int16 tl,u_int16 th)
 
 void win_file_select::set_curdirectory(char * dir)
 {
-  strcpy(cur_dir_,dir);
+  if(cur_dir_[strlen(cur_dir_)-1]!='/') strcat(cur_dir_,"/");
+  strcat(cur_dir_,dir);
   list_directory(ext);
 }
 
@@ -196,7 +203,7 @@ char * win_file_select::wait_for_select(const Functor0 & updatefunc,
 	    strcat(tmp,(p+4));
 	    input::set_key_repeat(0);
 	    input::clear_keys_queue();
-	    s=strdup(tmp+strlen(base_dir_)+1);
+	    s=strdup(tmp+strlen(base_dir_));
 	    return s;
 	  }
       }

@@ -1,4 +1,4 @@
-dnl aclocal.m4 generated automatically by aclocal 1.4
+dnl aclocal.m4 generated automatically by aclocal 1.4a
 
 dnl Copyright (C) 1994, 1995-8, 1999 Free Software Foundation, Inc.
 dnl This file is free software; the Free Software Foundation
@@ -9,6 +9,47 @@ dnl This program is distributed in the hope that it will be useful,
 dnl but WITHOUT ANY WARRANTY, to the extent permitted by law; without
 dnl even the implied warranty of MERCHANTABILITY or FITNESS FOR A
 dnl PARTICULAR PURPOSE.
+
+AC_DEFUN(AM_PATH_SDL_MIXER,
+[
+AC_ARG_WITH(sdl_mixer-prefix,[  --with-sdl_mixer-prefix=PFX   Prefix where SDL_mixer is installed (optional)],
+            sdl_mixer_prefix="$withval"
+            if test -e "$sdl_mixer_prefix/lib/libSDL_mixer.so" ; then
+              CFLAGS="$CFLAGS -I$sdl_mixer_prefix/include"
+              LIBS="$LIBS -I$sdl_mixer_prefix/include -L$sdl_mixer_prefix/lib"
+              LD_LIBRARY_PATH_SAVE="$LD_LIBRARY_PATH"
+              LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$sdl_mixer_prefix/lib"
+              AC_CHECK_LIB(SDL_mixer,Mix_OpenAudio,
+                           SDL_MIXER=yes
+                           LIBS="$LIBS -lSDL_mixer"
+                           DEFS="$DEFS -DSDL_MIXER",)
+              LD_LIBRARY_PATH="$LD_LIBRARY_PATH_SAVE"
+            else
+              AC_CHECK_LIB(SDL_mixer,Mix_OpenAudio,
+                           SDL_MIXER=yes
+                           LIBS="$LIBS -lSDL_mixer"
+                           DEFS="$DEFS -DSDL_MIXER",)
+            fi,
+            SDL_MIXER=no
+            AC_CHECK_LIB(SDL_mixer,Mix_OpenAudio,
+                         SDL_MIXER=yes
+                         LIBS="$LIBS -lSDL_mixer"
+                         DEFS="$DEFS -DSDL_MIXER",)
+            )
+]
+)
+
+AC_DEFUN(AM_PATH_PYTHON,
+[
+AC_ARG_WITH(python-prefix,[  --with-python-prefix=PFX   Prefix where Python is installed (optional)],
+            python_prefix="$withval"
+            PYPACKAGE=""
+            if test -e "$python_prefix/bin/python" ; then
+              PYPACKAGE="$python_prefix/bin/python"
+            fi,
+            PYPACKAGE="")
+]
+)
 
 # Configure paths for SDL
 # Sam Lantinga 9/21/99
@@ -64,7 +105,7 @@ AC_ARG_ENABLE(sdltest, [  --disable-sdltest       Do not try to compile and run 
       ac_save_CFLAGS="$CFLAGS"
       ac_save_LIBS="$LIBS"
       CFLAGS="$CFLAGS $SDL_CFLAGS"
-      LIBS="$LIBS $SDL_LIBS"
+      LIBS="$LIBS $SDL_LIBS $SDL_CFLAGS"
 dnl
 dnl Now check if the installed SDL is sufficiently new. (Also sanity
 dnl checks the results of sdl-config to some extent
@@ -311,6 +352,8 @@ dnl AM_INIT_AUTOMAKE(package,version, [no-define])
 
 AC_DEFUN(AM_INIT_AUTOMAKE,
 [AC_REQUIRE([AC_PROG_INSTALL])
+dnl We require 2.13 because we rely on SHELL being computed by configure.
+AC_PREREQ([2.13])
 PACKAGE=[$1]
 AC_SUBST(PACKAGE)
 VERSION=[$2]
@@ -331,6 +374,19 @@ AM_MISSING_PROG(AUTOCONF, autoconf, $missing_dir)
 AM_MISSING_PROG(AUTOMAKE, automake, $missing_dir)
 AM_MISSING_PROG(AUTOHEADER, autoheader, $missing_dir)
 AM_MISSING_PROG(MAKEINFO, makeinfo, $missing_dir)
+dnl We check for tar when the user configures the end package.
+dnl This is sad, since we only need this for "dist".  However,
+dnl there's no other good way to do it.  We prefer GNU tar if
+dnl we can find it.  If we can't find a tar, it doesn't really matter.
+AC_CHECK_PROGS(AMTAR, gnutar gtar tar)
+AMTARFLAGS=
+if test -n "$AMTAR"; then
+  if $SHELL -c "$AMTAR --version" > /dev/null 2>&1; then
+    dnl We have GNU tar.
+    AMTARFLAGS=o
+  fi
+fi
+AC_SUBST(AMTARFLAGS)
 AC_REQUIRE([AC_PROG_MAKE_SET])])
 
 #

@@ -41,9 +41,9 @@ void mapengine::use_map(landmap * lm)
   mv.attach_map(lmap);
 }
 
-void mapengine::launch_dialog(npc * whichcar)
+void mapengine::launch_dialog(character_base * whichcar, char * dlg_file)
 {
-  de=new dialog_engine(whichcar,th);
+  de=new dialog_engine(whichcar,dlg_file,th,0);
   de->run();
   while(de->is_running && !letsexit)
     {

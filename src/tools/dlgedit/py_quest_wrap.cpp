@@ -487,26 +487,24 @@ SWIG_InstallConstants(PyObject *d, swig_const_info constants[]) {
 
 /* -------- TYPES TABLE (BEGIN) -------- */
 
-#define  SWIGTYPE_p_character_base swig_types[0] 
+#define  SWIGTYPE_p_quest swig_types[0] 
 #define  SWIGTYPE_p_storage swig_types[1] 
-#define  SWIGTYPE_p_character swig_types[2] 
-static swig_type_info *swig_types[4];
+static swig_type_info *swig_types[3];
 
 /* -------- TYPES TABLE (END) -------- */
 
 
 /*-----------------------------------------------
-              @(target):= characterc.so
+              @(target):= questc.so
   ------------------------------------------------*/
-#define SWIG_init    initcharacterc
+#define SWIG_init    initquestc
 
-#define SWIG_name    "characterc"
+#define SWIG_name    "questc"
 
 
 #include "types.h"
-#include "character.h"
 #include "storage.h"
-#include "dialog_engine.h"
+#include "quest.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -567,24 +565,24 @@ static PyObject *_wrap_delete_storage(PyObject *self, PyObject *args) {
 }
 
 
-static PyObject *_wrap_new_character_base(PyObject *self, PyObject *args) {
+static PyObject *_wrap_new_quest(PyObject *self, PyObject *args) {
     PyObject *resultobj;
-    character_base *result ;
+    quest *result ;
     
-    if(!PyArg_ParseTuple(args,":new_character_base")) return NULL;
-    result = (character_base *)new character_base();
-    resultobj = SWIG_NewPointerObj((void *) result, SWIGTYPE_p_character_base);
+    if(!PyArg_ParseTuple(args,":new_quest")) return NULL;
+    result = (quest *)new quest();
+    resultobj = SWIG_NewPointerObj((void *) result, SWIGTYPE_p_quest);
     return resultobj;
 }
 
 
-static PyObject *_wrap_delete_character_base(PyObject *self, PyObject *args) {
+static PyObject *_wrap_delete_quest(PyObject *self, PyObject *args) {
     PyObject *resultobj;
-    character_base *arg0 ;
+    quest *arg0 ;
     PyObject * argo0 =0 ;
     
-    if(!PyArg_ParseTuple(args,"O:delete_character_base",&argo0)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_character_base,1)) == -1) return NULL;
+    if(!PyArg_ParseTuple(args,"O:delete_quest",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_quest,1)) == -1) return NULL;
     delete arg0;
     Py_INCREF(Py_None);
     resultobj = Py_None;
@@ -592,86 +590,13 @@ static PyObject *_wrap_delete_character_base(PyObject *self, PyObject *args) {
 }
 
 
-static PyObject *_wrap_character_base_get_name(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    character_base *arg0 ;
-    PyObject * argo0 =0 ;
-    char *result ;
-    
-    if(!PyArg_ParseTuple(args,"O:character_base_get_name",&argo0)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_character_base,1)) == -1) return NULL;
-    result = (char *)arg0->get_name();
-    resultobj = PyString_FromString(result);
-    return resultobj;
-}
-
-
-static PyObject *_wrap_character_base_set_name(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    character_base *arg0 ;
-    char *arg1 ;
-    PyObject * argo0 =0 ;
-    
-    if(!PyArg_ParseTuple(args,"Os:character_base_set_name",&argo0,&arg1)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_character_base,1)) == -1) return NULL;
-    arg0->set_name((char const *)arg1);
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
-static PyObject *_wrap_character_base_get_color(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    character_base *arg0 ;
-    PyObject * argo0 =0 ;
-    unsigned int result ;
-    
-    if(!PyArg_ParseTuple(args,"O:character_base_get_color",&argo0)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_character_base,1)) == -1) return NULL;
-    result = (unsigned int )arg0->get_color();
-    resultobj = PyInt_FromLong((long)result);
-    return resultobj;
-}
-
-
-static PyObject *_wrap_new_character(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    character *result ;
-    
-    if(!PyArg_ParseTuple(args,":new_character")) return NULL;
-    result = (character *)new character();
-    resultobj = SWIG_NewPointerObj((void *) result, SWIGTYPE_p_character);
-    return resultobj;
-}
-
-
-static PyObject *_wrap_delete_character(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    character *arg0 ;
-    PyObject * argo0 =0 ;
-    
-    if(!PyArg_ParseTuple(args,"O:delete_character",&argo0)) return NULL;
-    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_character,1)) == -1) return NULL;
-    delete arg0;
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
-    return resultobj;
-}
-
-
-static PyMethodDef charactercMethods[] = {
+static PyMethodDef questcMethods[] = {
 	 { "storage_set", _wrap_storage_set, METH_VARARGS },
 	 { "storage_get", _wrap_storage_get, METH_VARARGS },
 	 { "new_storage", _wrap_new_storage, METH_VARARGS },
 	 { "delete_storage", _wrap_delete_storage, METH_VARARGS },
-	 { "new_character_base", _wrap_new_character_base, METH_VARARGS },
-	 { "delete_character_base", _wrap_delete_character_base, METH_VARARGS },
-	 { "character_base_get_name", _wrap_character_base_get_name, METH_VARARGS },
-	 { "character_base_set_name", _wrap_character_base_set_name, METH_VARARGS },
-	 { "character_base_get_color", _wrap_character_base_get_color, METH_VARARGS },
-	 { "new_character", _wrap_new_character, METH_VARARGS },
-	 { "delete_character", _wrap_delete_character, METH_VARARGS },
+	 { "new_quest", _wrap_new_quest, METH_VARARGS },
+	 { "delete_quest", _wrap_delete_quest, METH_VARARGS },
 	 { NULL, NULL }
 };
 
@@ -681,23 +606,15 @@ static PyMethodDef charactercMethods[] = {
 
 /* -------- TYPE CONVERSION AND EQUIVALENCE RULES (BEGIN) -------- */
 
-static void *_p_characterTo_p_character_base(void *x) {
-    return (void *)((character_base *) ((character *) x));
+static void *_p_questTo_p_storage(void *x) {
+    return (void *)((storage *) ((quest *) x));
 }
-static void *_p_character_baseTo_p_storage(void *x) {
-    return (void *)((storage *) ((character_base *) x));
-}
-static void *_p_characterTo_p_storage(void *x) {
-    return (void *)((storage *) ((character *) x));
-}
-static swig_type_info _swigt__p_character_base[] = {{"_p_character_base", 0, "character_base *"},{"_p_character_base"},{"_p_character", _p_characterTo_p_character_base},{0}};
-static swig_type_info _swigt__p_storage[] = {{"_p_storage", 0, "storage *"},{"_p_character_base", _p_character_baseTo_p_storage},{"_p_storage"},{"_p_character", _p_characterTo_p_storage},{0}};
-static swig_type_info _swigt__p_character[] = {{"_p_character", 0, "character *"},{"_p_character"},{0}};
+static swig_type_info _swigt__p_quest[] = {{"_p_quest", 0, "quest *"},{"_p_quest"},{0}};
+static swig_type_info _swigt__p_storage[] = {{"_p_storage", 0, "storage *"},{"_p_quest", _p_questTo_p_storage},{"_p_storage"},{0}};
 
 static swig_type_info *swig_types_initial[] = {
-_swigt__p_character_base, 
+_swigt__p_quest, 
 _swigt__p_storage, 
-_swigt__p_character, 
 0
 };
 
@@ -715,23 +632,17 @@ static swig_const_info swig_const_table[] = {
     { SWIG_PY_INT,     "WALK_EAST", (long) 7, 0, 0, 0},
     { SWIG_PY_INT,     "NBR_MOVES", (long) 8, 0, 0, 0},
     { SWIG_PY_INT,     "NO_MOVE", (long) 65535, 0, 0, 0},
-    { SWIG_PY_INT,     "DWARF", (long) DWARF, 0, 0, 0},
-    { SWIG_PY_INT,     "ELF", (long) ELF, 0, 0, 0},
-    { SWIG_PY_INT,     "HALFELF", (long) HALFELF, 0, 0, 0},
-    { SWIG_PY_INT,     "HUMAN", (long) HUMAN, 0, 0, 0},
-    { SWIG_PY_INT,     "FEMALE", (long) FEMALE, 0, 0, 0},
-    { SWIG_PY_INT,     "MALE", (long) MALE, 0, 0, 0},
 {0}};
 
 static PyObject *SWIG_globals;
 #ifdef __cplusplus
 extern "C" 
 #endif
-SWIGEXPORT(void) initcharacterc(void) {
+SWIGEXPORT(void) initquestc(void) {
     PyObject *m, *d;
     int i;
     SWIG_globals = SWIG_newvarlink();
-    m = Py_InitModule("characterc", charactercMethods);
+    m = Py_InitModule("questc", questcMethods);
     d = PyModule_GetDict(m);
     for (i = 0; swig_types_initial[i]; i++) {
         swig_types[i] = SWIG_TypeRegister(swig_types_initial[i]);

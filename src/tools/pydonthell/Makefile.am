@@ -4,9 +4,11 @@ bin_PROGRAMS = pydonthell
 
 pydonthell_SOURCES = pydonthell.cpp
 
+CPPFLAGS +=-DUSE_PYTHON -DUSE_MAP
+
 LDADD = ../../animation.o ../../animation_off.o ../../audio.o \
 ../../audio_loop.o \
-../../character.o ../../data.o ../../data_screen.o ../../dialog.o ../../dialog_engine.o \
+../../character.o ../../character_base.o ../../data.o ../../data_screen.o ../../dialog.o ../../dialog_engine.o \
 ../../drawing_area.o ../../event.o ../../fileops.o ../../game.o ../../gametime.o ../../py_inc.o ../../py_modules.o ../../py_adonthell_wrap.o \
 ../../image.o ../../input.o ../../lex.prefs.o \
 ../../mapselect.o ../../maptpl.o ../../mapobject.o ../../mapcharacter.o ../../landmap.o ../../mapview.o ../../mapengine.o \

@@ -1019,10 +1019,10 @@ load_dialogue (MainFrame * wnd, const char *file)
             {
                 if (parse_dlgfile (s, n) == LOAD_STR)
                 {
-                    data::characters.erase (wnd->myplayer->name);
-                    delete wnd->myplayer->name;
-                    wnd->myplayer->name = strdup (s.c_str ());
-                    data::characters.set (wnd->myplayer->name, wnd->myplayer);
+                    data::characters.erase (wnd->myplayer->get_name());
+                    delete wnd->myplayer->get_name();
+                    wnd->myplayer->set_name (s.c_str ());
+                    data::characters.set (wnd->myplayer->get_name(), wnd->myplayer);
                 }
                 break;             
             }
@@ -1041,14 +1041,14 @@ load_dialogue (MainFrame * wnd, const char *file)
 
             case LOAD_NPC:
             {
-                npc *mynpc = NULL;
+                character *mynpc = NULL;
 
                 if (parse_dlgfile (s, n) == LOAD_STR)
-                    mynpc = (npc *) data::characters.get (s.c_str ());
+                    mynpc = (character *) data::characters.get (s.c_str ());
 
-                if (mynpc == NULL) mynpc = (npc *) data::characters.next (); 
+                if (mynpc == NULL) mynpc = (character *) data::characters.next (); 
 
-                PyDict_SetItemString (data::globals, "the_npc", pass_instance (mynpc, "npc"));
+                PyDict_SetItemString (data::globals, "the_npc", pass_instance (mynpc, "character"));
                 wnd->mynpc = mynpc;
                 break;            
             }
@@ -1172,15 +1172,15 @@ save_dialogue (MainFrame * wnd)
     if (wnd->cust_func != "") out << "\nFunc §" << wnd->cust_func << "§\n";
 
     // Players name, race and gender
-    if (strcmp ("Banec", wnd->myplayer->name))
-        out << "\nName §" << wnd->myplayer->name << "§";
+    if (strcmp ("Banec", wnd->myplayer->get_name()))
+        out << "\nName §" << wnd->myplayer->get_name() << "§";
     if (wnd->myplayer->storage::get ("race") != 0)
         out << "\nRace " << wnd->myplayer->storage::get ("race");
     if (wnd->myplayer->storage::get ("gender") != 1)
         out << "\nGender " << wnd->myplayer->storage::get ("gender");
 
     // NPC name
-    out << "\nNPC §" << wnd->mynpc->name << "§";
+    out << "\nNPC §" << wnd->mynpc->get_name() << "§";
 
     // Save Circles and create position-table 
     for (i = 0; i < wnd->number; i++)

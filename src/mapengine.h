@@ -31,7 +31,7 @@ class mapengine
   void set_mapview_schedule(char * s);
   void use_map(landmap * lm);
   landmap * get_landmap() { return lmap; }
-  void launch_dialog(npc * whichcar);
+  void launch_dialog(character_base * whichcar, char * dlg_file);
   void run();
 
   void mainloop();

@@ -15,11 +15,19 @@
 
 #include <SDL/SDL.h>
 
+#define u_int8 unsigned char
+#define u_int16 unsigned short
+#define u_int32 unsigned int
+#define s_int8 signed char
+#define s_int16 signed short
+#define s_int32 signed int
+
+/*
 #define u_int8 Uint8
 #define u_int16 Uint16
 #define u_int32 Uint32
 #define s_int8 Sint8
 #define s_int16 Sint16
 #define s_int32 Sint32
-
+*/
 #endif

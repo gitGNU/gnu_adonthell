@@ -16,7 +16,7 @@
 #include "ps_interface.h"
 #include "../../data.h"
 
-ps_dlg::ps_dlg (player *p, npc *n)
+ps_dlg::ps_dlg (character *p, character *n)
 {
     myplayer = p;
     mynpc = n;
@@ -24,24 +24,23 @@ ps_dlg::ps_dlg (player *p, npc *n)
 
 void ps_dlg::run ()
 {
-    wnd = create_ps_window (this, myplayer->name, myplayer->storage::get("race"),
-        myplayer->storage::get("gender"), mynpc->name);
+    wnd = create_ps_window (this, myplayer->get_name(), myplayer->storage::get("race"),
+        myplayer->storage::get("gender"), mynpc->get_name());
 }
 
 void ps_dlg::on_ok (char* n, int r, int g, char *the_npc)
 {
-    data::characters.erase (myplayer->name);
+    data::characters.erase (myplayer->get_name());
     
-    delete myplayer->name;  
-    myplayer->name = strdup (n);
+    myplayer->set_name(n);
     myplayer->set("race", r);
     myplayer->set("gender", g);
 
-    data::characters.set (myplayer->name, myplayer);
-    mynpc = (npc *) data::characters.get (the_npc);
+    data::characters.set (myplayer->get_name(), myplayer);
+    mynpc = (character *) data::characters.get (the_npc);
 }
 
-npc *ps_dlg::get_npc ()
+character *ps_dlg::get_npc ()
 {
     return mynpc;
 }

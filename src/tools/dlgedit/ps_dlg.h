@@ -23,10 +23,10 @@
 class ps_dlg
 {
 public:
-    ps_dlg (player*, npc*);
+    ps_dlg (character*, character*);
 
     void run ();
-    npc *get_npc ();                        // Return selected NPC
+    character *get_npc ();             // Return selected NPC
     void on_ok (char*, int, int, char*);    // OK-Button pressed
 
     GtkEntry *name;                         // Set player's name
@@ -36,8 +36,8 @@ public:
     GtkWidget *wnd;                         // The dialog window
     
 private:
-    player *myplayer;                       // The player object
-    npc *mynpc;                             // The NPC object attached to the dialogue
+    character *myplayer;               // The player object
+    character *mynpc;                  // The NPC object attached to the dialogue
 };
 
 #endif // __PSDLG_H__

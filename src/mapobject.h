@@ -16,6 +16,8 @@
 #ifndef _MAPOBJ_H
 #define _MAPOBJ_H
 
+#define MAPOBJECTS_DIR "gfx/mapobjects/"
+
 #include <vector>
 #include "animation_off.h"
 #include "maptpl.h"
@@ -91,6 +93,7 @@ class mapobject : public maptpl
   void quick_load();
   void save();
   void load();
+  void new_animation();
   void add_animation();
   s_int8 insert_animation(animation &an, u_int16 pos);
   s_int8 delete_animation(u_int16 pos);

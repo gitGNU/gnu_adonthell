@@ -42,12 +42,16 @@ void event_list::add_event (event* ev)
   events.push_back(ev);
 }
 
+#if defined(USE_MAP)
 void event_list::add_map_event(char * script, u_int16 etype, 
 			       s_int32 esubmap=-1,s_int32 ex=-1, 
 			       s_int32 ey=-1, s_int16 edir=-1, 
 			       mapcharacter * ec=NULL)
 {
+  char fdef[strlen(script)+strlen(EVENTS_DIR)+1];
   base_map_event * e=new base_map_event();
+  strcpy(fdef,EVENTS_DIR);
+  strcat(fdef,script);
   e->submap=esubmap;
   e->type=etype;
   e->x=ex;
@@ -55,8 +59,9 @@ void event_list::add_map_event(char * script, u_int16 etype,
   e->dir=edir;
   e->c=ec;
   add_event(e);
-  event_handler::register_event(e,script);
+  event_handler::register_event(e,fdef);
 }
+#endif
 
 event::~event ()
 {
@@ -128,6 +133,7 @@ event* event_handler::load_event (gzFile f, bool reg)
 
     switch (type)
     {
+#if defined(USE_MAP)
         case ENTER_EVENT:
         {
             e = new enter_event;
@@ -139,6 +145,7 @@ event* event_handler::load_event (gzFile f, bool reg)
             e = new leave_event;
             break;
         }
+#endif
 
         case TIME_EVENT:
         {
@@ -173,6 +180,7 @@ event* event_handler::load_event (gzFile f, bool reg)
 // =======================================================================
 // HERE COME ALL THE DIFFERENT EVENTS:
 
+#if defined(USE_MAP)
 enter_event::enter_event () : base_map_event ()
 {
     type = ENTER_EVENT; 
@@ -214,7 +222,7 @@ void base_map_event::execute (event *e)
 
     // Build the event script's local namespace
     PyObject *locals = Py_BuildValue ("{s:i,s:i,s:i,s:i,s:s}", "posx", t->x, 
-        "posy", t->y, "dir", t->dir, "map", t->map, "name", t->c->get_character()->name);
+        "posy", t->y, "dir", t->dir, "map", t->map, "name", t->c->get_name());
     // Execute script
     PyEval_EvalCode (script, data::globals, locals);
     // Cleanup
@@ -250,9 +258,10 @@ void base_map_event::save (gzFile out)
     gzwrite (out, &dir, sizeof (dir));
     gzwrite (out, &map, sizeof (map));    
 
-    put_string (out, c->get_character()->name);
+    put_string (out, c->get_name());
     put_string (out, script_file);    
 }
+#endif
 
 time_event::time_event ()
 {
