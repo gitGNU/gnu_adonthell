@@ -9,18 +9,18 @@ callbacks.h dirbrowser.h interface.h main.h
 
 mergequests_SOURCES = mergequests.cc
 
-mergequests_LDADD = ../../quest.o ../../storage.o ../../fileops.o
+mergequests_LDADD = quest.o storage.o fileops.o
 
 # Evil, but it works...
-CPPFLAGS +=-I../.. -D_DLGEDIT_ -D_DEBUG_ -D_VERSION_=\"0.7\" `gtk-config --cflags`
+CPPFLAGS +=-I../.. `gtk-config --cflags`
 
 LDFLAGS=-lm -lstdc++ `gtk-config --libs`
 
-../../fileops.o : ../../fileops.cpp
+fileops.o : ../../fileops.cpp
 	$(CXXCOMPILE) -c $< -o $@
 
-../../quest.o : ../../quest.cpp
+quest.o : ../../quest.cpp
 	$(CXXCOMPILE) -c $< -o $@
 
-../../storage.o : ../../storage.cpp
+storage.o : ../../storage.cpp
 	$(CXXCOMPILE) -c $< -o $@

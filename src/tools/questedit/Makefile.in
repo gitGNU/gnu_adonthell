@@ -76,10 +76,10 @@ questedit_SOURCES = main.cc interface.cc callbacks.cc dirbrowser.cc callbacks.h 
 
 mergequests_SOURCES = mergequests.cc
 
-mergequests_LDADD = ../../quest.o ../../storage.o ../../fileops.o
+mergequests_LDADD = quest.o storage.o fileops.o
 
 # Evil, but it works...
-CPPFLAGS =  -I../.. -D_DLGEDIT_ -D_DEBUG_ -D_VERSION_=\"0.7\" `gtk-config --cflags`
+CPPFLAGS =  -I../.. `gtk-config --cflags`
 
 LDFLAGS = -lm -lstdc++ `gtk-config --libs`
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
@@ -95,8 +95,7 @@ questedit_LDADD = $(LDADD)
 questedit_DEPENDENCIES = 
 questedit_LDFLAGS = 
 mergequests_OBJECTS =  mergequests.o
-mergequests_DEPENDENCIES =  ../../quest.o ../../storage.o \
-../../fileops.o
+mergequests_DEPENDENCIES =  quest.o storage.o fileops.o
 mergequests_LDFLAGS = 
 CXXFLAGS = @CXXFLAGS@
 CXXCOMPILE = $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
@@ -111,7 +110,7 @@ DIST_COMMON =  Makefile.am Makefile.in
 
 DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 
-TAR = gtar
+TAR = tar
 GZIP_ENV = --best
 DEP_FILES =  .deps/callbacks.P .deps/dirbrowser.P .deps/interface.P \
 .deps/main.P .deps/mergequests.P
@@ -353,13 +352,13 @@ mostlyclean-generic distclean-generic clean-generic \
 maintainer-clean-generic clean mostlyclean distclean maintainer-clean
 
 
-../../fileops.o : ../../fileops.cpp
+fileops.o : ../../fileops.cpp
 	$(CXXCOMPILE) -c $< -o $@
 
-../../quest.o : ../../quest.cpp
+quest.o : ../../quest.cpp
 	$(CXXCOMPILE) -c $< -o $@
 
-../../storage.o : ../../storage.cpp
+storage.o : ../../storage.cpp
 	$(CXXCOMPILE) -c $< -o $@
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
