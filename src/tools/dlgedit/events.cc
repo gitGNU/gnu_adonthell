@@ -199,33 +199,35 @@ guint
 key_press_notify_event (GtkWidget * widget, GdkEventKey * event, gpointer data)
 {
     MainFrame *MainWnd = (MainFrame *) data;
-    u_int32 index;
+    u_int32 index, offset = 5;
+
+    if (event->state & GDK_SHIFT_MASK) offset *= 10;
 
     switch (event->keyval)
     {
         /* Edit selected node */
-    case GDK_Return:
+        case GDK_Return:
         {
             edit_node (MainWnd);
             break;
         }
 
         /* Deselect selected node */
-    case GDK_Escape:
+        case GDK_Escape:
         {
             deselect_object (MainWnd);
             break;
         }
 
         /* Delete selected node */
-    case GDK_Delete:
+        case GDK_Delete:
         {
             delete_node (MainWnd);
             break;
         }
 
         /* Cycle through nodes */
-    case GDK_Tab:
+        case GDK_Tab:
         {
             if (MainWnd->nodes.empty ())
                 break;
@@ -250,7 +252,7 @@ key_press_notify_event (GtkWidget * widget, GdkEventKey * event, gpointer data)
             break;
         }
         /* Center screen on selected node */
-    case GDK_c:
+        case GDK_c:
         {
             if (MainWnd->selected_node != NULL)
             {
@@ -260,64 +262,64 @@ key_press_notify_event (GtkWidget * widget, GdkEventKey * event, gpointer data)
             break;
         }
         /* scrolling */
-    case GDK_Up:
-    case GDK_KP_Up:
+        case GDK_Up:
+        case GDK_KP_Up:
         {
-            MainWnd->y_offset += 5;
+            MainWnd->y_offset += offset;
             redraw_graph (MainWnd);
             break;
         }
-    case GDK_Down:
-    case GDK_KP_Down:
+        case GDK_Down:
+        case GDK_KP_Down:
         {
-            MainWnd->y_offset -= 5;
+            MainWnd->y_offset -= offset;
             redraw_graph (MainWnd);
             break;
         }
-    case GDK_Left:
-    case GDK_KP_Left:
+        case GDK_Left:
+        case GDK_KP_Left:
         {
-            MainWnd->x_offset += 5;
+            MainWnd->x_offset += offset;
             redraw_graph (MainWnd);
             break;
         }
-    case GDK_Right:
-    case GDK_KP_Right:
+        case GDK_Right:
+        case GDK_KP_Right:
         {
-            MainWnd->x_offset -= 5;
+            MainWnd->x_offset -= offset;
             redraw_graph (MainWnd);
             break;
         }
-    case GDK_KP_Home:
+        case GDK_KP_Home:
         {
-            MainWnd->x_offset += 5;
-            MainWnd->y_offset += 5;
+            MainWnd->x_offset += offset;
+            MainWnd->y_offset += offset;
             redraw_graph (MainWnd);
             break;
         }
-    case GDK_KP_End:
+        case GDK_KP_End:
         {
-            MainWnd->x_offset += 5;
-            MainWnd->y_offset -= 5;
+            MainWnd->x_offset += offset;
+            MainWnd->y_offset -= offset;
             redraw_graph (MainWnd);
             break;
         }
-    case GDK_KP_Page_Up:
+        case GDK_KP_Page_Up:
         {
-            MainWnd->x_offset -= 5;
-            MainWnd->y_offset += 5;
+            MainWnd->x_offset -= offset;
+            MainWnd->y_offset += offset;
             redraw_graph (MainWnd);
             break;
         }
-    case GDK_KP_Page_Down:
+        case GDK_KP_Page_Down:
         {
-            MainWnd->x_offset -= 5;
-            MainWnd->y_offset -= 5;
+            MainWnd->x_offset -= offset;
+            MainWnd->y_offset -= offset;
             redraw_graph (MainWnd);
             break;
         }
-    default:
-        break;
+        default:
+            break;
     }
 
     return TRUE;

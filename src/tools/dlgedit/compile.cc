@@ -49,7 +49,7 @@ void dlg_compiler::run ()
     output_script ();
 }
 
-// Write the Dialogue's text
+// Sort and write the Dialogue's text
 void dlg_compiler::write_import ()
 {
     // We use a 'FILE*' here instead of a 'ofstream', as it makes writing 
@@ -183,6 +183,9 @@ void dlg_compiler::write_npc ()
         
         // Here is the command whose target we have to set later on
         data->cmd = code.back ();
+
+        // This line of dialogue may be used several times
+        if (cur_crcle->actions[0] != '0') write_loop ();
         
         // Do any operation on (gamestate) variables before we display the
         // players text, because player-conditions may depend on those 
@@ -259,6 +262,9 @@ void dlg_compiler::write_player ()
 
         write_text ();
 
+        // This line of dialogue may be used several times
+        if (cur_crcle->actions[0] != '0') write_loop ();
+
         // Here's the line of the script that preceeding nodes must link to
         data = new cmp_data (cur_crcle, code.back (), code.size ()-1);
         todo_nodes.push_back (data);
@@ -330,6 +336,13 @@ void dlg_compiler::write_end ()
     code.push_back (cmd);    
 }
 
+void dlg_compiler::write_loop ()
+{
+    loop_cmd *cmd = new loop_cmd (text_lookup[cur_crcle->number]);
+    code.push_back (cmd);
+}
+
+// write the script for the interpreter as well as an ASCII version 
 void dlg_compiler::output_script ()
 {
     u_int32 i;

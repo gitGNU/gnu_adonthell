@@ -611,7 +611,8 @@ draw_circle (MainFrame * wnd, DlgNode * circle, int highlite)
     circle->position.y += wnd->y_offset;
 
     // Insert number of links 
-    g_string_sprintf (links, "%i", circle->link.size ());
+    if (circle->link.size ())
+        g_string_sprintf (links, "%i", circle->link.size ());
 
     // Indicate wether node contains additional code
     if (((Circle *) circle)->variables != "" || ((Circle *) circle)->conditions != "")

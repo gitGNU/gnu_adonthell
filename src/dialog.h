@@ -32,17 +32,18 @@ public:
 class dialog
 {
 public:
-    static s_int32 *offset;
-    static s_int32 *length;
+    static s_int32 *offset;             // The dialogue string file's
+    static s_int32 *length;             // "table of contents"
 
     u_int32 speaker;                    // The current speaker 
     u_int32 answer;                     // The text chosen by the player
     char *text_file;                    // The file with the dialogues strings
-    char *player_name;
+    char *player_name;                  // The players name
 
     vector<dlg_text*> npc_text;         // NPC´s part
     vector<dlg_text*> player_text;      // Player´s part
     vector<u_int32> used_text;          // Text already spoken -> don´t display again
+    vector<u_int32> loop_text;          // Text may be displayed again
 
     vector<char*> strings;              // Text data
 };

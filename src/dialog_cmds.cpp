@@ -33,6 +33,8 @@ s_int32 *dialog::offset = NULL;
 s_int32 *dialog::length = NULL;
 
 
+// === IMPORT ===
+
 // Initializes the command from the buffer
 void import_cmd::init (s_int32 *buffer, u_int32 &i, void *data)
 {
@@ -95,6 +97,8 @@ void import_cmd::ascii (ofstream &out)
 }
 
 
+// === CLEAR ===
+
 // continues dialogue according to players selection
 s_int32 clear_cmd::run (u_int32 &pc, void *data)
 {
@@ -102,6 +106,7 @@ s_int32 clear_cmd::run (u_int32 &pc, void *data)
     dialog *dlg = (dialog *) data;
 
     // Memorize what parts of the dialogue where already used, to avoid loops
+    if (find (dlg->loop_text.begin (), dlg->loop_text.end (), dlg->player_text[dlg->answer]->id) == dlg->loop_text.end ())
     dlg->used_text.push_back (dlg->player_text[dlg->answer]->id);
 
     // Continue the dialogue according to the players choice
@@ -132,6 +137,8 @@ void clear_cmd::ascii (ofstream &out)
     out << "CLEAR";
 }
 
+
+// === TEXT ===
 
 // Initializes the command from the buffer
 void text_cmd::init (s_int32 *buffer, u_int32 &i, void *data)
@@ -214,6 +221,43 @@ void text_cmd::ascii (ofstream &out)
     out << "TEXT    " << text << " " << offset;
 }
 
+
+// === LOOP ===
+
+// Initializes the command from the buffer
+void loop_cmd::init (s_int32 *buffer, u_int32 &i, void *data)
+{
+    text = buffer[i++];
+}
+
+// allows a text to be displayed multiple times
+s_int32 loop_cmd::run (u_int32 &pc, void *data)
+{
+    dialog *dlg = (dialog *) data;
+
+    // don't add the same text twice
+    if (find (dlg->loop_text.begin (), dlg->loop_text.end (), text) == dlg->loop_text.end ())
+        dlg->loop_text.push_back (text);
+        
+    return 1;
+}
+
+void loop_cmd::write (FILE *out)
+{
+    // write cmds type
+    fwrite (&type, sizeof (type), 1, out);
+    
+    fwrite (&text, sizeof (text), 1, out);
+}
+
+void loop_cmd::ascii (ofstream &out)
+{
+    out << "LOOP    " << text;
+}
+
+
+// === SPEAKER ===
+
 speaker_cmd::speaker_cmd (u_int32 s, u_int32 m) : speaker(s), mood(m)
 {
     type = SPEAKER;
@@ -257,6 +301,9 @@ void speaker_cmd::ascii (ofstream &out)
 {
     out << "SPEAKER " << speaker << " " << mood;
 }
+
+
+// === SWITCH_DLG ===
 
 switch_dlg_cmd::switch_dlg_cmd (u_int32 d, char *n)
 {

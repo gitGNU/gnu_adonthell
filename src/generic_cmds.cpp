@@ -210,10 +210,10 @@ void binary_cmd::write (FILE *out)
 // write command in human readable form
 void binary_cmd::ascii (ofstream &out)
 {
-    char* ops[] = { "", "", "", "", "", "", "LET", "ADD", "SUB", "MUL", "DIV",
+    char* ops[] = { "LET", "ADD", "SUB", "MUL", "DIV",
                     "EQ ", "NEQ", "LT ", "LEQ", "GT ", "GEQ", "AND", "OR " };
 
-    out << ops[type] << "     ";
+    out << ops[type - LET] << "     ";
 
     if (c_param1 != NULL) out << param1_location << "." << c_param1 << " ";
     else out << i_param1 << " ";

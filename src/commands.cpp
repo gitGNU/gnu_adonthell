@@ -45,6 +45,7 @@ NEW_CMD (let_cmd)
 NEW_CMD (jmp_cmd)
 NEW_CMD (branch_cmd)
 NEW_CMD (switch_dlg_cmd)
+NEW_CMD (loop_cmd)
 
 // Add the registration of your commands to this function
 void init_interpreter ()
@@ -74,6 +75,7 @@ void init_interpreter ()
     REGISTER_CMD (CLEAR, clear_cmd)
     REGISTER_CMD (SPEAKER, speaker_cmd)
     REGISTER_CMD (SWITCH_DLG, switch_dlg_cmd)
+    REGISTER_CMD (LOOP, loop_cmd)
 }
 
 

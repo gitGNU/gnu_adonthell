@@ -67,6 +67,7 @@ private:
     void write_display ();          // Tells the interpreter to show the new text
     void write_end ();              // Tells the interpreter to quit
     void write_clear ();            // Continues the interpreter after players choice
+    void write_loop ();             // Allows text to be reused
     
     void output_script ();          // Write the compiled script to disk
     void get_cur_nodes ();          // Get the nodes to create the next block from

@@ -93,6 +93,23 @@ private:
     u_int32 text;               // Id of the dialogue text
 };
 
+// allows a certain part of the dialogue to be used more than once
+class loop_cmd : public command
+{
+public:
+    loop_cmd () { type = LOOP; }
+    loop_cmd (u_int32 t) : text (t) { type = LOOP; }
+
+    void init (s_int32*, u_int32&, void*);
+    s_int32 run (u_int32&, void*);
+
+    void write (FILE*);
+    void ascii (ofstream&);   
+
+private:
+    u_int32 text;
+};
+
 // switches a NPC's active dialogue
 class switch_dlg_cmd : public command
 {

@@ -30,29 +30,30 @@ enum
     CLEAR = 3,      // CLEAR                        Reset Text buffers
     SPEAKER = 4,    // SPEAKER <speaker> <mood>     Sets the Speaker
     SWITCH_DLG = 5, // SWITCH_DLG <npc> <dlg>       Changes the NPC's active dialogue
-
+    LOOP = 6,       // LOOP <id>                    Text may be chosen multiple times
+    
     // Arithmetic
-    LET = 6,        // LET <id1> <id2>              id2 = id1
-    ADD = 7,        // ADD <id1> <id2> <id3>        id3 = id1 + id2
-    SUB = 8,        // SUB <id1> <id2> <id3>        id3 = id1 - id2
-    MUL = 9,        // MUL <id1> <id2> <id3>        id3 = id1 * id2
-    DIV = 10,       // DIV <id1> <id2> <id3>        id3 = int (id1 / id2)
+    LET = 7,        // LET <id1> <id2>              id2 = id1
+    ADD = 8,        // ADD <id1> <id2> <id3>        id3 = id1 + id2
+    SUB = 9,        // SUB <id1> <id2> <id3>        id3 = id1 - id2
+    MUL = 10,       // MUL <id1> <id2> <id3>        id3 = id1 * id2
+    DIV = 11,       // DIV <id1> <id2> <id3>        id3 = int (id1 / id2)
 
     // Comparisons
-    EQ = 11,        // EQ <id1> <id2> <bool>        bool = id1 == id2 ? true : false
-    NEQ = 12,       // NEQ <id1> <id2> <bool>       bool = id1 != id2 ? true : false
-    LT = 13,        // LT <id1> <id2> <bool>        bool = id1 < id2 ? true : false
-    LEQ = 14,       // LEQ <id1> <id2> <bool>       bool = id1 <= id2 ? true : false
-    GT = 15,        // GT <id1> <id2> <bool>        bool = id1 > id2 ? true : false
-    GEQ = 16,       // GEQ <id1> <id2> <bool>       bool = id1 >= id2 ? true : false
+    EQ = 12,        // EQ <id1> <id2> <bool>        bool = id1 == id2 ? true : false
+    NEQ = 13,       // NEQ <id1> <id2> <bool>       bool = id1 != id2 ? true : false
+    LT = 14,        // LT <id1> <id2> <bool>        bool = id1 < id2 ? true : false
+    LEQ = 15,       // LEQ <id1> <id2> <bool>       bool = id1 <= id2 ? true : false
+    GT = 16,        // GT <id1> <id2> <bool>        bool = id1 > id2 ? true : false
+    GEQ = 17,       // GEQ <id1> <id2> <bool>       bool = id1 >= id2 ? true : false
 
     // Logic
-    AND = 17,       // AND <bool1> <bool2> <bool3>  bool3 = bool1 && bool2
-    OR = 18,        // OR <bool1> <bool2> <bool3>   bool3 = bool1 || bool2
+    AND = 18,       // AND <bool1> <bool2> <bool3>  bool3 = bool1 && bool2
+    OR = 19,        // OR <bool1> <bool2> <bool3>   bool3 = bool1 || bool2
 
     // Program flow
-    JMP = 19,       // JMP <offset>                 PC += offset
-    BRANCH = 20,    // BRANCH <bool> <offset>       bool == true ? PC++ : PC += offset
+    JMP = 20,       // JMP <offset>                 PC += offset
+    BRANCH = 21,    // BRANCH <bool> <offset>       bool == true ? PC++ : PC += offset
 
     // Those five are used during parsing only. They are defined here to avoid
     // conflicts with other commands, but are only used internally by the 
