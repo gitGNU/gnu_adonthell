@@ -54,7 +54,7 @@ public:
      *  The drawing_area is then located at (0, 0) and is (0, 0) sized.
      */  
     drawing_area ();
-
+ 
 #ifndef SWIG
     /** Builds a drawing_area from the parameters.
      *  @param px X position.
@@ -130,12 +130,12 @@ public:
     }
 
     /** 
-     * Returns a pointer to the drawing_area attached to this one.
+     * Returns a pointer to the drawing_area assigned to this one.
      * 
      * 
-     * @return pointer to the attached drawing_area, NULL if none.
+     * @return pointer to the assigned drawing_area, NULL if none.
      */
-    drawing_area * attached_drawing_area () const
+    drawing_area * assigned_drawing_area () const
     {
         return draw_to; 
     }

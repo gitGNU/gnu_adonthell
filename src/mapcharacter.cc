@@ -55,6 +55,9 @@ mapcharacter::mapcharacter () : mapsquare_walkable_area (), character_base ()
 mapcharacter::~mapcharacter ()
 {
     clear ();
+    for (u_int16 i = 0; i < NBR_MOVES; i++)
+        delete anim[i];
+    anim.clear (); 
 }
 
 void mapcharacter::clear ()

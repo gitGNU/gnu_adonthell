@@ -23,43 +23,35 @@
  */
 
 
-
+#include <iostream>
 #include "mapview.h"
 #include "landmap.h"
 
 
-void mapview::init ()
+mapview::mapview () : da () 
 {
     drawable::set_length (0);
     drawable::set_height (0); 
-    d_length = d_height = currentsubmap = posx = posy = 0;
+    d_length = d_height = currentsubmap_ = posx_ = posy_ = 0;
     m_map = NULL;
-    offx = offy = draw_offx = draw_offy = 0;
-    da = new drawing_area ();
+    offx_ = offy_ = 0;
     locals = PyDict_New ();
     PyDict_SetItemString (locals, "myself", pass_instance (this, "mapview"));
 }
 
-mapview::mapview ()
-{
-    init ();
-}
-
 mapview::~mapview ()
-{
-    delete da;
-    
+{     
     Py_DECREF (locals);
 }
 
 void mapview::attach_map (landmap * m)
 {
     m_map = m;
-    currentsubmap = 0;
+    currentsubmap_ = 0;
     PyDict_SetItemString (locals, "mymap", pass_instance (m_map, "landmap"));
     if (m_map->nbr_of_submaps ())
     {
-        set_pos (0, 0);
+        set_pos (0, 0, 0);
     }
 }
 
@@ -69,154 +61,113 @@ void mapview::detach_map ()
     PyDict_DelItemString (locals, "mymap");
 }
 
-s_int8 mapview::set_current_submap (u_int16 sm)
+s_int8 mapview::set_pos (u_int16 sm, u_int16 px, u_int16 py, s_int16 ox = 0, s_int16 oy = 0)
 {
-    if (sm >= m_map->nbr_of_submaps ())
-        return -1;
-    currentsubmap = sm;
+    currentsubmap_ = sm;
+    mapsquare_area * ms = m_map->submap[sm]; 
+    
+    s_int32 tpx = px * MAPSQUARE_SIZE + ox;
+    s_int32 tpy = py * MAPSQUARE_SIZE + oy;
+    
+    if (tpx + length () > ms->area_length () * MAPSQUARE_SIZE)
+        tpx = ms->area_length () * MAPSQUARE_SIZE - length (); 
+    if (tpy + height () > ms->area_height () * MAPSQUARE_SIZE)
+        tpy = ms->area_height () * MAPSQUARE_SIZE - height (); 
+
+    if (tpx < 0) tpx = 0;
+    if (tpy < 0) tpy = 0; 
+    
+    px = tpx / MAPSQUARE_SIZE;
+    py = tpy / MAPSQUARE_SIZE;
+
+    ox = tpx % MAPSQUARE_SIZE;
+    oy = tpy % MAPSQUARE_SIZE;
+    
+    posx_ = px;
+    posy_ = py;
+    offx_ = ox;
+    offy_ = oy;
+    
     return 0;
 }
 
-s_int8 mapview::set_pos (u_int16 px, u_int16 py, s_int16 ox = 0, s_int16 oy =
-                         0)
-{
-    if (!m_map->nbr_of_submaps ())
-        return -1;
-    px += ox / MAPSQUARE_SIZE;
-    ox %= MAPSQUARE_SIZE;
-    py += oy / MAPSQUARE_SIZE;
-    oy %= MAPSQUARE_SIZE;
-    if (px >= m_map->submap[currentsubmap]->area_length () ||
-        py >= m_map->submap[currentsubmap]->area_height ())
-        return -1;
-
-    if (ox < 0)
-    {
-        px--;
-        ox = MAPSQUARE_SIZE + ox;
-    }
-    if (oy < 0)
-    {
-        py--;
-        oy = MAPSQUARE_SIZE + oy;
-    }
-
-    posx = px;
-    posy = py;
-    offx = ox;
-    offy = oy;
-    return 0;
-}
-
-s_int8 mapview::center_on (u_int16 px, u_int16 py, s_int16 ox =
+s_int8 mapview::center_on (u_int16 sm, u_int16 px, u_int16 py, s_int16 ox =
                            0, s_int16 oy = 0)
 {
-    s_int32 npx = px - (d_length >> 1);
-    s_int32 npy = py - (d_height >> 1);
+    s_int32 tpx = px * MAPSQUARE_SIZE + ox - (length () - MAPSQUARE_SIZE >> 1); 
+    s_int32 tpy = py * MAPSQUARE_SIZE + oy - (height () - MAPSQUARE_SIZE >> 1); 
 
-    if (!(d_length % 2))
-        ox += MAPSQUARE_SIZE / 2;
-    if (!(d_height % 2))
-        oy += MAPSQUARE_SIZE / 2;
+    if (tpx < 0) tpx = 0; 
+    if (tpy < 0) tpy = 0; 
+    
+    s_int16 npx = tpx / MAPSQUARE_SIZE; 
+    s_int16 npy = tpy / MAPSQUARE_SIZE;
+    
+    s_int16 nox = tpx % MAPSQUARE_SIZE;
+    s_int16 noy = tpy % MAPSQUARE_SIZE;
 
-    if (ox < 0)
-    {
-        npx--;
-        ox = MAPSQUARE_SIZE + ox;
-    }
-    if (oy < 0)
-    {
-        npy--;
-        oy = MAPSQUARE_SIZE + oy;
-    }
-    if (npx < 0 || (!npx && ox < 0))
-    {
-        npx = 0;
-        ox = 0;
-    }
-    if (npy < 0 || (!npy && oy < 0))
-    {
-        npy = 0;
-        oy = 0;
-    }
-
-    if (npx > m_map->submap[currentsubmap]->area_length () - d_length ||
-        (npx == m_map->submap[currentsubmap]->area_length () - d_length && ox))
-    {
-        npx = m_map->submap[currentsubmap]->area_length () - d_length;
-        ox = 0;
-    }
-    if (npy > m_map->submap[currentsubmap]->area_height () - d_height ||
-        (npy == m_map->submap[currentsubmap]->area_height () - d_height && oy))
-    {
-        npy = m_map->submap[currentsubmap]->area_height () - d_height;
-        oy = 0;
-    }
-
-    return set_pos (npx, npy, ox, oy);
+    return set_pos (sm, npx, npy, nox, noy);     
 }
 
 void mapview::scroll_right ()
 {
     if (!can_scroll_right ())
         return;
-    if (offx == MAPSQUARE_SIZE - 1)
+    if (offx_ == MAPSQUARE_SIZE - 1)
     {
-        offx = 0;
-        posx++;
+        offx_ = 0;
+        posx_++;
     }
     else
-        offx++;
+        offx_++;
 }
 
 void mapview::scroll_left ()
 {
     if (!can_scroll_left ())
         return;
-    if (offx == 0)
+    if (offx_ == 0)
     {
-        offx = MAPSQUARE_SIZE - 1;
-        posx--;
+        offx_ = MAPSQUARE_SIZE - 1;
+        posx_--;
     }
     else
-        offx--;
+        offx_--;
 }
 
 void mapview::scroll_down ()
 {
     if (!can_scroll_down ())
         return;
-    if (offy == MAPSQUARE_SIZE - 1)
+    if (offy_ == MAPSQUARE_SIZE - 1)
     {
-        offy = 0;
-        posy++;
+        offy_ = 0;
+        posy_++;
     }
     else
-        offy++;
+        offy_++;
 }
 
 void mapview::scroll_up ()
 {
     if (!can_scroll_up ())
         return;
-    if (offy == 0)
+    if (offy_ == 0)
     {
-        offy = MAPSQUARE_SIZE - 1;
-        posy--;
+        offy_ = MAPSQUARE_SIZE - 1;
+        posy_--;
     }
     else
-        offy--;
+        offy_--;
 }
 
 void mapview::resize (u_int16 l, u_int16 h)
 {
     drawable::set_length (l);
     drawable::set_height (h); 
-    draw_offx = (l % MAPSQUARE_SIZE);
-    draw_offy = (h % MAPSQUARE_SIZE);
     d_length = (l / MAPSQUARE_SIZE) + (l % MAPSQUARE_SIZE != 0);
     d_height = (h / MAPSQUARE_SIZE) + (h % MAPSQUARE_SIZE != 0);
-    da->resize (drawable::length (), drawable::height ());
+    da.resize (length (), height ());
 }
 
 s_int8 mapview::get_state (igzstream& file)
@@ -226,7 +177,7 @@ s_int8 mapview::get_state (igzstream& file)
     t << file;
     set_schedule (t);
 
-    u_int16 a, b, c, d;
+    u_int16 a, b, c, d, sm;
 
     // Read the mapview's dimensions
     // Length and height
@@ -235,19 +186,14 @@ s_int8 mapview::get_state (igzstream& file)
     resize (a, b);
 
     // Currentsubmap
-    a << file; 
-    set_current_submap (a);
-
-    // Screen position (FIXME: obsolete!)
-    a << file;
-    b << file; 
-
+    sm << file;
+    
     // Position on map
     a << file;
     b << file;
     c << file;
     d << file; 
-    set_pos (a, b, c, d);
+    set_pos (sm, a, b, c, d);
 
     return 0;
 }
@@ -264,17 +210,13 @@ s_int8 mapview::put_state (ogzstream& file)
     b >> file;
     b = height (); 
     b >> file; 
-    currentsubmap >> file; 
-
-    // FIXME: Obsolete x and y members - Fire them!
-    b >> file;
-    b >> file;
+    currentsubmap_ >> file; 
 
     // Position
-    posx >> file;
-    posy >> file;
-    offx >> file;
-    offy >> file; 
+    posx_ >> file;
+    posy_ >> file;
+    offx_ >> file;
+    offy_ >> file; 
     
     return 0;
 }
@@ -304,17 +246,24 @@ void mapview::draw (s_int16 x, s_int16 y, const drawing_area * da_opt = NULL,
     if (!m_map)
         return;
 
-    da->move (x, y);
+    static SDL_Rect trect; 
+    static drawing_area tda;
 
-    l = m_map->submap[currentsubmap];
+    da.move (x, y);
+    if (da_opt) da.assign_drawing_area (da_opt);
+    
+    trect = da.setup_rects ();
+    tda = trect;
+    
+    l = m_map->submap[currentsubmap_];
     if (!l->area_length () || !l->area_height ())
         return;
 
-    i0 = posx;
-    j0 = posy;
-    ie = i0 + d_length + (offx != 0) < l->area_length () ? i0 + d_length + (offx !=
+    i0 = posx_;
+    j0 = posy_;
+    ie = i0 + d_length + (offx_ != 0) < l->area_length () ? i0 + d_length + (offx_ !=
                                                                     0) : l->area_length ();
-    je = j0 + d_height + (offy != 0) < l->area_height () ? j0 + d_height + (offy !=
+    je = j0 + d_height + (offy_ != 0) < l->area_height () ? j0 + d_height + (offy_ !=
                                                                     0) : l->area_height ();
 
     // 1st horizontal parse to check top overflows
@@ -368,24 +317,24 @@ void mapview::draw (s_int16 x, s_int16 y, const drawing_area * da_opt = NULL,
             {
                 if (it->base_tile->y <= itc->base_tile->y)
                 {
-                    draw_tile (x, y, da_opt, target, it);
+                    draw_tile (x, y, &tda, target, it);
                     it++;
                 }
                 else
                 {
-                    draw_mapchar (x, y, da_opt, target, itc); 
+                    draw_mapchar (x, y, &tda, target, itc); 
                     itc++;
                 }
             }
             else
             {
-                draw_mapchar (x, y, da_opt, target, itc); 
+                draw_mapchar (x, y, &tda, target, itc); 
                 itc++;
             }
         }
         else
         {
-            draw_tile (x, y, da_opt, target, it);
+            draw_tile (x, y, &tda, target, it);
             it++;
         }
     }
@@ -400,7 +349,7 @@ void mapview::draw (s_int16 x, s_int16 y, const drawing_area * da_opt = NULL,
              it != l->area[i0][j].tiles.end () && *(it->base_tile) <= *it;
              it++)
             if (it->y == it->base_tile->y && it->x > it->base_tile->x)
-                draw_tile (x, y, da_opt, target, it); 
+                draw_tile (x, y, &tda, target, it); 
 
         for (itc = l->area[i0][j].mapchars.begin ();
              itc != l->area[i0][j].mapchars.end (); itc++)
@@ -415,7 +364,7 @@ void mapview::draw (s_int16 x, s_int16 y, const drawing_area * da_opt = NULL,
                  it++);
             for (; it != l->area[i][j].tiles.end () && *(it->base_tile) == *it;
                  it++)
-                draw_tile (x, y, da_opt, target, it);
+                draw_tile (x, y, &tda, target, it);
                 
             for (itc = l->area[i][j].mapchars.begin ();
                  itc != l->area[i][j].mapchars.end (); itc++)
@@ -427,7 +376,7 @@ void mapview::draw (s_int16 x, s_int16 y, const drawing_area * da_opt = NULL,
         for (it = l->area[ie - 1][j].tiles.begin ();
              it != l->area[ie - 1][j].tiles.end (); it++)
             if (it->y == it->base_tile->y && it->x < it->base_tile->x)
-                draw_tile (x, y, da_opt, target, it); 
+                draw_tile (x, y, &tda, target, it); 
 
         for (itc = l->area[ie - 1][j].mapchars.begin ();
              itc != l->area[ie - 1][j].mapchars.end (); itc++)
@@ -437,7 +386,7 @@ void mapview::draw (s_int16 x, s_int16 y, const drawing_area * da_opt = NULL,
         // Drawing characters
         for (itc = characters_draw.begin (); itc != characters_draw.end ();
              itc++)
-            draw_mapchar (x, y, da_opt, target, itc); 
+            draw_mapchar (x, y, &tda, target, itc); 
         characters_draw.clear ();
     }
 
@@ -512,29 +461,31 @@ void mapview::draw (s_int16 x, s_int16 y, const drawing_area * da_opt = NULL,
             {
                 if (it->base_tile->y <= itc->base_tile->y)
                 {
-                    draw_tile (x, y, da_opt, target, it);
+                    draw_tile (x, y, &tda, target, it);
                     it++;
                 }
                 else
                 {
-                    draw_mapchar (x, y, da_opt, target, itc); 
+                    draw_mapchar (x, y, &tda, target, itc); 
                     itc++;
                 }
             }
             else
             {
-                draw_mapchar (x, y, da_opt, target, itc); 
+                draw_mapchar (x, y, &tda, target, itc); 
                 itc++;
             }
         }
         else
         {
-            draw_tile (x, y, da_opt, target, it);
+            draw_tile (x, y, &tda, target, it);
             it++;
         }
     }
     critical_draw.clear ();
     characters_draw.clear ();
+
+    if (da_opt) da.detach_drawing_area ();  
 }
 
 
@@ -546,21 +497,21 @@ void mapview::draw_tile (s_int16 x, s_int16 y, const drawing_area * da_opt,
                          surface * target, list<mapsquare_tile>::iterator it) const
 { 
     it->mapobj->draw_from_base
-        ((it->base_tile->x - posx) * MAPSQUARE_SIZE - offx + x - draw_offx,
-         (it->base_tile->y - posy) * MAPSQUARE_SIZE - offy + y - draw_offy,
-         da, target);
+        ((it->base_tile->x - posx_) * MAPSQUARE_SIZE - offx_ + x,
+         (it->base_tile->y - posy_) * MAPSQUARE_SIZE - offy_ + y,
+         da_opt, target);
 }
 
 void mapview::draw_mapchar (s_int16 x, s_int16 y, const drawing_area * da_opt,
                             surface * target, list<mapsquare_char>::iterator itc) const
 { 
     u_int16 xdraw =
-        ((itc->mchar->posx () - posx - itc->mchar->base_x ()) * MAPSQUARE_SIZE)
-        + itc->mchar->offx () - offx + x - draw_offx;
+        ((itc->mchar->posx () - posx_ - itc->mchar->base_x ()) * MAPSQUARE_SIZE)
+        + itc->mchar->offx () - offx_ + x;
     
     u_int16 ydraw =
-        ((itc->mchar->posy () - posy - itc->mchar->base_y ()) * MAPSQUARE_SIZE)
-        + itc->mchar->offy () - offy + y - draw_offy;
+        ((itc->mchar->posy () - posy_ - itc->mchar->base_y ()) * MAPSQUARE_SIZE)
+        + itc->mchar->offy () - offy_ + y;
     
-    itc->mchar->draw (xdraw, ydraw, da, target);
+    itc->mchar->draw (xdraw, ydraw, da_opt, target);
 }

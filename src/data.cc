@@ -296,7 +296,8 @@ bool data::load (u_int32 pos)
         cerr <<  "Couldn't open \"" << filepath << " - stopping\n" << endl; 
         return false;
     }
-    //  FIXME : put a version info in mapengine state file
+    if (!fileops::get_version (in, 1, 1, filepath))
+        return false;
     map_engine->get_state(in); 
     in.close (); 
 #endif
@@ -462,6 +463,7 @@ gamedata* data::save (u_int32 pos, string desc)
     filepath = gdata->get_directory(); 
     filepath += "/mapengine.data";
     file.open (filepath); 
+    fileops::put_version (file, 1);
     map_engine->put_state(file);
     file.close (); 
 #endif

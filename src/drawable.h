@@ -30,10 +30,10 @@
 class surface; 
 
 /**
- * Abstract class for drawable objects manipulation.
+ * Abstract class for drawable %objects manipulation.
  *
  * This class is designed to allow flexibility in
- * drawable objects manipulation. It also serves as
+ * drawable %objects manipulation. It also serves as
  * a template when creating your own classes.
  *
  * It defines the basic virtual methods every drawable
@@ -90,14 +90,14 @@ public:
     }
 
     /** 
-     * Virtual update function, provided for objects which
+     * Virtual update function, provided for %objects which
      * doesn't need one.
      * 
      */
     virtual void update ();
 
     /** 
-     * Virtual input update function, provided for objects which
+     * Virtual input update function, provided for %objects which
      * doesn't need one.
      * 
      */
