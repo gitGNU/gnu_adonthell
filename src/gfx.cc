@@ -24,36 +24,36 @@ SDL_Surface * screen::getbuffer;
 
 image::image ()
 {
-  if(DEBUG) fprintf(stderr, "Function: image::image\n");
   data = NULL;
   lenght=height=0;
 }
 
 image::~image()
 {
- if(DEBUG) fprintf(stderr, "Function: image::~image\n");
   free(data);
 }
 
 u_int16 image::get_lenght()
 {
-  if(DEBUG) fprintf(stderr, "Function: image::get_lenght\n");
   return(lenght);
 }
 
 u_int16 image::get_height()
 {
-  if(DEBUG) fprintf(stderr, "Function: image::get_height\n");
   return(height);
+}
+
+void image::set_sizefactor(u_int8 x)
+{
+  sizefactor=x;
 }
 
 #ifdef SDL
 void image::putbox (u_int16 x, u_int16 y)
 {
-  if(DEBUG) fprintf(stderr, "Function: image::putbox\n");
   static SDL_Rect dr;
-  x*=screen::get_sizefactor();
-  y*=screen::get_sizefactor();
+  x*=sizefactor;
+  y*=sizefactor;
   dr.x=x;
   dr.y=y;
   dr.w=lenght;
@@ -63,31 +63,26 @@ void image::putbox (u_int16 x, u_int16 y)
 
 void image::putbox_mask (u_int16 x, u_int16 y)
 {
-  if(DEBUG) fprintf(stderr, "Function: image::putbox_mask\n");
   static SDL_Rect dr;
-  x*=screen::get_sizefactor();
-  y*=screen::get_sizefactor();
+  x*=sizefactor;
+  y*=sizefactor;
   dr.x=x;
   dr.y=y;
   dr.w=lenght;
   dr.h=height;
-  if(data)
-    {
-      SDL_BlitSurface(data, NULL, screen::vis, &dr);
-    }
+  SDL_BlitSurface(data, NULL, screen::vis, &dr);
 }
 
 void image::putbox_part (u_int16 x, u_int16 y, u_int16 bw, u_int16 bh,
 			 u_int16 xo, u_int16 yo)
 {
-  if(DEBUG) fprintf(stderr, "Function: image::putbox_part\n");
   static SDL_Rect sr,dr;
-  x*=screen::get_sizefactor();
-  y*=screen::get_sizefactor();
-  bw*=screen::get_sizefactor();
-  bh*=screen::get_sizefactor();
-  xo*=screen::get_sizefactor();
-  yo*=screen::get_sizefactor();
+  x*=sizefactor;
+  y*=sizefactor;
+  bw*=sizefactor;
+  bh*=sizefactor;
+  xo*=sizefactor;
+  yo*=sizefactor;
   sr.x=xo;
   sr.y=yo;
   sr.w=bw;
@@ -101,33 +96,29 @@ void image::putbox_part (u_int16 x, u_int16 y, u_int16 bw, u_int16 bh,
 
 void image::putbox_trans (u_int16 x, u_int16 y, u_int8 alpha)
 {
-  if(DEBUG) fprintf(stderr, "Function: image::putbox_trans\n");
   static SDL_Rect dr;
-  x*=screen::get_sizefactor();
-  y*=screen::get_sizefactor();
+  x*=sizefactor;
+  y*=sizefactor;
   dr.x=x;
   dr.y=y;
   dr.w=lenght;
   dr.h=height;
 
-  if(data)
-    {
-      SDL_SetAlpha(data, SDL_SRCALPHA, alpha);
-      SDL_BlitSurface(data, NULL, screen::vis, &dr);
-    }
+  SDL_SetAlpha(data, SDL_SRCALPHA, alpha);
+  SDL_BlitSurface(data, NULL, screen::vis, &dr);
+  
 }
 
 void image::putbox_mask_part (u_int16 x, u_int16 y, u_int16 bw, u_int16 bh,
 			      u_int16 xo, u_int16 yo)
 {
-  if(DEBUG) fprintf(stderr, "Function: image::putbox_mask_part\n");
   static SDL_Rect sr,dr;
-  x*=screen::get_sizefactor();
-  y*=screen::get_sizefactor();
-  bw*=screen::get_sizefactor();
-  bh*=screen::get_sizefactor();
-  xo*=screen::get_sizefactor();
-  yo*=screen::get_sizefactor();
+  x*=sizefactor;
+  y*=sizefactor;
+  bw*=sizefactor;
+  bh*=sizefactor;
+  xo*=sizefactor;
+  yo*=sizefactor;
   sr.x=xo;
   sr.y=yo;
   sr.w=bw;
@@ -142,10 +133,9 @@ void image::putbox_mask_part (u_int16 x, u_int16 y, u_int16 bw, u_int16 bh,
 
 void image::putbox_mask_trans (u_int16 x, u_int16 y, u_int8 alpha)
 {
-  if(DEBUG) fprintf(stderr, "Function: image::putbox_mask_trans\n");
   static SDL_Rect dr;
-  x*=screen::get_sizefactor();
-  y*=screen::get_sizefactor();
+  x*=sizefactor;
+  y*=sizefactor;
   dr.x=x;
   dr.y=y;
   dr.w=lenght;
@@ -159,14 +149,13 @@ void image::putbox_part_trans (u_int16 x, u_int16 y, u_int16 bw,
 			       u_int16 bh, u_int16 xo, u_int16 yo, 
 			       u_int8 alpha)
 {
-  if(DEBUG) fprintf(stderr, "Function: image::putbox_part_trans\n");
   static SDL_Rect sr,dr;
-  x*=screen::get_sizefactor();
-  y*=screen::get_sizefactor();
-  bw*=screen::get_sizefactor();
-  bh*=screen::get_sizefactor();
-  xo*=screen::get_sizefactor();
-  yo*=screen::get_sizefactor();
+  x*=sizefactor;
+  y*=sizefactor;
+  bw*=sizefactor;
+  bh*=sizefactor;
+  xo*=sizefactor;
+  yo*=sizefactor;
   sr.x=xo;
   sr.y=yo;
   sr.w=bw;
@@ -185,14 +174,13 @@ void image::putbox_mask_part_trans (u_int16 x, u_int16 y, u_int16 bw,
 				    u_int16 bh, u_int16 xo, u_int16 yo, 
 				    u_int8 alpha)
 {
-  if(DEBUG) fprintf(stderr, "Function: image::putbox_mask_part_trans\n");
   static SDL_Rect sr,dr;
-  x*=screen::get_sizefactor();
-  y*=screen::get_sizefactor();
-  bw*=screen::get_sizefactor();
-  bh*=screen::get_sizefactor();
-  xo*=screen::get_sizefactor();
-  yo*=screen::get_sizefactor();
+  x*=sizefactor;
+  y*=sizefactor;
+  bw*=sizefactor;
+  bh*=sizefactor;
+  xo*=sizefactor;
+  yo*=sizefactor;
   sr.x=xo;
   sr.y=yo;
   sr.w=bw;
@@ -207,7 +195,6 @@ void image::putbox_mask_part_trans (u_int16 x, u_int16 y, u_int16 bw,
 
 void image::gfxrealloc(u_int32 l)
 {
-  if(DEBUG) fprintf(stderr, "Function: image::gfxrealloc\n");
  // void * tmp;
 //  tmp=calloc(bytes_per_pixel,sizefactor*sizefactor*lenght*height*l);
 //  data->pixels=(void*)realloc(data,l*bytes_per_pixel*sizefactor*sizefactor);
@@ -216,7 +203,6 @@ void image::gfxrealloc(u_int32 l)
 
 void image::size(u_int16 l, u_int16 h)
 {
-  if(DEBUG) fprintf(stderr, "Function: image::size\n");
   if(!data)
     {  
       lenght=l;
@@ -227,11 +213,10 @@ void image::size(u_int16 l, u_int16 h)
 
 void image::resize(u_int16 l, u_int16 h)
 {
-  if(DEBUG) fprintf(stderr, "Function: image::resize\n");
   if(!data)
     {  
-      lenght=l*screen::get_sizefactor();
-      height=h*screen::get_sizefactor();
+      lenght=l*sizefactor;
+      height=h*sizefactor;
       data=SDL_CreateRGBSurface(SDL_SWSURFACE,lenght,height,screen::get_bytes_per_pixel()*8,0,0,0,0);
     }
 
@@ -239,7 +224,6 @@ void image::resize(u_int16 l, u_int16 h)
 
 void image::putbox_tile_img(image * source)
 {
-  if(DEBUG) fprintf(stderr, "Function: image::putbox_tile_img\n");
   u_int16 posx;
   u_int16 posy;
   for(posy=0; posy<height; posy+=source->height)
@@ -250,10 +234,8 @@ void image::putbox_tile_img(image * source)
 
 void image::putbox_img(image * source, u_int16 x, u_int16 y)
 {
-  if(DEBUG) fprintf(stderr, "Function: image::putbox_img\n");
   static SDL_Rect sr,dr;
-  //  x*=sizefactor;
-  //  y*=sizefactor;
+
   sr.x=0;
   sr.y=0;
   sr.w=lenght;
@@ -268,7 +250,6 @@ void image::putbox_img(image * source, u_int16 x, u_int16 y)
 
 void image::putbox_mask_img (image * source, u_int16 x, u_int16 y)
 {
-  if(DEBUG) fprintf(stderr, "Function: image::putbox_mask_img\n");
   u_int32 i, j;
   u_int8 mltp=sizefactor*sizefactor;
   u_int32 l=lenght*mltp, h=height*mltp;
@@ -290,14 +271,13 @@ void image::putbox_mask_img (image * source, u_int16 x, u_int16 y)
 void image::putbox_part_img (image * source, u_int16 x, u_int16 y, u_int16 bw, 
 			     u_int16 bh,u_int16 xo, u_int16 yo)
 {
-  if(DEBUG) fprintf(stderr, "Function: image::putbox_part_img\n");
   SDL_Rect sr,dr;
-  x*=screen::get_sizefactor();
-  y*=screen::get_sizefactor();
-  bw*=screen::get_sizefactor();
-  bh*=screen::get_sizefactor();
-  xo*=screen::get_sizefactor();
-  yo*=screen::get_sizefactor();
+  x*=sizefactor;
+  y*=sizefactor;
+  bw*=sizefactor;
+  bh*=sizefactor;
+  xo*=sizefactor;
+  yo*=sizefactor;
   sr.x=xo;
   sr.y=yo;
   sr.w=bw;
@@ -311,12 +291,10 @@ void image::putbox_part_img (image * source, u_int16 x, u_int16 y, u_int16 bw,
 
 void image::putbox_font_img (void * source, u_int16 xo, u_int16 totlen)
 {
-  if(DEBUG) fprintf(stderr, "Function: image::putbox_font_img\n");
-
   u_int16 i,j;
   SDL_Surface *tmp;
 
-  if(screen::get_sizefactor()==1) 
+  if(sizefactor==1) 
     {		
       tmp=SDL_CreateRGBSurface(SDL_SWSURFACE,lenght,height,screen::get_bytes_per_pixel()*8,0,0,0,0);
     }else{
@@ -339,7 +317,7 @@ void image::putbox_font_img (void * source, u_int16 xo, u_int16 totlen)
 	      R=*((u_int8*)source+(j*3)+(totlen*3*i)+(xo*3));
 	      G=*((u_int8*)source+(j*3)+(totlen*3*i)+1+(xo*3));
 	      B=*((u_int8*)source+(j*3)+(totlen*3*i)+2+(xo*3));
-	      if(screen::get_sizefactor()==1) 
+	      if(sizefactor==1) 
 		{		
 		  *((u_int8*)tmp->pixels+(i*tmp->pitch)+(j*3))=R;
 		  *((u_int8*)tmp->pixels+(i*tmp->pitch)+(j*3)+1)=G;
@@ -363,8 +341,8 @@ void image::putbox_font_img (void * source, u_int16 xo, u_int16 totlen)
 		}
 	    }
 	}
-      lenght*=screen::get_sizefactor();
-      height*=screen::get_sizefactor();
+      lenght*=sizefactor;
+      height*=sizefactor;
       data=SDL_ConvertSurface(tmp, tmp->format, SDL_SWSURFACE);
       SDL_SetColorKey(data, SDL_SRCCOLORKEY, 0xFF00FF);
       break;
@@ -380,7 +358,7 @@ void image::putbox_font_img (void * source, u_int16 xo, u_int16 totlen)
 	      G=*((u_int8*)source+(j*3)+(totlen*3*i)+1+(xo*3));
 	      B=*((u_int8*)source+(j*3)+(totlen*3*i)+2+(xo*3));
 	      u_int32 colour = SDL_MapRGB(tmp->format, R, G, B);
-	      if(screen::get_sizefactor()==1) 
+	      if(sizefactor==1) 
 		{
 		  *((u_int16 *)tmp->pixels+(i*tmp->pitch/2)+j) = colour;
 		}else{
@@ -391,8 +369,8 @@ void image::putbox_font_img (void * source, u_int16 xo, u_int16 totlen)
 		}
 	    }
 	}
-      lenght*=screen::get_sizefactor();
-      height*=screen::get_sizefactor();
+      lenght*=sizefactor;
+      height*=sizefactor;
       data=SDL_ConvertSurface(tmp, tmp->format, SDL_SWSURFACE);
       SDL_SetColorKey(data, SDL_SRCCOLORKEY, 0xF81F);
       break;
@@ -403,39 +381,33 @@ void image::putbox_font_img (void * source, u_int16 xo, u_int16 totlen)
 void image::putbox_trans_img (image * source, u_int16 x, u_int16 y, 
 			      u_int8 alpha)
 {
-  if(DEBUG) fprintf(stderr, "Function: image::putbox_trans_img\n");
 }
 
 void image::putbox_mask_part_img (image * source, u_int16 x, u_int16 y, 
 				  u_int16 bw, u_int16 bh,u_int16 xo, 
 				  u_int16 yo)
 {
-  if(DEBUG) fprintf(stderr, "Function: image::putbox_mask_part_img\n");
 }
 
 void image::putbox_mask_trans_img (image * source, u_int16 x, u_int16 y, 
 				   u_int8 alpha)
 {
-  if(DEBUG) fprintf(stderr, "Function: image::putbox_mask_trans_img\n");
 }
 
 void image::putbox_part_trans_img (image * source, u_int16 x, u_int16 y, 
 				   u_int16 bw, u_int16 bh, u_int16 xo, 
 				   u_int16 yo, u_int8 alpha)
 {
-  if(DEBUG) fprintf(stderr, "Function: image::putbox_part_trans_img\n");
 }
 
 void image::putbox_mask_part_trans_img(image * source, u_int16 x, u_int16 y, 
 				       u_int16 bw, u_int16 bh,u_int16 xo, 
 				       u_int16 yo, u_int8 alpha)
 {
-  if(DEBUG) fprintf(stderr, "Function: image::putbox_mask_part_trans_img\n");
 }
 
 s_int8 image::get(FILE * file)
 {
-  if(DEBUG) fprintf(stderr, "Function: image::get\n");
   u_int16 i,j;
   void * tmp;
   SDL_Surface * tmp2;
@@ -445,7 +417,7 @@ s_int8 image::get(FILE * file)
   switch(screen::get_bytes_per_pixel())
     {
     case 3:
-      if(screen::get_sizefactor()==1) 
+      if(sizefactor==1) 
 	{
 	  tmp2=SDL_CreateRGBSurface(SDL_SWSURFACE,lenght,height,24,0,0,0,0);
 	}else{
@@ -465,7 +437,7 @@ s_int8 image::get(FILE * file)
 	      G=*((u_int8*)tmp+(j*3)+(lenght*3*i)+1);
 	      B=*((u_int8*)tmp+(j*3)+(lenght*3*i)+2);
 	      
-	      if(screen::get_sizefactor()==1) 
+	      if(sizefactor==1) 
 		{		       
 		  *((u_int8*)tmp2->pixels+(i*tmp2->pitch)+(j*3))=R;
 		  *((u_int8*)tmp2->pixels+(i*tmp2->pitch)+(j*3)+1)=G;
@@ -490,14 +462,14 @@ s_int8 image::get(FILE * file)
 	    }
 	}
       
-      lenght*=screen::get_sizefactor();
-      height*=screen::get_sizefactor();
+      lenght*=sizefactor;
+      height*=sizefactor;
       data=SDL_ConvertSurface(tmp2, tmp2->format, SDL_SWSURFACE);
       SDL_SetColorKey(data, SDL_SRCCOLORKEY, 0xFF00FF);
       break;
       
     case 2:
-      if(screen::get_sizefactor()==1) 
+      if(sizefactor==1) 
 	{
 	  tmp2=SDL_CreateRGBSurface(SDL_SWSURFACE,lenght,height,16,0,0,0,0);
 	}else{
@@ -513,7 +485,7 @@ s_int8 image::get(FILE * file)
 	      G=*((u_int8*)tmp+(j*3)+(lenght*3*i)+1);
 	      B=*((u_int8*)tmp+(j*3)+(lenght*3*i)+2);
 	      u_int32 colour =  SDL_MapRGB(tmp2->format, R, G, B);
-	      if(screen::get_sizefactor()==1) 
+	      if(sizefactor==1) 
 		{
 		  *((u_int16 *)tmp2->pixels+(i*tmp2->pitch/2)+j) = colour;
 		}else{
@@ -524,8 +496,8 @@ s_int8 image::get(FILE * file)
 		}
 	    }
 	}
-      lenght*=screen::get_sizefactor();
-      height*=screen::get_sizefactor();
+      lenght*=sizefactor;
+      height*=sizefactor;
       data=SDL_ConvertSurface(tmp2, tmp2->format, SDL_SWSURFACE);
       SDL_SetColorKey(data, SDL_SRCCOLORKEY, 0xF81F);
       break;
@@ -540,7 +512,6 @@ s_int8 image::get(FILE * file)
 
 s_int8 image::load(char * fname)
 {
-  if(DEBUG) fprintf(stderr, "Function: image::load\n");
   s_int8 res;
   FILE * file=fopen(fname,"r");
   if(!file) return(-1);
@@ -552,7 +523,6 @@ s_int8 image::load(char * fname)
 #ifdef SDL
 s_int8 image::simpleget(FILE * file)
 {
-  if(DEBUG) fprintf(stderr, "Function: image::simpleget\n");
   u_int8 bpp = screen::get_bytes_per_pixel() * 8;
   if(data) { SDL_FreeSurface(data); }
   data=SDL_CreateRGBSurface(SDL_SWSURFACE,lenght,height,bpp,0,0,0,0);
@@ -564,7 +534,6 @@ s_int8 image::simpleget(FILE * file)
 
 s_int8 image::simpleload(char * fname)
 {
-  if(DEBUG) fprintf(stderr, "Function: image::simpleload\n");
   s_int8 res;
   FILE * file=fopen(fname,"r");
   if(!file) return(-1);
@@ -576,14 +545,12 @@ s_int8 image::simpleload(char * fname)
 #ifdef SDL
 void image::adapttodepth()
 {
-  if(DEBUG) fprintf(stderr, "Function: image::adapttodepth\n");
   // nothing needs to be done here, as SDL will 
   // always convert to the display surface format..
 }
 
 void screen::init_display(u_int8 vidmode = 0)
 {
-  if(DEBUG) fprintf(stderr, "Function: screen::init_display\n");
   u_int8 bpp;
   
   switch (vidmode)
@@ -592,11 +559,13 @@ void screen::init_display(u_int8 vidmode = 0)
       screenwidth = 320;
       screenheight = 200;
       sizefactor = 1;
+      image::set_sizefactor(1);
       break;
     case 1:
       screenwidth = 640;
       screenheight = 400;
       sizefactor = 2;
+      image::set_sizefactor(2);
       break;
     default:                   /*printdisclaimer(); */
       exit (1);
@@ -619,17 +588,17 @@ void screen::init_display(u_int8 vidmode = 0)
       exit (1);
       break;
     case 16:
-      printf ("Using 16bpp depth.\n");
+      printf ("Using 16bpp depth: %dx%d.\n",screenwidth,screenheight);
       bytes_per_pixel = 2;
       trans=0xF81F;  
       break;
     case 24:
-      printf ("Using 24bpp depth.\n");
+      printf ("Using 24bpp depth: %dx%d.\n",screenwidth,screenheight);
       bytes_per_pixel = 3;
       trans=0xFF00FF;  
       break;
     default:
-      printf ("Emulating 16bpp depth in %dbpp mode\n",bpp);
+      printf ("Emulating 16bpp depth in %dbpp mode: %dx%d.\n",bpp,screenwidth,screenheight);
       bpp=16;
       bytes_per_pixel = 2;
       trans=0xF81F;
@@ -652,7 +621,6 @@ void screen::init_display(u_int8 vidmode = 0)
 
 void screen::show()
 {
-  if(DEBUG) fprintf(stderr, "Function: screen::show\n");
   static struct timeval timer1, timer2, timer3;
 #if 1
   do
@@ -679,44 +647,37 @@ void screen::show()
 
 inline u_int8 screen::get_bytes_per_pixel()
 {
-  if(DEBUG) fprintf(stderr, "Function: screen::get_bytes_per_pixel\n");
   return(bytes_per_pixel);
 }
 
 inline u_int32 screen::get_trans()
 {
-  if(DEBUG) fprintf(stderr, "Function: screen::get_trans\n");
   return(trans);
 }
 
 inline u_int8 screen::get_sizefactor()
 {
-  //  if(DEBUG) fprintf(stderr, "Function: screen::get_sizefactor\n");
   return(sizefactor);
 }
 
 u_int8 screen::get_frames_to_do()
 {
-  if(DEBUG) fprintf(stderr, "Function: screen::get_frames_to_do\n");
   return(frames_to_do);
 }
 
 u_int8 screen::get_screenheight()
 {
-  if(DEBUG) fprintf(stderr, "Function: screen::get_screenheight\n");
   return(screenheight);
 }
 
 u_int8 screen::get_screenwidth()
 {
-  if(DEBUG) fprintf(stderr, "Function: screen::get_screenwidth\n");
   return(screenwidth);
 }
 
 #ifdef SDL
 void screen::init_gfx_buffers()
 {
- if(DEBUG) fprintf(stderr, "Function: screen::init_gfx_buffers\n");
  getbuffer=SDL_ConvertSurface(vis, vis->format, SDL_HWSURFACE);
 }
 #endif
@@ -724,7 +685,6 @@ void screen::init_gfx_buffers()
 
 void screen::drawbox(u_int16 x, u_int16 y, u_int16 w, u_int16 h, u_int32 color)
 {
-  if(DEBUG) fprintf(stderr, "Function: screen::drawbox\n");
   x*=sizefactor;
   y*=sizefactor;
   w*=sizefactor;
@@ -743,7 +703,6 @@ void screen::drawbox(u_int16 x, u_int16 y, u_int16 w, u_int16 h, u_int32 color)
 
 void screen::makesquare(u_int16 px,u_int16 py, u_int16 fact)
 {
-  if(DEBUG) fprintf(stderr, "Function: screen::makesquare\n");
   drawbox(0,py,320,fact,0);
   drawbox(0,200-fact-py,320,fact,0);
   drawbox(px,0,fact,200,0);
@@ -752,14 +711,12 @@ void screen::makesquare(u_int16 px,u_int16 py, u_int16 fact)
 
 sprite::sprite()
 {
-  if(DEBUG) fprintf(stderr, "Function: sprite::sprite\n");
   frame=NULL;
   nbr_of_frames=0;
 }
 
 sprite::~sprite()
 {
-  if(DEBUG) fprintf(stderr, "Function: sprite::~sprite\n");
   u_int16 i;
   for(i=0;i<nbr_of_frames;i++)
     frame[i].~image();
@@ -768,7 +725,6 @@ sprite::~sprite()
 
 void sprite::get(FILE * file)
 {
-  if(DEBUG) fprintf(stderr, "Function: sprite::get\n");
   fread(&nbr_of_frames,sizeof(nbr_of_frames),1,file);
   frame=(image*)calloc(sizeof(image),
 		       nbr_of_frames);

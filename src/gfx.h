@@ -51,6 +51,7 @@ class image
   ~image();
   u_int16 get_lenght();
   u_int16 get_height();
+  static void set_sizefactor(u_int8 x);
   void gfxrealloc(u_int32 l);
   void putbox (u_int16 x, u_int16 y);
   void putbox_mask (u_int16 x, u_int16 y);
