@@ -41,6 +41,8 @@ class mapselect
 	    u_int16 d_l, u_int16 d_h);
   ~mapselect();
 
+  u_int16 get_length() { return length; };
+  u_int16 get_height() { return height; };
   void check_if_fits();
   void move(u_int16 x, u_int16 y);
   void resize(u_int16 l, u_int16 h);
