@@ -1,5 +1,5 @@
 /*
-   $Id:
+   $Id$
 
    Copyright (C) 2002   Alexandre Courbot <alexandrecourbot@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
