@@ -43,6 +43,14 @@ The available options and what they do are:
   (If you have trouble with the fullscreen mode, see the NEWBIE
   file for help)
 
+- Double-size
+  Whether resolution should be scaled to 640x480 or not
+  0 = disable, 1 = enable
+  
+  Enabling double-size mode significantly increases CPU usage. On
+  old hardware you should consider turning this option off and run
+  Adonthell in fullscreen mode instead.
+
 - Language [locale]
   Specifies which language to use. As long as this option is unset,
   the language is determined by one of the following environment
