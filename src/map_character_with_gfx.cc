@@ -14,87 +14,130 @@
 
 #include "map_character_with_gfx.h"
 
-map_character_with_gfx::map_character_with_gfx () : map_character (),
+map_character_with_gfx::map_character_with_gfx (landmap & mymap) : map_character (mymap),
                                                     map_placeable_gfx((map_placeable &)*this) 
 {
-    mapsquare_obj_area moa;
-    moa.resize (1, 2);
-    moa.base.set_position (0, 1);
-    add_state ("n_stand", moa);
-    add_state ("s_stand", moa);
-    add_state ("e_stand", moa);
-    add_state ("w_stand", moa);
+    map_placeable_area * moa;
+    moa = add_state ("n_stand");
+    moa->set_area_size (1, 2);
+    moa->base.set_position (0, 1);
 
-    add_state ("n_walk", moa);
-    add_state ("s_walk", moa);
-    add_state ("e_walk", moa);
-    add_state ("w_walk", moa);
+    moa = add_state ("s_stand");
+    moa->set_area_size (1, 2);
+    moa->base.set_position (0, 1);
 
-    add_state ("n_run", moa);
-    add_state ("s_run", moa);
-    add_state ("e_run", moa);
-    add_state ("w_run", moa);
+    moa = add_state ("e_stand");
+    moa->set_area_size (1, 2);
+    moa->base.set_position (0, 1);
 
-    add_state("say_hi", moa);
+    moa = add_state ("w_stand");
+    moa->set_area_size (1, 2);
+    moa->base.set_position (0, 1);
+
+    moa = add_state ("n_walk");
+    moa->set_area_size (1, 2);
+    moa->base.set_position (0, 1);
+
+    moa = add_state ("s_walk");
+    moa->set_area_size (1, 2);
+    moa->base.set_position (0, 1);
+
+    moa = add_state ("e_walk");
+    moa->set_area_size (1, 2);
+    moa->base.set_position (0, 1);
+
+    moa = add_state ("w_walk");
+    moa->set_area_size (1, 2);
+    moa->base.set_position (0, 1);
+
+    moa = add_state ("n_run");
+    moa->set_area_size (1, 2);
+    moa->base.set_position (0, 1);
+
+    moa = add_state ("s_run");
+    moa->set_area_size (1, 2);
+    moa->base.set_position (0, 1);
+
+    moa = add_state ("e_run");
+    moa->set_area_size (1, 2);
+    moa->base.set_position (0, 1);
+
+    moa = add_state ("w_run");
+    moa->set_area_size (1, 2);
+    moa->base.set_position (0, 1);
+
+    moa = add_state("say_hi");
+    moa->set_area_size (1, 2);
+    moa->base.set_position (0, 1);
+
     
-    mapsquare_obj_area_gfx moag;
-
+    map_placeable_area_gfx * moag;
     animation * an;
-    an = new animation();
-    an->load("adontest/standnorth.anim");
-    moag.set_animation (an);
-    add_gfx ("n_stand", moag);
-    an = new animation();
-    an->load("adontest/standsouth.anim");
-    moag.set_animation (an);
-    add_gfx ("s_stand", moag);
-    an = new animation();
-    an->load("adontest/standeast.anim");
-    moag.set_animation (an);
-    add_gfx ("e_stand", moag);
-    an = new animation();
-    an->load("adontest/standwest.anim");
-    moag.set_animation (an);
-    add_gfx ("w_stand", moag);
 
+    moag = add_gfx ("n_stand", *(get_state("n_stand")));
     an = new animation();
-    an->load("adontest/walknorth.anim");
-    moag.set_animation (an);
-    add_gfx ("n_walk", moag);
+    an->load("adontest/standnorth2.anim");
+    moag->set_animation (an);
+    
+    moag = add_gfx ("s_stand", *(get_state("s_stand")));
     an = new animation();
-    an->load("adontest/walksouth.anim");
-    moag.set_animation (an);
-    add_gfx ("s_walk", moag);
-    an = new animation();
-    an->load("adontest/walkeast.anim");
-    moag.set_animation (an);
-    add_gfx ("e_walk", moag);
-    an = new animation();
-    an->load("adontest/walkwest.anim");
-    moag.set_animation (an);
-    add_gfx ("w_walk", moag);
+    an->load("adontest/standsouth2.anim");
+    moag->set_animation (an);
 
+    moag = add_gfx ("e_stand", *(get_state("e_stand")));
     an = new animation();
-    an->load("adontest/runnorth.anim");
-    moag.set_animation (an);
-    add_gfx ("n_run", moag);
+    an->load("adontest/standeast2.anim");
+    moag->set_animation (an);
+
+    moag = add_gfx ("w_stand", *(get_state("w_stand")));
     an = new animation();
-    an->load("adontest/runsouth.anim");
-    moag.set_animation (an);
-    add_gfx ("s_run", moag);
+    an->load("adontest/standwest2.anim");
+    moag->set_animation (an);
+
+    moag = add_gfx ("n_walk", *(get_state("n_walk")));
     an = new animation();
-    an->load("adontest/runeast.anim");
-    moag.set_animation (an);
-    add_gfx ("e_run", moag);
+    an->load("adontest/walknorth2.anim");
+    moag->set_animation (an);
+
+    moag = add_gfx ("s_walk", *(get_state("s_walk")));
     an = new animation();
-    an->load("adontest/runwest.anim");
-    moag.set_animation (an);
-    add_gfx ("w_run", moag);
+    an->load("adontest/walksouth2.anim");
+    moag->set_animation (an);
+
+    moag = add_gfx ("e_walk", *(get_state("e_walk")));
+    an = new animation();
+    an->load("adontest/walkeast2.anim");
+    moag->set_animation (an);
+
+    moag = add_gfx ("w_walk", *(get_state("w_walk")));
+    an = new animation();
+    an->load("adontest/walkwest2.anim");
+    moag->set_animation (an);
+
+    moag = add_gfx ("n_run", *(get_state("n_run")));
+    an = new animation();
+    an->load("adontest/runnorth2.anim");
+    moag->set_animation (an);
+
+    moag = add_gfx ("s_run", *(get_state("s_run")));
+    an = new animation();
+    an->load("adontest/runsouth2.anim");
+    moag->set_animation (an);
+
+    moag = add_gfx ("e_run", *(get_state("e_run")));
+    an = new animation();
+    an->load("adontest/runeast2.anim");
+    moag->set_animation (an);
+
+    moag = add_gfx ("w_run", *(get_state("w_run")));
+    an = new animation();
+    an->load("adontest/runwest2.anim");
+    moag->set_animation (an);
     
+    moag = add_gfx ("say_hi", *(get_state("say_hi")));
     an = new animation();
-    an->load("adontest/say_hi.anim");
-    moag.set_animation(an);
-    add_gfx("say_hi", moag);
-    
-    set_state ("w_stand"); 
+    an->load("adontest/say_hi.anim2");
+    moag->set_animation(an);
+
+    set_state ("s_stand"); 
 }

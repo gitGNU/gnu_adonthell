@@ -22,9 +22,9 @@ public:
     map_character_with_gfx  * mchar;
     bool letsexit;
 
-    game_client()
+    game_client(landmap & mymap)
     {
-        mchar = new map_character_with_gfx();
+        mchar = new map_character_with_gfx(mymap);
         letsexit = false;
     }
 
@@ -113,18 +113,7 @@ int main (int argc, char * argv[])
 
     input_manager::init();
 
-    game_client gc;
-
     input_listener il;
-
-    Functor1wRet<input_event *, int> fwr;
-    fwr = makeFunctor(&fwr, gc, &game_client::control_func);
-    il.connect_function(input_event::CONTROL_EVENT, 
-                        fwr);
-
-    fwr = makeFunctor(&fwr, gc, &game_client::callback_func);
-    il.connect_function(input_event::KEYBOARD_EVENT, 
-                        fwr);
 
     input_manager::add(&il);
 
@@ -144,9 +133,19 @@ int main (int argc, char * argv[])
     control_event::map_joystick_button(0, joystick_event::AXIS0_FORE, control_event::LEFT_BUTTON);
     control_event::map_joystick_button(0, joystick_event::AXIS0_BACK, control_event::RIGHT_BUTTON);
 
-    screen::set_video_mode (640, 480, 16);
-
     landmap lmap;
+
+    game_client gc(lmap);
+
+
+    Functor1wRet<input_event *, int> fwr;
+    fwr = makeFunctor(&fwr, gc, &game_client::control_func);
+    il.connect_function(input_event::CONTROL_EVENT, 
+                        fwr);
+
+    fwr = makeFunctor(&fwr, gc, &game_client::callback_func);
+    il.connect_function(input_event::KEYBOARD_EVENT, 
+                        fwr);
     
     lmap.resize (16, 12);
 
@@ -159,7 +158,7 @@ int main (int argc, char * argv[])
 
 
     // Adding one map object
-    map_object_with_gfx * mobj = new map_object_with_gfx();
+    map_object_with_gfx * mobj = new map_object_with_gfx(lmap);
 
     lmap.add_map_object(mobj);
 
@@ -174,12 +173,13 @@ int main (int argc, char * argv[])
     while (!gc.letsexit) 
     {
         u_int16 i, j;
-
-        input_manager::update();
         
         for (int i = 0; i < gametime::frames_to_skip (); i++) 
+        {
+            input_manager::update();
             lmap.update();
-        
+        }
+
         // Rendering phase
         
         for (j = 0; j < lmap.height (); j++)
@@ -206,15 +206,13 @@ int main (int argc, char * argv[])
                     case CHARACTER:
                         ((map_character_with_gfx *)
                          (*it)->obj)->draw ((*it)->x () * mapsquare_size + (*it)->ox (),
-                                           (*it)->y () * mapsquare_size + (*it)->oy (),
-                                           ((map_character_with_gfx *) (*it)->obj));
+                                           (*it)->y () * mapsquare_size + (*it)->oy ());
                         break; 
                         
                     case OBJECT:
                         ((map_object_with_gfx *)
                          (*it)->obj)->draw ((*it)->x () * mapsquare_size + (*it)->ox (),
-                                           (*it)->y () * mapsquare_size + (*it)->oy (),
-                                           ((map_object_with_gfx *) (*it)->obj));
+                                           (*it)->y () * mapsquare_size + (*it)->oy ());
                         
                         break;
 

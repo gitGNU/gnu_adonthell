@@ -21,7 +21,7 @@
 class map_character_with_gfx : public map_character, public map_placeable_gfx
 {
 public:
-    map_character_with_gfx (); 
+    map_character_with_gfx (landmap & mymap); 
 }; 
 
 #endif

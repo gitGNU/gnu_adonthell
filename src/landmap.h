@@ -150,87 +150,6 @@ private:
         }
     };
 
-    template<class T, class T_gfx>
-    class map_moving_thing_manager
-    {
-    protected:
-        landmap & mymap;
-        vector<T *> objects;
-
-        bool handle_gfx;
-        
-    public:
-        map_moving_thing_manager(landmap & mmap) : mymap(mmap)
-        {
-            handle_gfx = true;
-        }
-
-        ~map_moving_thing_manager()
-        {
-            clear();
-        }
-
-        void clear()
-        {
-            if(handle_gfx)
-                for (vector<T *>::iterator i = objects.begin();
-                     i != objects.end(); i++)
-                    // FIXME: check whether it works or not.
-                    delete ((T_gfx*)*i);
-            else
-                for (vector<T *>::iterator i = objects.begin();
-                     i != objects.end(); i++)
-                    delete *i;
-
-            objects.clear();
-        }
-
-        bool update()
-        {
-            if (handle_gfx) return update_gfx();
-            else return update_nogfx();
-        }
-
-        bool update_nogfx()
-        {
-            for (vector<T *>::iterator i = objects.begin();
-                 i != objects.end(); i++)
-            {
-                mymap.remove(*i);
-                (*i)->update();
-                mymap.put(*i);
-            }
-
-            return true;
-        }
-
-        bool update_gfx()
-        {
-            for (vector<T *>::iterator i = objects.begin();
-                 i != objects.end(); i++)
-            {
-                mymap.remove(*i);
-                (*i)->update();
-                ((T_gfx *)(*i))->map_placeable_gfx::update();
-                mymap.put(*i);
-            }
-            return true;
-        }
-
-        s_int32 add(T * obj)
-        {
-            objects.push_back(obj);
-            
-            return (objects.size() - 1);
-        }
-
-
-        T * operator [] (const int index)
-        {
-            return objects[index];
-        }
-    };
-
     /**
      * Objects that take place on this map.
      * 
@@ -242,7 +161,7 @@ private:
      * map.
      * 
      */
-    map_moving_thing_manager<map_character, map_character_with_gfx> characters;
+    map_thing_manager<map_character, map_character_with_gfx> characters;
 
     vector <vector <mapsquare> > area;
 
@@ -252,7 +171,7 @@ private:
     bool remove (map_moving * obj); 
 
 public:
-    landmap() : characters(*this)
+    landmap()
     {
     }
 
@@ -314,7 +233,7 @@ public:
 
     bool put_map_object(u_int32 index, map_coordinates & pos);
 
-    friend class landmap::map_moving_thing_manager<map_character, map_character_with_gfx>;
+    friend class map_moving;
 }; 
 
 

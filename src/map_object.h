@@ -20,7 +20,7 @@
 class map_object : public map_placeable
 {
 public:
-    map_object (); 
+    map_object (landmap & mymap); 
 
     bool update()
     {

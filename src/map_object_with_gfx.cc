@@ -15,32 +15,19 @@
 
 #include "map_object_with_gfx.h"
 
-static animation * make_anim (const string & s) 
+map_object_with_gfx::map_object_with_gfx (landmap & mymap) : map_object (mymap), map_placeable_gfx ((map_placeable &) *this) 
 {
-    animation * an = new animation ();
-    image * im = new image ();
-    animationframe af; 
-    im->load_pnm (s);
-    
-    an->insert_image (im, 0);
-    af.set_image_nbr (0);
-    af.set_mask (true);
-    an->insert_frame (af, 0); 
-    return an; 
-}
+    map_placeable_area * moa;
+    moa = add_state ("default");
+    moa->set_area_size (4, 5);
+    moa->base.set_position (3, 4);
 
+    map_placeable_area_gfx * moag;
 
-map_object_with_gfx::map_object_with_gfx () : map_object (), map_placeable_gfx ((map_placeable &) *this) 
-{
-    mapsquare_obj_area moa;
-    moa.resize (4, 5);
-    moa.base.set_position (3, 4);
-    add_state ("default", moa);
-
-    mapsquare_obj_area_gfx moag;
-
-    moag.set_animation (make_anim ("adontest/house.pnm"));
-    add_gfx ("default", moag); 
+    animation * an = new animation();
+    moag = add_gfx ("default", *(get_state("default"))); 
+    an->load("adontest/house.anim");
+    moag->set_animation (an);
     
     set_state ("default"); 
 }

@@ -16,7 +16,7 @@
 #include "map_character.h"
 #include <math.h>
 
-map_character::map_character () : map_moving ()
+map_character::map_character (landmap & mymap) : map_moving (mymap)
 {
     Type = CHARACTER;
     Speed = 2;

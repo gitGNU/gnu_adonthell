@@ -15,7 +15,7 @@
 #include "map_object.h"
 
 
-map_object::map_object () : map_placeable () 
+map_object::map_object (landmap & mymap) : map_placeable (mymap) 
 {
     Type = OBJECT; 
 }

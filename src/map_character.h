@@ -29,7 +29,7 @@ protected:
 
 public:
     
-    map_character ();
+    map_character (landmap & mymap);
 
     float speed () 
     {

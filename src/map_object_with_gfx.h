@@ -21,7 +21,7 @@
 class map_object_with_gfx : public map_object, public map_placeable_gfx
 {
 public:
-    map_object_with_gfx (); 
+    map_object_with_gfx (landmap & mymap); 
 }; 
 
 #endif

@@ -14,9 +14,10 @@
 
 
 #include "map_moving.h"
+#include "landmap.h"
 
-map_moving::map_moving ()
-    : map_placeable (), map_coordinates ()
+map_moving::map_moving (landmap & mymap)
+    : map_placeable (mymap), map_coordinates ()
 {
     Vx = 0.0;
     Vy = 0.0; 
@@ -50,6 +51,7 @@ void map_moving::set_limits (u_int16 mx, u_int16 my)
 bool map_moving::update ()
 {
     Has_moved = 0; 
+    Mymap.remove(this);
     
     if (vx ()) 
     {
@@ -108,5 +110,6 @@ bool map_moving::update ()
         Oy = (u_int16) foy; 
     }
     
+    Mymap.put(this);
     return true; 
 }

@@ -28,7 +28,7 @@ private:
     
 public:
 
-    map_moving (); 
+    map_moving (landmap & mymap); 
 
     float vx () 
     {

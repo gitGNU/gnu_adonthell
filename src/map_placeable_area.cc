@@ -1,5 +1,5 @@
 /*
-   $Id:
+   $Id$
 
    Copyright (C) 2002   Alexandre Courbot <alexandrecourbot@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
@@ -13,9 +13,9 @@
 */
 
 
-#include "mapsquare_obj_area.h"
+#include "map_placeable_area.h"
 
-void mapsquare_obj_area::resize (u_int16 nx, u_int16 ny)
+void map_placeable_area::set_area_size(u_int16 nx, u_int16 ny)
 {
     area.resize (nx);
     for (vector <vector <mapsquare_walkable_info> >::iterator i = area.begin ();

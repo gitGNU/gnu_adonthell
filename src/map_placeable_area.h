@@ -1,5 +1,5 @@
 /*
-   $Id:
+   $Id$
 
    Copyright (C) 2002   Alexandre Courbot <alexandrecourbot@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
@@ -13,8 +13,8 @@
 */
 
 
-#ifndef MAPSQUARE_OBJ_AREA_H_
-#define MAPSQUARE_OBJ_AREA_H_
+#ifndef MAP_PLACEABLE_AREA_H_
+#define MAP_PLACEABLE_AREA_H_
 
 #include "map_coordinates.h"
 #include <vector>
@@ -44,7 +44,7 @@ public:
     }
 }; 
 
-class mapsquare_obj_area
+class map_placeable_area
 {
 private:
     vector <vector <mapsquare_walkable_info> > area;
@@ -52,25 +52,25 @@ private:
 public:
     map_coordinates base; 
 
-    u_int16 area_length () const
+    u_int16 area_length() const
     {
         return area.size ();
     }
     
-    u_int16 area_height () const
+    u_int16 area_height() const
     {
         if (area.size ()) return area[0].size ();
         else return 0; 
     }
 
-    void resize (u_int16 nx, u_int16 ny);
+    void set_area_size(u_int16 nx, u_int16 ny);
 
-    mapsquare_walkable_info & get (u_int16 x, u_int16 y) 
+    mapsquare_walkable_info & get(u_int16 x, u_int16 y) 
     {
         return area[x][y]; 
     }
 
-    bool update () 
+    bool update() 
     {
         return true; 
     }

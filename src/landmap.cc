@@ -75,7 +75,7 @@ mapsquare * landmap::get (const u_int16 x, const u_int16 y)
 bool landmap::put (map_placeable * obj, map_coordinates & pos) 
 {
     u_int16 i, j;
-    mapsquare_obj_area * state = obj->current_state ();
+    map_placeable_area * state = obj->current_state ();
 
     if (!state) return false;
 
@@ -109,7 +109,7 @@ bool landmap::put (map_moving * obj)
 bool landmap::remove (map_placeable * obj, map_coordinates & pos) 
 {
     u_int16 i, j;
-    mapsquare_obj_area * state = obj->current_state ();
+    map_placeable_area * state = obj->current_state ();
 
     if (!state) return false;
 
