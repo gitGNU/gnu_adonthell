@@ -19,6 +19,10 @@
 #include "types.h"
 #include <vector>
 
+
+using namespace std; 
+
+
 // This is the lowlevel dialogue class 
 class dialog
 {

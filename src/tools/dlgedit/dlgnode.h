@@ -22,6 +22,10 @@
 #include <gdk/gdktypes.h>
 #include "../../types.h"
 
+
+using namespace std;
+
+
 // Definitions needed for the dialogue source file parser
 extern int parse_dlgfile (string&, int&);
 extern FILE* loadlgin;

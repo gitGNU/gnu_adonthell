@@ -16,10 +16,12 @@
 #include <string.h>
 #include <algorithm>
 
+#include <iostream>
 #include "../../types.h"
 #include "../../data.h"
 #include "dlgnode.h"
 #include "dlgcompile.h"
+ 
 
 // Operators that may appear in Python code
 string dlg_compiler::operators[NUM_OPS] = { "==", "!=", "<", "<=", ">", ">=", "=",

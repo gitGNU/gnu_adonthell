@@ -14,6 +14,7 @@
 
 #include <gtk/gtk.h>
 
+#include <iostream>
 #include "run.h"
 #include "run_interface.h"
 #include "debug.h"

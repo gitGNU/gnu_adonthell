@@ -13,7 +13,11 @@
  */
 
 #include <gtk/gtk.h>
+#ifdef GCC_3
+#include <ext/hash_map>
+#else
 #include <hash_map>
+#endif
 
 #include "../../character.h"
 #include "../../quest.h"
