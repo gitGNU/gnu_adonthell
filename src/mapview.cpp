@@ -431,19 +431,18 @@ void mapview::add_mapobject()
 {
   mapobject mobj;
   u_int16 p;
-  win_query * qw=new win_query(70,40,th,font,"Load mapobject:");
-  char * s=qw->wait_for_text(makeFunctor(*this,&mapview::update_editor),
-			     makeFunctor(*this,&mapview::draw_editor));
+  win_file_select * wf=new win_file_select(60,20,200,200,th,font,".mobj");
+  char * s=wf->wait_for_select(makeFunctor(*this,&mapview::update_editor),
+			       makeFunctor(*this,&mapview::draw_editor));
   if(!s) return;
+  char st[500];
   if(mobj.load(s))
     {
-      win_info * wi=new win_info(70,40,th,font,"Error loading mapobject!");
-      wi->wait_for_keypress(makeFunctor(*this,&mapview::update_editor),
-			    makeFunctor(*this,&mapview::draw_editor));
-      delete wi;
-      delete qw;
+      sprintf(st,"Error loading %s!",s);
+      delete wf;
       return;
     }
+  sprintf(st,"%s loaded successfully!",s);
   do
     {
       char tmp[255];
@@ -456,7 +455,7 @@ void mapview::add_mapobject()
       if(!s2)
 	{ 
 	  delete qw2;
-	  delete qw;
+	  delete wf;
 	  return;
 	}
       if(!s2[0]) p=m_map->nbr_of_patterns;
@@ -465,7 +464,8 @@ void mapview::add_mapobject()
     }
   while(p>m_map->nbr_of_patterns);
   m_map->insert_mapobject(mobj,p,s);
-  delete qw;
+  set_info_win(st);
+  delete wf;
   //  m_map->init_mapobjects();
   must_upt_label_object=true;
 }
@@ -484,7 +484,11 @@ void mapview::delete_mapobject()
 	  s[i]=toupper(s[i]);
 	  i++;
 	}
-      if(!(strcmp(s,"Y") || strcmp(s,"YES"))) return;
+      if(!(strcmp(s,"Y") || strcmp(s,"YES"))) 
+	{
+	  set_info_win("Object not deleted!");
+	  return;
+	}
       m_map->delete_mapobject(currentobj);
       if(currentobj>=m_map->nbr_of_patterns) 
 	currentobj=m_map->nbr_of_patterns-1;
@@ -494,6 +498,7 @@ void mapview::delete_mapobject()
       if(m_map->nbr_of_submaps)
 	current_tile=m_map->submap[currentsubmap]->land[mapselect::posx]
 	  [mapselect::posy].tiles.begin();
+      set_info_win("Object deleted!");
     }
 }
 
@@ -501,10 +506,7 @@ void mapview::add_submap()
 {
   if(!m_map->nbr_of_patterns)
     {
-      win_info * wi=new win_info(70,40,th,font,"You must have objects before adding a submap!");
-      wi->wait_for_keypress(makeFunctor(*this,&mapview::update_editor),
-			    makeFunctor(*this,&mapview::draw_editor));
-      delete wi;
+      set_info_win("You must have at least 1 object before adding a submap!");
       return;
     }
   m_map->add_submap();
@@ -529,6 +531,7 @@ void mapview::add_submap()
 	[mapselect::posy].tiles.begin();
       update_current_tile(*current_tile);
     }
+  set_info_win("Submap added successfully!");
 }
 
 void mapview::delete_submap()
@@ -545,8 +548,11 @@ void mapview::delete_submap()
 	  s[i]=toupper(s[i]);
 	  i++;
 	}
-      if(!(strcmp(s,"Y") || strcmp(s,"YES"))) return;
-
+      if(!(strcmp(s,"Y") || strcmp(s,"YES"))) 
+	{
+	  set_info_win("Submap not deleted");
+	  return;
+	}
       set_pos(0,0);
       m_map->remove_submap(currentsubmap);
       must_upt_label_pos=true;
@@ -562,48 +568,70 @@ void mapview::delete_submap()
 	  update_current_tile(*current_tile);
 	}
     }
+  set_info_win("Submap deleted successfully!");
 }
 
 void mapview::load_map()
 {
-  win_query * qw=new win_query(70,40,th,font,"Load map: (Type \"new\" for editing a new one)");
-  char * s=qw->wait_for_text(makeFunctor(*this,&mapview::update_editor),
-			     makeFunctor(*this,&mapview::draw_editor));
+  win_file_select * wf=new win_file_select(60,20,200,200,th,font,".map");
+  char * s=wf->wait_for_select(makeFunctor(*this,&mapview::update_editor),
+			       makeFunctor(*this,&mapview::draw_editor));
+
   if(!s) return;
-  if(strcmp(s,"new"))
+  if(m_map->load(s))
     {
-      if(m_map->load(s))
-	{
-	  win_info * wi=new win_info(70,40,th,font,"Error loading!");
-	  wi->wait_for_keypress(makeFunctor(*this,&mapview::update_editor),
-				makeFunctor(*this,&mapview::draw_editor));
-	  delete wi;
-	  delete qw;
-	  return;
-	}
-      landmap * t=m_map;
-      detach_map();
-      attach_map(t);
+      win_info * wi=new win_info(70,40,th,font,"Error loading!");
+      wi->wait_for_keypress(makeFunctor(*this,&mapview::update_editor),
+			    makeFunctor(*this,&mapview::draw_editor));
+      delete wi;
+      delete wf;
+      return;
     }
-  else 
-    {
-      landmap * t=m_map;
-      detach_map();
-      t->clear();
-      attach_map(t);
-    }
-  delete qw;
-  /*  currentsubmap=0;
-      currentobj=0;
-      set_pos(0,0);
-      set_cursor_pos(0,0);
-      mapselect::resize(m_map->submap[currentsubmap]->length,
-      m_map->submap[currentsubmap]->height);
-      current_tile=m_map->submap[currentsubmap]->land[mapselect::posx]
-      [mapselect::posy].tiles.begin();*/
+  landmap * t=m_map;
+  detach_map();
+  attach_map(t);
+  strcpy(file_name, s);
+  delete wf;
+
   must_upt_label_pos=true;
   must_upt_label_object=true;
   must_upt_label_square=true;
+}
+
+void mapview::quick_save()
+{
+  char s[500];
+  if(!strcmp(file_name,""))
+    {
+      sprintf(s,"You should save (F5) before calling this...");
+    }
+  else if(m_map->save(file_name))
+    {
+      sprintf(s,"Error saving %s!",file_name);
+    }
+  else
+    {
+      sprintf(s,"%s saved successfully!",file_name);
+    }
+  set_info_win(s);      
+}
+
+void mapview::quick_load()
+{
+  char s[500];
+  if(!strcmp(file_name,""))
+    {
+      sprintf(s,"You should load (F6) before calling this...");
+    }
+  else if(m_map->load(file_name))
+    {
+      sprintf(s,"Error saving %s!",file_name);
+    }
+  else
+    {
+      sprintf(s,"%s loaded successfully!",file_name);
+    }
+  set_info_win(s);      
 }
 
 void mapview::save_map()
@@ -621,6 +649,7 @@ void mapview::save_map()
       delete qw;
       return;
     }
+  strcpy(file_name, s);
   delete qw;
   must_upt_label_pos=true;
   must_upt_label_object=true;
@@ -780,13 +809,31 @@ void mapview::draw_walkable(u_int16 x, u_int16 y, drawing_area * da_opt=NULL)
 
   for(j=j0;j<je;j++)
     for(i=i0;i<ie;i++)
-      if(!l->land[i][j].walkable)
-	{
-	  u_int16 rx, ry;
-	  rx=(posx>ctrx)?i-(posx-ctrx):i;
-	  ry=(posy>ctry)?j-(posy-ctry):j;
-	  walkimg->draw(rx*MAPSQUARE_SIZE-offx,ry*MAPSQUARE_SIZE-offy,da);
-	}
+      {
+	u_int16 rx, ry;
+	rx=(posx>ctrx)?i-(posx-ctrx):i;
+	ry=(posy>ctry)?j-(posy-ctry):j;
+	const u_int32 col=0x0ff000;
+	if(l->land[i][j].is_walkable_left())
+	  screen::drawbox(rx*MAPSQUARE_SIZE-offx+1,
+			  ry*MAPSQUARE_SIZE-offy+1,
+			  1,MAPSQUARE_SIZE-2,col);
+  
+	if(l->land[i][j].is_walkable_right())
+	  screen::drawbox(rx*MAPSQUARE_SIZE-offx+MAPSQUARE_SIZE-1,
+			  ry*MAPSQUARE_SIZE-offy+1,
+			  1,MAPSQUARE_SIZE-2,col);
+	
+	if(l->land[i][j].is_walkable_up())
+	  screen::drawbox(rx*MAPSQUARE_SIZE-offx+1,
+			  ry*MAPSQUARE_SIZE-offy+1,
+			  MAPSQUARE_SIZE-2,1,col);
+	
+	if(l->land[i][j].is_walkable_down())
+	  screen::drawbox(rx*MAPSQUARE_SIZE-offx+1,
+			  ry*MAPSQUARE_SIZE-offy+MAPSQUARE_SIZE-1,
+			  MAPSQUARE_SIZE-2,1,col);
+      }
 }
 
 inline bool testkey(SDLKey k)
@@ -800,6 +847,24 @@ void mapview::update_editor()
 {
   update();
   m_map->update();
+  if(info_win_count)
+    {
+      if(info_win_count==1)
+	{
+	  info_win->set_border_visible(true);
+	  info_win->set_background_visible(true);
+	  info_win->set_visible_all(true);
+	}
+      info_win->update();
+      info_win_count++;
+      if(info_win_count==200) 
+	{
+	  info_win->set_border_visible(false);
+	  info_win->set_background_visible(false);
+	  info_win->set_visible_all(false);
+	  info_win_count=0;
+	}
+    }
 }
 
 void mapview::draw_editor()
@@ -808,7 +873,11 @@ void mapview::draw_editor()
   if(m_map->nbr_of_submaps) 
     {
       draw(0,0,da);
-      if(input::is_pushed(SDLK_k)) draw_walkable(0,0,da);
+      if(input::is_pushed(SDLK_k)) 
+	{
+	  draw_grid();
+	  draw_walkable(0,0,da);
+	}
       if(m_map->nbr_of_patterns) draw_cursor();
     }
   container->draw();
@@ -830,6 +899,8 @@ void mapview::draw_editor()
   if(must_upt_label_pos) update_label_pos();
   if(must_upt_label_object) update_label_object();
   if(must_upt_label_square) update_label_square();
+
+  info_win->draw();
 }
 
 void mapview::update_editor_keys()
@@ -891,11 +962,18 @@ void mapview::update_editor_keys()
     if(input::has_been_pushed(SDLK_F4))
       delete_submap();
 
-    if(input::has_been_pushed(SDLK_F5))
-      save_map();
-
-    if(input::has_been_pushed(SDLK_F6))
-      load_map();
+  if(input::has_been_pushed(SDLK_F5))
+    { 
+      if(SDL_GetModState()&KMOD_LSHIFT)
+	quick_save();
+      else save_map(); 
+    }
+  if(input::has_been_pushed(SDLK_F6))
+    { 
+      if(SDL_GetModState()&KMOD_LSHIFT)
+	quick_load();
+      else load_map(); 
+    }
 
     if(input::has_been_pushed(SDLK_s))
       {
@@ -929,6 +1007,14 @@ void mapview::update_and_draw()
   draw_editor();
 }
 
+void mapview::set_info_win(char * text)
+{
+  info_win_label->set_text(text);
+  info_win_label->set_auto_size(true);
+  info_win->set_justify(info_win_label,WIN_JUSTIFY_CENTER);
+  info_win_count=1;
+}
+
 void mapview::editor()
 {
   u_int16 i;
@@ -942,6 +1028,16 @@ void mapview::editor()
   container->add(label_object);
   container->add(label_square);
   container->set_visible_all(true);
+
+  info_win=new win_container(20,10,280,20,th);
+  info_win_label=new win_label(0,5,0,0,th,font);
+  info_win->add(info_win_label);
+  info_win_count=0;
+  info_win->set_border_size(WIN_SIZE_MINI);
+  info_win->set_border_visible(false);
+  info_win->set_background_visible(false);
+  info_win->set_visible_all(false);
+
   must_upt_label_pos=true;
   must_upt_label_object=true;
   must_upt_label_square=true;
@@ -963,6 +1059,7 @@ void mapview::editor()
       screen::show();
     }
   delete container;
+  delete info_win;
   delete th;
   delete font;
 }

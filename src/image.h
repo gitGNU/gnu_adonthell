@@ -21,7 +21,6 @@
 
 class image
 {
-  static SDL_Rect sr,dr;
 #ifdef _DEBUG_
   static u_int16 a_d_diff;
 #endif

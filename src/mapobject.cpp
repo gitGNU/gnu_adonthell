@@ -25,6 +25,7 @@ void mapobject::init()
   part=NULL;
 #ifdef _EDIT_
   in_editor=false;
+  strcpy(file_name,"");
 #endif
 }
 
@@ -330,6 +331,42 @@ void mapobject::update_label_part()
   must_upt_label_part=false;
 }
 
+void mapobject::quick_save()
+{
+  char s[500];
+  if(!strcmp(file_name,""))
+    {
+      sprintf(s,"You should save (F5) before calling this...");
+    }
+  else if(save(file_name))
+    {
+      sprintf(s,"Error saving %s!",file_name);
+    }
+  else
+    {
+      sprintf(s,"%s saved successfully!",file_name);
+    }
+  set_info_win(s);      
+}
+
+void mapobject::quick_load()
+{
+  char s[500];
+  if(!strcmp(file_name,""))
+    {
+      sprintf(s,"You should load (F6) before calling this...");
+    }
+  else if(load(file_name))
+    {
+      sprintf(s,"Error saving %s!",file_name);
+    }
+  else
+    {
+      sprintf(s,"%s loaded successfully!",file_name);
+    }
+  set_info_win(s);      
+}
+
 void mapobject::save()
 {
   win_query * qw=new win_query(70,40,th,font,"Save mapobject as:");
@@ -338,48 +375,45 @@ void mapobject::save()
 			     makeFunctor(*this,
 					 &mapobject::draw_editor));
   if(!s) return;
+  char st[500];
   if(save(s))
     {
-      win_info * wi=new win_info(70,40,th,font,"Error saving!");
-      wi->wait_for_keypress(makeFunctor(*this,&mapobject::update_editor),
-			    makeFunctor(*this,&mapobject::draw_editor));
-      delete wi;
+      sprintf(st,"Error saving %s!",s);
     }
+  else sprintf(st,"%s saved successfully!",s);
+  strcpy(file_name,s);
+  set_info_win(st);
   delete qw;
 }
 
 void mapobject::load()
 {
   mapobject * t=new mapobject;
-  win_query * qw=new win_query(70,40,th,font,"Load mapobject:");
-  char * s=qw->wait_for_text(makeFunctor(*this,
-					 &mapobject::update_editor),
-			     makeFunctor(*this,
-					 &mapobject::draw_editor));
+  win_file_select * wf=new win_file_select(60,20,200,200,th,font,".mobj");
+  char * s=wf->wait_for_select(makeFunctor(*this,&mapobject::update_editor),
+			       makeFunctor(*this,&mapobject::draw_editor));
   if(!s)
     {
       delete t;
-      delete qw;
+      delete wf;
       return;
     }
+  char st[500];
   if(t->load(s)) 
     {
-      win_info * wi=new win_info(70,40,th,font,"Error loading!");
-      wi->wait_for_keypress(makeFunctor(*this,&mapobject::update_editor),
-			    makeFunctor(*this,&mapobject::draw_editor));
-      delete wi;
+      sprintf(st,"Error loading %s!",s);
     }
   else 
     {
+      sprintf(st,"%s loaded successfully!",s);
       currentpart=0;
       *(mapobject*)this=*t;
     }
+  strcpy(file_name,s);
+  set_info_win(st);
   delete t;
-  delete qw;
-  if(in_editor) 
-    {
-      must_upt_label_part=true;
-    }
+  delete wf;
+  must_upt_label_part=true;
 }
 
 void mapobject::add_animation()
@@ -521,12 +555,20 @@ void mapobject::update_editor_keys()
     {show_grid=show_grid==true?false:true; must_upt_label_part=true;}
 
   if(input::has_been_pushed(SDLK_F5))
-    { save(); }
+    { 
+      if(SDL_GetModState()&KMOD_LSHIFT)
+	quick_save();
+      else save(); 
+    }
   if(input::has_been_pushed(SDLK_F6))
-    { load(); }
-  if(input::has_been_pushed(SDLK_a))
+    { 
+      if(SDL_GetModState()&KMOD_LSHIFT)
+	quick_load();
+      else load(); 
+    }
+  if(input::has_been_pushed(SDLK_F1))
     { add_animation(); }
-  if(input::has_been_pushed(SDLK_d))
+  if(input::has_been_pushed(SDLK_F2))
     { delete_animation(currentpart); }
 
   if(!nbr_of_parts) return;
@@ -625,9 +667,27 @@ void mapobject::update_editor_keys()
       else
 	{ move_cursor_down(); must_upt_label_part=true;}
     }
-  if(input::has_been_pushed(SDLK_SPACE))
+  /*  if(input::has_been_pushed(SDLK_SPACE))
     if(show_grid)
-      toggle_walkable();
+    toggle_walkable();*/
+
+  if(input::has_been_pushed(SDLK_x))
+    if(show_grid)
+      placetpl[posx][posy].set_walkable_left
+	(placetpl[posx][posy].is_walkable_left()?false:true);
+  if(input::has_been_pushed(SDLK_v))
+    if(show_grid)
+      placetpl[posx][posy].set_walkable_right
+	(placetpl[posx][posy].is_walkable_right()?false:true);
+  if(input::has_been_pushed(SDLK_c))
+    if(show_grid)
+      placetpl[posx][posy].set_walkable_down
+	(placetpl[posx][posy].is_walkable_down()?false:true);
+  if(input::has_been_pushed(SDLK_d))
+    if(show_grid)
+      placetpl[posx][posy].set_walkable_up
+	(placetpl[posx][posy].is_walkable_up()?false:true);
+
   if(input::has_been_pushed(SDLK_b))
     if(show_grid)
       set_base_tile(posx,posy);
@@ -637,6 +697,24 @@ void mapobject::update_editor()
 {
   update();
   maptpl::update();
+  if(info_win_count)
+    {
+      if(info_win_count==1)
+	{
+	  info_win->set_border_visible(true);
+	  info_win->set_background_visible(true);
+	  info_win->set_visible_all(true);
+	}
+      info_win->update();
+      info_win_count++;
+      if(info_win_count==200) 
+	{
+	  info_win->set_border_visible(false);
+	  info_win->set_background_visible(false);
+	  info_win->set_visible_all(false);
+	  info_win_count=0;
+	}
+    }
 }
 
 void mapobject::draw_editor()
@@ -653,6 +731,8 @@ void mapobject::draw_editor()
   if(must_upt_label_part) update_label_part();
   if(show_grid) maptpl::draw();
   container->draw();
+
+  info_win->draw();
 }
 
 void mapobject::update_and_draw()
@@ -660,6 +740,14 @@ void mapobject::update_and_draw()
   static u_int16 i;
   for(i=0;i<screen::frames_to_do();i++) update_editor();
   draw_editor();
+}
+
+void mapobject::set_info_win(char * text)
+{
+  info_win_label->set_text(text);
+  info_win_label->set_auto_size(true);
+  info_win->set_justify(info_win_label,WIN_JUSTIFY_CENTER);
+  info_win_count=1;
 }
 
 void mapobject::editor()
@@ -683,6 +771,16 @@ void mapobject::editor()
   container->set_border_visible(true);
   container->set_visible_all(true);
   currentpart=0;
+
+  info_win=new win_container(20,10,280,20,th);
+  info_win_label=new win_label(0,5,0,0,th,font);
+  info_win->add(info_win_label);
+  info_win_count=0;
+  info_win->set_border_size(WIN_SIZE_MINI);
+  info_win->set_border_visible(false);
+  info_win->set_background_visible(false);
+  info_win->set_visible_all(false);
+
   must_upt_label_part=true;
   show_grid=false;
   in_editor=true;
@@ -697,6 +795,7 @@ void mapobject::editor()
     }
   in_editor=false;
   delete container;
+  delete info_win;
   delete bg;
   delete th;
   delete font;

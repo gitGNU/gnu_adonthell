@@ -15,6 +15,9 @@
 #ifndef _screen_h
 #define _screen_h
 
+// FIXME: drawbox, etc... must be capable of converting the argument given
+// color from a hex triplet to the screen format using SDL_MapRGB
+
 #include "drawing_area.h"
 
 class screen

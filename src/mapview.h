@@ -43,6 +43,11 @@ class mapview
   list<mapsquare_char> characters_draw;
 
 #ifdef _EDIT_
+  char file_name[500];
+  win_label * info_win_label;
+  win_container * info_win;
+  u_int8 info_win_count;
+
   win_font * font;
   win_theme * th;
   win_container * container;
@@ -107,6 +112,8 @@ class mapview
   void add_submap();
   void delete_submap();
 
+  void quick_save();
+  void quick_load();
   void load_map();
   void save_map();
 
@@ -116,6 +123,7 @@ class mapview
   void draw_editor();
   void update_editor_keys();
   void update_and_draw();
+  void set_info_win(char * text);
   void editor();
 #endif
   friend class mapsquare_tile;

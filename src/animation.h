@@ -37,6 +37,7 @@
 #include "win_background.h"
 #include "win_query.h"
 #include "win_info.h"
+#include "win_file_select.h"
 
 #ifdef _EDIT_
 typedef enum anim_editor_mode {IMAGE, FRAME};
@@ -92,6 +93,11 @@ class animation
 #endif
 
 #ifdef _EDIT_
+  char file_name[500];
+  win_label * info_win_label;
+  win_container * info_win;
+  u_int8 info_win_count;
+
   image * clipboard;
   animation_frame f_clipboard;
   bool mode;
@@ -172,6 +178,8 @@ class animation
   s_int8 delete_image(u_int16 pos);
   s_int8 delete_frame(u_int16 pos);
   void add_frame();
+  void quick_save();
+  void quick_load();
   void save();
   void load();
   void set_mode(anim_editor_mode m);
@@ -183,6 +191,7 @@ class animation
   void update_editor();
   void draw_editor();
   void update_and_draw();
+  void set_info_win(char * text);
   void editor();
 #endif
 

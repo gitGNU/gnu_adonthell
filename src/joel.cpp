@@ -36,7 +36,7 @@ int main(int argc,char **argv)
   // change into data directory
   chdir (myconfig.datadir.data ());
   //clavier
-  screen::set_video_mode(640,480);
+  screen::set_video_mode(320,240);
   input::init();
   win_theme th(WIN_THEME_ORIGINAL);
   win_font font(WIN_THEME_ORIGINAL);

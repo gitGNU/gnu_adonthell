@@ -14,6 +14,7 @@
 #define _WIN_SELECT_H_
 
 #include "win_scrolled.h"
+#include "input.h"
 
 class win_base;
 class win_theme;

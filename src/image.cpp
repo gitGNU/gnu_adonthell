@@ -18,8 +18,8 @@
 #include "types.h"
 #include "image.h"
 
-SDL_Rect image::sr;
-SDL_Rect image::dr;
+SDL_Rect sr;
+SDL_Rect dr;
 #ifdef _DEBUG_
 u_int16 image::a_d_diff=0;
 #endif

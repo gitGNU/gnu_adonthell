@@ -85,8 +85,7 @@ class mapsquare
 #endif
   
   u_int16 type; // Terrain type ; need to be defined later
-  bool walkable;
-  bool walkable_char;
+  u_int8 walkable;
 
   list<mapsquare_tile> tiles;
   list<mapsquare_tile>::iterator base_begin;
@@ -95,12 +94,35 @@ class mapsquare
   mapsquare();
   ~mapsquare();
 
-  bool is_walkable() { return walkable && walkable_char; }
-
   // Draw takes only a mapview as argument.
   void draw(mapview * mv);
   void draw(s_int16 x, s_int16 y, mapobject ** pattern, 
 	    drawing_area * da_opt=NULL);
+  bool is_walkable_left() { return walkable & WALKABLE_LEFT; }
+  bool is_walkable_right() { return walkable & WALKABLE_RIGHT; }
+  bool is_walkable_up() { return walkable & WALKABLE_UP; }
+  bool is_walkable_down() { return walkable & WALKABLE_DOWN; }
+  void set_walkable_left(bool w)
+    {
+      if(!w) walkable&=(ALL_WALKABLE-WALKABLE_LEFT);
+      else walkable|=WALKABLE_LEFT;
+    }
+  void set_walkable_right(bool w)
+    {
+      if(!w) walkable&=(ALL_WALKABLE-WALKABLE_RIGHT);
+      else walkable|=WALKABLE_RIGHT;
+    }  
+  void set_walkable_up(bool w)
+    {
+      if(!w) walkable&=(ALL_WALKABLE-WALKABLE_UP);
+      else walkable|=WALKABLE_UP;
+    }  
+  void set_walkable_down(bool w)
+    {
+      if(!w) walkable&=(ALL_WALKABLE-WALKABLE_DOWN);
+      else walkable|=WALKABLE_DOWN;
+    }
+
   friend class mapsquare_tile;
   friend class landsubmap;
   friend class landmap;

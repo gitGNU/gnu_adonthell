@@ -229,7 +229,7 @@ void win_label::draw()
   if(template_)
     if(draw_brightness_)
       {
-	static image imgbright;
+	image imgbright;
       	imgbright.brightness(template_,level_brightness_);
 	imgbright.putbox_mask(realx_,realy_,da_);
       }

@@ -549,7 +549,7 @@ void mapcharacter::update_editor_keys()
      show_grid=show_grid?false:true;
 
   if(input::has_been_pushed(SDLK_SPACE))
-      toggle_walkable();
+    toggle_walkable();
   if(input::has_been_pushed(SDLK_b))
     if(show_grid)
       set_base_tile(posx,posy);

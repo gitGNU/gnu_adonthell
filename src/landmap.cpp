@@ -118,8 +118,7 @@ void mapsquare_char::draw(mapview * mv)
 mapsquare::mapsquare()
 {
   type=0;
-  walkable=true;
-  walkable_char=true;
+  walkable=0;
   base_begin=tiles.end();
 #ifdef _DEBUG_
   cout << "mapsquare() called, "<< ++a_d_diff
@@ -440,7 +439,7 @@ s_int8 landsubmap::set_square_pattern(u_int16 px, u_int16 py,
       {
 	t.x=px-m_map->pattern[patnbr]->basex+i;
 	t.y=py-m_map->pattern[patnbr]->basey+j;
-	land[t.x][t.y].walkable&=m_map->pattern[patnbr]->
+	land[t.x][t.y].walkable|=m_map->pattern[patnbr]->
 	  placetpl[i][j].walkable;
 	if(m_map->pattern[patnbr]->basex!=i || 
 	   m_map->pattern[patnbr]->basey!=j)

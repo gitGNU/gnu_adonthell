@@ -4,7 +4,7 @@ LIBS = -lz -g `sdl-config --cflags` `sdl-config --libs` -L/home/maitrise/MAITRIS
 OBJECTS = pnm.o drawing_area.o image.o screen.o animation.o game.o \
 	prefs.o lex.prefs.o input.o mapselect.o win_label.o win_write.o \
 	win_query.o animation_off.o \
-	win_info.o win_container.o win_select.o win_file.o \
+	win_info.o win_container.o win_select.o win_file.o win_file_select.o \
 	win_border.o win_base.o win_font.o win_image.o \
 	win_background.o win_scrolled.o win_scrollbar.o win_theme.o
 
@@ -138,6 +138,9 @@ win_select.o: ../../win_select.cpp
 
 win_file.o: ../../win_file.cpp
 	$(CPP) -c $(CPPFLAGS) ../../win_file.cpp -o win_file.o
+
+win_file_select.o: ../../win_file_select.cpp
+	$(CPP) -c $(CPPFLAGS) ../../win_file_select.cpp -o win_file_select.o
 
 win_border.o: ../../win_border.cpp
 	$(CPP) -c $(CPPFLAGS) ../../win_border.cpp -o win_border.o

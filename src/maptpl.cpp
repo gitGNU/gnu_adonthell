@@ -132,9 +132,27 @@ void maptpl::draw_walkables()
   for(i=d_posx;(i<d_posx+dl)&&(i<length);i++)
     for(j=d_posy;(j<d_posy+dh)&&(j<height);j++)
       {
-	if(!placetpl[i][j].walkable)
-	  selimg->draw(s_posx+((i-d_posx)*MAPSQUARE_SIZE),
-		       s_posy+((j-d_posy)*MAPSQUARE_SIZE));
+	const u_int32 col=0x0ff000;
+	if(placetpl[i][j].is_walkable_left())
+	  screen::drawbox(s_posx+((i-d_posx)*MAPSQUARE_SIZE+1),
+			  s_posy+((j-d_posy)*MAPSQUARE_SIZE+1),
+			  1,MAPSQUARE_SIZE-2,col);
+
+	if(placetpl[i][j].is_walkable_right())
+	  screen::drawbox(s_posx+((i-d_posx)*MAPSQUARE_SIZE)+MAPSQUARE_SIZE-1,
+			  s_posy+((j-d_posy)*MAPSQUARE_SIZE+1),
+			  1,MAPSQUARE_SIZE-2,col);
+	
+	if(placetpl[i][j].is_walkable_up())
+	  screen::drawbox(s_posx+((i-d_posx)*MAPSQUARE_SIZE+1),
+			  s_posy+((j-d_posy)*MAPSQUARE_SIZE+1),
+			  MAPSQUARE_SIZE-2,1,col);
+	
+	if(placetpl[i][j].is_walkable_down())
+	  screen::drawbox(s_posx+((i-d_posx)*MAPSQUARE_SIZE)+1,
+			  s_posy+((j-d_posy)*MAPSQUARE_SIZE)+MAPSQUARE_SIZE-1,
+			  MAPSQUARE_SIZE-2,1,col);
+
       }
 }
 
@@ -153,7 +171,7 @@ void maptpl::draw_base_tile(u_int16 x, u_int16 y, drawing_area * da_opt=NULL)
 
 void maptpl::draw()
 {
-  draw_walkables();
-  draw_base_tile();
   mapselect::draw();
+  draw_base_tile();
+  draw_walkables();
 }
