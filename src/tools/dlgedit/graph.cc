@@ -94,15 +94,17 @@ new_circle (MainFrame * wnd, GdkPoint point, int type)
 int 
 new_arrow (MainFrame * wnd, GdkPoint point)
 {
-    DlgNode *arrow = new DlgNode;
+    DlgNode *arrow;
     DlgNode *end = get_cur_selection (wnd, point);
     int type;
+    u_int32 i;
 
     /* Exit function if  
        - no node is marked
        - the marked node is no circle
        - the clicked node is no circle
-       - the clicked node is the marked node */
+       - the clicked node is the marked node 
+       - a connection already existe */
     if (wnd->selected_node == NULL)
         return 0;
     if (wnd->selected_node->type == LINK)
@@ -111,6 +113,12 @@ new_arrow (MainFrame * wnd, GdkPoint point)
         return 0;
     if (wnd->selected_node == end)
         return 0;
+    if (end != NULL)
+        for (i = 0; i < wnd->selected_node->next->len; i++)
+            if (end == g_ptr_array_index (((DlgNode *) g_ptr_array_index (wnd->selected_node->next, i)))->next, 0);
+                return 0;
+
+    arrow = new DlgNode;
 
     /* Init arrow */
     arrow->prev = g_ptr_array_new ();
