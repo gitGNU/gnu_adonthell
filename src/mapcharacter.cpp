@@ -15,6 +15,7 @@
 #include <iostream.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 #include "types.h"
 #include "image.h"
 #include "mapsquare.h"
@@ -256,6 +257,11 @@ void mapcharacter::set_posy (u_int16 y)
 
 void mapcharacter::update_NPC (landmap * amap)
 {
+    // freeze characters too far from the player
+    character *player = (character *) objects::get("the_player");
+    if (abs (data->posx - player->posx) > 20) return;
+    if (abs (data->posy - player->posy) > 16) return;
+
     if ((scridx == 0) && (is_ready ()))
     {
         // update_dir ();
