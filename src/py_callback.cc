@@ -23,8 +23,6 @@
  */
 
 
-#ifdef USE_PYTHON
-
 #include "py_callback.h"
 
 py_callback::py_callback (PyObject *func, PyObject *args)
@@ -76,5 +74,3 @@ void py_callback::callback_func1 (int arg)
     PyObject_CallObject (function, py_arg);
     Py_XDECREF (py_arg);
 }
-
-#endif // USE_PYTHON

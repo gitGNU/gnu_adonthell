@@ -148,13 +148,6 @@ static void mix_channels(void *udata, Uint8 *stream, int len)
 	SDL_mutexV(mixer_lock);
 }
 
-static void PrintFormat(char *title, SDL_AudioSpec *fmt)
-{
-	printf("%s: %d bit %s audio (%s) at %u Hz\n", title, (fmt->format&0xFF),
-			(fmt->format&0x8000) ? "signed" : "unsigned",
-			(fmt->channels > 1) ? "stereo" : "mono", fmt->freq);
-}
-
 /* Open the mixer with a certain desired audio format */
 int Mix_OpenAudio(int frequency, Uint16 format, int nchannels, int chunksize)
 {

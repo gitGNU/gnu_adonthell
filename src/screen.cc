@@ -59,19 +59,11 @@ void screen::set_video_mode (u_int16 nl, u_int16 nh, u_int8 depth = 0)
                      nh);
             exit (1);
             break;
-        case 16:
-            printf ("Using 16bpp depth: %dx%d.\n", nl, nh);
-            bytes_per_pixel_ = 2;
-            break;
-        case 24:
-            printf ("Using 24bpp depth: %dx%d.\n", nl, nh);
-            bytes_per_pixel_ = 3;
-            break;
         default:
-            printf ("Emulating 16bpp depth in %dbpp mode: %dx%d.\n", bpp, nl,
-                    nh);
-            bpp = 16;
-            bytes_per_pixel_ = 2;
+            if (emulated) cout << "Emulating " << (u_int16) depth << "bpp depth in "
+                               << (u_int16) bpp << "bpp mode: " << nl << "x" << nh << ".\n";
+            else cout << "Using " << (u_int16) bpp << "bpp depth: " << nl << "x" << nh << ".\n"; 
+            bytes_per_pixel_ = bpp / 8; 
             break;
     }
     display.set_length (nl);
