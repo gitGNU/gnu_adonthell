@@ -574,11 +574,13 @@ void mapcharacter::update()
 void mapcharacter::launch_action(mapcharacter * requester)
 {
 #ifndef _EDIT_
-  PyDict_SetItemString(locals,"requester",
-		       pass_instance(requester,"mapcharacter"));
   if(action && action_activated)
+  {
+    PyDict_SetItemString(locals,"requester",
+		       pass_instance(requester,"mapcharacter"));
     PyEval_EvalCode(action,data::globals,locals);
-  PyDict_DelItemString(locals,"requester");
+    PyDict_DelItemString(locals,"requester");
+  }
 #endif
 }
 
