@@ -12,36 +12,19 @@
    See the COPYING file for more details.
 */
 
-#ifndef INPUT_EVENT_H
-#define INPUT_EVENT_H
+#include "mouse_event.h"
 
-#include "types.h"
-
-class input_event
+string mouse_event::Button_symbol[mouse_event::NBR_BUTTONS] =
 {
-public:
-    typedef enum
-    {
-        KEYBOARD_EVENT,
-        MOUSE_EVENT,
-        JOYSTICK_EVENT,
-        CONTROL_EVENT, 
-        NBR_INPUT_TYPES
-    } input_type;
-    
-    input_event (input_type t)
-    {
-        Type = t; 
-    }
+    "no button",
+    "left button",
+    "middle button",
+    "right_button",
+    "wheel up",
+    "wheel down"
+};
 
-    input_type type () 
-    {
-        return Type; 
-    }
-
-private:
-    input_type Type;
-    
-}; 
-
-#endif
+const string & mouse_event::button_symbol() const
+{
+    return Button_symbol[button()];
+}

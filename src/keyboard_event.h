@@ -1,3 +1,17 @@
+/*
+   $Id:
+
+   Copyright (C) 2002   Alexandre Courbot <alexandrecourbot@linuxgames.com>
+   Part of the Adonthell Project http://adonthell.linuxgames.com
+
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License.
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY.
+
+   See the COPYING file for more details.
+*/
+
 #ifndef KEYBOARD_EVENT_H
 #define KEYBOARD_EVENT_H
 
@@ -14,7 +28,7 @@ public:
 
     typedef enum
     {
-        UNKNOWN_KEY,
+        UNKNOWN_KEY = 0,
         BACKSPACE_KEY,
         TAB_KEY,
         CLEAR_KEY,
@@ -249,8 +263,6 @@ public:
         NBR_KEYS
     } key_type; 
     
-    static string key_symbol[NBR_KEYS];
-
     keyboard_event (event_type t, key_type k) : input_event (KEYBOARD_EVENT)
     {
         Type = t;
@@ -267,13 +279,12 @@ public:
         return Key; 
     }
 
-    const string & symbol () const;
+    const string & key_symbol () const;
     
 private:
+    static string Key_symbol[NBR_KEYS];
     event_type Type;
     key_type Key; 
-    
-    friend class input_manager;
 }; 
 
 #endif

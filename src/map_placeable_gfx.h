@@ -38,7 +38,18 @@ public:
 
     void set_state (const string & name) 
     {
+        if (Current_gfx != Gfxs.end() && Current_gfx->first == name)
+            return;
+
+        if (Current_gfx != Gfxs.end())
+        {
+            Current_gfx->second.stop();
+            Current_gfx->second.rewind();
+        }
         Current_gfx = Gfxs.find (name); 
+
+        if (Current_gfx != Gfxs.end())
+            Current_gfx->second.play();
     }
 
     bool update () 

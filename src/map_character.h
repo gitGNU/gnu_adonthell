@@ -19,8 +19,13 @@
 
 class map_character : public map_moving
 {
+public:
+    typedef enum { NONE = 0, WEST = 1, EAST = 2, NORTH = 4, SOUTH = 8 } direction;
+
 protected:
     float Speed; 
+    bool Is_running;
+    int Current_dir;
 
 public:
     
@@ -28,6 +33,8 @@ public:
     {
         Type = CHARACTER;
         Speed = 2;
+        Is_running = false;
+        Current_dir = NONE;
     }
 
     float speed () 
@@ -40,22 +47,84 @@ public:
         Speed = s; 
     }
 
-    void update_state () 
+    bool is_running()
     {
-        float xvel = vx () > 0 ? vx () : -vx (); 
-        float yvel = vy () > 0 ? vy () : -vy ();
-
-        if (xvel > yvel) 
-        {
-            if (vx () > 0) set_state ("standeast");
-            else if (vx () < 0) set_state ("standwest"); 
-        }
-        else if (yvel > xvel) 
-        {
-            if (vy () > 0) set_state ("standsouth");
-            else if (vy () < 0) set_state ("standnorth"); 
-        }
+        return Is_running;
     }
+
+    void walk()
+    {
+        Is_running = false;
+        set_direction(current_dir());
+    }
+
+    void run()
+    {
+        Is_running = true;
+        set_direction(current_dir());
+    }
+
+    void stop()
+    {
+        set_velocity(0.0, 0.0);
+    }
+
+    int current_dir()
+    {
+        return Current_dir;
+    }
+
+    void set_direction(int ndir)
+    {
+        float vx = 0.0, vy = 0.0;
+
+        Current_dir = ndir;
+
+        if (current_dir() & WEST) vx = -speed() * (1 + is_running());
+        if (current_dir() & EAST) vx = speed() * (1 + is_running());
+        if (current_dir() & NORTH) vy = -speed() * (1 + is_running());
+        if (current_dir() & SOUTH) vy = speed() * (1 + is_running());
+
+        if (vx && vy)
+        {
+            float s = sqrt (vx*vx + vy*vy);
+            vx = (vx * fabs (vx))/s;
+            vy = (vy * fabs (vy))/s;
+        }
+
+        set_velocity(vx, vy);
+    }
+
+    void add_direction(direction ndir)
+    {
+        int tstdir = current_dir();
+        switch (ndir)
+        {
+            case WEST:
+                if (tstdir && EAST) tstdir &= ~EAST;
+                break;
+            case EAST:
+                if (tstdir && WEST) tstdir &= ~WEST;
+                break;
+            case SOUTH:
+                if (tstdir && NORTH) tstdir &= ~NORTH;
+                break;
+            case NORTH:
+                if (tstdir && SOUTH) tstdir &= ~SOUTH;
+                break;
+            default:
+                break;
+        }
+
+        set_direction(tstdir | ndir);
+    }
+
+    void remove_direction(direction ndir)
+    {
+        set_direction(current_dir() & ~ndir);
+    }
+
+    void update_state ();
 };
 
 #endif

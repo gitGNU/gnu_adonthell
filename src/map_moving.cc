@@ -38,17 +38,8 @@ void map_moving::set_offset (u_int16 ox, u_int16 oy)
 
 void map_moving::set_velocity (float vx, float vy) 
 {
-    if (vx != 0 && vy != 0)
-    {
-    	float s = sqrt (vx*vx + vy*vy);
-    	Vx = (vx * fabs (vx))/s;
-    	Vy = (vy * fabs (vy))/s;
-    }
-    else
-    {
-        Vx = vx;
-        Vy = vy;
-    }
+    Vx = vx;
+    Vy = vy;
 }
 
 void map_moving::set_limits (u_int16 mx, u_int16 my)

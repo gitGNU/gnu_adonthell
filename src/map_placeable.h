@@ -78,6 +78,8 @@ public:
 
     void set_state (const string & name) 
     {
+        if (Current_state != States.end() && Current_state->first == name)
+            return;
         Current_state = States.find (name); 
     }
 };

@@ -20,22 +20,6 @@
 
 class map_character_with_gfx : public map_character, public map_character_gfx
 {
-private:
-    animation * make_anim (const string & s) 
-    {
-        animation * an = new animation ();
-        image * im = new image ();
-        animationframe af; 
-        im->load_pnm (s);
-        
-        an->insert_image (im, 0);
-        af.set_image_nbr (0);
-        af.set_mask (true); 
-        an->insert_frame (af, 0); 
-        an->set_offset (0, 20);
-        return an; 
-    }
-
 public:
     map_character_with_gfx (); 
     

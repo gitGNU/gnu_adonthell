@@ -20,21 +20,81 @@ map_character_with_gfx::map_character_with_gfx () : map_character (),
     mapsquare_obj_area moa;
     moa.resize (1, 2);
     moa.base.set_position (0, 1);
-    add_state ("standnorth", moa);
-    add_state ("standsouth", moa);
-    add_state ("standeast", moa);
-    add_state ("standwest", moa);
+    add_state ("n_stand", moa);
+    add_state ("s_stand", moa);
+    add_state ("e_stand", moa);
+    add_state ("w_stand", moa);
+
+    add_state ("n_walk", moa);
+    add_state ("s_walk", moa);
+    add_state ("e_walk", moa);
+    add_state ("w_walk", moa);
+
+    add_state ("n_run", moa);
+    add_state ("s_run", moa);
+    add_state ("e_run", moa);
+    add_state ("w_run", moa);
+
+    add_state("say_hi", moa);
     
     mapsquare_obj_area_gfx moag;
+
+    animation * an;
+    an = new animation();
+    an->load("adontest/standnorth.anim");
+    moag.set_animation (an);
+    add_gfx ("n_stand", moag);
+    an = new animation();
+    an->load("adontest/standsouth.anim");
+    moag.set_animation (an);
+    add_gfx ("s_stand", moag);
+    an = new animation();
+    an->load("adontest/standeast.anim");
+    moag.set_animation (an);
+    add_gfx ("e_stand", moag);
+    an = new animation();
+    an->load("adontest/standwest.anim");
+    moag.set_animation (an);
+    add_gfx ("w_stand", moag);
+
+    an = new animation();
+    an->load("adontest/walknorth.anim");
+    moag.set_animation (an);
+    add_gfx ("n_walk", moag);
+    an = new animation();
+    an->load("adontest/walksouth.anim");
+    moag.set_animation (an);
+    add_gfx ("s_walk", moag);
+    an = new animation();
+    an->load("adontest/walkeast.anim");
+    moag.set_animation (an);
+    add_gfx ("e_walk", moag);
+    an = new animation();
+    an->load("adontest/walkwest.anim");
+    moag.set_animation (an);
+    add_gfx ("w_walk", moag);
+
+    an = new animation();
+    an->load("adontest/runnorth.anim");
+    moag.set_animation (an);
+    add_gfx ("n_run", moag);
+    an = new animation();
+    an->load("adontest/runsouth.anim");
+    moag.set_animation (an);
+    add_gfx ("s_run", moag);
+    an = new animation();
+    an->load("adontest/runeast.anim");
+    moag.set_animation (an);
+    add_gfx ("e_run", moag);
+    an = new animation();
+    an->load("adontest/runwest.anim");
+    moag.set_animation (an);
+    add_gfx ("w_run", moag);
     
-    moag.set_animation (make_anim ("adontest/servant1_north_1.pnm"));
-    add_gfx ("standnorth", moag);
-    moag.set_animation (make_anim ("adontest/servant1_south_1.pnm"));
-    add_gfx ("standsouth", moag);
-    moag.set_animation (make_anim ("adontest/servant1_east_1.pnm"));
-    add_gfx ("standeast", moag);
-    moag.set_animation (make_anim ("adontest/servant1_west_1.pnm"));
-    add_gfx ("standwest", moag);
+    an = new animation();
+    an->load("adontest/say_hi.anim");
+    moag.set_animation(an);
+    add_gfx("say_hi", moag);
     
-    set_state ("standwest"); 
+    set_state ("w_stand"); 
 }

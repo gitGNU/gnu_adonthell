@@ -15,7 +15,7 @@
 
 #include "map_object_with_gfx.h"
 
-animation * make_anim (const string & s) 
+static animation * make_anim (const string & s) 
 {
     animation * an = new animation ();
     image * im = new image ();

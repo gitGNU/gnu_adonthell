@@ -18,6 +18,7 @@
 
 #include "input_listener.h"
 #include "keyboard_event.h"
+#include "mouse_event.h"
 #include "joystick_event.h"
 #include <list> 
 

@@ -404,6 +404,16 @@ static keyboard_event::key_type sdl_key_trans[SDLK_LAST] =
     keyboard_event::EURO_KEY
 };
 
+static mouse_event::button_type sdl_button_trans[SDL_BUTTON_RIGHT + 3] = 
+{
+    mouse_event::NO_BUTTON,
+    mouse_event::LEFT_BUTTON,
+    mouse_event::MIDDLE_BUTTON,
+    mouse_event::RIGHT_BUTTON,
+    mouse_event::WHEEL_UP,
+    mouse_event::WHEEL_DOWN
+};
+
 void input_manager::update()
 {
     static SDL_Event event;
@@ -422,6 +432,27 @@ void input_manager::update()
             {
                 keyboard_event ke (keyboard_event::KEY_RELEASED, sdl_key_trans[event.key.keysym.sym]);
                 raise_event (ke);
+                break;
+            }
+            case SDL_MOUSEMOTION:
+            {
+                mouse_event me (mouse_event::MOUSE_MOTION, mouse_event::NO_BUTTON, 
+                                event.motion.x, event.motion.y);
+                raise_event(me);
+                break;
+            }
+            case SDL_MOUSEBUTTONDOWN:
+            {
+                mouse_event me(mouse_event::BUTTON_PUSHED, sdl_button_trans[event.button.button],
+                               event.button.x, event.button.y);
+                raise_event(me);
+                break;
+            }
+            case SDL_MOUSEBUTTONUP:
+            {
+                mouse_event me(mouse_event::BUTTON_RELEASED, sdl_button_trans[event.button.button],
+                               event.button.x, event.button.y);
+                raise_event(me);
                 break;
             }
         }

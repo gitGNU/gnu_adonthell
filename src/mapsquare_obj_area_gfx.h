@@ -29,6 +29,21 @@ public:
         anim = NULL; 
     }
 
+    void play()
+    {
+        anim->play();
+    }
+
+    void stop()
+    {
+        anim->stop();
+    }
+
+    void rewind()
+    {
+        anim->rewind();
+    }
+
     bool update () 
     {
         if (anim) anim->update ();

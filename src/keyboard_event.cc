@@ -14,7 +14,7 @@
 
 #include "keyboard_event.h"
 
-string keyboard_event::key_symbol[keyboard_event::NBR_KEYS] =
+string keyboard_event::Key_symbol[keyboard_event::NBR_KEYS] =
 {
     "unknown",
     "backspace",
@@ -249,7 +249,7 @@ string keyboard_event::key_symbol[keyboard_event::NBR_KEYS] =
     "euro"
 };
 
-const string & keyboard_event::symbol() const
+const string & keyboard_event::key_symbol() const
 {
-    return key_symbol[key()];
+    return Key_symbol[key()];
 }
