@@ -25,5 +25,6 @@ void on_file_load_activate (GtkMenuItem *, gpointer);
 void on_file_save_activate (GtkMenuItem *, gpointer);
 void on_dialogue_compile_activate (GtkMenuItem *, gpointer);
 void on_dialogue_run_activate (GtkMenuItem *, gpointer);
+void on_dialogue_variables_activate (GtkMenuItem *, gpointer);
 
 void on_list_select (GtkList *, GtkWidget *, gpointer);

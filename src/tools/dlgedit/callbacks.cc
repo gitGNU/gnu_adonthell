@@ -27,6 +27,7 @@ class dialog;
 #include "geometrie.h"
 #include "pjt_interface.h"
 #include "run.h"
+#include "preset.h"
 #include "interface.h"
 
 /* Main Window: on_widget_destroy App */
@@ -125,6 +126,16 @@ void
 on_dialogue_run_activate (GtkMenuItem * menuitem, gpointer user_data)
 {
     run_dlg dlg;
+    gtk_main ();
+    
+    if (!&dlg) return;
+}
+
+/* Dialogue Menu: Variables */
+void 
+on_dialogue_variables_activate (GtkMenuItem * menuitem, gpointer user_data)
+{
+    preset_dlg dlg (((MainFrame *) user_data)->pset_vars);
     gtk_main ();
     
     if (!&dlg) return;

@@ -115,6 +115,13 @@ void create_mainframe (MainFrame * MainWnd)
     /* Dialogue Menu */
     menu = gtk_menu_new ();
 
+    /* Variables */
+    menuitem = gtk_menu_item_new_with_label ("Variables");
+    gtk_container_add (GTK_CONTAINER (menu), menuitem);
+    gtk_widget_add_accelerator (menuitem, "activate", accel_group, GDK_v, GDK_MOD1_MASK, GTK_ACCEL_VISIBLE);
+    gtk_signal_connect (GTK_OBJECT (menuitem), "activate", GTK_SIGNAL_FUNC (on_dialogue_variables_activate), (gpointer) MainWnd);
+    gtk_widget_show (menuitem);
+
     /* Compile */
     menuitem = gtk_menu_item_new_with_label ("Compile");
     gtk_container_add (GTK_CONTAINER (menu), menuitem);

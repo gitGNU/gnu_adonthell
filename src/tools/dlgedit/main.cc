@@ -69,6 +69,7 @@ init_app (MainFrame * MainWnd)
     MainWnd->file_name = g_strdup ("./new_dialogue");
     MainWnd->x_offset = 0;
     MainWnd->y_offset = 0;
+    MainWnd->pset_vars = "";
 }
 
 /* free allocated memory */

@@ -12,6 +12,8 @@
    See the COPYING file for more details.
  */
 
+#include <string>
+
 /* Internal Editor Modes */
 enum
 {
@@ -34,31 +36,33 @@ enum
 /* Dialogue Editor Data */
 typedef struct
 {
-    GtkWidget *wnd;             /* Main Window */
-    GtkWidget *menu;            /* Menubar */
-    GtkWidget *graph;           /* Drawing Area */
-    GtkWidget *list;            /* Listbox */
+    GtkWidget *wnd;             // Main Window
+    GtkWidget *menu;            // Menubar
+    GtkWidget *graph;           // Drawing Area
+    GtkWidget *list;            // Listbox
     GtkWidget *text_dlg;
-    GtkWidget *dialogue_run;    /* The Dialogue_Run Menuitem */
-    GtkWidget *tooltip;         /* The tooltip */
+    GtkWidget *dialogue_run;    // The Dialogue_Run Menuitem
+    GtkWidget *tooltip;         // The tooltip
     GtkWidget *project;
 
-    GdkPixmap *pixmap;          /* Drawing surface */
-    GdkFont *font;              /* Font for Textoutput */
-    GdkGC *color[MAX_GC];       /* Custom Pens */
+    GdkPixmap *pixmap;          // Drawing surface
+    GdkFont *font;              // Font for Textoutput
+    GdkGC *color[MAX_GC];       // Custom Pens
 
-    ptr_list *nodes;            /* Storage of all nodes */
+    ptr_list *nodes;            // Storage of all nodes
 
-    DlgNode *selected_node;     /* Currently selected node */
-    DlgNode *below_pointer;     /* Node under Mouse-pointer */
-    DlgNode *dragged_node;      /* Node being dragged */
+    DlgNode *selected_node;     // Currently selected node
+    DlgNode *below_pointer;     // Node under Mouse-pointer
+    DlgNode *dragged_node;      // Node being dragged
 
-    gchar *file_name;           /* Name of the dialogue currently opened */
+    gchar *file_name;           // Name of the dialogue currently opened
 
-    u_int8 mode;                /* Program Mode */
-    u_int32 number;             /* Number of Nodes */
-    s_int32 x_offset;           /* Scrolling */
-    s_int32 y_offset;           /* Dito */
+    u_int8 mode;                // Program Mode
+    u_int32 number;             // Number of Nodes
+    s_int32 x_offset;           // Scrolling
+    s_int32 y_offset;           // Dito
+
+    string pset_vars;           // Preset variables for running the Dialogue
 }
 MainFrame;
 

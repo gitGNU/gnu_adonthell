@@ -12,7 +12,6 @@
    See the COPYING file for more details.
 */
 
-#include <gdk/gdkkeysyms.h>
 #include <gtk/gtk.h>
 
 #include "circle.h"
@@ -337,9 +336,6 @@ create_dlg_node_window (Circle *circle, crcle_dlg *dlg)
     gtk_widget_grab_default (text_entry);
     gtk_object_set_data (GTK_OBJECT (dlg_node_window), "tooltips", tooltips);
 
-    // set the window modal
-    gtk_window_set_modal ((GTK_WINDOW (dlg_node_window)), TRUE);
-    
     // Show window
     gtk_widget_show (dlg_node_window);
 

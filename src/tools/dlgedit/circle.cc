@@ -15,6 +15,9 @@
 #include <gtk/gtk.h>
 #include "circle.h"
 #include "crcle_interface.h"
+#include "../../interpreter.h"
+
+extern int cond_compile (const char*, string&, vector<command*>&);
 
 crcle_dlg::crcle_dlg (Circle *c) : circle (c)
 {
@@ -34,6 +37,15 @@ crcle_dlg::crcle_dlg (Circle *c) : circle (c)
 // Apply changes to Circle
 void crcle_dlg::on_ok ()
 {
+    string error;
+    vector<command*> code;
+
+    // Look if code contains errors
+    if (cond != "")
+    {
+        cond_compile (cond.c_str (), error, code);
+    }
+    
     retval = 1;
 
     circle->type = type;

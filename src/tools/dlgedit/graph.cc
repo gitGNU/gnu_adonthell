@@ -835,6 +835,12 @@ load_dialogue (MainFrame * wnd, const char *file)
     {
         switch (i = parse_dlgfile (s, n))
         {
+            case LOAD_VARS:
+            {
+                if (parse_dlgfile (s, n) == LOAD_STR) wnd->pset_vars = s;
+                break;             
+            }
+
             case LOAD_CIRCLE:
             {
                 circle = new Circle;
@@ -921,6 +927,9 @@ save_dialogue (MainFrame * wnd)
     
     // Number of nodes 
     out << "# " << wnd->number << " Nodes in Dialogue\n";
+
+    // Preset variables
+    if (wnd->pset_vars != "") out << "\nVars [" << wnd->pset_vars << "]\n";
     
     // Save Circles and create position-table 
     for (i = 0; i < wnd->number; i++)
