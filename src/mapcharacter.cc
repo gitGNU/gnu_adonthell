@@ -207,7 +207,7 @@ s_int8 mapcharacter::get_state (igzstream& file)
     set_action_active (b);
 
     // get the events
-    py_callback::instance = schedule.get_instance ();
+    py_callback::instance = schedule.get_instance (false);
     return event_list::get_state (file);
 }
 
@@ -570,7 +570,7 @@ void mapcharacter::time_callback (string delay, PyObject *cb, PyObject *args)
 
 void mapcharacter::time_callback_string (string delay, string cb, PyObject *args)
 {
-    PyObject *instance = schedule.get_instance ();
+    PyObject *instance = schedule.get_instance (false);
 
     // check that we have a valid instance that contains our callback
     if (instance == NULL)

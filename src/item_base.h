@@ -80,7 +80,21 @@ public:
      * Destructor.
      */
     ~item_base ();
-     
+    
+    /**
+     * Removes an item from its slot and deletes it if necessary. This
+     * method should be preferred over deleting an item directly, as it
+     * takes care of both mutable and immutable items.
+     */
+    void destroy ()
+    {
+        if (!Mutable)
+        {
+            if (Slot) Slot->remove (this);
+        }
+        else delete this;
+    }
+    
     /**
      * @name Item Actions
      */
@@ -98,7 +112,7 @@ public:
      * @param item the item to combine with this one
      * @return item resulting from combination, or \c NULL if combination fails.
      */
-    // item_base *combine (item_base * item);
+    item_base *combine (item_base * item);
     //@}
             
     /**

@@ -197,17 +197,22 @@ public:
      */
     //@{
     /**
-     * Direct access to the instance object
+     * Direct access to the instance object. The default behaviour is to
+     * increase the instance's reference count, so that this method can
+     * be safely called from Python scripts.
      *
-     * @return the Python class instance
+     * @param incref whether to increase the reference count.
+     * @return the Python class instance.
      */
-    PyObject *get_instance () const
+    PyObject *get_instance (const bool & incref = true) const
     {
+        if (incref) Py_XINCREF (Instance);
         return Instance;
     }
 
     /**
-     * Returns the class name of this object.
+     * Returns the class name of this object. This is the name of the
+     * wrapped Python class.
      *
      * @return class name of this object.
      */
@@ -217,7 +222,8 @@ public:
     }
 
     /**
-     * Returns the file name of this object.
+     * Returns the file name of this object. This is the name of the
+     * Python module containing the wrapped class.
      *
      * @return fiöe name of this object.
      */

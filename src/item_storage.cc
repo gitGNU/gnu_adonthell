@@ -52,15 +52,30 @@ void item_storage::add (item_base *item)
 item_base *item_storage::get (const string & name)
 {
     std::hash_map<std::string, item_base*>::iterator i = Items.find (name);
+    item_base *item;
     
     // no such item
     if (i == Items.end ())
     {
+        // assume that it is a mutable item ...
+        item = new item_base (true);
+        
+        // ... and return it if that is the case
+        if (item->get_state (name) && item->is_mutable ()) return item;
+        
         fprintf (stderr, "*** error: item_storage::get: no item called '%s'\n", name.c_str ());
+        
+        delete item;
         return NULL;
     }
     
-    else return (*i).second;
+    // retrieve item
+    item = (*i).second;
+    
+    // make sure that items from the storage have no inventory assigned
+    item->set_slot (NULL);
+    
+    return item;
 }
 
 // save storage to disk

@@ -54,11 +54,15 @@ public:
     /**
      * Add an item to the %storage. The item needs to be immutable,
      * otherwise it won't be added. It should also have a unique name.
+     * @param item The item to add to the storage
      */
     static void add (item_base *item);
     
     /**
-     * Retrieve an item from the %storage.
+     * Retrieve immutable item with given name from the %storage. 
+     * Instead of an immutable item's name, one may also pass the file
+     * name of a mutable item. In that case, the mutable item will be
+     * instanciated and returned.
      * @param name name of the item to retrieve.
      * @return item with given name, or \c NULL if no such item exists.
      */

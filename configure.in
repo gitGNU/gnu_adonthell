@@ -15,7 +15,7 @@ AM_CONFIG_HEADER(config.h)
 
 CFLAGS="-g -Wall -fno-exceptions"
 CPPFLAGS=""
-DEFS=""
+DEFS="-DSWIG_GLOBAL"
 
 dnl ********************
 dnl Checks for programs.

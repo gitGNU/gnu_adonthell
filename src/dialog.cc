@@ -325,6 +325,7 @@ string dialog::scan_string (const char *s)
         if (start == NULL) break;
 
         end = strcspn (start, "}");
+        mid = NULL;
 
         str = new char[end];
         str[end-1] = 0;        
@@ -333,11 +334,7 @@ string dialog::scan_string (const char *s)
         strncpy (str, start+1, end-1);
 
         // run the string
-        result = PyObject_CallMethod (dialogue.get_instance (), str, NULL);
-#ifdef PY_DEBUG
-        python::show_traceback ();
-#endif
-        mid = NULL;
+        result = PyObject_CallMethod (dialogue.get_instance (false), str, NULL);
 
         if (result)
             if (PyString_Check (result))

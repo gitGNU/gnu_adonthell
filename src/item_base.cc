@@ -26,6 +26,12 @@
 #include "item_base.h"
 #include "character_base.h"
 
+struct swig_type_info;
+extern "C" {
+    swig_type_info *SWIG_TypeQuery (const char*);
+    int SWIG_ConvertPtr (PyObject*, void**, swig_type_info*, int);
+}
+
 // ctor
 item_base::item_base (const std::string & item) : py_object ()
 {
@@ -74,6 +80,32 @@ bool item_base::use (character_base *character)
     return (result != 0);
 }        
 
+// combine two items
+item_base *item_base::combine (item_base *item)
+{
+    // can't be combined
+    if (!has_attribute ("combine")) return NULL;
+     
+    item_base *result = NULL;
+    
+    // pass item
+    PyObject *args = PyTuple_New (1);
+    PyTuple_SetItem (args, 0, python::pass_instance (item, "item_base"));
+    
+    // call method
+    PyObject *retval = call_method_ret ("combine", args);
+    
+    // try to retrieve result
+    SWIG_ConvertPtr (retval, (void **) &result, 
+        SWIG_TypeQuery ("_p_item_base"), 1);
+    
+    // cleanzp
+    Py_XDECREF (retval);
+    Py_DECREF (args);
+
+    return result;
+}
+
 // save a single item to file
 bool item_base::put_state (const std::string & file) const
 {
@@ -82,7 +114,7 @@ bool item_base::put_state (const std::string & file) const
     // has file been opened?
     if (!out.is_open ())
     {
-        fprintf (stderr, "*** item_base::save: cannot write '%s'\n", file.c_str ());
+        fprintf (stderr, "*** item_base::put_state: cannot write '%s'\n", file.c_str ());
         return false;
     }
     
@@ -129,7 +161,7 @@ bool item_base::get_state (const std::string & file)
     // has file been opened?
     if (!in.is_open ()) 
     {
-        fprintf (stderr, "*** item_base::load: cannot read '%s'\n", file.c_str ());
+        fprintf (stderr, "*** item_base::get_state: cannot read '%s'\n", file.c_str ());
         return false;
     }
     

@@ -109,7 +109,7 @@ public:
      * empty %slot. If not all items fitted, the number of the remaining
      * items will be returned.
      *
-     * Not that there is no explicit remove method, as item removal will
+     * Note that there is no explicit remove method, as item removal will
      * happen automatically.
      *
      * @param item The item(s) to add.
@@ -117,6 +117,59 @@ public:
      * @return the number of items that did not fit.
      */
     u_int32 add (item_base *item, const u_int32 & count = 1);
+    
+    /**
+     * Combine item(s) in the target %slot with the item(s) from the
+     * agent %slot. The combination's outcome will depend on the items
+     * involved. The target may be changed or transformed into a totally
+     * different item. The agent could remain unchanged or even be
+     * destroyed in the process. If no combination for target and agent
+     * is defined, nothing will happen.
+     *
+     * Note that target and agent need not be from the same inventory.
+     * The items resulting from the combination will always be added
+     * to this inventory (which should be that of the target).
+     *
+     * @param target %Slot containing the target items.
+     * @param agent %Slot containing the items to combine with target.
+     * @return \b true if combination succeeded, \b false otherwise.
+     */
+    bool combine (slot *target, slot *agent);
+    //@}
+
+    /**
+     * @name Query Methods
+     */    
+    //@{
+    /**
+     * Values representing the different query types. It is possible
+     * to find items either by their name or by their category.
+     */
+    enum 
+    { 
+        MATCH_NAME      = 1,
+        MATCH_CATEGORY  = 2
+    };
+
+    /**
+     * Find the first item that matches key. Depending on the
+     * match parameter, items are either retrieved by name or by
+     * category.
+     * @param key The key that items must match.
+     * @param match The type of query being performed.
+     * @return First item matching key, or \c NULL if no match found.
+     */    
+    item_base *find (const string & key, const u_int8 & match);
+    
+    /**
+     * Continue a query started by inventory::find. This will return
+     * subsequent items matching the parameters used by the last query.
+     * Note that this will not retrieve items in the same stack as the
+     * one returned by inventory::find. That is, only the first item
+     * of each matching stack is retrieved.
+     * @return More matching items, or \c NULL if no more match found.
+     */
+    item_base *find_next ();
     //@}
     
     /**
@@ -155,6 +208,16 @@ private:
      * with unlimited space will automatically grow as items are added.
      */
     bool Limited;
+    
+    /**
+     * Key of last query.
+     */
+    string QueryKey;
+
+    /**
+     * Type of last query.
+     */
+    u_int8 QueryType;
 #endif // SWIG
 };
 

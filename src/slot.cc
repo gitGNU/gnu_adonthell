@@ -83,7 +83,7 @@ u_int32 slot::add (item_base *item, const u_int32 & count)
         if (item->is_mutable ()) Item->stack (item);
     }
     
-    // clculate how many items will fit into the slot
+    // calculate how many items will fit into the slot
     u_int32 fitting = item->max_stack () - Count;
     fitting = (fitting > count) ? count : fitting;
     
