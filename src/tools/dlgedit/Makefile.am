@@ -34,19 +34,3 @@ LDFLAGS=-lm -lstdc++ `gtk-config --libs`
 
 lex.loadlg.cc: loadlg.l
 	flex -olex.loadlg.cc loadlg.l
-
-lex.vars.cc: variable.l
-	flex -olex.vars.cc variable.l
-
-vars.tab.cc: variable.y
-	bison -d -p vars -o vars.tab.cc variable.y
-
-lex.cond.cc: condition.l
-	flex -olex.cond.cc condition.l
-
-cond.tab.cc: condition.y
-	bison -d -p cond -o cond.tab.cc condition.y
-
-
-
-
