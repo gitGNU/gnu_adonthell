@@ -46,7 +46,8 @@ class DlgCompiler
 {
 public:
     DlgCompiler (DlgModule *module);
-
+    ~DlgCompiler ();
+    
     void run ();
     
 private:

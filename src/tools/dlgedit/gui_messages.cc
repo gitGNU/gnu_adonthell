@@ -39,7 +39,8 @@ GuiMessages::GuiMessages (GtkWidget *sb)
     messages[10]    = " Change the preferences of the current dialogue";
     messages[11]    = " Customize imports, constructor, destructor and methods of the dialogue script";
     messages[12]    = " Transform the current dialogue into a Python script, as required by the dialogue engine";
-    messages[13]    = " Start the dialogue engine with the current dialogue";
+    messages[13]    = " Preview a translation of the current dialogue";
+    messages[14]    = " Start the dialogue engine with the current dialogue";
     
     messages[20]    = " Switch the view to this dialogue";
     
@@ -55,6 +56,8 @@ GuiMessages::GuiMessages (GtkWidget *sb)
     
     messages[120]   = " Release LEFT mouse button to attach Arrow to this Circle";
     
+    messages[130]   = " All editing functions are disabled.  Press CTRL+P to leave preview mode";
+            
     // Report Success
     messages[200]   = " Loading successful";
     messages[201]   = " Saving successful";
@@ -71,7 +74,11 @@ GuiMessages::GuiMessages (GtkWidget *sb)
     messages[-3]    = " Could not load '%s'. Either this is no dialogue source, or it has been corrupted";
     messages[-4]    = " Saving of '%s' failed.";
             
-    messages[-100]  = " Cannot connect two PLAYER Circles";    
+    messages[-100]  = " Cannot connect two PLAYER Circles";
+    
+    // Preview Translations
+    messages[-130]  = " '%s' does not appear to be a binary catalog file";
+    messages[-131]  = " Failed to create temporary locale dir";
 }
 
 // display a message to the statusbar

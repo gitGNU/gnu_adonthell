@@ -18,8 +18,15 @@
  * @author Kai Sterker
  * @brief The contents of a DlgCircle.
  */
+ 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
 
 #include <algorithm>
+//#include "gettext.h"
+#include <libintl.h>
+#include "gui_dlgedit.h"
 #include "dlg_circle_entry.h"
 
 // Default Constructor
@@ -30,6 +37,16 @@ DlgCircleEntry::DlgCircleEntry ()
     npc_ = "Default";
     code_ = "";
     condition_ = "";
+}
+
+// get the dialogue text
+string DlgCircleEntry::text ()
+{
+    // usually, we just need to return the text
+    if (GuiDlgedit::window->mode () != L10N_PREVIEW) return text_;
+    
+    // in case we are in preview mode, we need to translate the text first
+    return gettext (text_.c_str ());
 }
 
 // set the dialogue text
@@ -57,6 +74,8 @@ void DlgCircleEntry::setText (string t)
 // set the node's condition
 void DlgCircleEntry::setCondition (string c)
 {
+    if (c == "") return;
+    
     // remove all whitespace from the edges of the condition
     condition_ = c.substr (c.find_first_not_of (" \n\t"), c.find_last_not_of (" \n\t") + 1);
 

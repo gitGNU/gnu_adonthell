@@ -31,6 +31,7 @@ void on_file_save_activate (GtkMenuItem *, gpointer);
 void on_file_close_activate (GtkMenuItem *, gpointer);
 void on_dialogue_compile_activate (GtkMenuItem *, gpointer);
 void on_dialogue_run_activate (GtkMenuItem *, gpointer);
+void on_dialogue_preview_activate (GtkMenuItem *, gpointer);
 void on_dialogue_functions_activate (GtkMenuItem *, gpointer);
 void on_dialogue_player_activate (GtkMenuItem *, gpointer);
 void on_window_activate (GtkMenuItem *, gpointer);

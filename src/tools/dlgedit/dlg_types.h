@@ -56,7 +56,8 @@ enum mode_type
     NODE_SELECTED   = 1,
     NODE_HILIGHTED  = 2,
     NODE_DRAGGED    = 3,
-    NUM_MODES       = 4
+    L10N_PREVIEW    = 4,
+    NUM_MODES       = 5
 };
 
 /**
@@ -83,8 +84,9 @@ enum menu_item
     SETTINGS        = 2,
     FUNCTIONS       = 3,
     COMPILE         = 4,
-    RUN             = 5,
-    MAX_ITEM        = 6
+    PREVIEW         = 5,
+    RUN             = 6,
+    MAX_ITEM        = 7
 };
 
 #define LOAD    1

@@ -42,7 +42,7 @@ public:
      * Get the text assigned to this circle.
      * @return the circle's text.
      */
-    string text ()                  { return text_; }
+    string text ();
     /**
      * Get the comment assigned to this circle.
      * @return the circle's comments.

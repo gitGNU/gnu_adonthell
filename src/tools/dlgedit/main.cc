@@ -19,13 +19,22 @@
  * @brief The main function of dlgedit.
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <gtk/gtk.h>
+#include <locale.h>
+#include "gettext.h"
 #include "gui_dlgedit.h"
 
 int main (int argc, char *argv[])
 {
     // Init GTK+
     gtk_init (&argc, &argv);
+    
+    // Init i18n
+    setlocale (LC_MESSAGES, "");
     
     // Create the User Interface
     GuiDlgedit dlgedit;

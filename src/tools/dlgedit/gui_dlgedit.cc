@@ -18,10 +18,18 @@
  * @author Kai Sterker
  * @brief The Dialogue Editor's main window
  */
+ 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
 
 #include <algorithm>
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
+#include <stdio.h>
+#include <sys/stat.h>
+#include <unistd.h>
+#include "gettext.h"
 #include "dlg_compiler.h"
 #include "gui_dlgedit.h"
 #include "gui_dlgedit_events.h"
@@ -64,7 +72,7 @@ GuiDlgedit *GuiDlgedit::window = NULL;
 
 // Strings describing the various program states
 char *GuiDlgedit::progState[NUM_MODES] = 
-    { " IDLE", " SELECTED", " HIGHLIGHTED", " DRAGGED" };
+    { " IDLE", " SELECTED", " HIGHLIGHTED", " DRAGGED", " PREVIEW" };
 
 // Create the main window
 GuiDlgedit::GuiDlgedit ()
@@ -217,11 +225,24 @@ GuiDlgedit::GuiDlgedit ()
     gtk_widget_show (menuitem);
     menuItem[COMPILE] = menuitem;
 
+    // Preview i18n
+#ifdef ENABLE_NLS 
+    menuitem = gtk_menu_item_new_with_label ("Preview Translation");
+    gtk_container_add (GTK_CONTAINER (submenu), menuitem);
+    gtk_widget_add_accelerator (menuitem, "activate", accel_group, GDK_p, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
+    gtk_object_set_data (GTK_OBJECT (menuitem), "help-id", GINT_TO_POINTER (13));
+    gtk_signal_connect (GTK_OBJECT (menuitem), "enter-notify-event", GTK_SIGNAL_FUNC (on_display_help), message);
+    gtk_signal_connect (GTK_OBJECT (menuitem), "leave-notify-event", GTK_SIGNAL_FUNC (on_clear_help), message);
+    gtk_signal_connect (GTK_OBJECT (menuitem), "activate", GTK_SIGNAL_FUNC (on_dialogue_preview_activate), (gpointer) this);
+    gtk_widget_show (menuitem);
+    menuItem[PREVIEW] = menuitem;
+#endif
+    
     // Run
     menuitem = gtk_menu_item_new_with_label ("Run");
     gtk_container_add (GTK_CONTAINER (submenu), menuitem);
     gtk_widget_add_accelerator (menuitem, "activate", accel_group, GDK_r, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
-    gtk_object_set_data (GTK_OBJECT (menuitem), "help-id", GINT_TO_POINTER (13));
+    gtk_object_set_data (GTK_OBJECT (menuitem), "help-id", GINT_TO_POINTER (14));
     gtk_signal_connect (GTK_OBJECT (menuitem), "enter-notify-event", GTK_SIGNAL_FUNC (on_display_help), message);
     gtk_signal_connect (GTK_OBJECT (menuitem), "leave-notify-event", GTK_SIGNAL_FUNC (on_clear_help), message);
     gtk_signal_connect (GTK_OBJECT (menuitem), "activate", GTK_SIGNAL_FUNC (on_dialogue_run_activate), (gpointer) NULL);
@@ -307,6 +328,19 @@ GuiDlgedit::GuiDlgedit ()
     directory_ = g_get_current_dir ();
     
     clear ();
+}
+
+// dtor
+GuiDlgedit::~GuiDlgedit ()
+{
+    // cleanup if in preview mode
+    if (mode_ == L10N_PREVIEW)
+    {
+        unlink ("/tmp/locale/xy/LC_MESSAGES/preview.mo");
+        rmdir ("/tmp/locale/xy/LC_MESSAGES");
+        rmdir ("/tmp/locale/xy");
+        rmdir ("/tmp/locale/");    
+    }
 }
 
 // starts a new dialogue
@@ -445,6 +479,117 @@ void GuiDlgedit::compileDialogue ()
     message->display (212);
 }
 
+// preview the translated dialogue
+void GuiDlgedit::previewTranslation (string catalogue)
+{
+    DlgModule *module = graph_->dialogue ();
+    if (module == NULL) return;
+
+    // check if we have a proper catalogue
+    if (strncmp (catalogue.substr (catalogue.length ()-3).c_str (), ".mo", 3))
+    {
+        message->display (-130, g_basename (catalogue.c_str ()));
+        return;
+    }
+    
+    // see if the file exists at all
+    FILE *exists = fopen (catalogue.c_str (), "rb");
+
+    if (!exists)
+    {
+        message->display (-2, g_basename (catalogue.c_str ()));
+        return;
+    }
+    // if it does, check magic number of catalogue file
+    else
+    {
+        unsigned int magic;
+        
+        // read magic number
+        fread (&magic, 4, 1, exists);
+        fclose (exists);
+    
+        if (magic != 0x950412de)
+        {
+            message->display (-130, g_basename (catalogue.c_str ()));
+            return;
+        }
+    }
+    
+    // create temporary locale directory
+    if (mkdir ("/tmp/locale/", 0750) ||
+        mkdir ("/tmp/locale/xy", 0750) ||
+        mkdir ("/tmp/locale/xy/LC_MESSAGES", 0750))
+    {
+        message->display (-131);
+        return;
+    }
+            
+    // create a symlink to the given catalogue
+    symlink (catalogue.c_str (), "/tmp/locale/xy/LC_MESSAGES/preview.mo");
+    
+    // set the language to use  
+    setenv ("LANGUAGE", "xy", 1);
+    
+#ifdef ENABLE_NLS
+    {
+        // tell gettext that the language has changed
+        extern int _nl_msg_cat_cntr;
+        ++_nl_msg_cat_cntr;
+    }
+#endif
+    
+    // open the catalogue
+    bindtextdomain ("preview", "/tmp/locale");
+    textdomain ("preview");
+    
+    // deselect selected node, if any
+    DlgNode *node = module->deselectNode ();
+    
+    // update menuitem
+    gtk_label_set_text (GTK_LABEL (GTK_BIN (menuItem[PREVIEW])->child), "Exit Preview mode");
+    
+    // set program mode
+    setMode (L10N_PREVIEW);
+    message->display (130);
+    
+    // reselect node with proper translation
+    if (node != NULL) module->selectNode (node);
+}
+
+// stop preview mode
+void GuiDlgedit::exitPreview ()
+{
+    DlgModule *module = graph_->dialogue ();
+
+    // clear the program mode
+    setMode (NUM_MODES);
+    
+    // restore the program mode
+    if (module != NULL) 
+    {
+        setMode (module->mode ());
+        
+        // deselect selected node, if any
+        DlgNode *node = module->deselectNode ();
+    
+        // reselect node without translation
+        if (node != NULL) module->selectNode (node);
+    }
+    
+    // update menuitem
+    gtk_label_set_text (GTK_LABEL (GTK_BIN (menuItem[PREVIEW])->child), "Preview Translation");
+
+    // cleanup
+    unlink ("/tmp/locale/xy/LC_MESSAGES/preview.mo");
+    rmdir ("/tmp/locale/xy/LC_MESSAGES");
+    rmdir ("/tmp/locale/xy");
+    rmdir ("/tmp/locale/");
+
+    // clear the statusbar
+    message->clear ();
+}
+
 DlgModule *GuiDlgedit::initDialogue (string name)
 {
     // the new dialogue
@@ -462,7 +607,10 @@ DlgModule *GuiDlgedit::initDialogue (string name)
     gtk_widget_set_sensitive (menuItem[SETTINGS], TRUE);
     gtk_widget_set_sensitive (menuItem[FUNCTIONS], TRUE);
     gtk_widget_set_sensitive (menuItem[COMPILE], TRUE);
-
+#ifdef ENABLE_NLS
+    gtk_widget_set_sensitive (menuItem[PREVIEW], TRUE);
+#endif
+    
     return dlg;
 }
 
@@ -601,6 +749,9 @@ void GuiDlgedit::clear ()
     gtk_widget_set_sensitive (menuItem[SETTINGS], FALSE);
     gtk_widget_set_sensitive (menuItem[FUNCTIONS], FALSE);
     gtk_widget_set_sensitive (menuItem[COMPILE], FALSE);
+#ifdef ENABLE_NLS
+    gtk_widget_set_sensitive (menuItem[PREVIEW], FALSE);
+#endif
     gtk_widget_set_sensitive (menuItem[RUN], FALSE);
     
     // empty the graph and list widget
@@ -614,9 +765,18 @@ void GuiDlgedit::setMode (mode_type mode)
     
     // get the string representing the current program state   
     if (mode < IDLE || mode >= NUM_MODES)
+    {
         text = " INVALID MODE";
+        mode_ = IDLE;
+    }
     else
+    {
+        // ignore everything else as long as we are in preview mode
+        if (mode_ == L10N_PREVIEW) return;
+        
         text = progState[mode];
+        mode_ = mode;
+    }
     
     // some context id the statusbar needs for some reason
     int id = gtk_statusbar_get_context_id (GTK_STATUSBAR (status_mode), "Mode");

@@ -95,6 +95,22 @@ void on_dialogue_functions_activate (GtkMenuItem * menuitem, gpointer user_data)
 */
 }
 
+// Dialogue Menu: Preview i18n
+void on_dialogue_preview_activate (GtkMenuItem * menuitem, gpointer user_data)
+{
+    GuiDlgedit *dlgedit = (GuiDlgedit *) user_data;
+    GuiFile fs (LOAD, "Select message catalogue (.mo)", dlgedit->directory ());
+
+    // start translation preview
+    if (dlgedit->mode () != L10N_PREVIEW)
+    {
+        // File selection closed with OK
+        if (fs.run ()) dlgedit->previewTranslation (fs.getSelection ());
+    }
+    // stop translation preview
+    else dlgedit->exitPreview ();
+}
+
 // Dialogue Menu: Run
 void on_dialogue_run_activate (GtkMenuItem * menuitem, gpointer user_data)
 {

@@ -4,22 +4,32 @@ dnl **************************************************************
 
 AC_INIT(README)
 AM_INIT_AUTOMAKE(adonthell, 0.4dev1)
+AM_CONFIG_HEADER(config.h)
 
 CFLAGS="-g -Wall -fno-exceptions -fno-rtti"
 DEFS=""
 
+dnl ********************
 dnl Checks for programs.
+dnl ********************
+
 AC_PROG_CC
 AC_PROG_CXX
 AC_LANG_C
 AC_PROG_CXXCPP
 AM_PROG_LIBTOOL
 AC_PROG_MAKE_SET
-dnl AC_PROG_RANLIB
 
 dnl Detect the canonical host and target build environment
 AC_CANONICAL_HOST
 AC_CANONICAL_TARGET
+
+dnl ****
+dnl i18n
+dnl ****
+
+AM_GNU_GETTEXT
+ALL_LINGUAS=""
 
 dnl ********************
 dnl Additional arguments
@@ -45,10 +55,10 @@ AC_ARG_WITH(data-dir,
 [  --with-data-dir=DIR    Directory where datas will be installed],
             gamedatadir="$withval", gamedatadir=none)
 
-
 dnl **********************
 dnl Set the data directory
 dnl **********************
+
 if test x$gamedatadir = xnone; then
   case "$target" in
     *-*-cygwin* | *-*-mingw32*)
@@ -63,7 +73,6 @@ if test x$gamedatadir = xnone; then
   esac
 fi
 DEFS="$DEFS -DDATA_DIR=\"\\\"$gamedatadir\\\"\""
-
 
 dnl **********************
 dnl Check for memory leaks
@@ -102,10 +111,9 @@ AC_CHECK_FT2(6.0.0,
     AC_MSG_ERROR([*** Freetype version >= 6.0.0 not found!])
 )
 
-
-dnl********************
+dnl *******************
 dnl Check for OggVorbis
-dnl********************
+dnl *******************
 
 OGG_VORBIS=no
 AM_PATH_VORBIS(
@@ -117,7 +125,6 @@ AM_PATH_VORBIS(
         AC_MSG_RESULT(Disabling OggVorbis support)
         ogg_music="disabled"
 )
-
 
 dnl ********************
 dnl Check for Python. 
@@ -358,6 +365,8 @@ doc/Makefile
 doc/devel/Makefile
 doc/dlgedit/Makefile
 doc/items/Makefile
+intl/Makefile 
+po/Makefile.in 
 src/Makefile
 src/tools/Makefile
 src/tools/animedit/Makefile
@@ -365,8 +374,6 @@ src/tools/charedit/Makefile
 src/tools/combat/Makefile
 src/tools/dlgedit/Makefile
 src/tools/dlgedit/examples/Makefile
-dnl src/tools/fontedit/Makefile
-dnl src/tools/maptools/Makefile
 src/tools/questedit/Makefile
 src/tools/oggloop/Makefile
 src/tools/pydonthell/Makefile

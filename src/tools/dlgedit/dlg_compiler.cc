@@ -40,6 +40,15 @@ DlgCompiler::DlgCompiler (DlgModule *module)
     memset (operationTable, 0, length * sizeof (int));
 }
 
+// dtor
+DlgCompiler::~DlgCompiler ()
+{
+    delete[] codeTable;
+    delete[] conditionTable;
+    delete[] operationTable;
+}
+
+// compile the dialogue into Python script
 void DlgCompiler::run ()
 {
     // try to open the file
@@ -49,11 +58,8 @@ void DlgCompiler::run ()
     unsigned int pos = fname.rfind ("-");
     if (pos != fname.npos) fname.erase (pos);
 
-    // add proper file extension
-    fname += ".py";
-    
     // try to open the file
-    file.open (fname.c_str ());
+    file.open ((fname + ".py").c_str ());
     if (file.eof ()) return;
     
     // write the script header

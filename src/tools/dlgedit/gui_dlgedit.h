@@ -47,7 +47,7 @@ public:
     /**
      * Destructor.
      */
-    ~GuiDlgedit () { }
+    ~GuiDlgedit ();
     
     /**
      * Global pointer to the main window, to allow easy access from anywhere.
@@ -104,6 +104,11 @@ public:
      * @param mode The new program state.
      */
     void setMode (mode_type mode);
+    /**
+     * Get the current program state
+     * @return The program state.
+     */
+    mode_type mode ()   { return mode_; }
     
     /**
      * Create a new dialogue.
@@ -132,6 +137,16 @@ public:
      * Compile a dialogue
      */
     void compileDialogue ();
+    /**
+     * preview translation for a dialogue
+     * @param catalogue full path to a gnu gettext compliant binary catalogue
+     *        (.mo) file
+     */
+    void previewTranslation (string catalogue);
+    /**
+     * stop translation preview
+     */
+    void exitPreview ();
     
     /**
      * Get the directory where the last fileselection took place.
@@ -168,6 +183,7 @@ private:
     void clear ();
 
     int number;                     // serial number of open dialogues
+    mode_type mode_;                // the program mode
     GuiList *list_;                 // instant preview widget
     GuiGraph *graph_;               // dialogue view
     GuiMessages *message;           // statusbar for displaying help/error texts

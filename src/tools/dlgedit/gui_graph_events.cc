@@ -52,7 +52,7 @@ gint expose_event (GtkWidget * widget, GdkEventExpose * event, gpointer data)
     return FALSE;
 }
 
-// Mouse-button pressed on Drawing Area/
+// Mouse-button pressed on Drawing Area
 gint button_press_event (GtkWidget *widget, GdkEventButton *event, gpointer data)
 {
     GuiGraph *graph = (GuiGraph *) data;
@@ -63,6 +63,10 @@ gint button_press_event (GtkWidget *widget, GdkEventButton *event, gpointer data
         // Middle button pressed
         case 2:
         {
+            // ignore edit command if in preview mode
+            if (GuiDlgedit::window->mode () == L10N_PREVIEW)
+                break;
+            
             // If nothing selected, see if we're over a node
             if (graph->mode () == IDLE)
                 graph->selectNode (point);
@@ -103,6 +107,10 @@ gint motion_notify_event (GtkWidget *widget, GdkEventMotion *event, gpointer dat
     // Dragging dialogue nodes
     if (event->state == GDK_BUTTON_PRESS_MASK)
     {
+        // don't allow dragging if in preview mode
+        if (GuiDlgedit::window->mode () == L10N_PREVIEW)
+            return FALSE;
+        
         // no node being dragged so far -> start dragging
         if (graph->mode () != NODE_DRAGGED)
             graph->prepareDragging (point);
@@ -133,7 +141,8 @@ gint button_release_event (GtkWidget *widget, GdkEventButton *event, gpointer da
                 // select the node under the cursor, if any
                 if (!graph->selectNode (point))
                     // otherwise create a new circle at that position
-                    graph->newCircle (point);
+                    if (GuiDlgedit::window->mode () != L10N_PREVIEW)
+                        graph->newCircle (point);
                 
                 break;
             }
@@ -141,6 +150,10 @@ gint button_release_event (GtkWidget *widget, GdkEventButton *event, gpointer da
             // node selected
             case NODE_SELECTED:
             {
+                // ignore edit command if in preview mode
+                if (GuiDlgedit::window->mode () == L10N_PREVIEW)
+                    break;
+
                 // try to create a new link between two nodes
                 graph->newArrow (point);
                 break;
@@ -261,6 +274,10 @@ guint key_press_notify_event (GtkWidget * widget, GdkEventKey * event, gpointer 
         // edit selected node
         case GDK_Return:
         {
+            // ignore edit command if in preview mode
+            if (GuiDlgedit::window->mode () == L10N_PREVIEW)
+                break;            
+            
             graph->editNode ();
             break;
         }
@@ -275,6 +292,10 @@ guint key_press_notify_event (GtkWidget * widget, GdkEventKey * event, gpointer 
         // delete node
         case GDK_Delete:
         {
+            // ignore delete command if in preview mode
+            if (GuiDlgedit::window->mode () == L10N_PREVIEW)
+                break;            
+
             graph->deleteNode ();
             break;
         }

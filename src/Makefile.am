@@ -10,7 +10,7 @@ moddatadir = $(gamedatadir)/modules
 
 bin_PROGRAMS = alextest joltest
 
-EXTRA_DIST = .indent.pro prefs.l py_adonthell.i adonthell.py
+EXTRA_DIST = .indent.pro prefs.l # py_adonthell.i adonthell.py
 
 CPPFLAGS += $(SDL_DEFS) $(OGG_DEFS) $(SDL_CFLAGS) $(OGG_CFLAGS) $(PY_CFLAGS) $(FT2_CFLAGS)
 
