@@ -119,6 +119,12 @@ event* event_handler::load_event (gzFile f, bool reg)
             e = new leave_event;
             break;
         }
+
+        case TIME_EVENT:
+        {
+            e = new time_event;
+            break;
+        }
         
         default:
         {

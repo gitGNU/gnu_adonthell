@@ -72,6 +72,12 @@ void gamedata::save (gzFile file)
     put_string (file, time);
 }
 
+void gamedata::set_description (char *desc)
+{
+    if (description != NULL) delete description;
+    description = strdup (desc);
+}
+
 // data initialisation
 void data::init (char* dir)
 {
@@ -125,6 +131,7 @@ void data::cleanup ()
 bool data::load (u_int32 pos)
 {
     gzFile in = NULL;
+    const char *basedir = pos ? adonthell_dir : ".";
     char filepath[256];
     npc *mynpc;
     quest *myquest;
@@ -147,9 +154,8 @@ bool data::load (u_int32 pos)
     PyDict_SetItemString (globals, "characters", chars);
     PyDict_SetItemString (chars, the_player->name, pass_instance (the_player, "player"));
 
-    // try to open character.data (think of something better here:)
-    if (pos == 0) sprintf (filepath, "%s/character.data", saves[pos]->get_directory ());
-    else  sprintf (filepath, "%s/%s/character.data", adonthell_dir, saves[pos]->get_directory ());
+    // try to open character.data
+    sprintf (filepath, "%s/%s/character.data", basedir, saves[pos]->get_directory ());
     in = gzopen (filepath, "r");
 
     if (!in)
@@ -175,8 +181,7 @@ bool data::load (u_int32 pos)
     PyDict_SetItemString (globals, "quests", quests);
 
     // try to open quest.data
-    if (pos == 0) sprintf (filepath, "%s/quest.data", saves[pos]->get_directory ());
-    else sprintf (filepath, "%s/%s/quest.data", adonthell_dir, saves[pos]->get_directory ());
+    sprintf (filepath, "%s/%s/quest.data", basedir, saves[pos]->get_directory ());
     in = gzopen (filepath, "r");
 
     if (!in)
@@ -254,7 +259,11 @@ gamedata* data::save (u_int32 pos, char *desc)
 
         saves.push_back (gdata);
     }
-    else gdata = saves[pos];
+    else
+    {
+        gdata = saves[pos];
+        gdata->set_description (desc);
+    }
 
     // save characters 
     sprintf (filepath, "%s/%s/character.data", adonthell_dir, gdata->get_directory ());

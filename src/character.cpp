@@ -203,7 +203,5 @@ void npc::load (gzFile in, bool load_script)
     if (dialogue) free (dialogue);
     dialogue = get_string (in);    
 
-    if (schedule_file) free (schedule_file);
-    schedule_file = get_string (in);
-    set_schedule (schedule_file, load_script);   
+    set_schedule (get_string (in), load_script);   
 }
