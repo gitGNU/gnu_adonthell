@@ -50,6 +50,7 @@ enum
 
     // Those four are used for parsing only. They are defined here to avoid
     //  conflicts with other commands.
+    REG = 251,
     THEN = 252,
     ELSE = 253,
     ID = 254,
