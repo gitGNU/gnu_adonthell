@@ -13,7 +13,8 @@
 /* Callback Data for running a Dialogue */
 typedef struct
 {
-    dialog *engine;
+    dialog *data;
+    interpreter *engine;
     GtkWidget *npc;
     GtkWidget *player;
 }

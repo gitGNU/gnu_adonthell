@@ -16,7 +16,7 @@
 
 #include "../../types.h"
 #include "../../dlg_io.h"
-#include "../../dialog_cmd.h"
+#include "../../commands.h"
 #include "linked_list.h"
 #include "dlgnode.h"
 #include "main.h"
@@ -37,8 +37,7 @@ void write_text (DlgCompiler *, ptr_list *, gchar *);
 void undo_changes (ptr_list *);
 
 void add_CLEAR (DlgCompiler *, GPtrArray *);
-void add_END (DlgCompiler *, GPtrArray *);
-void add_DISPLAY (DlgCompiler *, GPtrArray *);
+void add_RETURN (DlgCompiler *, GPtrArray *, u_int32);
 void add_NPCTEXT (DlgCompiler *, GPtrArray *, s_int32);
 void add_IMPORT (DlgCompiler *, GPtrArray *, s_int32, s_int32);
 void add_PTEXT (DlgCompiler *, GPtrArray *, s_int32);
@@ -217,12 +216,12 @@ compile_nodes (DlgCompiler * comp)
     GPtrArray *command_block = g_ptr_array_new ();
     DlgNode *circle;
     dialog_cmd *cmd;
-    u_int32 i, j, len, num;
+    u_int32 i, j, len, num, retval = 2;
 
     /* Look if we reached a end */
     if (comp->next_circles->len == 0)
     {
-        add_END (comp, command_block);
+        add_RETURN (comp, command_block, 0);
 
         g_ptr_array_add (comp->compiled_blocks, command_block);
 
@@ -233,9 +232,6 @@ compile_nodes (DlgCompiler * comp)
 
     else
     {
-        /* add CLEAR */
-        add_CLEAR (comp, command_block);
-
         /* add circles 
            There are 3 possibilities: Either PLAYER - nodes follow, further
            NPC - nodes follow or END follows */
@@ -266,6 +262,8 @@ compile_nodes (DlgCompiler * comp)
 
                     for (j = 0; j < len; j++)
                         add_PTEXT (comp, command_block, (get_next_circle (circle, j))->number);
+
+                    retval = 1;
                 }
 
                 /* 3. NPC - nodes follow */
@@ -275,7 +273,10 @@ compile_nodes (DlgCompiler * comp)
         }
 
         /* add DISPLAY */
-        add_DISPLAY (comp, command_block);
+        add_RETURN (comp, command_block, retval);
+
+        /* add CLEAR */
+        add_CLEAR (comp, command_block);
 
         g_ptr_array_add (comp->compiled_blocks, command_block);
 
@@ -392,23 +393,18 @@ write_dialogue (DlgCompiler * comp, gchar * file_name)
             {
             case CLEAR:
                 {
-                    fprintf (txt, "\n%i CLEAR\n", (int)k++);
+                    fprintf (txt, "%i CLEAR\n", (int)k++);
                     d2h (CLEAR, 4, dat);
                     break;
                 }
-            case DISPLAY:
+            case RETURN:
                 {
-                    fprintf (txt, "%i DISPLAY\n", (int)k++);
-                    d2h (DISPLAY, 4, dat);
+                    fprintf (txt, "%i RETURN %i\n\n", (int)k++, (int)cmd->text);
+                    d2h (RETURN, 4, dat);
+                    d2h (cmd->text, 4, dat);
                     break;
                 }
-            case END:
-                {
-                    fprintf (txt, "\n%i END\n", (int)k++);
-                    d2h (END, 4, dat);
-                    break;
-                }
-            case IMPORT:
+           case IMPORT:
                 {
                     fprintf (txt, "%i IMPORT \"%s\"\n", (int)k++, ((DlgNode *) get_ptr_list_element (comp->nodes, cmd->new_pc))->text);
                     d2h (IMPORT, 4, dat);
@@ -470,22 +466,12 @@ add_CLEAR (DlgCompiler * comp, GPtrArray * array)
 }
 
 void 
-add_END (DlgCompiler * comp, GPtrArray * array)
+add_RETURN (DlgCompiler * comp, GPtrArray * array, u_int32 retval)
 {
     dialog_cmd *cmd = (dialog_cmd *) malloc (sizeof (dialog_cmd));
 
-    cmd->type = END;
-
-    g_ptr_array_add (array, cmd);
-    comp->dlg_length += 1;
-}
-
-void 
-add_DISPLAY (DlgCompiler * comp, GPtrArray * array)
-{
-    dialog_cmd *cmd = (dialog_cmd *) malloc (sizeof (dialog_cmd));
-
-    cmd->type = DISPLAY;
+    cmd->type = RETURN;
+    cmd->text = retval;
 
     g_ptr_array_add (array, cmd);
     comp->dlg_length += 1;

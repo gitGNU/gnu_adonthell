@@ -21,6 +21,7 @@ class dialog;
 #include "../../dlg_io.h"
 #include "../../dialog_cmd.h"
 #include "../../array_tmpl.h"
+#include "../../interpreter.h"
 #include "../../dialog.h"
 #include "linked_list.h"
 #include "dlgnode.h"
@@ -35,7 +36,8 @@ run_dialogue (MainFrame * wnd)
     RunData *rd = (RunData *) g_malloc (sizeof (RunData));
     GtkWidget *dlg;
 
-    rd->engine = new dialog;
+    rd->data = new dialog;
+    rd->engine = new interpreter (wnd->filename, dialog);
 
     /* Dialog for displaying Dialogue */
     dlg = create_run_dialogue (rd);
@@ -51,6 +53,7 @@ run_dialogue (MainFrame * wnd)
     /* Clean up */
     gtk_widget_destroy (dlg);
     delete rd->engine;
+    delete rd->data;
     g_free (rd);
 }
 
@@ -92,14 +95,14 @@ ShowDialogue (RunData * rd, u_int32 answer)
 
     switch (result)
     {
-        case -1:
+        case 0:
         {
             /* the end */
             gtk_main_quit ();
             return 1;
         }
         
-        case -2:
+        case -1:
         {
             /* error */
             gtk_editable_delete_text (GTK_EDITABLE (rd->npc), 0, -1);
@@ -109,7 +112,7 @@ ShowDialogue (RunData * rd, u_int32 answer)
             return 0;
         }
 
-        default:
+        case 1:
         {
             /* Recieve NPC´s text stored in  m_Engine -> m_NPCText */
             gtk_editable_delete_text (GTK_EDITABLE (rd->npc), 0, -1);

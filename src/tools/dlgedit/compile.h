@@ -26,4 +26,12 @@ typedef struct
 }
 DlgCompiler;
 
+typedef struct
+{
+    s_int32 type;               /* Command´s type */
+    s_int32 text;               /* ID of string to load */
+    s_int32 new_pc;             /* New value of Program Counter */
+}
+dialog_cmd;
+
 void make_dialogue (MainFrame *);
