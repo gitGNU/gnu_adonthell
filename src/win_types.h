@@ -15,6 +15,8 @@
 #ifndef TYPES_WIN_H_
 #define TYPES_WIN_H_
 
+#include "SDL_keysym.h"
+
 #define WIN_NB_TABLE_CHAR 255
 #define WIN_TEXT_MAX_LENGTH 5000
 #define WIN_FONT_HEIGHT 8
@@ -38,7 +40,11 @@
 //border filename
 #define WIN_V_BORDER_TEMPLATE_FILE "v_border.pnm"
 #define WIN_H_BORDER_TEMPLATE_FILE "h_border.pnm"
-#define WIN_CORNER_FILE "corner.pnm"
+#define WIN_CORNER_TOP_LEFT_FILE "corner_top_left.pnm"
+#define WIN_CORNER_TOP_RIGHT_FILE "corner_top_right.pnm"
+#define WIN_CORNER_BOTTOM_LEFT_FILE "corner_bottom_left.pnm"
+#define WIN_CORNER_BOTTOM_RIGHT_FILE "corner_bottom_right.pnm"
+
 
 //background filename
 #define WIN_BACKGROUND_FILE "background.pnm"
@@ -49,7 +55,12 @@
 #define WIN_SCROLLBAR_BOTTOM_FILE "scroll_bot.pnm"
 #define WIN_SCROLLBAR_TOP_FILE "scroll_top.pnm"
 
-
+//default key For the selection
+#define WIN_SELECT_DEFAULT_KEY_NEXT SDLK_n
+#define WIN_SELECT_DEFAULT_KEY_PREVIOUS SDLK_p
+#define WIN_SELECT_DEFAULT_KEY_NEXT_SELECT SDLK_TAB
+#define WIN_SELECT_DEFAULT_KEY_UP_SELECT SDLK_BACKSPACE
+#define WIN_SELECT_DEFAULT_KEY_ACTIVATE SDLK_SPACE
 
 //cursor filename
 #define WIN_CURSOR_FILE "cursor.pnm"
@@ -60,23 +71,27 @@
 
 //just a start to build a theme
 #define WIN_THEME_ORIGINAL "original/" //dont forget '/'
+#define WIN_THEME_ELFE "elfe/"
 
 //win_OBJECT
 #define WIN_OBJ_LABEL 0
 #define WIN_OBJ_WRITE 1
 #define WIN_OBJ_IMAGE 2
-#define WIN_OBJ_ANIMATION 3
-#define WIN_OBJ_CONTAINER 4
+#define WIN_OBJ_CONTAINER 3
 
 //win_select
 #define WIN_SELECT_MODE_BRIGHTNESS 0
 #define WIN_SELECT_MODE_BORDER 1
 #define WIN_SELECT_MODE_CURSOR 2 //used with label!!!! 
 
+#define WIN_SELECT_JUST_SELECT true
+#define WIN_SELECT_JUST_OBJECT false
+
+
 //WIN SCROLL BAR
 #define WIN_SCROLLBAR_PAD_DEFAULT 10;
 
-
+/*
 typedef struct 
 {
   char text[WIN_TEXT_MAX_LENGTH];
@@ -86,7 +101,7 @@ typedef struct
   u_int16 len_fl;
   bool end_win; //if text reach the end of window
 }text_w;
-
+*/
 
 #endif
 

@@ -1,7 +1,6 @@
 #include <list>
 #include "win_types.h"
 #include "win_base.h"
-#include "win_friend.h"
 #include "win_font.h"
 #include "win_label.h"
 #include "win_write.h"

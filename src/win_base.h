@@ -21,6 +21,7 @@ class image;
 class win_border;
 class win_background;
 class win_select;
+class win_cursor;
 
 class win_base
 {
@@ -33,14 +34,30 @@ class win_base
 #ifdef _DEBUG_
   static u_int16 cpt_win_obj_debug; 
 #endif
-  image * corner;
+  
+  
+  image * corner_t_l;
+  image * corner_t_r;
+  image * corner_b_l;
+  image * corner_b_r;
   image * h_border;
   image * v_border;
+  
+  image * select_corner_t_l;
+  image * select_corner_t_r;
+  image * select_corner_b_l;
+  image * select_corner_b_r;
+  image * select_h_border;
+  image * select_v_border;
+ 
+  
   image * background;
-
+ 
   //contain image to build border
   win_border * wborder;
   
+  win_border * wborder_select;
+
   //contain image to build background
   win_background * wback;
   
@@ -53,33 +70,43 @@ class win_base
   void * param_func2;
   void execute_activate_function();
   
+  void destroy_border();
+  void destroy_border_select();
+  
+  
 
  protected: 
   //pointer of win_select, needed because each object depend of a win_container
-   win_container * wc;
+  win_container * wc;
+  
+  //drawing area where the object can be visible
+  drawing_area * da;
+  
+  //pointer to a win_select, if this object is in a win_select wselect!=NULL
+  win_select * wselect;
+  
+  bool selected;
+  bool visible;
+  
+  void draw_background();
+  void draw_border();
+  void resize_border();
+  void resize_background();
+  
+  u_int8 select_mode;
 
-   //drawing area where the object can be visible
-   drawing_area * da;
-   
-   bool selected;
-   bool visible;
-    
-   void draw_background();
-   void draw_border();
-   void resize_border();
-   void resize_background();
+  u_int16 x_pad_l; //x start for the text
+  image * cursor;
 
-   u_int8 select_mode;
- 
  public:
-
    
+  
    /**************************************************************************/
    /****************************YOU CAN USE THIS *****************************/
    /**************************************************************************/
  
    win_base(s_int16,s_int16,u_int16,u_int16,win_container * twc=NULL ,drawing_area * tda=NULL);
-   ~win_base();
+   virtual ~win_base();
 
    //visible
    void show();
@@ -98,7 +125,7 @@ class win_base
    u_int16 get_length();
    u_int16 get_height();
    void resize(u_int16,u_int16);
-   void move(s_int16,s_int16,bool move_by_scrollbar=false);
+   virtual void move(s_int16,s_int16,bool move_by_scrollbar=false);
    
    //select mode
    void set_select_mode(u_int8);
@@ -112,19 +139,20 @@ class win_base
    
    //set border of this object, if paramater is NULL, no border is drawing
    void set_border(win_border * );
+   void set_border_select(win_border * twb);
+     
+   //set cursor WORK ONLY WITH LABEL AND WRITE
+   void set_cursor (win_cursor * tmp);
    
    //set background of this object, if paramater is NULL, no background is drawing
    void set_background(win_background * );
 
 
-
-
+   
    /**************************************************************************/
    /****************************NEVER USE THIS *******************************/
    /**************************************************************************/
    
-   //pointer to a win_select, if this object is in a win_select wselect!=NULL
-   win_select * wselect;
    
    //postion of x,y in the screen, not the position of the object in a container
    s_int16 real_x; //position on the screen
@@ -148,6 +176,9 @@ class win_base
 
    void save_position();
    void reload_position();
+
+   void attach_select(win_select *,u_int8 tmode); //this function is called by win_select
+   void dettach_select();
 
 };
 #endif

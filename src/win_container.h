@@ -39,7 +39,7 @@ class win_container : public win_base
   list<win_write *> l_write; //write list
   list<win_container *> l_container; //container list
   list<win_image *> l_image; //image list
-  list<win_anim *> l_anim; //animation list
+  list<win_anim *> l_anim; //image list
   
   // DATA TO SCROLLBAR
   s_int16 cur_pos_scrollbar;
@@ -83,16 +83,22 @@ class win_container : public win_base
   //it's to create an win_image (x,y, and pointer to image)
   win_image * add_image(s_int16,s_int16,image *);
 
-  //it's to create an win_anim (x,y, and pointer to animation)
-  win_anim * add_anim(s_int16,s_int16,animation *);
-  
-  //used to remove object like win_label,win_write,win_container,win_image
+  win_anim * add_anim(s_int16,s_int16,animation *); 
+ 
+  //used to remove object like win_label,win_write,win_container,win_image but NOT in MEMORY
   void remove(win_label *);
   void remove(win_write *);
   void remove(win_container *);
   void remove(win_image *);
   void remove(win_anim *);
   
+  // Destroy all object in list && MEMORY
+  void destroy_all_label();
+  void destroy_all_image();
+  void destroy_all_anim();
+  void destroy_all_write();
+  void destroy_all_container();
+
   //used to draw all object of this container
   void draw();
   
@@ -122,9 +128,10 @@ class win_container : public win_base
   /****************************NEVER USE THIS *****************************/
   /**************************************************************************/
   void is_object_max_y(s_int16); //if the object have the Max y 
+  win_select * tree_select;
   void find_obj_max_y(); //search the object which have the max y
-  void attach_select(win_select *); //this function is called by win_select
-  void dettach_select(); //this function is called by win_select
+  // void attach_select(win_select *); //this function is called by win_select
+  // void dettach_select(); //this function is called by win_select
   //don't use it
   void update_da(); //this function update some position about the drawing area
   //you doesn't use this constructor !!!!!it's called by a creation of new container
@@ -132,3 +139,13 @@ class win_container : public win_base
 };
 
 #endif
+
+
+
+
+
+
+
+
+
+

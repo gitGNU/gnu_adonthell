@@ -19,7 +19,6 @@
 #include <list>
 
 class win_image;
-class win_anim;
 class win_label;
 class win_write;
 class win_container;
@@ -28,121 +27,94 @@ class win_select;
 class win_cursor;
 class image;
 
-class Type_win_select{
-
-
- public:
-  win_image * img;
-  win_anim * anm;
-  win_label * lab;
-  win_write * wri;
-  win_container * con;
-
-
-  //pointer of his mother win_select
-  win_select * wselect; 
-
-  // real border of the object
-  // needed if the object have a border before the selection
-  win_border * n_border; 
-  
-  ///needed to identify type of object
-  u_int8 id; // 0:lab, 1:wri, 2:img, 3: con
-  
-  //constructor for each object
-  Type_win_select(win_image * p,win_select *,u_int8 m);
-  Type_win_select(win_anim * p,win_select *,u_int8 m);
-  Type_win_select(win_label * p,win_select *,u_int8 m);
-  Type_win_select(win_write * p,win_select *,u_int8 m);
-  Type_win_select(win_container * p,win_select *,u_int8 m);
-  
-  ~Type_win_select();
-
-  //activate the object
-  void activate();
-  
-  //return a pointer of this object
-  void * get();
-
-  //give the selected mode of this object
-  void select();
-
-  //give the unselected mode of this object
-  void unselect();
-  
-  s_int16 get_y_move(win_container *);
-
-  void y_move(s_int16);
-};
-
-
 class win_select
 {
+ private:
 
- public:
-  //****************************************
-  //**************** PUBLIC  ***************
-  //****************************************
-  win_container * wc;
-  //CONSTRUCTOR
-  win_select(win_container *);
-
-   //DESTRUCTOR
-  ~win_select();
-
-  //list of all object in this selection
-  list<Type_win_select> l_list;
-
-  //pointer on the l_list
-  list<Type_win_select>::iterator ite_list;
+#ifdef _DEBUG_
+  static u_int16 cpt_win_select_debug;
+#endif
+  
+  list<win_base *> l_list; 
+  list<win_base *>::iterator ite_list;
+  list<win_container *> l_select;
+  list<win_container *>::iterator ite_select;
   
   
-  //border used to select an object
-  win_border * cur_border; 
-  //cursor used to select an object
-  win_cursor * cursor;
-  
-  //Method used to add object
-  void add(win_label *,u_int8 m=WIN_SELECT_MODE_BRIGHTNESS);
-  void add(win_write *,u_int8 m=WIN_SELECT_MODE_BRIGHTNESS);
-  void add(win_image *,u_int8 m=WIN_SELECT_MODE_BRIGHTNESS);
-  void add(win_anim *,u_int8 m=WIN_SELECT_MODE_BRIGHTNESS);
-  void add(win_container *,u_int8 m=WIN_SELECT_MODE_BORDER);
-  
-  //Method used to remove object
-  void remove(win_label *);
-  void remove(win_write *);
-  void remove(win_image *);
-  void remove(win_anim *);
-  void remove(win_container*);
-
-  //change position to next object and return this pointer 
-  void * next();
-  
-  //change position to previous object and return this pointer 
-  void * previous();
-  
-  //get pointer of the cur object 
-  void * get();
-
-  //get position of the cur object start at 1 return zero if no objet
-  u_int16 get_pos();
-  
-
-  //set the default object
-  void set_default_obj(void * tmp);
-
-  //set border to the selection, You need to set a border if you have insert object with WIN_SELECT_MODE_BORDER
-  void set_border(win_border *);
-  
-  void set_cursor(win_cursor *);
-
-  //activate the cur object
-  void activate_select();
-  
+  bool type_select;
+  win_border * border_to_select;
+  win_cursor * cursor_to_select;
+  s_int16 get_y_move_to_be_visible(); 
+  static win_select * cur_select;
   void adjust_visible();
 
+ public:
+  //call this constructor to create the first win_select
+  win_select(win_container * tmp,bool b=WIN_SELECT_JUST_OBJECT);
+  
+  ~win_select();
+  
+  //add an object in the win_select, so this win select is like a sheet of tree
+  void add(win_base * , u_int8 m);
+  //remove an object in the win_select but not destroy object !!!
+  void remove(win_base *);
+  //remove all object
+  void remove_all();
+  //remove all select and destroy them
+  void remove_all_select();
+  //set border && cursor for the selection
+  void set_border(win_border * tmp);
+  void set_cursor(win_cursor * tmp);
+  
+  //pass to the next object
+  win_base * next();
+  
+  //pass to the previous object
+  win_base * previous();
+  
+  //add a selection, the twc is the container which 'll be attach to the select
+  win_select *  add_select(win_container * twc,bool b=WIN_SELECT_JUST_OBJECT);
+  
+  //remove a selection but don't destroy
+  void remove_select(win_select * tmp); 
+  
+ 
+  // call this function to change for another win_select
+  void next_select();
+  // call this function to return up of the cur winselect (like a tree)
+  void up_select();  
+  // call this function when you want activate function of the cur object
+  void activate_select(); 
+  //set the default object 
+  void set_default_obj(void * tmp); 
+  
+  //get pointer of cur selection
+  win_base * get(); 
+  //get position of cur selection
+  u_int8 get_pos(); 
+ 
+  static SDLKey next_key;
+  static SDLKey previous_key;
+  static SDLKey next_select_key;
+  static SDLKey up_select_key;
+  static SDLKey activate_key;
+  static bool activate_selection;
+
+  //update function
+  static void update(); 
+
+
+  /*****************************************************************************/
+  /******************NEVER USE THIS *******************************************/
+ /*****************************************************************************/
+  win_select(win_container * twc,win_select *tws,bool b=WIN_SELECT_JUST_OBJECT);
+  win_select * father_select;
+  win_container * attached_container; //container which his attached at the select
+   
 };
+
+
+
 #endif
 
 

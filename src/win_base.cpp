@@ -1,3 +1,4 @@
+
 /*
    $Id$
 
@@ -55,11 +56,23 @@ void win_base::init_base(s_int16 tx,s_int16 ty, u_int16 tl,u_int16 th,win_contai
   
    h_border=NULL;
    v_border=NULL;
-   corner=NULL;
+   corner_t_l=NULL;
+   corner_t_r=NULL;
+   corner_b_l=NULL;
+   corner_b_r=NULL;
    background=NULL;
    wborder=NULL;
    wback=NULL;
    
+   select_corner_t_l=NULL;
+   select_corner_t_r=NULL;
+   select_corner_b_l=NULL;
+   select_corner_b_r=NULL;
+   select_h_border=NULL;
+   select_v_border=NULL;
+   wborder_select=NULL;
+
+   cursor=NULL;
    //initialize transluency of background
    level_trans_back=180;
 
@@ -69,15 +82,17 @@ void win_base::init_base(s_int16 tx,s_int16 ty, u_int16 tl,u_int16 th,win_contai
    //init_var
    act_function=NULL;
 
+   //initialize pad
+   x_pad_l =0;
 }
 
 win_base::win_base(s_int16 tx,s_int16 ty, u_int16 tl,u_int16 th,win_container * twc=NULL,drawing_area * tda=NULL)
 {
-  init_base(tx,ty,tl,th,twc,tda);
 #ifdef _DEBUG_
   cout << "win_base() called, "<< ++cpt_win_obj_debug
        << " objects currently allocated\n";
 #endif
+  init_base(tx,ty,tl,th,twc,tda);
 }
 
 win_base::~win_base()
@@ -85,26 +100,47 @@ win_base::~win_base()
   wc=NULL;
   da=NULL;
   wborder=NULL;
-  wback=NULL; 
-   
-  if(h_border) delete h_border;
-  if(v_border) delete v_border;
-  if(corner) delete corner;
-  if(background) delete background;
+  wback=NULL;
+  cursor=NULL;
+  if(wselect) wselect->remove(this);
 #ifdef _DEBUG_
   cout << "~win_base() called, "<< --cpt_win_obj_debug
        << " objects currently allocated\n";
 #endif
+  destroy_border();
+  destroy_border_select();
+  if(background) delete background;
+}
+
+
+void win_base::destroy_border()
+{
+  if(h_border) delete h_border;
+  if(v_border) delete v_border;
+  if(corner_t_l) delete corner_t_l;
+  if(corner_t_r) delete corner_t_r;
+  if(corner_b_l) delete corner_b_l;
+  if(corner_b_r) delete corner_b_r;
+}
+
+void win_base::destroy_border_select()
+{
+  if(select_h_border) delete select_h_border;
+  if(select_v_border) delete select_v_border;
+  if(select_corner_t_l) delete select_corner_t_l;
+  if(select_corner_t_r) delete select_corner_t_r;
+  if(select_corner_b_l) delete select_corner_b_l;
+  if(select_corner_b_r) delete select_corner_b_r;
 }
 
 void win_base::select()
 {
-   selected=true;
+  selected=true;
 }
 
 void win_base::unselect()
 {
-   selected=false;
+  selected=false;
 }
 
 void win_base::show()
@@ -170,17 +206,55 @@ void win_base::set_border(win_border * twb)
    wborder=twb;
    if(wborder)
      {
-       if(h_border) delete h_border;
-       if(v_border) delete v_border;
-       if(corner) delete corner;
+       destroy_border();
        h_border=new image();
        v_border=new image();
-       corner=new image();
-       *corner=*(twb->corner);
+       corner_t_l=new image();
+       corner_t_r=new image();
+       corner_b_l=new image();
+       corner_b_r=new image();
+       *corner_t_l=*(twb->corner_top_left);
+       *corner_t_r=*(twb->corner_top_right);
+       *corner_b_l=*(twb->corner_bottom_left);
+       *corner_b_r=*(twb->corner_bottom_right);
        resize_border();
      }
 }
 
+void win_base::set_border_select(win_border * twb)
+{
+  if(wselect)
+    {
+      wborder_select=twb;
+      if(wborder_select)
+	{
+	  destroy_border_select();
+	  select_h_border=new image();
+	  select_v_border=new image();
+	  select_corner_t_l=new image();
+	  select_corner_t_r=new image();
+	  select_corner_b_l=new image();
+	  select_corner_b_r=new image();
+	  *select_corner_t_l=*(twb->corner_top_left);
+	  *select_corner_t_r=*(twb->corner_top_right);
+	  *select_corner_b_l=*(twb->corner_bottom_left);
+	  *select_corner_b_r=*(twb->corner_bottom_right);
+	  resize_border();
+	}
+    }
+}
+
+void
+win_base::set_cursor (win_cursor * tmp)
+{
+  if (tmp)
+    {
+      if (cursor)delete cursor;
+      cursor = new image ();
+      *cursor = *(tmp->cursor);
+      x_pad_l=cursor->length;
+    } else x_pad_l=0;
+}
 
 void win_base::resize_border()
 {
@@ -191,6 +265,13 @@ void win_base::resize_border()
 	h_border->resize(length,wborder->h_border_template->height);
 	h_border->putbox_tile_img(wborder->h_border_template); 
      }
+   if(wselect && wborder_select)
+     {
+       select_v_border->resize(wborder_select->v_border_template->length,height);
+       select_v_border->putbox_tile_img(wborder_select->v_border_template);
+       select_h_border->resize(length,wborder_select->h_border_template->height);
+       select_h_border->putbox_tile_img(wborder_select->h_border_template); 
+     }
 }
 
 
@@ -198,63 +279,111 @@ void win_base::resize_border()
 
 void win_base::draw_border()
 {
-  if(wborder)
-    {
-#define WIN_CORNER_RELX (corner->length>>1)
-#define WIN_CORNER_RELY (corner->height>>1)
+#define WIN_CORNER_RELX (corner_b_l->length>>1)
+#define WIN_CORNER_RELY (corner_b_l->height>>1)
 #define WIN_HBRELX (wborder->h_border_template->length>>1)
 #define WIN_HBRELY (wborder->h_border_template->height>>1)
 #define WIN_VBRELX (wborder->v_border_template->length>>1)
 #define WIN_VBRELY (wborder->v_border_template->height>>1)
-      if(wselect && select_mode==WIN_SELECT_MODE_BRIGHTNESS)
+
+#define WIN_CORNER_SELECT_RELX (select_corner_b_l->length>>1)
+#define WIN_CORNER_SELECT_RELY (select_corner_b_l->height>>1)
+#define WIN_HBRELX_SELECT (wborder_select->h_border_template->length>>1)
+#define WIN_HBRELY_SELECT (wborder_select->h_border_template->height>>1)
+#define WIN_VBRELX_SELECT (wborder_select->v_border_template->length>>1)
+#define WIN_VBRELY_SELECT (wborder_select->v_border_template->height>>1)
+
+  if(wselect)
+    {
+      if(selected)
+	switch(select_mode)
+	  {
+	  case WIN_SELECT_MODE_BORDER:
+	    //draw with select_border
+	    if(wborder_select)
+	      { 
+		if(wc)
+		  {
+		    select_h_border->putbox(real_x,real_y-select_h_border->height,wc->get_drawing_area());
+		    select_h_border->putbox(real_x,real_y+height,wc->get_drawing_area());
+		    select_v_border->putbox(real_x-select_v_border->length,real_y,wc->get_drawing_area());
+		    select_v_border->putbox(real_x+length,real_y,wc->get_drawing_area());
+		    select_corner_t_l->putbox_mask(real_x-WIN_CORNER_SELECT_RELX-((select_v_border->length)>>1),
+						   real_y-WIN_CORNER_SELECT_RELY-(select_h_border->height>>1),wc->get_drawing_area());   //t_l   
+		    select_corner_t_r->putbox_mask(real_x+length-WIN_CORNER_SELECT_RELX+(select_v_border->length>>1),
+						   real_y-WIN_CORNER_SELECT_RELY-(select_h_border->height>>1),wc->get_drawing_area());      //t_r
+		    select_corner_b_l->putbox_mask(real_x-WIN_CORNER_SELECT_RELX-((select_v_border->length)>>1),
+						   real_y+height-WIN_CORNER_SELECT_RELY+(select_h_border->height>>1),wc->get_drawing_area());    //b_l 
+		    select_corner_b_r->putbox_mask(real_x+length-WIN_CORNER_SELECT_RELX+(select_v_border->length>>1),
+						   real_y+height-WIN_CORNER_SELECT_RELY+(select_h_border->height>>1),wc->get_drawing_area()); //b_r
+		  }
+		else
+		  {
+		    select_h_border->putbox(real_x,real_y-select_h_border->height,wc->get_drawing_area());
+		    select_h_border->putbox(real_x,real_y+height,wc->get_drawing_area());
+		    select_v_border->putbox(real_x-select_v_border->length,real_y,wc->get_drawing_area());
+		    select_v_border->putbox(real_x+length,real_y,wc->get_drawing_area());
+		    select_corner_t_l->putbox_mask(real_x-WIN_CORNER_SELECT_RELX-((select_v_border->length)>>1),
+						   real_y-WIN_CORNER_SELECT_RELY-(select_h_border->height>>1));   //t_l   
+		    select_corner_t_r->putbox_mask(real_x+length-WIN_CORNER_SELECT_RELX+(select_v_border->length>>1),
+						   real_y-WIN_CORNER_SELECT_RELY-(select_h_border->height>>1));      //t_r
+		    select_corner_b_l->putbox_mask(real_x-WIN_CORNER_SELECT_RELX-((select_v_border->length)>>1),
+						   real_y+height-WIN_CORNER_SELECT_RELY+(select_h_border->height>>1));    //b_l 
+		    select_corner_b_r->putbox_mask(real_x+length-WIN_CORNER_SELECT_RELX+(select_v_border->length>>1),
+						   real_y+height-WIN_CORNER_SELECT_RELY+(select_h_border->height>>1));
+		  }
+	      }
+	    break;
+	  default:
+	    if(wborder)
+	      {
+		if(wc)
+		  { 
+		    h_border->putbox(real_x,real_y-h_border->height,wc->get_drawing_area());
+		    h_border->putbox(real_x,real_y+height,wc->get_drawing_area());
+		    v_border->putbox(real_x-v_border->length,real_y,wc->get_drawing_area());
+		    v_border->putbox(real_x+length,real_y,wc->get_drawing_area());
+		    
+		    corner_t_l->putbox_mask(real_x-WIN_CORNER_RELX-((v_border->length)>>1),
+					real_y-WIN_CORNER_RELY-(h_border->height>>1),wc->get_drawing_area());   //t_l   
+		    corner_t_r->putbox_mask(real_x+length-WIN_CORNER_RELX+(v_border->length>>1),
+					    real_y-WIN_CORNER_RELY-(h_border->height>>1),wc->get_drawing_area());      //t_r
+		    corner_b_l->putbox_mask(real_x-WIN_CORNER_RELX-((v_border->length)>>1),
+					    real_y+height-WIN_CORNER_RELY+(h_border->height>>1),wc->get_drawing_area());    //b_l 
+		    corner_b_r->putbox_mask(real_x+length-WIN_CORNER_RELX+(v_border->length>>1),
+					    real_y+height-WIN_CORNER_RELY+(h_border->height>>1),wc->get_drawing_area()); //b_r
+		  }
+		else
+		  {
+		    h_border->putbox(x,y-h_border->height);
+		    h_border->putbox(x,y+height);
+		    v_border->putbox(x-v_border->length,y);
+		    v_border->putbox(x+length,y);
+		    
+		    corner_t_l->putbox_mask(x-WIN_CORNER_RELX-((v_border->length)>>1),
+					    y-WIN_CORNER_RELY-(h_border->height>>1));      
+		    corner_t_r->putbox_mask(x+length-WIN_CORNER_RELX+(v_border->length>>1),
+					    y-WIN_CORNER_RELY-(h_border->height>>1));      
+		    corner_b_l->putbox_mask(x-WIN_CORNER_RELX-((v_border->length)>>1),
+					    y+height-WIN_CORNER_RELY+(h_border->height>>1));     
+		    corner_b_r->putbox_mask(x+length-WIN_CORNER_RELX+(v_border->length>>1),
+					    y+height-WIN_CORNER_RELY+(h_border->height>>1));
+		  }
+	      }
+	    
+	break;
+	  }
+      else
 	{
-	  if(selected)
+	  switch(select_mode)
 	    {
-	  
-	       
+	    case WIN_SELECT_MODE_BRIGHTNESS:
+	      if(wborder)
+		{
+		  static image tmp;
 		  if(wc)
 		    { 
-		      h_border->putbox_mask(real_x,real_y-h_border->height,wc->get_drawing_area());
-		      h_border->putbox_mask(real_x,real_y+height,wc->get_drawing_area());
-		      v_border->putbox_mask(real_x-v_border->length,real_y,wc->get_drawing_area());
-		      v_border->putbox_mask(real_x+length,real_y,wc->get_drawing_area());
-		      
-		      corner->putbox_mask(real_x-WIN_CORNER_RELX-((v_border->length)>>1),
-					  real_y-WIN_CORNER_RELY-(h_border->height>>1),wc->get_drawing_area());      
-		      corner->putbox_mask(real_x+length-WIN_CORNER_RELX+(v_border->length>>1),
-				      real_y-WIN_CORNER_RELY-(h_border->height>>1),wc->get_drawing_area());      
-		      corner->putbox_mask(real_x-WIN_CORNER_RELX-((v_border->length)>>1),
-					  real_y+height-WIN_CORNER_RELY+(h_border->height>>1),wc->get_drawing_area());     
-		      corner->putbox_mask(real_x+length-WIN_CORNER_RELX+(v_border->length>>1),
-				      real_y+height-WIN_CORNER_RELY+(h_border->height>>1),wc->get_drawing_area());
-		    }
-		  else
-		    {
-		      //image tmp;
-		      //tmp.brightness(h_border,120);
-		      h_border->putbox_mask(x,y-h_border->height);
-		      h_border->putbox_mask(x,y+height);
-		      
-		      //tmp.brightness(v_border,120);
-		      v_border->putbox_mask(x-v_border->length,y);
-		      v_border->putbox_mask(x+length,y);
-		      
-		      //tmp.brightness(corner,120);
-		      corner->putbox_mask(x-WIN_CORNER_RELX-((v_border->length)>>1),
-					  y-WIN_CORNER_RELY-(h_border->height>>1));      
-		      corner->putbox_mask(x+length-WIN_CORNER_RELX+(v_border->length>>1),
-					  y-WIN_CORNER_RELY-(h_border->height>>1));      
-		      corner->putbox_mask(x-WIN_CORNER_RELX-((v_border->length)>>1),
-					  y+height-WIN_CORNER_RELY+(h_border->height>>1));     
-		      corner->putbox_mask(x+length-WIN_CORNER_RELX+(v_border->length>>1),
-					  y+height-WIN_CORNER_RELY+(h_border->height>>1));
-		    }
-		}
-	      else
-		{//if wselect but not select
-		  image tmp;
-		  if(wc)
-		    { 
+		  
 		      tmp.brightness(h_border,120);
 		      tmp.putbox_mask(real_x,real_y-h_border->height,wc->get_drawing_area());
 		      tmp.putbox_mask(real_x,real_y+height,wc->get_drawing_area());
@@ -262,13 +391,16 @@ void win_base::draw_border()
 		      tmp.putbox_mask(real_x-v_border->length,real_y,wc->get_drawing_area());
 		      tmp.putbox_mask(real_x+length,real_y,wc->get_drawing_area());
 		      
-		      tmp.brightness(corner,120);
+		      tmp.brightness(corner_t_l,120);
 		      tmp.putbox_mask(real_x-WIN_CORNER_RELX-((v_border->length)>>1),
-				      real_y-WIN_CORNER_RELY-(h_border->height>>1),wc->get_drawing_area());      
+				      real_y-WIN_CORNER_RELY-(h_border->height>>1),wc->get_drawing_area());    
+		      tmp.brightness(corner_t_r,120);
 		      tmp.putbox_mask(real_x+length-WIN_CORNER_RELX+(v_border->length>>1),
 				      real_y-WIN_CORNER_RELY-(h_border->height>>1),wc->get_drawing_area());      
+		      tmp.brightness(corner_b_l,120);
 		      tmp.putbox_mask(real_x-WIN_CORNER_RELX-((v_border->length)>>1),
 				      real_y+height-WIN_CORNER_RELY+(h_border->height>>1),wc->get_drawing_area());     
+		      tmp.brightness(corner_b_r,120);
 		      tmp.putbox_mask(real_x+length-WIN_CORNER_RELX+(v_border->length>>1),
 				      real_y+height-WIN_CORNER_RELY+(h_border->height>>1),wc->get_drawing_area());
 		    }
@@ -282,55 +414,97 @@ void win_base::draw_border()
 		      tmp.putbox_mask(x-v_border->length,y);
 		      tmp.putbox_mask(x+length,y);
 		      
-		      tmp.brightness(corner,120);
+		      tmp.brightness(corner_t_l,120);
 		      tmp.putbox_mask(x-WIN_CORNER_RELX-((v_border->length)>>1),
-				      y-WIN_CORNER_RELY-(h_border->height>>1));      
+				      y-WIN_CORNER_RELY-(h_border->height>>1));   
+		      tmp.brightness(corner_t_r,120);
 		      tmp.putbox_mask(x+length-WIN_CORNER_RELX+(v_border->length>>1),
 				      y-WIN_CORNER_RELY-(h_border->height>>1));      
+		      tmp.brightness(corner_b_l,120);
 		      tmp.putbox_mask(x-WIN_CORNER_RELX-((v_border->length)>>1),
 				      y+height-WIN_CORNER_RELY+(h_border->height>>1));     
+		      tmp.brightness(corner_b_r,120);
 		      tmp.putbox_mask(x+length-WIN_CORNER_RELX+(v_border->length>>1),
 				      y+height-WIN_CORNER_RELY+(h_border->height>>1));
 		    }
+		}
+	      break;
 	      
+	    default:
+	      if(wborder)
+		if(wc)
+		  { 
+		    h_border->putbox(real_x,real_y-h_border->height,wc->get_drawing_area());
+		    h_border->putbox(real_x,real_y+height,wc->get_drawing_area());
+		    v_border->putbox(real_x-v_border->length,real_y,wc->get_drawing_area());
+		    v_border->putbox(real_x+length,real_y,wc->get_drawing_area());
+		    
+		    corner_t_l->putbox_mask(real_x-WIN_CORNER_RELX-((v_border->length)>>1),
+					    real_y-WIN_CORNER_RELY-(h_border->height>>1),wc->get_drawing_area());   //t_l   
+		    corner_t_r->putbox_mask(real_x+length-WIN_CORNER_RELX+(v_border->length>>1),
+					    real_y-WIN_CORNER_RELY-(h_border->height>>1),wc->get_drawing_area());      //t_r
+		    corner_b_l->putbox_mask(real_x-WIN_CORNER_RELX-((v_border->length)>>1),
+					    real_y+height-WIN_CORNER_RELY+(h_border->height>>1),wc->get_drawing_area());    //b_l 
+		    corner_b_r->putbox_mask(real_x+length-WIN_CORNER_RELX+(v_border->length>>1),
+					    real_y+height-WIN_CORNER_RELY+(h_border->height>>1),wc->get_drawing_area()); //b_r
+		  }
+		else
+		  {
+		    h_border->putbox(x,y-h_border->height);
+		    h_border->putbox(x,y+height);
+		    v_border->putbox(x-v_border->length,y);
+		    v_border->putbox(x+length,y);
+		    
+		    corner_t_l->putbox_mask(x-WIN_CORNER_RELX-((v_border->length)>>1),
+					    y-WIN_CORNER_RELY-(h_border->height>>1));      
+		    corner_t_r->putbox_mask(x+length-WIN_CORNER_RELX+(v_border->length>>1),
+					    y-WIN_CORNER_RELY-(h_border->height>>1));      
+		    corner_b_l->putbox_mask(x-WIN_CORNER_RELX-((v_border->length)>>1),
+					    y+height-WIN_CORNER_RELY+(h_border->height>>1));     
+		    corner_b_r->putbox_mask(x+length-WIN_CORNER_RELX+(v_border->length>>1),
+					    y+height-WIN_CORNER_RELY+(h_border->height>>1));
+		  }
 	      
+	      break;
 	    }
+	  
 	}
-      else
-	{//if not wselect
-	  if(wc)
-	    { 
-	      h_border->putbox_mask(real_x,real_y-h_border->height,wc->get_drawing_area());
-	      h_border->putbox_mask(real_x,real_y+height,wc->get_drawing_area());
-	      v_border->putbox_mask(real_x-v_border->length,real_y,wc->get_drawing_area());
-	      v_border->putbox_mask(real_x+length,real_y,wc->get_drawing_area());
-	      
-	      corner->putbox_mask(real_x-WIN_CORNER_RELX-((v_border->length)>>1),
-				  real_y-WIN_CORNER_RELY-(h_border->height>>1),wc->get_drawing_area());      
-	      corner->putbox_mask(real_x+length-WIN_CORNER_RELX+(v_border->length>>1),
-				  real_y-WIN_CORNER_RELY-(h_border->height>>1),wc->get_drawing_area());      
-	      corner->putbox_mask(real_x-WIN_CORNER_RELX-((v_border->length)>>1),
-				  real_y+height-WIN_CORNER_RELY+(h_border->height>>1),wc->get_drawing_area());     
-	      corner->putbox_mask(real_x+length-WIN_CORNER_RELX+(v_border->length>>1),
-				  real_y+height-WIN_CORNER_RELY+(h_border->height>>1),wc->get_drawing_area());
-	    }
-	  else
-	    {
-	      h_border->putbox_mask(x,y-h_border->height);
-	      h_border->putbox_mask(x,y+height);
-	      v_border->putbox_mask(x-v_border->length,y);
-	      v_border->putbox_mask(x+length,y);
-	      
-	      corner->putbox_mask(x-WIN_CORNER_RELX-((v_border->length)>>1),
-				  y-WIN_CORNER_RELY-(h_border->height>>1));      
-	      corner->putbox_mask(x+length-WIN_CORNER_RELX+(v_border->length>>1),
-				  y-WIN_CORNER_RELY-(h_border->height>>1));      
-	      corner->putbox_mask(x-WIN_CORNER_RELX-((v_border->length)>>1),
-				  y+height-WIN_CORNER_RELY+(h_border->height>>1));     
-	      corner->putbox_mask(x+length-WIN_CORNER_RELX+(v_border->length>>1),
-				  y+height-WIN_CORNER_RELY+(h_border->height>>1));
-	    }
-	}
+    }
+  else
+    {
+      if(wborder)
+	if(wc)
+	  { 
+	    h_border->putbox(real_x,real_y-h_border->height,wc->get_drawing_area());
+	    h_border->putbox(real_x,real_y+height,wc->get_drawing_area());
+	    v_border->putbox(real_x-v_border->length,real_y,wc->get_drawing_area());
+	    v_border->putbox(real_x+length,real_y,wc->get_drawing_area());
+	    
+	    corner_t_l->putbox_mask(real_x-WIN_CORNER_RELX-((v_border->length)>>1),
+				    real_y-WIN_CORNER_RELY-(h_border->height>>1),wc->get_drawing_area());   //t_l   
+	    corner_t_r->putbox_mask(real_x+length-WIN_CORNER_RELX+(v_border->length>>1),
+				    real_y-WIN_CORNER_RELY-(h_border->height>>1),wc->get_drawing_area());      //t_r
+	    corner_b_l->putbox_mask(real_x-WIN_CORNER_RELX-((v_border->length)>>1),
+				    real_y+height-WIN_CORNER_RELY+(h_border->height>>1),wc->get_drawing_area());    //b_l 
+	    corner_b_r->putbox_mask(real_x+length-WIN_CORNER_RELX+(v_border->length>>1),
+				    real_y+height-WIN_CORNER_RELY+(h_border->height>>1),wc->get_drawing_area()); //b_r
+	  }
+	else
+	  {
+	    h_border->putbox(x,y-h_border->height);
+	    h_border->putbox(x,y+height);
+	    v_border->putbox(x-v_border->length,y);
+	    v_border->putbox(x+length,y);
+	    
+	    corner_t_l->putbox_mask(x-WIN_CORNER_RELX-((v_border->length)>>1),
+				    y-WIN_CORNER_RELY-(h_border->height>>1));      
+	    corner_t_r->putbox_mask(x+length-WIN_CORNER_RELX+(v_border->length>>1),
+				    y-WIN_CORNER_RELY-(h_border->height>>1));      
+	    corner_b_l->putbox_mask(x-WIN_CORNER_RELX-((v_border->length)>>1),
+				    y+height-WIN_CORNER_RELY+(h_border->height>>1));     
+	    corner_b_r->putbox_mask(x+length-WIN_CORNER_RELX+(v_border->length>>1),
+				    y+height-WIN_CORNER_RELY+(h_border->height>>1));
+	  }      
     }
 }
 
@@ -443,14 +617,19 @@ void win_base::save_position()
 void win_base::reload_position()
 {
   move(save_x,save_y);
-  // x=save_x;
-  //y=save_y;
 }
 
 
+void win_base::attach_select(win_select * tws, u_int8 tmode)
+{
+  wselect=tws;
+  select_mode=tmode;
+}
 
-
-
+void win_base::dettach_select()
+{
+  wselect=NULL;
+}
 
 
 

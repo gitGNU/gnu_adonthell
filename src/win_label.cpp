@@ -31,12 +31,11 @@ win_label::win_label (s_int16 x, s_int16 y, u_int16 l, u_int16 h, win_font * fo,
     auto_height = false;
     auto_size = false;
     cursor = NULL;
-    x_pad_l = 0;
+    //x_pad_l = 0;
     size_texte = 0;
     cur_text_pos = 0;
     tmp_image = new image ();
     tmp_draw = new image ();
-    set_text("");
 }
 
 win_label::~win_label ()
@@ -45,8 +44,6 @@ win_label::~win_label ()
         delete cursor;
     delete tmp_image;
     delete tmp_draw;
-
-    dettach_select ();
 }
 
 void
@@ -78,8 +75,8 @@ win_label::add_text (const char *tmp)
 {
     if (strlen (tmp) + strlen (texte) < WIN_TEXT_MAX_LENGTH)
     {
-      strcat (texte, tmp);
-      set_text (texte);
+        strcat (texte, tmp);
+        set_text (texte);
         return true;
     }
     else
@@ -123,6 +120,7 @@ win_label::set_auto_height (bool tmp)
         wc->find_obj_max_y ();  //for scrollbar
 }
 
+/*
 void
 win_label::set_cursor (win_cursor * tmp)
 {
@@ -135,6 +133,7 @@ win_label::set_cursor (win_cursor * tmp)
         *cursor = *(tmp->cursor);
     }
 }
+*/
 
 void
 win_label::init_draw ()
@@ -247,23 +246,26 @@ win_label::init_draw ()
             win_base::resize (length, tmp_y);
         }
     }
-  tmp_draw->resize(length,height);  
-  draw_text(cur_text_pos);
+    //now resize drawing surface
+#warning no resize needed must change it (jol)
+    tmp_draw->resize (length, height);
+    draw_text (cur_text_pos);
 }
 
-void win_label::draw_text(u_int16 i)
+
+void
+win_label::draw_text (u_int16 i)
 {
-  u_int16 tmp_y=0;
-  u_int16 use_space=0+x_pad_l;
-  u_int16 word_space=0;
-  u_int16 begin_word=0;
-  u_int16 tmp_pos,tmp_pos2;
- 
-  for(u_int16 k=0;k<height;k++)
-    for(u_int16 j=0;j<length;j++)
-      tmp_draw->put_pix(j,k,screen::trans_pix);
-  
-  while(i<size_texte && texte[i]!='\0' && tmp_y<height)
+    u_int16 tmp_y = 0;
+    u_int16 use_space = 0 + x_pad_l;
+    u_int16 word_space = 0;
+    u_int16 begin_word = 0;
+    u_int16 tmp_pos, tmp_pos2;
+
+    for (u_int16 k = 0; k < height; k++)
+        for (u_int16 j = 0; j < length; j++)
+            tmp_draw->put_pix (j, k, screen::trans_pix);
+    while (i < size_texte && texte[i] != '\0' && tmp_y < height)
     {
         begin_word = i;
         tmp_pos = begin_word;
@@ -345,7 +347,6 @@ void win_label::draw_text(u_int16 i)
     last_text_pos = i;
 }
 
-
 void
 win_label::resize (u_int16 l, u_int16 h)
 {
@@ -359,49 +360,47 @@ win_label::resize (u_int16 l, u_int16 h)
     }
 }
 
-
 void
 win_label::draw ()
 {
-    if (visible && font)
+  if (visible && font)
     {
-        draw_background ();
-        if (wselect && selected)
+      draw_background ();
+      if (wselect && selected)
         {
-            if (select_mode == WIN_SELECT_MODE_BRIGHTNESS)
+	  if (select_mode == WIN_SELECT_MODE_BRIGHTNESS)
             {
-                tmp_image->brightness (tmp_draw, 180);
-                tmp_image->putbox_mask (real_x, real_y, da);
+	      tmp_image->brightness (tmp_draw, 180);
+	      tmp_image->putbox_mask (real_x, real_y, da);
             }
-            else
+	  else
             {
-                if (select_mode == WIN_SELECT_MODE_CURSOR)
+	      if (select_mode == WIN_SELECT_MODE_CURSOR)
                 {
-                    draw_cursor ();
-                    tmp_draw->putbox_mask (real_x, real_y, da);
+		  draw_cursor ();
+		  tmp_draw->putbox_mask (real_x, real_y, da);
                 }
-                else
+	      else
                 {
-                    if (select_mode == WIN_SELECT_MODE_BORDER)
-                        tmp_draw->putbox_mask (real_x, real_y, da);
+		  if (select_mode == WIN_SELECT_MODE_BORDER)
+		    tmp_draw->putbox_mask (real_x, real_y, da);
                 }
             }
         }
-        else
+      else
         {
-
-            tmp_draw->putbox_mask (real_x, real_y, da);
-
+	  
+	  tmp_draw->putbox_mask (real_x, real_y, da);
+	  
         }
-        draw_border ();
+      draw_border ();
     }
 }
 
 void
 win_label::draw_cursor ()
 {
-    if (cursor)
-        cursor->putbox_mask (real_x, real_y, da);
+  if (cursor) cursor->putbox_mask (real_x, real_y, da);
 }
 
 void
@@ -412,29 +411,11 @@ win_label::update ()
 
 
 void
-win_label::attach_select (win_select * tmp)
-{
-    wselect = tmp;
-}
-
-void
-win_label::dettach_select ()
-{
-    if (wselect)
-    {
-        wselect->remove (this);
-        wselect = NULL;
-        x_pad_l = 0;
-    }
-}
-
-
-void
 win_label::set_select_mode (u_int8 tmp)
 {
-    win_base::set_select_mode (tmp);
+  /*win_base::set_select_mode (tmp);
     if (select_mode == WIN_SELECT_MODE_CURSOR)
         if (wselect->cursor)
             x_pad_l = wselect->cursor->cursor->length;
-    init_draw ();
+	    init_draw ();*/
 }

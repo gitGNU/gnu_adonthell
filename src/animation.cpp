@@ -293,7 +293,7 @@ void animation::draw(u_int16 x, u_int16 y, drawing_area * da_opt=NULL)
 #endif
 
   t_frame[frame[currentframe].imagenbr].set_mask(frame[currentframe].is_masked);
-  t_frame[frame[currentframe].imagenbr].set_alpha(frame[currentframe].alpha);
+  t_frame[frame[currentframe].imagenbr].set_alpha(frame[currentframe].get_alpha());
   
   t_frame[frame[currentframe].imagenbr].draw(x+frame[currentframe].gapx,
 					     y+frame[currentframe].gapy,

@@ -33,8 +33,6 @@ class win_anim : public win_base
   void draw();
   void update();
   ~win_anim();
-  void attach_select(win_select *);
-  void dettach_select();
  
  
  private:

@@ -59,8 +59,6 @@ char * win_write::get_text_entry()
 void win_write::write()
 {
   static s_int32 c;
-  //  cout << "size_texte: " << size_texte << endl; 
-  //  cout << "tmp_text: " << tmp_input << endl;
   while((c=input::get_next_unicode())>0)
     {
 #ifdef _DEBUG_

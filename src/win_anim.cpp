@@ -65,22 +65,3 @@ void win_anim::update()
       length=picture->t_frame[picture->frame[picture->currentframe].imagenbr].length;
     } 
 }
-
-
-
-
-
-void win_anim::attach_select(win_select * tmp)
-{
-   wselect=tmp;
-}
-
-
-void win_anim::dettach_select()
-{
-  if(wselect)
-    {
-      wselect->remove(this);
-      wselect=NULL;
-    }
-}

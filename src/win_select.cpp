@@ -16,6 +16,7 @@
 #include <list>
 #include "types.h"
 #include "image.h"
+#include "input.h"
 #include "win_types.h"
 #include "win_font.h"
 #include "win_border.h"
@@ -23,494 +24,358 @@
 #include "win_label.h"
 #include "win_write.h"
 #include "win_image.h"
-#include "win_anim.h"
 #include "win_container.h"
 #include "win_select.h"
 
+win_select * win_select::cur_select=NULL;
+SDLKey win_select::next_key=WIN_SELECT_DEFAULT_KEY_NEXT;
+SDLKey win_select::previous_key=WIN_SELECT_DEFAULT_KEY_PREVIOUS;
+SDLKey win_select::next_select_key=WIN_SELECT_DEFAULT_KEY_NEXT_SELECT;
+SDLKey win_select::up_select_key=WIN_SELECT_DEFAULT_KEY_UP_SELECT;
+SDLKey win_select::activate_key=WIN_SELECT_DEFAULT_KEY_ACTIVATE;
+bool win_select::activate_selection=false;
 
-Type_win_select::Type_win_select(win_image * p,win_select * ws,u_int8 m)
+#ifdef _DEBUG_
+u_int16 win_select::cpt_win_select_debug=0;
+#endif
+
+
+
+win_select::win_select(win_container * tmp,bool b=WIN_SELECT_JUST_OBJECT)
 {
-  img=p;
-  img->attach_select(ws);
-  img->set_select_mode(m);
-  img->save_position();
-  wselect=ws;
-  id=WIN_OBJ_IMAGE;
-  
-  if(m==WIN_SELECT_MODE_BORDER)
-    n_border=img->get_border();
-  else n_border=NULL;
+#ifdef _DEBUG_
+   cout << "win_select() called, "<< ++cpt_win_select_debug
+       << " objects currently allocated\n";
+#endif
+
+  attached_container=tmp;
+  type_select=b;
+  l_list.clear();ite_list=l_list.begin();
+  l_select.clear();ite_select=l_select.begin();
+  border_to_select=NULL;
+  cursor_to_select=NULL;
+  cur_select=this;
+  father_select=NULL;  
 }
 
-
-Type_win_select::Type_win_select(win_anim * p,win_select * ws,u_int8 m)
+win_select::win_select(win_container * tmp,win_select *tws,bool b=WIN_SELECT_JUST_OBJECT)
 {
-  anm=p;
-  anm->attach_select(ws);
-  anm->set_select_mode(m);
-  anm->save_position();
-  wselect=ws;
-  id=WIN_OBJ_ANIMATION;
-  
-  if(m==WIN_SELECT_MODE_BORDER)
-    n_border=anm->get_border();
-  else n_border=NULL;
-}
-
-
-Type_win_select::Type_win_select(win_label * p,win_select * ws,u_int8 m)
-{
-  lab=p;
-  lab->attach_select(ws);
-  lab->set_select_mode(m);
-  lab->save_position();
-  
-  wselect=ws;
-  id=WIN_OBJ_LABEL;
-  if(m==WIN_SELECT_MODE_BORDER)
-    n_border=lab->get_border(); 
-  else n_border=NULL;
-  
-  if(m==WIN_SELECT_MODE_CURSOR)
-    if(ws->cursor)
-      lab->x_pad_l=ws->cursor->cursor->length;
-
-}
-
-Type_win_select::Type_win_select(win_write * p,win_select * ws,u_int8 m)
-{
-  wri=p;
-  wri->wselect=ws;
-  wri->set_select_mode(m);
-  wri->save_position();
-  
-  wselect=ws;
-  id=WIN_OBJ_WRITE;
-  if(m==WIN_SELECT_MODE_BORDER)
-    n_border=wri->get_border();
-  else n_border=NULL;
-}
-
-Type_win_select::Type_win_select(win_container * p,win_select * ws,u_int8 m)
-{
-  con=p;
-  con->attach_select(ws);
-  con->set_select_mode(m);
-  con->save_position();
-
-  wselect=ws;
-  id=WIN_OBJ_CONTAINER;
-  if(m==WIN_SELECT_MODE_BORDER)
-    n_border=p->get_border();
-  else n_border=NULL;
-}
-
-void Type_win_select::select()
-{
-  switch(id)
-    {
-    case WIN_OBJ_LABEL:
-      if(lab->get_select_mode()==WIN_SELECT_MODE_BORDER) lab->set_border(wselect->cur_border); 
-      if(lab->get_select_mode()==WIN_SELECT_MODE_CURSOR) lab->set_cursor(wselect->cursor);
-      lab->select();
-      break;
-    case WIN_OBJ_WRITE:
-      if(wri->get_select_mode()==WIN_SELECT_MODE_BORDER) wri->set_border(wselect->cur_border);
-      wri->select();
-      break;
-    case WIN_OBJ_IMAGE:
-      if(img->get_select_mode()==WIN_SELECT_MODE_BORDER) img->set_border(wselect->cur_border);
-      img->select();
-      break;
-    case WIN_OBJ_ANIMATION:
-      if(anm->get_select_mode()==WIN_SELECT_MODE_BORDER) anm->set_border(wselect->cur_border);
-      anm->select();
-      break;
-    case WIN_OBJ_CONTAINER:
-      if(con->get_select_mode()==WIN_SELECT_MODE_BORDER) con->set_border(wselect->cur_border); 
-      con->select();
-      break;
-    }
-}
-
-void Type_win_select::unselect()
-{
-  switch(id)
-    {
-    case WIN_OBJ_LABEL:
-      if(lab->get_select_mode()==WIN_SELECT_MODE_BORDER) lab->set_border(NULL);
-      if(lab->get_select_mode()==WIN_SELECT_MODE_CURSOR) lab->set_cursor(NULL);
-      lab->unselect();
-      break;
-    case WIN_OBJ_WRITE:
-      if(wri->get_select_mode()==WIN_SELECT_MODE_BORDER) wri->set_border(NULL);
-      wri->unselect();
-      break;
-    case WIN_OBJ_IMAGE:
-      if(img->get_select_mode()==WIN_SELECT_MODE_BORDER) img->set_border(NULL);
-      img->unselect();
-      break;
-    case WIN_OBJ_ANIMATION:
-      if(anm->get_select_mode()==WIN_SELECT_MODE_BORDER) anm->set_border(NULL);
-      anm->unselect();
-      break;
-    case WIN_OBJ_CONTAINER:
-      if(con->get_select_mode()==WIN_SELECT_MODE_BORDER) con->set_border(NULL);
-      con->unselect();
-      break;
-    }
-}
-
-void * Type_win_select::get()
-{
-  switch(id)
-    {
-    case WIN_OBJ_LABEL:
-      return(lab);
-      break;
-    case WIN_OBJ_WRITE:
-      return(wri);
-      break;
-    case WIN_OBJ_IMAGE:
-      return(img);
-      break;
-    case WIN_OBJ_ANIMATION:
-      return(anm);
-      break;
-    case WIN_OBJ_CONTAINER:
-      return(con);
-      break;
-    }
-  return(NULL);
-}
-
-Type_win_select::~Type_win_select()
-{
-  switch(id)
-    {
-    case WIN_OBJ_LABEL:
-      lab->dettach_select();
-      lab->set_border(n_border);
-      break;
-    case WIN_OBJ_WRITE:
-      wri->wselect=NULL;
-      wri->set_border(n_border);
-      break;
-    case WIN_OBJ_IMAGE:
-      img->dettach_select();
-      img->set_border(n_border);
-      break;
-    case WIN_OBJ_ANIMATION:
-      anm->dettach_select();
-      anm->set_border(n_border);
-      break;
-    case WIN_OBJ_CONTAINER:
-      con->dettach_select();
-      con->set_border(n_border);
-      break;
-    }
-}
-
-
-s_int16 Type_win_select::get_y_move(win_container * wc)
-{
-  switch(id)
-   {
-   case WIN_OBJ_LABEL:
-     if(lab->real_y == wc->real_y || (lab->real_y>=wc->real_y && lab->real_y+lab->height <= wc->real_y + wc->height))
-       return 0;
-     else
-       if(lab->real_y < wc->real_y) 
-	 return (wc->real_y - lab->real_y);
-       else
-	 if(lab->real_y > wc->real_y+wc->height || lab->real_y+lab->height > wc->real_y+wc->height) 
-	   return ((wc->real_y+wc->height) - (lab->real_y+lab->height));
-     break;
-
-    case WIN_OBJ_WRITE:
-       if(wri->real_y == wc->real_y || (wri->real_y>=wc->real_y && wri->real_y+wri->height <= wc->real_y + wc->height))
-       return 0;
-     else
-       if(wri->real_y < wc->real_y) 
-	 return (wc->real_y - wri->real_y);
-       else
-	 if(wri->real_y > wc->real_y+wc->height || wri->real_y+wri->height > wc->real_y+wc->height) 
-	   return ((wc->real_y+wc->height) - (wri->real_y+wri->height));
-
-      break;
-   case WIN_OBJ_IMAGE:
-     if(img->real_y == wc->real_y || (img->real_y>=wc->real_y && img->real_y+img->height <= wc->real_y + wc->height))
-       return 0;
-     else
-       if(img->real_y < wc->real_y) 
-	 return (wc->real_y - img->real_y);
-       else
-	 if(img->real_y > wc->real_y+wc->height || img->real_y+img->height > wc->real_y+wc->height) 
-	   return ((wc->real_y+wc->height) - (img->real_y+img->height));
-
-     break;
-   case WIN_OBJ_ANIMATION:
-     if(anm->real_y == wc->real_y || (anm->real_y>=wc->real_y && anm->real_y+anm->height <= wc->real_y + wc->height))
-       return 0;
-     else
-       if(anm->real_y < wc->real_y) 
-	 return (wc->real_y - anm->real_y);
-       else
-	 if(anm->real_y > wc->real_y+wc->height || anm->real_y+anm->height > wc->real_y+wc->height) 
-	   return ((wc->real_y+wc->height) - (anm->real_y+anm->height));
-
-     break;
-   case WIN_OBJ_CONTAINER:
-     if(con->real_y == wc->real_y || (con->real_y>=wc->real_y && con->real_y+con->height <= wc->real_y + wc->height))
-       return 0;
-     else
-       if(con->real_y < wc->real_y) 
-	 return (wc->real_y - con->real_y);
-       else
-	 if(con->real_y > wc->real_y+wc->height || con->real_y+con->height > wc->real_y+wc->height) 
-	   return ((wc->real_y+wc->height) - (con->real_y+con->height));
-
-      break;
-   }
-  return 0;
-}
-
-void Type_win_select::activate()
-{
-switch(id)
-   {
-    case WIN_OBJ_LABEL:
-      lab->activate();
-      break;
-    case WIN_OBJ_WRITE:
-      wri->activate();
-      break;
-    case WIN_OBJ_IMAGE:
-      img->activate();
-      break;
-    case WIN_OBJ_ANIMATION:
-      anm->activate();
-      break;
-    case WIN_OBJ_CONTAINER:
-      con->activate();
-      break;
-    }
-}
-
-void Type_win_select::y_move(s_int16 tmp)
-{
-switch(id)
-   {
-    case WIN_OBJ_LABEL:
-      lab->move(lab->x,lab->y+tmp);
-      break;
-    case WIN_OBJ_WRITE:
-      wri->move(wri->x,wri->y+tmp);;
-      break;
-    case WIN_OBJ_IMAGE:
-      img->move(img->x,img->y+tmp);;
-      break;
-    case WIN_OBJ_ANIMATION:
-      anm->move(anm->x,anm->y+tmp);;
-      break;
-    case WIN_OBJ_CONTAINER:
-      con->move(con->x,con->y+tmp);;
-      break;
-    }
-}
-
-/*************************************************************************/
-/*************************** WIN_SELECT *******************************/
-/*************************************************************************/
-void win_select::activate_select()
-{
-  if(ite_list!=l_list.end()) 
-    {
-      ite_list->activate();
-    }
-}
-
-win_select::win_select(win_container * tmp)
-{
-  wc=tmp;
-  l_list.clear();
-  cur_border=NULL;
-  cursor=NULL;
-  ite_list=l_list.begin();
+#ifdef _DEBUG_
+  cout << "win_select() called, "<< ++cpt_win_select_debug
+       << " objects currently allocated\n";
+#endif
+  attached_container=tmp;
+  type_select=b;
+  l_list.clear();ite_list=l_list.begin();
+  l_select.clear();ite_select=l_select.begin();
+  border_to_select=NULL;
+  cursor_to_select=NULL;
+  father_select=tws;  
 }
 
 win_select::~win_select()
 {
+#ifdef _DEBUG_
+  cout << "~win_select() called, "<< --cpt_win_select_debug
+       << " objects currently allocated\n";
+#endif
+  remove_all();
+  remove_all_select();
+}
+
+void win_select::add(win_base * twb, u_int8 m)
+{  
+  twb->attach_select(this,m);
+  l_list.push_back(twb);
+  ite_list=l_list.begin();
+  if(m==WIN_SELECT_MODE_BORDER && border_to_select)
+    twb->set_border_select(border_to_select);
+  else if(m==WIN_SELECT_MODE_CURSOR && cursor_to_select)
+    {
+      twb->set_cursor(cursor_to_select);
+      ((win_label*)twb)->init_draw();
+    } 
+}
+
+void win_select::remove_all()
+{
+  list<win_base *>::iterator i=l_list.begin();
+  while(i!=l_list.end())
+    {     
+      if(*i)(*i)->dettach_select();
+      i++;
+    }
   l_list.clear();
 }
 
+void win_select::remove_all_select()
+{
+  list<win_container *>::iterator i=l_select.begin();
+  while(i!=l_select.end())
+    { 
+      if(*i) 
+	{
+	  (*i)->dettach_select();
+	  delete (*i)->tree_select;
+	  (*i)->tree_select=NULL;
+	}
+      i++;
+    }
+  l_list.clear();
+}
+
+void win_select::remove(win_base * twb)
+{
+  list<win_base *>::iterator i=l_list.begin();
+  while(i!=l_list.end() && twb!=(*i)) i++;
+  if(i!=l_list.end()) l_list.erase(i);
+  twb->dettach_select();
+} 
+
+void win_select::set_border(win_border * tmp)
+{
+  border_to_select=tmp;
+} 
+
+void win_select::set_cursor(win_cursor * tmp)
+{
+  cursor_to_select=tmp;
+} 
+
+win_base * win_select::next()
+{
+  if(type_select)
+    {
+      if(ite_select!=l_select.end())
+	{
+	  win_container * tmpwc=*ite_select;
+	  if(tmpwc)
+	    {
+	      if(tmpwc->tree_select)
+		{
+		  if(tmpwc->tree_select->ite_list==tmpwc->tree_select->l_list.end()) return NULL;
+		  (*(tmpwc->tree_select->ite_list))->unselect();
+		  tmpwc->tree_select->ite_list++;
+		  if(tmpwc->tree_select->ite_list==tmpwc->tree_select->l_list.end())
+		    {
+		      tmpwc->tree_select->ite_list--;
+		    }
+		  (*(tmpwc->tree_select->ite_list))->select();
+		  tmpwc->tree_select->adjust_visible();
+		  return(*(tmpwc->tree_select->ite_list));
+		}
+	    }
+	}
+    }
+  else
+    {
+
+      if(ite_list!=l_list.end())
+	{
+	  (*ite_list)->unselect();
+	  ite_list++;
+	  if(ite_list==l_list.end())
+	    {
+	      ite_list--;
+	    }
+	  (*ite_list)->select();
+	  adjust_visible();
+	  return *ite_list;
+	}
+    }
+  
+
+  return NULL;
+}
+
+win_base * win_select::previous()
+{
+  if(type_select)
+    {
+      if(ite_select!=l_select.end())
+	{
+	  win_container * tmpwc=*ite_select;
+	  if(tmpwc)
+	    {
+	      if(tmpwc->tree_select)
+		{
+		  if(tmpwc->tree_select->ite_list==tmpwc->tree_select->l_list.end()) return NULL;
+		  (*(tmpwc->tree_select->ite_list))->unselect();
+		  if(tmpwc->tree_select->ite_list!=tmpwc->tree_select->l_list.begin())
+		    { 
+		      tmpwc->tree_select->ite_list--;    
+		    }
+		  (*(tmpwc->tree_select->ite_list))->select();
+		  tmpwc->tree_select->adjust_visible();
+		  return(*(tmpwc->tree_select->ite_list));  
+		}
+	    }
+	}
+    }
+  else
+    {
+      if(ite_list==l_list.end()) return NULL;
+      (*ite_list)->unselect();
+      if(ite_list!=l_list.begin())
+	{ 
+	  ite_list--;    
+	}
+      (*ite_list)->select();
+      adjust_visible();
+      return(*ite_list);
+    } 
+  return NULL;
+}
+
+s_int16 win_select::get_y_move_to_be_visible()
+{
+  if((*ite_list)->real_y == attached_container->real_y || ((*ite_list)->real_y>=attached_container->real_y && (*ite_list)->real_y+(*ite_list)->height <= attached_container->real_y + attached_container->height))
+    return 0;
+  else
+    if((*ite_list)->real_y < attached_container->real_y) 
+      return (attached_container->real_y - (*ite_list)->real_y);
+    else
+      if((*ite_list)->real_y > attached_container->real_y+attached_container->height || (*ite_list)->real_y+(*ite_list)->height > attached_container->real_y+attached_container->height) 
+	return ((attached_container->real_y+attached_container->height) - ((*ite_list)->real_y+(*ite_list)->height));
+  return 0;
+}
 
 void win_select::adjust_visible()
 {
-  if(ite_list!=NULL)
+  if(ite_list!=l_list.end())
     {
-      s_int16 y_move=ite_list->get_y_move(wc);
+      s_int16 y_move=get_y_move_to_be_visible();
       if(y_move)
 	{
-	  list<Type_win_select>::iterator i=l_list.begin();
+	  list<win_base*>::iterator i=l_list.begin();
 	  while(i!=l_list.end())
 	    {
-	      i->y_move(y_move);
+	      (*i)->move((*i)->x,(*i)->y+y_move);
 	      i++;
 	    }  
 	}
     }
 }
 
-
-
-void win_select::add(win_label *p, u_int8 m=0)
+win_select *  win_select::add_select(win_container * twc,bool b=WIN_SELECT_JUST_OBJECT)
 {
-  Type_win_select * tmp=new Type_win_select(p,this,m);
-  l_list.push_back(*tmp);
-  tmp=NULL;
-  ite_list=l_list.begin();
+  win_select * tmp2 = new win_select(twc,this,b);
+  twc->tree_select=tmp2;
+  
+  twc->attach_select(this,WIN_SELECT_MODE_BRIGHTNESS);
+  l_select.push_back(twc);
+  ite_select=l_select.begin();  
+  return tmp2; 
 }
 
-void win_select::add(win_write *p, u_int8 m=0)
+void win_select::remove_select(win_select * tmp)
 {
-  Type_win_select * tmp=new Type_win_select(p,this,m);
-  l_list.push_back(*tmp);
-  tmp=NULL;
-  ite_list=l_list.begin();
+  list<win_container *>::iterator i=l_select.begin();
+  while(i!=l_select.end() && tmp!=(*i)->tree_select) i++;
+  if(i!=l_select.end()) 
+    {
+      l_select.erase(i);    
+    }
 }
 
-void win_select::add(win_image *p, u_int8 m=0)
+
+
+void win_select::next_select()
 {
-  Type_win_select * tmp=new Type_win_select(p,this,m);
-  l_list.push_back(*tmp);
-  tmp=NULL;
-  ite_list=l_list.begin();
+  if(ite_select!=l_select.end())
+    {
+      (*ite_select)->unselect();
+      ite_select++;
+      if(ite_select==l_select.end())
+	{ 
+	  ite_select=l_select.begin();
+	}
+      (*ite_select)->select();
+    }
 }
 
-void win_select::add(win_anim *p, u_int8 m=0)
+
+void win_select::up_select()
 {
-  Type_win_select * tmp=new Type_win_select(p,this,m);
-  l_list.push_back(*tmp);
-  tmp=NULL;
-  ite_list=l_list.begin();
+  if(father_select) cur_select=father_select;
 }
 
-void win_select::add(win_container *p,u_int8 m=1)
+void win_select::update()
 {
-  Type_win_select * tmp=new Type_win_select(p,this,m);
-  l_list.push_back(*tmp);
-  tmp=NULL;
-  ite_list=l_list.begin();
+  if(cur_select)
+    if(activate_selection)
+      {	
+	if(input::has_been_pushed(next_key)) cur_select->next();
+	else if(input::has_been_pushed(previous_key)) cur_select->previous();
+	else if(input::has_been_pushed(next_select_key)) cur_select->next_select();
+	else if(input::has_been_pushed(up_select_key)) cur_select->up_select();
+	else if(input::has_been_pushed(activate_key)) cur_select->activate_select(); 
+      } 
 }
 
-void win_select::remove(win_label * tmp)
+void win_select::activate_select()
 {
-  list<Type_win_select>::iterator i=l_list.begin();
-  while(i!=l_list.end() && tmp!=i->get()) i++;
-  if(i!=l_list.end()) l_list.erase(i);
-}
-
-void win_select::remove(win_write * tmp)
-{
-  list<Type_win_select>::iterator i=l_list.begin();
-  while(i!=l_list.end() && tmp!=i->get()) i++;
-  if(i!=l_list.end()) l_list.erase(i);
-}
-
-void win_select::remove(win_image * tmp)
-{
-  list<Type_win_select>::iterator i=l_list.begin();
-  while(i!=l_list.end() && tmp!=i->get()) i++;
-  if(i!=l_list.end()) l_list.erase(i);
-}
-
-void win_select::remove(win_anim * tmp)
-{
-  list<Type_win_select>::iterator i=l_list.begin();
-  while(i!=l_list.end() && tmp!=i->get()) i++;
-  if(i!=l_list.end()) l_list.erase(i);
+  if(type_select)
+    {
+      if(ite_select!=l_select.end())
+	{
+	  win_container * tmpwc=*ite_select;
+	  if(tmpwc)
+	    if(tmpwc->tree_select)
+	      if(tmpwc->tree_select->type_select) cur_select=tmpwc->tree_select;
+	      else if(tmpwc->tree_select->ite_list!=tmpwc->tree_select->l_list.end())
+		(*(tmpwc->tree_select->ite_list))->activate();  
+	}
+    }
+  else
+    {
+      if(ite_list!=l_list.end()) 
+	{
+	  (*ite_list)->activate();
+	}
+    }  
 }
 
 void win_select::set_default_obj(void * tmp)
 {
-  list<Type_win_select>::iterator i=l_list.begin();
-  ite_list->unselect();
-  while(i!=l_list.end() && tmp!=i->get()) i++;
-  if(i!=l_list.end()) ite_list=i;
-  ite_list->select();
-}
-
-void win_select::set_cursor(win_cursor * tmp)
-{
-  cursor=tmp;
-}
-
-void win_select::set_border(win_border * tmp)
-{
-  cur_border=tmp;
-}
-
-void win_select::remove(win_container * tmp)
-{
-  list<Type_win_select>::iterator i=l_list.begin();
-  while(i!=l_list.end() && tmp!=i->get()) i++;
-  if(i!=l_list.end()) l_list.erase(i);
-}
-
-
-//get next object
-void * win_select::next()
-{
-  ite_list->unselect();
-  ite_list++;
-  if(ite_list==l_list.end())
+  if(type_select)
     {
-      ite_list--;
+      list<win_container *>::iterator i=l_select.begin();
+      while(i!=l_select.end() && tmp!=(*i)) i++;
+      if(i!=l_select.end()) ite_select=i;
+      (*ite_select)->select();
     }
-  ite_list->select();
-  adjust_visible();
-  return(ite_list->get());
-}
-
-
-//get next object
-void * win_select::previous()
-{
-  ite_list->unselect();
-  if(ite_list!=l_list.begin())
-    { 
-      ite_list--;    
+  else
+    {
+      list<win_base *>::iterator i=l_list.begin();
+      if(ite_list!=l_list.end()) (*ite_list)->unselect();
+      while(i!=l_list.end() && tmp!=(*i)) i++;
+      if(i!=l_list.end()) ite_list=i;
+      (*ite_list)->select();
     }
-  ite_list->select();
-  adjust_visible();
-  return(ite_list->get());  
 }
 
-//get cur object
-void * win_select::get()
+win_base * win_select::get()
 {
-  if(ite_list==NULL) return NULL;
-  return(ite_list->get());
+  return(type_select?*ite_list:*ite_select);
 }
 
-
-u_int16 win_select::get_pos()
+u_int8 win_select::get_pos()
 {
-  u_int16 pos=1;
-  list<Type_win_select>::iterator i=l_list.begin();
-  while(i!=l_list.end() && i!=ite_list) {i++;pos++;};
-  if(i!=l_list.end())  return pos;
-  else return 0;
+  u_int8 cpt=1;
+  if(type_select)
+    {
+      list<win_container *>::iterator i=l_select.begin();
+      while(i!=l_select.end() && ite_select!=i) {i++;cpt++;}
+      if(i==l_select.end()) return 0;
+    }
+  else
+    {
+      list<win_base *>::iterator i=l_list.begin();
+      while(i!=l_list.end() && ite_list!=i) {i++;cpt++;}
+      if(i==l_list.end()) return 0;
+    }
+  return cpt;
 }
-
-
-
-
-
-
-
-
-
 
 

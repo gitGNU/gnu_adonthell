@@ -32,8 +32,8 @@ class win_image : public win_base
   void draw();
   void update();
   ~win_image();
-  void attach_select(win_select *);
-  void dettach_select();
+  // void attach_select(win_select *);
+  // void dettach_select();
  
  
  private:
@@ -43,3 +43,4 @@ class win_image : public win_base
   
 };
 #endif
+

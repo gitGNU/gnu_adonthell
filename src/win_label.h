@@ -34,7 +34,7 @@ class win_label : public win_base
   
   image * tmp_image;
   image * tmp_draw;
-  image * cursor;
+  //image * cursor;
 
   void draw_cursor();
  
@@ -45,9 +45,9 @@ class win_label : public win_base
   void init_draw();
   
   u_int16 cur_text_pos; //cur position of the text
-  u_int16 last_text_pos; //last position of the text
+  u_int16 last_text_pos; //derniere position of the text
 
-  u_int16 x_pad_l; //x start for the text
+  // u_int16 x_pad_l; //x start for the text
   win_label(s_int16,s_int16,u_int16,u_int16,win_font * fo,win_container *);
   
   ~win_label();
@@ -66,11 +66,11 @@ class win_label : public win_base
   void resize(u_int16 l,u_int16 h);
   void set_select_mode(u_int8 tmp);
 
-  void set_cursor(win_cursor * tmp);
+  //void set_cursor(win_cursor * tmp);
   void draw_text(u_int16);//position to begin text
 
-  void attach_select(win_select *);
-  void dettach_select();
+  // void attach_select(win_select *);
+  // void dettach_select();
 };
 #endif
 

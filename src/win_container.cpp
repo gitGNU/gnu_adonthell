@@ -49,10 +49,14 @@ win_container::~win_container()
   da->detach_drawing_area();
   delete da;
   
-  dettach_select();
+  //dettach_select();
   
   sb=NULL;
   destroy_scrollbar();
+  
+  //tree_select
+  if(tree_select)
+    if(tree_select->father_select) tree_select->father_select->remove_select(tree_select);
 }
 
 void win_container::init_scrollbar()
@@ -80,12 +84,14 @@ win_container::win_container(s_int16 x,s_int16 y,u_int16 l,u_int16 h):win_base(x
    l_write.clear();
    l_container.clear();
    l_image.clear();
+   l_anim.clear();
    da=new drawing_area(x,y,length,height);
 
    //init scroll bar image
    sb=NULL;
    pad_scroll= WIN_SCROLLBAR_PAD_DEFAULT;
    init_scrollbar();
+   tree_select=NULL;
 }
 
 
@@ -96,6 +102,7 @@ win_container::win_container(s_int16 tx,s_int16 ty,u_int16 tl,u_int16 th,win_con
    l_write.clear();
    l_container.clear();
    l_image.clear();
+   l_anim.clear();
    da=new drawing_area(real_x,real_y,length,height);
    da->assign_drawing_area(wc->get_drawing_area());
 
@@ -103,6 +110,7 @@ win_container::win_container(s_int16 tx,s_int16 ty,u_int16 tl,u_int16 th,win_con
    sb=NULL;
    pad_scroll= WIN_SCROLLBAR_PAD_DEFAULT;
    init_scrollbar();
+   tree_select=NULL;
 }
 
 void win_container::is_object_max_y(s_int16 tmp)
@@ -298,8 +306,8 @@ void win_container::draw()
       list<win_image *>::iterator l=l_image.begin();
       while(l!=l_image.end()) (*l++)->draw();
 
-      list<win_anim *>::iterator m=l_anim.begin();
-      while(m!=l_anim.end()) (*m++)->draw();
+      list<win_anim *>::iterator o=l_anim.begin();
+      while(o!=l_anim.end()) (*o++)->draw();
       
       draw_scrollbar();
       draw_border();
@@ -308,6 +316,7 @@ void win_container::draw()
 
 void win_container::update()
 {
+
   if(visible)
     {
       list<win_label *>::iterator i=l_label.begin();
@@ -321,9 +330,9 @@ void win_container::update()
 
       list<win_image *>::iterator l=l_image.begin();
       while(l!=l_image.end()) (*l++)->update();
-
-      list<win_anim *>::iterator m=l_anim.begin();
-      while(m!=l_anim.end()) (*m++)->update();
+      
+      list<win_anim *>::iterator o=l_anim.begin();
+      while(o!=l_anim.end()) (*o++)->update();
     }
 }
 
@@ -343,8 +352,8 @@ void win_container::show_all()
   list<win_image *>::iterator l=l_image.begin();
   while(l!=l_image.end()) (*l++)->show();      
 
-  list<win_anim *>::iterator m=l_anim.begin();
-  while(m!=l_anim.end()) (*m++)->show();      
+  list<win_anim *>::iterator o=l_anim.begin();
+  while(o!=l_anim.end()) (*o++)->show();      
 }
 
 
@@ -363,8 +372,8 @@ void win_container::hide_all()
   list<win_image *>::iterator l=l_image.begin();
   while(l!=l_image.end()) (*l++)->hide(); 
 
-  list<win_anim *>::iterator m=l_anim.begin();
-  while(m!=l_anim.end()) (*m++)->hide(); 
+  list<win_anim *>::iterator o=l_anim.begin();
+  while(o!=l_anim.end()) (*o++)->hide();      
 }
 
 void win_container::resize(u_int16 tl,u_int16 th)
@@ -375,6 +384,7 @@ void win_container::resize(u_int16 tl,u_int16 th)
   update_scrollbar();
 }
 
+/*
 void win_container::attach_select(win_select * tmp)
 {
   wselect=tmp;
@@ -388,6 +398,7 @@ void win_container::dettach_select()
       wselect=NULL;
     }
 }
+*/
 
 void win_container::up_scrollbar()
 {
@@ -408,10 +419,6 @@ void win_container::up_scrollbar()
 
       list<win_image *>::iterator l=l_image.begin();
       while(l!=l_image.end()) {(*l)->move((*l)->x,(*l)->y+tmp,true);*l++;}
-
-      list<win_anim *>::iterator m=l_anim.begin();
-      while(m!=l_anim.end()) {(*m)->move((*m)->x,(*m)->y+tmp,true);*m++;}
-
       update_scrollbar_index();
     }
 }
@@ -442,10 +449,6 @@ void win_container::down_scrollbar()
       
       list<win_image *>::iterator l=l_image.begin();
       while(l!=l_image.end()) {(*l)->move((*l)->x,(*l)->y-tmp,true);*l++;}
-
-      list<win_anim *>::iterator m=l_anim.begin();
-      while(m!=l_anim.end()) {(*m)->move((*m)->x,(*m)->y-tmp,true);*m++;}
-
       update_scrollbar_index();
     }
 }
@@ -484,12 +487,50 @@ void win_container::find_obj_max_y()
 	    max_y_object=(*l)->y+(*l)->height;
 	  *l++;
 	}
+
+      list<win_anim *>::iterator o=l_anim.begin();
+      while(o!=l_anim.end()) 
+	{
+	  if(max_y_object<(*o)->y+(*o)->height)
+	    max_y_object=(*o)->y+(*o)->height;
+	  *o++;
+	}
 }
 
 
 
 
 
+
+void win_container::destroy_all_label()
+{
+  list<win_label *>::iterator l=l_label.begin();
+  while(l!=l_label.end()) delete *l++;
+}
+
+void win_container::destroy_all_container()
+{
+  list<win_container *>::iterator k=l_container.begin();
+  while(k!=l_container.end()) delete *k++;
+}
+
+void win_container::destroy_all_write()
+{
+  list<win_write *>::iterator m=l_write.begin();
+  while(m!=l_write.end()) delete *m++;
+}
+
+void win_container::destroy_all_image()
+{
+  list<win_image *>::iterator n=l_image.begin();
+  while(n!=l_image.end()) delete *n++;
+}
+
+void win_container::destroy_all_anim()
+{
+  list<win_anim *>::iterator o=l_anim.begin();
+  while(o!=l_anim.end()) delete *o++;
+}
 
 
 

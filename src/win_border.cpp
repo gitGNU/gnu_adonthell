@@ -29,7 +29,10 @@ win_border::win_border(char * rep,char * size=WIN_BORDER_NORMAL_SIZE)
 {
   h_border_template=NULL;
   v_border_template=NULL;
-  corner=NULL;
+  corner_top_left=NULL;
+  corner_top_right=NULL;
+  corner_bottom_left=NULL;
+  corner_bottom_right=NULL;
   win_border::load(rep,size);
 }
 
@@ -52,14 +55,20 @@ win_border::~win_border()
  
   if(h_border_template) delete h_border_template;
   if(v_border_template)  delete v_border_template;
-  if(corner) delete corner;
+  if(corner_bottom_left) delete corner_bottom_left;
+  if(corner_bottom_right) delete corner_bottom_right;
+  if(corner_top_left) delete corner_top_left;
+  if(corner_top_right) delete corner_top_right;
 }
 
 void win_border::load(char * rep,char *size)
 {
   if(h_border_template) delete h_border_template; 
   if(v_border_template) delete v_border_template; 
-  if(corner) delete corner;
+  if(corner_bottom_left) delete corner_bottom_left;
+  if(corner_bottom_right) delete corner_bottom_right;
+  if(corner_top_left) delete corner_top_left;
+  if(corner_top_right) delete corner_top_right;
   char path[255];char tmp[255];
   strcpy(path,WIN_DIRECTORY);
   strcat(path,WIN_BORDER_DIRECTORY);
@@ -75,10 +84,26 @@ void win_border::load(char * rep,char *size)
   strcat(tmp,WIN_V_BORDER_TEMPLATE_FILE);
   v_border_template->load_pnm(tmp);//new
   
-  corner=new image();
+  corner_top_left=new image();
   strcpy(tmp,path);
-  strcat(tmp,WIN_CORNER_FILE);
-  corner->load_pnm(tmp);//new
+  strcat(tmp,WIN_CORNER_TOP_LEFT_FILE);
+  corner_top_left->load_pnm(tmp);//new
+  
+  corner_top_right=new image();
+  strcpy(tmp,path);
+  strcat(tmp,WIN_CORNER_TOP_RIGHT_FILE);
+  corner_top_right->load_pnm(tmp);//new
+
+  corner_bottom_left=new image();
+  strcpy(tmp,path);
+  strcat(tmp,WIN_CORNER_BOTTOM_LEFT_FILE);
+  corner_bottom_left->load_pnm(tmp);//new
+
+  corner_bottom_right=new image();
+  strcpy(tmp,path);
+  strcat(tmp,WIN_CORNER_BOTTOM_RIGHT_FILE);
+  corner_bottom_right->load_pnm(tmp);//new
+
 }
 /***********************************************************/
 /***************************WIN BACKGROUND******************/

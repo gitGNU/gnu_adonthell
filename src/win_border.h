@@ -27,7 +27,10 @@ class win_border
  public:
   image * h_border_template;
   image * v_border_template;
-  image * corner;
+  image * corner_top_right;
+  image * corner_top_left;
+  image * corner_bottom_left;
+  image * corner_bottom_right;
 
   win_border(char *rep ,char *size=WIN_BORDER_NORMAL_SIZE);
   ~win_border();

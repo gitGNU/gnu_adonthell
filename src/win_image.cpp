@@ -34,7 +34,7 @@ win_image::win_image(s_int16 tx,s_int16 ty,image * tpic,win_container * twc):win
 
 win_image::~win_image()
 {
-  dettach_select();
+  //dettach_select();
 }
 
 void win_image::set_image(image * tpic)
@@ -58,8 +58,12 @@ void win_image::draw()
 
 void win_image::update()
 {
-
+ 
 }
+
+
+/*
+
 
 void win_image::attach_select(win_select * tmp)
 {
@@ -75,3 +79,22 @@ void win_image::dettach_select()
       wselect=NULL;
     }
 }
+
+
+
+
+
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+
