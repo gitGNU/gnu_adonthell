@@ -115,7 +115,7 @@ new_arrow (MainFrame * wnd, GdkPoint point)
         return 0;
     if (end != NULL)
         for (i = 0; i < wnd->selected_node->next->len; i++)
-            if (end == g_ptr_array_index (((DlgNode *) g_ptr_array_index (wnd->selected_node->next, i)))->next, 0);
+            if (end == g_ptr_array_index (((DlgNode *) g_ptr_array_index (wnd->selected_node->next, i))->next, 0));
                 return 0;
 
     arrow = new DlgNode;
