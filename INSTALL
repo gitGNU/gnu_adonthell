@@ -1,0 +1,41 @@
+If you are having problems installing the software or want a step-by-
+step guide to building and using the Adonthell software, please look
+at the NEWBIE file. If you just want the quick-start version of the
+install process, here it is.
+
+INSTALLING:
+
+There are three libraries that Adonthell depends on. Two of these
+libraries are required, but one is optional. The two REQUIRED
+libraries (and where they can be downloaded from) are:
+
+1. The Simple Directmedia Layer (SDL) library, version 1.0 or later.
+2. The SDL_image library, version 1.0 or later.
+
+Sound support under Adonthell is optional (but highly recommended!!).
+We suggest building Adonthell with sound support if you have a sound
+card configured to run under Linux. To do that, you'll need to build
+and install a third library, SDL_mixer.
+
+3. The SDL_mixer library, Version 1.0 or later.
+
+In the top level "adonthell-0.2" directory, type the following:
+
+./configure
+make
+
+Then, type the following to have the Adonthell mapengine run
+a demo map:
+
+./mapengine forest.map
+
+For more information, see the README or file. Problems? Don't have
+the right libraries? Please look at the NEWBIE file or our website
+for answers:
+
+http://adonthell.linuxgames.com
+ 
+*********************************************************************
+* That's it! Enjoy the game engine and let us know what you think!! *
+*********************************************************************
+					- The Adonthell Team

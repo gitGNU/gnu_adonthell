@@ -1,0 +1,8 @@
+#
+#	Melee combat engine testing.
+#	
+
+
+Building:
+
+g++ combat-test.cpp melee.cpp yarg.cc -o combat-test
