@@ -15,8 +15,7 @@
 #ifndef _screen_h
 #define _screen_h
 
-#include "types.h"
-#include "prefs.h"
+#include "drawing_area.h"
 
 class screen
 {
@@ -43,7 +42,7 @@ class screen
   // update the screen.
 
   static void drawbox(u_int16 x, u_int16 y, u_int16 w, u_int16 h, 
-		      u_int32 color);
+		      u_int32 color, drawing_area * da_opt=NULL);
   // Draw a box of a given color.
 
   static void makesquare(u_int16 px, u_int16 py, u_int16 factor);

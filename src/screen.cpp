@@ -147,7 +147,8 @@ void screen::show()
     }
 }
 
-void screen::drawbox(u_int16 x, u_int16 y, u_int16 w, u_int16 h, u_int32 color)
+void screen::drawbox(u_int16 x, u_int16 y, u_int16 w, u_int16 h, 
+		     u_int32 color, drawing_area * da_opt=NULL)
 {
   static SDL_Rect dr;
   dr.x=x;

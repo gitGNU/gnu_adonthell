@@ -3,7 +3,7 @@ SUBDIRS = . tools
 bin_PROGRAMS = mapengine joltest
 
 mapengine_SOURCES = animation.cpp audio.cpp audio_thread.cpp \
-character.cpp cutscene.cpp dialog.cpp event.cpp fileops.cpp game.cpp \
+character.cpp cutscene.cpp dialog.cpp drawing_area.cpp event.cpp fileops.cpp game.cpp \
 image.cpp init.cpp input.cpp inventory.cpp lex.prefs.cpp main.cpp \
 map.cpp mapcharacter.cpp mapengine.cpp mapevent.cpp mapitem.cpp \
 mappattern.cpp mapsquare.cpp pnm.cpp prefs.cpp py_inc.cpp py_character_wrap.cpp\
@@ -12,7 +12,7 @@ win_anim.cpp win_base.cpp win_border.cpp win_container.cpp win_font.cpp \
 win_file.cpp win_image.cpp win_label.cpp win_select.cpp win_write.cpp yarg.cc
 
 joltest_SOURCES = audio.cpp audio_thread.cpp \
-image.cpp animation.cpp init.cpp input.cpp \
+drawing_area.cpp image.cpp animation.cpp init.cpp input.cpp \
 lex.prefs.cpp pnm.cpp prefs.cpp screen.cpp win_label.cpp \
 win_write.cpp win_container.cpp win_select.cpp win_border.cpp \
 win_base.cpp win_font.cpp win_image.cpp win_anim.cpp joel.cpp yarg.cc win_file.cpp

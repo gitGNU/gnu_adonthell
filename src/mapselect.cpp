@@ -136,9 +136,13 @@ void mapselect::draw_grid()
 {
   static u_int16 i,j;
   for(i=d_posx;(i<d_posx+dl+1)&&(i<=length);i++)
-    screen::drawbox(s_posx+((i-d_posx)*MAPSQUARE_SIZE),s_posy,1,dh*MAPSQUARE_SIZE+1,0xFFFFFF);
+    screen::drawbox(s_posx+((i-d_posx)*MAPSQUARE_SIZE),s_posy,1,
+		    (height<dh)?height*MAPSQUARE_SIZE+1:dh*MAPSQUARE_SIZE+1,
+		    0xFFFFFF);
   for(j=d_posy;(j<d_posy+dh+1)&&(j<=height);j++)
-    screen::drawbox(s_posx,s_posy+((j-d_posy)*MAPSQUARE_SIZE),dl*MAPSQUARE_SIZE+1,1,0xFFFFFF);
+    screen::drawbox(s_posx,s_posy+((j-d_posy)*MAPSQUARE_SIZE),
+		    (length<dl)?length*MAPSQUARE_SIZE+1:dl*MAPSQUARE_SIZE+1,
+		    1,0xFFFFFF);
 }
 
 void mapselect::draw()
