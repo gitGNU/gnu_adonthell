@@ -1,3 +1,15 @@
+/*
+   Copyright (C) 1999   The Adonthell Project
+   Part of the Adonthell Project http://adonthell.linuxgames.com
+
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License.
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY.
+
+   See the COPYING file for more details.
+*/
+
 #include <iostream.h>
 #include <stdio.h>
 #include "types.h"
@@ -14,7 +26,7 @@
 #include "SDL.h"
 #include "SDL_thread.h"
 #include "SDL_mixer.h"
-#include "audio.h"
+#include "audio_thread.h"
 #endif
 
 void init_display(u_int8);
