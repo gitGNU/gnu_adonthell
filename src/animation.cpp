@@ -245,6 +245,16 @@ bool animation::is_empty()
   return((!nbr_of_frames)||(!nbr_of_images));
 }
 
+u_int16 animation::get_length()
+{
+  return length;
+}
+
+u_int16 animation::get_height()
+{
+  return height;
+}
+
 void animation::update()
 {
   if((!play_flag)||(!nbr_of_frames)) return;
@@ -588,14 +598,16 @@ void animation::select_frame(u_int16 nbr)
   must_upt_label_frame_info=true;
 }
 
-void animation::set_frame_gapx(u_int16 nbr, u_int16 gx)
+void animation::set_frame_gapx(u_int16 nbr, s_int16 gx)
 {
+  if(gx<0) return;
   frame[nbr].gapx=gx;
   must_upt_label_frame_info=true;
 }
 
-void animation::set_frame_gapy(u_int16 nbr, u_int16 gy)
+void animation::set_frame_gapy(u_int16 nbr, s_int16 gy)
 {
+  if(gy<0) return;
   frame[nbr].gapy=gy;
   must_upt_label_frame_info=true;
 }

@@ -130,6 +130,8 @@ class animation
   void clear();
   ~animation();
   bool is_empty();
+  u_int16 get_length();
+  u_int16 get_height();
 
   void update();
   void set_active_frame(u_int16 framenbr);
@@ -157,8 +159,8 @@ class animation
 #ifdef _EDIT_
   void select_image(u_int16 nbr);
   void select_frame(u_int16 nbr);
-  void set_frame_gapx(u_int16 nbr, u_int16 gx);
-  void set_frame_gapy(u_int16 nbr, u_int16 gy);
+  void set_frame_gapx(u_int16 nbr, s_int16 gx);
+  void set_frame_gapy(u_int16 nbr, s_int16 gy);
   void set_frame_alpha(u_int16 nbr, u_int8 a);
   void set_frame_delay(u_int16 nbr, u_int16 d);
   void set_frame_nextframe(u_int16 nbr, u_int16 nf);
