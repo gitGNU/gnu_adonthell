@@ -1,16 +1,5 @@
 ## Process this file with automake to produce Makefile.in
 
-SUBDIRS = . dlgedit
+SUBDIRS = . devel dlgedit
 
-EXTRA_DIST = charedit.lyx event.lyx interpreter.lyx items.txt \
-	reference.cfg mainpage.dxt intro.dxt prog_rules.dxt event.dxt \
-	map.dxt dialog.dxt python.dxt mapcharschedules.dxt save.dxt \
-	mapviewschedules.dxt
-
-if BUILD_DOC
-all:
-	$(P_DOXYGEN) reference.cfg
-
-clean:
-	rm -Rf html latex
-endif
+EXTRA_DIST = charedit.lyx event.lyx interpreter.lyx items.txt
