@@ -1,6 +1,6 @@
 ## Process this file with automake to produce Makefile.in
 
-MODULES_SUBDIRS = gfx input audio python lmap
+MODULES_SUBDIRS = gfx input audio python lmap gui
 
 if BUILD_TOOLS
 SUBDIRS = $(MODULES_SUBDIRS) . tools
@@ -20,7 +20,7 @@ EXTRA_DIST = .indent.pro prefs.l # py_adonthell.i adonthell.py
 
 CPPFLAGS += $(SDL_DEFS) $(OGG_DEFS) $(SDL_CFLAGS) $(OGG_CFLAGS) $(PY_CFLAGS) $(FT2_CFLAGS)
 
-noinst_LIBRARIES = libbase.a libgui.a
+noinst_LIBRARIES = libbase.a
 
 CLEANFILES = $(moddata_SCRIPTS)
 
@@ -70,20 +70,20 @@ libbase_LDADD = $(SDL_LIBS)
 
 libpython_LDADD = $(PY_LIBS)
 
-libgui_a_SOURCES = atk_box.cc atk_misc.cc atk_container.cc atk_label.cc \
-	atk_font.cc atk_widget.cc atk_fixed.cc  \
-	atk_bin.cc atk_window.cc atk_manager.cc atk_border_template.cc \
-	atk_border_ui.cc atk_theme.cc atk_background_template.cc \
-	atk_button_template.cc atk_button.cc atk_button_ui.cc \
-	atk_background_ui.cc \
-	callback_sig.cc \
-	atk_box.h atk_misc.h atk_container.h atk_label.h \
-	atk_font.h atk_widget.h atk_fixed.h \
-	atk_bin.h atk_window.h atk_manager.h atk_border_template.h  \
-	atk_border_ui.h atk_theme.h atk_background_template.h \
-	atk_button_template.h atk_button.h atk_button_ui.h \
-	atk_background_ui.h \
-	callback_sig.h callback_slot.h 
+#libgui_a_SOURCES = atk_box.cc atk_misc.cc atk_container.cc atk_label.cc \
+#	atk_font.cc atk_widget.cc atk_fixed.cc  \
+#	atk_bin.cc atk_window.cc atk_manager.cc atk_border_template.cc \
+#	atk_border_ui.cc atk_theme.cc atk_background_template.cc \
+#	atk_button_template.cc atk_button.cc atk_button_ui.cc \
+#	atk_background_ui.cc \
+#	callback_sig.cc \
+#	atk_box.h atk_misc.h atk_container.h atk_label.h \
+#	atk_font.h atk_widget.h atk_fixed.h \
+#	atk_bin.h atk_window.h atk_manager.h atk_border_template.h  \
+#	atk_border_ui.h atk_theme.h atk_background_template.h \
+#	atk_button_template.h atk_button.h atk_button_ui.h \
+#	atk_background_ui.h \
+#	callback_sig.h callback_slot.h 
 
 libgui_LDADD = $(FT2_LIBS)
 
@@ -106,7 +106,7 @@ joltest_SOURCES = joltest.cc
 
 schedtest_SOURCES = schedtest.cc
 
-joltest_LDADD = libgui.a gfx/libgfx.a input/libinput.a libbase.a $(libbase_LDADD) $(libgui_LDADD)
+joltest_LDADD = gui/libgui.a gfx/libgfx.a input/libinput.a libbase.a $(libbase_LDADD) $(libgui_LDADD)
 
 alextest_LDADD = lmap/libmap.a gfx/libgfx.a input/libinput.a libbase.a $(libbase_LDADD)
 
