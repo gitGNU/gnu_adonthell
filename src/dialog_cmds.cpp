@@ -99,7 +99,7 @@ s_int32 clear_cmd::run (u_int32 &pc, void *data)
     dialog *dlg = (dialog *) data;
 
     // Memorize what parts of the dialogue where already used, to avoid loops
-    dlg->used_text.push_back (dlg->player_text[dlg->answer]->offset);
+    dlg->used_text.push_back (dlg->player_text[dlg->answer]->id);
 
     // Continue the dialogue according to the players choice
     pc = dlg->player_text[dlg->answer]->offset;
@@ -144,7 +144,7 @@ s_int32 text_cmd::run (u_int32 &pc, void *data)
     dlg_text *t;
 
     // Look if that part of the conversation was already in use     
-    if (find (dlg->used_text.begin(), dlg->used_text.end(), pc + offset - 1) == dlg->used_text.end ())
+    if (find (dlg->used_text.begin(), dlg->used_text.end(), text) == dlg->used_text.end ())
     {
         // The offset given with the TEXT command is relative to the current line
         // That is:  current_line + offset  gives the line where the dialogue will

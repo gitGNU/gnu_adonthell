@@ -135,8 +135,8 @@ void run_dlg::run ()
         tmp_list = g_list_append (tmp_list, create_dlg_list_item (dat->strings[dat->npc_text[npc_answer]->id], 4, -1));
 
         // Now look for the player text
-        for (i = 0; i < npc_answer; )
-            if (dat->player_text[index++] == NULL) i++;
+        for (i = 0; (i < dat->player_text.size () && index < npc_answer); i++)
+            if (dat->player_text[i] == NULL) index++;
 
         // ... and add it to the list
         while (dat->player_text[index] != NULL && index < dat->player_text.size ())

@@ -384,11 +384,6 @@ void dlg_compiler::get_cur_nodes ()
     // data = todo_nodes[0];
     data = todo_nodes.back ();
 
-    // First, we have to check wether the childs of this (player-) node
-    // have already been compiled. If so, we can update the command with
-    // the proper jump target. (That's done in the isdone(...) function)
-    // Else we can safely add the child to the cur_nodes 
-
     // Assume that the chosen command continues in the next line
     // In case it doesn't this is corrected in the  isdone()  function
     ((text_cmd *) data->cmd)->setjmp (code.size () - data->line);
@@ -409,32 +404,29 @@ void dlg_compiler::get_cur_nodes ()
             data->line = code.size ();
         }
 
+    // First, we have to check wether the childs of this (player-) node
+    // have already been compiled. If so, we can update the command with
+    // the proper jump target. (That's done in the isdone(...) function)
+    // Else we can safely add the child to the cur_nodes 
+
     // For all following direct links (arrows) ...
     for (i = 0; i < data->node->next.size (); i++)
         // If following NPC-node (circle) wasn't already compiled ...
         if (!isdone (data->node->next[i]->next[0], data))
             // Add the NPC-node to the nodes to compile next
             cur_nodes.push_back (data->node->next[i]->next[0]);
-
+        
     // Now the same with the indirect links
     for (i = 0; i < data->node->link.size (); i++)
         if (!isdone (data->node->link[i]->next[0], data))
             cur_nodes.push_back (data->node->link[i]->next[0]);
-
+        
     // Note that the call to  isdone()  is important, as it sets the target
     // of PLAYER nodes that were handled earlier to the right position.
     // Without the call, it would either point after the variable-code, or
     // to the last NPC-line of a multi-NPC-block.
     isdone (data->node, data);
-/*
-    if (cur_crcle->type == PLAYER)
-    //    if (!isdone (data->node, data))
-        if (cur_crcle->variables != "")
-        {
-            write_variables ();
-            
-        }
-*/        
+
     // The End of dialogue follows:
     if (cur_nodes.empty ())
     {
@@ -464,9 +456,13 @@ u_int8 dlg_compiler::isdone (DlgNode *node, cmp_data *data)
         if (done_nodes[i]->node == node)
         {
             if (data->node != node)
+            {
+                if (!isdone (data->node, data)) return 0;
                 ((text_cmd *) data->cmd)->setjmp (done_nodes[i]->line - data->line - 1);
+            }
             else
                 ((text_cmd *) data->cmd)->setjmp (done_nodes[i]->line + ((text_cmd *) done_nodes[i]->cmd)->getjmp () - data->line);
+
             return 1;
         }
 
