@@ -23,6 +23,7 @@
  */
 extern "C"
 {
+	void initdialog_enginec(void);
 	void initcharacterc(void);
 	void initmapenginec(void);
 	void initquestc(void);
@@ -58,6 +59,7 @@ bool init_python(void)
 	/* Initialise SWIG modules. This should go if we ever switch to dynamic 
 	   link */
 	initcharacterc();
+    initdialog_enginec();
 	initmapenginec();
 	initquestc();
 //	initbaseitemc();

@@ -948,10 +948,14 @@ load_dialogue (MainFrame * wnd, const char *file)
     wnd->number = wnd->nodes.size ();
 
     // center view on first node
-    if (wnd->number > 0) 
-        if (!center_object (wnd, wnd->nodes[0]))
-            redraw_graph (wnd);
+    if (wnd->number > 0)
+    {
+        if (center_object (wnd, wnd->nodes[0]))
+            wnd->y_offset -= (wnd->graph->allocation.height / 2) - 20;
 
+        redraw_graph (wnd);
+    }
+    
     // set new window - title 
     wnd->file_name = g_strdup (file);
 
@@ -1343,6 +1347,12 @@ show_tooltip (MainFrame *wnd, DlgNode *node)
     {
         circle = (Circle *) node;
         str = g_string_new (circle->text.c_str ());
+
+        if (circle->character != "")
+        {
+            str = g_string_prepend (str, ": ");
+            str = g_string_prepend (str, circle->character.c_str ());
+        }
 
         if (circle->conditions != "")
         {

@@ -21,6 +21,7 @@ class dialog;
 #include "../../py_inc.h"
 #include "../../prefs.h"
 #include "../../game.h"
+#include "../../quest.h"
 #include "main.h"
 #include "graph.h"
 #include "interface.h"
@@ -57,7 +58,7 @@ main (int argc, char *argv[])
     insert_path (tmp);
 
     // Load module
-    PyObject *m = import_module ("character");
+    PyObject *m = import_module ("ins_modules");
         
     // Create a player
     MainWnd->myplayer = new player;
@@ -92,6 +93,34 @@ main (int argc, char *argv[])
         PyDict_SetItemString (game::globals, "the_npc", pass_instance (mynpc, "npc"));
     
         fclose (in);
+    }
+
+    // create quest array
+    PyObject *quests = PyDict_New ();
+    PyDict_SetItemString (game::globals, "quests", quests);
+
+    // try to open quest.data
+    sprintf (tmp, "%s/quest.data", myconf.datadir.c_str ());
+    in = fopen (tmp, "r");
+
+    if (in)
+    {
+        quest *myquest;
+        
+        // load quests
+        while (fgetc (in))
+        {
+            myquest = new quest;
+            myquest->load (in);
+        
+            // Pass quest over to Python interpreter
+            PyDict_SetItemString (quests, myquest->name, pass_instance (myquest, "quest"));
+
+            // Make this quest available to the engine
+            game::quests.set (myquest->name, myquest);
+        }
+        
+        fclose (in);    
     }
     
     // Misc initialization

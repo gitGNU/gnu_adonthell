@@ -172,8 +172,8 @@ char* npc::get_dialogue ()
 // Start conversation with the NPC
 void npc::talk ()
 {
-    dialog_engine *de = new dialog_engine (name);
     PyDict_SetItemString (game::globals, "the_npc", pass_instance (this, "npc"));
+    dialog_engine *de = new dialog_engine (name);
     de->run ();
 }
 

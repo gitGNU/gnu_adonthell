@@ -7,7 +7,7 @@ character.cpp cutscene.cpp dialog.cpp event.cpp fileops.cpp game.cpp \
 image.cpp init.cpp input.cpp inventory.cpp lex.prefs.cpp main.cpp \
 map.cpp mapcharacter.cpp mapengine.cpp mapevent.cpp mapitem.cpp \
 mappattern.cpp mapsquare.cpp pnm.cpp prefs.cpp py_inc.cpp py_character_wrap.cpp\
-py_mapengine_wrap.cpp py_quest_wrap.cpp quest.cpp screen.cpp storage.cpp \
+py_dialog_engine_wrap.cpp py_mapengine_wrap.cpp py_quest_wrap.cpp quest.cpp screen.cpp storage.cpp \
 win_anim.cpp win_base.cpp win_border.cpp win_container.cpp win_font.cpp \
 win_file.cpp win_image.cpp win_label.cpp win_select.cpp win_write.cpp yarg.cc
 
@@ -16,6 +16,10 @@ image.cpp animation.cpp init.cpp input.cpp \
 lex.prefs.cpp pnm.cpp prefs.cpp screen.cpp win_label.cpp \
 win_write.cpp win_container.cpp win_select.cpp win_border.cpp \
 win_base.cpp win_font.cpp win_image.cpp win_anim.cpp joel.cpp yarg.cc win_file.cpp
+
+py_dialog_engine_wrap.cpp : py_dialog_engine.i
+	swig -python -shadow -c++ -make_default -o $*.cpp $< 
+	@mv dialog_engine.py ../scripts
 
 py_character_wrap.cpp : py_character.i
 	swig -python -shadow -c++ -make_default -o $*.cpp $< 

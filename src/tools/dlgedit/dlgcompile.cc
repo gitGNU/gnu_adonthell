@@ -65,12 +65,10 @@ void dlg_compiler::write_strings ()
     vector<DlgNode*>::iterator i;
     u_int32 j = 0;
 
-    script << "from character import *\n\n";
-
     // write the class name
-    script << "class " << strrchr (filename.c_str (), '/') + 1 << ":\n";
-    script << "    loop = []\n";
-    script << "    strings = [";
+    script << "class " << strrchr (filename.c_str (), '/') + 1 << ":\n"
+           << "    loop = []\n"
+           << "    strings = [";
 
     // write all strings and build lookup table to get index when given
     // the number of the node
@@ -82,7 +80,18 @@ void dlg_compiler::write_strings ()
         }
 
     // with a last, empty string we don't have to care about the final comma
-    script << "\"\"]\n";
+    script << "\"\"]\n\n";
+
+    // these are dummies for the dialog editor; they're overwritten by
+    // the game's dialogue engine
+    script << "    def set_color (self, new_color):\n"
+           << "        pass\n\n"
+           << "    def set_name (self, new_name):\n"
+           << "        pass\n\n"
+           << "    def set_npc (self, new_npc):\n"
+           << "        pass\n\n"
+           << "    def set_portrait (self, new_portrait):\n"
+           << "        pass\n";
 
     return;
 }
@@ -159,6 +168,17 @@ void dlg_compiler::write_npc (Circle *circle)
 {
     u_int32 i = 0, j;
 
+    // set NPC if changed
+    if (character_changed (circle))
+    {
+        script << "\n" << space << "self.set_npc (";
+        if (circle->character == "") script << "the_npc.name)";
+        else script << "\"" << circle->character << "\")";
+    }
+
+#ifdef _DEBUG_
+    script << "\n\n" << space << "# " << circle->text.c_str (); 
+#endif
     // write circle's text and "jump target"
     script << "\n" << space << "self.npc.append (" << text_lookup[circle->number] << ")";
     script << "\n" << space << "self.cont.append (" << jump_lookup[circle->number] << ")";
@@ -191,6 +211,10 @@ void dlg_compiler::write_player (Circle *circle)
         script << "\n" << space << circle -> conditions;
         space += "    ";
     }
+
+#ifdef _DEBUG_
+    script << "\n\n" << space << "# " << circle->text.c_str (); 
+#endif
 
     // write circle's text and "jump target"
     script << "\n" << space << "self.player.append (" << text_lookup[circle->number] << ")";
@@ -374,4 +398,61 @@ u_int8 dlg_compiler::npc_follows (DlgNode *circle)
             return 1;
 
     return 0;
+}
+
+u_int8 dlg_compiler::character_changed (Circle *circle)
+{
+    if (circle->prev.empty ()) return 1;
+
+    vector<Circle*> prevs;
+    vector<Circle*>::iterator i;
+
+    // get all direct precedessors
+    get_prev_npc_nodes (circle, prevs);
+
+    // get all indirect precedessors
+    get_prev_npc_links (circle, prevs);
+
+    for (i = prevs.begin (); i != prevs.end (); i++)
+        if ((*i)->character != circle->character)
+            return 1;
+
+    return 0;
+}
+
+void dlg_compiler::get_prev_npc_nodes (Circle* circle, vector<Circle*> &prevs)
+{
+    DlgNode *node;
+    vector<DlgNode*>::iterator i;
+
+    // for all the circle's direct precedessor's
+    for (i = circle->prev.begin (); i != circle->prev.end (); i++)
+    {
+        node = (*i)->prev[0];
+
+        // ... add all NPC nodes to prevs
+        if (node->type == PLAYER)
+        {
+            // We have to check both immediate and linked nodes
+            get_prev_npc_nodes ((Circle *) node, prevs);
+            get_prev_npc_links ((Circle *) node, prevs);
+        }
+        else prevs.push_back ((Circle *) node);
+    }
+}
+
+void dlg_compiler::get_prev_npc_links (Circle* circle, vector<Circle*> &prevs)
+{
+    vector<DlgNode*>::iterator i, j;
+
+    for (i = circle->prev.begin (); i != circle->prev.end (); i++)
+        for (j = (*i)->link.begin (); j != (*i)->link.end (); j++)
+        {
+            if ((*j)->type == PLAYER) 
+            {
+                get_prev_npc_nodes ((Circle *) (*j), prevs);
+                get_prev_npc_links ((Circle *) (*j), prevs);
+            }
+            else prevs.push_back ((Circle *) (*j));
+        }
 }

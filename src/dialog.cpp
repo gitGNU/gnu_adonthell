@@ -27,18 +27,19 @@
 // Load and instanciate the dialogue object
 bool dialog::init (char *fpath, char *name)
 {
-	PyObject *module;
+    PyObject *module;
 	PyObject *classobj;
 
 	// First, test if the module has already been imported
 
 	// Seems not, so import
-	module = import_module(fpath);
+	module = import_module (fpath);
 
 	if (!module)
 		return false;
 
     module = PyImport_ReloadModule (module);
+    PyObject *globals = PyModule_GetDict (module);
 
 	// Extract the class from the dialogue module
 	classobj = PyObject_GetAttrString(module, name);
@@ -51,6 +52,17 @@ bool dialog::init (char *fpath, char *name)
 	// Instantiate! Will we ever need to pass args to class
 	// constructor here?
 	instance = PyObject_CallObject(classobj, NULL);
+
+    // add some stuff to the dialogue's global namespace
+    PyObject *characters = PyDict_GetItemString (game::globals, "characters");
+    PyObject *quests = PyDict_GetItemString (game::globals, "quests");
+    PyObject *the_npc = PyDict_GetItemString (game::globals, "the_npc");
+    PyObject *the_player = PyDict_GetItemString (game::globals, "the_player");
+    
+    PyDict_SetItemString (globals, "characters", characters);
+    PyDict_SetItemString (globals, "quests", quests);
+    PyDict_SetItemString (globals, "the_npc", the_npc);
+    PyDict_SetItemString (globals, "the_player", the_player);
 
 	Py_DECREF(classobj);
 
@@ -91,6 +103,11 @@ dialog::~dialog ()
 {
     Py_XDECREF (instance);
     if (strings) delete strings;
+}
+
+PyObject* dialog::get_instance ()
+{
+    return instance;
 }
 
 // Gets the index of either the player or npc array
@@ -352,6 +369,9 @@ dialog_engine::dialog_engine (const char *npc_name)
     // save dialogue engine
     engine = game::engine;
     game::engine = this;
+    portrait = NULL;
+    name = NULL;
+    face = NULL;
     
     npc *mynpc = (npc *) game::characters.get (npc_name);
     char *dlg_file = mynpc->get_dialogue ();
@@ -366,16 +386,11 @@ dialog_engine::dialog_engine (const char *npc_name)
     back = new win_background (game::theme);
     wnd = new win_container (40, 20, 240, 160);
 
-    // we'd also get the portrait to use from the npc data
-    portrait = new image (64, 64);
-    portrait->load_pnm ("gfxtree/portraits/lyanna.pnm");
-    portrait->set_mask (true);
-
-    face = wnd->add_image (10, 10, portrait);
-    name = wnd->add_label (10, 75, 64, 10, font);
-    name->set_auto_height (true);
-    name->set_text (mynpc->name);
-    
+    // set the NPC's portrait (later:  get the portrait to use from the npc data)
+    set_portrait ("gfxtree/portraits/lyanna.pnm");
+    // ... and name
+    set_name (mynpc->name);
+        
     txt = wnd->add_container (80, 5, 155, 150);
     sel = new win_select (txt);
     sel->set_cursor (cursor);
@@ -392,8 +407,25 @@ dialog_engine::dialog_engine (const char *npc_name)
         cout << "\n*** Error loading dialogue script " << strrchr (dlg_file, '/')+1 << flush;
         answer = -1;	
 	}
-	else answer = 0;
+	else
+	{
+        // Make the set_portrait/name/color functions available to the dialogue script
+        instance = pass_instance (this, "dialog_engine");
 
+        PyObject *setname = PyObject_GetAttrString (instance, "set_name");
+        PyObject *setportrait = PyObject_GetAttrString (instance, "set_portrait");
+        PyObject *setcolor = PyObject_GetAttrString (instance, "set_color");
+        PyObject *setnpc = PyObject_GetAttrString (instance, "set_npc");
+
+        PyObject *dlg_instance = dlg->get_instance ();
+
+        PyObject_SetAttrString (dlg_instance, "set_name", setname);
+        PyObject_SetAttrString (dlg_instance, "set_portrait", setportrait);
+        PyObject_SetAttrString (dlg_instance, "set_color", setcolor);
+        PyObject_SetAttrString (dlg_instance, "set_npc", setnpc);
+    
+	   answer = 0;
+    }
     delete dlg_file;
 }
 
@@ -411,6 +443,8 @@ dialog_engine::~dialog_engine ()
     delete portrait;
     delete font;
     delete back;
+
+    Py_XDECREF (instance);
 }
 
 void dialog_engine::run ()
@@ -424,15 +458,18 @@ void dialog_engine::run ()
         delete this;
         return;
     }
-    
+
+    // Continue dialogue with selected answer
     dlg->run (answer);
 
+    // End of dialogue
     if (!dlg->text)
     {
         delete this;
         return;
     }
-    
+
+    // Add NPC text and all player reactions to container
     for (i = 0; i < dlg->text_size; i++)
     {
         l = txt->add_label (10, h, 120, h+font->height, font);
@@ -444,7 +481,9 @@ void dialog_engine::run ()
         h += l->height+10;
     }
 
+    // Either select the single NPC speech ...
     if (dlg->text_size == 1) sel->set_default_obj (cur_answers.front ());
+    // ... or the player's first answer
     else sel->set_default_obj (cur_answers[1]);
     
     txt->show_all ();
@@ -458,12 +497,15 @@ void dialog_engine::realtime_tasks ()
 
 void dialog_engine::update_keyboard ()
 {
+    // SPACE activates the current selection
     if (input::has_been_pushed (SDLK_SPACE))
     {
         vector<win_label*>::iterator i;
-        
+
+        // remember choice
         answer = sel->get_pos () - 1;
 
+        // remove all the displayed text
         for (i = cur_answers.begin (); i != cur_answers.end (); i++)
         {
             sel->remove (*i);
@@ -475,6 +517,7 @@ void dialog_engine::update_keyboard ()
         run ();
     }
 
+    // Cursor keys iterate through possible answers
     if (dlg->text_size > 1)
     {
         if (input::has_been_pushed (SDLK_UP))
@@ -493,21 +536,57 @@ void dialog_engine::update_keyboard ()
 void dialog_engine::gametime_tasks ()
 {
     engine->gametime_tasks ();
-    update ();
-}
-
-void dialog_engine::update ()
-{
-    // wnd->update ();
     wnd->draw ();
-/*
-    if (dlg->answer == 0xFFFF) return;
-
-    run (win);
-    dlg->answer = 0xFFFF;
-*/
 }
 
 void dialog_engine::insert_plugin ()
 {
+}
+
+// Set / change the NPC-portrait
+void dialog_engine::set_portrait (char *new_portrait)
+{
+    if (face)
+    {
+        wnd->remove (face);
+        delete face;
+    }
+    if (portrait) delete portrait;
+    
+    portrait = new image (64, 64);
+    portrait->load_pnm (new_portrait);
+    portrait->set_mask (true);
+
+    face = wnd->add_image (10, 10, portrait);
+    face->show ();
+}
+
+// Set / change the NPC-name
+void dialog_engine::set_name (char *new_name)
+{
+    if (name)
+    {
+        wnd->remove (name);
+        delete name;
+    }
+    
+    name = wnd->add_label (10, 75, 64, 10, font);
+    name->set_auto_height (true);
+    name->set_text (new_name);
+    name->show ();
+}
+
+// Set / change the NPC-text color 
+void dialog_engine::set_color (u_int32 new_color)
+{
+}
+
+// Set a different NPC
+void dialog_engine::set_npc (char* new_npc)
+{
+    npc *mynpc = (npc *) game::characters.get (new_npc);
+    
+    set_name (mynpc->name);
+    set_portrait ("gfxtree/portraits/lyanna.pnm");
+    set_color (0);
 }

@@ -15,6 +15,8 @@
 #ifndef __DIALOG_H__
 #define __DIALOG_H__
 
+#ifndef SWIG
+
 #include "Python.h"
 #include "types.h"
 #include "window.h"
@@ -35,6 +37,7 @@ public:
 
     bool init (char*, char*);       // Load & instantiate the dialogue object
     void run (u_int32);             // Run the dialogue 
+    PyObject *get_instance ();      // Get the Python dialogue instance
 
     char **text;                    // NPC's speech and according Player responses
     u_int32 text_size;              // Number of strings in text
@@ -54,37 +57,47 @@ private:
 };
 
 class dialog_engine : public game_engine
+#else
+class dialog_engine
+#endif // SWIG
 {
 public:
-    dialog_engine (const char*);
-    ~dialog_engine ();
+    void set_portrait (char*);      // Changes the displayed NPC portrait
+    void set_name (char*);          // Changes the diaplayed NPC name
+    void set_color (u_int32);       // Changes the NPC's text-color
+    void set_npc (char*);           // Changes the whole NPC
+
+    dialog_engine (const char*);    // Constructor
+#ifndef SWIG
+    ~dialog_engine ();              // Destructor
     
-    void realtime_tasks ();
-    void gametime_tasks ();
+    void realtime_tasks ();         // Stuff done really often
+    void gametime_tasks ();         // Stuff done once per frame
     
-    void update_keyboard ();
-    void update ();
-    void run ();
+    void update_keyboard ();        // React to (keyboard) input
+    void run ();                    // Execute one step of the dialogue
 
 private:
     void insert_plugin ();          // 'Merges' a dialogue with the loaded one
 
-    win_font *font;
-    win_container *wnd;
-    win_container *txt;
-    win_image *face;
-    win_label *name;
-    win_border *border;
-    win_background *back;
-    win_select *sel;
-    win_cursor *cursor;
-    image *portrait;
+    win_font *font;                 // The font
+    win_container *wnd;             // The dialogue window
+    win_container *txt;             // Container with the dialogue text
+    win_image *face;                // Widget holding NPC portrait
+    win_label *name;                // Widget holding NPC name
+    win_border *border;             // Window border
+    win_background *back;           // Window background
+    win_select *sel;                // Selection of possible answers
+    win_cursor *cursor;             // Cursor for selection
+    image *portrait;                // The NPC's portrait
 
-    vector <win_label*> cur_answers;
-    
-    dialog *dlg;
-    game_engine *engine;
-    int answer;
+    vector <win_label*> cur_answers;// Answers currently available for selection
+
+    PyObject* instance;             // Dialogue Engine Python wrapper class
+    dialog *dlg;                    // The Python/C interface for the dialogue
+    game_engine *engine;            // A backup of the previously active engine
+    int answer;                     // The selected dialogue option
+#endif // SWIG
 };
 #endif // __DIALOG_H__
 

@@ -336,9 +336,13 @@ create_list_item (MainFrame *wnd, DlgNode *node, int mode)
     GtkWidget *list_item;
     GdkWindow *list;
     GdkColor color;
+    string label_text (((Circle *) node)->character);
     GtkStyle *style = gtk_style_copy (gtk_widget_get_default_style ());
     int w, h;
 
+    if (label_text != "") label_text += ": ";
+    label_text += ((Circle *) node)->text;
+    
     switch (mode)
     {
         // Selcted node's text
@@ -379,7 +383,7 @@ create_list_item (MainFrame *wnd, DlgNode *node, int mode)
     gdk_window_get_size (list, &w, &h);
 
     /* create label */    
-    label = gtk_label_new (((Circle *) node)->text.c_str ());
+    label = gtk_label_new (label_text.c_str ());
     gtk_widget_set_style (label, style);
     gtk_widget_set_usize (label, w - 10, 0);
     gtk_label_set_justify ((GtkLabel *) label, GTK_JUSTIFY_LEFT);

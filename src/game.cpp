@@ -76,8 +76,8 @@ void game::load (const char *gamedir, const char *staticdir)
     npc *mynpc;
     quest *myquest;
     
-    // Load character module
-    PyObject *m = import_module ("character");
+    // Load some modules
+    PyObject *m = import_module ("ins_modules");
     Py_INCREF(m);
     
     // Create a player (later: load from file or whatever)
@@ -160,8 +160,8 @@ void game::load (const char *gamedir, const char *staticdir)
         // Make this quest available to the engine
         game::quests.set (myquest->name, myquest);
     }
-    
-    fclose (in);    
+
+    fclose (in);
 }
 
 // Save all dynamic gamedata to the gamedir

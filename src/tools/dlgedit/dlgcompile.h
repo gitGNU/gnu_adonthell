@@ -54,6 +54,10 @@ private:
 
     u_int8 npc_follows (DlgNode*);   // TRUE if player node(s) follow Circle
     u_int8 player_follows (DlgNode*);// TRUE if player node(s) follow Circle
+    u_int8 character_changed (Circle*);// TRUE if another NPC speaks
+
+    void get_prev_npc_nodes (Circle*, vector<Circle*>&);
+    void get_prev_npc_links (Circle*, vector<Circle*>&);
 };
 
 #endif // __COMPILE_H__
