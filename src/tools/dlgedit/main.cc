@@ -43,6 +43,7 @@ main (int argc, char *argv[])
     MainWnd->text_dlg = NULL;
     MainWnd->pixmap = NULL;
     MainWnd->project = NULL;
+    MainWnd->err = NULL;
 
     // create game_state array
     storage *game_state = new storage ();

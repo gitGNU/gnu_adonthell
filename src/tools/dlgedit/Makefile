@@ -56,7 +56,7 @@ LDFLAGS    =
 LOADLIBES := -lm -lstdc++ `gtk-config --libs`
 
 
-OBJECTS := ./callbacks.o ../../character.o ../../commands.o ./circle.o ./compile.o ./cond.tab.o ./crcle_callbacks.o ./crcle_interface.o ./create_code.o ./dlgnode.o ./events.o ../../generic_cmds.o ./geometrie.o ./graph.o ./interface.o ../../interpreter.o  ../../dialog_cmds.o ./lex.cond.o ./lex.loadlg.o ./lex.vars.o ./main.o ./pjt_interface.o ./pjt_callbacks.o ./preset.o ./project.o ./ps_callbacks.o ./ps_dlg.o ./ps_interface.o ./pset_callbacks.o ./pset_interface.o ./run.o ./run_callbacks.o ./run_interface.o ../../storage.o ./vars.tab.o ../../yarg.o
+OBJECTS := ./callbacks.o ../../character.o ../../commands.o ./circle.o ./compile.o ./cond.tab.o ./crcle_callbacks.o ./crcle_interface.o ./create_code.o ./dlgnode.o ./error_dlg.o ./err_callbacks.o ./err_interface.o ./events.o ../../generic_cmds.o ./geometrie.o ./graph.o ./interface.o ../../interpreter.o  ../../dialog_cmds.o ./lex.cond.o ./lex.loadlg.o ./lex.vars.o ./main.o ./pjt_interface.o ./pjt_callbacks.o ./preset.o ./project.o ./ps_callbacks.o ./ps_dlg.o ./ps_interface.o ./pset_callbacks.o ./pset_interface.o ./run.o ./run_callbacks.o ./run_interface.o ../../storage.o ./vars.tab.o ../../yarg.o
 
 #
 # dlgedit
@@ -122,6 +122,8 @@ clean:: tidy
 
 ./dlgnode.o: ../../types.h ./dlgnode.h /usr/include/gdk/gdktypes.h
 
+./error_dlg.o: ./err_callbacks.h ./err_interface.h ./error_dlg.h
+
 ./events.o: ../../character.h ../../types.h ./dlgnode.h ./graph.h ./main.h /usr/include/gdk/gdkkeysyms.h /usr/include/gdk/gdktypes.h /usr/include/gtk/gtk.h /usr/include/gtk/gtkstyle.h /usr/include/stdio.h
 
 ../../generic_cmds.o: /usr/include/string.h
@@ -142,13 +144,13 @@ clean:: tidy
 
 ./linked_list.o: ../../types.h ./linked_list.h /usr/include/stdlib.h
 
-./main.o: ../../character.h ../../commands.h ../../interpreter.h ../../types.h ./dlgnode.h ./graph.h ./interface.h ./main.h /usr/include/gdk/gdktypes.h /usr/include/gtk/gtk.h /usr/include/gtk/gtkstyle.h /usr/include/stdio.h
+./main.o: ../../character.h ../../commands.h ../../interpreter.h ../../types.h ./dlgnode.h ./error_dlg.h ./graph.h ./interface.h ./main.h /usr/include/gdk/gdktypes.h /usr/include/gtk/gtk.h /usr/include/gtk/gtkstyle.h /usr/include/stdio.h
 
 ./pjt_callbacks.o: ./pjt_callbacks.h ./pjt_interface.h /usr/include/gtk/gtk.h
 
 ./pjt_interface.o: ./pjt_callbacks.h ./pjt_interface.h /usr/include/gdk/gdkkeysyms.h /usr/include/gtk/gtk.h
 
-./preset.o: ../../interpreter.h ./preset.h ./pset_interface.h /usr/include/gtk/gtkstyle.h
+./preset.o: ./error_dlg.h ../../interpreter.h ./preset.h ./pset_interface.h /usr/include/gtk/gtkstyle.h
 
 ./project.o: ../../types.h ./project.h /usr/include/gtk/gtk.h /usr/include/stdio.h /usr/include/string.h
 

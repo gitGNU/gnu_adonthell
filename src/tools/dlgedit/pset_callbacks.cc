@@ -23,7 +23,8 @@ void
 on_preset_ok_pressed (GtkButton * button, gpointer user_data)
 {
     preset_dlg *dlg = (preset_dlg *) user_data;
-    dlg->on_ok (gtk_editable_get_chars ((GtkEditable *) dlg->entry, 0, -1));
+    if (!dlg->on_ok (gtk_editable_get_chars ((GtkEditable *) dlg->entry, 0, -1)))
+        return;
 
     // clean up
     gtk_main_quit ();

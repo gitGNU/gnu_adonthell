@@ -12,38 +12,43 @@
    See the COPYING file for more details.
 */
 
-#include <iostream.h>
-
 #include "preset.h"
 #include "pset_interface.h"
 #include "../../interpreter.h"
 
 extern int vars_compile (const char*, string&, vector<command*>&);
 
-preset_dlg::preset_dlg (string &v) : vars(v)
+preset_dlg::preset_dlg (string &v, error_dlg* e) : vars(v), err (e)
 {
     dlg = create_preset_dlg (this);
 }
 
 
-void preset_dlg::on_ok (char *v)
+int preset_dlg::on_ok (char *v)
 {
-    string error;
+    string error ("");
     vector<command*> code;
 
-    vars = v;
-
-    if (vars != "")
+    // is there any code at all -> try to compile
+    if (strcmp (v, ""))
     {
         vars_compile (v, error, code);
+
+        // compilation errors found
+        if (error != "")
+        {
+            // Either create a new error_dlg window, or bring it to front
+            if (!err) err = new error_dlg;
+            else err->to_front ();
+
+            // Display the error message
+            err->display (error.c_str ());
+            return 0;
+        }
     }
 
-    // test
-    ofstream out ("code.txt");
-    out << "\nError:\n" << error << "\n\nCode:";
-    for (u_int32 i = 0; i < code.size(); i++)
-        code[i]->ascii (out);
-
-    out.close ();
+    // everything turned out fine :)
+    vars = v;
+    return 1;
 }
 

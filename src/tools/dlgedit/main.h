@@ -19,6 +19,7 @@
 #include <string>
 #include <vector>
 #include "dlgnode.h"
+#include "error_dlg.h"
 #include "../../character.h"
 
 // Internal Editor Modes
@@ -76,9 +77,10 @@ typedef struct
     s_int32 scroll_x;           // Auto-scroll rate
     s_int32 scroll_y;           // Auto-scroll rate
     u_int8 scroll;              // Auto-scrolling on/off
-    
+
+    error_dlg *err;             // a dialog for displaying (error) messages
     string pset_vars;           // Preset variables for running the Dialogue
-    player* myplayer;           // A player object
+    player *myplayer;           // A player object
 }
 MainFrame;
 

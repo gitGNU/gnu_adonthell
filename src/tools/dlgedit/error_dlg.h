@@ -12,26 +12,22 @@
    See the COPYING file for more details.
 */
 
-#ifndef __PRESET_H__
-#define __PRESET_H__
+#ifndef __ERROR_DLG_H__
+#define __ERROR_DLG_H__
 
 #include <gtk/gtkstyle.h>
-#include <string>
-#include "error_dlg.h"
 
 // Set variables to be used for testing the Dialogue
-class preset_dlg
+class error_dlg
 {
 public:
-    preset_dlg (string&, error_dlg*);
+    error_dlg ();
 
     GtkWidget *dlg;             // The actual Dialogue Window
     GtkWidget *entry;           // The Text entry
 
-    string &vars;               // The text users entered
-    error_dlg *err;             // The Widget for displaying error messages
-
-    int on_ok (char*);          // Accepted changes    
+    void to_front ();           // Bring dialog to front
+    void display (const char*); // Display some text
 };
 
-#endif // __PRESET_H__
+#endif // __ERROR_DLG_H__

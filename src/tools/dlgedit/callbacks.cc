@@ -142,7 +142,9 @@ on_dialogue_run_activate (GtkMenuItem * menuitem, gpointer user_data)
 void 
 on_dialogue_variables_activate (GtkMenuItem * menuitem, gpointer user_data)
 {
-    preset_dlg dlg (((MainFrame *) user_data)->pset_vars);
+    MainFrame *wnd = (MainFrame *) user_data;
+    
+    preset_dlg dlg (wnd->pset_vars, wnd->err);
     gtk_main ();
     
     if (!&dlg) return;
