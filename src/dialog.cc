@@ -186,8 +186,12 @@ void dialog::run (u_int32 index)
 
         // check if some text is left at all
         size = PyList_Size (speech);
-        if (size == 0) return;
-
+        if (size == 0) 
+        {
+            i_text = text_.begin ();
+            return;
+        }
+                
         // prepare the random number generator        
         yarg::range (0, size - 1);
 
