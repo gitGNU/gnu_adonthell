@@ -19,8 +19,8 @@
  */ 
 
 
-#ifndef _image_h
-#define _image_h
+#ifndef IMAGE_H
+#define IMAGE_H
  
 #include "fileops.h"
 #include "screen.h"
@@ -284,38 +284,42 @@ class image : public drawable
      */ 
     void put_pix (u_int16 x, u_int16 y, u_int32 col);
  
- private:
-#ifdef _EDIT_
-    /// Raw image data
-    void *simpledata;
-#endif
-    /// Drawing area where to draw to
-    drawing_area *draw_to;
+    /**
+     * Image copy. 
+     * 
+     */
+    image & operator = (image & im);
+
+private:
 
     /// Correctly prepare the blitting operation into the
     /// attached drawing_area.
-    inline void get_rects (s_int16 x, s_int16 y);
-
-#ifdef _DEBUG_
-    static u_int16 a_d_diff;
-#endif
-    /// Actual image.
-    SDL_Surface *data;
-
-    /// Bytes per pixel (image depth).
-    u_int8 bytes_per_pixel;
-
-    /// Is mask on? 
-    bool mask_on;
-
-    /// Alpha value.
-    u_int8 alpha_;
-
+    void get_rects (s_int16 x, s_int16 y);
+    
     /// Initialise an image.
     void init ();
 
- public:
+    /// Drawing area where to draw to
+    drawing_area *draw_to;
+         
+    /// Actual image.
+    SDL_Surface *data;
+    
+    /// Bytes per pixel (image depth).
+    u_int8 bytes_per_pixel;
+    
+    /// Is mask on? 
+    bool mask_on;
+    
+    /// Alpha value.
+    u_int8 alpha_;
+     
 #ifdef _EDIT_
+    /// Raw image data
+    void *simpledata;
+
+public:
+    
     /** Save an image into an opened file, in %game format, with
      *  alpha and mask values.
      *  @param file opened file where to save into.
@@ -376,14 +380,12 @@ class image : public drawable
      */
     s_int8 save_pnm (string fname);
 
-#endif
+#endif // _EDIT_
 
 #ifndef SWIG
-    /// Image copy.
-    image & operator = (image & im);
     friend class drawable; 
     friend class data_screen;
-#endif
+#endif // SWIG
 };
 
-#endif
+#endif // IMAGE_H
