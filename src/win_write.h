@@ -32,8 +32,8 @@ class win_write : public win_base
   char text_result[TEXT_MAX];
   
   text_w text;
-  int beg_select;
-  int end_select;
+  /*  int beg_select;
+      int end_select;*/
   bool ok_text;
   
  

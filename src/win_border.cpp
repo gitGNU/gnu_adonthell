@@ -49,7 +49,6 @@ void win_border::update()
 
 win_border::~win_border()
 {
- 
   if(h_border_template) delete h_border_template;
   if(v_border_template)  delete v_border_template;
   if(corner) delete corner;

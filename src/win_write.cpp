@@ -33,8 +33,8 @@ win_write::win_write(u_int16 tx,u_int16 ty,u_int16 tl,u_int16 th,win_font *fo,wi
   text.pos=0;
   text.pos_tmp=0;
   text.end_win=false;
-  beg_select=0;
-  end_select=-2;
+  /*  beg_select=0;
+      end_select=-2;*/
   ok_text=false;
 }
 
@@ -49,19 +49,23 @@ win_write::~win_write()
 
 bool win_write::is_text()
 {
-  return((end_select>=0) && (end_select-beg_select>0) && ok_text);
+  //  return((end_select>=0) && (end_select-beg_select>0) && ok_text);
+  return(ok_text);
 }
 
 char * win_write::get_text()
 {
   if (is_text())
     { 
-      register int i=0;
-      register int j=beg_select;
-      while(i<=(end_select-beg_select))
-	text_result[i++]=text.text[j++];
+      u_int16 i;
+      //      register int j=beg_select;
+      //      while(i<=(end_select-beg_select))
+      //	text_result[i++]=text.text[j++];
+      for(i=0;i<text.lenght;i++)
+	text_result[i]=text.text[i];
       text_result[i]='\0';
       ok_text=false;
+      cout << text_result << endl;
       return text_result;
     }
   else return NULL;
@@ -103,16 +107,16 @@ void win_write::write()
 	{
 	  if(c==SDLK_RETURN)
 	    {
-	      beg_select=end_select+2;
-	      end_select=(text.lenght-1);
-	      cout << beg_select << " " << end_select << endl;
+	      //	      beg_select=end_select+2;
+	      //      end_select=(text.lenght-1);
 	      ok_text=true;
-	      text.text[text.lenght++]='\n';
+	      text.text[text.lenght++]='\0';
 	    }
 	  else
 	    {
-	      if(c==SDLK_BACKSPACE && text.lenght>0) 
+	      if(c==SDLK_BACKSPACE) 
 		{
+		  if(text.lenght<=0) return;
 		  text.lenght--;
 		  if(text.pos>0) text.pos--;
 		}
