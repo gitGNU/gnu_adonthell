@@ -16,11 +16,13 @@
 #define _screen_h
 
 #include "types.h"
+#include "prefs.h"
 
 class screen
 {
   static u_int16 width;
   static u_int16 height;
+  static u_int32 SDL_flags; // Used for fullscreen and other flags
 
   static void init_gfx_buffers();
   // Called by init_display to init the drawable fx buffers.
@@ -34,7 +36,7 @@ class screen
   static SDL_Surface * getbuffer;
 
   static void set_video_mode(u_int16 w, u_int16 h);
-  static void init_display();
+  static void init_display(config *myconfig);
   static void show();
   // update the screen.
 
@@ -48,6 +50,7 @@ class screen
   static void mouse_cursor_off();
   static void mouse_cursor_on();
   // Mouse cursor display functions.
+
 };
 
 #endif

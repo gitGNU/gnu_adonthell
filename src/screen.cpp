@@ -18,9 +18,11 @@
 #include "screen.h"
 #include "image.h"
 #include "pnm.h"
+#include "prefs.h"
 
 u_int16 screen::width;
 u_int16 screen::height;
+u_int32 screen::SDL_flags;
 u_int8 screen::frames_to_do;
 u_int8 screen::bytes_per_pixel;
 u_int32 screen::trans;
@@ -38,7 +40,7 @@ void screen::set_video_mode(u_int16 w, u_int16 h)
   }
   
   atexit (SDL_Quit);
-  bpp=SDL_VideoModeOK(w, h, 16, SDL_HWSURFACE);
+  bpp = SDL_VideoModeOK(w, h, 16, SDL_HWSURFACE | SDL_flags);
 
   switch (bpp)
     {
@@ -67,7 +69,8 @@ void screen::set_video_mode(u_int16 w, u_int16 h)
   width=w;
   height=h;
 
-  vis=SDL_SetVideoMode(w, h, bpp, SDL_HWSURFACE);
+  // Set the video mode
+  vis=SDL_SetVideoMode(w, h, bpp, SDL_HWSURFACE | SDL_flags);
   if (vis == NULL) 
     {
       fprintf (stderr, "error: %s\n", SDL_GetError ());
@@ -82,10 +85,22 @@ void screen::set_video_mode(u_int16 w, u_int16 h)
   frames_to_do=1;
 }
 
-void screen::init_display()
-{  
-  width = 320;
-  height = 200;
+void screen::init_display(config *myconfig)
+{
+  SDL_flags = 0x0;
+
+  // Set width and height of display
+  if (myconfig->screen_resolution == 1) {
+    width = 640;
+    height = 480;
+  } else {
+    width = 320;
+    height = 200;
+  }
+
+  // Check for full screen mode
+  if (myconfig->screen_mode == 1) SDL_flags |= SDL_FULLSCREEN;
+
   set_video_mode(width, height);
 }
 

@@ -31,7 +31,8 @@ SDL_Thread *game::audio_thread;
 
 void game::init(config &myconfig)
 {
-  screen::init_display ();
+  // Pass on resolution/general display data
+  screen::init_display (&myconfig);
       
 #ifdef SDL_MIXER
   
