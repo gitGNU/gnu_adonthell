@@ -60,3 +60,5 @@ void on_condition_list_unselect_row (GtkCList * clist, gint row, gint column, Gd
 void on_fs_ok_button_pressed (GtkButton * button, gpointer user_data);
 
 void on_fs_cancel_button_pressed (GtkButton * button, gpointer user_data);
+
+void on_warning_close_clicked (GtkButton * button, gpointer user_data);

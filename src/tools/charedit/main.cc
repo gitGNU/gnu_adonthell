@@ -13,6 +13,7 @@
 */
 
 #include <gtk/gtk.h>
+#include <fstream.h>
 #include <stdio.h>
 
 #include "main.h"
@@ -35,18 +36,17 @@ main (int argc, char *argv[])
     return 0;
 }
 
-gchar *
-main_wnd::events[5] = { "Enter", "Leave", "Pickup", "Drop", "Kill" };
-gchar *
-main_wnd::races[4] = { "Dwarf", "Elf", "Half-Elf", "Human" };
-gchar *
-main_wnd::gender[2] = { "Female", "Male" };
+gchar *main_wnd::events[5] = { "Enter", "Leave", "Pickup", "Drop", "Kill" };
+gchar *main_wnd::races[4] = { "Dwarf", "Elf", "Half-Elf", "Human" };
+gchar *main_wnd::gender[2] = { "Female", "Male" };
 
 main_wnd::main_wnd ()
 {
     attribute_list_sel = -1;
     event_list_sel = -1;
     last_dir = "";
+    char_dir = g_get_current_dir ();
+    cur_dir = NULL;
 }
 
 // load a few default attributes from a file
@@ -93,7 +93,7 @@ main_wnd::colorify_list (GtkCList * list)
     color.blue = 65000;
     color.green = 55000;
 
-    // can't think of a better way to find end of list :P
+    // can't think of a better way to iterate through the CList :P
     while (gtk_clist_get_text (list, i++, 0, &str))
         if (!(i % 2))
             gtk_clist_set_background (list, i - 1, &color);
@@ -111,14 +111,90 @@ main_wnd::get_option (GtkOptionMenu * o)
     return (gchar *) gtk_object_get_user_data (GTK_OBJECT (i));
 }
 
-gchar*
+// Write all info to a file
+void 
+main_wnd::write_character_source ()
+{
+    if (cur_dir == NULL) return;
+
+    gchar *name, *dialogue, *schedule, *tmp, *fname;
+    gchar *str;
+    int i = 0;
+    ofstream file;
+
+    // Make chosen directory default directory 
+    g_free (char_dir);
+    char_dir = g_strdup (cur_dir);
+
+    // create filename from chosen directory and the character's name
+    fname = g_strdup (name);
+    g_strdown (fname);
+    g_strdelimit (fname, " ", '_');
+    tmp = g_strconcat (cur_dir, fname, ".character", NULL);
+
+    // try to open file
+    file.open (tmp);
+    if (!file)
+    {
+        create_warning ("    Save failed!");
+        gtk_main ();
+        g_free (tmp);
+        g_free (fname);
+        return;
+    }
+
+    // Get some data
+    name = g_strstrip (gtk_entry_get_text (GTK_ENTRY (name_entry)));
+    schedule = g_strstrip (gtk_entry_get_text (GTK_ENTRY (scl_entry)));
+    dialogue = g_strstrip (gtk_entry_get_text (GTK_ENTRY (dlg_entry)));
+
+    // write stuff to file
+    file << "# Adonthell character source file\n\n";
+
+    file << "basic:\n";
+    file << "name = " << name << "\n";
+    file << "race = " << get_option (GTK_OPTION_MENU (race_choice)) << "\n";
+    file << "gender = " << get_option (GTK_OPTION_MENU (gender_choice)) << "\n";
+
+    file << "\nattributes:\n";
+    while (gtk_clist_get_text (GTK_CLIST (attribute_list), i, 0, &str))
+    {
+        file << str << " = ";
+        gtk_clist_get_text (GTK_CLIST (attribute_list), i++, 1, &str);
+        file << str << "\n";
+    }
+
+    i = 0;
+    file << "\nevents:\n";
+    while (gtk_clist_get_text (GTK_CLIST (event_list), i, 0, &str))
+    {
+        file << "type = " << str << "\n";
+        gtk_clist_get_text (GTK_CLIST (event_list), i, 1, &str);
+        file << "script = " << str << "\n";
+        gtk_clist_get_text (GTK_CLIST (event_list), i++, 2, &str);
+        file << "parameters = " << str << "\n";
+    }
+
+    file << "\nactions:\n";
+    file << "schedule = " << schedule << "\n";
+    file << "dialogue = " << dialogue << "\n";
+
+    // clean up
+    file.close ();
+    g_free (tmp);
+    g_free (fname);
+}
+
+
+gchar *
 main_wnd::get_script ()
 {
     GString *file = g_string_new ("");
     gchar *script;
     int i, j;
-    
+
     GtkWidget *fs = create_fileselection (file, false);
+
     gtk_file_selection_set_filename ((GtkFileSelection *) fs, last_dir);
 
     // chose file
@@ -140,11 +216,11 @@ main_wnd::get_script ()
 
     script = g_strndup (script, j);
     g_string_free (file, TRUE);
-    
-    return script; 
+
+    return script;
 }
 
-event_wnd::event_wnd (main_wnd *wnd, gchar *event)
+event_wnd::event_wnd (main_wnd * wnd, gchar * event)
 {
     main = wnd;
     ok = false;
@@ -152,7 +228,7 @@ event_wnd::event_wnd (main_wnd *wnd, gchar *event)
     params = "";
 
     condition_list_sel = -1;
-    
+
     GtkWidget *event_dlg = create_event_wnd (this, event);
 
     gtk_widget_show (event_dlg);

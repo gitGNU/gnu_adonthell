@@ -17,6 +17,7 @@
 
 #include "callbacks.h"
 #include "interface.h"
+#include "dirbrowser.h"
 #include "main.h"
 
 // File menu "Open"
@@ -30,7 +31,49 @@ on_open_activate (GtkMenuItem * menuitem, gpointer user_data)
 void
 on_save_activate (GtkMenuItem * menuitem, gpointer user_data)
 {
+    main_wnd *wnd = (main_wnd *) user_data;
+    gchar *name, *dialogue, *schedule;
+    GtkWidget *dir_browser;
 
+    // check a few things:
+    // has the character a name?
+    name = g_strstrip (gtk_entry_get_text (GTK_ENTRY (wnd->name_entry)));
+    if (name == NULL || !strcmp (name, ""))
+    {
+        gtk_notebook_set_page (GTK_NOTEBOOK (wnd->notebook), 0);
+        gtk_widget_grab_focus (wnd->name_entry);
+        create_warning ("The character has no name!\n\nThe name is not only a simple attribute of the character, it is also an ID needed by the game engine to access the character data.");
+        gtk_main ();
+        return;
+    }
+    
+    // has the character a schedule?
+    schedule = g_strstrip (gtk_entry_get_text (GTK_ENTRY (wnd->scl_entry)));
+    if (schedule == NULL || !strcmp (schedule, ""))
+    {
+        gtk_notebook_set_page (GTK_NOTEBOOK (wnd->notebook), 3);
+        gtk_widget_grab_focus (wnd->scl_entry);
+        create_warning ("The character has no schedule!\n\nSchedules control the character's movements and behaviour. Without a schedule it will remain frozen.");
+        gtk_main ();
+        return;
+    }
+
+    // has the character a dialogue?
+    dialogue = g_strstrip (gtk_entry_get_text (GTK_ENTRY (wnd->dlg_entry)));
+    if (dialogue == NULL || !strcmp (dialogue, ""))
+    {
+        gtk_notebook_set_page (GTK_NOTEBOOK (wnd->notebook), 3);
+        gtk_widget_grab_focus (wnd->dlg_entry);
+        create_warning ("The character has no dialogue!\n\nWithout a dialogue, the character will not be able to respond to the player when contacted.");
+        gtk_main ();
+        return;
+    }
+
+    // chose directory to save to
+    dir_browser = xmms_create_dir_browser ("Select character directory", wnd->char_dir, GTK_SELECTION_SINGLE, wnd);
+    gtk_main ();
+
+    wnd->write_character_source ();
 }
 
 // File menu "Quit"
@@ -174,6 +217,7 @@ on_event_add_clicked (GtkButton * button, gpointer user_data)
 
     // and create the dialog
     event_wnd dlg (wnd, event);
+
     gtk_main ();
 
     if (dlg.ok)
@@ -225,7 +269,7 @@ on_event_update_clicked (GtkButton * button, gpointer user_data)
     gtk_clist_get_text (GTK_CLIST (wnd->event_list), wnd->event_list_sel, 1, &script);
     gtk_clist_get_text (GTK_CLIST (wnd->event_list), wnd->event_list_sel, 2, &params);
     gtk_entry_set_text (GTK_ENTRY (dlg.script_entry), script);
-    
+
     pairs = g_strsplit (params, ", ", 0);
 
     while (pairs[i] != NULL)
@@ -244,7 +288,7 @@ on_event_update_clicked (GtkButton * button, gpointer user_data)
     }
 
     g_strfreev (pairs);
-    
+
     gtk_main ();
 
     if (dlg.ok)
@@ -307,7 +351,7 @@ void
 on_event_browse_clicked (GtkButton * button, gpointer user_data)
 {
     event_wnd *wnd = (event_wnd *) user_data;
-    gchar *script  = wnd->main->get_script ();
+    gchar *script = wnd->main->get_script ();
 
     gtk_entry_set_text (GTK_ENTRY (wnd->script_entry), script);
 }
@@ -322,7 +366,14 @@ on_event_ok_clicked (GtkButton * button, gpointer user_data)
     int i = 0;
 
     // get script
-    wnd->script = g_strdup (gtk_entry_get_text (GTK_ENTRY (wnd->script_entry)));
+    wnd->script = g_strstrip (g_strdup (gtk_entry_get_text (GTK_ENTRY (wnd->script_entry))));
+    if (wnd->script == NULL || !strcmp (wnd->script, ""))
+    {
+        gtk_widget_grab_focus (wnd->script_entry);
+        create_warning ("The event has no script assigned!\n\nThe script defines what happens if the event occurs. Without it, the event remains useless.");
+        gtk_main ();
+        return;
+    }
 
     // get conditions
     while (gtk_clist_get_text (GTK_CLIST (wnd->condition_list), i, 1, &entry))
@@ -331,8 +382,9 @@ on_event_ok_clicked (GtkButton * button, gpointer user_data)
         {
             gtk_clist_get_text (GTK_CLIST (wnd->condition_list), i, 0, &condition);
 
-            if (strcmp (params->str, "")) g_string_append (params, ", ");
-                
+            if (strcmp (params->str, ""))
+                g_string_append (params, ", ");
+
             g_string_append (params, condition);
             g_string_append (params, "=");
             g_string_append (params, entry);
@@ -340,7 +392,7 @@ on_event_ok_clicked (GtkButton * button, gpointer user_data)
 
         i++;
     }
-    
+
     wnd->params = params->str;
     wnd->ok = true;
 
@@ -363,7 +415,8 @@ on_condition_update_clicked (GtkButton * button, gpointer user_data)
     gchar *condition;
 
     // No Condition selected
-    if (wnd->condition_list_sel < 0) return;
+    if (wnd->condition_list_sel < 0)
+        return;
 
     // Update the value
     condition = gtk_entry_get_text (GTK_ENTRY (wnd->condition_entry));
@@ -379,7 +432,7 @@ on_condition_list_select_row (GtkCList * clist, gint row, gint column, GdkEvent 
 {
     event_wnd *wnd = (event_wnd *) user_data;
     gchar *condition, *entry;
-    
+
     wnd->condition_list_sel = row;
 
     // Update the label text
@@ -399,12 +452,12 @@ on_condition_list_unselect_row (GtkCList * clist, gint row, gint column, GdkEven
 
     gtk_label_set_text (GTK_LABEL (wnd->condition_label), "Value");
     gtk_entry_set_text (GTK_ENTRY (wnd->condition_entry), "");
-    
+
     wnd->condition_list_sel = -1;
 }
 
 // File-Selection: ok -> get file name
-void 
+void
 on_fs_ok_button_pressed (GtkButton * button, gpointer user_data)
 {
     GtkFileSelection *fs = (GtkFileSelection *) gtk_widget_get_ancestor (GTK_WIDGET (button), GTK_TYPE_FILE_SELECTION);
@@ -416,7 +469,7 @@ on_fs_ok_button_pressed (GtkButton * button, gpointer user_data)
 }
 
 // File-Selection: cancel -> no file name
-void 
+void
 on_fs_cancel_button_pressed (GtkButton * button, gpointer user_data)
 {
     GtkFileSelection *fs = (GtkFileSelection *) gtk_widget_get_ancestor (GTK_WIDGET (button), GTK_TYPE_FILE_SELECTION);
@@ -425,3 +478,8 @@ on_fs_cancel_button_pressed (GtkButton * button, gpointer user_data)
     gtk_main_quit ();
 }
 
+void
+on_warning_close_clicked (GtkButton * button, gpointer user_data)
+{
+    on_widget_destroy (GTK_WIDGET (user_data), NULL);
+}

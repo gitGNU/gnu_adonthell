@@ -22,6 +22,7 @@ class main_wnd
   public:
     main_wnd ();
 
+    void write_character_source ();
     void load_list_defaults (GtkCList *, gchar *, gchar *);
     void colorify_list (GtkCList *);
     gchar *get_option (GtkOptionMenu *);
@@ -33,6 +34,7 @@ class main_wnd
     GtkWidget *attrib_entry;
     GtkWidget *val_entry;
     GtkWidget *attribute_list;
+    GtkWidget *notebook;
     int attribute_list_sel;
 
     GtkWidget *event_choice;
@@ -43,7 +45,9 @@ class main_wnd
     GtkWidget *scl_entry;
 
     gchar *last_dir;
-    
+    gchar *char_dir;
+    gchar *cur_dir;
+
     static gchar *events[5];    // = { "Enter", "Leave", "Pickup", "Drop", "Kill" };
     static gchar *races[4];     // = { "Dwarf", "Elf", "Half-Elf", "Human" };
     static gchar *gender[2];    // = { "Female", "Male" }; 
@@ -52,7 +56,7 @@ class main_wnd
 class event_wnd
 {
   public:
-    event_wnd (main_wnd*, gchar*);
+    event_wnd (main_wnd *, gchar *);
 
     GtkWidget *script_entry;
     GtkWidget *condition_label;

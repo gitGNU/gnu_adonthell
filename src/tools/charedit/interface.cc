@@ -157,6 +157,7 @@ create_main_wnd (main_wnd & wnd)
     gtk_object_set_data_full (GTK_OBJECT (main_wnd), "notebook1", notebook1, (GtkDestroyNotify) gtk_widget_unref);
     gtk_widget_show (notebook1);
     gtk_box_pack_start (GTK_BOX (vbox1), notebook1, TRUE, TRUE, 0);
+    wnd.notebook = notebook1;
 
     vbox3 = gtk_vbox_new (FALSE, 0);
     gtk_widget_ref (vbox3);
@@ -516,7 +517,7 @@ create_main_wnd (main_wnd & wnd)
     gtk_object_set_data_full (GTK_OBJECT (main_wnd), "schedule_entry", schedule_entry, (GtkDestroyNotify) gtk_widget_unref);
     gtk_widget_show (schedule_entry);
     gtk_box_pack_start (GTK_BOX (hbox11), schedule_entry, FALSE, FALSE, 0);
-    gtk_tooltips_set_tip (tooltips, schedule_entry, "Enter the initial schedule script that shall control this characters movement.", 0);
+    gtk_tooltips_set_tip (tooltips, schedule_entry, "Enter the initial schedule script that shall control this character's movement.", 0);
     wnd.scl_entry = schedule_entry;
 
     chose_schedule = gtk_button_new_with_label ("Browse ...");
@@ -561,8 +562,8 @@ create_main_wnd (main_wnd & wnd)
     gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook1), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook1), 3), label14);
 
     gtk_signal_connect (GTK_OBJECT (main_wnd), "delete_event", GTK_SIGNAL_FUNC (on_widget_destroy), NULL);
-    gtk_signal_connect (GTK_OBJECT (open), "activate", GTK_SIGNAL_FUNC (on_open_activate), NULL);
-    gtk_signal_connect (GTK_OBJECT (save), "activate", GTK_SIGNAL_FUNC (on_save_activate), NULL);
+    gtk_signal_connect (GTK_OBJECT (open), "activate", GTK_SIGNAL_FUNC (on_open_activate), &wnd);
+    gtk_signal_connect (GTK_OBJECT (save), "activate", GTK_SIGNAL_FUNC (on_save_activate), &wnd);
     gtk_signal_connect (GTK_OBJECT (quit), "activate", GTK_SIGNAL_FUNC (on_widget_destroy), NULL);
     gtk_signal_connect (GTK_OBJECT (attrib_update), "clicked", GTK_SIGNAL_FUNC (on_attrib_update_clicked), &wnd);
     gtk_signal_connect (GTK_OBJECT (attrib_remove), "clicked", GTK_SIGNAL_FUNC (on_attrib_remove_clicked), &wnd);
@@ -801,4 +802,69 @@ create_fileselection (GString * file, bool fileops)
     gtk_widget_grab_default (fs_ok_button);
 
     return fileselection1;
+}
+
+GtkWidget *
+create_warning (gchar * message)
+{
+    GtkWidget *warning;
+    GtkWidget *vbox1;
+    GtkWidget *label;
+    GtkWidget *hseparator1;
+    GtkWidget *hbuttonbox1;
+    GtkWidget *warning_close;
+
+    warning = gtk_window_new (GTK_WINDOW_DIALOG);
+    gtk_object_set_data (GTK_OBJECT (warning), "warning", warning);
+    gtk_window_set_title (GTK_WINDOW (warning), "Warning");
+    gtk_window_set_position (GTK_WINDOW (warning), GTK_WIN_POS_MOUSE);
+    gtk_window_set_modal (GTK_WINDOW (warning), TRUE);
+    gtk_window_set_policy (GTK_WINDOW (warning), FALSE, FALSE, TRUE);
+
+    vbox1 = gtk_vbox_new (FALSE, 0);
+    gtk_widget_ref (vbox1);
+    gtk_object_set_data_full (GTK_OBJECT (warning), "vbox1", vbox1, (GtkDestroyNotify) gtk_widget_unref);
+    gtk_widget_show (vbox1);
+    gtk_container_add (GTK_CONTAINER (warning), vbox1);
+    gtk_container_set_border_width (GTK_CONTAINER (vbox1), 4);
+
+    label = gtk_label_new (message);
+    gtk_widget_ref (label);
+    gtk_object_set_data_full (GTK_OBJECT (warning), "label", label, (GtkDestroyNotify) gtk_widget_unref);
+    gtk_widget_show (label);
+    gtk_box_pack_start (GTK_BOX (vbox1), label, TRUE, TRUE, 0);
+    gtk_label_set_justify (GTK_LABEL (label), GTK_JUSTIFY_LEFT);
+    gtk_label_set_line_wrap (GTK_LABEL (label), TRUE);
+    gtk_misc_set_alignment (GTK_MISC (label), 0, 0);
+    gtk_misc_set_padding (GTK_MISC (label), 10, 10);
+
+    hseparator1 = gtk_hseparator_new ();
+    gtk_widget_ref (hseparator1);
+    gtk_object_set_data_full (GTK_OBJECT (warning), "hseparator1", hseparator1, (GtkDestroyNotify) gtk_widget_unref);
+    gtk_widget_show (hseparator1);
+    gtk_box_pack_start (GTK_BOX (vbox1), hseparator1, FALSE, TRUE, 4);
+    gtk_widget_set_usize (hseparator1, 200, -2);
+
+    hbuttonbox1 = gtk_hbutton_box_new ();
+    gtk_widget_ref (hbuttonbox1);
+    gtk_object_set_data_full (GTK_OBJECT (warning), "hbuttonbox1", hbuttonbox1, (GtkDestroyNotify) gtk_widget_unref);
+    gtk_widget_show (hbuttonbox1);
+    gtk_box_pack_start (GTK_BOX (vbox1), hbuttonbox1, FALSE, FALSE, 0);
+
+    warning_close = gtk_button_new_with_label ("Close");
+    gtk_widget_ref (warning_close);
+    gtk_object_set_data_full (GTK_OBJECT (warning), "warning_close", warning_close, (GtkDestroyNotify) gtk_widget_unref);
+    gtk_widget_show (warning_close);
+    gtk_container_add (GTK_CONTAINER (hbuttonbox1), warning_close);
+    GTK_WIDGET_SET_FLAGS (warning_close, GTK_CAN_DEFAULT);
+
+    gtk_signal_connect (GTK_OBJECT (warning), "delete_event", GTK_SIGNAL_FUNC (on_widget_destroy), NULL);
+    gtk_signal_connect (GTK_OBJECT (warning_close), "clicked", GTK_SIGNAL_FUNC (on_warning_close_clicked), warning);
+
+    gtk_widget_grab_focus (warning_close);
+    gtk_widget_grab_default (warning_close);
+
+    gtk_widget_show (warning);
+
+    return warning;
 }

@@ -20,5 +20,6 @@
 GtkWidget *create_main_wnd (main_wnd &);
 GtkWidget *create_event_wnd (event_wnd *, gchar *);
 GtkWidget *create_fileselection (GString *, bool);
+GtkWidget *create_warning (gchar *);
 
 #endif // __INTERFACE_H__
