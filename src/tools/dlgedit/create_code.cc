@@ -195,7 +195,7 @@ void create_code (string &prog, vector<command*> &script)
 
             case JMP:
             {
-                cmd = new jmp_cmd (num_cmds[index]+1);
+                cmd = new jmp_cmd (num_cmds[index]);
                 block.push_back (cmd);
                 
                 // cout << "[" << rec << "] Jmp " << num_cmds[index]+1 << "\n";
@@ -214,7 +214,7 @@ void create_code (string &prog, vector<command*> &script)
             
             case BRANCH:
             {
-                cmd = new branch_cmd (num_cmds[index]+1-cur_cmds, vars[j].c_str ());
+                cmd = new branch_cmd (num_cmds[index]-cur_cmds, vars[j].c_str ());
                 block.push_back (cmd);
                 
                 // cout << "[" << rec << "] Branch " << vars[j] << " " << num_cmds[index]+1-cur_cmds << "\n";

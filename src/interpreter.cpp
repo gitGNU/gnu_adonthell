@@ -32,7 +32,7 @@ char* command::strread (s_int32 *buffer, u_int32 &i)
     tmp[buffer[i]] = 0;
 
     // let i point after the string
-    i += 1 + strlen (tmp)/4 + strlen (tmp)%4;
+    i += 2 + strlen (tmp)/4; //  + strlen (tmp)%4;
 
     return tmp;
 }
