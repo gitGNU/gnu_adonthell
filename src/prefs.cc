@@ -36,7 +36,7 @@
 config::config () 
 {
     // set some default values where possible
-#ifdef WIN32
+#if defined (WIN32) || defined (__APPLE__)
     screen_mode = 1;                // Fullscreen
 #else
     screen_mode = 0;                // Fullscreen
@@ -54,7 +54,7 @@ config::config ()
     language = "";                  // Let the user's environment decide
 
     // set the path to the adonthellrc file:
-#ifndef WIN32
+#ifndef SINGLE_DIR_INST
     adonthellrc = string (getenv ("HOME")) + "/.adonthell";
 #else
     adonthellrc = string (".");

@@ -1,7 +1,7 @@
 /*
    $Id$
  
-   Copyright (C) 1999/2000/2001/2002 Kai Sterker <kaisterker@linuxgames.com>
+   Copyright (C) 1999/2000/2001/2002/2003 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -95,6 +95,8 @@ bool init_python()
 extern "C"
 int main(int argc, char * argv[])
 {
+    config myconfig;
+
 #ifdef MEMORY_LEAKS
     // to debug memory leaks with mtrace. It's better to use
     // a tool like memprof, mpatrol or valgrind though.
@@ -102,7 +104,7 @@ int main(int argc, char * argv[])
 #endif
 
     // init game environment
-#if !defined (WIN32) 
+#if !defined (SINGLE_DIR_INST) 
     game::init (DATA_DIR);
 #else
     // change working directory to the application's location.
@@ -115,6 +117,10 @@ int main(int argc, char * argv[])
         str = strrchr (argv[0], '/');
         *(str + 1) = 0;
         chdir (argv[0]);
+
+        // FIXME: this should go once we have our 'game launcher' gui 
+        myconfig.gamedir = string (argv[0]) + "/games/wastesedge";
+
         *(str + 1) = '/';
     }
     
@@ -128,8 +134,6 @@ int main(int argc, char * argv[])
     
     game::init (buf);
 #endif
-
-    config myconfig;
 
     // read the $HOME/.adonthell/adonthellrc file
     // and check the arguments we recieved.

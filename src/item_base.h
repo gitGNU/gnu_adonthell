@@ -355,7 +355,7 @@ protected:
      */
     //@{
     friend u_int32 slot::add (item_base * item, const u_int32 & count = 1);
-    friend bool slot::remove (item_base * item, const u_int32 & count = 1);
+    friend u_int32 slot::remove (item_base * item, const u_int32 & count = 1);
 
     /**
      * Add an item (or stack of items) to this item's stack. We assume

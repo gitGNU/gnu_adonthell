@@ -38,7 +38,7 @@ string game::Game_data_dir;
 void game::init (string game_dir) 
 {
     Global_data_dir = game_dir;
-#ifndef WIN32
+#ifndef SINGLE_DIR_INST
     User_data_dir = getenv ("HOME");
     User_data_dir += "/.adonthell";
 #else

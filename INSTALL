@@ -161,9 +161,9 @@ this directory.
 --disable-vorbistest
 --disable-gtktest
 
-  If configure claims to not find the SDL library, OggVorbis or
+  If configure claims to not find the SDL library, Ogg Vorbis or
 GTK+ although they are there, or if you try to cross-compile, 
-you can disable the test. 
+you can disable the respective test. 
 
 Another way to workaround such a problem might be to recreate 
 'configure' by running the 'autogen.sh' script.
