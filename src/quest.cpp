@@ -12,8 +12,6 @@
    See the COPYING file for more details.
 */
 
-#include "game.h"
-#include "py_inc.h"
 #include "quest.h"
 
 // Save a quest object
@@ -62,7 +60,4 @@ void quest::load (FILE *in)
 
         set (key, value);
     }
-
-    // Make this quest available to the engine
-    game::quests.set (name, this);
 }

@@ -61,7 +61,7 @@ void game::init(config &myconfig)
     }
     
     // Set the theme (later: get theme from config file)
-    theme = "original/"; // strdup ((myconfig.window_theme + "/").c_str ());
+    theme = strdup ((myconfig.window_theme + "/").c_str ());
 
     // load the game (later: continue with the last saved game?!)
     load (myconfig.datadir.c_str (), myconfig.datadir.c_str ());    
@@ -156,6 +156,9 @@ void game::load (const char *gamedir, const char *staticdir)
         
         // Pass quest over to Python interpreter
         PyDict_SetItemString (quests, myquest->name, pass_instance (myquest, "quest"));
+
+        // Make this quest available to the engine
+        quests.set (myquest->name, myquest);
     }
     
     fclose (in);    
