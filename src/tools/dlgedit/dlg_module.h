@@ -46,6 +46,18 @@ public:
     void draw (GdkPixmap *surface, DlgPoint &offset) { }
 
     /**
+     * Add the given node to the dialogue.
+     * @param node the DlgNode to add.
+     */    
+    void addNode (DlgNode *node);
+    
+    /**
+     * Delete the currently selected node from the dialogue. If the node 
+     * is a circle, also deletes all attached arrows.
+     */
+    void deleteNode ();
+    
+    /**
      * Select a node from the list of nodes.
      * @param node The DlgNode to select.
      * @return <b>true</b> if the node has been selected, <b>false</b>

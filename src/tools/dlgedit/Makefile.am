@@ -27,6 +27,7 @@ dlgedit_SOURCES = \
     gui_graph_events.cc \
     gui_list.cc \
     gui_list_events.cc \
+    gui_messages.cc \
     gui_modal_dialog.cc \
     gui_tooltip.cc \
     lex.loadlg.cc \
@@ -51,6 +52,7 @@ dlgedit_SOURCES = \
     gui_graph_events.h \
     gui_list.h \
     gui_list_events.h \
+    gui_messages.h \
     gui_modal_dialog.h \
     gui_tooltip.h
 

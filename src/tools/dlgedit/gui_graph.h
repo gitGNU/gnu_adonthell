@@ -89,6 +89,25 @@ public:
      */
     //@{
     /**
+     * Create a new DlgCircle at the given position.
+     * @param pos Current cursor position
+     * @param type Type of the new circle.
+     * @return <b>true</b> if the circle could be created,
+     *         <b>false</b> otherwise.
+     */
+    bool newCircle (DlgPoint &pos, node_type type = NPC);
+    /**
+     * Create a new DlgArrow between the selected node and the given position.
+     * @param pos Current cursor position
+     * @return <b>true</b> if the link could be created, <b>false</b> otherwise.
+     */
+    bool newArrow (DlgPoint &pos);
+    /**
+     * Edit currently selected node.
+     * @return <b>true</b> if editing was successful, <b>false</b> otherwise.
+     */
+    bool editNode ();
+    /**
      * Select the given node and update the instant preview and node editor
      * accordingly.
      * @param node the DlgNode to be selected
@@ -142,10 +161,6 @@ public:
      *         <b>false</b> otherwise.
      */
     bool centerNode (DlgNode *node = NULL);
-    /**
-     * Edit currently selected node.
-     */
-    void editNode ();
     //@}
 
     /**

@@ -24,12 +24,6 @@
 
 void on_widget_destroy (GtkWidget *, gpointer);
 
-/*
-// Fileselection Dialog Callbacks
-void on_fs_ok_button_pressed (GtkButton *, gpointer);
-void on_fs_cancel_button_pressed (GtkButton *, gpointer);
-*/
-        
 // Menu Callbacks
 void on_file_new_activate (GtkMenuItem *, gpointer);
 void on_file_load_activate (GtkMenuItem *, gpointer);
@@ -40,5 +34,9 @@ void on_dialogue_run_activate (GtkMenuItem *, gpointer);
 void on_dialogue_functions_activate (GtkMenuItem *, gpointer);
 void on_dialogue_player_activate (GtkMenuItem *, gpointer);
 void on_window_activate (GtkMenuItem *, gpointer);
+
+// Statusbar callbacks
+void on_display_help (GtkWidget *widget, GdkEventCrossing *event, gpointer user_data);
+void on_clear_help (GtkWidget *widget, GdkEventCrossing *event, gpointer user_data);
 
 #endif // GUI_DLGEDIT_EVENTS_H

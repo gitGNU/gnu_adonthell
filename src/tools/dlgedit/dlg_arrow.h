@@ -39,7 +39,11 @@ public:
      * @param e The node the link points to.  
      */
     DlgArrow (DlgNode *s, DlgNode *e);
-
+    /**
+     * Detach the arrow from it's start and end circle.
+     */
+    ~DlgArrow ();
+    
     /**
      * Calculate the arrow's shape. Call this function every time either
      * it's start- or end-circle has moved.

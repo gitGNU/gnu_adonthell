@@ -24,15 +24,21 @@
 #include "gui_dlgedit.h"
 
 // Constructor
-DlgCircle::DlgCircle (node_type t, DlgCircleEntry *e, DlgPoint &p)
+DlgCircle::DlgCircle (DlgPoint &p, node_type t, DlgCircleEntry *e)
 {
     type_ = t;
-    entry_ = e;
+    entry_ = (e ? e : new DlgCircleEntry);
     last_parent = NULL;
     
     // Align Circle to the (imaginary) grid
     top_left = DlgPoint (p.x () - (p.x () % CIRCLE_DIAMETER), p.y () - (p.y () % CIRCLE_DIAMETER));
     bottom_right = DlgPoint (x () + CIRCLE_DIAMETER, y () + CIRCLE_DIAMETER);
+}
+
+// dtor
+DlgCircle::~DlgCircle ()
+{
+    if (entry_) delete entry_;
 }
 
 // get a certain parent-circle of this circle
@@ -92,6 +98,18 @@ DlgCircle *DlgCircle::sibling (query_type pos, int offset)
     }
     
     return mySibling;
+}
+
+// check whether the given node is a child of this circle
+bool DlgCircle::hasChild (DlgNode *child)
+{
+    list<DlgNode*>::iterator j;
+    
+    for (j = next_.begin (); j != next_.end (); j++)
+        if (child == (*j)->next (FIRST))
+            return true;
+    
+    return false;
 }
 
 // draw the circle

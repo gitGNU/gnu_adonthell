@@ -25,6 +25,7 @@
 #include <vector>
 #include <string>
 #include <gtk/gtkstyle.h>
+#include "gui_messages.h"
 #include "gui_graph.h"
 #include "gui_list.h"
 
@@ -165,10 +166,10 @@ private:
     int number;                     // serial number of open dialogues
     GuiList *list_;                 // instant preview widget
     GuiGraph *graph_;               // dialogue view
+    GuiMessages *message;           // statusbar for displaying help/error texts
     GtkWidget *wnd;                 // actual main window
     GtkWidget *menuItem[MAX_ITEM];  // pointers to a few menu-items
     GtkWidget *windowMenu;          // the 'Windows' dropdown menu
-    GtkWidget *status_help;         // statusbar for help messages
     GtkWidget *status_mode;         // statusbar displaying the program state
     GdkFont *font_;                 // font for text-output
     GdkGC *color[MAX_GC];           // custom Pens

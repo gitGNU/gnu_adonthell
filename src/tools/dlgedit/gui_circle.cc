@@ -206,7 +206,7 @@ GuiCircle::GuiCircle (node_type *t, DlgCircleEntry *e) : GuiModalDialog ()
     gtk_box_pack_start (GTK_BOX (hbox1), npc_selection, TRUE, TRUE, 0);
     gtk_tooltips_set_tip (tooltips, npc_selection, "Select the speaker", NULL);
     npc_selection_menu = gtk_menu_new ();
-    glade_menuitem = gtk_menu_item_new_with_label ("default");
+    glade_menuitem = gtk_menu_item_new_with_label ("Default");
     gtk_object_set_user_data (GTK_OBJECT (glade_menuitem), NULL);
     gtk_widget_show (glade_menuitem);
     gtk_menu_append (GTK_MENU (npc_selection_menu), glade_menuitem);

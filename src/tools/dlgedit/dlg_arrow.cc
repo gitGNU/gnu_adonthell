@@ -42,6 +42,26 @@ DlgArrow::DlgArrow (DlgNode *start, DlgNode *end)
     initShape ();
 }
 
+// Remove arrow from it's start and end node
+DlgArrow::~DlgArrow ()
+{
+    DlgNode *circle;
+    
+    // remove arrow from previous circle
+    if (prev_.size () != 0)
+    {
+        circle = prev_.front ();
+        circle->removePrev (this);
+    }
+    
+    // remove arrow from following circle
+    if (next_.size () != 0)
+    {
+        circle = next_.front ();
+        circle->removeNext (this);    
+    }
+}
+
 // prepare the Arrow's shape
 void DlgArrow::initShape ()
 {

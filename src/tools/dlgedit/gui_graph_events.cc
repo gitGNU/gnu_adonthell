@@ -48,32 +48,7 @@ gint expose_event (GtkWidget * widget, GdkEventExpose * event, gpointer data)
     gdk_draw_pixmap (widget->window, widget->style->fg_gc[GTK_WIDGET_STATE (widget)],
         graph->pixmap (), event->area.x, event->area.y, event->area.x, event->area.y,
         event->area.width, event->area.height);
-/*
-    else
-    {
-        GdkGCValues val;
-        
-        event->area.x += MainWnd->x_offset;
-        event->area.y += MainWnd->y_offset;
-    
-        gdk_gc_get_values (widget->style->black_gc, &val);
-        
-        gdk_draw_pixmap (event->window, widget->style->fg_gc[GTK_WIDGET_STATE (widget)],
-            MainWnd->pixmap, MainWnd->multsel_rect.x, MainWnd->multsel_rect.y, MainWnd->multsel_rect.x, MainWnd->multsel_rect.y,
-            MainWnd->multsel_rect.width, MainWnd->multsel_rect.height);
 
-        gdk_gc_set_line_attributes (widget->style->black_gc, val.line_width,
-            GDK_LINE_ON_OFF_DASH, val.cap_style, val.join_style);
-           
-        gdk_draw_rectangle (event->window, widget->style->black_gc, FALSE, 
-            event->area.x, event->area.y, event->area.width-1, event->area.height-1);
-
-        MainWnd->multsel_rect = event->area;
-
-        gdk_gc_set_line_attributes (widget->style->black_gc, val.line_width,
-            GDK_LINE_SOLID, val.cap_style, val.join_style);
-    }
-*/       
     return FALSE;
 }
 
@@ -105,6 +80,8 @@ gint button_press_event (GtkWidget *widget, GdkEventButton *event, gpointer data
             // if something selected -> deselect
             if (graph->mode () == NODE_SELECTED)
                 graph->deselectNode ();
+            
+            break;
         }
 
         default: break;
@@ -137,35 +114,6 @@ gint motion_notify_event (GtkWidget *widget, GdkEventMotion *event, gpointer dat
     else graph->mouseMoved (point);
 
     return FALSE;
-/*    
-    MainFrame *MainWnd = (MainFrame *) data;
-    GdkPoint point;
-    
-    point.x = (s_int32) event->x - MainWnd->x_offset;
-    point.y = (s_int32) event->y - MainWnd->y_offset;
-
-    // start/stop scrolling of dialogue area
-    if (MainWnd->number > 0) begin_scrolling (MainWnd, point);
-
-    // Dragging dialogue nodes
-    if (event->state == GDK_BUTTON_PRESS_MASK)
-    {
-        if (MainWnd->dragged_node == NULL)
-        {
-            if (!new_mover (MainWnd, point)) draw_multiselbox (MainWnd, point);
-        }
-        else
-        {
-            move_node (MainWnd, point);
-
-            // update graph
-            redraw_graph (MainWnd);
-        }
-    }
-
-    // Highlighting dialogue nodes
-    else mouse_over (MainWnd, point);
-*/
 }
 
 // Mouse-button released on Drawing Area
@@ -183,14 +131,27 @@ gint button_release_event (GtkWidget *widget, GdkEventButton *event, gpointer da
             case IDLE:
             {
                 // select the node under the cursor, if any
-                graph->selectNode (point);
+                if (!graph->selectNode (point))
+                    // otherwise create a new circle at that position
+                    graph->newCircle (point);
+                
+                break;
             }
-            
+
+            // node selected
+            case NODE_SELECTED:
+            {
+                // try to create a new link between two nodes
+                graph->newArrow (point);
+                break;
+            }
+                        
             // node dragged
             case NODE_DRAGGED:
             {
                 // stop dragging
                 graph->stopDragging (point);
+                break;
             }
                     
             default: break;

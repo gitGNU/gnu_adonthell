@@ -50,6 +50,10 @@ GuiDlgedit::GuiDlgedit ()
     for (int i = 0; i < MAX_GC; i++)
         color[i] = NULL;
     
+    // Statusbar for displaying help and error messages
+    GtkWidget *status_help = gtk_statusbar_new ();
+    message = new GuiMessages (status_help);
+        
     // Main Window
     wnd = gtk_window_new (GTK_WINDOW_TOPLEVEL);
     gtk_widget_set_usize (GTK_WIDGET (wnd), 800, 600);
@@ -75,6 +79,9 @@ GuiDlgedit::GuiDlgedit ()
     menuitem = gtk_menu_item_new_with_label ("New");
     gtk_container_add (GTK_CONTAINER (submenu), menuitem);
     gtk_widget_add_accelerator (menuitem, "activate", accel_group, GDK_n, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
+    gtk_object_set_data (GTK_OBJECT (menuitem), "help-id", GINT_TO_POINTER (1));
+    gtk_signal_connect (GTK_OBJECT (menuitem), "enter-notify-event", GTK_SIGNAL_FUNC (on_display_help), message);
+    gtk_signal_connect (GTK_OBJECT (menuitem), "leave-notify-event", GTK_SIGNAL_FUNC (on_clear_help), message);
     gtk_signal_connect (GTK_OBJECT (menuitem), "activate", GTK_SIGNAL_FUNC (on_file_new_activate), (gpointer) this);
     gtk_widget_show (menuitem);
 
@@ -82,6 +89,9 @@ GuiDlgedit::GuiDlgedit ()
     menuitem = gtk_menu_item_new_with_label ("Open");
     gtk_container_add (GTK_CONTAINER (submenu), menuitem);
     gtk_widget_add_accelerator (menuitem, "activate", accel_group, GDK_o, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
+    gtk_object_set_data (GTK_OBJECT (menuitem), "help-id", GINT_TO_POINTER (2));
+    gtk_signal_connect (GTK_OBJECT (menuitem), "enter-notify-event", GTK_SIGNAL_FUNC (on_display_help), message);
+    gtk_signal_connect (GTK_OBJECT (menuitem), "leave-notify-event", GTK_SIGNAL_FUNC (on_clear_help), message);
     gtk_signal_connect (GTK_OBJECT (menuitem), "activate", GTK_SIGNAL_FUNC (on_file_load_activate), (gpointer) this);
     gtk_widget_show (menuitem);
 
@@ -89,6 +99,9 @@ GuiDlgedit::GuiDlgedit ()
     menuitem = gtk_menu_item_new_with_label ("Save");
     gtk_container_add (GTK_CONTAINER (submenu), menuitem);
     gtk_widget_add_accelerator (menuitem, "activate", accel_group, GDK_s, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
+    gtk_object_set_data (GTK_OBJECT (menuitem), "help-id", GINT_TO_POINTER (3));
+    gtk_signal_connect (GTK_OBJECT (menuitem), "enter-notify-event", GTK_SIGNAL_FUNC (on_display_help), message);
+    gtk_signal_connect (GTK_OBJECT (menuitem), "leave-notify-event", GTK_SIGNAL_FUNC (on_clear_help), message);
     gtk_signal_connect (GTK_OBJECT (menuitem), "activate", GTK_SIGNAL_FUNC (on_file_save_activate), (gpointer) this);
     gtk_widget_show (menuitem);
     menuItem[SAVE] = menuitem;
@@ -97,6 +110,9 @@ GuiDlgedit::GuiDlgedit ()
     menuitem = gtk_menu_item_new_with_label ("Close");
     gtk_container_add (GTK_CONTAINER (submenu), menuitem);
     gtk_widget_add_accelerator (menuitem, "activate", accel_group, GDK_w, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
+    gtk_object_set_data (GTK_OBJECT (menuitem), "help-id", GINT_TO_POINTER (4));
+    gtk_signal_connect (GTK_OBJECT (menuitem), "enter-notify-event", GTK_SIGNAL_FUNC (on_display_help), message);
+    gtk_signal_connect (GTK_OBJECT (menuitem), "leave-notify-event", GTK_SIGNAL_FUNC (on_clear_help), message);
     gtk_signal_connect (GTK_OBJECT (menuitem), "activate", GTK_SIGNAL_FUNC (on_file_close_activate), (gpointer) NULL);
     gtk_widget_show (menuitem);
     menuItem[CLOSE] = menuitem;
@@ -111,6 +127,9 @@ GuiDlgedit::GuiDlgedit ()
     menuitem = gtk_menu_item_new_with_label ("Quit");
     gtk_menu_append (GTK_MENU (submenu), menuitem);
     gtk_widget_add_accelerator (menuitem, "activate", accel_group, GDK_q, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
+    gtk_object_set_data (GTK_OBJECT (menuitem), "help-id", GINT_TO_POINTER (5));
+    gtk_signal_connect (GTK_OBJECT (menuitem), "enter-notify-event", GTK_SIGNAL_FUNC (on_display_help), message);
+    gtk_signal_connect (GTK_OBJECT (menuitem), "leave-notify-event", GTK_SIGNAL_FUNC (on_clear_help), message);
     gtk_signal_connect (GTK_OBJECT (menuitem), "activate", GTK_SIGNAL_FUNC (on_widget_destroy), (gpointer) NULL);
     gtk_widget_show (menuitem);
 
@@ -127,6 +146,9 @@ GuiDlgedit::GuiDlgedit ()
     menuitem = gtk_menu_item_new_with_label ("Settings");
     gtk_container_add (GTK_CONTAINER (submenu), menuitem);
     gtk_widget_add_accelerator (menuitem, "activate", accel_group, GDK_t, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
+    gtk_object_set_data (GTK_OBJECT (menuitem), "help-id", GINT_TO_POINTER (10));
+    gtk_signal_connect (GTK_OBJECT (menuitem), "enter-notify-event", GTK_SIGNAL_FUNC (on_display_help), message);
+    gtk_signal_connect (GTK_OBJECT (menuitem), "leave-notify-event", GTK_SIGNAL_FUNC (on_clear_help), message);
     gtk_signal_connect (GTK_OBJECT (menuitem), "activate", GTK_SIGNAL_FUNC (on_dialogue_player_activate), (gpointer) NULL);
     gtk_widget_show (menuitem);
     menuItem[SETTINGS] = menuitem;
@@ -135,6 +157,9 @@ GuiDlgedit::GuiDlgedit ()
     menuitem = gtk_menu_item_new_with_label ("Functions");
     gtk_container_add (GTK_CONTAINER (submenu), menuitem);
     gtk_widget_add_accelerator (menuitem, "activate", accel_group, GDK_f, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
+    gtk_object_set_data (GTK_OBJECT (menuitem), "help-id", GINT_TO_POINTER (11));
+    gtk_signal_connect (GTK_OBJECT (menuitem), "enter-notify-event", GTK_SIGNAL_FUNC (on_display_help), message);
+    gtk_signal_connect (GTK_OBJECT (menuitem), "leave-notify-event", GTK_SIGNAL_FUNC (on_clear_help), message);
     gtk_signal_connect (GTK_OBJECT (menuitem), "activate", GTK_SIGNAL_FUNC (on_dialogue_functions_activate), (gpointer) NULL);
     gtk_widget_show (menuitem);
     menuItem[FUNCTIONS] = menuitem;
@@ -149,6 +174,9 @@ GuiDlgedit::GuiDlgedit ()
     menuitem = gtk_menu_item_new_with_label ("Compile");
     gtk_container_add (GTK_CONTAINER (submenu), menuitem);
     gtk_widget_add_accelerator (menuitem, "activate", accel_group, GDK_c, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
+    gtk_object_set_data (GTK_OBJECT (menuitem), "help-id", GINT_TO_POINTER (12));
+    gtk_signal_connect (GTK_OBJECT (menuitem), "enter-notify-event", GTK_SIGNAL_FUNC (on_display_help), message);
+    gtk_signal_connect (GTK_OBJECT (menuitem), "leave-notify-event", GTK_SIGNAL_FUNC (on_clear_help), message);
     gtk_signal_connect (GTK_OBJECT (menuitem), "activate", GTK_SIGNAL_FUNC (on_dialogue_compile_activate), (gpointer) NULL);
     gtk_widget_show (menuitem);
     menuItem[COMPILE] = menuitem;
@@ -157,6 +185,9 @@ GuiDlgedit::GuiDlgedit ()
     menuitem = gtk_menu_item_new_with_label ("Run");
     gtk_container_add (GTK_CONTAINER (submenu), menuitem);
     gtk_widget_add_accelerator (menuitem, "activate", accel_group, GDK_r, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
+    gtk_object_set_data (GTK_OBJECT (menuitem), "help-id", GINT_TO_POINTER (13));
+    gtk_signal_connect (GTK_OBJECT (menuitem), "enter-notify-event", GTK_SIGNAL_FUNC (on_display_help), message);
+    gtk_signal_connect (GTK_OBJECT (menuitem), "leave-notify-event", GTK_SIGNAL_FUNC (on_clear_help), message);
     gtk_signal_connect (GTK_OBJECT (menuitem), "activate", GTK_SIGNAL_FUNC (on_dialogue_run_activate), (gpointer) NULL);
     gtk_widget_show (menuitem);
     menuItem[RUN] = menuitem;
@@ -202,7 +233,6 @@ GuiDlgedit::GuiDlgedit ()
     gtk_widget_set_usize (hbox, -2, 20);
 
     // help message
-    status_help = gtk_statusbar_new ();
     gtk_widget_ref (status_help);
     gtk_object_set_data_full (GTK_OBJECT (wnd), "status_help", status_help, (GtkDestroyNotify) gtk_widget_unref);
     gtk_widget_show (status_help);
@@ -222,6 +252,9 @@ GuiDlgedit::GuiDlgedit ()
 
     // set the programm mode
     setMode (IDLE);
+
+    // Display welcome message
+    message->display (1000);
 
     // font to use on the drawing area
     font_ = gdk_font_load ("-*-*-medium-r-normal-sans-12-*-*-*-*-*-iso8859-1");
@@ -258,7 +291,7 @@ void GuiDlgedit::loadDialogue (string file)
 
     if (!loadlgin)
     {
-        g_message ("could not open file %s", file.c_str ());
+        message->display (-2, g_basename (file.c_str ()));
         return;
     }
 
@@ -272,10 +305,18 @@ void GuiDlgedit::loadDialogue (string file)
     DlgModule *module = initDialogue (file);
 
     // try to load from file
-    if (!module->load ()) closeDialogue ();
-
+    if (!module->load ())
+    {
+        message->display (-2, g_basename (filename ().c_str ()));
+        closeDialogue ();
+    }
+    
     // Display the dialogue
-    else showDialogue (module);
+    else 
+    {
+        message->display (200);        
+        showDialogue (module);
+    }
 }
 
 // save a dialogue
@@ -290,8 +331,9 @@ void GuiDlgedit::saveDialogue (string file)
     // append the ".adlg" extension if necessary
     if (file.rfind (".adlg") == file.npos) file += ".adlg";
 
-    // save
-    module->save (file); 
+    // try to save file
+    if (!module->save (file)) message->display (-4, g_basename (file.c_str ()));
+    else message->display (201);    
 }
 
 // close the dialogue being displayed
@@ -388,8 +430,10 @@ void GuiDlgedit::initMenu ()
         name = (char*) (*i)->name().c_str ();
         menuitem = gtk_menu_item_new_with_label (g_basename (name));
         gtk_container_add (GTK_CONTAINER (windowMenu), menuitem);
-        gtk_signal_connect (GTK_OBJECT (menuitem), "activate", 
-        GTK_SIGNAL_FUNC (on_window_activate), (gpointer) *i);
+        gtk_signal_connect (GTK_OBJECT (menuitem), "activate", GTK_SIGNAL_FUNC (on_window_activate), (gpointer) *i);
+        gtk_object_set_data (GTK_OBJECT (menuitem), "help-id", GINT_TO_POINTER (20));
+        gtk_signal_connect (GTK_OBJECT (menuitem), "enter-notify-event", GTK_SIGNAL_FUNC (on_display_help), message);
+        gtk_signal_connect (GTK_OBJECT (menuitem), "leave-notify-event", GTK_SIGNAL_FUNC (on_clear_help), message);
         gtk_widget_show (menuitem);
     
         // Menu Accelerators

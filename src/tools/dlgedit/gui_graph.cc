@@ -87,6 +87,98 @@ void GuiGraph::detachModule ()
 
     // update the program state
     GuiDlgedit::window->setMode (IDLE);
+
+    // remove the tooltip if it is open
+    if (tooltip)
+    {
+        delete tooltip;
+        tooltip = NULL;
+    }
+}
+
+// create a new circle
+bool GuiGraph::newCircle (DlgPoint &point, node_type type)
+{
+    // if there is no module assigned to the view, there is nothing to select
+    if (module == NULL) return false;
+    
+    // create the new node ...
+    DlgCircle *circle = new DlgCircle (point, type);
+    
+    // ... add it to the module ...
+    module->addNode (circle);
+    
+    // ... and select it for editing
+    module->selectNode (circle);
+    
+    // see whether creation was cancelled
+    if (!editNode ())
+    {
+        // cleanup
+        module->deleteNode ();
+
+        return false;
+    }
+    
+    return true;
+}
+
+// create a new arrow
+bool GuiGraph::newArrow (DlgPoint &point)
+{
+    // if there is no module assigned to the view, there is nothing to select
+    if (module == NULL) return false;
+
+    // calculate absolute position of the point
+    point.move (-offset->x (), -offset->y ());
+
+    // get start and end of the circle
+    DlgNode *start = module->selected ();
+    DlgNode *end = module->getNode (point);
+
+    // sanity checks
+    if (!start || start->type () == LINK) return false;
+    if (end && end->type () == LINK) return false;
+    if (start == end || ((DlgCircle *) start)->hasChild (end)) return false; 
+    
+    // if no end selected, create a new circle first
+    if (end == NULL)
+    {
+        // chose a sensible type for the new circle
+        node_type type = (start->type () == NPC ? PLAYER : NPC);
+        
+        // there musn't be a node selected to create a new circle
+        module->deselectNode ();
+        
+        // try to create a new circle
+        newCircle (point, type);
+        
+        // chose the newly created circle as end of the arrow
+        end = module->getNode (point);
+        
+        // restore selection
+        deselectNode ();
+        selectNode (start);
+        
+        // do we have a valid end now?
+        if (end == NULL) return false;
+    }
+
+    // no connection between start and end if both are PLAYER nodes   
+    if (start->type () == PLAYER && end->type () == PLAYER) return false;
+
+    // now create the arrow between start and end, ...
+    DlgArrow *arrow = new DlgArrow (start, end);
+
+    // ... add it to the module ...
+    module->addNode (arrow);
+    
+    // ... and update everything
+    GuiDlgedit::window->list ()->display (start);
+	arrow->draw (surface, *offset);
+    module->setChanged ();
+    
+    return true;
 }
 
 // select a node
@@ -307,9 +399,9 @@ bool GuiGraph::centerNode (DlgNode *node)
 }
 
 // edit selected node
-void GuiGraph::editNode ()
+bool GuiGraph::editNode ()
 {
-    if (module == NULL) return;
+    if (module == NULL) return false;
     
     // see if a node is currently selected
     DlgCircle *selected = (DlgCircle *) module->selected ();
@@ -317,16 +409,23 @@ void GuiGraph::editNode ()
     // if so ...
     if (selected && selected->type () != LINK)
     {
+        // disable scrolling (just in case)
+        scrolling = false;
+        
         GuiCircle edit (&selected->type (), selected->entry ());
 
 	    // Editing aborted?
-	    if (!edit.run ()) return;
+	    if (!edit.run ()) return false;
 	
 	    // otherwise update everything
         GuiDlgedit::window->list ()->display (selected);
 	    selected->draw (surface, *offset);
         module->setChanged ();
+        
+        return true;
     }
+    
+    return false;
 }
 
 // set everything up for moving nodes around

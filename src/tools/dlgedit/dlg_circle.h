@@ -38,8 +38,9 @@ class DlgCircle : public DlgNode
 {
 public:
     DlgCircle () { mode_ = IDLE; last_parent = NULL; }
-    DlgCircle (node_type t, DlgCircleEntry *e, DlgPoint &p);
-
+    DlgCircle (DlgPoint &p, node_type t, DlgCircleEntry *e = NULL);
+    ~DlgCircle ();
+    
     /** 
      * @name Methods for graph traversal
      */
@@ -124,6 +125,12 @@ public:
      * @return <b>true</b> if this is the case, <b>false</b> otherwise.
      */
     bool hasCode ()                     { return entry_->hasCode (); }
+    
+    /**
+     * Check whether the given node is a child of this circle
+     * @return <b>true</b> if this is the case, <b>false</b> otherwise.
+     */
+    bool hasChild (DlgNode *child);
     
     DlgCircle *lastParent ()            { return last_parent; }
     void setLastParent (DlgCircle *p)   { last_parent = p; }

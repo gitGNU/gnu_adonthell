@@ -110,6 +110,44 @@ DlgNode* DlgModule::getNode (DlgPoint &position)
     return NULL;
 }
 
+// add a node to the dialogue
+void DlgModule::addNode (DlgNode *node)
+{
+    nodes.push_back (node);    
+}
+
+// delete a node from the dialogue
+void DlgModule::deleteNode ()
+{
+    // if no node is selected, there's nothing to delete
+    if (selected_ == NULL) return;
+    
+    // otherwise, first deselect it
+    DlgNode *node = deselectNode ();
+    
+    // if the node is a circle, also delete the attached arrows
+    if (node->type () != LINK)
+    {
+        // delete all preceding arrows
+        for (DlgNode *i = node->prev (FIRST); i != NULL; i = node->prev (NEXT))
+        {
+            nodes.erase (remove (nodes.begin (), nodes.end (), i), nodes.end ());       
+            delete i;
+        }
+        
+        // delete all following arrows
+        for (DlgNode *i = node->next (FIRST); i != NULL; i = node->next (NEXT))
+        {
+            nodes.erase (remove (nodes.begin (), nodes.end (), i), nodes.end ());     
+            delete i;
+        }
+    }
+
+    // remove the node itself from the vector
+    nodes.erase (remove (nodes.begin (), nodes.end (), node), nodes.end ());       
+    delete node;
+}
+
 // deselect the selected node
 DlgNode* DlgModule::deselectNode ()
 {

@@ -123,3 +123,18 @@ void on_window_activate (GtkMenuItem * menuitem, gpointer user_data)
     GuiDlgedit::window->showDialogue (module);
 }
 
+// Display help text associated with a menuitem to the statusbar 
+void on_display_help (GtkWidget *widget, GdkEventCrossing *event, gpointer user_data)
+{
+    int id = GPOINTER_TO_INT (gtk_object_get_data (GTK_OBJECT (widget), "help-id"));
+    GuiMessages *message = (GuiMessages *) user_data;
+    
+    message->display (id);
+}
+
+// Clear text displayed by the statusbar 
+void on_clear_help (GtkWidget *widget, GdkEventCrossing *event, gpointer user_data)
+{
+    GuiMessages *message = (GuiMessages *) user_data;
+    message->clear ();
+}
