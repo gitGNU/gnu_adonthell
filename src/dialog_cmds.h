@@ -85,6 +85,7 @@ public:
     void write (FILE*);
     void ascii (ofstream&);   
     void setjmp (s_int32);
+    s_int32 getjmp ();
 
 private:
     u_int32 text;               // Id of the dialogue text

@@ -57,7 +57,9 @@ void dlg_compiler::write_import ()
     FILE* str = NULL;
     Circle *node;
     string sf = filename + ".str";
-
+    string tf = filename + ".txt";
+    ofstream txt (tf.c_str ());
+    
     command *cmd;               // The Import-command
     
     u_int32 *offset;            // Those two make the Table of
@@ -107,14 +109,23 @@ void dlg_compiler::write_import ()
     fwrite (offset, sizeof (offset[0]), index, str);
     fwrite (length, sizeof (length[0]), index, str);
 
+    index = 0;
+    
     for (i = 0; i < dlg.size (); i++)
     {
         node = (Circle *) dlg[i];
         if (node->type != LINK)
+        {
             fwrite (node->text.c_str (), strlen (node->text.c_str ()), 1, str);
+            txt.width (3);
+            txt << index++ << "  " << node->text << "\n";
+        }
     }
 
+    txt << "\n";
+    
     // Clean up (DON'T delete 'text'! It's still needed!)
+    txt.close ();
     fclose (str);
     delete[] offset;
     delete[] length;    
@@ -322,7 +333,7 @@ void dlg_compiler::output_script ()
     string af = filename + ".txt";
     string sf = filename + ".dlg";
     
-    ofstream ascii (af.c_str ());
+    ofstream ascii (af.c_str (), ios::ate);
     FILE* script = fopen (sf.c_str (), "wb");
 
     i = code.size ();
@@ -398,9 +409,9 @@ void dlg_compiler::get_cur_nodes ()
     // If data is a player node and not done yet write is variable-code
     if (cur_crcle->type == PLAYER)
         if (cur_crcle->variables != "")
-            if (find (done_nodes.begin (), done_nodes.end (), data) == done_nodes.end ())
+            if (!isdone (data->node, data))
                 write_variables ();
-
+            
     // The End of dialogue follows:
     if (cur_nodes.empty ())
     {
@@ -429,7 +440,10 @@ u_int8 dlg_compiler::isdone (DlgNode *node, cmp_data *data)
     for (i = 0; i < done_nodes.size (); i++)
         if (done_nodes[i]->node == node)
         {
-            ((text_cmd *) data->cmd)->setjmp (done_nodes[i]->line - data->line - 1);
+            if (data->node != node)
+                ((text_cmd *) data->cmd)->setjmp (done_nodes[i]->line - data->line - 1);
+            else
+                ((text_cmd *) data->cmd)->setjmp (done_nodes[i]->line + ((text_cmd *) done_nodes[i]->cmd)->getjmp () - data->line);
             return 1;
         }
 

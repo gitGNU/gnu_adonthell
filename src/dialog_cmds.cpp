@@ -184,6 +184,11 @@ void text_cmd::setjmp (s_int32 p)
     pc_off = p;
 }
 
+s_int32 text_cmd::getjmp ()
+{
+    return pc_off;
+}
+
 speaker_cmd::speaker_cmd (u_int32 s, u_int32 m) : speaker(s), mood(m)
 {
     type = SPEAKER;
