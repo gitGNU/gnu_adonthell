@@ -24,7 +24,21 @@
 void
 on_open_activate (GtkMenuItem * menuitem, gpointer user_data)
 {
+    main_wnd *wnd = (main_wnd *) user_data;
+    GString *file = g_string_new ("");
+    GtkWidget *fs = create_fileselection (file, false);
 
+    gtk_file_selection_set_filename ((GtkFileSelection *) fs, wnd->last_dir);
+    gtk_file_selection_complete ((GtkFileSelection *) fs, "*.character");
+    
+    // chose file
+    gtk_widget_show (fs);
+    gtk_main ();
+
+    // try to load file
+    wnd->read_character_source (file->str);
+
+    g_string_free (file, TRUE);
 }
 
 // File menu "Save"

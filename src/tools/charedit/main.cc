@@ -111,6 +111,30 @@ main_wnd::get_option (GtkOptionMenu * o)
     return (gchar *) gtk_object_get_user_data (GTK_OBJECT (i));
 }
 
+void
+main_wnd::set_option (GtkOptionMenu * o, gchar * label)
+{
+    GtkMenu *m = (GtkMenu *) gtk_option_menu_get_menu (o);
+    GList *l = gtk_container_children (GTK_CONTAINER (m));
+    gchar *c;
+    int j = 0;
+
+    while (l)
+    { 
+        GtkMenuItem *i = (GtkMenuItem *) l->data;
+        c = (gchar *) gtk_object_get_user_data (GTK_OBJECT (i));
+
+        if (strcmp (c, label) == 0)
+        {
+            gtk_option_menu_set_history (o, j);
+            break;
+        }
+        
+        j++;
+        l = g_list_next (l);
+    }
+}
+
 // Write all info to a file
 void 
 main_wnd::write_character_source ()
@@ -125,6 +149,11 @@ main_wnd::write_character_source ()
     // Make chosen directory default directory 
     g_free (char_dir);
     char_dir = g_strdup (cur_dir);
+
+    // Get some data
+    name = g_strstrip (gtk_entry_get_text (GTK_ENTRY (name_entry)));
+    schedule = g_strstrip (gtk_entry_get_text (GTK_ENTRY (scl_entry)));
+    dialogue = g_strstrip (gtk_entry_get_text (GTK_ENTRY (dlg_entry)));
 
     // create filename from chosen directory and the character's name
     fname = g_strdup (name);
@@ -142,11 +171,6 @@ main_wnd::write_character_source ()
         g_free (fname);
         return;
     }
-
-    // Get some data
-    name = g_strstrip (gtk_entry_get_text (GTK_ENTRY (name_entry)));
-    schedule = g_strstrip (gtk_entry_get_text (GTK_ENTRY (scl_entry)));
-    dialogue = g_strstrip (gtk_entry_get_text (GTK_ENTRY (dlg_entry)));
 
     // write stuff to file
     file << "# Adonthell character source file\n\n";
@@ -185,6 +209,114 @@ main_wnd::write_character_source ()
     g_free (fname);
 }
 
+void
+main_wnd::read_character_source (gchar *fname)
+{
+    ifstream file;
+    gchar **vals, *dummy[3] = { "", "", "" };
+    char str[256];
+    int mode = 0, i = 0, j;
+
+    file.open (fname);
+    if (!file)
+    {
+        create_warning ("    Load failed!");
+        gtk_main ();
+        return;
+    }
+
+    gtk_clist_freeze (GTK_CLIST (attribute_list));
+    gtk_clist_freeze (GTK_CLIST (event_list));
+    gtk_clist_clear (GTK_CLIST (attribute_list));
+    gtk_clist_clear (GTK_CLIST (event_list));
+
+    // read file line by line
+    while (!file.eof ())
+    {
+        file.getline (str, 255);
+        g_strstrip (str);
+
+        // ignore comments or blank lines
+        if (str != NULL && str[0] != '#' && str[0] != '\0')
+        {
+            if (strcmp (str, "basic:") == 0)
+            {
+                mode = 1;
+                continue;
+            }
+            if (strcmp (str, "attributes:") == 0)
+            {
+                mode = 2;
+                continue;
+            }
+            if (strcmp (str, "events:") == 0)
+            {
+                mode = 3;
+                continue;
+            }
+            if (strcmp (str, "actions:") == 0)
+            {
+                mode = 4;
+                continue;
+            }
+
+            vals = g_strsplit (str, "=", 1);
+            g_strstrip (vals[0]);
+            g_strstrip (vals[1]);
+
+            switch (mode)
+            {
+                case 1:
+                {
+                    if (strcmp (vals[0], "name") == 0)
+                        gtk_entry_set_text (GTK_ENTRY (name_entry), vals[1]);
+                    if (strcmp (vals[0], "race") == 0)
+                        set_option (GTK_OPTION_MENU (race_choice), vals[1]);
+                    if (strcmp (vals[0], "gender") == 0)
+                        set_option (GTK_OPTION_MENU (gender_choice), vals[1]);
+
+                    break;
+                }
+                case 2:
+                {
+                    gtk_clist_append (GTK_CLIST (attribute_list), vals);
+
+                    break;
+                }
+                case 3:
+                {
+                    if (strcmp (vals[0], "type") == 0)
+                    {
+                        gtk_clist_append (GTK_CLIST (event_list), dummy);
+                        gtk_clist_set_text (GTK_CLIST (event_list), i, 0, vals[1]);
+                    }
+                    if (strcmp (vals[0], "script") == 0)
+                        gtk_clist_set_text (GTK_CLIST (event_list), i, 1, vals[1]);
+                    if (strcmp (vals[0], "parameters") == 0)
+                        gtk_clist_set_text (GTK_CLIST (event_list), i++, 2, vals[1]);
+
+                    break;
+                }
+                case 4:
+                {
+                    if (strcmp (vals[0], "dialogue") == 0)
+                        gtk_entry_set_text (GTK_ENTRY (dlg_entry), vals[1]);
+                    if (strcmp (vals[0], "schedule") == 0)
+                        gtk_entry_set_text (GTK_ENTRY (scl_entry), vals[1]);
+                        
+                    break;
+                }
+            }
+
+            g_strfreev (vals);
+        }
+    }
+
+    colorify_list (GTK_CLIST (attribute_list));
+    colorify_list (GTK_CLIST (event_list));
+    gtk_clist_thaw (GTK_CLIST (attribute_list));
+    gtk_clist_thaw (GTK_CLIST (event_list));
+}
 
 gchar *
 main_wnd::get_script ()

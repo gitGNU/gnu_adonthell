@@ -23,8 +23,10 @@ class main_wnd
     main_wnd ();
 
     void write_character_source ();
+    void read_character_source (gchar*);
     void load_list_defaults (GtkCList *, gchar *, gchar *);
     void colorify_list (GtkCList *);
+    void set_option (GtkOptionMenu *, gchar *);
     gchar *get_option (GtkOptionMenu *);
     gchar *get_script ();
 
