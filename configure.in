@@ -71,17 +71,18 @@ dnl **********************
 if test x$gamedatadir = xnone; then
   case "$target" in
     *-*-cygwin* | *-*-mingw32*)
-      gamedatadir="C:/share/adonthell"
+      gamedatadir=""
     ;;
     *-*-beos*)
       gamedatadir="/boot/home/share/adonthell"
+      DEFS="$DEFS -DDATA_DIR=\"\\\"$gamedatadir\\\"\""
     ;;
     *)
       gamedatadir="${datadir}/adonthell"
+      DEFS="$DEFS -DDATA_DIR=\"\\\"$gamedatadir\\\"\""
     ;;
   esac
 fi
-DEFS="$DEFS -DDATA_DIR=\"\\\"$gamedatadir\\\"\""
 
 dnl **********************
 dnl Check for memory leaks
@@ -238,8 +239,12 @@ if test x$pylibs = xnone; then
 	AC_MSG_RESULT(yes)
    fi
 else
-   PY_LIBS=${pylibs}
    PY_CFLAGS=${pycflags}
+   AC_MSG_CHECKING(for Python cflags)
+   AC_MSG_RESULT($PY_CFLAGS)
+   PY_LIBS=${pylibs}
+   AC_MSG_CHECKING(for Python library flags)
+   AC_MSG_RESULT($PY_LIBS)
    PY_VERSION="Manually specified"   
 fi
 
@@ -430,7 +435,14 @@ echo "Building API doc .......... : $builddoc"
 if test x$memleaks = xyes; then
 echo "Test for Memory Leaks ..... : enabled"
 fi
-echo "Data directory ............ : $gamedatadir"
+case "$target" in
+  *-*-cygwin* | *-*-mingw32*)
+    echo "Building for Windows target."
+  ;;
+  *)
+    echo "Data directory ............ : $gamedatadir"
+  ;;
+esac
 
 echo
 echo "Now type 'make' to build Adonthell"
