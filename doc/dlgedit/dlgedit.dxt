@@ -1,7 +1,7 @@
 /*
    $Id$
 
-   Copyright (C) 1999/2000/2001 Kai Sterker <kaisterker@linuxgames.com>
+   Copyright (C) 1999/2000/2001/2002 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -16,8 +16,8 @@
 /*! \mainpage The Adonthell Dialogue Editor
 
 This document is a part of the Adonthell Developer's Reference. It
-describes the usage of the dialogue editor and gives a few hints
-for writing well designed dialogues.
+describes the usage of the dialogue editor (<tt>dlgedit</tt> and 
+gives a few hints for writing well designed dialogues.
 
 <h2>Contents</h2>
 
@@ -27,6 +27,7 @@ for writing well designed dialogues.
     -# \ref sec22 
     -# \ref sec23 
 -# \ref page3
+    -# \ref sec30
     -# \ref sec31
     -# \ref sec32
     -# \ref sec33
@@ -110,22 +111,23 @@ functionality of the Dialogue Editor.
 
 Dialogues start with a NPC line, so that is what we add first.
 Simply left-click on the dialogue area of the Editor. A
-dialog pops up that allows you to enter the text of the
+dialog window pops up that allows you to enter the text of the
 node. As you see, NPC is the default, so simply enter the
-line of dialogue and press OK. What you will see when moving
-the cursor over the newly appeared node is the following:
+line of dialogue (<i>"Hello, I am Eric."</i>) and press OK. 
+What you will see when moving the cursor over the newly created 
+node is the following:
 
 <center>
 \image latex step1.eps
 \image html step1.png
 </center>
 
-Now we add the players response. To do this, left-click on
+Now we add the player's response. To do this, left-click on
 the circle. It will appear in red to signal that it is the
 selected node. Now left-click on a location a bit further
 down. Again the Text Input Window pops up, this time with
-Player preselected, just as we want it. Enter the Text and
-press OK.
+Player preselected, just as we want it. Enter the text 
+(<i>"I am Kai."</i>) and press OK.
 
 <center>
 \image latex step2.eps
@@ -135,115 +137,88 @@ press OK.
 Your screen should look like this. The NPC node is still
 selected, therefore drawn red, and the Player node is drawn
 blue, to distinguish it from NPC nodes. The arrow between
-them symbolises the flaw of the Dialogue .
+them symbolises the flow of the dialogue .
 
 Since the player shall have two possible responses, we have
-to create another player node, somewhere next to the first
-one. Voila, the first two lines of the dialogue are already
-done. Now right-click on an empty spot to deselect the NPC
-node and then select the first Player node. You see, that
+to create another Player node, somewhere next to the first
+one. (<i>"Goodbye!"</i>) Voila, the first two lines of dialogue 
+are already done. 
+Now right-click on an empty spot to deselect the NPC
+node and then select the first Player node. You see that
 it appears orange, so you know at the first glance that
 it is a selected Player node. Left-click somewhere below
-it, enter the appropriate Text, confirm with OK and repeat
-the same for the second Player node.
+it, enter the appropriate text (<i>"Nice to meet you."</i>), 
+confirm with OK and repeat the same for the second Player node.
+(<i>"Fare well."</i>)
 
 <center>
 \image latex step3.eps
 \image html step3.png
 </center>
 
-If your Display shows something similar, you've done it :-).
+If your display shows something similar, you've done it :-).
 Now lines 4 and 5 of the Dialogue have to follow, but, as
 you have already noticed, they are just the same as a part
 of the existing dialogue. Would be nice if we could reuse
-that part, eh? Well, we can. All we need to do is telling
-the Editor which part has to follow a node. 
+that part, eh? Well, we can. All we need to do is linking
+the right nodes.
 
 Okay, lets dot it: Deselect the Player node and select the
 bottom left NPC node (or the node correspondenting to that
-one in your work). Then simply left-click on the arrow that
-points to the Player node we want to follow. And this is
-the complete dialogue:
+one in your work). Then simply left-click on the Player node 
+that needs to follow. And this is the complete dialogue:
 
 <center>
 \image latex step4.eps 
 \image html step4.png
 </center>
 
-The numbers inside the nodes tell how many such "indirect"
-links start at each node, and when selecting a node with
-indirect links, the appropriate arrows are coloured purple.
-
-Of course we could have used a direct link as well, but in
-more complex dialogues, this technique avoids arrows criss-crossing
-all over the screen.
+Of course this is a most minimalistic example, and there 
+are many advanced techniques yet to be explored, like
+\ref page4 to your dialogue. But at least you should have 
+learned how to operate the program. For detailed descriptions
+of the remaining features refer to the following chapters.
 
 \subsection sec23 The Result
 
-Now save and compile the Dialogue. You'll get a .py file,
-the Python dialogue script. In our example it should look
-similar to the following:
+Now save (<tt>File->Save</tt>) and compile (<tt>Dialogue->Compile</tt>)
+the dialogue. You'll get a .py file, the Python dialogue script. 
+In our example it will look similar to the following:
  
 \verbatim
-class new_dialogue:
+import dialogue
+# -- pygettext support
+def _(message): return message
 
-    loop = []
+class untitled (dialogue.base):
+	text = [None,\
+		_("Hello, I am Eric."),\
+		_("I am Kai."),\
+		_("Goodbye!"),\
+		_("Nice to meet you."),\
+		_("Fare well.")]
 
-    strings = ["Hello,I'm Eric.","I am Kai.","Goodbye!","Farewell.","Nice to meet you.",""]
+	# -- (speaker, code, ((text, operation, condition), ...))
+	dlg = [\
+		(None, -1, ((1, 0, -1), )),\
+		("Default", -1, ((2, 0, -1), (3, 0, -1), )),\
+		(None, -1, ((4, 0, -1), )),\
+		(None, -1, ((5, 0, -1), )),\
+		("Default", -1, ((3, 0, -1), )),\
+		("Default", -1, ())]
 
-    def __init__(self):
-        self.dialogue = [self.start, self.answer2, self.answer4, None]
- 
-    def __getattr__ (self, var):
-        return 0
 
-    def run (self, answer):
-        self.npc = []
-        self.player = []
-        self.cont = []
-        self.dialogue[answer]()
-
-    def npc0 (self):
-        self.npc.append (0)
-        self.cont.append (0)
-
-    def player2 (self):
-        self.player.append (1)
-        self.cont.append (1)
-
-    def player4 (self):
-        self.player.append (2)
-        self.cont.append (2)
-
-    def npc6 (self):
-        self.npc.append (3)
-        self.cont.append (0)
-
-    def npc8 (self):
-        self.npc.append (4)
-        self.cont.append (0)
-
-    def start (self):
-        self.npc0 ()
-        self.player2 ()
-        self.player4 ()
-        self.player.append (-1)
-
-    def answer4 (self):
-        self.npc6 ()
-        self.player.append (-1)
-
-    def answer2 (self):
-        self.npc8 ()
-        self.player4 ()
-        self.player.append (-1)
+	def __init__(self, p, n):
+		self.namespace = globals ()
+		self.the_player = p
+		self.the_npc = n
 \endverbatim 
 
 You see, its a lot easier to use the Dialogue Editor than
-writing the Code by hand. Of course, if you know what you
+writing that code by hand. Of course, if you know what you
 are doing, you can edit this file afterwards. But usually,
-you should do any editing in the editor only. For a description
-of the commands refer to the Python Documentation (http://www.python.org). 
+you should do any editing in the editor only. (See http://www.python.org
+for an extensive documentation of the Python scripting language.)
 
 \htmlonly
 <hr>
@@ -262,6 +237,45 @@ After above example you should be able to start designing
 Dialogues right away. But for your convenience, and because
 some of the advanced editor features are not described yet,
 this section contains the complete reference guide.
+
+\subsection sec30 Command line Switches
+
+Although dlgedit is a graphical editor, there are a few
+commandline options for convenience.
+
+\par -c     
+<b>compile all SOURCES and exit</b><br>
+If the <b>-c</b> option is specified with a list of dialogue
+source files (recognizable by their <i>.adlg</i> suffix),
+these sources are turned into python dialogue scripts without
+invoking the graphical editor. 
+
+\par -d
+<b>print project directory and exit</b><br>
+A dialogue is usually assigned to a certain project, i.e a game.
+The project directory tells dlgedit where to search for things 
+like character and quest data needed to compile dialogues. 
+
+\par -j project
+<b>specify a default project</b><br>
+Assigns the given project to new dialogues, or to dialogues that 
+do not belong to a project yet. To properly compile dialogues,
+they usually need to belong to a project. Works in combination
+with the <b>-c</b> option.
+
+\par -p path
+<b>specify a custom project directory</b><br>
+If your project/game does not reside in the default project
+directory (which can be queried with the <b>-d</b> option),
+you can specify an alternative path with this option.
+
+\par -v 
+<b>print version number and exit</b>
+
+You may specify a list of dialogue sources on the command line. 
+Unless the <b>-c</b> switch is used, all of them will be opened 
+in the editor. If no sources are given, it will start with a 
+new, blank dialogue.
 
 \subsection sec31 The Main Window
 \anchor diaare
@@ -306,7 +320,7 @@ of the cursor. The table below shows all possible constellations:
   <tr>
     <td>\e on \e Arrow </td>
     <td>Select Arrow </td>
-    <td>Add Arrow as indirect Link</td>
+    <td>-</td>
     <td>-</td>
   </tr>
 \htmlonly
@@ -363,7 +377,7 @@ of the cursor. The table below shows all possible constellations:
     <td>\e on \e Circle </td>
     <td>Deselect Circle</td>
     <td>Deselect Circle</td>
-    <td>Remove indirect Link</td>
+    <td-</td>
   </tr>
   <tr>
     <td>\e on \e Arrow </td>
@@ -685,12 +699,13 @@ gets compiled into a python class which then is fed into
 Adonthell's Python interpreter to execute it step by step.
 Given the flexibility of Python, it is only sensible to
 use it to achieve more than simple static dialogues. In
-brief, Python makes it possible to reflect the gameworlds
+brief, Python makes it possible to reflect the gameworld's
 current state in a dialogue, and also to change that state
 depending on the player's behaviour throughout the dialogue.
 As you have learned above, you can enter additional Python
 code at various places of the dialogue:
 
+- into the constructor and destructor of the dialogue class.
 - directly into the text. This code has to be enclosed in
   braces {} and should return a string.
 - as a condition that decides whether a chunk of dialogue
