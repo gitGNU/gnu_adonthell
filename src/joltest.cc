@@ -121,7 +121,7 @@ int main (int argc, char * argv[])
   box->set_visible (true); 
   box->set_size (200, 60);
   box->set_position (0, 0); 
-  box->set_geometry (box::VERTICAL); 
+  box->set_geometry (box::HORIZONTAL); 
   box->set_border_ui (theme.get_border("mini"));
   
   
@@ -131,24 +131,33 @@ int main (int argc, char * argv[])
   wid->set_size (30, 50);
   wid->set_visible (true);
   wid->realize (); 
-  box->add_start (wid, true, true, 0); 
+  //  box->add_start (wid, true, true, 0); 
   
   wid = new widget;
   wid->set_size (30, 20);
   wid->set_visible (true);
   wid->realize (); 
-  box->add_start (wid, true, true, 0); 
+  //  box->add_start (wid, true, true, 0); 
 
   
   /* create a button */
   gui::button * but;
   but = new gui::button;
+  but->set_position (30,30);
   but->set_size (30, 20);
   but->set_visible (true);
   but->set_button_ui ( &bt_tmp);
   but->set_text ("Quit ", &font);
   but->realize ();
-  box->add_start (but, false, false); 
+  box->add_start (but); 
+
+  but = new gui::button;
+  but->set_size (30, 20);
+  but->set_visible (true);
+  but->set_button_ui ( &bt_tmp);
+  but->set_text ("Load ", &font);
+  but->realize ();
+  box->add_start (but); 
 
   /* build the box */
   box->realize ();  
@@ -178,13 +187,6 @@ int main (int argc, char * argv[])
   
   input::manager::cleanup();
   
-
-
-
-
-
-
-
 
   /**
    * SAVE A THEME

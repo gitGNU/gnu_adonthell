@@ -34,7 +34,6 @@ u_int16 container::get_border_width () const
 }
 
 
-
 container::~container ()
 {
   /* destroy the decoration */
@@ -44,27 +43,37 @@ container::~container ()
 
 void container::set_border_ui (border_template * bd_tmp)
 {
+  /* if there is already object remove it */
   if ( my_object_ui)  delete my_object_ui;
+  /* build a new border */
   my_object_ui = new border_ui (this);
+  /* define the new border */
   ((border_ui*)my_object_ui)->set_border (bd_tmp); 
 }
 
 bool container::draw (gfx::drawing_area * da, gfx::surface * sf)
 {
+  /* call the widget draw */
   if (widget::draw (da, sf) )
     {
+      /* attach drawing area */
       assign_drawing_area (da);
+      /* draw the theme */
       if (my_object_ui) my_object_ui->draw(da, sf);
+      /* detach the drawing area */
       detach_drawing_area ();
+      
       return true;
     }
+  
   return false;
 }
 
 void container::update_size ()
 {
+  /* update widget size */
   widget::update_size ();
-  
+  /* if there is is a ui object update it */
   if (my_object_ui) my_object_ui->resize();
 }
 
@@ -79,17 +88,7 @@ void container::update_position ()
 void container::realize()
 {
   widget::realize();
+  
   /* we call resize for objet_ui */
   if (my_object_ui) my_object_ui->resize ();
 }
-
-
-
-
-
-
-
-
-
-
-

@@ -12,6 +12,8 @@
    See the COPYING file for more details
 */
 
+#include <iostream>
+
 #include "button_ui.h"
 
 
@@ -29,7 +31,8 @@ void button_ui::draw (gfx::drawing_area * da, gfx::surface * sf)
   
   if( button_->get_pressed()) pressed_border_->draw(da, sf);
   else released_border_->draw(da, sf);
-  background_->draw (da, sf);
+
+  //background_->draw (da, sf);
 }
 
 
@@ -40,6 +43,9 @@ void button_ui::resize()
   pressed_border_->resize();
   released_border_->resize();
   background_->resize();
+
+  std::cout << "ID:" << button_->get_id () << 
+    " x:" << button_->get_x() << " y:" << button_->get_y () << " l:" << button_->get_length () << "  h:" << button_->get_height () << std::endl;
 }
 
 

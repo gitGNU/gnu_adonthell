@@ -111,8 +111,9 @@ void border_ui::move ()
 					  container_->get_y_real() - (img_[border_template::C_BR]->height()>>1) +
 					  (img_[border_template::B_BOTTOM]->height()>>1) + container_->get_height());
 
-  std::cout << "border_ui::move x:" << container_->get_x_real () << " y:" << container_->get_y_real () << " l:" 
+  /*  std::cout << "border_ui::move x:" << container_->get_x_real () << " y:" << container_->get_y_real () << " l:" 
 	    << container_->get_length() << " h:" << container_->get_height() << std::endl;
+  */
 }
 
 

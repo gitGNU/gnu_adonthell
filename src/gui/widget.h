@@ -216,6 +216,9 @@ namespace gui
        */
       virtual bool update (); 
       
+      
+      int get_id () const;
+
     
       /** Execute on_destroy callback 
        */
@@ -236,8 +239,6 @@ namespace gui
       protected : 
 	
     
-	
-	private : 
 	
 	/* get event from this windows */
 	// window * parent_window_; 
@@ -275,6 +276,11 @@ namespace gui
       /* true if the object has default */
       bool has_default_;
     
+
+      static int ID_;
+
+      int my_ID;
+
     };  
   
 };

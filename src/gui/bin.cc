@@ -76,6 +76,7 @@ void bin::update_size ()
   if (child)
     {
       /* we center the alone child */
+      child->set_position ( get_border_width (), get_border_width ());
       child->set_size (get_length () - ( get_border_width () << 1 ), get_height () - ( get_border_width() << 1));
       child->realize ();
     }
@@ -118,10 +119,15 @@ int bin::input_update (input::event * ev)
 void bin::realize ()
 {
   container::realize ();
-  //check size and location of children
-  set_position ( get_x(), get_y());
-  set_size (get_length(), get_height());
-  //WARNING : execute child->realize () ??
+
+  /* if there is a child, we resize it and rebuild it */
+  if (child)
+    {
+      /* we center the alone child */
+      child->set_position ( get_border_width (), get_border_width ()); 
+      child->set_size (get_length () - ( get_border_width () << 1 ), get_height () - ( get_border_width() << 1));
+      child->realize ();
+    }
 }
 
 

@@ -19,9 +19,14 @@
 
 using namespace gui;
 
+int widget::ID_ = 0;
+
 widget::widget () : parent_ (NULL) 
 {    
+  my_ID = ID_++;
 }
+
+int widget::get_id () const { return my_ID;}
 
  
 void widget::set_parent (container * parent)
@@ -41,7 +46,7 @@ void widget::set_position (s_int16 x, s_int16 y)
 void widget::update_position ()
 {
   /* if there is a parent, calcul obsolute position with relative position */
-  if (parent_) drawing_area::move (parent_->get_x_real () + x_ + parent_->get_border_width (), parent_->get_y_real () + y_ +parent_->get_border_width () );
+  if (parent_) drawing_area::move (parent_->get_x_real () + x_ , parent_->get_y_real () + y_ );
   else drawing_area::move (x_, y_); 
 }
 
@@ -71,8 +76,7 @@ s_int16 widget::get_y_real () const
 
 void widget::set_size (s_int32 length, s_int32 height)
 {
-  if (get_length () == length && get_height () == height) return; 
-  
+  if (get_length () == length && get_height () == height); 
   if ( length >= 0 && height >=0) drawing_area::resize (length, height); 
   else if (length >= 0 ) drawing_area::resize (length, 0);
   else if (height >= 0 ) drawing_area::resize (0, height);
@@ -182,6 +186,9 @@ widget::~widget ()
 
 bool widget::draw (gfx::drawing_area * da, gfx::surface * sf)
 {
+  
+  
+
   return visible_;
 }
 

@@ -68,13 +68,13 @@ void button::set_text (const std::string & text, font * font)
   /* destroy child */
   clear();
   
-  label * lab = new label;
+  /*  label * lab = new label;
   lab->set_font (*font);
   lab->set_text (text);
   lab->set_visible (true);
   //  lab->set_alignment ( misc::CENTER, misc::CENTER );
   add ( lab );
-  lab->realize();
+  lab->realize();*/
 }
 
 
