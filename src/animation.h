@@ -23,7 +23,6 @@
 #include <string>
 #include "input.h"
 #include "prefs.h"
-//#include "game.h"
 #include "win_types.h"
 #include "win_base.h"
 #include "win_font.h"
@@ -130,6 +129,7 @@ class animation
   animation();
   void clear();
   ~animation();
+  bool is_empty();
 
   void update();
   void set_active_frame(u_int16 framenbr);

@@ -240,6 +240,11 @@ animation::~animation()
 #endif
 }
 
+bool animation::is_empty()
+{
+  return((!nbr_of_frames)||(!nbr_of_images));
+}
+
 void animation::update()
 {
   if((!play_flag)||(!nbr_of_frames)) return;

@@ -179,7 +179,8 @@ void game::cleanup()
 #endif
 
   Py_DECREF (globals);
+#warning kill_python make the mapengine segfaults when it quits.
+#warning please fix it (Alex)
   kill_python();
-
   SDL_Quit();
 }

@@ -15,7 +15,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <SDL/SDL.h>
-#include <SDL/SDL_image.h>
 #include "types.h"
 #include "image.h"
 

@@ -22,6 +22,7 @@ dnl Check for libraries.
 dnl ********************
 
 AC_CHECK_LIB(pthread, main,, echo "Adonthell requires Pthreads library.  Exitting..."; exit 1)
+AC_CHECK_LIB(z, main,,echo "Adonthell requires Zlib. Exitting...";exit 1)
 AC_CHECK_LIB(SDL, main,, echo "Adonthell requires the  SDL library.  Exitting..."; exit 1)
 
 dnl Check for SDL
@@ -32,11 +33,7 @@ AM_PATH_SDL($SDL_VERSION,
 )
 
 CFLAGS="$CFLAGS $SDL_CFLAGS"
-LIBS="$SDL_LIBS"
-
-AC_CHECK_LIB(SDL_image, main, 
-  LIBS="$LIBS -lSDL_image",
-  echo "Adonthell requires the SDL_image library.  Exitting..."; exit 1)
+LIBS="$SDL_LIBS -lz"
 
 dnl**************************************************
 dnl Seems SDL 1.1.5+ uses 255 for opaque instead of 0
@@ -151,14 +148,11 @@ dnl  **************************
 dnl  Check for required headers
 dnl  **************************
 
-AC_CHECK_HEADERS([pthread.h SDL/SDL.h])
+AC_CHECK_HEADERS([pthread.h SDL/SDL.h zlib.h])
 
 if test x$SDL_MIXER = xyes; then
    AC_CHECK_HEADERS([SDL/SDL_mixer.h SDL/SDL_audio.h]) 
 fi 
-
-AC_CHECK_HEADER(SDL/SDL_image.h)
-
 
 dnl ********************************
 dnl Generate our compiler arguements
