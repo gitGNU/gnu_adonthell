@@ -23,7 +23,9 @@ int main(int argc, char * argv[])
     // Init the game engine
     if (!the_game.init ()) 
         return 1;
-    data::load (0);
+
+    if (!data::load (0))
+        return 2;
 
     exec_file("init.py");
     show_traceback ();

@@ -22,7 +22,7 @@
 #include <unistd.h>
 
 #include "../../character_base.h"
-// #include "../../event.h"
+#include "../../fileops.h"
 #include "../../data.h"
 
 objects data::characters;
@@ -219,6 +219,9 @@ int main (int argc, char* argv[])
              << "\" for writing.\n\n";
         return 1;
     }
+
+    // write version
+    fileops::put_version (outfile, 1);
 
     // get absolute pathname
     chdir (argv[1]);

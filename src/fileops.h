@@ -1,7 +1,7 @@
 /*
    $Id$
 
-   Copyright (C) 1999   The Adonthell Project
+   Copyright (C) 1999 - 2001 The Adonthell Team
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -12,18 +12,22 @@
    See the COPYING file for more details.
 */
 
-#ifndef _fileops_h
-#define _fileops_h
+#ifndef __FILEOPS_H__
+#define __FILEOPS_H__
 
 #include <zlib.h>
 #include <string.h>
+#include "types.h"
 
-// void getstringfromfile(char strg[],SDL_RWops * file);
-// void putstringtofile(char strg[],SDL_RWops * file);
+// some file related functions
+class fileops
+{
+public:
+    static void put_string (gzFile, char*);     // Save a string
+    static char* get_string (gzFile);           // Load a string
 
-// Save a string
-void put_string (gzFile, char*);
-// Load a string
-char* get_string (gzFile);
+    static void put_version (gzFile, u_int16);  // Set version of a file
+    static bool get_version (gzFile, u_int16, u_int16, char*); // Check version
+};
 
-#endif
+#endif // __FILEOPS_H__

@@ -64,18 +64,23 @@ gamedata::~gamedata ()
     if (time != NULL) delete time;
 }
 
-void gamedata::load (gzFile file)
+bool gamedata::load (gzFile file)
 {
-    description = get_string (file);
-    location = get_string (file);
-    time = get_string (file);
+    if (!fileops::get_version (file, 1, 1, "save.data")) 
+        return false;
+    
+    description = fileops::get_string (file);
+    location = fileops::get_string (file);
+    time = fileops::get_string (file);
+    return true;
 }
 
 void gamedata::save (gzFile file)
 {
-    put_string (file, description);
-    put_string (file, location);
-    put_string (file, time);
+    fileops::put_version (file, 1);
+    fileops::put_string (file, description);
+    fileops::put_string (file, location);
+    fileops::put_string (file, time);
 }
 
 void gamedata::set_description (char *desc)
@@ -133,10 +138,12 @@ void data::init (char* d)
                     sprintf (filepath, "%s/%s", adonthell_dir, dirent->d_name);
 
                     gdata = new gamedata;
-                    gdata->load (in);
-                    gdata->set_directory (filepath);
-                    
-                    saves.push_back (gdata);
+                    if (gdata->load (in))
+                    {
+                        gdata->set_directory (filepath);
+                        saves.push_back (gdata);
+                    }
+
                     gzclose (in);
                 }
             }
@@ -206,6 +213,9 @@ bool data::load (u_int32 pos)
         return false;
     }
 
+    if (!fileops::get_version (in, 1, 1, filepath))
+        return false;
+
     // load characters     
     while (gzgetc (in))
     {
@@ -235,6 +245,9 @@ bool data::load (u_int32 pos)
         return false;
     }
     
+    if (!fileops::get_version (in, 1, 1, filepath))
+        return false;
+
     // load quests
     while (gzgetc (in))
     {
@@ -320,6 +333,7 @@ gamedata* data::save (u_int32 pos, char *desc)
         return NULL;
     }
 
+    fileops::put_version (file, 1);
     while ((mychar = (character *) characters.next ()) != NULL)
     {
         // don't save the player
@@ -346,6 +360,7 @@ gamedata* data::save (u_int32 pos, char *desc)
         return NULL;
     }
 
+    fileops::put_version (file, 1);
     while ((myquest = (quest *) data::quests.next ()) != NULL)
     {
         // tell the quest.data loader that another entry follows
@@ -384,12 +399,14 @@ gamedata* data::next_save ()
     static vector<gamedata*>::iterator i = saves.begin ();
     static u_int32 size = saves.size ();
 
+    // check whether a new save has been added
     if (size != saves.size ())
     {
         size = saves.size ();
         i = saves.begin ();
     }
 
+    // check whether we reached the end of the list
     if (++i == saves.end ())
     {
         i = saves.begin ();

@@ -22,6 +22,7 @@
 #include <unistd.h>
 
 #include "../../quest.h"
+#include "../../fileops.h"
 
 // read the quest source file and append it to the quest data file
 void process_character (char *input, gzFile output)
@@ -117,6 +118,8 @@ int main (int argc, char* argv[])
              << "\" for writing.\n\n";
         return 1;
     }
+
+    fileops::put_version (outfile, 1);
 
     // get absolute pathname
     chdir (argv[1]);

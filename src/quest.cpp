@@ -23,7 +23,7 @@ void quest::save (gzFile out)
     u_int32 j;
     
     // Save name
-    put_string (out, name);
+    fileops::put_string (out, name);
     
     // Save all variables and flags
     j = data.size ();
@@ -32,7 +32,7 @@ void quest::save (gzFile out)
     for (i = data.begin (); i != data.end (); i++)
     {
         string = strdup ((*i).first);
-        put_string (out, string);
+        fileops::put_string (out, string);
         free (string);
         gzwrite (out, &(*i).second, sizeof (s_int32));
     }
@@ -46,13 +46,13 @@ void quest::load (gzFile in)
     char *key;
 
     // load name
-    name = get_string (in);
+    name = fileops::get_string (in);
     
     // load all variables and flags
     gzread (in, &size, sizeof (size));
     for (i = 0; i < size; i++)
     {
-        key = get_string (in);
+        key = fileops::get_string (in);
         gzread (in, &value, sizeof (value));
 
         set (key, value);

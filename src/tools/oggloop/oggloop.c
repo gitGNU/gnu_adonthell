@@ -38,6 +38,7 @@ int main (int argc, char *argv[]) {
   double start = 0;
   double end = 0;
   int i, s, e, p_raw, p_pcm;
+  unsigned short version = 1;
 
   /* open the file, our last argument */
   oggfile = fopen (argv[argc-1], "r");
@@ -96,6 +97,9 @@ int main (int argc, char *argv[]) {
 
    infofile = fopen (infoname, "w");
    if (infofile) {
+     fputc ('v', infofile);
+     fwrite (&version, sizeof(version), 1, infofile);
+
      fwrite (&p_pcm, sizeof(p_pcm), 1, infofile);
      fwrite (&p_raw, sizeof(p_raw), 1, infofile);
      fwrite (&s, sizeof(s), 1, infofile);

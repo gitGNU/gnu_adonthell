@@ -37,7 +37,7 @@ public:
     ~gamedata ();
     
     void save (gzFile);                     // save a record to disk
-    void load (gzFile);                     // load a record from disk
+    bool load (gzFile);                     // load a record from disk
 
     // a bunch of methods to access the private attributes
     char* get_directory () { return directory; }

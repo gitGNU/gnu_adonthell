@@ -23,6 +23,7 @@
 #include "SDL_mixer.h"
 
 #include "types.h"
+#include "fileops.h"
 #include "audio.h"
 #include "audio_loop.h"
 
@@ -44,10 +45,16 @@ bool loop_info::load (char *filename)
     FILE *info = fopen (info_file, "r");
     if (info)
     {
-        fread (&start_page_pcm, sizeof(start_page_pcm), 1, info);
-        fread (&start_page_raw, sizeof(start_page_raw), 1, info);
-        fread (&start, sizeof(start), 1, info);
-        fread (&end, sizeof(end), 1, info);
+        if (!fileops::get_version (info, 1, 1, info_file))
+            retval = false;
+        else
+        {
+            fread (&start_page_pcm, sizeof(start_page_pcm), 1, info);
+            fread (&start_page_raw, sizeof(start_page_raw), 1, info);
+            fread (&start, sizeof(start), 1, info);
+            fread (&end, sizeof(end), 1, info);
+        }
+
         fclose (info);
     }
     else retval = false;

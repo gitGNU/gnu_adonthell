@@ -29,10 +29,11 @@ extern "C"
 #include "../../prefs.h"
 #include "../../data.h"
 #include "../../quest.h"
+#include "../../fileops.h"
+#include "../../character_base.h"
 #include "main.h"
 #include "graph.h"
 #include "interface.h"
-#include "../../character.h"
 
 int 
 main (int argc, char *argv[])
@@ -98,6 +99,9 @@ main (int argc, char *argv[])
     {
         character *mynpc = NULL;
     
+        if (!fileops::get_version (in, 1, 1, tmp))
+            return 1;
+
         while (gzgetc (in))
         {
             mynpc = new character;
@@ -130,6 +134,9 @@ main (int argc, char *argv[])
     {
         quest *myquest;
         
+        if (!fileops::get_version (in, 1, 1, tmp))
+            return 1;
+
         // load quests
         while (gzgetc (in))
         {

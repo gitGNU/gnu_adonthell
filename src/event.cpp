@@ -242,11 +242,11 @@ void base_map_event::load (gzFile f)
     gzread (f, &dir, sizeof (dir));
     gzread (f, &map, sizeof (map));
 
-    name = get_string (f);
+    name = fileops::get_string (f);
     c = (mapcharacter*) data::characters.get (name);
     delete name;
 
-    script_file = get_string (f);
+    script_file = fileops::get_string (f);
 }
 
 // Save enter_event to file
@@ -258,8 +258,8 @@ void base_map_event::save (gzFile out)
     gzwrite (out, &dir, sizeof (dir));
     gzwrite (out, &map, sizeof (map));    
 
-    put_string (out, c->get_name());
-    put_string (out, script_file);    
+    fileops::put_string (out, c->get_name());
+    fileops::put_string (out, script_file);    
 }
 #endif
 
@@ -283,7 +283,7 @@ void time_event::save (gzFile out)
     gzwrite (out, &day, sizeof (day));
     gzwrite (out, &d_step, sizeof (d_step));
 
-    put_string (out, script_file);    
+    fileops::put_string (out, script_file);    
 }
 
 // Load a time event from file
@@ -296,7 +296,7 @@ void time_event::load (gzFile f)
     gzread (f, &day, sizeof (day));
     gzread (f, &d_step, sizeof (d_step));
 
-    script_file = get_string (f);
+    script_file = fileops::get_string (f);
 }
 
 // Execute time event's script

@@ -61,7 +61,7 @@ void character_base::save(gzFile out)
   u_int32 j;
   
   // Save name
-  put_string (out, name);
+  fileops::put_string (out, name);
     
   // Save all attributes and flags
   j = data.size ();
@@ -70,12 +70,12 @@ void character_base::save(gzFile out)
   for (i = data.begin (); i != data.end (); i++)
     {
       string = strdup ((*i).first);
-      put_string (out, string);
+      fileops::put_string (out, string);
       free (string);
       gzwrite (out, &(*i).second, sizeof (s_int32));
     }
 
-  put_string (out, dialogue);
+  fileops::put_string (out, dialogue);
 }
 
 void character_base::load (gzFile in)
@@ -85,7 +85,7 @@ void character_base::load (gzFile in)
     char *key;
 
     // load name
-    name = get_string (in);
+    name = fileops::get_string (in);
 
 #ifndef _EDIT_
     // make the character available from data
@@ -96,10 +96,10 @@ void character_base::load (gzFile in)
     gzread (in, &size, sizeof(size));
     for (i = 0; i < size; i++)
     {
-        key = get_string (in);
+        key = fileops::get_string (in);
         gzread (in, &value, sizeof (value));
         set (key, value);
     }
 
-    dialogue = get_string (in);
+    dialogue = fileops::get_string (in);
 }
