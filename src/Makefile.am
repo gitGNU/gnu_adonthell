@@ -50,6 +50,7 @@ libbase_a_SOURCES = \
         gametime.h \
         quest.h \
         schedule.h \
+        schedule_data.h \
         storage.h \
         str_hash.h \
         time_event.h \

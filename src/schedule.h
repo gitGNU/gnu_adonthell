@@ -24,6 +24,7 @@
 
 #include "py_object.h"
 #include "time_event.h"
+#include "schedule_data.h"
 
 /**
  * Path to the schedule scripts.
@@ -60,16 +61,33 @@ public:
     void update ();
 
     /**
-     * Assign a (new) %schedule script. This script is responsible for
-     * the character's current activity.
+     * Assign a (new) %schedule script, which is responsible for the
+     * character's current activity. This method should only be used
+     * from the manager %schedule. From within a %schedule script, use
+     * queue_schedule () instead.
      *
      * @param file Filename of the script to load.
      * @param args Addional arguments to pass to the script constructor.
+     *
+     *  @sa queue_schedule ()
      */
     void set_schedule (string file, PyObject * args = NULL);
 
     /**
-     * Call this to explicitly clear the attached schedule. This will
+     * Set %schedule to use once the current one stops. Overrides
+     * the %schedule otherwise chosen by the manager script. This
+     * method allows a %schedule to decide upon the character's
+     * next activity.
+     *
+     * @param file Filename of the script to load.
+     * @param args Addional arguments to pass to the script constructor.
+     * 
+     * @sa set_schedule ()
+     */
+    void queue_schedule (string file, PyObject * args = NULL);
+    
+    /**
+     * Call this to explicitly clear the attached %schedule. This will
      * also run the destructor (__del__ method) of the script, if it
      * exists.
      */
@@ -92,7 +110,8 @@ public:
      * %schedule is active, it is executed every %game cycle. If it's
      * inactive, it will cause the %character to freeze.
      * 
-     * @param a \c true if the schedule should be activated, \c false otherwise.
+     * @param a \c true if the %schedule should be activated, \c false
+     * otherwise.
      */
     void set_active (bool a)    { Active = a; }
     
@@ -108,9 +127,9 @@ public:
     /** 
      * Sets whether the %schedule is running or not. Once
      * it stops running, the manager script will be executed to
-     * determine a new schedule.
+     * determine a new %schedule.
      *
-     * @param a \c false if the schedule should be stopped, \c true otherwise.
+     * @param a \c false if the %schedule should be stopped, \c true otherwise.
      */
     void set_running (bool r)    { Running = r; }
 
@@ -127,7 +146,7 @@ public:
      * Specify a period after which the manager script is run,
      * whether the active %schedule is finished or not. This function
      * makes use of the %event system and is much more efficient than
-     * querying the current time within the schedule itself. It
+     * querying the current time within the %schedule itself. It
      * therefore is the preferred method of letting schedules run a 
      * fixed amount of gametime.
      *
@@ -143,7 +162,21 @@ public:
      *      "14 hours from now on".
      */
     void set_alarm (string time, bool absolute = false);
-                
+    
+    /**
+     * Set an alarm for a script set with queue_schedule (). This 
+     * needs to happen after the call to %queue_schedule, but before
+     * calling set_running (false). If a %schedule is already running,
+     * use set_alarm () instead.
+     * 
+     * @param time The amount of time the %schedule should be active.
+     * @param absolute whether the given time is relative to the current
+     *      time or an absolute hour of the current (or next) day.
+     *
+     * @sa set_alarm ()
+     */
+    void queue_alarm (string time, bool absolute = false);
+    
     /**
      * Restore the state of the %schedule class from disk. Loads
      * a state previously saved with the put_state () method.
@@ -177,6 +210,9 @@ private:
     
     // set the alarm to execute the manager script at a certain time
     time_event *Alarm;
+    
+    // schedule to set instead of running manager script
+    schedule_data *Queue;
 #endif // SWIG
 };
 

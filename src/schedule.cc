@@ -28,6 +28,7 @@ schedule::schedule ()
 {
     Active = false;
     Running = false;
+    Queue = NULL;
     Alarm = NULL;
 }
 
@@ -39,6 +40,9 @@ schedule::~schedule ()
         event_handler::remove_event (Alarm);
         delete Alarm;        
     }
+    
+    if (Queue)
+        delete Queue;
 }
 
 // execute the schedule
@@ -48,8 +52,23 @@ void schedule::update ()
     if (!Active) return;
     
     // no schedule running --> assign a new one
-    if (!Running) Manager.run ();
-
+    if (!Running) 
+    {
+        // if no schedule queued, let the manager script decide
+        if (!Queue) 
+            Manager.run ();
+        
+        // otherwise use the queued script
+        else
+        {
+            set_schedule (Queue->file, Queue->args);
+            set_alarm (Queue->time, Queue->absolute);
+            
+            delete Queue;
+            Queue = NULL;
+        }
+    }
+        
     // finally run schedule
     Schedule.run ();
 }
@@ -70,6 +89,14 @@ void schedule::set_schedule (string file, PyObject *args)
         delete Alarm;
         Alarm = NULL;
     }
+}
+
+// queue a schedule
+void schedule::queue_schedule (string file, PyObject *args)
+{
+    if (Queue) delete Queue;
+    
+    Queue = new schedule_data (file, args);
 }
 
 // assign a (new) manager script
@@ -112,6 +139,19 @@ void schedule::set_alarm (string time, bool absolute)
     event_handler::register_event (Alarm);
 }
 
+// set alarm for a queued schedule
+void schedule::queue_alarm (string time, bool absolute)
+{
+    if (!Queue)
+    {
+        fprintf (stderr, "*** schedule::queue_alarm: queue a schedule first!\n");
+        return;
+    }
+    
+    Queue->time = time;
+    Queue->absolute = absolute;
+}
+
 // save state to disk
 void schedule::put_state (ogzstream &file)
 {
@@ -134,12 +174,23 @@ void schedule::put_state (ogzstream &file)
         true >> file;
         Alarm->put_state (file);
     }
+    
+    // save queue, if set
+    if (!Queue)
+    {
+        false >> file;
+    }
+    else
+    {
+        true >> file;
+        Queue->put_state (file);
+    }
 }
 
 // load state from disk
 bool schedule::get_state (igzstream &file)
 {
-    bool has_alarm;
+    bool has_feature;
     
     Active << file;
     Running << file;
@@ -159,8 +210,8 @@ bool schedule::get_state (igzstream &file)
     }
     
     // restore alarm
-    has_alarm << file;
-    if (has_alarm)
+    has_feature << file;
+    if (has_feature)
     {
         Alarm = new time_event;
         Alarm->get_state (file);
@@ -168,6 +219,14 @@ bool schedule::get_state (igzstream &file)
         
         // don't forget to register the alarm!
         event_handler::register_event (Alarm);
+    }
+    
+    // restore queue
+    has_feature << file;
+    if (has_feature)
+    {
+        Queue = new schedule_data;
+        Queue->get_state (file);
     }
     
     return true;
