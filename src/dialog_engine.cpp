@@ -18,8 +18,8 @@
 #include "data.h"
 #include "input.h"
 #include "image.h"
-#include "screen.h"
 #include "py_inc.h"
+#include "input.h"
 #include "dialog_engine.h"
 
 // Init the dialogue engine
@@ -133,6 +133,9 @@ dialog_engine::~dialog_engine ()
         delete fonts[i];
 
     Py_XDECREF (instance);
+
+    // get rid of any keys that might have been accidently pressed during dialogue
+    input::clear_keys_queue ();
 }
 
 void dialog_engine::run ()
@@ -184,6 +187,11 @@ void dialog_engine::run ()
 bool dialog_engine::update ()
 {
     sel->update ();
+
+    // catch other keypresses
+    if (input::is_pushed (SDLK_LEFT)) sel->up ();
+    if (input::is_pushed (SDLK_RIGHT)) sel->down ();
+    
     return is_running;
 }
 
@@ -233,5 +241,4 @@ void dialog_engine::set_npc (char* new_npc)
     
     set_name (mynpc->get_name());
     set_portrait ("gfx/portraits/lyanna.pnm");
-    can_add = false;
 }
