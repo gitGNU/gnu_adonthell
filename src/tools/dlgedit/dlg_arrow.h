@@ -71,7 +71,7 @@ public:
      * save an Arrow to a file
      * @param file Stream to an open file
      */
-    void save (ofstream &file);
+    void save (std::ofstream &file);
     
     /**
      * Check whether the arrow is located at the given point.

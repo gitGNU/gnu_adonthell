@@ -23,7 +23,7 @@
 #define DLG_COMPILER_H
 
 #include <vector>
-#include <fstream.h>
+#include <fstream>
 #include "dlg_module.h"
 #include "dlg_circle.h"
 
@@ -132,7 +132,7 @@ private:
     token getKeyword (const std::string &statement);
     token getToken (const std::string &statement);
     
-    ofstream file;
+    std::ofstream file;
     DlgModule *dialogue;            // The dialogue to be compiled    
     
     DlgCircle start;                // Start node of the dialogue

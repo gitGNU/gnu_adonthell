@@ -24,7 +24,7 @@
 #endif
 
 #include <gtk/gtk.h>
-#include <iostream.h>
+#include <iostream>
 #include <locale.h>
 #include "gettext.h"
 #include "game.h"
@@ -83,7 +83,7 @@ int main (int argc, char *argv[])
             // check whether the file is a valid dialoge
             if (!GuiDlgedit::checkDialogue (dialogue))
             {
-                cout << "Loading of '" << dialogue << "' failed\n";
+                std::cout << "Loading of '" << dialogue << "' failed\n";
                 continue;
             }
             
@@ -92,11 +92,11 @@ int main (int argc, char *argv[])
             // try to load from file
             if (!module->load ())
             {
-                cout << "Loading of '" << dialogue << "' failed\n";
+                std::cout << "Loading of '" << dialogue << "' failed\n";
             }
             else
             {            
-                cout << "Compiling '" << dialogue << "' ...\n";
+                std::cout << "Compiling '" << dialogue << "' ...\n";
             
                 // try to compile the dialogue
                 DlgCompiler compiler (module);

@@ -25,7 +25,7 @@
 #include <list>
 #include <string>
 #include <stdio.h>
-#include <fstream.h>
+#include <fstream>
 #include "dlg_types.h"
 #include "dlg_node_gfx.h"
 
@@ -131,7 +131,7 @@ public:
      * Save a node to file
      * @param out Stream to the file to save to
      */
-    virtual void save (ofstream &out) { } 
+    virtual void save (std::ofstream &out) { }
     
     /**
      * Get the type of the node.

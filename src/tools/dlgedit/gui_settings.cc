@@ -21,7 +21,7 @@
 
 #include <gtk/gtk.h>
 #include <sys/stat.h>
-#include <iostream.h>
+#include <iostream>
 #include "dlg_types.h"
 #include "gui_file.h"
 #include "gui_dlgedit.h"
@@ -207,5 +207,5 @@ void GuiSettings::display (DlgModuleEntry *e, std::string &name)
 void GuiSettings::applyChanges ()
 {
     if (!entry->setProject (gtk_entry_get_text (GTK_ENTRY (project))))
-        cout << "Loading quests/characters failed!\n";
+        std::cout << "Loading quests/characters failed!\n";
 }

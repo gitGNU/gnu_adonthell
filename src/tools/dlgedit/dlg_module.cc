@@ -295,7 +295,7 @@ bool DlgModule::load ()
 // save dialogue to file
 bool DlgModule::save (std::string &file)
 {
-    ofstream out (file.c_str ());
+    std::ofstream out (file.c_str ());
     int index = 0;
     
     // opening failed for some reasons    

@@ -22,7 +22,7 @@
  */
 
 #ifdef _DEBUG_
-#include <iostream.h>
+#include <iostream>
 #endif
 
 #include "storage.h"
@@ -37,7 +37,7 @@ storage::~storage ()
 void storage::set_val (string key, s_int32 value)
 {
 #ifdef _DEBUG_
-    cout << "storage::set_val \"" << key << "\" = " << value << endl;
+    std::cout << "storage::set_val \"" << key << "\" = " << value << std::endl;
 #endif
     if (!value) data.erase (key);
     else
@@ -51,9 +51,9 @@ s_int32 storage::get_val (string key)
 {
 #ifdef _DEBUG_
     if (data.find (key) != data.end ())
-        cout << "storage::get_val \"" << key << "\" = " << data[key] << endl;
+        std::cout << "storage::get_val \"" << key << "\" = " << data[key] << std::endl;
     else
-        cout << "storage::get_val no such key \"" << key << "\"" << endl;
+        std::cout << "storage::get_val no such key \"" << key << "\"" << std::endl;
 #endif
     if (data.find (key) == data.end ()) return 0;
     else return data[key];
@@ -94,13 +94,13 @@ void objects::set_val (const char* key, storage *val)
         if (strcmp ((*j).first, key) == 0)
         {
 #ifdef _DEBUG_
-            cout << "*** objects::set: key already exists: '" << key << "'\n";
-            cout << "*** container contents: ";
+            std::cout << "*** objects::set: key already exists: '" << key << "'\n";
+            std::cout << "*** container contents: ";
 
             for (j = data.begin (); j != data.end (); j++)
-            cout << "'" << (*j).first << "', ";
+                std::cout << "'" << (*j).first << "', ";
 
-            cout << "\n\n" << flush;
+            std::cout << "\n\n" << flush;
 #endif // _DEBUG_
 
         return;
@@ -121,8 +121,8 @@ storage* objects::get_val (const char* key)
             return (*j).second;
 
 #ifdef _DEBUG_
-    cout << "*** objects::get: key does not exist: '" << key << "'\n";
-    cout << "*** container contents: ";
+    std::cout << "*** objects::get: key does not exist: '" << key << "'\n";
+    std::cout << "*** container contents: ";
 
     for (j = data.begin (); j != data.end (); j++)
         cout << "'" << (*j).first << "', ";

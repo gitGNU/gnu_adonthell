@@ -128,7 +128,7 @@ public:
     /**
      * Save the Dialogue to a file
      */
-    void save (ofstream &file)          { }
+    void save (std::ofstream &file)          { }
     
     /**
      * Get the list of nodes in this dialogue.

@@ -238,7 +238,7 @@ bool DlgCircle::load ()
 }
 
 // save all data neccessary to restore the circle
-void DlgCircle::save (ofstream &file)
+void DlgCircle::save (std::ofstream &file)
 {
     // Keyword "Circle" and circle's number
     file << "\nCircle\n";

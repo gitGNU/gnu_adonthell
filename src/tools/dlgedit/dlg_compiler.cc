@@ -20,7 +20,7 @@
  */
 
 #include <iterator>
-#include <ostream.h>
+#include <iostream>
 #include "dlg_cmdline.h"
 #include "dlg_compiler.h"
 #include "dlg_types.h"
@@ -306,7 +306,7 @@ std::string DlgCompiler::inflateCode (std::string code)
     bool is_local = true;
 
 #ifdef _DEBUG_
-    cout << ">>> " << code << endl;
+    std::cout << ">>> " << code << std::endl;
 #endif
     // replace the_npc/the_player with self.the_npc/self.the_player
     pos = code.find ("the_npc", 0);
@@ -365,8 +365,8 @@ std::string DlgCompiler::inflateCode (std::string code)
                 }
 
 #ifdef _DEBUG_
-                cout << "token = '" << stripped << "', operator = '" <<
-                    operators[i] << "'\n" << flush;
+                std::cout << "token = '" << stripped << "', operator = '" <<
+                    operators[i] << "'\n" << std::flush;
 #endif
 
                 // skip functions and arrays
@@ -443,15 +443,15 @@ std::string DlgCompiler::inflateCode (std::string code)
                 pos += operators[i].length ();
                 begin = pos;
 #ifdef _DEBUG_
-                cout << code << endl;
-                for (u_int32 j = 0; j < begin; j++) cout << " ";
-                cout << "^\n";
+                std::cout << code << std::endl;
+                for (unsigned int j = 0; j < begin; j++) std::cout << " ";
+                std::cout << "^\n";
 #endif
                 break;
             }
 
 #ifdef _DEBUG_
-    cout << "<<< " << code << "\n\n";
+    std::cout << "<<< " << code << "\n\n";
 #endif
     return code;
 }
@@ -586,7 +586,7 @@ bool DlgCompiler::addCondition (DlgCircle *circle, int idx)
             error += "\"\n ";
         
             // add error to list
-            if (DlgCmdline::compile) cout << error;
+            if (DlgCmdline::compile) std::cout << error;
             else GuiError::console->add (error, circle);
 
             errors++;
@@ -605,7 +605,7 @@ bool DlgCompiler::addCondition (DlgCircle *circle, int idx)
         error += "\"\n ";
 
         // add error to list
-        if (DlgCmdline::compile) cout << error;
+        if (DlgCmdline::compile) std::cout << error;
         else GuiError::console->add (error, circle);
         
         errors++;
@@ -667,7 +667,7 @@ int DlgCompiler::checkFollowers (DlgCircle *circle)
             error += "\"\n ";
             
             // add error to the error console
-            if (DlgCmdline::compile) cout << error;
+            if (DlgCmdline::compile) std::cout << error;
             else GuiError::console->add (error, circle);
             
             errors++;
@@ -709,7 +709,7 @@ bool DlgCompiler::checkConditions (DlgCircle *circle)
             error += child->entry ()->text ();
             error += "\"\n ";
             
-            if (DlgCmdline::compile) cout << error;
+            if (DlgCmdline::compile) std::cout << error;
             else GuiError::console->add (error, child);
             
             errors++;

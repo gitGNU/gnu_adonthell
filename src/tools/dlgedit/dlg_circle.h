@@ -91,7 +91,7 @@ public:
      * save a circle to a file
      * @param file Stream to an open file
      */
-    void save (ofstream &file);
+    void save (std::ofstream &file);
 
     /**
      * Draw this node to the given surface with the specified offset. 

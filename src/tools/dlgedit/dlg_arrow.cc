@@ -217,7 +217,7 @@ bool DlgArrow::load (std::vector<DlgNode*> &nodes)
 }
 
 // save an arrow to file
-void DlgArrow::save (ofstream &file)
+void DlgArrow::save (std::ofstream &file)
 {
     // Keyword "Arrow" and arrow's number
     file << "\nArrow\n";
