@@ -25,6 +25,7 @@ noinst_LIBRARIES = libbase.a
 CLEANFILES = $(moddata_SCRIPTS)
 
 libbase_a_SOURCES = \
+	callback_sig.cc \
         character_base.cc \
         character.cc \
         event.cc \
@@ -43,6 +44,7 @@ libbase_a_SOURCES = \
         time_event_handler.cc \
         yarg.cc \
         callback.h \
+	callback_sig.h \
         character.h \
         character_base.h \
         event.h \

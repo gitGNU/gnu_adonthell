@@ -376,6 +376,7 @@ src/gfx/Makefile
 src/input/Makefile
 src/audio/Makefile
 src/python/Makefile
+src/gui/Makefile
 src/lmap/Makefile
 src/tools/Makefile
 src/tools/charedit/Makefile
