@@ -68,10 +68,10 @@ VERSION = 0.1.1.7
 
 bin_PROGRAMS = mapengine joltest alextest
 
-mapengine_SOURCES = animation.cpp audio.cpp audio_thread.cpp character.cpp commands.cpp cutscene.cpp dialog_cmds.cpp fileops.cpp game.cpp generic_cmds.cpp image.cpp init.cpp interpreter.cpp input.cpp inventory.cpp lex.prefs.cpp main.cpp map.cpp mapcharacter.cpp mapengine.cpp mapevent.cpp mappattern.cpp mapsquare.cpp pnm.cpp prefs.cpp screen.cpp storage.cpp win_label.cpp win_write.cpp win_container.cpp win_select.cpp win_friend.cpp win_border.cpp win_base.cpp win_font.cpp win_image.cpp
+mapengine_SOURCES = animation.cpp audio.cpp audio_thread.cpp character.cpp commands.cpp cutscene.cpp dialog_cmds.cpp fileops.cpp game.cpp generic_cmds.cpp image.cpp init.cpp interpreter.cpp input.cpp inventory.cpp lex.prefs.cpp main.cpp map.cpp mapcharacter.cpp mapengine.cpp mapevent.cpp mappattern.cpp mapsquare.cpp pnm.cpp prefs.cpp screen.cpp storage.cpp win_label.cpp win_write.cpp win_container.cpp win_select.cpp win_friend.cpp win_border.cpp win_base.cpp win_font.cpp win_image.cpp yarg.cc
 
 
-joltest_SOURCES = animation.cpp audio.cpp audio_thread.cpp character.cpp commands.cpp cutscene.cpp dialog_cmds.cpp fileops.cpp game.cpp generic_cmds.cpp image.cpp init.cpp interpreter.cpp input.cpp inventory.cpp lex.prefs.cpp pnm.cpp prefs.cpp screen.cpp storage.cpp win_label.cpp win_write.cpp win_container.cpp win_select.cpp win_friend.cpp win_border.cpp win_base.cpp win_font.cpp win_image.cpp joel.cpp
+joltest_SOURCES = animation.cpp audio.cpp audio_thread.cpp character.cpp commands.cpp cutscene.cpp dialog_cmds.cpp fileops.cpp game.cpp generic_cmds.cpp image.cpp init.cpp interpreter.cpp input.cpp inventory.cpp lex.prefs.cpp pnm.cpp prefs.cpp screen.cpp storage.cpp win_label.cpp win_write.cpp win_container.cpp win_select.cpp win_friend.cpp win_border.cpp win_base.cpp win_font.cpp win_image.cpp joel.cpp yarg.cc
 
 
 alextest_SOURCES = fileops.cpp pnm.cpp screen.cpp image.cpp animation.cpp lex.prefs.cpp prefs.cpp alextest.cpp input.cpp
@@ -91,7 +91,7 @@ image.o init.o interpreter.o input.o inventory.o lex.prefs.o main.o \
 map.o mapcharacter.o mapengine.o mapevent.o mappattern.o mapsquare.o \
 pnm.o prefs.o screen.o storage.o win_label.o win_write.o \
 win_container.o win_select.o win_friend.o win_border.o win_base.o \
-win_font.o win_image.o
+win_font.o win_image.o yarg.o
 mapengine_LDADD = $(LDADD)
 mapengine_DEPENDENCIES = 
 mapengine_LDFLAGS = 
@@ -100,7 +100,7 @@ commands.o cutscene.o dialog_cmds.o fileops.o game.o generic_cmds.o \
 image.o init.o interpreter.o input.o inventory.o lex.prefs.o pnm.o \
 prefs.o screen.o storage.o win_label.o win_write.o win_container.o \
 win_select.o win_friend.o win_border.o win_base.o win_font.o \
-win_image.o joel.o
+win_image.o joel.o yarg.o
 joltest_LDADD = $(LDADD)
 joltest_DEPENDENCIES = 
 joltest_LDFLAGS = 
@@ -130,13 +130,13 @@ DEP_FILES =  .deps/alextest.P .deps/animation.P .deps/audio.P \
 .deps/prefs.P .deps/screen.P .deps/storage.P .deps/win_base.P \
 .deps/win_border.P .deps/win_container.P .deps/win_font.P \
 .deps/win_friend.P .deps/win_image.P .deps/win_label.P \
-.deps/win_select.P .deps/win_write.P
+.deps/win_select.P .deps/win_write.P .deps/yarg.P
 SOURCES = $(mapengine_SOURCES) $(joltest_SOURCES) $(alextest_SOURCES)
 OBJECTS = $(mapengine_OBJECTS) $(joltest_OBJECTS) $(alextest_OBJECTS)
 
 all: all-redirect
 .SUFFIXES:
-.SUFFIXES: .S .c .cpp .o .s
+.SUFFIXES: .S .c .cc .cpp .o .s
 $(srcdir)/Makefile.in: Makefile.am $(top_srcdir)/configure.in $(ACLOCAL_M4) 
 	cd $(top_srcdir) && $(AUTOMAKE) --gnu src/Makefile
 
@@ -197,6 +197,8 @@ joltest: $(joltest_OBJECTS) $(joltest_DEPENDENCIES)
 alextest: $(alextest_OBJECTS) $(alextest_DEPENDENCIES)
 	@rm -f alextest
 	$(CXXLINK) $(alextest_LDFLAGS) $(alextest_OBJECTS) $(alextest_LDADD) $(LIBS)
+.cc.o:
+	$(CXXCOMPILE) -c $<
 .cpp.o:
 	$(CXXCOMPILE) -c $<
 
@@ -275,6 +277,25 @@ maintainer-clean-depend:
 %.lo: %.c
 	@echo '$(LTCOMPILE) -c $<'; \
 	$(LTCOMPILE) -Wp,-MD,.deps/$(*F).pp -c $<
+	@-sed -e 's/^\([^:]*\)\.o[ 	]*:/\1.lo \1.o :/' \
+	  < .deps/$(*F).pp > .deps/$(*F).P; \
+	tr ' ' '\012' < .deps/$(*F).pp \
+	  | sed -e 's/^\\$$//' -e '/^$$/ d' -e '/:$$/ d' -e 's/$$/ :/' \
+	    >> .deps/$(*F).P; \
+	rm -f .deps/$(*F).pp
+
+%.o: %.cc
+	@echo '$(CXXCOMPILE) -c $<'; \
+	$(CXXCOMPILE) -Wp,-MD,.deps/$(*F).pp -c $<
+	@-cp .deps/$(*F).pp .deps/$(*F).P; \
+	tr ' ' '\012' < .deps/$(*F).pp \
+	  | sed -e 's/^\\$$//' -e '/^$$/ d' -e '/:$$/ d' -e 's/$$/ :/' \
+	    >> .deps/$(*F).P; \
+	rm .deps/$(*F).pp
+
+%.lo: %.cc
+	@echo '$(LTCXXCOMPILE) -c $<'; \
+	$(LTCXXCOMPILE) -Wp,-MD,.deps/$(*F).pp -c $<
 	@-sed -e 's/^\([^:]*\)\.o[ 	]*:/\1.lo \1.o :/' \
 	  < .deps/$(*F).pp > .deps/$(*F).P; \
 	tr ' ' '\012' < .deps/$(*F).pp \
