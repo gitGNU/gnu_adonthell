@@ -82,10 +82,13 @@ public:
 #endif
 
 private:
+#ifndef SWIG
     static void unload ();                  // Unload the game
+    static bool save_mapcharacter (char*);  // Save mapcharacter hack
 
     static vector<gamedata*> saves;         // Keeps track of available save games 
     static char *adonthell_dir;             // The $HOME/.adonthell/ directory
+#endif
 };
 
 #endif // __DATA_H__

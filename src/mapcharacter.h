@@ -115,13 +115,17 @@ class mapcharacter : public maptpl, public character_base
   
 #ifndef _EDIT_
   void set_schedule(char * file);
+  char *get_schedule() { return schedule_file; }
   bool is_schedule_activated() { return schedule_activated; }
   void set_schedule_active(bool a) { schedule_activated=a; }
 
   void set_action(char * file);
+  char *get_action() { return action_file; }
   bool is_action_activated() { return action_activated; }
   void set_action_active(bool a) { action_activated=a; }
   void update_move();
+
+  char *get_anim() { return anim_file; }
 #endif
   void update();
   void launch_action(mapcharacter * requester);
@@ -169,6 +173,9 @@ class mapcharacter : public maptpl, public character_base
 #ifndef _EDIT_
   PyCodeObject * schedule;   // The character's schedule
   PyCodeObject * action;     // The character's action
+  char * schedule_file;
+  char * action_file;
+  char * anim_file;
 #endif
 
 #ifdef _EDIT_

@@ -12,8 +12,10 @@
    See the COPYING file for more details.
 */
 
+#include <stdio.h>
 #include <dirent.h>
 #include <sys/stat.h>
+#include <fstream.h>
 
 #include "types.h"
 #include "fileops.h"
@@ -21,16 +23,16 @@
 #include "quest.h"
 #include "data.h"
 #include "character.h"
-#if defined(USE_MAP)
+#if defined (USE_MAP)
 #include "mapengine.h"
 #endif
 
-#if defined(USE_PYTHON)
+#if defined (USE_PYTHON)
 PyObject *data::globals = NULL;     // Global namespace for the Python interpreter
 PyObject *data::py_module = NULL;
 #endif
 
-#if defined(USE_MAP)
+#if defined (USE_MAP)
 mapengine * data::map_engine;
 #endif
 
@@ -124,7 +126,7 @@ void data::init (char* d)
     saves.push_back (gdata);
 
     // Init the global namespace of the python interpreter
-#if defined(USE_PYTHON)
+#if defined (USE_PYTHON)
     py_module = import_module ("ins_modules");
  	globals = PyModule_GetDict (py_module);
 #endif    
@@ -166,9 +168,9 @@ void data::init (char* d)
     }
     
     the_player = NULL;
-#if defined(USE_MAP)
+#if defined (USE_MAP)
     map_engine = new mapengine;
-#if defined(USE_PYTHON)
+#if defined (USE_PYTHON)
     PyDict_SetItemString (globals, "map_engine", pass_instance (map_engine, "mapengine"));
 #endif
 #endif
@@ -184,7 +186,7 @@ void data::cleanup ()
     for (vector<gamedata*>::iterator i = saves.begin (); i != saves.end (); i++)
       delete *i;
 
-#if defined(USE_PYTHON)
+#if defined (USE_PYTHON)
     // Note that we don't have to DECREF globals, because they're a borrowed
     // reference of py_module
     Py_XDECREF (py_module);
@@ -209,7 +211,7 @@ bool data::load (u_int32 pos)
     // Add the player to the game objects
     characters.set (the_player->get_name(), the_player);
 
-#if defined(USE_PYTHON)
+#if defined (USE_PYTHON)
     // Make "myplayer" available to the interpreter 
     PyDict_SetItemString (globals, "the_player", pass_instance (the_player, "character"));
 
@@ -236,7 +238,7 @@ bool data::load (u_int32 pos)
     {
         mynpc = new character;
         mynpc->character_base::load (in);
-#if defined(USE_PYTHON)
+#if defined (USE_PYTHON)
         // Pass character over to Python interpreter
         PyDict_SetItemString (chars, mynpc->get_name(), pass_instance (mynpc, "character"));
 #endif
@@ -244,7 +246,7 @@ bool data::load (u_int32 pos)
     
     gzclose (in);
 
-#if defined(USE_PYTHON)
+#if defined (USE_PYTHON)
     // create quest array
     PyObject *quests = PyDict_New ();
     PyDict_SetItemString (globals, "quests", quests);
@@ -269,7 +271,7 @@ bool data::load (u_int32 pos)
         myquest = new quest;
         myquest->load (in);
         
-#if defined(USE_PYTHON)
+#if defined (USE_PYTHON)
         // Pass quest over to Python interpreter
         PyDict_SetItemString (quests, myquest->name, pass_instance (myquest, "quest"));
 #endif
@@ -278,6 +280,22 @@ bool data::load (u_int32 pos)
     }
 
     gzclose (in);
+
+    // load mapcharacter
+#if defined (USE_PYTHON)
+    sprintf (filepath, "%s/mapchar.py", saves[pos]->get_directory ());
+    FILE *f = fopen (filepath, "r");
+
+    if (!f)
+    {
+        fprintf (stderr, "Couldn't open \"%s\" - stopping\n", filepath);
+        return false;
+    }
+
+	PyRun_File (f, filepath, Py_file_input, data::globals, NULL);
+    fclose (f);
+#endif
+
     return true;
 }
 
@@ -291,6 +309,8 @@ void data::unload ()
     while ((mychar = (character *) characters.next ()) != NULL)
     {
         characters.erase (mychar->get_name());
+        map_engine->get_landmap ()->remove_mapchar (mychar, 
+            mychar->get_submap (), mychar->get_posx (), mychar->get_posy ());
         delete mychar;
     }
 
@@ -303,6 +323,9 @@ void data::unload ()
 
     // the main character was deleted with the other characters already
     the_player = NULL;
+
+    // clean the map
+    map_engine->get_landmap ()->mapchar.clear ();
 }
 
 // Save all dynamic gamedata to the gamedir
@@ -409,10 +432,92 @@ gamedata* data::save (u_int32 pos, char *desc)
     gdata->save (file);
     gzclose (file);
 
+    // save mapcharacter
+    sprintf (filepath, "%s/mapchar.py", gdata->get_directory ());
+    if (!save_mapcharacter (filepath))
+    {
+        fprintf (stderr, "Couldn't create \"%s\" - save failed\n", filepath);
+        return NULL;
+    }
+
     // only now it is safe to add the new record to the array
     if (pos >= saves.size ()) saves.push_back (gdata);
     
     return gdata;
+}
+
+// Save the mapcharacter information (should go to mapinfo file after v0.3)
+bool data::save_mapcharacter (char *file)
+{
+    ofstream f (file);
+    character *mychar;
+    char *fname;
+
+    if (!f) return false;
+
+#if defined (USE_MAP)
+    f << "map = map_engine.get_landmap ()\n\n";
+
+    while ((mychar = (character *) characters.next ()) != NULL)
+    {
+        if ((fname = mychar->get_anim ()) == NULL) continue;
+        
+        f << "chrctr = characters['" << mychar->get_name () << "']\n"
+          << "chrctr.load ('" << fname << "')\n"
+          << "chrctr.set_on_map (map)\n"
+          << "chrctr.set_pos (" << mychar->get_submap () << ", " 
+          << mychar->get_posx () << ", " << mychar->get_posy () << ")\n";
+
+        switch (mychar->get_move ())
+        {
+            case STAND_NORTH:
+            case WALK_NORTH:
+            {
+                f << "chrctr.stand_north ()\n";
+                break;
+            }
+            case STAND_SOUTH:
+            case WALK_SOUTH:
+            {
+                f << "chrctr.stand_south ()\n";
+                break;
+            }
+            case STAND_EAST:
+            case WALK_EAST:
+            {
+                f << "chrctr.stand_east ()\n";
+                break;
+            }
+            case STAND_WEST:
+            case WALK_WEST:
+            {
+                f << "chrctr.stand_west ()\n";
+                break;
+            }
+            default:
+            {
+                f << "chrctr.stand_north ()\n";
+                break;
+            }
+        }
+
+        if ((fname = mychar->get_schedule ()) != NULL)
+            f << "chrctr.set_schedule ('" << fname << "')\n"
+              << "chrctr.set_schedule_active (" 
+              << (int) mychar->is_schedule_activated () << ")\n";
+              
+        if ((fname = mychar->get_action ()) != NULL)
+            f << "chrctr.set_action ('" << fname << "')\n"
+              << "chrctr.set_action_active (" 
+              << (int) mychar->is_action_activated () << ")\n";
+
+        f << "map.add_mapcharacter (chrctr)\n\n";
+    }
+#endif
+
+    f.close ();
+
+    return true;
 }
 
 // Iterate over saved game descriptions

@@ -36,7 +36,9 @@ void mapcharacter::init()
   action=NULL;
   schedule_activated=true;
   action_activated=true;
-  schedule=NULL;
+  schedule_file=NULL;
+  action_file=NULL;
+  anim_file=NULL;
 #endif
 }
 
@@ -46,8 +48,11 @@ void mapcharacter::clear()
     delete(anim[i]);
   anim.clear();
 #if defined(USE_PYTHON)
-  if(schedule) free (schedule);
-  if(action) free (action);
+  if (schedule) free (schedule);
+  if (action) free (action);
+  if (anim_file) delete[] anim_file;
+  if (action_file) delete[] action_file;
+  if (schedule_file) delete[] schedule_file;
 #endif
 }
 
@@ -86,6 +91,13 @@ s_int8 mapcharacter::load(const char * fname)
   if(fileops::get_version (file, 1, 1, fdef))
     retvalue=get(file);
   gzclose(file);
+
+#if defined(USE_PYTHON)
+  if (anim_file) delete[] anim_file;
+  anim_file = new char[strlen(fname)+1];
+  strcpy (anim_file, fname);
+#endif
+
   return 0;
 }
 
@@ -404,6 +416,10 @@ void mapcharacter::set_schedule(char * file)
 	  if (schedule) delete schedule;
 	  schedule = PyNode_Compile (n, file);
       PyNode_Free (n);
+
+      if (schedule_file) delete[] schedule_file;
+      schedule_file = new char[strlen (file)+1];
+      strcpy (schedule_file, file);
 	}
       else
         {
@@ -436,6 +452,10 @@ void mapcharacter::set_action(char * file)
 	  if (action) delete action;
 	  action = PyNode_Compile (n, file);
       PyNode_Free (n);
+
+      if (action_file) delete[] action_file;
+      action_file = new char[strlen (file)+1];
+      strcpy (action_file, file);
 	}
       else
         {
@@ -607,6 +627,7 @@ void mapcharacter::draw(mapview * mv)
 mapcharacter& mapcharacter::operator =(mapcharacter &m)
 {
   u_int16 i,j;
+  u_int16 h = maptpl::height(); // workaround for gcc 2.95.2 internal compiler error
   for (i=0;i<NBR_MOVES;i++)
     (*anim[i])=(*m.anim[i]);
   for(i=0;i<maptpl::length();i++)
@@ -618,8 +639,8 @@ mapcharacter& mapcharacter::operator =(mapcharacter &m)
   maptpl::basey=m.maptpl::basey;
   placetpl=new (mapsquaretpl*)[maptpl::length()];
   for(i=0;i<maptpl::length();i++)
-    { 
-      placetpl[i]=new mapsquaretpl[maptpl::height()];
+    {
+      placetpl[i]=new mapsquaretpl[h];
       for(j=0;j<maptpl::height();j++)
 	placetpl[i][j].walkable=m.placetpl[i][j].walkable;
     }  

@@ -30,6 +30,7 @@
 #include "win_manager.h"
 #include "dialog_engine.h"
 #include "data_screen.h"
+#include "data.h"
 
 %}
 
@@ -65,3 +66,4 @@
 %include "win_manager.h"
 %include "dialog_engine.h"
 %include "data_screen.h"
+%include "data.h"

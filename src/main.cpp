@@ -54,8 +54,8 @@ int main(int argc, char * argv[])
     if (!the_game.init ()) 
         return 1;
 
-    if (!data::load (0))
-        return 2;
+    // if (!data::load (0))
+    //    return 2;
   
     exec_file("init.py");
     show_traceback ();
