@@ -13,32 +13,50 @@
 #ifndef _WIN_FONT_H_
 #define _WIN_FONT_H_
 
-class image;
+#include <iostream.h>
+#include <stdlib.h>
+#include <string.h>
+#include "types.h"
+#include "win_types.h"
+#include "image.h"
+
+
 
 class win_font{
 
  private:
   void erase();
   void init_in_table();
+  
   bool table_core[WIN_NB_TABLE_CHAR];
 
   image * table;  
   
   u_int8 height_;
   u_int8 length_; //just for space bar
+ 
  public:
-    
+  
   win_font(char *);
+  
   win_font(win_font &);
+  
   win_font();
+  
   ~win_font();
+  
   void load(char *);
-  void load_font(char *);
+  
+  //  void load_font(char *);
+  
   bool in_table(u_int16 tmp);
+  
   image & operator[](int);
+  
   //win_font & operator=(win_font &);
   
   u_int16 height(){return height_;}
+  
   u_int16 length(){return length_;}
   
   image * cursor;

@@ -13,34 +13,90 @@
 #ifndef WIN_SCROLLBAR_H_
 #define WIN_SCROLLBAR_H_
 
-class image;
-class win_base;
-class win_scrolled;
+#include "image.h"
+#include "drawing_area.h"
+#include "win_types.h"
+
+class win_theme;
+class win_scroll;
 
 class win_scrollbar
 {
  public:
-  image * back_bot;
-  image * back_mid;
-  image * back_top;
-  image * bar_top;
-  image * bar_bot;
-  image * bar_mid;
-  image * bar_flex;
-  image * bar;
-  image * back;
-    
+  
+  win_scrollbar();
+  
+  win_scrollbar(win_scroll * );
+
   win_scrollbar(win_scrollbar &);
+  
   win_scrollbar(char *rep);
+  
   ~win_scrollbar();
-  win_scrollbar & operator=(win_scrollbar &);
-  void update_scroll_bar(win_scrolled * ws);
+  
+  void update_bar();
+  
   void load(char *);
-  void update(win_base *);
+  
+  void update_back();
+  
   void destroy();
+  
+  void set_scrollbar(win_scrollbar &);
+  
+  void set_scrollbar(win_theme  & wt);
+  
+  void set_visible_scrollbar(bool b)
+    {visible_=b;}
+  
+  void set_trans_scrollbar(bool b)
+    {
+      if(!bar_draw_) return;
+      if(trans_=b){ bar_draw_->set_alpha(130);back_draw_->set_alpha(130); }
+      else{bar_draw_->set_alpha(255);back_draw_->set_alpha(255); }
+    }
+  
+  void set_brightness_scrollbar(bool b){brightness_=b;refresh();}
+  
+  void draw(drawing_area * da= NULL);
+  
+  u_int16 height_bar(){if(bar_) return bar_->height();return 0;}
+
+ private:
+  
+  void init();
+  
+  void refresh();
+
+  win_scrollbar & operator=(win_scrollbar &);
+  
+  image * back_bot_;
+  image * back_mid_;
+  image * back_top_;
+  image * bar_top_;
+  image * bar_bot_;
+  image * bar_mid_;
+  image * bar_flex_;
+  
+  image * bar_;
+  image * back_;
+  
+  image * bar_brightness_;
+  image * back_brightness_;
+  
+  image * bar_draw_;
+  image * back_draw_;
+
+  bool visible_;
+  bool brightness_;
+  bool trans_;
+
+  win_scroll * wsc_;
+  
 };
 
 #endif
+
 
 
 

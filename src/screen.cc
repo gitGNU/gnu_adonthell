@@ -36,7 +36,7 @@ bool screen::fullscreen_ = false;
 void screen::set_video_mode (u_int16 nl, u_int16 nh, u_int8 depth = 0)
 {
     u_int8 bpp;
-    u_int32 SDL_flags = 0;
+    u_int32 SDL_flags = SDL_HWSURFACE | SDL_DOUBLEBUF | SDL_ASYNCBLIT;
     u_int8 emulated = depth; 
     
     if (SDL_Init (SDL_INIT_VIDEO) < 0)

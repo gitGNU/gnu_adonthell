@@ -12,6 +12,127 @@
    See the COPYING file for more details
 */
 
+
+#include "win_base.h"
+#include "win_container.h"
+
+win_base::win_base(): win_border(this),win_background(this)
+{
+  wb_father_= NULL;
+  
+  pad_y_ = pad_x_ = 0;
+  
+  move(0,0);
+  
+  set_visible(false);
+
+  set_focus(false);
+
+  set_activate(false);
+  
+  set_brightness(false);
+  
+  set_trans(false);
+
+  set_can_be_selected(true);
+
+  set_align(ALIGN_NONE);
+}
+
+win_base::~win_base()
+{
+}
+
+void win_base::set_container(win_container * wc)
+{
+  wb_father_=wc;
+  
+  update_position();
+  
+  update_align();
+}
+
+void win_base::update_position()
+{
+  
+  if(wb_father_) {
+    drawing_area::move(wb_father_->real_x() + x() + pad_x(), wb_father_->real_y() + y() + pad_y() );
+  }
+  else {
+    drawing_area::move( x() + pad_x(), y() + pad_y() );		   
+  }
+}
+
+void win_base::move(s_int16 tx, s_int16 ty)
+{
+  
+  x_= tx;
+  
+  y_= ty;
+  
+  update_position();
+}
+
+void win_base::resize(u_int16 tl, u_int16 th)
+{
+  drawing_area::resize(tl, th);
+  
+  win_border::update();
+  
+  win_background::update();
+}
+
+bool win_base::update()
+{
+    if(win_event::update())
+    {
+      // if(focus_) ADDME: ajouter l'appel a update_input 
+      on_update();
+      
+      return true;
+    }
+  return false;
+}
+
+bool win_base::input_update()
+{
+  return (focus_ && activate_);
+}
+
+bool win_base::draw()
+{
+  on_draw();
+  
+  if(visible_) on_draw_visible();
+  
+  return visible_;
+}
+
+
+
+void win_base::update_align()
+{ 
+  switch(align_)
+    {
+    case ALIGN_LEFT:
+      move((wb_father_) ? ((win_container*)wb_father_)->space_with_border() : 0 , y() );
+      break;
+    case ALIGN_RIGHT:
+      move(((wb_father_) ? wb_father_->length() : screen::length())-((wb_father_)?((win_container*)wb_father_)->space_with_border() : 0 ) - length() , y() );
+      break;
+    case ALIGN_CENTER:
+      if(((wb_father_)?wb_father_->length():screen::length())>length()) 
+	move((((wb_father_)?wb_father_->length():screen::length()) - length()) >>1,y());
+      break;
+    }
+}
+
+
+
+
+
+
+/*
 #include <iostream.h>
 #include <string.h>
 #include <list>
@@ -334,10 +455,11 @@ void win_base::update_align()
 
 
 
-
+*/
 /*******************************************************/
 /************************ DRAW *************************/
 /*******************************************************/
+/*
 void win_base::draw_border()
 {
 #define WB_CORNER_MIDX (border->corner_top_left->length()>>1)
@@ -358,62 +480,40 @@ void win_base::draw_border()
   static image imgbright;  
   
   switch(draw_brightness_)
-  {
-      case true:
-          imgbright.brightness(* (border->h_border),level_brightness_);
-          imgbright.set_mask (true);  
-          imgbright.draw(realx_,realy_-border->h_border->height(),pda_);
-          imgbright.draw(realx_,+realy_+height_,pda_);
-          
-          imgbright.brightness(* (border->v_border) ,level_brightness_);
-          imgbright.set_mask (true); 
-          imgbright.draw(realx_-border->v_border->length(),realy_,pda_);
-          imgbright.draw(realx_+length_,realy_,pda_);
-          
-          imgbright.brightness(* (border->corner_top_left) ,level_brightness_);
-          imgbright.set_mask (true); 
-          imgbright.draw(realx_-WB_CORNER_MIDX-((border->v_border->length())>>1),
-                         realy_-WB_CORNER_MIDY-(border->h_border->height()>>1),pda_);   
-          
-          imgbright.brightness(* (border->corner_top_right) ,level_brightness_);
-          imgbright.set_mask (true); 
-          imgbright.draw(realx_+length_-WB_CORNER_MIDX+(border->v_border->length()>>1),
-                         realy_-WB_CORNER_MIDY-(border->h_border->height()>>1),pda_); 
-          
-          imgbright.brightness(* (border->corner_bottom_left) ,level_brightness_);
-          imgbright.set_mask (true); 
-          imgbright.draw(realx_-WB_CORNER_MIDX-((border->v_border->length())>>1),
-                         realy_+height_-WB_CORNER_MIDY+(border->h_border->height()>>1),pda_);
-          
-          imgbright.brightness(* (border->corner_bottom_right),level_brightness_);
-          imgbright.set_mask (true); 
-          imgbright.draw(realx_+length_-WB_CORNER_MIDX+(border->v_border->length()>>1),
-                         realy_+height_-WB_CORNER_MIDY+(border->h_border->height()>>1),pda_);
-          break;
-      case false:
-          border->h_border->set_mask (true);
-          border->h_border->draw(realx_,realy_-border->h_border->height(),pda_);
-          border->h_border->draw(realx_,+realy_+height_,pda_);
-          
-          border->v_border->set_mask (true);
-          border->v_border->draw(realx_-border->v_border->length(),realy_,pda_);
-          border->v_border->draw(realx_+length_,realy_,pda_);
-          
-          border->corner_top_left->set_mask (true); 
-          border->corner_top_left->draw(realx_-WB_CORNER_MIDX-((border->v_border->length())>>1),
-                                        realy_-WB_CORNER_MIDY-(border->h_border->height()>>1),pda_);   
-          
-          border->corner_top_right->set_mask (true); 
-          border->corner_top_right->draw(realx_+length_-WB_CORNER_MIDX+(border->v_border->length()>>1),
-                                         realy_-WB_CORNER_MIDY-(border->h_border->height()>>1),pda_);
-          
-          border->corner_bottom_left->set_mask (true); 
-          border->corner_bottom_left->draw(realx_-WB_CORNER_MIDX-((border->v_border->length())>>1),
-                                           realy_+height_-WB_CORNER_MIDY+(border->h_border->height()>>1),pda_); 
-          
-          border->corner_bottom_right->set_mask (true); 
-          border->corner_bottom_right->draw(realx_+length_-WB_CORNER_MIDX+(border->v_border->length()>>1),
-                                            realy_+height_-WB_CORNER_MIDY+(border->h_border->height()>>1),pda_);
+    {
+    case true:
+      imgbright.brightness(border->h_border,level_brightness_);
+      imgbright.putbox_mask(realx_,realy_-border->h_border->height(),pda_);
+      imgbright.putbox_mask(realx_,+realy_+height_,pda_);
+      imgbright.brightness(border->v_border,level_brightness_);
+      imgbright.putbox_mask(realx_-border->v_border->length(),realy_,pda_);
+      imgbright.putbox_mask(realx_+length_,realy_,pda_);
+      imgbright.brightness(border->corner_top_left,level_brightness_);
+      imgbright.putbox_mask(realx_-WB_CORNER_MIDX-((border->v_border->length())>>1),
+			    realy_-WB_CORNER_MIDY-(border->h_border->height()>>1),pda_);   
+      imgbright.brightness(border->corner_top_right,level_brightness_);
+      imgbright.putbox_mask(realx_+length_-WB_CORNER_MIDX+(border->v_border->length()>>1),
+			    realy_-WB_CORNER_MIDY-(border->h_border->height()>>1),pda_); 
+      imgbright.brightness(border->corner_bottom_left,level_brightness_);
+      imgbright.putbox_mask(realx_-WB_CORNER_MIDX-((border->v_border->length())>>1),
+			    realy_+height_-WB_CORNER_MIDY+(border->h_border->height()>>1),pda_);
+      imgbright.brightness(border->corner_bottom_right,level_brightness_);
+      imgbright.putbox_mask(realx_+length_-WB_CORNER_MIDX+(border->v_border->length()>>1),
+			    realy_+height_-WB_CORNER_MIDY+(border->h_border->height()>>1),pda_);
+      break;
+    case false:
+      border->h_border->putbox_mask(realx_,realy_-border->h_border->height(),pda_);
+      border->h_border->putbox_mask(realx_,+realy_+height_,pda_);
+      border->v_border->putbox_mask(realx_-border->v_border->length(),realy_,pda_);
+      border->v_border->putbox_mask(realx_+length_,realy_,pda_);
+      border->corner_top_left->putbox_mask(realx_-WB_CORNER_MIDX-((border->v_border->length())>>1),
+					   realy_-WB_CORNER_MIDY-(border->h_border->height()>>1),pda_);   
+      border->corner_top_right->putbox_mask(realx_+length_-WB_CORNER_MIDX+(border->v_border->length()>>1),
+					    realy_-WB_CORNER_MIDY-(border->h_border->height()>>1),pda_);
+      border->corner_bottom_left->putbox_mask(realx_-WB_CORNER_MIDX-((border->v_border->length())>>1),
+					      realy_+height_-WB_CORNER_MIDY+(border->h_border->height()>>1),pda_); 
+      border->corner_bottom_right->putbox_mask(realx_+length_-WB_CORNER_MIDX+(border->v_border->length()>>1),
+					       realy_+height_-WB_CORNER_MIDY+(border->h_border->height()>>1),pda_);
       break;
     }
 }
@@ -428,14 +528,14 @@ void win_base::draw_background()
   //if is a visible background and if in win_select and this object is not select and mode select is brigthness so drawthe background in brightness mode
   if(visible_background_ && in_select_ && (!selected_) && mode_select_==WIN_SELECT_MODE_BRIGHTNESS)
     {
-      imgbright.brightness(* (theme_->background->background),level_brightness_);
-      imgbright.set_alpha (level_trans_back_); 
-      imgbright.draw(realx_,realy_,da_);
+      imgbright.brightness(theme_->background->background,level_brightness_);
+      imgbright.putbox_trans(realx_,realy_,level_trans_back_,da_);
     }
   //draw the background
-  else if(visible_background_)
-  {
-      theme_->background->background->set_alpha (level_trans_back_); 
-      theme_->background->background->draw(realx_,realy_,da_);
-  }
+  else if(visible_background_)theme_->background->background->putbox_trans(realx_,realy_,level_trans_back_,da_);
 }
+
+
+
+
+*/

@@ -13,6 +13,83 @@
 #ifndef _WIN_CONTAINER_H_
 #define _WIN_CONTAINER_H_
 
+#include<list>
+#include "drawing_area.h"
+#include "win_base.h"
+
+using namespace std;
+
+typedef list<win_base*> lwb;
+
+class win_container : public win_base
+{
+ public:
+  
+  win_container();
+  
+  void move(s_int16, s_int16);
+  
+  void resize(u_int16, u_int16);
+
+  virtual void add(win_base *);
+
+  virtual void remove(win_base *);
+
+  virtual void remove_all();
+
+  virtual void destroy();
+
+  virtual ~win_container();
+  
+  virtual bool update();
+
+  virtual bool input_update();
+  
+  virtual bool draw();
+  
+  void set_visible_all(bool b);
+  
+  virtual void set_brightness(bool b);
+
+  virtual void set_trans(bool b);
+
+  virtual void set_space_with_border(u_int16 b){space_with_border_=b;update_layout();}
+  
+  virtual void set_space_with_object(u_int16 o){space_with_object_=o;update_layout();}
+  
+  u_int16 space_with_border(){return space_with_border_;}
+  
+  u_int16 space_with_object(){return space_with_object_;}
+
+  void set_layout(u_int8 l){layout_=l;update_layout();}
+  
+  void set_focus_object(win_base * f);
+  
+  win_base * focus_object(){return focus_object_;}
+
+  const static u_int8 SPACE_WITH_BORDER = 10;
+  const static u_int8 SPACE_WITH_OBJECT = 10;
+  
+  const static u_int8 LIST_LAYOUT = 1;
+  const static u_int8 NO_LAYOUT = 0;
+
+ protected:
+  
+  void update_position();
+  void update_layout();
+  
+  u_int16 space_with_object_;
+  u_int16 space_with_border_;
+  u_int8 layout_;
+
+  lwb list_wb_;
+
+  win_base * focus_object_;
+  
+};
+
+
+/*
 class win_base;
 class win_theme;
 
@@ -28,7 +105,7 @@ class win_container : public win_base
 
  public:
   win_container(s_int16 tx,s_int16 ty,u_int16 tl,u_int16 th,win_theme * wth);
-  virtual ~win_container();
+  ~win_container();
 
   //add an object
   virtual void add(win_base *);
@@ -67,7 +144,7 @@ class win_container : public win_base
 
   //bugs in this functions.
   void set_visible_all(bool);
-
+*/
   /*
 
   //justify all object : WIN_JUSTIFY_LEFT, WIN_JUSTIFY_RIGHT, WIN_JUSTIFY_CENTER
@@ -76,7 +153,7 @@ class win_container : public win_base
   //justify an win_base object in this object
   void set_justify(win_base * wb,u_int8);
   */  
-
+/*
   //align all object
   void set_align_all(u_int8);
 
@@ -92,6 +169,8 @@ class win_container : public win_base
   void set_focus(bool b);
   bool is_focus(){return focus_;}  
 };
+
+*/
 #endif
 
 

@@ -98,6 +98,7 @@ bool base_map_event::load (igzstream& f)
     submap << f; 
     x << f;
     y << f;
+
     dir << f;
     map << f;
 

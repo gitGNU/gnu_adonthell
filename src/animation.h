@@ -413,7 +413,7 @@ public:
      * Updates the animation state.
      * 
      */ 
-    void update ();
+    bool update ();
 
     //@}
 

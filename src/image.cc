@@ -180,16 +180,18 @@ s_int8 image::save (string fname) const
 
 s_int8 image::put_raw (ogzstream& file) const
 {
+    length () >> file;
+    height () >> file; 
+
+    if (!length () || !height ()) return 0; 
+
     SDL_Surface *tmp2 = SDL_CreateRGBSurface (0, length (),
                                               height (), 24, 
                                               0x0000FF, 0x00FF00,
                                               0xFF0000, 0);
     
     SDL_Surface * temp = SDL_ConvertSurface (vis, tmp2->format, 0);
-
-    length () >> file;
-    height () >> file; 
-    
+     
     file.put_block (temp->pixels, length () * height () * 3); 
 
     SDL_FreeSurface (temp);

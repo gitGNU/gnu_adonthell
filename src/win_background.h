@@ -12,21 +12,68 @@
 
 #ifndef WIN_BACKGROUND_H_
 #define WIN_BACKGROUND_H_
-class image;
+
+class win_theme;
 class win_base;
+
+#include "image.h"
+#include "drawing_area.h"
+#include "win_types.h"
 
 class win_background
 {
  public:
-  image * background_template;
-  image * background;
   
+  win_background();
+  
+  win_background(win_base *);
+
   win_background(win_background &);
+  
   win_background(char * rep);
+  
   ~win_background();
+  
   void load(char *);
-  void update(win_base *);
+  
+  void update();
+  
+  void destroy();
+
+  void draw(drawing_area * da =NULL);
+
+  void set_visible_background(bool b){visible_=b;}
+
+  void set_background(win_background &);
+
+  void set_background(win_theme & wt);
+  
+  void set_brightness_background(bool b);
+  
+  void set_trans_background(bool b);//{trans_=b;}
+  
+ private:
   win_background & operator=(win_background & wb);
+  
+  void refresh();
+
+  void init();
+  
+  image * background_template_;
+  
+  image * background_;
+  
+  image * background_brightness_;
+  
+  image * background_draw_;
+  
+  win_base * wb_;
+  
+  bool visible_;
+
+  bool brightness_;
+
+  bool trans_;
 };
 
 

@@ -37,10 +37,12 @@ drawable::~drawable ()
 { 
 }
 
-void drawable::update ()
+bool drawable::update ()
 {
+    return true; 
 }
 
-void drawable::input_update ()
+bool drawable::input_update ()
 {
+    return true; 
 }

@@ -122,18 +122,20 @@ animation::~animation ()
 }
 
 
-void animation::update ()
+bool animation::update ()
 {
     if ((!play_flag) || (!nbr_of_frames ()))
-        return;
+        return true;
     if (frame[currentframe ()].delay () == 0)
-        return;
+        return true;
     if (nbr_of_frames () <= 1)
-        return;
+        return true;
 
     speedcounter++;
     if (speedcounter >= frame[currentframe ()].delay ())
         next_frame ();
+
+    return true; 
 }
 
 void animation::next_frame ()

@@ -193,6 +193,8 @@ bool game::init_python ()
     // Game specific path
     string t = gamedata::game_data_dir () + "/scripts/modules"; 
     python::insert_path((char *) t.c_str ());
+    t = gamedata::game_data_dir () + "/scripts"; 
+    python::insert_path((char *) t.c_str ());
 
     /* Initialise SWIG module. This should go if we ever switch to dynamic 
        link */

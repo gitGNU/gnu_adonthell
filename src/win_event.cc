@@ -1,0 +1,64 @@
+#include "win_event.h"
+
+
+#if defined (USE_PYTHON)
+#include "py_callback.h"
+#endif
+
+
+#if defined (USE_PYTHON)
+void win_event::py_signal_connect (PyObject *pyfunc, int signal, PyObject *args = NULL) 
+    {
+      // create the callback
+      py_callback *callback = new py_callback (pyfunc, args);
+      py_callbacks.push_back (callback);
+      
+      // connect the signal
+      switch (signal)
+	{
+	case CLOSE:
+	  {
+	    set_callback_quit (makeFunctor (*callback, &py_callback::callback_func1));
+	    break;
+	  }
+	case DESTROY:
+	  {
+	    set_callback_destroy (
+	       MemberTranslator0wRet<bool, py_callback, bool (py_callback::*)()> (
+	       *callback, &py_callback::callback_func0ret));
+	    // makeFunctor (*callback, &py_callback::callback_func0ret));
+	    break;
+	  }
+	default:
+	  {
+	    set_signal_connect (makeFunctor (*callback, &py_callback::callback_func0), signal);
+	  }
+	}
+    }
+#endif
+  
+
+bool win_event::update()
+{
+  if(callback_destroy_ && !callback_destroy_()) return false;
+  return true;
+}
+
+
+win_event::~win_event()
+{
+  //notify that window is closing 
+  if (callback_quit_) (callback_quit_) (return_code_);
+  
+#if defined (USE_PYTHON)
+  //delete any python callbacks
+  for (vector<py_callback *>::iterator i = py_callbacks.begin (); i != py_callbacks.end (); i++)
+    delete *i;
+#endif 
+}
+
+
+
+
+
+

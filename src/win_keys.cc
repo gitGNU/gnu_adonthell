@@ -1,7 +1,5 @@
 /*
-   $Id$
-
-   (C) Copyright 2000/2001 Joel Vennin
+   (C) Copyright 2000, 2001 Joel Vennin
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -12,14 +10,17 @@
    See the COPYING file for more details
 */
 
-#ifndef WIN_IMAGE_H_
-#define WIN_IMAGE_H_
+#include "win_keys.h"
 
+SDLKey win_keys::KEY_ACTIVATE_ENTRY = SDLK_RETURN;
 
-#include "win_object.h"
-#include "image.h"
+SDLKey win_keys::KEY_UP = SDLK_PAGEUP;
 
-typedef win_object <image> win_image;
+SDLKey win_keys::KEY_DOWN = SDLK_PAGEDOWN;
 
+SDLKey win_keys::KEY_PREVIOUS = SDLK_UP;
 
-#endif
+SDLKey win_keys::KEY_NEXT = SDLK_DOWN;
+
+SDLKey win_keys::KEY_ACTIVATE = SDLK_SPACE;
+

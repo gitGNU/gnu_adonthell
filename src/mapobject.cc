@@ -50,12 +50,14 @@ void mapobject::clear ()
     mapsquare_walkable_area::clear (); 
 }   
 
-void mapobject::update ()
+bool mapobject::update ()
 {
     vector <animation *>::iterator i; 
     
     for (i = anim.begin (); i != anim.end (); i++)
         (*i)->update ();
+
+    return true; 
 }
 
 void mapobject::draw (s_int16 x, s_int16 y, const drawing_area * da_opt = NULL, surface * target = NULL) const

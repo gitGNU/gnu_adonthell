@@ -94,14 +94,14 @@ public:
      * doesn't need one.
      * 
      */
-    virtual void update ();
+    virtual bool update ();
 
     /** 
      * Virtual input update function, provided for %objects which
      * doesn't need one.
      * 
      */
-    virtual void input_update ();
+    virtual bool input_update ();
 
     /** 
      * Draw the object on the %screen.

@@ -15,28 +15,42 @@
 #ifndef _WIN_THEME_H_
 #define _WIN_THEME_H_
 
-class win_border;
-class win_base;
-class win_background;
-class win_scrollbar;
+#include "win_border.h"
+#include "win_background.h"
+#include "win_scroll.h"
+#include "win_scrollbar.h"
 
 class win_theme
 {
- private:
-  
   
  public:
-  win_border * normal;
-  win_border * mini;
-  win_background * background;
-  win_scrollbar * scrollbar;
-
+  win_theme();
+  
   win_theme(char *);
+  
   win_theme(win_theme &);
+  
   win_theme & operator=(win_theme &);
-  void destroy();
-  void update(win_base * wb=NULL);
+ 
   ~win_theme();
+  
+  void destroy();
+ 
+  static char * theme;
+  
+  friend class win_border;
+  friend class win_background;
+  friend class win_scrollbar;
+
+ private:
+  
+  win_border * normal;
+  
+  win_border * mini;
+  
+  win_background * background;
+  
+  win_scrollbar * scrollbar;
 };
 #endif
 

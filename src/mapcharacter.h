@@ -179,7 +179,7 @@ public:
      * Updates the mapcharacter's state and launchs his schedule.
      * 
      */
-    void update ();
+    bool update ();
 
     //@}
 
@@ -220,6 +220,33 @@ public:
      */
     s_int8 load (string fname);
 
+    /** Saves an mapcharacter into an opened file, in %game format, with
+     *  alpha and mask values. 
+     *  @warning as the mapcharacter which is saved comes from a %screen's depth
+     *           surface, it will be slightly altered during the save.
+     *           If you want a class capable of saving mapcharacters with full
+     *           truecolor quality, use mapcharacter_edit instead.
+     *  @param file opened file where to save into.
+     *  @return
+     *      @li 0 in case of success.
+     *      @li -1 in case of error.
+     *  @sa save ()
+     */
+    s_int8 put (ogzstream& file) const;
+
+    /** Saves an mapcharacter into an file, in %game format, with
+     *  alpha and mask values.
+     *  @warning as the mapcharacter which is saved comes from a %screen's depth
+     *           surface, it will be slightly altered during the save.
+     *           If you want a class capable of saving mapcharacters with full
+     *           truecolor quality, use mapcharacter_edit instead.
+     *  @param fname file name where to save into.
+     *  @return
+     *      @li 0 in case of success.
+     *      @li -1 in case of error.
+     *  @sa put ()
+     */
+    s_int8 save (string fname) const;
     //@}
     
 
@@ -663,7 +690,21 @@ public:
     void launch_action (mapcharacter * requester);
 
     //@}
-         
+
+
+    /** 
+     * Returns a pointer to an animation corresponding
+     * to a movment.
+     * 
+     * @param nbr index of the animation to get.
+     * 
+     * @return pointer to the \e nbr animation.
+     */
+    animation * get_animation (u_int16 nbr) 
+    {
+        return anim[nbr]; 
+    }
+    
 #ifndef SWIG
     /**
      * Mapcharacter copy (similar to copy ()).

@@ -9,37 +9,73 @@
 
    See the COPYING file for more details
 */
-#include <string.h>
-#include "types.h"
-#include "image.h"
-#include "win_types.h"
+
+#include "win_theme.h"
 #include "win_base.h"
 #include "win_border.h"
 
+
+win_border::win_border()
+{
+  wb_=NULL;
+
+  init();
+
+  set_trans_border(false);
+
+  set_visible_border( false );
+
+  set_brightness_border( false );
+  
+}
+
+
+win_border::win_border(win_base *wb)
+{
+  wb_=wb;
+  
+  init();
+
+  set_trans_border(false);
+
+  set_visible_border( false );
+
+  set_brightness_border( false );
+}
+
 win_border::win_border(char * rep,char * size=WIN_BORDER_NORMAL_SIZE)
 {
-  h_border_template=NULL;
-  v_border_template=NULL;
-  h_border=NULL;
-  v_border=NULL;
-  corner_top_left=NULL;
-  corner_top_right=NULL;
-  corner_bottom_left=NULL;
-  corner_bottom_right=NULL;
+  wb_=NULL;
+  
+  init();
+   
+  set_visible_border( false );
+   
+  set_trans_border(false);
+  
+  set_brightness_border( false );
+  
   win_border::load(rep,size);
+  
+  refresh();
 }
+
 
 win_border::win_border(win_border & wb)
 {
-  h_border=NULL;
-  v_border=NULL;
-  h_border_template=NULL;
-  v_border_template=NULL;
-  corner_top_left=NULL;
-  corner_top_right=NULL;
-  corner_bottom_left=NULL;
-  corner_bottom_right=NULL;
+  wb_=NULL;
+
+  init();
+  
+  set_visible_border( false );
+  
+  set_trans_border(false);
+
+  set_brightness_border( false );
+  
   *this=wb;
+
+  refresh();
 }
 
 win_border::~win_border()
@@ -47,104 +83,231 @@ win_border::~win_border()
   destroy();
 }
 
+
+void win_border::set_border(win_border & wb)
+{
+  *this=wb;
+
+  refresh();
+}
+
+
+void win_border::set_border(win_theme & wt, u_int8 size = win_border::NORMAL)
+{
+  switch(size)
+    {
+    case NORMAL:
+      *this=*(wt.normal);
+      break;
+      
+    case MINI:
+      *this=*(wt.mini);
+      break;
+    }
+  refresh();
+}
+
+
+void win_border::init()
+{
+  h_border_template_=NULL;
+  v_border_template_=NULL;
+  for(u_int8 i=0;i<NB_BORDER_IMAGE;i++)
+    border_[i]=border_brightness_[i]=NULL;  
+}
+
 win_border & win_border::operator=(win_border & wb)
 {
+  
   destroy();
-  h_border_template=new image();
-  *h_border_template=*(wb.h_border_template);
-  v_border_template=new image();
-  *v_border_template=*(wb.v_border_template);
-  corner_bottom_left=new image();
-  *corner_bottom_left=*(wb.corner_bottom_left);
-  corner_bottom_right=new image();
-  *corner_bottom_right=*(wb.corner_bottom_right);
-  corner_top_left=new image();
-  *corner_top_left=*(wb.corner_top_left);
-  corner_top_right=new image();
-  *corner_top_right=*(wb.corner_top_right);
-  h_border=new image();
-  v_border=new image();
+  h_border_template_=new image();
+  *h_border_template_=*(wb.h_border_template_);
+  v_border_template_=new image();
+  *v_border_template_=*(wb.v_border_template_);
+  
+  for(u_int8 i=0;i<NB_BORDER_IMAGE-2;i++)
+    {
+      border_[i]=new image();
+      border_brightness_[i]=new image();
+      *(border_[i])=*(wb.border_[i]);
+      *(border_brightness_[i])=*(wb.border_brightness_[i]);
+      border_[i]->set_mask(true);
+      border_brightness_[i]->set_mask(true);
+    }
+  
+  for(u_int8 i=NB_BORDER_IMAGE-2;i<NB_BORDER_IMAGE;i++)
+    {
+      border_[i]=new image();
+      border_brightness_[i]=new image();
+      border_[i]->set_mask(true);
+      border_brightness_[i]->set_mask(true);
+    }
+  update();
   return *this;
 }
 
 void win_border::destroy()
 {
-  if(h_border_template) delete h_border_template;
-  if(v_border_template)  delete v_border_template;
-  if(corner_bottom_left) delete corner_bottom_left;
-  if(corner_bottom_right) delete corner_bottom_right;
-  if(corner_top_left) delete corner_top_left;
-  if(corner_top_right) delete corner_top_right;
-  if(h_border) delete h_border;
-  if(v_border)  delete v_border;
-  h_border=NULL;
-  v_border=NULL;
-  h_border_template=NULL;
-  v_border_template=NULL;
-  corner_bottom_left=NULL;
-  corner_bottom_right=NULL;
-  corner_top_left=NULL;
-  corner_top_right=NULL;
+  if(h_border_template_) delete h_border_template_;
+  if(v_border_template_)  delete v_border_template_;
+  
+  for(u_int8 i = 0; i< NB_BORDER_IMAGE; i++)
+    {delete border_[i];delete border_brightness_[i];}
+  
+  init();
 }
 
 void win_border::load(char * rep,char *size)
 {
   destroy();
+  
   char path[255];char tmp[255];
   strcpy(path,WIN_DIRECTORY);
   strcat(path,WIN_BORDER_DIRECTORY);
   strcat(path,rep);
   strcat(path,size);
-  h_border_template=new image();
+  
+  h_border_template_=new image();
   strcpy(tmp,path);
   strcat(tmp,WIN_H_BORDER_TEMPLATE_FILE);
-  h_border_template->load_pnm(tmp);//new
+  h_border_template_->load_pnm(tmp);//new
   
-  v_border_template=new image();
+ 
+  v_border_template_=new image();
   strcpy(tmp,path);
   strcat(tmp,WIN_V_BORDER_TEMPLATE_FILE);
-  v_border_template->load_pnm(tmp);//new
+  v_border_template_->load_pnm(tmp);//new
+
   
-  corner_top_left=new image();
+  border_[0]=new image();
   strcpy(tmp,path);
   strcat(tmp,WIN_CORNER_TOP_LEFT_FILE);
-  corner_top_left->load_pnm(tmp);//new
-  
-  corner_top_right=new image();
+  border_[0]->load_pnm(tmp);
+  border_brightness_[0]=new image();
+  border_brightness_[0]->brightness(*(border_[0]),WIN_BRIGHTNESS_LEVEL);
+  border_[0]->set_mask(true);
+  border_brightness_[0]->set_mask(true);
+
+  border_[1]=new image();
   strcpy(tmp,path);
   strcat(tmp,WIN_CORNER_TOP_RIGHT_FILE);
-  corner_top_right->load_pnm(tmp);//new
+  border_[1]->load_pnm(tmp);
+  border_brightness_[1]=new image();
+  border_brightness_[1]->brightness(*(border_[1]),WIN_BRIGHTNESS_LEVEL);
+  border_[1]->set_mask(true);
+  border_brightness_[1]->set_mask(true);
 
-  corner_bottom_left=new image();
+
+  border_[2]=new image();
   strcpy(tmp,path);
   strcat(tmp,WIN_CORNER_BOTTOM_LEFT_FILE);
-  corner_bottom_left->load_pnm(tmp);//new
+  border_[2]->load_pnm(tmp);
+  border_brightness_[2]=new image();
+  border_brightness_[2]->brightness(*(border_[2]),WIN_BRIGHTNESS_LEVEL);
+  border_[2]->set_mask(true);
+  border_brightness_[2]->set_mask(true);
+  
 
-  corner_bottom_right=new image();
+  border_[3]=new image();
   strcpy(tmp,path);
   strcat(tmp,WIN_CORNER_BOTTOM_RIGHT_FILE);
-  corner_bottom_right->load_pnm(tmp);//new
-
-  v_border=new image();
-  h_border=new image();
-}
-
-void win_border::update(win_base *wb)
-{
-  if(v_border && h_border && wb)
+  border_[3]->load_pnm(tmp);
+  border_brightness_[3]=new image();
+  border_brightness_[3]->brightness(*(border_[3]),WIN_BRIGHTNESS_LEVEL);
+  border_[3]->set_mask(true);
+  border_brightness_[3]->set_mask(true);
+  
+  for(u_int8 i=NB_BORDER_IMAGE-2;i<NB_BORDER_IMAGE;i++)
     {
-      v_border->resize(v_border_template->length(),wb->height());
-      v_border->tile(*v_border_template);
-      h_border->resize(wb->length(),h_border_template->height());
-      h_border->tile(*h_border_template); 
+      border_[i]=new image();
+      border_brightness_[i]=new image();
+      border_[i]->set_mask(true);
+      border_brightness_[i]->set_mask(true);
     }
 }
 
 
+void win_border::update()
+{  
+  if(!h_border_template_ || !v_border_template_ || !wb_) return;
+  
+  border_[4]->resize(v_border_template_->length(),wb_->height());
+  border_[4]->tile(*v_border_template_);
+  border_brightness_[4]->brightness(*(border_[4]),WIN_BRIGHTNESS_LEVEL);
+
+  border_[5]->resize(wb_->length(),h_border_template_->height());
+  border_[5]->tile(*h_border_template_);
+  border_brightness_[5]->brightness(*(border_[5]),WIN_BRIGHTNESS_LEVEL);
+}
+
+u_int16 win_border::height_border()
+{
+  if(h_border_template_) return h_border_template_->height();
+  return 0;
+}
+
+u_int16 win_border::length_border()
+{
+  if(v_border_template_) return v_border_template_->length();
+  return 0;
+}
 
 
+void win_border::set_trans_border(bool b)
+{
+  if(!h_border_template_) return;
+  if(b)
+    for(u_int8 i=0; i<NB_BORDER_IMAGE;i++)
+      {
+	border_[i]->set_alpha(130);
+	border_brightness_[i]->set_alpha(130);
+      }
+  else 
+    for(u_int8 i=0; i<NB_BORDER_IMAGE;i++)
+      {
+	border_[i]->set_alpha(255);
+	border_brightness_[i]->set_alpha(255);
+      }
+}
 
 
+void win_border::draw(drawing_area * da)
+{  
+  if(!h_border_template_ || !visible_border_ || !wb_) return;
+  
+  border_draw_[5]->draw(wb_->real_x(), wb_->real_y() - height_border(),da);
+  
+  border_draw_[5]->draw(wb_->real_x(), wb_->real_y() + wb_->height(),da);
+  
+  border_draw_[4]->draw(wb_->real_x() - length_border() , wb_->real_y(),da);
+  
+  border_draw_[4]->draw(wb_->real_x() + wb_->length(), wb_->real_y(),da);
+  
+  border_draw_[0]->draw(wb_->real_x() - (border_draw_[0]->length()>>1) - (length_border()>>1),
+			wb_->real_y() - (border_draw_[0]->height()>>1) - (height_border()>>1),da);   
+  
+  border_draw_[1]->draw(wb_->real_x() + wb_->length() - (border_draw_[0]->length()>>1) + (length_border()>>1),
+			wb_->real_y() - (border_draw_[0]->height()>>1) - (height_border()>>1),da);
+  
+  border_draw_[2]->draw(wb_->real_x() - (border_draw_[0]->length()>>1) - (length_border()>>1),
+			wb_->real_y() + wb_->height() - (border_draw_[0]->height()>>1) + (height_border()>>1),da); 
+  
+  border_draw_[3]->draw(wb_->real_x() + wb_->length() - (border_draw_[0]->length()>>1) + (length_border()>>1),
+			wb_->real_y() + wb_->height() - (border_draw_[0]->height()>>1) + (height_border()>>1),da);  
+}
+
+
+void win_border::set_brightness_border(bool b)
+{
+  brightness_=b;
+  refresh();
+}
+
+
+void win_border::refresh()
+{
+  border_draw_ = (brightness_) ? border_brightness_ : border_;
+}
 
 
 

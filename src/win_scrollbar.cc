@@ -9,43 +9,77 @@
 
    See the COPYING file for more details
 */
-#include <list>
-#include <string.h>
-#include "types.h"
-#include "image.h"
-#include "win_types.h"
-#include "win_base.h"
-#include "win_container.h"
-#include "win_scrolled.h"
+
+#include "win_theme.h"
 #include "win_scrollbar.h"
+
+
+
+win_scrollbar::win_scrollbar()
+{
+  wsc_=NULL;
+
+  init();
+
+  set_visible_scrollbar(true);
+ 
+  set_trans_scrollbar(false);
+  
+  set_brightness_scrollbar(false);
+  
+  refresh();
+}
+
+
+win_scrollbar::win_scrollbar(win_scroll * wsc)
+{
+  wsc_=wsc;
+
+  init();
+
+  set_visible_scrollbar(true);
+  
+  set_trans_scrollbar(false);
+  
+  set_brightness_scrollbar(false);
+  
+  refresh();
+}
+
 
 win_scrollbar::win_scrollbar(win_scrollbar & ws)
 {
-  back_bot=NULL;
-  back_mid=NULL;
-  back_top=NULL;
-  bar_top=NULL;
-  bar_bot=NULL;
-  bar_mid=NULL;
-  bar_flex=NULL;
-  bar=NULL;
-  back=NULL;
+  wsc_=NULL;
+
+  init();
+
+  set_visible_scrollbar(true);
+  
+  set_trans_scrollbar(false);
+  
+  set_brightness_scrollbar(false);
+  
   *this=ws;
+
+  refresh();
 }
 
 
 win_scrollbar::win_scrollbar(char * rep)
 {
-  back_bot=NULL;
-  back_mid=NULL;
-  back_top=NULL;
-  bar_top=NULL;
-  bar_bot=NULL;
-  bar_mid=NULL;
-  bar_flex=NULL;
-  bar=NULL;
-  back=NULL;
+  wsc_=NULL;
+  
+  init();
+
+  set_visible_scrollbar(true);
+  
+  set_trans_scrollbar(false);
+  
+  set_brightness_scrollbar(false);
+
   load(rep);
+
+  refresh();
 }
 
 win_scrollbar::~win_scrollbar()
@@ -53,27 +87,69 @@ win_scrollbar::~win_scrollbar()
   destroy();
 }
 
+
+void win_scrollbar::set_scrollbar(win_scrollbar & ws)
+{
+  *this=ws;
+  refresh();
+}
+
+void win_scrollbar::set_scrollbar(win_theme & wt)
+{
+  *this=*(wt.scrollbar);
+  refresh();
+}
+
+void win_scrollbar::init()
+{
+  back_bot_=NULL;
+  back_mid_=NULL;
+  back_top_=NULL;
+  bar_top_=NULL;
+  bar_bot_=NULL;
+  bar_mid_=NULL;
+  bar_flex_=NULL;
+  bar_=NULL;
+  back_=NULL;
+  bar_brightness_=NULL;
+  back_brightness_=NULL;
+  bar_draw_=NULL;
+  back_draw_=NULL;
+}
+
 win_scrollbar & win_scrollbar::operator=(win_scrollbar & wb)
 {
   destroy();
-  bar_top=new image();
-  *bar_top=*(wb.bar_top);
-  bar_mid=new image();
-  *bar_mid=*(wb.bar_mid);
-  bar_bot=new image();
-  *bar_bot=*(wb.bar_bot);
-  bar_flex=new image();
-  *bar_flex=*(wb.bar_flex);
+  bar_top_=new image();
+  *bar_top_=*(wb.bar_top_);
+  bar_mid_=new image();
+  *bar_mid_=*(wb.bar_mid_);
+  bar_bot_=new image();
+  *bar_bot_=*(wb.bar_bot_);
+  bar_flex_=new image();
+  *bar_flex_=*(wb.bar_flex_);
 
-  back_top=new image();
-  *back_top=*(wb.back_top);
-  back_mid=new image();
-  *back_mid=*(wb.back_mid);
-  back_bot=new image();
-  *back_bot=*(wb.back_bot);
+  back_top_=new image();
+  *back_top_=*(wb.back_top_);
+  back_mid_=new image();
+  *back_mid_=*(wb.back_mid_);
+  back_bot_=new image();
+  *back_bot_=*(wb.back_bot_);
 
-  bar=new image();
-  back=new image();
+  bar_=new image();
+  back_=new image();
+  bar_->set_mask(true);
+  back_->set_mask(true);
+  
+
+  bar_brightness_ = new image();
+  back_brightness_ = new image();
+  bar_brightness_->set_mask(true);
+  back_brightness_->set_mask(true);
+  
+  update_back();
+  update_bar();
+  
   return *this;
 }
 
@@ -87,89 +163,180 @@ void win_scrollbar::load(char * theme)
   strcat(path,WIN_SCROLLBAR_DIRECTORY);
   strcat(path,theme);
   
-  bar=new image();
-  back=new image();
-  
-  bar_top=new image();
+  bar_=new image();
+  back_=new image();
+  bar_->set_mask(true);
+  back_->set_mask(true);
+
+  bar_brightness_ = new image();
+  back_brightness_ = new image();
+  bar_brightness_->set_mask(true);
+  back_brightness_->set_mask(true);
+
+  bar_top_=new image();
   strcpy(tmp,path);
   strcat(tmp,WIN_SCROLLBAR_BAR_TOP);
-  bar_top->load_pnm(tmp);
+  bar_top_->load_pnm(tmp);
   
-  bar_mid=new image();
+  bar_mid_=new image();
   strcpy(tmp,path);
   strcat(tmp,WIN_SCROLLBAR_BAR_MID);
-  bar_mid->load_pnm(tmp);
+  bar_mid_->load_pnm(tmp);
   
-  bar_bot=new image();
+  bar_bot_=new image();
   strcpy(tmp,path);
   strcat(tmp,WIN_SCROLLBAR_BAR_BOT);
-  bar_bot->load_pnm(tmp);
+  bar_bot_->load_pnm(tmp);
   
-  bar_flex=new image();
+  bar_flex_=new image();
   strcpy(tmp,path);
   strcat(tmp,WIN_SCROLLBAR_BAR_FLEX);
-  bar_flex->load_pnm(tmp);
+  bar_flex_->load_pnm(tmp);
 
-  back_top=new image();
+  back_top_=new image();
   strcpy(tmp,path);
   strcat(tmp,WIN_SCROLLBAR_BACK_TOP);
-  back_top->load_pnm(tmp);
+  back_top_->load_pnm(tmp);
   
-  back_mid=new image();
+  back_mid_=new image();
   strcpy(tmp,path);
   strcat(tmp,WIN_SCROLLBAR_BACK_MID);
-  back_mid->load_pnm(tmp);
+  back_mid_->load_pnm(tmp);
   
-  back_bot=new image();
+  back_bot_=new image();
   strcpy(tmp,path);
   strcat(tmp,WIN_SCROLLBAR_BACK_BOT);
-  back_bot->load_pnm(tmp);
+  back_bot_->load_pnm(tmp); 
+}
 
+void win_scrollbar::update_back()
+{
+  if(!wsc_ || !back_) return;
   
+  back_->resize(back_mid_->length(),wsc_->height());
+  
+  
+  back_->tile(*back_mid_);
+  
+  
+  //back_->putbox_img(back_top_,0,0);
+  back_top_->draw(0,0,NULL,back_);
+
+  //back_->putbox_img(back_bot_,0,wsc_->height()-back_bot_->height());
+  back_bot_->draw(0,wsc_->height()-back_bot_->height(),NULL,back_);
+  
+  
+  back_brightness_->brightness(*back_, WIN_BRIGHTNESS_LEVEL);
+
 }
 
-void win_scrollbar::update(win_base * wb)
+void win_scrollbar::refresh()
 {
-  if(wb)
+  if(brightness_)
     {
-      back->resize(back_mid->length(),wb->height());
-      back->tile(*back_mid);
-      back_top->draw (0,0, NULL, back);
-      back_bot->draw (0,wb->height()-back_bot->height(), NULL, back);
-    }
-}
-
-void win_scrollbar::destroy()
-{
-  if(back_bot) delete back_bot;
-  if(back_top) delete back_top;
-  if(back_mid) delete back_mid;
-  if(bar_bot) delete bar_bot;
-  if(bar_mid) delete bar_mid;
-  if(bar_top) delete bar_top;
-  if(bar_flex) delete bar_flex;
-  if(bar) delete bar;
-  if(back) delete back;
-}
-
-void win_scrollbar::update_scroll_bar(win_scrolled * ws)
-{
-  if(ws->height()-ws->amplitude()>bar_top->height()+bar_mid->height()+bar_bot->height())
-    {
-      bar->resize(bar_top->length(),ws->height()-ws->amplitude());
-      bar->tile(*bar_flex);
-      bar_top->draw(0,0, NULL, bar);
-      bar_bot->draw (0,bar->height()-bar_bot->height(), NULL, bar);
-      bar_mid->draw (0,(bar->height()-bar_mid->height())>>1, NULL, bar);
+      bar_draw_=bar_brightness_;
+      
+      back_draw_=back_brightness_;
     }
   else
     {
-      bar->resize(bar_top->length(),bar_top->height()+bar_mid->height()+bar_bot->height());
-      bar_top->draw (0,0, NULL, bar);
-      bar_bot->draw (0,bar->height()-bar_bot->height(), NULL, bar);
-      bar_mid->draw (0,bar_top->height(), NULL, bar);
-    }
+     bar_draw_=bar_;
+    
+     back_draw_=back_;
+  }
 }
+
+
+void win_scrollbar::destroy()
+{
+  if(back_bot_) delete back_bot_;
+  
+  if(back_top_) delete back_top_;
+  
+  if(back_mid_) delete back_mid_;
+  
+  if(bar_bot_) delete bar_bot_;
+  
+  if(bar_mid_) delete bar_mid_;
+  
+  if(bar_top_) delete bar_top_;
+  
+  if(bar_flex_) delete bar_flex_;
+  
+  if(bar_) delete bar_;
+  
+  if(back_) delete back_;
+
+  if(bar_brightness_) delete bar_brightness_;
+
+  if(back_brightness_) delete back_brightness_;
+}
+
+
+void win_scrollbar::update_bar()
+{
+  if(!wsc_ || !bar_) return;
+  if (!(wsc_->height() + wsc_->amplitude()))  return; 
+  
+  u_int16 calcul =  (wsc_->height() * wsc_->height()) / (wsc_->height() + wsc_->amplitude()); 
+  
+  //if(calcul == bar_->height() || bar_->height() == (bar_top_->height() + bar_mid_->height() + bar_bot_->height())) return;
+
+  if( calcul > bar_top_->height() + bar_mid_->height() + bar_bot_->height())
+    {
+     
+
+      bar_->resize(bar_top_->length(), calcul);
+      
+      //bar_->putbox_tile_img( bar_flex_ );
+      bar_->tile(*bar_flex_);
+      
+      //bar_->putbox_img(bar_top_,0,0);
+      bar_top_->draw(0,0,NULL,bar_);
+
+      //bar_->putbox_img(bar_bot_, 0, bar_->height() - bar_bot_->height());
+      bar_bot_->draw(0,bar_->height() - bar_bot_->height(),NULL,bar_);
+
+      //bar_->putbox_img(bar_mid_,0,( bar_->height() - bar_mid_->height() ) >>1 );
+      bar_mid_->draw(0,(bar_->height() - bar_mid_->height() ) >> 1, NULL,bar_);
+    }
+  else
+    {
+      bar_->resize(bar_top_->length(), bar_top_->height() + bar_mid_->height() + bar_bot_->height());
+      
+      //bar_->putbox_img(bar_top_,0,0);
+      bar_top_->draw(0,0,NULL,bar_);
+      
+      //bar_->putbox_img(bar_bot_,0,bar_->height() - bar_bot_->height());
+      bar_bot_->draw(0,bar_->height() - bar_bot_->height(),NULL,bar_);
+
+      //bar_->putbox_img(bar_mid_,0,bar_top_->height());
+      bar_mid_->draw(0,bar_top_->height(),NULL,bar_);
+    }
+  bar_brightness_->brightness(*bar_,WIN_BRIGHTNESS_LEVEL);
+}
+
+
+void win_scrollbar::draw(drawing_area * da = NULL)
+{
+  if(!visible_ || !back_draw_ || !bar_draw_) return; 
+  
+  back_draw_->draw(wsc_->real_x() + wsc_->length() - back_->length(), wsc_->real_y() , da );
+  
+  bar_draw_->draw(1 + wsc_->real_x() + wsc_->length() - back_->length(), wsc_->real_y() + wsc_->cursor_y() , da);
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

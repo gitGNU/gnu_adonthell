@@ -32,8 +32,7 @@
 #include "win_select.h"
 #include "win_theme.h"
 #include "win_container.h"
-
-class win_write;
+#include "win_write.h"
 
 /**
  * Whether the data screen should load or save games.

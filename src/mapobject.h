@@ -75,7 +75,7 @@ public:
      * Updates the mapobject's state.
      * 
      */
-    void update ();
+    bool update ();
 
     //@}
 

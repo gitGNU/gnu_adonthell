@@ -1,7 +1,7 @@
 
 
-                               Adonthell 
-                            - Waste's Edge -
+                             Adonthell 0.3 
+                           
 
 
     This program is free software; you can redistribute it and/or modify
@@ -18,30 +18,24 @@
 Installation:
 =============
 
-See the INSTALL and NEWBIE files for details 
+See the INSTALL and NEWBIE files for details.
+Note that this package alone doesn't allow you to play anything - 
+you'll need a game package in addition to this one. The official
+game package for this release is Waste's Edge release 0.3. If you
+don't already have it, you should download it and install it next to
+this package.
 
 
 Configuring Adonthell:
 ======================
 
 The first time you run Adonthell, a configuration file is created:
-$HOME/.adonthell/adonthellrc. Unless you install the data file in
-/usr/local/share/adonthell, you'll have to add the full path to the
-data directory yourself.
+$HOME/.adonthell/adonthellrc. Edit it to customize the game to your
+convenience.
 
 The available options and what they do are:
 (Some of these options might be changable from the main program)
 
-- Data
-  The full path to the Adonthell data directory, 
-  e.g. Data [/home/me/adonthell-data]
-
-- Map
-  Obsolete
-
-- Screen-resolution
-  Obsolete
-  
 - Screen-mode
   Whether Adonthell should run fullscreen or in windowed mode 
   0 = Windowed mode, 1 = Fullscreen mode
@@ -57,23 +51,8 @@ The available options and what they do are:
 - Audio-sample-rate
   0 = 11025 Hz, 1 = 22050 Hz,  2 = 44100 Hz
 
-- Audio-interpolation
-  Obsolete
-
 - Audio-volume
   The mixer setting, 0 - 100 %
-
-All those settings have to be enclosed with
-
-Section [id]
-End
-
-The configuration file can have a number of such sections with 
-different ID's. At the beginning you can use "Default [id]" to specify
-the section that is used by default.
-
-When running the program with a section id as parameter, this special
-configuration is loaded.
 
 
 Running Adonthell:
@@ -81,10 +60,13 @@ Running Adonthell:
 
 Okay, now you're ready to launch the program:
 Type
-$> adonthell 
-or
-$> adonthell <id>
-where <id> is a section in your configuration file
+$> adonthell <gamename>
+To run the game named <gamename>.
+
+To get a list of currently installed games you can play, type:
+$> adonthell -l
+This will print a list of the installed games you can launch
+with above command.
 
 
 Directories:
@@ -92,11 +74,11 @@ Directories:
 - $HOME/.adonthell 
   contains the configuration file and your saved games.
 
-- /usr/local/share/adonthell
-  contains the data files: graphics, music, etc.
-  You can install these in a different location, but you'll have
-  to update your configuration file in that case.
-  (see 'Configuring Adonthell' in this document)
+- Global data directory
+  You can get this directory by invoking 'adonthell -d' (by default
+  /usr/local/share/adonthell) . This is the directory where games will
+  install to. If you have a game installed somewhere else, you can
+  play it by invoking 'adonthell -g <path-to-my-game>'
 
 
 Release Notes:
@@ -112,6 +94,9 @@ be free of severe bugs.  Missing features include combat, items and
 magic.  But you can interact with NPC's and the game world, and the
 internals enable us to create a basic plot, so v0.3 is actually
 playable!
+
+You're greatly invited to report us bugs, problems, or anything you
+think we should now. Any feedback is appreciated, so don't hesitate!
 
 
 Contact:

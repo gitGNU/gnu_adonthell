@@ -38,12 +38,12 @@ character_base::~character_base ()
 {
 }
 
-void character_base::set_name (const string & newname)
+void character_base::set_name (string newname)
 {
     name = newname; 
 }
 
-void character_base::set_dialogue (const string & newdlg)
+void character_base::set_dialogue (string newdlg)
 {
     dialogue = newdlg; 
 }

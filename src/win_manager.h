@@ -16,27 +16,30 @@
 
 #include <list>
 
-
-#ifndef SWIG
-using namespace std; 
-#endif
-
 class win_container;
 
 class win_manager
 {
  public:
   static void add(win_container *);
+  
   static bool exist(win_container *);
+  
   static void remove(win_container *);
+  
   static void update();
-  // static void update_keyboard();
+  
+  static void input_update();
+  
   static void draw();
+  
   static void set_focus(win_container*);
+  
   static void destroy();
 
 
  private:
+  
   static list<win_container *> lmanage;
   //static list<win_container *> ::iterator ilm;
   static win_container * wc;

@@ -232,9 +232,11 @@ void mapview::set_schedule (string file)
     schedule_file_ = file;      
 }
 
-void mapview::update ()
+bool mapview::update ()
 {
-    schedule.run (); 
+    schedule.run ();
+
+    return true; 
 }
 
 void mapview::draw (s_int16 x, s_int16 y, const drawing_area * da_opt = NULL,

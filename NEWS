@@ -2,7 +2,7 @@ version 0.3pre
 - Added Python scripting
 - Added Dialogue system
 - Fullscreen support
-- Improved music playback quality
+- Now using Ogg Vorbis for music playback
 
 version 0.2.1
 - Switched from GGI to SDL

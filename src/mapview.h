@@ -329,7 +329,7 @@ public:
      * Updates the mapview's state and launchs his schedule.
      * 
      */
-    void update ();
+    bool update ();
 
     void draw (s_int16 x, s_int16 y, const drawing_area * da_opt = NULL,
                surface *target = NULL) const;

@@ -15,8 +15,67 @@
 #ifndef _WIN_SELECT_H_
 #define _WIN_SELECT_H_
 
-#include "win_scrolled.h"
+#include "win_scroll.h"
 
+class win_select : public win_scroll
+{
+ public:
+  
+  win_select();
+
+  bool input_update();
+  
+  void add(win_base * w);
+  
+  void remove(win_base * w);
+
+  void remove_all();
+  
+  void set_mode(const u_int8 mode){mode_ = mode;}
+  
+  void set_border_select(win_border * border){border_select_ = border;}
+  
+  void set_circle(const bool  b) {circle_ = b;}
+  bool is_circle(){return circle_;}
+
+  void set_default();
+
+  void set_default_object(const win_base * wb);
+
+  void set_default_position(const u_int16 pos);
+
+  win_base * get_selected_object();
+  
+  u_int16 get_selected_position();
+
+  static const u_int8 MODE_BORDER = 0;
+  
+  static const u_int8 MODE_BRIGHTNESS = 1;
+  
+ protected:
+  
+  void rules(const bool b, win_base * wb);
+
+  void update_cur_select_position();
+
+  void next();
+  
+  void previous();
+
+  void activate();
+
+  u_int8 mode_;
+  
+  bool circle_;
+
+  win_border * border_select_;
+
+  lwb::iterator cur_select_;
+};
+
+
+
+/*
 class win_base;
 class win_theme;
 class win_container;
@@ -112,15 +171,17 @@ class win_select : public win_scrolled
   //set the curselect to NULL, needed if you want clean select
   static void init();
   
-  /*IMPORTANT
+  IMPORTANT
     you can with win_select browse a tree of selection, if you want to return at the last node call the back function, or if you want
     to go at a node you have selected just call the on_activate_function
-  */  
+   
   static s_int32 next_key;
   static s_int32 previous_key;
   static s_int32 activate_key;
   static s_int32 back_key;
 };
+
+*/
 #endif
 
 

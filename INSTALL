@@ -25,11 +25,10 @@ version of Python by entering the command:
    See http://www.libsdl.org/
 
 
-For sound support, you'll also need the SDL_mixer library, Version 1.0 
-or later and OggVorbis.
+For convenience, the SDL_mixer library is included into the sources.
+You'll need OggVorbis if you want to enjoy the music.
 
-   See http://www.libsdl.org/projects/SDL_mixer/
-   and http://www.xiph.org/ogg/vorbis/download/
+   See http://www.xiph.org/ogg/vorbis/download/
 
 
 Installing:
@@ -37,15 +36,12 @@ Installing:
 
 In the toplevel adonthell-0.3 directory type
 
-./configure
-make
+$>./configure
+$>make
 
+and (as root)
 
-The first time you run Adonthell, a configuration file is created:
-$HOME/.adonthell/adonthellrc. Unless you install the data package in
-/usr/local/share/adonthell/ you'll have to add the full path to the
-data directory manually. Various other aspects of the game are also
-controlled via this file. 
+$>make install
 
 For more information, see the README file. Problems? Don't have
 the right libraries? Please look at the NEWBIE file or our website
@@ -65,7 +61,8 @@ for you. For a complete list, run 'configure --help'.
 --disable-gtktest
 
   If configure claims to not find the SDL library, OggVorbis or
-GTK+ although they are there, you can try to disable the test. 
+GTK+ although they are there, or if you try to cross-compile, 
+you can disable the test. 
 
 Another way to workaround such a problem might be to recreate 
 'configure' by running the 'autogen.sh' script.
@@ -84,7 +81,9 @@ those directories to /etc/ld.so.conf.
 
   Use this to build the Adonthell development tools. These include
 editors for our graphic objects, characters, maps, dialogues and a
-few other utilities.
+few other utilities. Be carefull that these tools will be installed
+at 'make install' time. This isn't a good option for the average
+player. Really.
 
 
 --enable-doc
@@ -112,3 +111,4 @@ to finally display any occurrence of memory leaks.
 * That's it! Enjoy the game engine and let us know what you think!! *
 *********************************************************************
 					- The Adonthell Team
+

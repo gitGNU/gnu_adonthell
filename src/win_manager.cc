@@ -54,7 +54,7 @@ void win_manager::destroy()
   for(list<win_container *>::iterator i=lmanage.begin();i!=lmanage.end();i++)
     delete *i;
   lmanage.clear();
-  wc=NULL;
+  wc = NULL;
 }
 
 void win_manager::draw()
@@ -64,6 +64,12 @@ void win_manager::draw()
       if(*i!=wc) (*i)->draw();
     }
   if(wc) wc->draw();
+}
+
+
+void win_manager::input_update()
+{  
+  if(wc) {wc->input_update();} 
 }
 
 void win_manager::update()

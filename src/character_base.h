@@ -91,7 +91,7 @@ class character_base : public storage
      * 
      * @param newname name of the %character.
      */
-    void set_name(const string& newname);
+    void set_name(string newname);
 
     /** 
      * Returns the color representing the %character.
@@ -121,7 +121,7 @@ class character_base : public storage
      * 
      * @param dialogue new %character's dialog.
      */
-    void set_dialogue (const string& dialogue);
+    void set_dialogue (string dialogue);
 
     /** 
      * Loads the state (attributes) of the %character from an opened file.

@@ -23,17 +23,6 @@
 #define WIN_FONT_LENGHT 8
 #define WIN_SPACE_LENGHT 8
 
-//justify
-#define WIN_ALIGN_LEFT 0
-#define WIN_ALIGN_RIGHT 1
-#define WIN_ALIGN_CENTER 2
-#define WIN_ALIGN_NONE 3
-
-//layout
-#define WIN_LAYOUT_NO 0
-#define WIN_LAYOUT_LIST 1
-#define WIN_LAYOUT_AUTO 2
-
 //directory
 #define WIN_DIRECTORY "gfx/window/"
 #define WIN_FONT_DIRECTORY "font/"
@@ -47,10 +36,6 @@
 #define WIN_FONT_FILE_PIC "font.pnm"
 #define WIN_FONT_FILE "font.font"
 
-//CURSOR LABEL
-#define WIN_CURSOR_BLINKING 75
-
-
 //border filename
 #define WIN_V_BORDER_TEMPLATE_FILE "v_border.pnm"
 #define WIN_H_BORDER_TEMPLATE_FILE "h_border.pnm"
@@ -58,7 +43,6 @@
 #define WIN_CORNER_TOP_RIGHT_FILE "corner_top_right.pnm"
 #define WIN_CORNER_BOTTOM_LEFT_FILE "corner_bottom_left.pnm"
 #define WIN_CORNER_BOTTOM_RIGHT_FILE "corner_bottom_right.pnm"
-
 
 //background filename
 #define WIN_BACKGROUND_FILE "background.pnm"
@@ -72,11 +56,6 @@
 #define WIN_SCROLLBAR_BACK_MID "scroll_back_mid.pnm"
 #define WIN_SCROLLBAR_BACK_BOT "scroll_back_bot.pnm"
 
-//default key For the selection
-#define WIN_SELECT_DEFAULT_KEY_NEXT SDLK_DOWN
-#define WIN_SELECT_DEFAULT_KEY_PREVIOUS SDLK_UP
-#define WIN_SELECT_DEFAULT_KEY_ACTIVATE SDLK_SPACE
-#define WIN_SELECT_DEFAULT_KEY_BACK SDLK_b
 
 //cursor filename
 #define WIN_CURSOR_FILE "cursor.pnm"
@@ -89,52 +68,7 @@
 #define WIN_THEME_ORIGINAL "original/" //dont forget '/'
 #define WIN_THEME_ELFE "silverleaf/"
 
-//win_OBJECT
-#define WIN_OBJ_BASE 0
-#define WIN_OBJ_LABEL 1
-#define WIN_OBJ_WRITE 2
-#define WIN_OBJ_IMAGE 3
-#define WIN_OBJ_CONTAINER 4
-#define WIN_OBJ_SCROLLED 5
-#define WIN_OBJ_SELECT 6
-
-//win_signal
-#define WIN_SIG_ACTIVATE 0
-#define WIN_SIG_UNACTIVATE 1
-#define WIN_SIG_UPDATE 2
-#define WIN_SIG_DRAW 3
-//this signal is call only is objet is visible
-#define WIN_SIG_DRAW_ONLY_VISIBLE 11 
-#define WIN_SIG_ACTIVATE_KEY 4
-#define WIN_SIG_NEXT_KEY 5
-#define WIN_SIG_PREVIOUS_KEY 6
-#define WIN_SIG_SCROLL_UP 7
-#define WIN_SIG_SCROLL_DOWN 8
-#define WIN_SIG_SELECT 9
-#define WIN_SIG_UNSELECT 10
-#define WIN_SIG_KEYBOARD 12
-#define WIN_SIG_DESTROY 20
-#define WIN_SIG_CLOSE 21
-
-
-
-//win_select
-#define WIN_SELECT_MODE_BRIGHTNESS 0
-#define WIN_SELECT_MODE_BORDER 1
-#define WIN_SELECT_MODE_CURSOR 2 
-
-#define WIN_SIZE_NORMAL 0
-#define WIN_SIZE_MINI 1
-
-#define WIN_SELECT_TYPE_NORMAL 0
-#define WIN_SELECT_TYPE_SCROLL 1
-
-
-
-//WIN SCROLL BAR
-#define WIN_SCROLLBAR_PAD_DEFAULT 10;
-#define WIN_SPACE_BETWEEN_BORDER 10;
-#define WIN_SPACE_BETWEEN_OBJECT 5;
+#define WIN_BRIGHTNESS_LEVEL 130
 
 #endif
 

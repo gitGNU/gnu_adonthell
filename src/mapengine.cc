@@ -46,11 +46,12 @@ void mapengine::load_map (string fname)
 
 void mapengine::run ()
 {
-    //     static u_int32 cpt = 0; 
+    //     static u_int32 cpt = 0;  
     letsexit = false; 
     gametime::start_action (); 
     while (!letsexit)
     {
+//         static image ima (300, 200);
         //         cpt++;
 //         if (cpt == 200) 
 //         {
@@ -61,6 +62,9 @@ void mapengine::run ()
 //             cout << "Loaded " << ++lcpt << " times\n"; 
 //         }
         mainloop ();
+//         ima.set_mask (true); 
+//         ima.set_alpha (100);
+//         ima.draw (10, 10); 
         screen::show ();
         gametime::update (); 
     }
@@ -71,6 +75,7 @@ void mapengine::mainloop ()
     input::update ();
     for (int i = 0; i < gametime::frames_to_do (); i++)
     {
+        win_manager::input_update ();
         win_manager::update ();
         lmap.update ();
         mv.update ();

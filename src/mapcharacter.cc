@@ -108,6 +108,37 @@ s_int8 mapcharacter::load (string fname)
     return 0;
 }
 
+s_int8 mapcharacter::put (ogzstream& file) const
+{
+    int i;
+
+    for (i = 0; i < NBR_MOVES; i++)
+    {
+        anim[i]->put (file);
+    }
+
+    mapsquare_walkable_area::put (file); 
+
+    return 0;
+}
+
+s_int8 mapcharacter::save (string fname) const
+{
+    string s = MAPCHAR_DIR;
+
+    s += fname;
+    ogzstream file (s);
+    if (!file.is_open ())
+        return -1;
+    
+    s_int8 retvalue; 
+    fileops::put_version (file, 1); 
+    retvalue = put (file);
+    file.close ();
+
+    return 0;
+}
+
 s_int8 mapcharacter::get_state (igzstream& file)
 {
     // Load the schedule's and graphical data
@@ -271,11 +302,11 @@ bool mapcharacter::can_go_north () const
     s_int16 ax = sx - (posx () - base_x ());
     s_int16 ay = sy - (posy () - base_y ());
     u_int16 ex =
-        (posx () - base_x () + area_length () >=
+        (posx () - base_x () + area_length () >
          refmap->submap[submap ()]->area_length ()) ? refmap->submap[submap ()]->area_length () -
         1 : posx () - base_x () + area_length ();
     u_int16 ey =
-        (posy () - base_y () + area_height () >=
+        (posy () - base_y () + area_height () >
          refmap->submap[submap ()]->area_height ()) ? refmap->submap[submap ()]->area_height () -
         1 : posy () - base_y () + area_height ();
 
@@ -371,11 +402,11 @@ bool mapcharacter::can_go_west () const
     s_int16 ax = sx - (posx () - base_x ());
     s_int16 ay = sy - (posy () - base_y ());
     u_int16 ex =
-        (posx () - base_x () + area_length () >=
+        (posx () - base_x () + area_length () >
          refmap->submap[submap ()]->area_length ()) ? refmap->submap[submap ()]->area_length () -
         1 : posx () - base_x () + area_length ();
     u_int16 ey =
-        (posy () - base_y () + area_height () >=
+        (posy () - base_y () + area_height () >
          refmap->submap[submap ()]->area_height ()) ? refmap->submap[submap ()]->area_height () -
         1 : posy () - base_y () + area_height ();
 
@@ -509,10 +540,12 @@ void mapcharacter::set_action (string file)
     action_file_ = file; 
 }
  
-void mapcharacter::update ()
+bool mapcharacter::update ()
 {
     schedule.run (); 
     update_move ();
+
+    return true; 
 }
 
 void mapcharacter::launch_action (mapcharacter * requester)
@@ -669,8 +702,17 @@ void mapcharacter::update_move ()
                         stand_north ();
                         break;
                     }
+                    leave_event evt;
+
+                    evt.submap = submap ();
+                    evt.x = posx ();
+                    evt.y = posy ();
+                    evt.c = this;
+                    evt.dir = WALK_NORTH; 
+                    event_handler::raise_event (evt);
+
                     occupy (submap (), posx (), posy () - 1);
-                }
+                 }
                 set_offset (offx (), offy () - 1);
                 
                 if (offy () == -MAPSQUARE_SIZE)
@@ -687,6 +729,7 @@ void mapcharacter::update_move ()
                     evt.x = posx ();
                     evt.y = posy ();
                     evt.c = this;
+                    evt.dir = WALK_NORTH; 
                     event_handler::raise_event (evt);
                 }
                 break;
@@ -698,11 +741,20 @@ void mapcharacter::update_move ()
                         stand_south ();
                         break;
                     }
+                    leave_event evt;
+
+                    evt.submap = submap ();
+                    evt.x = posx ();
+                    evt.y = posy ();
+                    evt.c = this;
+                    evt.dir = WALK_SOUTH; 
+                    event_handler::raise_event (evt);
+
                     leave (submap (), posx (), posy ());
                     occupy (submap (), posx (), posy ());
                     set_pos (submap (), posx (), posy () + 1);
                     set_offset (0, -(MAPSQUARE_SIZE - 1));
-                }
+                 }
                 else
                 {
                     set_offset (offx (), offy () + 1);
@@ -718,6 +770,7 @@ void mapcharacter::update_move ()
                         evt.x = posx ();
                         evt.y = posy ();
                         evt.c = this;
+                        evt.dir = WALK_SOUTH; 
                         event_handler::raise_event (evt);
                     }
                 }
@@ -730,7 +783,16 @@ void mapcharacter::update_move ()
                         stand_west ();
                         break;
                     }
-                    occupy (submap (), posx () - 1, posy ());
+                    leave_event evt;
+
+                    evt.submap = submap ();
+                    evt.x = posx ();
+                    evt.y = posy ();
+                    evt.c = this;
+                    evt.dir = WALK_WEST; 
+                    event_handler::raise_event (evt);
+
+                    occupy (submap (), posx () - 1, posy ()); 
                 }
                 set_offset (offx () -1, offy ());  
                 if (offx () == -MAPSQUARE_SIZE)
@@ -747,6 +809,7 @@ void mapcharacter::update_move ()
                     evt.x = posx ();
                     evt.y = posy ();
                     evt.c = this;
+                    evt.dir = WALK_WEST; 
                     event_handler::raise_event (evt);
                 }
                 break;
@@ -758,10 +821,19 @@ void mapcharacter::update_move ()
                         stand_east ();
                         break;
                     }
+                    leave_event evt;
+                    
+                    evt.submap = submap ();
+                    evt.x = posx ();
+                    evt.y = posy ();
+                    evt.c = this;
+                    evt.dir = WALK_EAST; 
+                    event_handler::raise_event (evt);
+
                     leave (submap (), posx (), posy ());
                     occupy (submap (), posx (), posy ());
                     set_pos (submap (), posx () + 1, posy ());
-                    set_offset (-(MAPSQUARE_SIZE - 1), 0);
+                    set_offset (-(MAPSQUARE_SIZE - 1), 0);  
                 }
                 else
                 {
@@ -777,6 +849,7 @@ void mapcharacter::update_move ()
                         evt.x = posx ();
                         evt.y = posy ();
                         evt.c = this;
+                        evt.dir = WALK_EAST; 
                         event_handler::raise_event (evt);
                     }
                 }

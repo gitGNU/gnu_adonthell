@@ -22,7 +22,7 @@ preset.h ps_callbacks.h ps_dlg.h ps_interface.h pset_callbacks.h \
 pset_interface.h run.h run_callbacks.h run_interface.h
 
 # Evil, but it works...
-CPPFLAGS +=-I../.. -DUSE_PYTHON -D_VERSION_=\"0.7\" $(PY_CFLAGS) $(GTK_CFLAGS) 
+CPPFLAGS +=-I../.. -DUSE_PYTHON -D_VERSION_=\"0.7\" $(PY_CFLAGS) $(GTK_CFLAGS)  $(SDL_CFLAGS)
 
 SWIGFLAGS = -D_DLGEDIT_ -D_DEBUG_
 

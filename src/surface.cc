@@ -114,12 +114,14 @@ void surface::fillrect (s_int16 x, s_int16 y, u_int16 l, u_int16 h, u_int32 col,
 
 void surface::lock () const
 {
+    if (!length () || !height ()) return;   
     if (SDL_MUSTLOCK(vis)) 
         SDL_LockSurface (vis);
 }
 
 void surface::unlock () const
 {
+    if (!length () || !height ()) return;   
     if (SDL_MUSTLOCK(vis)) 
         SDL_UnlockSurface (vis);
 }
@@ -225,7 +227,7 @@ void surface::resize (u_int16 l, u_int16 h)
     set_length (l);
     set_height (h); 
 
-    vis = SDL_CreateRGBSurface (SDL_HWSURFACE | SDL_SRCCOLORKEY | SDL_SRCALPHA,
+    vis = SDL_CreateRGBSurface (SDL_HWSURFACE | SDL_SRCCOLORKEY | SDL_SRCALPHA | SDL_ASYNCBLIT,
                                 length (), height (),
                                 screen::bytes_per_pixel () * 8,
                                 screen::display.vis->format->Rmask,

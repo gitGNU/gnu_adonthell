@@ -12,6 +12,277 @@
    See the COPYING file for more details
 */
 
+#include "win_select.h"
+
+
+win_select::win_select()
+{
+  cur_select_ = list_wb_.begin();
+  
+  set_mode(MODE_BRIGHTNESS);
+  
+  border_select_ = NULL;
+
+  set_circle(false);
+
+  //set_visible_scrollbar(false);
+}
+
+
+void win_select::add(win_base * w)
+{
+    win_scroll::add(w);
+    cur_select_ = list_wb_.begin (); 
+    //if select has a border for the selection, just set border to the win_base added
+    if(border_select_ != NULL) w->set_border(*border_select_);
+    
+    //set the object to unselect
+    rules(false, w);
+    
+    set_default();
+    
+    update_cur_select_position();
+}
+
+
+void win_select::remove(win_base * w)
+{
+  rules(false, w);
+  
+  win_scroll::remove(w);
+  
+  set_default();
+}
+
+
+void win_select::remove_all()
+{
+ win_scroll::remove_all();
+ cur_select_ = list_wb_.begin();
+}
+
+
+void win_select::next()
+{
+  //test if next possible
+  if(cur_select_ == list_wb_.end() || list_wb_.size() == 0) return;
+  
+  (*cur_select_)->on_unselect();
+
+  //unselect cur element
+  rules(false,*cur_select_);
+  (*cur_select_)->set_activate (false);
+  
+  //create a temporary index
+  lwb :: iterator i = cur_select_;
+
+  //go next
+  i++;
+
+  //while not a the end, not be selected and different at old object go to the next
+  while( i != list_wb_.end() && !(*i)->is_can_be_selected() && i != cur_select_) i++; 
+  
+  //if at end of list and select circle is activate
+  if(i == list_wb_.end())
+    {
+      //cur is the begin of list
+      if( circle_ )
+	{
+	  i = list_wb_.begin();
+	  while(i != list_wb_.end() && !(*i)->is_can_be_selected() && i != cur_select_) i++;
+	  if(i != list_wb_.end()) cur_select_ = i; 
+	}
+    }else cur_select_ = i;
+  
+  rules(true,*cur_select_);
+  
+  (*cur_select_)->on_select();
+  
+  on_next();
+
+  update_cur_select_position();
+}
+
+
+void win_select::previous()
+{
+  if(cur_select_==list_wb_.end() || list_wb_.size() == 0) return;
+  
+  (*cur_select_)->on_unselect();
+  
+  //set to unselect object
+  rules(false,*cur_select_);
+  
+  (*cur_select_)->set_activate (false);
+  
+  lwb::iterator i=cur_select_;
+  
+  if(circle_)
+    {
+      if(i==list_wb_.begin()) i=list_wb_.end();
+      i--;
+    }
+  else if(i!=list_wb_.begin()) i--;
+  
+  while(i != list_wb_.begin() && !(*i)->is_can_be_selected() && i != cur_select_) i--; 
+  
+  if( i== list_wb_.begin() && !(*i)->is_can_be_selected())
+    {
+      if(circle_)
+	{
+	  i = list_wb_.end();
+	  i--;
+	  while(i!=list_wb_.begin() && !(*i)->is_can_be_selected() && i!=cur_select_) i--;
+	  if((*i)->is_can_be_selected()) cur_select_=i;
+	}
+    } else cur_select_=i;
+ 
+  (*cur_select_)->on_select();
+  
+  //set to select object
+  rules(true,*cur_select_);
+  
+  //update_position();
+  on_previous();
+
+  update_cur_select_position();
+}
+
+
+void win_select::activate()
+{
+  if(cur_select_ == list_wb_.end()) return;
+  
+  //set_activate(false);  
+  
+  (*cur_select_)->set_activate(true);
+  
+  on_activate_key(); 
+}
+
+
+bool win_select::input_update()
+{
+  
+  if(win_scroll::input_update())
+    {
+      if(focus_object_) return true;
+      
+      if(input::has_been_pushed(win_keys::KEY_NEXT)) next();
+      if(input::has_been_pushed(win_keys::KEY_PREVIOUS)) previous();
+      if(input::has_been_pushed(win_keys::KEY_ACTIVATE)) activate();
+      
+      return true;
+    }
+  return false;
+}
+
+void win_select::rules(const bool b, win_base * wb)
+{
+  if(!wb->is_can_be_selected()) return;
+  
+  switch(mode_)
+    {
+    case MODE_BORDER:
+      wb->set_visible_border(b);
+      break;
+      
+    case MODE_BRIGHTNESS:
+      wb->set_brightness(!b);
+      break;
+    }
+}
+
+
+void win_select::set_default()
+{
+  if(list_wb_.size() == 0) return;
+
+  if(cur_select_ != list_wb_.end())
+  {
+      rules(false,*cur_select_);
+  }
+  
+  cur_select_ = list_wb_.begin();
+
+  while(cur_select_ != list_wb_.end() && !(*cur_select_)->is_can_be_selected()) cur_select_++;
+  
+  if(cur_select_ != list_wb_.end()) rules(true,*cur_select_);
+}
+
+void win_select::set_default_object(const win_base * wb)
+{
+  if(list_wb_.size() == 0) return;
+  
+  if(cur_select_ != list_wb_.end()) rules(false,*cur_select_);
+
+  cur_select_ = list_wb_.begin();
+  
+  while(cur_select_ != list_wb_.end() && *cur_select_ != wb) cur_select_++;
+
+  if(cur_select_ != list_wb_.end()) rules(true,*cur_select_);
+
+  update_cur_select_position();
+}
+
+
+void win_select::set_default_position(const u_int16 pos)
+{
+  if(list_wb_.size() == 0 || pos > list_wb_.size()) return;
+  
+  if(cur_select_ != list_wb_.end()) rules(false,*cur_select_);
+
+  cur_select_ = list_wb_.begin();
+
+  u_int16 i = 0;
+
+  while(cur_select_ != list_wb_.end() && i++ < pos) cur_select_++;
+
+  if(cur_select_ != list_wb_.end()) rules(true,*cur_select_);
+
+  update_cur_select_position();
+}
+
+
+win_base * win_select::get_selected_object()
+{
+  if(cur_select_ != list_wb_.end() || list_wb_.size() == 0) return *cur_select_;
+  else return NULL;
+}
+
+u_int16 win_select::get_selected_position()
+{
+  u_int16 pos_=0;
+ 
+  lwb::iterator i = list_wb_.begin();
+  
+  if(i==list_wb_.end()) return 0;
+  
+  while( (*i++) != (*cur_select_)) pos_++;
+  
+  return pos_+1;
+}
+
+
+void win_select::update_cur_select_position()
+{
+  if(!max_amplitude_) return;
+
+  while( 1 )
+    { 
+        //       if((*cur_select_)->height() > height() + (space_with_border_ << 1) ) break;
+        // Workaround if the object is bigger than the select (Alex).
+      if((*cur_select_)->height() + (space_with_border_ << 1) > height()) break;
+      else if((*cur_select_)->y() + (*cur_select_)->pad_y() < space_with_border_ ) up();
+      else if((*cur_select_)->y() + (*cur_select_)->pad_y() + (*cur_select_)->height() > height() - space_with_border_) down();
+      else break;
+    }
+}
+
+
+
+
+/*
 #include <list>
 #include "types.h"
 #include "input.h"
@@ -24,8 +295,6 @@
 #include "win_container.h"
 #include "win_scrolled.h"
 #include "win_select.h"
-
-#include "audio.h"
 
 //STATIC INIT
 win_select * win_select::curselect_=NULL;
@@ -130,14 +399,12 @@ void win_select::destroy()
 
 void win_select::on_next()
 {
-    audio::play_wave (-1, 1); 
-    if(callback_[WIN_SIG_NEXT_KEY]) (callback_[WIN_SIG_NEXT_KEY])();
+  if(callback_[WIN_SIG_NEXT_KEY]) (callback_[WIN_SIG_NEXT_KEY])();
 }
 
 void win_select::on_previous()
 {
-    audio::play_wave (-1, 1); 
-    if(callback_[WIN_SIG_PREVIOUS_KEY]) (callback_[WIN_SIG_PREVIOUS_KEY])();
+  if(callback_[WIN_SIG_PREVIOUS_KEY]) (callback_[WIN_SIG_PREVIOUS_KEY])();
 }
 
 bool win_select::update()
@@ -167,7 +434,7 @@ void win_select::set_select_object(win_base * wb,bool b)
     case WIN_SELECT_MODE_BORDER:
       wb->set_border_visible(b);
     }
-
+  
   switch(type_selected_)
     {
     case WIN_SELECT_TYPE_NORMAL:
@@ -312,8 +579,8 @@ void win_select::update_position()
       while(!tmp_is_visible_)
 	{
 	 
-	  /* if(((*index_list)->y()+(*index_list)->pady()>space_between_border_) && 
-	     ((*index_list)->y()+(*index_list)->height()>height_-space_between_border_)) {tmp_is_visible_=true;cout << "16\n";}*/
+	  // if(((*index_list)->y()+(*index_list)->pady()>space_between_border_) && 
+	  //   ((*index_list)->y()+(*index_list)->height()>height_-space_between_border_)) {tmp_is_visible_=true;cout << "16\n";}
 	  if((*index_list)->height()>height_+(space_between_border_<<1)) tmp_is_visible_=true;
 
 	  else if((*index_list)->y()+(*index_list)->pady()<space_between_border_) up();
@@ -438,7 +705,6 @@ bool win_select::activate___()
 {
   if(index_list!=list_obj.end()) 
     {
-      audio::play_wave (-1, 0); 
       (*index_list)->set_activated(true);
       on_activate_key();
       return true;
@@ -497,7 +763,7 @@ void win_select::init()
 
 
 
-
+*/
 
 
 

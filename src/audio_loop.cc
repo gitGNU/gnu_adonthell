@@ -120,14 +120,14 @@ static long _get_next_page(OggVorbis_File *vf,ogg_page *og,int boundary){
 }
 
 static void _make_decode_ready(OggVorbis_File *vf){
-  if(vf->decode_ready)return;
+  if(vf->ready_state)return;
   if(vf->seekable){
     vorbis_synthesis_init(&vf->vd,vf->vi+vf->current_link);
   }else{
     vorbis_synthesis_init(&vf->vd,vf->vi);
   }    
   vorbis_block_init(&vf->vd,&vf->vb);
-  vf->decode_ready=1;
+  vf->ready_state=1;
   return;
 }
 
@@ -135,7 +135,7 @@ static void _decode_clear(OggVorbis_File *vf){
   ogg_stream_clear(&vf->os);
   vorbis_dsp_clear(&vf->vd);
   vorbis_block_clear(&vf->vb);
-  vf->decode_ready=0;
+  vf->ready_state=0;
 
   vf->bittrack=0.f;
   vf->samptrack=0.f;
@@ -150,7 +150,7 @@ static int _process_packet(OggVorbis_File *vf,int readp){
     
     /* process a packet if we can.  If the machine isn't loaded,
        neither is a page */
-    if(vf->decode_ready){
+    if(vf->ready_state){
       ogg_packet op;
       int result=ogg_stream_packetout(&vf->os,&op);
       ogg_int64_t granulepos;
@@ -214,7 +214,7 @@ static int _process_packet(OggVorbis_File *vf,int readp){
     vf->bittrack+=og.header_len*8;
 
     /* has our decoding just traversed a bitstream boundary? */
-    if(vf->decode_ready){
+    if(vf->ready_state){
       if(vf->current_serialno!=ogg_page_serialno(&og)){
 	_decode_clear(vf);
       }
@@ -232,7 +232,7 @@ static int _process_packet(OggVorbis_File *vf,int readp){
        we're now nominally at the header of the next bitstream
     */
 
-    if(!vf->decode_ready){
+    if(!vf->ready_state){
       int link;
       if(vf->seekable){
 	vf->current_serialno=ogg_page_serialno(&og);
