@@ -143,7 +143,7 @@ on_dialogue_player_activate (GtkMenuItem * menuitem, gpointer user_data)
     
     gtk_main ();
 
-    wnd->mynpc = dlg.get_npc ();
+    wnd->set_npc (dlg.get_npc ());
 }
 
 // Dialogue Menu: Run

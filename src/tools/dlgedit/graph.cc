@@ -1051,8 +1051,7 @@ load_dialogue (MainFrame * wnd, const char *file)
                     itc++;
                 }
                 
-                PyDict_SetItemString (data::globals, "the_npc", python::pass_instance (mynpc, "character"));
-                wnd->mynpc = mynpc;
+                wnd->set_npc (mynpc);
                 break;            
             }
 

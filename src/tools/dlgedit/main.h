@@ -89,10 +89,11 @@ public:
     run_dlg *test_dlg;          // For testing the dialogue
     string pset_vars;           // Preset variables for running the Dialogue
     string cust_func;           // Custom functions of the Dialogue
-    character_base *myplayer;   // A player object
-    character_base *mynpc;      // A NPC object
+    character *myplayer;        // A player object
+    character *mynpc;           // A NPC object
     
     void set_changed ();        // Update the title bar when dialogue changes
+    void set_npc (character_base*);// Set shortcut to one of the npc's
 };
 
 /* Functions */

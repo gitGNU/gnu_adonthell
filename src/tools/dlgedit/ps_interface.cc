@@ -226,7 +226,8 @@ GtkWidget * create_ps_window (ps_dlg *dlg, const char* name, int race, int gende
     for (itc = data::characters.begin (); itc != data::characters.end () && itc->second != NULL; itc++) 
     {
         // don't add the player character to the list
-        if (!strcmp (itc->second->get_name().c_str (), ((character *) data::the_player)->get_name().c_str ())) continue;
+        if (!strcmp (itc->second->get_name().c_str (), ((character *) data::the_player)->get_name().c_str ()))
+            continue;
         
         glade_menuitem = gtk_menu_item_new_with_label (itc->second->get_name().c_str ());
         gtk_object_set_user_data (GTK_OBJECT (glade_menuitem), (void *) itc->second->get_name().c_str ());

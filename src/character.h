@@ -27,23 +27,13 @@
 #define CHARACTER_H_
 
 #include "storage.h"
-
-#ifdef USE_MAP
 #include "mapcharacter.h"
-#else
-#include "character_base.h"
-#endif
 
 /**
  * Class holding %game characters.
  * 
  */ 
-class character
-#ifdef USE_MAP
-: public mapcharacter
-#else
-: public character_base
-#endif
+class character : public mapcharacter
 {
 public:
     /** 

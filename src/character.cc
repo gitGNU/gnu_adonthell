@@ -25,15 +25,9 @@
 #include "character.h"
  
 dictionary <character *> data::characters;
+character * data::the_player = NULL;
 
-character * data::the_player; 
-
-character::character()
-#ifdef USE_MAP
- : mapcharacter ()
-#else
- : character_base ()
-#endif
+character::character() : mapcharacter ()
 {
 }
 

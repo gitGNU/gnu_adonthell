@@ -29,7 +29,6 @@ extern "C"
 #include "../../prefs.h"
 #include "../../quest.h"
 #include "../../fileops.h"
-#include "../../character_base.h"
 #include "main.h"
 #include "graph.h"
 #include "interface.h"
@@ -85,13 +84,7 @@ main (int argc, char *argv[])
         
     // Create a player
 	data::globals = PyModule_GetDict(m);
-    MainWnd->myplayer = new character_base;
-
-    // Add the player to the character array
-    data::the_player = (character*) MainWnd->myplayer;
-
-    // Make "the_player" available to the interpreter 
-    PyDict_SetItemString (data::globals, "the_player", python::pass_instance (MainWnd->myplayer, "character"));
+    MainWnd->myplayer = (character *) new character_base ();
 
     // create character array
     PyObject *chars = PyDict_New ();
@@ -116,8 +109,7 @@ main (int argc, char *argv[])
 
             // Pass character over to Python interpreter
             PyObject *charref = python::pass_instance (mynpc, "character");
-            PyDict_SetItemString (chars, (char *) mynpc->get_name().c_str (),
-                charref);
+            PyDict_SetItemString (chars, (char *) mynpc->get_name().c_str (), charref);
             Py_DECREF (charref);
 
             // Make this character available to the engine
@@ -127,12 +119,10 @@ main (int argc, char *argv[])
         if (mynpc == NULL)
         {
             mynpc = new character_base ();
-            mynpc->set_name("Dummy Character");
+            mynpc->set_name ("Dummy Character");
         }
-        
-        // set a shortcut to one of the NPC's
-        PyDict_SetItemString (data::globals, "the_npc", python::pass_instance (mynpc, "character"));
-        MainWnd->mynpc = mynpc;
+
+        MainWnd->set_npc (mynpc);
 
         in.close ();
     }
@@ -185,7 +175,14 @@ main (int argc, char *argv[])
     // Misc initialization
     init_app (MainWnd);
 
-    data::characters[MainWnd->myplayer->get_name().c_str ()] = (character*) MainWnd->myplayer;
+    // Add the player to the character array
+    data::characters[MainWnd->myplayer->get_name().c_str ()] = MainWnd->myplayer;
+    data::the_player = MainWnd->myplayer;
+
+    // Make "the_player" available to the interpreter
+    PyObject *charref = python::pass_instance (MainWnd->myplayer, "character");
+    PyDict_SetItemString (data::globals, "the_player", charref);
+    Py_DECREF (charref);
 
     MainWnd->wnd = NULL;
     MainWnd->text_dlg = NULL;
@@ -204,7 +201,6 @@ main (int argc, char *argv[])
     Py_Finalize ();
 
     delete_dialogue (MainWnd);
-    delete MainWnd->myplayer;
     delete MainWnd;
 
     return 0;
@@ -217,6 +213,16 @@ void MainFrame::set_changed ()
     char *title = GTK_WINDOW (wnd)->title;
     gtk_window_set_title (GTK_WINDOW (wnd), g_strjoin (NULL, title, " (changed)", NULL));
     changed = 1;
+}
+
+// set a shortcut to one of the NPC's
+void MainFrame::set_npc (character_base *npc)
+{
+    mynpc = (character *) npc;
+
+    PyObject *charref = python::pass_instance (mynpc, "character");
+    PyDict_SetItemString (data::globals, "the_npc", charref);
+    Py_DECREF (charref);
 }
 
 /* Set variables to safe values */

@@ -24,7 +24,7 @@
 
 
 #include "character_base.h"
-
+#include <iostream.h>
 
 using namespace std; 
 
@@ -32,6 +32,8 @@ using namespace std;
 character_base::character_base ()
 {
   color = 1;
+  name = "";
+  dialogue = "";
 }
 
 character_base::~character_base ()
@@ -50,7 +52,6 @@ void character_base::set_dialogue (string newdlg)
 
 void character_base::put_state(ogzstream& out)
 {
-//   hash_map<const char*, s_int32, hash<const char*>, equal_key>::iterator i;
     storage::iterator i;
     
     u_int32 j;
@@ -90,15 +91,11 @@ void character_base::get_state (igzstream& in)
     size << in; 
     for (i = 0; i < size; i++)
     {
-//         char * s; 
-        string key; 
+        string key;
         key << in;
         
         /// @bug : We should be able to pass a string to objects
         /// instead of a char *, which memory isn't freed at exit.
-
-//         s = new char [key.size () + 1]; 
-//         strcpy (s, key.c_str ()); 
         value << in;
         set (key.c_str (), value);
     }

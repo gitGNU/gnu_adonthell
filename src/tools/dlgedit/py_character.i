@@ -8,26 +8,35 @@
 
 %}
 
-#define _DLGEDIT_
-
-class storage
+%typemap(python,in) string
 {
-public:
-    void set (const char*, int);
-    int get (const char*);
-};
+    if (PyString_Check ($source))
+    {
+        $target = new string (PyString_AsString($source));
+    }
+    else
+    {
+        PyErr_SetString (PyExc_TypeError, "not a String");
+        return NULL;
+    }
+}
 
-#define STAND_NORTH 0
-#define STAND_SOUTH 1
-#define STAND_WEST 2
-#define STAND_EAST 3
-#define WALK_NORTH 4
-#define WALK_SOUTH 5
-#define WALK_WEST 6
-#define WALK_EAST 7
-#define NBR_MOVES 8
-#define NO_MOVE 65535
+%typemap(python,out) string
+{
+    $target = PyString_FromString((const char *)$source->c_str());
+    delete $source;
+}
+
+%typemap (python, freearg) string
+{
+    if ($source != NULL)
+    {
+        delete $source;
+    }
+}
 
 %include "../../types.h"
+%include "../../storage.h"
 %include "../../character_base.h"
+%include "../../mapcharacter.h"
 %include "../../character.h"

@@ -1,6 +1,7 @@
 Makefile
 dlgedit
 .deps
+.libs
 Makefile.in
 *.pyc
 py_quest_wrap.cc

@@ -68,11 +68,9 @@ bool dialog::init (char *fpath, char *name)
 
 bool dialog::setup (PyObject *module, char* name)
 {
-    PyObject *classobj;
-    PyObject *globals = PyModule_GetDict (module);
-
     // Extract the class from the dialogue module
-    classobj = PyObject_GetAttrString (module, name);
+    PyObject *globals = PyModule_GetDict (module);
+    PyObject *classobj = PyObject_GetAttrString (module, name);
     
     Py_DECREF (module);
 
@@ -87,6 +85,9 @@ bool dialog::setup (PyObject *module, char* name)
                           PyDict_GetItemString (data::globals, "the_npc"));
     PyDict_SetItemString (globals, "the_player",
                           PyDict_GetItemString (data::globals, "the_player"));
+
+    PyObject_Print (PyDict_GetItemString (data::globals, "the_npc"), stdout, 1);
+    cout << endl;
 
     // Instantiate! Will we ever need to pass args to class
     // constructor here?
@@ -190,10 +191,7 @@ void dialog::run (u_int32 index)
     PyObject * callres = PyObject_CallMethod (instance, "run", "i", answers[index]);
     Py_XDECREF (callres); 
     
-#ifdef _DEBUG_
-    show_traceback ();
-    cout << flush;
-#endif // _DEBUG_
+    python::show_traceback ();
 
     // Mark the Player's text (if any) as used unless loops allowed
     if (index != 0)
@@ -299,7 +297,7 @@ char* dialog::scan_string (const char *s)
     PyObject *result;
     char *start, *mid, *string = NULL;
     char *tmp, *newstr = new char[strlen (s)+1];
-    character *the_player = (character*) data::the_player;
+    character *the_player = data::the_player;
     strcpy (newstr, s); 
 
     // replace $... shortcuts
