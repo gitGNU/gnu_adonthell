@@ -67,8 +67,9 @@ public:
      * 
      * @param desc description of the saved %game.
      * @param dir directory of the saved %game.
+     * @param time Textual representation of in-game time.
      */
-    gamedata (string desc, string dir); 
+    gamedata (string desc, string dir, string time); 
 #endif
 
     /** 
@@ -240,10 +241,11 @@ public:
      * 
      * @param pos Slot number where to save to.
      * @param desc Description of the %game to be saved.
+     * @param time Textual representation of in-game time.
      * 
      * @return \e true in case of success, false otherwise.
      */
-    static bool save (u_int32 pos, string desc);
+    static bool save (u_int32 pos, string desc, string time);
     
     /**
      * Unloads the current %game, resetting the engine to it's

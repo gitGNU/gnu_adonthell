@@ -56,11 +56,12 @@ gamedata::gamedata ()
 {
 }
 
-gamedata::gamedata (string dir, string desc)
+gamedata::gamedata (string dir, string desc, string time)
 {
     Timestamp = 0;
     Directory = dir;
-    Description = desc; 
+    Description = desc;
+    Gametime = time;
 }
 
 gamedata::~gamedata ()
@@ -285,7 +286,7 @@ bool gamedata::load_newest ()
     return load (newest);
 }
 
-bool gamedata::save (u_int32 pos, string desc)
+bool gamedata::save (u_int32 pos, string desc, string time)
 {
     gamedata *gdata;
     string filepath;
@@ -326,12 +327,13 @@ bool gamedata::save (u_int32 pos, string desc)
         }
         
         // we'll need a new gamedata record
-        gdata = new gamedata (filepath, desc);
+        gdata = new gamedata (filepath, desc, time);
     }
     else
     {
         gdata = saves[pos];
         gdata->set_description (desc);
+        gdata->set_gametime (time);
     }
 
     // save characters 
@@ -488,13 +490,13 @@ bool gamedata::init (string udir, string gdir, string gname, u_int8 qload)
     // try to change into data directory
     if (chdir (game_data_dir ().c_str ()))
     {
-        cerr << "\nSeems like " << game_data_dir () << " is no valid data directory.";
-        cerr << "\nMake sure that your Adonthell installation is correct.\n"; 
+        fprintf (stderr, "Seems like %s is no valid data directory.\n", game_data_dir ().c_str ());
+        fprintf (stderr, "Please make sure that your Adonthell installation is correct.\n"); 
         return false;
     }
 
     // Add the default savegame used to start a new game to the list of saves
-    gdata = new gamedata (gdir, "Start New Game");
+    gdata = new gamedata (gdir, "Start New Game", "Day 0 - 00:00");
     saves.push_back (gdata);
 
     // Read the user's saved games (if any) - they'll be located in

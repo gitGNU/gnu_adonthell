@@ -1,7 +1,7 @@
 /*
    $Id$
 
-   Copyright (C) 2001 by Kai Sterker <kaisterker@linuxgames.com>
+   Copyright (C) 2001/2002 by Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -291,13 +291,12 @@ void data_screen::on_save ()
     const char* description = entry->text_char ();
     int pos = image_list->get_selected_position ();
 
-    gamedata::save (pos, description);
+    gamedata::save (pos, description, gametime);
     gamedata *gdata = gamedata::get_saved_game (pos);
 
     // save sucessful --> save preview
     if (gdata != NULL)
     {
-        gdata->set_gametime (gametime); 
         string filepath = gdata->directory ();
         filepath += "/preview.pnm";
         save_preview (filepath);
