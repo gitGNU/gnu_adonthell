@@ -738,12 +738,12 @@ static PyObject *_wrap_npc_talk(PyObject *self, PyObject *args) {
     PyObject *resultobj;
     npc *arg0 ;
     PyObject * argo0 =0 ;
-    char *result ;
     
     if(!PyArg_ParseTuple(args,"O:npc_talk",&argo0)) return NULL;
     if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_npc,1)) == -1) return NULL;
-    result = (char *)arg0->talk();
-    resultobj = PyString_FromString(result);
+    arg0->talk();
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
     return resultobj;
 }
 

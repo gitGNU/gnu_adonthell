@@ -19,6 +19,7 @@
 #include "SDL_thread.h"
 #include "prefs.h"
 #include "Python.h"
+#include "storage.h"
 
 class game_engine
 {
@@ -40,6 +41,7 @@ class game
   static PyObject *globals;
   static char *theme;
   static game_engine *engine;
+  static objects characters;
 };
 
 #endif

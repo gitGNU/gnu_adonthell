@@ -35,7 +35,7 @@ void screen::set_video_mode(u_int16 w, u_int16 h, config * myconfig=NULL)
   u_int8 bpp;
   SDL_flags |= SDL_HWSURFACE;
   SDL_flags |= SDL_DOUBLEBUF;
-  //  if(myconfig&&(myconfig->screen_mode == 1)) SDL_flags |= SDL_FULLSCREEN;
+  if(myconfig&&(myconfig->screen_mode == 1)) SDL_flags |= SDL_FULLSCREEN;
 
   if (SDL_Init (SDL_INIT_VIDEO) < 0) {
     fprintf (stderr, "couldn't init SDL: %s\n", SDL_GetError ());

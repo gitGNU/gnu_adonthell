@@ -103,6 +103,19 @@ void dialog::run (u_int32 index)
     // Is it sufficient to get those objects only once???
     PyObject *npc, *player, *cont;
 
+    // (Re)Init dialog::text
+    if (text)
+    {
+        for (i = 0; i < text_size; i++) delete text[i];
+        delete text;
+
+        text_size = 0;
+        text = NULL;
+    }
+
+    // End of dialogue:
+    if (answers[index] == -1) return;
+    
     // Execute the next part of the dialogue
     PyObject_CallMethod (instance, "run", "i", answers[index]);
 #ifdef _DEBUG_
@@ -138,13 +151,6 @@ void dialog::run (u_int32 index)
             PySequence_DelItem (npc, i--);
     }
 
-    // 3. (Re)Init dialog::text
-    if (text)
-    {
-        for (i = 0; i < text_size; i++) delete text[i];
-        delete text;
-    }
-    
     nsz = PyList_Size (npc);
     psz = PyList_Size (player);
 
@@ -152,17 +158,12 @@ void dialog::run (u_int32 index)
     {
         text = new char*[nsz+psz];
     
-        // 4. Randomly chose between possible NPC replies
+        // 3. Randomly chose between possible NPC replies
         randgen.init (" ", 0, nsz-1);
     }
-    else 
-    {
-        // End of dialogue
-        text_size = 0;
-        text = NULL;
-        return;
-    }
-    
+    // End of dialogue
+    else return;
+
     randgen.randomize ();
     i = randgen.get (5);
 
@@ -171,9 +172,9 @@ void dialog::run (u_int32 index)
 
     // scan the string for { python code }
     text[0] = scan_string (strings[s]);
-    answers.push_back (0);
+    answers.push_back (-1);
 
-    // Mark the NPC text as used unless it's allowed to loop
+    // 4. Mark the NPC text as used unless it's allowed to loop
     if (!PySequence_In (PyObject_GetAttrString (instance, "loop"), PyInt_FromLong (s)))
         used.push_back (s);
 
@@ -220,7 +221,7 @@ char* dialog::scan_string (const char *s)
     PyObject *result;
     char *start, *mid, *string = NULL;
     char *tmp, *newstr = strdup (s);
-    player *the_player = (player*) objects::get("the_player");
+    player *the_player = (player*) game::characters.get("the_player");
 
     // replace $... shortcuts
     while (1)
@@ -346,10 +347,15 @@ char *dialog::get_substr (const char* string, char* begin, char* end)
 }
 
 // Init the dialogue engine
-dialog_engine::dialog_engine (mapcharacter *c, game_engine *e) : engine (e)
+dialog_engine::dialog_engine (const char *npc_name)
 {
-    npc *mynpc = (npc *) c->data;
-
+    // save dialogue engine
+    engine = game::engine;
+    game::engine = this;
+    
+    npc *mynpc = (npc *) game::characters.get (npc_name);
+    char *dlg_file = mynpc->get_dialogue ();
+    
     // Init the low level dialogue stuff
     dlg = new dialog;
 
@@ -360,8 +366,13 @@ dialog_engine::dialog_engine (mapcharacter *c, game_engine *e) : engine (e)
     back = new win_background (game::theme);
     wnd = new win_container (40, 20, 240, 160);
 
-    face = wnd->add_image (5, 5, c->portrait);
-    name = wnd->add_label (5, 75, 64, 10, font);
+    // we'd also get the portrait to use from the npc data
+    portrait = new image (64, 64);
+    portrait->load_raw ("gfxtree/portraits/lyanna.pnm");
+    portrait->set_mask (true);
+
+    face = wnd->add_image (10, 10, portrait);
+    name = wnd->add_label (10, 75, 64, 10, font);
     name->set_auto_height (true);
     name->set_text (mynpc->name);
     
@@ -376,24 +387,28 @@ dialog_engine::dialog_engine (mapcharacter *c, game_engine *e) : engine (e)
     wnd->draw ();
 
     // Load dialogue
-	if (!dlg->init (mynpc->talk (), strrchr (mynpc->talk (), '/')+1))
+	if (!dlg->init (dlg_file, strrchr (dlg_file, '/')+1))
 	{
-        cout << "\n*** Error loading dialogue script " << strrchr (mynpc->talk (), '/')+1 << flush;
+        cout << "\n*** Error loading dialogue script " << strrchr (dlg_file, '/')+1 << flush;
         answer = -1;	
 	}
 	else answer = 0;
 
-	run ();
+    delete dlg_file;
 }
 
 dialog_engine::~dialog_engine ()
 {
+    // refresh screen
+    screen::drawbox(0,0,320,200,0);
+
+    // restore engine
+    game::engine = engine;
+
     delete wnd;
     delete border;
     delete cursor;
-    //    delete face;
-    //    delete name;
-    //    delete txt;
+    delete portrait;
     delete font;
 }
 
@@ -405,8 +420,6 @@ void dialog_engine::run ()
     // Possibly error
     if (answer < 0)
     {
-        screen::drawbox(0,0,320,200,0);
-        game::engine = engine;
         delete this;
         return;
     }
@@ -415,8 +428,6 @@ void dialog_engine::run ()
 
     if (!dlg->text)
     {
-        screen::drawbox(0,0,320,200,0);
-        game::engine = engine;
         delete this;
         return;
     }

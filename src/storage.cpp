@@ -46,9 +46,6 @@ s_int32& storage::operator[] (const char *key)
 }
 
 
-// The container for access to certain objects via a keyword
-map<const char*, storage*, ltstr> objects::data;
-
 // Insert a new object for access from the interpreter
 void objects::set (const char* key, storage *val)
 {
@@ -103,4 +100,18 @@ void objects::erase (const char *key)
     // Check wether the key exists
     if (data.find (key) != data.end ())
         data.erase (key);
+}
+
+// Iterate over the array
+storage *objects::next ()
+{
+    static map<const char*, storage*>::iterator i = data.begin ();
+    
+    if (i == data.end ()) 
+    {
+        i = data.begin ();
+        return NULL;
+    }
+
+    return (*i++).second;
 }

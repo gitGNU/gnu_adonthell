@@ -60,12 +60,13 @@ protected:
 class objects
 {
 public:
-    static void set (const char*, storage*);
-    static storage* get (const char*);
-    static void erase (const char*);
+    void set (const char*, storage*);
+    storage* get (const char*);
+    void erase (const char*);
+    storage* next ();
 
 private:
-    static map<const char*, storage*, ltstr> data;
+    map<const char*, storage*, ltstr> data;
 };
 
 #endif // __STORAGE_H__

@@ -33,6 +33,7 @@ SDL_Thread *game::audio_thread;
 PyObject *game::globals;
 char *game::theme;
 game_engine *game::engine;
+objects game::characters;
 
 void game::init(config &myconfig)
 {
@@ -72,7 +73,7 @@ void game::init(config &myconfig)
     myplayer->name = "Player";
 
     // Add the player to the game objects
-    objects::set ("the_player", myplayer);
+    characters.set ("the_player", myplayer);
 
     // Make "myplayer" available to the interpreter 
 	globals = PyModule_GetDict(m);
@@ -99,7 +100,7 @@ void game::init(config &myconfig)
         mynpc = new npc;
         mynpc->load (in);
         PyDict_SetItemString (chars, mynpc->name, pass_instance (mynpc, "npc"));
-        objects::set (mynpc->name, mynpc);
+        characters.set (mynpc->name, mynpc);
     }
     
     fclose (in);

@@ -23,7 +23,6 @@
 #include "win_border.h"
 #include "win_select.h"
 #include "win_image.h"
-#include "mapcharacter.h"
 #include "game.h"
 #include <vector>
 
@@ -45,7 +44,7 @@ private:
 
     char **strings;                 // The dialogue text
 
-    vector<u_int32> answers;        // The indices with which to call instance.run () 
+    vector<s_int32> answers;        // The indices with which to call instance.run () 
     vector<s_int32> choices;        // Strings player can chose from
     vector<s_int32> used;           // Dialogue parts that are already spoken
 
@@ -57,7 +56,7 @@ private:
 class dialog_engine : public game_engine
 {
 public:
-    dialog_engine (mapcharacter *, game_engine *);
+    dialog_engine (const char*);
     ~dialog_engine ();
     
     void realtime_tasks ();
@@ -65,9 +64,9 @@ public:
     
     void update_keyboard ();
     void update ();
+    void run ();
 
 private:
-    void run ();
     void insert_plugin ();          // 'Merges' a dialogue with the loaded one
 
     win_font *font;
@@ -79,6 +78,7 @@ private:
     win_background *back;
     win_select *sel;
     win_cursor *cursor;
+    image *portrait;
 
     vector <win_label*> cur_answers;
     

@@ -15,6 +15,7 @@
 #include "character.h"
 #include "eval.h"
 #include "game.h"
+#include "dialog.h"
 #include "py_inc.h"
 
 void character::save (FILE *out)
@@ -130,14 +131,22 @@ void npc::set_schedule (char* file)
               << "\" not found!" << flush;
 }
 
-// Start conversation with the NPC
-char* npc::talk ()
+// Returns the NPC's dialogue
+char* npc::get_dialogue ()
 {
     char *str = new char[strlen (dialogue) + 11];
     strcpy (str, "dialogues/");
     strcat (str, dialogue);
     
     return str;
+}
+
+// Start conversation with the NPC
+void npc::talk ()
+{
+    dialog_engine *de = new dialog_engine (name);
+    PyDict_SetItemString (game::globals, "the_npc", pass_instance (this, "npc"));
+    de->run ();
 }
 
 // Execute the active schedule and return the direction of movement

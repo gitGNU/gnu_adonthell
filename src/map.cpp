@@ -26,7 +26,6 @@
 #include "mapcharacter.h"
 #include "mapsquare.h"
 #include "window.h"
-#include "dialog.h"
 #include "map.h"
 #ifdef SDL_MIXER
 #include "audio.h"
@@ -390,7 +389,8 @@ void landmap::update_keyboard()
     if (input::has_been_pushed(SDLK_SPACE))
     {
         // when starting a dialogue
-        game::engine = new dialog_engine (&othermapchar[0], this);
+        // game::engine = new dialog_engine (&othermapchar[0], this);
+        ((npc*) othermapchar[0].data)->talk ();
     }
 }
 

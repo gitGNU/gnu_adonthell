@@ -191,6 +191,10 @@ int main(int argc, char * argv[])
     enter_event *e = new enter_event;
     event_handler::register_event (e, "scripts/event_test.py");
 
+    e = new enter_event;
+    e->c = (character *) game::characters.get ("Tristan Illig");
+    event_handler::register_event (e, "scripts/talk_to_player.py");
+    
     mapengine::map_engine(map1);
 
     game::cleanup();

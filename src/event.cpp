@@ -184,6 +184,6 @@ void enter_event::load (FILE *f)
     fread (&len, sizeof (len), 1, f);
     name = new char[len];
     fread (name, len, 1, f);
-    c = (character*) objects::get (name);
+    c = (character*) game::characters.get (name);
     delete name;
 }

@@ -66,10 +66,11 @@ public:
     void set_schedule (char*);      // Set / change the active schedule
     void set_dialogue (char*);      // Set / change the active dialogue
 
-    char* talk ();                  // Returns the active dialogue
-    u_int8 move (u_int8);           // Run the active schedule
+    void talk ();                   // starts conversation with the character
+    u_int8 move (u_int8);           // Executes the schedule script
 
 #ifndef SWIG
+    char* get_dialogue ();          // Returns the character's dialogue
     void save (FILE*);              // Save the character to file
     void load (FILE*);              // Load the character from file
 
