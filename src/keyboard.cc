@@ -13,7 +13,7 @@ bool keyboard::charkeys[65536];
 #ifdef SDL
 u_int16 keyboard::last_key;
 
-int keyboard_init() {
+int keyboard_init(void *) {
 
   SDL_Event event;
   SDL_EnableUNICODE(1);

@@ -21,11 +21,12 @@ See the INSTALL file for details
 Playing with the map engine:
 ============================
 
-In this directory, type "./mapengine forest.map". The maps are stored in the 
-data/ directory. Actually forest.map is the only one available, for 
-demonstration purpose (however it lacks of different characters!).
-If you have a good computer (i.e P133 or more) and want to try 640x400 res, 
-launch "./mapengine forest.map -m1".
+After following the instructions in the INSTALL file, type 
+"./mapengine forest.map". The maps are stored in the data/directory. 
+Actually forest.map is the only one available, for demonstration purpose 
+(however it lacks of different characters!). If you have a good computer 
+(i.e P133 or more) and want to try 640x400 res, launch 
+"./mapengine forest.map -m1".
 
 Directories:
 ============

@@ -16,7 +16,7 @@
 #ifdef SDL_MIXER
 
 int audio_init();
-void audio_update();
+int audio_update(void* data);
 void audio_cleanup();
 #endif
 #endif

@@ -36,7 +36,7 @@ int audio_init() {
   return(0);
 }
 
-void audio_update()
+int audio_update(void *data)
 {
   // Keep audio up-to-date
   while (1==1) {

@@ -1,5 +1,5 @@
 /*
-   $Id
+   $Id$
  
    Copyright (C) 1999   The Adonthell Project
    Part of the Adonthell Project http://adonthell.linuxgames.com
@@ -51,7 +51,7 @@ int main(int argc, char * argv[])
 #ifdef SDL
   SDL_Thread *input_thread;
 
-   input_thread = SDL_CreateThread((void*)keyboard_init, NULL);
+  input_thread = SDL_CreateThread(keyboard_init, NULL);
   if ( input_thread != NULL) {
      fprintf(stderr, "User input thread started.\n");
   } else {
@@ -64,7 +64,7 @@ int main(int argc, char * argv[])
   SDL_Thread *audio_thread;
 
   audio_init();
-  audio_thread = SDL_CreateThread((void*)audio_update, NULL);
+  audio_thread = SDL_CreateThread(audio_update, NULL);
   if ( audio_thread == NULL) {
      fprintf(stderr, "Couldn't create audio thread: %s\n", SDL_GetError());
      fprintf(stderr, "Audio will not be used\n");

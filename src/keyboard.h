@@ -13,7 +13,7 @@ class keyboard
 };
 
 #ifdef SDL
-int keyboard_init();
+int keyboard_init(void *data);
 #endif
 
 #endif
