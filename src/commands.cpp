@@ -19,6 +19,7 @@
 
 // Include the header file of your own commands here
 #include "dialog_cmds.h"
+#include "generic_cmds.h"
 
 // These macros expand to a function that allocates a new
 // instance of your command and is needed for the REGISTER_CMD

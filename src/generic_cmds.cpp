@@ -14,12 +14,74 @@
 
 #include "generic_cmds.h"
 #include "storage.h"
+#include <string.h>
 
 binary_cmd::binary_cmd ()
 {
     c_param1 = c_param2 = target = NULL;
     param1_location = param2_location = target_location = NULL;
     i_param1 = i_param2 = 1;
+    ptype = 0;
+}
+
+binary_cmd::binary_cmd (char *t, char *p1, char *p2)
+{
+    int i;
+    
+    // First give all members a sane state
+    c_param1 = c_param2 = target = NULL;
+    param1_location = param2_location = target_location = NULL;
+    i_param1 = i_param2 = 1;
+    ptype = 0;
+
+    // Now look at the parameters and see what we've got
+    if (strchr (t, '.'))
+    {
+        target_location = new char[(i = strcspn (t, "."))+1];
+        strncpy (target_location, t, i);
+        target_location[i] = '\0';
+
+        if (!strcmp (target_location, "local")) ptype = ptype | TARGET_LOCAL;
+        target = strdup (t + strcspn (t, ".") + 1);
+    }
+    else
+    {
+        target_location = strdup ("game_state");
+        target = strdup (t);
+        ptype = ptype | TARGET_GLOBAL;
+    }
+
+    if (strchr (p1, '.'))
+    {
+        param1_location = new char[(i = strcspn (p1, "."))+1];
+        strncpy (param1_location, p1, i);
+        param1_location[i] = '\0';
+
+        if (!strcmp (param1_location, "local")) ptype = ptype | PARAM1_LOCAL;
+        c_param1 = strdup (p1 + strcspn (p1, ".") + 1);
+    }
+    else
+    {
+        param1_location = strdup ("game_state");
+        c_param1 = strdup (p1);
+        ptype = ptype | PARAM1_GLOBAL;
+    }
+
+    if (strchr (p2, '.'))
+    {
+        param2_location = new char[(i = strcspn (p2, "."))+1];
+        strncpy (param2_location, p2, i);
+        param2_location[i] = '\0';
+
+        if (!strcmp (param2_location, "local")) ptype = ptype | PARAM2_LOCAL;
+        c_param2 = strdup (p2 + strcspn (p2, ".") + 1);
+    }
+    else
+    {
+        param2_location = strdup ("game_state");
+        c_param2 = strdup (p2);
+        ptype = ptype | PARAM2_GLOBAL;
+    }
 }
 
 binary_cmd::~binary_cmd ()
@@ -32,38 +94,72 @@ binary_cmd::~binary_cmd ()
     if (target != NULL) delete target;
 }
 
+// Read the commands arguments from the buffer
 void binary_cmd::init (s_int32 *buffer, u_int32 &i, void *data)
 {
-    s_int32 tmp;
-    
-    init (buffer, i, param1_location, tmp);
-    init (buffer, i, c_param1, i_param1);
-    init (buffer, i, param2_location, tmp);
-    init (buffer, i, c_param2, i_param2);
-    init (buffer, i, target_location, tmp);
-    init (buffer, i, target, tmp);
-}
+    ptype = buffer[i++];
 
-// Init all the variables (needs to be updated)
-void binary_cmd::init (s_int32 *buffer, u_int32 &i, char *c_param, s_int32 &i_param)
-{
-    u_int32 length;
+    // read target
+    target = strread (buffer, i); 
+    if (ptype & TARGET_GLOBAL) target_location = strdup ("game_state");
+    else if (ptype & TARGET_LOCAL) target_location = interpreter;
+    else target_location = strread (buffer, i);
 
-    if ((length = buffer[i++]) == 0)
-    {
-        if (i_param) i_param = buffer[i++];
-        else
-        {
-            c_param = new char[11];
-            strcpy (c_param, interpreter);
-        }
-    }
+    // parameter 1
+    if (ptype & PARAM1_NUMBER) i_param1 = buffer[i++];
     else
     {
-        c_param = new char[length];
-        memcpy (c_param, buffer + i, length);
-        i += length / sizeof (s_int32);
+        c_param1 = strread (buffer, i); 
+        if (ptype & PARAM1_GLOBAL) param1_location = strdup ("game_state");
+        else if (ptype & PARAM1_LOCAL) param1_location = interpreter;
+        else param1_location = strread (buffer, i);
     }
+
+    // parameter 2
+    if (ptype & PARAM2_NUMBER) i_param2 = buffer[i++];
+    else
+    {
+        c_param2 = strread (buffer, i); 
+        if (ptype & PARAM2_GLOBAL) param2_location = strdup ("game_state");
+        else if (ptype & PARAM2_LOCAL) param2_location = interpreter;
+        else param2_location = strread (buffer, i);
+    }
+}
+
+// write the commands code to file
+void binary_cmd::write (FILE *out)
+{
+    fwrite (&type, sizeof(type), 1, out);
+    fwrite (&ptype, sizeof(ptype), 1, out);
+
+    // Target
+    fwrite (target, strlen(target)+1, 1, out);
+    if (ptype & (TARGET_LOCAL | TARGET_GLOBAL)) 
+        fwrite (target_location, strlen(target_location)+1, 1, out);
+
+    // Param 1
+    if (ptype & PARAM1_NUMBER) fwrite (&i_param1, sizeof(i_param1), 1, out);
+    else
+    {
+        fwrite (c_param1, strlen(c_param1)+1, 1, out);
+        if (ptype & (PARAM1_LOCAL | PARAM1_GLOBAL)) 
+            fwrite (param1_location, strlen(param1_location)+1, 1, out);    
+    }
+
+    // Param 2
+    if (ptype & PARAM2_NUMBER) fwrite (&i_param2, sizeof(i_param2), 1, out);
+    else
+    {
+        fwrite (c_param2, strlen(c_param2)+1, 1, out);
+        if (ptype & (PARAM2_LOCAL | PARAM2_GLOBAL)) 
+            fwrite (param2_location, strlen(param2_location)+1, 1, out);    
+    }
+} 
+
+// write command in human readable form
+void ascii (FILE *out)
+{
+    
 }
 
 // if we have variable arguments, read their value

@@ -86,7 +86,7 @@ End
 Circle
   Type 2
   Pos 358 126
-  Note [If the player listens to Hterins poem and ask him his name afterwards, he'll get the opportunity to continue this thread.]
+  Note [If the player listens to Hterins poem and asks him his name afterwards, he'll get the opportunity to continue this thread.]
   Text [Well, I could recite one of my numerous poems, for which I am quite famous. Or I may tell you a few things about my home, the fair Island of Adonthell.]
   Vars [local.adonthell = 1;]
 End
@@ -94,7 +94,6 @@ End
 Circle
   Type 1
   Pos 227 179
-  Note [Some comment.]
   Text [I´d love to hear a good poem!]
 End
 

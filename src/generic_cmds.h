@@ -19,15 +19,36 @@
 #include "storage.h"
 #include "interpreter.h"
 
+
+// Command for stopping/pausing the interpreter
+class return_cmd : public command
+{
+public:
+    void init (s_int32 *buffer, u_int32 &i, void *data)
+    {
+        retval = buffer[i++];
+    }
+    s_int32 run (u_int32 &PC, void *data)
+    {
+        return retval;
+    }
+
+private:
+    s_int32 retval;
+};
+
 // base class for commands having two parameters, namely
 // add, mul, sub, div, eq, neq, lt, leq, gt, geq, and, or
 class binary_cmd : public command
 {
 public:
     binary_cmd ();
+    binary_cmd (char*, char*, char*);
     virtual ~binary_cmd ();
     
     void init (s_int32*, u_int32&, void*);
+    void write (FILE*);             // Write the command as script code to file
+    void ascii (FILE*);             // Write cmd as human readable test to file
 
 protected:
     char *target;                   // Operations target
@@ -41,8 +62,21 @@ protected:
     s_int32 i_param1;               // Immeditate parameter 1
     s_int32 i_param2;               // and 2
 
-    void init (s_int32*, u_int32&, char*, s_int32&);
+    u_int32 ptype;                  // Parameter types (see enum below)
+    
     inline void read_game_state (); // Read variable parameters at runtime
+
+    enum                            // Types of the parameters
+    {
+        TARGET_GLOBAL = 1,          // Target is the game_state storage
+        TARGET_LOCAL  = 2,          // Target is the interpreters local storage
+        PARAM1_GLOBAL = 4,          // Parameter 1 is inside the game_state storage
+        PARAM1_LOCAL =  8,          // Param 1 inside the int. local storage
+        PARAM1_NUMBER = 16,         // Param 1 is an integer
+        PARAM2_GLOBAL = 32,         // game_state storage
+        PARAM2_LOCAL =  64,         // interpreter storage
+        PARAM2_NUMBER = 128         // integer
+    };
 };
 
 // target = param1 + param2 

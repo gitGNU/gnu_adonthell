@@ -35,7 +35,11 @@ public:
 
     // ID of the interpreter that spawns the command; used for access to the 
     // interpreter's local storage
-    char interpreter[11];
+    char *interpreter;
+
+protected:
+    // Extract a string from the buffer
+    char* strread (s_int32*, u_int32&); 
 };
 
 

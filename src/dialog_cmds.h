@@ -12,33 +12,24 @@
    See the COPYING file for more details
 */
 
-class return_cmd : public command
-{
-public:
-    void init (s_int32 *buffer, u_int32 &i, void *data)
-    {
-        retval = buffer[i++];
-    }
-    s_int32 run (u_int32 &PC, void *data)
-    {
-        return retval;
-    }
 
-private:
-    s_int32 retval;
-};
-
+// Reads the strings needed for the dialogue from the string file
 class import_cmd : public command
 {
 public:
-    void init (s_int32 *buffer, u_int32 &i, void *data)
-    {
-        text = buffer[i++];
-    }
-    s_int32 run (u_int32 &PC, void *data);
+    import_cmd () { }
+    import_cmd (u_int32 *t, u_int32 s) : text(t), sz(s)  { }
+    virtual ~import_cmd () { delete[] text; }
+    
+    void init (s_int32*, u_int32&, void *);
+    s_int32 run (u_int32&, void *);
 
+    void write (FILE*);
+    void ascii (FILE*);
+    
 private:
-    u_int32 text;
+    u_int32 *text;
+    u_int32 sz;
 };
 
 class clear_cmd : public command

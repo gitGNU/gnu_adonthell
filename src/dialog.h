@@ -12,6 +12,11 @@
    See the COPYING file for more details
 */
 
+#ifndef __DIALOG_H__
+#define __DIALOG_H__
+
+#include <vector>
+
 class dialog
 {
 public:
@@ -19,13 +24,20 @@ public:
     static s_int32 *offset;
     static s_int32 *length;
 
-    u_int32 answer;
-    char *text_file;
-    char *npc_text;                     // NPC´s part
-    Array<char*> player_text;           // player´s part
-    Array<u_int32> cur_cmds;            // New PC values
-    Array<u_int32> used_text;           // Text already spoken -> don´t display again
-    Array<char*> strings;               // Text data
+    struct text                         // Contains a line of text & its attributes
+    {
+        u_int32 id;                     // Id of the string
+        s_int32 offset;                 // offset to next command in dialogue
+    };
+    
+    u_int32 answer;                     // The text chosen by the player
+    char *text_file;                    // The file with the dialogues strings
+
+    vector<text*> npc_text;             // NPC´s part
+    vector<text*> player_text;          // Player´s part
+    vector<u_int32> used_text;          // Text already spoken -> don´t display again
+
+    vector<char*> strings;              // Text data
 };
 
 #ifndef _DLGEDIT_                       // Don't need this for compiling dlgedit
@@ -42,5 +54,6 @@ private:
     dialog *dlg;
     interpreter *engine;
 };
-#endif
+#endif // _DLGEDIT_
+#endif // __DIALOG_H__
 

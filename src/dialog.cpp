@@ -17,7 +17,6 @@
 
 #include "types.h"
 #include "gfx.h"
-#include "array_tmpl.h"
 #include "interpreter.h"
 #include "commands.h"
 #include "window.h"
@@ -26,7 +25,8 @@
 
 // Init the dialogue engine
 dialog_engine::dialog_engine ()
-{  
+{
+/*
     // Init interpreter
     interpreter::callbacks.clear ();
     init_interpreter ();
@@ -54,10 +54,12 @@ dialog_engine::dialog_engine ()
     dlg->text_file = "dialog/tomas_hterin.str";
 
     engine = new interpreter ("dialog/tomas_hterin.dat", dlg);
+*/
 }
 
 void dialog_engine::update_keyboard ()
 {
+/*
   static u_int16 lastkeypressed=0;
   if(input::is_pushed(lastkeypressed)) return;
   lastkeypressed=0;
@@ -69,18 +71,22 @@ void dialog_engine::update_keyboard ()
     {dlg->answer = 2; lastkeypressed=99;}
   if (input::is_pushed (100)) 
     {dlg->answer = 3; lastkeypressed=100;}
+*/
 }
 
 void dialog_engine::update (window &win)
 {
+/*
     if (dlg->answer == 0xFFFF) return;
 
     run (win);
     dlg->answer = 0xFFFF;
+*/
 }
 
 void dialog_engine::run (window &win)
 {
+/*
     u_int32 i;
     s_int32 result;
     char *abc[8] = { "a", "b", "c", "d", "e", "f", "g", "h" };
@@ -121,9 +127,10 @@ void dialog_engine::run (window &win)
 
         case 2:
         {
-            /* NPC only */
+            // NPC only
             str = dlg->npc_text;
         }
     }
     win.set_text (str.c_str ());   
+*/
 }

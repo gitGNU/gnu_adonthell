@@ -21,6 +21,21 @@
 // template class Array<CmdNew*>;
 Array<CmdNew> interpreter::callbacks;
 
+// Read a string from the int-buffer: just a convenience function
+char* command::strread (s_int32 *buffer, u_int32 &i)
+{
+    // Hopefully the first number in buffer holds the strings length
+    char *tmp = new char[buffer[i++]];
+
+    // copy the string's contents
+    memcpy (tmp, buffer+i, buffer[i-1]);
+
+    // let i point after the string
+    i += buffer[i-1];
+
+    return tmp;
+}
+
 // Constructors
 interpreter::interpreter ()
 {
@@ -46,7 +61,6 @@ interpreter::interpreter (const char *file, void *data) : user_data (data)
 
     // Now we have to register it with that id
     objects::set (id, (storage *) this);
-
 }
 
 // Destructor
@@ -102,13 +116,19 @@ u_int8 interpreter::load (const char *file)
         // Call the registered function to create a instance
         // of the Command with type = buffer[j]
         cmd = (*callbacks.get_element (buffer[j]))();
+
+        // Tell the command to which interpreter it belongs
+        // This is used to access the interpreters local storage from 
+        // within the command
+        cmd->interpreter = id;
+
+        // Set the commands type
+        cmd->type = buffer[j];
         
         // init the command with its parameters
         // you recieve a pointer to its first argument and should
         // return the number of bytes you read (Failure to do so
         // may even result in a SEGFAULT, so take care!)
-        strcpy (cmd->interpreter, id);
-        cmd->type = buffer[j];
         cmd->init (buffer, ++j, user_data);
 
         // add command to programs code
