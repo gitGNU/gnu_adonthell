@@ -121,7 +121,7 @@ public:
      * Get the type of the node.
      * @return the type of the node.
      */
-    node_type type ()       { return type_; }
+    node_type &type ()      { return type_; }
     
     void setIndex (int i)   { index_ = i; }
     int index ()            { return index_; }

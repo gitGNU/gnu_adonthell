@@ -64,7 +64,7 @@ public:
      */
     string condition ()             { return condition_; }
     
-    void setText (string t)         { text_ = t; }
+    void setText (string t);
     void setAnnotation (string a)   { annotation_ = a; }
     void setNpc (string n)          { npc_ = n; }
     void setCondition (string c)    { condition_ = c; }

@@ -123,13 +123,14 @@ public:
      * @return a reference to the dialogue's name.
      */
     string &name ()                 { return name_; }
-    
     /**
      * Set the name of this dialogue.
      * @param the filename of the file the dialogue was loaded from.
      */
     void setName (const string &filename);
-    
+    bool changed ()                 { return changed_; }
+    void setChanged (bool c = true) { changed_ = c; }
+
 protected:
     vector<DlgNode*> nodes;     // all the nodes in this dialogue
     DlgNode *selected_;         // the node currently selected

@@ -21,6 +21,7 @@
 
 #include <gtk/gtk.h>
 #include "gui_circle_events.h"
+#include "gui_circle.h"
 #include "dlg_types.h"
 
 // When switching pages of the notebook, give Focus to first widget on the new page
@@ -32,15 +33,17 @@ void on_switch_page (GtkNotebook *notebook, GtkNotebookPage *page, gint page_num
 
         while (children != NULL)
         {
-            if (GTK_IS_CONTAINER (g_list_first (children)->data))
+            GtkWidget *widget = (GtkWidget*) g_list_first (children)->data;
+
+            if (GTK_IS_CONTAINER (widget))
             {
-                children = gtk_container_children ((GtkContainer *) g_list_first (children)->data);
+                children = gtk_container_children ((GtkContainer *) widget);
                 continue;
             }
 
-            if (GTK_IS_WIDGET (g_list_first (children)->data))
+            if (GTK_IS_WIDGET (widget))
             {
-                gtk_widget_grab_focus ((GtkWidget *) g_list_first (children)->data);
+                gtk_widget_grab_focus (widget);
                 return;
             }
 
@@ -76,15 +79,22 @@ void on_radio_button_pressed (GtkButton * button, gpointer user_data)
     gtk_text_insert ((GtkText *) entry, entry->style->font, &color, &entry->style->white, " ", -1);
     gtk_text_insert ((GtkText *) entry, entry->style->font, &color, &entry->style->white, text, -1);
     gtk_editable_delete_text ((GtkEditable *) entry, 0, 1);
-    g_free (text);
 
+    // cleanup
+    g_free (text);
     gtk_text_thaw ((GtkText *) entry);
+
+    // remember the type of the text
+    gtk_object_set_data (GTK_OBJECT (entry), "type", GINT_TO_POINTER (type));
 }
 
 // close the dialog and keep all changes
 void on_circle_ok_button_pressed (GtkButton * button, gpointer user_data)
 {
-    // if (!((crcle_dlg *) user_data)->on_ok ()) return;
+    GuiCircle *dialog = (GuiCircle *) user_data;
+
+    dialog->applyChanges ();
+    dialog->okButtonPressed (true);
 
     // clean up
     gtk_main_quit ();

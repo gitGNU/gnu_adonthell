@@ -15,7 +15,6 @@
 #include <gtk/gtk.h>
 #include "gui_circle.h"
 #include "gui_circle_events.h"
-#include "dlg_types.h"
 
 /**
  * @file gui_circle.h
@@ -24,20 +23,16 @@
  * @brief The Edit Circle window
  */
 
-GuiCircle::GuiCircle (node_type type, DlgCircleEntry *e) : GuiModalDialog ()
+GuiCircle::GuiCircle (node_type *t, DlgCircleEntry *e) : GuiModalDialog ()
 {
     entry = e;
-    
+    type = t;
+
     GtkWidget *vbox1;
     GtkWidget *notebook1;
     GtkWidget *vbox2;
     GtkWidget *scrolledwindow;
     GtkWidget *label;
-    
-    // the different text entries
-    GtkWidget *text_entry;
-    GtkWidget *annotation_entry;
-
     GSList *character_group = NULL;
     GtkWidget *player_button;
     GtkWidget *narrator_button;
@@ -114,28 +109,11 @@ GuiCircle::GuiCircle (node_type type, DlgCircleEntry *e) : GuiModalDialog ()
     gtk_text_set_editable (GTK_TEXT (text_entry), TRUE);
     gtk_text_set_word_wrap (GTK_TEXT (text_entry), TRUE);
     
-    // set the textcolor of the entry according to the given type
-    if (type == NPC)
-        gtk_text_insert (GTK_TEXT (text_entry), text_entry->style->font,
-            &text_entry->style->black, &text_entry->style->white,
-            e->text ().c_str (), -1);
-    else if (type == NARRATOR)
-    {
-        gtk_text_insert ((GtkText *) text_entry, text_entry->style->font,
-            &dark_green, &text_entry->style->white, " ", -1);
-        gtk_text_insert (GTK_TEXT (text_entry), text_entry->style->font,
-            &dark_green, &text_entry->style->white, e->text ().c_str (), -1);
-        gtk_editable_delete_text ((GtkEditable *) text_entry, 0, 1);
-    }
-    else
-    {
-        gtk_text_insert ((GtkText *) text_entry, text_entry->style->font,
-            &dark_blue, &text_entry->style->white, " ", -1);
-        gtk_text_insert (GTK_TEXT (text_entry), text_entry->style->font,
-            &dark_blue, &text_entry->style->white, e->text ().c_str (), -1);
-        gtk_editable_delete_text ((GtkEditable *) text_entry, 0, 1);
-    }
-    
+    // set the text of the entry
+    gtk_text_insert (GTK_TEXT (text_entry), text_entry->style->font,
+         &text_entry->style->black, &text_entry->style->white,
+         e->text ().c_str (), -1);
+
     // The radiobuttons to chose the text-type from
     label = gtk_label_new ("Narrator");
     gtk_label_set_justify ((GtkLabel *) label, GTK_JUSTIFY_LEFT);
@@ -161,9 +139,11 @@ GuiCircle::GuiCircle (node_type type, DlgCircleEntry *e) : GuiModalDialog ()
     GTK_WIDGET_UNSET_FLAGS (narrator_button, GTK_CAN_FOCUS);
     
     // activate the narrator button if neccessary
-    if (type == NARRATOR)
+    if (*type == NARRATOR)
+    {
         gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (narrator_button), TRUE);
-
+        on_radio_button_pressed (GTK_BUTTON (narrator_button), text_entry);
+    }
     // the player button
     label = gtk_label_new ("Player");
     gtk_label_set_justify ((GtkLabel *) label, GTK_JUSTIFY_LEFT);
@@ -189,8 +169,11 @@ GuiCircle::GuiCircle (node_type type, DlgCircleEntry *e) : GuiModalDialog ()
     GTK_WIDGET_UNSET_FLAGS (player_button, GTK_CAN_FOCUS);
 
     // activate the player button if neccessary
-    if (type == PLAYER)
+    if (*type == PLAYER)
+    {
         gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (player_button), TRUE);
+        on_radio_button_pressed (GTK_BUTTON (player_button), text_entry);
+    }
 
     hbox1 = gtk_hbox_new (FALSE, 10);
     gtk_widget_ref (hbox1);
@@ -209,8 +192,11 @@ GuiCircle::GuiCircle (node_type type, DlgCircleEntry *e) : GuiModalDialog ()
     GTK_WIDGET_UNSET_FLAGS (npc_button, GTK_CAN_FOCUS);
 
     // activate the NPC button if neccessary
-    if (type == NPC)
+    if (*type == NPC)
+    {
         gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (npc_button), TRUE);
+        on_radio_button_pressed (GTK_BUTTON (npc_button), text_entry);
+    }
 
     // the option menu with the available NPC's
     npc_selection = gtk_option_menu_new ();
@@ -368,7 +354,7 @@ GuiCircle::GuiCircle (node_type type, DlgCircleEntry *e) : GuiModalDialog ()
     gtk_signal_connect (GTK_OBJECT (player_button), "clicked", GTK_SIGNAL_FUNC (on_radio_button_pressed), text_entry);
     gtk_signal_connect (GTK_OBJECT (npc_button), "clicked", GTK_SIGNAL_FUNC (on_radio_button_pressed), text_entry);
     gtk_signal_connect (GTK_OBJECT (narrator_button), "clicked", GTK_SIGNAL_FUNC (on_radio_button_pressed), text_entry);
-    gtk_signal_connect (GTK_OBJECT (ok_button), "clicked", GTK_SIGNAL_FUNC (on_circle_ok_button_pressed), window);
+    gtk_signal_connect (GTK_OBJECT (ok_button), "clicked", GTK_SIGNAL_FUNC (on_circle_ok_button_pressed), this);
     gtk_signal_connect (GTK_OBJECT (cancel_button), "clicked", GTK_SIGNAL_FUNC (gtk_main_quit), NULL);
     gtk_signal_connect (GTK_OBJECT (window), "delete_event", GTK_SIGNAL_FUNC (gtk_main_quit), NULL);
 
@@ -376,4 +362,60 @@ GuiCircle::GuiCircle (node_type type, DlgCircleEntry *e) : GuiModalDialog ()
     gtk_widget_grab_focus (text_entry);
     gtk_widget_grab_default (text_entry);
     gtk_object_set_data (GTK_OBJECT (window), "tooltips", tooltips);
+}
+
+// Apply the user's changes to the DlgCircle
+void GuiCircle::applyChanges ()
+{
+    gchar *text;
+
+     // set the circle's type
+    *type = (node_type) GPOINTER_TO_INT (gtk_object_get_data (GTK_OBJECT (text_entry), "type"));
+
+    // get the contents of the different entries
+    text = gtk_editable_get_chars ((GtkEditable *) text_entry, 0, -1);
+    entry->setText (text);
+    g_free (text);
+
+    text = gtk_editable_get_chars ((GtkEditable *) annotation_entry, 0, -1);
+    entry->setAnnotation (text);
+    g_free (text);
+
+    entry->setCode (code_edit->getText ());
+    entry->setCondition (cond_edit->getText ());
+    entry->setNpc (getOption (GTK_OPTION_MENU (npc_selection)));
+}
+
+// returns selected option
+gchar *GuiCircle::getOption (GtkOptionMenu * o)
+{
+    GtkMenu *m = (GtkMenu *) gtk_option_menu_get_menu (o);
+    GtkMenuItem *i = (GtkMenuItem *) gtk_menu_get_active (m);
+    gchar *s = (gchar *) gtk_object_get_user_data (GTK_OBJECT (i));
+
+    return s ? s : s = "";
+}
+
+// sets a default option
+void GuiCircle::setOption (GtkOptionMenu *o, const gchar *label)
+{
+    GtkMenu *m = (GtkMenu *) gtk_option_menu_get_menu (o);
+    GList *l = gtk_container_children (GTK_CONTAINER (m));
+    gchar *c;
+    int j = 0;
+
+    while (l)
+    {
+        GtkMenuItem *i = (GtkMenuItem *) l->data;
+        c = (gchar *) gtk_object_get_user_data (GTK_OBJECT (i));
+
+        if (c && strcmp (c, label) == 0)
+        {
+            gtk_option_menu_set_history (o, j);
+            break;
+        }
+
+        j++;
+        l = g_list_next (l);
+    }
 }

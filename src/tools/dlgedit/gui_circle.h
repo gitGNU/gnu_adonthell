@@ -43,13 +43,25 @@ public:
      * @param type The type of the circle to display (NPC, PLAYER or NARRATOR)
      * @param entry The contents of the circle
      */
-    GuiCircle (node_type type, DlgCircleEntry *entry);
+    GuiCircle (node_type *type, DlgCircleEntry *entry);
+
+    /**
+     * Apply the values entered in the dialogue to the edited node. This
+     * method should be called when the user hits the OK button.
+     */
+    void applyChanges ();
 
 private:
+    gchar *getOption (GtkOptionMenu * o);
+    void setOption (GtkOptionMenu *o, const gchar *label);
+
     GuiEdit *cond_edit;             // Text entry for conditions
     GuiEdit *code_edit;             // Text entry for code
+    GtkWidget *text_entry;          // Entry for dialogue text
+    GtkWidget *annotation_entry;    // Entry for annotations
     GtkWidget *npc_selection;       // The dropdown list with the various NPC's
     DlgCircleEntry *entry;          // The data to display
+    node_type *type;                // The type of the node
 };
 
 #endif // GUI_CIRCLE_H

@@ -280,8 +280,15 @@ void GuiGraph::editNode ()
     // if so ...
     if (selected && selected->type () != LINK)
     {
-        GuiCircle edit (selected->type (), selected->entry ());
-	edit.run ();
+        GuiCircle edit (&selected->type (), selected->entry ());
+
+	    // Editing aborted?
+	    if (!edit.run ()) return;
+	
+	    // otherwise update everything
+        GuiDlgedit::window->list ()->display (selected);
+	    selected->draw (surface, *offset);
+        module->setChanged ();
     }
 }
 
