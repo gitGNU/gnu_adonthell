@@ -65,6 +65,8 @@ void dlg_compiler::write_strings ()
     vector<DlgNode*>::iterator i;
     u_int32 j = 0;
 
+    script << "from player import *\n\n";
+
     // write the class name
     script << "class " << strrchr (filename.c_str (), '/') + 1 << ":\n";
     script << "    loop = []\n";
@@ -145,6 +147,8 @@ void dlg_compiler::write_custom_func ()
             script << "\n    " << cust_func.substr (i,j-i);
             i = ++j;
         }
+
+        cust_func.erase (cust_func.end()-1);
     }
 
     script << "\n";
@@ -180,6 +184,8 @@ void dlg_compiler::write_npc (Circle *circle)
             script << "\n" << space << circle->variables.substr (i,j-i);
             i = ++j;  
         }
+
+        circle->variables.erase (circle->variables.end()-1);
     }
 
     // allow loops
@@ -353,6 +359,8 @@ void dlg_compiler::get_cur_nodes ()
             script << "\n" << space << circle->variables.substr (j, k-j);
             j = ++k;  
         }
+
+        circle->variables.erase (circle->variables.end()-1);
     }
 
     return;

@@ -96,7 +96,7 @@ mapengine_LDFLAGS =
 CXXFLAGS = @CXXFLAGS@
 CXXCOMPILE = $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
 CXXLD = $(CXX)
-CXXLINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(LDFLAGS) -o ../$@
+CXXLINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(LDFLAGS) -o $@
 DIST_COMMON =  Makefile.am Makefile.in
 
 
@@ -448,7 +448,7 @@ mostlyclean distclean maintainer-clean
 
 
 py_player_wrap.cpp : py_player.i
-	swig -python -shadow -c++ -o $*.cpp $< 
+	swig -python -shadow -c++ -make_default -o $*.cpp $< 
 	@mv player.py ../scripts
 
 py_mapengine_wrap.cpp : py_mapengine.i

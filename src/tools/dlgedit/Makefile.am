@@ -9,15 +9,15 @@ lex.loadlg.cc function.cc \
 main.cc pjt_interface.cc pjt_callbacks.cc preset.cc project.cc \
 ps_callbacks.cc ps_dlg.cc ps_interface.cc pset_callbacks.cc \
 pset_interface.cc run.cc run_callbacks.cc run_interface.cc \
-interface.cc
+interface.cc 
 
 # Evil, but it works...
-CPPFLAGS += -Werror -D_DLGEDIT_ `gtk-config --cflags`
+CPPFLAGS += -Werror -D_DLGEDIT_ -D_DEBUG_ `gtk-config --cflags`
 
 LDADD = ../../inventory.o ../../py_mapengine_wrap.o \
 ../../animation.o ../../py_player_wrap.o \
 ../../audio.o ../../lex.prefs.o ../../screen.o \
-../../audio_thread.o ../../storage.o \
+../../audio_thread.o \
 ../../character.o ../../map.o ../../win_base.o \
 ../../mapcharacter.o ../../win_border.o \
 ../../cutscene.o ../../mapengine.o ../../win_container.o \
@@ -28,7 +28,7 @@ LDADD = ../../inventory.o ../../py_mapengine_wrap.o \
 ../../image.o ../../pnm.o ../../win_select.o \
 ../../init.o ../../prefs.o ../../win_write.o \
 ../../input.o ../../yarg.o \
-../../py_inc.o ../../dialog.o
+../../py_inc.o ../../dialog.o ../../storage.o
 
 LDFLAGS=-lm -lstdc++ `gtk-config --libs`
 

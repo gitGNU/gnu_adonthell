@@ -80,6 +80,7 @@ void dialog::extract_strings ()
 dialog::dialog ()
 {
     instance = NULL;
+    strings = NULL;
 }
 
 dialog::~dialog ()
@@ -87,9 +88,12 @@ dialog::~dialog ()
     u_int32 i = 0;
     Py_XDECREF (instance);
 
-    while (strings[i] != NULL)
-        delete strings[i++]; 
-    delete strings;
+    if (strings)
+    {
+        while (strings[i] != NULL)
+            delete strings[i++]; 
+        delete strings;
+    }
 }
 
 // Gets the index of either the player or npc array
@@ -104,6 +108,9 @@ void dialog::run (u_int32 index)
 
     // Execute the next part of the dialogue
     PyObject_CallMethod (instance, "run", "i", answers[index]);
+#ifdef _DEBUG_
+    show_traceback ();
+#endif // _DEBUG_
 
     // Mark the Player's text (if any) as used unless loops allowed
     if (index != 0)

@@ -3,14 +3,16 @@
 %{
 
 #include "types.h"
+#include "character.h"
+#include "storage.h"
 
 %}
 
-#include "character.h"
-
-// The Player's main character
-class player
+class storage
 {
 public:
-protected:
+    void set (const char*, int);
+    int get (const char*);
 };
+
+%include "character.h"

@@ -899,21 +899,21 @@ load_dialogue (MainFrame * wnd, const char *file)
             {
                 if (parse_dlgfile (s, n) == LOAD_STR)
                 {
-                    delete[] wnd->myplayer->get_name ();
-                    wnd->myplayer->set_name (s.c_str ());
+                    // delete[] wnd->myplayer->get_name ();
+                    // wnd->myplayer->set_name (s.c_str ());
                 }
                 break;             
             }
 
             case LOAD_RACE:
             {
-                if (parse_dlgfile (s, n) == LOAD_NUM) wnd->myplayer->set ("race", n);
+                if (parse_dlgfile (s, n) == LOAD_NUM); // wnd->myplayer->set ("race", n);
                 break;
             }
 
             case LOAD_GENDER:
             {
-                if (parse_dlgfile (s, n) == LOAD_NUM) wnd->myplayer->set ("gender", n);
+                if (parse_dlgfile (s, n) == LOAD_NUM); // wnd->myplayer->set ("gender", n);
                 break;
             }
             
@@ -1014,12 +1014,14 @@ save_dialogue (MainFrame * wnd)
     if (wnd->cust_func != "") out << "\nFunc §" << wnd->cust_func << "§\n";
 
     // Players name, race and gender
+    /*
     if (strcmp ("Banec", wnd->myplayer->get_name ()))
         out << "\nName §" << wnd->myplayer->get_name () << "§";
     if (wnd->myplayer->get ("race") != 0)
         out << "\nRace " << wnd->myplayer->get ("race");
     if (wnd->myplayer->get ("gender") != 1)
         out << "\nGender " << wnd->myplayer->get ("gender");
+    */
     
     // Save Circles and create position-table 
     for (i = 0; i < wnd->number; i++)

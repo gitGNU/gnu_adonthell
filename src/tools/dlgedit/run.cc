@@ -17,7 +17,6 @@
 #include "run.h"
 #include "run_interface.h"
 #include "../../dialog.h"
-#include "../../storage.h"
 #include "../../character.h"
 #include "../../py_inc.h"
 
@@ -31,10 +30,14 @@ run_dlg::run_dlg (string f, string v, player *p)
 
     // Import module
     insert_path (path);
-    dat->init (file, file);
-
+    if (!dat->init (file, file))
+    {
+        cout << "\n*** Error loading dialogue script!" << flush;
+        answer = -1;
+    }
+    
     // The start of the dialogue
-    answer = 0;
+    else answer = 0;
 
     free (path);
 }
@@ -52,8 +55,11 @@ void run_dlg::run ()
     tmp_list = NULL;
     GtkAdjustment *adj;
 
+    // Error occured:
+    if (answer < 0) return;
+
     // Run the interpreter
-    dat->run (answer);
+    dat->run ((u_int32) answer);
 
     // See if we reached the end of the script
     if (dat->text == NULL) return;

@@ -19,6 +19,7 @@ class dialog;
 
 #include "../../types.h"
 #include "../../py_inc.h"
+#include "../../prefs.h"
 #include "main.h"
 #include "graph.h"
 #include "interface.h"
@@ -28,6 +29,14 @@ main (int argc, char *argv[])
 {
     // The Application Data
     MainFrame *MainWnd = new MainFrame;
+
+    // try to read adonthellrc to get path to script directory
+    config myconf (argc > 1 ? argv[1] : "");
+    if (!myconf.read_adonthellrc ())
+        return 1;
+
+    char script_dir[256];
+    sprintf (script_dir, "%s/scripts", myconf.datadir.c_str ());
 
     gtk_init (&argc, &argv);
 
@@ -39,6 +48,10 @@ main (int argc, char *argv[])
         return 1;
     }
 
+    insert_path (script_dir);
+    import_module ("player");
+    // exec_file ("/home/kai/adonthell/maptest/scripts/player_test.py");
+        
     // Create a player
     MainWnd->myplayer = new player;
 
@@ -51,10 +64,6 @@ main (int argc, char *argv[])
     MainWnd->project = NULL;
     MainWnd->err = NULL;
 
-    // create game_state array
-    storage *game_state = new storage ();
-    objects::set ("game_state", game_state);
-
     // Create Top Level Window and Controls
     create_mainframe (MainWnd);
 
@@ -66,7 +75,6 @@ main (int argc, char *argv[])
 
     delete_dialogue (MainWnd);
     delete MainWnd->myplayer;
-    delete game_state;
     delete MainWnd;
 
     return 0;
@@ -89,9 +97,11 @@ init_app (MainFrame * MainWnd)
     MainWnd->scroll_x = 0;
     MainWnd->scroll_y = 0;
     MainWnd->pset_vars = "";
+/*
     MainWnd->myplayer->set_name ("Banec");
     MainWnd->myplayer->set ("race", 0);     // Dwarf
     MainWnd->myplayer->set ("gender", 1);   // Male
+*/
 }
 
 /* free allocated memory */

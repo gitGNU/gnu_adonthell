@@ -34,7 +34,7 @@ public:
 
     GtkWidget *dlg;             // The actual Dialogue Window
     GtkWidget *list;            // The List widget that holds the dialogue text
-    u_int32 answer;             // The chosen answer
+    s_int32 answer;             // The chosen answer
 
     void run ();                // Run the dialogue
     

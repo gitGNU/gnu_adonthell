@@ -27,8 +27,10 @@ void ps_dlg::run ()
 
 void ps_dlg::on_ok (char* n, int r, int g)
 {
+/*
     delete[] myplayer->get_name ();  
     myplayer->set_name (n);
     myplayer->set("race", r);
     myplayer->set("gender", g); 
+*/
 }

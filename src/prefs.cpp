@@ -20,15 +20,15 @@
 config::config (string s) : section (s)
 {
     // set some default values where possible
-    datadir = "";                 // Directory containing the gamedata
-    mapname = "";                 // Map to load on startup
-    screen_resolution = 0;        // 320x240
-    screen_mode = 1;              // Fullscreen
-    audio_channels = 1;           // Stereo
-    audio_resolution = 1;         // 16 bit
-    audio_interpolation = 1;      // Interpolation on
-    audio_sample_rate = 2;        // 11025, 22050 or 44100 Hz
-    audio_volume = 50;            // 0 - 100%
+    datadir = "/usr/local/share/adonthell"; // Directory containing the gamedata
+    mapname = "maptest.map";                // Map to load on startup
+    screen_resolution = 0;                  // 320x240
+    screen_mode = 1;                        // Fullscreen
+    audio_channels = 1;                     // Stereo
+    audio_resolution = 1;                   // 16 bit
+    audio_interpolation = 1;                // Interpolation on
+    audio_sample_rate = 2;                  // 11025, 22050 or 44100 Hz
+    audio_volume = 50;                      // 0 - 100%
 
     // set the path to the adonthellrc file:
     adonthellrc = string (getenv ("HOME")) + "/.adonthell";
@@ -139,6 +139,10 @@ int config::read_adonthellrc ()
     } 
 
     // If we arrive here, no configuration has been loaded
+    cout << "\nSorry, could not load the configuration \"" << section << "\".\n"
+         << "Please check the " << adonthellrc << "/adonthellrc file\n"
+         << "for available configurations.\n" << flush;
+
     return 0;
 }
 

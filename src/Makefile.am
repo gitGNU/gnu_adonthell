@@ -12,7 +12,7 @@ win_image.cpp win_base.cpp win_font.cpp mapitem.cpp py_inc.cpp py_player_wrap.cp
 py_mapengine_wrap.cpp yarg.cc py_dialogue.cpp
 
 py_player_wrap.cpp : py_player.i
-	swig -python -shadow -c++ -o $*.cpp $< 
+	swig -python -shadow -c++ -make_default -o $*.cpp $< 
 	@mv player.py ../scripts
 
 py_mapengine_wrap.cpp : py_mapengine.i

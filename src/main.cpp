@@ -152,10 +152,17 @@ int main(int argc, char * argv[])
     config myconfig (argc > 1 ? argv[1] : "");
 
     // try to read adonthellrc
-    myconfig.read_adonthellrc ();
+    if (!myconfig.read_adonthellrc ())
+        return 1;
     
-    // change into data directory
-    chdir (myconfig.datadir.data ());
+    // try to change into data directory
+    if (chdir (myconfig.datadir.c_str ()))
+    {
+        printf ("\nSeems like %s is no valid data directory.", myconfig.datadir.c_str ());
+        printf ("\nIf you have installed the Adonthell date files into a different location,");
+        printf ("\nplease make sure to update the $HOME/.adonthell/adonthellrc file\n");
+        return 1;
+    }
 
     game::init (myconfig);
     
