@@ -28,8 +28,8 @@
 
 struct swig_type_info;
 extern "C" {
-    swig_type_info *SWIG_TypeQuery (const char*);
-    int SWIG_ConvertPtr (PyObject*, void**, swig_type_info*, int);
+    swig_type_info *SWIG_Python_TypeQuery (const char*);
+    int SWIG_Python_ConvertPtr (PyObject*, void**, swig_type_info*, int);
 }
 
 // ctor
@@ -149,8 +149,8 @@ item_base *item_base::combine (item_base *item)
     PyObject *retval = call_method_ret ("combine", args);
     
     // try to retrieve result
-    SWIG_ConvertPtr (retval, (void **) &result, 
-        SWIG_TypeQuery ("_p_item_base"), 1);
+    SWIG_Python_ConvertPtr (retval, (void **) &result, 
+        SWIG_Python_TypeQuery ("_p_item_base"), 1);
     
     // cleanzp
     Py_XDECREF (retval);
