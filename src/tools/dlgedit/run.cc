@@ -104,13 +104,13 @@ void run_dlg::run ()
     if (retval == 0) return;
 
     // Prepare the random number generator
-    randgen.init (" ", 0, dat->npc_text.size ());
+    randgen.init (dat->strings[dat->npc_text[0]->id], 0, dat->npc_text.size ()-1);
     randgen.randomize ();
 
     // Get the NPCs answer in case there are more than one possible NPC answers
     // In the other case  randgen  will deliver a number between 0 and 0, which is
     // the only available NPC text
-    npc_answer = randgen.get ();
+    npc_answer = randgen.get (5);
 
     // Now examine  dlg  and see what we've got
     // case 1: only one or more NPC-lines

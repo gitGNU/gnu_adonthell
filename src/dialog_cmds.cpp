@@ -134,7 +134,7 @@ void clear_cmd::ascii (ofstream &out)
 void text_cmd::init (s_int32 *buffer, u_int32 &i, void *data)
 {
     text = buffer[i++];
-    pc_off = buffer[i++];
+    offset = buffer[i++];
 }
 
 // adds a line to the text arrays
@@ -144,13 +144,13 @@ s_int32 text_cmd::run (u_int32 &pc, void *data)
     dlg_text *t;
 
     // Look if that part of the conversation was already in use     
-    if (find (dlg->used_text.begin(), dlg->used_text.end(), pc + pc_off - 1) == dlg->used_text.end ())
+    if (find (dlg->used_text.begin(), dlg->used_text.end(), pc + offset - 1) == dlg->used_text.end ())
     {
         // The offset given with the TEXT command is relative to the current line
-        // That is:  current_line + pc_off  gives the line where the dialogue will
+        // That is:  current_line + offset  gives the line where the dialogue will
         // continue when this text is chosen. Note that pc == current_line + 1 at
         // this point!
-        t = new dlg_text (text, pc + pc_off - 1);
+        t = new dlg_text (text, pc + offset - 1);
 
         // Assign this line of dialogue to the current speaker (who has been set
         // by the SPEAKER command). We only have to distinguish between player and
@@ -171,22 +171,12 @@ void text_cmd::write (FILE *out)
     fwrite (&text, sizeof (text), 1, out);
 
     // write offset
-    fwrite (&pc_off, sizeof (pc_off), 1, out);
+    fwrite (&offset, sizeof (offset), 1, out);
 }
 
 void text_cmd::ascii (ofstream &out)
 {
-    out << "TEXT    " << text << " " << pc_off;
-}
-
-void text_cmd::setjmp (s_int32 p)
-{
-    pc_off = p;
-}
-
-s_int32 text_cmd::getjmp ()
-{
-    return pc_off;
+    out << "TEXT    " << text << " " << offset;
 }
 
 speaker_cmd::speaker_cmd (u_int32 s, u_int32 m) : speaker(s), mood(m)

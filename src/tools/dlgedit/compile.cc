@@ -146,6 +146,7 @@ void dlg_compiler::write_npc ()
     u_int32 pos;
     branch_cmd *cmd = NULL;
     cmp_data *data;
+    int speaker_changed = 1;
 
     // Look wether multiple NPC nodes with multiple parents exist
     // --> handle differently
@@ -157,7 +158,7 @@ void dlg_compiler::write_npc ()
         cur_crcle = (Circle *) cur_nodes[i];
 
         // Set the NPC that will speak
-        write_speaker ();
+        if (speaker_changed) write_speaker ();
 
         // Here's the line of the script that preceeding nodes must link to
         data = new cmp_data (cur_crcle, NULL, code.size ());
@@ -187,7 +188,7 @@ void dlg_compiler::write_npc ()
         if (cur_crcle->variables != "") write_variables (); 
 
         // If player-text follows, write that immediately
-        if (ptext_follows ())
+        if ((speaker_changed = ptext_follows ()))
         {
             write_player ();
 
@@ -392,6 +393,22 @@ void dlg_compiler::get_cur_nodes ()
     // In case it doesn't this is corrected in the  isdone()  function
     ((text_cmd *) data->cmd)->setjmp (code.size () - data->line);
 
+    cur_crcle = (Circle *) data->node;
+
+    // Write the PLAYER node's variable-code. We write it more than
+    // once, in case different nodes with variable code link to the 
+    // same NPC node
+    if (cur_crcle->type == PLAYER)
+        if (cur_crcle->variables != "")
+        {
+            write_variables ();
+            code.push_back (new jmp_cmd (0));
+
+            // Let the block end with the jmp_cmd instead of text_cmd
+            data->cmd = code.back ();
+            data->line = code.size ();
+        }
+
     // For all following direct links (arrows) ...
     for (i = 0; i < data->node->next.size (); i++)
         // If following NPC-node (circle) wasn't already compiled ...
@@ -404,14 +421,20 @@ void dlg_compiler::get_cur_nodes ()
         if (!isdone (data->node->link[i]->next[0], data))
             cur_nodes.push_back (data->node->link[i]->next[0]);
 
-    cur_crcle = (Circle *) data->node;
-
-    // If data is a player node and not done yet write is variable-code
+    // Note that the call to  isdone()  is important, as it sets the target
+    // of PLAYER nodes that were handled earlier to the right position.
+    // Without the call, it would either point after the variable-code, or
+    // to the last NPC-line of a multi-NPC-block.
+    isdone (data->node, data);
+/*
     if (cur_crcle->type == PLAYER)
+    //    if (!isdone (data->node, data))
         if (cur_crcle->variables != "")
-            if (!isdone (data->node, data))
-                write_variables ();
+        {
+            write_variables ();
             
+        }
+*/        
     // The End of dialogue follows:
     if (cur_nodes.empty ())
     {

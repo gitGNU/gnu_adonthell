@@ -361,7 +361,7 @@ void jmp_cmd::write (FILE* out)
 
 void jmp_cmd::ascii (ofstream &out)
 {
-    out << "JMP  " << offset+1;
+    out << "JMP     " << offset+1;
 }
 
 
@@ -394,9 +394,4 @@ void branch_cmd::write (FILE* out)
 void branch_cmd::ascii (ofstream &out)
 {
     out << "BRANCH  local." << condition << " " << offset+1;
-}
-
-void branch_cmd::setjmp (s_int32 o)
-{
-    offset = o;
 }

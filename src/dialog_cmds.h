@@ -73,23 +73,24 @@ private:
 };
 
 // adds a line to the text arrays
-class text_cmd : public command
+class text_cmd : public command, public offset_cmd
 {
 public:
     text_cmd () { type = TEXT; }
-    text_cmd (u_int32 t, s_int32 p) : text(t), pc_off(p) { type = TEXT; }
+    text_cmd (u_int32 t, s_int32 p) : text(t)
+    { 
+        type = TEXT;
+        offset = p;
+    }
     
     void init (s_int32*, u_int32&, void*);
     s_int32 run (u_int32&, void*);
 
     void write (FILE*);
     void ascii (ofstream&);   
-    void setjmp (s_int32);
-    s_int32 getjmp ();
 
 private:
     u_int32 text;               // Id of the dialogue text
-    s_int32 pc_off;             // Program Counter offset - where to continue the dialogue
 };
 
 #endif // __DIALOG_CMDS_H__

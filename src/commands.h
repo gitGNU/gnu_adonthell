@@ -15,6 +15,8 @@
 #ifndef __COMMANDS_H__
 #define __COMMANDS_H__
 
+#include "types.h"
+
 // command types (must not exceed 255 - at least those used with the dialogue compiler)
 // Add your own types to this list
 enum
@@ -60,6 +62,19 @@ enum
     ID = 254,       // Specifies a variable name
     NUM = 255       // Specifies an integer value
 };
+
+
+// Base class for commands with offsets
+class offset_cmd
+{
+public:
+    void setjmp (s_int32);
+    s_int32 getjmp ();
+    
+protected:
+    s_int32 offset;
+};
+
 
 void init_interpreter ();
 

@@ -56,31 +56,33 @@ private:
 
 
 // Jump to another line in the script
-class jmp_cmd : public command
+class jmp_cmd : public command, public offset_cmd
 {
 public:
-    jmp_cmd () { }
-    jmp_cmd (s_int32 o) : offset (o) { type = JMP; }
+    jmp_cmd () { type = JMP; }
+    jmp_cmd (s_int32 o)
+    {
+        type = JMP;
+        offset = o;
+    }
     
     void init (s_int32*, u_int32&, void*);
     s_int32 run (u_int32&, void*);
 
     void write (FILE*);             // Write the command as script code to file
     void ascii (ofstream&);         // Write cmd as human readable test to file
-
-private:
-    s_int32 offset;
 };
 
 
 // Branch to another line in the script depending on the value of condition
-class branch_cmd : public command
+class branch_cmd : public command, public offset_cmd
 {
 public:
     branch_cmd () { condition = NULL; }
-    branch_cmd (s_int32 o, const char* c) : offset (o)
+    branch_cmd (s_int32 o, const char* c)
     {
         type = BRANCH;
+        offset = o;
         condition = strdup (c + strcspn (c, ".") + 1);
     }
     virtual ~branch_cmd () { if (condition) delete[] condition; }
@@ -90,10 +92,8 @@ public:
 
     void write (FILE*);             // Write the command as script code to file
     void ascii (ofstream&);         // Write cmd as human readable test to file
-    void setjmp (s_int32);
-    
+
 private:
-    s_int32 offset;
     char* condition;
 };
 

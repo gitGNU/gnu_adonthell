@@ -74,3 +74,14 @@ void init_interpreter ()
     REGISTER_CMD (CLEAR, clear_cmd)
     REGISTER_CMD (SPEAKER, speaker_cmd)
 }
+
+
+void offset_cmd::setjmp (s_int32 o)
+{
+    offset = o;
+}
+
+s_int32 offset_cmd::getjmp ()
+{
+    return offset;
+}
