@@ -24,6 +24,19 @@
 # even the implied warranty of MERCHANTABILITY or FITNESS FOR A
 # PARTICULAR PURPOSE.
 
+# aclocal.m4 generated automatically by aclocal 1.6.3 -*- Autoconf -*-
+
+# Copyright 1996, 1997, 1998, 1999, 2000, 2001, 2002
+# Free Software Foundation, Inc.
+# This file is free software; the Free Software Foundation
+# gives unlimited permission to copy and/or distribute it,
+# with or without modifications, as long as this notice is preserved.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY, to the extent permitted by law; without
+# even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+# PARTICULAR PURPOSE.
+
 AC_DEFUN(AM_PATH_PYTHON,
 [
 AC_ARG_WITH(python-prefix,[  --with-python-prefix=PFX   Prefix where Python is installed (optional)],
@@ -6646,7 +6659,7 @@ int main ()
     vorbis_info		vi;
 
     vorbis_info_init (&vi);
-    vorbis_encode_init (&vi, 2, 44100, -1, 128, -1);
+    vorbis_encode_init (&vi, 2, 44100, -1, 128000, -1);
     vorbis_analysis_init (&vd, &vi);
     vorbis_block_init (&vd, &vb);
     /* this function was added in 1.0rc3, so this is what we're testing for */
@@ -6898,5 +6911,6 @@ main ()
   AC_SUBST(GTK_LIBS)
   rm -f conf.gtktest
 ])
+
 
 
