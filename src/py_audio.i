@@ -15,15 +15,9 @@
 #define u_int32 unsigned long
 #define s_int32 signed long
 
-#ifdef SDL_MIXER
-
 class audio
 {
 public:
-
-  static void init(config*);
-  static void cleanup(void);
-
   // Background Music functions:
     // Use these to load/unload background music
     static int load_background(int slot, char *filename);
@@ -52,10 +46,6 @@ public:
     // Temporary convience function to change background
     static void change_background(int slot, int time);
 
-    // Audio thread update function
-    static int update(void * data);
-
     static bool is_initialized() { return audio_initialized; }
 };
 
-#endif

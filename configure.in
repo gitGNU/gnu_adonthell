@@ -12,10 +12,19 @@ CFLAGS="-O6 -g -Wall"
 dnl DEFS="-DSDL"
 
 dnl Checks for programs.
+AC_PROG_CC
 AC_PROG_CXX
 AC_LANG_CPLUSPLUS
 AC_PROG_CXXCPP
 AC_PROG_MAKE_SET
+
+dnl ********************
+dnl Additional arguments
+dnl ********************
+
+AC_ARG_WITH(ogg, [  --with-ogg=DIR          Set where the Ogg library is located]) 
+AC_ARG_WITH(vorbis, [  --with-vorbis=DIR        Set where the Vorbis library is located]) 
+
 
 dnl ********************
 dnl Check for libraries.
@@ -71,6 +80,19 @@ if test x$SDL_MIXER = xno; then
     SDL_MIXER=yes
     LIBS="$LIBS -lSDL_mixer"
     DEFS="$DEFS -DSDL_MIXER",)
+fi
+
+dnl********************
+dnl Check for OggVorbis
+dnl********************
+
+OGG_VORBIS=no
+if test x$SDL_MIXER = xyes; then
+    AM_PATH_VORBIS(
+      OGG_VORBIS="yes"
+      LIBS="$LIBS $VORBIS_LIBS $VORBISFILE_LIBS"
+      DEFS="$DEFS -DOGG_VORBIS"
+      CFLAGS="$CFLAGS $VORBIS_CFLAGS", AC_MSG_RESULT(Disabling OggVorbis support))
 fi
 
 dnl ********************
@@ -154,6 +176,10 @@ if test x$SDL_MIXER = xyes; then
    AC_CHECK_HEADERS([SDL/SDL_mixer.h SDL/SDL_audio.h]) 
 fi 
 
+if test x$OGG_VORBIS = xyes; then
+   AC_CHECK_HEADERS([vorbis/vorbisfile.h]) 
+fi 
+
 dnl ********************************
 dnl Generate our compiler arguements
 dnl ********************************
@@ -174,5 +200,6 @@ src/tools/dlgedit/examples/Makefile
 src/tools/maptools/Makefile
 src/tools/questedit/Makefile
 src/tools/charedit/Makefile
+src/tools/oggloop/Makefile
 src/tools/combat/Makefile
 ])

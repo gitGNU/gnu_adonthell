@@ -57,6 +57,7 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
+CC = @CC@
 CXX = @CXX@
 CXXCPP = @CXXCPP@
 MAKEINFO = @MAKEINFO@
@@ -66,6 +67,10 @@ SDL_CFLAGS = @SDL_CFLAGS@
 SDL_CONFIG = @SDL_CONFIG@
 SDL_LIBS = @SDL_LIBS@
 VERSION = @VERSION@
+VORBISENC_LIBS = @VORBISENC_LIBS@
+VORBISFILE_LIBS = @VORBISFILE_LIBS@
+VORBIS_CFLAGS = @VORBIS_CFLAGS@
+VORBIS_LIBS = @VORBIS_LIBS@
 
 EXTRA_DIST = animation.dia animedit.lyx animedit.ps animedit.txt charedit.lyx dlgedit.lyx dlgedit_debug.ps dlgedit_edit.ps dlgedit_main.ps dlgedit_run.ps event.lyx gfx_global.dia graphic_system.lyx graphic_system.ps graphic_system.txt image.dia image.eps input.lyx interpreter.lyx items.txt map.lyx screen.dia step1.ps step2.ps step3.ps step4.ps window.lyx window.ps window.txt
 
@@ -77,7 +82,7 @@ DIST_COMMON =  Makefile.am Makefile.in
 
 DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 
-TAR = gtar
+TAR = tar
 GZIP_ENV = --best
 all: all-redirect
 .SUFFIXES:

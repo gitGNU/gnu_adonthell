@@ -13,16 +13,43 @@
 */
 #ifdef SDL_MIXER
 
-#include <iostream.h>
+#include <string.h>
+#include <stdlib.h>
 #include "prefs.h"
 #include "audio.h"
 #include "SDL.h"
 #include "SDL_mixer.h"
 
+loop_info::loop_info ()
+{
+    start = 0;
+    end = 0;
+}
+
+bool loop_info::load (char *filename)
+{
+    bool retval = true;
+    char *info_file = strdup (filename);
+    memcpy (info_file+strlen(info_file)-4, ".lpp", 4);
+
+    FILE *info = fopen (info_file, "r");
+    if (info)
+    {
+        fread (&start, sizeof(start), 1, info);
+        fread (&end, sizeof(end), 1, info);
+        fclose (info);
+    }
+    else retval = false;
+
+    free (info_file);
+    return retval;
+}
+
 extern unsigned short md_mode; // This is declared in MikMod
 
 int audio::background_volume;
 int audio::effects_volume;
+loop_info *audio::loop[NUM_MUSIC];
 Mix_Music *audio::music[NUM_MUSIC];
 Mix_Chunk *audio::sounds[NUM_WAVES];
 bool audio::background_on;
@@ -33,6 +60,72 @@ int audio::audio_rate;
 Uint16 audio::buffer_size;
 Uint16 audio::audio_format;
 int audio::audio_channels;
+
+#ifdef OGG_VORBIS
+extern "C" {
+
+// We've got to access internal SDL_mixer data, so here's it's redefiniton
+// from SDL_mixer/music_ogg.h:
+typedef struct {
+	int playing;
+	int volume;
+	OggVorbis_File vf;
+	int section;
+	SDL_AudioCVT cvt;
+	int len_available;
+	Uint8 *snd_available;
+} OGG_music;
+
+// from SDL_mixer/music.c:
+struct _Mix_Music {
+	enum {
+		MUS_CMD,
+		MUS_WAV,
+		MUS_MOD,
+		MUS_MID,
+		MUS_OGG,
+		MUS_MP3
+	} type;
+	union {
+		OGG_music *ogg;
+	} data;
+	Mix_Fading fading;
+	int fade_volume;
+	int fade_step;
+	int fade_steps;
+	int error;
+};
+
+// Callback passed to OggVorbis to read/and loop our background music
+size_t ogg_read_callback (void *ptr, size_t size, size_t nmemb, void *datasource)
+{
+    // get the current position
+    size_t cur_pos = ftell ((FILE*) datasource);
+    u_int32 end_pos = audio::get_loop_end ();
+
+    // check whether we'll reach the looping point with the next read
+    if (cur_pos + nmemb > end_pos)
+    {
+        // In case we do:
+        int read = 0;
+        int to_read = end_pos - cur_pos;
+        nmemb -= to_read;
+
+        // read up to the looping point, ...
+        read = fread (ptr, size, to_read, (FILE*) datasource);
+        // jump back in the stream ...
+        ov_raw_seek (audio::get_vorbisfile (), audio::get_loop_start ());
+        // and read the remaining data from there
+        read += fread (((char*) ptr)+read, size, nmemb, (FILE*) datasource);
+
+        return read;
+    }
+    
+    // otherwise just read the next chunk of data
+    return fread (ptr, size, nmemb, (FILE*) datasource);
+}
+}
+#endif
 
 void audio::init (config *myconfig) {
 
@@ -60,7 +153,7 @@ void audio::init (config *myconfig) {
   // 100... scales to percentages ;>
   background_volume = myconfig->audio_volume;   
 
-  buffer_size = 512;         // Audio buffer size
+  buffer_size = 4096;        // Audio buffer size
   effects_volume = 128;	     // Still figuring this one out...
   background_on = false;     // No background music is playing
   current_background = -1;   // No song currently playing
@@ -131,14 +224,10 @@ int audio::load_background(int slot, char *filename) {
 
     // This warns the audio thread to stop updating
     background_on = false;
-
     current_background = -1;
+
     Mix_HaltMusic();  // Just a precaution
     unload_background(slot);
-    background_on = false;
-
-    // Wow! Recursive call!
-    load_background(slot, filename);
 
   // If we aren't loading background music over
   // music currently playing ...
@@ -147,10 +236,21 @@ int audio::load_background(int slot, char *filename) {
     // Music already occupies that slot
     if (music[slot] != NULL)
       unload_background(slot);
-
-    // No music in slot, load new tune in
-    music[slot] = Mix_LoadMUS(filename);
   }
+  
+  // No music in slot, load new tune in, ...
+  music[slot] = Mix_LoadMUS(filename);
+  loop[slot] = new loop_info;
+
+#ifdef OGG_VORBIS
+  // reed loop points and ...
+  if (!loop[slot]->load (filename))
+    loop[slot]->end = ov_raw_total (&music[slot]->data.ogg->vf, -1);
+
+  // enable looping
+  music[slot]->data.ogg->vf.callbacks.read_func = &ogg_read_callback;
+#endif
+
   return(0);
 }
 
@@ -158,6 +258,7 @@ void audio::unload_background(int slot) {
   if (music[slot] != NULL) {
     Mix_FreeMusic(music[slot]);
     music[slot] = NULL;
+    delete loop[slot];
   }
 }
 
@@ -225,6 +326,9 @@ void audio::play_background(int slot) {
 void audio::fade_out_background(int time) {
   if (background_on == true) {
     Mix_FadeOutMusic(time);
+#ifdef OGG_VORBIS
+    music[current_background]->data.ogg->vf.callbacks.read_func = &fread;
+#endif
     background_on = false;
     current_background = -1;
   }
@@ -244,22 +348,10 @@ void audio::change_background(int slot, int time) {
   fade_in_background(slot, time);
 }
 
-int audio::update(void * data)
+#ifdef OGG_VORBIS
+OggVorbis_File* audio::get_vorbisfile ()
 {
-  // Keep audio up-to-date
-  while (1) {
-
-    // Once the audio is connected, keep updating the audio stream
-    if (background_on == true &&  ! Mix_PlayingMusic()) {
-      Mix_PlayMusic(music[current_background], 2);
-    }
-    SDL_Delay(1000);
-  }
+    return &music[current_background]->data.ogg->vf;
 }
-
-// This is our audio 'hook'. In order to use audio,
-// you must include the 'globals.h' file to get
-// access to the hook.
-audio *audio_in;
-
+#endif
 #endif

@@ -1,5 +1,6 @@
 /*
    $Id$
+
    Copyright (C) 2000 Andrew Henderson <hendersa@db.erau.edu>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
@@ -10,13 +11,18 @@
 
    See the COPYING file for more details.
 */
+
 #ifndef __AUDIO_H__
 #define __AUDIO_H__
 
 #ifdef SDL_MIXER
-
+#include "types.h"
 #include "SDL_mixer.h"
 #include "prefs.h"
+
+#ifdef OGG_VORBIS
+#include "vorbis/vorbisfile.h"
+#endif
 
 // We'll only load two waves into memory
 #define NUM_WAVES 2
@@ -25,11 +31,22 @@
 // We can play four SFX at once
 #define NUM_CHANNELS 4
 
+class loop_info
+{
+public:
+    loop_info ();
+    bool load (char*);
+
+    u_int32 start;
+    u_int32 end;
+};
+
 class audio
 {
   static int background_volume;
   static int effects_volume;
   static Mix_Music *music[NUM_MUSIC];
+  static loop_info *loop[NUM_MUSIC];
   static Mix_Chunk *sounds[NUM_WAVES];
   static bool background_on;
   static int current_background;
@@ -73,10 +90,13 @@ public:
     // Temporary convience function to change background
     static void change_background(int slot, int time);
 
-    // Audio thread update function
-    static int update(void * data);
-
     static bool is_initialized() { return audio_initialized; }
+
+#ifdef OGG_VORBIS
+    static int get_loop_start() { return loop[current_background]->start; }
+    static int get_loop_end() { return loop[current_background]->end; }
+    static OggVorbis_File* get_vorbisfile();
+#endif
 };
 
 #endif
