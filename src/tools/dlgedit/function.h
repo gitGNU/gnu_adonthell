@@ -15,7 +15,7 @@
 #ifndef _FUNCTION_
 #define _FUNCTION_
 
-#include <vector>
+#include <map>
 
 // Functions
 enum

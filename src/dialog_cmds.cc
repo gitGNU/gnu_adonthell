@@ -12,7 +12,9 @@
    See the COPYING file for more details
 */
 
+#ifndef _DLGEDIT_
 #define _DLGEDIT_
+#endif
 
 #include <stdio.h>
 #include <iostream.h>

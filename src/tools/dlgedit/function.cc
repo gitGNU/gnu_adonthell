@@ -42,7 +42,7 @@ function::~function ()
 // Add a new function to node
 void function::add ()
 {
-    map<const char*, s_int32, ltstr>::iterator i;
+    // map<const char*, s_int32, ltstr>::iterator i;
     function_data *data = new function_data;
     char *entry[4];
 
