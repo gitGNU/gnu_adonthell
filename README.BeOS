@@ -78,9 +78,24 @@ not. Espacially those depending on GTK+ might cause trouble. However,
 for playing Adonthell, you won't need them, so it's no big loss.
 
 
+Restrictions:
+=============
+
+In contrast to other Operating Systems, BeOS seems to be unable to
+display resolutions lower than 640x480 (possibly depending on the 
+graphic driver?), specifically not 320x240. Therefore you will 
+experience a black border around the screen in fullscreen mode.
+There are no plans to change this, as the next version will use a
+higher resolution anyway. 
+
+However, if BeOS provides a workaround I am not aware of, feel 
+free to contact me:
+
+
 Contact:
 ========
 
 At the moment, the BeOS port is maintained (*cough*) by Kai Sterker 
 (kaisterker@linuxgames.com). If you run into any troubles not listed
 here or want to contribute a patch please drop me a few lines.
+
