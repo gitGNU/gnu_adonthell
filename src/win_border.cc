@@ -92,7 +92,7 @@ void win_border::set_border(win_border & wb)
 }
 
 
-void win_border::set_border(win_theme & wt, u_int8 size = win_border::NORMAL)
+void win_border::set_border(win_theme & wt, u_int8 size)
 {
   switch(size)
     {
