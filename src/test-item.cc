@@ -35,6 +35,8 @@ int main( int argc, char* argv[] )
     cout << "FAILED, because .next != NULL\n";
   else if( CT_def.prev != NULL )
     cout << "FAILED, because .prev != NULL\n";
+  else if( CT_def.getNumber() != 1 )
+    cout << "FAILED, because .getNumber() != 1\n";
   else if( CT_def.getId() != 0 )
     cout << "FAILED, because .getID != 0\n";
   else if( CT_def.getName() != "" )
@@ -87,22 +89,20 @@ int main( int argc, char* argv[] )
     cout << "FAILED, because .getUseEffAct() != false\n";
   else if( CT_def.getAttItem() != NULL )
     cout << "FAILED, because .getAttItem() != NULL\n";
-  else if( CT_def.number != 1 )
-    cout << "FAILED, because .number != 1\n";
   else
     cout << "OK!\n";
 
   // Test the full constructor
 
   cout << "\tFull... ";
-  u_int16 at[NUM_ATT];
-  bool ch[NUM_CHR], ae[NUM_EFF];
-  effect ef[NUM_EFF];
-  for( u_int8 i = 0; i < NUM_ATT; i++ )
+  u_int16 at[CT_def.NUM_ATT];
+  bool ch[CT_def.NUM_CHR], ae[CT_def.NUM_EFF];
+  effect ef[CT_def.NUM_EFF];
+  for( u_int8 i = 0; i < CT_def.NUM_ATT; i++ )
     at[i] = 0;
-  for( u_int8 i = 0; i < NUM_CHR; i++ )
+  for( u_int8 i = 0; i < CT_def.NUM_CHR; i++ )
     ch[i] = false;
-  for( u_int8 i = 0; i < NUM_EFF; i++ )
+  for( u_int8 i = 0; i < CT_def.NUM_EFF; i++ )
     ae[i] = false;
   item CT_ful( 27, "Something", "something.gfx", 0, at, ch, ae, ef, 27 );
 
@@ -113,6 +113,8 @@ int main( int argc, char* argv[] )
     cout << "FAILED, because .next != NULL\n";
   else if( CT_ful.prev != NULL )
     cout << "FAILED, because .prev != NULL\n";
+  else if( CT_ful.getNumber() != 27 )
+    cout << "FAILED, because .getNumber() != 27\n";
   else if( CT_ful.getId() != 27 )
     cout << "FAILED, because .getID != 27\n";
   else if( CT_ful.getName() != "Something" )
@@ -165,8 +167,6 @@ int main( int argc, char* argv[] )
     cout << "FAILED, because .getUseEffAct() != false\n";
   else if( CT_ful.getAttItem() != NULL )
     cout << "FAILED, because .getAttItem() != NULL\n";
-  else if( CT_ful.number != 27 )
-    cout << "FAILED, because .number != 27\n";
   else
     cout << "OK!\n";
 
@@ -182,6 +182,8 @@ int main( int argc, char* argv[] )
     cout << "FAILED, because .next != NULL\n";
   else if( CT_spa.prev != NULL )
     cout << "FAILED, because .prev != NULL\n";
+  else if( CT_spa.getNumber() != 99 )
+    cout << "FAILED, because .getNumber() != 99\n";
   else if( CT_spa.getId() != 32 )
     cout << "FAILED, because .getID != 32\n";
   else if( CT_spa.getName() != "Something Else" )
@@ -234,8 +236,6 @@ int main( int argc, char* argv[] )
     cout << "FAILED, because .getUseEffAct() != false\n";
   else if( CT_spa.getAttItem() != NULL )
     cout << "FAILED, because .getAttItem() != NULL\n";
-  else if( CT_spa.number != 99 )
-    cout << "FAILED, because .number != 99\n";
   else
     cout << "OK!\n";
 
@@ -267,33 +267,151 @@ int main( int argc, char* argv[] )
 
   OT_2.attach( OT_3 );
 
-  cout << "\t== (Step 1)... ";
+  cout << "\t==... ";
   if( OT_1 == OT_2 )
     cout << "FAILED, because OT_1 should not equal OT_2!\n";
   else
     cout << "OK!\n";
 
-  cout << "\t!= (Step 1)... ";
+  cout << "\t!=... ";
   if( OT_1 != OT_2 )
     cout << "OK!\n";
   else
     cout << "FAILED, because OT_1 should not equal OT_2!\n";
 
-  OT_1 = OT_2;
+  OT_2 = OT_1;
   
-  cout << "\t== (Step 2)... ";
+  cout << "\t=... ";
   if( OT_1 == OT_2 )
     cout << "OK!\n";
   else
-    cout << "FAILED, because OT_1 should not equal OT_2!\n";
+    cout << "FAILED, because OT_1 should equal OT_2!\n";
 
-  cout << "\t!= (Step 2)... ";
-  if( OT_1 != OT_2 )
-    cout << "FAILED, because OT_1 should not equal OT_2!\n";
+  OT_2.setName( "foo" );
+  OT_3.setName( OT_2.getName() );
+
+  cout << "\t+= (Step 1)... ";
+  u_int16 foo = OT_2.getNumber();
+  if( (OT_2 += OT_3) && OT_2.getNumber() == foo + OT_3.getNumber() )
+    cout << "OK!\n";
+  else
+    cout << "FAILED, because OT_2.getNumber() should be "
+	 << foo + OT_3.getNumber() << endl;
+
+  cout << "\t+= (Step 2)... ";
+  foo = OT_2.getNumber();
+  if( (OT_2 += OT_1) )
+    cout << "FAILED, because OT_2 is a '" << OT_2.getName()
+	 << "' and OT_1 is a '" << OT_1.getName() << "'!\n";
   else
     cout << "OK!\n";
 
-  cout << "If Step 2 was OK, = is also OK!\n";
+  OT_1.setNumber( 1 );
+  OT_2.setNumber( OT_2.MAX_NUM );
+  OT_1.setName( OT_2.getName() );
+
+  cout << "\t+= (Step 3)... ";
+  foo = OT_2.getNumber();
+  if( (OT_2 += OT_1) )
+    cout << "FAILED, because MAX_NUM is " << OT_2.MAX_NUM
+	 << ", so " << OT_1.getNumber() << " " << OT_1.getName()
+	 << " should not be able to be added!\n";
+  else
+    cout << "OK!\n";
+
+  OT_1.setName( "foo" );
+  OT_2.setName( OT_1.getName() );
+  OT_3.setName( "bar" );
+  OT_1.setNumber( 99 );
+  OT_2.setNumber( 98 );
+  OT_3.setNumber( 1 );
+
+  cout << "\t-= (Step 1)... ";
+  foo = OT_1.getNumber();
+  if( (OT_1 -= OT_2) && OT_1.getNumber() == foo - OT_2.getNumber() )
+    cout << "OK!\n";
+  else
+    cout << "FAILED, because OT_1.getNumber() should be "
+	 << foo - OT_2.getNumber() << endl;
+
+  cout << "\t-= (Step 2)... ";
+  if( (OT_1 -= OT_3) )
+    cout << "FAILED, because OT_1 is a '" << OT_1.getName()
+	 << "' and OT_3 is a '" << OT_3.getName() << "'!\n";
+  else
+    cout << "OK!\n";
+
+  cout << "\t-= (Step 3)... ";
+  OT_3.setName( OT_1.getName() );
+  foo = OT_1.getNumber();
+  if( (OT_1 -= OT_3) )
+    cout << "FAILED, because there is only " << foo << " '"
+	 << OT_1.getName() << "', so " << OT_3.getNumber()
+	 << " should not be able to be subtracted!\n";
+  else
+    cout << "OK!\n";
+
+  /*
+  OT_1.setNumber( 1 );
+  OT_2.setNumber( 98 );
+  OT_3.setNumber( 99 );
+
+  cout << "\t++ (Step 1)... ";
+  if( (OT_2++) )
+    cout << "OK!\n";
+  else
+    cout << "FAILED, because OT_2 was not incremented!\n";
+
+  cout << "\t++ (Step 2)... ";
+  if( !(OT_3++) )
+    cout << "OK!\n";
+  else
+    cout << "FAILED, because OT_3 should not have been incremented!\n";
+
+  cout << "\t-- (Step 1)... ";
+  if( (OT_2--) )
+    cout << "OK!\n";
+  else
+    cout << "FAILED, because OT_3 was not decremented!\n";
+
+  cout << "\t-- (Step 2)... ";
+  if( (OT_1--) )
+    cout << "OK!\n";
+  else
+    cout << "FAILED, because OT_1 should not have been decremented!\n";
+  */
+
+  OT_1.setNumber( 1 );
+  OT_2.setNumber( 98 );
+  OT_3.setNumber( 99 );
+
+  cout << "\t>... ";
+  if( OT_2 > OT_1 && !( OT_2 > OT_3 ) )
+    cout << "OK!\n";
+  else
+    cout << "FAILED, because OT_3 > OT_2 > OT_1 was not true!\n";
+
+  cout << "\t<... ";
+  if( OT_1 < OT_2 && !( OT_3 < OT_2 ) )
+    cout << "OK!\n";
+  else
+    cout << "FAILED, because OT_1 < OT_2 < OT_3 was not true!\n";
+
+  OT_1.setNumber( 1 );
+  OT_2.setNumber( 1 );
+  OT_3.setNumber( 99 );
+
+  cout << "\t>=... ";
+  if( OT_2 >= OT_1 && OT_3 >= OT_1 && !( OT_1 >= OT_3 ) )
+    cout << "OK!\n";
+  else
+    cout << "FAILED, because OT_3 >= OT_2 >= OT_1 was not true!\n";
+
+  cout << "\t<=... ";
+  if( OT_1 <= OT_2 && OT_2 <= OT_3 && !( OT_3 <= OT_1 ) )
+    cout << "OK!\n";
+  else
+    cout << "FAILED, because OT_1 <= OT_2 <= OT_3 was not true!\n";
 
   // ===============================================================
 
@@ -325,6 +443,13 @@ int main( int argc, char* argv[] )
   FT_2.setEquipEff( FT_E );
   FT_2.setUnequipEff( FT_E );
   FT_2.setUseEff( FT_E );
+
+  cout << "\tget/setNumber()...";
+  FT_1.setNumber( FT_2.getNumber() );
+  if( FT_1.getNumber() == FT_2.getNumber() )
+    cout << "OK!\n";
+  else
+    cout << "FAILED!\n";
 
   cout << "\tget/setId()... ";
   FT_1.setId( FT_2.getId() );

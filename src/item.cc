@@ -23,6 +23,7 @@ item::item() // default constructor
   debug_mode = false;
   next = NULL;
   prev = NULL;
+  setNumber( 1 );
   setId( 0 );
   setName( "" );
   setGfx( "" );
@@ -51,18 +52,19 @@ item::item() // default constructor
   for( u_int8 i = 0; i < NUM_EFF; i++ )
     item_eff[i] = NULL;
   attached = NULL;
-  number = 1;
+  pos = 0;
 }
 
 item::item( const u_int32 ix, const string nm, const string gf,
 	    const u_int8 ty, const u_int16 at[],
 	    const bool ch[], const bool ae[], effect ef[],
-	    const u_int8 n )
+	    const u_int16 n )
   // "full" constructor
 {
   debug_mode = false;
   next = NULL;
   prev = NULL;
+  setNumber( n );
   setId( ix );
   setName( nm );
   setGfx( gf );
@@ -77,15 +79,16 @@ item::item( const u_int32 ix, const string nm, const string gf,
     item_eff[i] = &ef[i];
   }
   attached = NULL;
-  number = n;
+  pos = 0;
 }
 
 item::item( const u_int32 ix, const string nm, const string gf,
-	    const u_int8 ty, const u_int8 n ) // sparse constructor
+	    const u_int8 ty, const u_int16 n ) // sparse constructor
 {
   debug_mode = false;
   next = NULL;
   prev = NULL;
+  setNumber( n );
   setId( ix );
   setName( nm );
   setGfx( gf );
@@ -114,7 +117,7 @@ item::item( const u_int32 ix, const string nm, const string gf,
   for( u_int8 i = 0; i < NUM_EFF; i++ )
     item_eff[i] = NULL;
   attached = NULL;
-  number = n;
+  pos = 0;
 }
 
 item::item( const string fn ) // from file constructor
@@ -132,12 +135,12 @@ item item::operator=( const item& it )
 {
   if( *this != it )
   {
+    setNumber( it.getNumber() );
     setName( it.getName() );
     setGfx( it.getGfx() );
     setType( it.getType() );
     setSize( it.getSize() );
     setWeight( it.getWeight() );
-    setValue( it.getValue() );
     setValue( it.getValue() );
     setUses( it.getUses() );
     setMoveable( it.getMoveable() );
@@ -163,14 +166,16 @@ item item::operator=( const item& it )
     setUseEff( *it.getUseEff() );
     if( it.getAttached() )
       attach( *( it.getAttItem() ) );
-    number = it.number;
+    else if( getAttached() )
+      detach();
   }
   return *this;
 }
 
 bool item::operator==( const item& it ) const
 {
-  if( getName() == it.getName() &&
+  if( getNumber() == it.getNumber() && 
+      getName() == it.getName() &&
       getGfx() == it.getGfx() && 
       getType() == it.getType() &&
       getSize() == it.getSize() &&
@@ -200,8 +205,7 @@ bool item::operator==( const item& it ) const
       getEquipEff() == it.getEquipEff() &&
       getUnequipEff() == it.getUnequipEff() &&
       getUseEff() == it.getUseEff() &&
-      getAttItem() == it.getAttItem() &&
-      number == it.number )
+      getAttItem() == it.getAttItem() )
     return true;
   else
     return false;
@@ -210,6 +214,117 @@ bool item::operator==( const item& it ) const
 bool item::operator!=( const item& it ) const
 {
   if( !( *this == it ) )
+    return true;
+  else
+    return false;
+}
+
+bool item::operator+=( const item& it )
+{
+  if( getName() != it.getName() )
+  {
+    if( debug_mode )
+      cout << "+=: Cannot add '" << it.getName() << "' to different item '"
+	   << getName() << "'\n";
+    return false;
+  }
+  else if( setNumber( getNumber() + it.getNumber() ) )
+  {
+    if( debug_mode )
+      cout << "+=: Added " << it.getNumber() << " '" << getName()
+	   << "', making the new quantity " << getNumber() << endl;
+    return true;
+  }
+  else
+  {
+    if( debug_mode )
+      cout << "+=: Could not add " << it.getNumber() << " '" << getName()
+	   << "' items, because MAX_NUM is " << MAX_NUM << endl;
+    return false;
+  }
+}
+
+bool item::operator-=( const item& it )
+{
+  if( getName() != it.getName() )
+  {
+    if( debug_mode )
+      cout << "-=: Cannot subtract '" << it.getName()
+	   << "' from different item '" << getName() << "'\n";
+    return false;
+  }
+  else if( setNumber( getNumber() - it.getNumber() ) )
+  {
+    if( debug_mode )
+      cout << "-=: Subtracted " << it.getNumber() << " '" << getName()
+	   << "', making the new quantity " << getNumber() << endl;
+    return true;
+  }
+  else
+    return false;
+}
+
+bool item::operator++()
+{
+  if( setNumber( getNumber() + 1 ) )
+  {
+    if( debug_mode )
+      cout << "++: Quantity incremented to " << getNumber() << endl;
+    return true;
+  }
+  else
+    return false;
+}
+
+bool item::operator--()
+{
+  if( setNumber( getNumber() - 1 ) )
+  {
+    if( debug_mode )
+      cout << "++: Quantity decremented to " << getNumber() << endl;
+    return true;
+  }
+  else
+    return false;
+}
+
+bool item::operator>( const item& it ) const
+{
+  if( getNumber() > it.getNumber() )
+  {
+    if( debug_mode )
+      cout << ">: " << getNumber() << " is greater than " << it.getNumber()
+	   << endl;
+    return true;
+  }
+  else
+    return false;
+}
+
+bool item::operator<( const item& it ) const
+{
+  if( getNumber() < it.getNumber() )
+  {
+    if( debug_mode )
+      cout << "<: " << getNumber() << " is less than " << it.getNumber()
+	   << endl;
+    return true;
+  }
+  else
+    return false;
+}
+
+bool item::operator>=( const item& it ) const
+{
+  if( !( *this < it ) )
+    return true;
+  else
+    return false;
+}
+
+bool item::operator<=( const item& it ) const
+{
+  if( !( *this > it ) )
     return true;
   else
     return false;
@@ -240,6 +355,13 @@ string item::pb( const bool val ) const
 
 // GET FUNCTIONS (RETURNING A VALUE)
 // ===================================================================
+
+u_int16 item::getNumber() const // returns number of items
+{
+  if( debug_mode )
+    cout << "getNumber(): There are " << num << " " << name << endl;
+  return num;
+}
 
 u_int32 item::getId() const // returns ID number
 {
@@ -461,11 +583,34 @@ item* item::getAttItem() const // returns a pointer to the attached item
   return attached;
 }
 
+u_int32 item::getPos() const // returns the index in the display list
+{
+  return pos;
+}
+
 // ===================================================================
 
 
 // SET FUNCTIONS (MODIFYING)
 // ===================================================================
+
+bool item::setNumber( const u_int16 n ) // sets number of items
+{
+  if( n <= MAX_NUM )
+  {  
+    if( debug_mode )
+      cout << "setNumber(): There are now " << n << " " << getName() << endl;
+    num = n;
+    return true;
+  }
+  else
+  {
+    if( debug_mode )
+      cout << "setNumber(): Asked to set number to " << n << ", "
+	   << "but MAX_NUM is " << MAX_NUM << ", so did nothing\n";
+    return false;
+  }
+}
 
 bool item::setId( const u_int32 val ) // sets ID number
 {
@@ -701,6 +846,12 @@ bool item::setUnequipEff( effect& val ) // sets unequip effect
 bool item::setUseEff( effect& val ) // sets use effect
 {
   item_eff[4] = &val;
+  return true;
+}
+
+bool item::setPos( const u_int32 n ) // sets index in the display list
+{
+  pos = n;
   return true;
 }
 

@@ -24,6 +24,7 @@ Public member variables:
 Protected member variables:
 
   bool debug_mode; // is debug mode on or off?
+  u_int16 number; // number of items in this stack
   u_int32 id; // ID number corresponding to the items database (MORE info
 	           // when it becomes available)
   string name; // name of the item
@@ -84,7 +85,7 @@ Constructors:
 	 // number = 1
 
   item( u_int32 i, string nm, string gf, u_int8 ty,
-	u_int16 at[], bool ch[], bool ae[], effect ef[], u_int8 n )
+	u_int16 at[], bool ch[], bool ae[], effect ef[], u_int16 n )
          // the "full" constructor:
          // id is the ID number of the item
 	 // nm is the name
@@ -97,7 +98,7 @@ Constructors:
 	 // n is the number
 	 // *** NOTE *** that prev, next, and attached are not set!
 
-  item( u_int32 i, string nm, string gf, u_int8 ty, u_int8 n )
+  item( u_int32 i, string nm, string gf, u_int8 ty, u_int16 n )
          // maybe the most useful constructor of all, the "sparse" constructor:
          // id is the ID number of the item
 	 // nm is the name

@@ -22,19 +22,19 @@
 #include "types.h"
 #include "effect.h"
 
-// CONSTANTS
-// ===================================================================
-
-const u_int8 NUM_ATT = 4;  // number of attributes
-const u_int8 NUM_CHR = 12; // number of characteristics
-const u_int8 NUM_EFF = 5;  // number of effects
-
-// ===================================================================
-
-
 class item
 {
  public:
+
+  // CONSTANTS
+  // ===================================================================
+  
+  const static u_int8 NUM_ATT = 4;   // number of attributes
+  const static u_int8 NUM_CHR = 12;  // number of characteristics
+  const static u_int8 NUM_EFF = 5;   // number of effects
+  const static u_int16 MAX_NUM = 99; // maximum number of items
+  
+  // ===================================================================
 
   // CONSTRUCTORS AND DESTRUCTORS
   // ===================================================================
@@ -42,10 +42,10 @@ class item
   item(); // default constructor
   item( const u_int32 ix, const string nm, const string gf,
 	const u_int8 ty, const u_int16 at[], const bool ch[],
-	const bool ae[], effect ef[], const u_int8 n );
+	const bool ae[], effect ef[], const u_int16 n );
           // "full" constructor
   item( const u_int32 ix, const string nm, const string gf,
-	const u_int8 ty, const u_int8 n ); // "sparse" constructor
+	const u_int8 ty, const u_int16 n ); // "sparse" constructor
   item( const string fn ); // from file constructor
 
   // ===================================================================
@@ -57,7 +57,15 @@ class item
   item operator=( const item& it );
   bool operator==( const item& it ) const;
   bool operator!=( const item& it ) const;
-  
+  bool operator++();
+  bool operator--();
+  bool operator+=( const item& it );
+  bool operator-=( const item& it );
+  bool operator>( const item& it ) const;
+  bool operator<( const item& it ) const;
+  bool operator>=( const item& it ) const;
+  bool operator<=( const item& it ) const;
+
   // ===================================================================
 
 
@@ -66,7 +74,6 @@ class item
 
   item *next; // pointer to the next item in the container
   item *prev; // pointer to the previous item in the container
-  u_int8 number; // number of item of this type in this stack
 
   // ===================================================================
 
@@ -82,6 +89,7 @@ class item
   // "GET" FUNCTIONS, VALUE RETURNING
   // ===================================================================
 
+  u_int16 getNumber() const; // returns number of items
   u_int32 getId() const; // returns ID number
   string getName() const; // returns name
   string getGfx() const; // returns gfx filename
@@ -113,6 +121,10 @@ class item
   effect* getUnequipEff() const; // returns unequip effect
   effect* getUseEff() const; // returns use effect
   item* getAttItem() const; // returns a pointer to attached item
+  u_int32 getPos() const; /* returns the index in the display list; *NOTE* that
+			     if the item is not in a list, this property is
+			     invalid, so be careful or you might "set up us the
+			     segfault" */
 
   // ===================================================================
 
@@ -120,6 +132,7 @@ class item
   // "SET" FUNCTIONS, MODIFY
   // ===================================================================
 
+  bool setNumber( const u_int16 n ); // sets number of items
   bool setId( const u_int32 val ); // sets ID number
   bool setName( const string val ); // sets name
   bool setGfx( const string val ); // sets gfx filename
@@ -149,7 +162,8 @@ class item
   bool setEquipEff( effect& val ); // sets equip effect
   bool setUnequipEff( effect& val ); // sets unequip effect
   bool setUseEff( effect& val ); // sets use effect
-  
+  bool setPos( const u_int32 n ); // sets index in the display list
+
   // ===================================================================
 
 
@@ -169,6 +183,7 @@ class item
   // ===================================================================
 
   bool debug_mode; // is debug mode on or off?
+  u_int16 num; // number of items
   u_int32 id; // ID number
   string name; // name
   string gfx; // gfx filename
@@ -178,6 +193,8 @@ class item
   bool item_ace[NUM_EFF]; // active effects array, see item.txt
   effect* item_eff[NUM_EFF]; // effects array, see item.txt
   item* attached; // pointer to combined item, see item.txt
+  u_int32 pos; /* position in the display list (index of the item in the
+		  inventory class's vector 'display' */
 
   // ===================================================================
 
