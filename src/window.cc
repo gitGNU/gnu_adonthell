@@ -54,30 +54,30 @@ void window::init_table_char()
 { char i;int j=0;
   u_int16 pos,tl;
 
-  void * font;
+  image * font = new image();
   u_int16 lenght,height;
 
   FILE *f;
   if((f=fopen("gfxtree/window/font.idx","rb"))==NULL)
                   {printf("font.idx not found\n");exit(1);}    
-  FILE * f2=fopen("gfxtree/window/font.pnm","r");
-  //  font.load("gfxtree/window/font.pnm"); 
-  font=read_pnm(f2,&lenght,&height); 
+  //  FILE * f2=fopen("gfxtree/window/font.pnm","r");
+  font->load("gfxtree/window/font.pnm"); 
+  //font=read_pnm(f2,&lenght,&height); 
   tablechar=new image[NB_TABLE_CHAR];
   while(j<NB_TABLE_CHAR && !feof(f) )
     {
      fread(&i,sizeof(i),1,f);
      fread(&pos,sizeof(pos),1,f);
      fread(&tl,sizeof(tl),1,f);
-     //     tablechar[i].resize(tl,WIN_FONT_HEIGHT);
-     //     tablechar[i].putbox_part_img(&font,0,0,tl,WIN_FONT_HEIGHT,pos,0);
-     tablechar[i].size(tl,WIN_FONT_HEIGHT);
-     tablechar[i].putbox_font_img(font,pos,lenght);
+     tablechar[i].resize(tl,WIN_FONT_HEIGHT);
+     tablechar[i].putbox_part_img(font,0,0,tl,WIN_FONT_HEIGHT,pos,0);
+     //     tablechar[i].size(tl,WIN_FONT_HEIGHT);
+     //  tablechar[i].putbox_font_img(font,pos,lenght);
      j++;
     }
   fclose(f);
-  fclose(f2);
-  free(font);
+  // fclose(f2);
+  delete(font);
 }
 
 
