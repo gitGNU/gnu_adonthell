@@ -1,8 +1,10 @@
 ## Process this file with automake to produce Makefile.in
 
-EXTRA_DIST = attributes.txt
-
+if HAVE_GTK
 bin_PROGRAMS = questedit mergequests
+endif
+
+EXTRA_DIST = attributes.txt
 
 questedit_SOURCES = main.cc interface.cc callbacks.cc dirbrowser.cc \
 callbacks.h dirbrowser.h interface.h main.h
@@ -26,3 +28,4 @@ quest.o : ../../quest.cpp
 
 storage.o : ../../storage.cpp
 	$(CXXCOMPILE) -c $< -o $@
+

@@ -1,8 +1,10 @@
 ## Process this file with automake to produce Makefile.in
 
-EXTRA_DIST = Enter.txt Leave.txt attributes.txt
-
+if HAVE_GTK
 bin_PROGRAMS = charedit mergechars
+endif
+
+EXTRA_DIST = Enter.txt Leave.txt attributes.txt
 
 charedit_SOURCES = main.cc interface.cc callbacks.cc dirbrowser.cc \
 callbacks.h dirbrowser.h interface.h main.h
@@ -14,5 +16,9 @@ mergechars_LDADD = character_base.o storage.o fileops.o $(GTK_LIBS)
 # Evil, but it works...
 CPPFLAGS +=-I../.. $(GTK_CFLAGS)
 
+%.o : %.cc
+	$(CXXCOMPILE) -c $< -o $@
+
 %.o : ../../%.cpp
 	$(CXXCOMPILE) -c $< -o $@
+

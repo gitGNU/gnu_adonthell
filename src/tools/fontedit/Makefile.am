@@ -2,9 +2,10 @@
 
 bin_PROGRAMS = fontedit
 
-fontedit_SOURCES = font_editor.cpp win_font_editor.cpp
+fontedit_SOURCES = font_editor.cpp win_font_editor.cpp \
+	win_font_editor.h
 
-fontedit_LDADD = pnm.o drawing_area.o image.o screen.o \
+fontedit_LDADD = pnm.o fileops.o drawing_area.o image.o screen.o \
 	prefs.o lex.prefs.o input.o \
 	win_label.o win_write.o win_query.o win_info.o \
 	win_container.o win_select.o win_file.o win_file_select.o\

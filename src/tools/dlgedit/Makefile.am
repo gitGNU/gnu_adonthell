@@ -1,10 +1,13 @@
 ## Process this file with automake to produce Makefile.in
 
+if HAVE_GTK
+bin_PROGRAMS = dlgedit
+endif
+
 SUBDIRS = examples
 
 EXTRA_DIST = loadlg.l ins_dlgedit_modules.py py_character.i py_quest.i
 
-bin_PROGRAMS = dlgedit
 
 dlgedit_SOURCES = callbacks.cc circle.cc crcle_callbacks.cc \
 crcle_interface.cc dbg_callbacks.cc dbg_interface.cc debug.cc \
@@ -36,8 +39,12 @@ py_%_wrap.cpp : py_%.i
 py_quest_wrap.cpp : py_quest.i
 	swig $(SWIGFLAGS) -python -shadow -c++ -make_default -o py_quest_wrap.cpp $<
  
+%.o : %.cc
+	$(CXXCOMPILE) -c $< -o $@
+
 %.o : ../../%.cpp
 	$(CXXCOMPILE) -c $< -o $@
 
 %.o : ../../%.cc
 	$(CXXCOMPILE) -c $< -o $@
+

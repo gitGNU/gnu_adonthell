@@ -6,7 +6,7 @@ endif
 
 bin_PROGRAMS = adonthell
 
-EXTRA_DIST = win_info.cpp win_file_select.cpp .indent.pro prefs.l win_query.cpp
+EXTRA_DIST = win_info.cpp win_file_select.cpp .indent.pro prefs.l win_query.cpp py_adonthell.i
 
 CPPFLAGS +=-DUSE_PYTHON -DUSE_MAP $(SDL_DEFS) $(OGG_DEFS) $(SDL_CFLAGS) $(OGG_CFLAGS) $(PY_CFLAGS)
 adonthell_LDADD = $(SDL_LIBS) $(OGG_LIBS) $(PY_LIBS)
@@ -21,7 +21,7 @@ screen.cpp storage.cpp win_background.cpp win_base.cpp win_border.cpp \
 win_container.cpp win_file.cpp win_font.cpp win_image.cpp win_label.cpp \
 win_manager.cpp win_scrollbar.cpp win_scrolled.cpp win_select.cpp win_theme.cpp \
 win_write.cpp yarg.cc \
-animation.h animation_off.h audio.h audio_loop.h callback.h py_callback.h \
+animation.h audio.h audio_loop.h callback.h py_callback.h \
 character_base.h character.h data.h data_screen.h dialog.h dialog_engine.h \
 drawing_area.h event.h fileops.h game.h gametime.h image.h input.h inventory.h \
 item.h landmap.h mapcharacter.h mapobject.h mapselect.h maptpl.h mapview.h \
