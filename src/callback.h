@@ -196,7 +196,7 @@ public:
 template <class RT,class Func>
 class FunctionTranslator0wRet:public Functor0wRet<RT>{
 public:
-	FunctionTranslator0wRet(Func f):Functor0wRet<RT>(thunk,0,(PFunc)f,0,0){}
+	FunctionTranslator0wRet(Func f):Functor0wRet<RT>(thunk,0,(FunctorBase::PFunc)f,0,0){}
 	static RT thunk(const FunctorBase &ftor)
 		{
 		return (Func(ftor.getFunc()))();
@@ -369,7 +369,7 @@ template <class P1,class RT,class Func>
 class FunctionTranslator1wRet:public Functor1wRet<P1,RT>{
 public:
 	FunctionTranslator1wRet(Func f):
-		Functor1wRet<P1,RT>(thunk,0,(PFunc)f,0,0){}
+		Functor1wRet<P1,RT>(thunk,0,(FunctorBase::PFunc)f,0,0){}
 	static RT thunk(const FunctorBase &ftor,P1 p1)
 		{
 		return (Func(ftor.getFunc()))(p1);
@@ -478,7 +478,7 @@ template <class P1,class P2,class RT,class Func>
 class FunctionTranslator2wRet:public Functor2wRet<P1,P2,RT>{
 public:
 	FunctionTranslator2wRet(Func f):
-		Functor2wRet<P1,P2,RT>(thunk,0,(PFunc)f,0,0){}
+		Functor2wRet<P1,P2,RT>(thunk,0,(FunctorBase::PFunc)f,0,0){}
 	static RT thunk(const FunctorBase &ftor,P1 p1,P2 p2)
 		{
 		return (Func(ftor.getFunc()))(p1,p2);
@@ -588,7 +588,7 @@ template <class P1,class P2,class P3,class RT,class Func>
 class FunctionTranslator3wRet:public Functor3wRet<P1,P2,P3,RT>{
 public:
 	FunctionTranslator3wRet(Func f):
-		Functor3wRet<P1,P2,P3,RT>(thunk,0,(PFunc)f,0,0){}
+		Functor3wRet<P1,P2,P3,RT>(thunk,0,(FunctorBase::PFunc)f,0,0){}
 	static RT thunk(const FunctorBase &ftor,P1 p1,P2 p2,P3 p3)
 		{
 		return (Func(ftor.getFunc()))(p1,p2,p3);

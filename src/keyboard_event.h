@@ -26,7 +26,6 @@
 #define KEYBOARD_EVENT_H
 
 #include "input_event.h"
-#include <string>
 
 /**
  * Represents a keyboard event, that is a key identifier

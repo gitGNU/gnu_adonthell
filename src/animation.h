@@ -30,6 +30,7 @@
 #include "image.h"
 #include <vector>
 
+using std::vector;
 
 /**
  * Handles images properties in an animation.

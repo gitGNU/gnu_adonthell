@@ -318,7 +318,6 @@ int main(int argc, char * argv[])
 
                 }
             }
-//                 }
 //                 for (mapsquare::iterator it = sq->begin ();
 //                      it != sq->end (); it++)
 //                 {

@@ -221,13 +221,16 @@ void map_moving::update_pos2()
                                                            py + l - it->y() + it->obj->current_state()->base.y())
                             .is_walkable()) continue;
 
-                        if (objz >= nzground) nzground = objz;
+                        if (objz > nzground) nzground = objz;
                         if (objz < z()) continue;
                         
-                        set_altitude(objz);
-                        Is_falling = false;
-                        set_vertical_velocity(0.0);
-                        break;
+                        if (vz() <= 0)
+                        {
+                            set_altitude(objz);
+                            Is_falling = false;
+                            set_vertical_velocity(0.0);
+                            break;
+                        }
                     }
                     
                 }
@@ -236,6 +239,7 @@ void map_moving::update_pos2()
                 for (u_int16 k = 0; k < nbx; k++)
                 {
                     mapsquare * msqr = Mymap.get(px + k, py + l);
+
                     for (mapsquare::iterator it = msqr->begin(); it != msqr->end(); ++it)
                     {
                         if (it->obj->current_state()->get(px + k - it->x() + it->obj->current_state()->base.x(),

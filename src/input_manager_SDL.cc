@@ -28,6 +28,8 @@
 #include <vector>
 #include "SDL.h"
 
+using std::vector;
+
 list <input_listener *> input_manager::listeners;
 
 /**

@@ -29,6 +29,8 @@
 #include <vector>
 #include "fileops.h"
 
+using std::vector;
+
 const int mapsquare_size = 40;
 
 /**

@@ -32,11 +32,7 @@
 #include <string>
 #include "types.h"
 
-
-#ifndef SWIG
-using namespace std; 
-#endif
-
+using std::string; 
 
 /**
  * Enumeration to know whether a file is read or write opened.

@@ -26,7 +26,6 @@
 #define MOUSE_EVENT_H
 
 #include "input_event.h"
-#include <string>
 
 /**
  * Represents a mouse event, that is a motion event,

@@ -32,7 +32,7 @@
 #include <string>
 #include "python_class.h"
 
-using namespace std; 
+using std::string;
 
 
 /**

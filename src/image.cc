@@ -26,7 +26,7 @@
 #include "pnm.h"
 
 
-using namespace std; 
+using std::string; 
 
 image::image () : surface ()
 {

@@ -15,6 +15,7 @@
 
 #include "landmap.h"
 #include <algorithm>
+#include <iostream>
 
 mapsquare_info::mapsquare_info (map_coordinates & pos)
  : map_coordinates (pos) 
@@ -261,8 +262,8 @@ void landmap::output_occupation()
             u_int16 nb = 0;
             for (mapsquare::iterator it = msqr->begin(); it != msqr->end(); it++)
                 nb++;
-            cout << nb << " ";
+            std::cout << nb << " ";
         }
-        cout << endl;
+        std::cout << std::endl;
     }
 }

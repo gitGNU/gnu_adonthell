@@ -29,9 +29,7 @@
 #include <vector>
 #include "mapsquare.h"
 
-#ifndef SWIG
-using namespace std; 
-#endif
+using std::vector; 
 
 class landmap; 
 

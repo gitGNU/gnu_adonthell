@@ -21,9 +21,7 @@
  
 
 
-#ifndef SWIG
-using namespace std; 
-#endif
+using std::string; 
 
 
 extern FILE* prefsin;

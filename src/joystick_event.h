@@ -26,7 +26,6 @@
 
 
 #include "input_event.h"
-#include <string>
 
 /**
  * Represents a joystick event, that is a button and

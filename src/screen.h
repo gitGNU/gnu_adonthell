@@ -28,9 +28,7 @@
 #include <string>
 
 
-#ifndef SWIG
-using namespace std; 
-#endif
+using std::string; 
 
 
 /** Screen access is made through this class.

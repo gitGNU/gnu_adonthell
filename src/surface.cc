@@ -23,8 +23,6 @@
 
 #include <iostream>
 
-using namespace std; 
-
 
 SDL_Rect surface::srcrect; 
 SDL_Rect surface::dstrect; 

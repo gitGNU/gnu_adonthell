@@ -35,7 +35,7 @@ string game::Global_data_dir;
 string game::Game_data_dir; 
 
 
-void game::init (string game_dir = "") 
+void game::init (string game_dir) 
 {
     Global_data_dir = DATA_DIR;
     User_data_dir = getenv ("HOME");

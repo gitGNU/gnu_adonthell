@@ -27,11 +27,6 @@
  
 #include "animation.h"
 
-
-using namespace std; 
-
-
-
 // animationframe class.
 
 

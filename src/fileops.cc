@@ -27,9 +27,8 @@
 #include <iostream>
 #include "fileops.h"
 
-
-using namespace std; 
-
+using std::cerr;
+using std::endl;
 
 gz_file::gz_file ()
 {

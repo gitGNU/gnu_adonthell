@@ -25,9 +25,12 @@
 #include "python_class.h"
 #include <iostream> 
 
+using std::cerr;
+using std::endl;
+
 PyObject * data::globals;
 
-using namespace std;
+using std::string;
 
 /*
  * Start Python

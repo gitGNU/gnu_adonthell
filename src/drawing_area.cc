@@ -23,10 +23,6 @@
 
 #include "drawing_area.h"
 
-
-using namespace std;
-
-
 drawing_area::drawing_area ()
 {
     move (0, 0);

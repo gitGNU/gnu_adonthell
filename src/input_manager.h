@@ -33,6 +33,8 @@
 #include "control_event.h"
 #include <list> 
 
+using std::list;
+
 /**
  * This class is responsible for handling all input events and
  * raise callback methods accordingly. It mainly handles a list

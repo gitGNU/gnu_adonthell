@@ -27,6 +27,9 @@
 #define INPUT_EVENT_H
 
 #include "types.h"
+#include <string>
+
+using std::string;
 
 /**
  * Base class for input events classes.

@@ -27,9 +27,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-using namespace std; 
 
- 
 void *pnm::get (SDL_RWops * file, u_int16 * length, u_int16 * height)
 {
     void *image;

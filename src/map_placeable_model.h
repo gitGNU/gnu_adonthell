@@ -30,6 +30,10 @@
 #include <map>
 #include <string>
 
+using std::map;
+using std::string;
+using std::pair;
+
 /**
  * Represents a placeable, i.e. something (character, object, ...)
  * that can be placed on a map and occupies some space on it.

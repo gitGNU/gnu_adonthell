@@ -38,10 +38,11 @@
 #include <string>
 #include "types.h"
 
-#ifndef SWIG
-using namespace std; 
-#endif
-
+using std::hash_map; 
+using std::map; 
+using std::vector;
+using std::string;
+using std::pair;
 
 /** 
  * Base storage class. If you want to access attributes of an object of yours
