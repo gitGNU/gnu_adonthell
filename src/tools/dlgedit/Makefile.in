@@ -97,8 +97,9 @@ CPPFLAGS =  -I../.. -DUSE_PYTHON -D_VERSION_=\"0.7\" $(PY_CFLAGS) `gtk-config --
 
 SWIGFLAGS = -D_DLGEDIT_ -D_DEBUG_
 
-dlgedit_LDADD = character.o data.o dialog.o event.o fileops.o lex.prefs.o prefs.o py_inc.o quest.o storage.o yarg.o character_base.o $(PY_LIBS) $(GTK_LIBS) -lm -lstdc++
+dlgedit_LDADD = character.o data.o dialog.o event.o fileops.o lex.prefs.o prefs.o py_inc.o quest.o storage.o yarg.o character_base.o $(PY_LIBS) -lm -lstdc++
 
+dlgedit_LDFLAGS = `gtk-config --libs`
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = ../../../header.h
 CONFIG_CLEAN_FILES = 
@@ -115,7 +116,6 @@ ps_callbacks.o ps_dlg.o ps_interface.o pset_callbacks.o \
 pset_interface.o run.o run_callbacks.o run_interface.o
 dlgedit_DEPENDENCIES =  character.o data.o dialog.o event.o fileops.o \
 lex.prefs.o prefs.o py_inc.o quest.o storage.o yarg.o character_base.o
-dlgedit_LDFLAGS = 
 CXXCOMPILE = $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
 CXXLD = $(CXX)
 CXXLINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(LDFLAGS) -o $@

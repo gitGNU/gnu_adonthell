@@ -25,8 +25,8 @@ SWIGFLAGS = -D_DLGEDIT_ -D_DEBUG_
 
 dlgedit_LDADD = character.o data.o dialog.o \
 event.o fileops.o lex.prefs.o prefs.o py_inc.o \
-quest.o storage.o yarg.o character_base.o $(PY_LIBS) $(GTK_LIBS) -lm -lstdc++
- 
+quest.o storage.o yarg.o character_base.o $(PY_LIBS) -lm -lstdc++
+dlgedit_LDFLAGS = `gtk-config --libs`
 
 lex.loadlg.cc: loadlg.l
 	flex -olex.loadlg.cc loadlg.l
