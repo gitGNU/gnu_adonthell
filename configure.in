@@ -281,6 +281,7 @@ AC_SUBST(gamedatadir)
 AC_OUTPUT([
 Makefile
 doc/Makefile
+doc/dlgedit/Makefile
 src/Makefile
 src/tools/Makefile
 src/tools/charedit/Makefile
