@@ -355,7 +355,7 @@ dialog_engine::dialog_engine (mapcharacter *c, game_engine *e) : engine (e)
 
     // Create window
     font = new win_font (game::theme);
-    border = new win_border (game::theme);
+    border = new win_border (game::theme,WIN_BORDER_MINI_SIZE);
     cursor = new win_cursor (game::theme);
     back = new win_background (game::theme);
     wnd = new win_container (40, 20, 240, 160);
@@ -399,7 +399,7 @@ dialog_engine::~dialog_engine ()
 
 void dialog_engine::run ()
 {
-    u_int32 i, h = 0;
+    u_int32 i, h = 10;
     win_label *l;
     
     // Possibly error
@@ -423,13 +423,13 @@ void dialog_engine::run ()
     
     for (i = 0; i < dlg->text_size; i++)
     {
-        l = txt->add_label (0, h, 155, h+font->height, font);
+        l = txt->add_label (10, h, 120, h+font->height, font);
         l->set_auto_height (true);
         l->set_text (dlg->text[i]);
         sel->add (l, WIN_SELECT_MODE_BORDER);  
         cur_answers.push_back (l);
 
-        h += l->height;
+        h += l->height+10;
     }
 
     if (dlg->text_size == 1) sel->set_default_obj (cur_answers.front ());
@@ -468,7 +468,7 @@ void dialog_engine::update_keyboard ()
         if (input::has_been_pushed (SDLK_UP))
         {
             if (sel->get_pos () == 2) sel->set_default_obj (cur_answers.back ());
-            else sel->preview ();
+            else sel->previous ();
         }
         if (input::has_been_pushed (SDLK_DOWN))
         {

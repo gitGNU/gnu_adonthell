@@ -372,6 +372,7 @@ void win_select::remove(win_image * tmp)
 void win_select::set_default_obj(void * tmp)
 {
   list<Type_win_select>::iterator i=l_list.begin();
+  ite_list->unselect();
   while(i!=l_list.end() && tmp!=i->get()) i++;
   if(i!=l_list.end()) ite_list=i;
   ite_list->select();
@@ -411,7 +412,7 @@ void * win_select::next()
 
 
 //get next object
-void * win_select::preview()
+void * win_select::previous()
 {
   ite_list->unselect();
   if(ite_list!=l_list.begin())

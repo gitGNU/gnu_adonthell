@@ -114,8 +114,8 @@ class win_select
   //change position to next object and return this pointer 
   void * next();
   
-  //change position to preview object and return this pointer 
-  void * preview();
+  //change position to previous object and return this pointer 
+  void * previous();
   
   //get pointer of the cur object 
   void * get();

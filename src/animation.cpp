@@ -344,6 +344,7 @@ void animation::info_window(char * t_label)
   while(input::get_next_key()<0);
   delete querycont;
   delete queryback;
+  delete queryborder;
   input::clear_keys_queue();
 }
 
@@ -372,6 +373,7 @@ char * animation::query_window(char * t_label)
       {
 	delete querycont;
 	delete queryback;
+	delete queryborder;
 	s=NULL;
 	return(s);
       }
@@ -385,6 +387,7 @@ char * animation::query_window(char * t_label)
   s=strdup(querywrite->get_text());
   delete querycont;
   delete queryback;
+  delete queryborder;
   cout << "Returning:" << s << endl;
   return(s);
 }

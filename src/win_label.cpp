@@ -246,30 +246,26 @@ win_label::init_draw ()
             win_base::resize (length, tmp_y);
         }
     }
-    //now resize drawing surface
-#warning no resize needed must change it (jol)
-    tmp_draw->resize (length, height);
-    draw_text (cur_text_pos);
+  tmp_draw->resize(length,height);  
+  draw_text(cur_text_pos);
 }
 
-
-void
-win_label::draw_text (u_int16 i)
+void win_label::draw_text(u_int16 i)
 {
-    u_int16 tmp_y = 0;
-    u_int16 use_space = 0 + x_pad_l;
-    u_int16 word_space = 0;
-    u_int16 begin_word = 0;
-    u_int16 tmp_pos, tmp_pos2;
-
-    for (u_int16 k = 0; k < height; k++)
-        for (u_int16 j = 0; j < length; j++)
-            tmp_draw->put_pix (j, k, screen::trans);
-#warning Alex FIXME
-    //  tmp_draw->putbox(0,0);
-#warning end problem
-
-    while (i < size_texte && texte[i] != '\0' && tmp_y < height)
+  u_int16 tmp_y=0;
+  u_int16 use_space=0+x_pad_l;
+  u_int16 word_space=0;
+  u_int16 begin_word=0;
+  u_int16 tmp_pos,tmp_pos2;
+ 
+  for(u_int16 k=0;k<height;k++)
+    for(u_int16 j=0;j<length;j++)
+      tmp_draw->put_pix(j,k,screen::trans);
+  /*#warning Alex FIXME 
+  tmp_draw->putbox(0,0);
+  #warning end problem  */
+  
+  while(i<size_texte && texte[i]!='\0' && tmp_y<height)
     {
         begin_word = i;
         tmp_pos = begin_word;
