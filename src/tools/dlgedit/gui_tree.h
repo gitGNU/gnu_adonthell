@@ -1,7 +1,7 @@
 /*
    $Id$
 
-   Copyright (C) 2002 Kai Sterker <kaisterker@linuxgames.com>
+   Copyright (C) 2002/2003 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -40,6 +40,18 @@ class GuiTree
 {
 public:
     /**
+     * Speaking names for node icons,
+     */    
+    enum {
+        BUBBLE          = 0,
+        BUBBLE_SEL      = 1,
+        BUBBLE_MOD      = 2,
+        BUBBLE_SEL_MOD  = 3,
+        PROJECT         = 4, 
+        MAX_ICONS       = 5
+    };
+    
+    /**
      * Constructor. Creates the tree widget and adds it to the
      * given pane.
      * @param paned The GtkPaned that will hold the tree widget. 
@@ -58,12 +70,49 @@ public:
      *
      * @param module A module whose structure should be displayed.
      */
-    void display (DlgModule *module);
+    void addModule (DlgModule *module);
+    /**
+     * Refresh the given module. This will remove the module sub-tree
+     * and generate it anew. To be called after reverting to saved.
+     *
+     * @param module The module to refresh.
+     */
+    void updateModule (DlgModule *module);
+    /**
+     * Attach the given module to a new project. To be called after 
+     * changine the project the module belongs to.
+     *
+     * @param module The module to move to new project.
+     */
+    void updateProject (DlgModule *module);
+    /**
+     * Remove a module sub-tree. To be called when a module is closed
+     * or a sub-module is deleted.
+     *
+     * @param The module to remove.
+     */
+    void removeModule (DlgModule *module);
+    
+    /**
+     * Add available projects to the tree.
+     */
+    void addProjects ();
     
     /**
      * Empty the widget.
      */
     void clear ();
+    
+    /**
+     * Update the state (saved/modified) of the module's icon.
+     * @param module Module whose state (and icon) to update
+     */
+    void setChanged (DlgModule *module);
+    /**
+     * Update the name of the given module.
+     * @param module Module whose name should be updated.
+     */
+    void setName (DlgModule *module);
     
     /**
      * Insert a module into the tree, as child of the given parent.
@@ -95,13 +144,38 @@ private:
     /**
      * Insert a module into the tree, as child of the given parent.
      * @param parent The parent of the module to add.
+     * @param sibling The sibling after which module should be added.
      * @param module The module to add.
      * @return The node that has been added.
      */
-    GtkCTreeNode *insert (GtkCTreeNode *parent, DlgModule *module);
+    GtkCTreeNode *insert (GtkCTreeNode *parent, GtkCTreeNode *sibling, DlgModule *module);
+    /**
+     * Set the icon of the given node to the appropriate state.
+     * @param node Node whose icon to change.
+     * @param select Whether to use the selected or normal icon.
+     * @param changed Whether the given node is saved or modified.
+     */
+    void setIcon (GtkCTreeNode *node, bool select, bool changed);
+    /**
+     * Find the node associated with the given module.
+     * @param module DlgModule whose node to retrieve.
+     * @return Node associated with the module, or NULL if it isn't found.
+     */
+    GtkCTreeNode *locate (DlgModule *module);
+    /**
+     * Find the node associated with the given project. If no such node
+     * exists, it will be created.
+     * @param project Name of the project
+     * @return Node associated with project
+     */
+    GtkCTreeNode *locateProject (const std::string &project);
     
     GtkWidget *tree;        // The actual GTK+ tree widget
     GtkCTreeNode *selected; // The node currently 'selected'
+    
+    // Icons to display next to tree nodes
+    GdkPixmap *icon[MAX_ICONS];
+    GdkBitmap *mask[MAX_ICONS];
 };
 
 #endif // GUI_TREE_H

@@ -1,7 +1,7 @@
 /*
    $Id$ 
 
-   Copyright (C) 2002 Kai Sterker <kaisterker@linuxgames.com>
+   Copyright (C) 2002/2003 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -21,10 +21,8 @@
 
 #include <gtk/gtk.h>
 #include <sys/stat.h>
-#include <dirent.h>
-#include <iostream>
+#include <vector>
 #include "cfg_data.h"
-#include "dlg_cmdline.h"
 #include "gui_file.h"
 #include "gui_dlgedit.h"
 #include "gui_settings.h"
@@ -299,8 +297,7 @@ void GuiSettings::display (DlgModuleEntry * e, const std::string & name)
 
         // display the contents of the module
         setProject (entry->project ());
-        setDescription (entry->description());
-        
+        setDescription (entry->description());        
     }
 
     // set the title
@@ -316,8 +313,14 @@ void GuiSettings::applyChanges ()
 {
     // project
     std::string project = getProject ();
-    if (project != "none" && !entry->setProject (project))
-        std::cout << "Loading quests/characters failed!\n";
+    
+    // if project changed, update tree
+    if (project != entry->project ())
+    {
+        if (!entry->setProject (project))
+           std::cout << "Loading quests/characters failed!\n";
+        GuiDlgedit::window->updateProject ();
+    }
 
     // description
     entry->setDescription (getDescription ());
@@ -365,21 +368,17 @@ void GuiSettings::setProject (const std::string & label)
         l = g_list_next (l);
     }
 
-    if (label != "")
-    {
-        // that project is not available yet, so add it
-        GtkWidget *menuitem = gtk_menu_item_new_with_label (label.c_str ());
-        gtk_object_set_user_data (GTK_OBJECT (menuitem), (void *) strdup (label.c_str ()));
-        gtk_signal_connect (GTK_OBJECT (menuitem), "activate", GTK_SIGNAL_FUNC (on_project_changed), (gpointer) this);
-        gtk_widget_show (menuitem);
+    // that project is not available yet, so add it
+    GtkWidget *menuitem = gtk_menu_item_new_with_label (label.c_str ());
+    gtk_object_set_user_data (GTK_OBJECT (menuitem), (void *) strdup (label.c_str ()));
+    gtk_signal_connect (GTK_OBJECT (menuitem), "activate", GTK_SIGNAL_FUNC (on_project_changed), (gpointer) this);
+    gtk_widget_show (menuitem);
 
-        gtk_menu_insert (GTK_MENU (m), menuitem, 0);
-        gtk_option_menu_set_history (GTK_OPTION_MENU (project), 0);
+    gtk_menu_insert (GTK_MENU (m), menuitem, 0);
+    gtk_option_menu_set_history (GTK_OPTION_MENU (project), 0);
 
-        // update base directory
-        setBasedir (label);
-    }
-    else setProject ("none");
+    // update base directory
+    setBasedir (label);
 }
 
 // set the module's description
@@ -429,49 +428,20 @@ std::string GuiSettings::getBasedir ()
 // add available projects to list
 void GuiSettings::populateProjects (GtkWidget *menu)
 {
-    struct dirent * d;
-    struct stat statbuf;
     GtkWidget *menuitem;
-    DIR * mydir = opendir (DlgCmdline::datadir.c_str());
-    std::string name, filename, path = DlgCmdline::datadir + "/";
-
-    // project 'none'
-    menuitem = gtk_menu_item_new_with_label ("none");
-    gtk_object_set_user_data (GTK_OBJECT (menuitem), (void *) "none");
-    gtk_signal_connect (GTK_OBJECT (menuitem), "activate", GTK_SIGNAL_FUNC (on_project_changed), (gpointer) this);
-    gtk_widget_show (menuitem);
-    gtk_menu_append (GTK_MENU (menu), menuitem);
-
-    // no such directory
-    if (!mydir) return;
+    std::vector<std::string> projects = CfgData::data->projectsFromDatadir ();
+    std::vector<std::string>::iterator i;
     
-    // get all directories inside
-    while ((d = readdir (mydir)) != NULL)
+    for (i = projects.begin (); i != projects.end (); i++)
     {
-        name = d->d_name;
-        filename = path + name;
+        menuitem = gtk_menu_item_new_with_label ((*i).c_str ());
+        gtk_object_set_user_data (GTK_OBJECT (menuitem), (void *) strdup ((*i).c_str ()));
+        gtk_signal_connect (GTK_OBJECT (menuitem), "activate", GTK_SIGNAL_FUNC (on_project_changed), (gpointer) this);
+        gtk_widget_show (menuitem);
 
-        // ignore '.' and '..' directories
-        if (name != "." && name != "..")
-        {
-            stat (filename.c_str (), &statbuf);
-            
-            // fill list with valid entries
-            if (S_ISDIR (statbuf.st_mode))
-            {
-                menuitem = gtk_menu_item_new_with_label (name.c_str ());
-                gtk_object_set_user_data (GTK_OBJECT (menuitem), (void *) strdup (name.c_str ()));
-                gtk_signal_connect (GTK_OBJECT (menuitem), "activate", GTK_SIGNAL_FUNC (on_project_changed), (gpointer) this);
-                gtk_widget_show (menuitem);
-
-                gtk_menu_append (GTK_MENU (menu), menuitem);
-            }
-        }
+        gtk_menu_append (GTK_MENU (menu), menuitem);
     }
 
     // finally append menu to drop-down list
     gtk_option_menu_set_menu (GTK_OPTION_MENU (project), menu);
-
-    // cleanup
-    closedir (mydir);
 }

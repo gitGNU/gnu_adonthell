@@ -55,7 +55,7 @@ public:
      * be discarded.
      * @param file full path/name of the file to add.
      */
-    void addFile (std::string & file);
+    void addFile (const std::string & file);
     /**
      * Get the list of files, sorted alphabetically.
      * @return list of previously opened files.
@@ -72,8 +72,14 @@ public:
      * specific data. The number of projects isn't limited.
      * @param project name of the project to add.
      */
-    void addProject (std::string & project);
-
+    void addProject (const std::string & project);
+    /**
+     * Return the names of all projects in the current data directory.
+     * This list also includes the default project 'none', so it is
+     * non-empty even if the data directory contains no projects yet.
+     */
+    std::vector<std::string> projectsFromDatadir ();
+    
     /**
      * Assign a (new) base directory to the given project. If no
      * such project exists yet, it will be created.

@@ -1,7 +1,7 @@
 /*
    $Id$
 
-   Copyright (C) 2002 Kai Sterker <kaisterker@linuxgames.com>
+   Copyright (C) 2002/2003 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -44,6 +44,11 @@ public:
      */
     DlgModule (std::string p, std::string n, std::string u, std::string d);
 
+    /**
+     * Delete a subdialogue.
+     */
+    ~DlgModule ();
+    
     /**
      * Reset the dialogue to its state after construction. Deletes all
      * nodes and clears the DlgModuleEntry.
@@ -312,7 +317,7 @@ public:
      * Mark this dialogue as changed.
      * @param c Set to \b true to mark the dialogue as changed.
      */
-    void setChanged (bool c = true)     { changed_ = c; }
+    void setChanged (bool c = true);
     
     /**
      * Retrieve the parent dialogue of this module. If the module is

@@ -31,7 +31,7 @@ bool DlgCmdline::compile = false;
 std::string DlgCmdline::datadir = DATA_DIR"/games";
 
 // the default project
-std::string DlgCmdline::project = "";
+std::string DlgCmdline::project = "none";
 
 // index of the first dialgoue source in argv[]
 int DlgCmdline::sources;

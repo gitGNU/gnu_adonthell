@@ -36,6 +36,7 @@ GuiGraph::GuiGraph (GtkWidget *paned)
     module = NULL;
     offset = NULL;
     surface = NULL;
+    tooltip = NULL;
     scrolling = false;
     
     // create drawing area for the graph

@@ -1,7 +1,7 @@
 /*
    $Id$
 
-   Copyright (C) 2002 Kai Sterker <kaisterker@linuxgames.com>
+   Copyright (C) 2002/2003 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -100,7 +100,7 @@ public:
      * Load a (top level) dialogue from a file
      * @param file Filename (and path) of the dialogue to load.
      */
-    void loadDialogue (std::string file);
+    void loadDialogue (const std::string &file);
     /**
      * Load a sub-dialogue from a file. Sub-dialogues are not
      * directly available for editing; instead they become part
@@ -108,12 +108,12 @@ public:
      * @param file Filename (and path) of the dialogue to load.
      * @return the sub-dialogue, or \b NULL if loading failed.
      */
-    DlgModule* loadSubdialogue (std::string file);
+    DlgModule* loadSubdialogue (const std::string &file);
     /**
      * Save a dialogue to file
      * @param file Filename (and path) of the dialogue to load.
      */
-    void saveDialogue (std::string file);
+    void saveDialogue (const std::string &file);
     /**
      * Reload dialogue from disk if possible. This discards all
      * changes since the last save.
@@ -138,7 +138,7 @@ public:
      * @param file path of the dialogue
      * @return <b>true</b> if the dialogue is valid, <b>false</b> otherwise.
      */
-    static bool checkDialogue (std::string file);
+    static bool checkDialogue (const std::string &file);
     /**
      * Edit the custom code of the current module.
      */
@@ -152,12 +152,19 @@ public:
      * @param catalogue full path to a gnu gettext compliant binary catalogue
      *        (.mo) file
      */
-    void previewTranslation (std::string catalogue);
+    void previewTranslation (const std::string &catalogue);
     /**
      * stop translation preview
      */
     void exitPreview ();
-    
+    /**
+     * Indicate that the active dialogue has been changed by the user
+     */
+    void setChanged (); 
+    /**
+     * Indicate that the acive dialogue has been assigned to a new project.
+     */
+    void updateProject ();
     /**
      * Get the directory where the last fileselection took place.
      * @return Path to the directory last opened.

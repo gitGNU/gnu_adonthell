@@ -340,6 +340,8 @@ GuiDlgedit::GuiDlgedit ()
     // Accelerators
     gtk_window_add_accel_group (GTK_WINDOW (wnd), accel_group);
 
+    gtk_widget_realize (wnd);
+    
     // Tree
     tree_ = new GuiTree (hpaned);
     
@@ -422,10 +424,10 @@ void GuiDlgedit::newDialogue ()
 }
 
 // load a new dialogue
-void GuiDlgedit::loadDialogue (std::string file)
+void GuiDlgedit::loadDialogue (const std::string &f)
 {
     // make sure that file has an absolute path
-    if (file[0] != '/') file = directory_ + std::string ("/") + file;
+    std::string file = (f[0] == '/' ? f : directory_ + std::string ("/") + f);
     
     // test if we have a valid dialogue
     if (!checkDialogue (file))
@@ -465,13 +467,13 @@ void GuiDlgedit::loadDialogue (std::string file)
         CfgData::data->addFile (file);
         initRecentFiles ();
 
-        message->display (200);      
+        message->display (200);     
         showDialogue (module, true);
     }
 }
 
 // load a sub-dialogue
-DlgModule* GuiDlgedit::loadSubdialogue (std::string file)
+DlgModule* GuiDlgedit::loadSubdialogue (const std::string &file)
 {
     // test if we have a valid dialogue
     if (!checkDialogue (file)) return NULL;
@@ -531,12 +533,12 @@ void GuiDlgedit::revertDialogue ()
     
     // redisplay
     graph_->detachModule ();
-    tree_->display (module);
+    tree_->updateModule (module);
     graph_->attachModule (module);
 }
 
 // save a dialogue
-void GuiDlgedit::saveDialogue (std::string file)
+void GuiDlgedit::saveDialogue (const std::string &file)
 {
     DlgModule *module = graph_->dialogue ();
     if (module == NULL) return;
@@ -566,7 +568,7 @@ void GuiDlgedit::saveDialogue (std::string file)
         gtk_widget_set_sensitive (menuItem[REVERT], TRUE);
              
         // update the dialogue's name in case it has changed
-        initTitle ();
+        tree_->setName (module);
         initMenu ();
     }  
 }
@@ -586,9 +588,6 @@ void GuiDlgedit::closeDialogue ()
     // detach module
     graph_->detachModule ();
     
-    // clear the module structure
-    tree_->clear ();
-
     // if another dialogue is open, display that one
     if (dialogues_.size () > 0) showDialogue (dialogues_.front ());
     // otherwise just clear the GUI
@@ -614,7 +613,7 @@ void GuiDlgedit::showDialogue (DlgModule *module, bool center)
     // NOTE that this method does some magic: it will select and attach
     // the sub-dialogue of 'module' that has been viewed before. In that
     // case, 'module' must not be attached, as it is the toplevel dialogue.
-    tree_->display (module);
+    tree_->addModule (module);
     
     // attach the dialogue to the view
     // In case of a newly created or (re)loaded 'module', none of it's
@@ -670,6 +669,7 @@ void GuiDlgedit::settings ()
         GuiSettings::dialog = new GuiSettings ();
     
     // otherwise just show it
+    std::string project = module->entry ()->project ();
     GuiSettings::dialog->display (module->entry (), module->shortName ());
 }
 
@@ -688,7 +688,7 @@ void GuiDlgedit::customCode ()
 }
 
 // preview the translated dialogue
-void GuiDlgedit::previewTranslation (std::string catalogue)
+void GuiDlgedit::previewTranslation (const std::string &catalogue)
 {
     DlgModule *module = graph_->dialogue ();
     if (module == NULL) return;
@@ -798,7 +798,22 @@ void GuiDlgedit::exitPreview ()
     message->clear ();
 }
 
-bool GuiDlgedit::checkDialogue (std::string file)
+void GuiDlgedit::setChanged ()
+{
+    // update tree
+    tree_->setChanged (graph_->dialogue ());
+    
+    // update title bar
+    initTitle ();
+}
+
+void GuiDlgedit::updateProject ()
+{
+    // update tree
+    tree_->updateProject (graph_->dialogue ());
+}
+
+bool GuiDlgedit::checkDialogue (const std::string &file)
 {
     // first, open the file
     FILE *test = fopen (file.c_str (), "rb");
@@ -857,9 +872,14 @@ void GuiDlgedit::initTitle ()
     DlgModule *module = graph_->dialogue ();
   
     if (module != NULL)
-        title = g_strjoin (NULL, title, " - [", 
+    {
+        if (module->changed ())
+            title = g_strjoin (NULL, title, " - [", 
+                module->shortName ().c_str (), " (modified)]", NULL);
+        else
+            title = g_strjoin (NULL, title, " - [", 
                 module->shortName ().c_str (), "]", NULL);
-
+    }
     gtk_window_set_title (GTK_WINDOW (wnd), title);
 }
 

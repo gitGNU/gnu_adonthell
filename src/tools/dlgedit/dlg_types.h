@@ -72,7 +72,7 @@ enum
     GC_RED          = 4,
     GC_DARK_GREEN   = 5,
     GC_GREEN        = 6,
-    GC_BRIGHT_GREEN = 7,
+    GC_ORANGE       = 7,
     GC_DARK_BLUE    = 8,
     GC_BLUE         = 9,
     MAX_GC          = 10

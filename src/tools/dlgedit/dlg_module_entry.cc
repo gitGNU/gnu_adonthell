@@ -35,7 +35,7 @@ DlgModuleEntry::DlgModuleEntry ()
 // initialize the DlgModuleEntry to sane state
 void DlgModuleEntry::init ()
 {
-    project_ = "";
+    project_ = "none";
     imports_ = "";
     ctor_ = "";
     dtor_ = "";
@@ -68,8 +68,11 @@ bool DlgModuleEntry::setProject (std::string p)
         characters.clear ();
         quests.clear ();
         
-        retval &= loadCharacters ();
-        retval &= loadQuests ();
+        if (p != "none")
+        {
+            retval &= loadCharacters ();
+            retval &= loadQuests ();
+        }
     }
     
     return retval;

@@ -21,7 +21,10 @@
 
 #include <stdio.h>
 #include <algorithm>
+#include <sys/stat.h>
+#include <dirent.h>
 #include "cfg_data.h"
+#include "dlg_cmdline.h"
 
 /**
  * Global access to the dlgedit configuration
@@ -46,7 +49,7 @@ CfgData::~CfgData ()
 }
 
 // add entry to list of recently opened files
-void CfgData::addFile (std::string &file)
+void CfgData::addFile (const std::string &file)
 {
     // check whether the file already exists
     std::deque<std::string>::iterator i = find (Files.begin (), Files.end (), file);
@@ -89,7 +92,7 @@ void CfgData::removeFile (const std::string & file)
 }
 
 // add entry to list of projects
-void CfgData::addProject (std::string &project)
+void CfgData::addProject (const std::string &project)
 {
     std::vector<CfgProject*>::iterator i;
     
@@ -141,6 +144,44 @@ void CfgData::setBasedir (const std::string & project, const std::string & based
     CfgProject *p = new CfgProject (project);
     p->setBasedir (basedir);
     Projects.push_back (p);
+}
+
+// return list of projects available in given data directory
+std::vector<std::string> CfgData::projectsFromDatadir ()
+{
+    struct dirent * d;
+    struct stat statbuf;
+    DIR *mydir = opendir (DlgCmdline::datadir.c_str());
+    std::string name, filename, path = DlgCmdline::datadir + "/";
+    std::vector<std::string> projects;
+    
+    // default project
+    projects.push_back (string ("none"));
+    
+    // no such directory
+    if (!mydir) return projects;
+    
+    // get all directories inside
+    while ((d = readdir (mydir)) != NULL)
+    {
+        name = d->d_name;
+        filename = path + name;
+
+        // ignore '.' and '..' directories
+        if (name != "." && name != "..")
+        {
+            stat (filename.c_str (), &statbuf);
+            
+            // fill vector with valid entries
+            if (S_ISDIR (statbuf.st_mode))
+                projects.push_back (name);
+        }
+    }
+    
+    // cleanup
+    closedir (mydir);
+    
+    return projects;        
 }
 
 // save configuration data

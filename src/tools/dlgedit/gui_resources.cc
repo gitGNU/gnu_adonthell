@@ -59,15 +59,15 @@ void GuiResources::init (GtkWidget *widget)
     gdk_colormap_alloc_color (colormap, &c, TRUE, TRUE);
     gdk_gc_set_foreground (Color[GC_WHITE], &c);
 
-    // Grey
+    // Grey (for NPC node background)
     Color[GC_GREY] = gdk_gc_new (window);
-    c.red   = 50000;
-    c.green = 50000;
-    c.blue  = 50000;
+    c.red   = 55000;
+    c.green = 55000;
+    c.blue  = 55000;
     gdk_colormap_alloc_color (colormap, &c, TRUE, TRUE);
     gdk_gc_set_foreground (Color[GC_GREY], &c);
 
-    // Dark Red
+    // Dark Red (for selected nodes)
     Color[GC_DARK_RED] = gdk_gc_new (window);
     c.red   = 65535;
     c.green = 0;
@@ -83,15 +83,15 @@ void GuiResources::init (GtkWidget *widget)
     gdk_colormap_alloc_color (colormap, &c, TRUE, TRUE);
     gdk_gc_set_foreground (Color[GC_RED], &c);
 
-    // Green
+    // Green (for narrator node background)
     Color[GC_GREEN] = gdk_gc_new (window);
-    c.red   = 39680;
+    c.red   = 51117;
     c.green = 65355;
-    c.blue  = 45900;
+    c.blue  = 48496;
     gdk_colormap_alloc_color (colormap, &c, TRUE, TRUE);
     gdk_gc_set_foreground (Color[GC_GREEN], &c);
 
-    // Dark Green
+    // Dark Green (for narrator nodes)
     Color[GC_DARK_GREEN] = gdk_gc_new (window);
     c.red   = 0;
     c.green = 27300;
@@ -99,15 +99,15 @@ void GuiResources::init (GtkWidget *widget)
     gdk_colormap_alloc_color (colormap, &c, TRUE, TRUE);
     gdk_gc_set_foreground (Color[GC_DARK_GREEN], &c);
 
-    // Bright Green
-    Color[GC_BRIGHT_GREEN] = gdk_gc_new (window);
-    c.red   =     0;
-    c.green = 47616;
-    c.blue  =  1536;
+    // Orange (for highlighting nodes)
+    Color[GC_ORANGE] = gdk_gc_new (window);
+    c.red   = 62258;
+    c.green = 43253;
+    c.blue  = 9175;
     gdk_colormap_alloc_color (colormap, &c, TRUE, TRUE);
-    gdk_gc_set_foreground (Color[GC_BRIGHT_GREEN], &c);
+    gdk_gc_set_foreground (Color[GC_ORANGE], &c);
 
-    // Dark Blue
+    // Dark Blue (for player nodes)
     Color[GC_DARK_BLUE] = gdk_gc_new (window);
     c.red   = 0;
     c.green = 0;
@@ -115,10 +115,10 @@ void GuiResources::init (GtkWidget *widget)
     gdk_colormap_alloc_color (colormap, &c, TRUE, TRUE);
     gdk_gc_set_foreground (Color[GC_DARK_BLUE], &c);
 
-    // Blue - like the sky
+    // Blue - like the sky (for player node background)
     Color[GC_BLUE] = gdk_gc_new (window);
-    c.red   = 32768;
-    c.green = 58112;
+    c.red   = 48496;
+    c.green = 50461;
     c.blue  = 65535;
     gdk_colormap_alloc_color (colormap, &c, TRUE, TRUE);
     gdk_gc_set_foreground (Color[GC_BLUE], &c);
@@ -150,13 +150,13 @@ GdkGC *GuiResources::getColor (mode_type mode, node_type type)
         // selected
         case NODE_SELECTED:
         {
-	    return Color[GC_DARK_RED];
+            return Color[GC_DARK_RED];
         }
 
         // highlighted
         case NODE_HILIGHTED:
         {
-            return Color[GC_BRIGHT_GREEN];
+            return Color[GC_ORANGE];
         }
 
         // unknown
@@ -174,14 +174,14 @@ GdkGC *GuiResources::getFill (mode_type mode, node_type type)
     switch (type)
     {
         case PLAYER:
-	    return Color[GC_BLUE];
+            return Color[GC_BLUE];
         case NPC:
-	    return Color[GC_GREY];
+            return Color[GC_GREY];
         case NARRATOR:
-	    return Color[GC_GREEN];
+            return Color[GC_GREEN];
         // unknown
         default:
-            return Color[GC_BLACK];
+            return Color[GC_WHITE];
     }
 
     return (GdkGC *) NULL;

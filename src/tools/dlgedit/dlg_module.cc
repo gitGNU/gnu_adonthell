@@ -37,6 +37,12 @@ DlgModule::DlgModule (std::string p, std::string n, std::string u, std::string d
     init ();
 }
 
+// dtor
+DlgModule::~DlgModule ()
+{
+    GuiDlgedit::window->tree ()->removeModule (this);
+}
+
 // initialize a newly constructed DlgModule
 void DlgModule::init ()
 {
@@ -245,6 +251,18 @@ DlgNode* DlgModule::deselectNode ()
     
     // return the node for drawing
     return retval;
+}
+
+// indicate that this module has been modified by the user
+void DlgModule::setChanged (bool changed)
+{
+     if (changed_ != changed)
+     {
+         changed_ = changed;
+
+         // updated view
+         GuiDlgedit::window->setChanged ();
+     }
 }
 
 // draw the module
@@ -474,7 +492,11 @@ bool DlgModule::save (std::string &path, std::string &name)
 {
     // update path and name
     path_ = path + "/";
-    name_ = name;
+    if (name_ != name)
+    {
+        name_ = name;
+        changed_ = true;
+    }
     
     // open file
     std::ofstream out (fullName ().c_str ());
@@ -485,7 +507,7 @@ bool DlgModule::save (std::string &path, std::string &name)
     // Write Header: Adonthell Dialogue System file version 2
     out << "# Dlgedit File Format 2\n#\n"
         << "# Produced by Adonthell Dlgedit v" << _VERSION_ << "\n"
-        << "# (C) 2000/2001/2002 Kai Sterker\n#\n"
+        << "# (C) 2000/2001/2002/2003 The Adonthell Team & Kai Sterker\n#\n"
         << "# $I" << "d$\n\n"
         << "Note §" << entry_.description () << "§\n\n";
 
@@ -493,7 +515,7 @@ bool DlgModule::save (std::string &path, std::string &name)
     out << "Id " << serial_ << "\n";
     
     // Save settings and stuff
-    if (entry_.project () != "")
+    if (entry_.project () != "none")
         out << "Proj §" << entry_.project () << "§\n";
     
     if (entry_.imports () != "")
@@ -519,9 +541,9 @@ bool DlgModule::save (std::string &path, std::string &name)
             (*i)->save (out);
 
     // mark dialogue as unchanged
-    changed_ = false;
+    setChanged (false);
     
-    return true;    
+    return true;
 }
 
 // save a sub-module
