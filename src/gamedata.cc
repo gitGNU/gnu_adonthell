@@ -108,22 +108,13 @@ bool gamedata::load_characters (u_int32 pos)
         return false;
     
     // load characters     
-
     char ctemp;
 
-    PyObject * chars = PyDict_GetItemString (data::globals, "characters"); 
-    
     while (ctemp << in) 
     {
         mynpc = new character;
         mynpc->character_base::get_state (in);
  
-        // Pass character over to Python interpreter
-        PyObject *charref = python::pass_instance (mynpc, "character"); 
-        PyDict_SetItemString (chars, (char *) mynpc->get_name().c_str (),
-                              charref);
-        Py_DECREF (charref);
-        
         // Make this character available to the engine
         data::characters[mynpc->get_name ().c_str ()] = mynpc;
     }
@@ -139,9 +130,6 @@ bool gamedata::load_quests (u_int32 pos)
     string filepath;
     quest *myquest;
     
-    // retrieve quest array
-    PyObject *quests = PyDict_GetItemString (data::globals, "quests");
-
     // try to open quest.data
     filepath = saves[pos]->directory ();
     filepath += "/quest.data"; 
@@ -162,13 +150,7 @@ bool gamedata::load_quests (u_int32 pos)
     {
         myquest = new quest;
         myquest->load (in);
-        
-        // Pass quest over to Python interpreter
-        PyObject *questref = python::pass_instance (myquest, "quest"); 
-        PyDict_SetItemString (quests, (char *) myquest->name.c_str (),
-                              questref);
-        Py_DECREF (questref); 
-        
+
         // Make this quest available to the engine
         data::quests[myquest->name.c_str ()] = myquest;
     }
@@ -482,17 +464,6 @@ void gamedata::unload ()
     // Add the player to the game objects
     data::characters[data::the_player->get_name().c_str ()] = data::the_player; 
     
-    // retrieve character array
-    PyObject * chars = PyDict_GetItemString (data::globals, "characters");
-
-    // Make the player available to Python
-    PyObject *the_player = python::pass_instance (data::the_player, "character"); 
-    PyDict_SetItemString (data::globals, "the_player", the_player);
-    
-    PyDict_SetItemString (chars, (char *) data::the_player->get_name().c_str (),
-                          the_player);
-    Py_DECREF (the_player); 
-
     // delete all quests
     dictionary <quest *>::iterator itq;
     for (itq = data::quests.begin (); itq != data::quests.end (); itq++) 

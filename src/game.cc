@@ -157,30 +157,11 @@ void game::init_data ()
     PyDict_SetItemString (data::globals, "map_engine", map_engine);
     Py_DECREF (map_engine); 
 
-    PyObject *chars = PyDict_New ();
-    PyDict_SetItemString (data::globals, "characters", chars);
-    Py_DECREF (chars); 
-
-    PyObject *quests = PyDict_New ();
-    PyDict_SetItemString (data::globals, "quests", quests);
-    Py_DECREF (quests); 
-
     data::the_player = new character;
     data::the_player->set_name ("Player");
     
     // Add the player to the game objects
     data::characters[data::the_player->get_name().c_str ()] = data::the_player; 
-    
-    // retrieve character array
-    chars = PyDict_GetItemString (data::globals, "characters");
-
-    // Make the player available to Python
-    PyObject *the_player = python::pass_instance (data::the_player, "character"); 
-    PyDict_SetItemString (data::globals, "the_player", the_player);
-    
-    PyDict_SetItemString (chars, (char *) data::the_player->get_name().c_str (),
-                          the_player);
-    Py_DECREF (the_player); 
 }
 
 void game::cleanup_data () 
