@@ -29,13 +29,7 @@ protected:
 
 public:
     
-    map_character () 
-    {
-        Type = CHARACTER;
-        Speed = 2;
-        Is_running = false;
-        Current_dir = NONE;
-    }
+    map_character ();
 
     float speed () 
     {

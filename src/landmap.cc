@@ -48,6 +48,17 @@ bool mapsquare::exist (map_placeable * obj, map_coordinates & pos)
     return true; 
 }
 
+landmap::~landmap()
+{
+    clear();
+}
+
+void landmap::clear()
+{
+    objects.clear();
+    characters.clear();
+}
+
 void landmap::resize (const u_int16 nx, const u_int16 ny) 
 {
     area.resize (nx);
@@ -127,4 +138,27 @@ bool landmap::remove (map_placeable * obj, map_coordinates & pos)
 bool landmap::remove (map_moving * obj) 
 {
     return remove (obj, *obj); 
+}
+
+void landmap::update()
+{
+    objects.update();
+    characters.update();
+}
+
+s_int32 landmap::add_map_object(map_object * mobj)
+{
+    return objects.add(mobj);
+}
+
+bool landmap::add_map_character(map_character * mchar)
+{
+    put(mchar);
+    return characters.add(mchar);
+}
+
+bool landmap::put_map_object(u_int32 index, map_coordinates & pos)
+{
+    put(objects[index], pos);
+    return true;
 }

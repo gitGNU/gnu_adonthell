@@ -56,12 +56,14 @@ private:
     vector <mapsquare_info> objects; 
 
 public:
-    vector <mapsquare_info>::iterator begin () 
+    typedef vector <mapsquare_info>::iterator iterator;
+
+    iterator begin () 
     {
         return objects.begin (); 
     }
 
-    vector <mapsquare_info>::iterator end () 
+    iterator end () 
     {
         return objects.end (); 
     }
@@ -74,9 +76,190 @@ public:
 class landmap
 {
 private:
+    template<class T, class T_gfx>
+    class map_thing_manager
+    {
+    protected:
+        vector<T *> objects;
+
+        bool handle_gfx;
+        
+    public:
+        map_thing_manager()
+        {
+            handle_gfx = true;
+        }
+
+        ~map_thing_manager()
+        {
+            clear();
+        }
+
+        void clear()
+        {
+            if(handle_gfx)
+                for (vector<T *>::iterator i = objects.begin();
+                     i != objects.end(); i++)
+                    // FIXME: check whether it works or not.
+                    delete ((T_gfx*)*i);
+            else
+                for (vector<T *>::iterator i = objects.begin();
+                     i != objects.end(); i++)
+                    delete *i;
+
+            objects.clear();
+        }
+
+        bool update()
+        {
+            if (handle_gfx) return update_gfx();
+            else return update_nogfx();
+        }
+
+        bool update_nogfx()
+        {
+            for (vector<T *>::iterator i = objects.begin();
+                 i != objects.end(); i++)
+                (*i)->update();
+
+            return true;
+        }
+
+        bool update_gfx()
+        {
+            for (vector<T *>::iterator i = objects.begin();
+                 i != objects.end(); i++)
+            {
+                (*i)->update();
+                ((T_gfx *)(*i))->map_placeable_gfx::update();
+            }
+            return true;
+        }
+
+        s_int32 add(T * obj)
+        {
+            objects.push_back(obj);
+            
+            return (objects.size() - 1);
+        }
+
+
+        T * operator [] (const int index)
+        {
+            return objects[index];
+        }
+    };
+
+    template<class T, class T_gfx>
+    class map_moving_thing_manager
+    {
+    protected:
+        landmap & mymap;
+        vector<T *> objects;
+
+        bool handle_gfx;
+        
+    public:
+        map_moving_thing_manager(landmap & mmap) : mymap(mmap)
+        {
+            handle_gfx = true;
+        }
+
+        ~map_moving_thing_manager()
+        {
+            clear();
+        }
+
+        void clear()
+        {
+            if(handle_gfx)
+                for (vector<T *>::iterator i = objects.begin();
+                     i != objects.end(); i++)
+                    // FIXME: check whether it works or not.
+                    delete ((T_gfx*)*i);
+            else
+                for (vector<T *>::iterator i = objects.begin();
+                     i != objects.end(); i++)
+                    delete *i;
+
+            objects.clear();
+        }
+
+        bool update()
+        {
+            if (handle_gfx) return update_gfx();
+            else return update_nogfx();
+        }
+
+        bool update_nogfx()
+        {
+            for (vector<T *>::iterator i = objects.begin();
+                 i != objects.end(); i++)
+            {
+                mymap.remove(*i);
+                (*i)->update();
+                mymap.put(*i);
+            }
+
+            return true;
+        }
+
+        bool update_gfx()
+        {
+            for (vector<T *>::iterator i = objects.begin();
+                 i != objects.end(); i++)
+            {
+                mymap.remove(*i);
+                (*i)->update();
+                ((T_gfx *)(*i))->map_placeable_gfx::update();
+                mymap.put(*i);
+            }
+            return true;
+        }
+
+        s_int32 add(T * obj)
+        {
+            objects.push_back(obj);
+            
+            return (objects.size() - 1);
+        }
+
+
+        T * operator [] (const int index)
+        {
+            return objects[index];
+        }
+    };
+
+    /**
+     * Objects that take place on this map.
+     * 
+     */
+    map_thing_manager<map_object, map_object_with_gfx> objects;
+
+    /**
+     * Pointers to the characters that are on this
+     * map.
+     * 
+     */
+    map_moving_thing_manager<map_character, map_character_with_gfx> characters;
+
     vector <vector <mapsquare> > area;
 
+    bool put (map_placeable * obj, map_coordinates & pos); 
+    bool put (map_moving * obj); 
+    bool remove (map_placeable * obj, map_coordinates & pos); 
+    bool remove (map_moving * obj); 
+
 public:
+    landmap() : characters(*this)
+    {
+    }
+
+    ~landmap();
+
+    void clear();
+
     u_int16 length () const
     {
         return area.size ();
@@ -92,12 +275,47 @@ public:
 
     mapsquare * get (const u_int16 x, const u_int16 y); 
 
-    bool put (map_placeable * obj, map_coordinates & pos); 
-    bool put (map_moving * obj); 
-    bool remove (map_placeable * obj, map_coordinates & pos); 
-    bool remove (map_moving * obj); 
+
+    void update();
+    void update_with_gfx();
+
+    /** 
+     * Adds a map_object to this map.
+     * @warning Ownership of the map_object will be given
+     * to the map, which will delete it. DO NOT use the map_object
+     * separately after having called this method!
+     * 
+     * @todo this function should load objects from files, being given
+     * a map_object file name. That way, there won't be any ownership problem
+     * anymore.
+     *
+     * @param mobj map_object to add to this map.
+     * 
+     * @return index of the object in case of success, \e -1 otherwise.
+     */
+    s_int32 add_map_object(map_object * mobj);
+
+    /** 
+     * Tell a map to handle a map_character. The map will take
+     * ownership of the character.
+     * 
+     * @warning Ownership of the map_character will be given
+     * to the map, which will delete it. DO NOT use the map_character
+     * separately after having called this method!
+     * 
+     * @todo this function should load objects from files, being given
+     * a map_character file name. That way, there won't be any ownership problem
+     * anymore.
+     * @param mchar map_character to handle.
+     * 
+     * @return \e true in case of success, \e false otherwise.
+     */
+    bool add_map_character(map_character * mchar);
+
+    bool put_map_object(u_int32 index, map_coordinates & pos);
+
+    friend class landmap::map_moving_thing_manager<map_character, map_character_with_gfx>;
 }; 
 
 
 #endif
-

@@ -16,6 +16,14 @@
 #include "map_character.h"
 #include <math.h>
 
+map_character::map_character () : map_moving ()
+{
+    Type = CHARACTER;
+    Speed = 2;
+    Is_running = false;
+    Current_dir = NONE;
+}
+
 void map_character::set_direction(int ndir)
 {
   float vx = 0.0, vy = 0.0;
@@ -28,11 +36,11 @@ void map_character::set_direction(int ndir)
   if (current_dir() & SOUTH) vy = speed() * (1 + is_running());
   
   if (vx && vy)
-    {
+  {
       float s = sqrt (vx*vx + vy*vy);
       vx = (vx * fabs (vx))/s;
       vy = (vy * fabs (vy))/s;
-    }
+  }
   
   set_velocity(vx, vy);
 
@@ -84,13 +92,13 @@ void map_character::update_state()
         else 
         {
             if ((vx() > 0) && (current_state_name()[0] == 'w'))
-                state = 'e';
+                state = "e";
             else if ((vx() < 0) && (current_state_name()[0] == 'e'))
-                state = 'w';
+                state = "w";
             else if ((vy() > 0) && (current_state_name()[0] == 'n'))
-                state = 's';
+                state = "s";
             else if ((vy() < 0) && (current_state_name()[0] == 's'))
-                state = 'n';
+                state = "n";
             else state = current_state_name()[0];
         }
         state += is_running() ? "_run" : "_walk";

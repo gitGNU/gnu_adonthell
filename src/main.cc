@@ -19,11 +19,12 @@ mipcmp boah;
 class game_client
 {
 public:
-    map_character_with_gfx mchar;
+    map_character_with_gfx  * mchar;
     bool letsexit;
 
     game_client()
     {
+        mchar = new map_character_with_gfx();
         letsexit = false;
     }
 
@@ -35,46 +36,46 @@ public:
         {
             if (cev->button() == control_event::A_BUTTON)
             {
-                mchar.run();
+                mchar->run();
             }            
             if (cev->button() == control_event::LEFT_BUTTON)
             {
-                mchar.add_direction(mchar.WEST);
+                mchar->add_direction(mchar->WEST);
             }
             if (cev->button() == control_event::RIGHT_BUTTON)
             {
-                mchar.add_direction(mchar.EAST);
+                mchar->add_direction(mchar->EAST);
             }
             if (cev->button() == control_event::UP_BUTTON)
             {
-                mchar.add_direction(mchar.NORTH);
+                mchar->add_direction(mchar->NORTH);
             }
             if (cev->button() == control_event::DOWN_BUTTON)
             {
-                mchar.add_direction(mchar.SOUTH);
+                mchar->add_direction(mchar->SOUTH);
             }            
         }
         else
         {
             if (cev->button() == control_event::A_BUTTON)
             {
-                mchar.walk();
+                mchar->walk();
             }            
             if (cev->button() == control_event::LEFT_BUTTON)
             {
-                mchar.remove_direction(mchar.WEST);
+                mchar->remove_direction(mchar->WEST);
             }
             if (cev->button() == control_event::RIGHT_BUTTON)
             {
-                mchar.remove_direction(mchar.EAST);
+                mchar->remove_direction(mchar->EAST);
             }
             if (cev->button() == control_event::UP_BUTTON)
             {
-                mchar.remove_direction(mchar.NORTH);
+                mchar->remove_direction(mchar->NORTH);
             }
             if (cev->button() == control_event::DOWN_BUTTON)
             {
-                mchar.remove_direction(mchar.SOUTH);
+                mchar->remove_direction(mchar->SOUTH);
             }            
 
         }
@@ -97,7 +98,7 @@ public:
         {
             if (kev->key() == keyboard_event::R_KEY)
             {
-                mchar.walk();
+                mchar->walk();
             }            
         }   
 
@@ -148,20 +149,26 @@ int main (int argc, char * argv[])
     landmap lmap;
     
     lmap.resize (16, 12);
-    gc.mchar.set_position (6, 8); 
-    lmap.put (&gc.mchar); 
-    gc.mchar.set_limits (15, 11); 
+
+    // Adding the map character
+    gc.mchar->set_position (6, 8); 
+    lmap.add_map_character (gc.mchar); 
+    gc.mchar->set_limits (15, 11); 
     
-    gc.mchar.set_speed (1.0); 
+    gc.mchar->set_speed (1.0); 
 
-    map_object_with_gfx mobj;
+
+    // Adding one map object
+    map_object_with_gfx * mobj = new map_object_with_gfx();
+
+    lmap.add_map_object(mobj);
+
     map_coordinates mobjmc (5, 5, 0, 0); 
-
-    lmap.put (&mobj, mobjmc); 
+    lmap.put_map_object (0, mobjmc); 
 
     mobjmc.set_position (7, 6);
     mobjmc.set_offset (20, 20);
-    lmap.put (&mobj, mobjmc); 
+    lmap.put_map_object (0, mobjmc); 
     
     
     while (!gc.letsexit) 
@@ -170,14 +177,8 @@ int main (int argc, char * argv[])
 
         input_manager::update();
         
-        lmap.remove (&gc.mchar); 
         for (int i = 0; i < gametime::frames_to_skip (); i++) 
-        {
-            gc.mchar.map_character::update ();  
-            gc.mchar.map_placeable_gfx::update ();  
-            mobj.update();
-        }
-        lmap.put (&gc.mchar); 
+            lmap.update();
         
         // Rendering phase
         
@@ -187,7 +188,7 @@ int main (int argc, char * argv[])
             for (i = 0; i < lmap.length (); i++) 
             {
                 mapsquare * sq = lmap.get (i, j); 
-                for (vector <mapsquare_info>::iterator it = sq->begin ();
+                for (mapsquare::iterator it = sq->begin ();
                      it != sq->end (); it++)
                 {
                     if (it->x () == i && it->y () == j) 

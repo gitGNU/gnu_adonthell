@@ -21,7 +21,11 @@ class map_object : public map_placeable
 {
 public:
     map_object (); 
+
+    bool update()
+    {
+        return true;
+    }
 };
 
 #endif
-
