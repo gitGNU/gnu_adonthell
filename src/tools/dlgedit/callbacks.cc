@@ -24,15 +24,17 @@ class dialog;
 #include "graph.h"
 #include "compile.h"
 #include "../../interpreter.h"
+#include "../../array_tmpl.h"
 #include "../../dialog.h"
 #include "dlgrun.h"
 #include "geometrie.h"
 #include "pjt_interface.h"
+#include "function.h"
 #include "interface.h"
 
-/* Main Window: Destroy App */
+/* Main Window: on_widget_destroy App */
 void 
-destroy (GtkWidget * widget, gpointer data)
+on_widget_destroy (GtkWidget * widget, gpointer data)
 {
     gtk_main_quit ();
 }
@@ -243,4 +245,58 @@ on_list_select (GtkList *list, GtkWidget *widget, gpointer user_data)
     deselect_object (wnd);
     center_object (wnd, node);
     select_object (wnd, point);
+}
+
+void on_function_released (GtkButton *button, gpointer user_data)
+{
+
+}
+
+// Add function to the list
+void on_add_button_clicked (GtkButton * button, gpointer user_data)
+{
+    ((function *) user_data)->add ();
+}
+
+// Remove funcxtion from list
+void on_remove_button_clicked (GtkButton * button, gpointer user_data)
+{
+    ((function *) user_data)->remove ();
+}
+
+// Element of function-list selected
+void on_fct_select_row (GtkWidget *clist, gint row, gint column, GdkEventButton *event, gpointer data)
+{
+    ((function *) data)->select (row);
+}
+
+// Element of function-list selected
+void on_fct_unselect_row (GtkWidget *clist, gint row, gint column, GdkEventButton *event, gpointer data)
+{
+    ((function *) data)->select (-1);
+}
+
+// Move function up in list
+void on_up_button_clicked (GtkButton * button, gpointer user_data)
+{
+    ((function *) user_data)->up ();
+}
+
+// Move function down in list
+void on_down_button_clicked (GtkButton * button, gpointer user_data)
+{
+    ((function *) user_data)->down ();
+}
+
+//
+void on_fct_ok_buttpn_clicked (GtkButton * button, gpointer user_data)
+{
+
+}
+
+
+void
+on_fct_cancel_button_clicked (GtkButton * button, gpointer user_data)
+{
+
 }

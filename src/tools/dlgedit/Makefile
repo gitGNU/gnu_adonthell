@@ -18,7 +18,7 @@ SEARCHDIRS := -I- -I${MYCODEDIR}
 
 # makemake variables
 
-DEPENDFLAGS := -O6 -Wall -Werror `gtk-config --cflags`
+DEPENDFLAGS := -Wall -Werror -D_DLGEDIT_ `gtk-config --cflags`
 
 # C preprocessor (C, C++, FORTRAN)
 
@@ -56,7 +56,7 @@ LDFLAGS    =
 LOADLIBES := -lm -lstdc++ `gtk-config --libs`
 
 
-OBJECTS := ./callbacks.o ./compile.o ./dlgrun.o ./events.o ./geometrie.o ./graph.o ./interface.o ./main.o ./linked_list.o ../../interpreter.o ../../commands.o ../../dialog_cmds.o ../../array_tmpl.o ./pjt_interface.o ./pjt_callbacks.o ./project.o
+OBJECTS := ./callbacks.o ./compile.o ./dlgrun.o ./events.o ./function.o ./geometrie.o ./graph.o ./interface.o ./main.o ./linked_list.o ../../interpreter.o ../../commands.o ../../dialog_cmds.o ../../array_tmpl.o ./pjt_interface.o ./pjt_callbacks.o ./project.o
 
 # dlgedit
 
@@ -82,7 +82,7 @@ clean:: tidy
 
 # list of all source files
 
-MM_ALL_SOURCES := ./callbacks.c ./compile.c ./dlgrun.c ./events.c ./geometrie.c ./graph.c ./interface.c ./main.c
+MM_ALL_SOURCES := ./callbacks.cc ./compile.cc ./dlgrun.cc ./events.cc ./function.cc ./geometrie.cc ./graph.cc ./interface.cc ./main.cc
 
 
 # target for checking a source file

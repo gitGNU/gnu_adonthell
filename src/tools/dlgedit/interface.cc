@@ -44,7 +44,7 @@ create_mainframe (MainFrame * MainWnd)
     MainWnd->wnd = gtk_window_new (GTK_WINDOW_TOPLEVEL);
     gtk_widget_set_usize (GTK_WIDGET (MainWnd->wnd), 640, 480);
     gtk_window_set_title (GTK_WINDOW (MainWnd->wnd), g_strjoin (NULL, "Adonthell Dialogue Editor v0.2 - [", strrchr (MainWnd->file_name, '/') + 1, "]", NULL));
-    gtk_signal_connect (GTK_OBJECT (MainWnd->wnd), "delete_event", GTK_SIGNAL_FUNC (destroy), NULL);
+    gtk_signal_connect (GTK_OBJECT (MainWnd->wnd), "delete_event", GTK_SIGNAL_FUNC (on_widget_destroy), NULL);
 
     /* Menu Accelerators */
     accel_group = gtk_accel_group_new ();
@@ -106,7 +106,7 @@ create_mainframe (MainFrame * MainWnd)
     menuitem = gtk_menu_item_new_with_label ("Quit");
     gtk_menu_append (GTK_MENU (menu), menuitem);
     gtk_widget_add_accelerator (menuitem, "activate", accel_group, GDK_F4, GDK_MOD1_MASK, GTK_ACCEL_VISIBLE);
-    gtk_signal_connect (GTK_OBJECT (menuitem), "activate", GTK_SIGNAL_FUNC (destroy), (gpointer) NULL);
+    gtk_signal_connect (GTK_OBJECT (menuitem), "activate", GTK_SIGNAL_FUNC (on_widget_destroy), (gpointer) NULL);
     gtk_widget_show (menuitem);
 
     /* Attach File Menu */
@@ -253,7 +253,7 @@ create_text_dialog (NodeData * cbd)
     gtk_object_set_data (GTK_OBJECT (text_dialog), "text_dialog", text_dialog);
     gtk_widget_set_usize (text_dialog, 450, 200);
     gtk_window_set_title (GTK_WINDOW (text_dialog), "Text");
-    gtk_window_set_position (GTK_WINDOW (text_dialog), GTK_WIN_POS_CENTER);
+    gtk_window_set_position (GTK_WINDOW (text_dialog), GTK_WIN_POS_MOUSE);
     gtk_window_set_default_size (GTK_WINDOW (text_dialog), 450, 200);
     gtk_window_set_policy (GTK_WINDOW (text_dialog), FALSE, FALSE, FALSE);
 
@@ -347,7 +347,7 @@ create_text_dialog (NodeData * cbd)
     GTK_WIDGET_SET_FLAGS (cancel_button, GTK_CAN_DEFAULT);
 
     /* Callback handlers (or whatever you call them in gtk) */
-    gtk_signal_connect (GTK_OBJECT (text_dialog), "destroy", GTK_SIGNAL_FUNC (destroy), NULL);
+    gtk_signal_connect (GTK_OBJECT (text_dialog), "on_widget_destroy", GTK_SIGNAL_FUNC (on_widget_destroy), NULL);
     gtk_signal_connect (GTK_OBJECT (button_player), "toggled", GTK_SIGNAL_FUNC (on_button_player_toggled), cbd);
     gtk_signal_connect (GTK_OBJECT (button_npc), "toggled", GTK_SIGNAL_FUNC (on_button_npc_toggled), cbd);
     gtk_signal_connect (GTK_OBJECT (cancel_button), "pressed", GTK_SIGNAL_FUNC (on_cancel_button_pressed), cbd);
@@ -501,7 +501,7 @@ create_run_dialogue (RunData * rd)
     gtk_clist_column_titles_hide (GTK_CLIST (player_txt));
     rd->player = player_txt;
 
-    gtk_signal_connect (GTK_OBJECT (run_dialogue), "delete_event", GTK_SIGNAL_FUNC (destroy), NULL);
+    gtk_signal_connect (GTK_OBJECT (run_dialogue), "delete_event", GTK_SIGNAL_FUNC (on_widget_destroy), NULL);
     gtk_signal_connect (GTK_OBJECT (player_txt), "select_row", GTK_SIGNAL_FUNC (on_player_txt_select_row), rd);
 
     return run_dialogue;

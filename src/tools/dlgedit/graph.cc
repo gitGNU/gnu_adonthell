@@ -29,6 +29,7 @@ class dialog;
 #include "compile.h"
 #include "dlgrun.h"
 #include "interface.h"
+#include "function.h"
 #include "graph.h"
 
 /* Create a new circle */
@@ -264,6 +265,10 @@ edit_node (MainFrame * wnd)
     /* arrow selected */
     else
     {
+        // Create and show dialog for user input
+        function fct (wnd->selected_node);
+        
+        gtk_main ();
     }
 
     show_preview (wnd);
