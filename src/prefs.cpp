@@ -62,7 +62,9 @@ config& config::operator =(const config *c)
 
 char *config::get_adonthellrc ()
 {
-    char *string = strdup (adonthellrc.c_str ());
+    char *string = new char[adonthellrc.length () + 1];
+    strcpy (string, adonthellrc.c_str ());
+
     return string;
 }
 

@@ -27,8 +27,8 @@ character_base::character_base ()
 
 character_base::~character_base ()
 {
-  if (dialogue) delete dialogue;
-  if (name) delete name;
+  if (dialogue) delete[] dialogue;
+  if (name) delete[] name;
 }
 
 void character_base::set_name (const char * newname)
@@ -44,7 +44,7 @@ void character_base::set_name (const char * newname)
 
 void character_base::set_dialogue (const char *newdlg)
 {
-    if (dialogue) delete dialogue;
+    if (dialogue) delete[] dialogue;
     if (!newdlg) dialogue = NULL;
     else
     {

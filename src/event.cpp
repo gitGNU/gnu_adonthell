@@ -65,8 +65,8 @@ void event_list::add_map_event(char * script, u_int16 etype,
 
 event::~event ()
 {
-    if (script_file) delete script_file;
-    if (script) delete script;
+    if (script_file) delete[] script_file;
+    if (script) free (script);
 }
 
 // Array with the registered events; each type of event is kept in
@@ -171,7 +171,7 @@ event* event_handler::load_event (gzFile f, bool reg)
         strcat (script_file, ".py");
         
         register_event (e, script_file);
-        delete script_file;
+        delete[] script_file;
     }
     
     return e;
@@ -244,7 +244,7 @@ void base_map_event::load (gzFile f)
 
     name = fileops::get_string (f);
     c = (mapcharacter*) data::characters.get (name);
-    delete name;
+    delete[] name;
 
     script_file = fileops::get_string (f);
 }

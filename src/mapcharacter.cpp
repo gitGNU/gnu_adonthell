@@ -46,7 +46,7 @@ void mapcharacter::clear()
     delete(anim[i]);
   anim.clear();
 #if defined(USE_PYTHON)
-  if(schedule) delete schedule;
+  if(schedule) free (schedule);
 #endif
 }
 

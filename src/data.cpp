@@ -50,18 +50,22 @@ gamedata::gamedata ()
 
 gamedata::gamedata (char *dir, char *desc)
 {
-    directory = strdup (dir);
-    description = strdup (desc);
+    directory = new char[strlen (dir)+1];
+    strcpy (directory, dir);
+    
+    description = new char[strlen (desc)+1];
+    strcpy (description, desc);
+    
     location = NULL;    // later landmap::curmap->location ();
     time = NULL;        // later game::time->to_string ();
 }
 
 gamedata::~gamedata ()
 {
-    if (directory != NULL) delete directory;
-    if (description != NULL) delete description;
-    if (location != NULL) delete location;
-    if (time != NULL) delete time;
+    if (directory != NULL) delete[] directory;
+    if (description != NULL) delete[] description;
+    if (location != NULL) delete[] location;
+    if (time != NULL) delete[] time;
 }
 
 bool gamedata::load (gzFile file)
@@ -85,14 +89,15 @@ void gamedata::save (gzFile file)
 
 void gamedata::set_description (char *desc)
 {
-    if (description != NULL) delete description;
-    description = strdup (desc);
+    if (description != NULL) delete[] description;
+
+    description = new char[strlen (desc)+1];
+    strcpy (description, desc);
 }
 
 void gamedata::set_directory (char *dir)
 {
-    if (directory != NULL) delete directory;
-    directory = strdup (dir);
+    if (directory != NULL) delete[] directory;
 }
 
 // data initialisation
@@ -165,7 +170,7 @@ void data::init (char* d)
 void data::cleanup () 
 {
     unload ();
-    delete adonthell_dir;
+    delete[] adonthell_dir;
     delete time;
     
     for (vector<gamedata*>::iterator i = saves.begin (); i != saves.end (); i++)
