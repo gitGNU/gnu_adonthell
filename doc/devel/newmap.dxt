@@ -1,0 +1,142 @@
+/*
+   $Id$
+
+   Copyright (C) 2001   Alexandre Courbot
+   Part of the Adonthell Project http://adonthell.linuxgames.com
+
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License.
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY.
+
+   See the COPYING file for more details.
+*/
+
+/** 
+ * @file newmap.dxt
+ *
+ * @author Alexandre Courbot <alexandrecourbot@linuxgames.com>
+ * @brief Specifications for the new mapengine.
+ */
+
+/*! 
+\page page10 Specifications for the new mapengine.
+
+This document will precisely describe the specifications/internals of
+the new map engine implementation that is supposed to be shipped with
+versions >= 0.4 of the Adonthell engine.
+
+\section p10spec Specification.
+What we want is a flexible, powerfull map engine that allows the
+following things:
+
+<ul>
+<li> Unlimited number of \e submaps, that is different areas that
+can be connected to each others (ex. several rooms in a house),
+<li> Precise, pixel-unit based %characters movments and %objects
+placement,
+<li> Unlimited number of possible \e levels, to allow things like
+bridges and so on,
+<li> Altitude management through \e levels. A %character must be
+able to fall from a bridge to the ground. A %character must also be
+able to naturally climb stairs, for example,
+<li> No limit about the number of %objects that can be placed on the
+maps, no matter if they are all at the same place,
+<li> %Objects and %characters must have the possibility to be
+animated. Furthermore, the ways of animations must be very flexible,
+allowing from very-simple to very-complex animations,
+<li> %Characters animations should be most flexible. In particular, a
+%character can have an unlimited number of special animations (jumping,
+falling,...) that may be unique to him.
+<li> Finally, the rendering must be realistic, bug-free of course,
+but should remain as fast as possible.
+</ul>
+
+The above have been written with the ideas of speed, flexibility and
+minimized ressource usage in mind. No pig-solution can pretend to be a
+viable solution for the implementation.
+
+... All the problem will now be to stand on these specifications! :)
+
+\section p10imp Implementation proposal
+Of course, our implementation will have to be well structured to be
+viable. Such demanding specifications implies that the proposed
+solution remains simple in it's parts, even if complex in it's
+whole. That's why this section is highly hierarchised. We'll try to
+describe the implementation from the higher layer to the lowest one.
+
+\subsection p10landmap The landmap class
+This class contains the entire map, as well as the elements
+(%characters, %objects) that are on it. It may or may not contains the
+\e graphical %data of these %objects - anyway it is of no importance
+for it as it's job is only to make the world it represents live - and
+in no way to render it.
+
+At this level, we only need the submaps, (map)%characters and
+(map)%objects this \e %landmap owns. So the structure of the
+\e %landmap class is as simple as this:
+
+\verbatim
+class landmap
+{
+    vector<landsubmap*> submap;
+    vector<mapcharacter*> mapchar;
+    vector<mapobject*> mobj;
+}
+\endverbatim
+
+Using such a structure, we have the following advantages:
+
+<ol>
+<li> The number of landsubmaps, mapcharacters and mapobjects are
+unlimited, and the allocated memory will exactly reflect the actual
+number of them used. We are using pointers here for several reasons:
+  <ol>
+  <li> The vector container needs to perform copies when resized. As
+we don't want our whole structures to be copied (which would be very
+slow and would need a tricky copy-constructor) we are using arrays of
+pointers.
+  <li> Sometimes (depending on the implementation) the actual size of the vector is larger than the
+number of elements that are inside it, to perform faster growings. As
+our classes are rather large, using pointers we will ``waste'' less memory.
+  <li> Finally, and probably the most important, using pointers the
+adress of the %objects in memory will remain the same, no matter
+whether we resize the vector or not. As mapobjects and %mapcharacter
+will further be referenced by their memory adress, using pointers here
+is mandatory if we want to keep this flexibility.
+  </ol>
+  On the other hand, we will be responsible for manually
+allocating/freeing our %objects, which will require additionnal
+attention.
+<li> The flexibility is maximal, as we can dynamically add/remove
+landsubmaps, mapobjects or mapcharacters. Beware, though, that the
+resizing of a vector can be time consuming.
+</ol>
+
+\subsection p10landsubmap The landsubmap class
+This class will be quite simple too. Actually, we will define a
+\e landsubmap as a vector of \e mapsquare_areas, which
+are the \e layers of this submap. On a simple map, the layer 0
+could for example be the ground, while the layer 1 will be a bridge:
+that way characters can safely walk on and under the bridge, it's just
+a matter of \e layer. All the problem will then be to define
+\e when does the characters switch from layer 0 to layer 1 and to
+layer 1 to layer 0 - but we will have a look at this later, so hang on
+;).
+
+So our structure for \e landsubmap will be:
+\verbatim
+class landsubmap
+{
+    vector<mapsquare_area> area;
+}
+\endverbatim
+
+Although things have quite quite simple until now, I fear the next
+sections will give you a few more headache.
+
+\subsection p10mapsquare_area The mapsquare_area class
+Serious matters starts now, as this class represents a bit more than
+arrays of things.
+
+*/

@@ -2,7 +2,7 @@
 
 EXTRA_DIST = reference.cfg mainpage.dxt intro.dxt prog_rules.dxt event.dxt \
 	map.dxt dialog.dxt python.dxt mapcharschedules.dxt save.dxt \
-	mapviewschedules.dxt
+	mapviewschedules.dxt newmap.dxt
 
 if BUILD_DOC
 all:
