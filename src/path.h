@@ -45,6 +45,7 @@ class path
 public:
     landmap * refmap; 
     u_int16 submap;
+    u_int16 dir;
     area_coord start;
     area_coord goal;
   

@@ -577,7 +577,7 @@ public:
         return current_move;
     }
  
-    bool set_goal (u_int16 x, u_int16 y);
+    bool set_goal (u_int16 x, u_int16 y, u_int16 dir);
     bool follow_path (); 
     bool goal_reached (); 
     

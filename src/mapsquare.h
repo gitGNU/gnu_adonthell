@@ -299,8 +299,8 @@ public:
      *
      * These members are here to allow faster and more efficient
      * pathfinding. Though they can as well be used for something else,
-     * but their value isn't guaranteed to stay constant. It's safe anyway
-     * to modify them, that's why they are public and uninitialize.
+     * but their value isn't guaranteed to stay constant. It is safe
+     * to modify them however, so they are public and uninitialised.
      * 
      */ 
     //@{

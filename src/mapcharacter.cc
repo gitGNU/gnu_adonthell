@@ -479,14 +479,15 @@ void mapcharacter::go_west ()
     ask_move = WALK_WEST;
 }
 
-bool mapcharacter::set_goal (u_int16 x, u_int16 y)
+bool mapcharacter::set_goal (u_int16 x, u_int16 y, u_int16 dir = NO_MOVE)
 {
     mypath.refmap = mymap ();
     mypath.submap = submap (); 
     mypath.start.x = posx ();
     mypath.start.y = posy (); 
     mypath.goal.x = x;
-    mypath.goal.y = y;  
+    mypath.goal.y = y;
+    mypath.dir = dir;
     pathindex = 0; 
     
     return mypath.calculate (); 
@@ -549,8 +550,27 @@ bool mapcharacter::follow_path ()
         }
         else pathindex++; 
     }
-    else return true;
-    return false; 
+    else
+    {
+        switch (mypath.dir)
+        {
+            case STAND_NORTH:
+                stand_north ();
+                break;
+            case STAND_SOUTH:
+                stand_south ();
+                break;
+            case STAND_WEST:
+                stand_west ();
+                break;
+            case STAND_EAST:
+                stand_east ();
+                break;
+        }
+
+        return true;
+    }
+    return false;
 }
 
 bool mapcharacter::goal_reached () 
