@@ -1,4 +1,5 @@
 Makefile
 adonthell
 adonthell.py
-py_adonthell_wrap.doc
+.deps
+Makefile.in

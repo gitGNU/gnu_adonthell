@@ -3,3 +3,5 @@ animedit
 mapcharedit
 mapedit
 mapobjedit
+.deps
+Makefile.in

@@ -1,2 +1,4 @@
 Makefile
 oggloop
+.deps
+Makefile.in

@@ -1,2 +1,4 @@
 Makefile
 pydonthell
+.deps
+Makefile.in

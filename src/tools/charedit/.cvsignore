@@ -1,3 +1,5 @@
 Makefile
 charedit
 mergechars
+.deps
+Makefile.in
