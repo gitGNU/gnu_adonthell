@@ -1,7 +1,7 @@
 /*
    $Id$
 
-   Copyright (C) 1999/2000/2001   The Adonthell Project
+   Copyright (C) 1999/2000/2001   Alexandre Courbot
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -80,7 +80,7 @@ public:
      * 
      * @return true if the surface is masked, false if it isn't.
      */
-    bool is_masked () 
+    bool is_masked () const
     {
         return mask_on; 
     }
@@ -98,7 +98,7 @@ public:
      * 
      * @return the alpha value of the surface.
      */
-    u_int8 alpha () 
+    u_int8 alpha () const
     {
         return alpha_; 
     }
@@ -129,8 +129,8 @@ public:
      * @param da_opt optional drawing_area to use during the drawing operation.
      * @param target pointer to the surface where to draw the drawable. If NULL, draw on the screen.
      */ 
-    void draw (s_int16 x, s_int16 y, drawing_area * da_opt = NULL,
-               surface * target = NULL)
+    void draw (s_int16 x, s_int16 y, const drawing_area * da_opt = NULL,
+               surface * target = NULL) const
     {
         draw (x, y, 0, 0, length (), height (), da_opt, target); 
     }
@@ -153,8 +153,8 @@ public:
      *
      */
     void draw (s_int16 x, s_int16 y, s_int16 sx, s_int16 sy, u_int16 sl,
-               u_int16 sh, drawing_area * da_opt = NULL,
-               surface * target = NULL);
+               u_int16 sh, const drawing_area * da_opt = NULL,
+               surface * target = NULL) const;
 #endif
 
     /**
@@ -164,8 +164,8 @@ public:
      * 
      */ 
     void draw_part (s_int16 x, s_int16 y, s_int16 sx, s_int16 sy, u_int16 sl,
-                    u_int16 sh, drawing_area * da_opt = NULL,
-                    surface * target = NULL)
+                    u_int16 sh, const drawing_area * da_opt = NULL,
+                    surface * target = NULL) const
     {
         draw (x, y, sx, sy, sl, sh, da_opt, target); 
     }
@@ -246,7 +246,7 @@ public:
      * may result in unpredictable behavior, crashes included.
      * 
      */
-    void lock () 
+    void lock () const
     {
         if (SDL_MUSTLOCK(vis)) 
             SDL_LockSurface (vis);  
@@ -257,7 +257,7 @@ public:
      * get_pix () and put_pix () methods.
      * 
      */
-    void unlock () 
+    void unlock () const
     {
         if (SDL_MUSTLOCK(vis)) 
             SDL_UnlockSurface (vis);  
@@ -319,7 +319,7 @@ public:
      * @param y Y position of the pixel to change.
      * @param col returned color.
      */
-    void get_pix (u_int16 x, u_int16 y, u_int32& col); 
+    void get_pix (u_int16 x, u_int16 y, u_int32& col) const; 
 
 #ifndef SWIG
     /** 
@@ -336,7 +336,7 @@ public:
      * @attention Not accessible from Python. Use get_pix_rgb from Python instead.
      * @sa get_pix_rgb ()   
      */
-    void get_pix (u_int16 x, u_int16 y, u_int8& r, u_int8& g, u_int8& b)
+    void get_pix (u_int16 x, u_int16 y, u_int8& r, u_int8& g, u_int8& b) const
     {
         u_int32 col;
         get_pix (x, y, col); 
@@ -349,7 +349,7 @@ public:
      *
      * @sa get_pix () 
      */ 
-    void get_pix_rgb (u_int16 x, u_int16 y, u_int8 r, u_int8 g, u_int8 b) 
+    void get_pix_rgb (u_int16 x, u_int16 y, u_int8 r, u_int8 g, u_int8 b) const
     {
         get_pix (x, y, r, g, b); 
     }
@@ -401,6 +401,12 @@ protected:
     
     
 private:
+
+    /**
+     * Forbid value passing.
+     * 
+     */ 
+    surface (surface & src); 
     
     /// SDL_Rects used in every blitting function.
     static SDL_Rect srcrect, dstrect; 
@@ -416,14 +422,14 @@ private:
     bool not_screen; 
 
     /// Used internally for blitting operations with drawing_areas.
-    void setup_rects (u_int16 x, u_int16 y, drawing_area * draw_to)
+    void setup_rects (u_int16 x, u_int16 y, const drawing_area * draw_to) const
     {
         setup_rects (x, y, 0, 0, length (), height (), draw_to); 
     }
     
     /// Used internally for blitting operations with drawing_areas.
     void setup_rects (s_int16 x, s_int16 y, s_int16 sx, s_int16 sy,
-                      u_int16 sl, u_int16 sh, drawing_area * draw_to); 
+                      u_int16 sl, u_int16 sh, const drawing_area * draw_to) const; 
 
 #ifndef SWIG
     friend class screen;

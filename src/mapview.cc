@@ -384,8 +384,8 @@ void mapview::update ()
 #endif
 }
 
-void mapview::draw (s_int16 x, s_int16 y, drawing_area * da_opt = NULL,
-                    surface *target = NULL)
+void mapview::draw (s_int16 x, s_int16 y, const drawing_area * da_opt = NULL,
+                    surface *target = NULL) const
 {
     static u_int16 i, j;
     static u_int16 i0, j0, ie, je;

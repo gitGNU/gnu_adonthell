@@ -1,7 +1,7 @@
 /*
    $Id$
 
-   Copyright (C) 1999/2000   The Adonthell Project
+   Copyright (C) 1999/2000/2001   Alexandre Courbot
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -13,6 +13,7 @@
 */
 
 #include "maptpl.h"
+#include "mapsquares.h"
 
 mapsquaretpl::mapsquaretpl ()
 {
@@ -99,7 +100,9 @@ s_int8 maptpl::get (igzstream& file)
         delete[]placetpl[i];
     delete[]placetpl;
     length_ << file;
-    height_ << file;     placetpl = new (mapsquaretpl *)[length ()];
+    height_ << file;
+
+    placetpl = new (mapsquaretpl *)[length ()];
     u_int16 h = height ();
     for (i = 0; i < length (); i++)
     {

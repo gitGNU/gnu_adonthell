@@ -13,6 +13,7 @@
 
 
 #include "mapselect.h"
+#include "mapsquares.h"
 
 mapselect::mapselect(u_int16 x, u_int16 y, u_int16 l, u_int16 h,
 		     u_int16 d_l, u_int16 d_h)

@@ -1,7 +1,7 @@
 /*
    $Id$
 
-   Copyright (C) 1999/2000/2001   The Adonthell Project
+   Copyright (C) 1999/2000/2001   Alexandre Courbot
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -66,8 +66,8 @@ void surface::set_alpha (u_int8 t)
 }
  
 void surface::draw (s_int16 x, s_int16 y, s_int16 sx, s_int16 sy, u_int16 sl,
-                         u_int16 sh, drawing_area * da_opt = NULL,
-                         surface * target = NULL)
+                    u_int16 sh, const drawing_area * da_opt = NULL,
+                    surface * target = NULL) const
 { 
     if (target == NULL) target = &screen::display; 
 
@@ -132,7 +132,7 @@ void surface::put_pix (u_int16 x, u_int16 y, u_int32 col)
     
 }
 
-void surface::get_pix (u_int16 x, u_int16 y, u_int32& col) 
+void surface::get_pix (u_int16 x, u_int16 y, u_int32& col) const
 {
     u_int8 * offset = ((Uint8 *) vis->pixels) + y * vis->pitch
         + x * vis->format->BytesPerPixel;
@@ -231,7 +231,7 @@ void surface::clear ()
 
 
 void surface::setup_rects (s_int16 x, s_int16 y, s_int16 sx, s_int16 sy,
-                           u_int16 sl, u_int16 sh, drawing_area * draw_to) 
+                           u_int16 sl, u_int16 sh, const drawing_area * draw_to) const
 {
     if (draw_to)
     { 

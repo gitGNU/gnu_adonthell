@@ -48,7 +48,7 @@ drawing_area& drawing_area::operator = (SDL_Rect& r)
     return (*this); 
 }
 
-SDL_Rect drawing_area::setup_rects ()
+SDL_Rect drawing_area::setup_rects () const
 {
     if (draw_to)
     {

@@ -16,7 +16,8 @@
 #ifndef _MAPSELECT_H
 #define _MAPSELECT_H
 
-#define MAPSQUARE_SIZE 20
+// const u_int16 MAPSQUARE_SIZE = 20;
+
 #define CURSOR_BLINK_RATE 40
 
 class mapselect

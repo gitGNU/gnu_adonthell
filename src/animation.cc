@@ -28,6 +28,7 @@
 #include "animation.h"
 
 
+
 using namespace std; 
 
 
@@ -72,7 +73,7 @@ s_int8 animationframe::get (igzstream& file)
     return (0);
 }
 
-s_int8 animationframe::put (ogzstream& file)
+s_int8 animationframe::put (ogzstream& file) const
 {
     image_nbr () >> file;
     is_masked () >> file;
@@ -111,6 +112,8 @@ void animation::clear ()
     play_flag = STOP;
     xoffset_ = 0;
     yoffset_ = 0;
+    set_length (0);
+    set_height (0); 
 }
 
 animation::~animation ()
@@ -123,33 +126,33 @@ void animation::update ()
 {
     if ((!play_flag) || (!nbr_of_frames ()))
         return;
-    if (frame[currentframe ()].delay_ == 0)
+    if (frame[currentframe ()].delay () == 0)
         return;
     if (nbr_of_frames () <= 1)
         return;
 
     speedcounter++;
-    if (speedcounter >= frame[currentframe ()].delay_)
+    if (speedcounter >= frame[currentframe ()].delay ())
         next_frame ();
 }
 
 void animation::next_frame ()
 {
-    currentframe_ = frame[currentframe ()].nextframe_;
+    currentframe_ = frame[currentframe ()].nextframe ();
     speedcounter = 0;
 }
  
-void animation::draw (s_int16 x, s_int16 y, drawing_area * da_opt = NULL, 
-                      surface *target = NULL)
+void animation::draw (s_int16 x, s_int16 y, const drawing_area * da_opt = NULL, 
+                      surface *target = NULL) const
 {
     t_frame[frame[currentframe ()].image_nbr ()]->
         set_mask (frame[currentframe ()].is_masked ());
     t_frame[frame[currentframe ()].image_nbr ()]->
         set_alpha (frame[currentframe ()].alpha ());
-
+    
     t_frame[frame[currentframe ()].image_nbr ()]->draw (x + xoffset () +
-                                                        frame[currentframe ()].gapx,
-                                                        y + yoffset () + frame[currentframe ()].gapy, da_opt,
+                                                        frame[currentframe ()].offx (),
+                                                        y + yoffset () + frame[currentframe ()].offy (), da_opt,
                                                         target);
 }
  
@@ -210,7 +213,7 @@ s_int8 animation::load (string fname)
     return (retvalue);
 }
 
-s_int8 animation::insert_image (image * im, u_int16 pos)
+s_int8 animation::insert_image (const image * im, u_int16 pos)
 {
     vector <image *>::iterator i;
     vector <animationframe>::iterator j;
@@ -222,7 +225,7 @@ s_int8 animation::insert_image (image * im, u_int16 pos)
     while (pos--)
         i++;
     
-    t_frame.insert (i, im);
+    t_frame.insert (i, (image *) im);
     
     for (j = frame.begin (); j != frame.end (); j++)
         if (j->image_nbr () >= pos)
@@ -253,7 +256,7 @@ s_int8 animation::delete_image (u_int16 pos)
     return 0;
 }
 
-s_int8 animation::insert_frame (animationframe af, u_int16 pos)
+s_int8 animation::insert_frame (const animationframe af, u_int16 pos)
 {
     vector <animationframe>::iterator i;
 
@@ -296,7 +299,7 @@ s_int8 animation::delete_frame (u_int16 pos)
     return 0;
 }
  
-void animation::zoom (u_int16 sx, u_int16 sy, animation * src)
+void animation::zoom (u_int16 sx, u_int16 sy, const animation * src)
 {
     static u_int16 i;
 
@@ -314,12 +317,12 @@ void animation::zoom (u_int16 sx, u_int16 sy, animation * src)
     for (i = 0; i < src->nbr_of_frames (); i++)
     {
         frame.push_back (src->frame[i]);
-        frame.back ().gapx = (src->frame[i].gapx * sx) / src->length ();
-        frame.back ().gapy = (src->frame[i].gapy * sy) / src->height ();
+        frame.back ().set_offset ((src->frame[i].offx () * sx) / src->length (),
+                                  (src->frame[i].offy () * sy) / src->height ());
     }
 }
 
-animation& animation::operator = (animation & src)
+animation& animation::operator = (const animation & src)
 { 
     clear (); 
     (drawable&) (*this) = (drawable&) src; 
@@ -363,13 +366,13 @@ void animation::calculate_dimensions ()
         u_int16 tl, th;
         
         if ((tl =
-             t_frame[frame[i].imagenbr]->length () + frame[i].gapx) >
+             t_frame[frame[i].image_nbr ()]->length () + frame[i].offx ()) >
             length ())
-            set_length (tl);
+            set_length (tl + xoffset ());
         
         if ((th =
-             t_frame[frame[i].imagenbr]->height () + frame[i].gapy) >
+             t_frame[frame[i].image_nbr ()]->height () + frame[i].offy ()) >
             height ())
-            set_height (th); 
+            set_height (th + yoffset ()); 
     }
 }

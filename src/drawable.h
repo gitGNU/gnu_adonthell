@@ -73,7 +73,7 @@ public:
      * 
      * @return length of the drawable.
      */
-    u_int16 length () 
+    u_int16 length () const
     {
         return length_; 
     }
@@ -84,7 +84,7 @@ public:
      * 
      * @return height of the drawable.
      */
-    u_int16 height () 
+    u_int16 height () const
     {
         return height_; 
     }
@@ -112,8 +112,8 @@ public:
      * @param target pointer to the surface where to draw the drawable. If NULL,
      *               draw on the screen.
      */
-    virtual void draw (s_int16 x, s_int16 y, drawing_area * da_opt = NULL,
-                       surface * target = NULL) = 0;
+    virtual void draw (s_int16 x, s_int16 y, const drawing_area * da_opt = NULL,
+                       surface * target = NULL) const = 0;
 
 protected:
     

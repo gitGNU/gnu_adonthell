@@ -90,14 +90,8 @@ void screen::set_video_mode (u_int16 nl, u_int16 nh)
     // Setting up the window title
     SDL_WM_SetCaption ("Adonthell", NULL);
 
-//     // Setting up transparency colors
-//     trans = SDL_MapRGB (vis->format, 0xFF, 0x00, 0xFF);
-//     trans_rgb = 0xFF00FF;
-
-//     // Global initialisations
-//     ftd = 1;
-//     init_frame_counter ();
-
+    // Turn off SDL cursor
+    SDL_ShowCursor (0);     
 }
 
 void screen::show () 

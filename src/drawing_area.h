@@ -66,7 +66,7 @@ public:
     /** Returns the horizontal position of the drawing_area.
      *  @return horizontal position of the drawing_area.
      */  
-    s_int16 x ()
+    s_int16 x () const
     {
         return rect.x; 
     }
@@ -74,7 +74,7 @@ public:
     /** Returns the vertical position of the drawing_area.
      *  @return vertical position of the drawing_area.
      */  
-    s_int16 y () 
+    s_int16 y () const
     {
         return rect.y; 
     }
@@ -82,7 +82,7 @@ public:
     /** Returns the length of the drawing_area.
      *  @return length of the drawing_area.
      */  
-    u_int16 length () 
+    u_int16 length () const
     {
         return rect.w; 
     }
@@ -90,7 +90,7 @@ public:
     /** Returns the height of the drawing_area.
      *  @return height of the drawing_area.
      */  
-    u_int16 height () 
+    u_int16 height () const
     {
         return rect.h; 
     }
@@ -120,9 +120,9 @@ public:
      *  by the drawing_area is the intersection of the two.
      *  @param da the drawing_area to assign.
      */  
-    void assign_drawing_area (drawing_area * da) 
+    void assign_drawing_area (const drawing_area * da) 
     {
-        draw_to = da; 
+        draw_to = (drawing_area *) da; 
     }
 
     /** 
@@ -131,7 +131,7 @@ public:
      * 
      * @return pointer to the attached drawing_area, NULL if none.
      */
-    drawing_area * attached_drawing_area () 
+    drawing_area * attached_drawing_area () const
     {
         return draw_to; 
     }
@@ -160,7 +160,7 @@ public:
      * @return SDL_Rect which is the intersection of this drawing area and
      * all the drawing areas assigned to it.
      */
-    SDL_Rect setup_rects (); 
+    SDL_Rect setup_rects () const; 
     
 private:
     /// drawing_area location and size.

@@ -40,7 +40,7 @@ mapsquare_tile::~mapsquare_tile ()
 #endif
 }
 
-void mapsquare_tile::draw (mapview * mv, u_int16 x, u_int16 y, drawing_area * da_opt = NULL, surface * target = NULL)
+void mapsquare_tile::draw (const mapview * mv, u_int16 x, u_int16 y, drawing_area * da_opt = NULL, surface * target = NULL)
 {
     if (is_base)
     {
@@ -48,7 +48,7 @@ void mapsquare_tile::draw (mapview * mv, u_int16 x, u_int16 y, drawing_area * da
 
         rx = (mv->posx > 0) ? this->x - mv->posx : this->x;
         ry = (mv->posy > 0) ? this->y - mv->posy : this->y;
-        mv->m_map->pattern[objnbr]->draw
+        mv->m_map->pattern[objnbr]->draw_from_base
             ((rx * MAPSQUARE_SIZE - mv->offx) + x - mv->draw_offx,
              (ry * MAPSQUARE_SIZE - mv->offy) + y - mv->draw_offy, mv->da, target);
     }
@@ -106,7 +106,7 @@ mapsquare_char::~mapsquare_char ()
 #endif
 }
 
-void mapsquare_char::draw (mapview * mv, u_int16 x, u_int16 y, drawing_area * da_opt = NULL, surface * target = NULL)
+void mapsquare_char::draw (const mapview * mv, u_int16 x, u_int16 y, drawing_area * da_opt = NULL, surface * target = NULL)
 {
     if (is_base)
     {
@@ -321,18 +321,18 @@ s_int8 landsubmap::put_mapobject (u_int16 px, u_int16 py, u_int16 patnbr)
     // base tile isn't at right of the object.
     // Bad initialisation of i0/j0/ie/je ( must be init like remove_obj)
 
-    u_int16 ie = m_map->pattern[patnbr]->maptpl::length ();
-    u_int16 je = m_map->pattern[patnbr]->maptpl::height ();
+    u_int16 ie = m_map->pattern[patnbr]->area_length ();
+    u_int16 je = m_map->pattern[patnbr]->area_height ();
 
-    ie = px - m_map->pattern[patnbr]->basex + ie > length ? length - px : ie;
-    je = py - m_map->pattern[patnbr]->basey + je > height ? height - py : je;
+    ie = px - m_map->pattern[patnbr]->base_x () + ie > length ? length - px : ie;
+    je = py - m_map->pattern[patnbr]->base_y () + je > height ? height - py : je;
 
     u_int16 i0 =
-        (px - m_map->pattern[patnbr]->basex) >
-        0 ? 0 : m_map->pattern[patnbr]->basex - px;
+        (px - m_map->pattern[patnbr]->base_x ()) >
+        0 ? 0 : m_map->pattern[patnbr]->base_x () - px;
     u_int16 j0 =
-        (py - m_map->pattern[patnbr]->basey) >
-        0 ? 0 : m_map->pattern[patnbr]->basey - py;
+        (py - m_map->pattern[patnbr]->base_y ()) >
+        0 ? 0 : m_map->pattern[patnbr]->base_y () - py;
 
     // Steps:
     // -Find out where to start/stop placing the object (screen overflow)
@@ -366,12 +366,12 @@ s_int8 landsubmap::put_mapobject (u_int16 px, u_int16 py, u_int16 patnbr)
     for (j = j0; j < je; j++)
         for (i = i0; i < ie; i++)
         {
-            t.x = px - m_map->pattern[patnbr]->basex + i;
-            t.y = py - m_map->pattern[patnbr]->basey + j;
+            t.x = px - m_map->pattern[patnbr]->base_x () + i;
+            t.y = py - m_map->pattern[patnbr]->base_y () + j;
             land[t.x][t.y].walkable &=
-                m_map->pattern[patnbr]->placetpl[i][j].walkable;
-            if (m_map->pattern[patnbr]->basex != i
-                || m_map->pattern[patnbr]->basey != j)
+                m_map->pattern[patnbr]->get_square (i, j)->get_walkable (); 
+            if (m_map->pattern[patnbr]->base_x () != i
+                || m_map->pattern[patnbr]->base_y () != j)
             {
                 for (it = land[t.x][t.y].tiles.begin ();
                      it != land[t.x][t.y].tiles.end () &&
@@ -720,25 +720,25 @@ void landmap::remove_mapobject (u_int16 smap,
     u_int16 i, j;
 
     list <mapsquare_tile>::iterator it;
-    u_int16 ie = pattern[obj->objnbr]->maptpl::length ();
-    u_int16 je = pattern[obj->objnbr]->maptpl::height ();
+    u_int16 ie = pattern[obj->objnbr]->area_length ();
+    u_int16 je = pattern[obj->objnbr]->area_height ();
 
-    u_int16 i0 = (obj->base_tile->x - pattern[obj->objnbr]->basex) > 0 ? 0 :
-        pattern[obj->objnbr]->basex - obj->base_tile->x;
-    u_int16 j0 = (obj->base_tile->y - pattern[obj->objnbr]->basey) > 0 ? 0 :
-        pattern[obj->objnbr]->basey - obj->base_tile->y;
+    u_int16 i0 = (obj->base_tile->x - pattern[obj->objnbr]->base_x ()) > 0 ? 0 :
+        pattern[obj->objnbr]->base_x () - obj->base_tile->x;
+    u_int16 j0 = (obj->base_tile->y - pattern[obj->objnbr]->base_y ()) > 0 ? 0 :
+        pattern[obj->objnbr]->base_y () - obj->base_tile->y;
 
     ie =
-        obj->base_tile->x - pattern[obj->objnbr]->basex + ie >
+        obj->base_tile->x - pattern[obj->objnbr]->base_x () + ie >
         submap[smap]->length ? submap[smap]->length - obj->base_tile->x : ie;
     je =
-        obj->base_tile->y - pattern[obj->objnbr]->basey + je >
+        obj->base_tile->y - pattern[obj->objnbr]->base_y () + je >
         submap[smap]->height ? submap[smap]->height - obj->base_tile->y : je;
 
     ie -= i0;
     je -= j0;
-    i0 += obj->base_tile->x - pattern[obj->objnbr]->basex;
-    j0 += obj->base_tile->y - pattern[obj->objnbr]->basey;
+    i0 += obj->base_tile->x - pattern[obj->objnbr]->base_x ();
+    j0 += obj->base_tile->y - pattern[obj->objnbr]->base_y ();
     ie += i0;
     je += j0;
 
@@ -776,7 +776,6 @@ s_int8 landmap::insert_mapobject (mapobject * an, u_int16 pos,
     for (i = 0; i < pos; i++)
         pattern[i] = oldpat[i];
     pattern[pos] = an;
-    pattern[pos]->play ();
     for (i = pos + 1; i < nbr_of_patterns; i++)
         pattern[i] = oldpat[i - 1];
     delete[]oldpat;

@@ -740,7 +740,7 @@ void mapcharacter::draw (s_int16 x, s_int16 y, drawing_area * da_opt = NULL, sur
 //     cout << anim[current_move]->playstate () << endl; 
 }
 
-void mapcharacter::draw (mapview * mv, u_int16 x, u_int16 y, surface * target = NULL)
+void mapcharacter::draw (const mapview * mv, u_int16 x, u_int16 y, surface * target = NULL)
 {
     u_int16 xdraw =
         ((posx - mv->posx - basex) * MAPSQUARE_SIZE) + offx - mv->offx + x -

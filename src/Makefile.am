@@ -15,7 +15,7 @@ adonthell_LDADD = $(SDL_LIBS) $(OGG_LIBS) $(PY_LIBS)
 adonthell_SOURCES = animation.cc audio.cc audio_loop.cc character_base.cc \
 character.cc data.cc data_screen.cc dialog.cc dialog_engine.cc \
 drawable.cc drawing_area.cc event.cc fileops.cc game.cc gametime.cc image.cc \
-input.cc landmap.cc lex.prefs.cc main.cc mapcharacter.cc mapengine.cc \
+input.cc landmap.cc lex.prefs.cc main.cc mapsquares.cc mapcharacter.cc mapengine.cc \
 mapobject.cc mapselect.cc maptpl.cc mapview.cc pnm.cc prefs.cc \
 py_callback.cc py_inc.cc py_modules.cc py_adonthell_wrap.cc quest.cc \
 screen.cc surface.cc storage.cc win_background.cc win_base.cc win_border.cc \
@@ -25,7 +25,7 @@ win_write.cc yarg.cc \
 animation.h audio.h audio_loop.h callback.h py_callback.h \
 character_base.h character.h data.h data_screen.h dialog.h dialog_engine.h \
 drawable.h drawing_area.h event.h fileops.h game.h gametime.h image.h input.h inventory.h \
-item.h landmap.h mapcharacter.h mapobject.h mapselect.h maptpl.h mapview.h \
+item.h landmap.h mapsquares.h mapcharacter.h mapobject.h mapselect.h maptpl.h mapview.h \
 mapengine.h pnm.h prefs.h py_inc.h py_modules.h quest.h screen.h surface.h storage.h \
 types.h win_anim.h win_background.h win_base.h win_border.h win_container.h \
 win_file.h win_file_select.h win_font.h win_image.h win_info.h win_label.h \

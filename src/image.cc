@@ -151,7 +151,7 @@ s_int8 image::load_pnm (string fname)
     return ret;
 }
 
-s_int8 image::put (ogzstream& file)
+s_int8 image::put (ogzstream& file) const
 {
     bool m = is_masked (); 
     s_int8 a = alpha ();
@@ -164,7 +164,7 @@ s_int8 image::put (ogzstream& file)
     return 0; 
 }
 
-s_int8 image::save (string fname)
+s_int8 image::save (string fname) const
 {
     ogzstream file (fname);
     s_int8 ret = 0; 
@@ -176,12 +176,12 @@ s_int8 image::save (string fname)
     return ret;
 }
 
-s_int8 image::put_raw (ogzstream& file)
+s_int8 image::put_raw (ogzstream& file) const
 {
     return 0;
 }
 
-s_int8 image::save_raw (string fname)
+s_int8 image::save_raw (string fname) const
 {
     ogzstream file (fname);
     s_int8 ret = 0; 
@@ -193,7 +193,7 @@ s_int8 image::save_raw (string fname)
     return ret;
 }
 
-s_int8 image::put_pnm (SDL_RWops * file)
+s_int8 image::put_pnm (SDL_RWops * file) const
 {
     SDL_Surface *tmp2 = SDL_CreateRGBSurface (0, length (),
                                               height (), 24, 
@@ -209,7 +209,7 @@ s_int8 image::put_pnm (SDL_RWops * file)
     return 0; 
 }
 
-s_int8 image::save_pnm (string fname)
+s_int8 image::save_pnm (string fname) const
 {
     SDL_RWops *file;
     s_int8 ret = 0; 
@@ -222,7 +222,7 @@ s_int8 image::save_pnm (string fname)
     return ret;
 }
  
-void image::zoom (surface& src, u_int16 l, u_int16 h, u_int16 x = 0, u_int16 y = 0)
+void image::zoom (const surface& src, u_int16 l, u_int16 h, u_int16 x = 0, u_int16 y = 0)
 { 
     // Calculate the step per pixel.
     // While the surface positions are u_int16s, we use u_int32s for step
@@ -256,7 +256,7 @@ void image::zoom (surface& src, u_int16 l, u_int16 h, u_int16 x = 0, u_int16 y =
     unlock (); 
 }
 
-void image::tile (surface& src, u_int16 l, u_int16 h, u_int16 x = 0, u_int16 y = 0)
+void image::tile (const surface& src, u_int16 l, u_int16 h, u_int16 x = 0, u_int16 y = 0)
 {
     u_int16 posx;
     u_int16 posy;
@@ -268,7 +268,7 @@ void image::tile (surface& src, u_int16 l, u_int16 h, u_int16 x = 0, u_int16 y =
             src.draw (x + posx, y + posy, &da, this); 
 }
 
-void image::brightness (surface& src, u_int8 cont, bool proceed_mask = false)
+void image::brightness (const surface& src, u_int8 cont, bool proceed_mask = false)
 {
     u_int16 i, j;
     u_int8 ir, ig, ib;
@@ -298,7 +298,7 @@ void image::brightness (surface& src, u_int8 cont, bool proceed_mask = false)
     set_alpha (255); 
 }  
 
-image& image::operator = (image& src)
+image& image::operator = (const image& src)
 {
     (surface&) (*this) = (surface&) src;    
     return *this; 

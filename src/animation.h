@@ -26,8 +26,10 @@
 #ifndef _ANIMATION_H
 #define _ANIMATION_H
 
+
 #include "image.h"
 #include <vector>
+
 
 /**
  * Handles images properties in an animation.
@@ -78,7 +80,7 @@ class animationframe
      * 
      * @return true if the surface is masked, false otherwise.
      */
-    bool is_masked ()
+    bool is_masked () const
     {
         return is_masked_;
     }
@@ -99,7 +101,7 @@ class animationframe
      * 
      * @return the alpha value of the frame.
      */
-    u_int8 alpha ()
+    u_int8 alpha () const
     {
 #ifdef REVERSE_ALPHA
         return alpha_;
@@ -137,7 +139,7 @@ class animationframe
      * 
      * @return the index of the image this frame points to.
      */
-    u_int16 image_nbr ()
+    u_int16 image_nbr () const
     {
         return imagenbr;
     }
@@ -158,7 +160,7 @@ class animationframe
      * 
      * @return the delay (in game cycles) of this frame (0 means infinite).
      */
-    u_int16 delay ()
+    u_int16 delay () const
     {
         return delay_;
     }
@@ -180,7 +182,7 @@ class animationframe
      * 
      * @return the index of the frame next to this one.
      */
-    u_int16 nextframe ()
+    u_int16 nextframe () const
     {
         return nextframe_;
     }
@@ -212,21 +214,11 @@ class animationframe
      * 
      * @return the X offset of this frame.
      */
-    u_int16 offx ()
+    u_int16 offx () const
     {
         return gapx;
     }
-
-    /** 
-     * Sets the X offset for this frame.
-     * 
-     * @param ox new X offset.
-     */
-    void set_offx (u_int16 ox)
-    {
-        gapx = ox;
-    }
-    
+     
     /** 
      * Returns the Y offset (i.e position relative to the animation's position)
      * of this frame.
@@ -234,18 +226,20 @@ class animationframe
      * 
      * @return the Y offset of this frame.
      */
-    u_int16 offy ()
+    u_int16 offy () const
     {
         return gapy;
     }
     
     /** 
-     * Sets the Y offset for this frame.
+     * Sets the offset for this frame.
      * 
-     * @param oy new Y offset.
+     * @param ox new X offset.
+     * @param ox new Y offset.
      */
-    void set_offy (u_int16 oy)
+    void set_offset (u_int16 ox,  u_int16 oy)
     {
+        gapx = ox;
         gapy = oy;
     }
 
@@ -275,7 +269,7 @@ class animationframe
      * 
      * @return 0 in case of success, error number in case of error.
      */
-    s_int8 put (ogzstream& file);
+    s_int8 put (ogzstream& file) const;
 
     
     //@}
@@ -289,11 +283,6 @@ private:
     s_int16 gapy;
     u_int16 delay_;
     u_int16 nextframe_;     
-    
-#ifndef SWIG
-    friend class animation;
-    friend class win_anim;
-#endif
 };
 
 
@@ -311,8 +300,7 @@ typedef enum { PLAY = true, STOP = false } play_state;
  * probably want to use this class. An animation contains:
  *   - A set of images arranged in an indexed array.
  *   - A set of animation_frames.
- *   - A position offset.
- * @todo is the position offset usefull?
+ *   - A global position offset.
  *
  * During playback, the animation look at the first animation_frame. Each
  * animation_frame refers to an image of the animation, and give it special
@@ -389,7 +377,7 @@ public:
      * 
      * @return PLAY is the animation is currently playing, STOP otherwise.
      */
-    play_state playstate ()
+    play_state playstate () const
     {
         return play_flag; 
     }
@@ -436,8 +424,8 @@ public:
      */ 
     //@{ 
 
-    void draw (s_int16 x, s_int16 y, drawing_area * da_opt = NULL,
-               surface * target = NULL);
+    void draw (s_int16 x, s_int16 y, const drawing_area * da_opt = NULL,
+               surface * target = NULL) const;
 
     //@}
 
@@ -485,7 +473,7 @@ public:
      * 
      * @return the number of frames in this animation.
      */
-    u_int16 nbr_of_frames ()
+    u_int16 nbr_of_frames () const
     {
         return frame.size ();
     }
@@ -496,7 +484,7 @@ public:
      * 
      * @return the number of images in this animation.
      */
-    u_int16 nbr_of_images ()
+    u_int16 nbr_of_images () const
     {
         return t_frame.size ();
     }
@@ -507,7 +495,7 @@ public:
      * 
      * @return the index of the frame currently displayed.
      */
-    u_int16 currentframe ()
+    u_int16 currentframe () const
     {
         return currentframe_;
     }
@@ -529,7 +517,7 @@ public:
      * 
      * @return the global X offset of the animation.
      */
-    s_int16 xoffset ()
+    s_int16 xoffset () const
     {
         return xoffset_;
     }
@@ -540,7 +528,7 @@ public:
      * 
      * @return the global Y offset of the animation.
      */
-    s_int16 yoffset ()
+    s_int16 yoffset () const
     {
         return yoffset_;
     }
@@ -604,7 +592,7 @@ public:
      * 
      * @return 0 in case of success, error code otherwise.
      */
-    s_int8 insert_image (image * im, u_int16 pos);
+    s_int8 insert_image (const image * im, u_int16 pos);
 
 
     /** 
@@ -612,12 +600,12 @@ public:
      * All the frames will be updated so the operation doesn't affect
      * the animation in any way.
      * 
-     * @param the animationframe to add.
+     * @param af the animationframe to add.
      * @param pos index where to add the frame.
      * 
      * @return 0 in case of success, error code otherwise.
      */
-    s_int8 insert_frame (animationframe af, u_int16 pos);
+    s_int8 insert_frame (const animationframe af, u_int16 pos);
 
     /** 
      * Removes an image at a given position.
@@ -657,7 +645,7 @@ public:
      * @param sy Desired Y size.
      * @param src Source animation to zoom.
      */
-    void zoom (u_int16 sx, u_int16 sy, animation * src);
+    void zoom (u_int16 sx, u_int16 sy, const animation * src);
 
     //@}
 
@@ -668,7 +656,7 @@ public:
      * @attention Not available from Python. Use copy () from Python instead.
      * @sa copy ()
      */ 
-    animation& operator = (animation& src);
+    animation& operator = (const animation& src);
 #endif
 
     /**
@@ -676,19 +664,17 @@ public:
      *
      * @sa operator = 
      */
-    void copy (animation& src) 
+    void copy (const animation& src) 
     {
         *this = src; 
     }
 
     
 private:
-    vector <image *> t_frame;
-    vector <animationframe> frame;
-    u_int16 currentframe_;
-    u_int16 speedcounter;
-    play_state play_flag;
-    s_int16 xoffset_, yoffset_;
+    /**
+     * Forbid value passing.
+     */
+    animation(animation& src);
 
     /** 
      * Calculate the real dimensions of the animation, depending
@@ -696,7 +682,14 @@ private:
      * 
      */
     void calculate_dimensions (); 
-    
+
+    mutable vector <image *> t_frame;
+    mutable vector <animationframe> frame;
+    u_int16 currentframe_;
+    u_int16 speedcounter;
+    play_state play_flag;
+    s_int16 xoffset_, yoffset_;
+     
 #ifndef SWIG
     friend class win_anim;
 #endif

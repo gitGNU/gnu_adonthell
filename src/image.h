@@ -162,7 +162,7 @@ public:
      *      @li -1 in case of error.
      *  @sa save ()
      */
-    s_int8 put (ogzstream& file);
+    s_int8 put (ogzstream& file) const;
 
     /** Saves an image into an file, in %game format, with
      *  alpha and mask values.
@@ -176,7 +176,7 @@ public:
      *      @li -1 in case of error.
      *  @sa put ()
      */
-    s_int8 save (string fname);
+    s_int8 save (string fname) const;
 
     /** Saves an image into an opened file, in %game format, without
      *  alpha and mask values.
@@ -190,7 +190,7 @@ public:
      *      @li -1 in case of error.
      *  @sa save_raw ()
      */
-    s_int8 put_raw (ogzstream& file);
+    s_int8 put_raw (ogzstream& file) const;
 
     /** Saves an image into an file, in %game format, without
      *  alpha and mask values.
@@ -204,7 +204,7 @@ public:
      *      @li -1 in case of error.
      *  @sa put_raw ()
      */
-    s_int8 save_raw (string fname);
+    s_int8 save_raw (string fname) const;
 
     /** Saves an image into an opened file, in PNM format, without
      *  alpha and mask values.
@@ -218,7 +218,7 @@ public:
      *      @li -1 in case of error.
      *  @sa save_pnm ()
      */
-    s_int8 put_pnm (SDL_RWops * file);
+    s_int8 put_pnm (SDL_RWops * file) const;
 
     /** Saves an image into an file, in PNM format, without
      *  alpha and mask values.
@@ -232,7 +232,7 @@ public:
      *      @li -1 in case of error.
      *  @sa put_pnm ()
      */
-    s_int8 save_pnm (string fname);
+    s_int8 save_pnm (string fname) const;
 
 
     //@}
@@ -251,7 +251,7 @@ public:
      *  Zoom the content of the src surface into this image, to it's own size.
      *  @param src the source image to zoom.
      */
-    void zoom (surface& src)
+    void zoom (const surface& src)
     {
         zoom (src, length (), height (), 0, 0);
     }
@@ -271,7 +271,7 @@ public:
      * @attention Not available from Python. Use zoom_to () from Python instead.
      * @sa zoom_to () 
      */
-    void zoom (surface& src, u_int16 l, u_int16 h, u_int16 x = 0, u_int16 y = 0);
+    void zoom (const surface& src, u_int16 l, u_int16 h, u_int16 x = 0, u_int16 y = 0);
 #endif
     
     /**
@@ -280,7 +280,7 @@ public:
      * @sa zoom () 
      * 
      */ 
-    void zoom_to (surface& src, u_int16 l, u_int16 h, u_int16 x = 0, u_int16 y = 0)
+    void zoom_to (const surface& src, u_int16 l, u_int16 h, u_int16 x = 0, u_int16 y = 0)
     {
         zoom (src, l, h, x, y); 
     }
@@ -289,7 +289,7 @@ public:
      *  Tiles the src surface so this image is totally filled.
      *  @param source the source surface to tile.
      */ 
-    void tile (surface& src)
+    void tile (const surface& src)
     {
         tile (src, length (), height ()); 
     }
@@ -308,7 +308,7 @@ public:
      * @attention Not available from Python. Use tile_to () from Python instead.
      * @sa tile_to () 
      */ 
-    void tile (surface& src, u_int16 l, u_int16 h, u_int16 x = 0, u_int16 y = 0);
+    void tile (const surface& src, u_int16 l, u_int16 h, u_int16 x = 0, u_int16 y = 0);
 #endif
     
     /**
@@ -317,7 +317,7 @@ public:
      * @sa tile () 
      * 
      */ 
-    void tile_to (surface& src, u_int16 l, u_int16 h, u_int16 x = 0, u_int16 y = 0)
+    void tile_to (const surface& src, u_int16 l, u_int16 h, u_int16 x = 0, u_int16 y = 0)
     {
         tile (src, l, h, x, y); 
     }
@@ -333,7 +333,7 @@ public:
      * @param proceed_mask if set to true, then the translucent pixels will
      *                     be lightened/darkened too.
      */
-    void brightness (surface& src, u_int8 cont, bool proceed_mask = false); 
+    void brightness (const surface& src, u_int8 cont, bool proceed_mask = false); 
  
     //@} 
 
@@ -345,7 +345,7 @@ public:
      * @attention Not available from Python. Use copy () from Python instead.
      * @sa copy ()
      */
-    image& operator = (image& src); 
+    image& operator = (const image& src); 
 #endif
 
     /**
@@ -353,16 +353,16 @@ public:
      *
      * @sa operator = 
      */
-    void copy (image& src) 
+    void copy (const image& src) 
     {
         *this = src; 
     }
  
 private:
     /**
-     * Copy-constructor (forbids value passing).
+     * Forbid value passing.
      */
-    image(image& src);
+    image(const image& src);
     
     /** 
      * Converts a raw image source recorded in RGB to the current screen depth

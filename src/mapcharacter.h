@@ -180,7 +180,7 @@ public:
 #endif
     void update ();
     void launch_action (mapcharacter * requester);
-    void draw (mapview * mv, u_int16 x, u_int16 y, surface * target = NULL);
+    void draw (const mapview * mv, u_int16 x, u_int16 y, surface * target = NULL);
     void draw (s_int16 x, s_int16 y, drawing_area * da_opt = NULL, surface * target = NULL);
 
     // Testing if a move is possible

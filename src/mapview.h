@@ -44,8 +44,8 @@ class mapview : public drawable
     //  u_int16 ctrx,ctry;
     drawing_area *da;
 
-    list <mapsquare_tile> critical_draw;
-    list <mapsquare_char> characters_draw;
+    mutable list <mapsquare_tile> critical_draw;
+    mutable list <mapsquare_char> characters_draw;
 
 #ifndef _EDIT_
     PyObject *locals;			// Locals that belong to that mapview
@@ -137,8 +137,8 @@ public:
     void set_schedule (string file);
 #endif
     void update ();
-    void draw (s_int16 x, s_int16 y, drawing_area * da_opt = NULL,
-               surface *target = NULL);
+    void draw (s_int16 x, s_int16 y, const drawing_area * da_opt = NULL,
+               surface *target = NULL) const;
 
 #ifdef _EDIT_
     void move_cursor_left ();
