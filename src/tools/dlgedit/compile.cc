@@ -112,11 +112,22 @@ void dlg_compiler::write_dialogue ()
 
 void dlg_compiler::write_entry_func ()
 {
-    script << "\n    def run (self, answer):";
-    script << "\n        self.npc = []";
-    script << "\n        self.player = []";
-    script << "\n        self.cont = []";
-    script << "\n        self.dialogue[answer]()\n";
+    // overwrite __getattr__, so that member variables need not be
+    // defined befor using them
+    script << "\n    def __getattr__ (self, var):"
+
+#ifdef _DEBUG_
+           << "\n        print \"*** Warning: \\\"\" + var + \"\\\" not defined!\""
+
+#endif _DEBUG_
+           << "\n        return 0\n"
+
+    // Write the function to start/continue the dialogue
+           << "\n    def run (self, answer):"
+           << "\n        self.npc = []"
+           << "\n        self.player = []"
+           << "\n        self.cont = []"
+           << "\n        self.dialogue[answer]()\n";
 }
 
 // Write a NPC part 
