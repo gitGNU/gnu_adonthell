@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-
+ 
 if BUILD_TOOLS
 SUBDIRS = . modules tools
 else

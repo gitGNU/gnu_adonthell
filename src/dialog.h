@@ -167,10 +167,11 @@ private:
     string npc_portrait_;           // Current NPCs portrait
     string npc_name_;               // Current NPCs name 
     
-    vector<s_int32> answers;        // The indices with which to call instance.run () 
+    vector<s_int32> answers;        // The indices to pass to dialogue.run () 
     vector<s_int32> choices;        // Strings player can chose from
     vector<s_int32> used;           // Dialogue parts that are already spoken
-
+    vector<s_int32> loop;           // Dialogue parts that can be looped
+    
     void clear ();                  // Cleanup
     bool setup ();                  // Further dialogue initialisation
     char* scan_string (const char*);// Look for enclosed code and execute it

@@ -61,23 +61,41 @@ bool dialog::init (string fpath, string name, PyObject *args)
 // Misc. initialisation
 bool dialog::setup ()
 {
-    // Extract the dialogue's strings
-    PyObject *list = dialogue.get_attribute ("text");
-    if (!list || !PyList_Check (list)) return false;
-
-    PyObject *s;
-    u_int32 i, index = PyList_Size (list);
-
-    strings = new char*[index];
-
-    for (i = 1; i < index; i++)
+    PyObject *list, *s;
+    u_int32 i, size;
+    
+    // Get the text that may loop
+    list = dialogue.get_attribute ("loop");
+    if (list && PyList_Check (list))
     {
-        s = PyList_GetItem (list, i);
-        if (s) strings[i] = PyString_AsString (s);
-        else strings[i] = "*** Error";
+        size = PyList_Size (list);
+    
+        for (i = 0; i < size; i++)
+        {
+            s = PyList_GetItem (list, i);
+            if (s && PyInt_Check (s)) loop.push_back (PyInt_AsLong (s));
+        }
+        
+        Py_DECREF (list);
     }
+    
+    // Extract the dialogue's strings
+    list = dialogue.get_attribute ("text");
+    if (list && PyList_Check (list))
+    {
+        size = PyList_Size (list);
+        strings = new char*[size];
 
-    Py_DECREF (list);
+        for (i = 1; i < size; i++)
+        {
+            s = PyList_GetItem (list, i);
+            if (s && PyString_Check (s)) strings[i] = PyString_AsString (s);
+            else strings[i] = "*** Error";
+        }
+
+        Py_DECREF (list);
+    }
+    else return false;
 
     // Init the first answer
     answers.push_back (0);
@@ -132,16 +150,16 @@ void dialog::run (u_int32 index)
     if (answer == -1)
         return;
     
-    // Mark the Player's text (if any) as used unless loops allowed
-    if (index > 0)
-    {
+    // Mark the Player text as used unless loops allowed
+    if (find (loop.begin (), loop.end (), answer) == loop.end ())
         used.push_back (answer);
-    }
-    
+        
     do
     {
         // Execute the next part of the dialogue
         arg = Py_BuildValue ("(i)", answer);
+        
+         // run next part of dialogue
         dialogue.run (arg);
 #ifdef PY_DEBUG
         python::show_traceback ();
@@ -206,8 +224,10 @@ void dialog::run (u_int32 index)
             Py_XDECREF (result);
             Py_XDECREF (arg);
             
-            // make sure this NPC text can't be used any more
-            used.push_back (answer);
+            // Mark the NPC text as used unless loops allowed
+            if (find (loop.begin (), loop.end (), answer) == loop.end ())
+                used.push_back (answer);
+            
             answers.push_back (answer);
         }
         else
