@@ -19,15 +19,17 @@
  * @brief Implements the time_event class.
  */
 
+#include "stdlib.h"
 #include "time_event.h"
 #include "gamedate.h"
 
 // create a new time event
 time_event::time_event (const string & time, bool absolute)
 {
+    Type = TIME_EVENT;
+    Repeat = 0;
     Time = parse_date (time);
     if (!absolute) Time += gamedate::time ();
-    Repeat = 0;
 }
 
 // specify the interval between two occurances of the event
@@ -35,6 +37,43 @@ void time_event::repeat (const string & interval, s_int32 count)
 {
     Interval = parse_date (interval);
     Repeat = count;
+}
+
+// execute the time event
+void time_event::execute (event & evnt)
+{
+    // nothing needs be passed to the script; it can get the
+    // current time from the gametime class if it is needed.
+    Script.run ();
+    
+    if (Repeat > 0) Repeat--;
+     
+    // when the script needs be repeated, do so.
+    if (Repeat != 0) Time += Interval;
+}
+
+// Save time event to file
+void time_event::put_state (ogzstream& out) const
+{
+    // save basic event data first
+    event::put_state (out);
+    
+    // save time event data
+    Time >> out;
+    Interval >> out;
+}
+
+// load time event from file
+bool time_event::get_state (igzstream& in)
+{
+    // get basic event data
+    event::get_state (in);
+    
+    // get time event data
+    Time << in;
+    Interval << in;
+    
+    return true;
 }
 
 // convert the time string to gametime minutes

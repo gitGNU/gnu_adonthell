@@ -21,6 +21,7 @@
 
 #include "gamedate.h"
 #include "gametime.h"
+#include "time_event.h"
 
 // gametime minutes spent in the gameworld so far
 u_int32 gamedate::Time = 0;
@@ -32,7 +33,7 @@ u_int32 gamedate::Ticks = 0;
 void gamedate::update ()
 {
     // fts contains the number of cycles that passed since the last
-    // call to gametime::tick
+    // call to gamedate::update
     Ticks += gametime::frames_to_skip ();
 
     // check whether a in-game minute has passed
@@ -41,7 +42,8 @@ void gamedate::update ()
         Ticks -= gametime::minute ();
         Time++;
         
-        // TODO: raise time event
+        // raise time event
+        event_handler::raise_event (time_event (Time));
     }
 }
 
@@ -73,7 +75,7 @@ u_int16 gamedate::day ()
     // how many minutes make one day
     static u_int day_in_minutes = 60 * HOURS_PER_DAY;
 
-    return day_in_minutes / Time;
+    return Time / day_in_minutes;
 }
 
 // calculate the hour of the current day
