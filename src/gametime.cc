@@ -22,6 +22,8 @@ u_int32 gametime::timer2;
 u_int8 gametime::ftd = 0;
 bool gametime::running = false; 
 
+NEW_EVENT(time_event)
+
 gametime::gametime (u_int32 start, float ratio)
 {
     ticks = 0;
@@ -33,6 +35,8 @@ gametime::gametime (u_int32 start, float ratio)
     
     // This decides how many realtime milliseconds make one gametime minute
     minute = (int) (60000 * ratio);
+    
+    REGISTER_EVENT (TIME_EVENT, time_event)
 }
 
 // Increase gametime 
@@ -76,7 +80,7 @@ void gametime::update ()
 
 time_event::time_event ()
 {
-    time =minute = hour = day =  0;
+    time = minute = hour = day =  0;
     m_step = h_step = d_step = 1;
     type = TIME_EVENT;
 }
@@ -95,7 +99,7 @@ void time_event::save (ogzstream& out) const
 }
 
 // Load a time event from file
-void time_event::load (igzstream& f)
+bool time_event::load (igzstream& f)
 {
     string s; 
     minute << f;
@@ -105,19 +109,23 @@ void time_event::load (igzstream& f)
     day << f;
     d_step << f;
     s << f;
-    set_script (s); 
+    set_script (s);
+    
+    return true;
 }
 
 // Execute time event's script
 void time_event::execute (event &e)
 {
     time_event t = (time_event&) e; 
+
     // Build the event script's local namespace
     PyObject *locals = Py_BuildValue ("{s:i,s:i,s:i}", "minute", (int) t.minute, 
         "hour", (int) t.hour, "day", (int) t.day);
     script.set_locals (locals);
     script.run ();
     script.set_locals (NULL); 
+    
     // Cleanup
     Py_DECREF (locals);
 #ifdef _DEBUG_

@@ -42,7 +42,7 @@ class mapview;
 
 /**
  * Baseclass for map enter/leave events.
- * The event will be launched if all the members data matches.
+ * The event will be launched if all the member's data matches.
  *
  */ 
 class base_map_event : public event
@@ -56,7 +56,7 @@ public:
 
     void save (ogzstream&) const;
 
-    void load (igzstream&);
+    bool load (igzstream&);
 
     /**
      * Submap index (-1 for any).
@@ -89,7 +89,7 @@ public:
     s_int32 map;
 
     /**
-     * Pointer to the mapcharacter that can launch this event (-1 for any).
+     * Pointer to the mapcharacter that can launch this event (NULL for any).
      * 
      */ 
     mapcharacter *c;
@@ -123,7 +123,7 @@ public:
 
 
 /**
- * To notify when a mapcharacter entered a mapsquare.
+ * To notify when a mapcharacter left a mapsquare.
  *
  */ 
 class leave_event : public base_map_event
@@ -136,18 +136,6 @@ public:
     leave_event ();
 };
 
-
-
-/**
- * event_list able to load and save map events.
- * 
- */ 
-class map_event_list : public event_list
-{
-public:
-    void save (ogzstream& out) const;
-    void load (igzstream& in);
-}; 
 
 
 /**
@@ -165,7 +153,7 @@ public:
  * when you don't need them anymore.
  *
  */
-class landmap : public map_event_list
+class landmap : public event_list
 {
  public: 
     /**

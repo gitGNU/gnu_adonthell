@@ -24,7 +24,9 @@
 
 using namespace std; 
 
-
+// functions that return a newly allocated event
+NEW_EVENT(enter_event)
+NEW_EVENT(leave_event)
 
 enter_event::enter_event () : base_map_event ()
 {
@@ -80,7 +82,7 @@ void base_map_event::execute (event& e)
 }
 
 // Load a enter event from file
-void base_map_event::load (igzstream& f)
+bool base_map_event::load (igzstream& f)
 {
     string name;
     string s; 
@@ -97,6 +99,8 @@ void base_map_event::load (igzstream& f)
     
     s << f;
     set_script (s); 
+
+    return true;
 }
 
 // Save enter_event to file
@@ -118,42 +122,12 @@ void base_map_event::save (ogzstream& out) const
     script_file () >> out; 
 }  
 
-void map_event_list::save (ogzstream& out) const
+landmap::landmap () : event_list () 
 {
-    vector <event *>::iterator i;
-    u_int32 nbr_events = events.size ();
-    nbr_events >> out; 
-    for (i = events.begin (); i != events.end (); i++)
-        (*i)->save (out); 
-}
-
-void map_event_list::load (igzstream& in)
-{
-    u_int32 nbr_events; 
-    nbr_events << in;
-    while (nbr_events) 
-    {
-        event * e; 
-        u_int8 t;
-        t << in;
-        switch (t) 
-        {
-            case ENTER_EVENT:
-                e = new enter_event;
-                e->load (in);
-                break;
-            case LEAVE_EVENT:
-                e = new leave_event;
-                e->load (in);
-                break;
-        }
-        add_event (e);
-        nbr_events--; 
-    }
-}
-
-landmap::landmap () : map_event_list () 
-{
+    // doing this here means some slight overhead, but at least
+    // its save and we don't have additional dependencies.
+    REGISTER_EVENT (ENTER_EVENT, enter_event)
+    REGISTER_EVENT (LEAVE_EVENT, leave_event) 
 }
 
 landmap::~landmap ()
@@ -164,7 +138,7 @@ landmap::~landmap ()
 void landmap::clear () 
 {
     // Clear all events
-    map_event_list::clear (); 
+    event_list::clear (); 
     
     // Remove all mapcharacters from this map.
     vector <mapcharacter *>::iterator ic;
@@ -255,9 +229,8 @@ s_int8 landmap::load (string fname)
 {
     igzstream file;
     s_int8 retvalue = -1;
-    string fdef;
+    string fdef (MAPS_DIR);
 
-    fdef = MAPS_DIR;
     fdef += fname;
     file.open (fdef);
     if (!file.is_open ())
@@ -334,13 +307,12 @@ s_int8 landmap::save (string fname)
 
 s_int8 landmap::get_state (igzstream& file)
 {
-    map_event_list::load (file); 
-    return 0; 
+    return event_list::load (file); 
 }
 
 s_int8 landmap::put_state (ogzstream& file) const
 {
-    map_event_list::save (file); 
+    event_list::save (file); 
     return 0; 
 }
 

@@ -52,8 +52,9 @@ enum
 };
 
 /**
- * Base class for events. You can create your own events types that can
- * be handled by the event handler by making them inherit from this class.
+ * Base class for events. You can create your own event types that can
+ * be handled by the event list and event handler by inheriting them from
+ * this class.
  * 
  */ 
 class event
@@ -88,8 +89,10 @@ public:
      * Loads an event from a file.
      * 
      * @param in file to load the event from.
+     *
+     * @return \e true if the event could be loaded, \e false otherwise
      */
-    virtual void load (igzstream& in) = 0;
+    virtual bool load (igzstream& in) = 0;
 
     /** 
      * Sets the script for an event.
@@ -133,53 +136,86 @@ protected:
 };
 
 /**
- *Base class for objects that want to register events
+ * Pointer to a function returning a newly allocated event
+ *
+ */
+typedef event* (*new_event)();
+
+
+/**
+ * Base class for objects that want to register events
  *
  */ 
 class event_list
 {
 public:
     /**
-     * Destructor - unregisters and delete all event owned by this list.
+     * Destructor - unregisters and deletes all events owned by this list.
      * 
      */ 
     virtual ~event_list ();
 
     /**
-     * Unregisters and delete all event owned by this list.
+     * Unregisters and deletes all events owned by this list.
      * 
      */ 
     void clear ();
 
     /** 
      * Adds an event to this list. The event will be
-     * registered into the event_handler and the list will then
-     * be responsible for it's deletion.
+     * registered with the event_handler and the list will then
+     * take care of it's deletion.
      * 
      * @param ev pointer to the event to add.
      */
     void add_event (event* ev);
 
+    /**
+     * Register an event for loading. Before the event_list can load
+     * an event from file, it needs a callback function that returns
+     * a new instance of the event of the given type.
+     *
+     * @param type the type of the event to register
+     * @param e a callback returning a new instance of an event of the given type.
+     *
+     * @sa load ()
+     */
+    static void register_event (int type, new_event e);
+    
     /** 
      * Save the event_list to a file.
      * 
      * @param out file where to save the event_list.
      */ 
-    virtual void save (ogzstream& out) const = 0;
+    void save (ogzstream& out) const;
     
     /** 
      * Loads the event_list from a file and registers all loaded events.
+     * @warning Before the event_list can load an event from file, it needs
+     *          a callback function that returns a new instance of that event.
      * 
      * @param in file to load the event_list from.
+     * 
+     * @return \e true if the event_list was loaded successfully, \e false otherwise.
+     * @sa register_event ()
      */
-    virtual void load (igzstream& in) = 0;
+    bool load (igzstream& in);
 
+#ifndef SWIG
 protected:
     /**
      * List of events.
      * 
      */ 
     mutable vector<event*> events;
+
+private:
+    /**
+     * Array with callbacks that return a newly allocated instance of an event.
+     * The event's type is the postion of the according callback in the array.
+     */
+    static new_event instanciate_event[MAX_EVENT];
+#endif // SWIG
 };
 
 /**
@@ -213,8 +249,20 @@ public:
     
 private:
 #ifndef SWIG
-    static vector<event*> handlers[MAX_EVENT];  // registered events storage
+    static vector<event*> handlers[MAX_EVENT];      // registered events storage
 #endif
 };
+
+/**
+ * A function that returns a new instance of an event.
+ */
+#define NEW_EVENT(evt)\
+    event* new_ ## evt () { return (event*) new evt; }
+/**
+ * Registers an event with the event_list, allowing it to load this event
+ * without knowing about it at compile time.
+ */
+#define REGISTER_EVENT(type,evt)\
+    event_list::register_event (type, (new_event) &new_ ## evt);
 
 #endif // EVENT_H_

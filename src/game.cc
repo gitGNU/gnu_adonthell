@@ -1,7 +1,7 @@
 /*
    $Id$
 
-   Copyright (C) 1999 The Adonthell Team
+   Copyright (C) 1999/2000/2001 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -19,13 +19,13 @@
 #include "input.h"
 #include "screen.h"
 #include "game.h"
+#include "data.h"
 
 #if defined(USE_PYTHON)
 #include "Python.h"
 #include "py_modules.h"
 #include "py_inc.h"
 #endif
-#include "data.h"
 
 #ifdef SDL_MIXER
 #include "audio.h"
@@ -77,7 +77,7 @@ bool game::init ()
 #if !defined(_EDIT_)
     // init the data subsystem
     if (!data::init (configuration->get_adonthellrc ()))
-      return false;
+        return false;
 #endif
     // voila :)
     return true;

@@ -126,7 +126,7 @@ bool data::init (string d)
             filepath = adonthell_dir;
             filepath += "/";
             filepath += dirent->d_name; 
-            //             sprintf (filepath, "%s/%s", adonthell_dir.c_str (), dirent->d_name);
+ 
             if (stat (filepath.c_str (), &statbuf) != -1 && S_ISDIR (statbuf.st_mode) && 
                 strncmp ("adonthell-save-", dirent->d_name, 15) == 0)
             {

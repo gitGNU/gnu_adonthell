@@ -31,6 +31,10 @@
 #include "data.h"
 #include "event.h"
 
+// Array with callbacks to return a newly instanciated event
+new_event event_list::instanciate_event[MAX_EVENT];
+
+
 event_list::~event_list ()
 {
     clear (); 
@@ -50,11 +54,62 @@ void event_list::clear ()
     }    
 }
 
-// Adds and register an event.
+// Adds an event to the list and register it with the event_handler.
 void event_list::add_event (event* ev)
 {
-    events.push_back(ev);
+    events.push_back (ev);
     event_handler::register_event (ev); 
+}
+
+// Register an event for loading
+void event_list::register_event (int type, new_event e)
+{
+    if (type < MAX_EVENT)
+        instanciate_event[type] = e;
+}
+
+// Save an event_list to file
+void event_list::save (ogzstream& out) const
+{
+    vector <event *>::iterator i;
+    u_int32 nbr_events = events.size ();
+    
+    nbr_events >> out; 
+
+    for (i = events.begin (); i != events.end (); i++)
+        (*i)->save (out); 
+}
+
+// Loads an event_list from file
+bool event_list::load (igzstream& in)
+{
+    u_int32 nbr_events;
+    u_int8 type;
+
+    nbr_events << in;
+    
+    while (nbr_events--) 
+    {
+        event * e = NULL;
+        type << in;
+        
+        // Instanciate an event of the given type
+        if (type < MAX_EVENT && instanciate_event[type] != NULL)
+            e = instanciate_event[type]();
+ 
+        // try to load it, ...
+        if (e != NULL && e->load (in))
+            add_event (e);
+        
+        // ... otherwise fail.
+        else
+        {
+            fprintf (stderr, "Could not load event #%i. Aborting ...\n", type);
+            return false;
+        }    
+    }
+    
+    return true;
 }
 
 event::~event ()
