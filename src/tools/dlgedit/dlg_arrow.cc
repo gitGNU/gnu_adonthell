@@ -78,21 +78,114 @@ void DlgArrow::initShape ()
     float a = x / s;
     float b = y / s;
     
-    DlgPoint line0 = start.offset ((int)(-10.0f * a), (int)(-10.0f * b));
-    DlgPoint line1 = end.offset ((int)(10.0f * a), (int)(10.0f * b));
-
+    DlgPoint line0 = getIntersection (start, end, *prev_.front ());
+    DlgPoint line1 = getIntersection (end, start, *next_.front ());
+    
     // line from start- to end-circle
     line[0] = (GdkPoint) line0;
     line[1] = (GdkPoint) line1;
 
     // arrow's tip
     tip[0] = line[1];
-    tip[1] = (GdkPoint) line1.offset ((int)(a * 10.0f + b * 5.0f), (int)(b * 10.0f - a * 5.0f));
-    tip[2] = (GdkPoint) line1.offset ((int)(a * 10.0f - b * 5.0f), (int)(b * 10.0f + a * 5.0f));
+    tip[1] = (GdkPoint) line1.offset ((int)(a * 8.0f + b * 4.0f), (int)(b * 8.0f - a * 4.0f));
+    tip[2] = (GdkPoint) line1.offset ((int)(a * 8.0f - b * 4.0f), (int)(b * 8.0f + a * 4.0f));
     
     // calculate arrow's new dimension
     init (line0, line1);
     grow (2, 2);
+}
+
+// calculate intersection of arrow and node shape
+DlgPoint DlgArrow::getIntersection (DlgPoint &start, DlgPoint &end, DlgRect &shape)
+{
+    DlgPoint tl = shape.topLeft ();
+    DlgPoint br = shape.bottomRight ();
+    
+    int direction;
+    double a, b;
+    DlgPoint p;    
+    
+    // gradient of line
+    double x = end.x () - start.x ();
+    double y = end.y () - start.y ();
+
+    // tangens of angle between line(start, end) and x-axis
+    double m = x == 0 ? 1.0 : y / x;
+    
+    // direction where line(start, end) intersects with border of start
+    enum { NORTH, EAST, SOUTH, WEST };
+
+    // calculate where line(start, end) intersects with border of start
+    if (y < 0)
+    {
+        a = tl.y () - start.y ();
+        
+        if (x > 0)
+        {
+            // 1. quadrant
+            b = br.x () - start.x ();
+            
+            if (m > a / b) direction = EAST;
+            else direction = NORTH;
+        }
+        else 
+        {
+            // 2. quadrant
+            b = tl.x () - start.x ();
+            
+            if (m >= a / b) direction = NORTH;
+            else direction = WEST;
+        }
+    }
+    else
+    {
+        a = br.y () - start.y ();
+        
+        if (x < 0)
+        {
+            // 3. quadrant
+            b = tl.x () - start.x ();
+
+            if (m > a / b) direction = WEST;
+            else direction = SOUTH;
+        }
+        else
+        {
+            // 4. quadrant
+            b = br.x () - start.x ();
+
+            if (m >= a / b) direction = SOUTH;
+            else direction = EAST;
+        }
+    }
+    
+    // now we have one coordinate of the intersection and can
+    // calculate the second
+    switch (direction)
+    {
+        case NORTH:
+        {
+            p = DlgPoint ((tl.y () - start.y ()) * x / y + start.x (), tl.y ());
+            break;
+        }
+        case EAST:
+        {
+            p = DlgPoint (br.x (), start.y () + y / x * (br.x () - start.x ()));
+            break;
+        }
+        case SOUTH: 
+        {
+            p = DlgPoint ((br.y () - start.y ()) * x / y + start.x (), br.y ());
+            break;
+        }
+        case WEST:
+        {
+            p = DlgPoint (tl.x (), start.y () + y / x * (tl.x () - start.x ()));
+            break;
+        }
+    }
+    
+    return p;
 }
 
 // draw the Arrow
