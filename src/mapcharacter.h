@@ -368,7 +368,7 @@ public:
      * until he reaches the next mapsquare.
      *
      */
-    void go_north ();
+    bool go_north ();
 
     /** 
      * Walk to South (if possible).
@@ -381,7 +381,7 @@ public:
      * until he reaches the next mapsquare.
      *
      */
-    void go_south ();
+    bool go_south ();
 
     /** 
      * Walk to East (if possible).
@@ -394,7 +394,7 @@ public:
      * until he reaches the next mapsquare.
      *
      */
-    void go_east ();
+    bool go_east ();
     
     /** 
      * Walk to West (if possible).
@@ -407,7 +407,7 @@ public:
      * until he reaches the next mapsquare.
      *
      */
-    void go_west ();
+    bool go_west ();
 
     /** 
      * Returns whether it is possible or not to go to North from

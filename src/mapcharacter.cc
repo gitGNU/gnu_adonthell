@@ -416,40 +416,60 @@ bool mapcharacter::can_go_west () const
     return true;
 }
 
-void mapcharacter::go_north ()
+bool mapcharacter::go_north ()
 {
     if (current_move < WALK_NORTH)
     {
-        previous_move = current_move; 
-        current_move = WALK_NORTH;
+        bool ret = can_go_north ();
+        previous_move = current_move;  
+        if (ret) 
+            current_move = WALK_NORTH;
+        else current_move = STAND_NORTH;
+        return ret; 
     }
+    return false; 
 }
 
-void mapcharacter::go_south ()
+bool mapcharacter::go_south ()
 {
     if (current_move < WALK_NORTH)
     {
-        previous_move = current_move; 
-        current_move = WALK_SOUTH;
+        bool ret = can_go_south (); 
+        previous_move = current_move;
+        if (ret) 
+            current_move = WALK_SOUTH;
+        else current_move = STAND_SOUTH; 
+        return ret; 
     }
+    return false; 
 }
 
-void mapcharacter::go_east ()
+bool mapcharacter::go_east ()
 {
     if (current_move < WALK_NORTH)
     {
-        previous_move = current_move; 
-        current_move = WALK_EAST;
+        bool ret = can_go_east (); 
+        previous_move = current_move;
+        if (ret) 
+            current_move = WALK_EAST;
+        else current_move = STAND_EAST; 
+        return ret; 
     }
+    return false; 
 }
 
-void mapcharacter::go_west ()
+bool mapcharacter::go_west ()
 {
     if (current_move < WALK_NORTH)
     {
-        previous_move = current_move; 
-        current_move = WALK_WEST;
+        bool ret = can_go_west (); 
+        previous_move = current_move;
+        if (ret) 
+            current_move = WALK_WEST;
+        else current_move = STAND_WEST; 
+        return ret; 
     }
+    return false; 
 }
 
 bool mapcharacter::set_goal (u_int16 x, u_int16 y, u_int16 dir = NO_MOVE)
@@ -485,35 +505,19 @@ bool mapcharacter::follow_path ()
         switch (dir) 
         {
             case WALK_NORTH:
-                if (can_go_north ()) 
-                {
-                    go_north ();
-                    success = 1; 
-                }
+                if (go_north ()) success = 1; 
                 break;
 
             case WALK_SOUTH:
-                if (can_go_south ()) 
-                {
-                    go_south ();
-                    success = 1; 
-                }
+                if (go_south ()) success = 1; 
                 break;
                 
             case WALK_WEST:
-                if (can_go_west ()) 
-                {
-                    go_west ();
-                    success = 1; 
-                }
+                if (go_west ()) success = 1; 
                 break;
                 
             case WALK_EAST:
-                if (can_go_east ()) 
-                {
-                    go_east ();
-                    success = 1; 
-                }
+                if (go_east ()) success = 1; 
                 break;
         }
                  
