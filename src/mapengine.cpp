@@ -17,105 +17,101 @@
 #include "mapengine.h"
 #include "win_manager.h"
 
-mapengine::mapengine()
+mapengine::mapengine ()
 {
-  mv.resize(screen::length(),screen::height());
-  letsexit=false;
+    mv.resize (screen::length (), screen::height ());
+    letsexit = false;
 }
 
-mapengine::~mapengine()
+mapengine::~mapengine ()
 {
-  win_manager::destroy ();
+    win_manager::destroy ();
 }
 
-void mapengine::set_mapview_schedule(char * s)
+void mapengine::set_mapview_schedule (char *s)
 {
-  mv.set_schedule(s);
+    mv.set_schedule (s);
 }
 
-void mapengine::load_map(const char * fname)
+void mapengine::load_map (const char *fname)
 {
-  lmap.load(fname);
-  //  mv.detach_map();
-  mv.attach_map(&lmap);
+    lmap.load (fname);
+    //  mv.detach_map();
+    mv.attach_map (&lmap);
 }
 
-void mapengine::run()
+void mapengine::run ()
 {
-  screen::init_frame_counter();
-  while(!letsexit)
+    screen::init_frame_counter ();
+    while (!letsexit)
     {
-      mainloop();
-      screen::show();
-      if(input::has_been_pushed(SDLK_ESCAPE)) letsexit=true;
+        mainloop ();
+        screen::show ();
+        if (input::has_been_pushed (SDLK_ESCAPE))
+            letsexit = true;
     }
 }
 
-void mapengine::mainloop()
+void mapengine::mainloop ()
 {
-    input::update();
-    for(int i=0;i<screen::frames_to_do();i++)
+    input::update ();
+    for (int i = 0; i < screen::frames_to_do (); i++)
     {
-	win_manager::update ();
-	lmap.update();
-	mv.update();
+        win_manager::update ();
+        lmap.update ();
+        mv.update ();
     }
-    mv.draw(0,0);
+    mv.draw (0, 0);
     win_manager::draw ();
 }
 
-s_int8 mapengine::get_state(gzFile file)
+s_int8 mapengine::get_state (gzFile file)
 {
     //  char * t;
-  u_int16 nbr_of,i;
-  string t;
+    u_int16 nbr_of, i;
+    string t;
 
-  // Load the map from the filename
-  
-  t = fileops::get_string2(file);
+    // Load the map from the filename
 
-  cout << "Loading map: " << t << endl;
+    t = fileops::get_string2 (file);
+    load_map (t.c_str ());
+    //  delete[] t;
 
-  load_map (t.c_str ());
-  //  delete[] t;
-
-  // Load the mapcharacters
-  gzread(file,&nbr_of,sizeof(nbr_of));
-
-  cout << "Loading " << nbr_of << " mapcharacters\n";
-
-  for(i=0;i<nbr_of;i++)
+    // Load the mapcharacters
+    gzread (file, &nbr_of, sizeof (nbr_of));
+    for (i = 0; i < nbr_of; i++)
     {
-      char * t=fileops::get_string(file);
-      mapcharacter * mc=(mapcharacter*)(data::characters.get(t));
-      cout << "Loading " << t << endl;
-      delete[] t;
-      lmap.add_mapcharacter(mc);
-      mc->get_state(file);
-      mc->set_on_map(&lmap);
-      mc->set_pos(mc->get_submap(),mc->get_posx(),mc->get_posy());
+        char *t = fileops::get_string (file);
+        mapcharacter *mc = (mapcharacter *) (data::characters.get (t));
+
+        delete[]t;
+        lmap.add_mapcharacter (mc);
+        mc->get_state (file);
+        mc->set_on_map (&lmap);
+        mc->set_pos (mc->get_submap (), mc->get_posx (), mc->get_posy ());
     }
-  // Load the mapview state
-  mv.get_state(file);
-  return 0;
+    // Load the mapview state
+    mv.get_state (file);
+    return 0;
 }
 
-s_int8 mapengine::put_state(gzFile file)
+s_int8 mapengine::put_state (gzFile file)
 {
-  u_int16 nbr_of,i;
-  // Save the map filename
-  fileops::put_string(file, lmap.filename().c_str());
+    u_int16 nbr_of, i;
 
-  // Save the mapcharacters and their status
-  nbr_of=lmap.mapchar.size();
-  gzwrite(file,&nbr_of,sizeof(nbr_of));
-  for(i=0;i<nbr_of;i++)
+    // Save the map filename
+    fileops::put_string (file, lmap.filename ().c_str ());
+
+    // Save the mapcharacters and their status
+    nbr_of = lmap.mapchar.size ();
+    gzwrite (file, &nbr_of, sizeof (nbr_of));
+    for (i = 0; i < nbr_of; i++)
     {
-      fileops::put_string(file,lmap.mapchar[i]->get_name());
-      lmap.mapchar[i]->put_state(file);
+        fileops::put_string (file, lmap.mapchar[i]->get_name ());
+        lmap.mapchar[i]->put_state (file);
     }
 
-  // Save the mapview state
-  mv.put_state(file);
-  return 0;
+    // Save the mapview state
+    mv.put_state (file);
+    return 0;
 }

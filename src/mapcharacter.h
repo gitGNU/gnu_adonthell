@@ -64,170 +64,204 @@ class mapview;
 
 struct PyCodeObject;
 
-class mapcharacter : public maptpl, public character_base
+class mapcharacter:public maptpl, public character_base
 {
- public:
-  // Constructors and init functions
-  void init();
-  void clear();
-  mapcharacter();
-  ~mapcharacter();
+public:
+    // Constructors and init functions
+    void init ();
+    void clear ();
+    mapcharacter ();
+    ~mapcharacter ();
 
-  // Actions
+    // Actions
 #ifndef _EDIT_
-  void talk ();
+    void talk ();
 #endif
 
-  // Loading
-  s_int8 get(gzFile file);
-  s_int8 load(const char * fname);
+    // Loading
+    s_int8 get (gzFile file);
+    s_int8 load (const char *fname);
 
 #ifndef _EDIT_
-  // State saving/loading
-  s_int8 get_state(gzFile file);
-  s_int8 put_state(gzFile file);
+    // State saving/loading
+    s_int8 get_state (gzFile file);
+    s_int8 put_state (gzFile file);
 #endif
 
-  // Positioning
-  u_int16 get_submap() { return submap; }
-  u_int16 get_posx() { return posx; }
-  u_int16 get_posy() { return posy; }
-  s_int8 get_offx() { return offx; }
-  s_int8 get_offy() { return offy; }
-
-  void set_on_map(landmap * m) 
+    // Positioning
+    u_int16 get_submap ()
     {
-      refmap=m;
-#ifndef _EDIT_
-      PyDict_SetItemString(locals,"mymap",pass_instance(refmap,"landmap"));
-#endif
+        return submap;
+    }
+    u_int16 get_posx ()
+    {
+        return posx;
+    }
+    u_int16 get_posy ()
+    {
+        return posy;
+    }
+    s_int8 get_offx ()
+    {
+        return offx;
+    }
+    s_int8 get_offy ()
+    {
+        return offy;
     }
 
-  void remove_from_map() 
+    void set_on_map (landmap * m)
+    { refmap = m;
+#ifndef _EDIT_
+    PyDict_SetItemString (locals, "mymap", pass_instance (refmap,
+                                                          "landmap"));
+#endif
+    } void remove_from_map ()
+    { refmap = NULL;
+#ifndef _EDIT_
+    PyDict_DelItemString (locals, "mymap");
+#endif
+    } void set_pos (u_int16 smap, u_int16 x, u_int16 y);
+    void set_offset (s_int8 x, s_int8 y)
     {
-      refmap=NULL;
-#ifndef _EDIT_
-      PyDict_DelItemString(locals,"mymap");
-#endif
+        offx = x;
+        offy = y;
+    } void remove_from_pos ();
+
+    void jump (u_int16 smap, u_int16 x, u_int16 y, u_int16 pos = NO_MOVE);
+
+    // Getting which movment the character is doing
+    u_int16 get_move ()
+    {
+        return current_move;
     }
-  void set_pos(u_int16 smap,u_int16 x,u_int16 y);
-  void set_offset(s_int8 x, s_int8 y) {offx=x; offy=y;}
 
-  void remove_from_pos();
-
-  void jump(u_int16 smap, u_int16 x, u_int16 y, u_int16 pos=NO_MOVE);
-  
-  // Getting which movment the character is doing
-  u_int16 get_move() {return current_move;}
-  
 #ifndef _EDIT_
-  string filename() { return filename_; }
+    string filename ()
+    {
+        return filename_;
+    }
 
-  void set_schedule(char * file);
-  string get_schedule() { return schedule_file; }
-  bool is_schedule_activated() { return schedule_activated; }
-  void set_schedule_active(bool a) { schedule_activated=a; }
-
-  void set_action(char * file);
-  string get_action() { return action_file; }
-  bool is_action_activated() { return action_activated; }
-  void set_action_active(bool a) { action_activated=a; }
-  void update_move();
+    void set_schedule (char *file);
+    string get_schedule ()
+    {
+        return schedule_file;
+    }
+    bool is_schedule_activated ()
+    {
+        return schedule_activated;
+    }
+    void set_schedule_active (bool a)
+    {
+        schedule_activated = a;
+    } void set_action (char *file);
+    string get_action ()
+    {
+        return action_file;
+    }
+    bool is_action_activated ()
+    {
+        return action_activated;
+    }
+    void set_action_active (bool a)
+    {
+        action_activated = a;
+    } void update_move ();
 
 #endif
-  void update();
-  void launch_action(mapcharacter * requester);
-  void draw(mapview * mv, u_int16 x, u_int16 y);
-  void draw(s_int16 x, s_int16 y, drawing_area * da_opt=NULL);
+    void update ();
+    void launch_action (mapcharacter * requester);
+    void draw (mapview * mv, u_int16 x, u_int16 y);
+    void draw (s_int16 x, s_int16 y, drawing_area * da_opt = NULL);
 
-  // Testing if a move is possible
-  bool can_go_north();
-  bool can_go_south();
-  bool can_go_east();
-  bool can_go_west();
+    // Testing if a move is possible
+    bool can_go_north ();
+    bool can_go_south ();
+    bool can_go_east ();
+    bool can_go_west ();
 
-  // Giving the character instructions on what it should do
-  void stand();
-  void stand_north();
-  void stand_south();
-  void stand_east();
-  void stand_west();
-  void go_north();
-  void go_south();
-  void go_east();
-  void go_west();
+    // Giving the character instructions on what it should do
+    void stand ();
+    void stand_north ();
+    void stand_south ();
+    void stand_east ();
+    void stand_west ();
+    void go_north ();
+    void go_south ();
+    void go_east ();
+    void go_west ();
 
-  void look_invert(u_int16 p);
+    void look_invert (u_int16 p);
 
-  mapcharacter * whosnext();
+    mapcharacter *whosnext ();
 
 #ifndef SWIG
-  mapcharacter& operator =(mapcharacter &m);
-#endif // SWIG
+    mapcharacter & operator = (mapcharacter & m);
+#endif							// SWIG
 
- protected:
-  u_int16 current_move;
-  u_int16 ask_move;
-  u_int16 submap;
-  u_int16 posx, posy;
-  s_int8 offx, offy;
-  bool schedule_activated;
-  bool action_activated;
-  vector<animation*> anim;
-  landmap * refmap;
-  
-  u_int16 length, height;
+protected:
+    u_int16 current_move;
+    u_int16 ask_move;
+    u_int16 submap;
+    u_int16 posx, posy;
+    s_int8 offx, offy;
+    bool schedule_activated;
+    bool action_activated;
+    vector < animation * >anim;
+    landmap *refmap;
+
+    u_int16 length, height;
 
 #ifndef _EDIT_
-  PyCodeObject * schedule;   // The character's schedule
-  PyCodeObject * action;     // The character's action
-  string schedule_file;
-  string action_file;
-  string filename_;
+    PyCodeObject *schedule;		// The character's schedule
+    PyCodeObject *action;		// The character's action
+    string schedule_file;
+    string action_file;
+    string filename_;
 #endif
 
 #ifdef _EDIT_
-  char label_txt[500];
-  image * bg;
-  win_font * font;
-  win_theme * th;
+    char label_txt[500];
+    image *bg;
+    win_font *font;
+    win_theme *th;
 
-  win_container * container;
-  win_label * label_frame;
-  win_label * label_char;
+    win_container *container;
+    win_label *label_frame;
+    win_label *label_char;
 
-  bool must_upt_label_frame;
-  bool must_upt_label_char;
+    bool must_upt_label_frame;
+    bool must_upt_label_char;
 
-  bool show_grid;
+    bool show_grid;
 #endif
-  void calculate_dimensions();
+    void calculate_dimensions ();
 
 
 #ifdef _EDIT_
-  // Editor specific functions
- public:
-  s_int8 put(gzFile file);
-  s_int8 save(const char * fname);
+    // Editor specific functions
+public:
+    s_int8 put (gzFile file);
+    s_int8 save (const char *fname);
 
-  void load();
-  void save();
+    void load ();
+    void save ();
 
-  void insert_anim(animation * an, u_int16 pos);
-  void load_anim();
-  void update_editor();
-  void set_anim_xoffset(u_int16 p, s_int16 xoff);
-  void set_anim_yoffset(u_int16 p, s_int16 yoff);
-  void update_label_frame();
-  void update_label_char();
-  void draw_editor();
-  void update_and_draw();
-  void update_editor_keys();
-  void editor();
+    void insert_anim (animation * an, u_int16 pos);
+    void load_anim ();
+    void update_editor ();
+    void set_anim_xoffset (u_int16 p, s_int16 xoff);
+    void set_anim_yoffset (u_int16 p, s_int16 yoff);
+    void update_label_frame ();
+    void update_label_char ();
+    void draw_editor ();
+    void update_and_draw ();
+    void update_editor_keys ();
+    void editor ();
 #endif
 #ifndef SWIG
-  friend class landmap;
-#endif // SWIG
+    friend class landmap;
+#endif							// SWIG
 };
 
 #endif

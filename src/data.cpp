@@ -290,12 +290,14 @@ bool data::load (u_int32 pos)
     gzclose (in);
 
     
+#ifdef USE_MAP
     // Load mapengine state
     s_filepath = saves[pos]->get_directory(); 
     s_filepath += "/mapengine.data";
     in=gzopen(s_filepath.c_str(),"r");
-    map_engine->get_state(in);
+    map_engine->get_state(in); 
     gzclose (in);
+#endif
     return true;
 }
 
@@ -454,12 +456,14 @@ gamedata* data::save (u_int32 pos, char *desc)
     gdata->save (file);
     gzclose (file);
 
+#ifdef USE_MAP
     // Save mapengine state
     s_filepath = gdata->get_directory(); 
     s_filepath += "/mapengine.data";
     file=gzopen(s_filepath.c_str(),"wb6");
     map_engine->put_state(file);
     gzclose(file);
+#endif
 
     /*
     // save mapcharacter
