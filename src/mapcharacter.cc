@@ -30,7 +30,7 @@ using namespace std;
 
 
 // Public methods
-mapcharacter::mapcharacter () : mapsquare_walkable_area (), character_base ()
+mapcharacter::mapcharacter () : mapsquare_walkable_area (), character_base (), event_list ()
 {
     submap_ = posx_ = posy_ = offx_ = offy_ = 0;
     refmap = NULL;
@@ -593,18 +593,6 @@ void mapcharacter::time_callback_string (string delay, string cb, PyObject *args
     }
     
     Py_XDECREF (callback);
-}
-
-void mapcharacter::pause ()
-{
-    for (vector<event*>::iterator i = Events.begin (); i != Events.end (); i++)
-        (*i)->pause ();
-}
-
-void mapcharacter::resume ()
-{
-    for (vector<event*>::iterator i = Events.begin (); i != Events.end (); i++)
-        (*i)->resume ();
 }
 
 bool mapcharacter::follow_path () 

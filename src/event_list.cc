@@ -28,6 +28,12 @@
 // Array with callbacks to return a newly instanciated event
 new_event event_list::instanciate_event[MAX_EVENTS];
 
+// constructor
+event_list::event_list ()
+{
+    Paused = false;
+}
+
 // destructor
 event_list::~event_list ()
 {
@@ -53,6 +59,7 @@ void event_list::add_event (event* ev)
 {
     ev->set_list (this);
     Events.push_back (ev);
+    if (Paused) ev->pause ();
     event_handler::register_event (ev); 
 }
 
@@ -66,6 +73,22 @@ void event_list::remove_event (event *ev)
 
     // found? -> get rid of it :)
     if (i != Events.end ()) Events.erase (i);
+}
+
+// disable all events in the list
+void event_list::pause ()
+{
+    Paused = true;
+    for (vector<event*>::iterator i = Events.begin (); i != Events.end (); i++)
+        (*i)->pause ();
+}
+
+// enable all events in the list
+void event_list::resume ()
+{
+    Paused = false;
+    for (vector<event*>::iterator i = Events.begin (); i != Events.end (); i++)
+        (*i)->resume ();
 }
 
 // Register an event for loading

@@ -67,13 +67,6 @@ void time_event_handler::remove_event (event *e)
 // register an event with the handler
 void time_event_handler::register_event (event *e)
 {
-    // make sure the event is recent enough
-    if (((time_event *) e)->time () < gamedate::time ())
-    {
-        fprintf (stderr, "*** time_event_handler::register_event: event older than current time!\n");
-        return;
-    }
-
     vector<event*>::iterator i = Events.begin ();
 
     // search for the proper place to insert new event

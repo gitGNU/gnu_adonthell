@@ -51,6 +51,11 @@ class event_list
 {
 public:
     /**
+     * Constructor - creates an empty, unpaused %event_list
+     */
+    event_list ();
+    
+    /**
      * Destructor - unregisters and deletes all events owned by this list.
      */ 
     virtual ~event_list ();
@@ -77,6 +82,19 @@ public:
      */
     void remove_event (event* ev);
     
+    /**
+     * Disable any events associated with this %event_list. This will
+     * effectively stop all actions of the %object the %event_list
+     * belongs to, e.g. a NPC.
+     */
+    void pause ();
+    
+    /**
+     * Re-enable the events associated with the %event_list, thus
+     * 'awaking' the %object to life again. 
+     */
+    void resume ();
+
     /**
      * Register an %event for loading. Before the %event_list can load
      * an %event from file, it needs a callback function that returns
@@ -118,6 +136,12 @@ protected:
     mutable std::vector<event*> Events;
 
 private:
+    /**
+     * Whether this %event_list is paused or not. Events that are added
+     * to a paused list will be paused as well.
+     */
+    bool Paused;
+
     /**
      * Array with callbacks that return a newly allocated instance of an %event.
      * The event's type is the postion of the according callback in the array.
