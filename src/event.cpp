@@ -130,6 +130,7 @@ event* event_handler::load_event (FILE* f, bool reg)
         strcat (script_file, ".py");
         
         register_event (e, script_file);
+        delete script_file;
     }
     
     return e;

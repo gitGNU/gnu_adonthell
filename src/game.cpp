@@ -83,6 +83,7 @@ void game::init(config &myconfig)
     // create character array
     PyObject *chars = PyDict_New ();
     PyDict_SetItemString (globals, "characters", chars);
+    PyDict_SetItemString (chars, "the_player", pass_instance (myplayer, "player"));
 
     // load characters from character.data
     FILE *in = fopen ("character.data", "r");
