@@ -158,7 +158,7 @@ void dlg_compiler::write_entry_func ()
 {
     // overwrite __getattr__, so that member variables need not be
     // defined before using them
-    script << "    def __getattr__ (self, name):";
+    script << "\n    def __getattr__ (self, name):";
     if (debug) script << "\n        print \"*** Warning: \\\"\" + name + \"\\\" not defined!\"";
     script << "\n        return 0\n";
 
