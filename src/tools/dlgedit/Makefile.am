@@ -1,7 +1,7 @@
 bin_PROGRAMS = dlgedit
 
 dlgedit_SOURCES = callbacks.cc \
-circle.cc compile.cc crcle_callbacks.cc \
+circle.cc dlgcompile.cc crcle_callbacks.cc \
 crcle_interface.cc dlgnode.cc error_dlg.cc \
 err_callbacks.cc err_interface.cc events.cc  \
 geometrie.cc graph.cc  \

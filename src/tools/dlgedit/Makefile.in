@@ -69,7 +69,7 @@ VERSION = @VERSION@
 
 bin_PROGRAMS = dlgedit
 
-dlgedit_SOURCES = callbacks.cc circle.cc compile.cc crcle_callbacks.cc crcle_interface.cc dlgnode.cc error_dlg.cc err_callbacks.cc err_interface.cc events.cc  geometrie.cc graph.cc  lex.loadlg.cc function.cc main.cc pjt_interface.cc pjt_callbacks.cc preset.cc project.cc ps_callbacks.cc ps_dlg.cc ps_interface.cc pset_callbacks.cc pset_interface.cc run.cc run_callbacks.cc run_interface.cc interface.cc 
+dlgedit_SOURCES = callbacks.cc circle.cc dlgcompile.cc crcle_callbacks.cc crcle_interface.cc dlgnode.cc error_dlg.cc err_callbacks.cc err_interface.cc events.cc  geometrie.cc graph.cc  lex.loadlg.cc function.cc main.cc pjt_interface.cc pjt_callbacks.cc preset.cc project.cc ps_callbacks.cc ps_dlg.cc ps_interface.cc pset_callbacks.cc pset_interface.cc run.cc run_callbacks.cc run_interface.cc interface.cc 
 
 
 # Evil, but it works...
@@ -87,7 +87,7 @@ PROGRAMS =  $(bin_PROGRAMS)
 
 DEFS = @DEFS@ -I. -I$(srcdir) -I../../..
 LIBS = @LIBS@
-dlgedit_OBJECTS =  callbacks.o circle.o compile.o crcle_callbacks.o \
+dlgedit_OBJECTS =  callbacks.o circle.o dlgcompile.o crcle_callbacks.o \
 crcle_interface.o dlgnode.o error_dlg.o err_callbacks.o err_interface.o \
 events.o geometrie.o graph.o lex.loadlg.o function.o main.o \
 pjt_interface.o pjt_callbacks.o preset.o project.o ps_callbacks.o \
@@ -117,8 +117,8 @@ DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 
 TAR = tar
 GZIP_ENV = --best
-DEP_FILES =  .deps/callbacks.P .deps/circle.P .deps/compile.P \
-.deps/crcle_callbacks.P .deps/crcle_interface.P .deps/dlgnode.P \
+DEP_FILES =  .deps/callbacks.P .deps/circle.P .deps/crcle_callbacks.P \
+.deps/crcle_interface.P .deps/dlgcompile.P .deps/dlgnode.P \
 .deps/err_callbacks.P .deps/err_interface.P .deps/error_dlg.P \
 .deps/events.P .deps/function.P .deps/geometrie.P .deps/graph.P \
 .deps/interface.P .deps/lex.loadlg.P .deps/main.P .deps/pjt_callbacks.P \

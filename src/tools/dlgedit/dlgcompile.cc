@@ -17,7 +17,7 @@
 
 #include "../../types.h"
 #include "dlgnode.h"
-#include "compile.h"
+#include "dlgcompile.h"
 
 dlg_compiler::dlg_compiler (vector<DlgNode*> &d, string f, string c)
 {

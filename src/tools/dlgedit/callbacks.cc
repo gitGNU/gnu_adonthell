@@ -21,7 +21,7 @@ class dialog;
 #include "dlgnode.h"
 #include "main.h"
 #include "graph.h"
-#include "compile.h"
+#include "dlgcompile.h"
 #include "geometrie.h"
 #include "pjt_interface.h"
 #include "run.h"

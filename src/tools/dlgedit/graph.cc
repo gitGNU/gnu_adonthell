@@ -28,7 +28,7 @@ class dialog;
 #include "dlgnode.h"
 #include "main.h"
 #include "geometrie.h"
-#include "compile.h"
+#include "dlgcompile.h"
 #include "interface.h"
 #include "circle.h"
 #include "graph.h"
