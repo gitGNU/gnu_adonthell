@@ -76,6 +76,7 @@ if test x$gamedatadir = xnone; then
     ;;
     *-*-beos*)
       gamedatadir="/boot/home/config/share/adonthell"
+      DEFS="$DEFS -DDATA_DIR=\"\\\"$gamedatadir\\\"\""
     ;;
     *)
       gamedatadir="${datadir}/adonthell"
@@ -143,8 +144,7 @@ dnl Check for Python.
 dnl ********************
 
 if test x$pylibs = xnone; then
-   AM_PATH_PYTHON()
-
+   
    dnl Find Python executable
    AC_PATH_PROGS(PYPACKAGE, python)
 
