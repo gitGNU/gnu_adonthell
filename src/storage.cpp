@@ -20,7 +20,7 @@
 void storage::set (const char *key, s_int32 value)
 {
 #ifdef _DEBUG_
-    cout << "\nstorage::set \"" << key << "\" = " << value;
+    cout << "storage::set \"" << key << "\" = " << value << endl;
 #endif
     if (!value) data.erase (key);
     else data[key] = value;
@@ -33,9 +33,9 @@ s_int32 storage::get (const char *key)
 {
 #ifdef _DEBUG_
     if (data.find (key) != data.end ())
-        cout << "\nstorage::get \"" << key << "\" = " << data[key];
+        cout << "storage::get \"" << key << "\" = " << data[key] << endl;
     else
-        cout << "\nstorage::get no such key \"" << key << "\"";
+        cout << "storage::get no such key \"" << key << "\"" << endl;
 #endif
     if (data.find (key) == data.end ()) return 0;
     else return data[key];
@@ -72,15 +72,14 @@ void objects::set (const char* key, storage *val)
     // Check wether that key already exists -> if so, that is bad!
     if (data.find (key) != data.end ())
     {
-        cout << "\n*** objects::set: key already exists: " << key;
-
 #ifdef _DEBUG_
-        cout << "\n*** container contents: ";
+        cout << "*** objects::set: key already exists: " << key << endl;
+        cout << "*** container contents: ";
 
         for (map<const char*, storage*>::iterator i = data.begin (); i != data.end (); i++)
             cout << (*i).first << ", ";
 
-        cout << "\n" << flush;
+        cout << "\n\n" << flush;
 #endif // _DEBUG_
 
         return;
@@ -96,15 +95,14 @@ storage* objects::get (const char* key)
     // Check wether the key exists
     if (data.find (key) == data.end ())
     {
-        cout << "\n*** objects::get: key does not exist: " << key;
-
 #ifdef _DEBUG_
-        cout << "\n*** container contents: ";
+        cout << "*** objects::get: key does not exist: " << key << endl;
+        cout << "*** container contents: ";
 
         for (map<const char*, storage*>::iterator i = data.begin (); i != data.end (); i++)
             cout << (*i).first << ", ";
 
-        cout << "\n" << flush;
+        cout << "\n\n" << flush;
 #endif // _DEBUG_
 
         // That probably causes a segfault, but if we can't get the
