@@ -41,11 +41,14 @@ int main(int argc, char * argv[])
     lmap.set_square_pattern(0,13,12,1);
     */
 
-    lmap.load("mymap.map");
+    if(argc==2)
+      lmap.load(argv[1]);
+
+    //    lmap.load("mymap.map");
     mview.attach_map(&lmap);
     mview.set_current_submap(0);
     mview.resize(11,11);
-    mview.set_pos(0,0);
+    //    mview.set_pos(0,0);
 
     mview.editor();
     //    lmap.save("mymap.map");

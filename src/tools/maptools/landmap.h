@@ -184,7 +184,7 @@ class landmap
   void update();
 
   s_int8 insert_mapobject(mapobject &an, u_int16 pos,
-			  string srcfile="");
+			  const char * srcfile="");
   s_int8 delete_mapobject(u_int16 pos);
 
   void draw_square(u_int16 smap, u_int16 x, u_int16 y, u_int16 px, u_int16 py,

@@ -67,6 +67,7 @@ class mapview
 #endif
 
  public:
+  void init();
   mapview();
   ~mapview();
 

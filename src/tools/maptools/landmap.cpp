@@ -288,6 +288,12 @@ void landsubmap::resize(u_int16 l, u_int16 h)
   for(i=0;i<l;i++)
     newland[i]=new mapsquare[h];
 
+  i=length;
+  j=height;
+  length=l;
+  height=h;
+  l=i;
+  h=j;
   land=newland;
 
   for(i=0;i<l && i<length;i++)
@@ -297,11 +303,9 @@ void landsubmap::resize(u_int16 l, u_int16 h)
 	if(it->is_base) set_square_pattern(i,j,it->objnbr);
       }
   
-  for(i=0;i<length;i++)
+  for(i=0;i<l;i++)
     delete[] ltemp[i];
   delete[] ltemp;
-  length=l;
-  height=h;
 }
 
 s_int8 landsubmap::get(gzFile file)
@@ -397,6 +401,10 @@ s_int8 landsubmap::set_square_pattern(u_int16 px, u_int16 py,
   // Get the base tile iterator for the others tiles
   t.base_tile=it;
   t.is_base=false;
+
+  if(ie>length) ie=length;
+  if(je>height) je=height;
+
   for(j=j0;j<je;j++)
     for(i=i0;i<ie;i++)
       {
@@ -445,10 +453,11 @@ void landmap::clear()
       for(i=0;i<nbr_of_submaps;i++)
 	delete submap[i];
       delete[] submap;
+      submap=NULL;
     }
-  if(pattern) delete[] pattern;
+  if(pattern) {delete[] pattern;pattern=NULL;}
 #ifdef _EDIT_
-  if(mini_pattern) delete[] mini_pattern;
+  if(mini_pattern) {delete[] mini_pattern;mini_pattern=NULL;}
 #endif
   nbr_of_patterns=nbr_of_submaps=0;
 }
@@ -544,7 +553,7 @@ s_int8 landmap::put(gzFile file)
       do
 	{
 	  gzwrite(file,&objsrc[i][j],sizeof(objsrc[i][j]));
-	}while (objsrc[i][j++]);
+	}while (j++<objsrc[i].size());
     }
   // Putting all submaps
   gzwrite(file,&nbr_of_submaps,sizeof(nbr_of_submaps));
@@ -671,7 +680,7 @@ void landmap::remove_obj_from_square(u_int16 smap,
 }
 
 s_int8 landmap::insert_mapobject(mapobject &an, u_int16 pos, 
-				 string srcfile="")
+				 const char * srcfile="")
 {
   mapobject * oldpat=pattern;
   u_int16 i,j,k;
@@ -698,7 +707,8 @@ s_int8 landmap::insert_mapobject(mapobject &an, u_int16 pos,
 #endif
 
   vector<string>::iterator itv=&objsrc[pos];
-  objsrc.insert(itv,srcfile);
+  string tt(srcfile);
+  objsrc.insert(itv,tt);
 
   if(pos!=nbr_of_patterns-1)
     {  
@@ -743,19 +753,28 @@ s_int8 landmap::delete_mapobject(u_int16 pos)
   for(k=0;k<nbr_of_submaps;k++)
     for(j=0;j<submap[k]->height;j++)
       for(i=0;i<submap[k]->length;i++)
-	for(it=submap[k]->land[i][j].tiles.begin();
-	    it!=submap[k]->land[i][j].tiles.end();it++)
-	  {
-	  shamegoto:
-	    if(it->objnbr>pos) 
-	      it->objnbr--;
-	    else if(it->objnbr==pos) 
-	      {
-		it=submap[k]->land[i][j].tiles.erase(it);
-		goto shamegoto;
-	      }
-	  }
-  
+	{
+	  for(it=submap[k]->land[i][j].tiles.begin();
+	      it!=submap[k]->land[i][j].tiles.end();it++)
+	    {
+	    shamegoto:
+	      if(it->objnbr>pos) 
+		it->objnbr--;
+	      else if(it->objnbr==pos) 
+		{
+		  it=submap[k]->land[i][j].tiles.erase(it);
+		  if(it!=submap[k]->land[i][j].tiles.end()) goto shamegoto;
+		  else goto endgoto;
+		}
+	    }
+	endgoto:
+	  for(it=submap[k]->land[i][j].tiles.begin();
+	      it!=submap[k]->land[i][j].tiles.end() && 
+		*(it->base_tile)<*it;it++);
+	  submap[k]->land[i][j].base_begin=it;
+	}
+  vector<string>::iterator itv=&objsrc[pos];
+  objsrc.insert(itv);
 #ifdef _DEBUG_
   cout << "Removed mapobject: " << nbr_of_patterns << " total in landmap.\n";
 #endif
