@@ -85,8 +85,7 @@ void gamedata::set_directory (string dir)
     directory_ = dir;
 }
 
-
-bool gamedata::load_characters (u_int32 pos) 
+bool gamedata::load_characters (u_int32 pos)
 {
     igzstream in;
     
@@ -111,6 +110,7 @@ bool gamedata::load_characters (u_int32 pos)
     char ctemp;
 
     // first, the player
+    data::the_player = new character ();
     data::the_player->character_base::get_state (in);
     data::characters[data::the_player->get_name ().c_str ()] = data::the_player;
 
@@ -204,7 +204,6 @@ bool gamedata::load (u_int32 pos)
     if (!load_characters (pos)) return false;
     if (!load_quests (pos)) return false;
     if (!load_mapengine (pos)) return false; 
-    
 
     return true; 
 }
@@ -467,12 +466,8 @@ void gamedata::unload ()
     }
     data::characters.clear (); 
     
-    data::the_player = new character;
-    data::the_player->set_name ("Player");
-    
-    // Add the player to the game objects
-    data::characters[data::the_player->get_name().c_str ()] = data::the_player; 
-    
+    data::the_player = NULL;
+
     // delete all quests
     dictionary <quest *>::iterator itq;
     for (itq = data::quests.begin (); itq != data::quests.end (); itq++) 

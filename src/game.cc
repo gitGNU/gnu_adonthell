@@ -151,7 +151,7 @@ void game::cleanup ()
 void game::init_data ()
 {
     data::map_engine = new mapengine;
-    data::the_player = new character;
+    data::the_player = NULL;
 }
 
 void game::cleanup_data () 
