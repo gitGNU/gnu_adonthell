@@ -24,6 +24,7 @@
 #ifndef ITEM_BASE_H
 #define ITEM_BASE_H
 
+#include <vector>
 #include "py_object.h"
 #include "slot.h"
 
@@ -106,18 +107,25 @@ public:
      */
     //@{
     /**
-     * This method is invoked when the given character equips this item.
-     * It can be used to apply item effects to the character if desired.
-     * @param character The character equipping this item.
+     * This method is invoked when the item is equipped by a character. It can
+     * be used to trigger special events.
+     * @param target the slot to which the items where added
      */
-    void equip (character_base *character);
+    void equipped (slot *target);
     
     /**
-     * This method is invoked when the given character unequips this item.
-     * It can be used to remove item effects from the character if neccessary.
-     * @param character The character equipping this item.
+     * This method is invoked when this item is unequipped by a character.
+     * It can be used to trigger special events.
+     * @param target the slot from which the items where removed
      */
-    void unequip (character_base *character);
+    void unequipped (slot *target);
+    
+    /**
+     * Check whether this item can be equipped by the given character.
+     * @param character The character that wants to equip this item.
+     * @return \b true if the character can equip the item, \b false otherwise.
+     */
+    bool can_equip (character_base *character);
     
     /**
      * Use an item. Triggers its main functionality if it can be used at all.
@@ -193,7 +201,13 @@ public:
         
         return (result != 0);
     }
-    
+
+    /**
+     * Retrieve a list of categories this item belongs to.
+     * @return List of item categories.
+     */
+    std::vector<string> categories () const;
+     
     /**
      * Get the charge the item has left.
      * @return number of charges the item has.

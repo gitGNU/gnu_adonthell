@@ -17,6 +17,7 @@
 #include "character_base.h"
 #include "item_storage.h"
 #include "inventory.h"
+#include "manager.h"
 #include "quest.h"
 #include "drawing_area.h"
 #include "drawable.h"
@@ -94,6 +95,7 @@ enum {Python = 1, C = 0};
     }
 }
 %typemap(python,in) const string & = string &;
+%typemap(python,in) const std::string & = string &;
 
 %typemap(python,out) string
 {
@@ -104,7 +106,7 @@ enum {Python = 1, C = 0};
 %typemap(python,out) string &
 {
     $result = PyString_FromString((const char *)$1->c_str());
-    delete $1; 
+    // delete $1; 
 }
 %typemap(python,out) const string & = string &;
 
@@ -116,6 +118,7 @@ enum {Python = 1, C = 0};
     }
 }
 %typemap (python, freearg) const string & = string &;
+%typemap (python, freearg) const std::string & = string &;
 
 %typemap (python,in) PyObject *pyfunc 
 { 
@@ -131,6 +134,10 @@ enum {Python = 1, C = 0};
 { 
     $1 = $input; 
 }
+
+%include "typemaps.i"
+%apply unsigned int *INOUT { unsigned int *count };
+
 
 %include "types.h"
 %include "fileops.h"
@@ -151,6 +158,7 @@ enum {Python = 1, C = 0};
 %include "item_base.h"
 %include "item_storage.h"
 %include "inventory.h"
+%include "manager.h"
 %include "drawing_area.h"
 %include "quest.h"
 %include "drawable.h"

@@ -26,6 +26,8 @@
 #include <vector>
 #include "slot.h"
 
+class character_base;
+
 /**
  * Whenever items need to be stored by an object -- be it %character,
  * chest, shop or %map -- an %inventory should be used. Inventories are
@@ -42,7 +44,8 @@ public:
      * @param size Initial size of the %inventory.
      * @param limited Whether %inventory has fixed size or not.
      */
-    inventory (const u_int16 & size = 0, const bool & limited = true);
+    inventory (const u_int16 & size = 0, const bool & limited = true,
+        character_base *owner = NULL);
         
     /**
      * Destroy inventory and its contents.
@@ -65,8 +68,9 @@ public:
      * you might have troubles in retrieving the %slot with the given id.
      * The size of the %inventory will grow by one.
      * @param id Id of the %slot to add.
+     * @param equipment Whether the slot is suitable for equipping items
      */
-    void add_slot (const string & id);
+    void add_slot (const string & id, const bool & equipment = false);
     
     /**
      * Retrieve the %slot with given id from the %inventory.
@@ -191,6 +195,15 @@ public:
     bool put_state (ogzstream & file);
     //@}
 
+    /** 
+     * Retrieve the %character to whom this inventory belongs.
+     * @return Owner of the inventory, or \c NULL if nobody owns it. 
+     */
+    character_base *owner () const
+    {
+        return Owner;
+    }
+    
 private:
 #ifndef SWIG
     /**
@@ -218,6 +231,11 @@ private:
      * Type of last query.
      */
     u_int8 QueryType;
+    
+    /**
+     * Character to whom this inventory is assigned.
+     */
+    character_base *Owner;
 #endif // SWIG
 };
 

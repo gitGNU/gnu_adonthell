@@ -24,11 +24,12 @@
 #include "item_base.h"
 
 // ctor
-inventory::inventory (const u_int16 & size, const bool & limited)
+inventory::inventory (const u_int16 & size, const bool & limited, character_base *owner)
 {
     QueryType = 0;
     QueryKey = "";
     Limited = limited;
+    Owner = owner;
     grow (size);
 }
 
@@ -52,9 +53,9 @@ void inventory::grow (const u_int16 & count)
 }
 
 // add named slot to inventory
-void inventory::add_slot (const std::string & id)
+void inventory::add_slot (const std::string & id, const bool & equipment)
 {
-    Slots.push_back (new slot (this, id));
+    Slots.push_back (new slot (this, id, equipment));
 }
 
 // retrieve named slot from inventory

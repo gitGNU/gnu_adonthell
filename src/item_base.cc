@@ -55,38 +55,57 @@ item_base::~item_base ()
     py_object::clear ();
 }
 
-// apply item effects
-void item_base::equip (character_base *character)
+// can the given character equip this item?
+bool item_base::can_equip (character_base *character)
 {
-    // no effect
-    if (!has_attribute ("equip")) return;
+    // no 
+    if (!has_attribute ("equipped")) return false;
+    
+    int result = 0;
     
     // pass character
     PyObject *args = PyTuple_New (1);
     PyTuple_SetItem (args, 0, python::pass_instance (character, "character_base"));
     
     // call method
-    call_method ("equip", args);
+    PyObject *retval = call_method_ret ("can_equip", args);
     
+    // if we have valid retval retrieve it
+    if (PyInt_Check (retval)) result = PyInt_AS_LONG (retval);
+
     // cleanzp
+    Py_XDECREF (retval);
     Py_DECREF (args);
+    
+    return (result != 0);
 }
 
-// remove item effects
-void item_base::unequip (character_base *character)
+// tell item it has been equipped
+void item_base::equipped (slot *target)
 {
     // no effect
-    if (!has_attribute ("unequip")) return;
+    if (!has_attribute ("equipped")) return;
     
-    // pass character
-    PyObject *args = PyTuple_New (1);
-    PyTuple_SetItem (args, 0, python::pass_instance (character, "character_base"));
+    if (!Mutable) Slot = target;
+
+    // call method
+    call_method ("equipped");
+    
+    if (!Mutable) Slot = NULL;
+}
+
+// tell item it has been removed
+void item_base::unequipped (slot *target)
+{
+    // no effect
+    if (!has_attribute ("unequipped")) return;
+    
+    if (!Mutable) Slot = target;
     
     // call method
-    call_method ("unequip", args);
+    call_method ("unequipped");
     
-    // cleanzp
-    Py_DECREF (args);
+    if (!Mutable) Slot = NULL;
 }
 
 // trigger item's main functionality
@@ -245,6 +264,31 @@ bool item_base::get_state (igzstream & file)
     
     return true;  
 }
+
+// return list of categories this item belongs to
+std::vector<string> item_base::categories () const
+{
+    std::vector<string> categories;
+    PyObject *list = get_attribute ("Categories");
+    PyObject *str;
+            
+    if (!PySequence_Check (list)) return categories;
+    
+    // get all category strings
+    for (int i = 0; i < PySequence_Size (list); i++)
+    {
+        str = PySequence_GetItem (list, i);
+        if (PyString_Check (str))
+            categories.push_back (PyString_AsString (str));
+        Py_XDECREF (str);
+    }
+    
+    // cleanup
+    Py_DECREF (list);
+    
+    return categories;
+}
+
 
 /*
 // recharge item

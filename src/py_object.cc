@@ -136,7 +136,7 @@ bool py_object::has_attribute (const std::string & name)
 }
 
 // Get an attribute of the instance
-PyObject *py_object::get_attribute (const string &name)
+PyObject *py_object::get_attribute (const string &name) const
 {
     if (Instance)
         return PyObject_GetAttrString (Instance, (char *) name.c_str ());

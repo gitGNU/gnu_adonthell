@@ -143,7 +143,7 @@ public:
      * @param name Name of the attribute to access
      * @return New reference to the attribute or NULL on error
      */
-    PyObject* get_attribute (const string & name);
+    PyObject* get_attribute (const string & name) const;
 
     /**
      * Returns the given attribute as integer value.

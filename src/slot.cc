@@ -24,12 +24,14 @@
 #include "item_storage.h"
 
 // ctor
-slot::slot (inventory *owner, const std::string & id)
+slot::slot (inventory *owner, const std::string & id, const bool & equipment)
 {
     Owner = owner;
     Id = id;
     Count = 0;
     Item = NULL;
+    Negated = false;
+    Equipment = equipment;
 }
 
 // dtor
@@ -161,6 +163,8 @@ bool slot::put_state (ogzstream & file) const
     // save slot attributes
     Id >> file;
     Count >> file;
+    Negated >> file;
+    Equipment >> file;
     
     // save the item(s) in the slot
     if (Count > 0) 
@@ -183,7 +187,9 @@ bool slot::get_state (igzstream & file)
     // get slot attributes
     Id << file;
     Count << file;
-
+    Negated << file;
+    Equipment << file;
+    
     // get item(s) if any
     if (Count > 0)
     {

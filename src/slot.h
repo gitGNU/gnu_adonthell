@@ -38,11 +38,15 @@ class slot
 public:
     /**
      * Create a new %slot with an optional id. The id can be used to
-     * retrieve certain slots from the %inventory.
+     * retrieve certain slots from the %inventory. The equipment flag
+     * determines whether this %slot will be able to contain equipped items,
+     * i.e. those worn or held by a %character. The manager::equip () method
+     * will only accept slots with the equipment flag set to true.
      * @param owner The %inventory the %slot belongs to
      * @param id The slot's id
+     * @param equipment \b true to allow equipping items in that slot
      */
-     slot (inventory *owner, const string & id = "");
+     slot (inventory *owner, const string & id = "", const bool & equipment = false);
 
     /**
      * Delete a slot.
@@ -55,7 +59,8 @@ public:
     //@{
     /**
      * Retrieve pointer to the item kept in this %slot. In case of an
-     * immutable item, it will also adjust item_base::Slot.
+     * immutable item, it will also adjust item_base::Slot. To check
+     * whether a slot is empty, use the count() method below; it's faster.
      * @return item in this %slot, or \c NULL in case it is empty.
      */
     item_base *get_item ();
@@ -103,7 +108,9 @@ public:
     void clear ();
     
     /**
-     * Retrieve the number of items in this %slot. 
+     * Retrieve the number of items in this %slot. This is the preferred
+     * method to check whether a slot is empty or not, as it has much less
+     * overhead than get_item() above.
      * @return number of items this %slot contains.
      */
     u_int32 count () const
@@ -112,6 +119,15 @@ public:
     }
     //@}
 
+    /**
+     * Return the inventory this slot belongs to.
+     * @return inventory this slot belongs to.
+     */
+    inventory *owner () const
+    {
+        return Owner;
+    }
+        
     /**
      * Attribute access
      */
@@ -132,6 +148,39 @@ public:
     void set_id (const string & id)
     {
         Id = id;
+    }
+
+    /**
+     * Is that slot 'disabled'?
+     * @return \b true if that is the case, \b false otherwise.
+     */
+    bool is_negated () const
+    {
+        return Negated;
+    }    
+    
+    /**
+     * Disable or enable this slot. It's up to users of the slot to
+     * make use of this flag.
+     * @param negated \b false to enable, \b true to disable the slot. 
+     */
+    void set_negated (const bool & negated)
+    {
+        Negated = negated;
+    }
+    
+    /**
+     * Is this slot meant for equipped items?
+     * @return \b true if that is the case, \b false otherwise.
+     */
+    bool is_equipment () const
+    {
+        return Equipment;
+    }    
+    
+    void set_equipment (const bool & equipment)
+    {
+        Equipment = equipment;
     }
     //@}
     
@@ -176,6 +225,16 @@ private:
      * The number of items in this %slot.
      */
     u_int32 Count;
+    
+    /**
+     * Whether the slot is disabled.
+     */
+    bool Negated;
+    
+    /**
+     * Whether this slot is for equipping items.
+     */
+    bool Equipment;
 #endif // SWIG
 };
 
