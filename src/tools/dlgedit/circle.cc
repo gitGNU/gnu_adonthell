@@ -54,15 +54,29 @@ crcle_dlg::crcle_dlg (Circle *c, MainFrame *w) : circle (c), wnd (w)
 // Apply changes to Circle
 int crcle_dlg::on_ok ()
 {
+    unsigned int pos = 0;
+    
     // Indicate that user hit the OK button
     retval = 1;
 
-    // Make text safe
+    // Make text safe:
+    // replace linebreaks with space
     replace (text.begin (), text.end (), '\n', ' ');
+
+    // escape quotes
+    while ((pos = text.find ("\"", pos)) != text.npos)
+    {
+        if (pos > 0) {
+            if (text[pos-1] != '\\') text.insert (pos, "\\");
+        }
+        else text.insert (pos, "\\");
+
+        pos++;
+    }
 
     if (!strncmp (cond.c_str (), "else if", 7))
         cond.replace (0, 7, "elif");
-
+    
     // Apply changes to the circle
     circle->type = type;
     circle->text = text;
