@@ -175,6 +175,7 @@ init_app (MainFrame * MainWnd)
     MainWnd->scroll_x = 0;
     MainWnd->scroll_y = 0;
     MainWnd->pset_vars = "";
+    MainWnd->cust_func = "";
     MainWnd->changed = 0;
     
     MainWnd->myplayer->name = strdup ("Banec");

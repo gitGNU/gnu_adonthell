@@ -59,7 +59,10 @@ int crcle_dlg::on_ok ()
 
     // Make text safe
     replace (text.begin (), text.end (), '\n', ' ');
-    
+
+    if (!strncmp (cond.c_str (), "else if", 7))
+        cond.replace (0, 7, "elif");
+
     // Apply changes to the circle
     circle->type = type;
     circle->text = text;

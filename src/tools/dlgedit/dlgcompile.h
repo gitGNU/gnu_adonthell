@@ -60,6 +60,7 @@ private:
     u_int8 narrator_before (Circle*);// TRUE if Narrator text before Circle
     u_int8 character_changed (Circle*);// TRUE if another NPC speaks
 
+    void sort (vector<DlgNode*>&);   // Rearrange if [elif ...] else statements
     void get_prev_npc_nodes (Circle*, vector<Circle*>&);
     void get_prev_npc_links (Circle*, vector<Circle*>&);
 };

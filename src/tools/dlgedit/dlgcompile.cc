@@ -334,34 +334,28 @@ void dlg_compiler::write_answer ()
 void dlg_compiler::write_player_answer (DlgNode *npc)
 {
     vector<DlgNode*>::iterator i;
-    DlgNode *player;
+    vector<DlgNode*> answers;
 
-    // first look at the direct links
+    // copy direct and indirect links to a single array
     for (i = npc->next.begin (); i != npc->next.end (); i++)
-    {
-        // get the player node the arrow (*j) is pointing to
-        player = (*i)->next[0];
+        answers.push_back ((*i)->next[0]);
 
-        // write the code
-        write_player ((Circle*)player);
+    for (i = npc->link.begin (); i != npc->link.end (); i++)
+        answers.push_back ((*i)->next[0]);
+
+    cout << "answers.size () = " << answers.size () << endl << flush;
+    if (answers.size () > 1) sort (answers);
+
+    // write the code
+    for (i = answers.begin (); i != answers.end (); i++)
+    {
+        write_player ((Circle*) *i);
         
         // if node isn't already handled or queued for handling,
         // add it to todo_nodes to have it handled later
-        if (find (todo_nodes.begin(), todo_nodes.end (), player) == todo_nodes.end () &&
-            find (done_nodes.begin(), done_nodes.end (), player) == done_nodes.end ())
-            todo_nodes.push_back (player);
-    }
-
-    // now the same with the indirect links
-    for (i = npc->link.begin (); i != npc->link.end (); i++)
-    {
-        player = (*i)->next[0];
-
-        write_player ((Circle*)player);        
-
-        if (find (todo_nodes.begin(), todo_nodes.end (), player) == todo_nodes.end () &&
-            find (done_nodes.begin(), done_nodes.end (), player) == done_nodes.end ())
-            todo_nodes.push_back (player);               
+        if (find (todo_nodes.begin(), todo_nodes.end (), *i) == todo_nodes.end () &&
+            find (done_nodes.begin(), done_nodes.end (), *i) == done_nodes.end ())
+            todo_nodes.push_back (*i);
     }
 
     return;
@@ -386,6 +380,8 @@ void dlg_compiler::get_cur_nodes ()
     for (i = circle->link.begin (); i != circle->link.end (); i++)
         cur_nodes.push_back ((*i)->next[0]);
 
+    if (cur_nodes.size () > 1) sort (cur_nodes);
+    
     script << "\n    def answer" << circle->number << " (self):";
 
     // write player's additional code
@@ -396,6 +392,49 @@ void dlg_compiler::get_cur_nodes ()
     }
     
     return;
+}
+
+// Get if - [elif ...] - else statements in the right order 
+void dlg_compiler::sort (vector<DlgNode*> &v)
+{
+    u_int32 i, if_pos = 0;
+    DlgNode *node;
+
+    for (i = 0; i < v.size (); i++)
+    {
+        node = v[i];
+
+        cout << "* node " << i << " = " << ((Circle*) node)->text << endl << flush;
+         
+        // move everything without condition to the front
+        if (((Circle *) node)->conditions == "")
+        {
+            if (i != if_pos)
+            {
+                v.erase (remove (v.begin (), v.end (), node), v.end ());
+                v.insert (v.begin (), node);
+            }
+
+            if_pos++;
+        }
+        else
+        {
+            // move "else" to the back
+            if (v.size ()-1 != i && !strncmp (((Circle *) node)->conditions.c_str (), "else", 4))
+            {
+                v.erase (remove (v.begin (), v.end (), node), v.end ());
+                v.insert (v.end (), node);
+                i--;
+            }
+
+            // insert "if" after those nodes without condition 
+            if (if_pos != i && !strncmp (((Circle *) node)->conditions.c_str (), "if", 2))
+            {
+                v.erase (remove (v.begin (), v.end (), node), v.end ());
+                v.insert (v.begin () + if_pos, node);
+            }
+        }
+    }
 }
 
 // Check wether player text follows after that NPC node
