@@ -3,7 +3,7 @@ dnl Process this file with autoconf to produce a configure script.
 dnl **************************************************************
 
 AC_INIT(README)
-AM_INIT_AUTOMAKE(adonthell, 0.4alpha1)
+AM_INIT_AUTOMAKE(adonthell, 0.4dev1)
 
 CFLAGS="-g -Wall -fno-exceptions -fno-rtti"
 DEFS=""
