@@ -656,7 +656,7 @@ s_int8 image::get(FILE * file)
 {
   if(DEBUG) fprintf(stderr, "Function: image::get\n");
 
-  u_int16 i;
+  u_int16 i,j;
   void * tmp;
   SDL_Surface * tmp2;
 
@@ -668,11 +668,14 @@ s_int8 image::get(FILE * file)
   tmp2->format->Bmask=0xFF0000;
   tmp2->format->Gmask=0x00FF00;
 
-  for(i=0;i<lenght*height;i++)
+  for(i=0;i<height;i++)
     {
-      *((u_int8*)tmp2->pixels+(i*3))=*((u_int8*)tmp+(i*3));
-      *((u_int8*)tmp2->pixels+(i*3)+1)=*((u_int8*)tmp+(i*3)+1);
-      *((u_int8*)tmp2->pixels+(i*3)+2)=*((u_int8*)tmp+(i*3)+2);
+      for(j=0;j<lenght;j++)
+	{
+	  *((u_int8*)tmp2->pixels+(i*tmp2->pitch)+(j*3))=*((u_int8*)tmp+(j*3)+(lenght*3*i));
+	  *((u_int8*)tmp2->pixels+(i*tmp2->pitch)+(j*3)+1)=*((u_int8*)tmp+(j*3)+(lenght*3*i)+1);
+	  *((u_int8*)tmp2->pixels+(i*tmp2->pitch)+(j*3)+2)=*((u_int8*)tmp+(j*3)+(lenght*3*i)+2);
+	}
     }
 
   data=SDL_ConvertSurface(tmp2, tmp2->format, SDL_SWSURFACE);
