@@ -168,7 +168,6 @@ void win_border::load(char * rep,char *size)
   basepath += size; 
 
   basepath = game::find_directory (basepath);
-  cout << basepath << endl;
   
   fullpath = basepath + WIN_H_BORDER_TEMPLATE_FILE; 
   h_border_template_=new image();

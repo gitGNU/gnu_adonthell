@@ -13,6 +13,8 @@
 
 #include "win_font.h"
 
+#include "game.h"
+
 win_font::win_font()
 {
   table=NULL;
@@ -61,7 +63,9 @@ void win_font::load(char * rep)
   
   //add font filename 
   path += WIN_FONT_FILE; 
-     
+
+  path = game::find_file (path); 
+  
   //open gzfile 
   if (!f.open (path)) 
   {

@@ -18,8 +18,10 @@ mipcmp boah;
 
 int main (int argc, char * argv[]) 
 {
-    screen::set_video_mode (640, 480, 16);
+    screen::init (); 
     input::init (); 
+
+    screen::set_video_mode (640, 480, 16);
 
     landmap lmap;
     map_character_with_gfx mchar; 

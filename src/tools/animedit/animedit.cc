@@ -24,15 +24,13 @@ int main (int argc, char * argv[])
     game::init ();
     cout << game::user_data_dir () << " " << game::global_data_dir () << " "
          << game::game_data_dir () << endl; 
+    screen::init (); 
+    input::init (); 
     screen::set_video_mode (640, 480, 16);
 
     win_manager wmgr;
     
-    input::init (); 
     win_manager::init (); 
-
-    win_manager::add_theme ("original"); 
-    win_manager::add_font ("original"); 
 
     win_theme * th = win_manager::get_theme ("original");
     win_font * ft = win_manager::get_font ("original"); 

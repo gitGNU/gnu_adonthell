@@ -14,6 +14,8 @@
 #include "win_background.h"
 #include "win_base.h"
 
+#include "game.h"
+
 win_background::win_background()
 {
   wb_=NULL;
@@ -145,13 +147,16 @@ void win_background::refresh()
 void win_background::load(char *rep)
 {
   destroy();
-  char path[255];
-  strcpy(path,WIN_DIRECTORY);
-  strcat(path,WIN_BACKGROUND_DIRECTORY);
-  strcat(path,rep);
-  strcat(path,WIN_BACKGROUND_FILE);
+
+  string basepath = WIN_DIRECTORY;
+  basepath += WIN_BACKGROUND_DIRECTORY;
+  basepath += rep;
+  basepath += WIN_BACKGROUND_FILE; 
+
+  basepath = game::find_file (basepath);
+  
   background_template_=new image();
-  background_template_->load_pnm(path);//new
+  background_template_->load_pnm(basepath.c_str ());//new
   
   background_=new image();
   background_->set_mask(true);

@@ -92,7 +92,34 @@ public:
         return Game_data_dir; 
     }
 
+    /** 
+     * Finds a file in the directories hierarchy, starting searching from
+     * game_data_dir(), then global_data_dir() and finally user_data_dir().
+     *
+     * If a matching file is found, the full absolute path is returned, else
+     * an empty string "" is returned. If the path was already absolute, it is
+     * returned immediatly.
+     * 
+     * @param fname name of the find to search for.
+     * 
+     * @return complete absolute path to the file if found, passed string if the given
+     *         path was already absolute, or "" if the file wasn't found.
+     */
     static string find_file (const string & fname);
+
+    /** 
+     * Finds a directory in the directories hierarchy, starting searching from
+     * game_data_dir(), then global_data_dir() and finally user_data_dir().
+     *
+     * If a matching directory is found, the full absolute path is returned, else
+     * an empty string "" is returned. If the path was already absolute, it is
+     * returned immediatly.
+     * 
+     * @param fname name of the find to search for.
+     * 
+     * @return complete absolute path to the directory if found, passed string if the given
+     *         path was already absolute, or "" if the directory wasn't found.
+     */
     static string find_directory (const string & dirname); 
     
 private:

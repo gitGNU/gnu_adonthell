@@ -316,6 +316,7 @@ dnl src/tools/maptools/Makefile
 src/tools/questedit/Makefile
 src/tools/oggloop/Makefile
 src/tools/pydonthell/Makefile
+src/tools/animedit/Makefile
 ])
 
 

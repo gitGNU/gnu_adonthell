@@ -73,6 +73,9 @@ string game::find_file (const string & fname)
 {
     string ret;
 
+    // If the name is already absolute, no need to search...
+    if (fname[0] == '/') return fname; 
+    
     // First check in the current game directory
     if ((ret = game_data_dir () + "/") != "/" && file_exist (ret + fname))
         ret += fname; 
@@ -91,6 +94,9 @@ string game::find_file (const string & fname)
 string game::find_directory (const string & dirname) 
 {
     string ret;
+
+    // If the name is already absolute, no need to search...
+    if (dirname[0] == '/') return dirname; 
 
     // First check in the current game directory
     if ((ret = game_data_dir () + "/") != "/" && directory_exist (ret + dirname))

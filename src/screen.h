@@ -50,6 +50,13 @@ public:
      */
     static surface display; 
 
+    /**
+     * Initialise the display subsystem. Never forget to call
+     * this function!
+     * 
+     */
+    static void init (); 
+    
     /** Sets the video mode.
      *  @param nl X screen resolution.
      *  @param nh Y screen resolution.
