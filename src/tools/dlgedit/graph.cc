@@ -971,7 +971,7 @@ new_dialogue (MainFrame * wnd)
 void 
 load_dialogue (MainFrame * wnd, const char *file)
 {
-    int i = 1, n;
+    int i = 1, n, y_min = 0, x_min = 0, x_max = 0;
     string s;
     Circle *circle;
     Arrow *arrow;
@@ -1041,7 +1041,15 @@ load_dialogue (MainFrame * wnd, const char *file)
                 circle->load (wnd->number++);
 
                 wnd->nodes.push_back (circle);
- 
+
+                // Get extension of the graph for proper displaying
+                if (circle->position.y < y_min)
+                    y_min = circle->position.y;
+                if (circle->position.x < x_min)
+                    x_min = circle->position.x;
+                else if (circle->position.x > x_max)
+                    x_max = circle->position.x;
+
                 break;
             }
 
@@ -1070,11 +1078,11 @@ load_dialogue (MainFrame * wnd, const char *file)
             redraw_arrow (wnd, *k); 
     }
     
-    // center view on first node
+    // center view on topmost node
     if (wnd->number > 0)
     {
-        if (center_object (wnd, wnd->nodes[0]))
-            wnd->y_offset -= (wnd->graph->allocation.height / 2) - 20;
+        wnd->y_offset -= y_min - 15;
+        wnd->x_offset -= (x_min + x_max) / 2 - wnd->graph->allocation.width / 2;
 
         redraw_graph (wnd);
     }
