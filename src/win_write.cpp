@@ -8,19 +8,29 @@
 #include "win_font.h"
 #include "win_friend.h"
 #include "win_container.h"
+#include "win_select.h"
 #include "win_write.h"
 
 
 win_write::win_write(u_int16 tx,u_int16 ty,u_int16 tl,u_int16 th,win_font *fo,win_container *tmpwc):win_base(tx,ty,tl,th,tmpwc,tmpwc->get_drawing_area())
 {
   font=fo;
-  text.length=0;
+  text.lenght=0;
   text.pos=0;
   text.pos_tmp=0;
   text.end_win=false;
   beg_select=0;
   end_select=-2;
   ok_text=false;
+}
+
+win_write::~win_write()
+{
+  if(wselect)
+    {
+       wselect->remove(this);
+       wselect=NULL;
+     }
 }
 
 bool win_write::is_text()
@@ -53,12 +63,13 @@ void win_write::draw()
 {
   if(visible && wc)
     {
-      draw_background();
-      draw_text(wc->get_x()+x,wc->get_y()+y,wc->get_x()+x+length,wc->get_y()+y+height,font,text,da);  
-      //if text reach end window
-      draw_border();
-      if(text.end_win) 
-	text.pos+=text.len_fl; 
+       draw_background();
+       if(wselect && !selected && select_mode==WIN_SELECT_MODE_BRIGHTNESS) draw_text(real_x,real_y,real_x+length,real_y+height,font,text,da,true);
+       else draw_text(real_x,real_y,real_x+length,real_y+height,font,text,da,false);
+       draw_border();
+       //if text reach end window
+       if(text.end_win) 
+	 text.pos+=text.len_fl; 
     }
 }
 
@@ -78,26 +89,26 @@ void win_write::write()
     {
       if(!alwayspush)     
 	{
-	  if(text.length<TEXT_MAX)
+	  if(text.lenght<TEXT_MAX)
 	    { 
 	      if(n==Enter_Key)
 		{
 		  beg_select=end_select+2;
-		  end_select=(text.length-1);
+		  end_select=(text.lenght-1);
 		  ok_text=true;
-		  text.text[text.length++]='\n';
+		  text.text[text.lenght++]='\n';
 		}      
 	      else   
 		{
-		  if(n==Backspace_Key && text.length>0) 
-		    {text.length--;
+		  if(n==Backspace_Key && text.lenght>0) 
+		    {text.lenght--;
 		    if(text.pos>0) text.pos--;
 		    }
 		  else 
 		    //ERROR TO SEE UPPERCASE
 		    if(input::is_pushed(Shift_Key))
-		      text.text[text.length++]=n-30;
-		    else text.text[text.length++]=n;
+		      text.text[text.lenght++]=n-30;
+		    else text.text[text.lenght++]=n;
 		}
 	    }
 	  alwayspush=true;
@@ -109,5 +120,10 @@ void win_write::write()
     }
   curletter=n;
 }
+
+
+
+
+
 
 

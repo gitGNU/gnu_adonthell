@@ -93,7 +93,7 @@ py_mapengine_wrap.o yarg.o event.o
 mapengine_LDADD = $(LDADD)
 mapengine_DEPENDENCIES = 
 mapengine_LDFLAGS = 
-CXXFLAGS = -O6 -g -Wall -D_EDIT -I/usr/local/include -I/usr/local/include/SDL -D_REENTRANT -I/usr/include/python1.5  -DSDL_MIXER 
+CXXFLAGS = -O6 -g -Wall -I/usr/local/include -I/usr/local/include/SDL -D_REENTRANT -I/usr/include/python1.5  -DSDL_MIXER 
 CXXCOMPILE = $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
 CXXLD = $(CXX)
 CXXLINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(LDFLAGS) -o $@
@@ -280,7 +280,7 @@ distdir: $(DISTFILES)
 	@for file in $(DISTFILES); do \
 	  d=$(srcdir); \
 	  if test -d $$d/$$file; then \
-	    cp -pr $$/$$file $(distdir)/$$file; \
+	    cp -pr $$d/$$file $(distdir)/$$file; \
 	  else \
 	    test -f $(distdir)/$$file \
 	    || ln $$d/$$file $(distdir)/$$file 2> /dev/null \

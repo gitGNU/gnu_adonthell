@@ -25,8 +25,9 @@ class win_write : public win_base
  
  public:
   win_write(u_int16,u_int16,u_int16,u_int16,win_font *fo,win_container *);
+  ~win_write();
   void set_font(win_font *fo);
-  bool is_text();//return true if seltext/length!=0
+  bool is_text();//return true if seltext/lenght!=0
   char * get_text();//return seltext if is_text
   void draw();
   void update();

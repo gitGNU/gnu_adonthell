@@ -5,26 +5,33 @@
 #include "win_friend.h"
  
 
-void draw_text(u_int16 sx,u_int16 sy,u_int16 ex,u_int16 ey,win_font *font,text_w & txt,drawing_area * da)
+void draw_text(u_int16 sx,u_int16 sy,u_int16 ex,u_int16 ey,win_font *font,text_w & txt,drawing_area * da,bool brightness)
 {
   u_int16 i=0;
   u_int16 j;
   u_int8 k;
   bool b;
+  image tmp;
   txt.len_fl=0;
   txt.pos_tmp=txt.pos;
   txt.end_win=false;
-  while( (sy+i*(font->height)<ey) &&  (txt.pos_tmp < txt.length ) ) { 
+  while( (sy+i*(font->height)<ey) &&  (txt.pos_tmp < txt.lenght ) ) { 
     j=0;
     b=true;
-    while((b) && ((sx+j)<ex) && (txt.pos_tmp<txt.length)) {
+    while((b) && ((sx+j)<ex) && (txt.pos_tmp<txt.lenght)) {
       k=txt.text[txt.pos_tmp];
       if(k==' ') 
-	j+=font->length;
+	j+=font->lenght;
       else { 
 	if(k=='\n') b=false;
 	else { 
-	  font->table[k].putbox_mask(sx+j,sy+i*(font->height),da);
+	  if(brightness)
+	    {
+	      tmp.brightness(&(font->table[k]),120);
+	      tmp.putbox_mask(sx+j,sy+i*(font->height),da);
+	    }
+	  else font->table[k].putbox_mask(sx+j,sy+i*(font->height),da);
+	   
 	  j+= font->table[k].length;
 	}
       }
@@ -33,7 +40,7 @@ void draw_text(u_int16 sx,u_int16 sy,u_int16 ex,u_int16 ey,win_font *font,text_w
     }
     i++;
   }
-  txt.end_win=(txt.pos_tmp<txt.length);
+  txt.end_win=(txt.pos_tmp<txt.lenght);
 }
 
 

@@ -25,14 +25,23 @@
 #define WIN_CORNER_FILE "corner.pnm"
 #define WIN_BACKGROUND_FILE "background.pnm"
 
+//directory size
+#define WIN_BORDER_NORMAL_SIZE "normal/"
+#define WIN_BORDER_MINI_SIZE "mini/"
+
 //just a start to build a theme
 #define WIN_THEME_ORIGINAL "original/" //dont forget '/'
+
+
+//win_select
+#define WIN_SELECT_MODE_BRIGHTNESS 0
+#define WIN_SELECT_MODE_BORDER 1
 
 
 typedef struct 
 {
   char text[TEXT_MAX];
-  u_int16 length;
+  u_int16 lenght;
   u_int16 pos;
   u_int16 pos_tmp;
   u_int16 len_fl;

@@ -21,7 +21,7 @@
 
 SDL_Rect image::sr;
 SDL_Rect image::dr;
-#ifdef DEBUG
+#ifdef _DEBUG_
 u_int16 image::a_d_diff=0;
 #endif
 
@@ -116,11 +116,11 @@ image &image::operator =(image &im)
   mask_on=im.mask_on;
   alpha=im.alpha;
   if(data) SDL_FreeSurface(data);
-#ifdef _EDIT
+#ifdef _EDIT_
   if(simpledata) free(simpledata);
 #endif
   data=SDL_ConvertSurface(im.data,im.data->format,im.data->flags);
-#ifdef _EDIT
+#ifdef _EDIT_
   simpledata=(void *)calloc(length*height,3);
   memcpy(simpledata,im.simpledata,length*height*3);
 #endif
@@ -135,14 +135,14 @@ void image::init()
   mask_on=false;
   alpha=0;
   draw_to=NULL;
-#ifdef _EDIT
+#ifdef _EDIT_
   simpledata=NULL;
 #endif
 }
 
 image::image ()
 {
-#ifdef DEBUG
+#ifdef _DEBUG_
   cout << "image() called, "<< ++a_d_diff
        << " objects currently allocated\n";
 #endif
@@ -151,7 +151,7 @@ image::image ()
 
 image::image (u_int16 l, u_int16 h)
 {
-#ifdef DEBUG
+#ifdef _DEBUG_
   cout << "image(u_int16, u_int16) called, "<< ++a_d_diff
        << " objects currently allocated\n";
 #endif
@@ -160,7 +160,7 @@ image::image (u_int16 l, u_int16 h)
   bytes_per_pixel=screen::bytes_per_pixel;
   data=SDL_CreateRGBSurface(SDL_SWSURFACE,length, height,
 			    bytes_per_pixel*8,0,0,0,0);
-#ifdef _EDIT
+#ifdef _EDIT_
   simpledata=(void*)calloc(length*height,3);
 #endif
   mask_on=false;
@@ -171,7 +171,7 @@ image::image (u_int16 l, u_int16 h)
 image::~image()
 {
   clear();
-#ifdef DEBUG
+#ifdef _DEBUG_
   cout << "~image() called, "<< --a_d_diff
        << " objects currently allocated\n";
 #endif
@@ -181,7 +181,7 @@ void image::clear()
 {
   SDL_FreeSurface(data);
   data=NULL;
-#ifdef _EDIT
+#ifdef _EDIT_
   free(simpledata);
 #endif
 }
@@ -195,7 +195,7 @@ void image::resize(u_int16 l, u_int16 h)
   height=h;
   data=SDL_CreateRGBSurface(SDL_SWSURFACE,length, height,
 			    bytes_per_pixel*8,0,0,0,0);
-#ifdef _EDIT
+#ifdef _EDIT_
   if(simpledata) free(simpledata);
   simpledata=(void *)calloc(length*height,3);
 #endif  
@@ -432,7 +432,7 @@ s_int8 image::load(const char * fname)
 
 s_int8 image::get_raw(SDL_RWops * file)
 {
-#ifndef _EDIT
+#ifndef _EDIT_
   void * simpledata;
 #endif
   SDL_Surface * tmp2;
@@ -444,7 +444,7 @@ s_int8 image::get_raw(SDL_RWops * file)
   bytes_per_pixel=screen::bytes_per_pixel;
   SDL_FreeSurface(tmp2);
 
-#ifndef _EDIT
+#ifndef _EDIT_
   free(simpledata);
 #endif
   if (!data) return(-1);
@@ -471,7 +471,7 @@ s_int8 image::load_pnm(char * fname)
   return(load_raw(fname));
 }
 
-#ifdef _EDIT
+#ifdef _EDIT_
 s_int8 image::put(SDL_RWops * file)
 {
   SDL_RWwrite(file,&mask_on,sizeof(mask_on),1);

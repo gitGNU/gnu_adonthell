@@ -40,12 +40,12 @@ class drawing_area : public SDL_Rect
 class image
 {
   static SDL_Rect sr,dr;
-#ifdef DEBUG
+#ifdef _DEBUG_
   static u_int16 a_d_diff;
 #endif
  protected:
 
-#ifdef _EDIT
+#ifdef _EDIT_
   void * simpledata;
 #endif
   drawing_area * draw_to;
@@ -76,7 +76,7 @@ class image
   s_int8 load_raw(const char * fname);
   s_int8 get_pnm(SDL_RWops * file);
   s_int8 load_pnm(char * fname);
-#ifdef _EDIT
+#ifdef _EDIT_
   s_int8 put(SDL_RWops * file);
   s_int8 save(char * fname);
   s_int8 put_raw(SDL_RWops * file);

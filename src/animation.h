@@ -18,7 +18,7 @@
 #include "types.h"
 #include "image.h"
 
-#ifdef _EDIT
+#ifdef _EDIT_
 #include <list>
 #include <string>
 #include "input.h"
@@ -64,23 +64,23 @@ class animation_frame
   void set_nextframe(u_int16 nf);
   s_int8 get(SDL_RWops * file);
   s_int8 load(const char * fname);
-#ifdef _EDIT
+#ifdef _EDIT_
   s_int8 put(SDL_RWops * file);
   s_int8 save(const char * fname);
 #endif
   friend class animation;
-#ifdef _EDIT
+#ifdef _EDIT_
   friend class animedit;
 #endif
 };
 
 class animation
 {
-#ifdef DEBUG
+#ifdef _DEBUG_
   static u_int16 a_d_diff;
 #endif
 
-#ifdef _EDIT
+#ifdef _EDIT_
   bool mode;
   win_font * font;
   win_border * border;
@@ -116,13 +116,13 @@ class animation
   void draw(u_int16 x, u_int16 y);
   s_int8 get(SDL_RWops * file);
   s_int8 load(const char * fname);
-#ifdef _EDIT
+#ifdef _EDIT_
   s_int8 put(SDL_RWops * file);
   s_int8 save(const char * fname);
 #endif
   animation &operator =(animation &a);
 
-#ifdef _EDIT
+#ifdef _EDIT_
   s_int8 insert_image(image &im, u_int16 pos);
   s_int8 insert_frame(animation_frame &af, u_int16 pos);
   u_int16 increase_frame(u_int16 c);

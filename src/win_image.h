@@ -16,6 +16,6 @@ class win_image : public win_base
   void set_image(image *);
   void draw();
   void update();
-
+  ~win_image();
 };
 #endif

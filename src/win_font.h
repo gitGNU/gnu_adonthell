@@ -13,7 +13,7 @@ class win_font{
   
   image * table;
   u_int8 height;
-  u_int8 length; //just for space bar
+  u_int8 lenght; //just for space bar
   
   win_font();
   win_font(char *);

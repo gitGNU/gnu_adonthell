@@ -11,12 +11,12 @@
 #include "win_border.h"
 
 
-win_border::win_border(char * rep)
+win_border::win_border(char * rep,char * size=WIN_BORDER_NORMAL_SIZE)
 {
   h_border_template=NULL;
   v_border_template=NULL;
   corner=NULL;
-  win_border::load(rep);
+  win_border::load(rep,size);
 }
 
 
@@ -41,7 +41,7 @@ win_border::~win_border()
   if(corner) delete corner;
 }
 
-void win_border::load(char * rep)
+void win_border::load(char * rep,char *size)
 {
   if(h_border_template) delete h_border_template; 
   if(v_border_template) delete v_border_template; 
@@ -50,20 +50,21 @@ void win_border::load(char * rep)
   strcpy(path,WIN_DIRECTORY);
   strcat(path,WIN_BORDER_DIRECTORY);
   strcat(path,rep);
+  strcat(path,size);
   h_border_template=new image();
   strcpy(tmp,path);
   strcat(tmp,WIN_H_BORDER_TEMPLATE_FILE);
-  h_border_template->load_raw(tmp);
+  h_border_template->load_raw(tmp);//new
   
   v_border_template=new image();
   strcpy(tmp,path);
   strcat(tmp,WIN_V_BORDER_TEMPLATE_FILE);
-  v_border_template->load_raw(tmp);
+  v_border_template->load_raw(tmp);//new
   
   corner=new image();
   strcpy(tmp,path);
   strcat(tmp,WIN_CORNER_FILE);
-  corner->load_raw(tmp);
+  corner->load_raw(tmp);//new
 }
 
 
@@ -89,6 +90,6 @@ void win_background::load(char *rep)
   strcat(path,rep);
   strcat(path,WIN_BACKGROUND_FILE);
   background_template=new image();
-  background_template->load_raw(path);
+  background_template->load_raw(path);//new
 }
 

@@ -14,6 +14,7 @@ class win_label : public win_base
   
  public:
   win_label(u_int16,u_int16,u_int16,u_int16,win_font * fo,win_container *);
+  ~win_label();
   void set_font(win_font * fo);//change font
   void draw();//draw text
   void set_text(char *t);//set text

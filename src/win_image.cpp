@@ -4,6 +4,7 @@
 #include "win_base.h"
 
 #include "win_container.h"
+#include "win_select.h"
 #include "win_image.h"
 
 
@@ -15,6 +16,15 @@ win_image::win_image(u_int16 tx,u_int16 ty,image * tpic,win_container * twc):win
       height=picture->height;
       length=picture->length;
     }
+}
+
+win_image::~win_image()
+{
+  if(wselect)
+    {
+       wselect->remove(this);
+       wselect=NULL;
+     }
 }
 
 void win_image::set_image(image * tpic)
@@ -31,8 +41,8 @@ void win_image::draw()
 {
   if(visible && wc && picture)
     {
-      picture->putbox(wc->get_x()+x,wc->get_y()+y);
-      draw_border();
+       picture->putbox(real_x,real_y,wc->get_drawing_area());
+       draw_border();
     }
 }
 

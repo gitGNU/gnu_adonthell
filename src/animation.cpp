@@ -17,7 +17,7 @@
 #include <stdlib.h>
 #include "animation.h"
 
-#ifdef DEBUG
+#ifdef _DEBUG_
 u_int16 animation::a_d_diff=0;
 #endif
 
@@ -111,7 +111,7 @@ s_int8 animation_frame::load(const char * fname)
   return(retvalue);
 }
 
-#ifdef _EDIT
+#ifdef _EDIT_
 s_int8 animation_frame::put(SDL_RWops * file)
 {
   SDL_RWwrite(file,&imagenbr,sizeof(imagenbr),1);
@@ -138,7 +138,7 @@ s_int8 animation_frame::save(const char * fname)
 
 animation::animation()
 {
-#ifdef DEBUG
+#ifdef _DEBUG_
   cout << "animation() called, "<< ++a_d_diff
        << " objects currently allocated\n";
 #endif
@@ -150,7 +150,7 @@ animation::animation()
   speedcounter=0;
   play_flag=false;
 
-#ifdef _EDIT
+#ifdef _EDIT_
   image temp;
   string t;
   mode=IMAGE;
@@ -178,7 +178,7 @@ animation::animation()
 animation::~animation()
 {
 
-#ifdef _EDIT
+#ifdef _EDIT_
   delete bg;
   delete label_mode;
   delete label_anim_info;
@@ -192,7 +192,7 @@ animation::~animation()
 
   delete[] t_frame;
   delete[] frame;
-#ifdef DEBUG
+#ifdef _DEBUG_
   cout << "~animation() called, "<< --a_d_diff
        << " objects currently allocated\n";
 #endif
@@ -270,7 +270,7 @@ s_int8 animation::load(const char * fname)
   return(retvalue);
 }
 
-#ifdef _EDIT
+#ifdef _EDIT_
 s_int8 animation::put(SDL_RWops * file)
 {
   u_int16 i;
@@ -342,7 +342,7 @@ animation & animation::operator =(animation &a)
   return *this;
 }
 
-#ifdef _EDIT
+#ifdef _EDIT_
 s_int8 animation::insert_image(image &im, u_int16 pos)
 {
   image * oldt_frame=t_frame;
@@ -357,7 +357,7 @@ s_int8 animation::insert_image(image &im, u_int16 pos)
   for(i=0;i<nbr_of_frames;i++)
     if(frame[i].imagenbr>=pos) frame[i].imagenbr++;
   delete[] oldt_frame;
-#ifdef DEBUG
+#ifdef _DEBUG_
   cout << "Added image: " << nbr_of_images << " total in animation.\n";
 #endif
   return 0;
@@ -377,7 +377,7 @@ s_int8 animation::insert_frame(animation_frame &af, u_int16 pos)
   for(i=0;i<nbr_of_frames;i++)
     if(frame[i].nextframe>=pos) frame[i].nextframe++; 
   delete[] oldframe;
-#ifdef DEBUG
+#ifdef _DEBUG_
   cout << "Added frame: " << nbr_of_frames << " total in animation.\n";
 #endif
   return 0;
@@ -418,7 +418,7 @@ s_int8 animation::delete_image(u_int16 pos)
     if(frame[i].imagenbr>pos) frame[i].imagenbr--;
   delete[] oldt_frame;
   if(currentimage>=nbr_of_images) currentimage=nbr_of_images-1;
-#ifdef DEBUG
+#ifdef _DEBUG_
   cout << "Added image: " << nbr_of_images << " total in animation.\n";
 #endif
   return 0;
@@ -438,7 +438,7 @@ s_int8 animation::delete_frame(u_int16 pos)
     if(frame[i].nextframe>=pos) frame[i].nextframe++; 
   delete[] oldframe;
   if(currentframe>=nbr_of_frames) currentframe=nbr_of_frames-1;
-#ifdef DEBUG
+#ifdef _DEBUG_
   cout << "Added frame: " << nbr_of_frames << " total in animation.\n";
 #endif
   return 0;

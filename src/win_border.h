@@ -6,9 +6,6 @@ class win_container;
 
 class win_border
 {
-
-
- 
   //image * h_border;
   //image * v_border;
 
@@ -17,9 +14,9 @@ class win_border
   image * v_border_template;
   image * corner;
 
-  win_border(char *);
+  win_border(char *rep ,char *size=WIN_BORDER_NORMAL_SIZE);
   ~win_border();
-  void load(char *);
+  void load(char *,char *);
 };
 
 
