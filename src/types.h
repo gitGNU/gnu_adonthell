@@ -1,7 +1,7 @@
 #ifndef _types_h
 #define _types_h
 
-// $Id
+// $Id$
 /*
    Copyright (C) 1999 Alexandre Courbot.
 

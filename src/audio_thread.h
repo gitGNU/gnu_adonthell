@@ -1,5 +1,6 @@
 /*
    $Id$
+
    Copyright (C) 2000 Andrew Henderson <hendersa@db.erau.edu>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 

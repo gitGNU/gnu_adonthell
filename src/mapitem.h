@@ -1,4 +1,6 @@
 /*
+    $Id$
+
     Copyright (C) 1999 The Adonthell Team.
 
     This program is free software; you can redistribute it and/or modify
