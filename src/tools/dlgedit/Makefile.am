@@ -6,7 +6,7 @@ endif
 
 SUBDIRS = examples
 
-EXTRA_DIST = loadlg.l
+EXTRA_DIST = loadlg.l loadcfg.l
 
 dlgedit_SOURCES = \
     cfg_data.cc \

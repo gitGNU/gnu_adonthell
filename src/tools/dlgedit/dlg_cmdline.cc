@@ -21,7 +21,7 @@
  
 #include <iostream> 
 #include <dirent.h>
-#include <getopt.h>
+#include <unistd.h>
 #include "dlg_cmdline.h"
 
 // flag indicating whether to compile the given scripts
