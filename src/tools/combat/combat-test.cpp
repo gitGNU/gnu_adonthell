@@ -120,7 +120,7 @@ void show_results(int parity) {
 	  	if(dice > (test.a_attack_range + test.b_defense_range) && (dice < test.a_attack_total_allotment - test.a_attack_b_real_luck))
 	  		printf("CTITICAL HIT!!\n\n");
 	  	if(dice	> (test.a_attack_total_allotment - test.a_attack_b_real_luck))
-	  		printf("CRITICAL MISS!!");
+	  		printf("CRITICAL MISS!!\n\n");
 	} else {
 	 	printf("***************\n* B attacks A *\n***************\n\n");
 		printf("Character B Attack Range: 0-->%4.4f\n",test.b_attack_range);
