@@ -57,7 +57,7 @@ ostream& operator << (ostream& stream,instruction &instr)
 {
   int i;
  
-  for (i=0;i<9;++i) cout << instr.param_val[i];
+  for (i=0;i<9;++i) stream << instr.param_val[i];
 
   return stream;
 }
