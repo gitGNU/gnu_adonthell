@@ -79,6 +79,9 @@ void GuiGraph::attachModule (DlgModule *m, bool cntr)
 
     // set the size of the dialogue
     drawing_area.resize (graph->allocation.width, graph->allocation.height);
+
+    // tell the module that it is in view
+    module->setDisplayed (true);
     
     // display the module
     draw ();
@@ -106,6 +109,9 @@ void GuiGraph::detachModule ()
 // display a different module
 void GuiGraph::switchModule (DlgModule *m)
 {
+    // we're switching between sub-dialogues
+    if (module) module->setDisplayed (false);
+    
     detachModule ();
     attachModule (m);
 }

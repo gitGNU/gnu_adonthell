@@ -131,7 +131,6 @@ GdkGC *GuiResources::getColor (mode_type mode, node_type type)
             if (type == NPC || type == LINK || type == MODULE) return Color[GC_BLACK];
             else if (type == NARRATOR) return Color[GC_DARK_GREEN];
             else return Color[GC_DARK_BLUE];
-            break;
         }
 
         // selected
@@ -140,19 +139,17 @@ GdkGC *GuiResources::getColor (mode_type mode, node_type type)
             if (type == NPC || type == LINK || type == MODULE) return Color[GC_DARK_RED];
             else if (type == NARRATOR) return Color[GC_YELLOW];
             else return Color[GC_RED];
-            break;
         }
 
         // highlighted
         case NODE_HILIGHTED:
         {
             return Color[GC_GREEN];
-            break;
         }
 
         // unknown
         default:
-            break;
+            return Color[GC_BLACK];
     }
 
     return (GdkGC *) NULL;

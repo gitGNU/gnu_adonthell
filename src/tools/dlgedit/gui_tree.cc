@@ -121,6 +121,10 @@ GtkCTreeNode *GuiTree::insert (GtkCTreeNode *parent, DlgModule *module)
     GtkCTreeNode *node = INSERT_NODE (parent, &text, false);
     gtk_ctree_node_set_row_data (GTK_CTREE (tree), node, (gpointer) module);
     
+    // display the module that has been in the view before
+    if (module->displayed ())
+        on_tree_select_row (GTK_CTREE (tree), (GList*) node, 0, this); 
+    
     return node;
 }
  

@@ -40,11 +40,13 @@ DlgModule::DlgModule (std::string p, std::string n, std::string s, std::string d
 void DlgModule::init ()
 {
     type_ = MODULE;
+    mode_ = IDLE;
     state_ = IDLE;
     selected_ = NULL;
     highlighted_ = NULL;
     parent_ = NULL;
     changed_ = false;
+    displayed_ = false;
 }
 
 // reset dialogue to initial state

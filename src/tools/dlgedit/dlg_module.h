@@ -215,6 +215,18 @@ public:
     std::string fullName ()             { return path_ + name_ + FILE_EXT; }
 
     /**
+     * Whether this (sub-)dialogue has been in view before switching
+     * dialogues.
+     * @return \b true if that is the case, \b false otherwise.
+     */
+    bool displayed ()                   { return displayed_; }
+    /**
+     * Mark this dialogue as displayed.
+     * @param c Set to \b true to mark the dialogue as displayed.
+     */
+    void setDisplayed (bool displayed)  { displayed_ = displayed; }
+    
+    /**
      * Check whether this dialogue has been changed since it's been
      * opened or saved.
      * @return \b true if that is the case, \b false otherwise.
@@ -272,8 +284,9 @@ protected:
     DlgNode *selected_;         // the node currently selected
     DlgNode *highlighted_;      // the node currently under the cursor
     DlgModule *parent_;         // parent of sub-dialogue
-    
+            
     DlgPoint offset_;           // The current offset in the graph view
+    bool displayed_;            // Whether that (sub-)dialogue was in view
     bool changed_;              // Whether there were changes since saving
     int nid_;                   // Id to use for the next new node
 

@@ -444,6 +444,7 @@ void GuiDlgedit::loadDialogue (std::string file)
     {
         // update list of previously opened files
         CfgData::data->addFile (file);
+        initRecentFiles ();
 
         message->display (200);      
         showDialogue (module, true);
@@ -540,6 +541,7 @@ void GuiDlgedit::saveDialogue (std::string file)
         
         // update list of previously opened files
         CfgData::data->addFile (file);
+        initRecentFiles ();
 
         // update 'Revert to Saved' menu item
         gtk_widget_set_sensitive (menuItem[REVERT], TRUE);
@@ -590,10 +592,16 @@ void GuiDlgedit::showDialogue (DlgModule *module, bool center)
     graph_->detachModule ();
     
     // update the tree view
+    // NOTE that this method does some magic: it will select and attach
+    // the sub-dialogue of 'module' that has been viewed before. In that
+    // case, 'module' must not be attached, as it is the toplevel dialogue.
     tree_->display (module);
     
     // attach the dialogue to the view
-    graph_->attachModule (module, center);
+    // In case of a newly created or (re)loaded 'module', none of it's
+    // sub-dialogues will have been in the view. Therefore, the call
+    // above can't attach anything. Therefore we can attach 'module'.
+    if (!graph_->getAttached ()) graph_->attachModule (module, center);
     
     // update the custom code entry if neccessary
     if (GuiCode::dialog != NULL)
