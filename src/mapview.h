@@ -39,6 +39,7 @@ class mapview
   drawing_area * da;
 
   list<mapsquare_tile> critical_draw;
+  list<mapcharacter*> characters_draw;
 
 #ifdef _EDIT_
   win_font * font;
@@ -118,6 +119,7 @@ class mapview
 #endif
   friend class mapsquare_tile;
   friend class mapsquare;
+  friend class mapcharacter;
 };
 
 #endif

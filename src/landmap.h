@@ -59,13 +59,16 @@ class mapsquare
   
   u_int16 type; // Terrain type ; need to be defined later
   bool walkable;
+  bool walkable_char;
 
   list<mapsquare_tile> tiles;
   list<mapsquare_tile>::iterator base_begin;
-
+  list<mapcharacter*> mapchars;
  public:
   mapsquare();
   ~mapsquare();
+
+  bool is_walkable() { return walkable && walkable_char; }
 
   // Draw takes only a mapview as argument.
   void draw(mapview * mv);
@@ -170,8 +173,14 @@ class landmap
   s_int8 save(const char * fname);
 #endif
 
+  void put_mapchar(mapcharacter * mchar, u_int16 smap, u_int16 px, u_int16 py);
+  void remove_mapchar(mapcharacter * mchar, u_int16 smap, u_int16 px,
+		      u_int16 py);
   // Adds a submap to the map. Returns 0 if ok (in this case, the submap
   // number is nbr_of_submaps-1)
+  void add_mapcharacter(mapcharacter * m)
+    {mapchar.push_back(m);}
+
   s_int8 add_submap();
   s_int8 add_submap(u_int16 l, u_int16 h);
 

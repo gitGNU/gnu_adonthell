@@ -19,8 +19,12 @@
 #include <vector>
 #include "animation_off.h"
 #include "maptpl.h"
+#include "landmap.h"
+#include "mapview.h"
+
 #ifdef _EDIT_
 #include "mapselect.h"
+#include "mapobject.h"
 
 #include "win_types.h"
 #include "win_base.h"
@@ -48,9 +52,15 @@ class mapcharacter : public maptpl
 #define WALK_EAST 7
 #define NBR_MOVES 8
 
-  u_int16 current_move;
+#define NO_MOVE 65535
 
+  u_int16 current_move;
+  u_int16 ask_move;
+  u_int16 submap;
+  u_int16 posx, posy;
+  s_int8 offx, offy;
   vector<animation_off*> anim;
+  landmap * refmap;
   
   u_int16 length, height;
 
@@ -79,9 +89,21 @@ class mapcharacter : public maptpl
   s_int8 get(gzFile file);
   s_int8 load(const char * fname);
 
+  void set_on_map(landmap * m) {refmap=m;}
+  void remove_from_map() {refmap=NULL;}
+  void set_pos(u_int16 smap,u_int16 x,u_int16 y);
+  void set_offset(s_int8 x, s_int8 y) {offx=x; offy=y;}
+  
   void update();
   void draw(s_int16 x, s_int16 y, drawing_area * da_opt=NULL);
+  void draw(mapview * mv);
 
+  u_int16 move() {return current_move;}
+
+  void stand_north();
+  void stand_south();
+  void stand_east();
+  void stand_west();
   void go_north();
   void go_south();
   void go_east();

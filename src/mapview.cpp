@@ -171,6 +171,7 @@ void mapview::draw(u_int16 x, u_int16 y, drawing_area * da_opt=NULL)
   static u_int16 i,j;
   static u_int16 i0,j0,ie,je;
   static list<mapsquare_tile>::iterator it;
+  static list<mapcharacter*>::iterator itc;
   static landsubmap * l;
   if(!m_map) return;
 
@@ -196,12 +197,22 @@ void mapview::draw(u_int16 x, u_int16 y, drawing_area * da_opt=NULL)
     if(it->x>it->base_tile->x && it->y>it->base_tile->y)
       critical_draw.push_back(*(it->base_tile));
 
+  for(itc=l->land[i0][j0].mapchars.begin();
+      itc!=l->land[i0][j0].mapchars.end();itc++)
+    characters_draw.push_back(*itc);
+
   // Top line
   for(i=i0;i<ie && i<l->length;i++)
-    for(it=l->land[i][j0].tiles.begin(); 
-	it!=l->land[i][j0].tiles.end();it++)
-      if(it->x==it->base_tile->x && it->y>it->base_tile->y)
-	critical_draw.push_back(*(it->base_tile));
+    {
+      for(it=l->land[i][j0].tiles.begin(); 
+	  it!=l->land[i][j0].tiles.end();it++)
+	if(it->x==it->base_tile->x && it->y>it->base_tile->y)
+	  critical_draw.push_back(*(it->base_tile));
+      
+      for(itc=l->land[i][j0].mapchars.begin();
+	  itc!=l->land[i][j0].mapchars.end();itc++)
+	characters_draw.push_back(*itc);
+    }
   
   // Top right corner
   for(it=l->land[ie-1][j0].tiles.begin(); 
@@ -209,12 +220,20 @@ void mapview::draw(u_int16 x, u_int16 y, drawing_area * da_opt=NULL)
     if(it->x<it->base_tile->x && it->y>it->base_tile->y)
       critical_draw.push_back(*(it->base_tile));
 
+  for(itc=l->land[ie-1][j0].mapchars.begin();
+      itc!=l->land[ie-1][j0].mapchars.end();itc++)
+    characters_draw.push_back(*itc);
+
   // Drawing top overflowing gfx
   critical_draw.sort();
   for(it=critical_draw.begin();it!=critical_draw.end();it++)
     it->draw(this);
   critical_draw.clear();
   
+  for(itc=characters_draw.begin();itc!=characters_draw.end();itc++)
+    (*itc)->draw(this);
+  characters_draw.clear();
+
   // Now drawing objects without any top or bottom overflow
   for(j=j0;j<je;j++)
     {
@@ -224,17 +243,35 @@ void mapview::draw(u_int16 x, u_int16 y, drawing_area * da_opt=NULL)
 	if(it->y==it->base_tile->y && it->x>it->base_tile->x)
 	  it->base_tile->draw(this);
       
+      for(itc=l->land[i0][j].mapchars.begin();
+	  itc!=l->land[i0][j].mapchars.end();itc++)
+	characters_draw.push_back(*itc);
+
       // Objects which base tile is visible on the map view
       for(i=i0;i<ie;i++)
-	for(it=l->land[i][j].base_begin;
-	    it!=l->land[i][j].tiles.end() && *(it->base_tile)<=*it;it++)
-	  it->draw(this);
-      
+	{
+	  for(it=l->land[i][j].base_begin;
+	      it!=l->land[i][j].tiles.end() && *(it->base_tile)<=*it;it++)
+	    it->draw(this);
+	  
+	  for(itc=l->land[i][j].mapchars.begin();
+	      itc!=l->land[i][j].mapchars.end();itc++)
+	    characters_draw.push_back(*itc);
+	}
       // Right overflow
       for(it=l->land[ie-1][j].tiles.begin();it!=l->land[ie-1][j].tiles.end();
 	  it++)
 	if(it->y==it->base_tile->y && it->x<it->base_tile->x)
 	  it->base_tile->draw(this);      
+
+      for(itc=l->land[ie-1][j].mapchars.begin();
+	  itc!=l->land[ie-1][j].mapchars.end();itc++)
+	characters_draw.push_back(*itc);
+
+      // Drawing characters
+      for(itc=characters_draw.begin();itc!=characters_draw.end();itc++)
+	  (*itc)->draw(this);
+      characters_draw.clear();
     }
 
   // Last horizontal parse to check bottom overflows

@@ -93,6 +93,7 @@ mapsquare::mapsquare()
 {
   type=0;
   walkable=true;
+  walkable_char=true;
   base_begin=tiles.end();
 #ifdef _DEBUG_
   cout << "mapsquare() called, "<< ++a_d_diff
@@ -468,6 +469,11 @@ void landmap::clear()
       delete[] pattern;
       pattern=NULL;
     }
+
+  for(i=0;i<mapchar.size();i++)
+    delete mapchar[i];
+  mapchar.clear();
+
 #ifdef _EDIT_
   if(mini_pattern) 
     {
@@ -563,6 +569,7 @@ s_int8 landmap::load(const char * fname)
   if(!file) return -1;
   retvalue=get(file);
   gzclose(file);
+
   return retvalue;
 }
 
@@ -604,6 +611,22 @@ s_int8 landmap::save(const char * fname)
 }
 
 #endif
+
+void landmap::put_mapchar(mapcharacter * mchar, u_int16 smap, 
+			       u_int16 px, u_int16 py)
+{
+  submap[smap]->land[px][py].mapchars.push_back(mchar);
+  //  mchar->set_pos(smap,px,py);
+}
+
+void landmap::remove_mapchar(mapcharacter * mchar, u_int16 smap, 
+				  u_int16 px,u_int16 py)
+{
+  list<mapcharacter*>::iterator it=submap[smap]->land[px][py].mapchars.begin();
+  list<mapcharacter*>::iterator e=submap[smap]->land[px][py].mapchars.end();
+  while(it!=e && *it!=mchar) it++;
+  if(it!=e) submap[smap]->land[px][py].mapchars.erase(it);
+}
 
 s_int8 landmap::add_submap()
 {
@@ -651,6 +674,10 @@ void landmap::update()
 #ifdef _EDIT_
       mini_pattern[i]->update();
 #endif
+    }
+  for(i=0;i<mapchar.size();i++)
+    {
+      mapchar[i]->update();
     }
 }
 

@@ -16,11 +16,13 @@
 
 void mapcharacter::init()
 {
-  length=height=0;
+  length=height=submap=posx=posy=offx=offy=0;
+  refmap=NULL;
   anim.resize(NBR_MOVES);
   for(u_int16 i=0; i<NBR_MOVES; i++)
     anim[i]=new animation_off;
   current_move=STAND_NORTH;
+  ask_move=NO_MOVE;
 }
 
 void mapcharacter::clear()
@@ -64,9 +66,142 @@ s_int8 mapcharacter::load(const char * fname)
   return 0;
 }
 
+void mapcharacter::set_pos(u_int16 smap,u_int16 x,u_int16 y)
+{
+  submap=smap; 
+  posx=x; posy=y; 
+  refmap->put_mapchar(this,smap,x,y);
+}
+
+void mapcharacter::stand_north() 
+{
+  anim[current_move]->stop();
+  anim[current_move]->rewind();
+  current_move=STAND_NORTH;anim[current_move]->play();
+}
+
+void mapcharacter::stand_south() 
+{
+  anim[current_move]->stop();
+  anim[current_move]->rewind();
+  current_move=STAND_SOUTH;anim[current_move]->play();
+}
+
+void mapcharacter::stand_east() 
+{
+  anim[current_move]->stop();
+  anim[current_move]->rewind();
+  current_move=STAND_EAST;
+  anim[current_move]->play();
+}
+
+void mapcharacter::stand_west() 
+{
+  anim[current_move]->stop();
+  anim[current_move]->rewind();
+  current_move=STAND_WEST;
+  anim[current_move]->play();
+}
+
+void mapcharacter::go_north() 
+{
+  if(!posy) {stand_north(); return;}
+  ask_move=WALK_NORTH;
+  if(current_move>=WALK_NORTH) return;
+  anim[current_move]->stop();
+  anim[current_move]->rewind();
+  current_move=WALK_NORTH;
+  anim[current_move]->play();
+}
+
+void mapcharacter::go_south() 
+{
+  if(posy==refmap->submap[submap]->height-1 && !offy)
+    {stand_south();return;}
+  ask_move=WALK_SOUTH;
+  if(current_move>=WALK_NORTH) return;
+  anim[current_move]->stop();
+  anim[current_move]->rewind();
+  current_move=WALK_SOUTH;
+  anim[current_move]->play();
+}
+
+void mapcharacter::go_east() 
+{
+  if(posx==refmap->submap[submap]->length-1 && !offx)
+    {stand_east();return;}
+  ask_move=WALK_EAST;
+  if(current_move>=WALK_NORTH) return;
+  anim[current_move]->stop();
+  anim[current_move]->rewind();
+  current_move=WALK_EAST;
+  anim[current_move]->play();
+}
+
+void mapcharacter::go_west() 
+{
+  if(!posx) {stand_west(); return;}
+  ask_move=WALK_WEST;
+  if(current_move>=WALK_NORTH) return;
+  anim[current_move]->stop();
+  anim[current_move]->rewind();
+  current_move=WALK_WEST;
+  anim[current_move]->play();
+}
+
 void mapcharacter::update()
 {
+  if(refmap) switch(current_move)
+    {
+    case WALK_NORTH:
+      offy--;
+      if(offy==-MAPSQUARE_SIZE)
+	{
+	  refmap->remove_mapchar(this,submap,posx,posy);
+	  set_pos(submap,posx,posy-1);
+	  if(ask_move!=WALK_NORTH) stand_north();
+	  offy=0;
+	}
+      break;
+    case WALK_SOUTH:
+      if(!offy)
+	{
+	  refmap->remove_mapchar(this,submap,posx,posy);
+	  set_pos(submap,posx,posy+1);
+	  set_offset(0,-(MAPSQUARE_SIZE-1));
+	}
+      else
+	{
+	  offy++;
+	  if(!offy && ask_move!=WALK_SOUTH) stand_south();
+	}
+      break;
+    case WALK_WEST:
+      offx--;
+      if(offx==-MAPSQUARE_SIZE)
+	{
+	  refmap->remove_mapchar(this,submap,posx,posy);
+	  set_pos(submap,posx-1,posy);
+	  if(ask_move!=WALK_WEST) stand_west();
+	  offx=0;
+	}
+      break;
+    case WALK_EAST:
+      if(!offx)
+	{
+	  refmap->remove_mapchar(this,submap,posx,posy);
+	  set_pos(submap,posx+1,posy);
+	  set_offset(-(MAPSQUARE_SIZE-1),0);
+	}
+      else
+	{
+	  offx++;
+	  if(!offx && ask_move!=WALK_EAST) stand_east();
+	}
+      break;
+    }
   anim[current_move]->update();
+  ask_move=NO_MOVE;
 }
 
 void mapcharacter::draw(s_int16 x, s_int16 y, drawing_area * da_opt=NULL)
@@ -74,24 +209,11 @@ void mapcharacter::draw(s_int16 x, s_int16 y, drawing_area * da_opt=NULL)
   anim[current_move]->draw(x,y,da_opt);
 }
 
-void mapcharacter::go_north()
+void mapcharacter::draw(mapview * mv)
 {
-  current_move=WALK_NORTH;
-}
-
-void mapcharacter::go_south()
-{
-  current_move=WALK_SOUTH;
-}
-
-void mapcharacter::go_east()
-{
-  current_move=WALK_EAST;
-}
-
-void mapcharacter::go_west()
-{
-  current_move=WALK_WEST;
+  u_int16 xdraw=((posx-(mv->posx-mv->ctrx)-basex)*MAPSQUARE_SIZE)+offx-mv->offx+mv->x;
+  u_int16 ydraw=((posy-(mv->posy-mv->ctry)-basey)*MAPSQUARE_SIZE)+offy-mv->offy+mv->y;
+  draw(xdraw,ydraw,mv->da);
 }
 
 mapcharacter& mapcharacter::operator =(mapcharacter &m)
@@ -440,3 +562,4 @@ void mapcharacter::editor()
   delete th;
 }
 #endif
+

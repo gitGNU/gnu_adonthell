@@ -9,7 +9,7 @@ OBJECTS = pnm.o drawing_area.o image.o screen.o animation.o game.o \
 	win_background.o win_scrolled.o win_scrollbar.o win_theme.o
 
 MOBJEDOBJ=mapobject.o maptpl.o mapobjedit.o
-MCAREDOBJ=mapcharacter.o maptpl.o mapcharedit.o
+MCAREDOBJ=mapcharacter.o maptpl.o landmap.o mapobject.o mapcharedit.o
 MEDOBJ=maptpl.o mapobject.o mapcharacter.o landmap.o mapview.o mapedit.o
 ANIMEDOBJ=animedit.o
 MOBJEDEXEC=mapobjedit
