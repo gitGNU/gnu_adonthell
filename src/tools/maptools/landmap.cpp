@@ -602,6 +602,15 @@ s_int8 landmap::add_submap(u_int16 l, u_int16 h)
 s_int8 landmap::remove_submap(u_int16 nbr)
 {
   if(nbr>nbr_of_submaps) return -1;
+  landsubmap ** tmp=submap;
+  u_int16 i;
+  submap=new (landsubmap*)[--nbr_of_submaps];
+  for(i=0;i<nbr;i++)
+    submap[i]=tmp[i];
+  delete tmp[nbr];
+  for(i=nbr;i<nbr_of_submaps;i++)
+    submap[i]=tmp[i+1];
+  if(tmp) delete[] tmp;
   return 0;
 }
 

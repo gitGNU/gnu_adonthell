@@ -1,5 +1,6 @@
-#include "landmap.h"
 #include <unistd.h>
+#include "landmap.h"
+#include "game.h"
 
 int main(int argc, char * argv[])
 {
@@ -18,8 +19,7 @@ int main(int argc, char * argv[])
 	    return 1;
 	}  
 
-    screen::set_video_mode(320,240);
-    input::init();
+    game::init(myconfig);
 
     landmap lmap;
     mapview mview;
@@ -53,6 +53,7 @@ int main(int argc, char * argv[])
     mview.editor();
     //    lmap.save("mymap.map");
 
-    input::shutdown();
+    game::cleanup();
+    //    input::shutdown();
     return 0;
 }

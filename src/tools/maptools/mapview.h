@@ -96,8 +96,12 @@ class mapview
   void move_cursor_up();
   void move_cursor_down();
 
-  void resize_map();
+  s_int8 resize_map(u_int16 nbr);
   void add_mapobject();
+  void delete_mapobject();
+
+  void add_submap();
+  void delete_submap();
 
   void load_map();
   void save_map();

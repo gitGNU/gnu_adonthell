@@ -57,6 +57,7 @@ class mapsquare
 #endif
   
   u_int16 type; // Terrain type ; need to be defined later
+  bool walkable;
 
   list<mapsquare_tile> tiles;
   list<mapsquare_tile>::iterator base_begin;

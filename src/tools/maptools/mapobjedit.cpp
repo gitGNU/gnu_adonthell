@@ -1,5 +1,6 @@
-#include "mapobject.h"
 #include <unistd.h>
+#include "mapobject.h"
+#include "game.h"
 
 int main(int argc, char * argv[])
 {
@@ -17,14 +18,15 @@ int main(int argc, char * argv[])
 	    printf ("\nplease make sure to update the $HOME/.adonthell/adonthellrc file\n");
 	    return 1;
 	}  
-    screen::set_video_mode(320,240);
-    input::init();
-
+    /*    screen::set_video_mode(320,240);
+	  input::init();*/
+    game::init(myconfig);
   
     mapobject mobj;
     if(argc==2) mobj.load(argv[1]);
     mobj.editor();
 
-    input::shutdown();
+    game::cleanup();
+    //    input::shutdown();
     return 0;
 }

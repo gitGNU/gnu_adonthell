@@ -1,5 +1,6 @@
-#include "animation.h"
 #include <unistd.h>
+#include "animation.h"
+#include "game.h"
 
 int main(int argc, char * argv[])
 {
@@ -17,11 +18,14 @@ int main(int argc, char * argv[])
       printf ("\nplease make sure to update the $HOME/.adonthell/adonthellrc file\n");
       return 1;
       }
-  screen::set_video_mode(320,240);
-  input::init();
+  /*  screen::set_video_mode(320,240);
+      input::init();*/
+
+  game::init(myconfig);
   animation anim;
   if(argc==2) anim.load(argv[1]);
   anim.editor();
-  input::shutdown();
+  game::cleanup();
+  //  input::shutdown();
   return 0;
 }

@@ -1,9 +1,12 @@
 CPP = g++
-CPPFLAGS = -D_EDIT_ -DREVERSE_ALPHA -g -Wall -I../../ -I/usr/local/include/SDL -I../mapcharedit `sdl-config --cflags`
-LIBS = -lz -g `sdl-config --cflags` `sdl-config --libs`
+CPPFLAGS = -D_EDIT_ -DREVERSE_ALPHA -g -Wall -I../../ -I/usr/local/include/SDL -I../mapcharedit  -I/usr/local/include/python1.6/ `sdl-config --cflags`
+LIBS = -lz -g -L/usr/local/lib/python1.6/config -lpython1.6 `sdl-config --cflags` `sdl-config --libs`
 OBJECTS = pnm.o drawing_area.o image.o screen.o animation.o \
-	prefs.o lex.prefs.o input.o \
-	win_label.o win_write.o win_query.o win_info.o \
+	prefs.o lex.prefs.o input.o game.o gametime.o event.o py_inc.o \
+	py_character_wrap.o py_dialog_engine_wrap.o py_dialogue.o \
+	py_quest_wrap.o quest.o dialog.o \
+	character.o fileops.o yarg.o \
+	storage.o win_label.o win_write.o win_query.o win_info.o \
 	win_container.o win_select.o win_file.o \
 	win_border.o win_base.o win_font.o win_image.o\
 	win_background.o win_scrolled.o win_scrollbar.o win_theme.o mapselect.o
@@ -49,6 +52,69 @@ lex.prefs.o: ../../lex.prefs.cpp
 
 input.o: ../../input.cpp
 	$(CPP) -c $(CPPFLAGS) ../../input.cpp -o input.o
+
+game.o: ../../game.cpp
+	$(CPP) -c $(CPPFLAGS) ../../game.cpp -o game.o
+
+gametime.o: ../../gametime.cpp
+	$(CPP) -c $(CPPFLAGS) ../../gametime.cpp -o gametime.o
+
+event.o: ../../event.cpp
+	$(CPP) -c $(CPPFLAGS) ../../event.cpp -o event.o
+
+py_inc.o: ../../py_inc.cpp
+	$(CPP) -c $(CPPFLAGS) ../../py_inc.cpp -o py_inc.o
+
+py_character_wrap.o: ../../py_character_wrap.cpp
+	$(CPP) -c $(CPPFLAGS) ../../py_character_wrap.cpp -o py_character_wrap.o
+
+py_dialog_engine_wrap.o: ../../py_dialog_engine_wrap.cpp
+	$(CPP) -c $(CPPFLAGS) ../../py_dialog_engine_wrap.cpp -o py_dialog_engine_wrap.o
+
+py_mapengine_wrap.o: ../../py_mapengine_wrap.cpp
+	$(CPP) -c $(CPPFLAGS) ../../py_mapengine_wrap.cpp -o py_mapengine_wrap.o
+
+py_quest_wrap.o: ../../py_quest_wrap.cpp
+	$(CPP) -c $(CPPFLAGS) ../../py_quest_wrap.cpp -o py_quest_wrap.o
+
+py_dialogue.o: ../../py_dialogue.cpp
+	$(CPP) -c $(CPPFLAGS) ../../py_dialogue.cpp -o py_dialogue.o
+
+quest.o: ../../quest.cpp
+	$(CPP) -c $(CPPFLAGS) ../../quest.cpp -o quest.o
+
+dialog.o: ../../dialog.cpp
+	$(CPP) -c $(CPPFLAGS) ../../dialog.cpp -o dialog.o
+
+mapengine.o: ../../mapengine.cpp
+	$(CPP) -c $(CPPFLAGS) ../../mapengine.cpp -o mapengine.o
+
+mapcharacter.o: ../../mapcharacter.cpp
+	$(CPP) -c $(CPPFLAGS) ../../mapcharacter.cpp -o mapcharacter.o
+
+mapsquare.o: ../../mapsquare.cpp
+	$(CPP) -c $(CPPFLAGS) ../../mapsquare.cpp -o mapsquare.o
+
+map.o: ../../map.cpp
+	$(CPP) -c $(CPPFLAGS) ../../map.cpp -o map.o
+
+mappattern.o: ../../mappattern.cpp
+	$(CPP) -c $(CPPFLAGS) ../../mappattern.cpp -o mappattern.o
+
+mapevent.o: ../../mapevent.cpp
+	$(CPP) -c $(CPPFLAGS) ../../mapevent.cpp -o mapevent.o
+
+character.o: ../../character.cpp
+	$(CPP) -c $(CPPFLAGS) ../../character.cpp -o character.o
+
+fileops.o: ../../fileops.cpp
+	$(CPP) -c $(CPPFLAGS) ../../fileops.cpp -o fileops.o
+
+yarg.o: ../../yarg.cc
+	$(CPP) -c $(CPPFLAGS) ../../yarg.cc -o yarg.o
+
+storage.o: ../../storage.cpp
+	$(CPP) -c $(CPPFLAGS) ../../storage.cpp -o storage.o
 
 win_label.o: ../../win_label.cpp
 	$(CPP) -c $(CPPFLAGS) ../../win_label.cpp -o win_label.o
