@@ -21,6 +21,12 @@
 u_int16 animation::a_d_diff=0;
 #endif
 
+#ifdef _EDIT_
+win_font * animation::font;
+win_border * animation::border;
+image * animation::bg;
+#endif
+
 void animation_frame::init()
 {
   imagenbr=0;
@@ -158,16 +164,19 @@ animation::animation()
   t+=WIN_BACKGROUND_DIRECTORY;
   t+=WIN_THEME_ORIGINAL;
   t+=WIN_BACKGROUND_FILE;
-  temp.load_raw(t.data());
-  font=new win_font(WIN_THEME_ORIGINAL);
-  border=new win_border(WIN_THEME_ORIGINAL);
+  if(!a_d_diff)
+    {
+      temp.load_raw(t.data());
+      bg=new image(320,240);
+      bg->putbox_tile_img(&temp);
+      font=new win_font(WIN_THEME_ORIGINAL);
+      border=new win_border(WIN_THEME_ORIGINAL);
+    }
   container=new win_container(200,12,110,216);
   label_mode=container->add_label(5,5,100,30,font);
   label_frame_nbr=container->add_label(5,35,100,30,font);
   label_anim_info=container->add_label(5,65,100,65,font);
   label_frame_info=container->add_label(5,100,100,100,font);
-  bg=new image(320,240);
-  bg->putbox_tile_img(&temp);
   container->set_border(border);
   container->show_all();
 #endif
@@ -181,15 +190,13 @@ animation::~animation()
 {
 
 #ifdef _EDIT_
-  delete bg;
-  delete label_mode;
-  delete label_anim_info;
-  delete label_frame_info;
-  delete label_frame_nbr;
-  delete border;
-  delete font;
-  // FIXME: Bug in the container destructor!
-  //  delete container;
+  delete container;
+  if(a_d_diff==1)
+    {
+      delete bg;
+      delete border;
+      delete font;
+    }
 #endif
 
   delete[] t_frame;
@@ -240,6 +247,10 @@ void animation::rewind()
 
 void animation::draw(u_int16 x, u_int16 y)
 {
+#ifdef _EDIT_
+  if(!nbr_of_frames) return;
+#endif
+
   t_frame[frame[currentframe].imagenbr].set_mask(frame[currentframe].is_masked);
   t_frame[frame[currentframe].imagenbr].set_alpha(frame[currentframe].alpha);
   
@@ -310,19 +321,15 @@ void animation::info_window(char * t_label)
   win_container * querycont;
   win_label * querylabel;
   win_label * querylabel2;
-  win_border * queryborder;
-  win_font * queryfont;
   win_background * queryback;
 
   queryback=new win_background(WIN_THEME_ORIGINAL);
-  queryfont=new win_font(WIN_THEME_ORIGINAL);
-  queryborder=new win_border(WIN_THEME_ORIGINAL);
   querycont=new win_container(70,40,200,120);
-  querylabel=querycont->add_label(5,5,190,130,queryfont);
+  querylabel=querycont->add_label(5,5,190,130,font);
   querylabel->set_text(t_label);
-  querylabel2=querycont->add_label(60,90,80,15,queryfont);
+  querylabel2=querycont->add_label(60,90,80,15,font);
   querylabel2->set_text("Press any key...");
-  querycont->set_border(queryborder);
+  querycont->set_border(border);
   querycont->set_background(queryback);
   querycont->show_all();
   input::clear_keys_queue();
@@ -336,7 +343,6 @@ void animation::info_window(char * t_label)
     }
   while(input::get_next_key()<0);
   delete querycont;
-  delete queryfont;
   delete queryback;
   input::clear_keys_queue();
 }
@@ -347,18 +353,14 @@ char * animation::query_window(char * t_label)
   win_container * querycont;
   win_label * querylabel;
   win_write * querywrite;
-  win_border * queryborder;
-  win_font * queryfont;
   win_background * queryback;
 
   queryback=new win_background(WIN_THEME_ORIGINAL);
-  queryfont=new win_font(WIN_THEME_ORIGINAL);
-  queryborder=new win_border(WIN_THEME_ORIGINAL);
   querycont=new win_container(70,40,200,120);
-  querylabel=querycont->add_label(5,5,100,15,queryfont);
+  querylabel=querycont->add_label(5,5,100,15,font);
   querylabel->set_text(t_label);
-  querywrite=querycont->add_write(5,20,100,30,queryfont);
-  querycont->set_border(queryborder);
+  querywrite=querycont->add_write(5,20,100,30,font);
+  querycont->set_border(border);
   querycont->set_background(queryback);
   querycont->show_all();
   input::clear_keys_queue();
@@ -369,7 +371,6 @@ char * animation::query_window(char * t_label)
       if(input::has_been_pushed(SDLK_ESCAPE))
       {
 	delete querycont;
-	delete queryfont;
 	delete queryback;
 	s=NULL;
 	return(s);
@@ -383,7 +384,6 @@ char * animation::query_window(char * t_label)
   input::clear_keys_queue();
   s=strdup(querywrite->get_text());
   delete querycont;
-  delete queryfont;
   delete queryback;
   cout << "Returning:" << s << endl;
   return(s);
@@ -512,7 +512,10 @@ s_int8 animation::delete_image(u_int16 pos)
   for(i=pos;i<nbr_of_images;i++)
     t_frame[i]=oldt_frame[i+1];
   for(i=0;i<nbr_of_frames;i++)
-    if(frame[i].imagenbr>pos) frame[i].imagenbr--;
+    {
+      if(frame[i].imagenbr>pos) frame[i].imagenbr--;
+      if(frame[i].nextframe>pos) frame[i].nextframe--;
+    }
   delete[] oldt_frame;
   if(currentimage>=nbr_of_images) currentimage=nbr_of_images-1;
 #ifdef _DEBUG_
@@ -522,6 +525,10 @@ s_int8 animation::delete_image(u_int16 pos)
     {
       t_frame=NULL;
       currentimage=0;
+      delete[] frame;
+      frame=NULL;
+      nbr_of_frames=0;
+      currentframe=0;
     }
   return 0;
 }

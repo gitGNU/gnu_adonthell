@@ -82,14 +82,14 @@ class animation
 
 #ifdef _EDIT_
   bool mode;
-  win_font * font;
-  win_border * border;
+  static win_font * font;
+  static win_border * border;
+  static image * bg;
   win_container * container;
   win_label * label_mode;
   win_label * label_frame_nbr;
   win_label * label_frame_info;
   win_label * label_anim_info;
-  image * bg;
 
   u_int16 currentimage;
 #endif

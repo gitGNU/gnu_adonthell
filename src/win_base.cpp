@@ -73,11 +73,11 @@ void win_base::init_base(s_int16 tx,s_int16 ty, u_int16 tl,u_int16 th,win_contai
 
 win_base::win_base(s_int16 tx,s_int16 ty, u_int16 tl,u_int16 th,win_container * twc=NULL,drawing_area * tda=NULL)
 {
+  init_base(tx,ty,tl,th,twc,tda);
 #ifdef _DEBUG_
   cout << "win_base() called, "<< ++cpt_win_obj_debug
        << " objects currently allocated\n";
 #endif
-  init_base(tx,ty,tl,th,twc,tda);
 }
 
 win_base::~win_base()
@@ -86,16 +86,15 @@ win_base::~win_base()
   da=NULL;
   wborder=NULL;
   wback=NULL; 
- 
-#ifdef _DEBUG_
-  cout << "~win_base() called, "<< --cpt_win_obj_debug
-       << " objects currently allocated\n";
-#endif
-  
+   
   if(h_border) delete h_border;
   if(v_border) delete v_border;
   if(corner) delete corner;
   if(background) delete background;
+#ifdef _DEBUG_
+  cout << "~win_base() called, "<< --cpt_win_obj_debug
+       << " objects currently allocated\n";
+#endif
 }
 
 void win_base::select()

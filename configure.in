@@ -22,7 +22,7 @@ dnl Check for libraries.
 dnl ********************
 
 AC_CHECK_LIB(pthread, main,, echo "Adonthell requires Pthreads library.  Exitting..."; exit 1)
-AC_CHECK_LIB(SDL, main, , echo "Adonthell requires the  SDL library.  Exitting..."; exit 1)
+AC_CHECK_LIB(SDL, main,, echo "Adonthell requires the  SDL library.  Exitting..."; exit 1)
 
 dnl Check for SDL
 SDL_VERSION=1.0.1
