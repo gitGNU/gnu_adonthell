@@ -23,6 +23,7 @@
 #ifndef EVENT_H__
 #define EVENT_H__
 
+#include <string>
 #include "callback.h"
 #include "py_object.h"
 #include "py_callback.h"

@@ -54,6 +54,7 @@ void gametime::update ()
     // two displayed frames (see FRAME_RATE).
     static u_int16 gfx_cycle_length = 1000 / FRAME_RATE;
     
+    // Wait a bit if our machine performed too fast!
     while (1)
     {
         timer2 = SDL_GetTicks () - timer1;

@@ -20,6 +20,7 @@
  * @brief  Superclass for all items.
  */
 
+#include <iostream>
 #include <algorithm>
 #include "item_base.h"
 
