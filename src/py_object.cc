@@ -111,7 +111,7 @@ bool py_object::instanciate (PyObject *module, string file, string classname, Py
 }
 
 // Execute the body of the script
-void py_object::call_method (const string & name, PyObject * args = NULL)
+void py_object::call_method (const string & name, PyObject * args)
 {
     if (Instance)
     {

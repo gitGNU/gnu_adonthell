@@ -106,7 +106,7 @@ protected:
     /**
      * List of events.
      */ 
-    mutable vector<event*> events;
+    mutable std::vector<event*> events;
 
 private:
     /**

@@ -24,7 +24,7 @@
 
 
 #include "character_base.h"
-#include <iostream.h>
+#include <iostream>
 
 character_base::character_base ()
 {

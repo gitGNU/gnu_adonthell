@@ -229,16 +229,16 @@ s_int8 map_character_with_gfx::load(string fname)
     return ret;
 }
 
-void map_character_with_gfx::draw (s_int16 x, s_int16 y, const drawing_area * da_opt = NULL,
-                                   surface * target = NULL)
+void map_character_with_gfx::draw (s_int16 x, s_int16 y, const drawing_area * da_opt,
+                                   surface * target)
 {
     draw_shadow(x, y, da_opt, target);
     y -= z();
     map_placeable_model_gfx::draw(x, y, da_opt, target);
 }
 
-void map_character_with_gfx::draw_shadow (s_int16 x, s_int16 y, const drawing_area * da_opt = NULL,
-                                   surface * target = NULL)
+void map_character_with_gfx::draw_shadow (s_int16 x, s_int16 y, const drawing_area * da_opt,
+                                   surface * target)
 {
     shadow.draw(x, y + 25 - zground, da_opt, target);
 }

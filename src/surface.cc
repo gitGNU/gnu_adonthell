@@ -59,8 +59,8 @@ void surface::set_alpha (u_int8 t)
 }
  
 void surface::draw (s_int16 x, s_int16 y, s_int16 sx, s_int16 sy, u_int16 sl,
-                    u_int16 sh, const drawing_area * da_opt = NULL,
-                    surface * target = NULL) const
+                    u_int16 sh, const drawing_area * da_opt,
+                    surface * target) const
 { 
     if (target == NULL) target = &screen::display; 
 
@@ -86,7 +86,7 @@ void surface::draw (s_int16 x, s_int16 y, s_int16 sx, s_int16 sy, u_int16 sl,
 }
 
 void surface::fillrect (s_int16 x, s_int16 y, u_int16 l, u_int16 h, u_int32 col, 
-                        drawing_area * da_opt = NULL)
+                        drawing_area * da_opt)
 {
     if (da_opt) 
     {
@@ -105,7 +105,7 @@ void surface::fillrect (s_int16 x, s_int16 y, u_int16 l, u_int16 h, u_int32 col,
 }
 
 void surface::draw_line(const s_int16 x1, const s_int16 y1, const s_int16 x2, const s_int16 y2, 
-                        const u_int32 color, const drawing_area * da_opt = NULL)
+                        const u_int32 color, const drawing_area * da_opt)
 {
    int i;
    int x,y;

@@ -104,12 +104,12 @@ private:
         void clear()
         {
             if(handle_gfx)
-                for (vector<T *>::iterator i = objects.begin();
+                for (typename vector<T *>::iterator i = objects.begin();
                      i != objects.end(); i++)
                     // FIXME: check whether it works or not.
                     delete ((T_gfx*)*i);
             else
-                for (vector<T *>::iterator i = objects.begin();
+                for (typename vector<T *>::iterator i = objects.begin();
                      i != objects.end(); i++)
                     delete *i;
 
@@ -124,7 +124,7 @@ private:
 
         bool update_nogfx()
         {
-            for (vector<T *>::iterator i = objects.begin();
+            for (typename vector<T *>::iterator i = objects.begin();
                  i != objects.end(); i++)
                 (*i)->update();
 
@@ -133,7 +133,7 @@ private:
 
         bool update_gfx()
         {
-            for (vector<T *>::iterator i = objects.begin();
+            for (typename vector<T *>::iterator i = objects.begin();
                  i != objects.end(); i++)
             {
                 (*i)->update();

@@ -44,7 +44,7 @@ void screen::init ()
     }
 }
 
-void screen::set_video_mode (u_int16 nl, u_int16 nh, u_int8 depth = 0)
+void screen::set_video_mode (u_int16 nl, u_int16 nh, u_int8 depth)
 {
     u_int8 bpp;
     u_int32 SDL_flags = SDL_HWSURFACE | SDL_DOUBLEBUF;

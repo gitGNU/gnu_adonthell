@@ -25,8 +25,8 @@ map_placeable_area_gfx::~map_placeable_area_gfx()
     delete anim;
 }
 
-void map_placeable_area_gfx::draw(s_int16 x, s_int16 y, const drawing_area * da_opt = NULL,
-                                   surface * target = NULL) const
+void map_placeable_area_gfx::draw(s_int16 x, s_int16 y, const drawing_area * da_opt,
+                                   surface * target) const
 {
     if(anim)
         anim->draw (x, y, da_opt, target); 

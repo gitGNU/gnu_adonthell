@@ -79,8 +79,8 @@ s_int8 map_object_with_gfx::load(string fname)
     return ret;
 }
 
-void map_object_with_gfx::draw (s_int16 x, s_int16 y, const drawing_area * da_opt = NULL,
-                                   surface * target = NULL) const
+void map_object_with_gfx::draw (s_int16 x, s_int16 y, const drawing_area * da_opt,
+                                   surface * target) const
 {
     map_placeable_model_gfx::draw(x, y, da_opt, target);
 }

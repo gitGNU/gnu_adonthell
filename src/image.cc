@@ -247,7 +247,7 @@ s_int8 image::save_pnm (string fname) const
     return ret;
 }
  
-void image::zoom (const surface& src, u_int16 l, u_int16 h, u_int16 x = 0, u_int16 y = 0)
+void image::zoom (const surface& src, u_int16 l, u_int16 h, u_int16 x, u_int16 y)
 { 
     // Calculate the step per pixel.
     // While the surface positions are u_int16s, we use u_int32s for step
@@ -281,7 +281,7 @@ void image::zoom (const surface& src, u_int16 l, u_int16 h, u_int16 x = 0, u_int
     unlock (); 
 }
 
-void image::tile (const surface& src, u_int16 l, u_int16 h, u_int16 x = 0, u_int16 y = 0)
+void image::tile (const surface& src, u_int16 l, u_int16 h, u_int16 x, u_int16 y)
 {
     u_int16 posx;
     u_int16 posy;
@@ -295,7 +295,7 @@ void image::tile (const surface& src, u_int16 l, u_int16 h, u_int16 x = 0, u_int
             src.draw (x + posx, y + posy, &da, this); 
 }
 
-void image::brightness (const surface& src, u_int8 cont, bool proceed_mask = false)
+void image::brightness (const surface& src, u_int8 cont, bool proceed_mask)
 {
     u_int16 i, j;
     u_int8 ir, ig, ib;

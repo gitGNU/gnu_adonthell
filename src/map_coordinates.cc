@@ -24,7 +24,7 @@ map_coordinates::map_coordinates ()
     Oy = 0; 
 }
 
-map_coordinates::map_coordinates (u_int16 x, u_int16 y, u_int16 z, u_int16 ox = 0, u_int16 oy = 0)
+map_coordinates::map_coordinates (u_int16 x, u_int16 y, u_int16 z, u_int16 ox, u_int16 oy)
 {
     X = x; 
     Y = y;

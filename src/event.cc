@@ -71,7 +71,7 @@ void event::clear ()
 }
 
 // set a script as event's action
-void event::set_script (string filename, PyObject * args = NULL)
+void event::set_script (string filename, PyObject * args)
 {
     // cleanup
     clear ();

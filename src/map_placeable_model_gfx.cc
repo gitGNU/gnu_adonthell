@@ -94,8 +94,8 @@ bool map_placeable_model_gfx::update()
     return true;
 }
 
-void map_placeable_model_gfx::draw (s_int16 x, s_int16 y, const drawing_area * da_opt = NULL,
-                                    surface * target = NULL) const
+void map_placeable_model_gfx::draw (s_int16 x, s_int16 y, const drawing_area * da_opt,
+                                    surface * target) const
 {
     if (Current_gfx != Gfxs.end ())
     {
@@ -114,8 +114,8 @@ void map_placeable_model_gfx::draw (s_int16 x, s_int16 y, const drawing_area * d
 }
 
 void map_placeable_model_gfx::draw_walkable(s_int16 x, s_int16 y, 
-                                            const drawing_area * da_opt = NULL,
-                                            surface * target = NULL) const
+                                            const drawing_area * da_opt,
+                                            surface * target) const
 {
     image im(mapsquare_size, mapsquare_size);
     im.fillrect(0, 0, im.length(), im.height(), 0xFF, 0, 0);
@@ -139,8 +139,8 @@ void map_placeable_model_gfx::draw_walkable(s_int16 x, s_int16 y,
 }
 
 void map_placeable_model_gfx::draw_border(s_int16 x, s_int16 y, 
-                                          const drawing_area * da_opt = NULL,
-                                          surface * target = NULL) const
+                                          const drawing_area * da_opt,
+                                          surface * target) const
 {
     map_placeable_area * st = Target.current_state();
 

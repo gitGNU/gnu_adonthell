@@ -30,13 +30,22 @@
 #endif
 #include <string>
 
-namespace std 
+#if __GNUG__ > 2
+namespace __gnu_cxx
+#else
+namespace std
+#endif
 {
-	
-template<> struct hash<string> {
-    size_t operator()(const string& s) const {
-	return __stl_hash_string(s.c_str());
-}};
+    template<> struct hash<std::string>
+    {
+        size_t operator()(const std::string & __s) const { return __stl_hash_string(__s.c_str()); }
+    };
+    
+    
+};
 
-}; // namespace std
+#if __GNUG__ > 2
+namespace std { using namespace __gnu_cxx; };
+#endif
+
 #endif

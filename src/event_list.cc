@@ -64,7 +64,7 @@ void event_list::register_event (u_int8 type, new_event e)
 // Save an event_list to file
 void event_list::put_state (ogzstream& out) const
 {
-    vector <event *>::iterator i;
+    std::vector <event *>::iterator i;
     u_int32 nbr_events = events.size ();
     
     nbr_events >> out; 
