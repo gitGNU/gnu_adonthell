@@ -23,6 +23,7 @@ class dialog;
 #include "compile.h"
 #include "dlgrun.h"
 #include "geometrie.h"
+#include "interface.h"
 
 /* Main Window: Destroy App */
 void 
