@@ -1426,12 +1426,14 @@ void begin_scrolling (MainFrame *wnd, GdkPoint point)
 
     wnd->scroll_x = 0;
     wnd->scroll_y = 0;
-    
+
+    // set scrolling offset and direction    
     if (point.x < 20) wnd->scroll_x = 15;
     if (point.y < 20) wnd->scroll_y = 15;
     if (point.x + 20 > width) wnd->scroll_x = -15;
     if (point.y + 20 > height) wnd->scroll_y = -15;
-    
+
+    // enable scrolling
     if (wnd->scroll_x || wnd->scroll_y)
     {
         if (!wnd->scroll)

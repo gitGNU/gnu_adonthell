@@ -12,4 +12,4 @@
    See the COPYING file for more details.
 */
 
-GtkWidget* create_error_window (error_dlg*);
+GtkWidget *create_error_window (error_dlg *);

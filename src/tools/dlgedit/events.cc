@@ -152,34 +152,27 @@ motion_notify_event (GtkWidget * widget, GdkEventMotion * event, gpointer data)
     point.x = (s_int32) event->x - MainWnd->x_offset;
     point.y = (s_int32) event->y - MainWnd->y_offset;
 
+    // start/stop scrolling of dialogue area
     begin_scrolling (MainWnd, point);
 
-    switch (event->state)
+    // Dragging dialogue nodes
+    if (event->state == GDK_BUTTON_PRESS_MASK)
     {
-        // Dragging dialogue nodes
-        case GDK_BUTTON_PRESS_MASK:
+        if (MainWnd->dragged_node == NULL)
         {
-            if (MainWnd->dragged_node == NULL)
-            {
-                if (!new_mover (MainWnd, point)) draw_multiselbox (MainWnd, point);
-            }
-            else
-            {
-                move_node (MainWnd, point);
-
-                // update graph
-                redraw_graph (MainWnd);
-            }
-            break;
+            if (!new_mover (MainWnd, point)) draw_multiselbox (MainWnd, point);
         }
-
-        // Highlighting dialogue nodes
-        default:
+        else
         {
-            mouse_over (MainWnd, point);
-            break;
+            move_node (MainWnd, point);
+
+            // update graph
+            redraw_graph (MainWnd);
         }
     }
+
+    // Highlighting dialogue nodes
+    else mouse_over (MainWnd, point);
 
     return FALSE;
 }
