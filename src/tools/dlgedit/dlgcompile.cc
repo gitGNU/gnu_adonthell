@@ -404,8 +404,6 @@ void dlg_compiler::sort (vector<DlgNode*> &v)
     {
         node = v[i];
 
-        cout << "* node " << i << " = " << ((Circle*) node)->text << endl << flush;
-         
         // move everything without condition to the front
         if (((Circle *) node)->conditions == "")
         {
