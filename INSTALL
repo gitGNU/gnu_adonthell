@@ -20,13 +20,14 @@ version of Python by entering the command:
    You can download Python directly from http://www.python.org.
 
 
-2. The Simple Directmedia Layer (SDL) library, version 1.0 or later.
+2. The Simple Directmedia Layer (SDL) library, version 1.2 or later.
 
    See http://www.libsdl.org/
 
 
-For convenience, the SDL_mixer library is included into the sources.
-You'll need OggVorbis if you want to enjoy the music.
+For convenience, the SDL_mixer library is included with the source code;
+it will be replaced by a custom mixer anyway. However, you'll need OggVorbis
+1.0rc1 to enjoy the music.
 
    See http://www.xiph.org/ogg/vorbis/download/
 
@@ -36,12 +37,12 @@ Installing:
 
 In the toplevel adonthell-0.3 directory type
 
-$>./configure
-$>make
+$> ./configure
+$> make
 
 and (as root)
 
-$>make install
+$> make install
 
 For more information, see the README file. Problems? Don't have
 the right libraries? Please look at the NEWBIE file or our website
@@ -77,13 +78,20 @@ better to set the $LD_LIBRARY_PATH environment variable, or to add
 those directories to /etc/ld.so.conf.
 
 
+--with-data-dir=DIR
+
+  Use this option to customize the location of the data directory.
+The default is /usr/local/share/adonthell. Once you have compiled
+Adonthell you can query the data directory with 'adonthell -g'.
+
+
 --enable-tools
 
   Use this to build the Adonthell development tools. These include
 editors for our graphic objects, characters, maps, dialogues and a
-few other utilities. Be carefull that these tools will be installed
-at 'make install' time. This isn't a good option for the average
-player. Really.
+few other utilities. Beware that non of these tools will be installed
+when running 'make install'. You will have to run them from their
+source directory or install the manually.
 
 
 --enable-doc
@@ -105,6 +113,8 @@ After compiling you have to set the $MALLOC_TRACE environment
 variable to any file. Running Adonthell will record debugging
 information in this file. Use 'mtrace adonthell $MALLOC_TRACE'
 to finally display any occurrence of memory leaks.
+  A much more convenient way to check for memory leaks is the
+'memprof' tool: http://people.redhat.com/~otaylor/memprof
 
 
 *********************************************************************

@@ -76,7 +76,7 @@ bool dialog::setup (PyObject *module, char* name)
 
     if (!classobj)
         return false;
-    
+
     PyDict_SetItemString (globals, "characters",
                           PyDict_GetItemString (data::globals, "characters"));
     PyDict_SetItemString (globals, "quests",
@@ -85,9 +85,6 @@ bool dialog::setup (PyObject *module, char* name)
                           PyDict_GetItemString (data::globals, "the_npc"));
     PyDict_SetItemString (globals, "the_player",
                           PyDict_GetItemString (data::globals, "the_player"));
-
-    PyObject_Print (PyDict_GetItemString (data::globals, "the_npc"), stdout, 1);
-    cout << endl;
 
     // Instantiate! Will we ever need to pass args to class
     // constructor here?

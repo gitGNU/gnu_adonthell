@@ -76,7 +76,7 @@ Directories:
 
 - Global data directory
   You can get this directory by invoking 'adonthell -d' (by default
-  /usr/local/share/adonthell) . This is the directory where games will
+  /usr/local/share/adonthell). This is the directory where games will
   install to. If you have a game installed somewhere else, you can
   play it by invoking 'adonthell -g <path-to-my-game>'
 
@@ -86,7 +86,7 @@ Release Notes:
 
 Adonthell - Waste's Edge -, or v0.3 for short is no complete RPG.
 It can be considered a technology demo, to show what our current 
-engine can do.  This also helps us to locate problems with the engine
+engine can do.  It also helps us to locate problems with the engine
 and our development tools.
 
 As the v0.3 implies, the engine is not complete, although it should

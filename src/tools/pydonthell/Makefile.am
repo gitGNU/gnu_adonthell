@@ -1,29 +1,10 @@
 ## Process this file with automake to produce Makefile.in
 
-bin_PROGRAMS = pydonthell
+noinst_PROGRAMS = pydonthell
 
 pydonthell_SOURCES = pydonthell.cc
 
 CPPFLAGS +=-I../.. -DUSE_MAP $(SDL_CFLAGS) $(OGG_CFLAGS) $(PY_CFLAGS) 
 
-pydonthell_LDADD = ../../animation.o ../../audio.o ../../drawable.o \
-../../audio_loop.o ../../py_callback.o \
-../../character.o ../../character_base.o ../../gamedata.o ../../data_screen.o ../../dialog.o ../../dialog_engine.o \
-../../drawing_area.o ../../event.o ../../fileops.o ../../game.o ../../gametime.o ../../python.o ../../py_adonthell_wrap.o \
-../../image.o ../../input.o ../../lex.prefs.o ../../mapsquare.o ../../py_script.o \
-../../mapsquare_walkable.o ../../mapobject.o ../../mapcharacter.o ../../landmap.o ../../mapview.o ../../mapengine.o \
-../../pnm.o ../../prefs.o ../../quest.o ../../screen.o ../../storage.o \
-../../win_background.o ../../win_base.o ../../win_border.o \
-../../win_container.o ../../win_font.o ../../win_keys.o\
-../../win_manager.o ../../win_scrollbar.o ../../win_scroll.o ../../win_select.o ../../win_theme.o \
-../../label.o  ../../label_input.o ../../win_event.o ../../surface.o \
-../../yarg.o ../../mixer.o ../../music.o ../../music_cmd.o ../../music_ogg.o ../../wavestream.o $(SDL_LIBS) $(OGG_LIBS) $(PY_LIBS)
+pydonthell_LDADD = ../../libadonthell.a $(SDL_LIBS) $(OGG_LIBS) $(PY_LIBS)
 
-
-lex.prefs.cc : prefs.l
-	flex -olex.prefs.cc $<
-
-%.o: %.cc
-	$(CXXCOMPILE) -c $< -o $@
-
-install:

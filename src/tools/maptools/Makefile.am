@@ -1,6 +1,6 @@
 ## Process this file with automake to produce Makefile.in
 
-bin_PROGRAMS = animedit mapobjedit mapcharedit mapedit
+noinst_PROGRAMS = animedit mapobjedit mapcharedit mapedit
 
 animedit_SOURCES = animedit.cc
 

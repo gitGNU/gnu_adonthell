@@ -1,7 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 
 if HAVE_GTK
-bin_PROGRAMS = charedit mergechars
+noinst_PROGRAMS = charedit mergechars
 endif
 
 EXTRA_DIST = Enter.txt Leave.txt attributes.txt

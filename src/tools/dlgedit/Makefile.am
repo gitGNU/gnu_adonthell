@@ -1,7 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 
 if HAVE_GTK
-bin_PROGRAMS = dlgedit
+noinst_PROGRAMS = dlgedit
 endif
 
 SUBDIRS = examples
@@ -22,7 +22,7 @@ preset.h ps_callbacks.h ps_dlg.h ps_interface.h pset_callbacks.h \
 pset_interface.h run.h run_callbacks.h run_interface.h
 
 # Evil, but it works...
-CPPFLAGS +=-I../.. -D_VERSION_=\"0.7\" $(PY_CFLAGS) $(GTK_CFLAGS)  $(SDL_CFLAGS)
+CPPFLAGS +=-I../.. -D_VERSION_=\"0.7\" $(PY_CFLAGS) $(GTK_CFLAGS) $(SDL_CFLAGS)
 
 SWIGFLAGS = -D_DLGEDIT_ -D_DEBUG_
 
