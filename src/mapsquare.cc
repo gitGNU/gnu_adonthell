@@ -206,7 +206,7 @@ void mapsquare_area::remove_mapobject (u_int16 px, u_int16 py, mapobject * mobj)
                 s.tiles.erase (it);
                 
                 // Recalculate the walkability of this square.
-                s.set_walkable (NONE_WALKABLE);
+                s.set_walkable (ALL_WALKABLE);
                 for (it = s.tiles.begin (); it != s.tiles.end (); it++)
                 {
                     u_int16 wx = it->x - (it->base_tile->x - it->mapobj->base_x ());
@@ -216,8 +216,18 @@ void mapsquare_area::remove_mapobject (u_int16 px, u_int16 py, mapobject * mobj)
                 }
             }
         } 
+    mapsquare & s = area[px][py]; 
     // Erase the base tile
-    area[px][py].tiles.erase (the_base);
+    s.tiles.erase (the_base);
+    // Recalculate the walkability of this square.
+    s.set_walkable (ALL_WALKABLE);
+    for (it = s.tiles.begin (); it != s.tiles.end (); it++)
+    {
+	u_int16 wx = it->x - (it->base_tile->x - it->mapobj->base_x ());
+	u_int16 wy = it->y - (it->base_tile->y - it->mapobj->base_y ());
+	s.set_walkable (s.get_walkable () &
+			it->mapobj->get_square (wx, wy)->get_walkable ());                     
+    }
 }
 
 void mapsquare_area::resize_area (u_int16 nl, u_int16 nh)
