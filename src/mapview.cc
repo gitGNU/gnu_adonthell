@@ -34,27 +34,32 @@ mapview::mapview () : da ()
     m_map = NULL;
     offx_ = offy_ = 0;
     locals = PyDict_New ();
-    PyDict_SetItemString (locals, "myself", python::pass_instance (this, "mapview"));
+    PyObject *myself = python::pass_instance (this, "mapview"); 
+    PyDict_SetItemString (locals, "myself", myself);
+    Py_DECREF (myself); 
 }
 
 mapview::~mapview ()
-{     
+{
+    detach_map (); 
     Py_DECREF (locals);
 }
 
 void mapview::attach_map (landmap * m)
 {
     m_map = m;
-    currentsubmap_ = 0;
-    PyDict_SetItemString (locals, "mymap", python::pass_instance (m_map, "landmap"));
-    if (m_map->nbr_of_submaps ())
-    {
-        set_pos (0, 0, 0);
-    }
+
+    PyObject * mymap = python::pass_instance (m_map, "landmap"); 
+    PyDict_SetItemString (locals, "mymap", mymap);
+    Py_DECREF (mymap); 
+
+    set_pos (0, 0, 0);
 }
 
 void mapview::detach_map ()
 {
+    if (!m_map) return;
+    
     m_map = NULL;
     PyDict_DelItemString (locals, "mymap");
 }

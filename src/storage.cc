@@ -28,6 +28,18 @@
 #include "storage.h"
 
 
+storage::~storage () 
+{
+    pair <const char *, s_int32> p;
+    while (1) 
+    {
+        p = next ();
+        if (p.first == NULL) break;
+        delete p.first; 
+    }
+}
+
+
 // Set a variable to a new value; delete key if value is zero to save space
 void storage::set (const char *key, s_int32 value)
 {
@@ -35,8 +47,16 @@ void storage::set (const char *key, s_int32 value)
     cout << "storage::set \"" << key << "\" = " << value << endl;
 #endif
     if (!value) data.erase (key);
-    else data[key] = value;
-
+    else
+    {
+        char * s; 
+        if (data.find (key) == data.end ())  
+            s = strdup (key);
+        else s = (char *) key;
+        
+        data[s] = value;
+    }
+    
     changed = 1;
 }
 

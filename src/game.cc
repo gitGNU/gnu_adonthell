@@ -68,6 +68,7 @@ bool game::init (int argc, char **argv)
     if (!configuration->read_adonthellrc ())
         return false;
 
+    // init game loading/saving system
     gamedata::init (configuration->get_adonthellrc (), configuration->datadir); 
     
     // init video subsystem
@@ -89,20 +90,10 @@ bool game::init (int argc, char **argv)
     
     // init python interpreter
     python::init (); 
-    python::insert_path("scripts");
-    python::insert_path("scripts/modules");
 
-    /* Initialise SWIG module. This should go if we ever switch to dynamic 
-       link */
-    initadonthellc();
-    
-    // Init the global namespace of the python interpreter 
-    py_module = python::import_module ("ins_modules");
-    if (!py_module)
-        return false;
-    data::globals = PyModule_GetDict (py_module);
-
-    
+    // initialise python import paths, SWIG module and globals
+    init_python (); 
+         
     // init the game data
     init_data (); 
     
@@ -115,15 +106,13 @@ void game::cleanup ()
 {
     // close all windows
     win_manager::destroy(); 
-
-    // cleanup the data
-   cleanup_data ();
     
-    // Cleanup the global namespace of python interpreter
-    // Note that we don't have to DECREF globals, because they're a borrowed
-    // reference of py_module
-    Py_XDECREF (py_module);
-
+    // cleanup the data
+    cleanup_data ();
+    
+    // cleanup the globals
+    cleanup_python (); 
+    
     // shutdown input subsystem
     input::shutdown ();
 
@@ -153,13 +142,48 @@ void game::cleanup ()
 void game::init_data ()
 {
     data::the_player = NULL;     
-
+    
     data::map_engine = new mapengine;
-    PyDict_SetItemString (data::globals, "map_engine",
-                          python::pass_instance (data::map_engine, "mapengine"));
+    PyObject *map_engine = python::pass_instance (data::map_engine, "mapengine"); 
+    PyDict_SetItemString (data::globals, "map_engine", map_engine);
+    Py_DECREF (map_engine); 
+
+    PyObject *chars = PyDict_New ();
+    PyDict_SetItemString (data::globals, "characters", chars);
+    Py_DECREF (chars); 
+
+    PyObject *quests = PyDict_New ();
+    PyDict_SetItemString (data::globals, "quests", quests);
+    Py_DECREF (quests); 
 }
 
 void game::cleanup_data () 
 {
     delete data::map_engine; 
+}
+
+bool game::init_python () 
+{
+    // Initialise the import path.
+    python::insert_path("scripts");
+    python::insert_path("scripts/modules");
+
+    /* Initialise SWIG module. This should go if we ever switch to dynamic 
+       link */
+    initadonthellc();
+    
+    // Init the global namespace of the python interpreter 
+    py_module = python::import_module ("ins_modules");
+    if (!py_module)
+        return false;
+    data::globals = PyModule_GetDict (py_module);
+    return true; 
+}
+
+void game::cleanup_python () 
+{
+    // Cleanup the global namespace of python interpreter
+    // Note that we don't have to DECREF data::globals, because they're a
+    // borrowed reference of py_module.
+    Py_DECREF (py_module); 
 }

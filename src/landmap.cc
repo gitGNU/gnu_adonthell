@@ -19,8 +19,6 @@
  */
 
 
-#include <iostream>
-
 #include "landmap.h"
 #include "character.h"
 
@@ -66,7 +64,7 @@ bool base_map_event::equals (event &e)
     if (dir != -1 && tmp.dir != dir) return false;
     if (map != -1 && tmp.map != map) return false;
     if (c && tmp.c != c) return false;
-
+    
     return true;
 }
 
@@ -97,6 +95,7 @@ bool base_map_event::load (igzstream& f)
     string name;
     string s; 
     
+    submap << f; 
     x << f;
     y << f;
     dir << f;
@@ -117,6 +116,7 @@ bool base_map_event::load (igzstream& f)
 void base_map_event::save (ogzstream& out) const
 {
     type >> out;
+    submap >> out; 
     x >> out;
     y >> out;
     dir >> out;
@@ -128,7 +128,7 @@ void base_map_event::save (ogzstream& out) const
         string s = ""; 
         s >> out;
     }
-    
+
     script_file () >> out; 
 }  
 

@@ -28,7 +28,7 @@ class win_container : public win_base
 
  public:
   win_container(s_int16 tx,s_int16 ty,u_int16 tl,u_int16 th,win_theme * wth);
-  ~win_container();
+  virtual ~win_container();
 
   //add an object
   virtual void add(win_base *);

@@ -85,7 +85,23 @@ private:
      * 
      */ 
     static void cleanup_data (); 
-    
+
+    /**
+     * Initialise Python's import paths, globals and game module.
+     *
+     * @ bug memory leak in initadonthellc, seems to come from SWIG.
+     * @ bug memory leak in module import.
+     */
+
+    static bool init_python ();
+
+    /**
+     * Free the globals.
+     * 
+     */
+
+    static void cleanup_python (); 
+
     /**
      * The Adonthell Python wrapper.
      * 

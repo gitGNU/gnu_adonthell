@@ -44,6 +44,7 @@ void mapengine::load_map (string fname)
 
 void mapengine::run ()
 {
+    letsexit = false; 
     gametime::start_action (); 
     while (!letsexit)
     {

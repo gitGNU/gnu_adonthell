@@ -28,9 +28,8 @@
 
 using namespace std; 
 
-
 image::image () : surface ()
-{ 
+{
 }
 
 image::image (u_int16 l, u_int16 h) : surface () 

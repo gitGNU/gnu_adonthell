@@ -90,17 +90,17 @@ void character_base::get_state (igzstream& in)
     size << in; 
     for (i = 0; i < size; i++)
     {
-        char * s; 
+//         char * s; 
         string key; 
         key << in;
         
         /// @bug : We should be able to pass a string to objects
         /// instead of a char *, which memory isn't freed at exit.
 
-        s = new char [key.size () + 1]; 
-        strcpy (s, key.c_str ()); 
+//         s = new char [key.size () + 1]; 
+//         strcpy (s, key.c_str ()); 
         value << in;
-        set (s, value);
+        set (key.c_str (), value);
     }
 
     dialogue << in; 

@@ -56,14 +56,20 @@ public:
      * 
      */
     storage () { changed = 1; }
-    
+
+    /** 
+     * Destructor.
+     * 
+     */
+    ~storage (); 
+
     /** 
      * Sets key to value.
      * 
      * @param key key.
      * @param value value.
      */
-    void set (const char* key, s_int32 value);
+    void set (const char * key, s_int32 value);
 
     /** 
      * Returns the value of a key.
@@ -72,7 +78,7 @@ public:
      * 
      * @return value of key.
      */
-    s_int32 get (const char* key);
+    s_int32 get (const char * key);
 
     /** 
      * Returns the next (key, value) pair of the storage.
@@ -80,7 +86,7 @@ public:
      * 
      * @return Next element.
      */
-    pair<const char*, s_int32> next ();
+    pair<const char *, s_int32> next ();
 
 #ifndef SWIG
     /** 
@@ -93,7 +99,7 @@ public:
      * 
      * @return value of key.
      */
-    s_int32& operator[] (const char* key);
+    s_int32& operator[] (const char * key);
 #endif
     
 private:
@@ -104,14 +110,14 @@ private:
      */ 
     struct equal_key
     {
-        bool operator() (const char* s1, const char* s2) const
+        bool operator() (const char * s1, const char * s2)
         {
-            return strcmp (s1, s2) == 0;
+            return (strcmp (s1, s2) == 0);
         } 
     };
 
-    hash_map<const char*, s_int32, hash<const char*>, equal_key> data;
-    hash_map<const char*, s_int32, hash<const char*>, equal_key>::iterator i;
+    hash_map<const char *, s_int32, hash<const char *>, equal_key> data;
+    hash_map<const char *, s_int32, hash<const char *>, equal_key>::iterator i;
     u_int8 changed;
 #endif
 
@@ -121,7 +127,7 @@ public:
      * Storage iterator, similar to STL iterator.
      * 
      */ 
-    typedef hash_map<const char*, s_int32, hash<const char*>, equal_key>::iterator iterator;
+    typedef hash_map<const char *, s_int32, hash<const char *>, equal_key>::iterator iterator;
     
     /** 
      * Returns an iterator to the beginning of the storage.
@@ -178,23 +184,23 @@ public:
      * @param key key.
      * @param val storage associated to key.
      */
-    void set (const char* key, storage* val);
+    void set (const char * key, storage* val);
 
     /** 
      * Returns a storage associated to a key.
      * 
-     * @param const char* key to return.
+     * @param key key to return.
      * 
      * @return storage associated to key.
      */
-    storage* get (const char*);
+    storage* get (const char * key);
 
     /** 
      * Erases a storage from it's key.
      * 
-     * @param const char* key to erase.
+     * @param key key to erase.
      */
-    void erase (const char*);
+    void erase (const char * key);
 
     /** 
      * Returns the next storage in the object.
@@ -228,10 +234,10 @@ private:
 
 struct eqstr
 {
-  bool operator()(const string s1, const string s2) const
-  {
-    return (s1 == s2);
-  }
+    bool operator()(const char * s1, const char * s2) const
+    {
+        return (strcmp (s1, s2) == 0);
+    }
 };
 
 /**

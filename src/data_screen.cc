@@ -91,7 +91,7 @@ void data_screen::init ()
     // display all the available saved games
     while ((gdata = gamedata::next_save ()) != NULL)
     {
-        sprintf (filepath, "%s/preview.pnm", gdata->get_directory ());
+        sprintf (filepath, "%s/preview.pnm", gdata->directory ());
     
         picture = new image;
         picture->load_pnm (filepath);
@@ -101,7 +101,7 @@ void data_screen::init ()
         shot->set_border_visible (true);
 
         entry = new win_write (100, 2, 130, 54, theme, font);
-        entry->set_text (gdata->get_description ());
+        entry->set_text (gdata->description ());
         entry_list.push_back (entry);
 
         box = new win_container (0, 0, 230, 58, theme);
@@ -210,7 +210,7 @@ void data_screen::on_save ()
     if (gdata != NULL)
     {
         char filepath[256];
-        sprintf (filepath, "%s/preview.pnm", gdata->get_directory ());
+        sprintf (filepath, "%s/preview.pnm", gdata->directory ());
         save_preview (filepath);
     }
 

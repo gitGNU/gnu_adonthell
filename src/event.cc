@@ -22,9 +22,7 @@
  * 
  */
 
-#include <iostream>
 #include <algorithm>
-#include <stdio.h>
 
 #include "fileops.h"
 #include "python.h"
@@ -117,7 +115,9 @@ event::~event ()
 
 void event::set_script (string filename)
 {
-    script.set_script (filename); 
+    if (filename == "") script.set_script (filename);
+    else script.set_script (EVENTS_DIR + filename + ".py");
+    script_file_ = filename;
 }
 
 // Array with the registered events; each type of event is kept in

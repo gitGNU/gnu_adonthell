@@ -75,7 +75,7 @@ public:
      */
     string script_file () const
     {
-        return script.script_file ();
+        return script_file_;
     }
     
     /** 
@@ -113,6 +113,12 @@ protected:
      * 
      */
     py_script script; 
+
+    /**
+     * Script file.
+     * 
+     */
+    string script_file_; 
 
     /**
      * Execute the script.

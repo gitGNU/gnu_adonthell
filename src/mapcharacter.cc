@@ -44,9 +44,9 @@ mapcharacter::mapcharacter () : mapsquare_walkable_area (), character_base ()
     ask_move = NO_MOVE;
 
     locals = PyDict_New ();
-    PyObject * objref = python::pass_instance(this,"mapcharacter"); 
-    PyDict_SetItemString (locals,"myself", objref);
-    Py_DECREF (objref); 
+    PyObject * myself = python::pass_instance(this,"mapcharacter"); 
+    PyDict_SetItemString (locals,"myself", myself);
+    Py_DECREF (myself); 
 }
  
 mapcharacter::~mapcharacter ()
@@ -169,7 +169,9 @@ void mapcharacter::set_map (landmap * m)
     m->mapchar.push_back (this);
     
     refmap = m;
-    PyDict_SetItemString (locals, "mymap", python::pass_instance (refmap,"landmap"));
+    PyObject *mymap = python::pass_instance (refmap,"landmap"); 
+    PyDict_SetItemString (locals, "mymap", mymap);
+    Py_DECREF (mymap); 
 }
 
 void mapcharacter::remove_from_map ()
@@ -515,8 +517,9 @@ void mapcharacter::update ()
 
 void mapcharacter::launch_action (mapcharacter * requester)
 {
-    PyDict_SetItemString (locals, "requester",
-                          python::pass_instance (requester, "mapcharacter"));
+    PyObject *req = python::pass_instance (requester, "mapcharacter"); 
+    PyDict_SetItemString (locals, "requester", req);
+    Py_DECREF (req); 
     action.run (); 
     PyDict_DelItemString (locals, "requester");
 }

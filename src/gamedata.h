@@ -40,18 +40,51 @@
 class gamedata
 {
 public:
+    /**
+     * Default constructor.
+     * 
+     */ 
     gamedata ();
-    gamedata (string desc, string dir);
+
+#ifndef SWIG
+    /** 
+     * Alternate constructor.
+     *
+     * @attention not available from %Python!
+     * 
+     * @param desc description of the saved game.
+     * @param dir directory of the saved game.
+     */
+    gamedata (string desc, string dir); 
+#endif
+
+    /** 
+     * Destructor.
+     * 
+     */
     ~gamedata ();
-    
-    void put (ogzstream&);                     // save a record to disk
-    bool get (igzstream&);                     // load a record from disk
+
+    /** 
+     * Save a record to an opened file.
+     * 
+     * @param ogzstream& opened file to save to.
+     */
+    void put (ogzstream&);
+
+    /** 
+     * Load a record from an opened file.
+     * 
+     * @param igzstream& opened file to load from.
+     * 
+     * @return true in case of success, false otherwise.
+     */
+    bool get (igzstream&);
     
     // a bunch of methods to access the private attributes
-    const char* get_directory () { return directory.c_str (); }
-    const char* get_description () { return description.c_str (); }
-    const char* get_location () { return location.c_str (); }
-    const char* get_time () { return time.c_str (); }
+    const char* directory () { return directory_.c_str (); }
+    const char* description () { return description_.c_str (); }
+    const char* location () { return location_.c_str (); }
+    const char* time () { return time_.c_str (); }
     void set_description (string);
     void set_directory (string);
 
@@ -72,13 +105,19 @@ public:
     
     static bool save (u_int32 pos, string desc);
     
+    /**
+     * Unloads the current game.
+     * 
+     */ 
+    static void unload (); 
+
     static gamedata* next_save ();
     
     /** 
-     * Returns the user data directory ($HOME/.adonthell).
+     * Returns the user %data directory ($HOME/.adonthell).
      * 
      * 
-     * @return user data directory.
+     * @return user %data directory.
      */
     static string user_data_dir () 
     {
@@ -86,10 +125,10 @@ public:
     }
     
     /** 
-     * Returns the game data directory.
+     * Returns the %game %data directory.
      * 
      * 
-     * @return game data directory.
+     * @return %game %data directory.
      */
     static string game_data_dir () 
     {
@@ -103,23 +142,17 @@ public:
     
 private:
 #ifndef SWIG
-    string directory;                        // the game's location on the harddisk
-    string description;                      // user supplied description of the game
-    string location;                         // the map or area the player is on
-    string time;                             // the gametime of the save
+    string directory_;                        // the game's location on the harddisk
+    string description_;                      // user supplied description of the game
+    string location_;                         // the map or area the player is on
+    string time_;                             // the gametime of the save
     
     /** 
      * Keeps track of available save games.
      * 
      */
     static vector<gamedata*> saves; 
-    
-    /**
-     * Unloads the current game.
-     * 
-     */ 
-    static void unload (); 
-
+     
     /**
      * $HOME/.adonthell
      * 

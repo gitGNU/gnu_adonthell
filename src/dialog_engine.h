@@ -45,6 +45,7 @@
 class dialog_engine : public win_container
 {
 public:
+
     /** 
      * Constructor.
      * 

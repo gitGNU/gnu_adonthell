@@ -27,7 +27,6 @@
 #include <iostream>
 #include "py_script.h"
 
-
 py_script::py_script ()
 {
     locals = NULL; 
@@ -45,9 +44,12 @@ void py_script::clear ()
 { 
     if (script)
     {
-        free (script);
+        Py_DECREF (script);
         script = NULL; 
     }
+
+    script_file_ = ""; 
+    locals = NULL; 
     set_active (true); 
 }
 
@@ -56,11 +58,19 @@ void py_script::set_script (string file)
     if (file == "")
     {
         script_file_ = "";
-        if (script)
-            free (script);
+
+        if (script) 
+        {
+            Py_DECREF (script); 
+            script = NULL; 
+        }
         
-        script = NULL;
         return;
+    } 
+    else if (script) 
+    {
+        Py_DECREF (script); 
+        script = NULL; 
     }
     
     FILE *f = fopen (file.c_str (), "r");
@@ -98,6 +108,6 @@ void py_script::run ()
 {
     if (script && is_activated ())
     {
-        PyEval_EvalCode (script, data::globals, locals); 
+        PyEval_EvalCode (script, data::globals, locals);
     }
 }

@@ -49,8 +49,8 @@ gamedata::gamedata ()
 
 gamedata::gamedata (string dir, string desc)
 {
-    directory = dir;
-    description = desc; 
+    directory_ = dir;
+    description_ = desc; 
 }
 
 gamedata::~gamedata ()
@@ -61,30 +61,30 @@ bool gamedata::get (igzstream& file)
 {
     if (!fileops::get_version (file, 2, 2, "save.data")) 
         return false;
-    directory << file; 
-    description << file;
-    location << file;
-    time << file; 
+    directory_ << file; 
+    description_ << file;
+    location_ << file;
+    time_ << file; 
     return true;
 }
 
 void gamedata::put (ogzstream& file)
 {
     fileops::put_version (file, 2);
-    directory >> file;
-    description >> file;
-    location >> file;
-    time >> file; 
+    directory_ >> file;
+    description_ >> file;
+    location_ >> file;
+    time_ >> file; 
 }
 
 void gamedata::set_description (string desc)
 {
-    description = desc; 
+    description_ = desc; 
 }
 
 void gamedata::set_directory (string dir)
 {
-    directory = dir;
+    directory_ = dir;
 }
 
 
@@ -107,18 +107,19 @@ bool gamedata::load (u_int32 pos)
     // Add the player to the game objects
     data::characters[data::the_player->get_name().c_str ()] = data::the_player; 
     
-    // Make "myplayer" available to Python 
-    PyDict_SetItemString (data::globals, "the_player", python::pass_instance (data::the_player, "character"));
+    // retrieve character array
+    PyObject *chars = PyDict_GetItemString (data::globals, "characters");
+
+    // Make the player available to Python
+    PyObject *the_player = python::pass_instance (data::the_player, "character"); 
+    PyDict_SetItemString (data::globals, "the_player", the_player);
     
-    // create character array
-    /// @bug chars seems to never be freed!
-    PyObject *chars = PyDict_New ();
-    PyDict_SetItemString (data::globals, "characters", chars);
     PyDict_SetItemString (chars, (char *) data::the_player->get_name().c_str (),
-                          python::pass_instance (data::the_player, "character"));
+                          the_player);
+    Py_DECREF (the_player); 
 
     // try to open character.data
-    filepath = saves[pos]->get_directory ();
+    filepath = saves[pos]->directory ();
     filepath += "/character.data";     
     in.open (filepath);
     
@@ -138,22 +139,23 @@ bool gamedata::load (u_int32 pos)
     {
         mynpc = new character;
         mynpc->character_base::get_state (in);
-
+ 
         // Pass character over to Python interpreter
+        PyObject *charref = python::pass_instance (mynpc, "character"); 
         PyDict_SetItemString (chars, (char *) mynpc->get_name().c_str (),
-                              python::pass_instance (mynpc, "character"));
-
+                              charref);
+        Py_DECREF (charref);
+        
         // Make this character available to the engine
         data::characters[mynpc->get_name ().c_str ()] = mynpc;
     }
     in.close (); 
     
-    // create quest array
-    PyObject *quests = PyDict_New ();
-    PyDict_SetItemString (data::globals, "quests", quests);
+    // retrieve quest array
+    PyObject *quests = PyDict_GetItemString (data::globals, "quests");
 
     // try to open quest.data
-    filepath = saves[pos]->get_directory ();
+    filepath = saves[pos]->directory ();
     filepath += "/quest.data"; 
     in.open (filepath); 
 
@@ -173,9 +175,11 @@ bool gamedata::load (u_int32 pos)
         myquest->load (in);
         
         // Pass quest over to Python interpreter
+        PyObject *questref = python::pass_instance (myquest, "quest"); 
         PyDict_SetItemString (quests, (char *) myquest->name.c_str (),
-                              python::pass_instance (myquest, "quest"));
-
+                              questref);
+        Py_DECREF (questref); 
+        
         // Make this quest available to the engine
         data::quests[myquest->name.c_str ()] = myquest;
     }
@@ -183,7 +187,7 @@ bool gamedata::load (u_int32 pos)
     in.close (); 
     
     // Load mapengine state
-    filepath = saves[pos]->get_directory(); 
+    filepath = saves[pos]->directory(); 
     filepath += "/mapengine.data";
     in.open (filepath); 
     
@@ -253,7 +257,7 @@ bool gamedata::save (u_int32 pos, string desc)
     }
 
     // save characters 
-    filepath = gdata->get_directory ();
+    filepath = gdata->directory ();
     filepath += "/character.data"; 
     file.open (filepath); 
 
@@ -285,7 +289,7 @@ bool gamedata::save (u_int32 pos, string desc)
     file.close (); 
 
     // save quests
-    filepath = gdata->get_directory ();
+    filepath = gdata->directory ();
     filepath += "/quest.data"; 
     file.open (filepath); 
     
@@ -314,7 +318,7 @@ bool gamedata::save (u_int32 pos, string desc)
     file.close ();
     
     // Save mapengine state
-    filepath = gdata->get_directory(); 
+    filepath = gdata->directory(); 
     filepath += "/mapengine.data";
     file.open (filepath); 
     
@@ -329,7 +333,7 @@ bool gamedata::save (u_int32 pos, string desc)
     file.close (); 
 
     // save gamedata
-    filepath = gdata->get_directory ();
+    filepath = gdata->directory ();
     filepath += "/save.data"; 
 
     file.open (filepath); 

@@ -29,10 +29,6 @@
 #endif
 
 #include "game.h"
-#include "python.h"
-
-#include <iostream>
-#include "mapcharacter.h"
 
 using namespace std; 
 
@@ -53,25 +49,11 @@ int main(int argc, char * argv[])
 #ifdef MEMORY_LEAKS
     mtrace ();
 #endif
-
-//     game::init (argc, argv);
-    
-//     while (1) 
-//     {
-//         mapcharacter * an = new mapcharacter (); 
-//         an->load ("servant1.mchar");
-//         an->draw (0, 0); 
-//         screen::show (); 
-//         delete an; 
-//         getchar (); 
-//     }
-
-//     game::cleanup ();
     
     if (!game::init (argc, argv)) return 1; 
     
     python::exec_file("init.py");
-
+    
     game::cleanup (); 
     
     return 0;

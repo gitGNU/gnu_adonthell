@@ -73,6 +73,7 @@ enum {Python = 1, C = 0};
 %typemap(python,out) string
 {
     $target = PyString_FromString((const char *)$source->c_str()); 
+    delete $source;
 }
 
 %typemap (python, freearg) string

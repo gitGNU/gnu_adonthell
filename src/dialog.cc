@@ -32,13 +32,13 @@
 #include "yarg.h"
 #include "character.h"
 #include "dialog.h"
+#include "objimpl.h"
 
- 
 // Load and instanciate the dialogue object
 bool dialog::init (char *fpath, char *name)
 {
-    PyObject *module;
     PyObject *classobj;
+    PyObject *module;
     
     // First, test if the module has already been imported
     
@@ -48,36 +48,34 @@ bool dialog::init (char *fpath, char *name)
     if (!module)
         return false;
     
-    module = PyImport_ReloadModule (module);
     PyObject *globals = PyModule_GetDict (module);
 
     // Extract the class from the dialogue module
     classobj = PyObject_GetAttrString(module, name);
     
+    Py_DECREF (module); 
+
     if (!classobj)
         return false;
     
-    Py_DECREF(module);
-    
-    // add some stuff to the dialogue's global namespace
-    PyObject *characters = PyDict_GetItemString (data::globals, "characters");
-    PyObject *quests = PyDict_GetItemString (data::globals, "quests");
-    PyObject *the_npc = PyDict_GetItemString (data::globals, "the_npc");
-    PyObject *the_player = PyDict_GetItemString (data::globals, "the_player");
-    
-    PyDict_SetItemString (globals, "characters", characters);
-    PyDict_SetItemString (globals, "quests", quests);
-    PyDict_SetItemString (globals, "the_npc", the_npc);
-    PyDict_SetItemString (globals, "the_player", the_player);
+    PyDict_SetItemString (globals, "characters",
+                          PyDict_GetItemString (data::globals, "characters"));
+    PyDict_SetItemString (globals, "quests",
+                          PyDict_GetItemString (data::globals, "quests"));
+    PyDict_SetItemString (globals, "the_npc",
+                          PyDict_GetItemString (data::globals, "the_npc"));
+    PyDict_SetItemString (globals, "the_player",
+                          PyDict_GetItemString (data::globals, "the_player"));
 
     // Instantiate! Will we ever need to pass args to class
     // constructor here?
     instance = PyObject_CallObject(classobj, NULL);
-    
+
+    Py_DECREF(classobj);
+
     if (!instance)
         return false;
     
-    Py_DECREF(classobj);
     
     // extract the dialogue's strings
     extract_strings ();
@@ -104,6 +102,8 @@ void dialog::extract_strings ()
         s = PyList_GetItem (list, i);
         if (s) strings[i] = PyString_AsString (s);
     }
+    
+    Py_DECREF (list); 
 }
 
 dialog::dialog ()
@@ -114,7 +114,12 @@ dialog::dialog ()
 
 dialog::~dialog ()
 {
-    Py_XDECREF (instance);
+    if (instance) 
+    {
+        PyObject * callres = PyObject_CallMethod (instance, "clear", NULL);
+        Py_XDECREF (callres);  
+        Py_DECREF (instance);
+    }
     if (strings) delete[] strings;
 }
 
@@ -144,11 +149,13 @@ void dialog::run (u_int32 index)
     }
 
     // End of dialogue:
-    if (answers[index] == -1) return;
+    if (answers[index] == -1)
+        return;
     
     // Execute the next part of the dialogue
-    PyObject_CallMethod (instance, "run", "i", answers[index]);
-
+    PyObject * callres = PyObject_CallMethod (instance, "run", "i", answers[index]);
+    Py_XDECREF (callres); 
+    
 #ifdef _DEBUG_
     show_traceback ();
     cout << flush;
@@ -158,8 +165,10 @@ void dialog::run (u_int32 index)
     if (index != 0)
     {
         s = choices[index-1];
-        if (!PySequence_In (PyObject_GetAttrString (instance, "loop"), PyInt_FromLong (s)))
+        PyObject * loopattr = PyObject_GetAttrString (instance, "loop"); 
+        if (!PySequence_In (loopattr, PyInt_FromLong (s)))
             used.push_back (s);
+        Py_DECREF (loopattr); 
     }
     
     // Empty helper arrays
@@ -171,7 +180,9 @@ void dialog::run (u_int32 index)
     npc = PyObject_GetAttrString (instance, "npc");
     player = PyObject_GetAttrString (instance, "player");
     cont = PyObject_GetAttrString (instance, "cont");
-    _npc_color = PyInt_AsLong (PyObject_GetAttrString (instance, "color"));
+    PyObject *attrcolor = PyObject_GetAttrString (instance, "color"); 
+    _npc_color = PyInt_AsLong (attrcolor);
+    Py_XDECREF (attrcolor); 
 
     // 2. Search the NPC part for used text
     for (i = 0; (int)i < PyList_Size (npc); i++)
@@ -206,8 +217,10 @@ void dialog::run (u_int32 index)
     answers.push_back (-1);
 
     // 4. Mark the NPC text as used unless it's allowed to loop
-    if (!PySequence_In (PyObject_GetAttrString (instance, "loop"), PyInt_FromLong (s)))
+    PyObject * loopattr = PyObject_GetAttrString (instance, "loop"); 
+    if (!PySequence_In (loopattr, PyInt_FromLong (s)))
         used.push_back (s);
+    Py_XDECREF (loopattr); 
 
     // 5. Extract the matching player strings
     while (j <= i)

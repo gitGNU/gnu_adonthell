@@ -137,7 +137,11 @@ void dlg_compiler::write_dialogue ()
     // write the dialogue functions
     script << "\n    def __init__(self):";
     script << "\n        self.dialogue = [self.start, ";
-
+    script << "\n";
+    script << "\n    def clear (self):";
+    script << "\n        del self.dialogue";
+    script << "\n";
+    
     // write answer-function-array and build lookup table to get index when given
     // the number of the node
     for (i = dlg.begin (); i != dlg.end (); i++)

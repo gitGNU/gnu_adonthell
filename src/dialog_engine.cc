@@ -63,7 +63,9 @@ void dialog_engine::init(character_base *mynpc, char * dlg_file, u_int8 size)
     }
 
     // Make the npc available to the dialogue engine
-    PyDict_SetItemString (data::globals, "the_npc", python::pass_instance (mynpc, "character_base"));
+    PyObject *the_npcref = python::pass_instance (mynpc, "character_base"); 
+    PyDict_SetItemString (data::globals, "the_npc", the_npcref);
+    Py_DECREF (the_npcref); 
     
     // Init the low level dialogue stuff
     dlg = new dialog;
@@ -106,28 +108,32 @@ void dialog_engine::init(character_base *mynpc, char * dlg_file, u_int8 size)
     set_background_visible (true);
 
     // Load dialogue
-	if (!dlg->init (dlg_file, strrchr (dlg_file, '/')+1))
-	{
+    if (!dlg->init (dlg_file, strrchr (dlg_file, '/')+1))
+    {
         cout << "\n*** Error loading dialogue script " << strrchr (dlg_file, '/')+1 << "\n";
         python::show_traceback ();
         cout << flush;
         answer = -1;	
-	}
-	else
-	{
+    }
+    else
+    {
         // Make the set_portrait/name/npc functions available to the dialogue script
         instance = python::pass_instance (this, "dialog_engine");
-
+        
         PyObject *setname = PyObject_GetAttrString (instance, "set_name");
         PyObject *setportrait = PyObject_GetAttrString (instance, "set_portrait");
         PyObject *setnpc = PyObject_GetAttrString (instance, "set_npc");
-
+        
         PyObject *dlg_instance = dlg->get_instance ();
-
+        
         PyObject_SetAttrString (dlg_instance, "set_name", setname);
         PyObject_SetAttrString (dlg_instance, "set_portrait", setportrait);
         PyObject_SetAttrString (dlg_instance, "set_npc", setnpc);
-
+        
+        Py_DECREF (setname); 
+        Py_DECREF (setportrait); 
+        Py_DECREF (setnpc); 
+        
         answer = 0;
     }
 }
@@ -136,13 +142,14 @@ dialog_engine::~dialog_engine ()
 {
     sel->set_activated (false);
 
-    delete dlg;
     delete theme;
     
     for (int i = 0; i < MAX_COLOR; i++)
         delete fonts[i];
 
     Py_XDECREF (instance);
+
+    delete dlg;
 
     // get rid of any keys that might have been accidently pressed during dialogue
     input::clear_keys_queue ();
