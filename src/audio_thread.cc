@@ -17,6 +17,7 @@
 #include "audio.h"
 #include "SDL.h"
 #include "SDL_mixer.h"
+#include "SDL_thread.h"
 
 audio *audio_in;
 
@@ -33,7 +34,7 @@ void audio_update()
   // Keep looping music
   while (1==1) {
     if ( ! Mix_PlayingMusic() ) Mix_PlayMusic(audio_in->music, 0);
-    sleep(100);
+    SDL_Delay(100);
   }
 }
 
