@@ -6,7 +6,8 @@
 #include "screen.h"
 #include "input.h"
 #include "atk_font.h"
-
+#include "atk_widget.h"
+#include "atk_box.h"
 #include "callback.h"
 #include "callback_slot.h"
 #include "callback_sig.h"
@@ -22,12 +23,12 @@ public :
 
 int main (int argc, char * argv[]) 
 {
-    if (argc != 2)
+ /*   if (argc != 2)
     {
-        cout << argv[0] << " <path/file.ttf>\n";   
+    cout << argv[0] << " <path/file.ttf>\n";   
         exit (0); 
     }
-    
+   */ 
     screen::init (); 
     input::init ();  
     screen::set_video_mode (640, 480, 16); 
@@ -38,54 +39,87 @@ int main (int argc, char * argv[])
     im.resize (640, 480);
     im.fillrect (0, 0, 640, 480, 127, 127, 127);
     im.draw (0, 0); 
- 
-    atk_font font;     
-    if (!font.load (argv[1])) exit (1);  
-    
-    font.info ();
-    
-    font.set_size (80);  
-    font.set_color (0, 0, 0);  
-    font.build (); 
-    font.draw ("Adonthell Power !!!", 40, 70); 
+    /* 
+       atk_font font;     
+       if (!font.load (argv[1])) exit (1);  
+       
+       font.info ();
+       
+       font.set_size (80);  
+       font.set_color (0, 0, 0);  
+       font.build (); 
+       font.draw ("Adonthell Power !!!", 40, 70); 
+       
+       
+       font.set_size (26);  
+       font.set_color (45, 167, 100);  
+       font.build (); 
+       font.draw ("It's working ...", 200, 120); 
+       
+       font.set_size (20);  
+       font.set_color (145, 200, 45);  
+       font.build (); 
+       font.draw ("Kay,\n Ben,\n  Alex,\n   James\n     I know ...", 140, 200); 
+       
+       
+       font.set_size (36);  
+       font.set_color (239, 16, 53);  
+       font.build (); 
+       font.draw ("I'm Fired !!!;=) ", 170, 320); 
+       
+       font.set_size (16);  
+       font.set_color (200, 200, 200);  
+       font.build ();  
+       font.draw (", ? ; . : / ! § % ù $ £ ¤ ^ } { # ~ @ µ * - + & ' < > ", 10,350 );
+    */
+
+
     
 
-    font.set_size (26);  
-    font.set_color (45, 167, 100);  
-    font.build (); 
-    font.draw ("It's working ...", 200, 120); 
+    atk_box * box = new atk_box;
     
-    font.set_size (20);  
-    font.set_color (145, 200, 45);  
-    font.build (); 
-    font.draw ("Kay,\n Ben,\n  Alex,\n   James\n     I know ...", 140, 200); 
+    box->set_spacing (5); 
+    box->set_visible (true); 
+    box->set_size (200, 60);
+    box->set_position (50, 50); 
     
-    
-    font.set_size (36);  
-    font.set_color (239, 16, 53);  
-    font.build (); 
-    font.draw ("I'm Fired !!!;=) ", 170, 320); 
-    
-    font.set_size (16);  
-    font.set_color (200, 200, 200);  
-    font.build ();  
-    font.draw (", ? ; . : / ! § % ù $ £ ¤ ^ } { # ~ @ µ * - + & ' < > ", 10,350 );
+    atk_widget * wid;
 
+    wid = new atk_widget;
+    wid->set_size (30, 50);
+    wid->set_visible (true);
+    wid->realize (); 
+    box->add_start (wid, true, true, 0); 
+
+    wid = new atk_widget;
+    wid->set_size (30, 20);
+    wid->set_visible (true);
+    wid->realize (); 
+    box->add_start (wid, true, true, 0); 
+
+    wid = new atk_widget;
+    wid->set_size (10, 50);
+    wid->set_visible (true);
+    wid->realize (); 
+    box->add_start (wid, false, false, 15); 
+
+    box->realize (); 
+    box->draw ();  
+
+    
     screen::show ();
-    
-   
-
+     
     input::shutdown (); 
-
-    /***************************************/
+       
+       /***************************************/
     /***************************************/
     /************CALLBACK STUFF*************/
     /***************************************/
     /***************************************/
-    cout << "/***************************************/\n"; 
-    cout << "/***************************************/\n"; 
-    cout << "CALLBACK STUFF : \n"; 
-    
+    // cout << "/***************************************/\n"; 
+    // cout << "/***************************************/\n"; 
+    // cout << "CALLBACK STUFF : \n"; 
+    /*
     A a;
     callback_sig cbs; 
 
@@ -95,8 +129,12 @@ int main (int argc, char * argv[])
     cbs.connect (new  callback_slot1 <char* > (makeFunctor (a, &A::aff),ch));
     
     cbs ();
-    
+    */
     getchar (); 
+
+
+    delete box; 
+
     return 0; 
 }
 

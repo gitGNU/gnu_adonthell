@@ -16,7 +16,7 @@
 #include "atk_container.h"
 
 
-atk_container::atk_container () : border_width_ (5)
+atk_container::atk_container () : border_width_ (6)
 { 
 }
 

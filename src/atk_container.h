@@ -41,7 +41,7 @@ class atk_container : public atk_widget
 public :
 
 
-    /**Initialize some variable,  child to NULL and border_width (5); */
+    /**Initialize some variable,  child to NULL and border_width (6); */
     atk_container (); 
 
     
@@ -78,7 +78,9 @@ public :
     virtual void clear () = 0; 
 
 
-    virtual ~atk_container () = 0; 
+    virtual ~atk_container ()
+    {
+    }
     
     /* call back */
     callback_sig on_add;

@@ -12,6 +12,8 @@
    See the COPYING file for more details
 */
 
+#include "screen.h"
+
 #include "atk_container.h"
 #include "atk_widget.h"
 
@@ -21,9 +23,9 @@ atk_widget::atk_widget () : parent_ (NULL)
 }
 
  
-void atk_widget::set_parent (atk_container & parent)
+void atk_widget::set_parent (atk_container * parent)
 {
-    parent_ = &parent;  
+    parent_ = parent;  
 }
 
 
@@ -157,3 +159,15 @@ atk_widget::~atk_widget ()
 }
 
 
+
+void atk_widget::draw (drawing_area * da = NULL, surface * sf = NULL)
+{
+    /*need to change this;) */
+
+    /* draw box */
+    screen::display.draw_line (get_x_real (), get_y_real (),get_x_real () + get_length (),get_y_real (),  0xFFFFFF); 
+    screen::display.draw_line (get_x_real (), get_y_real () + get_height () ,get_x_real () + get_length (),get_y_real () + get_height (),  0xFFFFFF);
+
+    screen::display.draw_line (get_x_real (), get_y_real (),get_x_real (),get_y_real ()+ get_height (),  0xFFFFFF); 
+    screen::display.draw_line (get_x_real () + get_length (), get_y_real (),get_x_real () + get_length (),get_y_real () + get_height (),  0xFFFFFF);
+}

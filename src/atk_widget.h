@@ -25,6 +25,7 @@
 #define ATK_WIDGET_H_
 
 #include "drawing_area.h"
+#include "surface.h"
 #include "callback_sig.h"
 
 
@@ -49,18 +50,24 @@ public :
 
     /** This method is abstract, it's used to build the widget.
      */
-    virtual void realize () = 0; 
-    
+    virtual void realize () //  = 0; 
+    {
+    }
 
     /** Set the parent of this widget. A widget can have only one parent
      *  @param parent his new parent
      */ 
-    void set_parent (atk_container & parent);  
+    void set_parent (atk_container * parent);  
 
 
     /** Set the parent window, parent window 
      *
      */
+
+
+    /*draw the widget
+     */
+    virtual void draw (drawing_area * da = NULL, surface * sf = NULL); 
     
 
     /** set position of this widget (but the layout can change this value) ,  position in his parent

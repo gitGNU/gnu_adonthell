@@ -193,13 +193,19 @@ void atk_font::draw (const std::string & text, s_int32 x, s_int32 y, surface * t
     } 
 }
 
-u_int32 atk_font::length_of (const std::string & text)
+u_int32 atk_font::get_length_of (const std::string & text)
 {
     u_int32 size = 0;
     for (u_int32 i = 0; i < text.length (); i++)
         if ((unsigned) text[i] < chars.size ())
             size += chars[text[i]].advance_x;
     return size; 
+}
+
+
+u_int16 atk_font::get_size()
+{
+  return size;
 }
 
 void atk_font::free_vector ()

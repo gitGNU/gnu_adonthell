@@ -89,7 +89,8 @@ void atk_box::add_start (atk_widget * w, bool expand = true, bool fill = true, u
     tmp->padding_ = padding;
 
     v_widget_.push_front (tmp);  
-
+    w->set_parent (this); 
+    
     update_homogene (); 
     
     on_add (); 
@@ -105,7 +106,52 @@ void atk_box::realize ()
 
 void atk_box::realize_horizontal ()
 {
+    if (v_widget_.size () == 0) return; 
+
+    /* init value with border width */
+    s_int32 x_tmp = border_width_;
+    s_int32 y_tmp = border_width_;
+
+    /* calcul the max length for each widget*/
+    s_int32 max_length = (get_length () - ((v_widget_.size () - 1)  * spacing_) - (border_width_ << 1) ) / v_widget_.size (); 
     
+    for (u_int16 i = 0;i < v_widget_.size (); i++)  
+    {
+        if (v_widget_[i]->expand_ == true)
+        {
+            if (v_widget_[i]->fill_ == true)
+            {
+                v_widget_[i]->widget_->set_size (max_length , get_height () - (border_width_ << 1)); 
+                v_widget_[i]->widget_->set_position (x_tmp, y_tmp);
+                x_tmp += max_length; 
+            }
+            else
+            {
+                // before fill just add padding
+                v_widget_[i]->widget_->set_size (max_length - (v_widget_[i]->padding_ << 1) , get_height () - (border_width_ << 1) - (v_widget_[i]->padding_ << 1));
+                v_widget_[i]->widget_->set_position (x_tmp + v_widget_[i]->padding_, y_tmp + v_widget_[i]->padding_);
+                x_tmp += max_length; 
+            } 
+        }
+        else
+        {
+            /* move */
+            v_widget_[i]->widget_->set_position (x_tmp, y_tmp); 
+
+            v_widget_[i]->widget_->set_size ((v_widget_[i]->widget_->get_length () > max_length) ? max_length : v_widget_[i]->widget_->get_length (),
+                                             get_height () - (border_width_ << 1) );   
+            
+            x_tmp += v_widget_[i]->widget_->get_length ();
+            
+            /* calcul new max_length */
+            if ((v_widget_.size () - i - 1) != 0) 
+                max_length = ((get_length () - ((v_widget_.size () - 1)  * spacing_) - border_width_ ) - x_tmp )
+                / ( v_widget_.size () - i - 1)   ;
+            
+        }  
+        /*add space between each widget */
+        x_tmp += spacing_; 
+    }
 }
 
 
@@ -125,7 +171,8 @@ void atk_box::add_end (atk_widget * w, bool expand = true, bool fill = true, u_i
     tmp->padding_ = padding;
 
     v_widget_.push_back (tmp);  
-
+    w->set_parent (this);
+    
     update_homogene (); 
     
     on_add (); 
@@ -155,9 +202,18 @@ void atk_box::update_homogene ()
 
     // now resize
     for (std::deque <atk_box_struct* >::iterator it = v_widget_.begin (); it != v_widget_.end (); it++)
-        (*it)->widget_->set_size (max_length, max_height);   
+        (*it)->widget_->set_size (max_length, max_height);    
 }
 
 
 
 
+void atk_box::draw (drawing_area * da = NULL, surface * sf = NULL)
+{
+    if (!is_visible ()) return; 
+    
+    atk_widget::draw (da, sf);
+
+    for (std::deque <atk_box_struct* >::iterator it = v_widget_.begin (); it != v_widget_.end (); it++)
+        (*it)->widget_->draw (da, sf);  
+}

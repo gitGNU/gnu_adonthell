@@ -58,7 +58,7 @@ libadonthell_a_SOURCES = animation.cc drawable.cc drawing_area.cc fileops.cc \
 	win_container.cc win_font.cc win_keys.cc\
 	win_manager.cc win_scrollbar.cc win_scroll.cc win_select.cc win_theme.cc \
 	label.cc  label_input.cc win_event.cc yarg.cc \
-	input_manager.cc input_event.cc input_listener.cc keyboard_event.cc joystick_event.cc mouse_event.cc
+	input_manager.cc input_event.cc input_listener.cc keyboard_event.cc joystick_event.cc mouse_event.cc \
 	types.h animation.h drawable.h drawing_area.h fileops.h image.h \
 	input.h gametime.h map_coordinates.h mapsquare_obj_area.h \
 	mapsquare_obj_area_gfx.h map_placeable.h map_placeable_gfx.h \

@@ -100,7 +100,12 @@ public :
      */
     u_int16 get_spacing () const; 
     
-
+    
+    /*draw the widget
+     */
+    virtual void draw (drawing_area * da = NULL, surface * sf = NULL); 
+    
+    
     ~atk_box (); 
     
     static const u_int8 VERTICAL = 0;
@@ -128,7 +133,7 @@ private :
     {
         /* the widget */
         atk_widget * widget_;
-
+        
         /* if true widget is streching to the container size, else container is stretch to widget */
         bool expand_;
 

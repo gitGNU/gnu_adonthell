@@ -29,7 +29,9 @@
 
 #include <ft2build.h>
 #include FT_FREETYPE_H
-
+#include "types.h"
+#include "surface.h"
+#include "image.h"
 
 
 /**
@@ -39,7 +41,7 @@
  */ 
 class atk_font
 {
-public : 
+  public : 
 
     /** Constructor initialize some variables : 
      *     - Set color to black color
@@ -129,9 +131,15 @@ public :
      * @param text : text to calcul
      * @return length of the text in pixel
      */
-    u_int32 length_of (const std::string & text);
-    
-    
+    u_int32 get_length_of (const std::string & text);
+  
+
+
+    /**
+     *
+     */
+    u_int16 get_size();
+
 private : 
 
 
@@ -171,9 +179,9 @@ private :
 
     /* dpi, dots-per-inch */
     int dpi;
-
+    
     /* size */
-    int size;
+    u_int16 size;
 
     /* contain all characters */
     std::vector <char_info> chars;       
