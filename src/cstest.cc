@@ -29,6 +29,7 @@
 
 #include "animation.h"
 #include "cutscene.h"
+#include "window.h"
 
 int main(int argc, char * argv[])
 {
@@ -37,6 +38,7 @@ int main(int argc, char * argv[])
   animation *anim2 = new animation();
   animation *anim3 = new animation();
   animation *anim4 = new animation();
+  window *wnd = new window();
 
   u_int8 ret=0;
 
@@ -203,6 +205,17 @@ int main(int argc, char * argv[])
       screen::show();
     }
 
+  // -- start window code
+  wnd->init(40, 20, 240, 160, WIN_NORMAL);
+  wnd->show ();
+  wnd->set_text ("                                            Adonthell");
+  wnd->update ();
+  wnd->draw ();
+  screen::show ();
+
+  while (!keyboard::is_pushed(Escape_Key));
+  // -- end window code
+  
   // Clean up SDL :>
   fprintf(stderr, "Killing threads...\n");
   if (input_thread != NULL) SDL_KillThread(input_thread);
@@ -226,6 +239,7 @@ int main(int argc, char * argv[])
   free(anim3);
   free(anim4);
   free(scene);
+  free(wnd); 
 
   SDL_Quit();
   return(0);
