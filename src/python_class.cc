@@ -1,7 +1,7 @@
 /*
    $Id$
 
-   Copyright (C) 2001 Kai Sterker <kaisterker@linuxgames.com>
+   Copyright (C) 2001/2002 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -27,10 +27,9 @@
 
 using std::cerr;
 using std::endl;
+using std::string;
 
 PyObject * data::globals;
-
-using std::string;
 
 /*
  * Start Python
@@ -78,23 +77,13 @@ bool python::exec_file (string filename)
     if (!mod)
     {
         cerr << "exec_file: " << filename << " load failed!" << endl;
+        show_traceback ();
         return false;
     }
 
     Py_DECREF (mod); 
 
     return true; 
-//     result = PyRun_SimpleFile (f, (char*) fn.c_str ());
-//     if (result != 0)
-//     {
-//          cerr << "exec_file: " << fn << " execution failed: " << endl;
-#ifdef PY_DEBUG
-         show_traceback ();
-#endif
-//     }
-    
-//     fclose (f);
-//     return result == 0;
 }
 
 /*
@@ -170,99 +159,147 @@ char *python::ptr_to_string (char *c, void *ptr, int sz)
     return c;
 }
 
-
-// Grab a function's code object from a Python module
-PyCodeObject *python::get_function_code (PyObject *module, const char* func_name)
-{
-    PyCodeObject *code = NULL;
-
-    // Try to grab the function object
-    if (PyObject_HasAttrString (module, (char*) func_name))
-    {
-        PyObject *function = PyObject_GetAttrString (module, (char*) func_name);
-
-        // If the function exists, get it's code object
-        if (function && PyCallable_Check (function))
-        {
-            code = (PyCodeObject *) PyObject_GetAttrString (function, "func_code");
-/*
-            cout << "code->co_flags   " << code->co_flags << endl;
-            cout << "code->co_nlocals " << code->co_nlocals << endl;
-            cout << "code->co_names ";
-            PyObject_Print (code->co_names, stdout, 0);	
-            cout << endl << "code->co_varnames ";
-            PyObject_Print (code->co_varnames, stdout, 0);
-            cout << endl << endl;
-*/
-            //if (code->co_flags & CO_NEWLOCALS)
-            //    code->co_flags -= CO_NEWLOCALS;
-            // code->co_flags = 0;
-        }
-
-        // Clean up
-        Py_XDECREF (function);
-    }
-
-    return code;
-}
-
+// load tuple from file
 PyObject * python::get_tuple (igzstream & file)
 {
-    PyObject * tuple; 
-    u_int32 l;
-    l << file;
+    PyObject *tuple, *item;
+    u_int32 size;
 
-    tuple = PyTuple_New (l);
+    size << file;
+    tuple = PyTuple_New (size);
 
-    for (u_int32 i = 0; i < l; i++) 
+    for (u_int32 i = 0; i < size; i++)
     {
-        string ms;
-        u_int32 j;
-        char c;
-        
-        c << file;
-        switch (c) 
-        {
-            case 's':
-                ms << file;
-                // Stolen reference
-                PyTuple_SetItem (tuple, i, PyString_FromString (ms.c_str ()));
-                break;
-                
-            case 'i':
-                j << file;
-                // Stolen reference
-                PyTuple_SetItem (tuple, i, PyInt_FromLong (j));
-                break; 
-        }
+        item = get_object (file);
+        if (item != NULL) PyTuple_SetItem (tuple, i, item);
     }
-    return tuple; 
+
+    return tuple;
 }
 
+// save contents of a tuple to file
 void python::put_tuple (PyObject * tuple, ogzstream & file)
 {
-    u_int32 l = PyTuple_Size (tuple);
-    l >> file;
-    for (u_int32 i = 0; i < l; i++) 
+    if (!PyTuple_Check (tuple))
     {
-        // Borrowed reference
-        PyObject * item = PyTuple_GetItem (tuple, i);
-        
-        // Check for the type of this object
-        // String?
-        if (PyString_Check (item)) 
+        fprintf (stderr, "*** python::put_tuple: argument is no tuple!");
+        return;
+    }
+
+    u_int32 size = PyTuple_Size (tuple);
+    size >> file;
+
+    for (u_int32 i = 0; i < size; i++)
+        put_object (PyTuple_GetItem (tuple, i), file);
+}
+
+// load dict from file
+PyObject *python::get_dict (igzstream & file)
+{
+    PyObject *dict, *key, *value;
+    u_int8 load;
+
+    dict = PyDict_New ();
+    load << file;
+
+    while (load != 0)
+    {
+        key = get_object (file);
+        value = get_object (file);
+
+        PyDict_SetItem (dict, key, value);
+        load << file;
+    }
+
+    return dict;
+}
+
+// save contents of a dict to file
+void python::put_dict (PyObject * dict, ogzstream & file)
+{
+    if (!PyDict_Check (dict))
+    {
+        fprintf (stderr, "*** python::put_dict: argument is no dict!");
+        return;
+    }
+
+    PyObject *key, *value;
+    s_int32 pos = 0;
+    u_int8 load = 1;
+
+    while (PyDict_Next (dict, &pos, &key, &value))
+    {
+        // save key only if saving value will succeed
+        if (PyInt_Check (value) || PyString_Check (value))
         {
-            's' >> file;
-            char * s = PyString_AsString (item); 
-            string (s) >> file;
-        }
-        
-        // Integer?
-        else if (PyInt_Check (item)) 
-        {
-            'i' >> file;
-            u_int32 li = PyInt_AsLong (item); 
-            li >> file;
+            load >> file;
+            put_object (key, file);
+            put_object (value, file);
         }
     }
+
+    // end of dict
+    load = 0;
+    load >> file;
+}
+
+// load string or integer from file
+PyObject *python::get_object (igzstream &file)
+{
+    char c;
+    c << file;
+
+    switch (c)
+    {
+        // string
+        case 's':
+        {
+            string str;
+            str << file;
+
+            return PyString_FromString (str.c_str ());
+        }
+
+        // integer
+        case 'i':
+        {
+            u_int32 i;
+            i << file;
+
+            return PyInt_FromLong (i);
+        }
+
+        // error:
+        default:
+        {
+            fprintf (stderr, "*** python::get_object: unknown object code '%c'", c);
+        }
+    }
+
+    return NULL;
+}
+
+// save basic python objects to file
+bool python::put_object (PyObject *item, ogzstream & file)
+{
+    // Check for the type of this object
+    // String?
+    if (PyString_Check (item))
+    {
+        's' >> file;
+        char * s = PyString_AsString (item);
+        string (s) >> file;
+        return true;
+    }
+
+    // Integer?
+    if (PyInt_Check (item))
+    {
+        'i' >> file;
+        u_int32 i = PyInt_AsLong (item);
+        i >> file;
+        return true;
+    }
+
+    return false;
 }

@@ -1,7 +1,7 @@
 /*
    $Id$
 
-   Copyright (C) 2001 Kai Sterker <kaisterker@linuxgames.com>
+   Copyright (C) 2001/2002 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -106,41 +106,68 @@ public:
     static PyObject *pass_instance (void* instance, const char* class_name);
 
     /**
-     * Return a function defined in the module as a code %object!
-     *
-     * @param pointer to the module.
-     * @param func_name name of the function to grab.
-     *
-     * @return pointer to the code %object, or NULL if the function does not exist.
-     */
-    static PyCodeObject *get_function_code (PyObject *module, const char* func_name);
-
-    /** 
      * Loads a Python tuple previously saved with put_tuple ().
-     * 
+     *
      * @param file Opened file where to load the tuple from.
-     * 
+     *
      * @return Restored Python tuple.
      */
-    static PyObject * get_tuple (igzstream & file); 
+    static PyObject * get_tuple (igzstream & file);
 
-    /** 
+    /**
      * Save a Python tuple into a file.
      *
      * @warning The Python tuple MUST ONLY be composed of Python strings
      * or integers!
-     * 
+     *
      * @param tuple Python tuple to save.
      * @param file Opened file where to save the tuple to.
      */
-    static void put_tuple (PyObject * tuple, ogzstream & file);  
+    static void put_tuple (PyObject * tuple, ogzstream & file);
+
+    /**
+     * Loads a Python dictionary previously saved with put_dict ().
+     *
+     * @param file Opened file where to load the dictionary from.
+     *
+     * @return Restored Python dictionary.
+     */
+    static PyObject * get_dict (igzstream & file);
+
+    /**
+     * Save a Python dictionary into a file.
+     *
+     * @warning Only integer and string values of the dictionary
+     * are saved!
+     *
+     * @param dict Python dict to save.
+     * @param file Opened file where to save the tuple to.
+     */
+    static void put_dict (PyObject * dict, ogzstream & file);
 
 private:
     /**
      * Convert a Pointer to a String, like SWIG 1.3.7 does
      *
      */
-    static char *python::ptr_to_string (char *c, void *ptr, int sz);
+    static char *ptr_to_string (char *c, void *ptr, int sz);
+
+    /**
+     * Saves basic Python types, like integers or strings to file.
+     *
+     * @param item Python object to save.
+     * @param file Opened file where to save the tuple to.
+     */
+    static bool put_object (PyObject *item, ogzstream & file);
+
+    /**
+     * Loads a Python object previously saved with put_object ().
+     *
+     * @param file Opened file where to load the object from.
+     *
+     * @return Restored Python object.
+     */
+    static PyObject * get_object (igzstream & file);
 };
 
 #ifndef SWIG

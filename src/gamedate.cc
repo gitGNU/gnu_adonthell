@@ -22,6 +22,7 @@
 #include "gamedate.h"
 #include "gametime.h"
 #include "time_event.h"
+#include "event_handler.h"
 
 // gametime minutes spent in the gameworld so far
 u_int32 gamedate::Time = 0;

@@ -90,7 +90,8 @@ public:
      */
     bool equals (event & evnt)
     {
-        return Time == event->time ();
+        time_event e = (time_event &) evnt;
+        return Time == e.time ();
     }
     
     /**

@@ -29,7 +29,7 @@ vector<event*> event_handler::handlers[MAX_EVENT];
 
 // See whether a matching event is registered and execute the
 // according script(s) 
-void event_handler::raise_event (event& e)
+void event_handler::raise_event (const event& e)
 {
     vector<event*>::iterator i;
     // Search through all registered events with the type of the raised event

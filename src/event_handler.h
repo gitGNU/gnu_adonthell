@@ -24,6 +24,9 @@
 #ifndef EVENT_HANDLER_H__
 #define EVENT_HANDLER_H__
 
+#include <vector>
+#include "event.h"
+
 /**
  * Keeps track of registered scripts, recieves triggered events 
  * and executes scripts handling those events
@@ -50,7 +53,7 @@ public:
      * 
      * @param ev event to raise.
      */
-    static void raise_event (event& ev);
+    static void raise_event (const event& ev);
     
 private:
 #ifndef SWIG
