@@ -16,6 +16,7 @@ class dialog;
 
 #include <gtk/gtk.h>
 #include <stdio.h>
+#include <iostream.h>
 
 #include "../../types.h"
 #include "linked_list.h"
@@ -247,9 +248,18 @@ on_list_select (GtkList *list, GtkWidget *widget, gpointer user_data)
     select_object (wnd, point);
 }
 
+// function changed -> set available operators
 void on_function_released (GtkButton *button, gpointer user_data)
 {
+    cout << "funtion ";
+    ((function *) user_data)->set_function ();
+}
 
+// operation changed -> set available operators
+void on_operation_released (GtkButton *button, gpointer user_data)
+{
+    cout << "operation ";
+    ((function *) user_data)->set_operation ();    
 }
 
 // Add function to the list

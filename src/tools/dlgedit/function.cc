@@ -14,6 +14,7 @@
 
 #include <map>
 #include <string.h>
+#include <iostream.h>
 #include <gtk/gtk.h>
 
 #include "../../types.h"
@@ -21,15 +22,17 @@
 #include "function.h"
 #include "callbacks.h"
 
+// static variables
 char *function::fct_string[] = { "LET", "IF" };
 char *function::op_string[] = { "=", "+=", "-=", "==", "!=", "<", ">" };
-map<const char*, s_int32, ltstr> vars;
+map<char*, s_int32, ltstr> function::vars;
 
 // Constructor
-function::function (DlgNode *n) : node (n), number (0)
+function::function (DlgNode *n) : node (n), number (-1), thefunction (IF)
 {
     create_function_dialog ();
     select (-1);
+    set_variables ();
     gtk_widget_show (function_dialog);
 }
 
@@ -42,16 +45,15 @@ function::~function ()
 // Add a new function to node
 void function::add ()
 {
-    // map<const char*, s_int32, ltstr>::iterator i;
+    map<char*, s_int32, ltstr>::iterator i;
     function_data *data = new function_data;
     char *entry[4];
 
     // add data to node
-    data->function = 1;
-    data->operation = 0;
+    data->function = thefunction;
+    data->operation = theoperation;
     data->variable = g_strdup (gtk_entry_get_text ((GtkEntry *) GTK_COMBO (variable)->entry));
     data->value = g_strdup (gtk_entry_get_text ((GtkEntry *) GTK_COMBO (value)->entry));
-    // node->functions.add_element (data);
 
     // add function to list
     entry[0] = function::fct_string[data->function];
@@ -61,7 +63,6 @@ void function::add ()
     gtk_clist_append ((GtkCList*) function_list, entry);
 
     // add variable to list of variables
-    /*
     i = vars.find (data->variable);
     if (i != vars.end ())
     {
@@ -69,31 +70,40 @@ void function::add ()
     }
     else
     {
-        vars[data->variable] = 0;
+        vars[data->variable] = 1;
+
+        // set new variable list
+        set_variables ();
     }
-    */
+    
     number++;
 }
 
 // Remove selected item from function-list
 void function::remove ()
 {
+    gchar *text;
+
+    // nothing selected (should not happen, but the extra check doesn't hurt either)
     if (selection == -1) return;
 
-    // update list of variables
-    /*
-    if (--vars[] == 0)
+    // get the selected variable
+    gtk_clist_get_text (GTK_CLIST (function_list), selection, 1, &text);
+
+    // update count of variable and remove from combobox if count == 0
+    if ((--vars[text]) == 0)
     {
-        vars.erase ();
+        vars.erase (text);
+        set_variables ();
     }
-    */
-    
-    // Remove function
+        
+    // Remove function from list
     gtk_clist_remove (GTK_CLIST (function_list), selection);
     select (-1);
     number--;
 }
 
+// move function up in function list
 void function::up ()
 {
     if (selection > 0)
@@ -103,6 +113,7 @@ void function::up ()
     }
 }
 
+// move function down in function list
 void function::down ()
 {
     if (selection < number)
@@ -112,6 +123,7 @@ void function::down ()
     }
 }
 
+// Select function in function-list
 void function::select (s_int32 row)
 {
     selection = row;
@@ -133,6 +145,129 @@ void function::select (s_int32 row)
     }
 }
 
+// Set the variables that appear in the combobox
+void function::set_variables ()
+{
+    GList *list = NULL;
+    map<char*, s_int32, ltstr>::iterator i;
+
+    // get used variables out of 'vars'
+    for (i = vars.begin (); i != vars.end (); i++)
+        list = g_list_append (list, (*i).first);
+
+    if (list)
+    {
+        // add them to both comboboxes
+        gtk_combo_set_popdown_strings ((GtkCombo *) variable, list);
+        gtk_combo_set_popdown_strings ((GtkCombo *) value, list);
+
+        // avoid that first popdown-string appears in entry
+        gtk_entry_set_text ((GtkEntry *) (GTK_COMBO (variable)->entry), "");
+        gtk_entry_set_text ((GtkEntry *) (GTK_COMBO (value)->entry), "");
+    }
+    else
+    {
+        gtk_list_clear_items ((GtkList *) (GTK_COMBO (variable)->list), 0, -1);
+        gtk_list_clear_items ((GtkList *) (GTK_COMBO (value)->list), 0, -1);
+    }
+}
+
+// Change the function
+void function::set_function ()
+{
+    GtkWidget *menu = gtk_option_menu_get_menu ((GtkOptionMenu *) function);
+    GtkWidget *menu_item = gtk_menu_get_active ((GtkMenu *) menu);
+    thefunction = GPOINTER_TO_INT(gtk_object_get_user_data (GTK_OBJECT (menu_item)));
+
+    cout << "fct " << thefunction << "\n"; 
+    set_operators ();
+}
+
+// Change the operation
+void function::set_operation ()
+{
+    GtkWidget *menu = gtk_option_menu_get_menu ((GtkOptionMenu *) operation);
+    GtkWidget *menu_item = gtk_menu_get_active ((GtkMenu *) menu);
+    theoperation = GPOINTER_TO_INT(gtk_object_get_user_data (GTK_OBJECT (menu_item)));
+
+    cout << "op  " << theoperation << "\n"; 
+}
+
+
+// Change the accessible operations
+void function::set_operators ()
+{
+    GtkWidget *menuitem;
+    GtkWidget *menu;
+    
+    switch (thefunction)
+    {
+        // arithmetics
+        case LET:
+        {
+            menu = gtk_menu_new ();
+
+            // assign
+            menuitem = gtk_menu_item_new_with_label ("=");
+            gtk_widget_show (menuitem);
+            gtk_menu_append (GTK_MENU (menu), menuitem);
+            gtk_object_set_user_data (GTK_OBJECT (menuitem), (gpointer) GINT_TO_POINTER(ASSIGN));
+
+            // add
+            menuitem = gtk_menu_item_new_with_label ("+=");
+            gtk_widget_show (menuitem);
+            gtk_menu_append (GTK_MENU (menu), menuitem);
+            gtk_object_set_user_data (GTK_OBJECT (menuitem), (gpointer) GINT_TO_POINTER(ADD));
+
+            // sub
+            menuitem = gtk_menu_item_new_with_label ("-=");
+            gtk_widget_show (menuitem);
+            gtk_menu_append (GTK_MENU (menu), menuitem);
+            gtk_object_set_user_data (GTK_OBJECT (menuitem), (gpointer) GINT_TO_POINTER(SUB));
+
+            theoperation = ASSIGN;
+            break;
+        }
+
+        // comparisons
+        case IF:
+        {
+            menu = gtk_menu_new ();
+
+            // equal
+            menuitem = gtk_menu_item_new_with_label ("==");
+            gtk_widget_show (menuitem);
+            gtk_menu_append (GTK_MENU (menu), menuitem);
+            gtk_object_set_user_data (GTK_OBJECT (menuitem), (gpointer) GINT_TO_POINTER(EQ));
+
+            // not equal
+            menuitem = gtk_menu_item_new_with_label ("!=");
+            gtk_widget_show (menuitem);
+            gtk_menu_append (GTK_MENU (menu), menuitem);
+            gtk_object_set_user_data (GTK_OBJECT (menuitem), (gpointer) GINT_TO_POINTER(NEQ));
+
+            // less than
+            menuitem = gtk_menu_item_new_with_label ("<");
+            gtk_widget_show (menuitem);
+            gtk_menu_append (GTK_MENU (menu), menuitem);
+            gtk_object_set_user_data (GTK_OBJECT (menuitem), (gpointer) GINT_TO_POINTER(LT));
+
+            // greater than
+            menuitem = gtk_menu_item_new_with_label (">");
+            gtk_widget_show (menuitem);
+            gtk_menu_append (GTK_MENU (menu), menuitem);
+            gtk_object_set_user_data (GTK_OBJECT (menuitem), (gpointer) GINT_TO_POINTER(GT));
+            
+            theoperation = EQ;
+            break;
+        }
+        default: return;
+    }
+
+    gtk_option_menu_remove_menu ((GtkOptionMenu *) operation);
+    gtk_option_menu_set_menu ((GtkOptionMenu *) operation, menu);
+}
+
 // Create the GUI
 void function::create_function_dialog ()
 {
@@ -143,7 +278,6 @@ void function::create_function_dialog ()
     GtkWidget *glade_menuitem;
     GtkWidget *add_button;
     GtkWidget *variable_entry;
-    GtkWidget *operation_menu;
     GtkWidget *value_entry;
     GtkWidget *scrolledwindow1;
     GtkWidget *label1;
@@ -164,7 +298,6 @@ void function::create_function_dialog ()
     gtk_window_set_title (GTK_WINDOW (function_dialog), "Functions");
     gtk_window_set_position (GTK_WINDOW (function_dialog), GTK_WIN_POS_MOUSE);
     gtk_window_set_modal (GTK_WINDOW (function_dialog), TRUE);
-    // gtk_window_set_default_size (GTK_WINDOW (function_dialog), 300, 180);
     gtk_window_set_policy (GTK_WINDOW (function_dialog), FALSE, FALSE, FALSE);
 
     vbox1 = gtk_vbox_new (FALSE, 0);
@@ -190,13 +323,15 @@ void function::create_function_dialog ()
     gtk_box_pack_start (GTK_BOX (hbox1), function, FALSE, FALSE, 0);
     function_menu = gtk_menu_new ();
     glade_menuitem = gtk_menu_item_new_with_label ("LET");
+    gtk_object_set_user_data (GTK_OBJECT (glade_menuitem), (gpointer) GINT_TO_POINTER(LET));
     gtk_widget_show (glade_menuitem);
     gtk_menu_append (GTK_MENU (function_menu), glade_menuitem);
     glade_menuitem = gtk_menu_item_new_with_label ("IF");
+    gtk_object_set_user_data (GTK_OBJECT (glade_menuitem), (gpointer) GINT_TO_POINTER(IF));
     gtk_widget_show (glade_menuitem);
     gtk_menu_append (GTK_MENU (function_menu), glade_menuitem);
     gtk_option_menu_set_menu (GTK_OPTION_MENU (function), function_menu);
-    gtk_option_menu_set_history (GTK_OPTION_MENU (function), 1);
+    gtk_option_menu_set_history (GTK_OPTION_MENU (function), thefunction);
 
     // Variable selection (either chose out of the list or add a new one)
     variable = gtk_combo_new ();
@@ -220,20 +355,8 @@ void function::create_function_dialog ()
         (GtkDestroyNotify) gtk_widget_unref);
     gtk_box_pack_start (GTK_BOX (hbox1), operation, FALSE, FALSE, 0);
     gtk_widget_show (operation);
-    operation_menu = gtk_menu_new ();
-    glade_menuitem = gtk_menu_item_new_with_label ("==");
-    gtk_widget_show (glade_menuitem);
-    gtk_menu_append (GTK_MENU (operation_menu), glade_menuitem);
-    glade_menuitem = gtk_menu_item_new_with_label ("!=");
-    gtk_widget_show (glade_menuitem);
-    gtk_menu_append (GTK_MENU (operation_menu), glade_menuitem);
-    glade_menuitem = gtk_menu_item_new_with_label ("<");
-    gtk_widget_show (glade_menuitem);
-    gtk_menu_append (GTK_MENU (operation_menu), glade_menuitem);
-    glade_menuitem = gtk_menu_item_new_with_label (">");
-    gtk_widget_show (glade_menuitem);
-    gtk_menu_append (GTK_MENU (operation_menu), glade_menuitem);
-    gtk_option_menu_set_menu (GTK_OPTION_MENU (operation), operation_menu);
+
+    set_operators ();
 
     // Value selection (chose variable out of list or enter digit)
     value = gtk_combo_new ();
@@ -271,10 +394,6 @@ void function::create_function_dialog ()
     gtk_clist_set_column_width (GTK_CLIST (function_list), 2, 65);
     gtk_clist_set_column_width (GTK_CLIST (function_list), 3, 110);
     gtk_clist_column_titles_show (GTK_CLIST (function_list));
-    gtk_clist_column_title_passive (GTK_CLIST (function_list), 0);
-    gtk_clist_column_title_passive (GTK_CLIST (function_list), 1);
-    gtk_clist_column_title_passive (GTK_CLIST (function_list), 2);
-    gtk_clist_column_title_passive (GTK_CLIST (function_list), 3);
     
     label1 = gtk_label_new ("Function");
     gtk_widget_ref (label1);
@@ -303,6 +422,9 @@ void function::create_function_dialog ()
         (GtkDestroyNotify) gtk_widget_unref);
     gtk_widget_show (label4);
     gtk_clist_set_column_widget (GTK_CLIST (function_list), 3, label4);
+
+    // Labels shouldn't be clickable as they serve no function anyway
+    gtk_clist_column_titles_passive (GTK_CLIST (function_list));
 
     // Buttons for list maipulation
     hbuttonbox2 = gtk_hbutton_box_new ();
@@ -402,4 +524,8 @@ void function::create_function_dialog ()
         GTK_SIGNAL_FUNC (on_fct_select_row), (gpointer) this);
     gtk_signal_connect (GTK_OBJECT (function_list), "unselect_row",
         GTK_SIGNAL_FUNC (on_fct_unselect_row), (gpointer) this);
+    gtk_signal_connect (GTK_OBJECT (function), "released",
+        GTK_SIGNAL_FUNC (on_function_released), (gpointer) this);
+    gtk_signal_connect (GTK_OBJECT (operation), "released",
+        GTK_SIGNAL_FUNC (on_operation_released), (gpointer) this);
 }

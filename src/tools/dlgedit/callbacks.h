@@ -38,6 +38,7 @@ void on_list_select (GtkList *, GtkWidget *, gpointer);
 
 // Function Dialog Callbacks
 void on_function_released (GtkButton *, gpointer);
+void on_operation_released (GtkButton *, gpointer);
 void on_add_button_clicked (GtkButton *, gpointer);
 void on_remove_button_clicked (GtkButton *, gpointer);
 void on_up_button_clicked (GtkButton *, gpointer);

@@ -67,9 +67,13 @@ public:
     void up ();
     void down ();
     void select (s_int32);          // Change selection state of the list                 
+    void set_function ();           // Change the function
+    void set_operation ();          // Change the operation
     
 private:
     void create_function_dialog (); // Create the GUI
+    void set_variables ();          // Set the variables displayed in the Combobox
+    void set_operators ();          // Change the accessible operations
 
     GtkWidget *function_dialog;     // The Dialogbox
     GtkWidget *function_list;       // The Listwidget containing assigned functions
@@ -86,11 +90,12 @@ private:
 
     static char* fct_string[];      // String representation of functions
     static char* op_string[];       // String representation of operators
-    static map<const char*, s_int32, ltstr> vars;// Contains all used variables ...
-                                    // ... with a ´Reference count´
-    
+    static map<char*, s_int32, ltstr> vars;// Contains all used variables
+
     s_int32 selection;              // Selected function in the list 
     s_int32 number;                 // Number of functions in list
+    u_int32 thefunction;            // Function currently selected
+    u_int32 theoperation;           // Operation currently selected
 };
 
 #endif // _FUNCTION_

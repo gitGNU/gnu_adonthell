@@ -347,7 +347,7 @@ create_text_dialog (NodeData * cbd)
     GTK_WIDGET_SET_FLAGS (cancel_button, GTK_CAN_DEFAULT);
 
     /* Callback handlers (or whatever you call them in gtk) */
-    gtk_signal_connect (GTK_OBJECT (text_dialog), "on_widget_destroy", GTK_SIGNAL_FUNC (on_widget_destroy), NULL);
+    gtk_signal_connect (GTK_OBJECT (text_dialog), "delete_event", GTK_SIGNAL_FUNC (on_widget_destroy), NULL);
     gtk_signal_connect (GTK_OBJECT (button_player), "toggled", GTK_SIGNAL_FUNC (on_button_player_toggled), cbd);
     gtk_signal_connect (GTK_OBJECT (button_npc), "toggled", GTK_SIGNAL_FUNC (on_button_npc_toggled), cbd);
     gtk_signal_connect (GTK_OBJECT (cancel_button), "pressed", GTK_SIGNAL_FUNC (on_cancel_button_pressed), cbd);
