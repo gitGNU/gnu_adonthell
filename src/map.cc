@@ -320,7 +320,7 @@ void map::update_keyboard()
 
 #ifdef SDL_MIXER
   // Sound effects tied to keyboard
-  if(keyboard::is_pushed(49)) audio_in->play_wave(0,0); // '1' Key
+  if(keyboard::is_pushed(49)) audio_in->play_wave(2,0); // '1' Key
   if(keyboard::is_pushed(50)) audio_in->play_wave(1,1); // '2' Key
 
   // Change background music (500 ms fade in/out, slot of new music)
