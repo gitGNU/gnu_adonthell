@@ -92,10 +92,15 @@ void py_callback::put_state (ogzstream & file) const
     std::string name = "";
     
     // get name of callback function
-    PyObject *p_name = PyObject_GetAttrString (function, "__name__");
-    if (PyString_Check (p_name)) name = PyString_AsString (p_name);
-    else fprintf (stderr, "*** error: py_callback::put_state: Failed to retrieve callback name!");
-    
+    if (function) {
+	PyObject *p_name = PyObject_GetAttrString (function, "__name__");
+    	if (PyString_Check (p_name)) name = PyString_AsString (p_name);
+    	else fprintf (stderr, "*** error: py_callback::put_state: Failed to retrieve callback name!");
+     
+        // cleanup
+        Py_XDECREF (p_name);
+    }
+
     name >> file;
 
     // NOTE: extra arguments need to be a tuple containing only ints or strings.
@@ -105,9 +110,6 @@ void py_callback::put_state (ogzstream & file) const
         python::put_tuple (arguments, file);
     }
     else false >> file; 
-     
-    // cleanup
-    Py_XDECREF (p_name);
 }
 
 // restore callback from a file
