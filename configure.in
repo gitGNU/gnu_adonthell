@@ -7,7 +7,7 @@ AC_INIT(README)
 AM_INIT_AUTOMAKE(adonthell, 0.3pre1)
 
 CFLAGS="-g -Wall"
-LIBS="-lz -ldl"
+#LIBS="-lz"
 DEFS=""
 
 dnl Checks for programs.
@@ -48,7 +48,10 @@ dnl ********************
 dnl Check for libraries.
 dnl ********************
 
-AC_CHECK_LIB(pthread, main,, echo "Adonthell requires Pthreads library.  Exitting..."; exit 1)
+AC_CHECK_LIB(pthread, main,
+    PTHREADS=yes,
+    PTHREADS=no)
+
 AC_CHECK_LIB(z, main,,echo "Adonthell requires Zlib. Exitting...";exit 1)
 
 dnl Check for SDL
@@ -171,7 +174,7 @@ changequote([, ])
 dnl Python 2.0+ requires some additional libraries
 
 if test $PYTHON_VERSION -ge 20; then
-	PY_LIBS="$PY_LIBS -ldb -lutil"
+	PY_LIBS="$PY_LIBS -lutil"
 fi
 
 dnl Try for specific version first, then the generic version, then panic
@@ -254,7 +257,11 @@ dnl  **************************
 dnl  Check for required headers
 dnl  **************************
 
-AC_CHECK_HEADERS([pthread.h SDL/SDL.h zlib.h])
+AC_CHECK_HEADERS([SDL/SDL.h zlib.h])
+
+if test x$PTHREADS = xyes; then
+   AC_CHECK_HEADERS([pthread.h])
+fi
 
 if test x$SDL_MIXER = xyes; then
    AC_CHECK_HEADERS([SDL/SDL_mixer.h SDL/SDL_audio.h]) 
@@ -327,4 +334,5 @@ echo
 echo "Now type 'make' to build Adonthell"
 echo "Afterwards, 'make install' will install Adonthell in $prefix/bin"
 echo
+
 
