@@ -148,7 +148,6 @@ void debug_dlg::update ()
 
     dictionary <character *>::iterator itc; 
     for (itc = data::characters.begin (); itc != data::characters.end () && itc->second != NULL; itc++) 
-        //     while ((mychar = (character *) data::characters.next ()) != NULL)
     {
         parent = gtk_ctree_find_by_row_data_custom (tree, NULL, (void *) itc->second->get_name().c_str (),
                                                     (GCompareFunc) strcompare);
@@ -170,7 +169,6 @@ void debug_dlg::update ()
 
     dictionary <quest *>::iterator itq; 
     for (itq = data::quests.begin (); itq != data::quests.end () && itq->second != NULL; itq++) 
-        //     while ((myquest = (quest *) data::quests.next ()) != NULL)
     {
         parent = gtk_ctree_find_by_row_data_custom (tree, NULL, (void *) itq->second->name.c_str (), (GCompareFunc) strcompare);
 
@@ -393,8 +391,9 @@ void debug_dlg::init ()
 
     dictionary <character *>::iterator itc; 
     for (itc = data::characters.begin (); itc != data::characters.end (); itc++) 
-        //     while ((mychar = (character *) data::characters.next ()) != NULL)
     {
+        if (itc->second == NULL) continue;
+
         text[0] = (char *) itc->second->get_name().c_str ();
         text[1] = "";
 
@@ -420,8 +419,9 @@ void debug_dlg::init ()
     gtk_clist_freeze (GTK_CLIST (quest_tree));
     dictionary <quest *>::iterator itq; 
     for (itq = data::quests.begin (); itq != data::quests.end (); itq++) 
-        //     while ((myquest = (quest *) data::quests.next ()) != NULL)
     {
+        if (itq->second == NULL) continue;
+
         text[0] = (char *) itq->second->name.c_str ();
         text[1] = "";
 
