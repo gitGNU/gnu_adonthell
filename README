@@ -43,6 +43,16 @@ The available options and what they do are:
   (If you have trouble with the fullscreen mode, see the NEWBIE
   file for help)
 
+- Language [locale]
+  Specifies which language to use. As long as this option is unset,
+  the language is determined by one of the following environment
+  variables: LANG, LC_ALL or LC_MESSAGES. Once the option is set,
+  it overrides any environment variable. For a listing of valid
+  locale strings, run 'locale -a'.
+  
+  Of course, the game you run has to provide the translation you 
+  chose here, otherwise you'll get the default (i.e. English) text.
+
 - Audio-channels
   Whether sound should be mono or stereo
   0 = Mono, 1 = Stereo
