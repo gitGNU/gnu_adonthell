@@ -519,25 +519,31 @@ create_list_item (MainFrame *wnd, DlgNode *node, int mode)
 
     switch (mode)
     {
+        // Selcted node's text
         case 1:
         {
             color.red = 65535;
-            color.green = 0;
+            if (node->type == NPC) color.green = 0;
+            else color.green = 32700;
             color.blue = 0;
             break;
         }
+        // Linked node's text
         case 2:
         {
             color.red = 30000;
             color.green = 30000;
-            color.blue = 30000;
+            if (node->type == NPC) color.blue = 30000;
+            else color.blue = 45000;
             break;
         }
+        // Directly attached node's text
         default:
         {
             color.red = 0;
             color.green = 0;
-            color.blue = 0;
+            if (node->type == NPC) color.blue = 0;
+            else color.blue = 35000;
             break;
         }
     }
