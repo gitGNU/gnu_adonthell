@@ -85,6 +85,9 @@ slot *inventory::next ()
 // insert item(s)
 u_int32 inventory::add (item_base *item, const u_int32 & count)
 {
+    // nothing to do
+    if (count == 0) return 0;
+    
     std::vector<slot*>::iterator i;
     s_int32 remaining = count;
     
@@ -107,8 +110,21 @@ u_int32 inventory::add (item_base *item, const u_int32 & count)
             if (remaining == 0) return 0;
         } 
 
+    // if there are still items left, grow inventory if allowed
+    if (remaining && !Limited)
+    {
+        slot *s;
+        
+        while (remaining)
+        {
+            s = new slot (this);
+            remaining = s->add (item, remaining);
+            Slots.push_back (s);
+        }
+    }
+    
     // return how many items didn't fit
-    return remaining;  
+    return remaining;
 }
 
 // save inventory
@@ -122,6 +138,9 @@ bool inventory::put_state (ogzstream & file)
     // save contents
     for (i = Slots.begin (); i != Slots.end (); i++)
     {
+        // in case of unlimited inventory, don't bother with saving empty slots
+        if (!Limited && (*i)->count () == 0) continue;
+        
         true >> file;
         (*i)->put_state (file);
     }

@@ -116,7 +116,7 @@ public:
      * @param count The number of items in the stack.
      * @return the number of items that did not fit.
      */
-    u_int32 add (item_base *item, const u_int32 & count);
+    u_int32 add (item_base *item, const u_int32 & count = 1);
     //@}
     
     /**
