@@ -1,5 +1,5 @@
 /*
-   $Id:
+   $Id$
 
    Copyright (C) 2002   Alexandre Courbot <alexandrecourbot@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
@@ -12,20 +12,44 @@
    See the COPYING file for more details.
 */
 
+/**
+ * @file   keyboard_event.h
+ * @author Alexandre Courbot <alexandrecourbot@linuxgames.com>
+ * 
+ * @brief  Declares the keyboard_event class.
+ * 
+ * 
+ */
+
+
 #ifndef KEYBOARD_EVENT_H
 #define KEYBOARD_EVENT_H
 
 #include "input_event.h"
 #include <string>
 
+/**
+ * Represents a keyboard event, that is a key identifier
+ * and a status (KEY_PUSHED or KEY_RELEASED).
+ * 
+ */
 class keyboard_event : public input_event
 {
 public:
+
+    /**
+     * Types of keyboard events.
+     * 
+     */
     typedef enum
     {
         KEY_PUSHED, KEY_RELEASED
     } event_type; 
 
+    /**
+     * Keyboard keys enumeration.
+     * 
+     */
     typedef enum
     {
         UNKNOWN_KEY = 0,
@@ -258,27 +282,52 @@ public:
         BREAK_KEY,
         MENU_KEY,
         POWER_KEY,
-        EURO_KEY,
-        
+        EURO_KEY,        
         NBR_KEYS
     } key_type; 
     
+    /** 
+     * Constructor.
+     * 
+     * @param t kind of keyboard event (KEY_PUSHED or KEY_RELEASED)
+     * @param k key concerned bu this event.
+     *
+     */
     keyboard_event (event_type t, key_type k) : input_event (KEYBOARD_EVENT)
     {
         Type = t;
         Key = k; 
     }
 
+    /** 
+     * Returns the type of this event.
+     * 
+     * 
+     * @return type of this keyboard_event.
+     */    
     event_type type () const
     {
         return Type; 
     }
 
+    /** 
+     * Returns the key concerned by this event.
+     * 
+     * 
+     * @return key concerned by this event.
+     */
     key_type key () const
     {
         return Key; 
     }
 
+    /** 
+     * Returns a reference to a string containing the symbol
+     * of the key concerned by this event.
+     * 
+     * 
+     * @return symbol of the key concerned by this event.
+     */
     const string & key_symbol () const;
     
 private:

@@ -43,20 +43,17 @@ public:
         return Listen_to[t]; 
     }
 
-    void listen_to (input_event::input_type t, bool val = true) 
-    {
-        Listen_to[t] = val; 
-    }
-
     void connect_function(input_event::input_type t, Functor1wRet<input_event *, int> f)
     {
         Callbacks[t] = f;
         Callback_set[t] = true;
+        Listen_to[t] = true;
     }
 
     void disconnect_function(input_event::input_type t)
     {
         Callback_set[t] = false;
+        Listen_to[t] = false;
     }
 
     int raise_event (input_event * ev)

@@ -1,5 +1,5 @@
 /*
-   $Id:
+   $Id$
 
    Copyright (C) 2002   Alexandre Courbot <alexandrecourbot@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
@@ -11,6 +11,15 @@
 
    See the COPYING file for more details.
 */
+
+/**
+ * @file   keyboard_event.cc
+ * @author Alexandre Courbot <alexandrecourbot@linuxgames.com>
+ * 
+ * @brief  Defines the keyboard_event class.
+ * 
+ * 
+ */
 
 #include "keyboard_event.h"
 

@@ -26,6 +26,63 @@ public:
     {
         letsexit = false;
     }
+
+    int control_func(input_event * ev)
+    {
+        control_event * cev = (control_event *)ev;
+
+        if (cev->type() == control_event::BUTTON_PUSHED)
+        {
+            if (cev->button() == control_event::A_BUTTON)
+            {
+                mchar.run();
+            }            
+            if (cev->button() == control_event::LEFT_BUTTON)
+            {
+                mchar.add_direction(mchar.WEST);
+            }
+            if (cev->button() == control_event::RIGHT_BUTTON)
+            {
+                mchar.add_direction(mchar.EAST);
+            }
+            if (cev->button() == control_event::UP_BUTTON)
+            {
+                mchar.add_direction(mchar.NORTH);
+            }
+            if (cev->button() == control_event::DOWN_BUTTON)
+            {
+                mchar.add_direction(mchar.SOUTH);
+            }            
+        }
+        else
+        {
+            if (cev->button() == control_event::A_BUTTON)
+            {
+                mchar.walk();
+            }            
+            if (cev->button() == control_event::LEFT_BUTTON)
+            {
+                mchar.remove_direction(mchar.WEST);
+            }
+            if (cev->button() == control_event::RIGHT_BUTTON)
+            {
+                mchar.remove_direction(mchar.EAST);
+            }
+            if (cev->button() == control_event::UP_BUTTON)
+            {
+                mchar.remove_direction(mchar.NORTH);
+            }
+            if (cev->button() == control_event::DOWN_BUTTON)
+            {
+                mchar.remove_direction(mchar.SOUTH);
+            }            
+
+        }
+
+        mchar.update_state();
+
+        return 1;
+    }
     
     int callback_func(input_event * ev)
     {
@@ -33,32 +90,6 @@ public:
 
         if (kev->type() == keyboard_event::KEY_PUSHED)
         {
-            if (kev->key() == keyboard_event::H_KEY)
-            {
-                mchar.stop();
-                mchar.set_state("say_hi");
-                return 1;
-            }
-            if (kev->key() == keyboard_event::R_KEY)
-            {
-                mchar.run();
-            }            
-            if (kev->key() == keyboard_event::LEFT_KEY)
-            {
-                mchar.add_direction(mchar.WEST);
-            }
-            if (kev->key() == keyboard_event::RIGHT_KEY)
-            {
-                mchar.add_direction(mchar.EAST);
-            }
-            if (kev->key() == keyboard_event::UP_KEY)
-            {
-                mchar.add_direction(mchar.NORTH);
-            }
-            if (kev->key() == keyboard_event::DOWN_KEY)
-            {
-                mchar.add_direction(mchar.SOUTH);
-            }
             if (kev->key() == keyboard_event::ESCAPE_KEY)
             {
                 letsexit = true;
@@ -66,47 +97,13 @@ public:
         }
         else
         {
-            if (kev->key() == keyboard_event::H_KEY)
-            {
-                mchar.update_state();
-            }
             if (kev->key() == keyboard_event::R_KEY)
             {
                 mchar.walk();
             }            
-            if (kev->key() == keyboard_event::LEFT_KEY)
-            {
-                mchar.remove_direction(mchar.WEST);
-            }
-            if (kev->key() == keyboard_event::RIGHT_KEY)
-            {
-                mchar.remove_direction(mchar.EAST);
-            }
-            if (kev->key() == keyboard_event::UP_KEY)
-            {
-                mchar.remove_direction(mchar.NORTH);
-            }
-            if (kev->key() == keyboard_event::DOWN_KEY)
-            {
-                mchar.remove_direction(mchar.SOUTH);
-            }            
         }   
 
-        mchar.update_state();
-
         return true;
-    }
-
-    int callback_mouse(input_event * ev)
-    {
-        mouse_event * me = (mouse_event *)ev;
-        
-        cout << me->x() << " " << me->y() << " ";
-        if (me->type() == mouse_event::BUTTON_PUSHED) cout  << me->button_symbol()<< " pushed";
-        else if (me->type() == mouse_event::BUTTON_RELEASED) cout  << me->button_symbol() << " released";
-        cout << endl;
-
-        return 1;
     }
 };
 
@@ -115,22 +112,38 @@ int main (int argc, char * argv[])
     screen::init (); 
     screen::set_video_mode(640, 480);
 
+    input_manager::init();
+
     game_client gc;
 
     input_listener il;
 
-    il.listen_to(input_event::KEYBOARD_EVENT);
-    il.listen_to(input_event::MOUSE_EVENT);
+    Functor1wRet<input_event *, int> fwr;
+    fwr = makeFunctor(&fwr, gc, &game_client::control_func);
+    il.connect_function(input_event::CONTROL_EVENT, 
+                        fwr);
 
-    Functor1wRet<input_event *, int> fwr = makeFunctor(&fwr, gc, &game_client::callback_func);
+    fwr = makeFunctor(&fwr, gc, &game_client::callback_func);
     il.connect_function(input_event::KEYBOARD_EVENT, 
                         fwr);
 
-    fwr = makeFunctor(&fwr, gc, &game_client::callback_mouse);
-    il.connect_function(input_event::MOUSE_EVENT, 
-                        fwr);
-
     input_manager::add(&il);
+
+    
+    control_event::map_keyboard_key(keyboard_event::LCTRL_KEY, control_event::A_BUTTON);
+    control_event::map_keyboard_key(keyboard_event::R_KEY, control_event::A_BUTTON);
+    control_event::map_joystick_button(0, joystick_event::BUTTON_0, control_event::A_BUTTON);
+    control_event::map_mouse_button(mouse_event::RIGHT_BUTTON, control_event::A_BUTTON);
+
+    control_event::map_keyboard_key(keyboard_event::UP_KEY, control_event::UP_BUTTON);
+    control_event::map_keyboard_key(keyboard_event::DOWN_KEY, control_event::DOWN_BUTTON);
+    control_event::map_keyboard_key(keyboard_event::LEFT_KEY, control_event::LEFT_BUTTON);
+    control_event::map_keyboard_key(keyboard_event::RIGHT_KEY, control_event::RIGHT_BUTTON);
+
+    control_event::map_joystick_button(0, joystick_event::AXIS1_FORE, control_event::UP_BUTTON);
+    control_event::map_joystick_button(0, joystick_event::AXIS1_BACK, control_event::DOWN_BUTTON);
+    control_event::map_joystick_button(0, joystick_event::AXIS0_FORE, control_event::LEFT_BUTTON);
+    control_event::map_joystick_button(0, joystick_event::AXIS0_BACK, control_event::RIGHT_BUTTON);
 
     screen::set_video_mode (640, 480, 16);
 
@@ -221,6 +234,8 @@ int main (int argc, char * argv[])
         screen::show ();
         screen::clear (); 
     }
+
+    input_manager::cleanup();
     
     return 0; 
 }
