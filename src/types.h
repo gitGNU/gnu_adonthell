@@ -1,3 +1,5 @@
+#ifndef _types_h
+#define _types_h
 
 /*
    Copyright (C) 1999 Alexandre Courbot.
@@ -24,3 +26,5 @@
 #define LEFT 2
 #define UP 3
 #define DOWN 4
+
+#endif

@@ -1,3 +1,6 @@
+#ifndef _mapsquare_h
+#define _mapsquare_h
+
 class mapcharacter;
 class mapsquare
 {
@@ -43,3 +46,6 @@ class mapsquare
 #define SOLID_RIGHT 2
 #define SOLID_UP 4
 #define SOLID_DOWN 8
+
+
+#endif

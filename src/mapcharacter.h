@@ -1,3 +1,8 @@
+#ifndef _mapcharacter_h
+#define _mapcharacter_h
+
+#include "gfx.h"
+
 class map;
 class mapcharacter
 {
@@ -58,3 +63,5 @@ class mapcharacter
 
 #define MAPCHAR_EVENT_COME 1
 #define MAPCHAR_EVENT_LEFT 2
+
+#endif

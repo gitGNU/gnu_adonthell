@@ -1,3 +1,6 @@
+#ifndef _mappattern_h
+#define _mappattern_h
+
 class mappattern
 {
     image * frame;
@@ -25,3 +28,5 @@ class mappattern
     void putbox_mask_part_trans (u_int16 x, u_int16 y, u_int16 bw, u_int16 bh,
 				 u_int16 xo, u_int16 yo, u_int8 alpha);
 };
+
+#endif

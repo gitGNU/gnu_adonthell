@@ -1,3 +1,12 @@
+#ifndef _map_h
+#define _map_h
+
+#include "types.h"
+#include "mapsquare.h"
+#include "mappattern.h"
+#include "mapevent.h"
+#include "window.h"
+
 typedef char lstr[100];
 
 class map
@@ -115,3 +124,5 @@ class map
 #define MAP_STATUS_NORMAL 0
 #define MAP_STATUS_QUIT 1
 #define MAP_STATUS_FADE 2
+
+#endif

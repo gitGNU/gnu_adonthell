@@ -90,7 +90,11 @@ u_int16 map::load_patternset_to_map(lstr fname, u_int16 startpos)
   u_int16 retvalue;
   FILE * file;
   file=fopen(fname,"r");
-  if(!file) return(0);
+  if(!file)
+  {
+     printf("Error opening file %s",fname);
+     exit(1);
+  }
   patternname=(lstr*)realloc(patternname,sizeof(lstr)*(nbr_of_patternsets+1));
   strcpy(patternname[nbr_of_patternsets],fname);
   retvalue=get_patternset_to_map(file,startpos);
@@ -106,6 +110,7 @@ s_int8 map::get(FILE * file)
   lstr filename;
   
   fread(&nbr_of_patterns,sizeof(nbr_of_patterns),1,file);
+
   nbr_of_patternsets=0;
   while(i<nbr_of_patterns)
     {

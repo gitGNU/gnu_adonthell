@@ -1,4 +1,8 @@
+#ifndef _gfx_h
+#define _gfx_h
+
 #include "ggi.h"
+#include "types.h"
 
 // All the members of this class are static. It's no use to declare a
 // screen object - use screen:<function> instead.
@@ -149,3 +153,5 @@ class sprite
   ~sprite();
   void get(FILE * file);
 };
+
+#endif

@@ -10,7 +10,6 @@
 */
 #ifndef _window_h_
 #define _window_h_
-#endif
 
 /* window.cc */
 
@@ -101,3 +100,6 @@ class window
 
 #define WIN_FONT_HEIGHT 8
 #define WIN_FONT_LENGHT 7
+
+
+#endif
