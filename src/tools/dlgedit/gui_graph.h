@@ -24,6 +24,7 @@
 
 #include <gdk/gdktypes.h>
 #include <gtk/gtkstyle.h>
+#include "gui_tooltip.h"
 #include "dlg_module.h"
 
 /**
@@ -154,6 +155,7 @@ private:
     DlgPoint *offset;       // Module's relative position to the origin
     GtkWidget *graph;       // Drawing Area
     GdkPixmap *surface;     // Drawing surface
+    GuiTooltip *tooltip;    // Tooltip for displaying node-text
 };
 
 #endif // GUI_GRAPH_H

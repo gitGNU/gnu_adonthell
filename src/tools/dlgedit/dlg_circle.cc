@@ -227,3 +227,31 @@ string DlgCircle::text ()
     // append actual text and return it
     return text += entry_->text ();
 }
+
+// get tooltip text of the circle
+string DlgCircle::tooltip ()
+{
+    string text = "";
+    
+    // is there any text at all?
+    if (entry_ == NULL) return text;
+
+    // are there a one or more conditions?
+    if (entry_->condition () != "")
+    {
+        text += entry_->condition ();
+        text += "\n\n";
+    }
+    
+    // append text
+    text += DlgCircle::text ();
+    
+    // is there further code?
+    if (entry_->code () != "")
+    {
+        text += "\n\n";
+        text += entry_->code ();
+    }
+    
+    return text;
+}

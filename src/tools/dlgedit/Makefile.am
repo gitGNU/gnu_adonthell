@@ -23,6 +23,7 @@ dlgedit_SOURCES = \
     gui_graph_events.cc \
     gui_list.cc \
     gui_list_events.cc \
+    gui_tooltip.cc \
     lex.loadlg.cc \
     main.cc \
     dlg_arrow.h \
@@ -40,7 +41,8 @@ dlgedit_SOURCES = \
     gui_graph.h \
     gui_graph_events.h \
     gui_list.h \
-    gui_list_events.h
+    gui_list_events.h \
+    gui_tooltip.h
 
 # Evil, but it works...
 CPPFLAGS +=-I../.. -D_VERSION_=\"0.8pre1\" $(PY_CFLAGS) $(GTK_CFLAGS) $(SDL_CFLAGS)

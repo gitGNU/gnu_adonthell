@@ -103,6 +103,12 @@ public:
     string text ();
     
     /**
+     * Get the text of this circle for use with the GuiTooltip
+     * @return a string of the form "<condition>\n<Text>\n<code>".
+     */
+    string tooltip ();
+
+    /**
      * Check whether any arbitrary Python code is assigned to this circle.
      * @return <b>true</b> if this is the case, <b>false</b> otherwise.
      */

@@ -45,6 +45,12 @@ public:
      */
     void setMode (mode_type m)  { mode_ = m; }
     
+    /** 
+     * Get the current mode of a node.
+     * @return the node's mode.
+     */
+    mode_type mode ()           { return mode_; }
+    
     /**
      * Draw this node to the given surface with the specified offset. 
      * The node's current mode determines the color thw node is drawn with. 

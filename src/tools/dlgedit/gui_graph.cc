@@ -21,6 +21,7 @@
 
 #include <gtk/gtk.h>
 #include "gui_dlgedit.h"
+#include "gui_tooltip.h"
 #include "gui_graph_events.h"
 
 // Constructor
@@ -45,7 +46,7 @@ GuiGraph::GuiGraph (GtkWidget *paned)
     gtk_signal_connect (GTK_OBJECT (graph), "button_release_event", (GtkSignalFunc) button_release_event, this);
     gtk_signal_connect (GTK_OBJECT (graph), "motion_notify_event", (GtkSignalFunc) motion_notify_event, this);
     gtk_signal_connect (GTK_OBJECT (GuiDlgedit::window->getWindow ()), "key_press_event", (GtkSignalFunc) key_press_notify_event, this);
-
+    
     gtk_widget_set_events (graph, GDK_EXPOSURE_MASK | GDK_LEAVE_NOTIFY_MASK | GDK_BUTTON_PRESS_MASK |
         GDK_BUTTON_RELEASE_MASK | GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_KEY_PRESS_MASK);
 }
@@ -361,10 +362,19 @@ void GuiGraph::mouseMoved (DlgPoint &point)
     if (prev != node)
     {
         // clear old if necessary
-        if (prev != NULL) prev->draw (surface, *offset);
-            
+        if (prev != NULL)
+        {
+            prev->draw (surface, *offset);
+            if (tooltip) delete tooltip;
+        }
+        
         // then highlight the new one
-        if (node != NULL) node->draw (surface, *offset, NODE_HILIGHTED);
+        if (node != NULL) 
+        {
+            node->draw (surface, *offset, NODE_HILIGHTED);
+            tooltip = new GuiTooltip (node);
+            tooltip->draw (graph);
+        }
     }
     
     return;
