@@ -1,17 +1,11 @@
 noinst_LIBRARIES = libgui.a
 
-libgui_a_SOURCES = box.cc misc.cc container.cc label.cc \
-	font.cc widget.cc fixed.cc  \
-	bin.cc window.cc manager.cc border_template.cc \
-	border_ui.cc theme.cc background_template.cc \
-	button_template.cc button.cc button_ui.cc \
-	background_ui.cc object_template.cc\
-	box.h misc.h container.h label.h \
-	font.h widget.h fixed.h \
-	bin.h window.h manager.h border_template.h  \
-	border_ui.h theme.h background_template.h \
-	button_template.h button.h button_ui.h \
-	background_ui.h object_template.h
-
+libgui_a_SOURCES = background.cc base.cc border.cc \
+	container.cc font.cc keys.cc \
+	manager.cc scrollbar.cc scroll.cc select_list.cc theme.cc \
+	event.cc \
+	font.h image.h label.h \
+	scrollbar.h scroll.h select_list.h theme.h keys.h event.h types.h \
+	write.h manager.h object.h window.h mapview.h
 
 CPPFLAGS = -I$(srcdir)/.. $(SDL_DEFS) $(SDL_CFLAGS) $(FT2_CFLAGS) $(PY_CFLAGS)

@@ -1,7 +1,5 @@
 /*
-   $Id$
-
-   (C) Copyright 2002 Joel Vennin
+   (C) Copyright 2000 Joel Vennin
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -12,83 +10,185 @@
    See the COPYING file for more details
 */
 
-#include "border_ui.h"
 #include "container.h"
 
 using namespace gui;
 
-container::container () : my_border_width (5), my_object_ui (NULL) 
-{  
+container::container()
+{
+  move(0,0);  
+  /* no layout */
+  set_layout(NO_LAYOUT);
+
+  /* define space between border */
+  set_space_with_border(SPACE_WITH_BORDER);
+
+  /* define space between objet */
+  set_space_with_object(SPACE_WITH_OBJECT);
+
+  /* objet focused inside the container */
+  focus_object_ = NULL;
 }
 
-
-void container::set_border_width (const u_int16 b)
+container::~container()
 {
-  my_border_width = b; 
+  destroy();
 }
 
-
-u_int16 container::get_border_width () const
+void container::move(s_int16 tx, s_int16 ty)
 {
-  return my_border_width; 
+  base::move(tx,ty);
+  for(lwb::iterator i=list_wb_.begin();i!=list_wb_.end();i++)
+    (*i)->update_position();
 }
 
-
-container::~container ()
+void container::resize(u_int16 tl, u_int16 th)
 {
-  /* destroy the decoration */
-  if (my_object_ui) delete my_object_ui; 
+  base::resize(tl,th);
+
+  update_layout();
 }
 
-
-void container::set_border_ui (border_template * bd_tmp)
+void container::update_position()
 {
-  /* if there is already object remove it */
-  if ( my_object_ui)  delete my_object_ui;
-  /* build a new border */
-  my_object_ui = new border_ui (this);
-  /* define the new border */
-  ((border_ui*)my_object_ui)->set_border (bd_tmp); 
+  base::update_position();
+  for(lwb::iterator i=list_wb_.begin();i!=list_wb_.end();i++)
+    (*i)->update_position();
 }
 
-bool container::draw (gfx::drawing_area * da, gfx::surface * sf)
+void container::add(base * w)
 {
-  /* call the widget draw */
-  if (widget::draw (da, sf) )
-    {
-      /* attach drawing area */
-      assign_drawing_area (da);
-      /* draw the theme */
-      if (my_object_ui) my_object_ui->draw(da, sf);
-      /* detach the drawing area */
-      detach_drawing_area ();
-      
-      return true;
-    }
+  list_wb_.push_back(w);
   
+  w->set_container(this);
+  
+  update_layout();
+}
+
+void container::remove(base * w)
+{
+  list_wb_.remove(w);
+  
+  w->set_container(NULL);
+
+  update_layout();
+}
+
+void container::remove_all()
+{
+  for(lwb::iterator i=list_wb_.begin();i!=list_wb_.end();i++)
+    {
+      (*i)->set_container(NULL);
+      list_wb_.erase(i);
+    }
+}
+
+void container::destroy()
+{
+  for(lwb::iterator i=list_wb_.begin();i!=list_wb_.end();i++)
+    delete *i;
+  list_wb_.clear();
+}
+
+bool container::update()
+{
+    if(base::update())
+    {
+      for(lwb::iterator i=list_wb_.begin();i!=list_wb_.end();i++)
+	{
+	  if(!(*i)->update())
+	    {
+	      list_wb_.erase(i);
+	      delete *i--;
+	    }
+	}
+      return true;
+    } 
   return false;
 }
 
-void container::update_size ()
-{
-  /* update widget size */
-  widget::update_size ();
-  /* if there is is a ui object update it */
-  if (my_object_ui) my_object_ui->resize();
-}
 
-void container::update_position ()
+bool container::input_update()
 {
-  widget::update_position();
-  /* we move the decoration associated at this container*/
-  if (my_object_ui) my_object_ui->move();
+  if(base::input_update())
+    {
+      if(focus_object_) focus_object_->input_update();
+      return true;
+    }
+  return false;
 }
 
 
-void container::realize()
+void container::set_focus_object(base * f)
 {
-  widget::realize();
+  if(focus_object_) focus_object_->set_focus(false);
+  if(f) f->set_focus(true);
+  focus_object_ = f;
+}
+
+void container::set_brightness(bool b)
+{
+  base::set_brightness(b);
   
-  /* we call resize for objet_ui */
-  if (my_object_ui) my_object_ui->resize ();
+  for(lwb::iterator i=list_wb_.begin();i!=list_wb_.end();i++)
+    (*i)->set_brightness(b);
+}
+
+void container::set_trans(bool b)
+{
+  base::set_trans(b);
+  
+  for(lwb::iterator i=list_wb_.begin();i!=list_wb_.end();i++)
+    (*i)->set_trans(b);
+}
+
+void container::set_visible_all(bool b)
+{
+  set_visible(b);
+   for(lwb::iterator i=list_wb_.begin();i!=list_wb_.end();i++)
+     (*i)->set_visible(b);
+}
+
+
+
+bool container::draw()
+{
+  if(base::draw()) 
+    {
+      assign_drawing_area(wb_father_); 
+
+      background::draw(this);   
+      
+      for(lwb::iterator i=list_wb_.begin();i!=list_wb_.end();i++)
+	(*i)->draw();
+      
+      border::draw(wb_father_);
+      
+      detach_drawing_area();
+      
+      return true;
+    }
+  return false;
+}
+
+
+
+void container::update_layout()
+{
+  
+  u_int16 indice_h=space_with_border_;
+  
+  switch(layout_)
+    {
+    case LIST_LAYOUT:
+      
+      for(lwb::iterator i=list_wb_.begin();i!=list_wb_.end();i++)
+	{
+	  (*i)->move((*i)->x(),indice_h);
+	  
+	  indice_h+=(*i)->height()+space_with_object_;
+	}
+      
+      break;
+    }
 }

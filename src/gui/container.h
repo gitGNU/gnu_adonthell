@@ -1,7 +1,7 @@
 /*
    $Id$
 
-   (C) Copyright 2002 Joel Vennin
+   (C) Copyright 2000/2001 Joel Vennin
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -12,134 +12,112 @@
    See the COPYING file for more details
 */
 
+#ifndef GUI_CONTAINER_H_
+#define GUI_CONTAINER_H_
 
-/**
- * @file   container.h
- * @author Joel Vennin <jol@linuxgames.com>
- * 
- * @brief  Declares the container base class.
- * 
- * 
- */
+#include<list>
+#include "../gfx/drawing_area.h"
+#include "base.h"
 
-#ifndef CONTAINER_H_
-#define CONTAINER_H_
+namespace gui {
+  
+  typedef std::list<base*> lwb;
 
 
-#include <vector>  
-
-#include "../callback_sig.h"
-#include "widget.h"
-#include "object_ui.h"
-
-namespace gui
-{
-
-  class border_template;
-
-  /** It's an abstract class, it's can contains lots of widget,  there are some method,  add,  remove a container...
-   *
+  /**
+   * Define a container. A container is able to contains an infinity of objet derived from base objet.
    */
-
-  class container : public widget
+  class container : public base
     {
-      public :
-	
-	
-	/**Initialize some variable,  child to NULL and border_width (5); */
-	container (); 
-      
+    public:
       
       /**
-       * Add a widget in the list.
-       * on_add event is executed
-       * @param a widget to add
+       * Constructor
        */
-      virtual void add (widget * w) = 0; 
-      
-      
-      /** Remove a widget,  don't delete the object
-       * on_remove event is executed
-       * @param remove the widget
-       */
-      virtual void remove (widget *  w) = 0; 
-
-
-      /** Set space between widget and container
-       * @param border width
-       */
-      void set_border_width (const u_int16);
-      
-      
-      /** get border width
-       * @return the border width
-       */
-      u_int16 get_border_width () const;
-      
-      
-      /** clear all widget of the vector and child,  they are deleted
-       * No event is called
-       */
-      virtual void clear () = 0; 
-      
+      container();
       
       /**
-       * draw the container
+       * Move the container.
        */
-      bool draw (gfx::drawing_area * da = NULL, gfx::surface * sf = NULL); 
-      
+      void move(s_int16, s_int16);
       
       /**
-       * Destructor
+       * Resize the container
        */
-      ~container (); 
-      
+      void resize(u_int16, u_int16);
       
       /**
-       * Set the border for this container
-       * @param bd_tmp : the border template use to display border, this objet alloc a border but not the template
-       * futur change : change set_border in set_ui : ?? maybe 
+       * Add base objet
        */
-      void set_border_ui (border_template * bd_tmp); 
-      
+      virtual void add(base *);
       
       /**
-       * update size 
+       * Remove an objet of the container
        */
-      virtual void update_size (); 
-      
+      virtual void remove(base *);
       
       /**
-       * update position
+       * Remove all objet
        */
-      virtual void update_position();
+      virtual void remove_all();
       
+      virtual void destroy();
       
-      /** 
-       * it's used to build the widget.
-       */
-      virtual void realize ();
-    
+      virtual ~container();
       
-      /* call back */
-      callback_sig on_add; //call when an objet is added
-      callback_sig on_remove; //call when an objet is removed
-    
+      virtual bool update();
       
-      protected :
-	
-      /* the space between container and widgets childs */
-	u_int16 my_border_width; 
+      virtual bool input_update();
       
+      virtual bool draw();
       
-      /* the border used by this container */
-      object_ui * my_object_ui; 
-
-      private : 
-
+      void set_visible_all(bool b);
+      
+      virtual void set_brightness(bool b);
+      
+      virtual void set_trans(bool b);
+      
+      virtual void set_space_with_border(u_int16 b){space_with_border_=b;update_layout();}
+      
+      virtual void set_space_with_object(u_int16 o){space_with_object_=o;update_layout();}
+      
+      u_int16 space_with_border(){return space_with_border_;}
+      
+      u_int16 space_with_object(){return space_with_object_;}
+      
+      void set_layout(u_int8 l){layout_=l;update_layout();}
+      
+      void set_focus_object(base * f);
+      
+      base * focus_object(){return focus_object_;}
+      
+      const static u_int8 SPACE_WITH_BORDER = 10;
+      const static u_int8 SPACE_WITH_OBJECT = 10;
+      
+      const static u_int8 LIST_LAYOUT = 1;
+      const static u_int8 NO_LAYOUT = 0;
+      
+    protected:
+      
+      void update_position();
+      void update_layout();
+      
+      u_int16 space_with_object_;
+      u_int16 space_with_border_;
+      u_int8 layout_;
+      
+      lwb list_wb_;
+      
+      base * focus_object_;
+      
     };
-};
-
+}
 #endif
+
+
+
+
+
+
 
 
