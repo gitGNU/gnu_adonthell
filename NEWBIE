@@ -291,12 +291,12 @@ for any request of help.
 
 The mailing list addresses are:
 
-General topic list:	adonthell-general@lists.sourceforge.net
-Developer list:		adonthell-devel@lists.sourceforge.net
-Graphics list:		adonthell-gfx@lists.sourceforge.net
+General topic list:	adonthell-general@
+Developer list:		adonthell-devel@mail.freesoftware.fsf.org
+Artwork list:		adonthell-artwork@mail.freesoftware.fsf.org
 
 You can subscribe to these mailing lists by going to the URL:
-http://sourceforge.net/mail/?group_id=1051
+http://savannah.gnu.org/mail/?group_id=702
 
 If you'd rather e-mail an Adonthell team member directly, you can get
 a list of contacts for the team from the Adonthell web page at:
