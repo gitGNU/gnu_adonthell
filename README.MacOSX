@@ -1,0 +1,90 @@
+Adonthell/Waste's Edge on Mac OS X - prelimenary work-around
+Document version 1.0 by Nils Hesse ( nils.hesse@kcl.ac.uk )
+
+Please not that this text describes how to get Adonthell and Waste's 
+Edge *kind of* working in Mac OS X. The method described is by no means 
+a consumer-ready way of doing things. However, at the moment, it is all 
+we have :)
+
+You WILL be using the Terminal A LOT. You will also need the Administrator's
+password.
+
+I am assuming that you have a default installation of Mac OS X 10.1 and 
+either the December 2001 or the April 2002 Developer Tools and an internet
+connection (the faster, the better).
+
+The very first thing you'll need, is Fink. You can get it at
+
+http://fink.sourceforge.net
+
+Fink is a package management system, similar to GNU Linux/Debian. It 
+will help you install all kinds of GNU (related) software. Amongst 
+others, this also includes things like the X11 windowing server, GNOME,
+enlightenment, etc... it is a very useful package to have, especially 
+if you like the GNU world. :)
+
+Please read all the FAQs and some Documentation on the Fink web site... 
+it is very useful. Also, try to familiarize yourself with dselect (in Fink).
+
+After you've succesfully installed fink, we can begin.
+
+1) at a new Terminal, type 'sudo dselect'.
+
+2) Go to [S]elect and get the following packages:
+
+gettext 		    (in base - you may already have this)
+automake25 		    (in devel)
+libtool14 		    (in devel)
+intltool 		    (in devel)
+sdl		            (in games)
+sdl-image		    (in games)
+sdl-mixer		    (in games)
+smpeg		        (in games)
+python-nox		    (in languages)
+tcltk		        (in languages)
+libogg		        (in sound)
+libogg-shlibs		(in sound)
+libvorbis		    (in sound)
+libvorbis-shlibs	(in sound)
+
+You may be asked to select some other packages in order to fullfill certain
+dependancies... make sure you do.
+
+3) [I]nstall, [C]onfig, [R]emove and [Q]uit.
+
+4) Next, we will need to create a symbolic link - a bit messy, but we can 
+remove it later. In the Terminal type 'ln -s /sw/lib/libvorbis.dylib
+/usr/lib/libvorbis.dylib'.
+
+5) Now we can compile the adonthell source and waste's edge sources :) Get 
+them from:
+
+http://homepage.mac.com/~nhesse
+
+You will need 'adonthell-0.3.3pre1.sit' and 'wastesedge.sit'
+
+6) Once you have those files, un-stuff them and 'cd' into the extracted
+adonthell directory in a Terminal. Once there, type 
+'./configure --disable-nls'. 
+With any luck, all should go well. Then, type 'make'. Watch the screen 
+output jibberish for a few minutes. If there are no errors, you can then 
+proceed with 'sudo make install'. Then you have adonthell installed.
+
+7) Now 'cd' into the extracted wastesedge directory and type './configure'.
+After that, 'make', and after that 'sudo make install'.
+
+8) If all went well, you're done. type '/sw/bin/adonthell-wastesedge' to 
+play. :))
+
+9) If you want, you can do a 'sudo rm /usr/lib/libvorbis.dylib' but that 
+aint important. It's probably best if you leave it there anyway.
+
+Known Bugs
+
+-Text input doesn't work.
+-Nationalisation (nls) doesn't work/compile
+
+Remember, this is an experimental work-around. You're pretty likely to 
+encounter a few problems. For questions, e-mail the adonthell-devel list:
+
+adonthell-devel@mail.freesoftware.fsf.org
