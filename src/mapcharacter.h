@@ -57,7 +57,11 @@ class mapview;
 
 struct PyCodeObject;
 
+#ifndef SWIG
 class mapcharacter : public maptpl
+#else
+class mapcharacter
+#endif
 {
  public:
   // Constructors and init functions
@@ -106,7 +110,9 @@ class mapcharacter : public maptpl
   void update_move();
   void update();
   void draw(mapview * mv);
+#ifndef SWIG
   void draw(s_int16 x, s_int16 y, drawing_area * da_opt=NULL);
+#endif
 
   // Testing if a move is possible
   bool can_go_north();
@@ -124,7 +130,9 @@ class mapcharacter : public maptpl
   void go_east();
   void go_west();
 
+#ifndef SWIG
   mapcharacter& operator =(mapcharacter &m);
+#endif // SWIG
 
  private:
   u_int16 current_move;
@@ -182,7 +190,9 @@ class mapcharacter : public maptpl
   void update_editor_keys();
   void editor();
 #endif
+#ifndef SWIG
   friend class landmap;
+#endif // SWIG
 };
 
 #endif

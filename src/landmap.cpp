@@ -15,11 +15,7 @@
 #include "landmap.h"
 #include "mapview.h"
 
-#ifdef _DEBUG_
-u_int16 mapsquare::a_d_diff=0;
-u_int16 landsubmap::a_d_diff=0;
-u_int16 landmap::a_d_diff=0;
-#else ifdef _EDIT_
+#if defined _DEBUG_ || defined _EDIT_
 u_int16 mapsquare::a_d_diff=0;
 u_int16 landsubmap::a_d_diff=0;
 u_int16 landmap::a_d_diff=0;

@@ -23,7 +23,7 @@
 
 #ifdef _EDIT_
 #define OBJSMPLSIZE 40
-#endif 
+#endif // _EDIT_
 
 class mapview;
 
@@ -84,11 +84,9 @@ class mapsquare_char
 
 class mapsquare
 {
-#ifdef _DEBUG_
+#if defined _DEBUG_ || defined _EDIT_
   static u_int16 a_d_diff;
-#else ifdef _EDIT_
-  static u_int16 a_d_diff;
-#endif
+#endif // _DEBUG_
   
   u_int16 type; // Terrain type ; need to be defined later
   u_int8 walkable;
@@ -145,11 +143,9 @@ class landmap;
 
 class landsubmap
 {
-#ifdef _DEBUG_
+#if defined _DEBUG_ || defined _EDIT_
   static u_int16 a_d_diff;
-#else ifdef _EDIT_
-  static u_int16 a_d_diff;
-#endif
+#endif // _DEBUG_
  public:
   landmap * m_map;
   mapsquare ** land;          // The mapsquares refers to the parent map
@@ -172,7 +168,7 @@ class landsubmap
 
 #ifdef _EDIT_
   s_int8 put(gzFile file);
-#endif
+#endif // _EDIT_
 
   u_int16 get_length();
   u_int16 get_height();
@@ -187,15 +183,13 @@ class landsubmap
   friend class mapcharacter;
 };  // landsubmap
 
-#endif
+#endif // SWIG
 
 class landmap
 {
-#ifdef _DEBUG_
+#if defined _DEBUG_ || defined _EDIT_
   static u_int16 a_d_diff;
-#else ifdef _EDIT_
-  static u_int16 a_d_diff;
-#endif
+#endif // _DEBUG_
 
 #ifndef SWIG
 #ifdef _EDIT_
@@ -210,8 +204,8 @@ class landmap
 
   void reset_objs();
 
-#endif
-#endif
+#endif // _EDIT_
+#endif // SWIG
 
  public:
 #ifndef SWIG
@@ -219,7 +213,7 @@ class landmap
   mapobject ** pattern;
   vector<string> objsrc;
   landsubmap ** submap;
-#endif
+#endif // SWIG
 
   u_int16 nbr_of_patterns;
   u_int16 nbr_of_submaps;
@@ -229,7 +223,9 @@ class landmap
   void clear();
   ~landmap();
 
+#ifndef SWIG
   landmap& operator =(const landmap& lm);
+#endif // SWIG
 
   u_int16 get_nbr_of_patterns() { return nbr_of_patterns; }
   u_int16 get_nbr_of_submaps() { return nbr_of_submaps; }
@@ -239,7 +235,7 @@ class landmap
 #ifdef _EDIT_
   s_int8 put(gzFile file);
   s_int8 save(const char * fname);
-#endif
+#endif // _EDIT_
 
   void put_mapchar(mapcharacter * mchar, u_int16 smap, u_int16 px, u_int16 py);
   void remove_mapchar(mapcharacter * mchar, u_int16 smap, u_int16 px,
@@ -250,10 +246,6 @@ class landmap
     {mapchar.push_back(m);}
   mapcharacter * get_mapchar(u_int16 nbr) { return mapchar[nbr]; }
 
-
-  s_int8 add_submap();
-  s_int8 add_submap(u_int16 l, u_int16 h);
-
   // Remove the submap nbr from the submaps list. Returns 0 if ok, otherwise
   // an error code.
   s_int8 remove_submap(u_int16 nbr);
@@ -261,24 +253,29 @@ class landmap
   s_int8 set_square_pattern(u_int16 smap, u_int16 px, u_int16 py, 
 			    u_int16 patnbr);
 
+  void update();
+
+  void draw_square(u_int16 smap, u_int16 x, u_int16 y, u_int16 px, u_int16 py,
+		   drawing_area * da_opt=NULL);
+
+  s_int8 add_submap(u_int16 l, u_int16 h);
+
 #ifndef SWIG
+  s_int8 add_submap();
+  
   void remove_obj_from_square(u_int16 smap,
 			      list<mapsquare_tile>::iterator obj);  
   s_int8 insert_mapobject(mapobject &an, u_int16 pos,
 			  const char * srcfile="");
   s_int8 delete_mapobject(u_int16 pos);
-#endif
 
-  void update();
-
-  void draw_square(u_int16 smap, u_int16 x, u_int16 y, u_int16 px, u_int16 py,
-		   drawing_area * da_opt=NULL);
   friend class mapview;
   friend class mapcharacter;
+#endif // SWIG
 
 #ifdef _EDIT_
   void editor();
-#endif
+#endif // _EDIT_
 };  // landmap
 
-#endif
+#endif // _LANDMAP_H
