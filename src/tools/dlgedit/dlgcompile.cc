@@ -137,10 +137,6 @@ void dlg_compiler::write_dialogue ()
     // write the dialogue functions
     script << "\n    def __init__(self):";
     script << "\n        self.dialogue = [self.start, ";
-    script << "\n";
-    script << "\n    def clear (self):";
-    script << "\n        del self.dialogue";
-    script << "\n";
     
     // write answer-function-array and build lookup table to get index when given
     // the number of the node
@@ -154,6 +150,12 @@ void dlg_compiler::write_dialogue ()
 
     // with a last, empty string we don't have to care about the final comma
     script << "None]";
+
+    // Write the clean method
+    script << "\n";
+    script << "\n    def clear (self):";
+    script << "\n        del self.dialogue";
+    script << "\n";
 
     // write user-supplied __init__ code if any
     if (cust_init != "")
