@@ -30,12 +30,13 @@
 #endif
 #include <string>
 
-using namespace std; 
-
+namespace std; 
+{
+	
 template<> struct hash<string> {
     size_t operator()(const string& s) const {
 	return __stl_hash_string(s.c_str());
 }};
 
-
+}; // namespace std
 #endif

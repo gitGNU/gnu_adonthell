@@ -1,7 +1,7 @@
 /*
    $Id$
    
-   Copyright (C) 2000/2001 Kai Sterker <kaisterker@linuxgames.com>
+   Copyright (C) 2000/2001/2002 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -31,10 +31,9 @@
 #include <ext/hash_map>
 #else
 #include <hash_map>
-#include <map>
 #endif
 #include "str_hash.h"
-// #include <map>
+#include <map>
 #include <vector>
 #include <string>
 #include "types.h"
