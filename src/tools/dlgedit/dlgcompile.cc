@@ -285,18 +285,35 @@ void dlg_compiler::write_start ()
 // at that moment
 void dlg_compiler::write_answer ()
 {
-    vector<DlgNode*>::iterator i;
+    vector<DlgNode*>::iterator i, j;
     space = "        ";
 
     // write npc node & followers (if any)
     for (i = cur_nodes.begin (); i != cur_nodes.end (); i++)
     {
-        // Two Player nodes following each other isn't allowed
-        if ((*i)->type != NPC && (*i)->type != NARRATOR)
+        // If we find a PLAYER node here, there is something wrong
+        if ((*i)->type == PLAYER)
         {
-            cout << "\n*** Compile error: NPC node expected!"
-                 << "\n Node \"" << ((Circle *) (*i))->text
-                 << "\" may not follow a player node" << flush;
+            int type = PLAYER;
+
+            // Find out which of the two possible errors (below) we have here
+            for (j = cur_nodes.begin (); j != cur_nodes.end (); j++)
+                if ((*j)->type != PLAYER)
+                {
+                    type = (*j)->type;
+                    break;
+                }
+
+            cout << "\n*** Compile error: NPC node expected, but found PLAYER node\n"
+                 << "\"" << ((Circle *) (*i))->text << "\"\n";
+
+            // A node's siblings have to be of the same kind
+            if (type != PLAYER)
+                 cout << "A node can't have different types of siblings." << flush;
+
+            // Two Player nodes following each other isn't allowed
+            else 
+                cout << "A PLAYER node may not follow another PLAYER node." << flush;
         }
         
         // write circle's condition (if any)
