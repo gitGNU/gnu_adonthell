@@ -70,6 +70,7 @@ void image::putbox_mask (u_int16 x, u_int16 y)
   dr.y=y;
   dr.w=lenght;
   dr.h=height;
+  SDL_SetColorKey(data, SDL_SRCCOLORKEY, screen::get_trans());
   SDL_BlitSurface(data, NULL, screen::vis, &dr);
 }
 
@@ -130,7 +131,7 @@ void image::putbox_mask_part (u_int16 x, u_int16 y, u_int16 bw, u_int16 bh,
   dr.y=y;
   dr.w=bw;
   dr.h=bh;
-
+  SDL_SetColorKey(data, SDL_SRCCOLORKEY, screen::get_trans());
   SDL_BlitSurface(data, &sr, screen::vis, &dr);
 }
 
@@ -142,7 +143,7 @@ void image::putbox_mask_trans (u_int16 x, u_int16 y, u_int8 alpha)
   dr.y=y;
   dr.w=lenght;
   dr.h=height;
-
+  SDL_SetColorKey(data, SDL_SRCCOLORKEY, screen::get_trans());
   SDL_SetAlpha(data, SDL_SRCALPHA, alpha);
   SDL_BlitSurface(data, NULL, screen::vis, &dr);
 }
@@ -195,6 +196,7 @@ void image::putbox_mask_part_trans (u_int16 x, u_int16 y, u_int16 bw,
   dr.y=y;
   dr.w=bw;
   dr.h=bh;
+  SDL_SetColorKey(data, SDL_SRCCOLORKEY, screen::get_trans());
   SDL_SetAlpha(data, SDL_SRCALPHA, alpha);
   SDL_BlitSurface(data, &sr, screen::vis, &dr);
  }
@@ -472,7 +474,7 @@ s_int8 image::get(FILE * file)
       lenght*=sizefactor;
       height*=sizefactor;
       data=SDL_ConvertSurface(tmp2, tmp2->format, SDL_SWSURFACE);
-      SDL_SetColorKey(data, SDL_SRCCOLORKEY, 0xFF00FF);
+      //      SDL_SetColorKey(data, SDL_SRCCOLORKEY, 0xFF00FF);
       break;
       
     case 2:
@@ -506,7 +508,7 @@ s_int8 image::get(FILE * file)
       lenght*=sizefactor;
       height*=sizefactor;
       data=SDL_ConvertSurface(tmp2, tmp2->format, SDL_SWSURFACE);
-      SDL_SetColorKey(data, SDL_SRCCOLORKEY, 0xF81F);
+      //      SDL_SetColorKey(data, SDL_SRCCOLORKEY, 0xF81F);
       break;
     }
   
@@ -586,7 +588,7 @@ void screen::init_display(u_int8 vidmode = 0)
   atexit (SDL_Quit);
 
 
-  bpp=SDL_VideoModeOK(screenwidth, screenheight, 24, SDL_HWSURFACE);
+  bpp=SDL_VideoModeOK(screenwidth, screenheight, 16, SDL_HWSURFACE);
 
   switch (bpp)
     {

@@ -62,7 +62,6 @@ int main(int argc, char * argv[])
 
   audio_init();
   audio_thread = SDL_CreateThread((void*)audio_update, NULL);
-
   if ( audio_thread != NULL) {
     NULL;
   } else {
@@ -70,7 +69,6 @@ int main(int argc, char * argv[])
      fprintf(stderr, "Audio will not be used\n");
   }
 #endif
-
   mapengine::map_engine(&map1);
 #ifdef SDL
   fprintf(stderr, "Killing threads...\n");
