@@ -24,14 +24,13 @@
  * 
  */
 
-#include <iostream>
 #include "py_object.h"
 
 py_object::py_object ()
 {
     instance = NULL;
+    script_file_ = "";
 }
-
 
 py_object::~py_object ()
 {
@@ -99,12 +98,14 @@ void py_object::call_method (const string & name, PyObject * args = NULL)
 {
     if (instance)
     {
-        static PyObject * tocall;
-        static PyObject *res; 
-        tocall = PyObject_GetAttrString (instance, (char *) name.c_str ());
-        res = PyObject_CallObject (tocall, args);
-        if (res) Py_DECREF (res); 
-        Py_DECREF (tocall); 
+        PyObject *tocall = PyObject_GetAttrString (instance, (char *) name.c_str ());
+
+        if (PyCallable_Check (tocall) == 1)
+        {    
+            PyObject *res = PyObject_CallObject (tocall, args);
+            Py_XDECREF (res); 
+            Py_DECREF (tocall); 
+        }
 #ifdef PY_DEBUG
         python::show_traceback ();
 #endif

@@ -1,6 +1,6 @@
 /*
-    SDL_mixer:  An audio mixer library based on the SDL library
-    Copyright (C) 1997, 1998, 1999, 2000, 2001  Sam Lantinga
+    MIXERLIB:  An audio mixer library based on the SDL library
+    Copyright (C) 1997-1999  Sam Lantinga
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -17,17 +17,16 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
     Sam Lantinga
-    slouken@libsdl.org
+    5635-34 Springhouse Dr.
+    Pleasanton, CA 94588 (USA)
+    slouken@devolution.com
 */
-
-/* $Id$ */
 
 #ifdef OGG_MUSIC
 
 /* This file supports Ogg Vorbis music streams */
 
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 
 #include "SDL_mixer.h"
@@ -78,7 +77,7 @@ OGG_music *OGG_new(const char *file)
 			return(NULL);
 		}
 	} else {
-		SDL_SetError("Out of memory");
+		SDL_OutOfMemory();
 	}
 	return(music);
 }
@@ -134,7 +133,7 @@ static void OGG_getsome(OGG_music *music)
 		music->len_available = music->cvt.len_cvt;
 		music->snd_available = music->cvt.buf;
 	} else {
-		SDL_SetError("Out of memory");
+		SDL_OutOfMemory();
 		music->playing = 0;
 	}
 }

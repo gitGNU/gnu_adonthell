@@ -102,7 +102,6 @@ private:
     static Uint16 audio_format;
     static int audio_channels;
     static py_object schedule;
-    static string schedule_file;
     static PyObject *schedule_args;
 #endif
 };
