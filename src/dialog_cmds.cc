@@ -1,3 +1,17 @@
+/*
+   $Id$
+
+   (C) Copyright 2000 Kai Sterker <kaisterker@linuxgames.com>
+   Part of the Adonthell Project http://adonthell.linuxgames.com
+
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License.
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY.
+
+   See the COPYING file for more details
+*/
+
 #include <stdio.h>
 #include <iostream.h>
 
@@ -32,6 +46,7 @@ s_int32 clear_cmd::run (u_int32 &pc, void *data)
     dialog *dlg = (dialog *) data;
 
     pc = dlg->cur_cmds.get_element (dlg->answer);
+    dlg->used_text.add_element (pc);
 
     dlg->player_text.clear ();
     dlg->cur_cmds.clear ();
@@ -45,7 +60,7 @@ s_int32 ptext_cmd::run (u_int32 &pc, void *data)
 {
     dialog *dlg = (dialog *) data;
      
-    if (!dlg->used_text.search_element (text))
+    if (!dlg->used_text.search_element (new_pc))
     {
         dlg->player_text.add_element (dlg->strings.get_element (text));
         dlg->cur_cmds.add_element (new_pc);
