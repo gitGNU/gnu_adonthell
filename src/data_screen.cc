@@ -75,8 +75,9 @@ data_screen::data_screen (int m)
     //when this have focus, give focus to the list
     set_focus_object(image_list);
     
-    image_list->set_signal_connect (makeFunctor (*this, &data_screen::on_select),
-				    win_event::ACTIVATE_KEY);
+    image_list->set_signal_connect (
+        makeFunctor (*this, &data_screen::on_select), 
+        win_event::ACTIVATE_KEY);
     
     //add the win_select to *this
     add (image_list);
@@ -111,31 +112,32 @@ void data_screen::init ()
     {
         sprintf (filepath, "%s/preview.pnm", gdata->directory ());
     
-	shot = new win_image();
+	    shot = new win_image();
         shot->image::load_pnm (filepath); 
-	shot->move(5,2);
-	shot->set_border(*theme,win_border::MINI);
-	shot->set_visible_border (true);
-	shot->pack();
+	    shot->move(5,2);
+	    shot->set_border(*theme,win_border::MINI);
+	    shot->set_visible_border (true);
+        shot->pack();
 	
-	entry = new win_write();
-	entry->move(100,2);
-	((label_input*)entry)->resize(130,54);
-	entry->set_font(*font);
-	entry->set_text (gdata->description ());
-	entry->pack();
+	    entry = new win_write();
+	    entry->move(100,2);
+	    ((label_input*)entry)->resize(130,54);
+	    entry->set_font(*font);
+	    entry->set_text (gdata->description ());
+	    entry->pack();
 	
-	entry_list.push_back (entry);
+	    entry_list.push_back (entry);
 	
         box = new win_container ();
-	box->move(0,0);
-	box->resize(230,58);
+	    box->move(0,0);
+	    box->resize(230,58);
         box->add (shot);
         box->add (entry);
         box->set_visible_all (true);
 	
-	//when the box is activated, we set the entry as focus object of the box
-	box->set_focus_object(entry);
+	    // when the box is activated, we set the entry as 
+        // focus object of the box
+	    box->set_focus_object(entry);
 
         image_list->add (box);
         
@@ -144,48 +146,49 @@ void data_screen::init ()
     
     // If we're saving the game, add "Empty Slot"
     if (mode == SAVE_SCREEN)
-      {
+    {
         shot = new win_image ();
         shot->move(5,2);
         shot->load_pnm("gfx/empty_slot.pnm");
-	shot->set_border(*theme, win_border::MINI);
+	    shot->set_border(*theme, win_border::MINI);
         shot->set_visible_border (true);
-	shot->pack (); 
+	    shot->pack (); 
 
         entry = new win_write ();
-	entry->set_font(*font);
+	    entry->set_font(*font);
         entry->move(100,2);
-	((label_input*) entry)->resize(130,54);
-	entry->set_text ("Empty Slot");
-	entry->pack();
+	    ((label_input*) entry)->resize(130,54);
+	    entry->set_text ("Empty Slot");
+	    entry->pack();
 	
-
-	entry_list.push_back (entry);
+	    entry_list.push_back (entry);
         
         box = new win_container ();
         box->move(0,0);
-	box->resize(230,58);
-	box->add (shot);
+	    box->resize(230,58);
+	    box->add (shot);
         box->add (entry);
-	box->set_visible_all (true);
+	    box->set_visible_all (true);
 	
-	//when the box is activated, we set the entry as focus object of the box
-	box->set_focus_object(entry);
+	    // when the box is activated, we set the entry as
+        // focus object of the box
+	    box->set_focus_object(entry);
 	
         image_list->add (box);
         image_list->set_default_object (box);
 	
         num++;
     }
-    else image_list->set_default_position (1);
+    else image_list->set_default_position (0);
     
 }
 
 bool data_screen::update ()
 {
-  if (!win_container::update() || input::has_been_pushed (SDLK_ESCAPE)) return false;
+    if (!win_container::update() || input::has_been_pushed (SDLK_ESCAPE)) 
+        return false;
   
-  return !quit;
+    return !quit;
 }
 
 // Select a game
@@ -195,33 +198,30 @@ void data_screen::on_select ()
     
     // loading
     if (mode == LOAD_SCREEN)
-      {
+    {
         gamedata::load (pos);
         set_return_code (1);
         quit = true;
-      }
+    }
     // saving
     else
-      {
-	win_container * tmp = (win_container*)image_list->get_selected_object();
+    {
+	    win_container * tmp = (win_container*)image_list->get_selected_object();
+	    image_list->set_focus_object(tmp);
 	
-	image_list->set_focus_object(tmp);
+	    entry = (win_write*) tmp->focus_object();
+		entry->set_cursor ( true);
+		entry->set_cursor_moveable (true);
 	
-	entry = (win_write*) tmp->focus_object();
-	
-	entry->set_cursor ( true);
-	
-	entry->set_cursor_moveable (true);
-	
-	const char *txt = entry->text_char ();
-	if (txt && !strncmp (txt, "Empty Slot", 10))
-	  entry->set_text ("");
+	    const char *txt = entry->text_char ();
+	    if (txt && !strncmp (txt, "Empty Slot", 10))
+	        entry->set_text ("");
   
-	entry->set_signal_connect (makeFunctor (*this, &data_screen::on_save),
+	    entry->set_signal_connect (makeFunctor (*this, &data_screen::on_save),
 				   win_event::ACTIVATE_KEY);
-	entry->set_activate (true);
-	input::clear_keys_queue ();
-      }
+	    entry->set_activate (true);
+	    input::clear_keys_queue ();
+    }
 }
 
 void data_screen::on_save ()
@@ -254,22 +254,3 @@ void data_screen::save_preview (char *path)
     preview.zoom (temp); 
     preview.save_pnm (path);     
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
