@@ -14,6 +14,7 @@
 
 #include <stdio.h>
 #include <unistd.h>
+#include "win_manager.h"
 #include "input.h"
 #include "screen.h"
 #include "game.h"
@@ -77,14 +78,13 @@ bool game::init ()
 // Cleanup everything
 game::~game ()
 {
+    // close all windows
+    win_manager::destroy();
+
     // save the config file
     configuration->write_adonthellrc ();
     delete configuration;
     
-    // shutdown Python
-#if defined(USE_PYTHON)
-    Py_Finalize ();
-#endif
 #if !defined(_EDIT_)
     // delete all data
     data::cleanup ();
@@ -93,7 +93,10 @@ game::~game ()
 #if defined SDL_MIXER && !defined _EDIT_
     //    audio::cleanup ();
 #endif
-
+    // shutdown Python
+#if defined(USE_PYTHON)
+    Py_Finalize ();
+#endif
     // shutdown video
     SDL_Quit ();
 }

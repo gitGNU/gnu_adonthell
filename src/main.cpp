@@ -60,6 +60,5 @@ int main(int argc, char * argv[])
     exec_file("init.py");
     show_traceback ();
     
-    data::cleanup();
     return 0;
 }

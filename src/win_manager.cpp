@@ -10,13 +10,12 @@
    See the COPYING file for more details
 */
 
-#include<list>
 #include "types.h"
 #include "image.h"
 #include "win_types.h"
 #include "win_base.h"
-#include "win_container.h"
 #include "win_manager.h"
+#include "win_container.h"
 
 list<win_container*> win_manager::lmanage;
 win_container * win_manager::wc=NULL;

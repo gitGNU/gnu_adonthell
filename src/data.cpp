@@ -72,9 +72,10 @@ gamedata::~gamedata ()
 
 bool gamedata::load (gzFile file)
 {
-    if (!fileops::get_version (file, 1, 1, "save.data")) 
+    if (!fileops::get_version (file, 2, 2, "save.data")) 
         return false;
     
+    directory = fileops::get_string (file);
     description = fileops::get_string (file);
     location = fileops::get_string (file);
     time = fileops::get_string (file);
@@ -83,7 +84,8 @@ bool gamedata::load (gzFile file)
 
 void gamedata::save (gzFile file)
 {
-    fileops::put_version (file, 1);
+    fileops::put_version (file, 2);
+    fileops::put_string (file, directory);
     fileops::put_string (file, description);
     fileops::put_string (file, location);
     fileops::put_string (file, time);
@@ -100,6 +102,9 @@ void gamedata::set_description (char *desc)
 void gamedata::set_directory (char *dir)
 {
     if (directory != NULL) delete[] directory;
+
+    directory = new char[strlen (dir)+1];
+    strcpy (directory, dir);
 }
 
 // data initialisation

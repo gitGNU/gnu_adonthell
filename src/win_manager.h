@@ -14,6 +14,8 @@
 #ifndef _WIN_MANAGER_
 #define _WIN_MANAGER_
 
+#include <list>
+
 class win_container;
 
 class win_manager
