@@ -85,8 +85,10 @@ libmap_a_SOURCES = map_coordinates.cc map_placeable_area.cc \
 
 libgui_a_SOURCES = atk_box.cc atk_misc.cc atk_container.cc atk_label.cc \
 	atk_font.cc atk_widget.cc atk_fixed.cc callback_sig.cc \
+	atk_bin.cc atk_manager.cc \
 	callback_slot.h atk_box.h atk_misc.h atk_container.h \
 	atk_label.h atk_font.h atk_widget.h atk_fixed.h \
+	atk_bin.h atk_window.h atk_manager.h \
 	callback_sig.h
 
 libgui_LDADD = $(FT2_LIBS)
@@ -110,7 +112,7 @@ alextest_SOURCES = main.cc
 
 joltest_SOURCES = joltest.cc
 
-joltest_LDADD = libgfx.a libgui.a libbase.a $(libbase_LDADD) $(libgui_LDADD)
+joltest_LDADD = libgfx.a libgui.a libinput.a libbase.a $(libbase_LDADD) $(libgui_LDADD)
 
 alextest_LDADD = libmap.a libgfx.a libinput.a libbase.a $(libbase_LDADD)
 

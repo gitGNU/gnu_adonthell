@@ -31,11 +31,7 @@
 
 class atk_container; 
 
-
-
-class atk_window
-{}; 
-
+class atk_window;
 
 /**
  * It's the common class for all object in the Adonthell Tool Kit.
