@@ -102,8 +102,10 @@ int main (int argc, char *argv[])
         char ctemp;
         character_base *mynpc = NULL;
     
-        if (!fileops::get_version (in, 2, 2, tmp))
+        if (!fileops::get_version (in, 3, 3, tmp))
             return 1;
+
+        MainWnd->myplayer->character_base::get_state (in);
 
         while (ctemp << in)
         {
