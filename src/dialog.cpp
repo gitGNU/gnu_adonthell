@@ -348,11 +348,11 @@ char *dialog::get_substr (const char* string, char* begin, char* end)
 {
     u_int32 b, e;
     b = strcspn (string, begin) + 1;
-    e = strcspn (string, end);
+    e = strcspn (string, end) - b;
 
-    char *result = new char[e-b];
-    strncpy (result, string+b, e-b);
-    result[e-b] = 0;
+    char *result = new char[b+1];
+    strncpy (result, string+b, e);
+    result[e] = 0;
 
     return result;
 }
