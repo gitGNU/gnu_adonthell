@@ -351,7 +351,7 @@ char *dialog::get_substr (const char* string, char* begin, char* end)
     e = strcspn (string, end);
 
     char *result = new char[e-b];
-    strncpy (result, string+b, e);
+    strncpy (result, string+b, e-b);
     result[e-b] = 0;
 
     return result;
