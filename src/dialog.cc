@@ -58,10 +58,17 @@ dialog_engine::dialog_engine ()
 
 void dialog_engine::update_keyboard ()
 {
-    if (keyboard::is_pushed (97)) dlg->answer = 0;
-    if (keyboard::is_pushed (98)) dlg->answer = 1;
-    if (keyboard::is_pushed (99)) dlg->answer = 2;
-    if (keyboard::is_pushed (100)) dlg->answer = 3;
+  static u_int16 lastkeypressed=0;
+  if(keyboard::is_pushed(lastkeypressed)) return;
+  lastkeypressed=0;
+  if (keyboard::is_pushed (97)) 
+    {dlg->answer = 0; lastkeypressed=97;}
+  if (keyboard::is_pushed (98)) 
+    {dlg->answer = 1; lastkeypressed=98;}
+  if (keyboard::is_pushed (99)) 
+    {dlg->answer = 2; lastkeypressed=99;}
+  if (keyboard::is_pushed (100)) 
+    {dlg->answer = 3; lastkeypressed=100;}
 }
 
 void dialog_engine::update (window &win)
@@ -118,6 +125,5 @@ void dialog_engine::run (window &win)
             str = dlg->npc_text;
         }
     }
-
     win.set_text (str.c_str ());   
 }
