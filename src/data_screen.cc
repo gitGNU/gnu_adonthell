@@ -101,6 +101,7 @@ data_screen::~data_screen ()
 void data_screen::init ()
 {
     string filepath;
+    u_int16 num = 0; 
     win_image *shot;
     win_write *entry;
     win_container *box = NULL;
@@ -112,34 +113,36 @@ void data_screen::init ()
         filepath = gdata->directory ();
         filepath += "/preview.pnm";
     
-	    shot = new win_image();
+        shot = new win_image();
         shot->image::load_pnm (filepath); 
-	    shot->move(5,2);
-	    shot->set_border(*theme,win_border::MINI);
-	    shot->set_visible_border (true);
+        shot->move(5,2);
+        shot->set_border(*theme,win_border::MINI);
+        shot->set_visible_border (true);
         shot->pack();
 	
-	    entry = new win_write();
-	    entry->move(100,2);
-	    ((label_input*)entry)->resize(130,54);
-	    entry->set_font(*font);
-	    entry->set_text (gdata->description ());
-	    entry->pack();
+        entry = new win_write();
+        entry->move(100,2);
+        ((label_input*)entry)->resize(130,54);
+        entry->set_font(*font);
+        entry->set_text (gdata->description ());
+        entry->pack();
 	
-	    entry_list.push_back (entry);
+        entry_list.push_back (entry);
 	
         box = new win_container ();
-	    box->move(0,0);
-	    box->resize(230,58);
+        box->move(0,0);
+        box->resize(230,58);
         box->add (shot);
         box->add (entry);
         box->set_visible_all (true);
 	
-	    // when the box is activated, we set the entry as 
+        // when the box is activated, we set the entry as 
         // focus object of the box
-	    box->set_focus_object(entry);
-
+        box->set_focus_object(entry);
+        
         image_list->add (box);
+        
+        num++;
     }
     
     // If we're saving the game, add "Empty Slot"
@@ -148,34 +151,67 @@ void data_screen::init ()
         shot = new win_image ();
         shot->move(5,2);
         shot->load_pnm("gfx/empty_slot.pnm");
-	    shot->set_border(*theme, win_border::MINI);
+        shot->set_border(*theme, win_border::MINI);
         shot->set_visible_border (true);
-	    shot->pack (); 
-
+        shot->pack (); 
+        
         entry = new win_write ();
-	    entry->set_font(*font);
+        entry->set_font(*font);
         entry->move(100,2);
-	    ((label_input*) entry)->resize(130,54);
-	    entry->set_text ("Empty Slot");
-	    entry->pack();
+        ((label_input*) entry)->resize(130,54);
+        entry->set_text ("Empty Slot");
+        entry->pack();
 	
-	    entry_list.push_back (entry);
+        entry_list.push_back (entry);
         
         box = new win_container ();
         box->move(0,0);
-	    box->resize(230,58);
-	    box->add (shot);
+        box->resize(230,58);
+        box->add (shot);
         box->add (entry);
-	    box->set_visible_all (true);
+        box->set_visible_all (true);
 	
-	    // when the box is activated, we set the entry as
+        // when the box is activated, we set the entry as
         // focus object of the box
-	    box->set_focus_object(entry);
+        box->set_focus_object(entry);
 	
         image_list->add (box);
         image_list->set_default_object (box);
+	
+        num++;
     }
-    else image_list->set_default_position (0);     
+    else image_list->set_default_position (0);
+
+    // If there is no saved games, display a message.
+    if (!num) 
+    {
+        box = new win_container ();
+        box->move(0, 0);
+        box->resize(230, 150);
+        
+        win_label * mess = new win_label ();
+        mess->set_font (*font); 
+        mess->move (0, 65);
+        mess->set_form (label::AUTO_SIZE); 
+        mess->set_text ("You have no saved games yet!");
+        mess->set_align (win_base::ALIGN_CENTER);  
+        mess->pack ();
+        box->add (mess); 
+        
+        mess = new win_label ();
+        mess->set_font (*font); 
+        mess->move (0, 115);
+        mess->set_form (label::AUTO_SIZE); 
+        mess->set_text ("Press ESC.");
+        mess->set_align (win_base::ALIGN_CENTER);  
+        mess->pack ();
+        box->add (mess);
+        
+        box->set_visible_all (true);
+        box->set_can_be_selected (false); 
+ 
+        image_list->add (box); 
+    }
 }
 
 bool data_screen::update ()
