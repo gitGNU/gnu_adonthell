@@ -1842,10 +1842,16 @@ ac_given_INSTALL="$INSTALL"
 
 trap 'rm -fr `echo "
 Makefile
+doc/Makefile
 src/Makefile
 src/tools/Makefile
 src/tools/pydonthell/Makefile
 src/tools/dlgedit/Makefile
+src/tools/dlgedit/examples/Makefile
+src/tools/maptools/Makefile
+src/tools/questedit/Makefile
+src/tools/charedit/Makefile
+src/tools/combat/Makefile
  header.h" | sed "s/:[^ ]*//g"` conftest*; exit 1' 1 2 15
 EOF
 cat >> $CONFIG_STATUS <<EOF
@@ -1939,10 +1945,16 @@ EOF
 cat >> $CONFIG_STATUS <<EOF
 
 CONFIG_FILES=\${CONFIG_FILES-"Makefile
+doc/Makefile
 src/Makefile
 src/tools/Makefile
 src/tools/pydonthell/Makefile
 src/tools/dlgedit/Makefile
+src/tools/dlgedit/examples/Makefile
+src/tools/maptools/Makefile
+src/tools/questedit/Makefile
+src/tools/charedit/Makefile
+src/tools/combat/Makefile
 "}
 EOF
 cat >> $CONFIG_STATUS <<\EOF
