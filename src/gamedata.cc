@@ -104,13 +104,17 @@ bool gamedata::load_characters (u_int32 pos)
         return false;
     }
     
-    if (!fileops::get_version (in, 2, 2, filepath)) 
+    if (!fileops::get_version (in, 3, 3, filepath))
         return false;
     
     // load characters     
     char ctemp;
 
-    while (ctemp << in) 
+    // first, the player
+    data::the_player->character_base::get_state (in);
+
+    // then all the others
+    while (ctemp << in)
     {
         mynpc = new character;
         mynpc->character_base::get_state (in);
@@ -179,7 +183,7 @@ bool gamedata::load_mapengine (u_int32 pos)
     
     if (!fileops::get_version (in, 1, 1, filepath))
         return false;
-    
+
     if (!data::map_engine->get_state(in))
     {
         cerr << "Couldn't load \"" << filepath << " - stopping\n" << endl;
@@ -264,8 +268,12 @@ bool gamedata::save (u_int32 pos, string desc)
         return false;
     }
     
-    fileops::put_version (file, 2);
+    fileops::put_version (file, 3);
 
+    // save the player first
+    data::the_player->character_base::put_state (file);
+
+    // now save all the other characters
     dictionary <character *>::iterator itc;
     for (itc = data::characters.begin (); itc != data::characters.end (); itc++) 
     {
@@ -393,7 +401,7 @@ bool gamedata::init (string udir, string gdir, string gname)
     }
 
     // Add the default savegame used to start a new game to the list of saves
-    gdata = new gamedata ( ".", "Start New Game");
+    gdata = new gamedata (gdir, "Start New Game");
     saves.push_back (gdata);
 
     // Read the user's saved games (if any) - they'll be located in

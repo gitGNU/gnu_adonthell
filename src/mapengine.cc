@@ -107,8 +107,8 @@ s_int8 mapengine::get_state (igzstream& file)
         mc->set_map (&lmap);
         mc->get_state (file);
     }
+
     // Load the mapview state
- 
     mv.mapview::get_state (file);
     mv.pack (); 
     return true;

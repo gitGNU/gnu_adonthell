@@ -118,23 +118,23 @@ void config::parse_arguments (int argc, char * argv[])
                 break;
                 
             case 'g':
-              { 
+            {
                 gamedir = optarg;
                 if (gamedir[gamedir.size () - 1] == '/')
-                  gamedir.erase (gamedir.size () - 1);
+                    gamedir.erase (gamedir.size () - 1);
                 
                 // Check whether the requested game directory exists
                 DIR * mydir = opendir (gamedir.c_str ()); 
                 
                 if (!mydir) 
-                  {
+                {
                     cerr << "Cannot open directory " << gamedir << "!" << endl;
                     exit (1); 
-                  }
+                }
                 closedir (mydir);
                 
                 break;
-              }
+            }
               
             case '?':
             case 'h':
@@ -146,14 +146,13 @@ void config::parse_arguments (int argc, char * argv[])
 
     // Check whether the GAME parameter is needed
     if (gamedir == "")
-      { 
-        
+    {
         // Check whether the GAME parameter is given
         if (argc - optind != 1)
-          {
+        {
             print_help_message (argv);
             exit (0);
-          }
+        }
         
         // Check whether the requested game exists
         struct dirent * d;
@@ -161,36 +160,37 @@ void config::parse_arguments (int argc, char * argv[])
         bool found = false; 
         
         if (!mydir) 
-          {
+        {
             cerr << "Cannot open directory " << DATA_DIR"/games!" << endl;
             exit (1); 
-          }
+        }
         
         while ((d = readdir (mydir)) != NULL)
-          {
+        {
             if (string (d->d_name) == argv[optind]) found = true; 
-          }
+        }
         
         closedir (mydir); 
         
         if (!found) 
-          {
+        {
             cerr << "Game " << argv[optind] << " can't be found.\n"; 
             exit (1); 
-          }
+        }
         
         // The game exists, so let the show continue...
         gamedir = DATA_DIR"/games/"; 
         gamedir += argv[1];
-      }
+    }
+
     // Now check whether the directory is a valid game directory
     string tfile = gamedir + "/gamename.txt"; 
     ifstream f (tfile.c_str ()); 
     if (!f.is_open ()) 
-      {
+    {
         cerr << "Directory " << gamedir << " is not a valid game directory.\n";
         exit (1); 
-      }
+    }
     char t[256];
     f.getline (t, 256); 
     game_name = t;

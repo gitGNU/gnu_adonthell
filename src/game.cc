@@ -152,21 +152,17 @@ void game::init_data ()
 {
     data::map_engine = new mapengine;
     data::the_player = new character;
-
-    data::the_player->set_name ("Player");
-    
-    // Add the player to the game objects
-    data::characters[data::the_player->get_name().c_str ()] = data::the_player; 
 }
 
 void game::cleanup_data () 
 {
-  delete data::map_engine;
-  data::map_engine = NULL; 
-  if (data::the_player) 
+    delete data::map_engine;
+    data::map_engine = NULL;
+
+    if (data::the_player)
     { 
-      delete data::the_player;
-      data::the_player = NULL; 
+        delete data::the_player;
+        data::the_player = NULL;
     }
 }
 
