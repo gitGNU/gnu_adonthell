@@ -8,6 +8,7 @@
  */
  
 #include "cutscene.h"
+#include "SDL_timer.h"
 
 cutscene::cutscene()
 {
@@ -26,13 +27,19 @@ cutscene::cutscene()
 
   num_keyframes=2;
   current_keyframe_ptr=keyframes;
-
   num_anims=1;
+
+  initialize_timer(); // Just in case someone forgets :P
 }
 
 cutscene::~cutscene()
 {
 
+}
+
+void cutscene::initialize_timer(void)
+{
+  timer = SDL_GetTicks();
 }
 
 u_int8 cutscene::insert_keyframe(u_int16 key)
@@ -200,7 +207,9 @@ u_int8 cutscene::render_scene()
 	  ptr2->anim->draw(x,y);
 	}
     }
-  cyclecounter++;
+  cyclecounter += SDL_GetTicks() - timer;
+  timer = SDL_GetTicks();
+
   return(0);
 }
  

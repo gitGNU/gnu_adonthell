@@ -37,9 +37,6 @@
 
 int do_cutscene(void) {
 
-  // Fade in our intro background music
-  audio_in->fade_in_background(0, 500);
-
   cutscene *scene = new cutscene();
   animation *anim = new animation();
   animation *anim2 = new animation();
@@ -131,16 +128,18 @@ int do_cutscene(void) {
   scene->set_imagekey_visible(3,2,true);
   scene->set_imagekey_visible(3,3,true);
 
-  scene->set_cycles(0,130);
-  scene->set_cycles(1,980);
-  scene->set_cycles(2,600);
-  scene->set_cycles(3,600);
+  // Takes 21-22 secs on hendersa's machine
+//  scene->set_cycles(0,130);
+//  scene->set_cycles(1,980);
+//  scene->set_cycles(2,600);
+//  scene->set_cycles(3,600);
 
-  // Slowed down animation to 50% original speed
-//  scene->set_cycles(0,260);
-//  scene->set_cycles(1,1960);
-//  scene->set_cycles(2, 1200);
-//  scene->set_cycles(3, 1200);
+  // Number of milliseconds, now ;>
+  // ~44 secs for intro tune
+  scene->set_cycles(0,500); // Initial pause: ~.5 sec
+  scene->set_cycles(1,42000);  // Pan time: ~42 sec
+  scene->set_cycles(2, 1000);   // Pause before dialog: ~1 sec
+//  scene->set_cycles(3, 10);  // Not needed
 
   // Layer #1 coordinates
   scene->set_coordinates(0,0,0,0);
@@ -165,6 +164,13 @@ int do_cutscene(void) {
   scene->set_coordinates(1,3,240,137);
   scene->set_coordinates(2,3,(-494 + 240),137);
   scene->set_coordinates(3,3,(-494 + 240),137);
+
+
+  // Fade in our intro background music
+  audio_in->fade_in_background(0, 500);
+
+  // Timing for animation is based on time from this point
+  scene->initialize_timer();
 
   while(scene->render_scene()!=1)
   {

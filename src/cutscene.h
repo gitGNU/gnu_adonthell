@@ -64,14 +64,15 @@ class cutscene : public image
   void set_coordinates(u_int16 key, u_int8 img, s_int16 x, s_int16 y);
   u_int16 get_current_keyframe();
   void set_current_keyframe(u_int16 key);
-  
+  void initialize_timer(void);
+
  private:
 
   u_int8 num_anims; // Number of images used in scene
   u_int16 num_keyframes; // Number of keyframes in scene
   u_int16 current_keyframe;
   s_int32 cyclecounter; // I wonder if it'll fill up...
-
+  Uint32 timer;
   struct keyframe *current_keyframe_ptr;
   struct keyframe *keyframes; // Reference to first keyframe
   animation *anims; // Reference to first animation
