@@ -48,9 +48,9 @@ Name            return LOAD_NAME;
 Race            return LOAD_RACE;
 Gender          return LOAD_GENDER;
 
-\§              mytext = ""; BEGIN(text);
-<text>\§        BEGIN(INITIAL); return LOAD_STR;
-<text>[^\§]+    mytext += yytext;
+§              mytext = ""; BEGIN(text);
+<text>§        BEGIN(INITIAL); return LOAD_STR;
+<text>[^§]+    mytext += yytext;
 
 {num}           mynum = atoi (yytext); return LOAD_NUM;
 

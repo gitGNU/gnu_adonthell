@@ -23,7 +23,9 @@
 class dialog
 {
 public:
+    dialog ();                      // Init stuff to a sane state
     ~dialog ();                     // Clean up stuff
+
     bool init (char*, char*);       // Load & instantiate the dialogue object
     void run (u_int32);             // Run the dialogue 
 
@@ -32,6 +34,9 @@ public:
 
 private:
 	PyObject *instance;             // Points to the instantiated dialogue class
+    PyObject *locals;
+    PyObject *globals;
+
     char **strings;                 // The dialogue text
 
     vector<u_int32> answers;        // The indices with which to call instance.run () 

@@ -1011,7 +1011,7 @@ save_dialogue (MainFrame * wnd)
     if (wnd->pset_vars != "") out << "\nVars §" << wnd->pset_vars << "§\n";
 
     // Preset variables
-    if (wnd->cust_func != "") out << "\nFunc §" << wnd->pset_vars << "§\n";
+    if (wnd->cust_func != "") out << "\nFunc §" << wnd->cust_func << "§\n";
 
     // Players name, race and gender
     if (strcmp ("Banec", wnd->myplayer->get_name ()))

@@ -43,13 +43,23 @@ bool dialog::init (char *fpath, char *name)
 	if (!classobj)
 		return false;
 
-	Py_DECREF(module);
+    // get the classes dictionary, we'll have use for it later on
+    cout << "\nGlobals: ";
+    globals = PyModule_GetDict (module);
+    if (globals) PyObject_Print (globals, stdout, 0);
+
+	// Py_DECREF(module);
 
 	// Instantiate! Will we ever need to pass args to class
 	// constructor here?
 	instance = PyObject_CallObject(classobj, NULL);
 
-	Py_DECREF(classobj);
+	// Py_DECREF(classobj);
+
+    // get the classes dictionary, we'll have use for it later on
+    cout << "\n Locals: ";
+    locals = PyObject_GetAttrString (instance, "__dict__");
+    if (locals) PyObject_Print (locals, stdout, 0);
 
     // extract the dialogue's strings
     extract_strings ();
@@ -78,9 +88,16 @@ void dialog::extract_strings ()
     }
 }
 
+dialog::dialog ()
+{
+    instance = NULL;
+    locals = NULL;
+}
+
 dialog::~dialog ()
 {
     Py_XDECREF (instance);
+    Py_XDECREF (locals);
 
     // Seems we don't have to delete the actual strings, as they are just
     // references to the strings of the Python dialogue object
@@ -202,8 +219,43 @@ void dialog::run (u_int32 index)
 
 void dialog::scan_string (u_int32 index)
 {
+    u_int32 end;
+    PyObject *result;
+    char *start, *string = NULL;
+    
+   // get the environment to run the string in
+   // PyObject *globals = PyModule_GetDict ();
+   // PyObject *locals = PyModule_GetDict (instance);
 
-    // PyRun_String (the_string, Py_eval_input, ,);
+    while (1)
+    {
+        // check wether the string contains python code at all
+        start = strchr (strings[index], '{');
+        if (start == NULL)
+        {
+            cout << "\nNo code found" << flush;
+            return;
+        }
+
+        end = strcspn (start, "}");
+
+        if (string) delete[] string;
+        string = new char[end];
+        string[end-1] = 0;        
+
+        // extract the code without the brackets
+        strncpy (string, start+1, end-1);
+
+        // run the string
+        result = PyRun_String (string, Py_eval_input, globals, locals);
+
+        if (result) PyObject_Print (result, stdout, 0);
+        else cout << "\nHouston, we have a problem! (" << string << ")" << flush;
+
+        
+        // Replace the string with the resulting string (if any)
+        return;
+    }
 }
 
 /*

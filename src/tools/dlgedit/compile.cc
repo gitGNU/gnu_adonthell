@@ -142,11 +142,12 @@ void dlg_compiler::write_custom_func ()
         
         while ((j = cust_func.find ('\n', i)) < cust_func.size ())
         {
-            script << "\n    " << cust_func.substr (i,j);
-            i = ++j;  
+            script << "\n    " << cust_func.substr (i,j-i);
+            i = ++j;
         }
     }
 
+    script << "\n";
 }
 
 // Write a NPC part 
@@ -176,7 +177,7 @@ void dlg_compiler::write_npc (Circle *circle)
         
         while ((j = circle->variables.find ('\n', i)) < circle->variables.size ())
         {
-            script << "\n" << space << circle->variables.substr (i,j);
+            script << "\n" << space << circle->variables.substr (i,j-i);
             i = ++j;  
         }
     }
@@ -349,7 +350,7 @@ void dlg_compiler::get_cur_nodes ()
     
         while ((k = circle->variables.find ('\n', j)) < circle->variables.size ())
         {
-            script << "\n" << space << circle->variables.substr (j, k);
+            script << "\n" << space << circle->variables.substr (j, k-j);
             j = ++k;  
         }
     }
