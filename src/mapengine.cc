@@ -50,12 +50,13 @@ void mapengine::load_map (string fname)
 
 void mapengine::run ()
 {
-    //     static u_int32 cpt = 0;  
     letsexit = false;
     mv.set_visible (true); 
     mv.pack (); 
     win_manager::add (&mv); 
     gametime::start_action (); 
+
+    //     static u_int32 cpt = 0;  
     while (!letsexit)
     {
 //         static image ima (300, 200);
@@ -115,7 +116,7 @@ s_int8 mapengine::get_state (igzstream& file)
     // Load the mapview state
  
     mv.mapview::get_state (file);
-    
+    mv.pack (); 
     return true;
 }
 

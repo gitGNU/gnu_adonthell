@@ -57,7 +57,7 @@ void win_font::load(char * rep)
   path += WIN_FONT_DIRECTORY; 
   
   //add theme pass
-  path += rep; 
+  path += string (rep) + "/"; 
   
   //add font filename 
   path += WIN_FONT_FILE; 
@@ -145,12 +145,4 @@ win_font & win_font::operator=(win_font & tmpfont)
   return * this;
 }
 */
-
-
-
-
-
-
-
-
-
+ 

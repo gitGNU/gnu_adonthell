@@ -31,6 +31,7 @@
 #include "python.h"
 #include "input.h"
 #include "dialog_engine.h"
+#include "win_manager.h"
 
 #include "audio.h"
 
@@ -55,14 +56,14 @@ void dialog_engine::init(character_base *mynpc, char * dlg_file, u_int8 size)
     
 
     // Load the different fonts
-    fonts[0] = new win_font ("white/");
-    fonts[1] = new win_font ("yellow/");
-    fonts[2] = new win_font ("red/");
-    fonts[3] = new win_font ("violet/");
-    fonts[4] = new win_font ("blue/");
-    fonts[5] = new win_font ("green/");
+    fonts[0] = win_manager::get_font ("white");
+    fonts[1] = win_manager::get_font ("yellow");
+    fonts[2] = win_manager::get_font ("red");
+    fonts[3] = win_manager::get_font ("violet");
+    fonts[4] = win_manager::get_font ("blue");
+    fonts[5] = win_manager::get_font ("green");
     
-    theme = new win_theme (WIN_THEME_ORIGINAL);
+    theme = win_manager::get_theme ("original");
     
     //set_theme (theme);
     set_border(*theme);
@@ -181,11 +182,6 @@ void dialog_engine::init(character_base *mynpc, char * dlg_file, u_int8 size)
 dialog_engine::~dialog_engine ()
 {
     sel->set_activate (false);
-
-    delete theme;
-    
-    for (int i = 0; i < MAX_COLOR; i++)
-        delete fonts[i];
 
     Py_XDECREF (instance);
 

@@ -25,7 +25,7 @@ bool gametime::running = false;
 NEW_EVENT(time_event)
 
 gametime::gametime (u_int32 start, float ratio)
-{
+{     
     ticks = 0;
     time = start;
     
@@ -59,15 +59,20 @@ void gametime::tick (u_int32 val)
 
 void gametime::update () 
 {
+    static u_int16 frame_rate = 1000 / 50;
+    
     // Syncronize the game's speed to the machine it's running on.
     while (1)
     {
         timer2 = SDL_GetTicks () - timer1;
         
-        if (timer2 >= CYCLE_LENGTH)
+        if (timer2 >= frame_rate)
             break;
-        else if (timer2 > 3)
-            SDL_Delay (timer2 - 2);
+        else
+            //             if (timer2 < (u_int32) (frame_rate - 3))
+        {
+            SDL_Delay (3);
+        }
     }
     
     timer1 = SDL_GetTicks () - (timer2 % CYCLE_LENGTH);

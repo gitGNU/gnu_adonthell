@@ -14,8 +14,6 @@
 
 #include "win_theme.h"
 
-char * win_theme::theme = WIN_THEME_ORIGINAL;
-
 win_theme::win_theme()
 {
   normal = NULL;
@@ -29,13 +27,15 @@ win_theme::win_theme()
 
 win_theme::win_theme(char * theme)
 {
-  normal=new win_border(theme, WIN_BORDER_NORMAL_SIZE);
+    string strtheme = string (theme) + "/";
+    
+  normal=new win_border((char *) strtheme.c_str(), WIN_BORDER_NORMAL_SIZE);
   
-  mini=new win_border(theme, WIN_BORDER_MINI_SIZE);
+  mini=new win_border((char *) strtheme.c_str(), WIN_BORDER_MINI_SIZE);
   
-  background=new win_background( theme );
+  background=new win_background((char *) strtheme.c_str() );
   
-  scrollbar=new win_scrollbar( theme );
+  scrollbar=new win_scrollbar((char *) strtheme.c_str() );
 } 
 
 win_theme::win_theme(win_theme & th)

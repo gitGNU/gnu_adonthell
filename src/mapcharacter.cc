@@ -25,6 +25,7 @@
 
 #include "mapcharacter.h" 
 #include "landmap.h"
+#include "win_manager.h"
 
 using namespace std; 
 
@@ -46,7 +47,8 @@ mapcharacter::mapcharacter () : mapsquare_walkable_area (), character_base ()
     locals = PyDict_New ();
     PyObject * myself = python::pass_instance(this,"mapcharacter"); 
     PyDict_SetItemString (locals,"myself", myself);
-    Py_DECREF (myself); 
+    Py_DECREF (myself);
+    saying = NULL; 
 }
  
 mapcharacter::~mapcharacter ()
@@ -634,6 +636,12 @@ bool mapcharacter::update ()
         anim[current_move]->play (); 
     }
     
+    if (saying && !saying->update ())
+    {
+        delete saying;
+        saying = NULL; 
+    }
+    
     return true; 
 }
 
@@ -649,6 +657,14 @@ void mapcharacter::launch_action (mapcharacter * requester)
 void mapcharacter::draw (s_int16 x, s_int16 y, const drawing_area * da_opt = NULL, surface * target = NULL) const
 {
     anim[current_move]->draw (x, y, da_opt, target);
+    if (saying) 
+    {
+        saying->move (x - (saying->drawing_area::length () >> 1) + (anim[current_move]->length () >> 1),
+                      y - (saying->drawing_area::height ()) + 5);
+        saying->assign_drawing_area (da_opt);
+        saying->draw ();
+        saying->detach_drawing_area (); 
+    }
 }
 
 mapcharacter & mapcharacter::operator = (const mapcharacter & src)
@@ -946,4 +962,23 @@ void mapcharacter::update_move ()
                 break;
         }
     anim[current_move]->update ();     
+}
+
+void mapcharacter::speak (string text)
+{
+    if (saying) 
+        delete saying;
+
+    string col; 
+    switch (get_color ()) 
+    { 
+        case 1: col = "yellow"; break; 
+        case 2: col = "red"; break; 
+        case 3: col = "violet"; break; 
+        case 4: col = "blue"; break; 
+        case 5: col = "green"; break;
+        default: col = "white"; break; 
+    } 
+    
+    saying = new text_bubble (text, col, "original"); 
 }

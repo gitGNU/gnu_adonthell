@@ -691,6 +691,10 @@ public:
 class win_manager
 {
  public:
+  static void init ();
+  
+  static void cleanup ();
+  
   static void add(win_base *);
 
   static void add_after (win_base *, win_base *);
@@ -709,6 +713,12 @@ class win_manager
   
   static void destroy();
 
+  static void add_theme (string name); 
+  static bool remove_theme (string name); 
+  static win_theme * get_theme (string name); 
+  static void add_font (string name); 
+  static bool remove_font (string name); 
+  static win_font * get_font (string name); 
 
  private:
   
@@ -907,8 +917,6 @@ class win_theme
   
   void destroy();
  
-  static char * theme;
-  
   friend class win_border;
   friend class win_background;
   friend class win_scrollbar;

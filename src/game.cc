@@ -95,6 +95,12 @@ bool game::init (config & configuration, initflags to_init = INIT_ALL)
         // init the game data
         init_data (); 
     }
+
+    // init window manager
+    if (to_init & INIT_WIN) 
+    {
+        win_manager::init (); 
+    }
     
     initiated = to_init;
     
@@ -106,7 +112,8 @@ bool game::init (config & configuration, initflags to_init = INIT_ALL)
 void game::cleanup () 
 {
     // close all windows
-    win_manager::destroy(); 
+    // delete all themes and fonts
+    win_manager::cleanup (); 
     
     // shutdown input subsystem
     if (initiated & INIT_INPUT) 

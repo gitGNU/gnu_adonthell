@@ -14,16 +14,31 @@
 #ifndef _WIN_MANAGER_
 #define _WIN_MANAGER_
 
-#include <list>
-
-class win_base;
-
+#include <list> 
+#if __GNUG__ > 2
+#include <ext/hash_map>
+#else
+#include <hash_map>
+#endif
+#include "win_theme.h"
+#include "win_font.h"
+#include "win_base.h"
 
 using namespace std; 
+
+template<> struct hash<string> {
+    size_t operator()(const string& s) const {
+	return __stl_hash_string(s.c_str());
+}};
+ 
 
 class win_manager
 {
  public:
+    static void init ();
+    
+    static void cleanup ();
+    
     static void add(win_base *);
   
     static void add_after (win_base * toadd, win_base * after);
@@ -43,14 +58,23 @@ class win_manager
     static void destroy();
 
 
+    static void add_theme (string name); 
+    static bool remove_theme (string name); 
+    static win_theme * get_theme (string name); 
+
+    static void add_font (string name); 
+    static bool remove_font (string name); 
+    static win_font * get_font (string name); 
  private:
   
-  static list<win_base *> lmanage;
-  //static list<win_container *> ::iterator ilm;
-  static win_base * wc;
+    static list<win_base *> lmanage;
+    //static list<win_container *> ::iterator ilm; 
+    
+    static hash_map<string, win_theme *> theme; 
+    static hash_map<string, win_font *> font; 
+    
+    static win_base * wc;
 };
 
 #endif
-
-
-
+ 

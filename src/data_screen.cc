@@ -34,6 +34,7 @@
 #include "data_screen.h"
 #include "mapengine.h"
 #include "gametime.h"
+#include "win_manager.h"
 
 data_screen::data_screen (int m)
 {
@@ -47,8 +48,8 @@ data_screen::data_screen (int m)
     win_container::resize(260,210);
     
     // Create GUI
-    font = new win_font (WIN_THEME_ORIGINAL);
-    theme = new win_theme (WIN_THEME_ORIGINAL);
+    font = win_manager::get_font ("original");
+    theme = win_manager::get_theme ("original"); 
     
     //Set features used
     set_border(*theme);
@@ -95,8 +96,6 @@ data_screen::data_screen (int m)
 
 data_screen::~data_screen ()
 {
-    delete theme;
-    delete font;
     gametime::start_action (); 
 }
 

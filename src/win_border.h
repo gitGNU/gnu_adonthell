@@ -59,9 +59,13 @@ class win_border
   
   u_int16 height_border();
 
-  const static u_int8 MINI = 0;
-  const static u_int8 NORMAL = 1;
-
+#ifdef SWIG
+#define win_border_MINI 0
+#define win_border_NORMAL 1
+#else
+    const static u_int8 MINI = 0;
+    const static u_int8 NORMAL = 1;
+#endif
  private:
   
   void init();

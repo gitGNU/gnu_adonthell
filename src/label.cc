@@ -64,11 +64,15 @@ bool label::input_update()
     {
       if(input::has_been_pushed(KEY_CURSOR_NEXT)) 
       {
+          cursor_blink_cur_ = 0;
+          cursor_visible_ = true; 
           cursor_next();
           check_form (); 
       }
       else if(input::has_been_pushed(KEY_CURSOR_PREVIOUS)) 
       {
+          cursor_blink_cur_ = 0; 
+          cursor_visible_ = true; 
           cursor_previous();
           check_form (); 
       }

@@ -37,7 +37,7 @@ bool screen::fullscreen_ = false;
 void screen::set_video_mode (u_int16 nl, u_int16 nh, u_int8 depth = 0)
 {
     u_int8 bpp;
-    u_int32 SDL_flags = SDL_HWSURFACE | SDL_DOUBLEBUF | SDL_ASYNCBLIT;
+    u_int32 SDL_flags = SDL_HWSURFACE | SDL_DOUBLEBUF;
     u_int8 emulated = depth; 
     
     if (SDL_Init (SDL_INIT_VIDEO) < 0)
@@ -87,7 +87,9 @@ void screen::set_video_mode (u_int16 nl, u_int16 nh, u_int8 depth = 0)
     SDL_WM_SetCaption ("Adonthell", NULL);
 
     // Turn off SDL cursor
-    SDL_ShowCursor (0);     
+    SDL_ShowCursor (0);
+
+    cout << screen::info (); 
 }
 
 void screen::show () 

@@ -35,7 +35,7 @@
 typedef
 enum
 { INIT_NONE = 0, INIT_VIDEO = 1, INIT_AUDIO = 2, INIT_PYTHON = 4, INIT_DATA = 8, 
-  INIT_SAVES = 16, INIT_INPUT = 32, INIT_ALL = 255 } initflags; 
+  INIT_SAVES = 16, INIT_INPUT = 32, INIT_WIN =  64, INIT_ALL = 255 } initflags; 
 
 /** Responsible for game initialisation and finalisation.
  *  It has only a few methods, however they are critical as they

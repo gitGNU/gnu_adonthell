@@ -39,6 +39,7 @@
 #include "mapsquare_walkable.h"
 #include "py_script.h"
 #include "path.h"
+#include "text_bubble.h"
 
 class landmap; 
 class path; 
@@ -468,6 +469,8 @@ public:
      * @return pointer to the mapcharacter next to this mapcharacter.
      */
     mapcharacter *whosnext () const;
+
+    void speak (string text); 
     //@}
       
 
@@ -809,7 +812,9 @@ private:
     string action_file_;
     
     string filename_; 
-    
+
+    text_bubble * saying; 
+  
     /**
      * Mapcharacter locales, available from Python.
      * 

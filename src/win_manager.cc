@@ -19,6 +19,34 @@
 list<win_base*> win_manager::lmanage;
 win_base * win_manager::wc=NULL;
 
+hash_map<string, win_theme *> win_manager::theme;
+hash_map<string, win_font *> win_manager::font; 
+
+using namespace std; 
+
+
+void win_manager::init () 
+{
+}
+
+void win_manager::cleanup () 
+{
+    // Close all windows
+    destroy ();
+    
+    // Cleaning up themes
+    for (hash_map <string, win_theme *>::iterator it = theme.begin ();
+         it != theme.end (); it++)
+        delete it->second;
+    theme.clear (); 
+
+    // Cleaning up fonts
+    for (hash_map <string, win_font *>::iterator ifo = font.begin ();
+         ifo != font.end (); ifo++)
+        delete ifo->second;
+    font.clear (); 
+}
+
 //add a container 
 void win_manager::add(win_base * tmp)
 {
@@ -113,4 +141,48 @@ void win_manager::set_focus(win_base * tmp)
         wc=tmp;
         wc->set_focus(true);
     }   
+}
+
+void win_manager::add_theme (string name)
+{
+    theme[name] = new win_theme ((char *) name.c_str ()); 
+}
+
+bool win_manager::remove_theme (string name)
+{
+    hash_map <string, win_theme *>::iterator it = theme.find (name);
+    if (it == theme.end ()) return false;
+
+    delete it->second;
+    theme.erase (it);
+    return true; 
+}
+
+win_theme * win_manager::get_theme (string name)
+{
+    hash_map <string, win_theme *>::iterator it = theme.find (name); 
+    if (it == theme.end ()) return NULL;
+    else return it->second; 
+}
+
+void win_manager::add_font (string name)
+{
+    font[name] = new win_font ((char *) name.c_str ());
+}
+
+bool win_manager::remove_font (string name)
+{
+    hash_map <string, win_font *>::iterator it = font.find (name);
+    if (it == font.end ()) return false;
+
+    delete it->second;
+    font.erase (it);
+    return true; 
+}
+
+win_font * win_manager::get_font (string name)
+{
+    hash_map <string, win_font *>::iterator it = font.find (name);
+    if (it == font.end ()) return NULL;
+    else return it->second; 
 }

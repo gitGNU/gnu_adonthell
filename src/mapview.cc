@@ -24,7 +24,7 @@
 
 
 #include "mapview.h"
-
+#include <set>
 
 mapview::mapview () : da () 
 {
@@ -248,13 +248,16 @@ void mapview::draw (s_int16 x, s_int16 y, const drawing_area * da_opt = NULL,
     static list <mapsquare_char>::iterator itc;
     static mapsquare_area *l;
     static u_int16 offx, offy; 
-    
+
+    static list <mapsquare_tile> critical_draw;
+    static list <mapsquare_char> characters_draw;
+
     if (!m_map)
         return;
 
     static SDL_Rect trect; 
     static drawing_area tda;
-
+     
     da.move (x, y);
     if (da_opt) da.assign_drawing_area (da_opt);
     
@@ -292,7 +295,7 @@ void mapview::draw (s_int16 x, s_int16 y, const drawing_area * da_opt = NULL,
          itc != l->area[i0][j0].mapchars.end (); itc++)
         if (itc->x > itc->base_tile->x && itc->y > itc->base_tile->y)
             characters_draw.push_back (*itc);
-
+    
     // Top line
     for (i = i0; i < ie && i < l->area_length (); i++)
     {
@@ -383,7 +386,9 @@ void mapview::draw (s_int16 x, s_int16 y, const drawing_area * da_opt = NULL,
                 
             for (itc = l->area[i][j].mapchars.begin ();
                  itc != l->area[i][j].mapchars.end (); itc++)
-                if (*itc == *(itc->base_tile))
+                if (*itc == *(itc->base_tile) &&
+                    itc->x == itc->mchar->posx () &&
+                    itc->y == itc->mchar->posy ())
                     characters_draw.push_back (*itc);
         }
         
@@ -500,7 +505,7 @@ void mapview::draw (s_int16 x, s_int16 y, const drawing_area * da_opt = NULL,
     critical_draw.clear ();
     characters_draw.clear ();
 
-    if (da_opt) da.detach_drawing_area ();  
+    if (da_opt) da.detach_drawing_area ();
 }
 
 

@@ -63,24 +63,7 @@
 //directory size
 #define WIN_BORDER_NORMAL_SIZE "normal/"
 #define WIN_BORDER_MINI_SIZE "mini/"
-
-//just a start to build a theme
-#define WIN_THEME_ORIGINAL "original/" //dont forget '/'
-#define WIN_THEME_ELFE "silverleaf/"
-
+ 
 #define WIN_BRIGHTNESS_LEVEL 130
 
 #endif
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -358,10 +358,7 @@ private:
     
 
     mutable drawing_area da; 
-    
-    mutable list <mapsquare_tile> critical_draw;
-    mutable list <mapsquare_char> characters_draw;
-
+     
     PyObject *locals;			// Locals that belong to that mapview
     py_script schedule;
     string schedule_file_; 
