@@ -18,6 +18,7 @@ class dialog;
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <string>
 #include <gtk/gtk.h>
 
 #include "../../types.h"
@@ -37,7 +38,7 @@ int
 new_circle (MainFrame * wnd, GdkPoint point, int type)
 {
     NodeData *cbd = (NodeData *) g_malloc (sizeof (NodeData));
-    DlgNode *circle = (DlgNode *) g_malloc (sizeof (DlgNode));
+    DlgNode *circle = new DlgNode;
     int retval;
 
     /* Init Circle */
@@ -93,7 +94,7 @@ new_circle (MainFrame * wnd, GdkPoint point, int type)
 int 
 new_arrow (MainFrame * wnd, GdkPoint point)
 {
-    DlgNode *arrow = (DlgNode *) g_malloc (sizeof (DlgNode));
+    DlgNode *arrow = new DlgNode;
     DlgNode *end = get_cur_selection (wnd, point);
     int type;
 
@@ -118,8 +119,6 @@ new_arrow (MainFrame * wnd, GdkPoint point)
     arrow->number = wnd->number;
     arrow->text = NULL;
     arrow->type = LINK;
-
-    /* Create new text */
 
     /* Add to Array */
     add_ptr_list_element (wnd->nodes, arrow);
@@ -377,7 +376,7 @@ free_node (DlgNode * node)
     g_ptr_array_free (node->next, FALSE);
     g_ptr_array_free (node->link, FALSE);
 
-    g_free (node);
+    delete node;
 }
 
 /* fills gaps created by removal of nodes */
@@ -413,7 +412,7 @@ new_mover (MainFrame * wnd, GdkPoint point)
         wnd->dragged_node = wnd->selected_node;
     else
     {
-        wnd->dragged_node = (DlgNode *) malloc (sizeof (DlgNode));
+        wnd->dragged_node = new DlgNode;
         wnd->dragged_node->type = MOVER;
         wnd->dragged_node->text = NULL;
         wnd->dragged_node->prev = g_ptr_array_new ();
@@ -456,7 +455,7 @@ new_mover (MainFrame * wnd, GdkPoint point)
             return;
         }
 
-        free_node (wnd->dragged_node);
+        delete wnd->dragged_node;
 
         wnd->dragged_node = NULL;
         wnd->mode = OBJECT_MARKED;
@@ -540,7 +539,7 @@ end_moving (MainFrame * wnd, GdkPoint point)
         redraw_arrow (wnd, arrow);
 
         /* delete temporary circle */
-        free_node (wnd->dragged_node);
+        delete wnd->dragged_node;
     }
 
     /* was circle moved, there is not much to do ;-) */
@@ -741,6 +740,7 @@ draw_arrow (MainFrame * wnd, DlgNode * arrow, int highlite)
     GdkPoint line[2];
     GdkPoint tip[3];
     GdkRectangle rect = inflate_rectangle (arrow->position, 10, 10);
+    u_int8 fill = arrow->text == NULL ? FALSE : TRUE;
 
     /* assure that we only redraw arrows */
     if (arrow->type != LINK)
@@ -793,7 +793,7 @@ draw_arrow (MainFrame * wnd, DlgNode * arrow, int highlite)
     /* draw everything */
     gdk_draw_polygon (wnd->pixmap, gc, FALSE, line, 2);
     gdk_draw_polygon (wnd->pixmap, wnd->graph->style->white_gc, TRUE, tip, 3);
-    gdk_draw_polygon (wnd->pixmap, gc, FALSE, tip, 3);
+    gdk_draw_polygon (wnd->pixmap, gc, fill, tip, 3);
     gtk_widget_draw (wnd->graph, &rect);
 }
 
@@ -924,7 +924,7 @@ load_dialogue (MainFrame * wnd, const char *file)
 void 
 load_circle (MainFrame * wnd, FILE * in, int type)
 {
-    DlgNode *circle = (DlgNode *) malloc (sizeof (DlgNode));
+    DlgNode *circle = new DlgNode;
     u_int32 size;
     char *str;
 
@@ -961,9 +961,12 @@ load_circle (MainFrame * wnd, FILE * in, int type)
 void 
 load_arrow (MainFrame * wnd, FILE * in)
 {
-    int num, i, idx;
+    u_int32 num, i, idx;
+    u_int16 size;
     char *str;
-    DlgNode *arrow = (DlgNode *) malloc (sizeof (DlgNode));
+    function_data *data;
+    string text ("");
+    DlgNode *arrow = new DlgNode;
     DlgNode *circle;
 
     /* init arrow */
@@ -971,9 +974,8 @@ load_arrow (MainFrame * wnd, FILE * in)
     arrow->next = g_ptr_array_new ();
     arrow->link = g_ptr_array_new ();
     arrow->highlite = 0;
-
+    
     /* assign type and load number */
-    arrow->text = NULL;
     arrow->type = LINK;
     fread (&arrow->number, sizeof (arrow->number), 1, in);
 
@@ -991,18 +993,49 @@ load_arrow (MainFrame * wnd, FILE * in)
     g_ptr_array_add (circle->prev, arrow);
     g_ptr_array_add (arrow->next, circle);
 
-    /* load text */
-    fread (&idx, sizeof (idx), 1, in);
+    // load function data
+    fread (&size, sizeof (size), 1, in);
 
-    if (idx > 0)
+    for (i = 0; i < size; i++)
     {
+        data = new function_data;
+        
+        // function
+        fread (&data->function, sizeof (data->function), 1, in);
+        
+        // variable
+        fread (&idx, sizeof (idx), 1, in);
         str = new char[idx + 1];
         fread (str, sizeof (str[0]), idx, in);
         str[idx] = '\0';
+        data->variable = str;
 
-        arrow->text = str;
+        // operation
+        fread (&data->operation, sizeof (data->operation), 1, in);
+
+        // value
+        fread (&idx, sizeof (idx), 1, in);
+        str = new char[idx + 1];
+        fread (str, sizeof (str[0]), idx, in);
+        str[idx] = '\0';
+        data->value = str;
+
+        // set arrow-text
+        text += function::fct_string[data->function];
+        text += " ";
+        text += data->variable;
+        text += " ";
+        text += function::op_string[data->operation];
+        text += " ";
+        text += data->value;
+        text += "\n";
+
+        arrow->fctn.push_back (data);
     }
 
+    if (size > 0) arrow->text = g_strdup (text.c_str ());
+    else arrow->text = NULL;
+    
     /* load  links */
     fread (&num, sizeof (num), 1, in);
     for (i = 0; i < num; i++)
@@ -1122,6 +1155,7 @@ void
 save_arrow (DlgNode * arrow, FILE * out, int number, int *table)
 {
     u_int32 i, len = 0;
+    u_int16 size;
 
     /* save type and number */
     fwrite (&arrow->type, sizeof (arrow->type), 1, out);
@@ -1131,16 +1165,29 @@ save_arrow (DlgNode * arrow, FILE * out, int number, int *table)
     fwrite (&table[((DlgNode *) g_ptr_array_index (arrow->prev, 0))->number], sizeof(table[0]), 1, out);
     fwrite (&table[((DlgNode *) g_ptr_array_index (arrow->next, 0))->number], sizeof(table[0]), 1, out);
 
-    /* save text */
-    if (arrow->text != NULL)
-    {
-        len = strlen (arrow->text);
-        fwrite (&len, sizeof (len), 1, out);
-        fwrite (arrow->text, sizeof (arrow->text[0]), len, out);
-    }
-    else
-        fwrite (&len, sizeof (len), 1, out);
+    // save function data
+    size = arrow->fctn.size ();
+    fwrite (&size, sizeof (size), 1, out);
 
+    for (i = 0; i < size; i++)
+    {
+        // function
+        fwrite (&arrow->fctn[i]->function, sizeof (arrow->fctn[i]->function), 1, out);
+        
+        // variable
+        len = strlen (arrow->fctn[i]->variable);
+        fwrite (&len, sizeof (len), 1, out);
+        fwrite (arrow->fctn[i]->variable, sizeof (arrow->fctn[i]->variable[0]), len, out);
+
+        // operation
+        fwrite (&arrow->fctn[i]->operation, sizeof (arrow->fctn[i]->operation), 1, out);
+
+        // value
+        len = strlen (arrow->fctn[i]->value);
+        fwrite (&len, sizeof (len), 1, out);
+        fwrite (arrow->fctn[i]->value, sizeof (arrow->fctn[i]->value[0]), len, out);
+    }
+    
     /* links */
     fwrite (&arrow->link->len, sizeof (arrow->link->len), 1, out);
     for (i = 0; i < arrow->link->len; i++)

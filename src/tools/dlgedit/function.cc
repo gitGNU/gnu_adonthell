@@ -13,6 +13,7 @@
 */
 
 #include <map>
+#include <string>
 #include <string.h>
 #include <gtk/gtk.h>
 
@@ -29,10 +30,27 @@ map<char*, s_int32, ltstr> function::vars;
 // Constructor
 function::function (DlgNode *n) : node (n), number (-1), thefunction (IF)
 {
+    u_int32 i, row;
+    char *entry[4];
+    
     create_function_dialog ();
     select (-1);
     set_variables ();
     gtk_widget_show (function_dialog);
+
+    for (i = 0; i < node->fctn.size (); i++)
+    {
+        // add function to list
+        entry[0] = fct_string[node->fctn[i]->function];
+        entry[1] = node->fctn[i]->variable;
+        entry[2] = op_string[node->fctn[i]->operation];
+        entry[3] = node->fctn[i]->value;
+    
+        row = gtk_clist_append ((GtkCList*) function_list, entry);
+        gtk_clist_set_row_data ((GtkCList*) function_list, row, node->fctn[i]);
+
+        number++;
+    }   
 }
 
 // Destructor
@@ -44,26 +62,26 @@ function::~function ()
 // Add a new function to node
 void function::add ()
 {
-    map<char*, s_int32, ltstr>::iterator i;
     function_data *data = new function_data;
     char *entry[4];
+    u_int32 row;
 
-    // add data to node
     data->function = thefunction;
-    data->operation = theoperation;
     data->variable = g_strdup (gtk_entry_get_text ((GtkEntry *) GTK_COMBO (variable)->entry));
+    data->operation = theoperation;
     data->value = g_strdup (gtk_entry_get_text ((GtkEntry *) GTK_COMBO (value)->entry));
 
     // add function to list
-    entry[0] = function::fct_string[data->function];
+    entry[0] = function::fct_string[thefunction];
     entry[1] = data->variable;
-    entry[2] = function::op_string[data->operation];
+    entry[2] = function::op_string[theoperation];
     entry[3] = data->value;
-    gtk_clist_append ((GtkCList*) function_list, entry);
+    
+    row = gtk_clist_append ((GtkCList*) function_list, entry);
+    gtk_clist_set_row_data ((GtkCList*) function_list, row, data);
 
     // add variable to list of variables
-    i = vars.find (data->variable);
-    if (i != vars.end ())
+    if (vars.find (data->variable) != vars.end ())
     {
         vars[data->variable]++;
     }
@@ -125,7 +143,33 @@ void function::down ()
 // keep changes
 void function::ok ()
 {
-    // add the contents of the function-list to the node
+    function_data *data;
+    string text ("");
+    s_int32 i;
+    
+    node->fctn.clear ();
+    if (node->text != NULL) g_free (node->text);
+    node->text = NULL;
+    
+    for (i = 0; i <= number; i++)
+    {
+        data = (function_data *) gtk_clist_get_row_data ((GtkCList *) function_list, i);
+
+        text += fct_string[data->function];
+        text += " ";
+        text += data->variable;
+        text += " ";
+        text += op_string[data->operation];
+        text += " ";
+        text += data->value;
+        text += "\n";
+
+        // add the contents of the function-list to the node
+        node->fctn.push_back (data);
+        node->text = g_strdup (text.c_str ()); 
+    }
+    
+    on_widget_destroy (function_dialog, NULL);
 }
 
 // Select function in function-list
@@ -133,7 +177,7 @@ void function::select (s_int32 row)
 {
     selection = row;
 
-    // Nothing selected -> deactivate som buttons
+    // Nothing selected -> deactivate some buttons
     if (row < 0)
     {
         gtk_widget_set_sensitive (remove_button, FALSE);

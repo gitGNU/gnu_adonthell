@@ -70,6 +70,9 @@ public:
     void select (s_int32);          // Change selection state of the list                 
     void set_function ();           // Change the function
     void set_operation ();          // Change the operation
+
+    static char* fct_string[];      // String representation of functions
+    static char* op_string[];       // String representation of operators
     
 private:
     void create_function_dialog (); // Create the GUI
@@ -89,8 +92,6 @@ private:
 
     DlgNode *node;                  // The Arrow which is being edited
 
-    static char* fct_string[];      // String representation of functions
-    static char* op_string[];       // String representation of operators
     static map<char*, s_int32, ltstr> vars;// Contains all used variables
 
     s_int32 selection;              // Selected function in the list 
