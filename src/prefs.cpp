@@ -189,6 +189,8 @@ int config::read_adonthellrc ()
         }
     } 
 
+    fclose (prefsin);
+    
     if (!got_it)
     {
         // See if we've got any other section we might use
