@@ -78,6 +78,9 @@ public:
     void draw_walkable(s_int16 x, s_int16 y, const drawing_area * da_opt = NULL,
                        surface * target = NULL) const;
 
+    void draw_border(s_int16 x, s_int16 y, const drawing_area * da_opt = NULL,
+                       surface * target = NULL) const;
+
     void put(ogzstream & file) const;
 
     void get(igzstream & file);

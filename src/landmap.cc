@@ -110,13 +110,13 @@ bool landmap::put (map_placeable * obj, map_coordinates & pos, bool flat = false
     if (pos.ox ()) fx++;
     if (pos.oy ()) fy++; 
     
-    if (fx >= length()) fx = length() - 1;
-    if (fy >= height()) fy = height() - 1;
+    if (fx > length()) fx = length() - 1;
+    if (fy > height()) fy = height() - 1;
 
     mapsquare * msqr; 
     
-    for (j = sy; j <= fy; j++) 
-        for (i = sx; i <= fx; i++) 
+    for (j = sy; j < fy; j++) 
+        for (i = sx; i < fx; i++) 
         {
             msqr = get (i, j);
             msqr->add (obj, pos, flat); 
@@ -148,13 +148,13 @@ bool landmap::remove (map_placeable * obj, map_coordinates & pos, bool flat = fa
     if (pos.ox ()) fx++;
     if (pos.oy ()) fy++; 
     
-    if (fx >= length()) fx = length() - 1;
-    if (fy >= height()) fy = height() - 1;
+    if (fx > length()) fx = length() - 1;
+    if (fy > height()) fy = height() - 1;
 
     mapsquare * msqr; 
     
-    for (j = sy; j <= fy; j++) 
-        for (i = sx; i <= fx; i++) 
+    for (j = sy; j < fy; j++) 
+        for (i = sx; i < fx; i++) 
         {
             msqr = get (i, j);
             msqr->remove (obj, pos, flat); 
@@ -187,4 +187,20 @@ bool landmap::put_map_object(u_int32 index, map_coordinates & pos, bool flat = f
 {
     put(objects[index], pos, flat);
     return true;
+}
+
+void landmap::output_occupation()
+{
+    for (u_int16 j = 0; j < height(); j++)
+    {
+        for (u_int16 i = 0; i < length(); i++)
+        {
+            mapsquare * msqr = get(i, j);
+            u_int16 nb = 0;
+            for (mapsquare::iterator it = msqr->begin(); it != msqr->end(); it++)
+                nb++;
+            cout << nb << " ";
+        }
+        cout << endl;
+    }
 }

@@ -138,6 +138,21 @@ void map_placeable_model_gfx::draw_walkable(s_int16 x, s_int16 y,
         }
 }
 
+void map_placeable_model_gfx::draw_border(s_int16 x, s_int16 y, 
+                                          const drawing_area * da_opt = NULL,
+                                          surface * target = NULL) const
+{
+    map_placeable_area * st = Target.current_state();
+
+    x -= st->base.x() * mapsquare_size + st->base.ox();
+    y -= st->base.y() * mapsquare_size + st->base.oy();
+
+    screen::display.fillrect(x, y, st->area_length() * mapsquare_size, 1, 0xFFFFFF);
+    screen::display.fillrect(x, y, 1, st->area_height() * mapsquare_size, 0xFFFFFF);
+    screen::display.fillrect(x + st->area_length() * mapsquare_size - 1, y, 1, st->area_height() * mapsquare_size, 0xFFFFFF);
+    screen::display.fillrect(x, y + st->area_height() * mapsquare_size - 1, st->area_length() * mapsquare_size, 1, 0xFFFFFF);
+}
+
 void map_placeable_model_gfx::put(ogzstream & file) const
 {
     u_int32 s = Gfxs.size();

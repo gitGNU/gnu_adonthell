@@ -247,6 +247,8 @@ public:
 
     bool put_map_object(u_int32 index, map_coordinates & pos, bool flat = false);
 
+    void output_occupation();
+
     friend class map_moving;
 }; 
 

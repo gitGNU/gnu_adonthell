@@ -56,12 +56,10 @@ void map_moving::set_limits (u_int16 mx, u_int16 my)
     Ly = my; 
 }
 
-bool map_moving::update ()
+void map_moving::update_pos()
 {
     Has_moved = 0; 
 
-    Mymap.remove(this);
-    
     if (vx ()) 
     {
         Has_moved = 1;
@@ -91,7 +89,7 @@ bool map_moving::update ()
                 fox = 39; 
             }
         }
-        if (X == Lx) 
+        if (X == Lx - 1) 
         {
             X--;
             fox = 39;
@@ -127,12 +125,63 @@ bool map_moving::update ()
                 foy = 39; 
             }
         }
-        if (Y == Ly) 
+        if (Y == Ly - 1) 
         {
             Y--;
             foy = 39; 
         }
         Oy = (u_int16) foy; 
+    }
+}
+
+bool map_moving::should_fall()
+{
+    map_placeable_area * state = current_state();
+
+    for (int j = 0; j < state->area_height(); j++)
+        for (int i = 0; i < state->area_length(); i++)
+        {
+            if (state->get(i, j).is_walkable()) continue;
+            u_int16 px = x() - state->base.x() + i;
+            u_int16 py = y() - state->base.y() + j;
+
+            u_int16 nbx = 1 + (ox() != 0);
+            u_int16 nby = 1 + (oy() != 0);
+
+            for (u_int16 l = 0; l < nby; l++)
+                for (u_int16 k = 0; k < nbx; k++)
+                {
+                    mapsquare * msqr = Mymap.get(px + k, py + l);
+                    for (mapsquare::iterator it = msqr->begin(); it != msqr->end(); it++)
+                    {
+                        if (!it->obj->current_state()->get(px + k - it->x() + it->obj->current_state()->base.x(),
+                                                           py + l - it->y() + it->obj->current_state()->base.y())
+                            .is_walkable()) 
+                        {
+                            return false;
+                        }
+                    }
+                }
+        }
+
+    return true;
+}
+
+bool map_moving::update()
+{
+    map_coordinates prevpos = *this;
+    float prevfox = fox;
+    float prevfoy = foy;
+
+    Mymap.remove(this);
+
+    update_pos();
+
+    if (!should_fall())
+    {
+        fox = prevfox;
+        foy = prevfoy;
+        *((map_coordinates*)this) = prevpos;
     }
     
     Mymap.put(this);

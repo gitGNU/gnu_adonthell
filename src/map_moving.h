@@ -74,7 +74,11 @@ public:
 
     void set_velocity (float vx, float vy); 
 
-    bool update (); 
+    void update_pos();
+
+    bool should_fall();
+
+    bool update(); 
 }; 
 
 #endif
