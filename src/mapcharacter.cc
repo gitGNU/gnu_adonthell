@@ -656,13 +656,12 @@ mapcharacter *mapcharacter::whosnext () const
 void mapcharacter::set_schedule (string file, PyObject * args = NULL)
 {     
     // Clears the schedule
-    if (file == "") 
-    {
-        schedule.clear ();
-        Py_XDECREF (schedule_args); 
-        schedule_args = NULL;
-    }
-    else 
+    schedule.clear ();
+    Py_XDECREF (schedule_args);
+    schedule_args = NULL;
+
+    // Set new schedule
+    if (file != "")
     {
         Py_XINCREF (args); 
         schedule_args = args; 
@@ -689,15 +688,13 @@ void mapcharacter::set_schedule (string file, PyObject * args = NULL)
 void mapcharacter::set_action (string file, PyObject * args = NULL)
 {     
     // Clears the action script
-    if (file == "") 
+    action.clear ();
+    Py_XDECREF (action_args);
+    action_args = NULL;
+
+    if (file != "")
     {
-        action.clear ();
-        Py_XDECREF (action_args);
-        action_args = NULL; 
-    }
-    else 
-    {
-        Py_XINCREF (args); 
+        Py_XINCREF (args);
         action_args = args; 
         u_int16 argssize = args == NULL ? 1 : PyTuple_Size (args) + 1; 
         PyObject * theargs;
@@ -893,9 +890,15 @@ void mapcharacter::leave_position ()
 
 void mapcharacter::set_pos (u_int16 smap, u_int16 x, u_int16 y)
 {
+    // update for pathfinding
+    mypath.submap = smap;
+
+    // update character position
     submap_ = smap;
     posx_ = x;
     posy_ = y;
+
+    // mark the character's place as occupied
     occupy (submap (), posx (), posy ()); 
 }
 
