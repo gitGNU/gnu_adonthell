@@ -119,10 +119,10 @@ class mapview
   u_int16 get_posy() { return posy; }
   void resize(u_int16 l, u_int16 h);
 
+#ifndef _EDIT_
   s_int8 get_state(gzFile file);
   s_int8 put_state(gzFile file);
 
-#ifndef _EDIT_
   void set_schedule(char * file);
 #endif
   void update();

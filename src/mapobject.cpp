@@ -316,12 +316,14 @@ void mapobject::zoom(u_int16 sx, u_int16 sy, mapobject * src)
 {
   u_int16 i;
   clear();
-  for(i=0;i<nbr_of_animations();i++)
+  for(i=0;i<src->nbr_of_animations();i++)
     {
-      anim[i]->zoom((src->anim[i]->length()*sx)/src->length(),
+      animation * an=new animation;
+      an->zoom((src->anim[i]->length()*sx)/src->length(),
 		   (src->anim[i]->height()*sy)/src->height(),src->anim[i]);
-      anim[i]->set_offset((src->anim[i]->xoffset()*sx)/src->length(),(src->anim[i]->yoffset()*sy)/src->height());
-      anim[i]->play();
+      an->set_offset((src->anim[i]->xoffset()*sx)/src->length(),(src->anim[i]->yoffset()*sy)/src->height());
+      an->play();
+      anim.push_back(an);
     }
 }
 

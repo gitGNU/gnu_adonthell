@@ -82,9 +82,11 @@ class mapcharacter : public maptpl, public character_base
   s_int8 get(gzFile file);
   s_int8 load(const char * fname);
 
+#ifndef _EDIT_
   // State saving/loading
   s_int8 get_state(gzFile file);
   s_int8 put_state(gzFile file);
+#endif
 
   // Positioning
   u_int16 get_submap() { return submap; }

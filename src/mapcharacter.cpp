@@ -96,6 +96,7 @@ s_int8 mapcharacter::load(const char * fname)
   return 0;
 }
 
+#ifndef _EDIT_
 s_int8 mapcharacter::get_state(gzFile file)
 {
   // Load the schedule's and graphical data
@@ -148,7 +149,6 @@ s_int8 mapcharacter::put_state(gzFile file)
   return 0;
 }
 
-#ifndef _EDIT_
 void mapcharacter::talk ()
 {
   dialog_engine *de = new dialog_engine (this, dialogue, 0);

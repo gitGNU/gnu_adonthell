@@ -197,6 +197,7 @@ void mapview::resize(u_int16 l, u_int16 h)
 #endif
 }
 
+#ifndef _EDIT_
 s_int8 mapview::get_state(gzFile file)
 {
   cout << "Getting mapview state!\n";
@@ -252,7 +253,6 @@ s_int8 mapview::put_state(gzFile file)
   return 0;
 }
 
-#ifndef _EDIT_
 void mapview::set_schedule(char * file)
 {
   if(!file || !strcmp(file,""))
