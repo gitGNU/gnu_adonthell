@@ -116,5 +116,29 @@ PyObject *import_module( char *filename )
 	return result;
 }
 
+// Make a C++ instance available to Python
+PyObject *pass_instance (PyObject *module, void *instance, const char *class_name)
+{
+    char class_ptr[256];
+    char class_addr[256] = "_";
+    char buffer[256];
 
+    // Construct the python shadow class matching the "instance" class 
+    strcat (strcpy (class_ptr, class_name), "Ptr");
 
+    // Construct SWIG's representation of the "instance" pointer
+    sprintf (buffer, "%p_%s_p", instance, class_name);
+    strcat (class_addr, buffer+2);
+
+    // Now create the Python object corresponding to "instance"
+    PyObject *cls = PyObject_GetAttrString(module, class_ptr);
+    PyObject *arg = Py_BuildValue ("(s)", class_addr);
+    PyObject *res = PyEval_CallObject (cls, arg);
+
+    // Clean up
+    Py_DECREF (arg);
+    Py_DECREF (cls);
+
+    // Voila: "res" is 'identical' to "instance" :)
+    return res;
+}

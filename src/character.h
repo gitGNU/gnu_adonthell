@@ -25,12 +25,10 @@
 class character : public storage
 {
 public:
-    void set_name (const char*);
-    char *get_name ();
+    char *name;                     // The character's name (and ID)
     
 protected:
     s_int32 type;                   // The characters type
-    char *name;                     // The character's name (and ID)
 };
 
 // Representation of a NPC

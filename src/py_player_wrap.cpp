@@ -519,31 +519,35 @@ static void *SwigcharacterTostorage(void *ptr) {
     return (void *) dest;
 }
 
-#define character_set_name(_swigobj,_swigarg0)  (_swigobj->set_name(_swigarg0))
-static PyObject *_wrap_character_set_name(PyObject *self, PyObject *args) {
+static char * character_name_set(character *obj, char *val) {
+    if (obj->name) delete [] obj->name;
+    obj->name = new char[strlen(val)+1];
+    strcpy((char *)obj->name,val);
+    return (char *) val;
+}
+static PyObject *_wrap_character_name_set(PyObject *self, PyObject *args) {
     character  *_arg0;
     PyObject  *_resultobj,*_argo0=0;
-    char  *_arg1;
+    char  *_result,*_arg1;
     self = self;
-    if(!PyArg_ParseTuple(args,"Os:character_set_name",&_argo0,&_arg1)) 
+    if(!PyArg_ParseTuple(args,"Os:character_name_set",&_argo0,&_arg1)) 
         return NULL;
     if ((SWIG_ConvertPtr(_argo0,(void **) &_arg0,SWIGTYPE_character_p,1)) == -1) return NULL;
-    character_set_name(_arg0,_arg1);
-    Py_INCREF(Py_None);
-    _resultobj = Py_None;
+    _result = (char *)character_name_set(_arg0,_arg1);
+    _resultobj = Py_BuildValue("s", _result);
     return _resultobj;
 }
 
-#define character_get_name(_swigobj)  (_swigobj->get_name())
-static PyObject *_wrap_character_get_name(PyObject *self, PyObject *args) {
+#define character_name_get(_swigobj) ((char *) _swigobj->name)
+static PyObject *_wrap_character_name_get(PyObject *self, PyObject *args) {
     character  *_arg0;
     PyObject  *_resultobj,*_argo0=0;
     char  *_result;
     self = self;
-    if(!PyArg_ParseTuple(args,"O:character_get_name",&_argo0)) 
+    if(!PyArg_ParseTuple(args,"O:character_name_get",&_argo0)) 
         return NULL;
     if ((SWIG_ConvertPtr(_argo0,(void **) &_arg0,SWIGTYPE_character_p,1)) == -1) return NULL;
-    _result = (char *)character_get_name(_arg0);
+    _result = (char *)character_name_get(_arg0);
     _resultobj = Py_BuildValue("s", _result);
     return _resultobj;
 }
@@ -689,16 +693,20 @@ static PyObject *_wrap_delete_player(PyObject *self, PyObject *args) {
 }
 
 static PyMethodDef playercMethods[] = {
+	 { "player_name_get", _wrap_character_name_get, METH_VARARGS },
+	 { "player_name_set", _wrap_character_name_set, METH_VARARGS },
 	 { "delete_player", _wrap_delete_player, METH_VARARGS },
 	 { "new_player", _wrap_new_player, METH_VARARGS },
+	 { "npc_name_get", _wrap_character_name_get, METH_VARARGS },
+	 { "npc_name_set", _wrap_character_name_set, METH_VARARGS },
 	 { "delete_npc", _wrap_delete_npc, METH_VARARGS },
 	 { "new_npc", _wrap_new_npc, METH_VARARGS },
 	 { "npc_talk", _wrap_npc_talk, METH_VARARGS },
 	 { "npc_set_dialogue", _wrap_npc_set_dialogue, METH_VARARGS },
 	 { "delete_character", _wrap_delete_character, METH_VARARGS },
 	 { "new_character", _wrap_new_character, METH_VARARGS },
-	 { "character_get_name", _wrap_character_get_name, METH_VARARGS },
-	 { "character_set_name", _wrap_character_set_name, METH_VARARGS },
+	 { "character_name_get", _wrap_character_name_get, METH_VARARGS },
+	 { "character_name_set", _wrap_character_name_set, METH_VARARGS },
 	 { "delete_storage", _wrap_delete_storage, METH_VARARGS },
 	 { "new_storage", _wrap_new_storage, METH_VARARGS },
 	 { "storage_get", _wrap_storage_get, METH_VARARGS },

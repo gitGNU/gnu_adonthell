@@ -43,6 +43,7 @@ private:
 
     void extract_strings ();        // Gets the dialogues text from 'instance'
     char* scan_string (const char*);// Look for enclosed code and execute it
+    char* get_substr (const char*, char*, char*);
 };
 
 /*

@@ -48,14 +48,31 @@ main (int argc, char *argv[])
         return 1;
     }
 
+    // Insert our script directory to python's search path
     insert_path (script_dir);
-    import_module ("player");
-    // exec_file ("/home/kai/adonthell/maptest/scripts/player_test.py");
+
+    // Load module
+    PyObject *m = import_module ("player");
         
     // Create a player
     MainWnd->myplayer = new player;
 
-    /* Misc initialization */
+    // Add the player to the game objects
+    objects::set ("the_player", MainWnd->myplayer);
+
+    // Make "myplayer" available to the interpreter 
+	PyObject *d = PyModule_GetDict(m);
+    PyDict_SetItemString (d, "the_player", pass_instance (m, MainWnd->myplayer, "player"));
+
+    // this is just a hack, have to do it proper in the future:
+    PyDict_SetItemString (d, "FEMALE", PyInt_FromLong (0));
+    PyDict_SetItemString (d, "MALE",  PyInt_FromLong (1));
+    PyDict_SetItemString (d, "HUMAN", PyInt_FromLong (3));
+    PyDict_SetItemString (d, "ELF", PyInt_FromLong (1));
+    PyDict_SetItemString (d, "HALFELF", PyInt_FromLong (2));
+    PyDict_SetItemString (d, "DWARF", PyInt_FromLong (0));
+        
+    // Misc initialization
     init_app (MainWnd);
 
     MainWnd->wnd = NULL;
@@ -97,11 +114,10 @@ init_app (MainFrame * MainWnd)
     MainWnd->scroll_x = 0;
     MainWnd->scroll_y = 0;
     MainWnd->pset_vars = "";
-/*
-    MainWnd->myplayer->set_name ("Banec");
+
+    MainWnd->myplayer->name = strdup ("Banec");
     MainWnd->myplayer->set ("race", 0);     // Dwarf
     MainWnd->myplayer->set ("gender", 1);   // Male
-*/
 }
 
 /* free allocated memory */
@@ -117,5 +133,6 @@ delete_dialogue (MainFrame * wnd)
     wnd->nodes.clear ();
     
     g_free (wnd->file_name);
+    if (wnd->tooltip) gtk_widget_destroy (wnd->tooltip);
 }
 

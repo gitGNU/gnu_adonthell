@@ -16,6 +16,7 @@
 #include <algorithm>
 
 #include "dialog.h"
+#include "character.h"
 #include "py_inc.h"
 #include "yarg.h"
 
@@ -103,6 +104,7 @@ void dialog::run (u_int32 index)
     PyObject_CallMethod (instance, "run", "i", answers[index]);
 #ifdef _DEBUG_
     show_traceback ();
+    cout << flush;
 #endif // _DEBUG_
 
     // Mark the Player's text (if any) as used unless loops allowed
@@ -206,23 +208,77 @@ void dialog::run (u_int32 index)
     Py_XDECREF (cont);
 }
 
+// execute embedded functions and replace shortcuts
+// yeah, the c string library hurts, but at least it's fast ;)
 char* dialog::scan_string (const char *s)
 {
-    u_int32 begin, end, len;
+    u_int32 begin, end, len, done;
     PyObject *result;
     char *start, *mid, *string = NULL;
     char *tmp, *newstr = strdup (s);
+    player *the_player = (player*) objects::get("the_player");
 
-    /*
     // replace $... shortcuts
     while (1)
     {
         // check wether the string contains shortcut code at all
-        start = strchr (strings[index], '$');
+        start = strchr (newstr, '$');
         if (start == NULL) break;
-    
+
+        done = 0;
+
+        // replace "$name"
+        if (strncmp (start, "$name", 5) == 0)
+        {
+            begin = strlen (newstr) - strlen (start);
+            tmp = new char[strlen (newstr) - 5 + strlen (the_player->name)];
+            strncpy (tmp, newstr, begin);
+            tmp[begin] = 0;
+            strcat (tmp, the_player->name);
+            strcat (tmp, start+5);
+            delete newstr;
+            newstr = tmp;
+            done = 1;
+        }
+
+        // replace "$fm"
+        if (strncmp (start, "$fm", 3) == 0)
+        {
+            // extract the "$fm{.../...} part
+            end = strcspn (start, "}");
+            string = new char[end];
+            string[end-1] = 0;        
+            strncpy (string, start+3, end);
+
+            if (the_player->get("gender") == 0) mid = get_substr (string, "{", "/");
+            else mid = get_substr (string, "/", "}");
+
+            begin = strlen(newstr) - strlen(start);
+            tmp = new char[strlen(newstr) - end + strlen (mid)];
+            strncpy (tmp, newstr, begin);
+            tmp[begin] = 0;
+            strcat (tmp, mid);
+            strcat (tmp, start+end+1);
+            
+            delete string;
+            delete newstr;
+            newstr = tmp;
+
+            done = 1;
+        }
+
+        // Error!
+        if (!done)
+        {
+            begin = strlen (newstr) - strlen (start);
+            tmp = new char[begin];
+            strncpy (tmp, newstr, begin);
+            tmp[begin] = 0;
+            delete newstr;
+            newstr = tmp;
+            cout << "\n*** Error, unknown macro " << start << flush;
+        }
     }
-    */
     
     // execute python functions
     while (1)
@@ -270,6 +326,19 @@ char* dialog::scan_string (const char *s)
     }
 
     return newstr;
+}
+
+char *dialog::get_substr (const char* string, char* begin, char* end)
+{
+    u_int32 b, e;
+    b = strcspn (string, begin) + 1;
+    e = strcspn (string, end);
+
+    char *result = new char[e-b];
+    strncpy (result, string+b, e);
+    result[e-b] = 0;
+
+    return result;
 }
 
 /*

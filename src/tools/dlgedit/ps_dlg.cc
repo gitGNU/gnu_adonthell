@@ -22,15 +22,13 @@ ps_dlg::ps_dlg (player *p)
 
 void ps_dlg::run ()
 {
-    wnd = create_ps_window (this, myplayer->get_name (), myplayer->get("race"), myplayer->get("gender"));
+    wnd = create_ps_window (this, myplayer->name, myplayer->get("race"), myplayer->get("gender"));
 }
 
 void ps_dlg::on_ok (char* n, int r, int g)
 {
-/*
-    delete[] myplayer->get_name ();  
-    myplayer->set_name (n);
+    delete myplayer->name;  
+    myplayer->name = strdup (n);
     myplayer->set("race", r);
     myplayer->set("gender", g); 
-*/
 }

@@ -39,7 +39,7 @@ void create_mainframe (MainFrame * MainWnd)
     /* Main Window */
     MainWnd->wnd = gtk_window_new (GTK_WINDOW_TOPLEVEL);
     gtk_widget_set_usize (GTK_WIDGET (MainWnd->wnd), 640, 480);
-    gtk_window_set_title (GTK_WINDOW (MainWnd->wnd), g_strjoin (NULL, "Adonthell Dialogue Editor v0.4 - [", strrchr (MainWnd->file_name, '/') + 1, "]", NULL));
+    gtk_window_set_title (GTK_WINDOW (MainWnd->wnd), g_strjoin (NULL, "Adonthell Dialogue Editor v", _VERSION_, " - [", strrchr (MainWnd->file_name, '/') + 1, "]", NULL));
     gtk_signal_connect (GTK_OBJECT (MainWnd->wnd), "delete_event", GTK_SIGNAL_FUNC (on_widget_destroy), NULL);
 
     /* Menu Accelerators */

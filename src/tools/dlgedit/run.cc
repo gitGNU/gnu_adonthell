@@ -13,6 +13,7 @@
 */
 
 #include <gtk/gtk.h>
+#include <fstream.h>
 
 #include "run.h"
 #include "run_interface.h"
