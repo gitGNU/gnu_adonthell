@@ -53,7 +53,7 @@ int main(int argc, char * argv[])
      exit(1);
   }
 
-  init_display(0);
+  //  init_display(0);
 
   cout << "Init_display done\n";
 
