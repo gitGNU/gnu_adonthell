@@ -1,6 +1,6 @@
 /*
    $Id$
-   
+
    Copyright (C) 2001 Kai Sterker <kaisterker@linuxgames.com>
    Copyright (C) 2001 Alexandre Courbot <alexandrecourbot@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
@@ -28,7 +28,7 @@
 #include "win_manager.h"
 
 text_bubble::text_bubble (const string & text, const string & textcolor,
-                          const string & themename, u_int16 len = 110) 
+                          const string & themename, u_int16 len = 110) : win_label ()
 {
     remain = 75 + text.length () * 4;
 
@@ -38,7 +38,7 @@ text_bubble::text_bubble (const string & text, const string & textcolor,
     set_font (*font);
     set_background (*theme);
     set_border (*theme, win_border::MINI);
-    
+
     label::resize (len, 0);
     set_form (label::AUTO_HEIGHT); 
     set_text (text);

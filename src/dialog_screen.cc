@@ -104,7 +104,8 @@ void dialog_screen::init(character_base *mynpc, char * dlg_file, u_int8 size)
     sel->set_space_with_object (5);
     sel->set_circle (true);
     sel->set_visible_scrollbar (true);
-    sel->set_auto_scrollbar (true);
+    // Commented 'cause it makes troubles during dialogues right now :) 
+    //     sel->set_auto_scrollbar (true);
     sel->set_activate (true);
 
     sel->set_visible (true);
