@@ -42,41 +42,59 @@ gives a few hints for writing well designed dialogues.
 
 /*! \page page1 Understanding the Dialogue Engine
 
-Before we start designing our first dialogues, it might be
-wise to have a look at the concept of the dialogue engine.
-Once you understand the basic rules, it will help you to
-avoid errors. A dialogue consists of a number of Narrator,
-NPC and Player lines, arranged in a certain order. The rules
-for this are as follows:
+Before we start designing our first dialogues, lets have a look
+behind the concept of the dialogue engine. Understanding the
+basics will allow you to use the editor more efficiently and
+prevent you from trying to accomplish the impossible.
 
--# The dialogue starts with, at least, either one NPC or Narrator
-   line.
--# Narrator lines may be followed by 0 or more of either lines.
--# NPC lines may be followed by 0 or more of either lines.
--# Player lines may be followed by 0 or more NPC or Narrator
-   lines.
--# The dialogue ends when no more lines follow.
+First of all, what exactly is a dialogue? In our case, a
+dialogue is the conversation between the player and at least
+one NPC. The NPCs speech is usually followed by a number of
+replies for the player to chose from. The NPC will then
+react according to the choice. After that it is the player's
+turn again, and so on.
 
-This results in a directed graph which later on is traversed
-by the dialogue engine according to the following rules:
+Apart from player and NPC there is a third entity: the Narrator.
+Technically, it behaves like a NPC, but it has a completely
+different role. Usually it will decribe matters that are of
+importance to the player, but cannot be depicted by the game
+engine.
 
--# Start with those lines that have no predecessor.
--# Chose randomly between multiple NPC or Narrator lines.
--# Let the player chose if there are multiple Player lines.
--# Don't chose lines twice (can be disabled for single lines).
+Now that we've seen who may take part in a dialogue, we'll
+have a look at its organization. It will usually start with
+NPC or Narrator speech, to give the player something to react
+to. However, there is no need for a player reaction. Instead,
+the Narrator and various NPCs could go on and on (in which case
+the dialogue would either degenerate into a monologue or into a
+conversation between different NPCs).
 
-Apart from that, there are a number of additional features
-that influence how the dialogue appears to the player:
+Player speech however will \b always be followed by either
+NPC or Narrator text, unless it ends the dialogue.
 
--# Each line may be based on conditions, meaning they are
-   only available if a certain condition is met.
--# NPC lines can be attached to different characters, making
-   conversations with/between multiple NPC's possible.
+Dialogues following the scheme above will remain rather
+static. The player may chose from a list of replies whenever
+it is his turn, but other than that everything remains the
+same in all circumstances. Therefore, the dialogue engine
+provides a few mechanisms to make dialogues more dynamic
+and adaptive to different situations.
 
-These 11 points cover most of the Dialogue System's functionality
-and should give you an idea what you can do with it, and
-what you can't. To get you going now, it's time for a brief
-tutorial.
+For one, NPCs and Narrator can have choises too. Whenever they
+have several options, they will randomly pick one. That may
+liven up the dialogue somewhat, but it also means a total
+loss of control. Therefore, each choice can be combined with
+a condition. Player, NPC and Narrator will only be able to
+chose those alternatives whose conditions evaluated true. As
+practically every aspect of gameworld and characters can be
+queried in a condition, it is possible to create dialogues
+that can adapt to many different situations.
+
+Such dialogues require lots of writing, of course. Therefore,
+<tt>dlgedit</tt>'s main aim is assisting you with the complex
+structure of dialogues, so you can fully concentrate on the
+actual writing. As it tries to get as little in the way as
+possible, its usage is not always intuitive. However, the
+brief tutorial that follows should make you comfortable with
+most of its controls.                                             
 
 \htmlonly
 <hr>
@@ -922,7 +940,7 @@ fit into the dialogue window.
 \htmlonly
 <hr>
 <center>
-&lt;&lt; <a href="index.html">Adding Python Code</a> &nbsp; 
+&lt;&lt; <a href="page4.html">Adding Python Code</a> &nbsp; 
 <a href="index.html">Contents</a> &nbsp;
 </center>
 \endhtmlonly
