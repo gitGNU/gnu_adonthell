@@ -23,7 +23,6 @@ class dialog;
 #include "graph.h"
 #include "dlgcompile.h"
 #include "geometrie.h"
-#include "pjt_interface.h"
 #include "run.h"
 #include "preset.h"
 #include "function.h"
