@@ -22,6 +22,7 @@
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
+#include <stdio.h>
 #include <iostream> 
 #include <fstream> 
 #include <sys/stat.h>
@@ -298,6 +299,8 @@ void config::write_adonthellrc ()
 bool config::read_adonthellrc ()
 {
     int n, i = 1;
+    u_int32 major = 0, minor = 0, micro = 0, MAJOR, MINOR, MICRO;
+    char suffix[16], SUFFIX[16]; 
     string s, fname, version;
 
 #ifndef WIN32
@@ -385,7 +388,12 @@ bool config::read_adonthellrc ()
 
             case PREFS_VERSION:
             {
-                if (parse_adonthellrc (n, s) == PREFS_STR) version = s;
+                // get config file version number
+                if (parse_adonthellrc (n, s) == PREFS_STR) 
+                {
+                    version = s;
+                    sscanf (version.c_str (), "%d.%d.%d%15s", &major, &minor, &micro, &suffix);
+                }
                 break;
             }
             default: break;
@@ -394,10 +402,16 @@ bool config::read_adonthellrc ()
 
     fclose (prefsin);
 
+    // get engine version numbers
+    sscanf (VERSION, "%d.%d.%d%15s", &MAJOR, &MINOR, &MICRO, &SUFFIX);
+    
     // compare version of config file and engine
-    if (version < VERSION)
+    if (major < MAJOR || 
+        (major == MAJOR && minor < MINOR) ||
+        (major == MAJOR && minor < MINOR && micro < MICRO) ||
+        strcmp (suffix, SUFFIX) != 0)
     {
-        // update config file
+        // update config file if engine is newer
         write_adonthellrc ();
     }
 
