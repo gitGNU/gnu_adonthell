@@ -22,24 +22,13 @@
 
 #include "../../character.h"
 #include "../../event.h"
-#include "../../game.h"
+#include "../../data.h"
 
-PyObject *game::globals;
-objects game::characters;
-
-// A fake dialog_engine to avoid linking problems
-class dialog_engine
-{
-public:
-    dialog_engine (const char*);
-    void run ();
-};
-
-dialog_engine::dialog_engine (const char *unused) { }
-void dialog_engine::run () { }
+PyObject *data::globals;
+objects data::characters;
 
 // Dump any error information to stderr (same as in ../../py_inc.cpp)
-void show_traceback(void)
+void show_traceback (void)
 {
 	if ( PyErr_Occurred() )
 		PyErr_Print();
