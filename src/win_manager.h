@@ -18,6 +18,9 @@
 
 class win_container;
 
+
+using namespace std; 
+
 class win_manager
 {
  public:

@@ -22,6 +22,9 @@ class py_callback;
 #include "types.h"
 #include "callback.h"
 
+
+using namespace std; 
+
 class win_event
 {
  public:

@@ -22,6 +22,7 @@
  */
 
 #include "screen.h"
+#include <iostream>
 #include <strstream> 
 
 

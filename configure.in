@@ -6,7 +6,7 @@ AC_INIT(README)
 
 AM_INIT_AUTOMAKE(adonthell, 0.3pre1)
 
-CFLAGS="-g -Wall"
+CFLAGS="-g -Wall -fno-exceptions -fno-rtti"
 DEFS=""
 
 dnl Checks for programs.
