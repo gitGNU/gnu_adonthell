@@ -13,6 +13,9 @@
 */
 
 #include <cstdio>
+#include <string>
+#include <stdlib.h>
+#include <libgen.h>
 #include <unistd.h>
 #include <getopt.h>
 
@@ -41,6 +44,7 @@ int main(int argc, char * argv[])
     myconfig.read_adonthellrc (); 
     myconfig.gamedir = "."; 
     
+    // set the game directory
     if (getopt (argc, argv, "g:") != -1)
     {
         myconfig.gamedir = optarg;
@@ -59,6 +63,28 @@ int main(int argc, char * argv[])
     
     if (!game::init (myconfig)) 
         return 1;
+    
+    // add the working directory to python's path (otherwise, scripts
+    // without absolute path cannot be executed)
+    string path = dirname (argv[0]);
+    if (path[0] != '/') 
+    {
+        string tmp = getcwd (NULL, 0);
+        path = tmp + path;
+    }
+
+    // the only way to pass that path to python seems to be the
+    // PYTHONPATH environment variable
+    string pythonpath = path;
+    char *env = getenv ("PYTHONPATH");
+    
+    if (env)
+    {
+        pythonpath += ":";
+        pythonpath += env;
+    }
+    
+    setenv ("PYTHONPATH", pythonpath.c_str (), 1);
     
     Py_Main (argc, argv);
     game::cleanup (); 

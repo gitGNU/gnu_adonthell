@@ -48,7 +48,7 @@ For more information, see the README file. Problems? Don't have
 the right libraries? Please look at the NEWBIE file or our website
 for answers:
 
-    http://adonthell.linuxgames.com
+   http://adonthell.linuxgames.com
 
 
 Advanced configure options:
@@ -89,18 +89,23 @@ Adonthell you can query the data directory with 'adonthell -g'.
 
   Use this to build the Adonthell development tools. These include
 editors for our graphic objects, characters, maps, dialogues and a
-few other utilities. Beware that non of these tools will be installed
+few other utilities. Note that non of these tools will be installed
 when running 'make install'. You will have to run them from their
-source directory or install the manually.
+source directory or install them manually.
 
 
 --enable-doc
 
   Use this to build the Adonthell source code documentation. For 
 this to work you will need two additional tools: doxygen and dot.
-See http://www.doxygen.org for the first. Latter is a part of
-AT&T's graphviz toolkit which can be found at
-http://www.research.att.com/sw/tools/graphviz/.
+
+   See http://www.doxygen.org 
+
+for the first. Latter is a part of AT&T's graphviz toolkit which
+can be found at
+
+   http://www.research.att.com/sw/tools/graphviz/.
+
   The documentation will end up in doc/html/ respectively
 doc/latex/. It is also made available for online browsing at 
 our website, http://adonthell.linuxgames.com.
@@ -115,6 +120,16 @@ information in this file. Use 'mtrace adonthell $MALLOC_TRACE'
 to finally display any occurrence of memory leaks.
   A much more convenient way to check for memory leaks is the
 'memprof' tool: http://people.redhat.com/~otaylor/memprof
+
+
+--enable-py-debug
+
+  This option turns on debugging output of the embedded python
+interpreter to locate bugs in our python scripts. If Adonthell
+behaves odd or hangs with no apparent error message, turning
+on Python debugging might reveal the source of error. You
+shouldn't enable this option unless you need it, since it
+increases CPU usage considerably on older machines. 
 
 
 *********************************************************************
