@@ -18,6 +18,7 @@
 #include "main.h"
 
 GtkWidget *create_main_wnd (main_wnd &);
-GtkWidget *create_event_enter (void);
+GtkWidget *create_event_wnd (event_wnd *, gchar *);
+GtkWidget *create_fileselection (GString *, bool);
 
 #endif // __INTERFACE_H__

@@ -20,7 +20,7 @@
 #include "interface.h"
 
 GtkWidget *
-create_main_wnd (main_wnd &wnd)
+create_main_wnd (main_wnd & wnd)
 {
     GtkWidget *main_wnd;
     GtkWidget *vbox1;
@@ -78,14 +78,14 @@ create_main_wnd (main_wnd &wnd)
     GtkWidget *label25;
     GtkWidget *label13;
     GtkWidget *vbox4;
-    GtkWidget *hbuttonbox2;
-    GtkWidget *dlg_add;
-    GtkWidget *dlg_remove;
-    GtkWidget *dlg_default;
-    GtkWidget *scrolledwindow2;
-    GtkWidget *dlg_list;
-    GtkWidget *label16;
-    GtkWidget *label17;
+    GtkWidget *frame5;
+    GtkWidget *hbox11;
+    GtkWidget *schedule_entry;
+    GtkWidget *chose_schedule;
+    GtkWidget *frame6;
+    GtkWidget *hbox10;
+    GtkWidget *dialogue_entry;
+    GtkWidget *chose_dialogue;
     GtkWidget *label14;
     GtkAccelGroup *accel_group;
     GtkTooltips *tooltips;
@@ -491,78 +491,70 @@ create_main_wnd (main_wnd &wnd)
     gtk_widget_show (label13);
     gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook1), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook1), 2), label13);
 
-    vbox4 = gtk_vbox_new (FALSE, 0);
+    vbox4 = gtk_vbox_new (FALSE, 4);
     gtk_widget_ref (vbox4);
     gtk_object_set_data_full (GTK_OBJECT (main_wnd), "vbox4", vbox4, (GtkDestroyNotify) gtk_widget_unref);
     gtk_widget_show (vbox4);
     gtk_container_add (GTK_CONTAINER (notebook1), vbox4);
     gtk_container_set_border_width (GTK_CONTAINER (vbox4), 4);
 
-    hbuttonbox2 = gtk_hbutton_box_new ();
-    gtk_widget_ref (hbuttonbox2);
-    gtk_object_set_data_full (GTK_OBJECT (main_wnd), "hbuttonbox2", hbuttonbox2, (GtkDestroyNotify) gtk_widget_unref);
-    gtk_widget_show (hbuttonbox2);
-    gtk_box_pack_start (GTK_BOX (vbox4), hbuttonbox2, FALSE, TRUE, 0);
-    gtk_button_box_set_layout (GTK_BUTTON_BOX (hbuttonbox2), GTK_BUTTONBOX_END);
-    gtk_button_box_set_spacing (GTK_BUTTON_BOX (hbuttonbox2), 0);
-    gtk_button_box_set_child_ipadding (GTK_BUTTON_BOX (hbuttonbox2), 0, 0);
+    frame5 = gtk_frame_new ("Schedule");
+    gtk_widget_ref (frame5);
+    gtk_object_set_data_full (GTK_OBJECT (main_wnd), "frame5", frame5, (GtkDestroyNotify) gtk_widget_unref);
+    gtk_widget_show (frame5);
+    gtk_box_pack_start (GTK_BOX (vbox4), frame5, FALSE, FALSE, 0);
 
-    dlg_add = gtk_button_new_with_label ("Add ...");
-    gtk_widget_ref (dlg_add);
-    gtk_object_set_data_full (GTK_OBJECT (main_wnd), "dlg_add", dlg_add, (GtkDestroyNotify) gtk_widget_unref);
-    gtk_widget_show (dlg_add);
-    gtk_container_add (GTK_CONTAINER (hbuttonbox2), dlg_add);
-    GTK_WIDGET_SET_FLAGS (dlg_add, GTK_CAN_DEFAULT);
-    gtk_tooltips_set_tip (tooltips, dlg_add, "Adds a dialogue to that character. For the dialogue to work, it's script must be located in the <adonthell-data>/scripts/dialogues directory.", 0);
+    hbox11 = gtk_hbox_new (FALSE, 8);
+    gtk_widget_ref (hbox11);
+    gtk_object_set_data_full (GTK_OBJECT (main_wnd), "hbox11", hbox11, (GtkDestroyNotify) gtk_widget_unref);
+    gtk_widget_show (hbox11);
+    gtk_container_add (GTK_CONTAINER (frame5), hbox11);
+    gtk_container_set_border_width (GTK_CONTAINER (hbox11), 8);
 
-    dlg_remove = gtk_button_new_with_label ("Remove");
-    gtk_widget_ref (dlg_remove);
-    gtk_object_set_data_full (GTK_OBJECT (main_wnd), "dlg_remove", dlg_remove, (GtkDestroyNotify) gtk_widget_unref);
-    gtk_widget_show (dlg_remove);
-    gtk_container_add (GTK_CONTAINER (hbuttonbox2), dlg_remove);
-    GTK_WIDGET_SET_FLAGS (dlg_remove, GTK_CAN_DEFAULT);
-    gtk_tooltips_set_tip (tooltips, dlg_remove, "Removes the selected dialogue", 0);
+    schedule_entry = gtk_entry_new ();
+    gtk_widget_ref (schedule_entry);
+    gtk_object_set_data_full (GTK_OBJECT (main_wnd), "schedule_entry", schedule_entry, (GtkDestroyNotify) gtk_widget_unref);
+    gtk_widget_show (schedule_entry);
+    gtk_box_pack_start (GTK_BOX (hbox11), schedule_entry, FALSE, FALSE, 0);
+    gtk_tooltips_set_tip (tooltips, schedule_entry, "Enter the initial schedule script that shall control this characters movement.", 0);
+    wnd.scl_entry = schedule_entry;
 
-    dlg_default = gtk_button_new_with_label ("make Default");
-    gtk_widget_ref (dlg_default);
-    gtk_object_set_data_full (GTK_OBJECT (main_wnd), "dlg_default", dlg_default, (GtkDestroyNotify) gtk_widget_unref);
-    gtk_widget_show (dlg_default);
-    gtk_container_add (GTK_CONTAINER (hbuttonbox2), dlg_default);
-    gtk_widget_set_usize (dlg_default, 96, -2);
-    GTK_WIDGET_SET_FLAGS (dlg_default, GTK_CAN_DEFAULT);
-    gtk_tooltips_set_tip (tooltips, dlg_default, "Makes the selected dialogue the character's default. It's launched when speaking to the character unless changed by some script within the game.", 0);
+    chose_schedule = gtk_button_new_with_label ("Browse ...");
+    gtk_widget_ref (chose_schedule);
+    gtk_object_set_data_full (GTK_OBJECT (main_wnd), "chose_schedule", chose_schedule, (GtkDestroyNotify) gtk_widget_unref);
+    gtk_widget_show (chose_schedule);
+    gtk_box_pack_start (GTK_BOX (hbox11), chose_schedule, FALSE, FALSE, 0);
+    gtk_widget_set_usize (chose_schedule, 80, -2);
 
-    scrolledwindow2 = gtk_scrolled_window_new (0, 0);
-    gtk_widget_ref (scrolledwindow2);
-    gtk_object_set_data_full (GTK_OBJECT (main_wnd), "scrolledwindow2", scrolledwindow2, (GtkDestroyNotify) gtk_widget_unref);
-    gtk_widget_show (scrolledwindow2);
-    gtk_box_pack_start (GTK_BOX (vbox4), scrolledwindow2, TRUE, TRUE, 0);
-    gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolledwindow2), GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
+    frame6 = gtk_frame_new ("Dialogue");
+    gtk_widget_ref (frame6);
+    gtk_object_set_data_full (GTK_OBJECT (main_wnd), "frame6", frame6, (GtkDestroyNotify) gtk_widget_unref);
+    gtk_widget_show (frame6);
+    gtk_box_pack_start (GTK_BOX (vbox4), frame6, FALSE, FALSE, 0);
 
-    dlg_list = gtk_clist_new (2);
-    wnd.dlg_list = dlg_list;
-    gtk_widget_ref (dlg_list);
-    gtk_object_set_data_full (GTK_OBJECT (main_wnd), "dlg_list", dlg_list, (GtkDestroyNotify) gtk_widget_unref);
-    gtk_widget_show (dlg_list);
-    gtk_container_add (GTK_CONTAINER (scrolledwindow2), dlg_list);
-    gtk_clist_set_column_width (GTK_CLIST (dlg_list), 0, 235);
-    gtk_clist_set_column_width (GTK_CLIST (dlg_list), 1, 80);
-    gtk_clist_column_titles_show (GTK_CLIST (dlg_list));
-    gtk_clist_column_titles_passive (GTK_CLIST (dlg_list));
+    hbox10 = gtk_hbox_new (FALSE, 8);
+    gtk_widget_ref (hbox10);
+    gtk_object_set_data_full (GTK_OBJECT (main_wnd), "hbox10", hbox10, (GtkDestroyNotify) gtk_widget_unref);
+    gtk_widget_show (hbox10);
+    gtk_container_add (GTK_CONTAINER (frame6), hbox10);
+    gtk_container_set_border_width (GTK_CONTAINER (hbox10), 8);
 
-    label16 = gtk_label_new ("Dialogue");
-    gtk_widget_ref (label16);
-    gtk_object_set_data_full (GTK_OBJECT (main_wnd), "label16", label16, (GtkDestroyNotify) gtk_widget_unref);
-    gtk_widget_show (label16);
-    gtk_clist_set_column_widget (GTK_CLIST (dlg_list), 0, label16);
+    dialogue_entry = gtk_entry_new ();
+    gtk_widget_ref (dialogue_entry);
+    gtk_object_set_data_full (GTK_OBJECT (main_wnd), "dialogue_entry", dialogue_entry, (GtkDestroyNotify) gtk_widget_unref);
+    gtk_widget_show (dialogue_entry);
+    gtk_box_pack_start (GTK_BOX (hbox10), dialogue_entry, FALSE, FALSE, 0);
+    gtk_tooltips_set_tip (tooltips, dialogue_entry, "Enter this character's initial dialogue.", 0);
+    wnd.dlg_entry = dialogue_entry;
 
-    label17 = gtk_label_new ("Default");
-    gtk_widget_ref (label17);
-    gtk_object_set_data_full (GTK_OBJECT (main_wnd), "label17", label17, (GtkDestroyNotify) gtk_widget_unref);
-    gtk_widget_show (label17);
-    gtk_clist_set_column_widget (GTK_CLIST (dlg_list), 1, label17);
+    chose_dialogue = gtk_button_new_with_label ("Browse ...");
+    gtk_widget_ref (chose_dialogue);
+    gtk_object_set_data_full (GTK_OBJECT (main_wnd), "chose_dialogue", chose_dialogue, (GtkDestroyNotify) gtk_widget_unref);
+    gtk_widget_show (chose_dialogue);
+    gtk_box_pack_start (GTK_BOX (hbox10), chose_dialogue, FALSE, FALSE, 0);
+    gtk_widget_set_usize (chose_dialogue, 80, -2);
 
-    label14 = gtk_label_new ("Dialogues");
+    label14 = gtk_label_new ("Actions");
     gtk_widget_ref (label14);
     gtk_object_set_data_full (GTK_OBJECT (main_wnd), "label14", label14, (GtkDestroyNotify) gtk_widget_unref);
     gtk_widget_show (label14);
@@ -581,11 +573,8 @@ create_main_wnd (main_wnd &wnd)
     gtk_signal_connect (GTK_OBJECT (event_update), "clicked", GTK_SIGNAL_FUNC (on_event_update_clicked), &wnd);
     gtk_signal_connect (GTK_OBJECT (event_list), "select_row", GTK_SIGNAL_FUNC (on_event_list_select_row), &wnd);
     gtk_signal_connect (GTK_OBJECT (event_list), "unselect_row", GTK_SIGNAL_FUNC (on_event_list_unselect_row), &wnd);
-    gtk_signal_connect (GTK_OBJECT (dlg_add), "clicked", GTK_SIGNAL_FUNC (on_dlg_add_clicked), NULL);
-    gtk_signal_connect (GTK_OBJECT (dlg_remove), "clicked", GTK_SIGNAL_FUNC (on_dlg_remove_clicked), NULL);
-    gtk_signal_connect (GTK_OBJECT (dlg_default), "clicked", GTK_SIGNAL_FUNC (on_dlg_default_clicked), NULL);
-    gtk_signal_connect (GTK_OBJECT (dlg_list), "select_row", GTK_SIGNAL_FUNC (on_dlg_list_select_row), NULL);
-    // gtk_signal_connect (GTK_OBJECT (dlg_list), "unselect_row", GTK_SIGNAL_FUNC (on_dlg_list_unselect_row), NULL);
+    gtk_signal_connect (GTK_OBJECT (chose_schedule), "clicked", GTK_SIGNAL_FUNC (on_chose_schedule_clicked), &wnd);
+    gtk_signal_connect (GTK_OBJECT (chose_dialogue), "clicked", GTK_SIGNAL_FUNC (on_chose_dialogue_clicked), &wnd);
 
     gtk_object_set_data (GTK_OBJECT (main_wnd), "tooltips", tooltips);
 
@@ -595,202 +584,221 @@ create_main_wnd (main_wnd &wnd)
 }
 
 GtkWidget *
-create_event_enter (main_wnd *wnd)
+create_event_wnd (event_wnd * wnd, gchar * event)
 {
-    GtkWidget *event_enter;
+    GtkWidget *my_event_wnd;
     GtkWidget *vbox5;
     GtkWidget *frame4;
     GtkWidget *hbox4;
-    GtkWidget *enter_script_entry;
-    GtkWidget *enter_browse;
+    GtkWidget *event_script_entry;
+    GtkWidget *event_browse;
     GtkWidget *frame3;
-    GtkWidget *table1;
-    GtkWidget *label18;
-    GtkWidget *label19;
-    GtkWidget *label20;
-    GtkWidget *label21;
-    GtkWidget *enter_character;
-    GtkWidget *enter_character_menu;
-    GtkWidget *glade_menuitem;
-    GtkWidget *enter_direction;
-    GtkWidget *enter_direction_menu;
-    GtkWidget *hbox5;
-    GtkWidget *enter_x_entry;
-    GtkWidget *enter_y_entry;
-    GtkWidget *label22;
+    GtkWidget *vbox7;
+    GtkWidget *hbox7;
+    GtkWidget *condition_label;
+    GtkWidget *condition_entry;
+    GtkWidget *hbuttonbox5;
+    GtkWidget *condition_update;
+    GtkWidget *scrolledwindow4;
+    GtkWidget *condition_list;
+    GtkWidget *label29;
+    GtkWidget *label30;
     GtkWidget *hbuttonbox3;
-    GtkWidget *enter_ok;
-    GtkWidget *enter_cancel;
+    GtkWidget *event_ok;
+    GtkWidget *event_cancel;
+    GtkTooltips *tooltips;
 
-    event_enter = gtk_window_new (GTK_WINDOW_DIALOG);
-    gtk_object_set_data (GTK_OBJECT (event_enter), "event_enter", event_enter);
-    gtk_window_set_title (GTK_WINDOW (event_enter), "Enter Event");
-    gtk_window_set_position (GTK_WINDOW (event_enter), GTK_WIN_POS_MOUSE);
-    gtk_window_set_modal (GTK_WINDOW (event_enter), TRUE);
-    gtk_window_set_policy (GTK_WINDOW (event_enter), FALSE, FALSE, FALSE);
+    tooltips = gtk_tooltips_new ();
+
+    my_event_wnd = gtk_window_new (GTK_WINDOW_DIALOG);
+    gtk_object_set_data (GTK_OBJECT (my_event_wnd), "my_event_wnd", my_event_wnd);
+    gtk_widget_set_usize (my_event_wnd, 240, 280);
+    gtk_window_set_title (GTK_WINDOW (my_event_wnd), g_strconcat (event, " Event", 0));
+    gtk_window_set_position (GTK_WINDOW (my_event_wnd), GTK_WIN_POS_MOUSE);
+    gtk_window_set_modal (GTK_WINDOW (my_event_wnd), TRUE);
+    gtk_window_set_policy (GTK_WINDOW (my_event_wnd), FALSE, FALSE, FALSE);
 
     vbox5 = gtk_vbox_new (FALSE, 0);
     gtk_widget_ref (vbox5);
-    gtk_object_set_data_full (GTK_OBJECT (event_enter), "vbox5", vbox5, (GtkDestroyNotify) gtk_widget_unref);
+    gtk_object_set_data_full (GTK_OBJECT (my_event_wnd), "vbox5", vbox5, (GtkDestroyNotify) gtk_widget_unref);
     gtk_widget_show (vbox5);
-    gtk_container_add (GTK_CONTAINER (event_enter), vbox5);
+    gtk_container_add (GTK_CONTAINER (my_event_wnd), vbox5);
     gtk_container_set_border_width (GTK_CONTAINER (vbox5), 4);
 
     frame4 = gtk_frame_new ("Script");
     gtk_widget_ref (frame4);
-    gtk_object_set_data_full (GTK_OBJECT (event_enter), "frame4", frame4, (GtkDestroyNotify) gtk_widget_unref);
+    gtk_object_set_data_full (GTK_OBJECT (my_event_wnd), "frame4", frame4, (GtkDestroyNotify) gtk_widget_unref);
     gtk_widget_show (frame4);
-    gtk_box_pack_start (GTK_BOX (vbox5), frame4, TRUE, TRUE, 0);
+    gtk_box_pack_start (GTK_BOX (vbox5), frame4, FALSE, TRUE, 0);
 
     hbox4 = gtk_hbox_new (FALSE, 4);
     gtk_widget_ref (hbox4);
-    gtk_object_set_data_full (GTK_OBJECT (event_enter), "hbox4", hbox4, (GtkDestroyNotify) gtk_widget_unref);
+    gtk_object_set_data_full (GTK_OBJECT (my_event_wnd), "hbox4", hbox4, (GtkDestroyNotify) gtk_widget_unref);
     gtk_widget_show (hbox4);
     gtk_container_add (GTK_CONTAINER (frame4), hbox4);
     gtk_container_set_border_width (GTK_CONTAINER (hbox4), 4);
 
-    enter_script_entry = gtk_entry_new ();
-    gtk_widget_ref (enter_script_entry);
-    gtk_object_set_data_full (GTK_OBJECT (event_enter), "enter_script_entry", enter_script_entry, (GtkDestroyNotify) gtk_widget_unref);
-    gtk_widget_show (enter_script_entry);
-    gtk_box_pack_start (GTK_BOX (hbox4), enter_script_entry, TRUE, TRUE, 0);
+    event_script_entry = gtk_entry_new ();
+    gtk_widget_ref (event_script_entry);
+    gtk_object_set_data_full (GTK_OBJECT (my_event_wnd), "event_script_entry", event_script_entry, (GtkDestroyNotify) gtk_widget_unref);
+    gtk_widget_show (event_script_entry);
+    gtk_box_pack_start (GTK_BOX (hbox4), event_script_entry, FALSE, FALSE, 0);
+    wnd->script_entry = event_script_entry;
 
-    enter_browse = gtk_button_new_with_label ("Browse ...");
-    gtk_widget_ref (enter_browse);
-    gtk_object_set_data_full (GTK_OBJECT (event_enter), "enter_browse", enter_browse, (GtkDestroyNotify) gtk_widget_unref);
-    gtk_widget_show (enter_browse);
-    gtk_box_pack_start (GTK_BOX (hbox4), enter_browse, FALSE, FALSE, 0);
+    event_browse = gtk_button_new_with_label ("Browse ...");
+    gtk_widget_ref (event_browse);
+    gtk_object_set_data_full (GTK_OBJECT (my_event_wnd), "event_browse", event_browse, (GtkDestroyNotify) gtk_widget_unref);
+    gtk_widget_show (event_browse);
+    gtk_box_pack_start (GTK_BOX (hbox4), event_browse, FALSE, FALSE, 0);
 
     frame3 = gtk_frame_new ("Conditions");
     gtk_widget_ref (frame3);
-    gtk_object_set_data_full (GTK_OBJECT (event_enter), "frame3", frame3, (GtkDestroyNotify) gtk_widget_unref);
+    gtk_object_set_data_full (GTK_OBJECT (my_event_wnd), "frame3", frame3, (GtkDestroyNotify) gtk_widget_unref);
     gtk_widget_show (frame3);
     gtk_box_pack_start (GTK_BOX (vbox5), frame3, TRUE, TRUE, 0);
 
-    table1 = gtk_table_new (4, 2, TRUE);
-    gtk_widget_ref (table1);
-    gtk_object_set_data_full (GTK_OBJECT (event_enter), "table1", table1, (GtkDestroyNotify) gtk_widget_unref);
-    gtk_widget_show (table1);
-    gtk_container_add (GTK_CONTAINER (frame3), table1);
-    gtk_container_set_border_width (GTK_CONTAINER (table1), 4);
-    gtk_table_set_row_spacings (GTK_TABLE (table1), 4);
-    gtk_table_set_col_spacings (GTK_TABLE (table1), 4);
+    vbox7 = gtk_vbox_new (FALSE, 0);
+    gtk_widget_ref (vbox7);
+    gtk_object_set_data_full (GTK_OBJECT (my_event_wnd), "vbox7", vbox7, (GtkDestroyNotify) gtk_widget_unref);
+    gtk_widget_show (vbox7);
+    gtk_container_add (GTK_CONTAINER (frame3), vbox7);
 
-    label18 = gtk_label_new ("Character");
-    gtk_widget_ref (label18);
-    gtk_object_set_data_full (GTK_OBJECT (event_enter), "label18", label18, (GtkDestroyNotify) gtk_widget_unref);
-    gtk_widget_show (label18);
-    gtk_table_attach (GTK_TABLE (table1), label18, 0, 1, 0, 1, (GtkAttachOptions) (0), (GtkAttachOptions) (0), 0, 0);
-    gtk_label_set_justify (GTK_LABEL (label18), GTK_JUSTIFY_LEFT);
+    hbox7 = gtk_hbox_new (FALSE, 4);
+    gtk_widget_ref (hbox7);
+    gtk_object_set_data_full (GTK_OBJECT (my_event_wnd), "hbox7", hbox7, (GtkDestroyNotify) gtk_widget_unref);
+    gtk_widget_show (hbox7);
+    gtk_box_pack_start (GTK_BOX (vbox7), hbox7, FALSE, TRUE, 0);
+    gtk_container_set_border_width (GTK_CONTAINER (hbox7), 4);
 
-    label19 = gtk_label_new ("Coordinates");
-    gtk_widget_ref (label19);
-    gtk_object_set_data_full (GTK_OBJECT (event_enter), "label19", label19, (GtkDestroyNotify) gtk_widget_unref);
-    gtk_widget_show (label19);
-    gtk_table_attach (GTK_TABLE (table1), label19, 0, 1, 1, 2, (GtkAttachOptions) (0), (GtkAttachOptions) (0), 0, 0);
-    gtk_label_set_justify (GTK_LABEL (label19), GTK_JUSTIFY_LEFT);
+    condition_label = gtk_label_new ("Value");
+    gtk_widget_ref (condition_label);
+    gtk_object_set_data_full (GTK_OBJECT (my_event_wnd), "condition_label", condition_label, (GtkDestroyNotify) gtk_widget_unref);
+    gtk_widget_show (condition_label);
+    gtk_box_pack_start (GTK_BOX (hbox7), condition_label, FALSE, FALSE, 0);
+    wnd->condition_label = condition_label;
 
-    label20 = gtk_label_new ("Direction");
-    gtk_widget_ref (label20);
-    gtk_object_set_data_full (GTK_OBJECT (event_enter), "label20", label20, (GtkDestroyNotify) gtk_widget_unref);
-    gtk_widget_show (label20);
-    gtk_table_attach (GTK_TABLE (table1), label20, 0, 1, 2, 3, (GtkAttachOptions) (0), (GtkAttachOptions) (0), 0, 0);
-    gtk_label_set_justify (GTK_LABEL (label20), GTK_JUSTIFY_LEFT);
+    condition_entry = gtk_entry_new ();
+    gtk_widget_ref (condition_entry);
+    gtk_object_set_data_full (GTK_OBJECT (my_event_wnd), "condition_entry", condition_entry, (GtkDestroyNotify) gtk_widget_unref);
+    gtk_widget_show (condition_entry);
+    gtk_box_pack_start (GTK_BOX (hbox7), condition_entry, TRUE, TRUE, 0);
+    gtk_widget_set_usize (condition_entry, 50, -2);
+    gtk_tooltips_set_tip (tooltips, condition_entry, "The conditions value", 0);
+    wnd->condition_entry = condition_entry;
 
-    label21 = gtk_label_new ("Map (???)");
-    gtk_widget_ref (label21);
-    gtk_object_set_data_full (GTK_OBJECT (event_enter), "label21", label21, (GtkDestroyNotify) gtk_widget_unref);
-    gtk_widget_show (label21);
-    gtk_table_attach (GTK_TABLE (table1), label21, 0, 1, 3, 4, (GtkAttachOptions) (0), (GtkAttachOptions) (0), 0, 0);
-    gtk_label_set_justify (GTK_LABEL (label21), GTK_JUSTIFY_LEFT);
+    hbuttonbox5 = gtk_hbutton_box_new ();
+    gtk_widget_ref (hbuttonbox5);
+    gtk_object_set_data_full (GTK_OBJECT (my_event_wnd), "hbuttonbox5", hbuttonbox5, (GtkDestroyNotify) gtk_widget_unref);
+    gtk_widget_show (hbuttonbox5);
+    gtk_box_pack_start (GTK_BOX (hbox7), hbuttonbox5, FALSE, TRUE, 0);
+    gtk_button_box_set_spacing (GTK_BUTTON_BOX (hbuttonbox5), 0);
 
-    enter_character = gtk_option_menu_new ();
-    gtk_widget_ref (enter_character);
-    gtk_object_set_data_full (GTK_OBJECT (event_enter), "enter_character", enter_character, (GtkDestroyNotify) gtk_widget_unref);
-    gtk_widget_show (enter_character);
-    gtk_table_attach (GTK_TABLE (table1), enter_character, 1, 2, 0, 1, (GtkAttachOptions) (0), (GtkAttachOptions) (0), 0, 0);
-    enter_character_menu = gtk_menu_new ();
-    glade_menuitem = gtk_menu_item_new_with_label ("None");
-    gtk_widget_show (glade_menuitem);
-    gtk_menu_append (GTK_MENU (enter_character_menu), glade_menuitem);
-    gtk_option_menu_set_menu (GTK_OPTION_MENU (enter_character), enter_character_menu);
+    condition_update = gtk_button_new_with_label ("Update");
+    gtk_widget_ref (condition_update);
+    gtk_object_set_data_full (GTK_OBJECT (my_event_wnd), "condition_update", condition_update, (GtkDestroyNotify) gtk_widget_unref);
+    gtk_widget_show (condition_update);
+    gtk_container_add (GTK_CONTAINER (hbuttonbox5), condition_update);
+    GTK_WIDGET_SET_FLAGS (condition_update, GTK_CAN_DEFAULT);
+    gtk_tooltips_set_tip (tooltips, condition_update, "Change the selected condition", 0);
 
-    enter_direction = gtk_option_menu_new ();
-    gtk_widget_ref (enter_direction);
-    gtk_object_set_data_full (GTK_OBJECT (event_enter), "enter_direction", enter_direction, (GtkDestroyNotify) gtk_widget_unref);
-    gtk_widget_show (enter_direction);
-    gtk_table_attach (GTK_TABLE (table1), enter_direction, 1, 2, 2, 3, (GtkAttachOptions) (0), (GtkAttachOptions) (0), 0, 0);
-    enter_direction_menu = gtk_menu_new ();
-    glade_menuitem = gtk_menu_item_new_with_label ("None");
-    gtk_widget_show (glade_menuitem);
-    gtk_menu_append (GTK_MENU (enter_direction_menu), glade_menuitem);
-    glade_menuitem = gtk_menu_item_new_with_label ("North");
-    gtk_widget_show (glade_menuitem);
-    gtk_menu_append (GTK_MENU (enter_direction_menu), glade_menuitem);
-    glade_menuitem = gtk_menu_item_new_with_label ("East");
-    gtk_widget_show (glade_menuitem);
-    gtk_menu_append (GTK_MENU (enter_direction_menu), glade_menuitem);
-    glade_menuitem = gtk_menu_item_new_with_label ("South");
-    gtk_widget_show (glade_menuitem);
-    gtk_menu_append (GTK_MENU (enter_direction_menu), glade_menuitem);
-    glade_menuitem = gtk_menu_item_new_with_label ("West");
-    gtk_widget_show (glade_menuitem);
-    gtk_menu_append (GTK_MENU (enter_direction_menu), glade_menuitem);
-    gtk_option_menu_set_menu (GTK_OPTION_MENU (enter_direction), enter_direction_menu);
+    scrolledwindow4 = gtk_scrolled_window_new (0, 0);
+    gtk_widget_ref (scrolledwindow4);
+    gtk_object_set_data_full (GTK_OBJECT (my_event_wnd), "scrolledwindow4", scrolledwindow4, (GtkDestroyNotify) gtk_widget_unref);
+    gtk_widget_show (scrolledwindow4);
+    gtk_box_pack_start (GTK_BOX (vbox7), scrolledwindow4, TRUE, TRUE, 0);
+    gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolledwindow4), GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
 
-    hbox5 = gtk_hbox_new (FALSE, 4);
-    gtk_widget_ref (hbox5);
-    gtk_object_set_data_full (GTK_OBJECT (event_enter), "hbox5", hbox5, (GtkDestroyNotify) gtk_widget_unref);
-    gtk_widget_show (hbox5);
-    gtk_table_attach (GTK_TABLE (table1), hbox5, 1, 2, 1, 2, (GtkAttachOptions) (GTK_FILL), (GtkAttachOptions) (GTK_FILL), 0, 0);
+    condition_list = gtk_clist_new (2);
+    gtk_widget_ref (condition_list);
+    gtk_object_set_data_full (GTK_OBJECT (my_event_wnd), "condition_list", condition_list, (GtkDestroyNotify) gtk_widget_unref);
+    gtk_widget_show (condition_list);
+    gtk_container_add (GTK_CONTAINER (scrolledwindow4), condition_list);
+    gtk_clist_set_column_width (GTK_CLIST (condition_list), 0, 106);
+    gtk_clist_set_column_width (GTK_CLIST (condition_list), 1, 80);
+    gtk_clist_column_titles_show (GTK_CLIST (condition_list));
+    gtk_clist_column_titles_passive (GTK_CLIST (condition_list));
+    wnd->main->load_list_defaults (GTK_CLIST (condition_list), g_strconcat (event, ".txt", 0), "");
+    wnd->condition_list = condition_list;
 
-    enter_x_entry = gtk_entry_new ();
-    gtk_widget_ref (enter_x_entry);
-    gtk_object_set_data_full (GTK_OBJECT (event_enter), "enter_x_entry", enter_x_entry, (GtkDestroyNotify) gtk_widget_unref);
-    gtk_widget_show (enter_x_entry);
-    gtk_box_pack_start (GTK_BOX (hbox5), enter_x_entry, FALSE, TRUE, 0);
-    gtk_widget_set_usize (enter_x_entry, 50, -2);
+    label29 = gtk_label_new ("Condition");
+    gtk_widget_ref (label29);
+    gtk_object_set_data_full (GTK_OBJECT (my_event_wnd), "label29", label29, (GtkDestroyNotify) gtk_widget_unref);
+    gtk_widget_show (label29);
+    gtk_clist_set_column_widget (GTK_CLIST (condition_list), 0, label29);
 
-    enter_y_entry = gtk_entry_new ();
-    gtk_widget_ref (enter_y_entry);
-    gtk_object_set_data_full (GTK_OBJECT (event_enter), "enter_y_entry", enter_y_entry, (GtkDestroyNotify) gtk_widget_unref);
-    gtk_widget_show (enter_y_entry);
-    gtk_box_pack_start (GTK_BOX (hbox5), enter_y_entry, FALSE, TRUE, 0);
-    gtk_widget_set_usize (enter_y_entry, 50, -2);
-
-    label22 = gtk_label_new ("???");
-    gtk_widget_ref (label22);
-    gtk_object_set_data_full (GTK_OBJECT (event_enter), "label22", label22, (GtkDestroyNotify) gtk_widget_unref);
-    gtk_widget_show (label22);
-    gtk_table_attach (GTK_TABLE (table1), label22, 1, 2, 3, 4, (GtkAttachOptions) (0), (GtkAttachOptions) (0), 0, 0);
+    label30 = gtk_label_new ("Value");
+    gtk_widget_ref (label30);
+    gtk_object_set_data_full (GTK_OBJECT (my_event_wnd), "label30", label30, (GtkDestroyNotify) gtk_widget_unref);
+    gtk_widget_show (label30);
+    gtk_clist_set_column_widget (GTK_CLIST (condition_list), 1, label30);
 
     hbuttonbox3 = gtk_hbutton_box_new ();
     gtk_widget_ref (hbuttonbox3);
-    gtk_object_set_data_full (GTK_OBJECT (event_enter), "hbuttonbox3", hbuttonbox3, (GtkDestroyNotify) gtk_widget_unref);
+    gtk_object_set_data_full (GTK_OBJECT (my_event_wnd), "hbuttonbox3", hbuttonbox3, (GtkDestroyNotify) gtk_widget_unref);
     gtk_widget_show (hbuttonbox3);
-    gtk_box_pack_start (GTK_BOX (vbox5), hbuttonbox3, TRUE, TRUE, 0);
+    gtk_box_pack_start (GTK_BOX (vbox5), hbuttonbox3, FALSE, TRUE, 0);
     gtk_button_box_set_layout (GTK_BUTTON_BOX (hbuttonbox3), GTK_BUTTONBOX_END);
     gtk_button_box_set_spacing (GTK_BUTTON_BOX (hbuttonbox3), 0);
 
-    enter_ok = gtk_button_new_with_label ("OK");
-    gtk_widget_ref (enter_ok);
-    gtk_object_set_data_full (GTK_OBJECT (event_enter), "enter_ok", enter_ok, (GtkDestroyNotify) gtk_widget_unref);
-    gtk_widget_show (enter_ok);
-    gtk_container_add (GTK_CONTAINER (hbuttonbox3), enter_ok);
-    GTK_WIDGET_SET_FLAGS (enter_ok, GTK_CAN_DEFAULT);
+    event_ok = gtk_button_new_with_label ("OK");
+    gtk_widget_ref (event_ok);
+    gtk_object_set_data_full (GTK_OBJECT (my_event_wnd), "event_ok", event_ok, (GtkDestroyNotify) gtk_widget_unref);
+    gtk_widget_show (event_ok);
+    gtk_container_add (GTK_CONTAINER (hbuttonbox3), event_ok);
+    GTK_WIDGET_SET_FLAGS (event_ok, GTK_CAN_DEFAULT);
 
-    enter_cancel = gtk_button_new_with_label ("Cancel");
-    gtk_widget_ref (enter_cancel);
-    gtk_object_set_data_full (GTK_OBJECT (event_enter), "enter_cancel", enter_cancel, (GtkDestroyNotify) gtk_widget_unref);
-    gtk_widget_show (enter_cancel);
-    gtk_container_add (GTK_CONTAINER (hbuttonbox3), enter_cancel);
-    GTK_WIDGET_SET_FLAGS (enter_cancel, GTK_CAN_DEFAULT);
+    event_cancel = gtk_button_new_with_label ("Cancel");
+    gtk_widget_ref (event_cancel);
+    gtk_object_set_data_full (GTK_OBJECT (my_event_wnd), "event_cancel", event_cancel, (GtkDestroyNotify) gtk_widget_unref);
+    gtk_widget_show (event_cancel);
+    gtk_container_add (GTK_CONTAINER (hbuttonbox3), event_cancel);
+    GTK_WIDGET_SET_FLAGS (event_cancel, GTK_CAN_DEFAULT);
 
-    gtk_signal_connect (GTK_OBJECT (event_enter), "delete_event", GTK_SIGNAL_FUNC (on_widget_destroy), NULL);
-    gtk_signal_connect (GTK_OBJECT (enter_script_entry), "changed", GTK_SIGNAL_FUNC (on_enter_script_entry_changed), NULL);
-    gtk_signal_connect (GTK_OBJECT (enter_browse), "clicked", GTK_SIGNAL_FUNC (on_enter_browse_clicked), NULL);
-    gtk_signal_connect (GTK_OBJECT (enter_ok), "clicked", GTK_SIGNAL_FUNC (on_enter_ok_clicked), wnd);
-    gtk_signal_connect (GTK_OBJECT (enter_cancel), "clicked", GTK_SIGNAL_FUNC (on_widget_destroy), NULL);
+    gtk_signal_connect (GTK_OBJECT (my_event_wnd), "delete_event", GTK_SIGNAL_FUNC (on_widget_destroy), NULL);
+    gtk_signal_connect (GTK_OBJECT (event_script_entry), "changed", GTK_SIGNAL_FUNC (on_event_script_entry_changed), wnd);
+    gtk_signal_connect (GTK_OBJECT (event_browse), "clicked", GTK_SIGNAL_FUNC (on_event_browse_clicked), wnd);
+    gtk_signal_connect (GTK_OBJECT (condition_update), "clicked", GTK_SIGNAL_FUNC (on_condition_update_clicked), wnd);
+    gtk_signal_connect (GTK_OBJECT (condition_list), "select_row", GTK_SIGNAL_FUNC (on_condition_list_select_row), wnd);
+    gtk_signal_connect (GTK_OBJECT (condition_list), "unselect_row", GTK_SIGNAL_FUNC (on_condition_list_unselect_row), wnd);
+    gtk_signal_connect (GTK_OBJECT (event_ok), "clicked", GTK_SIGNAL_FUNC (on_event_ok_clicked), wnd);
+    gtk_signal_connect (GTK_OBJECT (event_cancel), "clicked", GTK_SIGNAL_FUNC (on_event_cancel_clicked), my_event_wnd);
 
-    return event_enter;
+    gtk_object_set_data (GTK_OBJECT (my_event_wnd), "tooltips", tooltips);
+
+    return my_event_wnd;
+}
+
+GtkWidget *
+create_fileselection (GString * file, bool fileops)
+{
+    GtkWidget *fileselection1;
+    GtkWidget *fs_cancel_button;
+    GtkWidget *fs_ok_button;
+
+    fileselection1 = gtk_file_selection_new ("Chose File");
+    gtk_object_set_data (GTK_OBJECT (fileselection1), "fileselection1", fileselection1);
+    gtk_container_set_border_width (GTK_CONTAINER (fileselection1), 10);
+    GTK_WINDOW (fileselection1)->type = GTK_WINDOW_DIALOG;
+    gtk_window_set_modal (GTK_WINDOW (fileselection1), TRUE);
+    gtk_window_set_policy (GTK_WINDOW (fileselection1), FALSE, FALSE, FALSE);
+
+    if (!fileops)
+        gtk_file_selection_hide_fileop_buttons (GTK_FILE_SELECTION (fileselection1));
+
+    fs_cancel_button = GTK_FILE_SELECTION (fileselection1)->cancel_button;
+    gtk_object_set_data (GTK_OBJECT (fileselection1), "fs_cancel_button", fs_cancel_button);
+    gtk_widget_show (fs_cancel_button);
+
+    fs_ok_button = GTK_FILE_SELECTION (fileselection1)->ok_button;
+    gtk_object_set_data (GTK_OBJECT (fileselection1), "fs_ok_button", fs_ok_button);
+    gtk_widget_show (fs_ok_button);
+    GTK_WIDGET_SET_FLAGS (fs_ok_button, GTK_CAN_DEFAULT);
+
+    gtk_signal_connect (GTK_OBJECT (fs_cancel_button), "clicked", GTK_SIGNAL_FUNC (on_fs_cancel_button_pressed), NULL);
+    gtk_signal_connect (GTK_OBJECT (fs_ok_button), "clicked", GTK_SIGNAL_FUNC (on_fs_ok_button_pressed), file);
+
+    gtk_widget_grab_focus (fs_ok_button);
+    gtk_widget_grab_default (fs_ok_button);
+
+    return fileselection1;
 }

@@ -1,0 +1,7 @@
+# Possible parameters of the enter event
+
+x coordinate
+y coordinate
+direction
+map
+

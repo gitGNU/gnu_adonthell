@@ -39,18 +39,24 @@ void on_event_list_select_row (GtkCList * clist, gint row, gint column, GdkEvent
 
 void on_event_list_unselect_row (GtkCList * clist, gint row, gint column, GdkEvent * event, gpointer user_data);
 
-void on_dlg_add_clicked (GtkButton * button, gpointer user_data);
+void on_chose_schedule_clicked (GtkButton * button, gpointer user_data);
 
-void on_dlg_remove_clicked (GtkButton * button, gpointer user_data);
+void on_chose_dialogue_clicked (GtkButton * button, gpointer user_data);
 
-void on_dlg_default_clicked (GtkButton * button, gpointer user_data);
+void on_event_script_entry_changed (GtkEditable * editable, gpointer user_data);
 
-void on_dlg_list_select_row (GtkCList * clist, gint row, gint column, GdkEvent * event, gpointer user_data);
+void on_event_browse_clicked (GtkButton * button, gpointer user_data);
 
-void on_enter_script_entry_changed (GtkEditable * editable, gpointer user_data);
+void on_event_ok_clicked (GtkButton * button, gpointer user_data);
 
-void on_enter_browse_clicked (GtkButton * button, gpointer user_data);
+void on_event_cancel_clicked (GtkButton * button, gpointer user_data);
 
-void on_enter_ok_clicked (GtkButton * button, gpointer user_data);
+void on_condition_update_clicked (GtkButton * button, gpointer user_data);
 
-void on_enter_cancel_clicked (GtkButton * button, gpointer user_data);
+void on_condition_list_select_row (GtkCList * clist, gint row, gint column, GdkEvent * event, gpointer user_data);
+
+void on_condition_list_unselect_row (GtkCList * clist, gint row, gint column, GdkEvent * event, gpointer user_data);
+
+void on_fs_ok_button_pressed (GtkButton * button, gpointer user_data);
+
+void on_fs_cancel_button_pressed (GtkButton * button, gpointer user_data);

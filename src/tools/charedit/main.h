@@ -19,12 +19,13 @@
 
 class main_wnd
 {
-public:
+  public:
     main_wnd ();
 
-    void load_default_attributes (void);
-    void colorify_list (GtkCList*);
-    gchar* get_option (GtkOptionMenu*);
+    void load_list_defaults (GtkCList *, gchar *, gchar *);
+    void colorify_list (GtkCList *);
+    gchar *get_option (GtkOptionMenu *);
+    gchar *get_script ();
 
     GtkWidget *name_entry;
     GtkWidget *race_choice;
@@ -38,11 +39,33 @@ public:
     GtkWidget *event_list;
     int event_list_sel;
 
-    GtkWidget *dlg_list;
+    GtkWidget *dlg_entry;
+    GtkWidget *scl_entry;
 
-    static gchar *events[5]; // = { "Enter", "Leave", "Pickup", "Drop", "Kill" };
-    static gchar *races[4];  // = { "Dwarf", "Elf", "Half-Elf", "Human" };
-    static gchar *gender[2]; // = { "Female", "Male" }; 
+    gchar *last_dir;
+    
+    static gchar *events[5];    // = { "Enter", "Leave", "Pickup", "Drop", "Kill" };
+    static gchar *races[4];     // = { "Dwarf", "Elf", "Half-Elf", "Human" };
+    static gchar *gender[2];    // = { "Female", "Male" }; 
+};
+
+class event_wnd
+{
+  public:
+    event_wnd (main_wnd*, gchar*);
+
+    GtkWidget *script_entry;
+    GtkWidget *condition_label;
+    GtkWidget *condition_entry;
+    GtkWidget *condition_list;
+    int condition_list_sel;
+
+    gchar *script;
+    gchar *params;
+
+    main_wnd *main;
+
+    bool ok;
 };
 
 #endif // __MAIN_H__

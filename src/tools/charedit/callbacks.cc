@@ -34,7 +34,7 @@ on_save_activate (GtkMenuItem * menuitem, gpointer user_data)
 }
 
 // File menu "Quit"
-void 
+void
 on_widget_destroy (GtkWidget * widget, gpointer data)
 {
     gtk_widget_destroy (widget);
@@ -55,11 +55,14 @@ on_attrib_update_clicked (GtkButton * button, gpointer user_data)
     text[1] = gtk_entry_get_text (GTK_ENTRY (wnd->val_entry));
 
     // check whether attribute and value are nonzero
-    if (text[0] == NULL || !strcmp (text[0], "")) return;
-    if (text[1] == NULL || !strcmp (text[1], "")) return;
+    if (text[0] == NULL || !strcmp (text[0], ""))
+        return;
+    if (text[1] == NULL || !strcmp (text[1], ""))
+        return;
 
     // check whether value is an integer
-    if (text[1][0] != '-' && !isdigit (text[1][0])) return;
+    if (text[1][0] != '-' && !isdigit (text[1][0]))
+        return;
 
     // clear entries and selection
     gtk_entry_set_text (GTK_ENTRY (wnd->attrib_entry), "");
@@ -71,11 +74,11 @@ on_attrib_update_clicked (GtkButton * button, gpointer user_data)
         if (!strcmp (text[0], str))
         {
             // in case it does, only update the value
-            gtk_clist_set_text (GTK_CLIST (wnd->attribute_list), i-1, 1, text[1]);
+            gtk_clist_set_text (GTK_CLIST (wnd->attribute_list), i - 1, 1, text[1]);
 
             return;
         }
-    
+
     // else add them to the list and clear the entries
     gtk_clist_append (GTK_CLIST (wnd->attribute_list), text);
 
@@ -102,28 +105,29 @@ on_attrib_remove_clicked (GtkButton * button, gpointer user_data)
         if (!strcmp (attr, str))
         {
             gtk_entry_set_text (GTK_ENTRY (wnd->attrib_entry), "");
-            gtk_entry_set_text (GTK_ENTRY (wnd->val_entry), ""); 
+            gtk_entry_set_text (GTK_ENTRY (wnd->val_entry), "");
         }
 
         // Delete row
         gtk_clist_remove (GTK_CLIST (wnd->attribute_list), wnd->attribute_list_sel);
         wnd->colorify_list (GTK_CLIST (wnd->attribute_list));
-        
+
         return;
     }
 
     // check whether attribute is nonzero
-    if (attr == NULL || !strcmp (attr, "")) return;
+    if (attr == NULL || !strcmp (attr, ""))
+        return;
 
     // find attr in list and remove it
     while (gtk_clist_get_text (GTK_CLIST (wnd->attribute_list), i++, 0, &str))
         if (!strcmp (attr, str))
         {
-            gtk_clist_remove (GTK_CLIST (wnd->attribute_list), i-1);
+            gtk_clist_remove (GTK_CLIST (wnd->attribute_list), i - 1);
             wnd->colorify_list (GTK_CLIST (wnd->attribute_list));
 
             gtk_entry_set_text (GTK_ENTRY (wnd->attrib_entry), "");
-            gtk_entry_set_text (GTK_ENTRY (wnd->val_entry), ""); 
+            gtk_entry_set_text (GTK_ENTRY (wnd->val_entry), "");
 
             return;
         }
@@ -153,9 +157,11 @@ void
 on_attribute_list_unselect_row (GtkCList * clist, gint row, gint column, GdkEvent * event, gpointer user_data)
 {
     main_wnd *wnd = (main_wnd *) user_data;
+
     wnd->attribute_list_sel = -1;
 }
 
+// add a event to the event-list
 void
 on_event_add_clicked (GtkButton * button, gpointer user_data)
 {
@@ -166,18 +172,15 @@ on_event_add_clicked (GtkButton * button, gpointer user_data)
     // get the selected event type
     gchar *event = wnd->get_option (GTK_OPTION_MENU (wnd->event_choice));
 
-    // Enter-event
-    if (!strcmp (event, "Enter")) event_dlg = create_event_enter (wnd);
+    // and create the dialog
+    event_wnd dlg (wnd, event);
+    gtk_main ();
 
-    if (event_dlg != NULL)
+    if (dlg.ok)
     {
-        gtk_widget_show (event_dlg);
-        gtk_window_set_modal (GTK_WINDOW (event_dlg), TRUE);
-        gtk_main ();
-
         text[0] = event;
-        text[1] = "script";
-        text[2] = "x=142, y=23";
+        text[1] = dlg.script;
+        text[2] = dlg.params;
 
         gtk_clist_append (GTK_CLIST (wnd->event_list), text);
         wnd->colorify_list (GTK_CLIST (wnd->event_list));
@@ -196,10 +199,7 @@ on_event_remove_clicked (GtkButton * button, gpointer user_data)
         // Delete row
         gtk_clist_remove (GTK_CLIST (wnd->event_list), wnd->event_list_sel);
         wnd->colorify_list (GTK_CLIST (wnd->event_list));
-        
-        return;
     }
-
 }
 
 
@@ -207,10 +207,55 @@ void
 on_event_update_clicked (GtkButton * button, gpointer user_data)
 {
     main_wnd *wnd = (main_wnd *) user_data;
-    gchar *event;
-    
+    gchar *params, **pairs, **vals;
+    gchar *event, *condition, *script;
+    int i = 0, j = 0;
+
+    // return if no row selected
+    if (wnd->event_list_sel < 0)
+        return;
+
+    // Get the event type of the selected row
     gtk_clist_get_text (GTK_CLIST (wnd->event_list), wnd->event_list_sel, 0, &event);
 
+    // and create the dialog
+    event_wnd dlg (wnd, event);
+
+    // Now set the parameters & script accordingly
+    gtk_clist_get_text (GTK_CLIST (wnd->event_list), wnd->event_list_sel, 1, &script);
+    gtk_clist_get_text (GTK_CLIST (wnd->event_list), wnd->event_list_sel, 2, &params);
+    gtk_entry_set_text (GTK_ENTRY (dlg.script_entry), script);
+    
+    pairs = g_strsplit (params, ", ", 0);
+
+    while (pairs[i] != NULL)
+    {
+        vals = g_strsplit (pairs[i++], "=", 0);
+
+        while (gtk_clist_get_text (GTK_CLIST (dlg.condition_list), j, 0, &condition))
+        {
+            if (!strcmp (condition, vals[0]))
+                gtk_clist_set_text (GTK_CLIST (dlg.condition_list), j, 1, vals[1]);
+            j++;
+        }
+
+        j = 0;
+        g_strfreev (vals);
+    }
+
+    g_strfreev (pairs);
+    
+    gtk_main ();
+
+    if (dlg.ok)
+    {
+        // update the values
+        gtk_clist_set_text (GTK_CLIST (wnd->event_list), wnd->event_list_sel, 1, dlg.script);
+        gtk_clist_set_text (GTK_CLIST (wnd->event_list), wnd->event_list_sel, 2, dlg.params);
+
+        // and deselect the entry
+        gtk_clist_unselect_row (GTK_CLIST (wnd->event_list), wnd->event_list_sel, 0);
+    }
 }
 
 
@@ -218,6 +263,7 @@ void
 on_event_list_select_row (GtkCList * clist, gint row, gint column, GdkEvent * event, gpointer user_data)
 {
     main_wnd *wnd = (main_wnd *) user_data;
+
     wnd->event_list_sel = row;
 }
 
@@ -226,61 +272,156 @@ void
 on_event_list_unselect_row (GtkCList * clist, gint row, gint column, GdkEvent * event, gpointer user_data)
 {
     main_wnd *wnd = (main_wnd *) user_data;
+
     wnd->event_list_sel = -1;
 }
 
+void
+on_chose_schedule_clicked (GtkButton * button, gpointer user_data)
+{
+    main_wnd *wnd = (main_wnd *) user_data;
+    gchar *script = wnd->get_script ();
+
+    gtk_entry_set_text (GTK_ENTRY (wnd->scl_entry), script);
+}
+
 
 void
-on_dlg_add_clicked (GtkButton * button, gpointer user_data)
+on_chose_dialogue_clicked (GtkButton * button, gpointer user_data)
+{
+    main_wnd *wnd = (main_wnd *) user_data;
+    gchar *script = wnd->get_script ();
+
+    gtk_entry_set_text (GTK_ENTRY (wnd->dlg_entry), script);
+}
+
+
+void
+on_event_script_entry_changed (GtkEditable * editable, gpointer user_data)
 {
 
 }
 
 
 void
-on_dlg_remove_clicked (GtkButton * button, gpointer user_data)
+on_event_browse_clicked (GtkButton * button, gpointer user_data)
 {
+    event_wnd *wnd = (event_wnd *) user_data;
+    gchar *script  = wnd->main->get_script ();
 
+    gtk_entry_set_text (GTK_ENTRY (wnd->script_entry), script);
 }
 
 
 void
-on_dlg_default_clicked (GtkButton * button, gpointer user_data)
+on_event_ok_clicked (GtkButton * button, gpointer user_data)
 {
+    event_wnd *wnd = (event_wnd *) user_data;
+    GString *params = g_string_new ("");
+    gchar *condition, *entry;
+    int i = 0;
 
+    // get script
+    wnd->script = g_strdup (gtk_entry_get_text (GTK_ENTRY (wnd->script_entry)));
+
+    // get conditions
+    while (gtk_clist_get_text (GTK_CLIST (wnd->condition_list), i, 1, &entry))
+    {
+        if (strcmp (entry, ""))
+        {
+            gtk_clist_get_text (GTK_CLIST (wnd->condition_list), i, 0, &condition);
+
+            if (strcmp (params->str, "")) g_string_append (params, ", ");
+                
+            g_string_append (params, condition);
+            g_string_append (params, "=");
+            g_string_append (params, entry);
+        }
+
+        i++;
+    }
+    
+    wnd->params = params->str;
+    wnd->ok = true;
+
+    g_string_free (params, FALSE);
+    on_widget_destroy (gtk_widget_get_ancestor (GTK_WIDGET (button), GTK_TYPE_WINDOW), NULL);
 }
 
 
 void
-on_dlg_list_select_row (GtkCList * clist, gint row, gint column, GdkEvent * event, gpointer user_data)
+on_event_cancel_clicked (GtkButton * button, gpointer user_data)
 {
-
+    on_widget_destroy (GTK_WIDGET (user_data), NULL);
 }
 
 
 void
-on_enter_script_entry_changed (GtkEditable * editable, gpointer user_data)
+on_condition_update_clicked (GtkButton * button, gpointer user_data)
 {
+    event_wnd *wnd = (event_wnd *) user_data;
+    gchar *condition;
 
+    // No Condition selected
+    if (wnd->condition_list_sel < 0) return;
+
+    // Update the value
+    condition = gtk_entry_get_text (GTK_ENTRY (wnd->condition_entry));
+    gtk_clist_set_text (GTK_CLIST (wnd->condition_list), wnd->condition_list_sel, 1, condition);
+
+    // and deselect the entry
+    gtk_clist_unselect_row (GTK_CLIST (wnd->condition_list), wnd->condition_list_sel, 0);
 }
 
 
 void
-on_enter_browse_clicked (GtkButton * button, gpointer user_data)
+on_condition_list_select_row (GtkCList * clist, gint row, gint column, GdkEvent * event, gpointer user_data)
 {
+    event_wnd *wnd = (event_wnd *) user_data;
+    gchar *condition, *entry;
+    
+    wnd->condition_list_sel = row;
 
+    // Update the label text
+    gtk_clist_get_text (GTK_CLIST (wnd->condition_list), wnd->condition_list_sel, 0, &condition);
+    gtk_label_set_text (GTK_LABEL (wnd->condition_label), condition);
+
+    // Update the entry text
+    gtk_clist_get_text (GTK_CLIST (wnd->condition_list), wnd->condition_list_sel, 1, &entry);
+    gtk_entry_set_text (GTK_ENTRY (wnd->condition_entry), entry);
 }
 
 
 void
-on_enter_ok_clicked (GtkButton * button, gpointer user_data)
+on_condition_list_unselect_row (GtkCList * clist, gint row, gint column, GdkEvent * event, gpointer user_data)
 {
+    event_wnd *wnd = (event_wnd *) user_data;
 
+    gtk_label_set_text (GTK_LABEL (wnd->condition_label), "Value");
+    gtk_entry_set_text (GTK_ENTRY (wnd->condition_entry), "");
+    
+    wnd->condition_list_sel = -1;
 }
 
-
-void
-on_enter_cancel_clicked (GtkButton * button, gpointer user_data)
+// File-Selection: ok -> get file name
+void 
+on_fs_ok_button_pressed (GtkButton * button, gpointer user_data)
 {
+    GtkFileSelection *fs = (GtkFileSelection *) gtk_widget_get_ancestor (GTK_WIDGET (button), GTK_TYPE_FILE_SELECTION);
+    GString *file = (GString *) user_data;
 
+    file = g_string_assign (file, gtk_file_selection_get_filename (fs));
+    gtk_widget_destroy (GTK_WIDGET (fs));
+    gtk_main_quit ();
 }
+
+// File-Selection: cancel -> no file name
+void 
+on_fs_cancel_button_pressed (GtkButton * button, gpointer user_data)
+{
+    GtkFileSelection *fs = (GtkFileSelection *) gtk_widget_get_ancestor (GTK_WIDGET (button), GTK_TYPE_FILE_SELECTION);
+
+    gtk_widget_destroy (GTK_WIDGET (fs));
+    gtk_main_quit ();
+}
+
