@@ -37,16 +37,16 @@ class win_scrolled : public win_container
   win_scrolled(s_int16 tx,s_int16 ty,u_int16 tl,u_int16 th,win_theme * wth);
   ~win_scrolled();
   //you understand up in scrollbar
-  void up();
+  bool up();
   
   //down too :)
-  void down();
+  bool down();
 
   //return difference between the last object and the visual height, I think you don't understand, but i know you never use thisfunction just me 
   u_int16 amplitude(){return max_amplitude_;}
-  void add(win_base *);
-  void remove(win_base *);
-  void remove_all();
+  virtual void add(win_base *);
+  virtual void remove(win_base *);
+  virtual void remove_all();
   void resize(u_int16 tl,u_int16 th);
   void destroy();
   void draw();

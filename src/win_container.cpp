@@ -19,24 +19,34 @@
 #include "win_container.h"
 
 
+//constructor
 win_container::win_container(s_int16 tx,s_int16 ty,u_int16 tl,u_int16 th,win_theme * wth):win_base(tx,ty,tl,th,wth)
 {
+  //clear the list og object
   list_obj.clear();
+  //set the space between border and object
   space_between_border_=WIN_SPACE_BETWEEN_BORDER;
+  //set space between object and another object
   space_between_object_=WIN_SPACE_BETWEEN_OBJECT;
+  //set justify ----> WARNING MAYBE IN WIN_BASE ????
   justify_=WIN_JUSTIFY_NO;
+  //set layout equals no
   layout_=WIN_LAYOUT_NO;
+  //type of object is modify to win object ---> WARNING : Must find another solution
   type_obj_=WIN_OBJ_CONTAINER;
 }
 
+
 void win_container::set_space_between_object(u_int16 tmp)
 {
+  //set the space between object and call update layout to redefine position of each element
   space_between_object_=tmp;
   update_layout();
 }
 
 void win_container::set_space_between_border(u_int16 tmp)
 {
+  //set the space between border and object and call update layout to redefine position of each element
   space_between_border_=tmp;
   update_layout();
 }
@@ -48,26 +58,32 @@ win_container::~win_container()
 
 void win_container::add(win_base * tmp)
 {
+  //add the object 
   list_obj.push_back(tmp);
-
+  
+  //set the new object
   tmp->wb_father_=this;
   tmp->update_real_position();
-
+  //set justify this object
   set_justify(tmp,justify_);
+  //update layout
   update_layout();
+  //if the win_container is brightness set the new object in brightness mode
   if(draw_brightness_) tmp->set_draw_brightness(true);
 }
 
+
 void win_container::remove(win_base * tmp)
 {
-  list<win_base *>::iterator i=list_obj.begin();
-  while(i!=list_obj.end() && tmp!=(*i)) i++;
-  if(i!=list_obj.end()) 
-    {
-      tmp->wb_father_=NULL;
-      list_obj.erase(i);
-      update_layout();
-    }
+  // list<win_base *>::iterator i=list_obj.begin();
+  //while(i!=list_obj.end() && tmp!=(*i)) i++;
+  //if(i!=list_obj.end()) 
+  //{
+  list_obj.remove(tmp);
+  tmp->wb_father_=NULL;
+  //list_obj.erase(i);
+  update_layout();
+      // }
 }
 
 void win_container::remove_all()
@@ -86,39 +102,43 @@ void win_container::destroy()
 
 void win_container::update()
 {
+  //call the win update ---> on update()
   win_base::update();
+  //update all the elemnt in the list
   for(list<win_base *>::iterator i=list_obj.begin();i!=list_obj.end();i++)
     (*i)->update();
 }
 
 void win_container::draw()
 {
-  if(!visible_) return;
-  on_draw();
-  assign_drawing_area();
+  win_base::draw(); //WARNING: add maybe a bool if is need to draw
+  
+  //is not visible return
+  if(!visible_)return;
+
+  
+  assign_drawing_area(); //assign drawing area
+  //draw the background
   draw_background();
+  //next draw all the element
   for(list<win_base *>::iterator i=list_obj.begin();i!=list_obj.end();i++)
     (*i)->draw();
+  //draw the border
   draw_border();
+  //detach the drawing area
   detach_drawing_area();
 }
 
+
+//set visible mode for all element in list
 void win_container::set_visible_all(bool b)
 {
-  if(b)
-    {
-      visible_=true;
-      for(list<win_base *>::iterator i=list_obj.begin();i!=list_obj.end();i++)
-	(*i)->set_visible(true);
-    }
-  else
-    {
-      visible_=false;
-      for(list<win_base *>::iterator i=list_obj.begin();i!=list_obj.end();i++)
-	(*i)->set_visible(false);
-    }
+  visible_=b;
+  for(list<win_base *>::iterator i=list_obj.begin();i!=list_obj.end();i++)
+    (*i)->set_visible(visible_);
 }
 
+//set draw brightness for all element in the list
 void win_container::set_draw_brightness(bool b)
 {
   win_base::set_draw_brightness(b);
@@ -126,6 +146,7 @@ void win_container::set_draw_brightness(bool b)
     (*i)->set_draw_brightness(b);
 }
 
+//set justify an object in this container
 void win_container::set_justify(win_base * wb, u_int8 just)
 {
   switch(just)
@@ -143,6 +164,7 @@ void win_container::set_justify(win_base * wb, u_int8 just)
     }
 } 
 
+//justify all the element
 void win_container::set_justify(u_int8  just)
 {
   justify_=just;
@@ -150,12 +172,14 @@ void win_container::set_justify(u_int8  just)
     set_justify((*i),just);
 }
 
+//sezt the layout and update
 void win_container::set_layout(u_int8 lay)
 {
   layout_=lay;
   update_layout();
 }
 
+//
 void win_container::update_real_position()
 {
   win_base::update_real_position();
@@ -169,6 +193,8 @@ void win_container::move(s_int16 tx,s_int16 ty)
   update_real_position();
 }
 
+
+//just one layout actually but i whish add another --> grid layout
 void win_container::update_layout()
 {
   u_int16 indice=space_between_border_;

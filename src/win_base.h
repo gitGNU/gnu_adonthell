@@ -62,7 +62,7 @@ class win_base
   
   void set_in_select(bool b){in_select_=b;}
   void set_select(bool b){if(b) on_select(); else on_unselect();}
-  void set_select_mode_(u_int8 mode){mode_select_=mode;}
+  void set_select_mode_(u_int8 mode) {mode_select_=mode;set_draw_brightness(mode==WIN_SELECT_MODE_BRIGHTNESS);}
   win_base(s_int16 tx,s_int16 ty,u_int16 tl,u_int16 th,win_theme * wth);
   
 

@@ -14,7 +14,6 @@
 #define _WIN_SELECT_H_
 
 #include "win_scrolled.h"
-#include "input.h"
 
 class win_base;
 class win_theme;
@@ -32,7 +31,10 @@ class win_select : public win_scrolled
   u_int8 mode_selected_;
   //if this select has a father
   win_select * fatherselect_;
-  //current win_select activate
+ 
+  bool select_circle_;
+
+ //current win_select activate
   static win_select * curselect_;
   void next_();
   void previous_();
@@ -45,7 +47,7 @@ class win_select : public win_scrolled
   //use this function to activate the object see win_base.h
   void on_activate();
   
-  void activate___();
+  bool activate___();
  
  public:
   win_select(s_int16 tx,s_int16 ty,u_int16 tl,u_int16 th,win_theme * wth);
@@ -68,7 +70,9 @@ class win_select : public win_scrolled
   //set the mode of the selection WIN_SELECT_MODE_BRIGHTNESS, WIN_SELECT_MODE_BORDER, cursor not implemented
   void set_select_mode(u_int8);  
  
-  
+  void set_select_circle(bool b){select_circle_=b;}
+  bool is_select_circle(){return select_circle_;}
+
   //next object
   static void next();
   //previous object
@@ -76,8 +80,10 @@ class win_select : public win_scrolled
   //set the curselect
   static void set_cur_select(win_select * ws);
   //return a the father select
-  static void back();
+  static bool back();
+  //activate the object
   static void activate();
+
   static void set_activate_keyboard(bool b){activate_keyboard_=b;}
   static bool is_activate_keyboard(){return activate_keyboard_;}
   
@@ -95,6 +101,7 @@ class win_select : public win_scrolled
   static SDLKey back_key;
 };
 #endif
+
 
 
 
