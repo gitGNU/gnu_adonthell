@@ -179,9 +179,9 @@ void dialog::run (u_int32 index)
         s = PyInt_AsLong (PyList_GetItem (player, k));
         
         if (s == -1) j++;
-
+        
         // These are the strings belonging to the chosen NPC text
-        if (j == i)
+        if (j == i && s != -1)
         {
             // Only display unused text
             if (find (used.begin (), used.end (), s) == used.end ())
