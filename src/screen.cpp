@@ -97,7 +97,7 @@ void screen::set_fullscreen(bool mode)
     {
       SDL_flags|=SDL_FULLSCREEN;
     }
-  else
+  else if (screen::is_fullscreen ())
     {
       SDL_flags-=SDL_FULLSCREEN;
     }

@@ -27,7 +27,7 @@ config::config (string s) : section (s)
     mapname = "maptest.map";                // Map to load on startup
     screen_resolution = 0;                  // 320x240
     screen_mode = 1;                        // Fullscreen
-    window_theme = "original";              // Default theme
+    window_theme = "original/";             // Default theme
     audio_channels = 1;                     // Stereo
     audio_resolution = 1;                   // 16 bit
     audio_interpolation = 1;                // Interpolation on
@@ -36,6 +36,7 @@ config::config (string s) : section (s)
 
     // set the path to the adonthellrc file:
     adonthellrc = string (getenv ("HOME")) + "/.adonthell";
+
 }
 
 // That's more or less a move operator, as the source is destroyed

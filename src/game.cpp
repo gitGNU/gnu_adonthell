@@ -15,6 +15,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include "win_manager.h"
+#include "win_theme.h"
 #include "input.h"
 #include "screen.h"
 #include "game.h"
@@ -54,6 +55,10 @@ bool game::init ()
 
     // init video subsystem
     screen::set_video_mode (320, 240);
+    screen::set_fullscreen (configuration->screen_mode);
+
+    // set the theme
+    win_theme::theme = strdup (configuration->window_theme.c_str ());
 
     // init audio subsystem
 #if defined SDL_MIXER && !defined _EDIT_
