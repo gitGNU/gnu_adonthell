@@ -467,9 +467,10 @@ void dlg_compiler::write_answer ()
         // write circle's condition (if any)
         if (((Circle*)(*i))->conditions != "") 
         {
+            space = "        ";
             write_custom_code (((Circle*)(*i))->conditions);
             space = "            ";
-        }   
+        }
 
         // Write NPC stuff
         write_npc ((Circle*)*i);
