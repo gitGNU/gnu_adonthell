@@ -22,10 +22,11 @@ config::config (string s) : section (s)
     // set some default values where possible
     datadir = "";                 // Directory containing the gamedata
     mapname = "";                 // Map to load on startup
-    screen_resolution = 1;        // 320x240 or 640x480
-    screen_mode = 0;              // Window or Fullscreen
-    audio_channels = 1;           // Mono or Stereo
-    audio_resolution = 1;         // 8 or 16 bit
+    screen_resolution = 0;        // 320x240
+    screen_mode = 1;              // Fullscreen
+    audio_channels = 1;           // Stereo
+    audio_resolution = 1;         // 16 bit
+    audio_interpolation = 1;      // Interpolation on
     audio_sample_rate = 2;        // 11025, 22050 or 44100 Hz
     audio_volume = 50;            // 0 - 100%
 
@@ -65,6 +66,8 @@ void config::write_adonthellrc ()
        << "    Audio-resolution " << (int) audio_resolution << "\n\n"
        << "# Audio-sample-rate num\n#   0  11025 Hz\n#   1  22050 Hz\n#   2  44100 Hz\n"
        << "    Audio-sample-rate " << (int) audio_sample_rate << "\n\n"
+       << "# Audio-interpolation num\n#   0  Off\n#   1  On\n"
+       << "    Audio-interpolation " << (int) audio_interpolation << "\n\n"
        << "# Audio-volume num\n#   0 - 100 %\n"
        << "    Audio-volume " << (int) audio_volume << "\n\n"
        << "End\n";
@@ -189,6 +192,12 @@ void config::load_section ()
             case PREFS_AUDIO_SAMPLE_RATE:
             {
                 if (parse_adonthellrc (n, s) == PREFS_NUM) audio_sample_rate = n;
+                break;
+            }
+
+            case PREFS_AUDIO_INTERPOLATION:
+            {
+                if (parse_adonthellrc (n, s) == PREFS_NUM) audio_interpolation = n;
                 break;
             }
 

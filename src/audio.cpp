@@ -55,7 +55,8 @@ audio::audio (config &myconfig) {
     audio_channels, buffer_size);
 
   // Activate sample interpolation to improve quality
-  md_mode |= 0x0200; // 0x0200 is DMODE_INTERP in MikMod
+  if (myconfig.audio_interpolation)
+    md_mode |= 0x0200; // 0x0200 is DMODE_INTERP in MikMod
 
   // Now see what we got when opening the audio device
   // If we COULDN'T open the audio...

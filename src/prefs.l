@@ -41,6 +41,7 @@ Audio-channels      return PREFS_AUDIO_CHANNELS;
 Audio-resolution    return PREFS_AUDIO_RESOLUTION;
 Audio-sample-rate   return PREFS_AUDIO_SAMPLE_RATE;
 Audio-volume        return PREFS_AUDIO_VOLUME;
+Audio-interpolation return PREFS_AUDIO_INTERPOLATION;
 
 \[                  mytext = ""; BEGIN(text);
 <text>\]            BEGIN(INITIAL); return PREFS_STR;
