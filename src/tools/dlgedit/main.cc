@@ -85,25 +85,26 @@ main (int argc, char *argv[])
 
     // load characters from character.data
     FILE *in = fopen ("character.data", "r");
-    if (!in)
+    if (in)
     {
-        fprintf (stderr, "Couldn't open \"character.data\" - stopping\n");
-        return 1;
+        npc *mynpc = NULL;
+    
+        while (fgetc (in))
+        {
+            mynpc = new npc;
+            mynpc->load (in);
+            PyDict_SetItemString (chars, mynpc->name, pass_instance (mynpc, "npc"));
+            game::characters.set (mynpc->name, mynpc);
+        }
+
+        // set a shortcut to one of the NPC's
+        PyDict_SetItemString (game::globals, "the_npc", pass_instance (mynpc, "npc"));
+    
+        fclose (in);
     }
 
-    npc *mynpc;
-    
-    while (fgetc (in))
-    {
-        mynpc = new npc;
-        mynpc->load (in);
-        PyDict_SetItemString (chars, mynpc->name, pass_instance (mynpc, "npc"));
-        game::characters.set (mynpc->name, mynpc);
-    }
-    
-    fclose (in);
     chdir (wd);
-
+    
     // Misc initialization
     init_app (MainWnd);
 
