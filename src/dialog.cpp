@@ -350,7 +350,7 @@ char *dialog::get_substr (const char* string, char* begin, char* end)
     b = strcspn (string, begin) + 1;
     e = strcspn (string, end) - b;
 
-    char *result = new char[b+1];
+    char *result = new char[e+1];
     strncpy (result, string+b, e);
     result[e] = 0;
 
@@ -360,8 +360,9 @@ char *dialog::get_substr (const char* string, char* begin, char* end)
 // Init the dialogue engine
 dialog_engine::dialog_engine (const char *npc_name)
 {
-    // save dialogue engine
+    // save active engine and ...
     engine = game::engine;
+    // ... set focus to the dialogue engine
     game::engine = this;
     portrait = NULL;
     name = NULL;
