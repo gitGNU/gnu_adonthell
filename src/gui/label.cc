@@ -84,25 +84,6 @@ void label::set_text (const std::wstring & text)
 }
 
 
-void label::add_utf16 (u_int16 c)
-{
-  /*
-  my_old_cursor_ = my_cursor_; 
-  
-  if (my_old_cursor_.idx == my_text_.length ()) 
-    {
-      my_text_ += c;   
-      my_cursor_.idx = my_text_.length (); 
-    }
-  else my_text_.insert (my_cursor_.idx, c);
-  
-  build (false); 
-  */
-
-}
-
-
-
 /**
    Add text
 */
@@ -177,7 +158,6 @@ void label::build (const bool erase_all)
     switch (my_form_)
     {
         case NOTHING :
-	  std::cout << "label::build\n";
             build_form_nothing (); 
             update_cursor ();
             draw_string (!erase_all); 
@@ -524,7 +504,8 @@ void label::draw_string (const bool at_cursor)
          j++)
     {
       glyph = &((*my_font_) [my_text_[j]]);
-      glyph->my_glyph->draw (tx, ty + glyph->my_yoffset, NULL, this);
+      //      std::cout << tx << " " <<  ty + glyph->my_yoffset << " " << length() << " " << height () << std::endl;
+      glyph->my_glyph->draw (tx + glyph->my_minx + 1 , ty + glyph->my_yoffset, NULL, this);
       tx += glyph->my_advance; 
     }
     ty += my_font_->height ();
@@ -540,8 +521,11 @@ void label::draw_string (const bool at_cursor)
              j++)
         {
 	  glyph = &((*my_font_) [my_text_[j]]);
-            glyph->my_glyph->draw (tx, ty + glyph->my_yoffset, NULL, this);
-            tx += glyph->my_advance; 
+	  
+	  //	  std::cout << tx << " " <<  ty + glyph->my_yoffset << " " << length() << " " << height () << std::endl;
+	  
+	  glyph->my_glyph->draw (tx, ty + glyph->my_yoffset, NULL, this);
+	  tx += glyph->my_advance; 
         }
         ty += my_font_->height ();
         tmp_start_line++; 

@@ -165,7 +165,7 @@ void ttf::set_color (u_int8 r, u_int8 g, u_int8 b)
 
 u_int16 ttf::height ()
 {
-  return my_size;
+  return my_height;
 }
 
 void ttf::clean_cache ()
@@ -268,12 +268,13 @@ glyph_info::glyph_info (ttf & ft, wchar_t ch) : my_glyph (NULL)
   my_maxx = my_minx + FT_CEIL(metrics->width);
   my_maxy = FT_FLOOR(metrics->horiBearingY);
   my_miny = my_maxy - FT_CEIL(metrics->height);
-  my_yoffset = ft.my_ascent - my_maxy;
+  my_yoffset = ft.my_ascent - my_maxy + ft.my_descent;
   my_advance = FT_CEIL(metrics->horiAdvance);
 
   if (FT_Render_Glyph( face->glyph, ft_render_mode_normal )) return;
   
   my_glyph = new gfx::image (glyph->bitmap.width, glyph->bitmap.rows);
+  //  my_glyph->set_mask (true);
   ft.copy_bitmap_to_image ( glyph->bitmap.buffer, my_glyph);
 }
 

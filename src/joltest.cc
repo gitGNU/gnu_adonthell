@@ -32,6 +32,7 @@ int main (int argc, char * argv[])
       exit (1);
     }
   font.set_size (16);
+  font.set_color (255, 255, 255);
   font.build ();
   font.info ();
   
@@ -40,10 +41,8 @@ int main (int argc, char * argv[])
   l.resize (200, 200);
   l.set_ttf (font);
  
-  l.set_text (L"Le chien est partie");
+  l.set_text (L"ι@άτ");
   
-  s_int32 c;
-
   while ( !input::is_pushed (SDLK_ESCAPE))
     {
       l.input_update ();

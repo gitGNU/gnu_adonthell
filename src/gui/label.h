@@ -60,12 +60,6 @@ namespace gui {
       
       
       /**
-       * Add UTF-16
-       */
-      void add_utf16 (u_int16 c);
-
-
-      /**
 	 Set the form of the display
 	 NOTHING, AUTO_SIZE, AUTO_HEIGHT
       */
