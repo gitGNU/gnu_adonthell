@@ -72,93 +72,12 @@ int do_cutscene(void) {
   anim4->alpha_on=false;
   anim4->alpha=0;
 
-  scene->insert_keyframe(0);
-  scene->insert_keyframe(1);
+  scene->load("gfxtree/cutscene/intro.cut"); // Isn't this much shorter !!
 
-  // Generate a 'key' for each layer
-  scene->insert_imagekey(0);
-  scene->insert_imagekey(1);
-  scene->insert_imagekey(2);
-  scene->insert_imagekey(3);
-
-  // Assign images to those keys
   scene->set_imagekey_anim(0,anim);
   scene->set_imagekey_anim(1,anim2);
   scene->set_imagekey_anim(2,anim3);
   scene->set_imagekey_anim(3,anim4);
-
-  scene->set_imagekey_animspeed(0,0,100); // There's no animation
-  scene->set_imagekey_animspeed(1,0,100); // So these are irrelevant
-  scene->set_imagekey_animspeed(2,0,100);
-  scene->set_imagekey_animspeed(3,0,100);
-
-  scene->set_imagekey_animspeed(0,1,100); // There's no animation
-  scene->set_imagekey_animspeed(1,1,100); // So these are irrelevant
-  scene->set_imagekey_animspeed(2,1,100);
-  scene->set_imagekey_animspeed(3,1,100);
-
-  scene->set_imagekey_animspeed(0,2,100); // There's no animation
-  scene->set_imagekey_animspeed(1,2,100); // So these are irrelevant
-  scene->set_imagekey_animspeed(2,2,100);
-  scene->set_imagekey_animspeed(3,2,100);
-
-  scene->set_imagekey_animspeed(0,3,100); // There's no animation
-  scene->set_imagekey_animspeed(1,3,100); // So these are irrelevant
-  scene->set_imagekey_animspeed(2,3,100);
-  scene->set_imagekey_animspeed(3,3,100);
-
-  // Set each layer's visibility
-  scene->set_imagekey_visible(0,0,true);
-  scene->set_imagekey_visible(0,1,true);
-  scene->set_imagekey_visible(0,2,true);
-  scene->set_imagekey_visible(0,3,true);
-
-  scene->set_imagekey_visible(1,0,true);
-  scene->set_imagekey_visible(1,1,true);
-  scene->set_imagekey_visible(1,2,true);
-  scene->set_imagekey_visible(1,3,true);
-
-  scene->set_imagekey_visible(2,0,true);
-  scene->set_imagekey_visible(2,1,true);
-  scene->set_imagekey_visible(2,2,true);
-  scene->set_imagekey_visible(2,3,true);
-
-  scene->set_imagekey_visible(3,0,true);
-  scene->set_imagekey_visible(3,1,true);
-  scene->set_imagekey_visible(3,2,true);
-  scene->set_imagekey_visible(3,3,true);
-
-  // Number of milliseconds, now ;>
-  // ~44 secs for intro tune
-  scene->set_cycles(0,1500); // Initial pause: ~2.0 sec
-  scene->set_cycles(1,41000);  // Pan time: ~40.5 sec
-  scene->set_cycles(2, 1000);   // Pause before dialog: ~1 sec
-//  scene->set_cycles(3, 10);  // Not needed
-
-  // Layer #1 coordinates
-  scene->set_coordinates(0,0,0,0);
-  scene->set_coordinates(1,0,0,0);
-  scene->set_coordinates(2,0,-580,0);
-  scene->set_coordinates(3,0,-580,0);
-
-  // Layer #2 coordinates
-  scene->set_coordinates(0,1,0,73);
-  scene->set_coordinates(1,1,0,73);
-  scene->set_coordinates(2,1,-780,73);
-  scene->set_coordinates(3,1,-780,73);
-
-  // Layer #3: Coordinates of left portion
-  scene->set_coordinates(0,2,0,0);
-  scene->set_coordinates(1,2,0,0);
-  scene->set_coordinates(2,2,-994,0);
-  scene->set_coordinates(3,2,-994,0);
-
-  // Layer #4: Coordinates of right portion
-  scene->set_coordinates(0,3,240,137);
-  scene->set_coordinates(1,3,240,137);
-  scene->set_coordinates(2,3,(-994 + 240),137);
-  scene->set_coordinates(3,3,(-994 + 240),137);
-
 
   // Fade in our intro background music
 #ifdef SDL_MIXER

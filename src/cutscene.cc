@@ -8,7 +8,6 @@
  */
  
 #include "cutscene.h"
-#include "SDL_timer.h"
 
 cutscene::cutscene()
 {
@@ -215,19 +214,49 @@ u_int8 cutscene::render_scene()
  
 u_int8 cutscene::load(char * fname)
 {
+  int x,y;
+  u_int16 tmp_num_keyframes;
+  u_int8  tmp_num_anims;
+  struct keyframe *ptr1=keyframes;
+  struct imagekey *ptr2;
+
   FILE * file=fopen(fname,"r");
   if(!file) return(1);
-  
-  // Read in number of keyframes
-  // Read in number of animations
-  
-  // Read in each keyframe
 
-  // For each keyframe, read in imageframes
+  // number of keyframes
+  fread(&tmp_num_keyframes,sizeof(u_int16),1,file);
 
-  // For each anim, load animations.
+  // number of anims
+  fread(&tmp_num_anims,sizeof(u_int8),1,file);
+   
+  for(x=0;x<tmp_num_keyframes-2;x++) { this->insert_keyframe(0); }
+  for(x=0;x<tmp_num_anims-1;x++) { this->insert_imagekey(0); }
 
-  // For each imagekey, set pointers to the anims.
+  // keyframes
+  ptr1=keyframes;
+
+  for(x=0;x<num_keyframes;x++)
+    {
+      fread(&ptr1->cycles,sizeof(s_int32),1,file);
+      ptr1=ptr1->nextframe;
+    }
+
+  ptr1=keyframes;
+
+  // imagekeys
+  for(x=0;x<num_keyframes;x++)
+    {
+      ptr2=ptr1->imagekeys;
+      for(y=0;y<num_anims;y++)
+	{
+	  fread(&ptr2->x,sizeof(s_int16),1,file);
+	  fread(&ptr2->y,sizeof(s_int16),1,file);
+	  fread(&ptr2->visible,sizeof(bool),1,file);
+	  fread(&ptr2->animspeed,sizeof(u_int16),1,file);
+	  ptr2=ptr2->nextimg;
+	}
+      ptr1=ptr1->nextframe;
+    }
 
   fclose(file);
   return(0);
@@ -235,6 +264,42 @@ u_int8 cutscene::load(char * fname)
 
 u_int8 cutscene::save(FILE *file)
 {
+  int x,y;
+  struct keyframe *ptr1=keyframes;
+  struct imagekey *ptr2;
+
+  // number of keyframes
+  fwrite(&num_keyframes,sizeof(u_int16),1,file);
+
+  // number of anims
+  fwrite(&num_anims,sizeof(u_int8),1,file);
+  
+  // keyframes
+  for(x=0;x<num_keyframes;x++)
+    {
+      fwrite(&ptr1->cycles,sizeof(s_int32),1,file);
+      ptr1=ptr1->nextframe;
+    }
+
+  fprintf(stderr, "Test one\n");
+
+  ptr1=keyframes;
+
+  // imagekeys
+  for(x=0;x<num_keyframes;x++)
+    {
+      ptr2=ptr1->imagekeys;
+      for(y=0;y<num_anims;y++)
+	{
+	  fwrite(&ptr2->x,sizeof(s_int16),1,file);
+	  fwrite(&ptr2->y,sizeof(s_int16),1,file);
+	  fwrite(&ptr2->visible,sizeof(bool),1,file);
+	  fwrite(&ptr2->animspeed,sizeof(u_int16),1,file);
+	  ptr2=ptr2->nextimg;
+	}
+      ptr1=ptr1->nextframe;
+    }
+
   return(0);
 }
 
