@@ -20,14 +20,108 @@
  */
 
 #include <algorithm>
+#include "game.h"
+#include "quest.h"
+#include "character_base.h"
+#include "fileops.h"
 #include "dlg_module_entry.h"
 
 DlgModuleEntry::DlgModuleEntry ()
 {
+    project_ = "";
     imports_ = "";
     ctor_ = "";
     dtor_ = "";
     methods_ = "";
+}
+
+// set the project
+bool DlgModuleEntry::setProject (std::string p)
+{
+    bool retval = true;
+    
+    if (project_ != p)
+    {
+        project_ = p;
+        
+        // empty character and quest array
+        characters.clear ();
+        quests.clear ();
+        
+        retval &= loadCharacters ();
+        retval &= loadQuests ();
+    }
+    
+    return retval;
+}
+
+// load the character names
+bool DlgModuleEntry::loadCharacters ()
+{
+    // look for a character file
+    std::string file = game::find_file (project_ + "/character.data");
+    if (file == "") return false;
+    
+    // open the file
+    igzstream in;
+    in.open (file);
+    
+    // version check
+    if (!fileops::get_version (in, 3, 3, file))
+        return false;
+    
+    // load characters
+    character_base *mychar; 
+    char ctemp;
+
+    do
+    {
+        mychar = new character_base;
+        mychar->get_state (in);
+ 
+        // save the name of the NPC's
+        if (mychar->get_id () != "Player") 
+            addCharacter (mychar->get_name ());
+        
+        delete mychar;
+    }
+    while (ctemp << in);
+    
+    // close file
+    in.close ();
+
+    return true; 
+}
+
+// load the quest names
+bool DlgModuleEntry::loadQuests ()
+{
+    // look for a character file
+    std::string file = game::find_file (project_ + "/quest.data");
+    if (file == "") return false;
+    
+    // open the file
+    igzstream in;
+    in.open (file);
+    
+    // version check
+    if (!fileops::get_version (in, 1, 1, file))
+        return false;
+
+    ::quest myquest;
+    char ctemp;
+
+    // save the name of each Quest
+    while (ctemp << in)
+    {
+        myquest.load (in);
+        addQuest (myquest.name);
+    }
+    
+    // close file
+    in.close ();
+
+    return true; 
 }
 
 // add a character

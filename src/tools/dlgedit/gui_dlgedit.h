@@ -142,6 +142,10 @@ public:
      */
     void customCode ();
     /**
+     * Edit the settings of the current module.
+     */
+    void settings ();
+    /**
      * preview translation for a dialogue
      * @param catalogue full path to a gnu gettext compliant binary catalogue
      *        (.mo) file

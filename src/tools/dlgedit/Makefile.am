@@ -33,6 +33,7 @@ dlgedit_SOURCES = \
     gui_list_events.cc \
     gui_messages.cc \
     gui_modal_dialog.cc \
+    gui_settings.cc \
     gui_tooltip.cc \
     lex.loadlg.cc \
     main.cc \
@@ -62,6 +63,7 @@ dlgedit_SOURCES = \
     gui_list_events.h \
     gui_messages.h \
     gui_modal_dialog.h \
+    gui_settings.h \
     gui_tooltip.h
 
 # Evil, but it works...
@@ -72,7 +74,7 @@ SWIGFLAGS = -D_DLGEDIT_ -D_DEBUG_
 # dlgedit_LDADD = ../../libadonthell.a \
 # $(SDL_LIBS) $(PY_LIBS) $(GTK_LIBS)
 
-dlgedit_LDADD = $(GTK_LIBS)
+dlgedit_LDADD = $(GTK_LIBS) ../../libbase.a
 #dlgedit_LDFLAGS = -Wl,-E
 
 lex.loadlg.cc: loadlg.l

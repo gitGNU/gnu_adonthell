@@ -29,9 +29,11 @@
 #include <stdio.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <stdio.h>
 #include "gettext.h"
 #include "dlg_compiler.h"
 #include "gui_code.h"
+#include "gui_settings.h"
 #include "gui_dlgedit.h"
 #include "gui_dlgedit_events.h"
 
@@ -370,7 +372,16 @@ void GuiDlgedit::loadDialogue (std::string file)
         message->display (-2, g_basename (file.c_str ()));
         return;
     }
-
+    
+    // check if it's a regular file
+    struct stat statbuf;
+    fstat (fileno (loadlgin), &statbuf);
+    if (!S_ISREG (statbuf.st_mode))
+    {
+        message->display (-2, file.c_str ());
+        return;
+    }
+    
     // get the name to use for the dialogue
     file += g_strdup_printf ("-%i", ++number);
 
@@ -460,6 +471,10 @@ void GuiDlgedit::showDialogue (DlgModule *module)
     if (GuiCode::dialog != NULL)
         GuiCode::dialog->display (module->entry (), module->name ());
     
+    // update the settings if neccessary
+    if (GuiSettings::dialog != NULL)
+        GuiSettings::dialog->display (module->entry (), module->name ());
+
     // update the window title
     initTitle ();
 }
@@ -481,6 +496,20 @@ void GuiDlgedit::compileDialogue ()
     
     // report success
     message->display (212);
+}
+
+// edit the genral dialogu settings
+void GuiDlgedit::settings ()
+{
+    DlgModule *module = graph_->dialogue ();
+    if (module == NULL) return;
+
+    // if the dialog isn't already open ...
+    if (GuiSettings::dialog == NULL) 
+        GuiSettings::dialog = new GuiSettings ();
+    
+    // otherwise just show it
+    GuiSettings::dialog->display (module->entry (), module->name ());
 }
 
 // edit custom code of current module

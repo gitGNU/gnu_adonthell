@@ -47,8 +47,22 @@ CLEANFILES = $(moddata_SCRIPTS)
 
 #adonthell_SOURCES = main.cc
 
-libbase_a_SOURCES = fileops.cc gametime.cc \
-	types.h fileops.h gametime.h callback.h
+libbase_a_SOURCES = \
+        character_base.cc \
+        fileops.cc \
+	game.cc \
+        gametime.cc \
+        quest.cc \
+        storage.cc \
+        callback.h \
+        character_base.h \
+	fileops.h \
+	game.h \
+        gametime.h \
+        quest.h \
+        storage.h \
+	str_hash.h \
+        types.h 
 
 libbase_LDADD = $(SDL_LIBS)
 
@@ -102,11 +116,8 @@ liboldwin_a_SOURCES = win_background.cc win_base.cc win_border.cc \
 	win_write.h win_manager.h win_object.h window.h  
 
 libadonthell_a_SOURCES = input.cc \
-	game.cc \
 	yarg.cc \
-	input.h \
-	game.h \
-	str_hash.h
+	input.h 
 
 alextest_SOURCES = main.cc
 

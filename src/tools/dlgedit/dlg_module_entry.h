@@ -39,6 +39,11 @@ public:
      */
     //@{
     /**
+     * Get the project this module is assigned to.
+     * @return the project the module belongs to.
+     */
+    std::string project ()          { return project_; }
+    /**
      * Get the import statements assigned to this module.
      * @return the module's additional imports.
      */
@@ -58,14 +63,19 @@ public:
      * @return the module's user defined methods.
      */
     std::string methods ()          { return methods_; }
+    /**
+     * Sets the project this dialogue belongs to. Then loads the NPC and
+     * Quest names of this project.
+     * @param p Project name
+     * @return <b>true</b> if NPC's and Quests could be loaded,
+     *         <b>false</b> otherwise.
+     */
+    bool setProject (std::string p);
     
     void setImports (std::string i) { imports_ = i; }
     void setCtor (std::string c)    { ctor_ = c; }
     void setDtor (std::string d)    { dtor_ = d; }
     void setMethods (std::string m) { methods_ = m; }
-    
-    void addCharacter (std::string c);
-    void addQuest (std::string q);
     
     bool isCharacter (const std::string &c);
     bool isQuest (const std::string &q);
@@ -75,6 +85,13 @@ public:
     //@}
         
 private:
+    bool loadCharacters ();
+    bool loadQuests ();
+    
+    void addCharacter (std::string c);
+    void addQuest (std::string q);
+
+    std::string project_;           // project the dialogue belongs to
     std::string imports_;           // additional import statements
     std::string ctor_;              // constructor code
     std::string dtor_;              // destructor code

@@ -192,24 +192,11 @@ bool DlgModule::load ()
     {
         switch (i = parse_dlgfile (s, n))
         {
-            case LOAD_VARS:
+            case LOAD_PROJECT:
             {
-                if (parse_dlgfile (s, n) == LOAD_STR);
-                break;
+                if (parse_dlgfile (s, n) == LOAD_STR) entry_.setProject (s);
+                break;                
             }
-
-            case LOAD_NAME:
-            {
-                if (parse_dlgfile (s, n) == LOAD_STR)
-                {/*
-                    data::characters.erase (wnd->myplayer->get_name().c_str ());
-                    wnd->myplayer->set_name (s);
-                    data::characters[wnd->myplayer->get_name().c_str ()] =
-                        (character*) wnd->myplayer;
-                */}
-                break;
-            }
-
             case LOAD_NOTE:
             {
                 if (parse_dlgfile (s, n) == LOAD_STR) description_ = s;
@@ -318,6 +305,9 @@ bool DlgModule::save (std::string &file)
         << "Note §" << description_ << "§\n\n";
 
     // Save settings and stuff
+    if (entry_.project () != "")
+        out << "Proj §" << entry_.project () << "§\n";
+    
     if (entry_.imports () != "")
         out << "Inc  §" << entry_.imports () << "§\n";
     

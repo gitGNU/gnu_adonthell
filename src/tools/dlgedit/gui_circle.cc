@@ -23,7 +23,7 @@
  * @brief The Edit Circle window
  */
 
-GuiCircle::GuiCircle (node_type *t, DlgCircleEntry *e) : GuiModalDialog ()
+GuiCircle::GuiCircle (node_type *t, DlgCircleEntry *e, DlgModuleEntry *dme) : GuiModalDialog ()
 {
     entry = e;
     type = t;
@@ -211,25 +211,18 @@ GuiCircle::GuiCircle (node_type *t, DlgCircleEntry *e) : GuiModalDialog ()
     gtk_widget_show (glade_menuitem);
     gtk_menu_append (GTK_MENU (npc_selection_menu), glade_menuitem);
     gtk_option_menu_set_menu (GTK_OPTION_MENU (npc_selection), npc_selection_menu);
-
-    /*
-    dictionary <character *>::iterator itc; 
-    for (itc = data::characters.begin (); itc != data::characters.end () && itc->second != NULL; itc++) 
-        //     while ((mychar = (character *) data::characters.next ()) != NULL)
+ 
+    for (std::string name = dme->character (); name != ""; name = dme->character ()) 
     {
-        // don't add the player character to the list
-        if (!strcmp (itc->second->get_name().c_str (), ((character *) data::the_player)->get_name().c_str ())) continue;
-        
-        glade_menuitem = gtk_menu_item_new_with_label (itc->second->get_name().c_str ());
-        gtk_object_set_user_data (GTK_OBJECT (glade_menuitem), (void *) itc->second->get_name().c_str ());
+        glade_menuitem = gtk_menu_item_new_with_label (name.c_str ());
+        gtk_object_set_user_data (GTK_OBJECT (glade_menuitem), (void *) name.c_str ());
         gtk_widget_show (glade_menuitem);
         gtk_menu_append (GTK_MENU (npc_selection_menu), glade_menuitem);
         gtk_option_menu_set_menu (GTK_OPTION_MENU (npc_selection), npc_selection_menu);
     }
-    
-    if (circle->character != "") 
-        set_option (GTK_OPTION_MENU (npc_selection), circle->character.c_str());
-    */
+
+    // set the NPC this circle is assigned to    
+    setOption (GTK_OPTION_MENU (npc_selection), e->npc ().c_str ());
     
     // the option menu with the available moods
     label = gtk_label_new ("Mood: ");

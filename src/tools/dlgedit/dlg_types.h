@@ -92,33 +92,36 @@ enum menu_item
 #define LOAD    1
 #define SAVE    2
 
-// For loading Dialogue Files
+/**
+ * Defines for the various parts of a dialogue source file.
+ */
 enum
 {
-    LOAD_CIRCLE = 1,
-    LOAD_ARROW = 2,
-    LOAD_END = 3,
-    LOAD_TYPE = 4,
-    LOAD_PREV = 5,
-    LOAD_NEXT = 6,
-    LOAD_LINK = 7,
-    LOAD_POS = 8,
-    LOAD_NOTE = 9,
-    LOAD_TEXT = 10,
-    LOAD_COND = 11,
-    LOAD_VARS = 12,
-    LOAD_FUNC = 13,
-    LOAD_ACT = 14,
-    LOAD_NAME = 15,
-    LOAD_RACE = 16,
-    LOAD_GENDER = 17,
-    LOAD_NPC = 18,
-    LOAD_STR = 19,
-    LOAD_NUM = 20,
-    LOAD_IMPORTS = 21,
-    LOAD_CTOR = 22,
-    LOAD_DTOR = 23,
-    LOAD_UNKNOWN = 24
+    LOAD_CIRCLE     = 1,
+    LOAD_ARROW      = 2,
+    LOAD_END        = 3,
+    LOAD_TYPE       = 4,
+    LOAD_PREV       = 5,
+    LOAD_NEXT       = 6,
+    LOAD_LINK       = 7,
+    LOAD_POS        = 8,
+    LOAD_NOTE       = 9,
+    LOAD_TEXT       = 10,
+    LOAD_COND       = 11,
+    LOAD_VARS       = 12,
+    LOAD_FUNC       = 13,
+    LOAD_ACT        = 14,
+    LOAD_NAME       = 15,
+    LOAD_RACE       = 16,
+    LOAD_GENDER     = 17,
+    LOAD_NPC        = 18,
+    LOAD_STR        = 19,
+    LOAD_NUM        = 20,
+    LOAD_IMPORTS    = 21,
+    LOAD_CTOR       = 22,
+    LOAD_DTOR       = 23,
+    LOAD_PROJECT    = 24,
+    LOAD_UNKNOWN    = 25
 };
 
 /**

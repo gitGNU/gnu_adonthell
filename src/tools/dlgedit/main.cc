@@ -27,8 +27,9 @@
 #include <locale.h>
 #include <getopt.h>
 #include "gettext.h"
+#include "game.h"
 #include "gui_dlgedit.h"
-
+/*
 int parse_arguments (int argc, char *argv[])
 {
     int c;
@@ -47,7 +48,7 @@ int parse_arguments (int argc, char *argv[])
     
     return optind;
 }
-
+*/
 int main (int argc, char *argv[])
 {
     // Init GTK+
@@ -55,7 +56,10 @@ int main (int argc, char *argv[])
     
     // Init i18n
     setlocale (LC_ALL, "");
-    
+  
+    // init game directory
+    game::init (DATA_DIR"/games");
+      
     // Create the User Interface
     GuiDlgedit dlgedit;
     

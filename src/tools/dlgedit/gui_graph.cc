@@ -443,7 +443,7 @@ bool GuiGraph::editNode ()
         // disable scrolling (just in case)
         scrolling = false;
         
-        GuiCircle edit (&selected->type (), selected->entry ());
+        GuiCircle edit (&selected->type (), selected->entry (), module->entry ());
 
 	    // Editing aborted?
 	    if (!edit.run ()) return false;

@@ -24,6 +24,7 @@
 
 #include <string>
 #include "dlg_circle_entry.h"
+#include "dlg_module_entry.h"
 #include "dlg_types.h"
 #include "gui_edit.h"
 #include "gui_modal_dialog.h"
@@ -42,8 +43,9 @@ public:
      * Open the "Edit Dialogue Node" dialog. 
      * @param type The type of the circle to display (NPC, PLAYER or NARRATOR)
      * @param entry The contents of the circle
+     * @param dme The contents of the dialogue
      */
-    GuiCircle (node_type *type, DlgCircleEntry *entry);
+    GuiCircle (node_type *type, DlgCircleEntry *entry, DlgModuleEntry *dme);
 
     /**
      * Apply the values entered in the dialogue to the edited node. This

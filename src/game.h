@@ -33,7 +33,7 @@
 #include <string>
 #include "types.h"
 
-using namespace std; 
+using std::string; 
 
 /**
  * Holds information about global settings.
