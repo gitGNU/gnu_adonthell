@@ -558,6 +558,7 @@ s_int8 image::get(FILE * file)
 s_int8 image::get(char * file)
 {
   u_int16 i,j;
+  u_int32 colour;
 
   SDL_Surface * tmp;
   SDL_Surface * tmp2=NULL;
@@ -620,19 +621,33 @@ s_int8 image::get(char * file)
 	    {      
 	      for(j=0;j<lenght;j++)
 		{
-	     
-		  u_int32 colour = *((u_int32*)tmp->pixels+(i*tmp->pitch/4)+(j));
-		  SDL_GetRGB(colour, tmp->format, &R, &G, &B);
-		  colour =  SDL_MapRGB(tmp2->format, R, G, B);
-		  
+		  switch(tmp->format->BitsPerPixel)
+		    {
+		    case 32:
+		      colour = *((u_int32*)tmp->pixels+(i*tmp->pitch/4)+(j));
+		      SDL_GetRGB(colour, tmp->format, &R, &G, &B);
+		      colour =  SDL_MapRGB(tmp2->format, R, G, B);
+		      break;
+		    case 24:
+		      R=*((u_int8 *)tmp->pixels+i*tmp->pitch+j*3);
+		      G=*((u_int8 *)tmp->pixels+i*tmp->pitch+j*3+1);
+		      B=*((u_int8 *)tmp->pixels+i*tmp->pitch+j*3+2);
+
+		      colour =  SDL_MapRGB(tmp2->format, R, G, B);
+		      break;
+		    default:
+		      fprintf(stderr,"Whoops: tried to load graphic in %dbpp!\n",tmp->format->BitsPerPixel);
+		      colour = 0;
+		      break;
+		    }
+
 		  *((u_int16 *)tmp2->pixels+((i*2)*tmp2->pitch/2)+(j*2)) = colour;
 		  *((u_int16 *)tmp2->pixels+((i*2)*tmp2->pitch/2)+(j*2)+1) = colour;
 		  *((u_int16 *)tmp2->pixels+((i*2+1)*tmp2->pitch/2)+(j*2)) = colour;
 		  *((u_int16 *)tmp2->pixels+((i*2+1)*tmp2->pitch/2)+(j*2)+1) = colour;
 		
 		}
-	    }
-	
+	    }	
 	  lenght*=sizefactor;
 	  height*=sizefactor;
 	  data=SDL_ConvertSurface(tmp2, tmp2->format, SDL_SWSURFACE);
