@@ -15,6 +15,7 @@
 #ifndef __INTERPRETER_H__
 #define __INTERPRETER_H__
 
+#include "types.h"
 #include "array_tmpl.h"
 #include "storage.h"
 

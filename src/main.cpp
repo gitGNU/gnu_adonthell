@@ -171,7 +171,7 @@ int main(int argc, char * argv[])
 
     // Removed because of a segfault - seems to occur when calling
     //   scene->set_imagekey_anim(2,anim3);, line 79
-    // do_cutscene();
+    do_cutscene();
 
     mapengine::map_engine(map1);
 
