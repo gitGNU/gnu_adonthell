@@ -45,6 +45,7 @@ new_circle (MainFrame * wnd, GdkPoint point, int type)
     // Create Dialog to edit Circle's attributes ...
     crcle_dlg dlg (circle, wnd);
 
+    // this makes the mainwindow stay below the edit dialog
     gtk_window_set_transient_for (GTK_WINDOW (dlg.dlg), GTK_WINDOW (wnd->wnd));
 
     // ... and enter it's event loop
@@ -85,7 +86,7 @@ new_arrow (MainFrame * wnd, GdkPoint point)
     //   - the marked node is no circle
     //   - the clicked node is no circle
     //   - the clicked node is the marked node 
-    //   - a connection already existe 
+    //   - a connection already exists
     if (wnd->selected_node == NULL)
         return 0;
     if (wnd->selected_node->type == LINK)
@@ -236,6 +237,9 @@ edit_node (MainFrame * wnd)
         
         // Create and display dialog for user-input 
         crcle_dlg dlg ((Circle *) wnd->selected_node, wnd);
+
+        // this makes the mainwindow stay below the edit dialog
+        gtk_window_set_transient_for (GTK_WINDOW (dlg.dlg), GTK_WINDOW (wnd->wnd));
 
         // Enter Dialog - Event - Loop 
         gtk_main ();

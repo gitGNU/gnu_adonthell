@@ -29,6 +29,12 @@ dlg_compiler::dlg_compiler (vector<DlgNode*> &d, string f, string c)
     jump_lookup = new s_int32[dlg.size ()];
 }
 
+dlg_compiler::~dlg_compiler ()
+{
+    if (text_lookup) delete text_lookup;
+    if (jump_lookup) delete jump_lookup;
+}
+
 // Compile the Dialogue
 void dlg_compiler::run ()
 {

@@ -22,9 +22,10 @@
 class dlg_compiler
 {
 public:
-    dlg_compiler () { }
+    dlg_compiler () : text_lookup (NULL), jump_lookup (NULL) {  }
     dlg_compiler (vector<DlgNode*>&, string, string);
-
+    ~dlg_compiler ();
+    
     void run ();                    // Start the compile-process
 
 private:
