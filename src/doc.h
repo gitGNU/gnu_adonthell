@@ -2,6 +2,7 @@
    $Id$
 
    Copyright (C) 2001   Alexandre Courbot
+   Copyright (C) 2001   Kai Sterker
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -11,6 +12,18 @@
 
    See the COPYING file for more details.
 */
+
+
+/**
+ * @file   doc.h
+ * @author Alexandre Courbot <alexandrecourbot@linuxgames.com>
+ * @author Kai Sterker <kaisterker@linuxgames.com>
+ * 
+ * @brief  Extra documentation.
+ * 
+ * 
+ */
+
 
 
 /*! \mainpage
@@ -23,7 +36,7 @@
  code base and some of the important underlying concepts.
  
  In case you are not so much interested in programming for Adonthell but rather in
- creating game content you should take a look at the Designer's documentation
+ creating %game content you should take a look at the Designer's documentation
  instead.
  
  \section overview Overview
@@ -63,7 +76,7 @@
  * @section python Python 
  * In many kinds of computer games, including RPGs, a script language is necessary to command
  * characters, build complex actions, cutscenes, etc... As we want modularity and
- * reusability, in-game actions must be real-time interpreted. Scripts need to
+ * reusability, in-%game actions must be real-time interpreted. Scripts need to
  * interact with the C++ interface and of course they have to share variables with it.
  * Python (http://www.python.org) has proven to be very efficient at both - 
  * moreover it is an object-oriented language and therefore fits well with C++.
@@ -114,14 +127,14 @@
  * - u_int32: unsigned 32 bit integer
  * - s_int32: signed 32 bit integer
  *
- * @section gamedyn Game dynamic
- * As we display animated things, we need to know when they have to change. A game that
+ * @section gamedyn %Game dynamic
+ * As we display animated things, we need to know when they have to change. A %game that
  * runs at a different speed on various machines has nearly no interest, as only
  * a few configurations can make it run at the right speed. So it's very important
- * to have a timing system built into the game engine.
+ * to have a timing system built into the %game engine.
  * 
- * Adonthell uses it's own timing system. The time unit is the game cycle, which
- * corresponds to approximatively 1/70 of second. When the game runs, it performs
+ * Adonthell uses it's own timing system. The time unit is the %game cycle, which
+ * corresponds to approximatively 1/70 of second. When the %game runs, it performs
  * a loop which looks like this:
  *
  * @code
@@ -141,30 +154,30 @@
  * Explanations:
  *
  * This loop performs what is necessary to update the %screen. Depending on the speed
- * of the CPU, this can take more or less time. You've seen that a game cycle durate
+ * of the CPU, this can take more or less time. You've seen that a %game cycle durate
  * 1/70 of a second. For some machines, this is not enough to perform the entire loop.
  *
  * As you've seen, there are two kinds of operations that are in the loop:
  *
- * @li Update operations, which actually update the state of the game, according to
- *     user input, previous game state, etc... These operations are very fast to
+ * @li Update operations, which actually update the state of the %game, according to
+ *     user input, previous %game state, etc... These operations are very fast to
  *     perform.
  *
  * @li Drawing operations, that is, update the %screen. This is what may slow
  *     things down. Some graphic boards simply can't redraw the entire %screen 70
  *     times per second.
  *
- * So the solution to keep the game running at the same speed on every machine is to
- * draw less frames per second on slow machines (instead of drawing 1 frame every game
- * cycle, we'll draw one frame for 2 games cycles, for example). This is where
+ * So the solution to keep the %game running at the same speed on every machine is to
+ * draw less frames per second on slow machines (instead of drawing 1 frame every %game
+ * cycle, we'll draw one frame for 2 %games cycles, for example). This is where
  * gametime is usefull: The gametime::update() method calculates the delay between
  * the last call and the current call. It can then calculate if we've been late, and
- * catch the time back by telling to the other %objects that we must perform 2 games
+ * catch the time back by telling to the other %objects that we must perform 2 %games
  * cycles instead of 1 to be sync (this is the result of the gametime::get_frames_to_do()
  * method). For example, if the last loop took 1/35 of a second to be completed,
- * gametime::get_frames_to_do() will return 2, so the loop will perform 2 game updates
+ * gametime::get_frames_to_do() will return 2, so the loop will perform 2 %game updates
  * before drawing the %screen. On the contrary, if the machine is too fast (if it can
- * draw 2 frames for each game cycle, for example), it will usleep() to stay in sync.
+ * draw 2 frames for each %game cycle, for example), it will usleep() to stay in sync.
  *
  * In a more general manner, every class that get's updated and draw something on
  * the %screen MUST have an update() method, that updates it's state once, and a

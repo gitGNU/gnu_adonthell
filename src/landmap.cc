@@ -25,8 +25,17 @@
 using namespace std; 
 
 // functions that return a newly allocated event
-NEW_EVENT(enter_event)
-NEW_EVENT(leave_event)
+/** 
+ * Returns a newly allocated enter_event.
+ *  
+ */ 
+NEW_EVENT(enter_event); 
+
+/** 
+ * Returns a newly allocated leave_event.
+ *  
+ */ 
+NEW_EVENT(leave_event); 
 
 enter_event::enter_event () : base_map_event ()
 {

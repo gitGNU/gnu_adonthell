@@ -12,6 +12,17 @@
    See the COPYING file for more details.
 */
 
+
+/**
+ * @file   data_screen.cc
+ * @author Kai Sterker <kaisterker@linuxgames.com>
+ * 
+ * @brief  Defines the data_screen class.
+ * 
+ * 
+ */
+
+
 #include <iostream.h>
 
 #include "types.h"

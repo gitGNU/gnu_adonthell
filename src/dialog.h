@@ -12,34 +12,100 @@
    See the COPYING file for more details
 */
 
-#ifndef __DIALOG_H__
-#define __DIALOG_H__
+#ifndef DIALOG_H__
+#define DIALOG_H__
+
+
+/**
+ * @file   dialog.h
+ * @author Kai Sterker <kaisterker@linuxgames.com>
+ * 
+ * @brief  Defines the dialog class.
+ * 
+ * 
+ */
+
 
 #include "Python.h"
 #include "types.h"
 #include <vector>
-
+ 
 
 using namespace std; 
 
 
-// This is the lowlevel dialogue class 
+/**
+ * Lowlevel dialog class.
+ * 
+ */
 class dialog
 {
 public:
-    dialog ();                      // Init stuff to a sane state
-    ~dialog ();                     // Clean up stuff
+    /** 
+     * Default constructor.
+     * 
+     */
+    dialog ();
 
-    bool init (char*, char*);       // Load & instantiate the dialogue object
-    void run (u_int32);             // Run the dialogue 
-    PyObject *get_instance ();      // Get the Python dialogue instance
+    /** 
+     * Destructor.
+     * 
+     */
+    ~dialog ();
 
+    /** 
+     * Load and instanciate the dialog object.
+     *
+     * @param fpath file name of the dialog.
+     * @param name ??
+     *
+     * @return true in case of success, false otherwise.
+     */ 
+    bool init (char* fpath, char* name);
+    
+    /**
+     * Run the dialogue.
+     *
+     * @param index the index of the last answer.
+     *
+     */
+
+    void run (u_int32 index);
+
+    /** 
+     * Returns the Python dialog instance.
+     * 
+     * 
+     * @return the Python dialog instance.
+     */
+    PyObject *get_instance ();
+    
+    /** 
+     * Returns the npc color.
+     * 
+     * 
+     * @return the npc color.
+     */
     u_int32 npc_color () { return _npc_color; }
+
+    /** 
+     * Returns the size of the text.
+     * 
+     * 
+     * @return size of the text.
+     */
     u_int32 text_size () { return _text_size; }
+
+    /** 
+     * Returns the dialog's texts.
+     * 
+     * 
+     * @return array of strings containing the texts of the dialog.
+     */
     char** text () { return _text; }
     
 private:
-	PyObject *instance;             // Points to the instantiated dialogue class
+    PyObject *instance;             // Points to the instantiated dialogue class
     char **strings;                 // The dialogue text
     char **_text;                   // NPC's speech and according Player responses
     u_int32 _npc_color;             // The color of the NPC's text
@@ -54,5 +120,5 @@ private:
     char* get_substr (const char*, char*, char*);
 };
 
-#endif // __DIALOG_H__
+#endif // DIALOG_H__
 

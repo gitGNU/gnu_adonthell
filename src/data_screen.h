@@ -12,8 +12,20 @@
    See the COPYING file for more details.
 */
 
-#ifndef __DATA_SCREEN_H__
-#define __DATA_SCREEN_H__
+
+/**
+ * @file   data_screen.h
+ * @author Kai Sterker <kaisterker@linuxgames.com>
+ * 
+ * @brief  Declares the data_screen class.
+ * 
+ * 
+ */
+
+
+
+#ifndef DATA_SCREEN_H__
+#define DATA_SCREEN_H__
 
 #include "win_types.h"
 #include "win_font.h"
@@ -23,25 +35,68 @@
 
 class win_write;
 
+/**
+ * Whether the data screen should load or save games.
+ * 
+ */ 
 enum
 {
     LOAD_SCREEN = 0,
     SAVE_SCREEN = 1
 };
 
-// The gui for loading/saving games
+/**
+ * The gui for loading/saving games.
+ * 
+ */
 class data_screen : public win_container
 {
 public:
-    data_screen (int);                      // open load/save window
-    ~data_screen ();                        // destructor
-    bool update ();                         // react to input
+    /** 
+     * Constructor.
+     * 
+     * @param m LOAD_SCREEN or SAVE_SCREEN, depending on whether
+     * you want to save or load a game.
+     * 
+     */
+    data_screen (int m);
+
+    /**
+     * Destructor.
+     * 
+     */ 
+    ~data_screen ();
+
+    /**
+     * React to input.
+     * 
+     */ 
+    bool update ();
 
 private:
-    void init ();                           // gui initialisation
-    void on_select ();                      // callback for selecting a game 
-    void on_save ();                        // callback for entering a description
-    void save_preview (char*);              // write the thumbnail to disk
+    /** 
+     * GUI initialisation.
+     * 
+     */
+    void init ();
+
+    /**
+     * Callback for selecting a game.
+     * 
+     */ 
+    void on_select (); 
+
+    /**
+     * Callback for entering a description.
+     * 
+     */ 
+    void on_save ();
+
+    /**
+     * Write the thumbnail to disk.
+     * 
+     */
+    void save_preview (char*);
 
     win_font *font;                         // the font
     win_theme *theme;                       // the theme
@@ -53,4 +108,4 @@ private:
     bool quit;                              // Tells the window to close
 };
 
-#endif // __DATA_SCREEN_H__
+#endif // DATA_SCREEN_H__

@@ -1,7 +1,7 @@
 /*
    $Id$
 
-   Copyright (C) 1999   The Adonthell Project
+   Copyright (C) 1999/2000/2001 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -12,8 +12,20 @@
    See the COPYING file for more details.
 */
 
-#ifndef __GAME_H__
-#define __GAME_H__
+
+/**
+ * @file   game.h
+ * @author Kai Sterker <kaisterker@linuxgames.com>
+ * 
+ * @brief  Declares the game class.
+ * 
+ * 
+ */
+
+
+
+#ifndef GAME_H__
+#define GAME_H__
 
 #include "prefs.h"
 
@@ -26,10 +38,21 @@
 class game
 {
 public:
-    /** @param argc The argc that has been passed to the main program.
-     *  @param argv The argv that has been passed to the main program.
-     */
-    game (int argc, char** argv);
+    /**
+     * %Game initialisation function.
+     * Reads the configuration file,  
+     * check the validity of the data directory and
+     * initialize the display, input, sound, data and Python systems.
+     * It MUST be called before ANY other function in the game.
+     *
+     * @param argc The argc that has been passed to the main program.
+     * @param argv The argv that has been passed to the main program.
+     * @return
+     *     - true Initialisation sucessfull.
+     *     - false Initialisation failure - don't go any further and
+     *             quit.
+     */ 
+    static bool init (int argc, char** argv);
 
     /** Cleanup everything and quit.
      *  Performs the following:
@@ -40,22 +63,14 @@ public:
      *         -# Shutdown Python.
      *         -# Shutdown SDL and video.
      */ 
-    ~game ();                           // Cleanup everything
-
-    /** %Game initialisation function.
-     *  Reads the configuration file,  
-     *  check the validity of the data directory and
-     *  initialize the display, input, sound, data and Python systems.
-     *  It MUST be called before ANY other function in the game.
-     *  @return
-     *      - true Initialisation sucessfull.
-     *      - false Initialisation failure - don't go any further and
-     *              quit.
-     */ 
-    bool init ();                       // Init everything
+    static void cleanup (); 
 
 private:
-    config *configuration;              // The game's configuration data
+    /**
+     * The game's configuration data
+     * 
+     */ 
+    static config *configuration;
 };
 
-#endif // __GAME_H__
+#endif // GAME_H__

@@ -48,11 +48,6 @@ void mapengine::run ()
         mainloop ();
         screen::show ();
         gametime::update (); 
-        if (input::has_been_pushed (SDLK_ESCAPE))
-        { 
-            cout << "exit\n"; 
-            letsexit = true;
-        }
     }
 }
 

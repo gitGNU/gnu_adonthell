@@ -33,7 +33,7 @@
 
 /**
  * Handles images properties in an animation.
- * Objects of this class have no reason to exist if not affected to an
+ * %Objects of this class have no reason to exist if not affected to an
  * animation. The fact is, that often in an animation, you want the
  * same image to appear at different times, different positions or with
  * different mask and alpha values. An animationframe is a class that
@@ -295,8 +295,8 @@ typedef enum { PLAY = true, STOP = false } play_state;
 
 
 /**
- * Class that handles animated objects, their update and their playback.
- * Most often, you will want your drawn objects to be animated. Then you'll
+ * Class that handles animated elements, their update and their playback.
+ * Most often, you will want your drawn %objects to be animated. Then you'll
  * probably want to use this class. An animation contains:
  *   - A set of images arranged in an indexed array.
  *   - A set of animation_frames.

@@ -12,6 +12,16 @@
    See the COPYING file for more details.
 */
 
+
+/**
+ * @file   character.cc
+ * @author Kai Sterker <kaisterker@linuxgames.com>
+ * 
+ * @brief  Defines the character class.
+ * 
+ * 
+ */
+
 #include "character.h"
 
 character::character()

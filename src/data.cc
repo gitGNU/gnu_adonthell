@@ -12,6 +12,17 @@
    See the COPYING file for more details.
 */
 
+
+/**
+ * @file   data.cc
+ * @author Kai Sterker <kaisterker@linuxgames.com>
+ * 
+ * @brief  Defines the gamedata and data classes.
+ * 
+ * 
+ */ 
+
+
 #include <stdio.h>
 #include <dirent.h>
 #include <sys/stat.h>

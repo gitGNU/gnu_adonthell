@@ -12,6 +12,17 @@
    See the COPYING file for more details.
 */
 
+
+/**
+ * @file   py_callback.cc
+ * @author Kai Sterker <kaisterker@linuxgames.com>
+ * 
+ * @brief  Defines the py_callback class.
+ * 
+ * 
+ */
+
+
 #ifdef USE_PYTHON
 
 #include "py_callback.h"

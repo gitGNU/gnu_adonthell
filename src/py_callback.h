@@ -12,25 +12,75 @@
    See the COPYING file for more details.
 */
 
-#ifndef __PY_CALLBACK_H__
-#define __PY_CALLBACK_H__
+#ifndef PY_CALLBACK_H__
+#define PY_CALLBACK_H__
 
+
+/**
+ * @file   py_callback.h
+ * @author Kai Sterker <kaisterker@linuxgames.com>
+ * 
+ * @brief  Declares the py_callback class.
+ * 
+ * 
+ */
+
+ 
 #include "Python.h"
 
-// This class stores the C++ <-> Python callback binding
+/**
+ * Stores the C++ <-> Python callback binding
+ *
+ */ 
 class py_callback
 {
 public:
-    py_callback (PyObject *, PyObject *);   
+    /** 
+     * Constructor that assigns a function and it's arguments to the callback.
+     * 
+     * @param func function assigned to this callback.
+     * @param args Arguments passed to the function.
+     */
+    py_callback (PyObject * func, PyObject * args);   
+
+    /** 
+     * Destructor.
+     * 
+     */
     ~py_callback ();
 
-    void callback_func0 ();             // calls the python function w/o argument
-    bool callback_func0ret ();          // calls the python function and returns bool
-    void callback_func1 (int);          // calls the python function with an integer
+    /** 
+     * Calls the python function without arguments.
+     * 
+     */
+    void callback_func0 ();
+
+    /**
+     * Calls the python function and returns bool.
+     * 
+     */
+
+    bool callback_func0ret (); 
+
+    /**
+     * Calls the python function with an integer.
+     * 
+     */ 
+    void callback_func1 (int);
 
 private:
-    PyObject *function;                 // the function to be called
-    PyObject *arguments;                // additional arguments passed to the func
+    
+    /**
+     * The function to be called.
+     * 
+     */ 
+    PyObject *function;
+
+    /**
+     * Additional arguments passed to the function.
+     * 
+     */ 
+    PyObject *arguments;
 };
 
-#endif // __PY_CALLBACK_H__
+#endif // PY_CALLBACK_H__

@@ -12,6 +12,19 @@
    See the COPYING file for more details
 */
 
+
+
+/**
+ * @file   dialog.cc
+ * @author Kai Sterker <kaisterker@linuxgames.com>
+ * 
+ * @brief  Declares the dialog class.
+ * 
+ * 
+ */
+
+
+
 #include <iostream>
 #include <string>
 #include <algorithm>
@@ -22,35 +35,32 @@
 #include "character.h"
 #include "dialog.h"
 
-
-
-
-
+ 
 // Load and instanciate the dialogue object
 bool dialog::init (char *fpath, char *name)
 {
     PyObject *module;
-	PyObject *classobj;
-
-	// First, test if the module has already been imported
-
-	// Seems not, so import
-	module = import_module (fpath);
-
-	if (!module)
-		return false;
-
+    PyObject *classobj;
+    
+    // First, test if the module has already been imported
+    
+    // Seems not, so import
+    module = import_module (fpath);
+    
+    if (!module)
+        return false;
+    
     module = PyImport_ReloadModule (module);
     PyObject *globals = PyModule_GetDict (module);
 
-	// Extract the class from the dialogue module
-	classobj = PyObject_GetAttrString(module, name);
-
-	if (!classobj)
-		return false;
-
-	Py_DECREF(module);
-
+    // Extract the class from the dialogue module
+    classobj = PyObject_GetAttrString(module, name);
+    
+    if (!classobj)
+        return false;
+    
+    Py_DECREF(module);
+    
     // add some stuff to the dialogue's global namespace
     PyObject *characters = PyDict_GetItemString (data::globals, "characters");
     PyObject *quests = PyDict_GetItemString (data::globals, "quests");
@@ -62,24 +72,24 @@ bool dialog::init (char *fpath, char *name)
     PyDict_SetItemString (globals, "the_npc", the_npc);
     PyDict_SetItemString (globals, "the_player", the_player);
 
-	// Instantiate! Will we ever need to pass args to class
-	// constructor here?
-	instance = PyObject_CallObject(classobj, NULL);
-
-	if (!instance)
-	    return false;
+    // Instantiate! Will we ever need to pass args to class
+    // constructor here?
+    instance = PyObject_CallObject(classobj, NULL);
     
-	Py_DECREF(classobj);
-
+    if (!instance)
+        return false;
+    
+    Py_DECREF(classobj);
+    
     // extract the dialogue's strings
     extract_strings ();
-
+    
     // Init the first answer
     answers.push_back(0);
-
+    
     _text = NULL;
-
-	return true;
+    
+    return true;
 }
 
 // extract the dialogue's strings

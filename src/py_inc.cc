@@ -1,7 +1,7 @@
 /*
    $Id$
 
-   Copyright (C) 2000   The Adonthell Project
+   Copyright (C) 2000/2001 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -11,6 +11,15 @@
 
    See the COPYING file for more details.
 */
+
+
+/**
+ * @file py_inc.cc
+ * @author Kai Sterker <ksterker@topmail.de>
+ *
+ * @brief Defines some usefull low-level functions for Python.
+ */
+
 
 #include <iostream>
 

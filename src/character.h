@@ -12,6 +12,17 @@
    See the COPYING file for more details.
 */
 
+
+/**
+ * @file   character.h
+ * @author Kai Sterker <kaisterker@linuxgames.com>
+ * 
+ * @brief  Declares the character class.
+ * 
+ * 
+ */
+
+ 
 #ifndef CHARACTER_H_
 #define CHARACTER_H_
 
@@ -21,6 +32,10 @@
 #include "character_base.h"
 #endif
 
+/**
+ * Class holding %game characters.
+ * 
+ */ 
 class character
 #ifdef USE_MAP
 : public mapcharacter
@@ -29,7 +44,16 @@ class character
 #endif
 {
 public:
+    /** 
+     * Default constructor.
+     * 
+     */
     character();
+
+    /**
+     * Destructor.
+     * 
+     */ 
     ~character();
 };
 

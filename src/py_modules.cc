@@ -14,12 +14,27 @@
 
 #include "py_inc.h"
 
+
+/**
+ * @file   py_modules.cc
+ * @author Kai Sterker <kaisterker@linuxgames.com>
+ * 
+ * @brief  Declares the Python initialisation function.
+ * 
+ * 
+ */
+
+
 /*
  * SWIG init prototypes. Should we use dynamic linking??? 
  */
 extern "C"
 {
-	void initadonthellc (void);
+    /** 
+     * SWIG init prototype.
+     * 
+     */
+    void initadonthellc (void);
 }
 
 /*
@@ -27,14 +42,14 @@ extern "C"
  */
 bool init_python (void)
 {
-	Py_Initialize();
-
-	insert_path("scripts");
-	insert_path("scripts/modules");
-
-	/* Initialise SWIG modules. This should go if we ever switch to dynamic 
-	   link */
-	initadonthellc();
-	return true;
+    Py_Initialize();
+    
+    insert_path("scripts");
+    insert_path("scripts/modules");
+    
+    /* Initialise SWIG modules. This should go if we ever switch to dynamic 
+       link */
+    initadonthellc();
+    return true;
 }
 

@@ -12,9 +12,26 @@
    See the COPYING file for more details.
 */
 
+
+/**
+ * @file   py_modules.h
+ * @author Kai Sterker <kaisterker@linuxgames.com>
+ * 
+ * @brief  Defines the Python initialisation function.
+ * 
+ * 
+ */
+ 
+
 #ifndef __PY_MODULES_H__
 #define __PY_MODULES_H__
 
+/** 
+ * Initialise Python and inserts the Adonthell include paths.
+ * 
+ * 
+ * @return true in case of success, false otherwise.
+ */
 bool init_python (void);
 
 #endif // __PY_MODULES_H__

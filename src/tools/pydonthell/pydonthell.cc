@@ -25,30 +25,15 @@ extern int Py_Main(int, char **);
 
 int main(int argc, char * argv[])
 {
-    game the_game (0, NULL);
-
-    char *cwd = getcwd (NULL, 0);
-    char tmp[256];
-    
     // Init the game engine
-    if (!the_game.init ()) 
+    if (!game::init (argc, argv)) 
         return 1;
 
-    /*    landmap mymap;
     
-    PyObject * locals=PyDict_New();
-    
-    PyDict_SetItemString(locals,"mymap",pass_instance(&mymap,"landmap"));
+    char *cwd = getcwd (NULL, 0);
+    char tmp[256];
 
-    PyRun_String("print mymap.get_nbr_of_patterns();",Py_file_input,
-		 data::globals,locals);
     
-    mymap.load("smallmap.map");
-
-    PyRun_String("print mymap.get_nbr_of_patterns();",Py_file_input,
-		 data::globals,locals);
-    */
-  
     if (argc > 1 && argv[1][0] != '/') 
     {
         sprintf (tmp, "%s/%s", cwd, argv[1]);

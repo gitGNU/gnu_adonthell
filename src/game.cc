@@ -31,15 +31,26 @@
 #include "audio.h"
 #endif
 
-// The game engine
-game::game (int argc, char **argv)
-{
-    configuration = new config (argc > 1 ? argv[1] : "");
-}
+config * game::configuration = NULL; 
+
+
+/**
+ * @file   game.cc
+ * @author Kai Sterker <kaisterker@linuxgames.com>
+ * 
+ * @brief  Defines the game class.
+ * 
+ * 
+ */
+
 
 // Initialize all parts of the game engine
-bool game::init ()
+bool game::init (int argc, char **argv)
 {
+    if (configuration) delete configuration;
+    
+    configuration = new config (argc > 1 ? argv[1] : "");
+
     // try to read adonthellrc
     if (!configuration->read_adonthellrc ())
         return false;
@@ -84,7 +95,7 @@ bool game::init ()
 }
 
 // Cleanup everything
-game::~game ()
+void game::cleanup () 
 {
     // close all windows
     win_manager::destroy();

@@ -12,8 +12,19 @@
    See the COPYING file for more details.
 */
 
-#ifndef __DATA_H__
-#define __DATA_H__
+
+/**
+ * @file   data.h
+ * @author Kai Sterker <kaisterker@linuxgames.com>
+ * 
+ * @brief  Declares the gamedata and data classes.
+ * 
+ * 
+ */ 
+
+
+#ifndef DATA_H__
+#define DATA_H__
 
 #include <zlib.h>
 #include <string> 
@@ -21,9 +32,7 @@
 #include "storage.h"
 #include "gametime.h"
 
-#if defined(USE_PYTHON)
 #include "Python.h"
-#endif
 
 #if defined(USE_MAP)
 class mapengine;
@@ -32,7 +41,11 @@ class mapengine;
 class character;
 
 #ifndef SWIG
-// all the attributes related to a saved game
+
+/**
+ * Contains all the attributes related to a saved %game.
+ * 
+ */ 
 class gamedata
 {
 public:
@@ -59,8 +72,11 @@ private:
 };
 #endif
 
-// that's most of the data needed by the game engine plus methods 
-// to load and save that data
+/**
+ * Contains most of the data needed by the %game engine plus methods
+ * to load and save that data.
+ * 
+ */
 class data
 {
 public:
@@ -72,10 +88,9 @@ public:
     static const char* get_adonthell_dir () // Return the user's adonthell directory
       { return (const char*) adonthell_dir.c_str (); }
 
-#if defined(USE_PYTHON)
     static PyObject *globals;               // Global namespace to use in scripts
     static PyObject *py_module;             // The Adonthell Python wrapper
-#endif
+
     static gametime *time;                  // The gametime object
     static objects characters;              // All the characters 
     static objects quests;                  // All the quests
@@ -93,4 +108,4 @@ private:
 #endif
 };
 
-#endif // __DATA_H__
+#endif // DATA_H__

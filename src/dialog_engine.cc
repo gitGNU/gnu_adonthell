@@ -12,6 +12,17 @@
    See the COPYING file for more details
 */
 
+
+/**
+ * @file   dialog_engine.cc
+ * @author Kai Sterker <kaisterker@linuxgames.com>
+ * 
+ * @brief  Defines the dialog_engine class.
+ * 
+ * 
+ */ 
+
+
 #include <iostream.h>
 #include <string.h>
 #include "character.h"
