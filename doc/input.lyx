@@ -1,0 +1,172 @@
+#LyX 1.1 created this file. For more info see http://www.lyx.org/
+\lyxformat 2.15
+\textclass article
+\language default
+\inputencoding latin1
+\fontscheme default
+\graphics default
+\paperfontsize default
+\spacing single 
+\papersize Default
+\paperpackage a4
+\use_geometry 0
+\use_amsmath 0
+\paperorientation portrait
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\defskip medskip
+\quotes_language english
+\quotes_times 2
+\papercolumns 1
+\papersides 1
+\paperpagestyle headings
+
+\layout Title
+
+Adonthell Input System
+\layout Author
+
+Alexandre Courbot
+\layout Section
+
+Description
+\layout Standard
+
+The input system can be accessed by including 
+\emph on 
+input.h
+\emph default 
+.
+ It gives control to keyboard and mouse.
+\layout Standard
+
+It has to be periodically updated.
+ Just call 
+\emph on 
+input::update()
+\emph default 
+ in your main loop for example.
+ No particular setup or shutdown functions have to be called.
+\layout Section
+
+Keyboard access
+\layout Standard
+
+The keyboard can be accessed by several methods, each one having a particular
+ purpose:
+\layout Itemize
+
+You may want to know if a key was pushed 
+\emph on 
+when the update function were called
+\emph default 
+ with the following function: 
+\begin_deeper 
+\layout LyX-Code
+
+bool input::is_pushed(u_int16 key);
+\layout Standard
+
+The 
+\emph on 
+key
+\emph default 
+ parameter is the keycode ; a list of all keycodes can be found in the 
+\emph on 
+SDL_keysym.h 
+\emph default 
+include file.
+\layout Standard
+
+Once a key is pushed or released a key table is updated, allowing you to
+ know the 
+\emph on 
+current
+\emph default 
+ state of a key by calling 
+\emph on 
+input::is_pushed
+\emph default 
+.
+ This method has one drawback: It may happen that the user press and release
+ a key so rapidly that the 
+\emph on 
+push
+\emph default 
+ and 
+\emph on 
+release
+\emph default 
+ events will be caught at the same time by the same 
+\emph on 
+input::update()
+\emph default 
+ call.
+ In this case, you will NOT catch the keypress which may be very ennoying
+ especially in text input.
+ The following methods can prevent this.
+\end_deeper 
+\layout Itemize
+
+You can know 
+\emph on 
+how many times a key has been pushed or released since the last method call
+\emph default 
+:
+\begin_deeper 
+\layout LyX-Code
+
+u_int8 input::get_nbr_pushed(u_int16 k)
+\newline 
+u_int8 input::get_nbr_released(u_int16 k)
+\layout Standard
+
+Once 
+\emph on 
+get_nbr_pushed
+\emph default 
+ or 
+\emph on 
+get_nbr_released
+\emph default 
+ are called they return the value of the key counter and reset it.
+ That way, if a key has been pushed then immediatly released so the 
+\emph on 
+is_pushed
+\emph default 
+ function can't catch it, these function will anyway return that it has
+ been pushed one time and released one time.
+ These functions MUST be used in text_input applications for example.
+ They are not handy in other cases like character controlling when you only
+ need to know if the key is pushed or not.
+ To avoid problems, BE SURE to always call the two functions for all the
+ keys you need.
+ If you only call 
+\emph on 
+get_nbr_pushed
+\emph default 
+ this turn then call the two function the turn after, you may find weird
+ that your key has been released 2 times and pushed 1 time...
+\end_deeper 
+\layout Section
+
+Mouse access
+\layout Standard
+
+Mouse access is done by accessing the following variables:
+\layout LyX-Code
+
+u_int16 input::mouse_posx, input::mouse_posy;
+\layout LyX-Code
+
+bool input::mouse_button[3];
+\layout Standard
+
+Of course, the mouse cursor has to be enabled by calling the appropriate
+ function in the 
+\emph on 
+video
+\emph default 
+ class.
+\the_end
