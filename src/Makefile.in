@@ -1,4 +1,4 @@
-# Makefile.in generated automatically by automake 1.4 from Makefile.am
+# Makefile.in generated automatically by automake 1.4a from Makefile.am
 
 # Copyright (C) 1994, 1995-8, 1999 Free Software Foundation, Inc.
 # This Makefile.in is free software; the Free Software Foundation
@@ -46,9 +46,10 @@ AUTOMAKE = @AUTOMAKE@
 AUTOHEADER = @AUTOHEADER@
 
 INSTALL = @INSTALL@
-INSTALL_PROGRAM = @INSTALL_PROGRAM@ $(AM_INSTALL_PROGRAM_FLAGS)
+INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
+INSTALL_STRIP_FLAG =
 transform = @program_transform_name@
 
 NORMAL_INSTALL = :
@@ -68,7 +69,7 @@ VERSION = @VERSION@
 
 bin_PROGRAMS = mapengine cstest
 
-mapengine_SOURCES = array_tmpl.cc audio.cc audio_thread.cc commands.cc dialog_cmds.cc fileops.cc 	gfx.cc init.cc instruction.cc instruction_class.cc interpreter.cc keyboard.cc main.cc 	map.cc mapcharacter.cc mapengine.cc mapevent.cc mappattern.cc mapsquare.cc pnm.cc 	window.cc animation.cc dialog.cc
+mapengine_SOURCES = array_tmpl.cc audio.cc audio_thread.cc commands.cc dialog_cmds.cc fileops.cc 	gfx.cc init.cc instruction.cc instruction_class.cc interpreter.cc keyboard.cc main.cc 	map.cc mapcharacter.cc mapengine.cc mapevent.cc mappattern.cc mapsquare.cc pnm.cc 	window.cc animation.cc dialog.cc cutscene.cc 
 
 
 cstest_SOURCES = cutscene.cc gfx.cc keyboard.cc pnm.cc animation.cc cstest.cc audio.cc 	audio_thread.cc window.cc
@@ -86,7 +87,8 @@ LIBS = @LIBS@
 mapengine_OBJECTS =  array_tmpl.o audio.o audio_thread.o commands.o \
 dialog_cmds.o fileops.o gfx.o init.o instruction.o instruction_class.o \
 interpreter.o keyboard.o main.o map.o mapcharacter.o mapengine.o \
-mapevent.o mappattern.o mapsquare.o pnm.o window.o animation.o dialog.o
+mapevent.o mappattern.o mapsquare.o pnm.o window.o animation.o dialog.o \
+cutscene.o
 mapengine_LDADD = $(LDADD)
 mapengine_DEPENDENCIES = 
 mapengine_LDFLAGS = 
@@ -104,7 +106,7 @@ DIST_COMMON =  Makefile.am Makefile.in
 
 DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 
-TAR = tar
+TAR = gtar
 GZIP_ENV = --best
 DEP_FILES =  .deps/animation.P .deps/array_tmpl.P .deps/audio.P \
 .deps/audio_thread.P .deps/commands.P .deps/cstest.P .deps/cutscene.P \
@@ -141,8 +143,8 @@ install-binPROGRAMS: $(bin_PROGRAMS)
 	$(mkinstalldirs) $(DESTDIR)$(bindir)
 	@list='$(bin_PROGRAMS)'; for p in $$list; do \
 	  if test -f $$p; then \
-	    echo "  $(INSTALL_PROGRAM) $$p $(DESTDIR)$(bindir)/`echo $$p|sed 's/$(EXEEXT)$$//'|sed '$(transform)'|sed 's/$$/$(EXEEXT)/'`"; \
-	     $(INSTALL_PROGRAM) $$p $(DESTDIR)$(bindir)/`echo $$p|sed 's/$(EXEEXT)$$//'|sed '$(transform)'|sed 's/$$/$(EXEEXT)/'`; \
+	    echo "  $(INSTALL_PROGRAM) $(INSTALL_STRIP_FLAG) $$p $(DESTDIR)$(bindir)/`echo $$p|sed 's/$(EXEEXT)$$//'|sed '$(transform)'|sed 's/$$/$(EXEEXT)/'`"; \
+	     $(INSTALL_PROGRAM) $(INSTALL_STRIP_FLAG) $$p $(DESTDIR)$(bindir)/`echo $$p|sed 's/$(EXEEXT)$$//'|sed '$(transform)'|sed 's/$$/$(EXEEXT)/'`; \
 	  else :; fi; \
 	done
 
@@ -220,7 +222,7 @@ distdir: $(DISTFILES)
 	@for file in $(DISTFILES); do \
 	  d=$(srcdir); \
 	  if test -d $$d/$$file; then \
-	    cp -pr $$/$$file $(distdir)/$$file; \
+	    cp -pr $$d/$$file $(distdir)/$$file; \
 	  else \
 	    test -f $(distdir)/$$file \
 	    || ln $$d/$$file $(distdir)/$$file 2> /dev/null \
@@ -300,7 +302,7 @@ uninstall: uninstall-am
 all-am: Makefile $(PROGRAMS)
 all-redirect: all-am
 install-strip:
-	$(MAKE) $(AM_MAKEFLAGS) AM_INSTALL_PROGRAM_FLAGS=-s install
+	$(MAKE) $(AM_MAKEFLAGS) INSTALL_STRIP_FLAG=-s install
 installdirs:
 	$(mkinstalldirs)  $(DESTDIR)$(bindir)
 
