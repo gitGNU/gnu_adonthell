@@ -53,7 +53,7 @@ label::~label ()
 /**
    Set the font
 */
-inline void label::set_font (win_font & font)
+void label::set_font (win_font & font)
 {
     my_font_ = &font; 
     //  build (true); 
@@ -101,7 +101,7 @@ void label::add_text (const string & text)
 /**
    REsize the label
 */
-inline void label::resize (u_int16 l, u_int16 h)
+void label::resize (u_int16 l, u_int16 h)
 {
     image::resize (l, h); 
     set_text (my_text_); 
@@ -111,7 +111,7 @@ inline void label::resize (u_int16 l, u_int16 h)
 /**
    Set the form
 */
-inline void label::set_form (const u_int8 form)
+void label::set_form (const u_int8 form)
 {
     my_form_ = form;
     build (true); 
@@ -610,12 +610,12 @@ void label::cursor_previous ()
 }
 
 
-inline const string label::text_string () const
+const string label::text_string () const
 {
     return my_text_;  
 }
 
-inline const char * label::text_char () const
+const char * label::text_char () const
 {
     return my_text_.c_str (); 
 }

@@ -18,6 +18,10 @@ AM_PROG_LIBTOOL
 AC_PROG_MAKE_SET
 dnl AC_PROG_RANLIB
 
+dnl Detect the canonical host and target build environment
+AC_CANONICAL_HOST
+AC_CANONICAL_TARGET
+
 dnl ********************
 dnl Additional arguments
 dnl ********************
@@ -47,7 +51,17 @@ dnl **********************
 dnl Set the data directory
 dnl **********************
 if test x$gamedatadir = xnone; then
-  gamedatadir="${datadir}/adonthell"
+  case "$target" in
+    *-*-cygwin* | *-*-mingw32*)
+      gamedatadir="C:\share\adonthell"
+    ;;
+    *-*-beos*)
+      gamedatadir="/boot/home/share/adonthell"
+    ;;
+    *)
+      gamedatadir="${datadir}/adonthell"
+    ;;
+  esac
 fi
 DEFS="$DEFS -DDATA_DIR=\"\\\"$gamedatadir\\\"\""
 
@@ -140,8 +154,12 @@ changequote([, ])
 
 dnl Try for specific version first, then the generic version, then panic
 
-if test -r "$PYLIB/libpython$PYLIBVER.a"; then
+if test -r "$PYLIB/libpython$PYLIBVER.so"; then
     PY_LIBS="-L$PYLIB -lpython$PYLIBVER $PY_LIBS"
+elif test -r "$PYLIB/libpython$PYLIBVER.a"; then
+    PY_LIBS="-L$PYLIB -lpython$PYLIBVER $PY_LIBS"
+elif test -r "$PYLIB/libpython.so"; then
+    PY_LIBS="-L$PYLIB -lpython $PY_LIBS"
 elif test -r "$PYLIB/libpython.a"; then
     PY_LIBS="-L$PYLIB -lpython $PY_LIBS"
 else
@@ -316,6 +334,8 @@ echo Building API doc .......... : $builddoc
 if test x$memleaks = xyes; then
 echo Test for Memory Leaks : enabled
 fi
+echo Data directory ............ : $gamedatadir
+
 echo
 echo "Now type 'make' to build Adonthell"
 echo "Afterwards, 'make install' will install Adonthell in $prefix/bin"

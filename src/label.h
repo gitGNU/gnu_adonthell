@@ -41,7 +41,7 @@ public :
     /**
        Set the font
     */
-    inline void set_font (win_font & font);  
+    void set_font (win_font & font);  
 
 
     /**
@@ -90,19 +90,19 @@ public :
     /**
        Get the text in string
     */
-    inline const string text_string () const;
+    const string text_string () const;
 
 
     /**
        Get the text in char
     */
-    inline const char * text_char () const;
+    const char * text_char () const;
 
 
     /**
        Resize the label
     */
-    inline void resize (u_int16 l, u_int16 h);
+    void resize (u_int16 l, u_int16 h);
     
     
 #ifdef SWIG

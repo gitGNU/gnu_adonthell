@@ -1,0 +1,74 @@
+
+                       Adonthell on BeOS
+
+This file contains additional information for compiling Adonthell 
+under BeOS 5 for x86. For general compilation instructions refer to 
+the INSTALL file. Even more details are found within the NEWBIE file.
+
+
+Preparations:
+=============
+
+If you have compiled other software on your system already, you can
+probably skip this section. Read on to find a summary how to prepare
+BeOS for compiling Adonthell, what tools you need and how to install 
+them. If you run into any problems, please refer to the Documentation
+shipped with the individual library or tool.
+
+First of all, you'll have to install the BeOS Development Tools, which
+come as an extra package. You can find them at
+	http://sunsite.org.uk/packages/BeOS_stuff/beos/
+
+Next you'll have to install SDL, Python and Ogg Vorbis. See the INSTALL
+file for the respective URLs.
+SDL is simple: 'configure', 'make' and 'make install' is all it takes.
+However, you should also download and install the patch from
+	http://libsdl.org/faq/beos-sdl.diff 
+
+by typing:
+	$ (cd /; patch -p1 </path/to/patch/beos-sdl.diff) 
+
+This will add the /boot/develop/tools/gnupro/lib directory to the 
+systems library path (after a reboot). That is useful, as all the
+libraries we install go into that directory. 
+
+Python requires a little work: do a 
+	$ cp Misc/BeOS-setup.py 
+in the toplevel directory before running the usual 'configure', 
+'make' and 'make install'. 
+
+libogg (1.0 rc 2) didn't compile out of the box. Search for
+'#elif defined(__BEOS__)' in <oggdir>/include/ogg/os_types.h and 
+add '#include <ogg/config_types.h>' after '#include <inttypes.h>'.
+And the libvorbis configure script wouldn't find libogg unless 
+passing the '--with-ogg-prefix=/boot/develop/tools/gnupro/' option.
+Apart from that, it's the usual procedure.
+
+Now you are ready to compile Adonthell.
+
+
+Compiling Adonthell:
+====================
+
+That's as easy as
+	
+	$ configure
+	$ make
+	$ make install
+
+
+Building the various tools:
+===========================
+
+The various editors that come with Adonthell are not really written
+with portability in mind. Some of them might compile, others might
+not. Espacially those depending on GTK+ might cause trouble. However,
+for playing Adonthell, you won't need them, so it's no big loss.
+
+
+Contact:
+========
+
+At the moment, the BeOS port is maintained (*cough*) by Kai Sterker 
+(kaisterker@linuxgames.com). If you run into any troubles not listed
+here or want to contribute a patch please drop me a few lines.
