@@ -145,7 +145,7 @@ void event::put_state (ogzstream & file) const
         // save script
         case ACTION_SCRIPT:
         {
-            Script->object_file () >> file;
+            Script->class_name () >> file;
     
             if (Args)
             {

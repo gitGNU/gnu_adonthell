@@ -36,11 +36,17 @@ using std::string;
 class item_base : public py_object 
 {
 public:
+
     /**
-     * Create a new item from the given template. 
-     * @param item Name of the Python class defining the desired item.
+     * Default constructor. Creates an empty item.
      */
-    item_base (string item);
+    item_base () : py_object () {};
+    
+    /**
+     * Create a new item from the given item data. 
+     * @param item Name of the item data file defining the desired item.
+     */
+    item_base (const string &item);
     
     /**
      * Destructor.
@@ -80,6 +86,31 @@ public:
      * @param type category to remove from the item. 
      */
     void remove_type (const string &type);
+
+    /**
+     * Get the charge the item has left.
+     * @return number of charges the item has.
+     */
+    u_int16 charge ()                       { return Charge; }
+
+    /**
+     * Add charges to the item. Recharges the item up to MaxCharge.
+     * @param charge number of charges to add.
+     * @return number of charges not added to the item
+     */
+    u_int16 recharge (u_int16 & charge);
+
+    /**
+     * Get the maximum number of charges the item may hold.
+     * @return item's maximum number of charges.
+     */
+    u_int16 max_charge ()                   { return MaxCharge; }
+
+    /**
+     * Set the maximum number of charges the item may hold.
+     * @param item's maximum number of charges.
+     */
+    void set_max_charge (u_int max_charge)  { MaxCharge = max_charge; }
     //@}
     
 protected:
@@ -107,6 +138,7 @@ protected:
     void put_state (ogzstream &file) const;
     //@}
 
+private:
     /**
      * @name Basic Item Attributes
      */
@@ -114,12 +146,17 @@ protected:
     /**
      * List of categories this item belongs to.
      */
-    std::vector<std::string> types;
+    std::vector<std::string> Types;
     
     /**
      * Fuel or number of uses an item has.
      */
-    u_int16 charge;
+    u_int16 Charge;
+
+    /**
+     * Maximum amount of charge the item may have.
+     */
+    u_int16 MaxCharge;
     //@}
 };
 

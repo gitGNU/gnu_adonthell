@@ -92,12 +92,14 @@ void adonthell::main_loop ()
         // all windows of the current level
         win_manager::active->input_update ();
         if (update_map ()) lmap.update ();
-        win_manager::active->update ();
+        // win_manager::active->update ();
         if (control_active ()) control.run ();
     }
    
     if (!letsexit) 
     {
+        win_manager::active->update ();
+
         // first clear the screen to avoid artifacts
         screen::clear ();
     

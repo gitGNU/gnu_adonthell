@@ -529,7 +529,7 @@ class win_container : public win_base
 class win_image : public image, public win_base
 {
 public:
-  win_image(); 
+  // win_image(); 
   ~win_image(); 
   bool draw(); 
   bool update(); 

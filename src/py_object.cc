@@ -28,8 +28,9 @@
 
 py_object::py_object ()
 {
-    instance = NULL;
-    script_file_ = "";
+    Instance = NULL;
+    Filename = "";
+    Classname = "";
 }
 
 py_object::~py_object ()
@@ -40,11 +41,12 @@ py_object::~py_object ()
 // Cleanup (and re-initialisation)
 void py_object::clear ()
 {
-    // Delete our instance
-    Py_XDECREF (instance);
-    instance = NULL;
-    
-    script_file_ = "";
+    // Delete our Instance
+    Py_XDECREF (Instance);
+    Instance = NULL;
+
+    Filename = "";
+    Classname = "";
 }
 
 // Pass a (new) Python module to be used
@@ -81,14 +83,23 @@ bool py_object::instanciate (PyObject *module, string file, string classname, Py
 
     PyObject * classobj = PyObject_GetAttrString (module, (char *) classname.c_str ());
     Py_DECREF (module);
-    if (!classobj) return false;
-
-    // Create the instance
-    instance = PyObject_CallObject (classobj, args);
+    if (!classobj)
+    {
+        python::show_traceback ();
+        return false;
+    }
+    
+    // Create the Instance
+    Instance = PyObject_CallObject (classobj, args);
     Py_DECREF (classobj);
-    if (!instance) return false;
+    if (!Instance)
+    {
+        python::show_traceback ();
+        return false;
+    }
 
-    script_file_ = classname;
+    Filename = file;
+    Classname = classname;
 
     return true;
 }
@@ -97,38 +108,111 @@ bool py_object::instanciate (PyObject *module, string file, string classname, Py
 PyObject* py_object::call_method_ret (const string & name, PyObject * args)
 {
     PyObject *result = NULL;
-     
-    if (instance)
+
+    if (Instance)
     {
-        PyObject *tocall = PyObject_GetAttrString (instance, (char *) name.c_str ());
+        PyObject *tocall = PyObject_GetAttrString (Instance, (char *) name.c_str ());
 
         if (PyCallable_Check (tocall) == 1)
-        {    
+        {
             result = PyObject_CallObject (tocall, args);
-            Py_DECREF (tocall); 
+            Py_DECREF (tocall);
         }
 #ifdef PY_DEBUG
         python::show_traceback ();
 #endif
     }
-    
-    return result;
-}
 
-// Get an attribute of the instance
-PyObject *py_object::get_attribute (const string &name)
-{
-    if (instance)
-        return PyObject_GetAttrString (instance, (char *) name.c_str ());
-    else
-        return NULL;
+    return result;
 }
 
 // check for a certain attribute
 bool py_object::has_attribute (const std::string & name)
 {
-    if (instance)
-        return PyObject_HasAttrString (instance, (char *) name.c_str ());
+    if (Instance)
+        return PyObject_HasAttrString (Instance, (char *) name.c_str ());
     else
         return false;
+}
+
+// Get an attribute of the instance
+PyObject *py_object::get_attribute (const string &name)
+{
+    if (Instance)
+        return PyObject_GetAttrString (Instance, (char *) name.c_str ());
+    else
+        return NULL;
+}
+
+// Get an int attribute of the instance
+s_int32 py_object::get_attribute_int (const string &name)
+{
+    if (Instance)
+    {
+        PyObject *attribute = PyObject_GetAttrString (Instance, (char *) name.c_str ());
+        if (!attribute) return 0;
+
+        s_int32 value = PyInt_AsLong (attribute);
+        Py_DECREF (attribute);
+        
+        return value;
+    }
+    else
+        return 0;
+}
+
+ // Get a string attribute of the instance
+string py_object::get_attribute_string (const string &name)
+{
+    if (Instance)
+    {
+        PyObject *attribute = PyObject_GetAttrString (Instance, (char *) name.c_str ());
+        if (!attribute) return 0;
+
+        string value = PyString_AsString (attribute);
+        Py_DECREF (attribute);
+
+        return value;
+    }
+    else
+        return string ("");
+}
+
+// Set an attribute of the instance
+void py_object::set_attribute (const string &name, PyObject *value)
+{
+    if (Instance)
+        if (PyObject_SetAttrString (Instance, (char *) name.c_str (), value) == -1)
+            python::show_traceback ();
+    else return;
+}
+
+// Set an int attribute of the instance
+void py_object::set_attribute_int (const string &name, int value)
+{
+    if (Instance)
+    {
+        PyObject *val = PyInt_FromLong (value);
+
+        if (PyObject_SetAttrString (Instance, (char *) name.c_str (), val) == -1)
+            python::show_traceback ();
+
+        Py_DECREF (val);
+    }
+    else return;
+}
+
+// Set a string attribute of the instance
+void py_object::set_attribute_string (const string &name, const string & value)
+{
+    if (Instance)
+    {
+        PyObject *val = PyString_FromString (value.c_str ());
+
+        if (PyObject_SetAttrString (Instance, (char *) name.c_str (), val) == -1)
+            python::show_traceback ();
+
+        Py_DECREF (val);
+    }
+    else return;
 }

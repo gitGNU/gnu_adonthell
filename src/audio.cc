@@ -330,7 +330,7 @@ s_int8 audio::put_state (ogzstream& file)
     if (current_background != -1) music_file[current_background] >> file;
 
     // Save the schedule script state
-    schedule.object_file () >> file;
+    schedule.class_name () >> file;
     if (schedule_args) 
     {
         true >> file; 

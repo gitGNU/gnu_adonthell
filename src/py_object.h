@@ -1,8 +1,8 @@
 /*
    $Id$
 
-   Copyright (C) 1999/2000/2001    Kai Sterker
-   Copyright (C) 2001    Alexandre Courbot
+   Copyright (C) 1999/2000/2001/2003 Kai Sterker <kaisterker@linuxgames.com>
+   Copyright (C) 2001 Alexandre Courbot <alexandrecourbot@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -20,28 +20,25 @@
  * @author Alexandre Courbot <alexandrecourbot@linuxgames.com>
  * 
  * @brief  Declares the py_object class.
- * 
- * 
  */
 
 
-#ifndef PY_OBJECT_H_
-#define PY_OBJECT_H_
-
-
+#ifndef PY_OBJECT_H
+#define PY_OBJECT_H
+                   
 #include <string>
 #include "python_class.h"
 
-using namespace std; 
+using std::string; 
 
 
 /**
  * Python object class.
  *
- * Use this class to create instances of Python classes
- * contained in Python modules, then control their execution. You can pass
- * arguments to the class constructor when the script is imported, then to
- * any method you want to run.
+ * Use this class to create instances of Python classes contained in Python
+ * modules, then control their execution. You can pass an argument tuple to
+ * the class constructor and to any method you want to run. It is further
+ * possible to access and change attributes of the Python instance.
  * 
  */ 
 class py_object
@@ -64,7 +61,11 @@ public:
      * 
      */
     void clear (); 
- 
+
+    /**
+     * @name PyObject creation
+     */
+    //@{
     /** 
      * Creates an instance of a Python class.
      * 
@@ -86,27 +87,12 @@ public:
      *             Python class constructor.
      */
     bool reload_instance (string file, string classname, PyObject * args = NULL);
+    //@}
 
     /**
-     * Direct access to the instance object
-     *
-     * @return the Python class instance
+     * @name PyObject method calling
      */
-    PyObject *get_instance ()
-    {
-        return instance;
-    }
-
-    /**
-     * Returns the module name of this object.
-     * 
-     * @return module name of this object.
-     */
-    string object_file () const
-    {
-        return script_file_;
-    }
-    
+    //@{
     /** 
      * Call a method of this object.
      * 
@@ -139,6 +125,20 @@ public:
     {
         call_method ("run", args); 
     }
+    //@}
+
+    /**
+     * @name PyObject member access
+     */
+    //@{
+    /**
+     * Tests whether the object contains a certain attribute (i.e. method
+     * or variable).
+     *
+     * @param name Name of the attribute to test for
+     * @return <b>true</b> if the attribute exists, <b>false</b> otherwise.
+     */
+    bool has_attribute (const std::string & name);
 
     /**
      * Returns a new reference to an attribute of this object.
@@ -149,19 +149,89 @@ public:
     PyObject* get_attribute (const string & name);
 
     /**
-     * Tests whether the object contains a certain attribute (i.e. method
-     * or variable).
+     * Returns the given attribute as integer value.
      *
-     * @param name Name of the attribute to test for
-     * @return <b>true</b> if the attribute exists, <b>false</b> otherwise.
+     * @param name Name of the attribute to access
+     * @return An integer.
      */
-    bool has_attribute (const std::string & name);
+    s_int32 get_attribute_int (const string & name);
+
+    /**
+     * Returns the given attribute as string value.
+     *
+     * @param name Name of the attribute to access
+     * @return A string.
+     */
+    string get_attribute_string (const string & name);
+
+    /**
+     * Assign a new attribute to the module, overriding an existing
+     * attribute of the same name.
+     *
+     * @param name The attribute's name
+     * @param value The attribute's value
+     */
+    void set_attribute (const string & name, PyObject *value);
+
+    /**
+     * Assign a new integer attribute to the module, overriding an
+     * existing attribute of the same name.
+     *
+     * @param name The attribute's name
+     * @param value The attribute's value
+     */
+    void set_attribute_int (const string & name, s_int32 value);
+
+    /**
+     * Assign a new string attribute to the module, overriding an
+     * existing attribute of the same name.
+     *
+     * @param name The attribute's name
+     * @param value The attribute's value
+     */
+    void set_attribute_string (const string & name, const string & value);
+    //@}
+    
+    /**
+     * @name Member access
+     */
+    //@{
+    /**
+     * Direct access to the instance object
+     *
+     * @return the Python class instance
+     */
+    PyObject *get_instance () const
+    {
+        return Instance;
+    }
+
+    /**
+     * Returns the class name of this object.
+     *
+     * @return class name of this object.
+     */
+    std::string class_name () const
+    {
+        return Classname;
+    }
+
+    /**
+     * Returns the file name of this object.
+     *
+     * @return fiöe name of this object.
+     */
+    std::string file_name () const
+    {
+        return Filename;
+    }
+    //@}
 
 protected:
     /**
      * The python class instance wrapped by %py_object
      */    
-    PyObject *instance;
+    PyObject *Instance;
 
 private:
     /**
@@ -170,8 +240,15 @@ private:
      */
     bool instanciate (PyObject*, string, string, PyObject*);
 
-    string script_file_;
+    /**
+     * The class name of the current script
+     */
+    std::string Classname;
+
+    /**
+     * The file name of the current script
+     */
+    std::string Filename;
 };
 
-
-#endif
+#endif // PY_OBJECT_H

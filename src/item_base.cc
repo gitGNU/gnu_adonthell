@@ -24,7 +24,7 @@
 #include "item_base.h"
 
 // ctor
-item_base::item_base (std::string item) : py_object ()
+item_base::item_base (const std::string & item)
 {
     std::cout << "Item instance of '" << item << "' created" << endl;
     
@@ -45,11 +45,12 @@ void item_base::init (PyObject *item)
     std::cout << "Item instance initialized" << endl;
     
     // set derived item instance
-    Py_XDECREF (instance);
-    instance = item;
+    Py_XDECREF (Instance);
+    Instance = item;
     
     // init basic attributes
-    charge = 0;
+    Charge = 0;
+    MaxCharge = 0;
 }
 
 // trigger item's main functionality
@@ -83,14 +84,14 @@ bool item_base::use (character_base *character)
 void item_base::add_type (const std::string &type)
 {
     // only add if item does not already belong to that category
-    if (find (types.begin (), types.end (), type) != types.end ())
-        types.push_back (type);
+    if (find (Types.begin (), Types.end (), type) != Types.end ())
+        Types.push_back (type);
 }
 
 // remove the given category from the item.
 void item_base::remove_type (const std::string &type)
 {
-    types.erase (remove (types.begin (), types.end (), type), types.end ());
+    Types.erase (remove (Types.begin (), Types.end (), type), Types.end ());
 }
 
 // save state
@@ -120,4 +121,19 @@ void item_base::put_state (ogzstream& file) const
 bool item_base::get_state (igzstream& file)
 {
     return true;
+}
+
+// recharge item
+u_int16 item_base::recharge (u_int16 &charge)
+{
+    Charge += charge;
+
+    if (Charge > MaxCharge)
+    {
+        charge = Charge - MaxCharge;
+        Charge = MaxCharge;
+    }
+    else charge = 0;
+    
+    return charge;
 }
