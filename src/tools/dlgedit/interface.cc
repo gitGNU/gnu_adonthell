@@ -313,8 +313,8 @@ create_fileselection (GString * file, u_int8 type)
     gtk_widget_show (fs_ok_button);
     GTK_WIDGET_SET_FLAGS (fs_ok_button, GTK_CAN_DEFAULT);
 
-    gtk_signal_connect (GTK_OBJECT (fs_cancel_button), "pressed", GTK_SIGNAL_FUNC (on_fs_cancel_button_pressed), file);
-    gtk_signal_connect (GTK_OBJECT (fs_ok_button), "pressed", GTK_SIGNAL_FUNC (on_fs_ok_button_pressed), file);
+    gtk_signal_connect (GTK_OBJECT (fs_cancel_button), "clicked", GTK_SIGNAL_FUNC (on_fs_cancel_button_pressed), file);
+    gtk_signal_connect (GTK_OBJECT (fs_ok_button), "clicked", GTK_SIGNAL_FUNC (on_fs_ok_button_pressed), file);
 
     gtk_widget_grab_focus (fs_ok_button);
     gtk_widget_grab_default (fs_ok_button);

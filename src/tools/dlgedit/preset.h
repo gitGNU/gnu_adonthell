@@ -17,20 +17,20 @@
 
 #include <gtk/gtkstyle.h>
 #include <string>
-#include "error_dlg.h"
+#include "main.h"
 
 // Set variables to be used for testing the Dialogue
 class preset_dlg
 {
 public:
-    preset_dlg (string&, error_dlg*);
+    preset_dlg (MainFrame*);
 
     GtkWidget *dlg;             // The actual Dialogue Window
     GtkWidget *entry;           // The Text entry
 
-    string &vars;               // The text users entered
-    error_dlg *err;             // The Widget for displaying error messages
+    MainFrame *wnd;             // The Application
 
+    void run ();
     int on_ok (char*);          // Accepted changes    
 };
 

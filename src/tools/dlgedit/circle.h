@@ -17,14 +17,15 @@
 
 #include <gtk/gtkstyle.h>
 #include "dlgnode.h"
+#include "main.h"
 
 // Wrapper class for the Node Editing dialog
 class crcle_dlg
 {
 public:
-    crcle_dlg (Circle *);
+    crcle_dlg (Circle*, MainFrame*);
 
-    void on_ok ();              // Discard changes and exit
+    int on_ok ();               // Discard changes and exit
     void on_text (char *);      // Text has been updated
     void on_annotation (char*); // Note updated
     void on_condition (char *); // Conditions updated
@@ -45,6 +46,7 @@ public:
 
 private:
     Circle *circle;             // The node we edit 
+    MainFrame *wnd;             // The Application
 
     u_int8 type;                // Either PLAYER or NPC
     u_int8 combat;              // State of combat-checkbox

@@ -119,7 +119,7 @@ on_annotation_entry_changed (GtkEditable * editable, gpointer user_data)
 void
 on_circle_ok_button_pressed (GtkButton * button, gpointer user_data)
 {
-    ((crcle_dlg *) user_data)->on_ok ();
+    if (!((crcle_dlg *) user_data)->on_ok ()) return;
 
     // clean up
     gtk_main_quit ();

@@ -144,10 +144,10 @@ on_dialogue_variables_activate (GtkMenuItem * menuitem, gpointer user_data)
 {
     MainFrame *wnd = (MainFrame *) user_data;
     
-    preset_dlg dlg (wnd->pset_vars, wnd->err);
-    gtk_main ();
+    preset_dlg dlg (wnd);
+    dlg.run  ();
     
-    if (!&dlg) return;
+    gtk_main ();
 }
 
 /* Dialogue Menu: Variables */

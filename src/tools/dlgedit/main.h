@@ -19,8 +19,9 @@
 #include <string>
 #include <vector>
 #include "dlgnode.h"
-#include "error_dlg.h"
 #include "../../character.h"
+
+class error_dlg;
 
 // Internal Editor Modes
 enum
@@ -78,7 +79,7 @@ typedef struct
     s_int32 scroll_y;           // Auto-scroll rate
     u_int8 scroll;              // Auto-scrolling on/off
 
-    error_dlg *err;             // a dialog for displaying (error) messages
+    error_dlg *err;             // For Displaying error messages
     string pset_vars;           // Preset variables for running the Dialogue
     player *myplayer;           // A player object
 }

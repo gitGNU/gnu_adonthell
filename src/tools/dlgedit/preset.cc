@@ -14,13 +14,20 @@
 
 #include "preset.h"
 #include "pset_interface.h"
+#include "error_dlg.h"
 #include "../../interpreter.h"
 
 extern int vars_compile (const char*, string&, vector<command*>&);
 
-preset_dlg::preset_dlg (string &v, error_dlg* e) : vars(v), err (e)
+
+preset_dlg::preset_dlg (MainFrame *w) : wnd(w)
 {
     dlg = create_preset_dlg (this);
+}
+
+
+void preset_dlg::run ()
+{
 }
 
 
@@ -38,17 +45,19 @@ int preset_dlg::on_ok (char *v)
         if (error != "")
         {
             // Either create a new error_dlg window, or bring it to front
-            if (!err) err = new error_dlg;
-            else err->to_front ();
+            if (!wnd->err) wnd->err = new error_dlg (wnd);
+            else wnd->err->to_front ();
 
             // Display the error message
-            err->display (error.c_str ());
+            wnd->err->display (error.c_str ());
+            
             return 0;
         }
+        else if (wnd->err) wnd->err->display ("Compilation successfull :-)");
     }
 
     // everything turned out fine :)
-    vars = v;
+    wnd->pset_vars = v;
     return 1;
 }
 

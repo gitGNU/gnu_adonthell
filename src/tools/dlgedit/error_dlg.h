@@ -16,15 +16,19 @@
 #define __ERROR_DLG_H__
 
 #include <gtk/gtkstyle.h>
+#include "main.h"
 
 // Set variables to be used for testing the Dialogue
 class error_dlg
 {
 public:
-    error_dlg ();
-
+    error_dlg (MainFrame*);
+    ~error_dlg ();
+    
     GtkWidget *dlg;             // The actual Dialogue Window
     GtkWidget *entry;           // The Text entry
+
+    MainFrame *wnd;             // The Application
 
     void to_front ();           // Bring dialog to front
     void display (const char*); // Display some text

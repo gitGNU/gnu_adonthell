@@ -17,9 +17,14 @@
 #include "error_dlg.h"
 #include "err_interface.h"
 
-error_dlg::error_dlg ()
+error_dlg::error_dlg (MainFrame *w) : wnd (w)
 {
     dlg = create_error_window (this);
+}
+
+error_dlg::~error_dlg ()
+{
+    wnd->err = NULL;
 }
 
 void error_dlg::display (const char *msg)
@@ -27,6 +32,7 @@ void error_dlg::display (const char *msg)
     gtk_editable_delete_text ((GtkEditable *) entry, 0, -1); 
     gtk_text_insert ((GtkText *) entry, entry->style->font,
         &entry->style->black, &entry->style->white, msg, -1);
+    gtk_adjustment_set_value (((GtkText *) entry)->vadj, 0.0);
 }
 
 void error_dlg::to_front ()

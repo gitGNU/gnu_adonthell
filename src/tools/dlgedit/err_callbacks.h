@@ -15,6 +15,5 @@
 #include <gtk/gtk.h>
 
 
-void
-on_error_close_clicked                 (GtkButton       *button,
-                                        gpointer         user_data);
+void on_error_close_clicked (GtkButton *button, gpointer user_data);
+void on_error_delete (GtkWidget*, GdkEvent*, gpointer);

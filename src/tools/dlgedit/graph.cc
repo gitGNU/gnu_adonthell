@@ -44,7 +44,9 @@ new_circle (MainFrame * wnd, GdkPoint point, int type)
     wnd->scroll = 0;
     
     // Create Dialog to edit Circle's attributes ...
-    crcle_dlg dlg (circle);
+    crcle_dlg dlg (circle, wnd);
+
+    gtk_window_set_transient_for (GTK_WINDOW (dlg.dlg), GTK_WINDOW (wnd->wnd));
 
     // ... and enter it's event loop
     gtk_main ();
@@ -229,7 +231,7 @@ edit_node (MainFrame * wnd)
         }
         
         // Create and display dialog for user-input 
-        crcle_dlg dlg ((Circle *) wnd->selected_node);
+        crcle_dlg dlg ((Circle *) wnd->selected_node, wnd);
 
         // Enter Dialog - Event - Loop 
         gtk_main ();

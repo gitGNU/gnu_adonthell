@@ -16,11 +16,12 @@
 #include "circle.h"
 #include "crcle_interface.h"
 #include "../../interpreter.h"
+#include "error_dlg.h"
 
 extern int cond_compile (const char*, string&, vector<command*>&);
 extern int vars_compile (const char*, string&, vector<command*>&);
 
-crcle_dlg::crcle_dlg (Circle *c) : circle (c)
+crcle_dlg::crcle_dlg (Circle *c, MainFrame *w) : circle (c), wnd (w)
 {
     gchar **actions = g_strsplit (circle->actions.c_str (), "|", 2);
     
@@ -44,21 +45,30 @@ crcle_dlg::crcle_dlg (Circle *c) : circle (c)
 }
 
 // Apply changes to Circle
-void crcle_dlg::on_ok ()
+int crcle_dlg::on_ok ()
 {
-    string error, actions;
+    string error, actions, t1, t2;
     vector<command*> code;
 
     // Look if code contains errors
-    if (cond != "")
-    {
-        cond_compile (cond.c_str (), error, code);
-    }
+    if (cond != "") cond_compile (cond.c_str (), t1, code);
+    if (t1 != "") error = string ("Error(s) in Condition code:\n") + t1 + "\n\n";  
+    if (vars != "") vars_compile (vars.c_str (), t2, code);
+    if (t2 != "") error += string ("Error(s) in Variables code:\n") + t2;
 
-    if (vars != "")
+    // compilation errors found
+    if (error != "")
     {
-        vars_compile (vars.c_str (), error, code);
+        // Either create a new error_dlg window, or bring it to front
+        if (!wnd->err) wnd->err = new error_dlg (wnd);
+        else wnd->err->to_front ();
+
+        // Display the error message
+        wnd->err->display (error.c_str ());
+            
+        return 0;
     }
+    else if (wnd->err) wnd->err->display ("Compilation successfull :-)");
 
     // Indicate that user hit the OK button
     retval = 1;
@@ -76,6 +86,8 @@ void crcle_dlg::on_ok ()
 
     if (type == PLAYER) circle->character = 0;
     else circle->character = 1; // update this line once multiple NPCs are supported
+
+    return 1;
 }
 
 // Text has changed

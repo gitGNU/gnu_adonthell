@@ -68,7 +68,8 @@ create_preset_dlg (preset_dlg *dlg)
     gtk_tooltips_set_tip (tooltips, preset_entry, "Here you can assign values to variables that will be available when testing the Dialogue.", NULL);
     gtk_text_set_editable (GTK_TEXT (preset_entry), TRUE);
     gtk_text_insert (GTK_TEXT (preset_entry), preset_entry->style->font,
-        &preset_entry->style->black, &preset_entry->style->white, dlg->vars.c_str (), -1);
+        &preset_entry->style->black, &preset_entry->style->white, 
+        dlg->wnd->pset_vars.c_str (), -1);
 
     dlg->entry = preset_entry;
 

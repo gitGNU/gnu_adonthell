@@ -14,12 +14,25 @@
 
 #include <gtk/gtk.h>
 
+#include "error_dlg.h"
 #include "err_callbacks.h"
 
 void
-on_error_close_clicked                 (GtkButton       *button,
-                                        gpointer         user_data)
+on_error_close_clicked (GtkButton *button, gpointer user_data)
 {
-    gtk_widget_destroy ((GtkWidget *) user_data);  
+    error_dlg *dlg = (error_dlg *) user_data;
+    
+    gtk_widget_destroy (dlg->dlg);
+
+    delete dlg;
 }
 
+void
+on_error_delete (GtkWidget *widget, GdkEvent *event, gpointer user_data)
+{
+    error_dlg *dlg = (error_dlg *) user_data;
+    
+    gtk_widget_destroy (widget);
+
+    delete dlg;
+}

@@ -34,7 +34,7 @@ create_error_window (error_dlg *dlg)
   error_window = gtk_window_new (GTK_WINDOW_DIALOG);
   gtk_object_set_data (GTK_OBJECT (error_window), "error_window", error_window);
   gtk_widget_set_usize (error_window, 400, 320);
-  gtk_window_set_title (GTK_WINDOW (error_window), "Error(s) found!");
+  gtk_window_set_title (GTK_WINDOW (error_window), "Message Window");
   gtk_window_set_policy (GTK_WINDOW (error_window), FALSE, FALSE, FALSE);
 
   vbox1 = gtk_vbox_new (FALSE, 0);
@@ -89,10 +89,10 @@ create_error_window (error_dlg *dlg)
 
   gtk_signal_connect (GTK_OBJECT (error_close), "clicked",
                       GTK_SIGNAL_FUNC (on_error_close_clicked),
-                      error_window);
+                      dlg);
   gtk_signal_connect (GTK_OBJECT (error_window), "delete_event",
-                      GTK_SIGNAL_FUNC (on_widget_destroy),
-                      NULL);
+                      GTK_SIGNAL_FUNC (on_error_delete),
+                      dlg);
 
   gtk_widget_grab_focus (error_close);
   gtk_widget_grab_default (error_close);
