@@ -39,7 +39,6 @@ class mapengine
  protected:
   landmap * lmap;
   mapview mv;
-  dialog_engine * de;
   win_theme * th;
   bool letsexit;
 };

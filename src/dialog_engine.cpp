@@ -41,7 +41,7 @@ void dialog_engine::init(character_base *mynpc, char * dlg_file, win_theme *th, 
     instance = NULL;
   
     font = new win_font (win_theme::theme);
-    theme = new win_theme (win_theme::theme);
+    theme = th;
 
     // Full or half-sized window
     if (size)
@@ -131,12 +131,8 @@ void dialog_engine::init(character_base *mynpc, char * dlg_file, win_theme *th, 
 
 dialog_engine::~dialog_engine ()
 {
-    // refresh screen
-    screen::drawbox (0, 0, 320, 200, 0);
-
     sel->set_activated (false);
 
-    delete theme;
     delete font;
 
     Py_XDECREF (instance);

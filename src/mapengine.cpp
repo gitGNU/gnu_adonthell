@@ -14,12 +14,12 @@
 
 
 #include "mapengine.h"
+#include "win_manager.h"
 #include "dialog_engine.h"
 
 mapengine::mapengine()
 {
   lmap=NULL;
-  de=NULL;
   mv.resize(320,240);
   letsexit=false;
   th=new win_theme(win_theme::theme);
@@ -27,6 +27,7 @@ mapengine::mapengine()
 
 mapengine::~mapengine()
 {
+  win_manager::destroy ();
   delete th;
 }
 
@@ -43,16 +44,10 @@ void mapengine::use_map(landmap * lm)
 
 void mapengine::launch_dialog(character_base * whichcar, char * dlg_file)
 {
-  de=new dialog_engine(whichcar,dlg_file,th,0);
-  de->run();
-  while(de->is_running && !letsexit)
-    {
-      if(input::has_been_pushed(SDLK_ESCAPE)) letsexit=true;
-      mainloop();
-      screen::show();
-    }
-  delete de;
-  de=NULL;
+  dialog_engine *de = new dialog_engine (whichcar, dlg_file, th, 0);
+  win_manager::add (de);
+  win_manager::set_focus (de);
+  de->run ();
 }
 
 void mapengine::run()
@@ -71,35 +66,10 @@ void mapengine::mainloop()
   input::update();
   for(int i=0;i<screen::frames_to_do();i++)
     {
-      if(de) de->update();
-      /*	  if (!ds && !de) 
-		  {		
-		  if (input::is_pushed(SDLK_l)) ds = new data_screen (LOAD_SCREEN);
-		  if (input::is_pushed(SDLK_s)) ds = new data_screen (SAVE_SCREEN);
-		  
-		  if (input::is_pushed(SDLK_t)) 
-		  {
-		  de = new dialog_engine ((npc*)data::characters.next(), new win_theme (win_theme::theme));
-		  de->run ();
-		  }
-		  }*/
+      win_manager::update ();
       lmap->update();
       mv.update();
     }
-  /*        if (de && !de->update ())
-	    {
-	    delete de;
-	    de = NULL;
-	    }
-	    if (ds && ds->update ())
-	    {
-	    delete ds;
-	    ds = NULL;
-	    }
-	    }
-	    //      	screen::clear();*/
  mv.draw(0,0);
- if(de) de->draw();
- /*	if (ds) ds->draw ();
-	if (de) de->draw ();*/
+ win_manager::draw ();
 }
