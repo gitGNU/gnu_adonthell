@@ -33,6 +33,7 @@
 #include "audio.h"
 #include "gamedata.h"
 #include "python_class.h"
+#include "event_handler.h"
 
 // File format versions of the various data files
 // *** Increase when changing file format! ***
@@ -562,5 +563,8 @@ void gamedata::unload ()
     dictionary <quest *>::iterator itq;
     for (itq = data::quests.begin (); itq != data::quests.end (); itq++) 
         delete itq->second;
-    data::quests.clear (); 
+    data::quests.clear ();
+    
+    // remove any events that are left over
+    event_handler::clear ();
 }

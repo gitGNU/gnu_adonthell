@@ -45,9 +45,9 @@ public:
      * Create a new time %event.
      *
      * @param time The time when the %event should be raised. The string
-     *      specifies week, day, hour and minute in the format
-     *      "<number>w<number>d<number>h<number>m". If a number is 0, it
-     *      can be omitted.
+     *      specifies week, day, hour, minute and 1/10 minute in the format
+     *      "<number>w<number>d<number>h<number>m<number>t". If a number is 
+     *      0, it can be omitted.
      * @param absolute Decides whether the given time is relative from now
      *      on, or an absolute time
      */
@@ -138,7 +138,7 @@ public:
      * Get the event's "alarm" time, i.e. the time when it needs to be
      * executed.
      *
-     * @return the "alarm" time in %gametime minutes.
+     * @return the "alarm" time in 1/10 %gametime minutes.
      */
     u_int32 time () const
     {

@@ -24,6 +24,12 @@
 #include "time_event.h"
 #include "time_event_handler.h"
 
+// cleanup
+void time_event_handler::clear ()
+{
+    Events.clear ();    
+}
+
 // See whether a matching event is registered and execute the
 // according script(s) 
 void time_event_handler::raise_event (const event& e)

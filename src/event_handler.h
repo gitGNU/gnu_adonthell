@@ -40,14 +40,19 @@ public:
     static void init ();
 
     /**
-     * Delete the event handlers.
+     * Delete the %event handlers.
      */
     static void cleanup ();
 
+    /**
+     * Remove all events from all handlers
+     */
+    static void clear ();
+    
     /** 
-     * Registers an event.
+     * Registers an %event.
      * 
-     * @param ev pointer to the event to register.
+     * @param ev pointer to the %event to register.
      */
     static void register_event (event* ev)
     {
@@ -55,9 +60,9 @@ public:
     }
 
     /** 
-     * Unregister an event.
+     * Unregister an %event.
      * 
-     * @param ev pointer to the event to unregister.
+     * @param ev pointer to the %event to unregister.
      */
     static void remove_event (event* ev)
     {
@@ -65,9 +70,9 @@ public:
     }
 
     /** 
-     * Check if an event corresponding to ev exists, and execute it. 
+     * Check if an %event corresponding to ev exists, and execute it. 
      * 
-     * @param ev event to raise.
+     * @param ev %event to raise.
      */
     static void raise_event (const event& ev)
     {
@@ -76,7 +81,7 @@ public:
 
 private:
     /**
-     * A list of the actual event handlers
+     * A list of the actual %event handlers
      */
     static event_handler_base* Handler[MAX_EVENTS];
 };

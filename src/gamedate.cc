@@ -34,14 +34,16 @@ float gamedate::Ticks = 0.0;
 // Increase gametime 
 void gamedate::update ()
 {
+    static float tenth_minute = gametime::minute () / 10.0;
+    
     // fts contains the number of cycles that passed since the last
     // call to gamedate::update
     Ticks += gametime::frames_to_skip ();
 
     // check whether a in-game minute has passed
-    while (Ticks >= gametime::minute ())
+    while (Ticks >= tenth_minute)
     {
-        Ticks -= gametime::minute ();
+        Ticks -= tenth_minute;
         Time++;
         
         // raise time event
@@ -75,7 +77,7 @@ u_int16 gamedate::weekday ()
 u_int16 gamedate::day ()
 {
     // how many minutes make one day
-    static u_int day_in_minutes = 60 * HOURS_PER_DAY;
+    static u_int day_in_minutes = 600 * HOURS_PER_DAY;
 
     return Time / day_in_minutes;
 }
@@ -83,19 +85,19 @@ u_int16 gamedate::day ()
 // calculate the hour of the current day
 u_int16 gamedate::hour ()
 {
-    return (Time / 60) % HOURS_PER_DAY;
+    return (Time / 600) % HOURS_PER_DAY;
 }
 
 // calculate minute of the hour
 u_int16 gamedate::minute ()
 {
-    return Time % 60; 
+    return Time % 600; 
 }
 
 // convert the time string to gametime minutes
 u_int32 gamedate::parse_time (const std::string & time)
 {
-    u_int32 minutes = 0, number = 0;
+    u_int32 t_minutes = 0, number = 0;
     char num[2] = "0";
 
     for (u_int32 i = 0; i < time.length (); i++)
@@ -107,32 +109,38 @@ u_int32 gamedate::parse_time (const std::string & time)
             number = 10 * number + atoi (num);
         }
         // got a letter
-        else
+        else if (isalpha (time[i]))
         {
             switch (time[i])
             {
                 // weeks
                 case 'w':
                 {
-                    minutes += number * DAYS_PER_WEEK * HOURS_PER_DAY * 60;
+                    t_minutes += number * DAYS_PER_WEEK * HOURS_PER_DAY * 600;
                     break;
                 }
                 // days
                 case 'd':
                 {
-                    minutes += number * HOURS_PER_DAY * 60;
+                    t_minutes += number * HOURS_PER_DAY * 600;
                     break;
                 }
                 // hours
                 case 'h':
                 {
-                    minutes += number * 60;
+                    t_minutes += number * 600;
                     break;
                 }
                 // minutes
                 case 'm':
                 {
-                    minutes += number;
+                    t_minutes += number * 10;
+                    break;
+                }
+                // 10th minutes
+                case 't':
+                {
+                    t_minutes += number;
                     break;
                 }
                 // error
@@ -147,5 +155,5 @@ u_int32 gamedate::parse_time (const std::string & time)
         }
     }
 
-    return minutes;
+    return t_minutes;
 }

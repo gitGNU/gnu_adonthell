@@ -54,10 +54,18 @@ void event_handler::init ()
     REGISTER_EVENT (ACTION_EVENT, action_event) 
 }
 
+// cleanup
+void event_handler::clear ()
+{
+    for (int i = 0; i < MAX_EVENTS; i++)
+        if (Handler[i] != NULL)
+            Handler[i]->clear ();
+}
+
 // Clear the registered handlers
 void event_handler::cleanup ()
 {
-    for (int i; i < MAX_EVENTS; i++)
+    for (int i = 0; i < MAX_EVENTS; i++)
         if (Handler[i] != NULL)
             delete Handler[i];
 }

@@ -40,24 +40,29 @@ public:
      */
     virtual ~event_handler_base () {}
 
+    /**
+     * Cleamup. Removes all events registered with the handler.
+     */
+    virtual void clear () = 0;
+    
     /** 
-     * Registers an event.
+     * Registers an %event.
      * 
-     * @param ev pointer to the event to register.
+     * @param ev pointer to the %event to register.
      */
     virtual void register_event (event* ev) = 0;
 
     /** 
-     * Unregister an event.
+     * Unregister an %event.
      * 
-     * @param ev pointer to the event to unregister.
+     * @param ev pointer to the %event to unregister.
      */
     virtual void remove_event (event* ev) = 0;
 
     /** 
-     * Check if an event corresponding to ev exists, and execute it. 
+     * Check if an %event corresponding to ev exists, and execute it. 
      * 
-     * @param ev event to raise.
+     * @param ev %event to raise.
      */
     virtual void raise_event (const event& ev) = 0;
 };

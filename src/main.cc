@@ -184,6 +184,9 @@ int main(int argc, char * argv[])
     // cleanup the saves
     gamedata::cleanup (); 
     
+    // cleanup event system
+    event_handler::cleanup ();
+    
     // cleanup data
     delete data::engine;
     if (data::the_player)

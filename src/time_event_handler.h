@@ -37,6 +37,11 @@ class time_event_handler : public event_handler_base
 {
 public:
     /**
+     * Cleamup. Removes all events registered with the handler.
+     */
+    void clear ();
+
+    /**
      * Register a time %event with the %event handler. It is inserted
      * into the vector of registered events depending on its "alarm"
      * time. The %event needs to be removed before it can be safely

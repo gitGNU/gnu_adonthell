@@ -35,6 +35,11 @@ class map_event_handler : public event_handler_base
 {
 public:
     /**
+     * Cleamup. Removes all events registered with the handler.
+     */
+    void clear ();
+
+    /**
      * Register a map %event with the %event handler. The %event 
      * needs to be removed before it can be safely deleted.
      *

@@ -55,7 +55,7 @@ public:
 
     /**
      * Get the current %gametime.
-     * @return %gametime in minutes since start of the game.
+     * @return %gametime in 1/10 minutes since start of the game.
      */
     static u_int32 time ()      { return Time; }
 
@@ -83,7 +83,8 @@ public:
     /**
      * convert the time string to gametime minutes. The time string
      * has the format "<number>X", where X may be (w)eek, (d)ay,
-     * (h)our or (m)inute. Several such pairs can be concatenated.
+     * (h)our, (m)inute or (t)enth minute. Several such pairs can be
+     * concatenated.
      * Valid examples are "1w1d1h", "30m1h" but also "1h1h".
      *
      * @param time The time format string.
@@ -106,10 +107,10 @@ public:
     
 private:
 #ifndef SWIG
-    // Time spent in the game in gametime minutes
+    // Time spent in the game in 1/10 gametime minutes
     static u_int32 Time;
 
-    // number of game cycles since the last gametime minute passed
+    // number of game cycles since the last 1/10 gametime minute passed
     static float Ticks;
 #endif // SWIG
 };
