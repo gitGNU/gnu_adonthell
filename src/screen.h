@@ -140,7 +140,7 @@ public:
      * @param i advancement of the transition (finished when i == screen::length () / 2)
      */
     static void transition (u_int16 i); 
-    
+
 private:
     /// Bytes per pixel.
     static u_int8 bytes_per_pixel_; 

@@ -66,7 +66,17 @@ public:
     {
         return should_update_map_;
     }
-    
+
+    /**
+     * Fades the screen to black
+     */
+    void fade_out ();
+
+    /**
+     * Fades in from a black screen
+     */
+    void fade_in ();
+
 protected:
     landmap lmap;
     win_mapview mv;

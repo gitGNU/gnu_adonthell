@@ -80,6 +80,44 @@ void mapengine::mainloop ()
     win_manager::draw ();
 }
 
+// fade the screen out
+void mapengine::fade_out ()
+{
+    s_int16 i = 0;
+
+    while (i <= 60)
+    {
+        if (i > 60) i = 60;
+
+        mainloop ();
+
+        screen::transition (i * 2);
+        screen::show ();
+
+        gametime::update ();
+        i = i + (gametime::frames_to_do () * 2);
+    }
+}
+
+// fade the screen in
+void mapengine::fade_in ()
+{
+    s_int16 i = 60;
+
+    while (i >= 0)
+    {
+        if (i < 0) i = 0;
+
+        mainloop ();
+
+        screen::transition (i * 2);
+        screen::show ();
+
+        gametime::update ();
+        i = i - (gametime::frames_to_do () * 2);
+    }
+}
+
 s_int8 mapengine::get_state (igzstream& file)
 {
     u_int16 nbr_of, i;

@@ -124,8 +124,7 @@ bool screen::set_fullscreen (bool m)
 {
     if (fullscreen_ != m)
     {
-        
-        int r = SDL_WM_ToggleFullScreen(display.vis); 
+        int r = SDL_WM_ToggleFullScreen(display.vis);
         if (r) fullscreen_ = m;
         return r; 
     }

@@ -97,6 +97,9 @@ data_screen::data_screen (int m)
 data_screen::~data_screen ()
 {
     gametime::start_action (); 
+
+    data::map_engine->draw (0, 0);
+    data::map_engine->fade_in ();
 }
 
 void data_screen::init ()
@@ -231,6 +234,8 @@ void data_screen::on_select ()
     // loading
     if (mode == LOAD_SCREEN)
     {
+        data::map_engine->fade_out ();
+
         gamedata::load (pos);
         set_return_code (1);
         quit = true;
