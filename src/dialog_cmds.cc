@@ -6,6 +6,9 @@
 #include "dialog_cmds.h"
 #include "dialog.h"
 
+s_int32 *dialog::offset;
+s_int32 *dialog::length;
+
 // reads a string from the dialogue string file
 s_int32 import_cmd::run (u_int32 &pc, void *data)
 {
