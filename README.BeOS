@@ -17,14 +17,25 @@ shipped with the individual library or tool.
 
 First of all, you'll have to install the BeOS Development Tools, which
 come as an extra package. You can find them at
-	http://sunsite.org.uk/packages/BeOS_stuff/beos/
+	http://www.bebits.com/app/2157/
 
 Next you'll have to install SDL, Python and Ogg Vorbis. See the INSTALL
 file for the respective URLs.
 
+The easiest way for doing this is to install the Developer version of
+LibPak:
+	http://www.bebits.com/app/3322/
+
+Python is also available as precompiled package:
+	http://www.bebits.com/app/2206
+
+If you'd rather compile everything yourself, please follow the steps 
+below:
+
 SDL is simple: Open a terminal, cd into the SDL-1.2.x directory and type
 'configure', 'make' and 'make install'. You should also download the 
-patch from http://libsdl.org/faq/beos-sdl.diff and install by typing:
+patch from http://adonthell.linuxgames.com/files//beos-sdl.diff and 
+install by typing:
 	
     $ (cd /; patch -p1 </path/to/patch/beos-sdl.diff) 
 

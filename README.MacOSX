@@ -1,94 +1,45 @@
-Adonthell/Waste's Edge on Mac OS X - prelimenary work-around
-Document version 1.1 by Nils Hesse ( nils.hesse@kcl.ac.uk )
 
-Please note that this text describes how to get Adonthell and Waste's
-Edge *kind of* working in Mac OS X. The method described is by no
-means a consumer-ready way of doing things. However, at the moment,
-it is all we have :)
+                       Adonthell on MacOS X
 
-You WILL be using the Terminal A LOT. You will also need the
-Administrator's password.
+This file contains additional information for compiling Adonthell 
+under MacOS X. For general compilation instructions refer to the 
+INSTALL file. Even more details are found within the NEWBIE file.
 
-I am assuming that you have a default installation of Mac OS X 10.1
-and either the December 2001 or the April 2002 Developer Tools and an
-internet connection (the faster, the better).
 
-The very first thing you'll need, is Fink. You can get it at
+Preparations:
+=============
+Install the Developer Tools from
+    http://developer.apple.com/macosx/
 
-http://fink.sourceforge.net/
+Then you should create the /usr/local/ folder, if it is not there already.
+Open the terminal and type
+    sudo mkdir /usr/local/
 
-Fink is a package management system, similar to GNU Linux/Debian. It
-will help you install all kinds of GNU (related) software. Amongst
-others, this also includes things like the X11 windowing server,
-GNOME, enlightenment, etc... it is a very useful package to have,
-especially if you like the GNU world. :)
+Now you can go about installing SDL and Ogg Vorbis. See the INSTALL file
+for the URLs. Again, you'll have to use the terminal. Extract the SDL
+tarball (tar xzf SDL-1.2.x.tar.gz) and cd into the SDL-1.2.x directory.
+There type
 
-Please read all the FAQs and some Documentation on the Fink web
-site... it is very useful. Also, try to familiarize yourself with
-dselect (in Fink).
+    ./configure
+    make
+    sudo make install
 
-After you've succesfully installed fink, we can begin.
+That will install SDL into /usr/local/. Do the same steps for libogg and
+libvorbis (in that order). Refer to the documentation of each library for
+more detailed instructions.
 
-1) at a new Terminal, type 'sudo dselect'.
 
-2) Go to [S]elect and get the following packages:
+Compiling Adonthell:
+====================
+After all libraries have been installed successfully, it just takes 
+another
 
-gettext             (in base - you may already have this)
-automake25          (in devel)
-libtool14           (in devel)
-intltool            (in devel)
-sdl                 (in games)
-sdl-image           (in games)
-sdl-mixer           (in games)
-smpeg               (in games)
-python-nox          (in languages)
-tcltk               (in languages)
-libogg              (in sound)
-libogg-shlibs       (in sound)
-libvorbis           (in sound)
-libvorbis-shlibs    (in sound)
+    ./configure
+    make
+    sudo make install
 
-You may be asked to select some other packages in order to fullfill
-certain dependancies... make sure you do.
+to compile and install Adonthell. Repeat the same steps for the Waste's
+Edge data and you are done. You can now launch Adonthell by typing
 
-3) [I]nstall, [C]onfig, [R]emove and [Q]uit.
+    /usr/local/bin/adonthell wastesedge
 
-4) Next, we will need to create a symbolic link - a bit messy, but we
-can remove it later. In the Terminal type 'ln -s
-/sw/lib/libvorbis.dylib /usr/lib/libvorbis.dylib'.
-
-5) Now we can compile the adonthell source and waste's edge sources
-:) Get them from:
-
-http://freesoftware.fsf.org/download/adonthell/
-
-You will need 'adonthell-0.3.3pre1.sit' and 'wastesedge.sit'
-
-6) Once you have those files, un-stuff them and 'cd' into the
-extracted adonthell directory in a Terminal. Once there, type
-'./configure --disable-nls'. With any luck, all should go well. Then,
-type 'make'. Watch the screen output jibberish for a few minutes. If
-there are no errors, you can then proceed with 'sudo make install'.
-Then you have adonthell installed.
-
-7) Now 'cd' into the extracted wastesedge directory and type
-'./configure'. After that, 'make', and after that 'sudo make
-install'.
-
-8) If all went well, you're done. type '/sw/bin/adonthell-wastesedge'
-to play. :))
-
-9) If you want, you can do a 'sudo rm /usr/lib/libvorbis.dylib' but
-that aint important. It's probably best if you leave it there anyway.
-
-Known Bugs
-
--Text input doesn't work.
--Nationalisation (nls) doesn't work/compile
--Fullscreen mode doesn't work (due to SDL)
-
-Remember, this is an experimental work-around. You're pretty likely
-to encounter a few problems. For questions, e-mail the
-adonthell-devel list:
-
-adonthell-devel@mail.freesoftware.fsf.org
