@@ -234,7 +234,7 @@ void dialog::run (u_int32 index)
 // yeah, the c string library hurts, but at least it's fast ;)
 char* dialog::scan_string (const char *s)
 {
-    u_int32 begin, end, len, done;
+    u_int32 begin, end, len;
     PyObject *result;
     char *start, *mid, *string = NULL;
     char *tmp, *newstr = strdup (s);
@@ -247,8 +247,6 @@ char* dialog::scan_string (const char *s)
         start = strchr (newstr, '$');
         if (start == NULL) break;
 
-        done = 0;
-
         // replace "$name"
         if (strncmp (start, "$name", 5) == 0)
         {
@@ -260,7 +258,8 @@ char* dialog::scan_string (const char *s)
             strcat (tmp, start+5);
             delete newstr;
             newstr = tmp;
-            done = 1;
+
+            continue;
         }
 
         // replace "$fm"
@@ -286,20 +285,12 @@ char* dialog::scan_string (const char *s)
             delete newstr;
             newstr = tmp;
 
-            done = 1;
+            continue;
         }
 
         // Error!
-        if (!done)
-        {
-            begin = strlen (newstr) - strlen (start);
-            tmp = new char[begin];
-            strncpy (tmp, newstr, begin);
-            tmp[begin] = 0;
-            delete newstr;
-            newstr = tmp;
-            cout << "\n*** Error, unknown macro " << start << flush;
-        }
+        cout << "\n*** Error, unknown macro " << start << flush;
+        start[0] = ' ';
     }
     
     // execute python functions
