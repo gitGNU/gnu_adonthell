@@ -285,7 +285,8 @@ Q: Why do I get background music, but never any sound effects?
 
 A: Full sound effect support is in the code, and some sound effects
 are even loaded into memory when the game is executed. Currently, no
-events trigger sound effects, so you won't hear any.
+events trigger sound effects, so you won't hear any (excepted those
+related to GUI events).
 
 
 Q: The configure script claims it cannot find SDL (or Ogg Vorbis or

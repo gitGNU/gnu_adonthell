@@ -50,7 +50,9 @@ void nls::init (config &myconfig)
 void nls::set_language (const string &language)
 {    
 #if ENABLE_NLS
+#ifndef WIN32
     setenv ("LANGUAGE", language.c_str (), 1);
+#endif
     {
         // tell gettext that the language has changed
         extern int _nl_msg_cat_cntr;

@@ -4,7 +4,7 @@ dnl **************************************************************
 
 AC_PREREQ(2.50)
 AC_INIT(adonthell, 0.3.3, adonthell@linuxgames.com, adonthell)
-AC_PREFIX_PROGRAM(adonthell)
+dnl AC_PREFIX_PROGRAM(adonthell)
 
 dnl Detect the canonical host and target build environment
 AC_CANONICAL_HOST
