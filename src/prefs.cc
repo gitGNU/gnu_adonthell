@@ -300,7 +300,7 @@ bool config::read_adonthellrc ()
 {
     int n, i = 1;
     u_int32 major = 0, minor = 0, micro = 0, MAJOR, MINOR, MICRO;
-    char suffix[16], SUFFIX[16]; 
+    char suffix[16] = "\0", SUFFIX[16] = "\0"; 
     string s, fname, version;
 
 #ifndef WIN32

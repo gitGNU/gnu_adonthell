@@ -42,6 +42,8 @@ s_int8 mapsquare_walkable::put (ogzstream& file) const
 
 mapsquare_walkable_area::mapsquare_walkable_area ()
 {
+    basex = 0;
+    basey = 0;  
 }
 
 mapsquare_walkable_area::~mapsquare_walkable_area ()

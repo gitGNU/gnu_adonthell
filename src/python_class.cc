@@ -41,6 +41,7 @@ void python::init ()
 
 void python::cleanup () 
 {
+    Py_XDECREF (module);
     Py_Finalize ();
 }
 

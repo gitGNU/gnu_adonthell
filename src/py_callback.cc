@@ -125,7 +125,7 @@ bool py_callback::get_state (igzstream & file)
     // check that we have a valid instance that contains our callback
     if (instance == NULL)
     {
-        fprintf (stderr, "*** error: py_callback::get_state: Invalid instance!");
+        fprintf (stderr, "*** error: py_callback::get_state: Invalid instance!\n");
         return false;
     }
      
@@ -136,7 +136,7 @@ bool py_callback::get_state (igzstream & file)
     // sanity check
     if (!PyCallable_Check (function))
     {
-        fprintf (stderr, "*** error: py_callback::get_state: Setting callback ' %s' failed!", name.c_str ());
+        fprintf (stderr, "*** error: py_callback::get_state: Setting callback '%s' failed!\n", name.c_str ());
         return false;
     }
     
