@@ -25,6 +25,7 @@
 #include <vector>
 #include <string>
 #include "dlg_node.h"
+#include "dlg_module_entry.h"
 
 /**
  * This class contains a dialogue, made up of elementary nodes and
@@ -99,7 +100,7 @@ public:
      * Get the node that is currently selected.
      * @return the DlgNode currently selected
      */
-    DlgNode* selected ()            { return selected_; }
+    DlgNode* selected ()                { return selected_; }
 
     /**
      * Init the Dialogue from a file
@@ -118,33 +119,49 @@ public:
     /**
      * Save the Dialogue to a file
      */
-    void save (ofstream &file) { }
+    void save (ofstream &file)          { }
     
     /**
      * Get the list of nodes in this dialogue.
      * @return a reference to the list of nodes.
      */
-    std::vector<DlgNode*> &getNodes ()   { return nodes; }
+    std::vector<DlgNode*> &getNodes ()  { return nodes; }
     
     /**
      * Get the current offset of this dialogue.
      * @return a reference to the dialogue's offset.
      */
-    DlgPoint &offset ()             { return offset_; }
+    DlgPoint &offset ()                 { return offset_; }
     
     /**
      * Get the name of this dialogue.
      * @return a reference to the dialogue's name.
      */
-    std::string &name ()                 { return name_; }
+    std::string &name ()                { return name_; }
     /**
      * Set the name of this dialogue.
      * @param the filename of the file the dialogue was loaded from.
      */
     void setName (const std::string &filename);
-    bool changed ()                 { return changed_; }
-    void setChanged (bool c = true) { changed_ = c; }
+    
+    /**
+     * Check whether this dialogue has been changed since it's been
+     * opened or saved.
+     * @return <b>true</b> if that is the case, <b>false</b> otherwise.
+     */
+    bool changed ()                     { return changed_; }
+    /**
+     * Mark this dialogue as changed.
+     * @param c Set to <b>true</b> to mark the dialogue as changed.
+     */
+    void setChanged (bool c = true)     { changed_ = c; }
 
+    /**
+     * Get a pointer to the module entry
+     * @return the DlgModuleEntry of this module
+     */
+    DlgModuleEntry *entry ()            { return &entry_; }
+    
 protected:
     std::vector<DlgNode*> nodes;// all the nodes in this dialogue
     DlgNode *selected_;         // the node currently selected
@@ -156,6 +173,8 @@ protected:
     std::string name_;          // Short (file-) name of the dialogue 
     std::string description_;   // Description of the dialogue
 
+    DlgModuleEntry entry_;      // further content of the dialogue
+    
 private:
     void init ();               // initialize a newly constructed DlgModule
 };

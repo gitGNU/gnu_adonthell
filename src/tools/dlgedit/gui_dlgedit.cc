@@ -31,6 +31,7 @@
 #include <unistd.h>
 #include "gettext.h"
 #include "dlg_compiler.h"
+#include "gui_code.h"
 #include "gui_dlgedit.h"
 #include "gui_dlgedit_events.h"
 
@@ -198,13 +199,13 @@ GuiDlgedit::GuiDlgedit ()
     menuItem[SETTINGS] = menuitem;
 
     // Custom Functions
-    menuitem = gtk_menu_item_new_with_label ("Functions");
+    menuitem = gtk_menu_item_new_with_label ("Python Code");
     gtk_container_add (GTK_CONTAINER (submenu), menuitem);
-    gtk_widget_add_accelerator (menuitem, "activate", accel_group, GDK_f, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
+    gtk_widget_add_accelerator (menuitem, "activate", accel_group, GDK_p, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
     gtk_object_set_data (GTK_OBJECT (menuitem), "help-id", GINT_TO_POINTER (11));
     gtk_signal_connect (GTK_OBJECT (menuitem), "enter-notify-event", GTK_SIGNAL_FUNC (on_display_help), message);
     gtk_signal_connect (GTK_OBJECT (menuitem), "leave-notify-event", GTK_SIGNAL_FUNC (on_clear_help), message);
-    gtk_signal_connect (GTK_OBJECT (menuitem), "activate", GTK_SIGNAL_FUNC (on_dialogue_functions_activate), (gpointer) NULL);
+    gtk_signal_connect (GTK_OBJECT (menuitem), "activate", GTK_SIGNAL_FUNC (on_dialogue_functions_activate), (gpointer) this);
     gtk_widget_show (menuitem);
     menuItem[FUNCTIONS] = menuitem;
 
@@ -227,9 +228,9 @@ GuiDlgedit::GuiDlgedit ()
 
     // Preview i18n
 #ifdef ENABLE_NLS 
-    menuitem = gtk_menu_item_new_with_label ("Preview Translation");
+    menuitem = gtk_menu_item_new_with_label ("Preview Localization");
     gtk_container_add (GTK_CONTAINER (submenu), menuitem);
-    gtk_widget_add_accelerator (menuitem, "activate", accel_group, GDK_p, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
+    gtk_widget_add_accelerator (menuitem, "activate", accel_group, GDK_l, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
     gtk_object_set_data (GTK_OBJECT (menuitem), "help-id", GINT_TO_POINTER (13));
     gtk_signal_connect (GTK_OBJECT (menuitem), "enter-notify-event", GTK_SIGNAL_FUNC (on_display_help), message);
     gtk_signal_connect (GTK_OBJECT (menuitem), "leave-notify-event", GTK_SIGNAL_FUNC (on_clear_help), message);
@@ -477,6 +478,20 @@ void GuiDlgedit::compileDialogue ()
     
     // report success
     message->display (212);
+}
+
+// edit custom code of current module
+void GuiDlgedit::customCode ()
+{
+    DlgModule *module = graph_->dialogue ();
+    if (module == NULL) return;
+    
+    // if the dialog isn't already open ...
+    if (GuiCode::dialog == NULL) 
+        GuiCode::dialog = new GuiCode ();
+    
+    // otherwise just show it
+    GuiCode::dialog->display (module->entry ());
 }
 
 // preview the translated dialogue

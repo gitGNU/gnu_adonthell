@@ -25,8 +25,28 @@
 
 #include <gtk/gtk.h>
 #include <locale.h>
+#include <getopt.h>
 #include "gettext.h"
 #include "gui_dlgedit.h"
+
+int parse_arguments (int argc, char *argv[])
+{
+    int c;
+    
+    while ((c = getopt (argc, argv, "c:")) != -1)
+    {
+        switch (c)
+        {
+            case 'c':
+            {
+                
+                break;
+            }
+        }
+    }
+    
+    return optind;
+}
 
 int main (int argc, char *argv[])
 {

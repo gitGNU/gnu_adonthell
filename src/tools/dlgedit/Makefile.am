@@ -14,12 +14,14 @@ dlgedit_SOURCES = \
     dlg_circle_entry.cc \
     dlg_compiler.cc \
     dlg_module.cc \
+    dlg_module_entry.cc \
     dlg_mover.cc \
     dlg_node.cc \
     dlg_point.cc \
     dlg_rect.cc \
     gui_circle.cc \
     gui_circle_events.cc \
+    gui_code.cc \
     gui_dlgedit.cc \
     gui_dlgedit_events.cc \
     gui_edit.cc \
@@ -39,6 +41,7 @@ dlgedit_SOURCES = \
     dlg_circle_entry.h \
     dlg_compiler.h \
     dlg_module.h \
+    dlg_module_entry.h \
     dlg_mover.h \
     dlg_node.h \
     dlg_node_gfx.h \
@@ -47,6 +50,7 @@ dlgedit_SOURCES = \
     dlg_types.h \
     gui_circle.h \
     gui_circle_events.h \
+    gui_code.h \
     gui_dlgedit.h \
     gui_dlgedit_events.h \
     gui_edit.h \

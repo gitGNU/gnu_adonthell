@@ -138,6 +138,10 @@ public:
      */
     void compileDialogue ();
     /**
+     * Edit the custom code of the current module.
+     */
+    void customCode ();
+    /**
      * preview translation for a dialogue
      * @param catalogue full path to a gnu gettext compliant binary catalogue
      *        (.mo) file

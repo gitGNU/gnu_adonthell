@@ -72,7 +72,7 @@ void on_dialogue_compile_activate (GtkMenuItem * menuitem, gpointer user_data)
 // Dialogue Menu: Settings
 void on_dialogue_player_activate (GtkMenuItem * menuitem, gpointer user_data)
 {
-/*
+    /*
     MainFrame *wnd = (MainFrame *) user_data;
     
     preset_dlg dlg (wnd);
@@ -85,14 +85,8 @@ void on_dialogue_player_activate (GtkMenuItem * menuitem, gpointer user_data)
 // Dialogue Menu: Functions
 void on_dialogue_functions_activate (GtkMenuItem * menuitem, gpointer user_data)
 {
-/*
-    MainFrame *wnd = (MainFrame *) user_data;
-    
-    function_dlg dlg (wnd);
-    dlg.run  ();
-    
-    gtk_main ();
-*/
+    GuiDlgedit *dlgedit = (GuiDlgedit *) user_data;
+    dlgedit->customCode ();
 }
 
 // Dialogue Menu: Preview i18n
