@@ -266,7 +266,7 @@ A: It's one of two things: you either don't have the PNG graphics
 library installed or you have an incompatible version installed.
 Either way, you'll need to download and build the PNG graphics
 library. It's a default library that comes on most Linux systems, but
-you'll need a recent version for SDL_image. You can find the latest
+you'll need a recent version for libPNG. You can find the latest
 version of libPNG at:
 http://www.cdrom.com/pub/png/pngcode.html
 
