@@ -125,16 +125,19 @@ item_base *manager::unequip (slot *target, u_int32 *count)
 
     // the item we will remove from the slot
     item_base *item = target->get_item ();
+
+    if (item != NULL)
+    {
+        // try to remove the requested number of items    
+        *count -= target->remove (item, *count);
     
-    // try to remove the requested number of items    
-    *count -= target->remove (item, *count);
+        // let the character know when a slot was totally emptied.
+        if (target->count () == 0) item->unequipped (target);
     
-    // let the character know when a slot was totally emptied.
-    if (target->count () == 0) item->unequipped (target);
-    
-    // returned item(s) are no longer within a slot
-    if (item) item->set_slot (NULL);
-    
+        // returned item(s) are no longer within a slot
+        item->set_slot (NULL);
+    }
+   
     return item;
 }
 

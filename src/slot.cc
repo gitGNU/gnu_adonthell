@@ -108,7 +108,7 @@ u_int32 slot::add (item_base *item, const u_int32 & count)
 u_int32 slot::remove (item_base *item, const u_int32 & count)
 {
     // nothing needs be done
-    if (count == 0) return 0;
+    if (!item || count == 0) return 0;
 
     // in case items match, remove count items
     if (Item == item)
