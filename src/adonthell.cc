@@ -182,3 +182,10 @@ void adonthell::mapview_start ()
     
     win_manager::active->add (&view);
 }
+
+void adonthell::mapview_stop ()
+{
+    set_update_map (false);
+    view.mapview::detach_map ();
+    win_manager::active->remove (&view);
+}

@@ -210,6 +210,11 @@ class adonthell
      * @todo move mapview handling somewhere else
      */
     void mapview_start ();
+    
+    /**
+     * @todo move mapview handling somewhere else
+     */
+    void mapview_stop ();
 
   private:
     py_object control;

@@ -25,9 +25,9 @@
  code base and some of the important underlying concepts.
  
  In case you are not so much interested in programming for Adonthell but rather in
- creating %game content you should take a look at the \link
- http://adonthell.linuxgames.com/download-data/documentation.shtml Designer's 
- documentation \endlink instead.
+ creating %game content you should take a look at the <A
+ HREF="http://adonthell.linuxgames.com/download-data/documentation.shtml">Designer's
+ documentation</A> instead.
  
  \section overview Overview
  Apart from the pure API documentation, which contains the interface description
