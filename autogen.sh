@@ -9,3 +9,8 @@ rm -f `find . -name 'Makefile'`
 aclocal
 automake --add-missing --gnu
 autoconf 
+
+echo
+echo "Now type './configure' to prepare Adonthell for compilation."
+echo "Afterwards, 'make' will build Adonthell."
+echo

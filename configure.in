@@ -4,7 +4,6 @@ dnl **************************************************************
 
 AC_INIT(README)
 
-AM_CONFIG_HEADER(header.h)
 AM_INIT_AUTOMAKE(adonthell, 0.3pre1)
 
 CFLAGS="-O6 -g -Wall"
@@ -104,6 +103,7 @@ if test x$SDL_MIXER = xyes; then
       ogg_music="disabled")
 else
 	audio="disabled"	
+        ogg_music="disabled"
 fi
 
 
@@ -216,6 +216,9 @@ fi
 
 if test x$OGG_VORBIS = xyes; then
    AC_CHECK_HEADERS([vorbis/vorbisfile.h]) 
+   AM_CONDITIONAL(HAVE_OGG_VORBIS, true)
+else
+   AM_CONDITIONAL(HAVE_OGG_VORBIS, false)
 fi 
 
 
