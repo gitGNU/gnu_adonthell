@@ -65,3 +65,31 @@ void project_item::load (FILE *file)
 
 
 // Project stuff follows 
+// Save the project
+void project::save (const char *name)
+{
+    iterator it;
+    FILE *file = fopen (name, "w");
+
+    if (!file) return;
+    
+    // Adonthell Dialogue Project file version 1
+    fputs ("ADP1", file);
+
+    // save number of items
+    fwrite (items.size (), sizeof (int), 1, file);
+    
+    // Save all items
+    for (it = items.begin (); it != items.end (); it++)
+        it->save (file);
+}
+
+// Load a project
+void project::load (const char *name)
+{
+    FILE *file = fopen (name, "r");
+
+    if (!file) return;
+
+    // ...
+}

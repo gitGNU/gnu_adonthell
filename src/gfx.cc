@@ -1046,6 +1046,7 @@ void screen::show()
   SDL_UpdateRect (vis, 0, 0, 0, 0);
   frames_to_do=timer3.tv_usec/14000;
   if (frames_to_do>20) frames_to_do=20;
+  cerr << "\r\r" << (int) frames_to_do << flush;
 }
 #endif
 

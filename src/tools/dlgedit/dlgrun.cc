@@ -1,4 +1,6 @@
 /*
+   $Id$
+   
    Copyright (C) 1999 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
@@ -16,7 +18,6 @@
 #include <gtk/gtk.h>
 
 #include "../../types.h"
-#include "../../dlg_io.h"
 #include "../../array_tmpl.h"
 #include "../../interpreter.h"
 #include "../../commands.h"
@@ -68,13 +69,15 @@ void
 StartDialogue (RunData * rd)
 {
     FILE *str = fopen (rd->data->text_file, "r");
-    u_int32 count = h2d (4, str);
+    u_int32 count;
+
+    fread (&count, sizeof(count), 1, str);
         
     dialog::offset = new s_int32[count];
     dialog::length = new s_int32[count];
 
-    ri (dialog::offset, count, 4, str);
-    ri (dialog::length, count, 4, str);
+    fread (dialog::offset, sizeof(dialog::offset[0]), count, str);
+    fread (dialog::length, sizeof(dialog::length[0]), count, str);
 
     fclose (str);
     

@@ -195,7 +195,7 @@ on_file_load_activate (GtkMenuItem * menuitem, gpointer user_data)
     gtk_main ();
 
     // Try to load file
-    load_dialogue ((MainFrame *) user_data, file->str);
+    load_dialogue (wnd, file->str);
 
     // Clean up
     g_string_free (file, TRUE);

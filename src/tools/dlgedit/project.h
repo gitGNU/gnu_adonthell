@@ -23,16 +23,16 @@ class project_item
 {
 public:
 
-    void save (FILE*);      // save an item to disk
-    void load (FILE*);      // load an item
+    void save (FILE*);          // save an item to disk
+    void load (FILE*);          // load an item
     
 protected:
-    u_int32 type;           // Type thereof; either CHARACTER or DIALOGUE
-    char *note;             // Personal notes
-    char *label;            // Label of the entry
-    char *file;             // The actual npc or dlg represented by the item
-    u_int32 id;             // A unique id used throughout the project
-    Array<u_int32> attached;// The Dlgs attached to a NPC and vice versa
+    u_int32 type;               // Type thereof; either CHARACTER or DIALOGUE
+    char *note;                 // Personal notes
+    char *label;                // Label of the entry
+    char *file;                 // The actual npc or dlg represented by the item
+    u_int32 id;                 // A unique id used throughout the project
+    Array<u_int32> attached;    // The Dlgs attached to a NPC and vice versa
 };
 
 // All Information needed for the project management
@@ -41,13 +41,22 @@ class project
 friend class project_item;
 
 public:
-    GtkWidget *tree;        // Project Tree
-    GtkWidget *note;        // "Personal note" edit box
-    GtkWidget *npc_frame;   // NPC information
-    GtkWidget *npc_add;     // Add/Remove NPC
-    GtkWidget *dlg_frame;   // Dialogue information
-    GtkWidget *dlg_add;     // Add/Remove Dialogue
-    GtkWidget *npc_list;    // Dropdown list of all available NPCs
+    void save (const char*);    // Save the project
+    void load (const char*);    // Load a project
+    
+    void show_note ();          // Display an items note
+    void show_npc ();           // Display NPC info of item
+    void show_dlg ();           // Display Dialogue info of item
 
-    char *file_name;        // Name of the project file
+    GtkWidget *tree;            // Project Tree
+    GtkWidget *note;            // "Personal note" edit box
+    GtkWidget *npc_frame;       // NPC information
+    GtkWidget *npc_add;         // Add/Remove NPC
+    GtkWidget *dlg_frame;       // Dialogue information
+    GtkWidget *dlg_add;         // Add/Remove Dialogue
+    GtkWidget *npc_list;        // Dropdown list of all available NPCs
+
+    char *file_name;            // Name of the project file
+    
+    vector<project_item*> items;// Storage of the projects NPCs and Dlgs
 };

@@ -1,4 +1,6 @@
 /*
+   $Id$
+   
    Copyright (C) 1999 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
@@ -15,7 +17,6 @@
 #include <gtk/gtk.h>
 
 #include "../../types.h"
-#include "../../dlg_io.h"
 #include "../../commands.h"
 #include "linked_list.h"
 #include "dlgnode.h"
@@ -189,13 +190,9 @@ write_text (DlgCompiler * comp, ptr_list * nodes, gchar * file_name)
     /* write string - file */
     out = fopen (g_strjoin (NULL, file_name, ".str", NULL), "wb");
 
-    d2h (index, sizeof (u_int32), out);
-
-    for (i = 0; i < (s_int32)index; i++)
-        d2h (offset[i], 4, out);
-
-    for (i = 0; i < (s_int32)index; i++)
-        d2h (length[i], 4, out);
+    fwrite (&index, sizeof (index), 1, out);
+    fwrite (offset, sizeof (offset[0]), index, out);
+    fwrite (length, sizeof (length[0]), index, out);
 
     for (i = 0; i < nodes->size; i++)
     {
@@ -375,10 +372,10 @@ write_dialogue (DlgCompiler * comp, gchar * file_name)
     num_cmds = comp->pc_lookup[dlg->len - 1];
 
     /* output length of dialogue */
-    d2h (comp->dlg_length, 4, dat);
+    fwrite (&comp->dlg_length, sizeof(comp->dlg_length), 1, dat);
 
     /* output number of dialogue commands */
-    d2h (num_cmds, 4, dat);
+    fwrite (&num_cmds, sizeof(num_cmds), 1, dat);
     fprintf (txt, "%i commands in Dialogue\n\n", (int)num_cmds);
 
     for (i = 0; i < dlg->len; i++)
@@ -394,44 +391,44 @@ write_dialogue (DlgCompiler * comp, gchar * file_name)
             case CLEAR:
                 {
                     fprintf (txt, "%i CLEAR\n", (int)k++);
-                    d2h (CLEAR, 4, dat);
+                    fwrite (&cmd->type, sizeof(cmd->type), 1, dat);
                     break;
                 }
             case RETURN:
                 {
-                    fprintf (txt, "%i RETURN %i\n\n", (int)k++, (int)cmd->text);
-                    d2h (RETURN, 4, dat);
-                    d2h (cmd->text, 4, dat);
+                    fprintf (txt, "%i RETURN %i\n", (int)k++, (int)cmd->text);
+                    fwrite (&cmd->type, sizeof(cmd->type), 1, dat);
+                    fwrite (&cmd->text, sizeof(cmd->text), 1, dat);
                     break;
                 }
            case IMPORT:
                 {
                     fprintf (txt, "%i IMPORT \"%s\"\n", (int)k++, ((DlgNode *) get_ptr_list_element (comp->nodes, cmd->new_pc))->text);
-                    d2h (IMPORT, 4, dat);
-                    d2h (cmd->text, 4, dat);
+                    fwrite (&cmd->type, sizeof(cmd->type), 1, dat);
+                    fwrite (&cmd->text, sizeof(cmd->text), 1, dat);
                     break;
                 }
             case NPCTEXT:
                 {
-                    fprintf (txt, "%i NPCTEXT %i\n", (int)k++, (int)cmd->text);
-                    d2h (NPCTEXT, 4, dat);
-                    d2h (cmd->text, 4, dat);
+                    fprintf (txt, "\n%i NPCTEXT %i\n", (int)k++, (int)cmd->text);
+                    fwrite (&cmd->type, sizeof(cmd->type), 1, dat);
+                    fwrite (&cmd->text, sizeof(cmd->text), 1, dat);
                     break;
                 }
             case PTEXT:
                 {
                     fprintf (txt, "%i PTEXT %i %i\n", (int)k++, (int)cmd->text, (int)cmd->new_pc);
-                    d2h (PTEXT, 4, dat);
-                    d2h (cmd->text, 4, dat);
-                    d2h (cmd->new_pc, 4, dat);
+                    fwrite (&cmd->type, sizeof(cmd->type), 1, dat);
+                    fwrite (&cmd->text, sizeof(cmd->text), 1, dat);
+                    fwrite (&cmd->new_pc, sizeof(cmd->new_pc), 1, dat);
                     break;
                 }
             case SNPCTEXT:
                 {
-                    fprintf (txt, "%i SNPCTEXT %i %i\n", (int)k++, (int)cmd->text, (int)cmd->new_pc);
-                    d2h (SNPCTEXT, 4, dat);
-                    d2h (cmd->text, 4, dat);
-                    d2h (cmd->new_pc, 4, dat);
+                    fprintf (txt, "\n%i SNPCTEXT %i %i\n", (int)k++, (int)cmd->text, (int)cmd->new_pc);
+                    fwrite (&cmd->type, sizeof(cmd->type), 1, dat);
+                    fwrite (&cmd->text, sizeof(cmd->text), 1, dat);
+                    fwrite (&cmd->new_pc, sizeof(cmd->new_pc), 1, dat);
                     break;
                 }
             }
