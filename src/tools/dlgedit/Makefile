@@ -69,13 +69,13 @@ VERSION = 0.1.1.7
 
 bin_PROGRAMS = dlgedit
 
-dlgedit_SOURCES = callbacks.cc circle.cc compile.cc cond.tab.cc crcle_callbacks.cc crcle_interface.cc create_code.cc dlgnode.cc error_dlg.cc err_callbacks.cc err_interface.cc events.cc  geometrie.cc graph.cc  lex.cond.cc lex.loadlg.cc lex.vars.cc main.cc pjt_interface.cc pjt_callbacks.cc preset.cc project.cc ps_callbacks.cc ps_dlg.cc ps_interface.cc pset_callbacks.cc pset_interface.cc run.cc run_callbacks.cc run_interface.cc vars.tab.cc interface.cc
+dlgedit_SOURCES = callbacks.cc circle.cc compile.cc crcle_callbacks.cc crcle_interface.cc dlgnode.cc error_dlg.cc err_callbacks.cc err_interface.cc events.cc  geometrie.cc graph.cc  lex.loadlg.cc main.cc pjt_interface.cc pjt_callbacks.cc preset.cc project.cc ps_callbacks.cc ps_dlg.cc ps_interface.cc pset_callbacks.cc pset_interface.cc run.cc run_callbacks.cc run_interface.cc interface.cc
 
 
 # Evil, but it works...
-CPPFLAGS =  -Wall -Werror -D_DLGEDIT_ `gtk-config --cflags`
+CPPFLAGS =  -Werror -D_DLGEDIT_ `gtk-config --cflags`
 
-LDADD = ../../character.o ../../interpreter.o ../../yarg.o ../../storage.o ../../dialog_cmds.o ../../generic_cmds.o 
+LDADD = ../../inventory.o ../../py_mapengine_wrap.o ../../animation.o ../../py_player_wrap.o ../../audio.o ../../lex.prefs.o ../../screen.o ../../audio_thread.o ../../storage.o ../../character.o ../../map.o ../../win_base.o ../../mapcharacter.o ../../win_border.o ../../cutscene.o ../../mapengine.o ../../win_container.o ../../mapevent.o ../../win_font.o ../../fileops.o ../../mapitem.o ../../win_friend.o ../../game.o ../../mappattern.o ../../win_image.o ../../mapsquare.o ../../win_label.o ../../image.o ../../pnm.o ../../win_select.o ../../init.o ../../prefs.o ../../win_write.o ../../input.o ../../py_dialogue.o ../../yarg.o ../../py_inc.o
 
 
 LDFLAGS = -lm -lstdc++ `gtk-config --libs`
@@ -87,16 +87,24 @@ PROGRAMS =  $(bin_PROGRAMS)
 
 DEFS = -DHAVE_CONFIG_H -I. -I$(srcdir) -I../../..
 LIBS = -L/usr/local/lib -lSDL -lpthread -lSDL_image -lSDL_mixer -L/usr/lib/python1.5/config -lpython1.5
-dlgedit_OBJECTS =  callbacks.o circle.o compile.o cond.tab.o \
-crcle_callbacks.o crcle_interface.o create_code.o dlgnode.o error_dlg.o \
-err_callbacks.o err_interface.o events.o geometrie.o graph.o lex.cond.o \
-lex.loadlg.o lex.vars.o main.o pjt_interface.o pjt_callbacks.o preset.o \
-project.o ps_callbacks.o ps_dlg.o ps_interface.o pset_callbacks.o \
-pset_interface.o run.o run_callbacks.o run_interface.o vars.tab.o \
-interface.o
+dlgedit_OBJECTS =  callbacks.o circle.o compile.o crcle_callbacks.o \
+crcle_interface.o dlgnode.o error_dlg.o err_callbacks.o err_interface.o \
+events.o geometrie.o graph.o lex.loadlg.o main.o pjt_interface.o \
+pjt_callbacks.o preset.o project.o ps_callbacks.o ps_dlg.o \
+ps_interface.o pset_callbacks.o pset_interface.o run.o run_callbacks.o \
+run_interface.o interface.o
 dlgedit_LDADD = $(LDADD)
-dlgedit_DEPENDENCIES =  ../../character.o ../../interpreter.o \
-../../yarg.o ../../storage.o ../../dialog_cmds.o ../../generic_cmds.o
+dlgedit_DEPENDENCIES =  ../../inventory.o ../../py_mapengine_wrap.o \
+../../animation.o ../../py_player_wrap.o ../../audio.o \
+../../lex.prefs.o ../../screen.o ../../audio_thread.o ../../storage.o \
+../../character.o ../../map.o ../../win_base.o ../../mapcharacter.o \
+../../win_border.o ../../cutscene.o ../../mapengine.o \
+../../win_container.o ../../mapevent.o ../../win_font.o ../../fileops.o \
+../../mapitem.o ../../win_friend.o ../../game.o ../../mappattern.o \
+../../win_image.o ../../mapsquare.o ../../win_label.o ../../image.o \
+../../pnm.o ../../win_select.o ../../init.o ../../prefs.o \
+../../win_write.o ../../input.o ../../py_dialogue.o ../../yarg.o \
+../../py_inc.o
 dlgedit_LDFLAGS = 
 CXXFLAGS = -O6 -g -Wall -I/usr/local/include -I/usr/local/include/SDL -D_REENTRANT -I/usr/include/python1.5  -DSDL_MIXER 
 CXXCOMPILE = $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
@@ -110,15 +118,14 @@ DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 TAR = tar
 GZIP_ENV = --best
 DEP_FILES =  .deps/callbacks.P .deps/circle.P .deps/compile.P \
-.deps/cond.tab.P .deps/crcle_callbacks.P .deps/crcle_interface.P \
-.deps/create_code.P .deps/dlgnode.P .deps/err_callbacks.P \
-.deps/err_interface.P .deps/error_dlg.P .deps/events.P \
-.deps/geometrie.P .deps/graph.P .deps/interface.P .deps/lex.cond.P \
-.deps/lex.loadlg.P .deps/lex.vars.P .deps/main.P .deps/pjt_callbacks.P \
+.deps/crcle_callbacks.P .deps/crcle_interface.P .deps/dlgnode.P \
+.deps/err_callbacks.P .deps/err_interface.P .deps/error_dlg.P \
+.deps/events.P .deps/geometrie.P .deps/graph.P .deps/interface.P \
+.deps/lex.loadlg.P .deps/main.P .deps/pjt_callbacks.P \
 .deps/pjt_interface.P .deps/preset.P .deps/project.P \
 .deps/ps_callbacks.P .deps/ps_dlg.P .deps/ps_interface.P \
 .deps/pset_callbacks.P .deps/pset_interface.P .deps/run.P \
-.deps/run_callbacks.P .deps/run_interface.P .deps/vars.tab.P
+.deps/run_callbacks.P .deps/run_interface.P
 SOURCES = $(dlgedit_SOURCES)
 OBJECTS = $(dlgedit_OBJECTS)
 

@@ -19,7 +19,6 @@ class dialog;
 #include <gdk/gdkkeysyms.h>
 
 #include "../../types.h"
-#include "../../interpreter.h"
 #include "dlgnode.h"
 #include "main.h"
 #include "callbacks.h"

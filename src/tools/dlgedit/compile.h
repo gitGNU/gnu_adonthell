@@ -18,8 +18,6 @@
 #include <vector>
 #include <string>
 
-#include "../../interpreter.h" 
-
 // Dialogue Compiler
 class dlg_compiler
 {

@@ -24,7 +24,6 @@ class dialog;
 #include <time.h>
 
 #include "../../types.h"
-#include "../../interpreter.h"
 #include "../../character.h"
 #include "dlgnode.h"
 #include "main.h"

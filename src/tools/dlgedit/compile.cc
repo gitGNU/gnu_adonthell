@@ -15,11 +15,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <algorithm>
 
 #include "../../types.h"
-#include "../../commands.h"
-#include "../../dialog_cmds.h"
-#include "../../generic_cmds.h"
 #include "dlgnode.h"
 #include "compile.h"
 
@@ -217,7 +215,7 @@ void dlg_compiler::write_answer ()
     for (i = cur_nodes.begin (); i != cur_nodes.end (); i++)
     {
 #ifdef _DEBUG_
-        if ((*i)->type != NPC) cout << "\n***Compiler error: NPC node expected!"; 
+        if ((*i)->type != NPC) cout << "\n*** Compile error: NPC node expected!"; 
 #endif _DEBUG_
 
         script << "\n" << space << "self.npc" << (*i)->number << " ()";

@@ -33,8 +33,6 @@ public:
 
 class dialog
 {
-  private:
-	dialog();
 public:
 	PyObject *class_obj;                // Points to the instantiated dialogue class
 	char *module;

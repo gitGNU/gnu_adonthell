@@ -17,7 +17,6 @@
 
 #include "types.h"
 #include "image.h"
-#include "array_tmpl.h"
 
 //#include "window.h"
 #include "input.h"

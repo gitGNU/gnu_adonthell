@@ -15,10 +15,6 @@
 #include "preset.h"
 #include "pset_interface.h"
 #include "error_dlg.h"
-#include "../../interpreter.h"
-
-extern int vars_compile (const char*, string&, vector<command*>&);
-
 
 preset_dlg::preset_dlg (MainFrame *w) : wnd(w)
 {
@@ -30,12 +26,9 @@ void preset_dlg::run ()
 {
 }
 
-
 int preset_dlg::on_ok (char *v)
 {
-    string error ("");
-    vector<command*> code;
-
+/*
     // is there any code at all -> try to compile
     if (strcmp (v, ""))
     {
@@ -55,6 +48,7 @@ int preset_dlg::on_ok (char *v)
         }
         else if (wnd->err) wnd->err->display ("Compilation successfull :-)");
     }
+*/
 
     // everything turned out fine :)
     wnd->pset_vars = v;

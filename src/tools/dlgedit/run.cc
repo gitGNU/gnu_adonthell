@@ -17,78 +17,23 @@
 #include "run_interface.h"
 #include "../../dialog.h"
 #include "../../storage.h"
-#include "../../generic_cmds.h"
 #include "../../character.h"
+#include "../../py_inc.h"
 
 run_dlg::run_dlg (string f, string v, player *p)
 {
-#if 0
-    interpreter varset;
-    vector<command*> c;
-    string sf = f + ".str";
-    string df = f + ".dlg";
-    string e;    
-    FILE *str, *tmp;
-    u_int32 num;
-
+    char *file = g_basename (f.c_str ());
+    char *path = g_dirname (f.c_str ());
     dlg = create_run_dlg_wnd (this);
 
-    // now set some global definitions
-    varset.load ("globals.script");
-    varset.run ();
-
-    // set the player
-    objects::erase ("player");
-    objects::set ("player", p);
-
-    // preset variables
-    if (v != "")
-    {
-        tmp = fopen ("/tmp/psetvars.dlg", "w"); 
-        ofstream out ("/tmp/psetvars.txt");
-
-        vars_compile (v.c_str (), e, c);
-        c.push_back (new return_cmd (0));
-
-        num = c.size ();
-        fwrite (&num, sizeof(num), 1, tmp);
-
-        for (num = 0; num < c.size (); num++)
-        {   
-            out.width (3);
-            out << num << "  ";
-            c[num]->ascii (out);
-            out << "\n";
-            c[num]->write (tmp);
-        }
-
-        out.close ();
-        fclose (tmp);
-
-        varset.load ("/tmp/psetvars.dlg");
-        varset.run ();
-    }
-    
-    // load TOC of stringfile
-    str = fopen (sf.c_str (), "r");
-    fread (&num, sizeof (num), 1, str);
-
-    dialog::offset = new s_int32[num];
-    dialog::length = new s_int32[num];
-
-    fread (dialog::offset, num, sizeof (dialog::offset[0]), str);
-    fread (dialog::length, num, sizeof (dialog::length[0]), str);
-
-    fclose (str);
-
-    // Init Dialogue data
     dat = new dialog;
-    dat->text_file = strdup (sf.c_str ());
-    dat->player_name = p->get_name ();
+    dat->answer = 0;
 
-    // Init Interpreter
-    vm = new interpreter (strdup (df.c_str ()), dat);
-#endif
+    // Import module
+    insert_path (path);
+    dat->class_obj = import_module (file);
+
+    free (path);
 }
 
 

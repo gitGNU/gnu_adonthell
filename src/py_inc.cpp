@@ -9,11 +9,6 @@
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY.
 
-   This program is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License.
-   This program is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY.
-
    See the COPYING file for more details.
 */
 
@@ -30,7 +25,7 @@ extern "C"
 {
 	void initplayerc(void);
 	void initmapenginec(void);
-	void initbaseitemc(void);
+//	void initbaseitemc(void);
 }
 
 /*
@@ -62,7 +57,7 @@ bool init_python(void)
 	   link */
 	initplayerc();
 	initmapenginec();
-	initbaseitemc();
+//	initbaseitemc();
 
 	return true;
 }

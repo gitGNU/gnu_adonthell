@@ -20,11 +20,8 @@
 #include <string>
 
 #include "../../character.h"
-#include "../../interpreter.h"
 #include "../../dialog.h"
 #include "../../yarg.h"
-
-extern int vars_compile (const char*, string&, vector<command*>&);
 
 // Wrapper class for the Run Dialogue dialog
 class run_dlg
@@ -40,7 +37,6 @@ public:
     void run ();                // Run the dialogue
     
 private:
-    interpreter *vm;            // The Virtual Machine ;)    
     GList *tmp_list;            // Container for the Text to diaplay
     yarg randgen;               // Random number generator
 };

@@ -18,8 +18,7 @@ class dialog;
 #include <gtk/gtk.h>
 
 #include "../../types.h"
-#include "../../interpreter.h"
-#include "../../commands.h"
+#include "../../py_inc.h"
 #include "main.h"
 #include "graph.h"
 #include "interface.h"
@@ -27,10 +26,18 @@ class dialog;
 int 
 main (int argc, char *argv[])
 {
-    /* The Application Data */
+    // The Application Data
     MainFrame *MainWnd = new MainFrame;
 
     gtk_init (&argc, &argv);
+
+    // Init Python interpreter
+    if (!init_python ())
+    {
+        // This is unlikely to happen
+        fprintf(stderr, "Couldn't initialise Python - stopping\n");
+        return 1;
+    }
 
     // Create a player
     MainWnd->myplayer = new player;

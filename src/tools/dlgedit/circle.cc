@@ -15,11 +15,7 @@
 #include <gtk/gtk.h>
 #include "circle.h"
 #include "crcle_interface.h"
-#include "../../interpreter.h"
 #include "error_dlg.h"
-
-extern int cond_compile (const char*, string&, vector<command*>&);
-extern int vars_compile (const char*, string&, vector<command*>&);
 
 crcle_dlg::crcle_dlg (Circle *c, MainFrame *w) : circle (c), wnd (w)
 {

@@ -22,8 +22,6 @@ class dialog;
 #include "main.h"
 #include "graph.h"
 #include "compile.h"
-#include "../../interpreter.h"
-#include "../../dialog.h"
 #include "geometrie.h"
 #include "pjt_interface.h"
 #include "run.h"
