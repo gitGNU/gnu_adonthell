@@ -34,7 +34,7 @@ int main (int argc, char *argv[])
     gtk_init (&argc, &argv);
     
     // Init i18n
-    setlocale (LC_MESSAGES, "");
+    setlocale (LC_ALL, "");
     
     // Create the User Interface
     GuiDlgedit dlgedit;
