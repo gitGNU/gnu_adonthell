@@ -373,6 +373,7 @@ src/tools/Makefile
 src/tools/animedit/Makefile
 src/tools/charedit/Makefile
 src/tools/combat/Makefile
+src/tools/item/Makefile
 src/tools/dlgedit/Makefile
 src/tools/dlgedit/examples/Makefile
 src/tools/questedit/Makefile
