@@ -78,8 +78,8 @@ void mapengine::mainloop ()
     {
         win_manager::input_update ();
         if (should_update_map ()) lmap.update ();
-        win_manager::update ();
         mv.mapview::update ();
+        win_manager::update ();
     }
     screen::clear (); 
     mv.mapview::draw (0, 0);
