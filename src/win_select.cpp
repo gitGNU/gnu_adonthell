@@ -55,8 +55,11 @@ win_select::win_select(s_int16 tx,s_int16 ty,u_int16 tl,u_int16 th,win_theme * w
 win_select::~win_select()
 {
   //WARNING CHECK BACK
-  if(curselect_==this) back();
-
+  if(curselect_==this) 
+    {
+      back();
+      curselect_=NULL;
+    }
   //WARNING DESTROY()
 }
 

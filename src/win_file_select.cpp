@@ -5,6 +5,7 @@
 #include <sys/stat.h>
 #include "types.h"
 #include "image.h"
+#include "input.h"
 #include "win_types.h"
 #include "win_base.h"
 #include "win_border.h"
