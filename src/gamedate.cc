@@ -78,7 +78,7 @@ u_int16 gamedate::weekday ()
 u_int16 gamedate::day ()
 {
     // how many minutes make one day
-    static u_int day_in_minutes = 600 * HOURS_PER_DAY;
+    static u_int16 day_in_minutes = 600 * HOURS_PER_DAY;
 
     return Time / day_in_minutes;
 }

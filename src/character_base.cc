@@ -24,7 +24,7 @@
 
 
 #include "character_base.h"
-#include <iostream.h>
+#include <iostream>
 
 using namespace std; 
 
