@@ -28,21 +28,18 @@
 // according script(s) 
 void map_event_handler::raise_event (const event* e)
 {
-    vector<event*>::iterator j;
-    
-    // As long as matching events are in the list
-    for (vector<event*>::iterator i = Events.begin (); i != Events.end ();)
+    // we have to iterate back to front as executing an event might
+    // erase it from the vector. This invalidates any iterators pointing
+    // _after_ the deleted element.
+    for (vector<event*>::iterator i = Events.end (); i > Events.begin ();)
     {
-        j = i;
-        j++;
+        i--;
         
-        if ((*i)->equals (e))
-            // execute them. Note that events that use up their repeat
-            // count are automatically deleted and unregistered.
-            (*i)->execute (e);
-    
-        i = j;    
+        // if the events match, execute them. Note that events that use up
+        // their repeat count are automatically deleted and unregistered.
+        if ((*i)->equals (e)) (*i)->execute (e);
     }
+    
     return;
 }
 
