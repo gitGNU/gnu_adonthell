@@ -1,6 +1,6 @@
 /*
-    MIXERLIB:  An audio mixer library based on the SDL library
-    Copyright (C) 1997-1999  Sam Lantinga
+    SDL_mixer:  An audio mixer library based on the SDL library
+    Copyright (C) 1997, 1998, 1999, 2000, 2001  Sam Lantinga
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -17,10 +17,10 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
     Sam Lantinga
-    5635-34 Springhouse Dr.
-    Pleasanton, CA 94588 (USA)
-    slouken@devolution.com
+    slouken@libsdl.org
 */
+
+/* $Id$ */
 
 /* This file supports streaming WAV files, without volume adjustment */
 
@@ -32,8 +32,60 @@
 #include "SDL_rwops.h"
 #include "SDL_endian.h"
 
-#include "wave.h"
+#include "SDL_mixer.h"
 #include "wavestream.h"
+
+/*
+    Taken with permission from SDL_wave.h, part of the SDL library,
+    available at: http://www.libsdl.org/
+    and placed under the same license as this mixer library.
+*/
+
+/* WAVE files are little-endian */
+
+/*******************************************/
+/* Define values for Microsoft WAVE format */
+/*******************************************/
+#define RIFF		0x46464952		/* "RIFF" */
+#define WAVE		0x45564157		/* "WAVE" */
+#define FACT		0x74636166		/* "fact" */
+#define LIST		0x5453494c		/* "LIST" */
+#define FMT		0x20746D66		/* "fmt " */
+#define DATA		0x61746164		/* "data" */
+#define PCM_CODE	1
+#define ADPCM_CODE	2
+#define WAVE_MONO	1
+#define WAVE_STEREO	2
+
+/* Normally, these three chunks come consecutively in a WAVE file */
+typedef struct WaveFMT {
+/* Not saved in the chunk we read:
+	Uint32	FMTchunk;
+	Uint32	fmtlen;
+*/
+	Uint16	encoding;	
+	Uint16	channels;		/* 1 = mono, 2 = stereo */
+	Uint32	frequency;		/* One of 11025, 22050, or 44100 Hz */
+	Uint32	byterate;		/* Average bytes per second */
+	Uint16	blockalign;		/* Bytes per sample block */
+	Uint16	bitspersample;		/* One of 8, 12, 16, or 4 for ADPCM */
+} WaveFMT;
+
+/* The general chunk found in the WAVE file */
+typedef struct Chunk {
+	Uint32 magic;
+	Uint32 length;
+	Uint8 *data;			/* Data includes magic and length */
+} Chunk;
+
+/*********************************************/
+/* Define values for AIFF (IFF audio) format */
+/*********************************************/
+#define FORM		0x4d524f46		/* "FORM" */
+#define AIFF		0x46464941		/* "AIFF" */
+#define SSND		0x444e5353		/* "SSND" */
+#define COMM		0x4d4d4f43		/* "COMM" */
+
 
 /* Currently we only support a single stream at a time */
 static WAVStream *theWave = NULL;
@@ -78,7 +130,7 @@ extern WAVStream *WAVStream_LoadSong(const char *file, const char *magic)
 	SDL_AudioSpec wavespec;
 
 	if ( ! mixer.format ) {
-		SDL_SetError("WAV music output not started");
+		Mix_SetError("WAV music output not started");
 		return(NULL);
 	}
 	wave = (WAVStream *)malloc(sizeof *wave);
@@ -91,6 +143,8 @@ extern WAVStream *WAVStream_LoadSong(const char *file, const char *magic)
 		if ( strcmp(magic, "FORM") == 0 ) {
 			wave->wavefp = LoadAIFFStream(file, &wavespec,
 					&wave->start, &wave->stop);
+		} else {
+			Mix_SetError("Unknown WAVE format");
 		}
 		if ( wave->wavefp == NULL ) {
 			free(wave);
@@ -142,8 +196,17 @@ extern void WAVStream_PlaySome(Uint8 *stream, int len)
 			if ( (theWave->stop - pos) < original_len ) {
 				original_len = (theWave->stop - pos);
 			}
+			original_len = fread(theWave->cvt.buf,1,original_len,theWave->wavefp);
+			/* At least at the time of writing, SDL_ConvertAudio()
+			   does byte-order swapping starting at the end of the
+			   buffer. Thus, if we are reading 16-bit samples, we
+			   had better make damn sure that we get an even
+			   number of bytes, or we'll get garbage.
+			 */
+			if ( (theWave->cvt.src_format & 0x0010) && (original_len & 1) ) {
+				original_len--;
+			}
 			theWave->cvt.len = original_len;
-			fread(theWave->cvt.buf,original_len,1,theWave->wavefp);
 			SDL_ConvertAudio(&theWave->cvt);
 			memcpy(stream, theWave->cvt.buf, theWave->cvt.len_cvt);
 		} else {
@@ -208,11 +271,11 @@ static int ReadChunk(SDL_RWops *src, Chunk *chunk, int read_data)
 	if ( read_data ) {
 		chunk->data = (Uint8 *)malloc(chunk->length);
 		if ( chunk->data == NULL ) {
-			SDL_SetError("Out of memory");
+			Mix_SetError("Out of memory");
 			return(-1);
 		}
 		if ( SDL_RWread(src, chunk->data, chunk->length, 1) != 1 ) {
-			SDL_SetError("Couldn't read chunk");
+			Mix_SetError("Couldn't read chunk");
 			free(chunk->data);
 			return(-1);
 		}
@@ -256,7 +319,7 @@ static FILE *LoadWAVStream (const char *file, SDL_AudioSpec *spec,
 	wavelen		= SDL_ReadLE32(src);
 	WAVEmagic	= SDL_ReadLE32(src);
 	if ( (RIFFchunk != RIFF) || (WAVEmagic != WAVE) ) {
-		SDL_SetError("Unrecognized file type (not WAVE)");
+		Mix_SetError("Unrecognized file type (not WAVE)");
 		was_error = 1;
 		goto done;
 	}
@@ -279,7 +342,7 @@ static FILE *LoadWAVStream (const char *file, SDL_AudioSpec *spec,
 	format = (WaveFMT *)chunk.data;
 	if ( chunk.magic != FMT ) {
 		free(chunk.data);
-		SDL_SetError("Complex WAVE files not supported");
+		Mix_SetError("Complex WAVE files not supported");
 		was_error = 1;
 		goto done;
 	}
@@ -288,7 +351,7 @@ static FILE *LoadWAVStream (const char *file, SDL_AudioSpec *spec,
 			/* We can understand this */
 			break;
 		default:
-			SDL_SetError("Unknown WAVE data format");
+			Mix_SetError("Unknown WAVE data format");
 			was_error = 1;
 			goto done;
 	}
@@ -302,7 +365,7 @@ static FILE *LoadWAVStream (const char *file, SDL_AudioSpec *spec,
 			spec->format = AUDIO_S16;
 			break;
 		default:
-			SDL_SetError("Unknown PCM data format");
+			Mix_SetError("Unknown PCM data format");
 			was_error = 1;
 			goto done;
 	}
@@ -337,50 +400,57 @@ done:
 	return(wavefp);
 }
 
-static double SANE_to_double(Uint32 l1, Uint32 l2, Uint16 s1)
-{
-	double d;
-	struct almost_double {
-		Uint32 hi, lo;
-	} *dp = (struct almost_double *)&d;
+/* I couldn't get SANE_to_double() to work, so I stole this from libsndfile.
+ * I don't pretend to fully understand it.
+ */
 
-	dp->hi = ((l1 << 4) & 0x3ff00000) | (l1 & 0xc0000000);
-	dp->hi |= (l1 << 5) & 0xffff0;
-	dp->hi |= (l2 >> 27) & 0x1f;
-	dp->lo = (l2 << 5) & 0xffffffe0;
-	dp->lo |= ((s1 >> 11) & 0x1f);
-	return(d);
+static Uint32 SANE_to_Uint32 (Uint8 *sanebuf)
+{
+	/* Negative number? */
+	if (sanebuf[0] & 0x80)
+		return 0;
+
+	/* Less than 1? */
+	if (sanebuf[0] <= 0x3F)
+		return 1;
+
+	/* Way too big? */
+	if (sanebuf[0] > 0x40)
+		return 0x4000000;
+
+	/* Still too big? */
+	if (sanebuf[0] == 0x40 && sanebuf[1] > 0x1C)
+		return 800000000;
+
+	return ((sanebuf[2] << 23) | (sanebuf[3] << 15) | (sanebuf[4] << 7)
+		| (sanebuf[5] >> 1)) >> (29 - sanebuf[1]);
 }
 
 static FILE *LoadAIFFStream (const char *file, SDL_AudioSpec *spec,
 					long *start, long *stop)
 {
 	int was_error;
+	int found_SSND;
+	int found_COMM;
 	FILE *wavefp;
 	SDL_RWops *src;
 
+	Uint32 chunk_type;
+	Uint32 chunk_length;
+	long next_chunk;
+
 	/* AIFF magic header */
 	Uint32 FORMchunk;
-	Uint32 chunklen;
 	Uint32 AIFFmagic;
 	/* SSND chunk        */
-	Uint32 SSNDchunk;
-	Uint32 ssndlen;
 	Uint32 offset;
 	Uint32 blocksize;
 	/* COMM format chunk */
-	Uint32 COMMchunk;
-	Uint32 commlen;
-	Uint16 channels;
-	Uint32 numsamples;
-	Uint16 samplesize;
-	struct { /* plus a SANE format double precision number */
-		Uint32 l1;
-		Uint32 l2;
-		Uint16 s1;
-	} sane_freq;
-
-	Uint32 frequency;
+	Uint16 channels = 0;
+	Uint32 numsamples = 0;
+	Uint16 samplesize = 0;
+	Uint8 sane_freq[10];
+	Uint32 frequency = 0;
 
 
 	/* Make sure we are passed a valid data source */
@@ -397,60 +467,84 @@ static FILE *LoadAIFFStream (const char *file, SDL_AudioSpec *spec,
 
 	/* Check the magic header */
 	FORMchunk	= SDL_ReadLE32(src);
-	chunklen	= SDL_ReadLE32(src);
+	chunk_length	= SDL_ReadBE32(src);
 	AIFFmagic	= SDL_ReadLE32(src);
 	if ( (FORMchunk != FORM) || (AIFFmagic != AIFF) ) {
-		SDL_SetError("Unrecognized file type (not AIFF)");
+		Mix_SetError("Unrecognized file type (not AIFF)");
 		was_error = 1;
 		goto done;
 	}
 
-	/* Read the SSND data chunk */
-	SSNDchunk	= SDL_ReadLE32(src);
-	if ( SSNDchunk != SSND ) {
-		SDL_SetError("Unrecognized AIFF chunk (not SSND)");
-		was_error = 1;
-		goto done;
-	}
-	ssndlen		= SDL_ReadLE32(src);
-	offset		= SDL_ReadLE32(src);
-	blocksize	= SDL_ReadLE32(src);
+	/* From what I understand of the specification, chunks may appear in
+         * any order, and we should just ignore unknown ones.
+	 *
+	 * TODO: Better sanity-checking. E.g. what happens if the AIFF file
+	 *       contains compressed sound data?
+         */
 
-	/* Fill in start and stop pointers, then seek to format chunk */
-	ssndlen -= (2*sizeof(Uint32));
-	*start = SDL_RWtell(src) + offset;
-	*stop = SDL_RWtell(src) + ssndlen;
-	SDL_RWseek(src, *stop, SEEK_SET);
+	found_SSND = 0;
+	found_COMM = 0;
 
-	/* Read the audio data format chunk */
-	COMMchunk	= SDL_ReadLE32(src);
-	if ( COMMchunk != COMM ) {
-		SDL_SetError("Unrecognized AIFF chunk (not COMM)");
-		was_error = 1;
-		goto done;
+	do {
+	    chunk_type		= SDL_ReadLE32(src);
+	    chunk_length	= SDL_ReadBE32(src);
+	    next_chunk		= SDL_RWtell(src) + chunk_length;
+
+	    /* Paranoia to avoid infinite loops */
+	    if (chunk_length == 0)
+		break;
+
+            switch (chunk_type) {
+		case SSND:
+		    found_SSND		= 1;
+		    offset		= SDL_ReadBE32(src);
+		    blocksize		= SDL_ReadBE32(src);
+		    *start		= SDL_RWtell(src) + offset;
+		    break;
+
+		case COMM:
+		    found_COMM		= 1;
+
+		    /* Read the audio data format chunk */
+		    channels		= SDL_ReadBE16(src);
+		    numsamples		= SDL_ReadBE32(src);
+		    samplesize		= SDL_ReadBE16(src);
+		    SDL_RWread(src, sane_freq, sizeof(sane_freq), 1);
+		    frequency		= SANE_to_Uint32(sane_freq);
+		    break;
+
+		default:
+		    break;
+	    }
+	} while ((!found_SSND || !found_COMM)
+		 && SDL_RWseek(src, next_chunk, SEEK_SET) != -1);
+
+	if (!found_SSND) {
+	    Mix_SetError("Bad AIFF file (no SSND chunk)");
+	    was_error = 1;
+	    goto done;
 	}
-	commlen		= SDL_ReadLE32(src);
-	channels	= SDL_ReadLE16(src);
-	numsamples	= SDL_ReadLE32(src);
-	samplesize	= SDL_ReadLE16(src);
-	sane_freq.l1	= SDL_ReadLE32(src);
-	sane_freq.l2	= SDL_ReadLE32(src);
-	sane_freq.s1	= SDL_ReadLE16(src);
-	frequency	= (Uint32)SANE_to_double(sane_freq.l1, sane_freq.l2,
-								sane_freq.s1);
+		    
+	if (!found_COMM) {
+	    Mix_SetError("Bad AIFF file (no COMM chunk)");
+	    was_error = 1;
+	    goto done;
+	}
+
+	*stop = *start + channels * numsamples * (samplesize / 8);
 
 	/* Decode the audio data format */
 	memset(spec, 0, (sizeof *spec));
 	spec->freq = frequency;
 	switch (samplesize) {
 		case 8:
-			spec->format = AUDIO_U8;
+			spec->format = AUDIO_S8;
 			break;
 		case 16:
-			spec->format = AUDIO_S16;
+			spec->format = AUDIO_S16MSB;
 			break;
 		default:
-			SDL_SetError("Unknown samplesize in data format");
+			Mix_SetError("Unknown samplesize in data format");
 			was_error = 1;
 			goto done;
 	}

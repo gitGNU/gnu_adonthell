@@ -192,6 +192,14 @@ public:
      */
     static bool load_mapengine (u_int32 pos); 
 
+    /** 
+     * Load the audio system state from a saved %game.
+     * 
+     * @param pos Slot number to load.
+     * 
+     * @return \e true in case of success, \e false otherwise.
+     */
+    static bool load_audio (u_int32 pos); 
 
     /** 
      * Loads a previously saved %game. Slot 0 points to the

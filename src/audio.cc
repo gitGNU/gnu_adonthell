@@ -17,6 +17,7 @@
 #include <stdio.h>
 #include "SDL.h"
 #include "audio.h"
+
 // #include "audio_loop.h"
 
 bool audio::audio_initialized=false;
@@ -27,6 +28,7 @@ int audio::effects_volume;
 // loop_info *audio::loop[NUM_MUSIC];
 #endif
 Mix_Music *audio::music[NUM_MUSIC];
+string audio::music_file[NUM_MUSIC];
 Mix_Chunk *audio::sounds[NUM_WAVES];
 bool audio::background_on;
 int audio::current_background;
@@ -35,6 +37,21 @@ int audio::audio_rate;
 Uint16 audio::buffer_size;
 Uint16 audio::audio_format;
 int audio::audio_channels;
+
+// python schedule stuff
+py_object audio::schedule;
+bool audio::schedule_active;
+string audio::schedule_file;
+PyObject *audio::schedule_args;
+
+// callback to get notified when music finished playing
+void on_music_finished ()
+{
+    PyObject *song = Py_BuildValue ("(i)", audio::get_current_background ());
+    if (audio::is_schedule_activated ()) 
+        audio::get_schedule ().call_method ("music_finished", song);
+    Py_DECREF (song); 
+}
 
 void audio::init (config *myconfig) {
   int i;  // Generic counter variable
@@ -67,14 +84,17 @@ void audio::init (config *myconfig) {
   current_background = -1;   // No song currently playing
   background_paused = false; // Music isn't paused
   audio_initialized = false; // No audio connection yet
-
+  schedule_active = false;   // No schedule file yet
+  
   // Mark all slots in sound and music arrays as empty
   for (i = 0; i < NUM_WAVES; i++) sounds[i] = NULL;
-  for (i = 0; i < NUM_MUSIC; i++) music[i] = NULL; 
-
+  for (i = 0; i < NUM_MUSIC; i++) {
+      music[i] = NULL; 
+      music_file[i] = "";
+  }
+  
   // Try opening the audio device at our defaults
-  i=Mix_OpenAudio(audio_rate, audio_format,
-    audio_channels, buffer_size);
+  i = Mix_OpenAudio(audio_rate, audio_format, audio_channels, buffer_size);
 
   // Now see what we got when opening the audio device
   // If we COULDN'T open the audio...
@@ -89,6 +109,9 @@ void audio::init (config *myconfig) {
     fprintf(stderr, "Audio started in %d Hz %d bit %s format.\n", audio_rate,
      (audio_format&0xFF), (audio_channels > 1) ? "stereo" : "mono");
     set_background_volume (background_volume);
+    
+    // connect music finish callback
+    Mix_HookMusicFinished (&on_music_finished);
   }
 }
 
@@ -105,8 +128,11 @@ void audio::cleanup(void) {
   for (i = 0; i < NUM_MUSIC; i++) {
     unload_background(i);
     music[i] = NULL;
+    music_file[i] = "";
   }
 
+  schedule.clear ();
+  
   // Close out audio connection
   Mix_CloseAudio();
   audio_initialized = false;
@@ -153,7 +179,8 @@ int audio::load_background(int slot, char *filename) {
   
   // No music in slot, load new tune in, ...
   music[slot] = Mix_LoadMUS(filename);
-
+  music_file[slot] = filename;
+  
 #ifdef OGG_MUSIC
   // read loop points and ...
   // loop[slot] = new loop_info (&music[slot]->ogg_data.ogg->vf);
@@ -168,6 +195,7 @@ void audio::unload_background(int slot) {
   if (music[slot] != NULL) {
     Mix_FreeMusic(music[slot]);
     music[slot] = NULL;
+    music_file[slot] = "";
 #ifdef OGG_MUSIC
     // delete loop[slot];
 #endif
@@ -275,3 +303,78 @@ void audio::change_background(int slot, int time) {
 //     return &music[current_background]->ogg_data.ogg->vf;
 // }
 #endif
+
+// set audio schedule
+void audio::set_schedule (string file, PyObject * args)
+{     
+    // Clears the schedule
+    schedule.clear ();
+    Py_XDECREF (schedule_args);
+    schedule_args = NULL;
+
+    // Set new schedule
+    if (file != "")
+    {
+        Py_XINCREF (args); 
+        schedule_args = args; 
+        schedule.create_instance ("schedules/audio/" + file, file, args);
+    }
+    schedule_file = file;
+}
+
+// save state
+s_int8 audio::put_state (ogzstream& file)
+{
+    // avilable music 
+    NUM_MUSIC >> file;
+    for (int i = 0; i < NUM_MUSIC; i++) music_file[i] >> file;
+    
+    // currently playing
+    current_background >> file;
+    
+    // Save the schedule script state
+    schedule_file >> file;
+    if (schedule_args) 
+    {
+        true >> file; 
+        python::put_tuple (schedule_args, file);
+    }
+    else false >> file; 
+    is_schedule_activated () >> file;
+    
+    return 1;
+}
+
+// get state
+s_int8 audio::get_state (igzstream& file)
+{
+    string tune;
+    int num_music;
+    int background;
+    bool have_args;
+    
+    // avilable music 
+    num_music << file;
+    for (int i = 0; i < NUM_MUSIC && i < num_music; i++)
+    {
+        tune << file;
+        load_background (i, (char*) tune.c_str ());
+    }
+
+    // current background
+    num_music << file;
+    if (num_music != -1) play_background (num_music);
+        
+    // Restore the schedule script state
+    PyObject * args = NULL; 
+    schedule_file << file;
+    
+    have_args << file;
+    if (have_args) args = python::get_tuple (file); 
+    set_schedule (schedule_file, args);      
+    Py_XDECREF (args); 
+    
+    schedule_active << file;
+
+    return 1;
+}

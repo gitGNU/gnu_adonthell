@@ -1,29 +1,30 @@
 /*
-	MIXERLIB:  An audio mixer library based on the SDL library
-	Copyright (C) 1997-1999  Sam Lantinga
+    SDL_mixer:  An audio mixer library based on the SDL library
+    Copyright (C) 1997, 1998, 1999, 2000, 2001  Sam Lantinga
 
-	This library is free software; you can redistribute it and/or
-	modify it under the terms of the GNU Library General Public
-	License as published by the Free Software Foundation; either
-	version 2 of the License, or (at your option) any later version.
+    This library is free software; you can redistribute it and/or
+    modify it under the terms of the GNU Library General Public
+    License as published by the Free Software Foundation; either
+    version 2 of the License, or (at your option) any later version.
 
-	This library is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-	Library General Public License for more details.
+    This library is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+    Library General Public License for more details.
 
-	You should have received a copy of the GNU Library General Public
-	License along with this library; if not, write to the Free
-	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    You should have received a copy of the GNU Library General Public
+    License along with this library; if not, write to the Free
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-	Sam Lantinga
-	5635-34 Springhouse Dr.
-	Pleasanton, CA 94588 (USA)
-	slouken@devolution.com
+    Sam Lantinga
+    slouken@libsdl.org
 */
+
+/* $Id$ */
 
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 #include "SDL_endian.h"
 #include "SDL_audio.h"
 #include "SDL_timer.h"
@@ -55,7 +56,17 @@
 #  endif
 #endif
 #ifdef MID_MUSIC
-#include "timidity.h"
+#  ifdef USE_TIMIDITY_MIDI
+#    include "timidity.h"
+#  endif
+#  ifdef USE_NATIVE_MIDI
+#    include "native_midi.h"
+#  endif
+#  if defined(USE_TIMIDITY_MIDI) && defined(USE_NATIVE_MIDI)
+#    define MIDI_ELSE	else
+#  else
+#    define MIDI_ELSE
+#  endif
 #endif
 #ifdef OGG_MUSIC
 #include "music_ogg.h"
@@ -72,6 +83,8 @@ static int music_loops = 0;
 static char *music_cmd = NULL;
 static Mix_Music * volatile music_playing = NULL;
 static int music_volume = MIX_MAX_VOLUME;
+static int music_swap8;
+static int music_swap16;
 
 struct _Mix_Music {
 	enum {
@@ -93,7 +106,12 @@ struct _Mix_Music {
 		UNIMOD *module;
 #endif
 #ifdef MID_MUSIC
+#ifdef USE_TIMIDITY_MIDI
 		MidiSong *midi;
+#endif
+#ifdef USE_NATIVE_MIDI
+		NativeMidiSong *nativemidi;
+#endif
 #endif
 #ifdef OGG_MUSIC
 		OGG_music *ogg;
@@ -109,7 +127,13 @@ struct _Mix_Music {
 	int error;
 };
 #ifdef MID_MUSIC
+#ifdef USE_TIMIDITY_MIDI
 static int timidity_ok;
+static int samplesize;
+#endif
+#ifdef USE_NATIVE_MIDI
+static int native_midi_ok;
+#endif
 #endif
 
 /* Used to calculate fading steps */
@@ -220,9 +244,14 @@ void music_mixer(void *udata, Uint8 *stream, int len)
 				break;
 #endif
 #ifdef MID_MUSIC
+#ifdef USE_TIMIDITY_MIDI
 			case MUS_MID:
-				Timidity_PlaySome(stream, len/samplesize);
+				if ( timidity_ok ) {
+					int samples = len / samplesize;
+  					Timidity_PlaySome(stream, samples);
+				}
 				break;
+#endif
 #endif
 #ifdef OGG_MUSIC
 			case MUS_OGG:
@@ -293,7 +322,6 @@ int open_music(SDL_AudioSpec *mixer)
 		}
 		md_mode |= DMODE_STEREO;
 	}
-	samplesize	 = mixer->size/mixer->samples;
 	md_mixfreq	 = mixer->freq;
 	md_device	  = 0;
 	md_volume	  = 96;
@@ -309,13 +337,22 @@ int open_music(SDL_AudioSpec *mixer)
 	}
 #endif
 #ifdef MID_MUSIC
-	samplesize	 = mixer->size/mixer->samples;
-	if ( Timidity_Init(mixer->freq,
-			mixer->format, mixer->channels, mixer->samples) == 0 ) {
+#ifdef USE_TIMIDITY_MIDI
+	samplesize = mixer->size / mixer->samples;
+	if ( Timidity_Init(mixer->freq, mixer->format,
+	                    mixer->channels, mixer->samples) == 0 ) {
 		timidity_ok = 1;
 	} else {
 		timidity_ok = 0;
 	}
+#endif
+#ifdef USE_NATIVE_MIDI
+#ifdef USE_TIMIDITY_MIDI
+	native_midi_ok = !timidity_ok;
+	if ( native_midi_ok )
+#endif
+		native_midi_ok = native_midi_detect();
+#endif
 #endif
 #ifdef OGG_MUSIC
 	if ( OGG_init(mixer) < 0 ) {
@@ -339,10 +376,24 @@ int open_music(SDL_AudioSpec *mixer)
 	return(0);
 }
 
+/* Portable case-insensitive string compare function */
+int MIX_string_equals(const char *str1, const char *str2)
+{
+	while ( *str1 && *str2 ) {
+		if ( toupper((unsigned char)*str1) !=
+		     toupper((unsigned char)*str2) )
+			break;
+		++str1;
+		++str2;
+	}
+	return (!*str1 && !*str2);
+}
+
 /* Load a music file */
 Mix_Music *Mix_LoadMUS(const char *file)
 {
 	FILE *fp;
+	char *ext;
 	Uint8 magic[5];
 	Mix_Music *music;
 
@@ -357,6 +408,10 @@ Mix_Music *Mix_LoadMUS(const char *file)
 	}
 	magic[4] = '\0';
 	fclose(fp);
+
+	/* Figure out the file extension, so we can determine the type */
+	ext = strrchr(file, '.');
+	if ( ext ) ++ext; /* skip the dot in the extension */
 
 	/* Allocate memory for the music structure */
 	music = (Mix_Music *)malloc(sizeof(Mix_Music));
@@ -379,35 +434,50 @@ Mix_Music *Mix_LoadMUS(const char *file)
 	/* WAVE files have the magic four bytes "RIFF"
 	   AIFF files have the magic 12 bytes "FORM" XXXX "AIFF"
 	 */
-	if ( (strcmp((char *)magic, "RIFF") == 0) ||
+	if ( (ext && MIX_string_equals(ext, "WAV")) ||
+	     (strcmp((char *)magic, "RIFF") == 0) ||
 	     (strcmp((char *)magic, "FORM") == 0) ) {
 		music->type = MUS_WAV;
 		music->data.wave = WAVStream_LoadSong(file, (char *)magic);
 		if ( music->data.wave == NULL ) {
+		  	Mix_SetError("Unable to load WAV file");
 			music->error = 1;
 		}
 	} else
 #endif
 #ifdef MID_MUSIC
 	/* MIDI files have the magic four bytes "MThd" */
-	if ( strcmp(magic, "MThd") == 0 ) {
+	if ( (ext && MIX_string_equals(ext, "MID")) ||
+	     (ext && MIX_string_equals(ext, "MIDI")) ||
+	     strcmp((char *)magic, "MThd") == 0 ) {
 		music->type = MUS_MID;
+#ifdef USE_NATIVE_MIDI
+  		if ( native_midi_ok ) {
+  			music->data.nativemidi = native_midi_loadsong((char *)file);
+	  		if ( music->data.nativemidi == NULL ) {
+		  		Mix_SetError("%s", native_midi_error());
+			  	music->error = 1;
+			}
+	  	} MIDI_ELSE
+#endif
+#ifdef USE_TIMIDITY_MIDI
 		if ( timidity_ok ) {
 			music->data.midi = Timidity_LoadSong((char *)file);
 			if ( music->data.midi == NULL ) {
 				Mix_SetError("%s", Timidity_Error());
 				music->error = 1;
 			}
-		}
-		else {
+		} else {
 			Mix_SetError("%s", Timidity_Error());
 			music->error = 1;
 		}
+#endif
 	} else
 #endif
 #ifdef OGG_MUSIC
 	/* Ogg Vorbis files have the magic four bytes "OggS" */
-	if ( strcmp(magic, "OggS") == 0 ) {
+	if ( (ext && MIX_string_equals(ext, "OGG")) ||
+	     strcmp((char *)magic, "OggS") == 0 ) {
 		music->type = MUS_OGG;
 		music->data.ogg = OGG_new(file);
 		if ( music->data.ogg == NULL ) {
@@ -416,7 +486,9 @@ Mix_Music *Mix_LoadMUS(const char *file)
 	} else
 #endif
 #ifdef MP3_MUSIC
-	if ( magic[0]==0xFF && (magic[1]&0xF0)==0xF0) {
+	if ( (ext && MIX_string_equals(ext, "MPG")) ||
+	     (ext && MIX_string_equals(ext, "MPEG")) ||
+	     magic[0]==0xFF && (magic[1]&0xF0)==0xF0) {
 		SMPEG_Info info;
 		music->type = MUS_MP3;
 		music->data.mp3 = SMPEG_new(file, &info, 0);
@@ -435,6 +507,16 @@ Mix_Music *Mix_LoadMUS(const char *file)
 		if ( music->data.module == NULL ) {
 			Mix_SetError("%s", MikMod_strerror(MikMod_errno));
 			music->error = 1;
+		} else {
+			/* Stop implicit looping, fade out and other flags. */
+			music->data.module->extspd  = 1;
+			music->data.module->panflag = 1;
+			music->data.module->wrap    = 0;
+			music->data.module->loop    = 0;
+#if 0 /* Don't set fade out by default - unfortunately there's no real way
+         to query the status of the song or set trigger actions.  Hum. */
+			music->data.module->fadeout = 1;
+#endif
 		}
 	} else
 #endif
@@ -481,7 +563,16 @@ void Mix_FreeMusic(Mix_Music *music)
 #endif
 #ifdef MID_MUSIC
 			case MUS_MID:
-				Timidity_FreeSong(music->data.midi);
+#ifdef USE_NATIVE_MIDI
+  				if ( native_midi_ok ) {
+					native_midi_freesong(music->data.nativemidi);
+				} MIDI_ELSE
+#endif
+#ifdef USE_TIMIDITY_MIDI
+				if ( timidity_ok ) {
+					Timidity_FreeSong(music->data.midi);
+				}
+#endif
 				break;
 #endif
 #ifdef OGG_MUSIC
@@ -529,8 +620,18 @@ static int lowlevel_play(Mix_Music *music)
 #endif
 #ifdef MID_MUSIC
 		case MUS_MID:
-			Timidity_SetVolume(music_volume);
-			Timidity_Start(music->data.midi);
+#ifdef USE_NATIVE_MIDI
+  			if ( native_midi_ok ) {
+				native_midi_setvolume(music_volume);
+				native_midi_start(music->data.nativemidi);
+			} MIDI_ELSE
+#endif
+#ifdef USE_TIMIDITY_MIDI
+			if ( timidity_ok ) {
+				Timidity_SetVolume(music_volume);
+				Timidity_Start(music->data.midi);
+			}
+#endif
 			break;
 #endif
 #ifdef OGG_MUSIC
@@ -626,7 +727,16 @@ int Mix_VolumeMusic(int volume)
 #endif
 #ifdef MID_MUSIC
 		case MUS_MID:
-			Timidity_SetVolume(music_volume);
+#ifdef USE_NATIVE_MIDI
+			if ( native_midi_ok ) {
+				native_midi_setvolume(music_volume);
+			} MIDI_ELSE
+#endif
+#ifdef USE_TIMIDITY_MIDI
+			if ( timidity_ok ) {
+				Timidity_SetVolume(music_volume);
+			}
+#endif
 			break;
 #endif
 #ifdef OGG_MUSIC
@@ -667,7 +777,16 @@ static void lowlevel_halt(void)
 #endif
 #ifdef MID_MUSIC
 	case MUS_MID:
-		Timidity_Stop();
+#ifdef USE_NATIVE_MIDI
+		if ( native_midi_ok ) {
+			native_midi_stop();
+		} MIDI_ELSE
+#endif
+#ifdef USE_TIMIDITY_MIDI
+		if ( timidity_ok ) {
+			Timidity_Stop();
+		}
+#endif
 		break;
 #endif
 #ifdef OGG_MUSIC
@@ -759,6 +878,15 @@ void Mix_RewindMusic(void)
 			SMPEG_rewind(music_playing->data.mp3);
 			break;
 #endif
+#ifdef MID_MUSIC
+		case MUS_MID:
+#ifdef USE_NATIVE_MIDI
+			if ( native_midi_ok ) {
+				native_midi_stop();
+			}
+#endif
+			break;
+#endif
 		default:
 			/* TODO: Implement this for other music backends */
 			break;
@@ -799,9 +927,18 @@ int Mix_PlayingMusic(void)
 #endif
 #ifdef MID_MUSIC
 			case MUS_MID:
-				if ( ! Timidity_Active() ) {
-					return(0);
+#ifdef USE_NATIVE_MIDI
+				if ( native_midi_ok ) {
+					if ( ! native_midi_active() )
+						return(0);
+				} MIDI_ELSE
+#endif
+#ifdef USE_TIMIDITY_MIDI
+				if ( timidity_ok ) {
+					if ( ! Timidity_Active() )
+						return(0);
 				}
+#endif
 				break;
 #endif
 #ifdef OGG_MUSIC
@@ -813,7 +950,7 @@ int Mix_PlayingMusic(void)
 #endif
 #ifdef MP3_MUSIC
 			case MUS_MP3:
-				if(SMPEG_status(music_playing->data.mp3)!=SMPEG_PLAYING)
+				if ( SMPEG_status(music_playing->data.mp3) != SMPEG_PLAYING )
 					return(0);
 				break;
 #endif
@@ -852,8 +989,8 @@ void close_music(void)
 #endif
 #ifdef MOD_MUSIC
 	MikMod_Exit();
-    MikMod_UnregisterAllLoaders();
-    MikMod_UnregisterAllDrivers();
+	MikMod_UnregisterAllLoaders();
+	MikMod_UnregisterAllDrivers();
 #endif
 }
 

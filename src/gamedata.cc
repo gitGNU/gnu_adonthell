@@ -29,6 +29,7 @@
 #include <dirent.h>
 #include <sys/stat.h>
 
+#include "audio.h"
 #include "gamedata.h"
 #include "python_class.h"
 
@@ -196,6 +197,36 @@ bool gamedata::load_mapengine (u_int32 pos)
     return true; 
 }
 
+bool gamedata::load_audio (u_int32 pos)
+{
+    igzstream in;
+    string filepath;
+
+    // Load mapengine state
+    filepath = saves[pos]->directory(); 
+    filepath += "/audio.data";
+    in.open (filepath); 
+    
+    if (!in.is_open ())
+    {
+        cerr <<  "Couldn't open \"" << filepath << " - stopping\n" << endl; 
+        return false;
+    }
+    
+    if (!fileops::get_version (in, 1, 1, filepath))
+        return false;
+
+    if (!audio::get_state (in))
+    {
+        cerr << "Couldn't load \"" << filepath << " - stopping\n" << endl;
+        return false;
+    }
+    
+    in.close (); 
+
+    return true; 
+}
+
 bool gamedata::load (u_int32 pos)
 {
     // First, unload the current game
@@ -204,7 +235,8 @@ bool gamedata::load (u_int32 pos)
     if (!load_characters (pos)) return false;
     if (!load_quests (pos)) return false;
     if (!load_mapengine (pos)) return false; 
-
+    if (!load_audio (pos)) return false;
+    
     return true; 
 }
 
@@ -337,6 +369,21 @@ bool gamedata::save (u_int32 pos, string desc)
     data::engine->put_state(file);
     file.close (); 
 
+    // save music
+    filepath = gdata->directory ();
+    filepath += "/audio.data";
+    file.open (filepath); 
+
+    if (!file.is_open ())
+    {
+        cerr << "Couldn't create \"" << filepath << "\" - save failed\n"; 
+        return false;
+    }
+    
+    fileops::put_version (file, 1);
+    audio::put_state (file);
+    file.close ();
+    
     // save gamedata
     filepath = gdata->directory ();
     filepath += "/save.data"; 
@@ -457,6 +504,9 @@ void gamedata::cleanup ()
 
 void gamedata::unload () 
 {
+    // stop the music
+    audio::fade_out_background (500);
+    
     // delete all characters
     dictionary <character *>::iterator itc;
     for (itc = data::characters.begin (); itc != data::characters.end (); itc++) 

@@ -18,6 +18,8 @@
 #include "types.h"
 #include "SDL_mixer.h"
 #include "prefs.h"
+#include "py_object.h"
+#include <string>
 // #include "audio_loop.h"
 
 // We'll only load five waves into memory
@@ -27,29 +29,17 @@
 // We can play four SFX at once
 #define NUM_CHANNELS 4
 
-class loop_info;
 class audio
 {
-#ifndef SWIG
-  static bool audio_initialized;
-  static int background_volume;
-  static int effects_volume;
-  static Mix_Music *music[NUM_MUSIC];
-  static Mix_Chunk *sounds[NUM_WAVES];
-  static bool background_on;
-  static int current_background;
-  static bool background_paused;
-  static int audio_rate;
-  static Uint16 buffer_size;
-  static Uint16 audio_format;
-  static int audio_channels;
-#endif
 public:
+    static void init(config*);
+    static void cleanup(void);
 
-  static void init(config*);
-  static void cleanup(void);
+    // state saving/loading
+    static s_int8 put_state (ogzstream& file);
+    static s_int8 get_state (igzstream& file);
 
-  // Background Music functions:
+    // Background Music functions:
     // Use these to load/unload background music
     static int load_background(int slot, char *filename);
     static void unload_background(int slot);
@@ -77,7 +67,13 @@ public:
     // Temporary convience function to change background
     static void change_background(int slot, int time);
 
-    static bool is_initialized() { return audio_initialized; }
+    static bool is_initialized () { return audio_initialized; }
+    static bool is_schedule_activated () { return schedule_active; }
+    static py_object& get_schedule () { return schedule; }
+    static void set_schedule_active (bool a) { schedule_active = a; }
+    static int get_current_background () { return current_background; }
+    
+    static void set_schedule (string file, PyObject * args = NULL);
 
 #ifdef OGG_MUSIC
     // static loop_info *loop[NUM_MUSIC];
@@ -87,6 +83,27 @@ public:
     // static int get_start_page_pcm() { return loop[current_background]->start_page_pcm; }
     // static int get_start_page_raw() { return loop[current_background]->start_page_raw; }
     // static OggVorbis_File* get_vorbisfile();
+#endif
+
+private:
+#ifndef SWIG
+    static bool schedule_active;
+    static bool audio_initialized;
+    static int background_volume;
+    static int effects_volume;
+    static Mix_Music *music[NUM_MUSIC];
+    static string music_file[NUM_MUSIC];
+    static Mix_Chunk *sounds[NUM_WAVES];
+    static bool background_on;
+    static int current_background;
+    static bool background_paused;
+    static int audio_rate;
+    static Uint16 buffer_size;
+    static Uint16 audio_format;
+    static int audio_channels;
+    static py_object schedule;
+    static string schedule_file;
+    static PyObject *schedule_args;
 #endif
 };
 
