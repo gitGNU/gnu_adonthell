@@ -92,7 +92,7 @@ s_int8 image::get_raw (igzstream& file)
     
     l << file;
     h << file; 
-    
+
     rawdata = new char[l * h * 3];
     file.get_block (rawdata, l * h * 3); 
     
@@ -185,14 +185,22 @@ s_int8 image::put_raw (ogzstream& file) const
 
     if (!length () || !height ()) return 0; 
 
-    SDL_Surface *tmp2 = SDL_CreateRGBSurface (0, length (),
-                                              height (), 24, 
+    SDL_Surface *tmp2 = SDL_CreateRGBSurface (0, 1, 1, 24, 
                                               0x0000FF, 0x00FF00,
                                               0xFF0000, 0);
     
     SDL_Surface * temp = SDL_ConvertSurface (vis, tmp2->format, 0);
-     
-    file.put_block (temp->pixels, length () * height () * 3); 
+
+    SDL_LockSurface (temp); 
+    
+    // The pitch is ALWAYS a multiple of 4, no matter the length of the image.
+    // We must be carefull not to record the pitch overlap.
+    for (u_int16 j = 0; j < height (); j++) 
+    { 
+        file.put_block ((u_int8 *) temp->pixels + (temp->pitch * j), length () * 3); 
+    }
+
+    SDL_UnlockSurface (temp); 
 
     SDL_FreeSurface (temp);
     SDL_FreeSurface (tmp2); 
@@ -332,12 +340,13 @@ image& image::operator = (const image& src)
 void image::raw2display (void * rawdata, u_int16 l, u_int16 h)
 {
     set_length (l);
-    set_height (h); 
+    set_height (h);
+   
     SDL_Surface *tmp2 = SDL_CreateRGBSurfaceFrom (rawdata, length (),
                                                   height (), 24,
                                                   length () * 3,
                                                   0x0000FF, 0x00FF00,
                                                   0xFF0000, 0);
     vis = SDL_DisplayFormat (tmp2);
-    SDL_FreeSurface (tmp2); 
+    SDL_FreeSurface (tmp2);
 }

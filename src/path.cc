@@ -272,6 +272,7 @@ s_int8 path::get_state (igzstream & file)
     goal.y << file;
 
     nb_moves << file; 
+
     for (u_int16 i = 0; i < nb_moves; i++)
     {
         u_int16 t;
@@ -291,6 +292,7 @@ s_int8 path::put_state (ogzstream & file) const
     goal.y >> file;
 
     nbr_moves () >> file; 
+
     for (u_int16 i = 0; i < nbr_moves (); i++)
     {
         get_move (i) >> file; 

@@ -53,9 +53,7 @@ enum {Python = 1, C = 0};
 
 %}
 
-// This enum allows clearer ownership operation:
-// obj.thisown = Python (Python will destroy the object)
-// obj.thisown = C (C have to destroy the object)
+// Same enum available for Python
 enum {Python = 1, C = 0};
 
 %typemap(python,in) string
@@ -90,7 +88,7 @@ enum {Python = 1, C = 0};
         delete $source;
     }
 }
-%typemap (python, freearg) string & = string;
+ %typemap (python, freearg) string & = string;
 %typemap (python, freearg) const string = string;
 %typemap (python, freearg) const string & = string;
 

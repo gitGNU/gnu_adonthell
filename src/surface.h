@@ -370,12 +370,12 @@ public:
         *this = src; 
     }
          
+    SDL_Surface *vis;
 protected: 
     /**
      * The actual surface.
      * 
      */ 
-    SDL_Surface *vis;
  
     /** 
      * Resize this surface. All the content will be lost.
