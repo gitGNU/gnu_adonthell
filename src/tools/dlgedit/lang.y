@@ -8,7 +8,7 @@
 
 int yyerror(char *);
 int yylex();
-void create_code (string);
+void create_code (string&);
 
 vector<string> vars;
 
@@ -20,8 +20,8 @@ char* ops[] = { "", "", "", "", "", "", "Let", "Add", "Sub", "Mul", "Div",
 %token _IF
 %token _ELSE
 %token _NUM
-%token _LPAREN
-%token _RPAREN
+%token _LPAREN _RPAREN
+%token _LBRACE _RBRACE
 %token _SEMICOLON
 %nonassoc _EQ _NEQ _LT _GT _LEQ _GEQ
 %right _ASSIGN
@@ -65,10 +65,18 @@ expr:     val                       { $$ = $1; }
         | _LPAREN expr _RPAREN      { $$ = $2; }
 ;
 
-if_stat:  _IF _LPAREN comp _RPAREN assign    { $$ = $3 + string (1,THEN) + $5; }
-	    | _IF _LPAREN comp _RPAREN assign _ELSE assign  { $$ = $3 + string(1,THEN) + $5 + string(1,ELSE) + $7; }
+if_stat:  _IF _LPAREN comp _RPAREN block    { $$ = $3 + string (1,THEN) + $5; }
+	    | _IF _LPAREN comp _RPAREN block _ELSE block  { $$ = $3 + string(1,THEN) + $5 + string(1,ELSE) + $7; }
 ;
-	
+
+block:    _LBRACE assign_list _RBRACE   { $$ = $2; }
+        | assign                    { $$ = $1; }
+;
+
+assign_list: assign_list assign     { $$ = $1 + $2; }
+        | assign                    { $$ = $1; }
+;
+
 comp:     comp _AND comp            { $$ = string(1, AND) + $1 + $3; }
         | comp _OR comp             { $$ = string(1, OR) + $1 + $3; }
         | _LPAREN comp _RPAREN      { $$ = $2; }
@@ -110,51 +118,66 @@ int get_concat (string &prog, int index)
     return 0;
 }
 
-void create_code (string prog)
+// Transform the scanned and parsed code into the ASM-like script understandable 
+// by the interpreter. Since the code isn't quite in the right order, we have to
+// use a bit of recursion :)
+//
+// As an example, the code:
+//
+// if (e - 2 < 5 - a) 
+// {
+//     x = b + c * d * (e - (f/g));
+//     y = h;
+// }
+// else
+//     z = 0;
+//
+// results in the following _p_rogram and _a_rgument stacks:
+//
+// p: or lt sub id num sub num id then let add id mul mul id id sub id
+//    div id id id let id id else let num id
+// a: e 2 5 a b c d e f g x h y 0 z
+//
+// out of which we have to make: (with regx being temporary register x)
+//
+// sub 5 a reg1
+// sub e 2 reg2
+// lt reg2 reg1 9
+//
+// div f g reg1
+// sub e reg1 reg1
+// mul c d reg2
+// mul reg2 reg1 reg1
+// add b reg1 reg1
+// let reg1 x
+//
+// let h y
+// jmp 2
+//
+// let 0 z
+//
+// Ok, now we know what to do, so lets go :)
+void create_code (string &prog)
 {
-    int i, j = vars.size (), k = 0;
-    int code[3] = { 0, 0, 0 };
-    int numvals[3] = { 0, 0, 0 };
-    char regs = '0';
-    int then_length, else_length = 0;
-    int num_cmds = 0;
+    int i, j = vars.size ();
     unsigned char opcode;
-    
-    for (i = 0; i < prog.size (); i++)
-    {
-        switch (opcode = prog[i])
-        {
-            case ID:
-            case NUM:
-            {
-                numvals[k]++;
-                code[k]++;
-                break;
-            }
+    char regs = '0';
 
-            case THEN:
-            case ELSE:
-            {
-                k++;
-                break;
-            }
-
-            default:
-            {
-                code[k]++;
-                break;
-            }
-        } 
-    }
-
-//    cout << "then: " << code[1] << "/" << numvals[1] << " else:" << code[2] << "/" << numvals[2] << "\n";
-
-//    for (k = 0; k < 3; k++)
-//    {
-//        j = numvals[k];
+    static int then_length, else_length = 0;
+    static int num_cmds = 0;
+    static int rec = 1;
         
     for (i = prog.size () - 1; i >= 0; i--)
     {
+        // prints program and argument stack
+        if (prog[i] > 0)
+        {
+            cout << "*** ";
+            copy(prog.begin(), prog.end(), ostream_iterator<int>(cout, " "));
+            cout << "\n*** ";
+            copy(vars.begin(), vars.end(), ostream_iterator<string>(cout, " "));
+            cout << endl;
+       }
        
         switch (opcode = prog[i])
         {
@@ -177,7 +200,7 @@ void create_code (string prog)
                 // store result into a new register if both arguments are immediate ones
                 if (prog[i+1] != char(REG) && prog[i+2] != char(REG)) regs++;
 
-                cout << ops[opcode] << " " << vars[j] << " "<< vars[j+1] << " reg" << regs << "\n";
+                cout << "[" << rec << "] " << ops[opcode] << " " << vars[j] << " "<< vars[j+1] << " reg" << regs << "\n";
                 prog.replace (prog.begin () + i, prog.begin () + i + 3, 1, REG);
                 vars.erase (vars.begin () + j, vars.begin () + j + 2);
                 vars.insert (vars.begin () + j, ("reg"+string(1, regs)));
@@ -192,17 +215,18 @@ void create_code (string prog)
 
             case LET:
             {
-                cout << ops[opcode] << " " << vars[j] << " "<< vars[j+1] << "\n" << flush;
+                cout << "[" << rec << "] " << ops[opcode] << " " << vars[j] << " "<< vars[j+1] << "\n" << flush;
                 prog.erase (prog.begin () + i, prog.begin () + i + 3);
                 vars.erase (vars.begin () + j, vars.begin () + j + 2);
 
+                num_cmds++;
+                rec++;
+
+                // recursion to bring the resulting script into the right order
+                create_code (prog);
+
                 i = prog.size ();
                 j = vars.size ();
-                regs = '0';
-
-                num_cmds++;
-                
-                break;
             }
 
             case THEN:
@@ -233,19 +257,19 @@ void create_code (string prog)
                 {
                     case AND:
                     {
-                        cout << ops[opcode] << " " << vars[j] << " "<< vars[j+1] << " else\n" << flush;
+                        cout << "[" << rec << "] " << ops[opcode] << " " << vars[j] << " "<< vars[j+1] << " else\n" << flush;
                         i--;
                         break;
                     }
                     case OR:
                     {
-                        cout << ops[opcode] << " " << vars[j] << " "<< vars[j+1] << " 2\nJmp then\n" << flush;
+                        cout << "[" << rec << "] " << ops[opcode] << " " << vars[j] << " "<< vars[j+1] << " 2\nJmp then\n" << flush;
                         i--;
                         break;
                     }
                     default:
                     {
-                        cout << ops[opcode] << " " << vars[j] << " "<< vars[j+1] << " else\n" << flush;
+                        cout << "[" << rec << "] " << ops[opcode] << " " << vars[j] << " "<< vars[j+1] << " else\n" << flush;
                         break;
                     }
                 }
@@ -258,16 +282,7 @@ void create_code (string prog)
                 regs = '0';
             }
         }
-
-        // prints program and argument stack
-        cout << "*** ";
-        copy(prog.begin(), prog.end(), ostream_iterator<int>(cout, " "));
-        cout << "\n*** ";
-        copy(vars.begin(), vars.end(), ostream_iterator<string>(cout, " "));
-        cout << endl;
-
-//    }
     }
 
-    cout << "*** then " << then_length << "\n*** else " << else_length << "\n";  
+    // cout << "*** then " << then_length << "\n*** else " << else_length << "\n";  
 }

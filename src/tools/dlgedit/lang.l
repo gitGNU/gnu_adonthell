@@ -17,6 +17,8 @@ if          { return _IF; }
 else        { return _ELSE; }
 {ident}     { yylval = yytext; return _ID; }
 {num}       { yylval = yytext; return _NUM; }
+"{"         { return _LBRACE; }
+"}"         { return _RBRACE; }
 "("         { return _LPAREN; }
 ")"         { return _RPAREN; } 
 "=="        { return _EQ; }
