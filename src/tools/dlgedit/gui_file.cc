@@ -40,6 +40,9 @@ GuiFile::GuiFile (int type, const string &title, const string &file)
     // hide new/delete/rename directory buttons if we're loading a file
     if (type == LOAD) gtk_file_selection_hide_fileop_buttons (window);
 
+    // open the directory browsed last 
+    gtk_file_selection_set_filename (window, file.c_str ());
+    
     // get OK and Cancel buttons
     fs_cancel_button = window->cancel_button;
     fs_ok_button = window->ok_button;

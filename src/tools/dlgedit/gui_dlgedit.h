@@ -23,6 +23,7 @@
 #define GUI_DLGEDIT_H
 
 #include <vector>
+#include <string>
 #include <gtk/gtkstyle.h>
 #include "gui_graph.h"
 #include "gui_list.h"
@@ -113,6 +114,11 @@ public:
      */
     void loadDialogue (string file);
     /**
+     * Save a dialogue to file
+     * @param file Filename (and path) of the dialogue to load.
+     */
+    void saveDialogue (string file);
+    /**
      * Close a dialogue
      */
     void closeDialogue ();
@@ -121,7 +127,18 @@ public:
      * @param module The dialogue to display.
      */
     void showDialogue (DlgModule *module);
-            
+
+    /**
+     * Get the directory where the last fileselection took place.
+     * @return Path to the directory last opened.
+     */
+    string directory ()     { return directory_+"/"; }
+    /**
+     * Get the full path and name of the dialogue currently in the view.
+     * @return Filename of the current dialogue.
+     */
+    string filename ();
+                        
 private:
     /**
      * Prepare some colored pens for later use
@@ -139,12 +156,12 @@ private:
     /**
      * Add a dialogue to the GUI
      */
-    DlgModule *initDialogue (char*);
+    DlgModule *initDialogue (string);
     /**
      * Set the GUI back to it's initial state.
      */
     void clear ();
-    
+
     int number;                     // serial number of open dialogues
     GuiList *list_;                 // instant preview widget
     GuiGraph *graph_;               // dialogue view
@@ -156,6 +173,7 @@ private:
     GdkFont *font_;                 // font for text-output
     GdkGC *color[MAX_GC];           // custom Pens
     vector<DlgModule*> dialogues_;  // dialogues currently loaded
+    string directory_;              // directory used in last file-selection
 };
 
 #endif // GUI_DLGEDIT_H

@@ -25,6 +25,7 @@
 DlgNode::DlgNode (node_type t, DlgRect area)
 {
     type_ = t;
+    index_ = -1;
     top_left = area.topLeft ();
     bottom_right = area.bottomRight ();
 }

@@ -209,6 +209,36 @@ bool DlgCircle::load ()
     return true;
 }
 
+// save all data neccessary to restore the circle
+void DlgCircle::save (ofstream &file)
+{
+    // Keyword "Circle" and circle's number
+    file << "\nCircle\n";
+
+    // circle's type
+    file << "  Type " << (int) type () << "\n";
+    
+    // circle's position
+    file << "  Pos " << x () << " " << y () << "\n";
+
+    // circle's annotation
+    file << "  Note §" << entry_->annotation () << "§\n";
+
+    // circle's text
+    file << "  Text §" << entry_->text () << "§\n";
+
+    // circle's character
+    file << "  NPC §" << entry_->npc () << "§\n";
+
+    // circle's condition(s)
+    file << "  Cond §" << entry_->condition () << "§\n";
+
+    // circle's code
+    file << "  Vars §" << entry_->code () << "§\n";
+    
+    file << "End\n";
+}
+
 // get the text of a circle
 string DlgCircle::text ()
 {

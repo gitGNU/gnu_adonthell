@@ -25,6 +25,7 @@
 #include <list>
 #include <string>
 #include <stdio.h>
+#include <fstream.h>
 #include "dlg_types.h"
 #include "dlg_node_gfx.h"
 
@@ -49,7 +50,7 @@ extern FILE *loadlgin;
 class DlgNode : public DlgNodeGfx
 {
 public:
-    DlgNode () { }
+    DlgNode () { index_ = -1; }
     DlgNode (node_type t, DlgRect area);
 
     /** 
@@ -103,22 +104,37 @@ public:
      */
     void draw (GdkPixmap *surface, DlgPoint &offset, mode_type mode);
     
+    /**
+     * Draw this node to the given surface.
+     * @param surface the GdkPixmap to draw to
+     * @param offset the DlgPoint to use as offset
+     */
     virtual void draw (GdkPixmap *surface, DlgPoint &offset) = 0;
+    
+    /**
+     * Save a node to file
+     * @param out Stream to the file to save to
+     */
+    virtual void save (ofstream &out) = 0; 
     
     /**
      * Get the type of the node.
      * @return the type of the node.
      */
     node_type type ()       { return type_; }
+    
+    void setIndex (int i)   { index_ = i; }
+    int index ()            { return index_; }
         
 protected:
-    node_type type_;
+    node_type type_;                // type of the node
+    int index_;                     // position of node in file when saving
         
-    list<DlgNode*> prev_;
-    list<DlgNode*> next_;    
+    list<DlgNode*> prev_;           // list of node's parents
+    list<DlgNode*> next_;           // list of node's children
 
-    list<DlgNode*>::iterator p;
-    list<DlgNode*>::iterator n;
+    list<DlgNode*>::iterator p;     // iterator over parents
+    list<DlgNode*>::iterator n;     // iterator over children
     
     DlgNode* getNode (list<DlgNode*>::iterator &it, list<DlgNode*> &lst,
             query_type &pos, int &offset);

@@ -79,7 +79,18 @@ public:
     DlgCircle* sibling (query_type pos, int offset = 1);  
     //@}
 
+    /**
+     * load circle from a file. The file to load from is a global variable, 
+     * as loading is handled by a scanner generated with flex.
+     * @return <b>true</b> on success, <b>false</b> otherwise.
+     */
     bool load ();
+    
+    /**
+     * save a circle to a file
+     * @param file Stream to an open file
+     */
+    void save (ofstream &file);
 
     /**
      * Draw this node to the given surface with the specified offset. 

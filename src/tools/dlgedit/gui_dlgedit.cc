@@ -85,7 +85,7 @@ GuiDlgedit::GuiDlgedit ()
     menuitem = gtk_menu_item_new_with_label ("Save");
     gtk_container_add (GTK_CONTAINER (submenu), menuitem);
     gtk_widget_add_accelerator (menuitem, "activate", accel_group, GDK_s, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
-    gtk_signal_connect (GTK_OBJECT (menuitem), "activate", GTK_SIGNAL_FUNC (on_file_save_activate), (gpointer) NULL);
+    gtk_signal_connect (GTK_OBJECT (menuitem), "activate", GTK_SIGNAL_FUNC (on_file_save_activate), (gpointer) this);
     gtk_widget_show (menuitem);
     menuItem[SAVE] = menuitem;
     
@@ -224,6 +224,9 @@ GuiDlgedit::GuiDlgedit ()
 
     // init the colors we need for drawing
     initColors (graph_->drawingArea ());
+
+    // get the current working directory
+    directory_ = g_get_current_dir ();
     
     clear ();
 }
@@ -232,7 +235,7 @@ GuiDlgedit::GuiDlgedit ()
 void GuiDlgedit::newDialogue ()
 {
     // the name of the dialogue
-    gchar *name = g_strdup_printf ("untitled-%i", ++number);
+    gchar *name = g_strdup_printf ("%s/untitled-%i", directory_.c_str (), ++number);
             
     // the new dialogue
     DlgModule *module = initDialogue (name);
@@ -256,20 +259,35 @@ void GuiDlgedit::loadDialogue (string file)
     }
 
     // get the name to use for the dialogue
-    unsigned int pos = file.rfind (".adlg");
-    if (pos != file.npos) file.replace (pos, 5, g_strdup_printf ("-%i", ++number));
-    else file +=g_strdup_printf ("-%i", ++number);
+    file += g_strdup_printf ("-%i", ++number);
 
-    gchar *name = g_basename (file.c_str ());
-
+    // remember the current directory for later use
+    directory_ = g_dirname (file.c_str ());
+    
     // the new dialogue
-    DlgModule *module = initDialogue (name);
+    DlgModule *module = initDialogue (file);
 
     // try to load from file
     if (!module->load ()) closeDialogue ();
 
     // Display the dialogue
     else showDialogue (module);
+}
+
+// save a dialogue
+void GuiDlgedit::saveDialogue (string file)
+{
+    DlgModule *module = graph_->dialogue ();
+    if (module == NULL) return;
+    
+    // remember the current directory for later use
+    directory_ = g_dirname (file.c_str ());
+    
+    // append the ".adlg" extension if necessary
+    if (file.rfind (".adlg") == file.npos) file += ".adlg";
+
+    // save
+    module->save (file); 
 }
 
 // close the dialogue being displayed
@@ -302,6 +320,9 @@ void GuiDlgedit::closeDialogue ()
 // display a certain dialogue
 void GuiDlgedit::showDialogue (DlgModule *module)
 {
+    // remove the current module from the view
+    graph_->detachModule ();
+    
     // attach the dialogue to the view
     graph_->attachModule (module);
     
@@ -309,7 +330,7 @@ void GuiDlgedit::showDialogue (DlgModule *module)
     initTitle ();
 }
 
-DlgModule *GuiDlgedit::initDialogue (char *name)
+DlgModule *GuiDlgedit::initDialogue (string name)
 {
     // the new dialogue
     DlgModule *dlg = new DlgModule (name, "New Dialogue");
@@ -335,9 +356,10 @@ void GuiDlgedit::initTitle ()
 {
     gchar *title = "Adonthell Dialogue Editor v"_VERSION_;
     DlgModule *module = graph_->dialogue ();
-    
+  
     if (module != NULL)
-        title = g_strjoin (NULL, title, " - [", module->name().c_str (), "]", NULL);
+        title = g_strjoin (NULL, title, " - [", 
+                g_basename (module->name().c_str ()), "]", NULL);
 
     gtk_window_set_title (GTK_WINDOW (wnd), title);
 }
@@ -360,7 +382,7 @@ void GuiDlgedit::initMenu ()
     for (i = dialogues_.begin (); i != dialogues_.end (); i++, position++)
     {
         name = (char*) (*i)->name().c_str ();
-        menuitem = gtk_menu_item_new_with_label (name);
+        menuitem = gtk_menu_item_new_with_label (g_basename (name));
         gtk_container_add (GTK_CONTAINER (windowMenu), menuitem);
         gtk_signal_connect (GTK_OBJECT (menuitem), "activate", 
         GTK_SIGNAL_FUNC (on_window_activate), (gpointer) *i);
@@ -544,4 +566,20 @@ GdkGC *GuiDlgedit::getColor (mode_type mode, node_type type)
     }
 
     return NULL;
+}
+
+// get the full path/name of a dialogue
+string GuiDlgedit::filename ()
+{
+    DlgModule *module = graph_->dialogue ();
+    
+    // if there is no module, return the current working directory
+    if (module == NULL) return directory_;
+    string file = module->name ();
+    
+    // remove the serial number from the name
+    unsigned int pos = file.rfind ("-");
+    if (pos != file.npos) file.erase (pos);
+    
+    return file;
 }

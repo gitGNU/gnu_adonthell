@@ -27,12 +27,22 @@
 DlgModule::DlgModule (string n, string d)
 {
     type_ = MODULE;
-    name_ = n;
     selected_ = NULL;
     highlighted_ = NULL;
     description_ = d;
     changed_ = false;
     mode_ = NONE;
+    setName (n);
+}
+
+void DlgModule::setName (const string &filename)
+{
+    name_ = filename;
+    
+    unsigned int pos = name_.rfind (".adlg");
+    if (pos != name_.npos) name_.erase (pos, 5);
+    
+    // TODO: handle serial number
 }
 
 // select a given node
@@ -147,6 +157,12 @@ bool DlgModule::load ()
                 break;
             }
 
+            case LOAD_NOTE:
+            {
+                if (parse_dlgfile (s, n) == LOAD_STR) description_ = s;
+                break;
+            }
+
             case LOAD_RACE:
             {
                 if (parse_dlgfile (s, n) == LOAD_NUM); //->myplayer->set_val ("race", n);
@@ -206,4 +222,42 @@ bool DlgModule::load ()
     }
 
     return true;
+}
+
+// save dialogue to file
+bool DlgModule::save (string &file)
+{
+    ofstream out (file.c_str ());
+    int index = 0;
+    
+    // opening failed for some reasons    
+    if (!out) return false;
+
+    // Write Header: Adonthell Dialogue System file version 1
+    out << "# Dlgedit File Format 1\n#\n"
+        << "# Written by Adonthell Dlgedit v" << _VERSION_ << "\n"
+        << "# (C) 2000/2001/2002 Kai Sterker\n#\n"
+        << "# $Id$\n\n"
+        << "Note §" << description_ << "§\n\n";
+
+    // Save Circles first, as arrows depend on them when loading later on
+    for (vector<DlgNode*>::iterator i = nodes.begin (); i != nodes.end (); i++)
+        if ((*i)->type () != LINK)
+        {
+            (*i)->setIndex (index++);
+            (*i)->save (out);
+        }
+                
+    // Save Arrows
+    for (vector<DlgNode*>::iterator i = nodes.begin (); i != nodes.end (); i++)
+        if ((*i)->type () == LINK)
+            (*i)->save (out);
+
+    // mark dialogue as unchanged
+    changed_ = false;
+    
+    // update filename    
+    setName (file);
+    
+    return true;    
 }

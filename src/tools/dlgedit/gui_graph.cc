@@ -60,7 +60,10 @@ void GuiGraph::attachModule (DlgModule *m)
     
     // get reference of the module's offset
     offset = &m->offset ();
-    
+
+    // if a node is selected, update the instant preview
+    GuiDlgedit::window->list ()->display (module->selected ());
+        
     // set the size of the dialogue
     module->resize (graph->allocation.width, graph->allocation.height);
     
@@ -71,7 +74,10 @@ void GuiGraph::attachModule (DlgModule *m)
 // detach a module
 void GuiGraph::detachModule ()
 {
-    module = NULL;    
+    module = NULL;
+    
+    // clear the instant preview
+    GuiDlgedit::window->list ()->clear ();
 }
 
 // select a node
@@ -409,10 +415,11 @@ void GuiGraph::prepareScrolling (DlgPoint &point)
     // enable scrolling
     if (scroll_x || scroll_y)
     {
+        scroll_offset = DlgPoint (scroll_x, scroll_y);
+
         if (!scrolling)
         {
             scrolling = true;
-            scroll_offset = DlgPoint (scroll_x, scroll_y);
             gtk_timeout_add (100, on_scroll_graph, this);
         }
     }

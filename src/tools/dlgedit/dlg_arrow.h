@@ -55,13 +55,20 @@ public:
     void draw (GdkPixmap *surface, DlgPoint &offset);
 
     /**
-     * Init the Arrow from a file
+     * Init the Arrow from a file.  The file to load from is a global 
+     * variable, as loading is handled by a scanner generated with flex.
      * @param nodes The rest of the dialogue, to connect this Arrow to
      * @return <b>true</b> if loading was successful, <b>false</b>
      *         otherwise.
      */
     bool load (vector<DlgNode*> &nodes);
 
+    /**
+     * save an Arrow to a file
+     * @param file Stream to an open file
+     */
+    void save (ofstream &file);
+    
     /**
      * Check whether the arrow is located at the given point.
      * @return <b>true</b> if this is the case, <b>false</b> otherwise.

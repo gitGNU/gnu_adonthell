@@ -193,3 +193,21 @@ bool DlgArrow::load (vector<DlgNode*> &nodes)
 
     return false;
 }
+
+// save an arrow to file
+void DlgArrow::save (ofstream &file)
+{
+    // Keyword "Arrow" and arrow's number
+    file << "\nArrow\n";
+
+    // arrow's type
+    file << "  Type " << (int) type_ << "\n";
+
+    // start circle
+    file << "  Prev " << prev_.front ()->index () << "\n";
+
+    // end circle
+    file << "  Next " << next_.front ()->index () << "\n";
+
+    file << "End\n";
+}

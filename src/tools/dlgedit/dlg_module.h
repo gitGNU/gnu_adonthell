@@ -93,7 +93,19 @@ public:
      *         otherwise.
      */
     bool load ();
-
+    /**
+     * Save the Dialogue to a file
+     * @param file full path and filename of the dialogue
+     * @return <b>true</b> if saving was successful, <b>false</b>
+     *         otherwise.
+     */
+    bool save (string &file);
+    
+    /**
+     * Save the Dialogue to a file
+     */
+    void save (ofstream &file) { }
+    
     /**
      * Get the list of nodes in this dialogue.
      * @return a reference to the list of nodes.
@@ -111,6 +123,12 @@ public:
      * @return a reference to the dialogue's name.
      */
     string &name ()                 { return name_; }
+    
+    /**
+     * Set the name of this dialogue.
+     * @param the filename of the file the dialogue was loaded from.
+     */
+    void setName (const string &filename);
     
 protected:
     vector<DlgNode*> nodes;     // all the nodes in this dialogue
