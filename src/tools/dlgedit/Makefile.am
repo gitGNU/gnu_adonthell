@@ -6,7 +6,7 @@ endif
 
 SUBDIRS = examples
 
-EXTRA_DIST = loadlg.l dialogue.py
+EXTRA_DIST = loadlg.l
 
 dlgedit_SOURCES = \
     dlg_arrow.cc \

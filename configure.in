@@ -386,6 +386,7 @@ doc/items/Makefile
 intl/Makefile 
 po/Makefile.in 
 src/Makefile
+src/modules/Makefile
 src/tools/Makefile
 src/tools/charedit/Makefile
 src/tools/dlgedit/Makefile

@@ -1,16 +1,12 @@
 ## Process this file with automake to produce Makefile.in
 
 if BUILD_TOOLS
-SUBDIRS = . tools
+SUBDIRS = . modules tools
 endif
-
-moddatadir = $(gamedatadir)/modules
-
-moddata_DATA = dialogue.pyc adonthell.pyc
 
 bin_PROGRAMS = adonthell
 
-EXTRA_DIST = .indent.pro prefs.l py_adonthell.i adonthell.py
+EXTRA_DIST = .indent.pro prefs.l py_adonthell.i
 
 CPPFLAGS += $(SDL_DEFS) $(OGG_DEFS) $(SDL_CFLAGS) $(OGG_CFLAGS) $(PY_CFLAGS)
 
@@ -52,6 +48,7 @@ adonthell_SOURCES = main.cc
 py_adonthell_wrap.cc : py_adonthell.i *.h
 	@if test "${P_SWIG}"; then \
 	   ${P_SWIG} -python -shadow ${SDL_CFLAGS} -I./ -I../ -c++ -make_default -o $*.cc py_adonthell.i; \
+           mv adonthell.py modules/adonthell.py; \
 	else \
 	   echo "You need swig >= 1.3.10 in order to re-build this file."; \
 	   exit 1; \
@@ -59,9 +56,3 @@ py_adonthell_wrap.cc : py_adonthell.i *.h
 
 lex.prefs.cc : prefs.l
 	flex -olex.prefs.cc $<
-
-adonthell.pyc : dialogue.pyc adonthell.py adonthell
-	./adonthell -c
-
-dialogue.pyc : tools/dlgedit/dialogue.py
-	@cp $< .

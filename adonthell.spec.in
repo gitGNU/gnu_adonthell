@@ -44,8 +44,8 @@ make
 rm -rf $RPM_BUILD_ROOT
 make prefix=$RPM_BUILD_ROOT%{prefix} bindir=$RPM_BUILD_ROOT%{bindir} gamedatadir=$RPM_BUILD_ROOT%{gamedatadir} install
 strip $RPM_BUILD_ROOT%{bindir}/adonthell
-install -m 644 src/adonthell.py $RPM_BUILD_ROOT%{gamedatadir}/modules/adonthell.py
-install -m 644 src/tools/dlgedit/dialogue.py $RPM_BUILD_ROOT%{gamedatadir}/modules/dialogue.py
+install -m 644 src/modules/adonthell.py $RPM_BUILD_ROOT%{gamedatadir}/modules/adonthell.py
+install -m 644 src/modules/dialogue.py $RPM_BUILD_ROOT%{gamedatadir}/modules/dialogue.py
 
 
 
