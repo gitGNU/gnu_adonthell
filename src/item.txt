@@ -1,0 +1,183 @@
+==========================================================================
+
+DOCUMENTATION FOR item.h
+
+Item superclass
+
+==========================================================================
+This documentation is part of the Adonthell Project
+(adonthell.sourceforge.net)
+==========================================================================
+
+Public constants:
+
+  const NUM_ATT // number of attributes
+  const NUM_CHR // number of characteristics
+  const NUM_EFF // number of effects
+
+
+Public member variables:
+
+  item *next; // pointer to the next item in the container
+  item *prev; // pointer to the previous item in the container
+
+Protected member variables:
+
+  bool debug_mode; // is debug mode on or off?
+  unsigned int id; // ID number corresponding to the items database (MORE info
+	           // when it becomes available)
+  string name; // name of the item
+  string gfx;  // filename of the graphic
+  unsigned int type; // type of the item, corresponds to:
+                     // 0 -- item
+                     // 1 -- weapon
+                     // 2 -- armour
+                     // 3 -- spell
+  unsigned int item_att[]; // attributes array:
+                           // 0 -- size
+                           // 1 -- weight
+                           // 2 -- value
+                           // 3 -- number of uses (0 is infinite)
+  bool item_chr[]; // characteristics array. given an index, i, if i == TRUE,
+                   // the item has the corresponding characteristic:
+                   // 0 -- moveable
+                   // 1 -- container
+                   // 2 -- light
+                   // 3 -- locked
+                   // 4 -- openable
+                   // 5 -- useable
+                   // 6 -- obtainable
+                   // 7 -- droppable
+                   // 8 -- combinable
+                   // 9 -- equipable
+                   //10 -- unequipable
+  bool item_ace[]; // active effect array. given an index, i, if i == TRUE,
+		   // the corresponding effect will fire:
+                   // 0 -- obtain
+                   // 1 -- drop
+                   // 2 -- equip
+                   // 3 -- unequip
+                   // 4 -- use
+  effect item_eff[]; // effect array:
+                     // 0 -- obtain
+                     // 1 -- drop
+                     // 2 -- equip
+                     // 3 -- unequip
+                     // 4 -- use
+
+Constructors:
+
+  item() // default constructor; sets:
+         // next = NULL
+	 // prev = NULL
+         // id = 0
+         // name = ""
+         // gfx = ""
+         // type = 0
+	 // all attributes = 0;
+         // characteristics 0-4 = FALSE
+         // characteristics 5-8 = TRUE
+         // characteristics 9-10 = FALSE
+         // all item effects active = FALSE 
+
+  item( item *n, item *p, unsigned int i, string nm, string gf,
+	unsigned int ty, unsigned int at[], bool ch[], bool ae[], effect ef[] )
+         // the "full" constructor:
+         // *n is a pointer to the next item in the container
+         // *p is a pointer to the previous item in the container
+         // id is the ID number of the item
+	 // nm is the name
+         // gf is the filename of the gfx
+         // ty is the type of the item
+         // at[] is the attributes array
+         // ch[] is the characteristics array
+         // ae[] is the active effects array
+         // ef[] is the effects array
+
+  item( unsigned int i, string nm, string gf, unsigned int ty )
+         // maybe the most useful constructor of all, the "sparse" constructor:
+         // id is the ID number of the item
+	 // nm is the name
+         // gf is the filename of the gfx
+         // ty is the type of the item
+         // everything else is as in the default constructor
+
+  item( string fn ) // the from file constructor. provide a filename, and the
+		    // item will be sucked in from file. see item-file-fmt.txt
+		    // for details on the file format
+
+
+Overloaded operators:
+
+  item operator=( item& )   // assignment operator
+  bool operator==( item & ) // equality operator
+  bool operator!=( item & ) // inequality operator
+
+Debug functions:
+
+  bool debug( bool ) // turns debug on (default) or off
+  string pb( bool ) // returns a printable string corresponding to a bool
+
+Value returning functions:
+
+  unsigned int getId()     // returns ID number
+  string getName()         // returns name
+  string getGfx()          // returns gfx filename
+  unsigned int getType()   // returns type
+  unsigned int getSize()   // returns size
+  unsigned int getWeight() // returns weight
+  unsigned int getValue()  // returns value
+  unsigned int getUses()   // returns number of uses
+  bool getMoveable()       // returns moveable?
+  bool getContainer()      // returns container?
+  bool getLight()          // returns light?
+  bool getLocked()         // returns locked?
+  bool getOpenable()       // returns openable?
+  bool getUseable()        // returns useable?
+  bool getObtainable()     // returns obtainable?
+  bool getDroppable()      // returns droppable?
+  bool getCombineable()    // returns combinable?
+  bool getEquipable()      // returns equipable?
+  bool getUnequipable()    // returns unequipable?
+  bool getObtainEffAct()   // returns obtain effect active?
+  bool getDropEffAct()     // returns drop effect active?
+  bool getEquipEffAct()    // returns equip effect active?
+  bool getUnequipEffAct()  // returns unequip effect active?
+  bool getUseEffAct()      // returns use effect active
+  effect getObtainEff()    // returns obtain effect
+  effect getDropEff()      // returns drop effect
+  effect getEquipEff()     // returns equip effect
+  effect getUnequipEff()   // returns unequip effect
+  effect getUseEff()       // returns use effect
+
+Modifying functions:
+
+  bool setId( unsigned int )    // sets ID number
+  bool setName( string )        // sets name
+  bool setGfx( string )         // sets gfx filename
+  bool setType( unsigned int )  // sets type
+  bool setSize( unsigned int )  // sets size
+  bool setWeight( unsigned int )// sets weight
+  bool setValue( unsigned int ) // sets value
+  bool setUses( unsigned int )  // sets number of uses
+  bool setMoveable( bool )      // sets moveable?
+  bool setContainer( bool )     // sets container?
+  bool setLight( bool )         // sets light?
+  bool setLocked( bool )        // sets locked?
+  bool setOpenable( bool )      // sets openable?
+  bool setUseable( bool )       // sets useable?
+  bool setObtainable( bool )    // sets obtainable?
+  bool setDroppable( bool )     // sets droppable?
+  bool setCombineable( bool )   // sets combinable?
+  bool setEquipable( bool )     // sets equipable?
+  bool setUnequipable( bool )   // sets unequipable?
+  bool setObtainEffAct( bool )  // sets obtain effect active?
+  bool setDropEffAct( bool )    // sets drop effect active?
+  bool setEquipEffAct( bool )   // sets equip effect active?
+  bool setUnequipEffAct( bool ) // sets unequip effect active?
+  bool setUseEffAct( bool )     // sets use effect active
+  bool setObtainEff( effect )   // sets obtain effect
+  bool setDropEff( effect )     // sets drop effect
+  bool setEquipEff( effect )    // sets equip effect
+  bool setUnequipEff( effect )  // sets unequip effect
+  bool setUseEff( effect )      // sets use effect
