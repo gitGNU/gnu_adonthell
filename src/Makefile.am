@@ -22,6 +22,7 @@ libbase_a_SOURCES = \
         character_base.cc \
         fileops.cc \
 	game.cc \
+        gamedate.cc \
         gametime.cc \
         quest.cc \
         storage.cc \
@@ -30,6 +31,7 @@ libbase_a_SOURCES = \
         character_base.h \
 	fileops.h \
 	game.h \
+        gamedate.h \
         gametime.h \
         quest.h \
         storage.h \

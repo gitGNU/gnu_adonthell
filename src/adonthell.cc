@@ -23,6 +23,7 @@
 
 #include "win_manager.h"
 #include "gametime.h"
+#include "gamedate.h"
 #include "adonthell.h"
 #include "audio.h"
 
@@ -54,9 +55,11 @@ void adonthell::main (win_base *wnd, const string name)
         // blit the surface to the physical screen
         screen::show ();
     
-        // update the game clock and perform operations to keep the 
-        // game's speed constant
+        // perform operations to keep the game's speed constant
         gametime::update ();
+        
+        // update the internal clock
+        gamedate::update ();
     }
 
     // only leave one main loop at a time
