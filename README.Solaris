@@ -1,0 +1,70 @@
+
+                    Adonthell on Solaris
+
+This file contains additional information for compiling Adonthell 
+under SUN Solaris. It should run on both Sparc and x86, although
+latter hasn't been tested yet. For general compilation instructions 
+refer to the INSTALL file. Even more details are found within the 
+NEWBIE file.
+
+
+A word of warning:
+==================
+
+We do not have access to any Solaris boxes, so we cannot make sure
+that Adonthell will always compile out of the box. If you run into
+problems, please report them (see the README for a list of contacts).
+
+
+Compiling Adonthell:
+====================
+
+That's as easy as
+	
+	$ ./configure 
+	$ make
+	$ make install
+
+provided you have the usual GNU development tools installed.
+
+
+Known issues:
+=============
+
+* With some versions of gcc you might run into an error like 
+  the following:
+
+    str_hash.h:40: `hash' is not a template
+    [...]
+    
+  In that case replace line 33-37 of src/str_hash.h
+
+    #if __GNUG__ > 2
+    namespace __gnu_cxx
+    #else
+    namespace std
+    #endif
+
+  with a simple
+
+    namespace std
+
+  You can also remove the bit at the end (line 47 -49):
+
+    #if __GNUG__ > 2
+    namespace std { using namespace __gnu_cxx; };
+    #endif
+   
+  Then run 'make' again.
+  
+
+* Text input doesn't work. You can control your character, but 
+  won't be able to enter a custom name or save game description.
+  This will be fixed in one of the next versions.
+  
+
+Credits:
+========
+
+Thanks go to Brian Lund for his help with the initial Solaris port
+and to Markus for pointing out problems with version 0.3.3.

@@ -144,9 +144,9 @@ Contact:
 You can reach us in various ways:
 
 Email:         adonthell@linuxgames.com
-Mailing list:  adonthell-general@mail.freesoftware.fsf.org
+Mailing list:  adonthell-general@nongnu.org
 Web site:      http://adonthell.linuxgames.com
-Tech support:  http://savannah.gnu.org/support/?group_id=702
+Tech support:  http://savannah.nongnu.org/support/?group_id=702
 
 There is a Message Board for user to user discussion at
     http://www.3dforums.com/?action=forumpage&loc=49&forum_id=158
@@ -161,8 +161,8 @@ Reporting Bugs:
 
 We hope you'll never have to, but if you discover a problem, we
 would like to hear about it. Please use the Development mailing list
-(adonthell-devel@mail.freesoftware.fsf.org) for that. You can find
-informations on this and other mailing lists at 
+(adonthell-devel@nongnu.org) for that. You can find informations on
+this and other mailing lists at 
 
     http://adonthell.linuxgames.com/contact/mailinglist.shtml
 

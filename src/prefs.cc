@@ -1,7 +1,7 @@
 /*
    $Id$
 
-   Copyright (C) 2000/2001/2002 Kai Sterker <kaisterker@linuxgames.com>
+   Copyright (C) 2000/2001/2002/2003 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -29,15 +29,6 @@
 #include <sys/types.h>
 #include <dirent.h>
 #include <unistd.h>
-
-#ifndef __APPLE__
-#ifdef HAVE__GETOPT_H
-#include <_getopt.h>
-#else
-#include <getopt.h>
-#endif
-#endif // __APPLE__
-
 #include "prefs.h"
 #include "python_class.h"
 #include "game.h"
@@ -224,7 +215,7 @@ void config::parse_arguments (int argc, char * argv[])
         
         // The game exists, so let the show continue...
         gamedir = game::global_data_dir() + "/games/"; 
-        gamedir += argv[1];
+        gamedir += argv[optind];
     }
 
     // Now check whether the directory is a valid game directory
@@ -303,15 +294,13 @@ bool config::read_adonthellrc ()
     int n, i = 1;
     u_int32 major = 0, minor = 0, micro = 0, MAJOR, MINOR, MICRO;
     char suffix[16] = "\0", SUFFIX[16] = "\0"; 
-    string s, fname, version;
+    string s, fname;
 
 #ifndef WIN32
     fname = adonthellrc + "/adonthellrc";
 #else
     fname = adonthellrc + "/adonthell.ini";
 #endif
-
-    version = "0";
 
     // try to create that directory in case it dosn't exist
 #ifdef WIN32
@@ -333,9 +322,6 @@ bool config::read_adonthellrc ()
     }
 
     // adonthellrc opened -> read configuration
-    // if we've got something in section, then try to find this section,
-    // else use the section specified in 'Default' or use the first section
-    // we find.
     while (i)
     {
         switch (i = parse_adonthellrc (n, s))
@@ -392,10 +378,7 @@ bool config::read_adonthellrc ()
             {
                 // get config file version number
                 if (parse_adonthellrc (n, s) == PREFS_STR) 
-                {
-                    version = s;
-                    sscanf (version.c_str (), "%d.%d.%d%15s", &major, &minor, &micro, suffix);
-                }
+                    sscanf (s.c_str (), "%d.%d.%d%15s", &major, &minor, &micro, suffix);
                 break;
             }
             default: break;

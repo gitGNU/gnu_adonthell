@@ -1,7 +1,7 @@
 /*
    $Id$
 
-   Copyright (C) 2002 Kai Sterker <kaisterker@linuxgames.com>
+   Copyright (C) 2002/2003 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -51,7 +51,8 @@ void nls::set_language (const string &language)
 {    
 #if ENABLE_NLS
 #if !defined (WIN32) && !defined (__BEOS__)
-    setenv ("LANGUAGE", language.c_str (), 1);
+    string lang = "LANGUAGE=" + language;
+    putenv ((char *) lang.c_str ());
 #endif
     {
         // tell gettext that the language has changed
@@ -68,6 +69,6 @@ const char* nls::translate (const string &text)
 #if ENABLE_NLS
     return gettext (text.c_str ());
 #else
-    return text.c_str();
+    return text.c_str ();
 #endif
 }
