@@ -10,9 +10,9 @@
 
 %typemap(python,in) string
 {
-    if (PyString_Check ($source))
+    if (PyString_Check ($input))
     {
-        $target = new string (PyString_AsString($source));
+        $1 = string (PyString_AsString($input));
     }
     else
     {
@@ -23,17 +23,9 @@
 
 %typemap(python,out) string
 {
-    $target = PyString_FromString((const char *)$source->c_str());
-    delete $source;
+    $result = PyString_FromString((const char *)$1.c_str());
 }
 
-%typemap (python, freearg) string
-{
-    if ($source != NULL)
-    {
-        delete $source;
-    }
-}
 
 %include "../../types.h"
 %include "../../storage.h"
