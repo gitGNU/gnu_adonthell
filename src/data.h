@@ -45,7 +45,8 @@ public:
     char* get_location () { return location; }
     char* get_time () { return time; }
     void set_description (char*);
-        
+    void set_directory (char*);
+    
 private:
     char *directory;                        // the game's location on the harddisk
     char *description;                      // user supplied description of the game

@@ -488,55 +488,57 @@ SWIG_InstallConstants(PyObject *d, swig_const_info constants[]) {
 /* -------- TYPES TABLE (BEGIN) -------- */
 
 #define  SWIGTYPE_p_screen swig_types[0] 
-#define  SWIGTYPE_p_storage swig_types[1] 
-#define  SWIGTYPE_p_win_scrollbar swig_types[2] 
-#define  SWIGTYPE_p_character_base swig_types[3] 
-#define  SWIGTYPE_p_drawing_area swig_types[4] 
-#define  SWIGTYPE_p_quest swig_types[5] 
-#define  SWIGTYPE_p_win_theme swig_types[6] 
-#define  SWIGTYPE_p_Functor0wRet_bool_ swig_types[7] 
-#define  SWIGTYPE_p_SDL_Event swig_types[8] 
-#define  SWIGTYPE_p_gzFile swig_types[9] 
-#define  SWIGTYPE_p_animation_off swig_types[10] 
-#define  SWIGTYPE_p_mapview swig_types[11] 
-#define  SWIGTYPE_p_ltstr swig_types[12] 
-#define  SWIGTYPE_p_SDL_Surface swig_types[13] 
-#define  SWIGTYPE_p_win_background swig_types[14] 
-#define  SWIGTYPE_p_audio swig_types[15] 
-#define  SWIGTYPE_p_pair_const_char___signed_int_ swig_types[16] 
-#define  SWIGTYPE_p_leave_event swig_types[17] 
-#define  SWIGTYPE_p_time_event swig_types[18] 
-#define  SWIGTYPE_p_vector_event__ swig_types[19] 
-#define  SWIGTYPE_p_image swig_types[20] 
-#define  SWIGTYPE_p_config swig_types[21] 
-#define  SWIGTYPE_p_event_list swig_types[22] 
-#define  SWIGTYPE_p_event_handler swig_types[23] 
-#define  SWIGTYPE_p_win_image swig_types[24] 
-#define  SWIGTYPE_p_animation swig_types[25] 
-#define  SWIGTYPE_p_character swig_types[26] 
-#define  SWIGTYPE_p_mapcharacter swig_types[27] 
-#define  SWIGTYPE_p_win_container swig_types[28] 
-#define  SWIGTYPE_p_dialog_engine swig_types[29] 
-#define  SWIGTYPE_p_landmap swig_types[30] 
-#define  SWIGTYPE_p_mapobject swig_types[31] 
-#define  SWIGTYPE_p_event swig_types[32] 
-#define  SWIGTYPE_p_base_map_event swig_types[33] 
-#define  SWIGTYPE_p_enter_event swig_types[34] 
-#define  SWIGTYPE_p_unsigned_short swig_types[35] 
-#define  SWIGTYPE_p_short swig_types[36] 
-#define  SWIGTYPE_p_objects swig_types[37] 
-#define  SWIGTYPE_p_input swig_types[38] 
-#define  SWIGTYPE_p_equal_key swig_types[39] 
-#define  SWIGTYPE_p_Functor0 swig_types[40] 
-#define  SWIGTYPE_p_win_label swig_types[41] 
-#define  SWIGTYPE_p_animationframe swig_types[42] 
-#define  SWIGTYPE_p_SDL_RWops swig_types[43] 
-#define  SWIGTYPE_p_mapsquare swig_types[44] 
-#define  SWIGTYPE_p_mapengine swig_types[45] 
-#define  SWIGTYPE_p_win_border swig_types[46] 
-#define  SWIGTYPE_p_win_base swig_types[47] 
-#define  SWIGTYPE_p_win_font swig_types[48] 
-static swig_type_info *swig_types[50];
+#define  SWIGTYPE_p_data_screen swig_types[1] 
+#define  SWIGTYPE_p_storage swig_types[2] 
+#define  SWIGTYPE_p_win_scrollbar swig_types[3] 
+#define  SWIGTYPE_p_character_base swig_types[4] 
+#define  SWIGTYPE_p_drawing_area swig_types[5] 
+#define  SWIGTYPE_p_quest swig_types[6] 
+#define  SWIGTYPE_p_win_theme swig_types[7] 
+#define  SWIGTYPE_p_Functor0wRet_bool_ swig_types[8] 
+#define  SWIGTYPE_p_SDL_Event swig_types[9] 
+#define  SWIGTYPE_p_gzFile swig_types[10] 
+#define  SWIGTYPE_p_animation_off swig_types[11] 
+#define  SWIGTYPE_p_mapview swig_types[12] 
+#define  SWIGTYPE_p_ltstr swig_types[13] 
+#define  SWIGTYPE_p_SDL_Surface swig_types[14] 
+#define  SWIGTYPE_p_win_background swig_types[15] 
+#define  SWIGTYPE_p_audio swig_types[16] 
+#define  SWIGTYPE_p_pair_const_char___signed_int_ swig_types[17] 
+#define  SWIGTYPE_p_leave_event swig_types[18] 
+#define  SWIGTYPE_p_time_event swig_types[19] 
+#define  SWIGTYPE_p_vector_event__ swig_types[20] 
+#define  SWIGTYPE_p_image swig_types[21] 
+#define  SWIGTYPE_p_config swig_types[22] 
+#define  SWIGTYPE_p_event_list swig_types[23] 
+#define  SWIGTYPE_p_event_handler swig_types[24] 
+#define  SWIGTYPE_p_win_image swig_types[25] 
+#define  SWIGTYPE_p_animation swig_types[26] 
+#define  SWIGTYPE_p_character swig_types[27] 
+#define  SWIGTYPE_p_mapcharacter swig_types[28] 
+#define  SWIGTYPE_p_win_container swig_types[29] 
+#define  SWIGTYPE_p_dialog_engine swig_types[30] 
+#define  SWIGTYPE_p_landmap swig_types[31] 
+#define  SWIGTYPE_p_mapobject swig_types[32] 
+#define  SWIGTYPE_p_event swig_types[33] 
+#define  SWIGTYPE_p_base_map_event swig_types[34] 
+#define  SWIGTYPE_p_enter_event swig_types[35] 
+#define  SWIGTYPE_p_unsigned_short swig_types[36] 
+#define  SWIGTYPE_p_short swig_types[37] 
+#define  SWIGTYPE_p_objects swig_types[38] 
+#define  SWIGTYPE_p_input swig_types[39] 
+#define  SWIGTYPE_p_equal_key swig_types[40] 
+#define  SWIGTYPE_p_Functor0 swig_types[41] 
+#define  SWIGTYPE_p_win_label swig_types[42] 
+#define  SWIGTYPE_p_animationframe swig_types[43] 
+#define  SWIGTYPE_p_SDL_RWops swig_types[44] 
+#define  SWIGTYPE_p_mapsquare swig_types[45] 
+#define  SWIGTYPE_p_mapengine swig_types[46] 
+#define  SWIGTYPE_p_win_border swig_types[47] 
+#define  SWIGTYPE_p_win_base swig_types[48] 
+#define  SWIGTYPE_p_win_font swig_types[49] 
+#define  SWIGTYPE_p_win_manager swig_types[50] 
+static swig_type_info *swig_types[52];
 
 /* -------- TYPES TABLE (END) -------- */
 
@@ -574,7 +576,9 @@ static swig_type_info *swig_types[50];
 #include "win_container.h"
 #include "win_label.h"
 #include "win_image.h"
+#include "win_manager.h"
 #include "dialog_engine.h"
+#include "data_screen.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -7144,6 +7148,120 @@ static PyObject *_wrap_win_image_is_stretch(PyObject *self, PyObject *args) {
 }
 
 
+static PyObject *_wrap_win_manager_add(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_container *arg0 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"O:win_manager_add",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_container,1)) == -1) return NULL;
+    win_manager::add(arg0);
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_manager_exist(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_container *arg0 ;
+    PyObject * argo0 =0 ;
+    bool result ;
+    
+    if(!PyArg_ParseTuple(args,"O:win_manager_exist",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_container,1)) == -1) return NULL;
+    result = (bool )win_manager::exist(arg0);
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_manager_remove(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_container *arg0 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"O:win_manager_remove",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_container,1)) == -1) return NULL;
+    win_manager::remove(arg0);
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_manager_update(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    
+    if(!PyArg_ParseTuple(args,":win_manager_update")) return NULL;
+    win_manager::update();
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_manager_draw(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    
+    if(!PyArg_ParseTuple(args,":win_manager_draw")) return NULL;
+    win_manager::draw();
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_manager_set_focus(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_container *arg0 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"O:win_manager_set_focus",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_container,1)) == -1) return NULL;
+    win_manager::set_focus(arg0);
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_win_manager_destroy(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    
+    if(!PyArg_ParseTuple(args,":win_manager_destroy")) return NULL;
+    win_manager::destroy();
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_new_win_manager(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_manager *result ;
+    
+    if(!PyArg_ParseTuple(args,":new_win_manager")) return NULL;
+    result = (win_manager *)new win_manager();
+    resultobj = SWIG_NewPointerObj((void *) result, SWIGTYPE_p_win_manager);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_delete_win_manager(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    win_manager *arg0 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"O:delete_win_manager",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_win_manager,1)) == -1) return NULL;
+    delete arg0;
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
 static PyObject *_wrap_dialog_engine_set_portrait(PyObject *self, PyObject *args) {
     PyObject *resultobj;
     dialog_engine *arg0 ;
@@ -7292,6 +7410,46 @@ static PyObject *_wrap_dialog_engine_is_running_get(PyObject *self, PyObject *ar
     if(!PyArg_ParseTuple(args,"O:dialog_engine_is_running_get",&argo0)) return NULL;
     if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_dialog_engine,1)) == -1) return NULL;
     result = (bool ) (arg0->is_running);
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_new_data_screen(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    int arg0 ;
+    data_screen *result ;
+    
+    if(!PyArg_ParseTuple(args,"i:new_data_screen",&arg0)) return NULL;
+    result = (data_screen *)new data_screen(arg0);
+    resultobj = SWIG_NewPointerObj((void *) result, SWIGTYPE_p_data_screen);
+    return resultobj;
+}
+
+
+static PyObject *_wrap_delete_data_screen(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    data_screen *arg0 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"O:delete_data_screen",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_data_screen,1)) == -1) return NULL;
+    delete arg0;
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
+static PyObject *_wrap_data_screen_update(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    data_screen *arg0 ;
+    PyObject * argo0 =0 ;
+    bool result ;
+    
+    if(!PyArg_ParseTuple(args,"O:data_screen_update",&argo0)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_data_screen,1)) == -1) return NULL;
+    result = (bool )arg0->update();
     resultobj = PyInt_FromLong((long)result);
     return resultobj;
 }
@@ -7773,6 +7931,15 @@ static PyMethodDef adonthellcMethods[] = {
 	 { "win_image_draw", _wrap_win_image_draw, METH_VARARGS },
 	 { "win_image_set_stretch", _wrap_win_image_set_stretch, METH_VARARGS },
 	 { "win_image_is_stretch", _wrap_win_image_is_stretch, METH_VARARGS },
+	 { "win_manager_add", _wrap_win_manager_add, METH_VARARGS },
+	 { "win_manager_exist", _wrap_win_manager_exist, METH_VARARGS },
+	 { "win_manager_remove", _wrap_win_manager_remove, METH_VARARGS },
+	 { "win_manager_update", _wrap_win_manager_update, METH_VARARGS },
+	 { "win_manager_draw", _wrap_win_manager_draw, METH_VARARGS },
+	 { "win_manager_set_focus", _wrap_win_manager_set_focus, METH_VARARGS },
+	 { "win_manager_destroy", _wrap_win_manager_destroy, METH_VARARGS },
+	 { "new_win_manager", _wrap_new_win_manager, METH_VARARGS },
+	 { "delete_win_manager", _wrap_delete_win_manager, METH_VARARGS },
 	 { "dialog_engine_set_portrait", _wrap_dialog_engine_set_portrait, METH_VARARGS },
 	 { "dialog_engine_set_name", _wrap_dialog_engine_set_name, METH_VARARGS },
 	 { "dialog_engine_set_npc", _wrap_dialog_engine_set_npc, METH_VARARGS },
@@ -7783,6 +7950,9 @@ static PyMethodDef adonthellcMethods[] = {
 	 { "dialog_engine_run", _wrap_dialog_engine_run, METH_VARARGS },
 	 { "dialog_engine_is_running_set", _wrap_dialog_engine_is_running_set, METH_VARARGS },
 	 { "dialog_engine_is_running_get", _wrap_dialog_engine_is_running_get, METH_VARARGS },
+	 { "new_data_screen", _wrap_new_data_screen, METH_VARARGS },
+	 { "delete_data_screen", _wrap_delete_data_screen, METH_VARARGS },
+	 { "data_screen_update", _wrap_data_screen_update, METH_VARARGS },
 	 { NULL, NULL }
 };
 
@@ -7822,6 +7992,9 @@ static void *_p_characterTo_p_mapcharacter(void *x) {
 static void *_p_dialog_engineTo_p_win_container(void *x) {
     return (void *)((win_container *) ((dialog_engine *) x));
 }
+static void *_p_data_screenTo_p_win_container(void *x) {
+    return (void *)((win_container *) ((data_screen *) x));
+}
 static void *_p_leave_eventTo_p_base_map_event(void *x) {
     return (void *)((base_map_event *) ((leave_event *) x));
 }
@@ -7849,10 +8022,14 @@ static void *_p_win_imageTo_p_win_base(void *x) {
 static void *_p_win_labelTo_p_win_base(void *x) {
     return (void *)((win_base *) ((win_label *) x));
 }
+static void *_p_data_screenTo_p_win_base(void *x) {
+    return (void *)((win_base *) ((data_screen *) x));
+}
 static void *_p_win_containerTo_p_win_base(void *x) {
     return (void *)((win_base *) ((win_container *) x));
 }
 static swig_type_info _swigt__p_screen[] = {{"_p_screen", 0, "screen *"},{"_p_screen"},{0}};
+static swig_type_info _swigt__p_data_screen[] = {{"_p_data_screen", 0, "data_screen *"},{"_p_data_screen"},{0}};
 static swig_type_info _swigt__p_storage[] = {{"_p_storage", 0, "storage *"},{"_p_character_base", _p_character_baseTo_p_storage},{"_p_quest", _p_questTo_p_storage},{"_p_storage"},{"_p_mapcharacter", _p_mapcharacterTo_p_storage},{"_p_character", _p_characterTo_p_storage},{0}};
 static swig_type_info _swigt__p_win_scrollbar[] = {{"_p_win_scrollbar", 0, "win_scrollbar *"},{"_p_win_scrollbar"},{0}};
 static swig_type_info _swigt__p_character_base[] = {{"_p_character_base", 0, "character_base *"},{"_p_character_base"},{"_p_mapcharacter", _p_mapcharacterTo_p_character_base},{"_p_character", _p_characterTo_p_character_base},{0}};
@@ -7880,7 +8057,7 @@ static swig_type_info _swigt__p_win_image[] = {{"_p_win_image", 0, "win_image *"
 static swig_type_info _swigt__p_animation[] = {{"_p_animation", 0, "animation *"},{"_p_animation_off", _p_animation_offTo_p_animation},{"_p_animation"},{0}};
 static swig_type_info _swigt__p_character[] = {{"_p_character", 0, "character *"},{"_p_character"},{0}};
 static swig_type_info _swigt__p_mapcharacter[] = {{"_p_mapcharacter", 0, "mapcharacter *"},{"_p_mapcharacter"},{"_p_character", _p_characterTo_p_mapcharacter},{0}};
-static swig_type_info _swigt__p_win_container[] = {{"_p_win_container", 0, "win_container *"},{"_p_dialog_engine", _p_dialog_engineTo_p_win_container},{"_p_win_container"},{0}};
+static swig_type_info _swigt__p_win_container[] = {{"_p_win_container", 0, "win_container *"},{"_p_dialog_engine", _p_dialog_engineTo_p_win_container},{"_p_data_screen", _p_data_screenTo_p_win_container},{"_p_win_container"},{0}};
 static swig_type_info _swigt__p_dialog_engine[] = {{"_p_dialog_engine", 0, "dialog_engine *"},{"_p_dialog_engine"},{0}};
 static swig_type_info _swigt__p_landmap[] = {{"_p_landmap", 0, "landmap *"},{"_p_landmap"},{0}};
 static swig_type_info _swigt__p_mapobject[] = {{"_p_mapobject", 0, "mapobject *"},{"_p_mapobject"},{0}};
@@ -7899,11 +8076,13 @@ static swig_type_info _swigt__p_SDL_RWops[] = {{"_p_SDL_RWops", 0, "SDL_RWops *"
 static swig_type_info _swigt__p_mapsquare[] = {{"_p_mapsquare", 0, "mapsquare *"},{"_p_mapsquare"},{0}};
 static swig_type_info _swigt__p_mapengine[] = {{"_p_mapengine", 0, "mapengine *"},{"_p_mapengine"},{0}};
 static swig_type_info _swigt__p_win_border[] = {{"_p_win_border", 0, "win_border *"},{"_p_win_border"},{0}};
-static swig_type_info _swigt__p_win_base[] = {{"_p_win_base", 0, "win_base *"},{"_p_win_base"},{"_p_dialog_engine", _p_dialog_engineTo_p_win_base},{"_p_win_image", _p_win_imageTo_p_win_base},{"_p_win_label", _p_win_labelTo_p_win_base},{"_p_win_container", _p_win_containerTo_p_win_base},{0}};
+static swig_type_info _swigt__p_win_base[] = {{"_p_win_base", 0, "win_base *"},{"_p_win_base"},{"_p_dialog_engine", _p_dialog_engineTo_p_win_base},{"_p_win_image", _p_win_imageTo_p_win_base},{"_p_win_label", _p_win_labelTo_p_win_base},{"_p_data_screen", _p_data_screenTo_p_win_base},{"_p_win_container", _p_win_containerTo_p_win_base},{0}};
 static swig_type_info _swigt__p_win_font[] = {{"_p_win_font", 0, "win_font *"},{"_p_win_font"},{0}};
+static swig_type_info _swigt__p_win_manager[] = {{"_p_win_manager", 0, "win_manager *"},{"_p_win_manager"},{0}};
 
 static swig_type_info *swig_types_initial[] = {
 _swigt__p_screen, 
+_swigt__p_data_screen, 
 _swigt__p_storage, 
 _swigt__p_win_scrollbar, 
 _swigt__p_character_base, 
@@ -7952,6 +8131,7 @@ _swigt__p_mapengine,
 _swigt__p_win_border, 
 _swigt__p_win_base, 
 _swigt__p_win_font, 
+_swigt__p_win_manager, 
 0
 };
 
@@ -8302,6 +8482,8 @@ static swig_const_info swig_const_table[] = {
     { SWIG_PY_INT,     "WIN_SCROLLBAR_PAD_DEFAULT", (long) 10, 0, 0, 0},
     { SWIG_PY_INT,     "WIN_SPACE_BETWEEN_BORDER", (long) 10, 0, 0, 0},
     { SWIG_PY_INT,     "WIN_SPACE_BETWEEN_OBJECT", (long) 5, 0, 0, 0},
+    { SWIG_PY_INT,     "LOAD_SCREEN", (long) LOAD_SCREEN, 0, 0, 0},
+    { SWIG_PY_INT,     "SAVE_SCREEN", (long) SAVE_SCREEN, 0, 0, 0},
 {0}};
 
 static PyObject *SWIG_globals;

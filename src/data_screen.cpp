@@ -81,8 +81,7 @@ void data_screen::init ()
     // display all the available saved games
     while ((gdata = data::next_save ()) != NULL)
     {
-        sprintf (filepath, "%s/%s/preview.pnm", data::get_adonthell_dir (),
-            gdata->get_directory ());
+        sprintf (filepath, "%s/preview.pnm", gdata->get_directory ());
     
         picture = new image;
         picture->load_pnm (filepath);
@@ -109,7 +108,7 @@ void data_screen::init ()
     if (mode == SAVE_SCREEN)
     {
         picture = new image;
-        picture->load_pnm ("empty_slot.pnm");
+        picture->load_pnm ("gfx/empty_slot.pnm");
 
         shot = new win_image (5, 2, picture, theme);
         shot->set_border_size (WIN_SIZE_MINI);
@@ -154,7 +153,7 @@ bool data_screen::update ()
         entry->update ();
     }
 
-    return quit;
+    return !quit;
 }
 
 // Select a game
@@ -194,8 +193,7 @@ void data_screen::on_save ()
     if (gdata != NULL)
     {
         char filepath[256];
-        sprintf (filepath, "%s/%s/preview.pnm", data::get_adonthell_dir (),
-            gdata->get_directory ());
+        sprintf (filepath, "%s/preview.pnm", gdata->get_directory ());
         save_preview (filepath);
     }
 
