@@ -15,7 +15,7 @@ class instruction
 
   public:
   instruction();
-  instruction(const int &, String*);
+  instruction(const int &, char *);
   virtual void exec(mapcharacter*, map*, u_int16, u_int16)=0;
   u_int16 param(int);
   u_int16 otherevent();
