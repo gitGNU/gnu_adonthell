@@ -66,6 +66,8 @@ public:
 private:
     void load_section ();           // Load the actual game settings
     void save_section (ofstream&);  // Save them
+
+    config & operator = (const config*);
     
     string section;                 // Which section of the adonthellrc to read
     string defaults;                // Default section to load

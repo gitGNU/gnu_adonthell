@@ -17,6 +17,7 @@
 
 #include <vector>
 #include <stdio.h>
+#include <Python.h>
 #include "compile.h"
 
 #include "types.h"

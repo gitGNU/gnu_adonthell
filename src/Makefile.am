@@ -4,7 +4,7 @@ bin_PROGRAMS = mapengine joltest
 
 mapengine_SOURCES = animation.cpp audio.cpp audio_thread.cpp \
 character.cpp cutscene.cpp dialog.cpp drawing_area.cpp event.cpp fileops.cpp game.cpp \
-image.cpp init.cpp input.cpp inventory.cpp lex.prefs.cpp main.cpp \
+image.cpp init.cpp input.cpp lex.prefs.cpp main.cpp \
 map.cpp mapcharacter.cpp mapengine.cpp mapevent.cpp mapitem.cpp \
 mappattern.cpp mapsquare.cpp pnm.cpp prefs.cpp py_inc.cpp py_character_wrap.cpp\
 py_dialog_engine_wrap.cpp py_mapengine_wrap.cpp py_quest_wrap.cpp quest.cpp screen.cpp storage.cpp \

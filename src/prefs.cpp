@@ -38,6 +38,27 @@ config::config (string s) : section (s)
     adonthellrc = string (getenv ("HOME")) + "/.adonthell";
 }
 
+// That's more or less a move operator, as the source is destroyed
+config& config::operator =(const config *c)
+{
+    alt_configs = c->alt_configs;
+    defaults = c->defaults;
+    section = c->section;
+    datadir = c->datadir;
+    mapname = c->mapname;
+    screen_resolution = c->screen_resolution;
+    screen_mode = c->screen_mode;
+    window_theme = c->window_theme;
+    audio_channels = c->audio_channels; 
+    audio_resolution = c->audio_resolution;
+    audio_interpolation = c->audio_interpolation;
+    audio_sample_rate = c->audio_sample_rate;
+    audio_volume = c->audio_volume;
+    adonthellrc = c->adonthellrc;
+
+    delete c;
+    return *this;
+}
 
 // write a default configuration file
 void config::write_adonthellrc ()
@@ -63,9 +84,10 @@ void config::save_section (ofstream &rc)
        << "    Data [" << datadir << "]\n\n"
        << "# Map [file]\n#   Filename of the standard map to load\n"
        << "    Map [" << mapname << "]\n\n"
-       << "# Screen-resolution num\n#   0  Low (320x240) resolution\n"
-       << "#   1  High (640x480) resolution\n"
-       << "    Screen-resolution " << (int) screen_resolution << "\n\n"
+// Currently unused
+//       << "# Screen-resolution num\n#   0  Low (320x240) resolution\n"
+//       << "#   1  High (640x480) resolution\n"
+//       << "    Screen-resolution " << (int) screen_resolution << "\n\n"
        << "# Screen-mode num\n#   0  Windowed mode\n"
        << "#   1  Fullscreen mode\n    Screen-mode " << (int) screen_mode << "\n\n"
        << "# Window-theme [theme]\n#   original   - default Adonthell theme by Cirrus"
@@ -101,6 +123,10 @@ int config::read_adonthellrc ()
     // open failed -> try to write new configuration 
     if (!prefsin)
     {
+        // when writing a new configuration, defaults must match section
+        if (section != "") defaults = section;
+        else section = defaults;
+        
         write_adonthellrc ();
 
         // now try again
@@ -159,6 +185,17 @@ int config::read_adonthellrc ()
 
     if (!got_it)
     {
+        // See if we've got any other section we might use
+        if (alt_configs != NULL)
+        {
+            cout << "\nCan't find the \"" << section << "\" section of the"
+                 << " adonthellrc file.\nLoading \"" << alt_configs->section
+                 << "\" instead.\n" << flush;
+
+            *this = alt_configs;
+            return 1;
+        }
+    
         // If we arrive here, no configuration has been loaded
         cout << "\nSorry, could not load the configuration \"" << section << "\".\n"
              << "Please check the " << adonthellrc << "/adonthellrc file\n"
