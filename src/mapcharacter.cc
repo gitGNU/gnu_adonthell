@@ -573,6 +573,7 @@ bool mapcharacter::follow_path ()
         {
             mypath.start.x = posx ();
             mypath.start.y = posy ();
+            mypath.submap = submap ();
             mypath.calculate ();
             pathindex = 0; 
         }
@@ -890,9 +891,6 @@ void mapcharacter::leave_position ()
 
 void mapcharacter::set_pos (u_int16 smap, u_int16 x, u_int16 y)
 {
-    // update for pathfinding
-    mypath.submap = smap;
-
     // update character position
     submap_ = smap;
     posx_ = x;
