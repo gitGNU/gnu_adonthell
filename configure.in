@@ -2,7 +2,7 @@ dnl **************************************************************
 dnl Process this file with autoconf to produce a configure script.
 dnl **************************************************************
 
-AC_INIT(adonthell, 0.4dev1, adonthell@linuxgames.com)
+AC_INIT(README)
 
 dnl Detect the canonical host and target build environment
 AC_CANONICAL_HOST
