@@ -19,6 +19,7 @@
  * @brief Implements the gamedate class.
  */
 
+#include <ctype.h>
 #include <stdlib.h>
 #include "gamedate.h"
 #include "gametime.h"
@@ -138,7 +139,7 @@ u_int32 gamedate::parse_time (const std::string & time)
                     t_minutes += number * 10;
                     break;
                 }
-                // 10th minutes
+                // 1/10 minutes
                 case 't':
                 {
                     t_minutes += number;
