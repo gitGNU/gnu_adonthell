@@ -19,6 +19,7 @@
 mapsquare_info::mapsquare_info (map_coordinates & pos)
  : map_coordinates (pos) 
 {
+    zground = pos.z();
 }
 
 bool mapsquare_info::operator < (const mapsquare_info & mi) const
@@ -29,15 +30,15 @@ bool mapsquare_info::operator < (const mapsquare_info & mi) const
 //     if (mi.y() == y() || (mi.y() == y() + 1 && oy()) &&
 //         z() >= mi.z() + mi.obj->current_state()->zsize) return false;
 
-    if (z() + obj->current_state()->zsize <= mi.z()) return true;
-    if (z() >= mi.z() + mi.obj->current_state()->zsize) return false;
+    if (z() + obj->current_state()->zsize <= mi.zground) return true;
+    if (zground >= mi.z() + mi.obj->current_state()->zsize) return false;
     if (y() < mi.y()) return true;
     if (y() > mi.y()) return false;
     if (oy() < mi.oy()) return true;
     if (oy() > mi.oy()) return false;
 
-    if (obj->type() == OBJECT) return true;
-    if (obj->type() == CHARACTER) return false;
+//     if (obj->type() == OBJECT) return true;
+//     if (obj->type() == CHARACTER) return false;
 //     if (z() + obj->current_state()->zsize < mi.z() + mi.obj->current_state()->zsize) return true;
 //     if (z() + obj->current_state()->zsize > mi.z() + mi.obj->current_state()->zsize) return false;
 
@@ -59,6 +60,18 @@ bool mapsquare::add (map_placeable * obj, map_coordinates & pos)
 {
     mapsquare_info mi (pos);
     mi.obj = obj; 
+    vector<mapsquare_info>::iterator it = objects.begin();
+    while(it != objects.end() && mi.z() + mi.obj->current_state()->zsize < 
+          it->z() + it->obj->current_state()->zsize) ++it;
+    objects.insert(it, mi);
+    return true; 
+}
+
+bool mapsquare::add (map_moving * obj)
+{
+    mapsquare_info mi (*obj);
+    mi.obj = obj; 
+    mi.zground = obj->zground;
     vector<mapsquare_info>::iterator it = objects.begin();
     while(it != objects.end() && mi.z() + mi.obj->current_state()->zsize < 
           it->z() + it->obj->current_state()->zsize) ++it;
@@ -146,7 +159,37 @@ bool landmap::put (map_placeable * obj, map_coordinates & pos)
 
 bool landmap::put (map_moving * obj) 
 {
-    return put (obj, *obj); 
+    u_int16 i, j;
+    map_placeable_area * state = obj->current_state ();
+
+    if (!state) return false;
+
+    u_int16 sx = obj->x () < state->base.x () ? 0 :
+        obj->x () - state->base.x (); 
+    u_int16 sy = obj->y () < state->base.y () ? 0 :
+        obj->y () - state->base.y (); 
+    
+    u_int16 fx = obj->x () + state->area_length () - state->base.x ();
+    u_int16 fy = obj->y () + state->area_height () - state->base.y (); 
+
+    if (obj->ox ()) fx++;
+    if (obj->oy ()) fy++; 
+    
+    if (fx > length()) fx = length() - 1;
+    if (fy > height()) fy = height() - 1;
+
+    mapsquare * msqr; 
+    
+    for (j = sy; j < fy; j++) 
+        for (i = sx; i < fx; i++) 
+        {
+            msqr = get (i, j);
+            msqr->add (obj); 
+        }
+
+    return true; 
+
+    //    return put (obj, *obj); 
 }
 
 bool landmap::remove (map_placeable * obj, map_coordinates & pos) 

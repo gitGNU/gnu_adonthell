@@ -23,6 +23,8 @@
 class mapsquare_info : public map_coordinates
 {
 public:
+    s_int32 zground;
+
     map_placeable * obj;
     
     mapsquare_info (map_coordinates & pos);
@@ -45,19 +47,36 @@ private:
 public:
     typedef vector <mapsquare_info>::iterator iterator;
 
-    iterator begin () 
+    iterator begin ()
     {
         return objects.begin (); 
     }
 
-    iterator end () 
+    iterator end ()
     {
         return objects.end (); 
     }
 
     bool add (map_placeable * obj, map_coordinates & pos); 
+    bool add (map_moving * obj);
     bool remove (map_placeable * obj, map_coordinates & pos); 
     bool exist (map_placeable * obj, map_coordinates & pos); 
+
+    mapsquare_info * project_moving(map_moving & obj)
+    {
+        //        map_placeable_area * movstat = obj.current_state();
+
+        mapsquare::iterator it = begin();
+        while (it != end())
+        {
+            map_placeable_area * objstat = it->obj->current_state();
+            if (obj.z() + obj.climb_capability() > it->z() + objstat->zsize) break;
+            ++it;
+        }
+        
+        if (it == end()) return NULL;
+        return NULL;
+    }
 }; 
 
 class landmap

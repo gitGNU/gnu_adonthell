@@ -46,7 +46,7 @@ public:
         Walkable = true;  
     }
 
-    bool is_walkable () 
+    bool is_walkable () const
     {
         return Walkable; 
     }
@@ -56,7 +56,7 @@ public:
         Walkable = b; 
     }
 
-    void put(ogzstream & file)
+    void put(ogzstream & file) const
     {
         Walkable >> file;
     }
@@ -64,6 +64,11 @@ public:
     void get(igzstream & file)
     {
         Walkable << file;
+    }
+
+    bool does_intersect(const mapsquare_walkable_info & mwi, const u_int16 x, const u_int16 oy) const
+    {
+        return (is_walkable() && mwi.is_walkable());
     }
 }; 
 

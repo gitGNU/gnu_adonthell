@@ -45,9 +45,10 @@ protected:
 
     u_int16 Lx, Ly;
 
-    static const u_int16 climb_capability = 5;
+    static const u_int16 Climb_capability = 5;
     
 public:
+    s_int32 zground;
 
     map_moving (landmap & mymap); 
 
@@ -64,6 +65,11 @@ public:
     float vz()
     {
         return Vz;
+    }
+
+    u_int16 climb_capability()
+    {
+        return Climb_capability;
     }
 
     u_int16 lx () 
@@ -91,6 +97,8 @@ public:
      *      instead of taking the position nearest to the unreacheable square.
      */
     void update_pos();
+
+    void update_pos2();
 
     bool update(); 
 }; 

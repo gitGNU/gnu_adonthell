@@ -164,7 +164,7 @@ public:
         
         mobj = (map_object_with_gfx *)lmap.add_map_object();
         mobj->load("adontest/sandy.mobj");
-        
+
         mobj = (map_object_with_gfx *)lmap.add_map_object();
         mobj->load("adontest/rug.mobj");
         
