@@ -18,12 +18,14 @@
 #include "pnm.h"
 #include "data.h"
 #include "image.h"
+#include "input.h"
 #include "window.h"
 #include "data_screen.h"
 
 data_screen::data_screen (int m)
 {
     mode = m;
+    quit = false;
 
     // To get a clear view of the map, we have to get the screenshot in advance,
     // but it would be better if we could get it only in case it is needed
@@ -64,6 +66,7 @@ data_screen::data_screen (int m)
 
 data_screen::~data_screen ()
 {
+    if (shot) delete shot;
     delete window;
     delete theme;
     delete font;
@@ -72,27 +75,32 @@ data_screen::~data_screen ()
 void data_screen::init ()
 {
     int height = 5;
+    char filepath[256];
     image *picture;
     win_image *shot;
-    win_label *text;
-    win_write *entry;    
+    win_write *entry = NULL;    
+    gamedata *gdata;
 
-    for (int i = 0; i < 2; i++)
+    // display all the available saved games
+    while ((gdata = data::next_save ()) != NULL)
     {
+        sprintf (filepath, "%s/%s/preview.pnm", data::get_adonthell_dir (),
+            gdata->get_directory ());
+    
         picture = new image;
-        picture->load_pnm ("empty_slot.pnm");
+        picture->load_pnm (filepath);
 
         shot = new win_image (5, height, picture, theme);
         image_list->add (shot);
 
         entry = new win_write (0, height, 130, 60, theme, font);
-        entry->set_text ("Empty Slot");
+        entry->set_text (gdata->get_description ());
         text_list->add (entry);
 
         height += 68;
     }
 
-    // Add "Empty Slot"
+    // If we're saving the game, add "Empty Slot"
     if (mode == SAVE_SCREEN)
     {
         picture = new image;
@@ -107,10 +115,16 @@ void data_screen::init ()
         text_list->add (entry);
         text_list->set_default (entry);
     }
+    else
+    {
+        image_list->set_default (1);
+        text_list->set_default (1);
+    }
 }
 
-void data_screen::update ()
+bool data_screen::update ()
 {
+    // nothing selected --> broese through available games
     if (!entry)
     {
         u_int16 old_pos = image_list->get_pos ();
@@ -119,40 +133,66 @@ void data_screen::update ()
 
         if (old_pos != new_pos) text_list->set_default (new_pos);
     }
+    // a slot for saving selected --> enter description of the game
     else
     {
         entry->update ();
     }
+
+    return quit;
 }
 
 // Select a game
 void data_screen::on_select ()
 {
     int pos = image_list->get_pos ();
-    
+
+    // loading
     if (mode == LOAD_SCREEN)
     {
-        // data::load (pos);
+        data::load (pos);
+        quit = true;
     }
+    // saving
     else
     {
+        // allow to enter a description
         entry = (win_write *) text_list->get ();
         char *txt = entry->get_text ();
         if (txt && !strncmp (txt, "Empty Slot", 10))
             entry->set_text ("");
+        entry->set_signal_connect (makeFunctor (*this, &data_screen::on_save),
+            WIN_SIG_ACTIVATE_KEY);
         entry->set_activated (true);
-        
-        // char *path = data::save (pos);
-        save_preview (/*path*/);
-        // delete path;
+        input::clear_keys_queue ();
     }
 }
 
+void data_screen::on_save ()
+{
+    char* description = entry->get_text ();
+    int pos = image_list->get_pos ();
+
+    gamedata *gdata = data::save (pos, description);
+
+    // save sucessful --> save preview
+    if (gdata != NULL)
+    {
+        char filepath[256];
+        sprintf (filepath, "%s/%s/preview.pnm", data::get_adonthell_dir (),
+            gdata->get_directory ());
+        save_preview (filepath);
+    }
+
+    quit = true;
+}
+
 // Save the small thumbnail image
-void data_screen::save_preview ()
+void data_screen::save_preview (char *path)
 {
     image *preview = new image ();
 
+    // we'll need a 24 bit image for saving as pnm
     preview->bytes_per_pixel = 3;
     preview->length = 72;
     preview->height = 54;
@@ -160,10 +200,10 @@ void data_screen::save_preview ()
         preview->get_height (), 24,	0x000000FF, 0x0000FF00, 0x00FF0000, 0);
     preview->zoom (shot);
 
-    SDL_RWops * file = SDL_RWFromFile ("shot.pnm", "w"); 
+    // write it to disk
+    SDL_RWops * file = SDL_RWFromFile (path, "w"); 
     pnmput (file, preview->data->pixels, preview->get_length (), preview->get_height ());
     SDL_RWclose(file);
 
-    delete shot;
     delete preview;
 }

@@ -17,10 +17,10 @@
 
 #include "types.h"
 #include "fileops.h"
-#include "character.h"
 #include "py_inc.h"
 #include "quest.h"
 #include "data.h"
+
 
 PyObject *data::globals;        // Global namespace for the Python interpreter
 gametime *data::time;           // The gametime
@@ -28,6 +28,7 @@ objects data::characters;       // All the character data
 objects data::quests;           // All the quest data (the state of the gameworld)
 char *data::adonthell_dir=NULL; // The user's private adonthell directory
 vector<gamedata*> data::saves;  // The list of available savegames
+player* data::the_player=NULL;  // The main character
 
 gamedata::gamedata ()
 {
@@ -37,7 +38,7 @@ gamedata::gamedata ()
     time = NULL;
 }
 
-gamedata::gamedata (char *desc, char *dir)
+gamedata::gamedata (char *dir, char *desc)
 {
     directory = strdup (dir);
     description = strdup (desc);
@@ -72,12 +73,50 @@ void gamedata::save (gzFile file)
 // data initialisation
 void data::init (char* dir)
 {
+    gzFile in = NULL;
+    char filepath[256];
+
     // This is the user's private adonthell directory
     adonthell_dir = dir;
     
     // Add the default savegame used to start a new game to the list of saves
-    gamedata *gdata = new gamedata ("Start New Game", "adonthell-start");
+    gamedata *gdata = new gamedata ( ".", "Start New Game");
     saves.push_back (gdata);
+
+    // Init the global namespace of the python interpreter
+    PyObject *m = import_module ("ins_modules");
+ 	globals = PyModule_GetDict(m);
+    
+    // Read the user's saved game records (if any)
+    sprintf (filepath, "%s/saves.data", adonthell_dir);
+    in = gzopen (filepath, "r");
+
+    // if we've got anything at all, read it
+    if (in)
+    {
+        while (gzgetc (in))
+        {
+            gdata = new gamedata;
+            gdata->load (in);
+            saves.push_back (gdata);
+        }
+
+        gzclose (in);
+    }
+}
+
+// Cleanup everything
+void data::cleanup () 
+{
+    unload ();
+
+    delete adonthell_dir;
+    delete time;
+    
+    for (vector<gamedata*>::iterator i = saves.begin (); i != saves.end (); i++)
+        delete *i;
+
+    Py_DECREF (globals);
 }
 
 // Load a game from the gamedir directory
@@ -87,29 +126,28 @@ bool data::load (u_int32 pos)
     char filepath[256];
     npc *mynpc;
     quest *myquest;
-    
-    // Load some modules
-    PyObject *m = import_module ("ins_modules");
-    Py_INCREF(m);
+
+    // First, unload the current game
+    unload ();
     
     // Create a player (later: load from file or whatever)
-    player *myplayer = new player;
-    myplayer->name = "Player";
+    the_player = new player;
+    the_player->name = "Player";
 
     // Add the player to the game objects
-    characters.set ("the_player", myplayer);
+    characters.set (the_player->name, the_player);
 
     // Make "myplayer" available to the interpreter 
-	globals = PyModule_GetDict(m);
-    PyDict_SetItemString (globals, "the_player", pass_instance (myplayer, "player"));
+    PyDict_SetItemString (globals, "the_player", pass_instance (the_player, "player"));
 
     // create character array
     PyObject *chars = PyDict_New ();
     PyDict_SetItemString (globals, "characters", chars);
-    PyDict_SetItemString (chars, "the_player", pass_instance (myplayer, "player"));
+    PyDict_SetItemString (chars, the_player->name, pass_instance (the_player, "player"));
 
-    // try to open character.data
-    sprintf (filepath, "%s/character.data", saves[pos]->get_directory ());
+    // try to open character.data (think of something better here:)
+    if (pos == 0) sprintf (filepath, "%s/character.data", saves[pos]->get_directory ());
+    else  sprintf (filepath, "%s/%s/character.data", adonthell_dir, saves[pos]->get_directory ());
     in = gzopen (filepath, "r");
 
     if (!in)
@@ -135,7 +173,8 @@ bool data::load (u_int32 pos)
     PyDict_SetItemString (globals, "quests", quests);
 
     // try to open quest.data
-    sprintf (filepath, "%s/quest.data", saves[pos]->get_directory ());
+    if (pos == 0) sprintf (filepath, "%s/quest.data", saves[pos]->get_directory ());
+    else sprintf (filepath, "%s/%s/quest.data", adonthell_dir, saves[pos]->get_directory ());
     in = gzopen (filepath, "r");
 
     if (!in)
@@ -161,19 +200,43 @@ bool data::load (u_int32 pos)
     return true;
 }
 
-// Save all dynamic gamedata to the gamedir
-bool data::save (u_int32 pos, char *desc)
+// Unload a game
+void data::unload ()
 {
-    gamedata *gdata;
-    char filepath[256];
     character *mychar;
     quest *myquest;
 
+    // delete all characters
+    while ((mychar = (character *) characters.next ()) != NULL)
+    {
+        characters.erase (mychar->name);
+        delete mychar;
+    }
+
+    // delete all quests
+    while ((myquest = (quest *) data::quests.next ()) != NULL)
+    {
+        data::quests.erase (myquest->name);
+        delete myquest;
+    }    
+
+    // the main character was deleted with the other characters already
+    the_player = NULL;
+}
+
+// Save all dynamic gamedata to the gamedir
+gamedata* data::save (u_int32 pos, char *desc)
+{
+    gamedata *gdata;
+    char filepath[256];
+    npc *mychar;
+    quest *myquest;
+
     // make sure we don't overwrite the default game
-    if (pos == 0) return false;
+    if (pos == 0) return NULL;
 
     // see whether we're going to save to a new slot
-    if (pos > saves.size ())
+    if (pos >= saves.size ())
     {
         char dir[32];
         
@@ -198,11 +261,14 @@ bool data::save (u_int32 pos, char *desc)
     if (!file)
     {
         fprintf (stderr, "Couldn't create \"%s\" - save failed\n", filepath);
-        return false;
+        return NULL;
     }
 
-    while ((mychar = (character *) characters.next ()) != NULL)
+    while ((mychar = (npc *) characters.next ()) != NULL)
     {
+        // don't save the player
+        if ((character*) mychar == (character*) the_player) continue;
+    
         // tell the character.data loader that another entry follows
         gzputc (file, 1);
 
@@ -221,7 +287,7 @@ bool data::save (u_int32 pos, char *desc)
     if (!file)
     {
         fprintf (stderr, "Couldn't create \"%s\" - save failed\n", filepath);
-        return false;
+        return NULL;
     }
 
     while ((myquest = (quest *) data::quests.next ()) != NULL)
@@ -237,5 +303,47 @@ bool data::save (u_int32 pos, char *desc)
     gzputc (file, 0);
     gzclose (file);
 
-    return true;
+    // save gamedata
+    sprintf (filepath, "%s/saves.data", adonthell_dir);
+    file = gzopen (filepath, "w6"); 
+
+    if (!file)
+    {
+        fprintf (stderr, "Couldn't create \"%s\" - save failed\n", filepath);
+        return false;
+    }
+
+    vector<gamedata*>::iterator i = saves.begin (); 
+
+    // ignore the first entry, since it's our default save
+    for (i++; i != saves.end (); i++)
+    {
+        gzputc (file, 1);
+        (*i)->save (file);
+    }
+    
+    gzputc (file, 0);
+    gzclose (file);
+    
+    return gdata;
+}
+
+// Iterate over saved game descriptions
+gamedata* data::next_save ()
+{
+    static vector<gamedata*>::iterator i = saves.begin ();
+
+    if (++i == saves.end ())
+    {
+        i = saves.begin ();
+        return NULL;
+    }
+
+    return *i;
+}
+
+// Return the user's adonthell directory
+char* data::get_adonthell_dir ()
+{
+    return adonthell_dir;
 }

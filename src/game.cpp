@@ -103,6 +103,9 @@ game::~game ()
     // shutdown Python
 #ifndef _EDIT_
 	Py_Finalize ();
+
+    // delete all data
+	data::cleanup ();
 #endif
 
     // shutdown video

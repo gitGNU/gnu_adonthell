@@ -18,6 +18,7 @@
 #include <zlib.h>
 
 #include "storage.h"
+#include "character.h"
 #include "gametime.h"
 #include "Python.h"
 
@@ -51,15 +52,21 @@ class data
 {
 public:
     static void init (char*);               // Data initialisation
+    static void cleanup ();                 // Delete everything
     static bool load (u_int32);             // Load a game
-    static bool save (u_int32, char*);      // Save the game
+    static gamedata* save (u_int32, char*); // Save the game
+    static gamedata* next_save ();          // Iterate over saved game descriptions
+    static char* get_adonthell_dir ();      // Return the user's adonthell directory
 
     static PyObject *globals;               // Global namespace to use in scripts
     static gametime *time;                  // The gametime object
     static objects characters;              // All the characters 
     static objects quests;                  // All the quests
+    static player *the_player;              // The main character
 
 private:
+    static void unload ();                  // Unload the game
+
     static vector<gamedata*> saves;         // Keeps track of available save games 
     static char *adonthell_dir;             // The $HOME/.adonthell/ directory
 };

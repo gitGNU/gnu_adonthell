@@ -48,6 +48,7 @@ int main(int argc, char * argv[])
     // We need a map, and a map view or we won't see anything!
     landmap mymap;
     mapview mview;
+    data_screen *ds = NULL;
     
     // Trying to load the map
     if(mymap.load("smallmap.map"))
@@ -80,6 +81,8 @@ int main(int argc, char * argv[])
 	if(input::has_been_pushed(SDLK_ESCAPE)) break;
 	for(int i=0;i<screen::frames_to_do();i++)
 	  {
+	    if (!ds) 
+	    {
 	    if(input::is_pushed(SDLK_RIGHT)) mview.scroll_right();
 	    if(input::is_pushed(SDLK_LEFT)) mview.scroll_left();
 	    if(input::is_pushed(SDLK_UP)) mview.scroll_up();
@@ -89,10 +92,20 @@ int main(int argc, char * argv[])
 	    if(input::is_pushed(SDLK_c)) heroe->go_south();
 	    if(input::is_pushed(SDLK_x)) heroe->go_west();
 	    if(input::is_pushed(SDLK_v)) heroe->go_east();
+
+        if (input::is_pushed(SDLK_l)) ds = new data_screen (LOAD_SCREEN);
+        if (input::is_pushed(SDLK_s)) ds = new data_screen (SAVE_SCREEN);
+        }
 	    mymap.update();
+	    if (ds && ds->update ())
+	    {
+	       delete ds;
+	       ds = NULL;
+	    }
 	  }
 	//      	screen::clear();
 	mview.draw(10,10);
+    if (ds) ds->draw ();
 	screen::show();
       }
     return 0;

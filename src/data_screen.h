@@ -33,26 +33,27 @@ enum
 class data_screen
 {
 public:
-    data_screen (int);
-    ~data_screen ();
-    void draw () { window->draw (); }
-    void update ();
+    data_screen (int mode);                 // open load/save window
+    ~data_screen ();                        // destructor
+    void draw () { window->draw (); }       // draw the dialog
+    bool update ();                         // react to input
 
 private:
-    void init ();
-    void on_select ();
-    void save_preview ();
+    void init ();                           // gui initialisation
+    void on_select ();                      // callback for selecting a game 
+    void on_save ();                        // callback for entering a description
+    void save_preview (char*);              // write the thumbnail to disk
 
-    win_font *font;
-    win_theme *theme;
-    win_write *entry;
-    win_select *text_list;
-    win_select *image_list;
-    win_container *window;
+    win_font *font;                         // the font
+    win_theme *theme;                       // the theme
+    win_write *entry;                       // for entering a description of the game
+    win_select *text_list;                  // list of game descriptions
+    win_select *image_list;                 // list of thumbnails
+    win_container *window;                  // main window
 
-    image *shot;
-
-    int mode;
+    image *shot;                            // a 72x54 screenshot 
+    int mode;                               // Whether we're saving or loading
+    bool quit;                              // Tells the window to close
 };
 
 #endif // __DATA_SCREEN_H__
