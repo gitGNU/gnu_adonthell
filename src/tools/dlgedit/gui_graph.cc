@@ -20,9 +20,11 @@
  */
 
 #include <gtk/gtk.h>
+#include "cfg_data.h"
 #include "dlg_mover.h"
 #include "gui_dlgedit.h"
 #include "gui_circle.h"
+#include "gui_file.h"
 #include "gui_graph_events.h"
 
 // Constructor
@@ -73,7 +75,7 @@ void GuiGraph::attachModule (DlgModule *m, bool cntr)
     GuiDlgedit::window->setMode (module->mode ());
 
     // set the size of the dialogue
-    module->resize (graph->allocation.width, graph->allocation.height);
+    drawing_area.resize (graph->allocation.width, graph->allocation.height);
     
     // display the module
     draw ();
@@ -101,7 +103,7 @@ void GuiGraph::detachModule ()
 // create a new circle
 bool GuiGraph::newCircle (DlgPoint &point, node_type type)
 {
-    // if there is no module assigned to the view, there is nothing to select
+    // if there is no module assigned to the view, there is nothing to do
     if (module == NULL) return false;
     
     // create the new node ...
@@ -128,7 +130,7 @@ bool GuiGraph::newCircle (DlgPoint &point, node_type type)
 // create a new arrow
 bool GuiGraph::newArrow (DlgPoint &point)
 {
-    // if there is no module assigned to the view, there is nothing to select
+    // if there is no module assigned to the view, there is nothing to do
     if (module == NULL) return false;
 
     // calculate absolute position of the point
@@ -181,6 +183,40 @@ bool GuiGraph::newArrow (DlgPoint &point)
     module->setChanged ();
     
     return true;
+}
+
+// add a new subdialogue
+bool GuiGraph::newModule (DlgPoint &point)
+{
+    // if there is no module assigned to the view, there is nothing to do
+    if (module == NULL) return false;
+
+    // if a project root exists, use that in file selector
+    std::string dir = CfgData::data->getBasedir (module->entry ()->project ());
+
+    // otherwise revert to directory last opened
+    if (dir == "") dir = GuiDlgedit::window->directory ();
+    
+    // allow the user to select a module
+    GuiFile fs = GuiFile (FS_LOAD, "Select sub-dialogue to add", dir + "/");
+    if (fs.run ())
+    {
+        DlgModule *subdlg = GuiDlgedit::window ->loadSubdialogue (fs.getSelection());
+
+        if (subdlg == NULL) return false;
+
+        // draw the sub-dialogue
+        subdlg->initShape (point);
+        subdlg->draw (surface, *offset);
+
+        // update the module
+        module->setChanged ();
+        module->addNode (subdlg);
+              
+        return true;
+    }
+    
+    return false;    
 }
 
 // delete the selected node
@@ -244,6 +280,9 @@ bool GuiGraph::selectNode (DlgPoint &point)
     // if there is no module assigned to the view, there is nothing to select
     if (module == NULL) return false;
 
+    // is point within module's boundaries?
+    if (!drawing_area.contains (point)) return false;
+    
     // calculate absolute position of the point
     point.move (-offset->x (), -offset->y ());
     
@@ -272,18 +311,15 @@ bool GuiGraph::selectParent ()
         // ... try to retrieve it's parent
         DlgNode *parent = module->traverse ()->up ();
 
+        // deselect current
+        deselectNode ();
+
         // if we have it, then select it
-        if (parent)
-        {
-            deselectNode ();
-            return selectNode (parent);
-        }
+        if (parent) return selectNode (parent);
     }
 
     // if no node is selected, we simply select the first one
-    else return selectRoot ();
-    
-    return false;
+    return selectRoot ();
 }
 
 // select the child of a node
@@ -393,14 +429,14 @@ bool GuiGraph::centerNode (DlgNode *node)
     DlgPoint pos = node->center ().offset (*offset);
     int x, y; 
     
-    x = module->width () / 5;
-    y = module->height () / 5;
+    x = drawing_area.width () / 5;
+    y = drawing_area.height () / 5;
 
     // is node outside the views inner 60% ?
-    if (!module->inflate (-x, -y).contains (pos))
+    if (!drawing_area.inflate (-x, -y).contains (pos))
     {
         // then move the view so it is centered on the given point
-        DlgPoint o (-(pos.x()-module->width()/2), -(pos.y()-module->height()/2));
+        DlgPoint o (-(pos.x()-drawing_area.width()/2), -(pos.y()-drawing_area.height()/2));
         offset->move (o);
 
         draw ();
@@ -479,8 +515,8 @@ bool GuiGraph::prepareDragging (DlgPoint &point)
     // Is dragged node circle or arrow?
     if (node->type () != LINK)
     {
-        // circles can be dragged directly
-        mover = (DlgCircle *) node;
+        // circles and modules can be dragged directly
+        mover = node;
         
         // remove any tooltip, as it only gets in the way
         if (tooltip)
@@ -583,14 +619,20 @@ void GuiGraph::stopDragging (DlgPoint &point)
         }
     }
     
+    // update everything
+    if (mover->type() == MODULE)
+        deselectNode ();
+    else
+    {    
+        GuiDlgedit::window->list ()->display (module->selected ());
+        GuiDlgedit::window->setMode (NODE_SELECTED);
+        module->setMode (NODE_SELECTED);
+        module->setChanged ();
+    }
+
     // clear mover
     mover = NULL;
 
-    // update everything    
-    GuiDlgedit::window->list ()->display (module->selected ());
-    GuiDlgedit::window->setMode (NODE_SELECTED);
-    module->setMode (NODE_SELECTED);
-    module->setChanged ();
     draw ();
 }
 
@@ -607,9 +649,8 @@ void GuiGraph::resizeSurface (GtkWidget *widget)
     // init the surface
     if (GuiDlgedit::window->getColor (GC_GREY)) clear ();
             
-    // set the size of the attached dialogue
-    if (module) module->resize (widget->allocation.width,
-        widget->allocation.height);
+    // set the size of the attached dialogues
+    drawing_area.resize (widget->allocation.width, widget->allocation.height);
 }
 
 // empty the drawing area
@@ -650,8 +691,8 @@ void GuiGraph::draw ()
     // get visible part of graph
     t.x = -offset->x ();
     t.y = -offset->y ();
-    t.width = module->width ();
-    t.height = module->height ();
+    t.width = drawing_area.width ();
+    t.height = drawing_area.height ();
 
     DlgRect rect (t);
 
@@ -732,8 +773,8 @@ void GuiGraph::prepareScrolling (DlgPoint &point)
     // set scrolling offset and direction    
     if (point.x () < 20) scroll_x = 15;
     if (point.y () < 20) scroll_y = 15;
-    if (point.x () + 20 > graph->allocation.width) scroll_x = -15;
-    if (point.y () + 20 > graph->allocation.height) scroll_y = -15;
+    if (point.x () + 20 > drawing_area.width ()) scroll_x = -15;
+    if (point.y () + 20 > drawing_area.height ()) scroll_y = -15;
 
     // enable scrolling
     if (scroll_x || scroll_y)

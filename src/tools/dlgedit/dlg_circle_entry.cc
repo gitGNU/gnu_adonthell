@@ -75,7 +75,11 @@ void DlgCircleEntry::setText (std::string t)
 // set the node's condition
 void DlgCircleEntry::setCondition (std::string c)
 {
-    if (c == "") return;
+    if (c == "")
+    {
+        condition_ = c;
+        return;    
+    }
     
     // remove all whitespace from the edges of the condition
     condition_ = c.substr (c.find_first_not_of (" \n\t"), c.find_last_not_of (" \n\t") + 1);

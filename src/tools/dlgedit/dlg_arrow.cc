@@ -68,7 +68,7 @@ void DlgArrow::initShape ()
     // start- and end-point of arrow
     DlgPoint start = prev_.front ()->center ();
     DlgPoint end = next_.front ()->center ();
-    
+
     // gradient of line
     int x = start.x () - end.x ();
     int y = start.y () - end.y ();
@@ -78,7 +78,7 @@ void DlgArrow::initShape ()
     float a = x / s;
     float b = y / s;
     
-    DlgPoint line0 =  start.offset ((int)(-10.0f * a), (int)(-10.0f * b));
+    DlgPoint line0 = start.offset ((int)(-10.0f * a), (int)(-10.0f * b));
     DlgPoint line1 = end.offset ((int)(10.0f * a), (int)(10.0f * b));
 
     // line from start- to end-circle

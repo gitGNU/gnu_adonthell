@@ -22,7 +22,6 @@
 #ifndef DLG_MODULE_H
 #define DLG_MODULE_H
 
-#include "dlg_node.h"
 #include "dlg_module_entry.h"
 #include "kb_traverse.h"
 
@@ -43,6 +42,14 @@ public:
      * @param d Description of the module.
      */
     DlgModule (std::string p, std::string n, std::string s, std::string d);
+
+    /**
+     * Calculate this module's shape. The shape is a rectangle centered
+     * around the given DlgPoint. It is large enough to display the
+     * module's name.
+     * @param center The point to center the module shape around.
+     */
+    void initShape (DlgPoint &center);
     
     /**
      * Draw this node to the given surface with the specified offset. 
@@ -50,7 +57,7 @@ public:
      * @param surface the GdkPixmap to draw to
      * @param offset the DlgPoint to use as offset
      */
-    void draw (GdkPixmap *surface, DlgPoint &offset) { }
+    void draw (GdkPixmap *surface, DlgPoint &offset);
 
     /**
      * Add the given node to the dialogue.
@@ -205,7 +212,7 @@ protected:
     DlgPoint offset_;           // The current offset in the graph view
     bool changed_;              // Whether there were changes since saving
     int nid_;                   // Id to use for the next new node
-    
+
     std::string name_;          // Short (file-) name of the dialogue 
     std::string path_;          // Path of the dialogue
     std::string serial_;        // Unique number of the dialogue

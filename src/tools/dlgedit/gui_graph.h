@@ -106,6 +106,13 @@ public:
      */
     bool newArrow (DlgPoint &pos);
     /**
+     * Insert a subdialogue at the given position. Note that the position is
+     * already relative to the graph's origin.
+     * @param pos Current cursor position.
+     * @return \b true if a subdialogue could be added, \b false otherwise.
+     */
+    bool newModule (DlgPoint &pos);
+    /**
      * Edit currently selected node.
      * @return <b>true</b> if editing was successful, <b>false</b> otherwise.
      */
@@ -261,6 +268,7 @@ private:
     DlgPoint *offset;       // Module's relative position to the origin
     GtkWidget *graph;       // Drawing Area
     GdkPixmap *surface;     // Drawing surface
+    DlgRect drawing_area;   // Size of the Drawing Area
     GuiTooltip *tooltip;    // Tooltip for displaying node-text
     bool scrolling;         // Indicates whether autoscrolling is active
     DlgPoint scroll_offset; // Offset by which the view moves during scrolling

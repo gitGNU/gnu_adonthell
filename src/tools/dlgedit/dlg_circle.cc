@@ -79,13 +79,13 @@ void DlgCircle::draw (GdkPixmap *surface, DlgPoint &os)
     
     // offset circle
     DlgPoint position = topLeft ().offset (os);
-    DlgRect area (position, CIRCLE_DIAMETER+1, CIRCLE_DIAMETER+1);
+    DlgRect area (position, width () + 1, height () + 1);
     
     // draw everything to the surface
     gdk_draw_arc (surface, GuiDlgedit::window->getColor (GC_WHITE), TRUE, position.x (), position.y (), 20, 20, 0, 36000);
     gdk_draw_arc (surface, gc, FALSE, position.x (), position.y (), 20, 20, 0, 36000);
     
-    // Indicate wether node contains additional code
+    // Indicate whether node contains additional code
     if (hasCode () || entry_->loop ())
     {
         GString *code = g_string_sized_new (2);
@@ -97,8 +97,8 @@ void DlgCircle::draw (GdkPixmap *surface, DlgPoint &os)
         GdkFont *font = GuiDlgedit::window->font ();
     
         // place text in circles center
-        int x = position.x () + (20 - gdk_string_width (font, code->str)) / 2;
-        int y = position.y () + (21 + gdk_string_height (font, code->str)) / 2;
+        int x = position.x () + (width () - gdk_string_width (font, code->str)) / 2;
+        int y = position.y () + (height () + 1 + gdk_string_height (font, code->str)) / 2;
         gdk_draw_string (surface, font, gc, x, y, code->str);
 
         g_string_free (code, TRUE);

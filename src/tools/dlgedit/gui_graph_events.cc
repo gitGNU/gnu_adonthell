@@ -69,7 +69,10 @@ gint button_press_event (GtkWidget *widget, GdkEventButton *event, gpointer data
             
             // If nothing selected, see if we're over a node
             if (graph->mode () == IDLE)
-                graph->selectNode (point);
+                if (!graph->selectNode (point))
+                    // create a submodule, if we aren't
+                    graph->newModule (point);
+     
             
             // Edit node
             if (graph->mode () == NODE_SELECTED)
@@ -274,11 +277,26 @@ guint key_press_notify_event (GtkWidget * widget, GdkEventKey * event, gpointer 
         // edit selected node
         case GDK_Return:
         {
+            int x, y;
+
             // ignore edit command if in preview mode
             if (GuiDlgedit::window->mode () == L10N_PREVIEW)
                 break;            
-            
-            graph->editNode ();
+
+            // get cursoer position
+            gtk_widget_get_pointer (graph->drawingArea (), &x, &y);
+            DlgPoint point (x, y);                              
+
+            // If nothing selected, see if we're over a node
+            if (graph->mode () == IDLE)
+                if (!graph->selectNode (point))
+                    // create a submodule, if we aren't
+                    graph->newModule (point);
+
+            // Edit node
+            if (graph->mode () == NODE_SELECTED)
+                graph->editNode ();
+
             break;
         }
         

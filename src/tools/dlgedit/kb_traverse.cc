@@ -189,6 +189,9 @@ DlgNode* KBTraverse::selectRoot (std::vector<DlgNode*> *nodes)
 {
     std::vector<DlgNode*>::iterator i;
 
+    // cleanup
+    clear ();
+
     // find all the root nodes
     for (i = nodes->begin (); i != nodes->end (); i++)
         if ((*i)->type () != LINK)

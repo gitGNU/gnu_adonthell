@@ -63,7 +63,7 @@ void GuiList::clear ()
 void GuiList::display (DlgNode *node)
 {
     // make sure we have a valid node
-    if (node == NULL) return;
+    if (node == NULL || node->type() == MODULE) return;
     
     DlgCircle *circle, *c;
    

@@ -44,7 +44,22 @@ GuiTooltip::GuiTooltip (DlgNode *n)
     gtk_frame_set_shadow_type (GTK_FRAME (frame), GTK_SHADOW_OUT);
 
     // get the text
-    if (n->type () != LINK) text = ((DlgCircle *) n)->tooltip ();
+    switch (n->type ())
+    {
+        case NPC:
+        case PLAYER:
+        case NARRATOR:
+        {
+            text = ((DlgCircle *) n)->tooltip ();
+            break;            
+        }
+        case MODULE:
+        {
+            text = ((DlgModule *) n)->entry ()->description ();
+            break;            
+        }
+        default: break;
+    }
     
     // label with the text
     tip = gtk_label_new (text.c_str ());

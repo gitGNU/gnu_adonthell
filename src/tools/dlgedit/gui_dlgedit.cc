@@ -410,7 +410,7 @@ void GuiDlgedit::loadDialogue (std::string file)
     // try to load from file
     if (!module->load ())
     {
-        message->display (-2, filename.c_str ());
+        message->display (-3, filename.c_str ());
         closeDialogue ();
     }
     
@@ -423,6 +423,40 @@ void GuiDlgedit::loadDialogue (std::string file)
         message->display (200);      
         showDialogue (module, true);
     }
+}
+
+// load a sub-dialogue
+DlgModule* GuiDlgedit::loadSubdialogue (std::string file)
+{
+    // test if we have a valid dialogue
+    if (!checkDialogue (file)) return NULL;
+
+    // remember the current directory for later use
+    directory_ = g_dirname (file.c_str ());
+
+    // get the name to use for the dialogue
+    std::string filename = g_basename (file.c_str ());
+
+    // remove file extension
+    unsigned int pos = filename.rfind (FILE_EXT);
+    if (pos != filename.npos) filename.erase (pos);
+
+    // the sub-dialogue
+    DlgModule *module = new DlgModule (directory_, filename, "", "");
+
+    // try to load from file
+    if (!module->load ())
+    {
+        delete module;
+        message->display (-3, filename.c_str ());
+        return NULL;
+    }
+
+    // loading successful
+    message->display (202);   
+
+    // return the sub-dialogue
+    return module;    
 }
 
 // save a dialogue
@@ -932,7 +966,7 @@ GdkGC *GuiDlgedit::getColor (mode_type mode, node_type type)
         // not selected    
         case IDLE:
         {
-            if (type == NPC || type == LINK) return color[GC_BLACK];
+            if (type == NPC || type == LINK || type == MODULE) return color[GC_BLACK];
             else if (type == NARRATOR) return color[GC_DARK_GREEN];
             else return color[GC_DARK_BLUE];
             break;
@@ -941,7 +975,7 @@ GdkGC *GuiDlgedit::getColor (mode_type mode, node_type type)
         // selected
         case NODE_SELECTED:
         {
-            if (type == NPC || type == LINK) return color[GC_DARK_RED];
+            if (type == NPC || type == LINK || type == MODULE) return color[GC_DARK_RED];
             else if (type == NARRATOR) return color[GC_YELLOW];
             else return color[GC_RED];
             break;

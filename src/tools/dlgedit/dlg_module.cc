@@ -19,11 +19,12 @@
  * @brief One complete dialogue or sub-dialogue.
  */
 
+#include <gtk/gtk.h>
 #include <algorithm>
 #include "dlg_module.h"
 #include "dlg_circle.h"
 #include "dlg_arrow.h"
-#include "dlg_cmdline.h"
+#include "gui_dlgedit.h"
 
 // ctor
 DlgModule::DlgModule (std::string p, std::string n, std::string s, std::string d)
@@ -44,6 +45,18 @@ void DlgModule::init ()
     selected_ = NULL;
     highlighted_ = NULL;
     changed_ = false;
+}
+
+// calculate shape of sub-dialogue
+void DlgModule::initShape (DlgPoint &center)
+{
+    // calculate width of the module icon
+    GdkFont *font = GuiDlgedit::window->font ();
+    int width = gdk_string_width (font, name ().c_str ()) + 10;
+    
+    // align module to the (imaginary) grid and set shape
+    top_left = center.offset (-width/2 - (center.x () % CIRCLE_DIAMETER), -(center.y () % CIRCLE_DIAMETER));
+    resize (width, 20); 
 }
 
 // select a given node
@@ -164,6 +177,32 @@ DlgNode* DlgModule::deselectNode ()
     return retval;
 }
 
+// draw the module
+void DlgModule::draw (GdkPixmap *surface, DlgPoint &offset)
+{
+    // get the color for drawing the circle
+    GdkGC *gc = GuiDlgedit::window->getColor (mode_, type_);
+
+    // offset circle
+    DlgPoint position = topLeft ().offset (offset);
+    DlgRect area (position, width () + 1, height () + 1);
+
+    // draw everything to the surface
+    gdk_draw_rectangle (surface, GuiDlgedit::window->getColor (GC_WHITE), TRUE, position.x (), position.y (), width (), height ());
+    gdk_draw_rectangle (surface, gc, FALSE, position.x (), position.y (), width (), height ());
+
+    // get the font to draw name
+    GdkFont *font = GuiDlgedit::window->font ();
+
+    // place text in module's center
+    int x = position.x () + 5;
+    int y = position.y () + (height () + gdk_string_height (font, name ().c_str ())) / 2;
+    gdk_draw_string (surface, font, gc, x, y, name ().c_str ());
+
+    // Update the drawing area
+    GuiDlgedit::window->graph ()->update (area);
+}
+
 // Get extension of the graph for proper displaying
 void DlgModule::extension (int &min_x, int &max_x, int &y)
 {
@@ -189,10 +228,6 @@ bool DlgModule::load ()
     DlgArrow *arrow;
     std::string s;
 
-    // load the default project if there is one
-    if (DlgCmdline::project != "")
-        entry_.setProject (DlgCmdline::project);
-    
     // load all nodes and toplevel items
     while (i)
     {

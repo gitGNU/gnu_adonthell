@@ -62,6 +62,7 @@ GuiMessages::GuiMessages (GtkWidget *sb)
     // Report Success
     messages[200]   = " Loading successful";
     messages[201]   = " Saving successful";
+    messages[202]   = " Sub-dialogue loaded successfully";
     
     messages[210]   = " Settings updated";
     messages[211]   = " Custom code updated";
@@ -74,7 +75,7 @@ GuiMessages::GuiMessages (GtkWidget *sb)
     messages[-2]    = " Could not open '%s'. Please make sure the file exists and is readable";
     messages[-3]    = " Could not load '%s'. Either this is no dialogue source, or it has been corrupted";
     messages[-4]    = " Saving of '%s' failed.";
-            
+
     messages[-100]  = " Cannot connect two PLAYER Circles";
     
     // Preview Translations

@@ -112,10 +112,18 @@ public:
      */
     void newDialogue ();
     /**
-     * Load a dialogue from a file
+     * Load a (top level) dialogue from a file
      * @param file Filename (and path) of the dialogue to load.
      */
     void loadDialogue (std::string file);
+    /**
+     * Load a sub-dialogue from a file. Sub-dialogues are not
+     * directly available for editing; instead they become part
+     * of a (top level) dialogue.
+     * @param file Filename (and path) of the dialogue to load.
+     * @return the sub-dialogue, or \b NULL if loading failed.
+     */
+    DlgModule* loadSubdialogue (std::string file);
     /**
      * Save a dialogue to file
      * @param file Filename (and path) of the dialogue to load.
