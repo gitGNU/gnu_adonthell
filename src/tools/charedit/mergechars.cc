@@ -26,12 +26,27 @@
 #include "../../game.h"
 
 PyObject *game::globals;
+objects game::characters;
+
+class dialog_engine
+{
+public:
+    dialog_engine (const char*);
+    void run ();
+};
+
+dialog_engine::dialog_engine (const char *unused) { }
+void dialog_engine::run () { }
 
 // Dump any error information to stderr (same as in ../../py_inc.cpp)
 void show_traceback(void)
 {
 	if ( PyErr_Occurred() )
 		PyErr_Print();
+}
+
+PyObject *pass_instance (void *instance, const char *class_name)
+{
 }
 
 void process_character (char *input, FILE *output)

@@ -5,7 +5,7 @@ LIBS = -lm -lstdc++ `gtk-config --libs`
 OBJECTS = main.o interface.o callbacks.o dirbrowser.o
 EXEC = charedit 
 
-MERGEOBJS = mergechars.o ../../character.o ../../storage.o ../../event.o ../../prefs.o ../../lex.prefs.o
+MERGEOBJS = mergechars.o ../../character.o ../../storage.o ../../event.o ../../prefs.o ../../lex.prefs.o 
 
 all: $(OBJECTS) $(MERGEOBJS)
 	$(CPP) $(STDOBJECTS) $(OBJECTS) $(LIBS) -o $(EXEC)
