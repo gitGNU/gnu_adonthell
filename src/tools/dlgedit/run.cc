@@ -159,6 +159,7 @@ void run_dlg::run ()
             {
                 if (dat->player_text[index] != NULL) delete dat->player_text[index];
                 dat->player_text[index] = dat->player_text[i];
+                dat->player_text[i] = NULL;
             }
             
             tmp_list = g_list_append (tmp_list, create_dlg_list_item (dat->strings[dat->player_text[i]->id], 3, index++));            
