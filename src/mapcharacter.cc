@@ -149,7 +149,7 @@ s_int8 mapcharacter::get_state (igzstream& file)
     
     t << file; 
     load (t);
-    t << file; 
+    t << file;
     set_schedule (t);
     t << file; 
     set_action (t);
@@ -163,7 +163,7 @@ s_int8 mapcharacter::get_state (igzstream& file)
     offx_ << file;
     offy_ << file;
     activated << file;
-    schedule.set_active (activated); 
+    schedule.set_active (activated);
     activated << file; 
     action.set_active (activated); 
 
