@@ -31,8 +31,11 @@ for writing well designed dialogues.
     -# \ref sec32
     -# \ref sec33
     -# \ref sec34
-    -# \ref sec35
 -# \ref page4
+    -# \ref sec41
+    -# \ref sec42
+    -# \ref sec43
+-# \ref page5
 
 */
 
@@ -526,7 +529,8 @@ On this page, you can specifiy a condition which then decides
 whether this line of text will be available in the game
 or not. In fact you may enter any valid Python code, but
 the result may be unpredictible; so to be on the safe side,
-the code you write here should be a single if statement:
+the code you write here should be a single (but not necessarily
+simple) if statement, like
 
 \par
 \verbatim
@@ -546,7 +550,7 @@ is displayed or not, this code is executed if the line of
 text is displayed (in case of NPC text) or selected as response
 (in case of Player text). Use the code you enter here to
 change quest objects, NPC or Player attributes, etc. See the
-section about additional \ref code "Python code" for a
+section about additional \ref page4 "Python code" for a
 description.
 
 \par
@@ -663,9 +667,20 @@ on the parent you want to add the attribute to.
 Click here to run the current dialogue. This opens the Run
 Dialogue window in case it isn't open already.
 
-\anchor code \subsection sec35 Additional Python code
+\htmlonly
+<hr>
+<center>
+&lt;&lt; <a href="page3.html">The Dialogue Editor</a> &nbsp;
+<a href="index.html">Contents</a> &nbsp;
+<a href="page4.html">Adding Python Code</a> &gt;&gt;
+</center>
+\endhtmlonly
 
-From the tutorial you might have seen that each dialogue
+*/
+
+/*! \page page4 Adding Python Code
+
+From the \ref sec23 "tutorial" you might have seen that each dialogue
 get's compiled into a python class which then is fed into
 Adonthell's Python interpreter to execute it step by step.
 Given the flexibility of Python, it is only sensible to
@@ -685,10 +700,10 @@ code at various places of the dialogue:
 
 This section tries to give an overview of the possibilities
 additional Python code offers for the conversation with
-NPC's. One day, there'll be some document discussing the
-general Python scripting available in Adonthell.
+NPC's. One day there'll be some document discussing the
+Python scripting abilities of Adonthell in general.
 
-<h4>Embedded code</h4>
+\subsection sec41 Embedded Code
 
 The dialogue engine allows to embed a function call into
 a line of text and will insert whatever string this function
@@ -718,7 +733,7 @@ be replaced with the player's name at runtime, whereas
 if the player is female or <i>text_b</i> in case the player is
 male.
 
-<h4>Local variables</h4>
+\subsection sec42 Local Variables
 
 For more advanced dialogues it might be necessary to define
 local variables. They belong to the dialogue class and are
@@ -754,7 +769,7 @@ In many situations, it will be necessary that information
 survives an individual dialogue. That is where persistant
 variables come into play:
 
-<h4>Persistent variables</h4>
+\subsection sec43 Persistent Variables
 
 The state of the gameworld, of each NPC and the player are also
 accessible from a dialogue script. The full details should be
@@ -762,7 +777,7 @@ discussed in a general scripting doc, but unless this has happened,
 here are the bits relevant for the dialogue engine.
 
 The state of the gameworld is conserved in the various quests.
-All quests are stored in the <tt>global data::quests</tt> dictionary.
+All quests are stored in the global <tt>data::quests</tt> dictionary.
 To retrieve a certain quest you'd write
 
 \verbatim
@@ -787,30 +802,48 @@ Characters are treated in the same way. They are retrieved with
 <tt>adonthell.gamedata_get_character()</tt> and their attributes
 are also changed via the <tt>get_val()</tt>/<tt>set_val()</tt>
 functions. Even the shortcuts are the same. Instead of <tt>quest_name</tt>
-you'll have to give the Character's name, e.g.
+you'll have to give the character's name, e.g.
 
 \verbatim
-# Even character names containing blanks work!
+# character names containing blanks work too!
 Bjarn Fingolson.attribute_name = <expression>
 \endverbatim
 
 As an addition, the member variable <tt>the_player</tt> always points
 to the player character and <tt>the_npc</tt> to the npc the dialogue
-is assigned to.
+is assigned to. 
+
+Of course you can do more than just read or change character and quest
+attributes. For example, you could change an NPC's schedule, or assign 
+a different dialogue:
+
+\verbatim
+# you can access any character you want ...
+bjarn = gamedata_get_character ("Bjarn Fingolson")
+
+# .. and completely change his behaviour
+bjarn.set_schedule ("new_schedule")
+bjarn.set_dialogue ("new_dialogue")
+\endverbatim
+
+In fact, you have access to almost the complete Adonthell API, so
+there is much more you can influence than just the characters.
+Take a look at the Developer Documentation for the numerous functions
+you have at your command.
 
 \htmlonly
 <hr>
 <center>
-&lt;&lt; <a href="page2.html">An Example</a> &nbsp; 
+&lt;&lt; <a href="page3.html">The Dialogue Editor</a> &nbsp;
 <a href="index.html">Contents</a> &nbsp;
-<a href="page4.html">A Guideline for writing Dialogues</a> &gt;&gt;
+<a href="page5.html">A Guideline for writing Dialogues</a> &gt;&gt;
 </center>
 \endhtmlonly
 
 */
 
 
-/*! \page page4 A Guideline for writing Dialogues
+/*! \page page5 A Guideline for writing Dialogues
 
 After taking a look at the technical side, it's about time
 to give some hints on the actual dialogue creation. Although
@@ -874,9 +907,10 @@ fit into the dialogue window.
 \htmlonly
 <hr>
 <center>
-&lt;&lt; <a href="index.html">The Dialogue Editor</a> &nbsp; 
+&lt;&lt; <a href="index.html">Adding Python Code</a> &nbsp; 
 <a href="index.html">Contents</a> &nbsp;
 </center>
 \endhtmlonly
 
 */
+
