@@ -204,8 +204,8 @@ void mapview::add_mapobject()
       delete qw2;
     }
   while(p>m_map->nbr_of_patterns);
+  if(!strcmp(s,"new")) mobj.editor();
   m_map->insert_mapobject(mobj,p);
-  if(!strcmp(s,"new")) m_map->pattern[p].editor();
   delete qw;
   //  m_map->init_mapobjects();
   must_upt_label_object=true;
@@ -563,8 +563,17 @@ void mapview::update_editor_keys()
     if(input::is_pushed(SDLK_g))
       scroll_up();
   
-    if(input::is_pushed(SDLK_a))
+    if(input::has_been_pushed(SDLK_a))
       add_mapobject();
+
+    if(input::has_been_pushed(SDLK_d))
+      {
+	m_map->delete_mapobject(currentobj);
+	if(currentobj>=m_map->nbr_of_patterns) 
+	  currentobj=m_map->nbr_of_patterns-1;
+	  must_upt_label_square=true;
+	  must_upt_label_object=true;
+      }
 }
 
 void mapview::update_and_draw()

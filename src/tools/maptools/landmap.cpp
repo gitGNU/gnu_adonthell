@@ -454,7 +454,7 @@ s_int8 landmap::set_square_pattern(u_int16 smap, u_int16 px, u_int16 py,
   submap[smap].land[px][py].tiles.insert(it,t);
   it--;
   it->base_tile=it;
-  
+
   // Get the base tile iterator for the others tiles
   t.base_tile=it;
   t.is_base=false;
@@ -524,7 +524,9 @@ void landmap::remove_obj_from_square(u_int16 smap,
 s_int8 landmap::insert_mapobject(mapobject &an, u_int16 pos)
 {
   mapobject * oldpat=pattern;
-  u_int16 i;
+  u_int16 i,j,k;
+  list<mapsquare_tile>::iterator it;
+
   if(pos>nbr_of_patterns) return -2;
   pattern=new mapobject[++nbr_of_patterns];
   for(i=0;i<pos;i++)
@@ -538,11 +540,21 @@ s_int8 landmap::insert_mapobject(mapobject &an, u_int16 pos)
   oldpat=mini_pattern;
   mini_pattern=new mapobject[nbr_of_patterns];
   for(i=0;i<nbr_of_patterns-1;i++)
-    mini_pattern[i]=oldpat[i];
-  
+    mini_pattern[i]=oldpat[i];  
   mini_pattern[pos].zoom_to_fit(OBJSMPLSIZE,&an);
+  for(i=pos+1;i<nbr_of_patterns;i++)
+    mini_pattern[i]=oldpat[i-1];
   delete[] oldpat;
 #endif
+  if(pos==nbr_of_patterns-1) return 0;
+  
+  for(k=0;k<nbr_of_submaps;k++)
+    for(j=0;j<submap[k].height;j++)
+      for(i=0;i<submap[k].length;i++)
+	for(it=submap[k].land[i][j].tiles.begin();
+	    it!=submap[k].land[i][j].tiles.end();it++)
+	  if(it->objnbr>=pos) it->objnbr++;
+
 #ifdef _DEBUG_
   cout << "Added mapobject: " << nbr_of_patterns << " total in landmap.\n";
 #endif
@@ -552,7 +564,9 @@ s_int8 landmap::insert_mapobject(mapobject &an, u_int16 pos)
 s_int8 landmap::delete_mapobject(u_int16 pos)
 {
   mapobject * oldpat=pattern;
-  u_int16 i;
+  u_int16 i,j,k;
+  list<mapsquare_tile>::iterator it;
+
   if(pos>nbr_of_patterns-1) return -2;
   pattern=new mapobject[--nbr_of_patterns];
   for(i=0;i<pos;i++)
@@ -571,7 +585,23 @@ s_int8 landmap::delete_mapobject(u_int16 pos)
     mini_pattern[i]=oldpat[i+1];
   delete[] oldpat;
 #endif
-
+  
+  for(k=0;k<nbr_of_submaps;k++)
+    for(j=0;j<submap[k].height;j++)
+      for(i=0;i<submap[k].length;i++)
+	for(it=submap[k].land[i][j].tiles.begin();
+	    it!=submap[k].land[i][j].tiles.end();it++)
+	  {
+	  shamegoto:
+	    if(it->objnbr>pos) 
+	      it->objnbr--;
+	    else if(it->objnbr==pos) 
+	      {
+		it=submap[k].land[i][j].tiles.erase(it);
+		goto shamegoto;
+	      }
+	  }
+  
 #ifdef _DEBUG_
   cout << "Removed mapobject: " << nbr_of_patterns << " total in landmap.\n";
 #endif
