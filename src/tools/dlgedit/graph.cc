@@ -1,4 +1,6 @@
 /*
+   $Id$ 
+
    Copyright (C) 1999 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
@@ -12,13 +14,15 @@
 
 class dialog;
 
+#include <iostream.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <string>
 #include <gtk/gtk.h>
 
-#include "../../map/types.h"
-#include "../../dialog/dlg_io.h"
+#include "../../types.h"
+#include "../../interpreter.h"
 #include "linked_list.h"
 #include "dlgnode.h"
 #include "main.h"
@@ -26,6 +30,7 @@ class dialog;
 #include "compile.h"
 #include "dlgrun.h"
 #include "interface.h"
+#include "function.h"
 #include "graph.h"
 
 /* Create a new circle */
@@ -33,7 +38,7 @@ int
 new_circle (MainFrame * wnd, GdkPoint point, int type)
 {
     NodeData *cbd = (NodeData *) g_malloc (sizeof (NodeData));
-    DlgNode *circle = (DlgNode *) g_malloc (sizeof (DlgNode));
+    DlgNode *circle = new DlgNode;
     int retval;
 
     /* Init Circle */
@@ -89,15 +94,17 @@ new_circle (MainFrame * wnd, GdkPoint point, int type)
 int 
 new_arrow (MainFrame * wnd, GdkPoint point)
 {
-    DlgNode *arrow = (DlgNode *) g_malloc (sizeof (DlgNode));
+    DlgNode *arrow;
     DlgNode *end = get_cur_selection (wnd, point);
     int type;
+    u_int32 i;
 
     /* Exit function if  
        - no node is marked
        - the marked node is no circle
        - the clicked node is no circle
-       - the clicked node is the marked node */
+       - the clicked node is the marked node 
+       - a connection already existe */
     if (wnd->selected_node == NULL)
         return 0;
     if (wnd->selected_node->type == LINK)
@@ -106,6 +113,12 @@ new_arrow (MainFrame * wnd, GdkPoint point)
         return 0;
     if (wnd->selected_node == end)
         return 0;
+    if (end != NULL)
+        for (i = 0; i < wnd->selected_node->next->len; i++)
+            if (end == g_ptr_array_index (((DlgNode *) g_ptr_array_index (wnd->selected_node->next, i))->next, 0))
+                return 0;
+
+    arrow = new DlgNode;
 
     /* Init arrow */
     arrow->prev = g_ptr_array_new ();
@@ -114,8 +127,6 @@ new_arrow (MainFrame * wnd, GdkPoint point)
     arrow->number = wnd->number;
     arrow->text = NULL;
     arrow->type = LINK;
-
-    /* Create new text */
 
     /* Add to Array */
     add_ptr_list_element (wnd->nodes, arrow);
@@ -240,7 +251,6 @@ edit_node (MainFrame * wnd)
     cbd->node = wnd->selected_node;
     cbd->retval = 0;
 
-
     /* circle selected */
     if (wnd->selected_node->type != LINK)
     {
@@ -262,6 +272,10 @@ edit_node (MainFrame * wnd)
     /* arrow selected */
     else
     {
+        // Create and show dialog for user input
+        function fct (wnd->selected_node);
+        
+        gtk_main ();
     }
 
     show_preview (wnd);
@@ -370,7 +384,7 @@ free_node (DlgNode * node)
     g_ptr_array_free (node->next, FALSE);
     g_ptr_array_free (node->link, FALSE);
 
-    g_free (node);
+    delete node;
 }
 
 /* fills gaps created by removal of nodes */
@@ -406,7 +420,7 @@ new_mover (MainFrame * wnd, GdkPoint point)
         wnd->dragged_node = wnd->selected_node;
     else
     {
-        wnd->dragged_node = (DlgNode *) malloc (sizeof (DlgNode));
+        wnd->dragged_node = new DlgNode;
         wnd->dragged_node->type = MOVER;
         wnd->dragged_node->text = NULL;
         wnd->dragged_node->prev = g_ptr_array_new ();
@@ -449,7 +463,7 @@ new_mover (MainFrame * wnd, GdkPoint point)
             return;
         }
 
-        free_node (wnd->dragged_node);
+        delete wnd->dragged_node;
 
         wnd->dragged_node = NULL;
         wnd->mode = OBJECT_MARKED;
@@ -533,7 +547,7 @@ end_moving (MainFrame * wnd, GdkPoint point)
         redraw_arrow (wnd, arrow);
 
         /* delete temporary circle */
-        free_node (wnd->dragged_node);
+        delete wnd->dragged_node;
     }
 
     /* was circle moved, there is not much to do ;-) */
@@ -734,6 +748,7 @@ draw_arrow (MainFrame * wnd, DlgNode * arrow, int highlite)
     GdkPoint line[2];
     GdkPoint tip[3];
     GdkRectangle rect = inflate_rectangle (arrow->position, 10, 10);
+    u_int8 fill = arrow->text == NULL ? FALSE : TRUE;
 
     /* assure that we only redraw arrows */
     if (arrow->type != LINK)
@@ -785,7 +800,8 @@ draw_arrow (MainFrame * wnd, DlgNode * arrow, int highlite)
     
     /* draw everything */
     gdk_draw_polygon (wnd->pixmap, gc, FALSE, line, 2);
-    gdk_draw_polygon (wnd->pixmap, gc, FALSE, tip, 3);
+    gdk_draw_polygon (wnd->pixmap, wnd->graph->style->white_gc, TRUE, tip, 3);
+    gdk_draw_polygon (wnd->pixmap, gc, fill, tip, 3);
     gtk_widget_draw (wnd->graph, &rect);
 }
 
@@ -851,45 +867,32 @@ new_dialogue (MainFrame * wnd)
 
 /* load a dialogue from disk */
 void 
-load_dialogue (MainFrame * wnd)
+load_dialogue (MainFrame * wnd, const char *file)
 {
-    int i, type;
-    gchar str[31];
-    GString *file = g_string_new (NULL);
+    int i;
+    u_int8 type;
+    gchar str[5];
     FILE *in;
-    GtkWidget *fs = create_fileselection (file, 1);
-
-    gtk_file_selection_set_filename ((GtkFileSelection *) fs, wnd->file_name);
-
-    /* chose file */
-    gtk_widget_show (fs);
-    gtk_main ();
 
     /* Was load cancelled? */
-    if (file->str == NULL)
-    {
-        g_string_free (file, TRUE);
+    if (file == NULL)
         return;
-    }
 
     /* open File */
-    in = fopen (file->str, "rb");
+    in = fopen (file, "rb");
 
     if (!in)
     {
-        g_message ("could not open file %s", file->str);
-        g_string_free (file, TRUE);
+        g_message ("could not open file %s", file);
         return;
     }
 
     /* Check if its a correct file */
-    fgets (str, 31, in);
-    fseek (in, 81, SEEK_CUR);
+    fgets (str, 5, in);
 
-    if (g_strcasecmp ("Adonthell Dialogue System v0.1", str))
+    if (g_strcasecmp ("ADS1", str))
     {
-        g_message ("%s is no valid dialogue file", file->str);
-        g_string_free (file, TRUE);
+        g_message ("%s is no valid dialogue file", file);
         return;
     }
 
@@ -898,11 +901,11 @@ load_dialogue (MainFrame * wnd)
     init_app (wnd);
 
     /* ... then load all nodes ... */
-    wnd->number = h2d (4, in);
+    fread (&wnd->number, sizeof (wnd->number), 1, in);
 
     for (i = 0; i < (int) wnd->number; i++)
     {
-        type = h2d (4, in);
+        fread (&type, sizeof (type), 1, in);
 
         if (type != LINK)
             load_circle (wnd, in, type);
@@ -914,7 +917,7 @@ load_dialogue (MainFrame * wnd)
     redraw_graph (wnd);
 
     /* set new window - title */
-    wnd->file_name = g_strdup (file->str);
+    wnd->file_name = g_strdup (file);
     gtk_window_set_title (GTK_WINDOW (wnd->wnd), g_strjoin (NULL, "Adonthell Dialogue Editor v0.2 - [", strrchr (wnd->file_name, '/') + 1, "]", NULL));
 
     /* look wether compiled dlg exists and set Run - Menuitem accordingly
@@ -922,7 +925,6 @@ load_dialogue (MainFrame * wnd)
     gtk_widget_set_sensitive (wnd->dialogue_run, FALSE);
 
     /* clean up */
-    g_string_free (file, TRUE);
     fclose (in);
 }
 
@@ -930,7 +932,9 @@ load_dialogue (MainFrame * wnd)
 void 
 load_circle (MainFrame * wnd, FILE * in, int type)
 {
-    DlgNode *circle = (DlgNode *) malloc (sizeof (DlgNode));
+    DlgNode *circle = new DlgNode;
+    u_int32 size;
+    char *str;
 
     /* init arrow */
     circle->prev = g_ptr_array_new ();
@@ -940,17 +944,23 @@ load_circle (MainFrame * wnd, FILE * in, int type)
 
     /* assign type and load number */
     circle->type = type;
-    circle->number = h2d (4, in);
+    fread (&circle->number, sizeof (circle->number), 1, in);
 
     /* load position */
-    circle->position.x = h2d (4, in);
-    circle->position.y = h2d (4, in);
-    circle->position.height = h2d (4, in);
-    circle->position.width = h2d (4, in);
+    fread (&circle->position.x, sizeof (circle->position.x), 1, in);
+    fread (&circle->position.y, sizeof (circle->position.y), 1, in);
+    fread (&circle->position.height, sizeof (circle->position.height), 1, in);
+    fread (&circle->position.width, sizeof (circle->position.width), 1, in);
 
     /* load text */
-    circle->text = rs (4, in);
+    fread (&size, sizeof (size), 1, in);
 
+    str = new char[size + 1];
+    fread (str, sizeof (str[0]), size, in);
+    str[size] = '\0';
+
+    circle->text = str;
+    
     /* add to array of nodes */
     add_ptr_list_element (wnd->nodes, circle);
 }
@@ -959,8 +969,12 @@ load_circle (MainFrame * wnd, FILE * in, int type)
 void 
 load_arrow (MainFrame * wnd, FILE * in)
 {
-    int num, i;
-    DlgNode *arrow = (DlgNode *) malloc (sizeof (DlgNode));
+    u_int32 num, i, idx;
+    u_int16 size;
+    char *str;
+    function_data *data;
+    string text ("");
+    DlgNode *arrow = new DlgNode;
     DlgNode *circle;
 
     /* init arrow */
@@ -968,31 +982,80 @@ load_arrow (MainFrame * wnd, FILE * in)
     arrow->next = g_ptr_array_new ();
     arrow->link = g_ptr_array_new ();
     arrow->highlite = 0;
-
+    
     /* assign type and load number */
     arrow->type = LINK;
-    arrow->number = h2d (4, in);
+    fread (&arrow->number, sizeof (arrow->number), 1, in);
 
     /* load and assign start-circle */
-    circle = (DlgNode *) get_ptr_list_element (wnd->nodes, h2d (4, in));
+    fread (&idx, sizeof (idx), 1, in);
+    circle = (DlgNode *) get_ptr_list_element (wnd->nodes, idx);
 
     g_ptr_array_add (circle->next, arrow);
     g_ptr_array_add (arrow->prev, circle);
 
     /* load and assign end-circle */
-    circle = (DlgNode *) get_ptr_list_element (wnd->nodes, h2d (4, in));
+    fread (&idx, sizeof (idx), 1, in);
+    circle = (DlgNode *) get_ptr_list_element (wnd->nodes, idx);
 
     g_ptr_array_add (circle->prev, arrow);
     g_ptr_array_add (arrow->next, circle);
 
-    /* load text */
-    arrow->text = rs (4, in);
+    // load function data
+    fread (&size, sizeof (size), 1, in);
 
+    for (i = 0; i < size; i++)
+    {
+        data = new function_data;
+        
+        // function
+        fread (&data->function, sizeof (data->function), 1, in);
+        
+        // variable
+        fread (&idx, sizeof (idx), 1, in);
+        str = new char[idx + 1];
+        fread (str, sizeof (str[0]), idx, in);
+        str[idx] = '\0';
+        data->variable = str;
+
+        // operation
+        fread (&data->operation, sizeof (data->operation), 1, in);
+
+        // value
+        fread (&idx, sizeof (idx), 1, in);
+        str = new char[idx + 1];
+        fread (str, sizeof (str[0]), idx, in);
+        str[idx] = '\0';
+        data->value = str;
+
+        // set arrow-text
+        text += function::fct_string[data->function];
+        text += " ";
+        text += data->variable;
+        text += " ";
+        text += function::op_string[data->operation];
+        text += " ";
+        text += data->value;
+        text += "\n";
+
+        arrow->fctn.push_back (data);
+
+        // add variable to list of variables
+        if (function::vars.find (data->variable) != function::vars.end ())
+            function::vars[data->variable]++;
+        else
+            function::vars[data->variable] = 1;
+    }
+    
+    if (size > 0) arrow->text = g_strdup (text.c_str ());
+    else arrow->text = NULL;
+    
     /* load  links */
-    num = h2d (4, in);
+    fread (&num, sizeof (num), 1, in);
     for (i = 0; i < num; i++)
     {
-        circle = (DlgNode *) get_ptr_list_element (wnd->nodes, h2d (4, in));
+        fread (&idx, sizeof (idx), 1, in);
+        circle = (DlgNode *) get_ptr_list_element (wnd->nodes, idx);
 
         g_ptr_array_add (circle->link, arrow);
         g_ptr_array_add (arrow->link, circle);
@@ -1042,13 +1105,11 @@ save_dialogue (MainFrame * wnd)
     /* Be on the safe side */
     sort_nodes (wnd);
 
-    /* Write Header */
-    fprintf (out, "Adonthell Dialogue System v0.1 Editor File. (c) 1999 by Kai Sterker. Belongs to the Adonthell project.");
-    for (i = 0; i < 9; i++)
-        fputc ('\0', out);
-
+    /* Write Header: Adonthell Dialogue System file version 1 */
+    fputs ("ADS1", out);
+    
     /* Number of nodes */
-    d2h (wnd->number, 4, out);
+    fwrite (&wnd->number, sizeof(wnd->number), 1, out);
 
     /* Save Circles and create position-table */
     for (i = 0; i < wnd->number; i++)
@@ -1081,52 +1142,70 @@ save_dialogue (MainFrame * wnd)
 void 
 save_circle (DlgNode * circle, FILE * out, int number)
 {
+    u_int32 len = 0;
+    
     /* save type and number */
-    d2h (circle->type, 4, out);
-    d2h (number, 4, out);
+    fwrite (&circle->type, sizeof (circle->type), 1, out);
+    fwrite (&number, sizeof (number), 1, out);
 
     /* save position */
-    d2h (circle->position.x, 4, out);
-    d2h (circle->position.y, 4, out);
-    d2h (circle->position.height, 4, out);
-    d2h (circle->position.width, 4, out);
+    fwrite (&circle->position.x, sizeof (circle->position.x), 1, out);
+    fwrite (&circle->position.y, sizeof (circle->position.y), 1, out);
+    fwrite (&circle->position.height, sizeof (circle->position.height), 1, out);
+    fwrite (&circle->position.width, sizeof (circle->position.width), 1, out);
 
     /* save text */
     if (circle->text != NULL)
     {
-        d2h (strlen (circle->text) + 1, 4, out);
-        fprintf (out, circle->text);
+        len = strlen (circle->text);
+        fwrite (&len, sizeof (len), 1, out);
+        fwrite (circle->text, sizeof (circle->text[0]), len, out);
     }
     else
-        d2h (0, 4, out);
+        fwrite (&len, sizeof (len), 1, out);
 }
 
 void 
 save_arrow (DlgNode * arrow, FILE * out, int number, int *table)
 {
-    u_int32 i;
+    u_int32 i, len = 0;
+    u_int16 size;
 
     /* save type and number */
-    d2h (arrow->type, 4, out);
-    d2h (number, 4, out);
+    fwrite (&arrow->type, sizeof (arrow->type), 1, out);
+    fwrite (&number, sizeof (number), 1, out);
 
     /* start- and end-circle */
-    d2h (table[((DlgNode *) g_ptr_array_index (arrow->prev, 0))->number], 4, out);
-    d2h (table[((DlgNode *) g_ptr_array_index (arrow->next, 0))->number], 4, out);
+    fwrite (&table[((DlgNode *) g_ptr_array_index (arrow->prev, 0))->number], sizeof(table[0]), 1, out);
+    fwrite (&table[((DlgNode *) g_ptr_array_index (arrow->next, 0))->number], sizeof(table[0]), 1, out);
 
-    /* save text */
-    if (arrow->text != NULL)
+    // save function data
+    size = arrow->fctn.size ();
+    fwrite (&size, sizeof (size), 1, out);
+
+    for (i = 0; i < size; i++)
     {
-        d2h (strlen (arrow->text) + 1, 4, out);
-        fprintf (out, arrow->text);
-    }
-    else
-        d2h (0, 4, out);
+        // function
+        fwrite (&arrow->fctn[i]->function, sizeof (arrow->fctn[i]->function), 1, out);
+        
+        // variable
+        len = strlen (arrow->fctn[i]->variable);
+        fwrite (&len, sizeof (len), 1, out);
+        fwrite (arrow->fctn[i]->variable, sizeof (arrow->fctn[i]->variable[0]), len, out);
 
+        // operation
+        fwrite (&arrow->fctn[i]->operation, sizeof (arrow->fctn[i]->operation), 1, out);
+
+        // value
+        len = strlen (arrow->fctn[i]->value);
+        fwrite (&len, sizeof (len), 1, out);
+        fwrite (arrow->fctn[i]->value, sizeof (arrow->fctn[i]->value[0]), len, out);
+    }
+    
     /* links */
-    d2h (arrow->link->len, 4, out);
+    fwrite (&arrow->link->len, sizeof (arrow->link->len), 1, out);
     for (i = 0; i < arrow->link->len; i++)
-        d2h (table[((DlgNode *) g_ptr_array_index (arrow->link, i))->number], 4, out);
+        fwrite (&table[((DlgNode *) g_ptr_array_index (arrow->link, i))->number], sizeof (table[0]), 1, out);
 }
 
 void 

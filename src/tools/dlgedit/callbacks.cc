@@ -1,4 +1,6 @@
 /*
+   $Id$
+   
    Copyright (C) 1999 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
@@ -15,18 +17,24 @@ class dialog;
 #include <gtk/gtk.h>
 #include <stdio.h>
 
-#include "../../map/types.h"
+#include "../../types.h"
 #include "linked_list.h"
 #include "dlgnode.h"
 #include "main.h"
 #include "graph.h"
 #include "compile.h"
+#include "../../interpreter.h"
+#include "../../array_tmpl.h"
+#include "../../dialog.h"
 #include "dlgrun.h"
 #include "geometrie.h"
+#include "pjt_interface.h"
+#include "function.h"
+#include "interface.h"
 
-/* Main Window: Destroy App */
+/* Main Window: on_widget_destroy App */
 void 
-destroy (GtkWidget * widget, gpointer data)
+on_widget_destroy (GtkWidget * widget, gpointer data)
 {
     gtk_main_quit ();
 }
@@ -119,7 +127,7 @@ on_ok_button_pressed (GtkButton * button, gpointer user_data)
     /* Set Nodes Text */
     if (cbd->node->text)
         g_free (cbd->node->text);
-    cbd->node->text = gtk_editable_get_chars (cbd->edit_box, 0, -1);
+    cbd->node->text = g_strdelimit (gtk_editable_get_chars (cbd->edit_box, 0, -1), "\n\t", ' ');
 
     /* close dialog */
     gtk_widget_destroy (cbd->wnd->text_dlg);
@@ -150,7 +158,24 @@ on_fs_cancel_button_pressed (GtkButton * button, gpointer user_data)
     gtk_main_quit ();
 }
 
-/* File Menu: Load */
+// File menu: project
+void
+on_file_project_activate (GtkMenuItem *menuitem, gpointer user_data)
+{
+    MainFrame *wnd = (MainFrame *) user_data;
+    
+    // Create the project window
+    if (wnd->project == NULL)
+    {
+        wnd->project = create_project_window ();
+        gtk_widget_show (wnd->project);
+    }
+
+    // Bring the window to the front
+    gdk_window_raise (gtk_widget_get_parent_window (wnd->project));
+}
+
+/* File Menu: New */
 void 
 on_file_new_activate (GtkMenuItem * menuitem, gpointer user_data)
 {
@@ -161,7 +186,21 @@ on_file_new_activate (GtkMenuItem * menuitem, gpointer user_data)
 void 
 on_file_load_activate (GtkMenuItem * menuitem, gpointer user_data)
 {
-    load_dialogue ((MainFrame *) user_data);
+    MainFrame *wnd = (MainFrame *) user_data;
+
+    GString *file = g_string_new (NULL);
+    GtkWidget *fs = create_fileselection (file, 1);
+    gtk_file_selection_set_filename ((GtkFileSelection *) fs, wnd->file_name);
+
+    // chose file
+    gtk_widget_show (fs);
+    gtk_main ();
+
+    // Try to load file
+    load_dialogue (wnd, file->str);
+
+    // Clean up
+    g_string_free (file, TRUE);
 }
 
 /* File Menu: Save */
@@ -187,9 +226,12 @@ on_dialogue_run_activate (GtkMenuItem * menuitem, gpointer user_data)
 
 /* Continue Dialogue */
 void 
-on_player_txt_select_row (GtkCList * clist, gint row, gint column, GdkEvent * event, gpointer user_data)
+on_player_txt_select_row (GtkList * list, GtkWidget *widget, gpointer user_data)
 {
-    ShowDialogue ((RunData *) user_data, row);
+    RunData *rd = (RunData *) user_data;
+
+    rd->data->answer = GPOINTER_TO_INT(gtk_object_get_user_data (GTK_OBJECT(widget)));
+    ShowDialogue (rd);
 }
 
 /* Node selected in preview */
@@ -203,4 +245,58 @@ on_list_select (GtkList *list, GtkWidget *widget, gpointer user_data)
     deselect_object (wnd);
     center_object (wnd, node);
     select_object (wnd, point);
+}
+
+// function changed -> set available operators
+void on_function_released (GtkButton *button, gpointer user_data)
+{
+    ((function *) user_data)->set_function ();
+}
+
+// operation changed -> set available operators
+void on_operation_released (GtkButton *button, gpointer user_data)
+{
+    ((function *) user_data)->set_operation ();    
+}
+
+// Add function to the list
+void on_add_button_clicked (GtkButton * button, gpointer user_data)
+{
+    ((function *) user_data)->add ();
+}
+
+// Remove funcxtion from list
+void on_remove_button_clicked (GtkButton * button, gpointer user_data)
+{
+    ((function *) user_data)->remove ();
+}
+
+// Element of function-list selected
+void on_fct_select_row (GtkWidget *clist, gint row, gint column, GdkEventButton *event, gpointer data)
+{
+    ((function *) data)->select (row);
+}
+
+// Element of function-list selected
+void on_fct_unselect_row (GtkWidget *clist, gint row, gint column, GdkEventButton *event, gpointer data)
+{
+    ((function *) data)->select (-1);
+}
+
+// Move function up in list
+void on_up_button_clicked (GtkButton * button, gpointer user_data)
+{
+    ((function *) user_data)->up ();
+}
+
+// Move function down in list
+void on_down_button_clicked (GtkButton * button, gpointer user_data)
+{
+    ((function *) user_data)->down ();
+}
+
+// Accept the changes
+void on_fct_ok_buttpn_clicked (GtkButton * button, gpointer user_data)
+{
+    ((function *) user_data)->ok ();
 }

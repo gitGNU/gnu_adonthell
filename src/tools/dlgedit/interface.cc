@@ -1,4 +1,6 @@
 /*
+   $Id$
+   
    Copyright (C) 1999 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
@@ -16,7 +18,8 @@ class dialog;
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
 
-#include "../../map/types.h"
+#include "../../types.h"
+#include "../../interpreter.h"
 #include "linked_list.h"
 #include "dlgnode.h"
 #include "main.h"
@@ -26,8 +29,7 @@ class dialog;
 #include "interface.h"
 
 /* Create Top Level Window and Controls */
-void 
-create_mainframe (MainFrame * MainWnd)
+void create_mainframe (MainFrame * MainWnd)
 {
     GtkWidget *vbox;
     GtkWidget *menu;
@@ -41,7 +43,7 @@ create_mainframe (MainFrame * MainWnd)
     MainWnd->wnd = gtk_window_new (GTK_WINDOW_TOPLEVEL);
     gtk_widget_set_usize (GTK_WIDGET (MainWnd->wnd), 640, 480);
     gtk_window_set_title (GTK_WINDOW (MainWnd->wnd), g_strjoin (NULL, "Adonthell Dialogue Editor v0.2 - [", strrchr (MainWnd->file_name, '/') + 1, "]", NULL));
-    gtk_signal_connect (GTK_OBJECT (MainWnd->wnd), "delete_event", GTK_SIGNAL_FUNC (destroy), NULL);
+    gtk_signal_connect (GTK_OBJECT (MainWnd->wnd), "delete_event", GTK_SIGNAL_FUNC (on_widget_destroy), NULL);
 
     /* Menu Accelerators */
     accel_group = gtk_accel_group_new ();
@@ -58,6 +60,19 @@ create_mainframe (MainFrame * MainWnd)
 
     /* File Menu */
     menu = gtk_menu_new ();
+
+    /* Project */
+    menuitem = gtk_menu_item_new_with_label ("Project");
+    gtk_container_add (GTK_CONTAINER (menu), menuitem);
+    gtk_widget_add_accelerator (menuitem, "activate", accel_group, GDK_p, GDK_MOD1_MASK, GTK_ACCEL_VISIBLE);
+    gtk_signal_connect (GTK_OBJECT (menuitem), "activate", GTK_SIGNAL_FUNC (on_file_project_activate), (gpointer) MainWnd);
+    gtk_widget_show (menuitem);
+
+    /* Seperator */
+    menuitem = gtk_menu_item_new ();
+    gtk_menu_append (GTK_MENU (menu), menuitem);
+    gtk_widget_set_sensitive (menuitem, FALSE);
+    gtk_widget_show (menuitem);
 
     /* New */
     menuitem = gtk_menu_item_new_with_label ("New");
@@ -90,7 +105,7 @@ create_mainframe (MainFrame * MainWnd)
     menuitem = gtk_menu_item_new_with_label ("Quit");
     gtk_menu_append (GTK_MENU (menu), menuitem);
     gtk_widget_add_accelerator (menuitem, "activate", accel_group, GDK_F4, GDK_MOD1_MASK, GTK_ACCEL_VISIBLE);
-    gtk_signal_connect (GTK_OBJECT (menuitem), "activate", GTK_SIGNAL_FUNC (destroy), (gpointer) NULL);
+    gtk_signal_connect (GTK_OBJECT (menuitem), "activate", GTK_SIGNAL_FUNC (on_widget_destroy), (gpointer) NULL);
     gtk_widget_show (menuitem);
 
     /* Attach File Menu */
@@ -118,7 +133,7 @@ create_mainframe (MainFrame * MainWnd)
     gtk_widget_show (menuitem);
     MainWnd->dialogue_run = menuitem;
 
-    /* Attach File Menu */
+    /* Attach Dialogue Menu */
     menuitem = gtk_menu_item_new_with_label ("Dialogue");
     gtk_widget_show (menuitem);
     gtk_menu_item_set_submenu (GTK_MENU_ITEM (menuitem), menu);
@@ -237,7 +252,7 @@ create_text_dialog (NodeData * cbd)
     gtk_object_set_data (GTK_OBJECT (text_dialog), "text_dialog", text_dialog);
     gtk_widget_set_usize (text_dialog, 450, 200);
     gtk_window_set_title (GTK_WINDOW (text_dialog), "Text");
-    gtk_window_set_position (GTK_WINDOW (text_dialog), GTK_WIN_POS_CENTER);
+    gtk_window_set_position (GTK_WINDOW (text_dialog), GTK_WIN_POS_MOUSE);
     gtk_window_set_default_size (GTK_WINDOW (text_dialog), 450, 200);
     gtk_window_set_policy (GTK_WINDOW (text_dialog), FALSE, FALSE, FALSE);
 
@@ -331,7 +346,7 @@ create_text_dialog (NodeData * cbd)
     GTK_WIDGET_SET_FLAGS (cancel_button, GTK_CAN_DEFAULT);
 
     /* Callback handlers (or whatever you call them in gtk) */
-    gtk_signal_connect (GTK_OBJECT (text_dialog), "destroy", GTK_SIGNAL_FUNC (destroy), NULL);
+    gtk_signal_connect (GTK_OBJECT (text_dialog), "delete_event", GTK_SIGNAL_FUNC (on_widget_destroy), NULL);
     gtk_signal_connect (GTK_OBJECT (button_player), "toggled", GTK_SIGNAL_FUNC (on_button_player_toggled), cbd);
     gtk_signal_connect (GTK_OBJECT (button_npc), "toggled", GTK_SIGNAL_FUNC (on_button_npc_toggled), cbd);
     gtk_signal_connect (GTK_OBJECT (cancel_button), "pressed", GTK_SIGNAL_FUNC (on_cancel_button_pressed), cbd);
@@ -474,19 +489,18 @@ create_run_dialogue (RunData * rd)
     gtk_object_set_data_full (GTK_OBJECT (run_dialogue), "scrolledwindow2", scrolledwindow2, (GtkDestroyNotify) gtk_widget_unref);
     gtk_widget_show (scrolledwindow2);
     gtk_box_pack_start (GTK_BOX (vbox1), scrolledwindow2, TRUE, TRUE, 0);
+    gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolledwindow2), GTK_POLICY_NEVER, GTK_POLICY_ALWAYS);
 
-    player_txt = gtk_clist_new (1);
+    player_txt = gtk_list_new ();
     gtk_widget_set_name (player_txt, "player_txt");
     gtk_widget_ref (player_txt);
     gtk_object_set_data_full (GTK_OBJECT (run_dialogue), "player_txt", player_txt, (GtkDestroyNotify) gtk_widget_unref);
     gtk_widget_show (player_txt);
-    gtk_container_add (GTK_CONTAINER (scrolledwindow2), player_txt);
-    gtk_clist_set_column_width (GTK_CLIST (player_txt), 0, 80);
-    gtk_clist_column_titles_hide (GTK_CLIST (player_txt));
+    gtk_scrolled_window_add_with_viewport (GTK_SCROLLED_WINDOW (scrolledwindow2), player_txt);
     rd->player = player_txt;
 
-    gtk_signal_connect (GTK_OBJECT (run_dialogue), "delete_event", GTK_SIGNAL_FUNC (destroy), NULL);
-    gtk_signal_connect (GTK_OBJECT (player_txt), "select_row", GTK_SIGNAL_FUNC (on_player_txt_select_row), rd);
+    gtk_signal_connect (GTK_OBJECT (run_dialogue), "delete_event", GTK_SIGNAL_FUNC (on_widget_destroy), NULL);
+    gtk_signal_connect (GTK_OBJECT (player_txt), "select_child", GTK_SIGNAL_FUNC (on_player_txt_select_row), rd);
 
     return run_dialogue;
 }
@@ -503,25 +517,31 @@ create_list_item (MainFrame *wnd, DlgNode *node, int mode)
 
     switch (mode)
     {
+        // Selcted node's text
         case 1:
         {
             color.red = 65535;
-            color.green = 0;
+            if (node->type == NPC) color.green = 0;
+            else color.green = 32700;
             color.blue = 0;
             break;
         }
+        // Linked node's text
         case 2:
         {
             color.red = 30000;
             color.green = 30000;
-            color.blue = 30000;
+            if (node->type == NPC) color.blue = 30000;
+            else color.blue = 45000;
             break;
         }
+        // Directly attached node's text
         default:
         {
             color.red = 0;
             color.green = 0;
-            color.blue = 0;
+            if (node->type == NPC) color.blue = 0;
+            else color.blue = 35000;
             break;
         }
     }

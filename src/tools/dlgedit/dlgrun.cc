@@ -1,4 +1,6 @@
 /*
+   $Id$
+   
    Copyright (C) 1999 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
@@ -10,18 +12,16 @@
    See the COPYING file for more details.
  */
 
-class dialog;
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <gtk/gtk.h>
 
-#include "../../map/types.h"
-#include "../../dialog/dlg_io.h"
-#include "../../dialog/dialog_cmd.h"
-#include "../../dialog/array_tmpl.h"
-#include "../../dialog/dialog.h"
+#include "../../types.h"
+#include "../../array_tmpl.h"
+#include "../../interpreter.h"
+#include "../../commands.h"
+#include "../../dialog.h"
 #include "linked_list.h"
 #include "dlgnode.h"
 #include "main.h"
@@ -35,7 +35,14 @@ run_dialogue (MainFrame * wnd)
     RunData *rd = (RunData *) g_malloc (sizeof (RunData));
     GtkWidget *dlg;
 
-    rd->engine = new dialog;
+    /* Register commands with interpreter 
+       Normally you would do this once at Program startup */
+    interpreter::callbacks.clear ();
+    init_interpreter ();
+
+    rd->data = new dialog;
+    rd->data->text_file = g_strjoin (NULL, wnd->file_name, ".str", NULL);
+    rd->engine = new interpreter (g_strjoin (NULL, wnd->file_name, ".dat", NULL), rd->data);
 
     /* Dialog for displaying Dialogue */
     dlg = create_run_dialogue (rd);
@@ -43,7 +50,7 @@ run_dialogue (MainFrame * wnd)
 
     /* Here the dialogue gets initialized */
     /* The first parameter is the part of the dialogue to start with */
-    StartDialogue (wnd, rd, 0);
+    StartDialogue (rd);
     
     /* Thats the dialogue loop */
     gtk_main ();
@@ -51,99 +58,123 @@ run_dialogue (MainFrame * wnd)
     /* Clean up */
     gtk_widget_destroy (dlg);
     delete rd->engine;
+    delete rd->data;
+    delete[] dialog::offset;
+    delete[] dialog::length;
     g_free (rd);
 }
 
 /* Initialize Dialogue */
 void
-StartDialogue (MainFrame * wnd, RunData * rd, u_int32 start)
+StartDialogue (RunData * rd)
 {
-    u_int32 result;
+    FILE *str = fopen (rd->data->text_file, "r");
+    u_int32 count;
 
-    /* Tell the Engine to load the Dialogue */
-    result = rd->engine->init_dialog (wnd->file_name, start);
+    fread (&count, sizeof(count), 1, str);
+        
+    dialog::offset = new s_int32[count];
+    dialog::length = new s_int32[count];
 
-    if (!result)
-    {
-        gtk_editable_delete_text (GTK_EDITABLE (rd->npc), 0, -1);
-        gtk_text_insert ((GtkText *) rd->npc, rd->npc->style->font,
-            &rd->npc->style->white, &rd->npc->style->black,
-            rd->engine->error_text, -1);
+    fread (dialog::offset, sizeof(dialog::offset[0]), count, str);
+    fread (dialog::length, sizeof(dialog::length[0]), count, str);
 
-        return;
-    }
-
+    fclose (str);
+    
     /* Start */
-    ShowDialogue (rd, start);
+    ShowDialogue (rd);
 }
 
 /* Continue Dialogue */
 s_int8 
-ShowDialogue (RunData * rd, u_int32 answer)
+ShowDialogue (RunData * rd)
 {
-    s_int32 i;
+    u_int32 i;
     s_int32 result;
-    char *text[1];
+    GList *text = NULL;
     char **player_text;
 
     /* Thats the important call to the Dialogue engine with the (zero based)
-       * index of the chosen answer from the list of answers */
-    result = rd->engine->run_dialog (answer);
+       index of the chosen answer from the list of answers */
+    result = rd->engine->run ();
 
     switch (result)
     {
         case -1:
+        {
+            /* error */
+            gtk_editable_delete_text (GTK_EDITABLE (rd->npc), 0, -1);
+            gtk_text_insert ((GtkText *) rd->npc, rd->npc->style->font,
+                &rd->npc->style->white, &rd->npc->style->black,
+                "Interpreter returned error", -1);
+            return 0;
+        }
+
+        case 0:
         {
             /* the end */
             gtk_main_quit ();
             return 1;
         }
         
-        case -2:
+        case 1:
         {
-            /* error */
-            gtk_editable_delete_text (GTK_EDITABLE (rd->npc), 0, -1);
-            gtk_text_insert ((GtkText *) rd->npc, rd->npc->style->font,
-                &rd->npc->style->white, &rd->npc->style->black,
-                rd->engine->error_text, -1);
-            return 0;
-        }
-
-        default:
-        {
-            /* Recieve NPC´s text stored in  m_Engine -> m_NPCText */
+            /* Player part */
             gtk_editable_delete_text (GTK_EDITABLE (rd->npc), 0, -1);
             gtk_text_insert ((GtkText *) rd->npc, rd->npc->style->font,
                 &rd->npc->style->black, &rd->npc->style->white,
-                rd->engine->npc_text, -1);
+                rd->data->npc_text, -1);
 
-            gtk_clist_freeze (GTK_CLIST (rd->player));
-            gtk_clist_clear (GTK_CLIST (rd->player));
-
-            /* Check if there is a possible answer at all!
-               Else the NPC´s speech will continue. */
-            if (rd->engine->player_text.length() == 0)
-            {
-                text[0] = "... continue ...";
-                gtk_clist_append (GTK_CLIST (rd->player), text);
-            }
-
-            /* Else display all Answers contained in the Array
-               m_pPCText, which has the size  m_pPCText.m_Num */
-            else
-            {
-                player_text = rd->engine->player_text.get_array ();
+            gtk_list_clear_items (GTK_LIST (rd->player), 0, -1);
             
-                for (i = 0; i < result; i++)
-                {
-                    text[0] = player_text[i];
-                    gtk_clist_append (GTK_CLIST (rd->player), text);
-                }
-            }
-        
-            gtk_clist_thaw (GTK_CLIST (rd->player));
+            player_text = rd->data->player_text.get_array ();
+            
+            for (i = 0; i < rd->data->player_text.length (); i++)
+                text = g_list_append (text, list_item (player_text[i], i));
+
+            gtk_list_append_items (GTK_LIST (rd->player), text);
+
+            break;
+        }
+
+        case 2:
+        {
+            /* NPC only */
+            gtk_editable_delete_text (GTK_EDITABLE (rd->npc), 0, -1);
+            gtk_text_insert ((GtkText *) rd->npc, rd->npc->style->font,
+                &rd->npc->style->black, &rd->npc->style->white,
+                rd->data->npc_text, -1);
+
+            gtk_list_clear_items (GTK_LIST (rd->player), 0, -1);
+
+            text = g_list_append (text, list_item ("... continue ...", 0));
+            gtk_list_append_items (GTK_LIST (rd->player), text);
+
+            break;
         }
     }
     
     return result;
+}
+
+GtkWidget* list_item (const char *text, u_int32 index)
+{
+    GtkWidget *label;
+    GtkWidget *item;
+
+    /* create label */    
+    label = gtk_label_new (text);
+    gtk_widget_set_usize (label, 360, 0);
+    gtk_label_set_justify ((GtkLabel *) label, GTK_JUSTIFY_LEFT);
+    gtk_label_set_line_wrap ((GtkLabel *) label, TRUE);
+    gtk_widget_show (label);
+
+    /* add label to list_item */
+    item = gtk_list_item_new ();
+    gtk_container_add (GTK_CONTAINER(item), label);
+    gtk_object_set_user_data (GTK_OBJECT (item), GINT_TO_POINTER(index));
+    GTK_WIDGET_UNSET_FLAGS (item, GTK_CAN_FOCUS);
+    gtk_widget_show (item);
+    
+    return item;
 }

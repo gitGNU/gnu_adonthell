@@ -1,4 +1,6 @@
 /*
+   $Id$
+   
    Copyright (C) 1999 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
@@ -14,9 +16,8 @@
 #include <stdio.h>
 #include <gtk/gtk.h>
 
-#include "../../map/types.h"
-#include "../../dialog/dlg_io.h"
-#include "../../dialog/dialog_cmd.h"
+#include "../../types.h"
+#include "../../commands.h"
 #include "linked_list.h"
 #include "dlgnode.h"
 #include "main.h"
@@ -37,8 +38,7 @@ void write_text (DlgCompiler *, ptr_list *, gchar *);
 void undo_changes (ptr_list *);
 
 void add_CLEAR (DlgCompiler *, GPtrArray *);
-void add_END (DlgCompiler *, GPtrArray *);
-void add_DISPLAY (DlgCompiler *, GPtrArray *);
+void add_RETURN (DlgCompiler *, GPtrArray *, u_int32);
 void add_NPCTEXT (DlgCompiler *, GPtrArray *, s_int32);
 void add_IMPORT (DlgCompiler *, GPtrArray *, s_int32, s_int32);
 void add_PTEXT (DlgCompiler *, GPtrArray *, s_int32);
@@ -190,13 +190,9 @@ write_text (DlgCompiler * comp, ptr_list * nodes, gchar * file_name)
     /* write string - file */
     out = fopen (g_strjoin (NULL, file_name, ".str", NULL), "wb");
 
-    d2h (index, sizeof (u_int32), out);
-
-    for (i = 0; i < (s_int32)index; i++)
-        d2h (offset[i], 4, out);
-
-    for (i = 0; i < (s_int32)index; i++)
-        d2h (length[i], 4, out);
+    fwrite (&index, sizeof (index), 1, out);
+    fwrite (offset, sizeof (offset[0]), index, out);
+    fwrite (length, sizeof (length[0]), index, out);
 
     for (i = 0; i < nodes->size; i++)
     {
@@ -217,12 +213,12 @@ compile_nodes (DlgCompiler * comp)
     GPtrArray *command_block = g_ptr_array_new ();
     DlgNode *circle;
     dialog_cmd *cmd;
-    u_int32 i, j, len, num;
+    u_int32 i, j, len, num, retval = 2;
 
     /* Look if we reached a end */
     if (comp->next_circles->len == 0)
     {
-        add_END (comp, command_block);
+        add_RETURN (comp, command_block, 0);
 
         g_ptr_array_add (comp->compiled_blocks, command_block);
 
@@ -233,9 +229,6 @@ compile_nodes (DlgCompiler * comp)
 
     else
     {
-        /* add CLEAR */
-        add_CLEAR (comp, command_block);
-
         /* add circles 
            There are 3 possibilities: Either PLAYER - nodes follow, further
            NPC - nodes follow or END follows */
@@ -266,6 +259,8 @@ compile_nodes (DlgCompiler * comp)
 
                     for (j = 0; j < len; j++)
                         add_PTEXT (comp, command_block, (get_next_circle (circle, j))->number);
+
+                    retval = 1;
                 }
 
                 /* 3. NPC - nodes follow */
@@ -275,7 +270,10 @@ compile_nodes (DlgCompiler * comp)
         }
 
         /* add DISPLAY */
-        add_DISPLAY (comp, command_block);
+        add_RETURN (comp, command_block, retval);
+
+        /* add CLEAR */
+        add_CLEAR (comp, command_block);
 
         g_ptr_array_add (comp->compiled_blocks, command_block);
 
@@ -374,10 +372,10 @@ write_dialogue (DlgCompiler * comp, gchar * file_name)
     num_cmds = comp->pc_lookup[dlg->len - 1];
 
     /* output length of dialogue */
-    d2h (comp->dlg_length, 4, dat);
+    fwrite (&comp->dlg_length, sizeof(comp->dlg_length), 1, dat);
 
     /* output number of dialogue commands */
-    d2h (num_cmds, 4, dat);
+    fwrite (&num_cmds, sizeof(num_cmds), 1, dat);
     fprintf (txt, "%i commands in Dialogue\n\n", (int)num_cmds);
 
     for (i = 0; i < dlg->len; i++)
@@ -392,50 +390,45 @@ write_dialogue (DlgCompiler * comp, gchar * file_name)
             {
             case CLEAR:
                 {
-                    fprintf (txt, "\n%i CLEAR\n", (int)k++);
-                    d2h (CLEAR, 4, dat);
+                    fprintf (txt, "%i CLEAR\n", (int)k++);
+                    fwrite (&cmd->type, sizeof(cmd->type), 1, dat);
                     break;
                 }
-            case DISPLAY:
+            case RETURN:
                 {
-                    fprintf (txt, "%i DISPLAY\n", (int)k++);
-                    d2h (DISPLAY, 4, dat);
+                    fprintf (txt, "%i RETURN %i\n", (int)k++, (int)cmd->text);
+                    fwrite (&cmd->type, sizeof(cmd->type), 1, dat);
+                    fwrite (&cmd->text, sizeof(cmd->text), 1, dat);
                     break;
                 }
-            case END:
-                {
-                    fprintf (txt, "\n%i END\n", (int)k++);
-                    d2h (END, 4, dat);
-                    break;
-                }
-            case IMPORT:
+           case IMPORT:
                 {
                     fprintf (txt, "%i IMPORT \"%s\"\n", (int)k++, ((DlgNode *) get_ptr_list_element (comp->nodes, cmd->new_pc))->text);
-                    d2h (IMPORT, 4, dat);
-                    d2h (cmd->text, 4, dat);
+                    fwrite (&cmd->type, sizeof(cmd->type), 1, dat);
+                    fwrite (&cmd->text, sizeof(cmd->text), 1, dat);
                     break;
                 }
             case NPCTEXT:
                 {
-                    fprintf (txt, "%i NPCTEXT %i\n", (int)k++, (int)cmd->text);
-                    d2h (NPCTEXT, 4, dat);
-                    d2h (cmd->text, 4, dat);
+                    fprintf (txt, "\n%i NPCTEXT %i\n", (int)k++, (int)cmd->text);
+                    fwrite (&cmd->type, sizeof(cmd->type), 1, dat);
+                    fwrite (&cmd->text, sizeof(cmd->text), 1, dat);
                     break;
                 }
             case PTEXT:
                 {
                     fprintf (txt, "%i PTEXT %i %i\n", (int)k++, (int)cmd->text, (int)cmd->new_pc);
-                    d2h (PTEXT, 4, dat);
-                    d2h (cmd->text, 4, dat);
-                    d2h (cmd->new_pc, 4, dat);
+                    fwrite (&cmd->type, sizeof(cmd->type), 1, dat);
+                    fwrite (&cmd->text, sizeof(cmd->text), 1, dat);
+                    fwrite (&cmd->new_pc, sizeof(cmd->new_pc), 1, dat);
                     break;
                 }
             case SNPCTEXT:
                 {
-                    fprintf (txt, "%i SNPCTEXT %i %i\n", (int)k++, (int)cmd->text, (int)cmd->new_pc);
-                    d2h (SNPCTEXT, 4, dat);
-                    d2h (cmd->text, 4, dat);
-                    d2h (cmd->new_pc, 4, dat);
+                    fprintf (txt, "\n%i SNPCTEXT %i %i\n", (int)k++, (int)cmd->text, (int)cmd->new_pc);
+                    fwrite (&cmd->type, sizeof(cmd->type), 1, dat);
+                    fwrite (&cmd->text, sizeof(cmd->text), 1, dat);
+                    fwrite (&cmd->new_pc, sizeof(cmd->new_pc), 1, dat);
                     break;
                 }
             }
@@ -470,25 +463,15 @@ add_CLEAR (DlgCompiler * comp, GPtrArray * array)
 }
 
 void 
-add_END (DlgCompiler * comp, GPtrArray * array)
+add_RETURN (DlgCompiler * comp, GPtrArray * array, u_int32 retval)
 {
     dialog_cmd *cmd = (dialog_cmd *) malloc (sizeof (dialog_cmd));
 
-    cmd->type = END;
+    cmd->type = RETURN;
+    cmd->text = retval;
 
     g_ptr_array_add (array, cmd);
-    comp->dlg_length += 1;
-}
-
-void 
-add_DISPLAY (DlgCompiler * comp, GPtrArray * array)
-{
-    dialog_cmd *cmd = (dialog_cmd *) malloc (sizeof (dialog_cmd));
-
-    cmd->type = DISPLAY;
-
-    g_ptr_array_add (array, cmd);
-    comp->dlg_length += 1;
+    comp->dlg_length += 2;
 }
 
 void 

@@ -18,7 +18,7 @@ SEARCHDIRS := -I- -I${MYCODEDIR}
 
 # makemake variables
 
-DEPENDFLAGS := -g -Wall -Werror `gtk-config --cflags`
+DEPENDFLAGS := -g -Wall -Werror -D_DLGEDIT_ `gtk-config --cflags`
 
 # C preprocessor (C, C++, FORTRAN)
 
@@ -26,7 +26,7 @@ CPPFLAGS =
 
 # C compiler
 
-CC     := g++
+CC     := gcc
 CFLAGS  = ${DEPENDFLAGS}
 
 %.o : %.c
@@ -52,12 +52,15 @@ CXXFLAGS  = ${DEPENDFLAGS}
 # linker
 
 LINKER    := gcc
-LDFLAGS    = ../../.objects/dialog.o
+LDFLAGS    =
 LOADLIBES := -lm -lstdc++ `gtk-config --libs`
+
+
+OBJECTS := ./callbacks.o ./compile.o ./dlgrun.o ./events.o ./function.o ./geometrie.o ./graph.o ./interface.o ./main.o ./linked_list.o ../../interpreter.o ../../commands.o ../../dialog_cmds.o ../../array_tmpl.o ./pjt_interface.o ./pjt_callbacks.o ./project.o ../../storage.o
 
 # dlgedit
 
-dlgedit : ./callbacks.o ./compile.o ./dlgrun.o ./events.o ./geometrie.o ./graph.o ./interface.o ./main.o ./linked_list.o
+dlgedit : ${OBJECTS}
 	${LINKER} ${LDFLAGS} -o $@ ${filter-out %.a %.so, $^} ${LOADLIBES}
 
 # target for making everything
@@ -69,7 +72,7 @@ all: dlgedit
 
 .PHONY : tidy
 tidy::
-	@${RM} core ./callbacks.o ./compile.o ./dlgrun.o ./events.o ./geometrie.o ./graph.o ./interface.o ./main.o ./linked_list.o
+	@${RM} core ${OBJECTS} *~
 
 # target for removing all object files
 
@@ -79,7 +82,7 @@ clean:: tidy
 
 # list of all source files
 
-MM_ALL_SOURCES := ./callbacks.c ./compile.c ./dlgrun.c ./events.c ./geometrie.c ./graph.c ./interface.c ./main.c
+MM_ALL_SOURCES := ./callbacks.cc ./compile.cc ./dlgrun.cc ./events.cc ./function.cc ./geometrie.cc ./graph.cc ./interface.cc ./main.cc
 
 
 # target for checking a source file

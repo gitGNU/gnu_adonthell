@@ -13,12 +13,14 @@
 /* Callback Data for running a Dialogue */
 typedef struct
 {
-    dialog *engine;
+    dialog *data;
+    interpreter *engine;
     GtkWidget *npc;
     GtkWidget *player;
 }
 RunData;
 
 void run_dialogue (MainFrame *);
-void StartDialogue (MainFrame *, RunData *, u_int32);
-s_int8 ShowDialogue (RunData *, u_int32);
+void StartDialogue (RunData *);
+s_int8 ShowDialogue (RunData *);
+GtkWidget *list_item (const char*, u_int32);

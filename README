@@ -1,4 +1,4 @@
-Adonthell Map Engine Version 0.1.a
+Adonthell Map Engine
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -12,43 +12,25 @@ Adonthell Map Engine Version 0.1.a
 Release Note:
 =============
 
-This release is only a code cleanup release. Before it can be considered as 
-totally clean, I have to cleanup the editors code, which is a bug mess.
-But now the engine code is safe for your eyes :)
-Changes brought to the editors are minor (file selector).
-
 Compilation:
 ============
 
-To simply test the engine, just type "make". If you want to compile all the 
-development tools (map editor, etc...) type "make everything".
+See the INSTALL file for details 
+
 
 Playing with the map engine:
 ============================
 
-In this directory, type "./mapengine forest.map". The maps are stored in the 
-data/ directory. Actually forest.map is the only one available, for 
-demonstration purpose (however it lacks of different characters!).
-If you have a good computer (i.e P133 or more) and want to try 640x400 res, 
-launch "./mapengine forest.map -m1".
+After following the instructions in the INSTALL file, type 
+"./mapengine forest.map". The maps are stored in the data/directory. 
+Actually forest.map is the only one available, for demonstration purpose 
+(however it lacks of different characters!). If you have a good computer 
+(i.e P133 or more) and want to try 640x400 res, launch 
+"./mapengine forest.map -m1".
 
 Directories:
 ============
 
-data/ contains all the data needed by the engine to run: a map and the 
-graphics.
-
-doc/ contains the documentation (actually only about the map engine - there's 
-no doc yet for the editors, sorry)
-
-gfx/ is the graphical management source code directory
-
-map/ contain the source code relative to the map engine
-
-misc/ contain the source code for some other functions (initialization, etc..)
-
-In utils/ you will find the development tools: the pnm to pst converter, the
-pattern editor, the map editor and some tools related to characters creation.
 
 Note:
 =====

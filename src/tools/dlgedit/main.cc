@@ -1,4 +1,6 @@
 /*
+   $Id$
+   
    Copyright (C) 1999 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
@@ -15,7 +17,8 @@ class dialog;
 #include <stdio.h>
 #include <gtk/gtk.h>
 
-#include "../../map/types.h"
+#include "../../types.h"
+#include "../../interpreter.h"
 #include "linked_list.h"
 #include "dlgnode.h"
 #include "main.h"
@@ -37,6 +40,7 @@ main (int argc, char *argv[])
     MainWnd->wnd = NULL;
     MainWnd->text_dlg = NULL;
     MainWnd->pixmap = NULL;
+    MainWnd->project = NULL;
 
     /* Create Top Level Window and Controls */
     create_mainframe (MainWnd);

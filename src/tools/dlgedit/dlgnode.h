@@ -1,4 +1,6 @@
 /*
+   $Id$
+
    Copyright (C) 1999 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
@@ -10,9 +12,15 @@
    See the COPYING file for more details.
 */
 
+class DlgNode;
+
+#include <vector>
+#include "function.h"
+
 /* Node */
-typedef struct
+class DlgNode
 {
+public:
     u_int32 number;             /* unique ID */
     u_int8 type;                /* one of NPC, PLAYER, LINK */
     u_int8 highlite;            /* color of node */
@@ -23,8 +31,10 @@ typedef struct
     GPtrArray *next;            /* successor(s) */
     GPtrArray *link;            /* indirect connection(s) */
 
+    vector<function_data*> fctn;// assigned functions
+
     GdkPoint line[2];           /* Line of arrow */
     GdkPoint tip[3];            /* tip of arrow */
-}
-DlgNode;
+};
+
 

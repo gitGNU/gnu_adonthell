@@ -1,4 +1,6 @@
 /*
+   $Id$
+   
    Copyright (C) 1999 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
@@ -48,6 +50,7 @@ typedef struct
     GtkWidget *text_dlg;
     GtkWidget *dialogue_run;    /* The Dialogue_Run Menuitem */
     GtkWidget *tooltip;         /* The tooltip */
+    GtkWidget *project;
 
     GdkPixmap *pixmap;          /* Drawing surface */
     GdkFont *font;              /* Font for Textoutput */
