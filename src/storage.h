@@ -46,6 +46,8 @@ struct ltstr
 class storage
 {
 public:
+    storage () { changed = 1; }
+    
     void set (const char*, s_int32);
     s_int32 get (const char*);
     s_int32& operator[] (const char*);
@@ -53,6 +55,8 @@ public:
     
 protected:
     hash_map <const char*, s_int32, hash<const char*>, equal_key> data;
+    hash_map<const char*, s_int32, hash<const char*>, equal_key>::iterator i;
+    u_int8 changed;
 };
 
 
@@ -61,6 +65,8 @@ protected:
 class objects
 {
 public:
+    objects () { changed = 1; }
+    
     void set (const char*, storage*);
     storage* get (const char*);
     void erase (const char*);
@@ -68,6 +74,8 @@ public:
 
 private:
     map<const char*, storage*, ltstr> data;
+    map<const char*, storage*>::iterator i;
+    u_int8 changed;
 };
 
 #endif // __STORAGE_H__

@@ -24,6 +24,8 @@ void storage::set (const char *key, s_int32 value)
 #endif
     if (!value) data.erase (key);
     else data[key] = value;
+
+    changed = 1;
 }
 
 // Get the value of a variable; if key not found then variable is zero
@@ -48,11 +50,15 @@ s_int32& storage::operator[] (const char *key)
 // Iterate over the array
 pair<const char*, s_int32> storage::next ()
 {
-    static hash_map<const char*, s_int32, hash<const char*>, equal_key>::iterator i = data.begin ();
-    
+    if (changed)
+    {
+        changed = 0;
+        i = data.begin ();
+    }
+        
     if (i == data.end ()) 
     {
-        i = data.begin ();
+        changed = 1;
         return pair<const char*, s_int32> (NULL, 0);
     }
 
@@ -81,6 +87,7 @@ void objects::set (const char* key, storage *val)
     }
   
     data[key] = val;
+    changed = 1;
 }
 
 // Retrieve a object from the map
@@ -113,17 +120,24 @@ void objects::erase (const char *key)
 {
     // Check wether the key exists
     if (data.find (key) != data.end ())
+    {
         data.erase (key);
+        changed = 1;
+    }
 }
 
 // Iterate over the array
 storage *objects::next ()
 {
-    static map<const char*, storage*>::iterator i = data.begin ();
+    if (changed)
+    {
+        changed = 0;
+        i = data.begin ();
+    }
     
     if (i == data.end ()) 
     {
-        i = data.begin ();
+        changed = 1;
         return NULL;
     }
 
