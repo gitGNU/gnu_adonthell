@@ -67,6 +67,8 @@ class image
   ~image();
   void clear();
   void resize(u_int16 l, u_int16 h);
+  u_int16 get_length();
+  u_int16 get_height();
   s_int8 get(char * file);
 
   s_int8 get(gzFile file);

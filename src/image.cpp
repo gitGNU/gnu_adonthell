@@ -184,6 +184,16 @@ void image::clear()
 #endif
 }
 
+u_int16 image::get_length()
+{
+  return length;
+}
+
+u_int16 image::get_height()
+{
+  return height;
+}
+
 void image::resize(u_int16 l, u_int16 h)
 {
   if ((length==l)&&(height==h)) return;
