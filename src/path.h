@@ -39,9 +39,9 @@ class landmap;
  * A* pathfinding algorithm implementation class.
  *
  * This class calculates the shortest way from a begin point
- * to a goal point on a landmap using the A* algorithm and
- * stores the succession of directions to follow to reach
- * the goal point.
+ * to a goal point on a landmap using the A* algorithm. It
+ * stores a list of directions that when followed lead from
+ * the start to the goal.
  *
  * This class is particularly well designed for mapcharacters,
  * who will often need to walk from one point to another.
@@ -92,7 +92,7 @@ public:
     u_int16 submap;
 
     /**
-     * Wished direction to look at once the goal is reached.
+     * Direction to face once the goal is reached.
      * 
      */ 
     u_int16 dir;

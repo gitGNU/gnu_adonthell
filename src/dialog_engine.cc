@@ -52,7 +52,7 @@ void dialog_engine::init(character_base *mynpc, char * dlg_file, u_int8 size)
 
     //Init position & size
     win_container::move(20,20);
-    win_container::resize(280,100);
+    win_container::resize(280,105);
     
 
     // Load the different fonts
@@ -74,8 +74,8 @@ void dialog_engine::init(character_base *mynpc, char * dlg_file, u_int8 size)
     // Full or half-sized window
     if (size)
     {
-        move (20, 20);
-        resize (280, 200);
+        move (20, 15);
+        resize (280, 210);
     }
     
     // Make the npc available to the dialogue engine
