@@ -20,6 +20,7 @@ Circle::Circle ()
     comment = "";
     conditions = "";
     variables =	"";
+    actions = "0|0|0";
     mood = 0;
 }
 
@@ -29,6 +30,7 @@ Circle::Circle (u_int32 num, u_int8 tp, s_int32 x, s_int32 y)
     comment = "";
     conditions = "";
     variables =	"";
+    actions = "0|0|0";
 
     number = num;
     type = tp;
@@ -64,6 +66,9 @@ void Circle::save (ofstream &file, u_int32* table)
     // circle's variable(s)
     if (variables != "") file << "  Vars [" << variables << "]\n";
 
+    // circle's actions
+    if (actions != "") file << "  Act [" << actions << "]\n";
+    
     file << "End\n";
 };
 
@@ -130,6 +135,13 @@ void Circle::load (u_int32 num)
             case LOAD_VARS:
             {
                 if (parse_dlgfile (str, n) == LOAD_STR) variables = str;
+                break;             
+            }
+
+            // The Circle's Variables
+            case LOAD_ACT:
+            {
+                if (parse_dlgfile (str, n) == LOAD_STR) actions = str;
                 break;             
             }
                         

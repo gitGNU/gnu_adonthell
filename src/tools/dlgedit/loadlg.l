@@ -42,6 +42,7 @@ Note            return LOAD_NOTE;
 Text            return LOAD_TEXT;
 Cond            return LOAD_COND;
 Vars            return LOAD_VARS;
+Act             return LOAD_ACT;
 
 \[              mytext = ""; BEGIN(text);
 <text>\]        BEGIN(INITIAL); return LOAD_STR;

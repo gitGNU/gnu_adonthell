@@ -1804,6 +1804,36 @@ Local
 
 If you omit the object, the interpreter assumes you wish to access the gamestate
  array, as this will probably be the most frequent case.
+\layout Standard
+
+Future objects will include the player 
+\family typewriter 
+(player)
+\family default 
+ and all the NPCs, which will be refered to by their name.
+ The player will have (among others) the two attributes 
+\family typewriter 
+race
+\family default 
+ and 
+\family typewriter 
+gender
+\family default 
+, which can be used to adjust NPC behaviour in dialogues.
+\layout Standard
+
+One use of the gamestate array could be to specify which NPCs are currently
+ in the party.
+ The according attribute would be 
+\emph on 
+<npc_name>
+\family typewriter 
+\emph default 
+_in_party
+\family default 
+.
+ A dialogue could then take a different direction if a certain NPC is with
+ the player.
 \layout Subsubsection
 
 Language Definition

@@ -38,23 +38,25 @@ if          { return _IF; }
 else        { return _ELSE; }
 {ident}     { varslval = varstext; return _ID; }
 {num}       { varslval = varstext; return _NUM; }
-"{"         { return _LBRACE; }
-"}"         { return _RBRACE; }
-"("         { return _LPAREN; }
-")"         { return _RPAREN; } 
+"++"        { return _INC; }
+"--"        { return _DEC; }
+"{"         { return '{'; }
+"}"         { return '}'; }
+"("         { return '('; }
+")"         { return ')'; } 
 "=="        { return _EQ; }
 "!="        { return _NEQ; }
 "<="        { return _LEQ; }
 ">="        { return _GEQ; }
-">"         { return _GT; }
-"<"         { return _LT; }
-"="         { return _ASSIGN; }
-"+"         { return _ADD; }
-"-"         { return _SUB; }
-"*"         { return _MUL; }
-"/"         { return _DIV; }
+">"         { return '>'; }
+"<"         { return '<'; }
+"="         { return '='; }
+"+"         { return '+'; }
+"-"         { return '-'; }
+"*"         { return '*'; }
+"/"         { return '/'; }
 "&&"        { return _AND; }
 "||"        { return _OR; }
-";"         { return _SEMICOLON; }
+";"         { return ';'; }
 
 .           { printf("Illegal character.\n"); return yytext[0]; }

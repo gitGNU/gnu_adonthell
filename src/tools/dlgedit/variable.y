@@ -43,17 +43,18 @@ vector<command*> v_scrpt;
 
 %expect 1
 
+%right _INC _DEC
 %token _ID
 %token _IF
 %token _ELSE
 %token _NUM
-%token _LPAREN _RPAREN
-%token _LBRACE _RBRACE
-%token _SEMICOLON
-%nonassoc _EQ _NEQ _LT _GT _LEQ _GEQ
-%right _ASSIGN
-%left _ADD _SUB
-%left _MUL _DIV
+%token '(' ')'
+%token '{' '}'
+%token ';'
+%nonassoc _EQ _NEQ '<' '>' _LEQ _GEQ
+%right '='
+%left '+' '-'
+%left '*' '/'
 %left _NEG
 %left _OR
 %left _AND
@@ -71,20 +72,28 @@ stat:     assign                    { $$ = $1; }
 	   | if_stat	                { $$ = $1; }
 ;
 
-assign:   _ID _ASSIGN expr _SEMICOLON  { $$ = string(1, LET) + $3 + string(1, ID); vars.push_back ($1); }
+assign:   _ID '=' expr ';'          { $$ = string(1, LET) + $3 + string(1, ID); vars.push_back ($1); }
+       |  _ID _INC ';'              { $$ = string(1, LET) + string(1, ADD) + string(1, ID) + string(1, NUM) + string(1, ID);
+                                      vars.push_back ($1);
+                                      vars.push_back ("1");
+                                      vars.push_back ($1); }
+       |  _ID _DEC ';'              { $$ = string(1, LET) + string(1, SUB) + string(1, ID) + string(1, NUM) + string(1, ID);
+                                      vars.push_back ($1);
+                                      vars.push_back ("1");
+                                      vars.push_back ($1); }
 ;
 
 expr:     val                       { $$ = $1; }
-        | expr _ADD expr            { $$ = string(1, ADD) + $1 + $3; }
-        | expr _SUB expr            { $$ = string(1, SUB) + $1 + $3; } 
-        | expr _MUL expr            { $$ = string(1, MUL) + $1 + $3; }
-        | expr _DIV expr            { $$ = string(1, DIV) + $1 + $3; }       
-        | _LPAREN expr _RPAREN      { $$ = $2; }
+        | expr '+' expr             { $$ = string(1, ADD) + $1 + $3; }
+        | expr '-' expr             { $$ = string(1, SUB) + $1 + $3; } 
+        | expr '*' expr             { $$ = string(1, MUL) + $1 + $3; }
+        | expr '/' expr             { $$ = string(1, DIV) + $1 + $3; }       
+        | '(' expr ')'              { $$ = $2; }
 ;
 
 val:      _NUM                      { $$ = NUM; vars.push_back ($1); }
         | _ID                       { $$ = ID; vars.push_back ($1); }
-        | _SUB val %prec _NEG       { if ($2[0] == char(ID)) {
+        | '-' val %prec _NEG        { if ($2[0] == char(ID)) {
                                         $$ = string(1, SUB) + string(1, NUM) + $2; vars.insert ((vars.begin () + vars.size () - 1), "0");
                                       } else {
                                         $$ = $2; vars[vars.size () - 1] = "-" + vars[vars.size () - 1];
@@ -92,22 +101,22 @@ val:      _NUM                      { $$ = NUM; vars.push_back ($1); }
                                     }
 ;
 
-if_stat:  _IF _LPAREN comp _RPAREN block    { $$ = string (1,BRANCH) + $3 + $5 + string (1,ENDIF); }
-	    | _IF _LPAREN comp _RPAREN block _ELSE block  { $$ = string (1,BRANCH) + $3 + $5 + string (1,JMP) + $7 + string (1,ENDIF); }
+if_stat:  _IF '(' comp ')' block    { $$ = string (1,BRANCH) + $3 + $5 + string (1,ENDIF); }
+	    | _IF '(' comp ')' block _ELSE block  { $$ = string (1,BRANCH) + $3 + $5 + string (1,JMP) + $7 + string (1,ENDIF); }
 ;
 
 comp:     comp _AND comp            { $$ = string(1, AND) + $1 + $3; }
         | comp _OR comp             { $$ = string(1, OR) + $1 + $3; }
-        | _LPAREN comp _RPAREN      { $$ = $2; }
+        | '(' comp ')'              { $$ = $2; }
         | expr _EQ expr             { $$ = string(1, EQ) + $1 + $3; }
         | expr _NEQ expr            { $$ = string(1, NEQ) + $1 + $3; }
-        | expr _LT expr             { $$ = string(1, LT) + $1 + $3; }
+        | expr '<' expr             { $$ = string(1, LT) + $1 + $3; }
         | expr _LEQ expr            { $$ = string(1, LEQ) + $1 + $3; }
-        | expr _GT expr             { $$ = string(1, GT) + $1 + $3; }
+        | expr '>' expr             { $$ = string(1, GT) + $1 + $3; }
         | expr _GEQ expr            { $$ = string(1, GEQ) + $1 + $3; }
 ;
 
-block:    _LBRACE assign_list _RBRACE   { $$ = $2; }
+block:    '{' assign_list '}'       { $$ = $2; }
         | stat                      { $$ = $1; }
 ;
 

@@ -30,6 +30,9 @@ public:
     void on_condition (char *); // Conditions updated
     void on_variable (char *);  // Variables updated
     void on_type (u_int8);      // Type updated
+    void on_combat (u_int8);    // Combat updated
+    void on_loop (u_int8);      // Loop updated
+    void on_change_dlg (u_int8);// dialogue/plugin radiobuttons changed
 
     GtkWidget *dlg;             // The actual Dialog Window
     GtkWidget *text_entry;      // The Editboxes for the Nodes text
@@ -39,6 +42,9 @@ private:
     Circle *circle;             // The node we edit 
 
     u_int8 type;                // Either PLAYER or NPC
+    u_int8 combat;              // State of combat-checkbox
+    u_int8 loop;                // State of Loop-checkbox
+    u_int8 change_dlg;          // State of dialoge/plugin radiobuttons
     string text;                // Dialogue Text
     string note;                // Annotations
     string cond;                // Conditions for the node

@@ -133,3 +133,57 @@ on_circle_cancel_button_pressed (GtkButton * button, gpointer user_data)
     gtk_main_quit ();
     gtk_widget_destroy ((GtkWidget *) user_data);
 }
+
+void
+on_loop_clicked (GtkButton * button, gpointer user_data)
+{
+    crcle_dlg *dlg = (crcle_dlg *) user_data;
+    
+    if (gtk_toggle_button_get_active ((GtkToggleButton *) button)) dlg->on_loop ('1');
+    else dlg->on_loop ('0');
+}
+
+void
+on_start_combat_clicked (GtkButton * button, gpointer user_data)
+{
+    crcle_dlg *dlg = (crcle_dlg *) user_data;
+    
+    if (gtk_toggle_button_get_active ((GtkToggleButton *) button)) dlg->on_combat ('1');
+    else dlg->on_combat ('0');
+}
+
+void
+on_set_dlg_clicked (GtkButton * button, gpointer user_data)
+{
+
+}
+
+void
+on_add_plugin_clicked (GtkButton * button, gpointer user_data)
+{
+
+}
+
+void
+on_remove_plugin_clicked (GtkButton * button, gpointer user_data)
+{
+
+}
+
+void
+on_add_dlg_button_clicked (GtkButton * button, gpointer user_data)
+{
+
+}
+
+void
+on_remove_dlg_button_clicked (GtkButton * button, gpointer user_data)
+{
+
+}
+
+void
+on_dlg_list_start_selection (GtkCList * clist, gpointer user_data)
+{
+
+}

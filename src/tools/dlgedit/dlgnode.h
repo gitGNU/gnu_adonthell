@@ -41,9 +41,10 @@ enum
     LOAD_TEXT = 10,
     LOAD_COND = 11,
     LOAD_VARS = 12,
-    LOAD_STR = 13,
-    LOAD_NUM = 14,
-    LOAD_UNKNOWN = 15
+    LOAD_ACT = 13,
+    LOAD_STR = 14,
+    LOAD_NUM = 15,
+    LOAD_UNKNOWN = 16
 };
 
 // Node Types
@@ -89,7 +90,8 @@ public:
     string comment;                     // User's annotation
     string conditions;                  // Condition script
     string variables;                   // Variable script
-
+    string actions;                     // further actions
+    
     void save (ofstream&, u_int32*);    // Save Circle
     void load (u_int32);                // Load Circle
 }; 
