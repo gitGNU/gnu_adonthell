@@ -98,6 +98,17 @@ namespace input
             listeners.remove(il);
         }
 
+        /**
+         * Give the focus to the listener given in argument, if applicable.
+         *
+         * Giving the focus means this listener is queried first when an event
+         * is triggered.
+         *
+         * @param l the listener to give focus to.
+         * @return \e true if the listener was found, \e false otherwise.
+         */
+        bool give_focus(listener * l);
+
     private:
         static std::list <listener *> listeners;
 

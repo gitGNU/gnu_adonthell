@@ -1,5 +1,3 @@
-#if 0
-
 #include "lmap/landmap.h"
 #include "gfx/animation.h"
 #include "gametime.h"
@@ -376,7 +374,7 @@ int main(int argc, char * argv[])
     return 0; 
 }
 
-#else
+#if 0
 #include "gfx/image.h"
 #include "input/manager.h"
 

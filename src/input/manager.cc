@@ -25,6 +25,7 @@
 
 
 #include "manager.h"
+#include <algorithm>
 
 using namespace input;
 
@@ -33,5 +34,20 @@ void manager::raise_event(event & ev)
     for (std::list<listener *>::iterator it = listeners.begin(); 
          it != listeners.end(); it++)
         if ((*it)->is_listening_to(ev.type()))
-            (*it)->raise_event(&ev);
+        {
+            int res = (*it)->raise_event(&ev);
+            if (res) break;
+        }
+}
+
+bool manager::give_focus(listener * l)
+{
+    std::list<listener *>::iterator it = std::find(listeners.begin(), listeners.end(), l);
+    if (it != listeners.end())
+    {
+        listeners.erase(it);
+        listeners.push_front(l);
+        return true;
+    }
+    return false;
 }
