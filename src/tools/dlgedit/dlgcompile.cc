@@ -189,19 +189,16 @@ void dlg_compiler::write_custom_code (string code)
 {
     u_int32 i = 0, j;
 
-    cout << code << endl;
     code += '\n';
         
     while ((j = code.find ('\n', i)) < code.size ())
     {
-        string inflated = inflate (code.substr (i,j-i), RGET);
-        cout << inflated << endl;
-        script << "\n" << space << inflated;
+        script << "\n" << space << inflate (code.substr (i,j-i), RGET);
         i = ++j;
     }
 
     code.erase (code.end()-1);
-    cout << endl;
+
     script << "\n";
 }
 
