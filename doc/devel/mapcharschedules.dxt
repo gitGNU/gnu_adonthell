@@ -2,6 +2,7 @@
    $Id$
 
    Copyright (C) 2001   Alexandre Courbot
+   Copyright (C) 2002   Kai Sterker
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -14,31 +15,29 @@
 
 /*!
 
-\page page8 Writing mapcharacter schedules
+\page page8 Writing character schedules
 
-\section mcharsched0 Generalities
-A mapcharacter schedule file should always be placed in the \e
-script/schedules/mapcharacters directory in the %game hierarchy. It
-should contain a single class, named like the module. A schedule is
-attached to a mapcharacter by the mapcharacter::set_schedule ()
-method. See it's documentation for more details. You should be
-particularly careful that the argument list given to
-mapcharacter::set_schedule () \e has to be a Python tuple
-containing ONLY Python strings or integers.
+\section mcharsched0 Introduction
 
-\section mcharsched1 Arguments passed to __init__ ()
-When you call mapcharacter::set_schedule (), the first argument
-passed to the class constructor is a reference to the mapcharacter
-that called this method. This parameter should be saved as it will
-most likely be used during the run () method to control the
-mapcharacter. Then follow the arguments inside the tuple (optionally)
-passed to mapcharacter::set_schedule ().
+Character schedules provide the means to give life to characters. 
+They define what NPCs will do all day long, allow them to dynamically
+react to events in the gameworld and much more. To accomplish this
+with as little work as possible, there are two kinds of schedules.
 
-\section mcharsched2 Arguments passed to run ()
-No arguments are passed to the run () method.
+The first kind will be called \e manager schedule. This schedule is
+unique for most, if not all NPCs. It describes what they should do
+in a given situation. However, it does not describe how to do it.
 
-\section mcharsched3 Structure of a mapcharacter schedule file
-Here is what a mapcharacter schedule file should ideally look like:
+This is the purpose of the second kind, the so-called \e activity
+schedule. Activity schedules describe a single activity as generic
+as possible, so it can be reused by all the different manager scripts.
+
+
+\section mcharsched1 Script Template
+
+At first sight, both manager and activity schedules look pretty much
+alike. Therefore, the template below is a good starting point.
+
 \verbatim
 #
 #  (C) Copyright <year> <your name>
@@ -60,29 +59,138 @@ Here is what a mapcharacter schedule file should ideally look like:
 
 class myschedule:
     
-    # Parameters:
-    # Description of myparameter1
-    # Description of myparameter2
-    def __init__ (self, mapcharacterinstance, myparameter1, myparameter2):
-        self.myself = mapcharacterinstance
-        <do your other initialisation here>
+    # <description of parameters>
+    def __init__ (self, character, <parameters>):
+        self.myself = character
+        <initialisation>
 
     def run (self):
-        <mapcharacter control>
+        <character control>
 
     def __del__ (self)
-        <eventual cleanup>
+        <cleanup>
 \endverbatim
 
-\section mcharsched4 Storing variables
-It is unsafe to store variables in the class instance others than
-those passed to the __init__ method. When a mapcharacter's
-schedule is state-saved, only the schedule filename and it's
-initialisation arguments (the Python tuple passed to
-mapcharacter::set_schedule ()) are saved. So, if you create variables
-in the \e self object, do not expect them to survive %game
-saving/loading. A safe approach is to make use of the storage class,
-from which mapcharacter inherits, to store your persistant variables.
-Then they are automatically saved together with the mapcharacter.
+
+\section mcharsched2 The Manager Schedule
+
+The manager schedule is responsible for telling a character what to do
+in a given situation. When an activity has finished (and only then), 
+the manager schedule will be usually executed to decide upon the 
+character's next activity. Therefore, it's \c run method should consist 
+of a number of conditions that decide upon the activity script to use.
+
+Note that the current schedule is cleared before the manager schedule
+is executed. Therefore, it \b must set a new activity, otherwise the
+character will freeze (and the manager script will be called over and
+over again). The new activity can be set with the schedule::set_schedule ()
+method.
+
+The only way run the manager schedule is to quit the current activity.
+Everything else is taken care of automatically then.
+ 
+
+\section mcharsched3 The Activity Schedule
+
+The activity schedule tells a character how to accomplish its current
+task. Unlike the manager schedule, which is only executed to select a
+new activity, activity schedules are executed periodically; once per
+game cycle, i.e. about 75 times per second. Therefore, activity scripts
+should be made as efficient as possible. 
+
+For example, state variables of the character should be copied to local 
+variable in the __init__ method and written back by __del__ instead of 
+accessing them directly while the script runs. As long as those state 
+variables are only accessed by the manager script or a different 
+activity of the same character, this won't cause any problems.
+
+
+\section mcharsched4 Changing the current Activity
+
+Before a character's activity can be changed, the current one needs to
+be stopped first. Since life-like behaviour of characters depends on the
+interaction of many different activities, there are several ways to switch
+them.
+
+One thing all of them have in common is that the current activity must be
+stopped before another one can be assigned. The simplest method would be
+some sort of condition within the activity script itself. This works well
+for activities with a well defined outcome. Once that outcome is reached,
+a call to schedule::set_running (false) will stop the activity during the
+next game cycle.
+
+An activity without end (especially one that loops) can't be stopped that
+easily. In that case, the manager schedule (or the activity itself) can 
+set an alarm that will quit the script after a certain period. This is 
+done with the schedule::set_alarm () method, which offers two possibilites:
+
+- execute the script for a given amount of time, by passing false as 
+  the second argument. The script will run for the time given as the
+  first argument.
+  
+- execute the script until a certain time is reached. As activities are
+  usually short, this is limited to a day at most. If for example "14h30m"
+  is passed as the time, the script will stop at 14:30 either today, or the
+  next day if it is later than 14:30 already.
+
+No matter which possibility you chose, no further action is needed. Once 
+the set time passed (or is reached), the current activity will be stopped.
+
+The probably most advanced technique to stop an activity is to catch a
+certain event. This could be a character entering a certain room (for 
+a guard for example) or any other possible game event. The following code
+snippet demonstrates how to do this:
+
+\verbatim
+    # -- constructor
+    def __init__ (self, ...):
+        # -- create the event
+		self.event = base.time_event ("115m")
+        
+        # -- callback to run when the event occurs
+		self.event.set_callback (self.on_event, <tuple of optional args>)
+        
+        # -- register the event with the event handler
+		base.event_handler_register_event (self.event)
+
+        # -- further constructor code
+        ...
+
+    # -- the callback
+    def on_event (self, <optional args>):
+        # -- the event needs to be destroyed to avoid circular references
+        del self.event
+        self.event = None:
+        
+        # -- stop the current activity
+        myself.get_schedule ().set_running (0)
+            
+    # -- destructor
+    def __del__ (self):
+        # -- if the activity can be stopped in a different way,
+        #    the event needs to be cleared
+        if self.event != None:
+            base.event_handler_remove_event (self.event)
+            del self.event
+        
+        # -- further cleanup
+        ...
+\endverbatim
+
+Now we have a few ways to stop the current activity. What we want to do
+now is to set the new one. Again, there are several possibilites:
+
+The easiest way is letting the manager script do it's job. Once the 
+current activity has stopped, the manager script will run to set a the
+new activity.
+
+However, sometimes only a few sensible activities may follow the 
+current one. In that case, we wouldn't want to specify those in every 
+manager script, but rather in the activity script itself. This is done 
+via the schedule::queue_* methods. schedule::queue_schedule () is the 
+equivalent to set_schedule, schedule::queue_alarm () that of set_alarm. 
+Whenever the current activity stops and another activity is queued, 
+it will be made the next activity and the manager schedule will not 
+be executed. Note that only one schedule/alarm may be queued at a time.
 
 */
