@@ -99,8 +99,9 @@ void atk_box::add_start (atk_widget * w, bool expand = true, bool fill = true, u
 
 void atk_box::realize ()
 {
-    if (geometry_ == HORIZONTAL) realize_horizontal ();
-    else realize_vertical (); 
+  atk_container::realize();
+  if (geometry_ == HORIZONTAL) realize_horizontal ();
+  else realize_vertical (); 
 }
 
 
@@ -115,7 +116,6 @@ void atk_box::realize_horizontal ()
     /* calcul the max length for each widget*/
     s_int32 max_length = (get_length () - ((v_widget_.size () - 1)  * spacing_) - (border_width_ << 1) ) / v_widget_.size (); 
     
-
     for (u_int16 i = 0;i < v_widget_.size (); i++)  
     {
         if (v_widget_[i]->expand_ == true)
@@ -220,6 +220,7 @@ void atk_box::realize_vertical ()
 }
 
 
+
 void atk_box::add_end (atk_widget * w, bool expand = true, bool fill = true, u_int16 padding = 0)
 {
     atk_box_struct * tmp =  new atk_box_struct;
@@ -267,14 +268,17 @@ void atk_box::update_homogene ()
 
 
 
-void atk_box::draw (drawing_area * da = NULL, surface * sf = NULL)
-{
-    if (!is_visible ()) return; 
-    
-    atk_widget::draw (da, sf);
-
-    for (std::deque <atk_box_struct* >::iterator it = v_widget_.begin (); it != v_widget_.end (); it++)
-        (*it)->widget_->draw (da, sf);  
+bool atk_box::draw (drawing_area * da = NULL, surface * sf = NULL)
+{    
+  if (atk_container::draw (da, sf))
+    {
+      assign_drawing_area (da);
+      for (std::deque <atk_box_struct* >::iterator it = v_widget_.begin (); it != v_widget_.end (); it++)
+        (*it)->widget_->draw (this, sf);
+      detach_drawing_area();
+      return true;
+    }
+  return false;
 }
 
 
@@ -292,3 +296,15 @@ void atk_box::update_position ()
     for (std::deque <atk_box_struct* >::iterator it = v_widget_.begin (); it != v_widget_.end (); it++)
         (*it)->widget_->update_position ();
 }
+
+
+int atk_box::input_update (input_event * ev)
+{
+  int i =0;
+  int ret = 0;
+  while ( i < v_widget_.size() && ret == 0)
+    ret = v_widget_[i++]->widget_->input_update(ev);
+  return ret;
+}
+
+

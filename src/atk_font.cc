@@ -172,16 +172,17 @@ void atk_font::info ()
     std::cout << "Fixed size : " << face->num_fixed_sizes << std::endl;  
 }
  
-void atk_font::draw (const std::string & text, s_int32 x, s_int32 y, surface * target = NULL)
+void atk_font::draw (const std::string & text, s_int32 x, s_int32 y, drawing_area * da = NULL, surface * target = NULL)
 {
     s_int32 tmp_x = x; 
+    y+= size;
     for (u_int32 i = 0; i < text.length (); i++)
     {
         if ((unsigned) text[i] < chars.size ()) 
         {
             if (text[i] != '\n')
             {                 
-                chars[text[i]].picture->draw (tmp_x + chars[text[i]].left , y - chars[text[i]].top, NULL, target ); 
+                chars[text[i]].picture->draw (tmp_x + chars[text[i]].left , y - chars[text[i]].top, da, target ); 
                 tmp_x += chars[text[i]].advance_x;
             }
             else 

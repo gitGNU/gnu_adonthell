@@ -80,7 +80,6 @@ public :
      */
     void set_deleted (const bool); 
 
-
     
     /**
      * @return if this window can be deleted with mouse
@@ -88,13 +87,11 @@ public :
     bool is_deleted () const; 
     
 
-
     /**
      * set moveable with mouse
      * @param true if can be moved with mouse
      */
     void set_moveable (const bool); 
-
 
     
     /**
@@ -103,20 +100,17 @@ public :
     bool is_moveable () const; 
     
 
-
     /**
      * set resizeable with mouse
      * @param true if can be resized
      */
     void set_resizeable (const bool); 
     
-    
-    
+        
     /**
      * @return if this window can be resized with mouse
      */
     bool is_resizeable () const; 
-    
     
     
     /**
@@ -132,12 +126,6 @@ public :
     void shutdown ();
     
     
-    /**
-     * draw the window
-     */
-    void draw (drawing_area * da = NULL, surface * sf = NULL); 
-    
-
     /** 
      * update the widget
      * @return alive_ variable,  if alive_ is false the window manager destroy this object
@@ -149,14 +137,7 @@ public :
      * use to build the window.
      */ 
     void realize (); 
-        
-    
-    /** set size of the window
-     * @param length
-     * @param height
-     */
-    virtual void set_size (u_int32 length, u_int32 height);
-    
+      
     
     /* type of the window,  use for decoration */
     const static u_int8 TOPLEVEL = 0;

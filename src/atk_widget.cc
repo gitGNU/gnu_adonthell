@@ -67,10 +67,22 @@ s_int32 atk_widget::get_y_real () const
 }
 
 
-void atk_widget::set_size (u_int32 length, u_int32 height)
+void atk_widget::set_size (s_int32 length, s_int32 height)
 {
-    if (get_length () == length && get_height () == height) return; 
-    resize (length, height); 
+  if (length < 0 && height < 0 ) return;
+
+  if (length >= 0 && height < 0 ) 
+    {
+      drawing_area::resize (length, 0);
+      return;
+    }
+  if (length < 0 && height >= 0)
+    {
+      drawing_area::resize (0, height);
+      return;
+    }
+  if (get_length () == length && get_height () == height) return; 
+  drawing_area::resize (length, height); 
 }
 
 
@@ -167,22 +179,15 @@ atk_widget::~atk_widget ()
 
 
 
-void atk_widget::draw (drawing_area * da = NULL, surface * sf = NULL)
+bool atk_widget::draw (drawing_area * da = NULL, surface * sf = NULL)
 {
-    /*need to change this;) */
-
-    /* draw box */
-    screen::display.draw_line (get_x_real (), get_y_real (),get_x_real () + get_length (),get_y_real (),  0xFFFFFF); 
-    screen::display.draw_line (get_x_real (), get_y_real () + get_height () ,get_x_real () + get_length (),get_y_real () + get_height (),  0xFFFFFF);
-
-    screen::display.draw_line (get_x_real (), get_y_real (),get_x_real (),get_y_real ()+ get_height (),  0xFFFFFF); 
-    screen::display.draw_line (get_x_real () + get_length (), get_y_real (),get_x_real () + get_length (),get_y_real () + get_height (),  0xFFFFFF);
+  return visible_;
 }
 
 
 int atk_widget::input_update (input_event * ev)
 {
-    return 0; 
+  return 0;
 }
 
 

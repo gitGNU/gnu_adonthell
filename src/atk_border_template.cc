@@ -19,7 +19,9 @@
 
 atk_border_template::atk_border_template ()
 {
+
     for (int i = 0; i < _LAST; i++) img_[i] = NULL; 
+    for (int j = 0; j < C_TL; j++) imgborder_[j] = NULL; 
 }
 
 
@@ -34,7 +36,37 @@ void atk_border_template::load (igzstream & is)
         img_[i] = new image;
         img_[i]->get (is); 
     }
+    
+    for (int i = C_TL; i <_LAST; i++)
+      img_[i]->set_mask (true);
+    build();
 }
+
+
+void atk_border_template::build()
+{
+  if (img_[B_TOP] == NULL) return;
+  if( imgborder_[B_TOP] == NULL)
+    for (int i = 0; i <C_TL; i++)
+      {
+	imgborder_[i] = new image;
+	imgborder_[i]->set_mask (true);
+      }
+  
+  /* horizontal bar */
+  imgborder_[B_TOP]->resize (1280, img_[B_TOP]->height());
+  imgborder_[B_TOP]->tile (*(img_[B_TOP]));
+  imgborder_[B_BOTTOM]->resize (1280, img_[B_BOTTOM]->height());
+  imgborder_[B_BOTTOM]->tile (*(img_[B_BOTTOM]));
+  
+  /* vertical bar */
+  imgborder_[B_LEFT]->resize (img_[B_LEFT]->length(), 1280);
+  imgborder_[B_LEFT]->tile (*(img_[B_LEFT]));
+  imgborder_[B_RIGHT]->resize (img_[B_RIGHT]->length(), 1280);
+  imgborder_[B_RIGHT]->tile (*(img_[B_RIGHT]));
+}
+
+
 
 
 void atk_border_template::save (ogzstream & os)
@@ -47,9 +79,18 @@ void atk_border_template::save (ogzstream & os)
 
 image * atk_border_template::get (u_int8 i)
 {
-    return img_[i]; 
+  if ( i>= _LAST) return NULL;
+  return img_[i]; 
 }
 
+
+image * atk_border_template::get_border (u_int8 i)
+{
+  /* WARNING this test can be removed to optimize more .... */
+  if ( i>= C_TL) return NULL;
+  
+  return imgborder_[i];
+}
 
 void atk_border_template::set (u_int8 type, image * img)
 {
@@ -57,13 +98,12 @@ void atk_border_template::set (u_int8 type, image * img)
     img_[type] =  img; 
 }
 
-
 void atk_border_template::set (u_int8 type, std::string filename)
 {
-    image * img = new image;
-    if ( img->load_pnm (filename) < 0)
-        std::cout << "Error on load image " << filename <<  " in atk_border_template::set \n"; 
-    set (type, img); 
+  image * img = new image;
+  if ( img->load_pnm (filename) < 0)
+    std::cout << "Error on load image " << filename <<  " in atk_border_template::set \n"; 
+  set (type, img); 
 }
 
 
@@ -71,9 +111,15 @@ void atk_border_template::destroy ()
 {
     for (int i = 0; i < _LAST; i++)
     {
-        delete img_[i];
+        if (img_[i]) delete img_[i];
         img_[i] = NULL; 
     }
+
+    for (int j = 0; j < C_TL; j++)
+      {
+	if (imgborder_[j]) delete imgborder_[j];
+	imgborder_[j] = NULL;
+      }
 }
 
 

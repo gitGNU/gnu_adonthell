@@ -59,12 +59,32 @@ public :
      */
     void clear ();
 
-    
-    /** set position of this widget (but the layout can change this value) ,  position in his parent
-     * @param x
-     * @param y
+    /**
+     * update position
      */
-    void set_position (s_int32 x, s_int32 y);
+    virtual void update_position (); 
+    
+
+    /** set size of the window
+     * @param length
+     * @param height
+     */
+    virtual void set_size (u_int32 length, u_int32 height);
+    
+
+
+    /**
+     * draw the window
+     */
+    bool draw (drawing_area * da = NULL, surface * sf = NULL); 
+
+
+    /**
+     * input update function
+     * @return 1 if this object use the event,  else return 0
+     */
+    virtual int input_update (input_event *); 
+    
     
 
     /**destructor

@@ -100,16 +100,17 @@ void atk_label::realize ()
 
 
 
-void atk_label::draw (surface * target = NULL)
+bool atk_label::draw (drawing_area * da = NULL, surface * sf = NULL) 
 {
-    if (!font_) return; 
+  if (!atk_misc::draw (da, sf)) return false;
+  if (!font_) return false; 
 
-    s_int32 y_to_start;
-    s_int32 x_to_start; 
-    
-    // check y position to start draw
-    if (get_y_alignment () == TOP) y_to_start = get_y_real () + get_y_padding ();
-    else if (get_y_alignment () == BOTTOM) y_to_start = get_y_real () + get_height () - (font_->get_size () * (line_.size ())) - get_y_padding ();
+  s_int32 y_to_start;
+  s_int32 x_to_start; 
+  
+  // check y position to start draw
+  if (get_y_alignment () == TOP) y_to_start = get_y_real () + get_y_padding ();
+  else if (get_y_alignment () == BOTTOM) y_to_start = get_y_real () + get_height () - (font_->get_size () * (line_.size ())) - get_y_padding ();
     else y_to_start = get_y_real () + (get_height () - (font_->get_size () * (line_.size ()))) >> 1; 
     
     for (u_int16 i = 0; i < line_.size (); i++)
@@ -120,11 +121,12 @@ void atk_label::draw (surface * target = NULL)
         else x_to_start = get_x_real () + ((get_length () - font_->get_length_of (line_[i]))  >> 1); 
         
         // draw each line
-        font_->draw (line_[i], x_to_start, y_to_start, target); 
+        font_->draw (line_[i], x_to_start, y_to_start, da, sf); 
         
         // go to next line
         y_to_start += font_->get_size (); 
     }
+    return true;
 }
 
 

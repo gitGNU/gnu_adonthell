@@ -73,11 +73,11 @@ public :
     void realize (); 
 
 
-    /**Draw the label
-     * @param the target where draw the label, if null draw on the screen
+    /**
+     * draw the label
      */
-    void draw (surface * target = NULL); 
-    
+    virtual bool draw (drawing_area * da = NULL, surface * sf = NULL); 
+
 protected : 
 
     

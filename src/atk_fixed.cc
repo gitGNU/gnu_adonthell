@@ -57,6 +57,7 @@ void atk_fixed::clear ()
 
 void atk_fixed::realize ()
 { 
+  atk_container::realize();
 }
 
 
@@ -67,14 +68,17 @@ atk_fixed::~atk_fixed ()
 }
 
 
-void atk_fixed::draw (drawing_area * da = NULL, surface * sf = NULL)
-{
-    if (!is_visible ()) return; 
-    
-    atk_widget::draw (da, sf);
-
-    for (std::vector <atk_widget* >::iterator it = v_widget_.begin (); it != v_widget_.end (); it++)
-        (*it)->draw (da, sf);  
+bool atk_fixed::draw (drawing_area * da = NULL, surface * sf = NULL)
+{    
+  if (atk_container::draw (da, sf))
+    {
+      assign_drawing_area (da);
+      for (std::vector <atk_widget* >::iterator it = v_widget_.begin (); it != v_widget_.end (); it++)
+        (*it)->draw (this, sf);  
+      detach_drawing_area();
+      return true;
+    }
+  return false;
 }
 
 

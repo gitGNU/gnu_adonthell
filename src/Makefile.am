@@ -93,14 +93,19 @@ libmap_a_SOURCES = map_coordinates.cc map_placeable_area.cc \
 	map_character_with_gfx.h landmap.h
 
 libgui_a_SOURCES = atk_box.cc atk_misc.cc atk_container.cc atk_label.cc \
-	atk_font.cc atk_widget.cc atk_fixed.cc callback_sig.cc \
-	atk_bin.cc atk_manager.cc atk_theme.cc\
-	callback_slot.h atk_box.h atk_misc.h atk_container.h \
-	atk_label.h atk_font.h atk_widget.h atk_fixed.h \
-	atk_bin.h atk_window.h atk_manager.h atk_window.cc\
-	atk_border_template.h atk_border_template.cc \
-	atk_border.cc atk_border.h atk_theme.h\
-	callback_sig.h 
+	atk_font.cc atk_widget.cc atk_fixed.cc  \
+	atk_bin.cc atk_window.cc atk_manager.cc atk_border_template.cc \
+	atk_border_ui.cc atk_theme.cc atk_background_template.cc \
+	atk_button_template.cc atk_button.cc atk_button_ui.cc \
+	atk_background_ui.cc \
+	callback_sig.cc \
+	atk_box.h atk_misc.h atk_container.h atk_label.h \
+	atk_font.h atk_widget.h atk_fixed.h \
+	atk_bin.h atk_window.h atk_manager.h atk_border_template.h  \
+	atk_border_ui.h atk_theme.h atk_background_template.h \
+	atk_button_template.h atk_button.h atk_button_ui.h \
+	atk_background_ui.h \
+	callback_sig.h callback_slot.h 
 
 libgui_LDADD = $(FT2_LIBS)
 

@@ -30,6 +30,7 @@
 #include <ft2build.h>
 #include FT_FREETYPE_H
 #include "types.h"
+#include "drawing_area.h"
 #include "surface.h"
 #include "image.h"
 
@@ -120,7 +121,7 @@ class atk_font
      * @param y : y position
      * @param target : draw on target,  if not target,  draw on the screen
      */
-    void draw (const std::string & text, s_int32 x, s_int32 y, surface * target = NULL);  
+    void draw (const std::string & text, s_int32 x, s_int32 y,drawing_area * da,  surface * target = NULL);  
 
 
     

@@ -49,8 +49,7 @@ public :
     /** This method is abstract, it's used to build the widget.
      */
     virtual void realize () //  = 0; 
-    {
-    }
+    {}
 
     /** Set the parent of this widget. A widget can have only one parent
      *  @param parent his new parent
@@ -66,7 +65,7 @@ public :
     /**
      * draw the widget
      */
-    virtual void draw (drawing_area * da = NULL, surface * sf = NULL); 
+    virtual bool draw (drawing_area * da = NULL, surface * sf = NULL); 
     
 
     /** set position of this widget (but the layout can change this value) ,  position in his parent
@@ -111,7 +110,7 @@ public :
      * @param length
      * @param height
      */
-    virtual void set_size (u_int32 length, u_int32 height); 
+    virtual void set_size (s_int32 length, s_int32 height); 
 
     
     /** get length
@@ -219,7 +218,6 @@ public :
     virtual ~atk_widget (); 
 
 
-    
     /*define event */
     callback_sig on_show;
     

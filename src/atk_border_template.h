@@ -22,8 +22,8 @@
  * 
  */
 
-#ifndef ATK_BODER_TEMPLATE_H_
-#define ATK_BODER_TEMPLATE_H_
+#ifndef ATK_BORDER_TEMPLATE_H_
+#define ATK_BORDER_TEMPLATE_H_
 
 #include "fileops.h"
 #include "image.h"
@@ -31,13 +31,13 @@
 
 class atk_border_template
 {
-public : 
+    public : 
+        
+        /**
+         * Default constructor,  set all images to null
+         */
+        atk_border_template (); 
     
-    /**
-     * Default constructor,  set all images to null
-     */
-    atk_border_template (); 
-
     
     /**
      * read a stream to load image
@@ -49,23 +49,29 @@ public :
      * write image into the stream
      */
     void save (ogzstream & os); 
-
-
+    
+    
     
     /**
      * get name of the border
      * @return name of the border
      */
     std::string get_name () const;
-
-
+    
+    
     /**
      * set name of the border
      * @param name :  name of the border
      */
     void set_name (const std::string & name); 
     
-    
+
+    /**
+     * Build is automaticly call when you load a border
+     * build create 4 big border
+     */
+    void build();
+
     /**
      * get a image
      * @param image number
@@ -73,6 +79,12 @@ public :
      */
     image * get (u_int8);
 
+
+    /**
+     * get a border image
+     * @param the image number {B_TOP,B_BOTTOM, B_LEFT, B_RIGHT }
+     */
+    image * get_border(u_int8);
 
     /**
      * set a image
@@ -107,22 +119,26 @@ public :
             B_TOP = 0, B_BOTTOM, B_LEFT, B_RIGHT,
             C_TL, C_TR, C_BL, C_BR, C_EXIT,  C_RESIZE, _LAST
         } border_type;
-   
-protected :
 
-    
-    /**
-     * Destroy all images
-     */
+   
+    protected :
+        
+        /**
+         * Destroy all images
+         */
     void destroy (); 
-    
-    
+ 
+ 
     /* a tab with image */
     image * img_[_LAST]; 
 
 
+    /* this tab is used to store big border, it is necessary to optimise  resize and to reduce memory use */
+    image * imgborder_[C_TL];
+
     /* name of the border */
     std::string name_; 
+
 private : 
     
 }; 

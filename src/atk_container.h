@@ -30,8 +30,9 @@
 
 #include "callback_sig.h"
 #include "atk_widget.h"
+#include "atk_object_ui.h"
 
-class atk_border; 
+class atk_border_template;
 
 /** It's an abstract class, it's can contains lots of widget,  there are some method,  add,  remove a container...
  *
@@ -78,11 +79,44 @@ public :
      */
     virtual void clear () = 0; 
 
+    
+    /**
+     * draw the container
+     */
+    virtual bool draw (drawing_area * da = NULL, surface * sf = NULL); 
 
+
+    /**
+     * Destructor
+     */
     virtual ~atk_container (); 
     
+
+    /**
+     * Set the border for this container
+     * @param bd_tmp : the border template use to display border
+     */
+    void set_border_ui (atk_border_template * bd_tmp); 
+
     
+    /** set the minimum size of a widget
+     * @param length
+     * @param height
+     */
+    virtual void set_size (s_int32 length, s_int32 height); 
     
+
+    /**
+     * update position
+     */
+    virtual void update_position();
+
+    /** 
+     * it's used to build the widget.
+     */
+    virtual void realize ();
+    
+
     /* call back */
     callback_sig on_add;
     callback_sig on_remove; 
@@ -95,12 +129,11 @@ protected :
 
 
     /* the border used by this container */
-    atk_border * border_; 
-    
+    //atk_border_ui * border_; 
+ atk_object_ui * object_ui_; 
+
 private : 
 
-    
-    
 };
 
 

@@ -22,14 +22,14 @@ atk_bin::atk_bin () : child (NULL)
 
 void atk_bin::add (atk_widget * w)
 {
-    if (child) remove (child); 
+  //if (child) remove (child); 
+  clear();
 
     child = w;
     w->set_parent (this);
     
     w->set_position (0, 0);
-    
-    
+        
     on_add (); 
 }
 
@@ -55,13 +55,50 @@ void atk_bin::clear ()
 }
 
 
-void atk_bin::set_position (s_int32 x, s_int32 y)
+
+
+void atk_bin::update_position()
 {
-    atk_container::set_position (x, y);
-    if (child) child->update_position (); 
-    
+  atk_container::update_position();
+  
+  if (child) child->update_position (); 
 }
 
+void atk_bin::set_size (u_int32 length, u_int32 height)
+{
+    atk_container::set_size (length, height);
+    
+    if (child)
+    {
+        child->set_size (get_length () -(border_width_ << 1), get_height () - (border_width_ << 1));
+        child->realize ();
+    }
+}
+
+
+bool atk_bin::draw (drawing_area * da = NULL, surface * sf = NULL)
+{
+  if (atk_container::draw (da, sf))
+    {
+      assign_drawing_area(da);
+      /* draw the contain */ 
+      if (child) child->draw (this, sf);
+      detach_drawing_area();
+      return true;
+    }
+  return false;
+}
+
+
+/**
+ * input update function
+ * @return 1 if this object use the event,  else return 0
+     */
+int atk_bin::input_update (input_event * ev)
+{
+  if (child) return child->input_update (ev);
+  return 0;
+}
 
 
 atk_bin::~atk_bin ()

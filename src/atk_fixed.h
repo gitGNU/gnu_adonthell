@@ -69,10 +69,11 @@ public :
 
     /**draw the widget
      */
-    virtual void draw (drawing_area * da = NULL, surface * sf = NULL);
+    virtual bool draw (drawing_area * da = NULL, surface * sf = NULL);
     
-
-    
+    /**
+     * destructor
+     */
     ~atk_fixed (); 
     
 protected : 
