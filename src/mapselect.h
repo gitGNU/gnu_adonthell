@@ -19,24 +19,37 @@ class mapselect
 {
   u_int16 s_posx;
   u_int16 s_posy;
-
   u_int16 length;
   u_int16 height;
 
-  u_int16 posx;
-  u_int16 posy;
-
   u_int16 d_posx;
   u_int16 d_posy;
+  u_int16 dl;
+  u_int16 dh;
+
+  u_int16 posx;
+  u_int16 posy;
+  u_int16 cl;
+  u_int16 ch;
 
  public:
-  mapselect(u_int16 x, u_int16 y, u_int16 l=0, u_int16 h=0);
+  mapselect(u_int16 x, u_int16 y, u_int16 l, u_int16 h,
+	    u_int16 d_l, u_int16 d_h);
   ~mapselect();
 
   void check_if_fits();
   void move(u_int16 x, u_int16 y);
   void resize(u_int16 l, u_int16 h);
 
+  void set_cursor_pos(u_int16 x, u_int16 y);
+  s_int8 move_cursor_right();
+  s_int8 move_cursor_left();
+  s_int8 move_cursor_up();
+  s_int8 move_cursor_down();
+  u_int16 get_cursor_x();
+  u_int16 get_cursor_y();
   void update();
+  void draw_cursor();
+  void draw_grid();
   void draw();
 };

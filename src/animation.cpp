@@ -747,7 +747,7 @@ s_int8 animation::delete_frame(u_int16 pos)
   for(i=pos;i<nbr_of_frames;i++)
     frame[i]=oldframe[i+1];
   for(i=0;i<nbr_of_frames;i++)
-    if(frame[i].nextframe>=pos) frame[i].nextframe++; 
+    if(frame[i].nextframe>=pos && frame[i].nextframe) frame[i].nextframe--; 
   delete[] oldframe;
   if(currentframe>=nbr_of_frames) currentframe=nbr_of_frames-1;
   if(in_editor) 
@@ -1066,7 +1066,6 @@ void animation::update_and_draw()
   must_upt_label_frame_info=false;}
   if(must_upt_label_status) {update_label_status(); 
   must_upt_label_status=false;}
-  cout << (u_int16)screen::frames_to_do << endl;
 }
 
 void animation::editor()
@@ -1077,6 +1076,8 @@ void animation::editor()
   must_upt_label_frame_info=false;
   must_upt_label_status=false;  
   set_mode(IMAGE);
+  stop();
+  rewind();
   in_editor=true;
   while(!input::has_been_pushed(SDLK_ESCAPE))
     {

@@ -81,6 +81,7 @@ class animation_frame
 #endif
 
   friend class win_anim;
+  friend class animation_off;
 };
 
 class animation
@@ -189,6 +190,7 @@ class animation
 #endif
 
   friend class win_anim;
+  friend class animation_off;
 };
 
 #endif
