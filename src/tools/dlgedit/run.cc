@@ -112,10 +112,20 @@ void run_dlg::run ()
     // the only available NPC text
     npc_answer = randgen.get (5);
 
+    // see if  player_text  contains something different than NULL's
+    for (i = 0; i < dat->player_text.size (); i++)
+        if (dat->player_text[i] == NULL)
+            index++;
+
     // Now examine  dlg  and see what we've got
     // case 1: only one or more NPC-lines
-    if (dat->player_text.empty ())
+    if (dat->player_text.size () == index)
     {
+        // Possibly  player_text  contains some NULL values, so we clear it
+        // first. I can't contain non-NULL values though, therefore we don't
+        // leave any memory unallocated
+        dat->player_text.clear ();
+        
         // We trick a bit and make the interpreter think he has a Player-
         // text to continue the dialogue (that saves us from some ugly 
         // if-statements) (make hard copy!!!)
@@ -130,6 +140,8 @@ void run_dlg::run ()
     // case 2: there is NPC text and Player text available
     else
     {
+        index = 0;
+        
         // Fill in the NPC text
         tmp_list = g_list_append (tmp_list, create_dlg_list_item (" ", 2, -2));
         tmp_list = g_list_append (tmp_list, create_dlg_list_item (dat->strings[dat->npc_text[npc_answer]->id], 4, -1));
@@ -138,11 +150,19 @@ void run_dlg::run ()
         for (i = 0; (i < dat->player_text.size () && index < npc_answer); i++)
             if (dat->player_text[i] == NULL) index++;
 
+        index = 0;
+        
         // ... and add it to the list
-        while (dat->player_text[index] != NULL && index < dat->player_text.size ())
+        while (dat->player_text[i] != NULL && i < dat->player_text.size ())
         {
-            tmp_list = g_list_append (tmp_list, create_dlg_list_item (dat->strings[dat->player_text[index]->id], 3, index));            
-            index++;
+            if (i != index)
+            {
+                if (dat->player_text[index] != NULL) delete dat->player_text[index];
+                dat->player_text[index] = dat->player_text[i];
+            }
+            
+            tmp_list = g_list_append (tmp_list, create_dlg_list_item (dat->strings[dat->player_text[i]->id], 3, index++));            
+            i++;
         }
     }
 

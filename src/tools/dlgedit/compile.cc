@@ -145,7 +145,7 @@ void dlg_compiler::write_npc ()
     u_int32 i;
     u_int32 pos;
     branch_cmd *cmd = NULL;
-    cmp_data *data;
+    cmp_data *data, *todo_data;
     int speaker_changed = 1;
 
     // Look wether multiple NPC nodes with multiple parents exist
@@ -179,6 +179,8 @@ void dlg_compiler::write_npc ()
         // Write the text that will be spoken by the NPC
         write_text ();
 
+        todo_data = new cmp_data (cur_crcle, code.back (), code.size () - 1);
+        
         // Here is the command whose target we have to set later on
         data->cmd = code.back ();
         
@@ -202,12 +204,12 @@ void dlg_compiler::write_npc ()
         else if (end_follows())
         {
             // Node is done already ...
-            done_nodes.push_back (data);
+            done_nodes.push_back (todo_data);
             // ... but we also have to write the end
-            todo_nodes.push_back (data);
+            todo_nodes.push_back (todo_data);
         }
         // Else we add this one to todo_nodes to have it handled later
-        else todo_nodes.push_back (data);
+        else todo_nodes.push_back (todo_data);
 
         // if there was a condition, this is the line we have to jump to if
         // it isn't met 
@@ -361,7 +363,9 @@ void dlg_compiler::output_script ()
 // the next block
 void dlg_compiler::get_cur_nodes ()
 {
-    u_int32 i;
+    u_int32 i, pos;
+    s_int32 line;
+    command *cmd;
     cmp_data *data;
 
     // Make sure all the old NPC nodes are removed
@@ -396,12 +400,22 @@ void dlg_compiler::get_cur_nodes ()
     if (cur_crcle->type == PLAYER)
         if (cur_crcle->variables != "")
         {
+            pos = code.size ();
             write_variables ();
-            code.push_back (new jmp_cmd (0));
+            
+            if (pos < code.size ())
+            {
+                // save line and command
+                pos -= code.size ();
+                cmd = data->cmd;
+                line = data->line;
 
-            // Let the block end with the jmp_cmd instead of text_cmd
-            data->cmd = code.back ();
-            data->line = code.size ();
+                code.push_back (new jmp_cmd (0));
+
+                // Let the block end with the jmp_cmd instead of text_cmd
+                data->cmd = code.back ();
+                data->line = code.size ();
+            }
         }
 
     // First, we have to check wether the childs of this (player-) node
@@ -430,7 +444,11 @@ void dlg_compiler::get_cur_nodes ()
     // The End of dialogue follows:
     if (cur_nodes.empty ())
     {
-        if (end_follows ()) write_end ();
+        // Only write RETURN 0 once for each node. Was it already written,
+        // the offset to the follower will be negative.
+        if (end_follows ())
+            if (((text_cmd *) data->cmd)->getjmp () > 0)
+                write_end ();
         
         done_nodes.push_back (data);
         todo_nodes.pop_back ();
@@ -441,6 +459,19 @@ void dlg_compiler::get_cur_nodes ()
         // twice when the recursion is over
         return;
     }
+
+    // In case the PLAYER variable-code is right before the following
+    // NPC node, we can remove the JMP command, as it is not needed.
+    if (cur_crcle->type == PLAYER)
+        if (cur_crcle->variables != "")
+            if (((jmp_cmd *) code.back ())->getjmp () == 0)
+            {
+                code.pop_back ();
+
+                // restore the target
+                data->cmd = cmd;
+                data->line = line - pos;
+            }
 
     // Move the node from the todo- to the done_nodes    
     done_nodes.push_back (data);

@@ -21,7 +21,7 @@
 %}
 
 digit  [0-9]
-num    {digit}+
+num    -?{digit}+
 
 %x text
 %option noyywrap nounput never-interactive prefix="loadlg"

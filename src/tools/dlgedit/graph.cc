@@ -799,7 +799,7 @@ new_dialogue (MainFrame * wnd)
     init_app (wnd);
 
     // ... then update display 
-    gtk_window_set_title (GTK_WINDOW (wnd->wnd), "Adonthell Dialogue Editor v0.2 - [new_dialogue]");
+    gtk_window_set_title (GTK_WINDOW (wnd->wnd), "Adonthell Dialogue Editor v0.4 - [new_dialogue]");
     redraw_graph (wnd);
     show_preview (wnd);
 }
@@ -870,7 +870,7 @@ load_dialogue (MainFrame * wnd, const char *file)
 
     // set new window - title 
     wnd->file_name = g_strdup (file);
-    gtk_window_set_title (GTK_WINDOW (wnd->wnd), g_strjoin (NULL, "Adonthell Dialogue Editor v0.2 - [", strrchr (wnd->file_name, '/') + 1, "]", NULL));
+    gtk_window_set_title (GTK_WINDOW (wnd->wnd), g_strjoin (NULL, "Adonthell Dialogue Editor v0.4 - [", strrchr (wnd->file_name, '/') + 1, "]", NULL));
 
     // look wether compiled dlg exists and set Run - Menuitem accordingly
     // (Currently we simply set it to FALSE, since that is faster (to code)) 
@@ -951,7 +951,7 @@ save_dialogue (MainFrame * wnd)
 
     // set new window - title 
     wnd->file_name = g_strdup (file->str);
-    gtk_window_set_title (GTK_WINDOW (wnd->wnd), g_strjoin (NULL, "Adonthell Dialogue Editor v0.2 - [", strrchr (wnd->file_name, '/') + 1, "]", NULL));
+    gtk_window_set_title (GTK_WINDOW (wnd->wnd), g_strjoin (NULL, "Adonthell Dialogue Editor v0.4 - [", strrchr (wnd->file_name, '/') + 1, "]", NULL));
 
     // clean up 
     g_string_free (file, TRUE);
