@@ -568,15 +568,23 @@ void GuiGraph::stopDragging (DlgPoint &point)
     else 
     {
         mover->setPos ( 
-        DlgPoint (point.x () - (point.x () % CIRCLE_DIAMETER), 
-                  point.y () - (point.y () % CIRCLE_DIAMETER)));
+            DlgPoint (point.x () - (point.x () % CIRCLE_DIAMETER), 
+                      point.y () - (point.y () % CIRCLE_DIAMETER)));
     
-        // also need to update arrows    
+        // also need to update arrows and reorder children and parents 
         for (DlgNode *a = mover->prev (FIRST); a != NULL; a = mover->prev (NEXT))
+        {
+            a->prev (FIRST)->removeNext (a);
+            a->prev (FIRST)->addNext (a);
             ((DlgArrow *) a)->initShape ();
-
+        }
+        
         for (DlgNode *a = mover->next (FIRST); a != NULL; a = mover->next (NEXT))
+        {
+            a->next (FIRST)->removePrev (a);
+            a->next (FIRST)->addPrev (a);
             ((DlgArrow *) a)->initShape ();
+        }
     }
     
     // clear mover

@@ -181,6 +181,7 @@ bool DlgCircle::load ()
                 // Align Circle to the (imaginary) grid
                 top_left = DlgPoint (px - (px % CIRCLE_DIAMETER), py - (py % CIRCLE_DIAMETER));
                 bottom_right = DlgPoint (x () + CIRCLE_DIAMETER, y () + CIRCLE_DIAMETER);
+                
                 break;
             }
 

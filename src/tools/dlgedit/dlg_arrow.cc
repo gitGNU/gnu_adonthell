@@ -160,6 +160,10 @@ bool DlgArrow::load (vector<DlgNode*> &nodes)
                 // claculate the Arrow's shape
                 initShape ();
 
+                // finish concatenation
+                prev_.front ()->addNext (this);
+                next_.front ()->addPrev (this);
+
                 return true;
             }
 
@@ -177,7 +181,6 @@ bool DlgArrow::load (vector<DlgNode*> &nodes)
                 {
                     circle = nodes[n];
                     prev_.push_back (circle);
-                    circle->addNext (this);
                 }
                 break;
             }
@@ -189,7 +192,6 @@ bool DlgArrow::load (vector<DlgNode*> &nodes)
                 {
                     circle = nodes[n];
                     next_.push_back (circle);
-                    circle->addPrev (this);
                 }
                 break;
             }

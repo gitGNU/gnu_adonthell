@@ -24,8 +24,7 @@
 #endif
 
 #include <algorithm>
-//#include "gettext.h"
-#include <libintl.h>
+#include "gettext.h"
 #include "gui_dlgedit.h"
 #include "dlg_circle_entry.h"
 

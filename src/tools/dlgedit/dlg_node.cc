@@ -97,12 +97,16 @@ DlgNode* DlgNode::getNode (list<DlgNode*>::iterator &it,
 void DlgNode::addNext (DlgNode *node)
 {
     list<DlgNode*>::iterator i = next_.begin ();
-    DlgRect *cmp = node->type () == LINK ? node->prev (FIRST) : node;
-
+    DlgRect *cmp1, *cmp2 = node->type () == LINK ? node->next (FIRST) : node;
+     
     // search the proper place for insertion
-    if (cmp != NULL && !next_.empty ()) 
-        while (i != next_.end () && *cmp < *(*i)) i++;
-    
+    while (i != next_.end ())
+    {
+        cmp1 = (*i)->type () == LINK ? (*i)->next (FIRST) : *i;
+        if (*cmp2 < *cmp1) break;
+        i++;
+    }
+        
     // insert
     next_.insert (i, node);
 }
@@ -111,13 +115,16 @@ void DlgNode::addNext (DlgNode *node)
 void DlgNode::addPrev (DlgNode *node)
 {
     list<DlgNode*>::iterator i = prev_.begin ();
-    DlgRect *cmp = node->type () == LINK ? node->next (FIRST) : node;
-    
+    DlgRect *cmp1, *cmp2 = node->type () == LINK ? node->prev (FIRST) : node;
+     
     // search the proper place for insertion
-    if (cmp != NULL && !prev_.empty ()) 
-        while (i != prev_.end () && *cmp < *(*i)) i++;
+    while (i != prev_.end ())
+    {
+        cmp1 = (*i)->type () == LINK ? (*i)->prev (FIRST) : *i;
+        if (*cmp2 < *cmp1) break;
+        i++;
+    }
     
-    // insert
     prev_.insert (i, node);
 }
 

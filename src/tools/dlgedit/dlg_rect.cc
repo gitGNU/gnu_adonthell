@@ -133,9 +133,5 @@ void DlgRect::resize (int width, int height)
 // compare position of two rects 
 bool DlgRect::operator< (DlgRect &rect)
 {
-    if (rect.topLeft ().x () < top_left.x ()) return true;
-    if (rect.topLeft ().x () == top_left.x () &&
-        rect.topLeft ().y () < top_left.y ()) return true;    
-
-    return false;
+    return center () < rect.center ();
 }

@@ -82,6 +82,15 @@ public:
         return *this;
     }
     
+    /**
+     * Less Than operator
+     */
+    bool operator< (const DlgPoint &p)
+    {
+        if (x_ == p.x ()) return y_ < p.y ();
+        else return x_ < p.x ();
+    }
+    
 private:
     int x_;
     int y_;

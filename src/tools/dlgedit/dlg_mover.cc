@@ -105,6 +105,10 @@ void DlgMover::drop (DlgNode *node)
         // connect circle and arrow
         circle->addNext (arrow);
         arrow->addPrev (circle);
+
+        // reorder precedessor of arrow
+        arrow->next (FIRST)->removePrev (arrow);
+        arrow->next (FIRST)->addPrev (arrow);
     }
 
     // tip was moved
@@ -121,6 +125,10 @@ void DlgMover::drop (DlgNode *node)
         // connect circle and arrow
         circle->addPrev (arrow);
         arrow->addNext (circle);
+        
+        // reorder precedessor of arrow
+        arrow->prev (FIRST)->removeNext (arrow);
+        arrow->prev (FIRST)->addNext (arrow);
     }
     
     // redraw arrow
