@@ -67,7 +67,7 @@ bool dialog::setup ()
 {
     // Extract the dialogue's strings
     PyObject *list = dialogue.get_attribute ("text");
-    if (!list) return false;
+    if (!list || !PyList_Check (list)) return false;
 
     PyObject *s;
     u_int32 i, index = PyList_Size (list);
@@ -222,15 +222,15 @@ void dialog::run (u_int32 index)
             // let the player make his decision
             stop = true;
         }
+    
+        // cleanup
+        Py_XDECREF (speaker);
+        Py_XDECREF (speech);
     }
     while (!stop);            
 
     // init the iterator for dialogue text retrieval
     i_text = text_.begin ();
-    
-    // cleanup
-    Py_XDECREF (speaker);
-    Py_XDECREF (speech);
 }
 
 // execute embedded functions and replace shortcuts
