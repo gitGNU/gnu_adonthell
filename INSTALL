@@ -87,6 +87,18 @@ editors for our graphic objects, characters, maps, dialogues and a
 few other utilities.
 
 
+--enable-doc
+
+  Use this to build the Adonthell source code documentation. For 
+this to work you will need two additional tools: doxygen and dot.
+See http://www.doxygen.org for the first. Latter is a part of
+AT&T's graphviz toolkit which can be found at
+http://www.research.att.com/sw/tools/graphviz/.
+  The documentation will end up in doc/html/ respectively
+doc/latex/. It is also made available for online browsing at 
+our website, http://adonthell.linuxgames.com.
+
+
 --enable-memleaks
 
   This enables support for mtrace, a tool to find memory leaks.
