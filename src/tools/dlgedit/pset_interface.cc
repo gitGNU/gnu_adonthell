@@ -31,12 +31,9 @@ create_preset_dlg (preset_dlg *dlg)
     GtkWidget *hbuttonbox1;
     GtkWidget *preset_ok;
     GtkWidget *preset_cancel;
-    GtkTooltips *tooltips;
     GtkStyle *style = gtk_style_copy (gtk_widget_get_default_style ());
     style->font = gdk_font_load ("-*-lucidatypewriter-medium-*-*-*-12-*-*-*-*-*-iso8859-1");
    
-    tooltips = gtk_tooltips_new ();
-
     preset_dlg = gtk_window_new (GTK_WINDOW_DIALOG);
     gtk_object_set_data (GTK_OBJECT (preset_dlg), "preset_dlg", preset_dlg);
     gtk_widget_set_usize (preset_dlg, 400, 320);
@@ -65,7 +62,6 @@ create_preset_dlg (preset_dlg *dlg)
     gtk_widget_set_style (preset_entry, style);
     gtk_widget_show (preset_entry);
     gtk_container_add (GTK_CONTAINER (scrolledwindow1), preset_entry);
-    gtk_tooltips_set_tip (tooltips, preset_entry, "Here you can assign values to variables that will be available when testing the Dialogue.", NULL);
     gtk_text_set_editable (GTK_TEXT (preset_entry), TRUE);
     gtk_text_insert (GTK_TEXT (preset_entry), preset_entry->style->font,
         &preset_entry->style->black, &preset_entry->style->white, 
@@ -107,7 +103,6 @@ create_preset_dlg (preset_dlg *dlg)
 
     gtk_widget_grab_focus (preset_entry);
     gtk_widget_grab_default (preset_ok);
-    gtk_object_set_data (GTK_OBJECT (preset_dlg), "tooltips", tooltips);
     gtk_widget_show (preset_dlg);
 
     return preset_dlg;

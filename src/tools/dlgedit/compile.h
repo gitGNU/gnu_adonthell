@@ -23,7 +23,7 @@ class dlg_compiler
 {
 public:
     dlg_compiler () { }
-    dlg_compiler (vector<DlgNode*>&, string);
+    dlg_compiler (vector<DlgNode*>&, string, string);
 
     void run ();                    // Start the compile-process
 
@@ -34,16 +34,18 @@ private:
     vector<DlgNode*> done_nodes;    // Already compiled nodes
     
     string filename;                // The base dialogue filename
+    string cust_func;               // The dialogue's custom functions
     ofstream script;                // The script file
 
     u_int32 *text_lookup;           // tells String index when given node-number
     u_int32 *jump_lookup;           // tells Function index when given node-number
     
-    void write_dialogue ();
+    void write_dialogue ();         // Write the array with the dialogue functions
     void write_npc (Circle*);       // Write NPC part of a script block
     void write_player (Circle*);    // Write Player part of a block
     void write_strings ();          // Write the string-file and creates import cmd
     void write_entry_func ();       // Write the class' entry function run()
+    void write_custom_func ();      // Write the dialogue's user defined functions
     void get_cur_nodes ();          // Get the nodes to create the next block from
     void write_answer ();           // Write the answer function's NPC part
     void write_player_answer (DlgNode*);// Write the answer function's Player part

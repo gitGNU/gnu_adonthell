@@ -5,262 +5,262 @@
 
 # 71 Nodes in Dialogue
 
-Name [Kai]
+Name §Kai§
 Race 3
 Circle
   Type 2
   Pos 172 3
-  Text [I greet you, stranger.]
-  Act [0|0|0]
+  Text §I greet you, stranger.§
+  Act §0|0|0§
 End
 
 Circle
   Type 2
   Pos 172 45
-  Text [May I be of some help to you?]
-  Act [0|0|0]
+  Text §May I be of some help to you?§
+  Act §0|0|0§
 End
 
 Circle
   Type 1
   Pos 69 76
-  Text [And may I ask who you are at all?]
-  Act [0|0|0]
+  Text §And may I ask who you are at all?§
+  Act §0|0|0§
 End
 
 Circle
   Type 1
   Pos 172 125
-  Text [I am quite able to help myself, thank you!]
-  Act [0|0|0]
+  Text §I am quite able to help myself, thank you!§
+  Act §0|0|0§
 End
 
 Circle
   Type 1
   Pos 358 78
-  Text [What is it, you could offer me then?]
-  Vars [self.adonthell = 1]
-  Act [0|0|0]
+  Text §What is it, you could offer me then?§
+  Vars §self.adonthell = 1§
+  Act §0|0|0§
 End
 
 Circle
   Type 2
   Pos 69 125
-  Text [Of course, of course! Please forgive my unseemly behaviour!]
-  Act [0|0|0]
+  Text §Of course, of course! Please forgive my unseemly behaviour!§
+  Act §0|0|0§
 End
 
 Circle
   Type 2
   Pos 69 176
-  Text [Tomas Hterin is my name, poetry my profession. But who are you, if that question is allowed?]
-  Act [0|0|0]
+  Text §Tomas Hterin is my name, poetry my profession. But who are you, if that question is allowed?§
+  Act §0|0|0§
 End
 
 Circle
   Type 1
   Pos 23 221
-  Text [Your question is allowed, but the answer I can´t tell you.]
-  Act [0|0|0]
+  Text §Your question is allowed, but the answer I can´t tell you.§
+  Act §0|0|0§
 End
 
 Circle
   Type 1
   Pos 115 222
-  Text [I am $name, your creator.]
-  Act [0|0|0]
+  Text §I am $name, your creator.§
+  Act §0|0|0§
 End
 
 Circle
   Type 2
   Pos 23 270
-  Text [I see. Well, you probably have good reasons to keep your identity hidden and that is none of my buisiness.]
-  Act [0|0|0]
+  Text §I see. Well, you probably have good reasons to keep your identity hidden and that is none of my buisiness.§
+  Act §0|0|0§
 End
 
 Circle
   Type 2
   Pos 23 316
-  Note ["Please tell me more about Adonthell" should be available only if Hterin already recited his poem.]
-  Text [But if there is anything I could do for you, do not hesitate to ask.]
-  Act [0|0|0]
+  Note §"Please tell me more about Adonthell" should be available only if Hterin already recited his poem.§
+  Text §But if there is anything I could do for you, do not hesitate to ask.§
+  Act §0|0|0§
 End
 
 Circle
   Type 2
   Pos 115 270
-  Text [Is that what you think? Well, I must confess that I don´t like your attitude, $fm{bitch/my friend}. You´ll better be off before I accidently hit your conceited face!]
-  Act [0|0|0]
+  Text §Is that what you think? Well, I must confess that I don´t like your attitude, $fm{bitch/my friend}. You´ll better be off before I accidently hit your conceited face!§
+  Act §0|0|0§
 End
 
 Circle
   Type 2
   Pos 358 126
-  Note [If the player listens to Hterins poem and asks him his name afterwards, he'll get the opportunity to continue this thread.]
-  Text [Well, I could recite one of my numerous poems, for which I am quite famous. Or I may tell you a few things about my home, the fair Island of Adonthell.]
-  Act [0|0|0]
+  Note §If the player listens to Hterins poem and asks him his name afterwards, he'll get the opportunity to continue this thread.§
+  Text §Well, I could recite one of my numerous poems, for which I am quite famous. Or I may tell you a few things about my home, the fair Island of Adonthell.§
+  Act §0|0|0§
 End
 
 Circle
   Type 1
   Pos 227 179
-  Text [I´d love to hear a good poem!]
-  Act [0|0|0]
+  Text §I´d love to hear a good poem!§
+  Act §0|0|0§
 End
 
 Circle
   Type 1
   Pos 513 176
-  Text [Please tell me more about Adonthell!]
-  Cond [if self.adonthell == 1:]
-  Act [0|0|0]
+  Text §Please tell me more about Adonthell!§
+  Cond §if self.adonthell == 1:§
+  Act §0|0|0§
 End
 
 Circle
   Type 1
   Pos 358 176
-  Text [I wish to hear none of this!]
-  Act [0|0|0]
+  Text §I wish to hear none of this!§
+  Act §0|0|0§
 End
 
 Circle
   Type 2
   Pos 358 224
-  Text [What a pity! Maybe you will be more interested when we meet again.]
-  Act [0|0|0]
+  Text §What a pity! Maybe you will be more interested when we meet again.§
+  Act §0|0|0§
 End
 
 Circle
   Type 1
   Pos 411 273
-  Text [I hope it takes a while before you will bore me again with your talk.]
-  Act [0|0|0]
+  Text §I hope it takes a while before you will bore me again with your talk.§
+  Act §0|0|0§
 End
 
 Circle
   Type 1
   Pos 295 270
-  Text [We shall see. Good bye then!]
-  Act [0|0|0]
+  Text §We shall see. Good bye then!§
+  Act §0|0|0§
 End
 
 Circle
   Type 2
   Pos 227 224
-  Text [Good. This is one about my home. Its called `Fare thee well, Adonthell'.]
-  Act [0|0|0]
+  Text §Good. This is one about my home. Its called `Fare thee well, Adonthell'.§
+  Act §0|0|0§
 End
 
 Circle
   Type 2
   Pos 227 271
-  Text [Listen to the water that surrounds our shore,]
-  Act [0|0|0]
+  Text §Listen to the water that surrounds our shore,§
+  Act §0|0|0§
 End
 
 Circle
   Type 2
   Pos 227 315
-  Text [to the wind that blows into our face,]
-  Act [0|0|0]
+  Text §to the wind that blows into our face,§
+  Act §0|0|0§
 End
 
 Circle
   Type 2
   Pos 227 362
-  Text [to the stories they tell, before all disappears in darkness.]
-  Act [0|0|0]
+  Text §to the stories they tell, before all disappears in darkness.§
+  Act §0|0|0§
 End
 
 Circle
   Type 1
   Pos 167 401
-  Text [I guess, this was none of the poems that made you famous?]
-  Act [0|0|0]
+  Text §I guess, this was none of the poems that made you famous?§
+  Act §0|0|0§
 End
 
 Circle
   Type 1
   Pos 285 403
-  Text [Hey! I like that one!]
-  Act [0|0|0]
+  Text §Hey! I like that one!§
+  Act §0|0|0§
 End
 
 Circle
   Type 2
   Pos 285 452
-  Text [Well, I can see, your taste is quite exquisite. So may I be of further aid?]
-  Act [0|0|0]
+  Text §Well, I can see, your taste is quite exquisite. So may I be of further aid?§
+  Act §0|0|0§
 End
 
 Circle
   Type 1
   Pos 285 498
-  Text [Thank you, but I´ve really got to go now!]
-  Act [0|0|0]
+  Text §Thank you, but I´ve really got to go now!§
+  Act §0|0|0§
 End
 
 Circle
   Type 2
   Pos 285 548
-  Text [What a pity! But I am sure we will meet again soon.]
-  Act [0|0|0]
+  Text §What a pity! But I am sure we will meet again soon.§
+  Act §0|0|0§
 End
 
 Circle
   Type 2
   Pos 295 315
-  Text [Fare well!]
-  Act [0|0|0]
+  Text §Fare well!§
+  Act §0|0|0§
 End
 
 Circle
   Type 2
   Pos 513 224
-  Text [Very well. It was inhabited once by a strange people, but when Tanath discovered it about 900 years ago, only some ancient ruins reminded of that time.]
-  Act [0|0|0]
+  Text §Very well. It was inhabited once by a strange people, but when Tanath discovered it about 900 years ago, only some ancient ruins reminded of that time.§
+  Act §0|0|0§
 End
 
 Circle
   Type 1
   Pos 460 275
-  Text [Tell me more of those strange people!]
-  Act [0|0|0]
+  Text §Tell me more of those strange people!§
+  Act §0|0|0§
 End
 
 Circle
   Type 1
   Pos 569 274
-  Text [Tanath? Never heard of him before!]
-  Act [0|0|0]
+  Text §Tanath? Never heard of him before!§
+  Act §0|0|0§
 End
 
 Circle
   Type 2
   Pos 460 318
-  Text [As you wish. How they called themselves was not passed on, but scientists know them as the Ancients.]
-  Act [0|0|0]
+  Text §As you wish. How they called themselves was not passed on, but scientists know them as the Ancients.§
+  Act §0|0|0§
 End
 
 Circle
   Type 2
   Pos 460 363
-  Text [Nobody knows what happend to them, but their disappearance lies at the end of a period called the Age of Wonders. Therefore, the Wise assume, that there is a connection between the two events, but of what kind that might be, they cannot even guess. And that is all I know about them.]
-  Act [0|0|0]
+  Text §Nobody knows what happend to them, but their disappearance lies at the end of a period called the Age of Wonders. Therefore, the Wise assume, that there is a connection between the two events, but of what kind that might be, they cannot even guess. And that is all I know about them.§
+  Act §0|0|0§
 End
 
 Circle
   Type 2
   Pos 569 318
-  Text [I don´t know much of him either. An elf he was, and a mighty seafarer. But why he sailed far enought to discover that island, I cannot tell.]
-  Act [0|0|0]
+  Text §I don´t know much of him either. An elf he was, and a mighty seafarer. But why he sailed far enought to discover that island, I cannot tell.§
+  Act §0|0|0§
 End
 
 Circle
   Type 2
   Pos 569 364
-  Text [But maybe I can help you with something else.]
-  Act [1|0|0]
+  Text §But maybe I can help you with something else.§
+  Act §1|0|0§
 End
 
 Arrow

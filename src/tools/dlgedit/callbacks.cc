@@ -26,6 +26,7 @@ class dialog;
 #include "pjt_interface.h"
 #include "run.h"
 #include "preset.h"
+#include "function.h"
 #include "ps_dlg.h"
 #include "interface.h"
 
@@ -117,7 +118,7 @@ void
 on_dialogue_compile_activate (GtkMenuItem * menuitem, gpointer user_data)
 {
     MainFrame *wnd = (MainFrame *) user_data;
-    dlg_compiler compiler (wnd->nodes, wnd->file_name);
+    dlg_compiler compiler (wnd->nodes, wnd->file_name, wnd->cust_func);
 
     compiler.run ();
 
@@ -143,6 +144,18 @@ on_dialogue_variables_activate (GtkMenuItem * menuitem, gpointer user_data)
     MainFrame *wnd = (MainFrame *) user_data;
     
     preset_dlg dlg (wnd);
+    dlg.run  ();
+    
+    gtk_main ();
+}
+
+/* Dialogue Menu: Functions */
+void 
+on_dialogue_functions_activate (GtkMenuItem * menuitem, gpointer user_data)
+{
+    MainFrame *wnd = (MainFrame *) user_data;
+    
+    function_dlg dlg (wnd);
     dlg.run  ();
     
     gtk_main ();

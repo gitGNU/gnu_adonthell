@@ -16,7 +16,6 @@
 #include <string>
 #include <algorithm>
 
-#include "types.h"
 #include "image.h"
 #include "input.h"
 #include "dialog.h"
@@ -154,6 +153,10 @@ void dialog::run (u_int32 index)
 
     // The first value of text is the NPC Part
     s = PyInt_AsLong (PyList_GetItem (npc, i));
+
+    // scan the string for { python code }
+    scan_string (s);
+    
     text[0] = strings [s];
     answers.push_back (0);
 
@@ -174,6 +177,9 @@ void dialog::run (u_int32 index)
             // Only display unused text
             if (find (used.begin (), used.end (), s) == used.end ())
             {
+                // scan string for { python code } before displaying
+                scan_string (s);
+            
                 text[l++] = strings[s];
                 // Remember Player's possible replies to avoid loops
                 choices.push_back (s);               
@@ -192,6 +198,12 @@ void dialog::run (u_int32 index)
     Py_XDECREF (npc);
     Py_XDECREF (player);
     Py_XDECREF (cont);
+}
+
+void dialog::scan_string (u_int32 index)
+{
+
+    // PyRun_String (the_string, Py_eval_input, ,);
 }
 
 /*

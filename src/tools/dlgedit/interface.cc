@@ -128,6 +128,13 @@ void create_mainframe (MainFrame * MainWnd)
     gtk_signal_connect (GTK_OBJECT (menuitem), "activate", GTK_SIGNAL_FUNC (on_dialogue_variables_activate), (gpointer) MainWnd);
     gtk_widget_show (menuitem);
 
+    /* Custom Functions */
+    menuitem = gtk_menu_item_new_with_label ("Functions");
+    gtk_container_add (GTK_CONTAINER (menu), menuitem);
+    gtk_widget_add_accelerator (menuitem, "activate", accel_group, GDK_f, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
+    gtk_signal_connect (GTK_OBJECT (menuitem), "activate", GTK_SIGNAL_FUNC (on_dialogue_functions_activate), (gpointer) MainWnd);
+    gtk_widget_show (menuitem);
+
     /* Seperator */
     menuitem = gtk_menu_item_new ();
     gtk_menu_append (GTK_MENU (menu), menuitem);

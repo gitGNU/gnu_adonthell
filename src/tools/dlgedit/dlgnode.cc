@@ -55,19 +55,19 @@ void Circle::save (ofstream &file, u_int32* table)
     file << "  Pos " << position.x << " " << position.y << "\n";
 
     // circle's annotation
-    if (comment != "") file << "  Note [" << comment << "]\n";
+    if (comment != "") file << "  Note §" << comment << "§\n";
 
     // circle's text
-    file << "  Text [" << text << "]\n";
+    file << "  Text §" << text << "§\n";
 
     // circle's condition(s)
-    if (conditions != "") file << "  Cond [" << conditions << "]\n";
+    if (conditions != "") file << "  Cond §" << conditions << "§\n";
 
     // circle's variable(s)
-    if (variables != "") file << "  Vars [" << variables << "]\n";
+    if (variables != "") file << "  Vars §" << variables << "§\n";
 
     // circle's actions
-    if (actions != "") file << "  Act [" << actions << "]\n";
+    if (actions != "") file << "  Act §" << actions << "§\n";
     
     file << "End\n";
 };

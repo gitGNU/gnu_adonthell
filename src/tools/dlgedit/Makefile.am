@@ -5,7 +5,7 @@ circle.cc compile.cc crcle_callbacks.cc \
 crcle_interface.cc dlgnode.cc error_dlg.cc \
 err_callbacks.cc err_interface.cc events.cc  \
 geometrie.cc graph.cc  \
-lex.loadlg.cc \
+lex.loadlg.cc function.cc \
 main.cc pjt_interface.cc pjt_callbacks.cc preset.cc project.cc \
 ps_callbacks.cc ps_dlg.cc ps_interface.cc pset_callbacks.cc \
 pset_interface.cc run.cc run_callbacks.cc run_interface.cc \

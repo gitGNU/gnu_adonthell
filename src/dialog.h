@@ -16,6 +16,7 @@
 #define __DIALOG_H__
 
 #include "Python.h"
+#include "types.h"
 #include <vector>
 
 // This is the lowlevel dialogue class 
@@ -38,6 +39,7 @@ private:
     vector<s_int32> used;           // Dialogue parts that are already spoken
 
     void extract_strings ();        // Gets the dialogues text from 'instance'
+    void scan_string (u_int32);     // Look for enclosed code and execute it
 };
 
 /*

@@ -81,6 +81,7 @@ typedef struct
 
     error_dlg *err;             // For Displaying error messages
     string pset_vars;           // Preset variables for running the Dialogue
+    string cust_func;           // Custom functions of the Dialogue
     player *myplayer;           // A player object
 }
 MainFrame;

@@ -6,301 +6,301 @@
 Circle
   Type 2
   Pos 361 26
-  Text [Hello there!]
+  Text §Hello there!§
 End
 
 Circle
   Type 1
   Pos 225 66
-  Text [Who are you?]
+  Text §Who are you?§
 End
 
 Circle
   Type 1
   Pos 502 72
-  Text [Goodbye.]
+  Text §Goodbye.§
 End
 
 Circle
   Type 2
   Pos 502 113
-  Text [Farewell, friend Kai, and good luck! You are welcome to stay with me as long as you need. My food and provisions are yours, until you wish to head to the city. And be careful in your travels for I fear you will encounter much violence.]
+  Text §Farewell, friend Kai, and good luck! You are welcome to stay with me as long as you need. My food and provisions are yours, until you wish to head to the city. And be careful in your travels for I fear you will encounter much violence.§
 End
 
 Circle
   Type 2
   Pos 502 157
-  Text [I can already see a crowd gathering at the docks.]
+  Text §I can already see a crowd gathering at the docks.§
 End
 
 Circle
   Type 2
   Pos 502 202
-  Text [That can mean only trouble!]
+  Text §That can mean only trouble!§
 End
 
 Circle
   Type 2
   Pos 225 120
-  Text [I am Devon, my strange friend, and I am glad you are feeling better Kai!]
+  Text §I am Devon, my strange friend, and I am glad you are feeling better Kai!§
 End
 
 Circle
   Type 1
   Pos 166 170
-  Text [How do you know my name?]
+  Text §How do you know my name?§
 End
 
 Circle
   Type 1
   Pos 280 169
-  Text [Where am I?]
+  Text §Where am I?§
 End
 
 Circle
   Type 2
   Pos 165 213
-  Text [I am sorry! I did not mean to pry, but when I found you I knew not who you were. I am afraid I read through your logbook and discovered your name.]
+  Text §I am sorry! I did not mean to pry, but when I found you I knew not who you were. I am afraid I read through your logbook and discovered your name.§
 End
 
 Circle
   Type 2
   Pos 165 262
-  Text [Please forgive me!]
+  Text §Please forgive me!§
 End
 
 Circle
   Type 1
   Pos 165 312
-  Text [Found me?]
+  Text §Found me?§
 End
 
 Circle
   Type 2
   Pos 165 359
-  Text [I am unsure, my friend. All I know is that I found your waterlogged body in the depths of The Lurker's domain. What happened before remains a mystery. I pulled in my nets and within one I discovered you.  ]
+  Text §I am unsure, my friend. All I know is that I found your waterlogged body in the depths of The Lurker's domain. What happened before remains a mystery. I pulled in my nets and within one I discovered you.  §
 End
 
 Circle
   Type 1
   Pos 165 410
-  Text [The Lurkers domain?]
+  Text §The Lurkers domain?§
 End
 
 Circle
   Type 2
   Pos 165 455
-  Text [Aye! `tis what we sometimes call the sea. You were drowning in it, my friend. A fate twice bad to be certain!]
+  Text §Aye! `tis what we sometimes call the sea. You were drowning in it, my friend. A fate twice bad to be certain!§
 End
 
 Circle
   Type 1
   Pos 63 211
-  Text [Twice bad?]
+  Text §Twice bad?§
 End
 
 Circle
   Type 1
   Pos 220 498
-  Text [What is the Lurker?]
+  Text §What is the Lurker?§
 End
 
 Circle
   Type 2
   Pos 63 309
-  Text [Aye! Not only would it have meant death for you, but then you would have been doomed to walk the ocean floor, unable to fullfill the pact with Lithos.]
+  Text §Aye! Not only would it have meant death for you, but then you would have been doomed to walk the ocean floor, unable to fullfill the pact with Lithos.§
 End
 
 Circle
   Type 2
   Pos 280 212
-  Text [Why, on the shore, my friend, save now and thankfully alive!]
+  Text §Why, on the shore, my friend, save now and thankfully alive!§
 End
 
 Circle
   Type 1
   Pos 236 263
-  Text [What happened to me?]
+  Text §What happened to me?§
 End
 
 Circle
   Type 1
   Pos 327 264
-  Text [Shore of what?]
+  Text §Shore of what?§
 End
 
 Circle
   Type 2
   Pos 327 309
-  Text [Shore of what? Why, the shore of Tenebrae upon the Sea of Rain.]
+  Text §Shore of what? Why, the shore of Tenebrae upon the Sea of Rain.§
 End
 
 Circle
   Type 1
   Pos 387 354
-  Text [Tenebrae?]
+  Text §Tenebrae?§
 End
 
 Circle
   Type 1
   Pos 271 353
-  Text [Sea of Rain?]
+  Text §Sea of Rain?§
 End
 
 Circle
   Type 2
   Pos 271 408
-  Text [Obviously you do not spend any time away from the city to ask such questions. Why, `tis nothing more than the name of the sea. The story goes, that the rains are quite heavy the farther you go away from the shore. It is supposed to have something to do with Mordeas powers. Part of her role as ruling Tempest is to control the rain over the city, but she feels no obligation to extend that to the distant waters. Of course, I never had an unwanted cloud while out to sea myself, so I suspect the name is more rumor than truth. ]
+  Text §Obviously you do not spend any time away from the city to ask such questions. Why, `tis nothing more than the name of the sea. The story goes, that the rains are quite heavy the farther you go away from the shore. It is supposed to have something to do with Mordeas powers. Part of her role as ruling Tempest is to control the rain over the city, but she feels no obligation to extend that to the distant waters. Of course, I never had an unwanted cloud while out to sea myself, so I suspect the name is more rumor than truth. §
 End
 
 Circle
   Type 2
   Pos 387 408
-  Text [Aye! Tenebrae the city of Eternal Twilight. They say you´ll never find a more lovely place, and I do not disagree, save for one place. But I will say this: the further I am from the Lady, the better I feel. I can tell by your questions that you are not from this land. Came you from another island?]
+  Text §Aye! Tenebrae the city of Eternal Twilight. They say you´ll never find a more lovely place, and I do not disagree, save for one place. But I will say this: the further I am from the Lady, the better I feel. I can tell by your questions that you are not from this land. Came you from another island?§
 End
 
 Circle
   Type 2
   Pos 387 455
-  Text [Or perhaps some place that is an even greater distance away?]
+  Text §Or perhaps some place that is an even greater distance away?§
 End
 
 Circle
   Type 1
   Pos 306 500
-  Text [What is this lovelier place?]
+  Text §What is this lovelier place?§
 End
 
 Circle
   Type 1
   Pos 472 503
-  Text [Who is the Lady?]
+  Text §Who is the Lady?§
 End
 
 Circle
   Type 1
   Pos 387 501
-  Text [I am from far away.]
+  Text §I am from far away.§
 End
 
 Circle
   Type 2
   Pos 387 546
-  Text [I suspected as much, my friend, for your questions are most unusual. I must inform you that, a simple fisherman, I am a poor source of information about our local customs and such. I am sure there must be someone else who can tell you more. Why, I just know the right person. When you get to town, visit Bentic in the library in East Tenebrae. My good friend knows practically all there is to know about our land and its people. Yes, he can certainly help you.]
+  Text §I suspected as much, my friend, for your questions are most unusual. I must inform you that, a simple fisherman, I am a poor source of information about our local customs and such. I am sure there must be someone else who can tell you more. Why, I just know the right person. When you get to town, visit Bentic in the library in East Tenebrae. My good friend knows practically all there is to know about our land and its people. Yes, he can certainly help you.§
 End
 
 Circle
   Type 2
   Pos 220 551
-  Text [The Lurker? That is our name for Hydros, Titan of water. She is a crafty and treacherous one, always ready to pull unwilling victims to their deaths in the depth of the sea . . .  much like what nearly happened to you.]
+  Text §The Lurker? That is our name for Hydros, Titan of water. She is a crafty and treacherous one, always ready to pull unwilling victims to their deaths in the depth of the sea . . .  much like what nearly happened to you.§
 End
 
 Circle
   Type 1
   Pos 15 353
-  Text [What pact?]
+  Text §What pact?§
 End
 
 Circle
   Type 1
   Pos 102 354
-  Text [Who is Lithos?]
+  Text §Who is Lithos?§
 End
 
 Circle
   Type 2
   Pos 15 406
-  Text [Ages ago our people forged a covenant with Lithos. If he would still the shaking Earth, we would commend him our dead at the time of their passing.]
+  Text §Ages ago our people forged a covenant with Lithos. If he would still the shaking Earth, we would commend him our dead at the time of their passing.§
 End
 
 Circle
   Type 1
   Pos 15 452
-  Text [Commend to him?]
+  Text §Commend to him?§
 End
 
 Circle
   Type 2
   Pos 15 499
-  Text [Through the Necromancers, Lithos takes the dead to serve him for the remainder of their existence.]
+  Text §Through the Necromancers, Lithos takes the dead to serve him for the remainder of their existence.§
 End
 
 Circle
   Type 1
   Pos 15 546
-  Text [Who are the Necromancers?]
+  Text §Who are the Necromancers?§
 End
 
 Circle
   Type 2
   Pos 15 591
-  Text [I am amazed at how little you know, friend. The Necromancers are the keepers of the cemetery. They have the rather distasteful duty of burying the dead, thus honoring the pact and sending the dead to Lithos.]
+  Text §I am amazed at how little you know, friend. The Necromancers are the keepers of the cemetery. They have the rather distasteful duty of burying the dead, thus honoring the pact and sending the dead to Lithos.§
 End
 
 Circle
   Type 2
   Pos 102 408
-  Text [We call him the Mountain King. He rules the grass, the stones, the hills -- all that we walk upon. He also rules the death.]
+  Text §We call him the Mountain King. He rules the grass, the stones, the hills -- all that we walk upon. He also rules the death.§
 End
 
 Circle
   Type 1
   Pos 101 453
-  Text [Rules death?]
+  Text §Rules death?§
 End
 
 Circle
   Type 2
   Pos 306 549
-  Text [Why, the open sea of course! I can think of nothing more reassuring than the smell of the salt and the feel of a taut net as it fills with fish.]
+  Text §Why, the open sea of course! I can think of nothing more reassuring than the smell of the salt and the feel of a taut net as it fills with fish.§
 End
 
 Circle
   Type 2
   Pos 306 594
-  Text [And the Weather! I hear others complain it is as fickle as the Lady, but I know no such thing. I can think of no day at the sea where the sky was not clear and the waves as gentle as a baby`s hand.]
+  Text §And the Weather! I hear others complain it is as fickle as the Lady, but I know no such thing. I can think of no day at the sea where the sky was not clear and the waves as gentle as a baby`s hand.§
 End
 
 Circle
   Type 2
   Pos 472 549
-  Text [You mean the Lady Mordea, my friend. She is Tempest and ruler of the city. Others call her a tyrant, in whispered corners but I hold no opinion myself.]
+  Text §You mean the Lady Mordea, my friend. She is Tempest and ruler of the city. Others call her a tyrant, in whispered corners but I hold no opinion myself.§
 End
 
 Circle
   Type 2
   Pos 584 362
-  Text [Until recently, that is.]
+  Text §Until recently, that is.§
 End
 
 Circle
   Type 1
   Pos 583 415
-  Text [What is a Tempest?]
+  Text §What is a Tempest?§
 End
 
 Circle
   Type 1
   Pos 643 417
-  Text [What changed your opinion?]
+  Text §What changed your opinion?§
 End
 
 Circle
   Type 2
   Pos 643 461
-  Text [Lately, the Lady has taken to eleminating dissension by eleminating the dissenters. She has them executed at the docks.]
+  Text §Lately, the Lady has taken to eleminating dissension by eleminating the dissenters. She has them executed at the docks.§
 End
 
 Circle
   Type 2
   Pos 643 503
-  Text [At first, no one was killed but true criminals, but soon any who showed disagreement was put to the block. I fear for the freedom of the people.]
+  Text §At first, no one was killed but true criminals, but soon any who showed disagreement was put to the block. I fear for the freedom of the people.§
 End
 
 Circle
   Type 2
   Pos 583 461
-  Text [Indeed you ask unusual questions. However I know so little about them myself. In town you might find others who can offer so much more assistance.]
+  Text §Indeed you ask unusual questions. However I know so little about them myself. In town you might find others who can offer so much more assistance.§
 End
 
 Arrow

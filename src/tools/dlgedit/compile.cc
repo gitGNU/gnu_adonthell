@@ -19,10 +19,11 @@
 #include "dlgnode.h"
 #include "compile.h"
 
-dlg_compiler::dlg_compiler (vector<DlgNode*> &d, string f)
+dlg_compiler::dlg_compiler (vector<DlgNode*> &d, string f, string c)
 {
     dlg = d;
     filename = f;
+    cust_func = c;
 
     text_lookup = new u_int32[dlg.size ()];
     jump_lookup = new u_int32[dlg.size ()];
@@ -38,6 +39,9 @@ void dlg_compiler::run ()
 
     // write the dialogue functions
     write_dialogue ();
+
+    // write dialogue's custom functions
+    write_custom_func ();
     
     // this creates the script's "entry function"
     write_entry_func ();
@@ -125,6 +129,24 @@ void dlg_compiler::write_entry_func ()
            << "\n        self.player = []"
            << "\n        self.cont = []"
            << "\n        self.dialogue[answer]()\n";
+}
+
+// write additional user defined functions (if any)
+void dlg_compiler::write_custom_func ()
+{
+    u_int32 i = 0, j;
+
+    if (cust_func != "")
+    {
+        cust_func += '\n';
+        
+        while ((j = cust_func.find ('\n', i)) < cust_func.size ())
+        {
+            script << "\n    " << cust_func.substr (i,j);
+            i = ++j;  
+        }
+    }
+
 }
 
 // Write a NPC part 

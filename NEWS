@@ -1,4 +1,10 @@
-version 0.1.2
+version 0.3pre
+- Added Python scripting
+- Added Dialogue system
+- Fullscreen support
+- Improved music playback quality
+
+version 0.2.1
 - Switched from GGI to SDL
 - Added sound system
 - Basic Window/Text system

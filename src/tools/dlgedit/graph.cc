@@ -889,6 +889,12 @@ load_dialogue (MainFrame * wnd, const char *file)
                 break;             
             }
 
+            case LOAD_FUNC:
+            {
+                if (parse_dlgfile (s, n) == LOAD_STR) wnd->cust_func = s;
+                break;             
+            }
+
             case LOAD_NAME:
             {
                 if (parse_dlgfile (s, n) == LOAD_STR)
@@ -1002,11 +1008,14 @@ save_dialogue (MainFrame * wnd)
     out << "# " << wnd->number << " Nodes in Dialogue\n";
 
     // Preset variables
-    if (wnd->pset_vars != "") out << "\nVars [" << wnd->pset_vars << "]\n";
+    if (wnd->pset_vars != "") out << "\nVars §" << wnd->pset_vars << "§\n";
+
+    // Preset variables
+    if (wnd->cust_func != "") out << "\nFunc §" << wnd->pset_vars << "§\n";
 
     // Players name, race and gender
     if (strcmp ("Banec", wnd->myplayer->get_name ()))
-        out << "\nName [" << wnd->myplayer->get_name () << "]";
+        out << "\nName §" << wnd->myplayer->get_name () << "§";
     if (wnd->myplayer->get ("race") != 0)
         out << "\nRace " << wnd->myplayer->get ("race");
     if (wnd->myplayer->get ("gender") != 1)

@@ -31,7 +31,7 @@ public:
     MainFrame *wnd;             // The Application
 
     void run ();
-    int on_ok (char*);          // Accepted changes    
+    virtual int on_ok (char*);  // Accepted changes    
 };
 
 #endif // __PRESET_H__
