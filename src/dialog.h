@@ -35,7 +35,12 @@ using namespace std;
 
 
 /**
- * Lowlevel dialog class.
+ * The lowlevel dialog class. It is the link between Python dialogue
+ * scripts and the \link dialog_engine dialogue GUI \endlink . As such
+ * it is responsible for loading dialogue scripts and for stepping through
+ * the dialogue according to the player's %input and the current state
+ * of the %game. After each step, the resulting dialogue %text is available
+ * for display through the GUI.
  * 
  */
 class dialog
@@ -57,20 +62,36 @@ public:
     /** 
      * Load and instanciate the dialog object.
      *
-     * @param fpath file name of the dialog.
-     * @param name ??
+     * @param fpath full path to the dialogue.
+     * @param name name of the dialogue class.
      *
-     * @return true in case of success, false otherwise.
+     * @return \e true in case of success, \e false otherwise.
+     * @sa reload()
      */ 
     bool init (char* fpath, char* name);
     
     /**
-     * Run the dialogue.
+     * This method is similar to init. But unlike init, it will
+     * correctly handle dialogues that have changed on disk since
+     * they were first imported. This function can safely be called
+     * several times, although the dialogue will be reset each time.
      *
-     * @param index the index of the last answer.
+     * @param fpath full path to the dialogue.
+     * @param name name of the dialogue class.
      *
+     * @return \e true in case of success, \e false otherwise.
+     * @sa init()
      */
-
+    bool reload (char* fpath, char* name);
+    
+    /**
+     * Run the dialogue. Executes one step of the conversation.
+     * Afterwards the NPC's speech and possible reactions of the
+     * player can be retrieved via the text() method.
+     *
+     * @param index the index of the chosen alternative from the 
+     *        previous list of %text.
+     */
     void run (u_int32 index);
 
     /** 
@@ -82,7 +103,7 @@ public:
     PyObject *get_instance ();
     
     /** 
-     * Returns the npc color.
+     * Returns the color to be used for displaying the NPC's speech.
      * 
      * 
      * @return the npc color.
@@ -90,18 +111,28 @@ public:
     u_int32 npc_color () { return _npc_color; }
 
     /** 
-     * Returns the size of the text.
+     * Returns the number of %text lines available at this point of 
+     * the dialoge.
      * 
-     * 
-     * @return size of the text.
+     * @return the number of available dialogue texts. 0 if the 
+     *         dialogue is finished.
+     *
+     * @sa text()
      */
     u_int32 text_size () { return _text_size; }
 
     /** 
-     * Returns the dialog's texts.
+     * Returns the dialogue's %text. Depending on the current state
+     * of the dialogue, there can be multiple alternatives. The first
+     * string is always the NPC's speech. Any following strings are
+     * the player's possible reactions. The value passed to the run()
+     * method is the (zero-based) index of the alternative chosen by
+     * the player.
+     *
      * 
-     * 
-     * @return array of strings containing the texts of the dialog.
+     * @return array of strings containing the %text of the dialog or
+     *         \e NULL when the dialogue is finished.
+     * @sa text_size()
      */
     char** text () { return _text; }
     
@@ -116,7 +147,9 @@ private:
     vector<s_int32> choices;        // Strings player can chose from
     vector<s_int32> used;           // Dialogue parts that are already spoken
 
+    void clear ();                  // Cleanup
     void extract_strings ();        // Gets the dialogues text from 'instance'
+    bool setup (PyObject*, char*);  // Further dialogue initialisation
     char* scan_string (const char*);// Look for enclosed code and execute it
     char* get_substr (const char*, char*, char*); 
 };

@@ -53,11 +53,9 @@ void run_dlg::start ()
     dat = new dialog;
 
     // Import module
-    if (!dat->init (file, file))
+    if (!dat->reload (file, file))
     {
-        cout << "\n*** Error loading dialogue script! ";
-        python::show_traceback ();
-        cout << flush;
+        cout << "\n*** Error loading dialogue script! " << flush;
         answer = -1;
     }
 

@@ -34,26 +34,47 @@
 #include "dialog.h"
 #include "objimpl.h"
 
+
+// Constructor
+dialog::dialog ()
+{
+    instance = NULL;
+    strings = NULL;
+    _text = NULL;
+}
+
+// Destructor
+dialog::~dialog ()
+{
+    clear ();
+}
+
 // Load and instanciate the dialogue object
 bool dialog::init (char *fpath, char *name)
 {
-    PyObject *classobj;
     PyObject *module;
     
-    // First, test if the module has already been imported
-    
-    // Seems not, so import
+    // Try to import module
     module = python::import_module (fpath);
     
-    if (!module)
+    if (!module || !setup (module, name)) 
+    {
+        python::show_traceback ();
         return false;
-    
+    }
+
+    return true;
+}
+
+bool dialog::setup (PyObject *module, char* name)
+{
+    PyObject *classobj;
     PyObject *globals = PyModule_GetDict (module);
 
     // Extract the class from the dialogue module
-    classobj = PyObject_GetAttrString(module, name);
+    classobj = PyObject_GetAttrString (module, name);
     
-    Py_DECREF (module); 
+    Py_DECREF (module);
 
     if (!classobj)
         return false;
@@ -69,23 +90,42 @@ bool dialog::init (char *fpath, char *name)
 
     // Instantiate! Will we ever need to pass args to class
     // constructor here?
-    instance = PyObject_CallObject(classobj, NULL);
+    instance = PyObject_CallObject (classobj, NULL);
 
-    Py_DECREF(classobj);
+    Py_DECREF (classobj);
 
     if (!instance)
         return false;
-    
     
     // extract the dialogue's strings
     extract_strings ();
     
     // Init the first answer
-    answers.push_back(0);
-    
-    _text = NULL;
-    
+    answers.push_back (0);
+        
     return true;
+}
+
+// Reload a dialogue script that has changed on disk
+bool dialog::reload (char *fpath, char *name)
+{
+    PyObject *module;
+    
+    // Clean everything up
+    clear ();
+
+    // Try to import module
+    module = python::import_module (fpath);
+    
+    // Now try reload from disk 
+    if (module && PyImport_ReloadModule (module)) 
+    {
+        Py_DECREF (module);
+        return setup (module, name);
+    }
+    
+    python::show_traceback ();
+    return false;
 }
 
 // extract the dialogue's strings
@@ -106,13 +146,7 @@ void dialog::extract_strings ()
     Py_DECREF (list); 
 }
 
-dialog::dialog ()
-{
-    instance = NULL;
-    strings = NULL;
-}
-
-dialog::~dialog ()
+void dialog::clear ()
 {
     if (instance) 
     {
