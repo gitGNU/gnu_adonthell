@@ -18,12 +18,16 @@
 #include "dlg_types.h"
 
 #define YY_DECL int parse_dlgfile (std::string &mytext, int &mynum)
+
+#define MAX_INCLUDE_DEPTH 10
+YY_BUFFER_STATE include_stack[MAX_INCLUDE_DEPTH];
+int include_stack_ptr = 0;
 %}
 
 digit  [0-9]
 num    -?{digit}+
 
-%x text
+%x text module
 %option noyywrap nounput never-interactive prefix="loadlg"
 
 %%
@@ -32,7 +36,6 @@ num    -?{digit}+
 
 Circle          return LOAD_CIRCLE;
 Arrow           return LOAD_ARROW;
-Module          return LOAD_MODULE;
 End             return LOAD_END;
 Type            return LOAD_TYPE;
 Prev            return LOAD_PREV;
@@ -55,6 +58,39 @@ Dtor            return LOAD_DTOR;
 Ctor            return LOAD_CTOR;
 Id              return LOAD_ID;
 
+Module          mytext = ""; BEGIN(module); return LOAD_MODULE;
+
+<module>[ \t]   /* Eat whitespace */
+<module>[^ \t\n]+ {
+                mytext += yytext;
+                BEGIN(INITIAL);
+
+                if (include_stack_ptr >= MAX_INCLUDE_DEPTH)
+                {
+                    fprintf (stderr, "Modules nested too deeply\n");
+                    return LOAD_UNKNOWN;
+                }
+                
+                include_stack[include_stack_ptr++] = YY_CURRENT_BUFFER;
+                
+                yy_switch_to_buffer (yy_create_buffer (yyin, YY_BUF_SIZE));
+                return LOAD_STR;
+                }
+
+<<EOF>>         {
+                if (--include_stack_ptr < 0)
+                {
+                    include_stack_ptr = 0;
+                    yyterminate ();
+                }
+                else
+                {
+                    yy_delete_buffer (YY_CURRENT_BUFFER);
+                    yy_switch_to_buffer (include_stack[include_stack_ptr]);
+                    return 0;
+                }
+                }
+             
 §               mytext = ""; BEGIN(text);
 <text>§         BEGIN(INITIAL); return LOAD_STR;
 <text>[^§]+     mytext += yytext;

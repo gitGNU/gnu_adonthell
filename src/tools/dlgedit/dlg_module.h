@@ -374,7 +374,8 @@ protected:
     
     DlgModuleEntry entry_;      // further content of the dialogue
 
-    KBTraverse traverse_;       // Keyboard graph traversal   helper
+    KBTraverse traverse_;       // Keyboard graph traversal helper
+    
 private:
     void init ();               // initialize a newly constructed DlgModule
 };

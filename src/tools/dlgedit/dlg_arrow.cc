@@ -237,7 +237,9 @@ bool DlgArrow::operator== (DlgPoint &point)
 // load an arrow
 bool DlgArrow::load (DlgNode *m)
 {
-    DlgModule *owner, *module = (DlgModule *) m;
+    DlgModule *module = (DlgModule *) m;
+    DlgModule *owner = module;
+    DlgModule *toplevel = module->toplevel ();
     DlgNode *circle;
     std::string str;
     int n;
@@ -262,30 +264,44 @@ bool DlgArrow::load (DlgNode *m)
                 return true;
             }
 
+            // Module node belongs to
+            case LOAD_MODULE:
+            {
+                if (parse_dlgfile (str, n) == LOAD_NUM)
+                {
+                    // get the module the node belongs to
+                    owner = toplevel->getModule (n);
+                    
+                    // failed
+                    if (!owner || owner->type () != MODULE)
+                    {
+                        cout << "DlgArrow::load: failed to getModule (" 
+                             << n << ")!" << endl;
+                        
+                        return false;
+                    }
+                }
+                 
+                break;
+            }
+            
             // Node prior to arrow
             case LOAD_PREV:
             {
                 if (parse_dlgfile (str, n) == LOAD_NUM)
                 {
-                    // get the module the node belongs to
-                    owner = (DlgModule *) module->getModule (n);
-                    
-                    // failed
-                    if (owner == NULL || owner->type () != MODULE) 
-                        return false;
-                    
-                    if (parse_dlgfile (str, n) == LOAD_NUM)
-                    {
-                        // get the id of the previous circle
-                        circle = owner->getNode (n);
+                    // get the id of the previous circle
+                    circle = owner->getNode (n);
                         
-                        // failed
-                        if (circle == NULL) return false;
-                    }
-                    
-                    // everything okay, so add circle
-                    prev_.push_back (circle);
+                    // failed
+                    if (circle == NULL) return false;
                 }
+                    
+                // everything okay, so add circle
+                prev_.push_back (circle);
+                
+                // restore owner
+                owner = module;
                 
                 break;
             }
@@ -295,25 +311,19 @@ bool DlgArrow::load (DlgNode *m)
             {
                 if (parse_dlgfile (str, n) == LOAD_NUM)
                 {
-                    // get the module the node belongs to
-                    owner = (DlgModule *) module->getModule (n);
-                    
-                    // failed
-                    if (owner == NULL || owner->type () != MODULE) 
-                        return false;
-                    
-                    if (parse_dlgfile (str, n) == LOAD_NUM)
-                    {
-                        // get the id of the previous circle
-                        circle = owner->getNode (n);
+                    // get the id of the previous circle
+                    circle = owner->getNode (n);
                         
-                        // failed
-                        if (circle == NULL) return false;
-                    }
-                    
-                    // everything okay, so add circle
-                    next_.push_back (circle);
+                    // failed
+                    if (circle == NULL) return false;
                 }
+                    
+                // everything okay, so add circle
+                next_.push_back (circle);
+
+                // restore owner
+                owner = module;
+                
                 break;
             }
 
@@ -345,13 +355,20 @@ void DlgArrow::save (std::ofstream &file)
     // Keyword "Arrow" and arrow's number
     file << "\nArrow\n";
 
+    // module of start circle, if != 0
+    if (prev_.front ()->module_id () != 0)
+        file << "  Module " << prev_.front ()->module_id () << "\n";
+    
     // start circle
-    file << "  Prev " << prev_.front ()->module_id () << " "
-         << prev_.front ()->node_id () << "\n";
+    file << "  Prev " << prev_.front ()->node_id () << "\n";
+
+    // module of end circle, if != 0
+    if (next_.front ()->module_id () != 0)
+        file << "  Module " << next_.front ()->module_id () << "\n";
 
     // end circle
-    file << "  Next " << next_.front ()->module_id () << " "
-         << next_.front ()->node_id () << "\n";
+    file << "  Next " << next_.front ()->node_id () << "\n";
 
+    // end of node
     file << "End\n";
 }

@@ -303,7 +303,7 @@ void DlgModule::extension (int &min_x, int &max_x, int &y)
 // load a dialogue from file
 bool DlgModule::load ()
 {
-    int i = 1, n;
+    int i = 1, id = 0, n;
     DlgCircle *circle;
     DlgArrow *arrow;
     std::string s;
@@ -313,56 +313,50 @@ bool DlgModule::load ()
     {
         switch (i = parse_dlgfile (s, n))
         {
+            // load text node
             case LOAD_CIRCLE:
             {
-                circle = new DlgCircle (nid_);
+                circle = new DlgCircle (nid_, id++);
                 circle->load ();
-
+                
                 nodes.push_back (circle);
 
                 break;
             }
 
+            // load arrow node
             case LOAD_ARROW:
             {
                 arrow = new DlgArrow;
-                
-                if (arrow->load (this->toplevel ()))
+
+                if (arrow->load (this))
                     nodes.push_back (arrow);
 
                 break;
             }
 
+            // load submodule node
             case LOAD_MODULE:
             {
                 if (parse_dlgfile (s, n) == LOAD_STR)
                 {
-                    // get filename of the submodule
-                    std::string file = path_ + s; 
-                    
-                    // remember position in current file
-                    int filepos = ftell (loadlgin);
+                    // get filename of submodule
+                    std::string file = path_ + s;
 
-                    // and close it
-                    fclose (loadlgin);
-
-                    // load the subdialogue from it's own file
+                    // try to create the subdialogue
                     DlgModule *subdlg = GuiDlgedit::window->loadSubdialogue (file);
 
-                    // re-open our dialogue file
-                    loadlgin = fopen (fullName ().c_str (), "rb");
-                    if (!loadlgin) return false;
-
-                    // restore filepointer
-                    fseek (loadlgin, filepos, SEEK_SET);
-                    
-                    // load rest of subdialogue
+                    // if succeeded, read the final bits
                     if (subdlg)
-                    { 
+                    {
                         subdlg->loadSubdialogue ();
+                        subdlg->setParent (this);
+                        
                         nodes.push_back (subdlg);
                     }
+                    
                 }
+                                
                 break;
             }
             
@@ -430,7 +424,6 @@ bool DlgModule::load ()
         }
     }
     
-    fclose (loadlgin);
     return true;
 }
 
@@ -444,19 +437,18 @@ void DlgModule::loadSubdialogue ()
     {
         switch (i = parse_dlgfile (s, n))
         {
+            // module loaded or EOF
             case LOAD_END:
-            {
-                i = 0;
-                break;
-            }
-
+                return;
+            
+            // get id of submodule
             case LOAD_ID:
             {
                 if (parse_dlgfile (s, n) == LOAD_NUM) nid_ = n;
-
                 break;
             }
 
+            // get position of submodule
             case LOAD_POS:
             {
                 int x, y;
@@ -532,10 +524,8 @@ bool DlgModule::save (std::string &path, std::string &name)
 // save a sub-module
 void DlgModule::save (std::ofstream &file)
 {
-    std::string path = relativeName ();
-    
-    // the module's relative filename
-    file << "\nModule §" << path << "§\n";
+    // module's relative filename
+    file << "\nModule " << relativeName () << "\n";
             
     // module's id
     file << "  Id " << nid_ << "\n";

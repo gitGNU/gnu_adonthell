@@ -83,7 +83,7 @@ dlgedit_SOURCES = \
     kb_traverse.h
 
 # Evil, but it works...
-CPPFLAGS =-I../.. -D_VERSION_=\"0.8\" $(GTK_CFLAGS) $(SDL_CFLAGS)
+CPPFLAGS =-I../.. -D_VERSION_=\"0.9pre\" $(GTK_CFLAGS) $(SDL_CFLAGS)
 
 # SWIGFLAGS = -D_DLGEDIT_ -D_DEBUG_
 
@@ -98,9 +98,3 @@ lex.loadlg.cc: loadlg.l
 
 lex.loadcfg.cc: loadcfg.l
 	flex -olex.loadcfg.cc loadcfg.l
-
-# py_character_wrap.cc : py_character.i ../../character.h ../../character_base.h
-#	swig $(SWIGFLAGS) -python -shadow -c++ -make_default -o py_character_wrap.cc $<
-
-# py_quest_wrap.cc : py_quest.i ../../quest.h
-#	swig $(SWIGFLAGS) -python -shadow -c++ -make_default -o py_quest_wrap.cc $<

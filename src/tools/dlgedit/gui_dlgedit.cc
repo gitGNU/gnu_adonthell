@@ -18,7 +18,7 @@
  * @author Kai Sterker
  * @brief The Dialogue Editor's main window
  */
- 
+
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
@@ -40,6 +40,10 @@
 #include "gui_dlgedit.h"
 #include "gui_dlgedit_events.h"
 
+struct yy_buffer_state;
+extern void loadlg_switch_to_buffer (yy_buffer_state*);
+extern yy_buffer_state* loadlg_create_buffer (FILE*, int);
+        
 // Icon of the main window
 static char * icon_xpm[] = {
 "16 16 13 1",
@@ -470,6 +474,9 @@ DlgModule* GuiDlgedit::loadSubdialogue (std::string file)
     // the sub-dialogue
     DlgModule *module = new DlgModule (directory_, filename, "", "");
 
+    // loading successful
+    // loadlg_switch_to_buffer (loadlg_create_buffer (loadlgin, 16384));
+
     // try to load from file
     if (!module->load ())
     {
@@ -477,9 +484,6 @@ DlgModule* GuiDlgedit::loadSubdialogue (std::string file)
         message->display (-3, filename.c_str ());
         return NULL;
     }
-
-    // loading successful
-    message->display (202);   
 
     // return the sub-dialogue
     return module;    

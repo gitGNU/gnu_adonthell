@@ -39,9 +39,12 @@ class DlgCircle : public DlgNode
 public:
     /**
      * Create an empty circle. Used when loading a circle.
-     * @param id The id of the module the circle belongs to.
+     * @param mid The id of the module the circle belongs to.
+     * @param nid The id of the circle.
      */
-    DlgCircle (int id = 0) { mode_ = IDLE; entry_ = NULL; mid_ = id; }
+    DlgCircle (int mid = 0, int nid = 0) 
+    { mode_ = IDLE; entry_ = NULL; mid_ = mid; nid_ = nid; }
+
     /**
      * Create a circle with basic information. Used to create a new circle.
      * @param p The point where the circle needs to be created.
