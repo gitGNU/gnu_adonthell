@@ -24,7 +24,6 @@ public:
 
     game_client(landmap & mymap)
     {
-        mchar = new map_character_with_gfx(mymap);
         letsexit = false;
     }
 
@@ -137,7 +136,6 @@ int main (int argc, char * argv[])
 
     game_client gc(lmap);
 
-
     Functor1wRet<input_event *, int> fwr;
     fwr = makeFunctor(&fwr, gc, &game_client::control_func);
     il.connect_function(input_event::CONTROL_EVENT, 
@@ -150,17 +148,14 @@ int main (int argc, char * argv[])
     lmap.resize (16, 12);
 
     // Adding the map character
+    gc.mchar = (map_character_with_gfx *)lmap.add_map_character();
     gc.mchar->set_position (6, 8); 
-    lmap.add_map_character (gc.mchar); 
-    gc.mchar->set_limits (15, 11); 
-    
-    gc.mchar->set_speed (1.0); 
+    gc.mchar->set_limits (15, 11);
+    gc.mchar->set_speed (1.0);
 
 
     // Adding one map object
-    map_object_with_gfx * mobj = new map_object_with_gfx(lmap);
-
-    lmap.add_map_object(mobj);
+    map_object_with_gfx * mobj = (map_object_with_gfx *)lmap.add_map_object();
 
     map_coordinates mobjmc (5, 5, 0, 0); 
     lmap.put_map_object (0, mobjmc); 

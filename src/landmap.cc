@@ -146,15 +146,14 @@ void landmap::update()
     characters.update();
 }
 
-s_int32 landmap::add_map_object(map_object * mobj)
-{
-    return objects.add(mobj);
+map_object * landmap::add_map_object()
+{    
+    return objects.add(*this);
 }
 
-bool landmap::add_map_character(map_character * mchar)
+map_character * landmap::add_map_character()
 {
-    put(mchar);
-    return characters.add(mchar);
+    return characters.add(*this);
 }
 
 bool landmap::put_map_object(u_int32 index, map_coordinates & pos)

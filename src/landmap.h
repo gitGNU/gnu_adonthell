@@ -136,11 +136,15 @@ private:
             return true;
         }
 
-        s_int32 add(T * obj)
+        T * add(landmap & lm)
         {
+            T * obj;
+            if (handle_gfx) obj = new T_gfx(lm);
+            else obj = new T(lm);
+
             objects.push_back(obj);
             
-            return (objects.size() - 1);
+            return (obj);
         }
 
 
@@ -196,7 +200,6 @@ public:
 
 
     void update();
-    void update_with_gfx();
 
     /** 
      * Adds a map_object to this map.
@@ -212,7 +215,7 @@ public:
      * 
      * @return index of the object in case of success, \e -1 otherwise.
      */
-    s_int32 add_map_object(map_object * mobj);
+    map_object * add_map_object();
 
     /** 
      * Tell a map to handle a map_character. The map will take
@@ -229,7 +232,7 @@ public:
      * 
      * @return \e true in case of success, \e false otherwise.
      */
-    bool add_map_character(map_character * mchar);
+    map_character * add_map_character();
 
     bool put_map_object(u_int32 index, map_coordinates & pos);
 
