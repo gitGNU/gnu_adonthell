@@ -12,7 +12,7 @@ There are two libraries that Adonthell depends on:
 1. Python, version 1.5.2 or later. 
    
    Many Linux distributions (Debian, RedHat, SuSE, etc) include Python, but
-a few are still using Python 1.5 (or, worse, 1.4!). You can ckeck your 
+a few are still using Python 1.5 (or, worse, 1.4!). You can check your 
 version of Python by entering the command:
 
        python -c 'import sys ; print sys.version'
@@ -20,7 +20,7 @@ version of Python by entering the command:
    You can download Python directly from http://www.python.org.
 
 
-2. The Simple Directmedia Layer (SDL) library, version 1.2 or later.
+2. The Simple Direct media Layer (SDL) library, version 1.2 or later.
 
    See http://www.libsdl.org/
 
@@ -80,7 +80,7 @@ those directories to /etc/ld.so.conf.
 
 --with-data-dir=DIR
 
-  Use this option to customize the location of the data directory.
+  Use this option to customise the location of the data directory.
 The default is /usr/local/share/adonthell. Once you have compiled
 Adonthell you can query the data directory with 'adonthell -g'.
 
@@ -107,8 +107,8 @@ can be found at
    http://www.research.att.com/sw/tools/graphviz/.
 
   The documentation will end up in doc/<subdir>/html/ respectively
-doc/<subdir>/latex/, where subdir is one of devel or dlgedit.  It is
-also made available for online browsing at our website,
+doc/<subdir>/latex/, where subdir is one of devel or dlgedit.  It 
+is also made available for online browsing at our website,
 http://adonthell.linuxgames.com.
 
 

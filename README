@@ -30,11 +30,11 @@ Configuring Adonthell:
 ======================
 
 The first time you run Adonthell, a configuration file is created:
-$HOME/.adonthell/adonthellrc. Edit it to customize the game to your
+$HOME/.adonthell/adonthellrc. Edit it to customise the game to your
 convenience.
 
 The available options and what they do are:
-(Some of these options might be changable from the main program)
+(Some of these options might be changeable from the main program)
 
 - Screen-mode
   Whether Adonthell should run fullscreen or in windowed mode 
@@ -72,6 +72,7 @@ with above command.
 
 Directories:
 ============
+
 - $HOME/.adonthell 
   contains the configuration file and your saved games.
 
@@ -115,7 +116,7 @@ Reporting Bugs:
 ===============
 
 We hope you'll never have to, but if you discover a problem, we
-would like to hear about it.  The prefered way is to use the
+would like to hear about it.  The preferred way is to use the
 Sourceforge Bugtracker at 
   http://sourceforge.net/tracker/?atid=101051&group_id=1051&func=browse
 

@@ -135,7 +135,7 @@ press OK.
 Your screen should look like this. The NPC node is still
 selected, therefore drawn red, and the Player node is drawn
 blue, to distinguish it from NPC nodes. The arrow between
-them symbolizes the flaw of the Dialogue .
+them symbolises the flaw of the Dialogue .
 
 Since the player shall have two possible responses, we have
 to create another player node, somewhere next to the first
@@ -144,7 +144,7 @@ done. Now right-click on an empty spot to deselect the NPC
 node and then select the first Player node. You see, that
 it appears orange, so you know at the first glance that
 it is a selected Player node. Left-click somewhere below
-it, enter the apropriate Text, confirm with OK and repeat
+it, enter the appropriate Text, confirm with OK and repeat
 the same for the second Player node.
 
 <center>
@@ -157,7 +157,7 @@ Now lines 4 and 5 of the Dialogue have to follow, but, as
 you have already noticed, they are just the same as a part
 of the existing dialogue. Would be nice if we could reuse
 that part, eh? Well, we can. All we need to do is telling
-the Editor wich part has to follow a node. 
+the Editor which part has to follow a node. 
 
 Okay, lets dot it: Deselect the Player node and select the
 bottom left NPC node (or the node correspondenting to that
@@ -172,7 +172,7 @@ the complete dialogue:
 
 The numbers inside the nodes tell how many such "indirect"
 links start at each node, and when selecting a node with
-indirect links, the apropriate arrows are colored purple.
+indirect links, the appropriate arrows are coloured purple.
 
 Of course we could have used a direct link as well, but in
 more complex dialogues, this technique avoids arrows criss-crossing
@@ -479,7 +479,7 @@ position in the dialogue.
 
 \par 7. Text of preceding Nodes
 All the different lines of text that may preceed the
-\ref selcir "selected circle". The color of the entries gives
+\ref selcir "selected circle". The colour of the entries gives
 some information of the type: Blue text denotes lines of the Player,
 black text lines of the NPC; the Narrator appears green. Somewhat dimmed
 lines mean that the Circles are connected by \ref indlin "indirect links".
@@ -489,7 +489,7 @@ lines mean that the Circles are connected by \ref indlin "indirect links".
 This shall give a first impression of what the Dialogue will
 look like in the game. Basically it displays the text of
 the selected circle, together with all preceeding and following
-text. With this you should be able to judge wether all the
+text. With this you should be able to judge whether all the
 combinations of text fit well together. Furthermore, by
 clicking on a line of text, the attached Circle is selected,
 meaning you can browse through the whole dialogue. Note
@@ -497,12 +497,12 @@ that additional code of Nodes won't be taken into account,
 so in the game, the dialogue might be slightly different.
 
 \par 9. Text of selected node
-Again this is color-coded: as in the \ref diaare "Dialogue Area",
+Again this is colour-coded: as in the \ref diaare "Dialogue Area",
 orange text means a Player line, red text a NPC line and green
 is the Narrator.
 
 \par 10. Text following the selected node
-Text following the selected Node. The colors are the same
+Text following the selected Node. The colours are the same
 as for the \ref prenod "preceding nodes".
 
 \latexonly
@@ -525,10 +525,10 @@ the three with the \ref radbut "radiobuttons".
 \anchor edit
 
 \par 2. Conditions for the Node
-On this page, you can specifiy a condition which then decides
+On this page, you can specify a condition which then decides
 whether this line of text will be available in the game
 or not. In fact you may enter any valid Python code, but
-the result may be unpredictible; so to be on the safe side,
+the result may be unpredictable; so to be on the safe side,
 the code you write here should be a single (but not necessarily
 simple) if statement, like
 
@@ -539,7 +539,7 @@ if condition_1 == 1 and (flag_1 + flag_2) <= 10:
 
 \par
 You may also use <tt>elif</tt> and <tt>else</tt> statements, 
-but again the results might be unpredictible, unless you
+but again the results might be unpredictable, unless you
 restrict yourself to a single <tt>if</tt> and <tt>else</tt>.
 \anchor variab
 
@@ -556,7 +556,7 @@ description.
 \par
 The green page label tells you at a glance that this Circle
 contains some variable code, but neither Conditions nor
-miscellanous Commands. The Text-page's label will always
+miscellaneous Commands. The Text-page's label will always
 be black, as text isn't really optional.
 
 \par 4. Actions
@@ -564,7 +564,7 @@ Here are just a few shortcuts that create code as you can
 enter in the \ref variab "Variables Tab". Currently, only the
 Loop command works. When activated, the Node will not be
 marked as used once it appears in the conversation, and thus
-may occure several times.
+may occur several times.
 \anchor radbut
 
 \par 5. Assign text to Narrator, NPC or Player
@@ -638,7 +638,7 @@ Opens the debug window if it is not already open.
 This tab shows the current dialogue's local variables, if
 that dialogue was compiled with debugging enabled and is
 currently running. Local variables are only available as
-long as the Run window is open. Further they are reinitialized
+long as the Run window is open. Further they are reinitialised
 when restarting the dialogue.
 
 \par 2. Display character attributes
@@ -658,7 +658,7 @@ character attributes apply here.
 \par 4. The debug tree
 The actual attributes are shown in a tree. Unchanged attributes
 are displayed black, changed ones in green and deleted ones
-in red color. You can change an attributes value by leftclicking
+in red colour. You can change an attributes value by leftclicking
 on the attribute's name. To delete an attribute, assign
 a value of zero to it. To add a new attribute, simply click
 on the parent you want to add the attribute to.
@@ -681,7 +681,7 @@ Dialogue window in case it isn't open already.
 /*! \page page4 Adding Python Code
 
 From the \ref sec23 "tutorial" you might have seen that each dialogue
-get's compiled into a python class which then is fed into
+gets compiled into a python class which then is fed into
 Adonthell's Python interpreter to execute it step by step.
 Given the flexibility of Python, it is only sensible to
 use it to achieve more than simple static dialogues. In
@@ -739,15 +739,15 @@ For more advanced dialogues it might be necessary to define
 local variables. They belong to the dialogue class and are
 addressed as <tt>self.variable</tt>. Local variables are only
 accessible from within the dialogue itself and thus are only
-available as long as the dialogue is running. They are free'd
+available as long as the dialogue is running. They are freed
 at the end of the dialogue.
 
 What for are they then? Basically they can be used to track
 the player's path through the dialogue. Information he may
-or may not have recieved could enable or disable additional
+or may not have received could enable or disable additional
 choices at a later point in the same dialogue, but how does
 the dialogue engine learn about that. The solution is to
-use local variables. So when the player recieves the special
+use local variables. So when the player receives the special
 information you'd add the following variable code
 
 \verbatim
@@ -766,7 +766,7 @@ in above example you needn't do anything about the case
 where the player doesn't get that special information.
 
 In many situations, it will be necessary that information
-survives an individual dialogue. That is where persistant
+survives an individual dialogue. That is where persistent
 variables come into play:
 
 \subsection sec43 Persistent Variables
@@ -791,7 +791,7 @@ myattribute = myquest.get_val ("attribute_name")
 myquest.set_val ("attribute_name", <expression>)
 \endverbatim
 
-To save you some writing, dlgedit recognizes the following shortcuts:
+To save you some writing, dlgedit recognises the following shortcuts:
 
 \verbatim
 myattribute = quest_name.attribute_name
