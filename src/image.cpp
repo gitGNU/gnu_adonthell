@@ -255,7 +255,7 @@ void image::set_mask(bool m)
 {
   if((m)&&(!mask_on))
     {
-      SDL_SetColorKey(data, SDL_SRCCOLORKEY|SDL_RLEACCEL, screen::trans);
+      SDL_SetColorKey(data, SDL_SRCCOLORKEY, screen::trans);
       mask_on=true;
     }
   else if((!m)&&(mask_on))
@@ -376,7 +376,7 @@ void image::putbox_mask_img (image * source, u_int16 x, u_int16 y)
   dr.h=source->height;
   if(!mask_on) 
     {
-      SDL_SetColorKey(data, SDL_SRCCOLORKEY|SDL_RLEACCEL, screen::trans);
+      SDL_SetColorKey(data, SDL_SRCCOLORKEY, screen::trans);
       mask_on=true;
     }
   SDL_BlitSurface(source->data, &sr, data, &dr);
@@ -434,7 +434,7 @@ s_int8 image::get(gzFile file)
   if(!ret)
     {
       if(mask_on)
-	SDL_SetColorKey(data, SDL_SRCCOLORKEY|SDL_RLEACCEL, screen::trans);
+	SDL_SetColorKey(data, SDL_SRCCOLORKEY, screen::trans);
       set_alpha(alpha);
     }
   return ret;
