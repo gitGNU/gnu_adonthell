@@ -16,6 +16,7 @@ class dialog;
 #include <gtk/gtk.h>
 
 #include "../../types.h"
+#include "../../interpreter.h"
 #include "linked_list.h"
 #include "dlgnode.h"
 #include "main.h"

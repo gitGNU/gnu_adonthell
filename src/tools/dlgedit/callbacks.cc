@@ -21,6 +21,8 @@ class dialog;
 #include "main.h"
 #include "graph.h"
 #include "compile.h"
+#include "../../interpreter.h"
+#include "../../dialog.h"
 #include "dlgrun.h"
 #include "geometrie.h"
 #include "interface.h"
@@ -190,7 +192,10 @@ on_dialogue_run_activate (GtkMenuItem * menuitem, gpointer user_data)
 void 
 on_player_txt_select_row (GtkCList * clist, gint row, gint column, GdkEvent * event, gpointer user_data)
 {
-    ShowDialogue ((RunData *) user_data, row);
+    RunData *rd = (RunData *) user_data;
+
+    rd->data->answer = row;
+    ShowDialogue (rd);
 }
 
 /* Node selected in preview */

@@ -1,7 +1,5 @@
 class return_cmd : public command
 {
-    NEW_CMD(return_cmd)
-
 public:
     void init (s_int32 *buffer, u_int32 &i, void *data)
     {
@@ -18,8 +16,6 @@ private:
 
 class import_cmd : public command
 {
-    NEW_CMD(import_cmd)
-
 public:
     void init (s_int32 *buffer, u_int32 &i, void *data)
     {
@@ -33,8 +29,6 @@ private:
 
 class clear_cmd : public command
 {
-    NEW_CMD(clear_cmd)
-
 public:
     void init (s_int32 *buffer, u_int32 &i, void *data) 
     { 
@@ -45,8 +39,6 @@ public:
 
 class npctext_cmd : public command
 {
-    NEW_CMD(npctext_cmd)
-
 public:
     void init (s_int32 *buffer, u_int32 &i, void *data)
     {
@@ -60,8 +52,6 @@ private:
 
 class ptext_cmd : public command
 {
-    NEW_CMD(ptext_cmd)
-
 public:
     void init (s_int32 *buffer, u_int32 &i, void *data)
     {
@@ -77,8 +67,6 @@ private:
 
 class snpctext_cmd : public command
 {
-    NEW_CMD(snpctext_cmd)
-
 public:
     void init (s_int32 *buffer, u_int32 &i, void *data)
     {

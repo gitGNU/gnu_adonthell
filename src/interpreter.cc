@@ -10,6 +10,7 @@
    See the COPYING file for more details.
 */
 
+#include <iostream.h>
 #include <stdio.h>
 #include "types.h"
 #include "dlg_io.h"
@@ -17,7 +18,7 @@
 #include "interpreter.h"
 
 // template class Array<CmdNew*>;
-Array<CmdNew*> interpreter::callbacks;
+Array<CmdNew> interpreter::callbacks;
 
 // Constructors
 interpreter::interpreter ()
@@ -100,7 +101,6 @@ u_int8 interpreter::load (const char *file)
     delete[] buffer;
     
     return 1;
-
 }
 
 // Executes your program until it reaches a RETURN command
@@ -110,7 +110,7 @@ s_int32 interpreter::run ()
     if (PC >= cmd_num) return -1;
 #endif
 
-    while (code[PC]->type);
+    while (code[PC]->type)
     {
         // Execute all commands except RETURN
         // Since you cannot influence the interpreter directly

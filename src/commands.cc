@@ -18,6 +18,16 @@
 // Include the header file of your own commands here
 #include "dialog_cmds.h"
 
+// These macros expand to a function that allocates a new
+// instance of your command and is needed for the REGISTER_CMD
+// call below
+NEW_CMD(return_cmd)
+NEW_CMD(import_cmd)
+NEW_CMD(clear_cmd)
+NEW_CMD(ptext_cmd)
+NEW_CMD(npctext_cmd)
+NEW_CMD(snpctext_cmd)
+
 // Add the registration of your commands to this function
 // in the same order as in commands.h
 void init_interpreter ()

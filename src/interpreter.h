@@ -47,7 +47,7 @@ public:
 
     // Array with pointers to functions that return a newly allocated
     // command
-    static Array<CmdNew*> callbacks;
+    static Array<CmdNew> callbacks;
    
 private:
     // Program Counter
@@ -60,11 +60,11 @@ private:
     u_int32 cmd_num;
 };
 
-#define NEW_CMD(cmd) public: static command* _new () { return (command*) new cmd; } private:
+#define NEW_CMD(cmd) command* new_ ## cmd () { return (command*) new cmd; }
 #define REGISTER_CMD(type,cmd)\
     if ((u_int32)type != interpreter::callbacks.length())\
     {\
         cout << "Error registering command " << (u_int32) type << endl;\
         return;\
     }\
-    interpreter::callbacks.add_element ((CmdNew*)&cmd::_new);
+    interpreter::callbacks.add_element ((CmdNew)&new_ ## cmd);

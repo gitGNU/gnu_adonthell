@@ -10,8 +10,6 @@
    See the COPYING file for more details.
  */
 
-class dialog;
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -19,15 +17,18 @@ class dialog;
 
 #include "../../types.h"
 #include "../../dlg_io.h"
-#include "../../dialog_cmd.h"
 #include "../../array_tmpl.h"
 #include "../../interpreter.h"
+#include "../../commands.h"
 #include "../../dialog.h"
 #include "linked_list.h"
 #include "dlgnode.h"
 #include "main.h"
 #include "dlgrun.h"
 #include "interface.h"
+
+s_int32 *dialog::offset;
+s_int32 *dialog::length;
 
 /* run the compiled dialogue */
 void 
@@ -36,8 +37,14 @@ run_dialogue (MainFrame * wnd)
     RunData *rd = (RunData *) g_malloc (sizeof (RunData));
     GtkWidget *dlg;
 
+    /* Register commands with interpreter 
+       Normally you would do this once at Program startup */
+    interpreter::callbacks.clear ();
+    init_interpreter ();
+
     rd->data = new dialog;
-    rd->engine = new interpreter (wnd->filename, dialog);
+    rd->data->text_file = g_strjoin (NULL, wnd->file_name, ".str", NULL);
+    rd->engine = new interpreter (g_strjoin (NULL, wnd->file_name, ".dat", NULL), rd->data);
 
     /* Dialog for displaying Dialogue */
     dlg = create_run_dialogue (rd);
@@ -45,7 +52,7 @@ run_dialogue (MainFrame * wnd)
 
     /* Here the dialogue gets initialized */
     /* The first parameter is the part of the dialogue to start with */
-    StartDialogue (wnd, rd, 0);
+    StartDialogue (rd);
     
     /* Thats the dialogue loop */
     gtk_main ();
@@ -54,47 +61,55 @@ run_dialogue (MainFrame * wnd)
     gtk_widget_destroy (dlg);
     delete rd->engine;
     delete rd->data;
+    delete[] dialog::offset;
+    delete[] dialog::length;
     g_free (rd);
 }
 
 /* Initialize Dialogue */
 void
-StartDialogue (MainFrame * wnd, RunData * rd, u_int32 start)
+StartDialogue (RunData * rd)
 {
-    u_int32 result;
+    FILE *str = fopen (rd->data->text_file, "r");
+    u_int32 count = h2d (4, str);
+        
+    dialog::offset = new s_int32[count];
+    dialog::length = new s_int32[count];
 
-    /* Tell the Engine to load the Dialogue */
-    result = rd->engine->init_dialog (wnd->file_name, start);
+    ri (dialog::offset, count, 4, str);
+    ri (dialog::length, count, 4, str);
 
-    if (!result)
-    {
-        gtk_editable_delete_text (GTK_EDITABLE (rd->npc), 0, -1);
-        gtk_text_insert ((GtkText *) rd->npc, rd->npc->style->font,
-            &rd->npc->style->white, &rd->npc->style->black,
-            rd->engine->error_text, -1);
-
-        return;
-    }
-
+    fclose (str);
+    
     /* Start */
-    ShowDialogue (rd, start);
+    ShowDialogue (rd);
 }
 
 /* Continue Dialogue */
 s_int8 
-ShowDialogue (RunData * rd, u_int32 answer)
+ShowDialogue (RunData * rd)
 {
-    s_int32 i;
+    u_int32 i;
     s_int32 result;
     char *text[1];
     char **player_text;
 
     /* Thats the important call to the Dialogue engine with the (zero based)
-       * index of the chosen answer from the list of answers */
-    result = rd->engine->run_dialog (answer);
+       index of the chosen answer from the list of answers */
+    result = rd->engine->run ();
 
     switch (result)
     {
+        case -1:
+        {
+            /* error */
+            gtk_editable_delete_text (GTK_EDITABLE (rd->npc), 0, -1);
+            gtk_text_insert ((GtkText *) rd->npc, rd->npc->style->font,
+                &rd->npc->style->white, &rd->npc->style->black,
+                "Interpreter returned error", -1);
+            return 0;
+        }
+
         case 0:
         {
             /* the end */
@@ -102,49 +117,45 @@ ShowDialogue (RunData * rd, u_int32 answer)
             return 1;
         }
         
-        case -1:
-        {
-            /* error */
-            gtk_editable_delete_text (GTK_EDITABLE (rd->npc), 0, -1);
-            gtk_text_insert ((GtkText *) rd->npc, rd->npc->style->font,
-                &rd->npc->style->white, &rd->npc->style->black,
-                rd->engine->error_text, -1);
-            return 0;
-        }
-
         case 1:
         {
-            /* Recieve NPC´s text stored in  m_Engine -> m_NPCText */
+            /* Player part */
             gtk_editable_delete_text (GTK_EDITABLE (rd->npc), 0, -1);
             gtk_text_insert ((GtkText *) rd->npc, rd->npc->style->font,
                 &rd->npc->style->black, &rd->npc->style->white,
-                rd->engine->npc_text, -1);
+                rd->data->npc_text, -1);
 
             gtk_clist_freeze (GTK_CLIST (rd->player));
             gtk_clist_clear (GTK_CLIST (rd->player));
 
-            /* Check if there is a possible answer at all!
-               Else the NPC´s speech will continue. */
-            if (rd->engine->player_text.length() == 0)
-            {
-                text[0] = "... continue ...";
-                gtk_clist_append (GTK_CLIST (rd->player), text);
-            }
-
-            /* Else display all Answers contained in the Array
-               m_pPCText, which has the size  m_pPCText.m_Num */
-            else
-            {
-                player_text = rd->engine->player_text.get_array ();
+            player_text = rd->data->player_text.get_array ();
             
-                for (i = 0; i < result; i++)
-                {
-                    text[0] = player_text[i];
-                    gtk_clist_append (GTK_CLIST (rd->player), text);
-                }
+            for (i = 0; i < rd->data->player_text.length (); i++)
+            {
+                text[0] = player_text[i];
+                gtk_clist_append (GTK_CLIST (rd->player), text);
             }
         
             gtk_clist_thaw (GTK_CLIST (rd->player));
+            break;
+        }
+
+        case 2:
+        {
+            /* NPC only */
+            gtk_editable_delete_text (GTK_EDITABLE (rd->npc), 0, -1);
+            gtk_text_insert ((GtkText *) rd->npc, rd->npc->style->font,
+                &rd->npc->style->black, &rd->npc->style->white,
+                rd->data->npc_text, -1);
+
+            gtk_clist_freeze (GTK_CLIST (rd->player));
+            gtk_clist_clear (GTK_CLIST (rd->player));
+
+            text[0] = "... continue ...";
+
+            gtk_clist_append (GTK_CLIST (rd->player), text);
+            gtk_clist_thaw (GTK_CLIST (rd->player));
+            break;
         }
     }
     

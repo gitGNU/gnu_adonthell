@@ -21,5 +21,5 @@ typedef struct
 RunData;
 
 void run_dialogue (MainFrame *);
-void StartDialogue (MainFrame *, RunData *, u_int32);
-s_int8 ShowDialogue (RunData *, u_int32);
+void StartDialogue (RunData *);
+s_int8 ShowDialogue (RunData *);

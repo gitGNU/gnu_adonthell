@@ -52,12 +52,12 @@ CXXFLAGS  = ${DEPENDFLAGS}
 # linker
 
 LINKER    := gcc
-LDFLAGS    = ../../dialog.o ../../dlg_io.o ../../array_tmpl.o
+LDFLAGS    =
 LOADLIBES := -lm -lstdc++ `gtk-config --libs`
 
 # dlgedit
 
-dlgedit : ./callbacks.o ./compile.o ./dlgrun.o ./events.o ./geometrie.o ./graph.o ./interface.o ./main.o ./linked_list.o
+dlgedit : ./callbacks.o ./compile.o ./dlgrun.o ./events.o ./geometrie.o ./graph.o ./interface.o ./main.o ./linked_list.o ../../dlg_io.o ../../interpreter.o ../../commands.o ../../dialog_cmds.o ../../array_tmpl.o
 	${LINKER} ${LDFLAGS} -o $@ ${filter-out %.a %.so, $^} ${LOADLIBES}
 
 # target for making everything

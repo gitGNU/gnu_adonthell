@@ -19,6 +19,7 @@ class dialog;
 
 #include "../../types.h"
 #include "../../dlg_io.h"
+#include "../../interpreter.h"
 #include "linked_list.h"
 #include "dlgnode.h"
 #include "main.h"

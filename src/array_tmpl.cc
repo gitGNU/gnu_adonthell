@@ -20,7 +20,7 @@ struct _dlgnode;
 template class Array<u_int32>;
 template class Array<char*>;
 template class Array<_dlgnode*>;
-template class Array<CmdNew*>;
+template class Array<CmdNew>;
 
 // Create Array with space for 5 elements
 template <class T> Array<T>::Array()

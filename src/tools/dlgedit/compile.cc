@@ -474,7 +474,7 @@ add_RETURN (DlgCompiler * comp, GPtrArray * array, u_int32 retval)
     cmd->text = retval;
 
     g_ptr_array_add (array, cmd);
-    comp->dlg_length += 1;
+    comp->dlg_length += 2;
 }
 
 void 
