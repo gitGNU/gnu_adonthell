@@ -158,17 +158,6 @@ void dlg_compiler::write_custom_func ()
 void dlg_compiler::write_npc (Circle *circle)
 {
     u_int32 i = 0, j;
-    char *space;
-
-    script << "\n    def npc" << circle->number << " (self):";
-
-    // write circle's condition (if any)
-    if (circle->conditions != "") 
-    {
-        script << "\n        " << circle -> conditions;
-        space = "            ";
-    }
-    else space = "        "; 
 
     // write circle's text and "jump target"
     script << "\n" << space << "self.npc.append (" << text_lookup[circle->number] << ")";
@@ -191,24 +180,17 @@ void dlg_compiler::write_npc (Circle *circle)
     // allow loops
     if (circle->actions[0] == '1')
         script << "\n" << space << "self.loop.append (" << circle->number << ")";
-
-    script << "\n";
 }
 
 // Write a player part
 void dlg_compiler::write_player (Circle *circle)
 {
-    char *space;
-
-    script << "\n    def player" << circle->number << " (self):";
-
     // write circle's condition (if any)
     if (circle->conditions != "") 
     {
-        script << "\n        " << circle -> conditions;
-        space = "            ";
+        script << "\n" << space << circle -> conditions;
+        space += "    ";
     }
-    else space = "        "; 
 
     // write circle's text and "jump target"
     script << "\n" << space << "self.player.append (" << text_lookup[circle->number] << ")";
@@ -218,7 +200,7 @@ void dlg_compiler::write_player (Circle *circle)
     if (circle->actions[0] == '1')
         script << "\n" << space << "self.loop.append (" << circle->number << ")";
 
-    script << "\n";
+    if (circle->conditions != "") space.erase (space.end()-4,space.end()); 
 }
 
 // Write the first bit of the dialogue
@@ -226,17 +208,11 @@ void dlg_compiler::write_start ()
 {
     vector<DlgNode*>::iterator i;
 
-    // find the start of the dialogue (all nodes without parent), and while
-    // going through the dialogue anyway, write functions of all the nodes
+    // find the start of the dialogue (all nodes without parent)
     for (i = dlg.begin(); i != dlg.end (); i++)
         if ((*i)->type != LINK)
-        {
-            if ((*i)->type == PLAYER) write_player ((Circle*)*i);
-            else write_npc ((Circle*)*i);
-        
             if ((*i)->prev.empty ())
                 cur_nodes.push_back (*i);
-        }
 
     script << "\n    def start (self):";
     write_answer ();
@@ -249,7 +225,7 @@ void dlg_compiler::write_start ()
 void dlg_compiler::write_answer ()
 {
     vector<DlgNode*>::iterator i;
-    char *space = "        ";
+    space = "        ";
 
     // write npc node & followers (if any)
     for (i = cur_nodes.begin (); i != cur_nodes.end (); i++)
@@ -258,8 +234,16 @@ void dlg_compiler::write_answer ()
         if ((*i)->type != NPC) cout << "\n*** Compile error: NPC node expected!"; 
 #endif _DEBUG_
 
+        // write circle's condition (if any)
+        if (((Circle*)(*i))->conditions != "") 
+        {
+            script << "\n        " << ((Circle*)(*i))->conditions;
+            space = "            ";
+        }   
+
         // Write NPC stuff
-        script << "\n" << space << "self.npc" << (*i)->number << " ()";
+        // script << "\n" << space << "self.npc" << (*i)->number << " ()";
+        write_npc ((Circle*)*i);
 
         // write following player nodes (if any)
         if (player_follows (*i))
@@ -288,7 +272,6 @@ void dlg_compiler::write_answer ()
 void dlg_compiler::write_player_answer (DlgNode *npc)
 {
     vector<DlgNode*>::iterator i;
-    char *space = "        ";
     DlgNode *player;
 
     // first look at the direct links
@@ -297,10 +280,9 @@ void dlg_compiler::write_player_answer (DlgNode *npc)
         // get the player node the arrow (*j) is pointing to
         player = (*i)->next[0];
 
-        // instead of writing the function call, we could also call
-        // writer_player (player) to create inline code instead
-        script << "\n" << space << "self.player" << player->number << " ()";
-
+        // write the code
+        write_player ((Circle*)player);
+        
         // if node isn't already handled or queued for handling,
         // add it to todo_nodes to have it handled later
         if (find (todo_nodes.begin(), todo_nodes.end (), player) == todo_nodes.end () &&
@@ -313,7 +295,7 @@ void dlg_compiler::write_player_answer (DlgNode *npc)
     {
         player = (*i)->next[0];
 
-        script << "\n" << space << "self.player" << player->number << " ()";
+        write_player ((Circle*)player);        
 
         if (find (todo_nodes.begin(), todo_nodes.end (), player) == todo_nodes.end () &&
             find (done_nodes.begin(), done_nodes.end (), player) == done_nodes.end ())

@@ -35,6 +35,7 @@ private:
     
     string filename;                // The base dialogue filename
     string cust_func;               // The dialogue's custom functions
+    string space;                   // For formatting the python output
     ofstream script;                // The script file
 
     u_int32 *text_lookup;           // tells String index when given node-number
