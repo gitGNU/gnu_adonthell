@@ -101,7 +101,7 @@ void atk_border_template::set (u_int8 type, image * img)
 void atk_border_template::set (u_int8 type, std::string filename)
 {
   image * img = new image;
-  if ( img->load_pnm (filename) < 0)
+  if ( img->load_pnm (filename) != 0)
     std::cout << "Error on load image " << filename <<  " in atk_border_template::set \n"; 
   set (type, img); 
 }

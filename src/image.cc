@@ -22,8 +22,21 @@
  * 
  */
  
+#include <SDL/SDL_endian.h>
 #include "image.h"
 #include "pnm.h"
+
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+#define R_MASK 0x00ff0000
+#define G_MASK 0x0000ff00
+#define B_MASK 0x000000ff
+#define A_MASK 0xff000000
+#else
+#define R_MASK 0x000000ff
+#define G_MASK 0x0000ff00
+#define B_MASK 0x00ff0000
+#define A_MASK 0xff000000
+#endif
 
 using std::string; 
 
@@ -357,12 +370,15 @@ void image::pnm2display (void * rawdata, u_int16 l, u_int16 h)
 {
     set_length (l);
     set_height (h);
-   
+
     SDL_Surface *tmp2 = SDL_CreateRGBSurfaceFrom (rawdata, length (),
                                                   height (), 24,
                                                   length () * 3,
-                                                  0x0000FF, 0x00FF00,
-                                                  0xFF0000, 0);
+                                                  R_MASK, G_MASK,
+                                                  B_MASK, 0);
+
+    draw(0, 0);
+
 
     // We have to downscale to 16bpp in order for the masking to 
     // perform properly. This is stupid, but that's the way it is!
@@ -374,6 +390,6 @@ void image::pnm2display (void * rawdata, u_int16 l, u_int16 h)
     SDL_FreeSurface(tmp3);
     SDL_FreeSurface(tmp2);
 
-    raw2display(tmp4->pixels, length(), height());
+    vis = SDL_DisplayFormat (tmp4);
     SDL_FreeSurface(tmp4);
 }

@@ -137,9 +137,9 @@ pytest_LDADD = libbase.a libpython.a libgfx.a libinput.a $(libbase_LDADD) $(libp
 schedtest_LDADD = libbase.a libpython.a libgfx.a libinput.a $(libbase_LDADD) $(libpython_LDADD)
 
 # Note: .py files are also built by this target.
-py_%_wrap.cc : py_%.i *.h
+py_%_wrap.cc : py_%.i
 	@if test "${P_SWIG}"; then \
-	   ${P_SWIG} -python -shadow ${SDL_CFLAGS} -I./ -I../ -c++ -make_default -o py_$*_wrap.cc $<; \
+	   ${P_SWIG} -python -shadow ${SDL_CFLAGS} -I${srcdir} -c++ -make_default -o py_$*_wrap.cc $<; \
 	else \
 	   echo "You need swig >= 1.3.10 in order to re-build this file."; \
 	   exit 1; \
