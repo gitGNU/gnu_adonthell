@@ -34,6 +34,7 @@ surface::surface () : drawable ()
     set_alpha (255);
     set_mask (false); 
     not_screen = true; 
+    changed = false; 
 }
 
 surface::~surface () 
@@ -43,12 +44,11 @@ surface::~surface ()
 
 void surface::set_mask (bool m)
 {
-    if ((m) && (!mask_on) && vis)
-        SDL_SetColorKey (vis, SDL_SRCCOLORKEY | SDL_RLEACCEL, screen::trans_col ()); 
-    else if ((!m) && (mask_on) && vis)
-        SDL_SetColorKey (vis, 0, 0);
-
-    mask_on = m; 
+    if (m != is_masked ())
+    {
+        mask_on = m; 
+        changed = true; 
+    }
 }
 
 
@@ -76,10 +76,20 @@ void surface::draw (s_int16 x, s_int16 y, s_int16 sx, s_int16 sy, u_int16 sl,
     if (!dstrect.w || !dstrect.h)
         return;
     
+    if (changed)
+    {
+        changed = false;
+        if (is_masked ()) 
+            SDL_SetColorKey (vis, SDL_SRCCOLORKEY | SDL_RLEACCEL, screen::trans_col ()); 
+        else
+            SDL_SetColorKey (vis, 0, 0); 
+    }
+
     if (alpha () != 255)
         SDL_SetAlpha (vis, SDL_SRCALPHA, alpha_);
     
     SDL_BlitSurface (vis, &srcrect, target->vis, &dstrect); 
+    target->changed = true; 
 }
 
 void surface::fillrect (s_int16 x, s_int16 y, u_int16 l, u_int16 h, u_int32 col, 
@@ -97,7 +107,20 @@ void surface::fillrect (s_int16 x, s_int16 y, u_int16 l, u_int16 h, u_int32 col,
         dstrect.h = h;
     }
     
-    SDL_FillRect (vis, &dstrect, col); 
+    SDL_FillRect (vis, &dstrect, col);
+    changed = true; 
+}
+
+void surface::lock () const
+{
+    if (SDL_MUSTLOCK(vis)) 
+        SDL_LockSurface (vis);
+}
+
+void surface::unlock () const
+{
+    if (SDL_MUSTLOCK(vis)) 
+        SDL_UnlockSurface (vis);
 }
 
 void surface::put_pix (u_int16 x, u_int16 y, u_int32 col) 
@@ -128,8 +151,8 @@ void surface::put_pix (u_int16 x, u_int16 y, u_int32 col)
         case 4:
             *((Uint32 *) (offset)) = (Uint32) col;
             break;
-    }
-    
+    }     
+    changed = true; 
 }
 
 void surface::get_pix (u_int16 x, u_int16 y, u_int32& col) const
@@ -182,6 +205,7 @@ surface& surface::operator = (surface& src)
         vis = NULL;
     else
         vis = SDL_DisplayFormat (src.vis);
+    changed = true; 
     return *this; 
 }
  
@@ -207,8 +231,7 @@ void surface::resize (u_int16 l, u_int16 h)
                                 screen::display.vis->format->Gmask,
                                 screen::display.vis->format->Bmask,
                                 screen::display.vis->format->Amask); 
-    set_mask (is_masked ());
-    set_alpha (alpha ()); 
+    changed = true; 
 }
 
 void surface::clear () 
@@ -220,7 +243,8 @@ void surface::clear ()
         set_length (0);
         set_height (0); 
         set_alpha (255);
-        set_mask (false); 
+        set_mask (false);
+        changed = true; 
     }
 }
 

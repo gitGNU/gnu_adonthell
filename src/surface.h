@@ -246,22 +246,14 @@ public:
      * may result in unpredictable behavior, crashes included.
      * 
      */
-    void lock () const
-    {
-        if (SDL_MUSTLOCK(vis)) 
-            SDL_LockSurface (vis);  
-    }
+    void lock () const; 
     
     /** 
      * Unlock the surface after you've worked on it's pixels with the
      * get_pix () and put_pix () methods.
      * 
      */
-    void unlock () const
-    {
-        if (SDL_MUSTLOCK(vis)) 
-            SDL_UnlockSurface (vis);  
-    }
+    void unlock () const;
     
     /** 
      * Puts a pixel of a given color.
@@ -398,8 +390,14 @@ protected:
      * 
      */
     void clear (); 
-    
-    
+
+    /**
+     * Must be set to true when you change the surface
+     * by something else than class surface operations.
+     * 
+     */ 
+    mutable bool changed; 
+     
 private:
 
     /**
