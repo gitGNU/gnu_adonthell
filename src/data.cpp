@@ -110,7 +110,7 @@ void gamedata::set_directory (char *dir)
 }
 
 // data initialisation
-void data::init (char* d)
+bool data::init (char* d)
 {
 	DIR *dir;
     gzFile in = NULL;
@@ -128,6 +128,8 @@ void data::init (char* d)
     // Init the global namespace of the python interpreter
 #if defined (USE_PYTHON)
     py_module = import_module ("ins_modules");
+    if (!py_module)
+        return false;
  	globals = PyModule_GetDict (py_module);
 #endif
 
@@ -175,6 +177,8 @@ void data::init (char* d)
     PyDict_SetItemString (globals, "map_engine", pass_instance (map_engine, "mapengine"));
 #endif
 #endif
+
+    return true;
 }
 
 // Cleanup everything

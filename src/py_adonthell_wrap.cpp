@@ -8152,11 +8152,11 @@ static PyObject *_wrap_data_screen_update(PyObject *self, PyObject *args) {
 static PyObject *_wrap_data_init(PyObject *self, PyObject *args) {
     PyObject *resultobj;
     char *arg0 ;
+    bool result ;
     
     if(!PyArg_ParseTuple(args,"s:data_init",&arg0)) return NULL;
-    data::init(arg0);
-    Py_INCREF(Py_None);
-    resultobj = Py_None;
+    result = (bool )data::init(arg0);
+    resultobj = PyInt_FromLong((long)result);
     return resultobj;
 }
 

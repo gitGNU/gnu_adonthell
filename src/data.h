@@ -63,7 +63,7 @@ private:
 class data
 {
 public:
-    static void init (char*);               // Data initialisation
+    static bool init (char*);               // Data initialisation
     static void cleanup ();                 // Delete everything
     static bool load (u_int32);             // Load a game
     static gamedata* save (u_int32, char*); // Save the game

@@ -76,7 +76,8 @@ bool game::init ()
 #endif
 #if !defined(_EDIT_)
     // init the data subsystem
-    data::init (configuration->get_adonthellrc ());
+    if (!data::init (configuration->get_adonthellrc ()))
+      return false;
 #endif
     // voila :)
     return true;
