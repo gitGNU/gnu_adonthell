@@ -138,9 +138,8 @@ void win_manager::draw ()
     if (prev != NULL) prev->draw ();
   
     // on the way up, draw every window
-    for (list<win_base *>::iterator i = wnd_list.begin ();
-        i != wnd_list.end(); i++)
-        (*i)->draw ();
+    for (current = wnd_list.begin (); current != wnd_list.end(); current++)
+        (*current)->draw ();
 }
 
 // grab keyboard input
