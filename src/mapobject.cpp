@@ -569,12 +569,12 @@ void mapobject::update_editor_keys()
 
   if(testkey(SDLK_LEFT) && show_grid)
     {
-      if(SDL_GetModState()&KMOD_LSHIFT)
+      if(SDL_GetModState()&KMOD_SHIFT)
 	{ 
 	  if(part[currentpart].xoffset)
 	    set_part_xoffset(currentpart,part[currentpart].xoffset-1); 
 	}
-      else if(SDL_GetModState()&KMOD_LALT)
+      else if(SDL_GetModState() & (KMOD_META | KMOD_ALT))
 	{ 
 	  if((maptpl::get_length()-1)*MAPSQUARE_SIZE>=
 	     part[currentpart].get_length()+part[currentpart].xoffset)
@@ -585,25 +585,25 @@ void mapobject::update_editor_keys()
     }
   if(testkey(SDLK_RIGHT) && show_grid)
     {
-      if(SDL_GetModState()&KMOD_LSHIFT)
+      if(SDL_GetModState()&KMOD_SHIFT)
 	{ 
 	  if(part[currentpart].xoffset+part[currentpart].get_length()<
 	     maptpl::length*MAPSQUARE_SIZE)
 	    set_part_xoffset(currentpart,part[currentpart].xoffset+1); 
 	}
-      else if(SDL_GetModState()&KMOD_LALT)
+      else if(SDL_GetModState() & (KMOD_META | KMOD_ALT))
 	{ maptpl::resize(maptpl::get_length()+1,maptpl::get_height()); }
       else
 	{ move_cursor_right(); must_upt_label_part=true;}
     }
   if(testkey(SDLK_UP) && show_grid)
     {
-      if(SDL_GetModState()&KMOD_LSHIFT)
+      if(SDL_GetModState()&KMOD_SHIFT)
 	{ 
 	  if(part[currentpart].yoffset)
 	    set_part_yoffset(currentpart,part[currentpart].yoffset-1);
 	}
-      else if(SDL_GetModState()&KMOD_LALT)
+      else if(SDL_GetModState() & (KMOD_META | KMOD_ALT))
 	{ 
 	  if((maptpl::get_height()-1)*MAPSQUARE_SIZE>=
 	     part[currentpart].get_height()+part[currentpart].yoffset)
@@ -614,13 +614,13 @@ void mapobject::update_editor_keys()
     }
   if(testkey(SDLK_DOWN) && show_grid)
     {
-      if(SDL_GetModState()&KMOD_LSHIFT)
+      if(SDL_GetModState()&KMOD_SHIFT)
 	{ 
 	  if(part[currentpart].yoffset+part[currentpart].get_height()<
 	     maptpl::height*MAPSQUARE_SIZE)
 	    set_part_yoffset(currentpart,part[currentpart].yoffset+1); 
 	}
-      else if(SDL_GetModState()&KMOD_LALT)
+      else if(SDL_GetModState() & (KMOD_META | KMOD_ALT))
 	{ maptpl::resize(maptpl::get_length(),maptpl::get_height()+1); }
       else
 	{ move_cursor_down(); must_upt_label_part=true;}

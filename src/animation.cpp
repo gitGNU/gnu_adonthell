@@ -845,7 +845,7 @@ void animation::update_editor_keys()
     {
       if(mode==IMAGE) select_image(increase_image(currentimage));
       if((mode==FRAME)&&(!play_flag))
-	if(!(SDL_GetModState()&KMOD_LSHIFT))
+	if(!(SDL_GetModState()&KMOD_SHIFT))
 	  {select_frame(increase_frame(currentframe));}
 	else set_frame_gapx(currentframe,frame[currentframe].gapx+1);	    
     }
@@ -854,7 +854,7 @@ void animation::update_editor_keys()
     {
       if(mode==IMAGE) select_image(decrease_image(currentimage));
       if((mode==FRAME)&&(!play_flag))
-	if(!(SDL_GetModState()&KMOD_LSHIFT))
+	if(!(SDL_GetModState()&KMOD_SHIFT))
 	  {select_frame(decrease_frame(currentframe));}
      	else set_frame_gapx(currentframe,frame[currentframe].gapx-1);
     }
@@ -887,7 +887,7 @@ void animation::update_editor_keys()
 
   if(input::has_been_pushed(SDLK_c))
     {
-      if(SDL_GetModState()&&KMOD_LCTRL)
+      if(SDL_GetModState()&&KMOD_CTRL)
 	{
 	  if(mode==IMAGE)
 	    *clipboard=t_frame[currentimage];
@@ -898,7 +898,7 @@ void animation::update_editor_keys()
 
   if(input::has_been_pushed(SDLK_v))
     {
-      if(SDL_GetModState()&&KMOD_LCTRL)
+      if(SDL_GetModState()&&KMOD_CTRL)
 	{
 	  if(mode==IMAGE)
 	    t_frame[currentimage]=*clipboard;
@@ -912,7 +912,7 @@ void animation::update_editor_keys()
 
   if(input::has_been_pushed(SDLK_b))
     {
-      if(SDL_GetModState()&&KMOD_LCTRL)
+      if(SDL_GetModState()&&KMOD_CTRL)
 	{
 	  if(mode==IMAGE)
 	    insert_image(*clipboard,nbr_of_images);
@@ -945,12 +945,12 @@ void animation::update_editor_keys()
 		       decrease_image(frame[currentframe].imagenbr));
 
   if(testkey(SDLK_UP)&&mode==FRAME&&!play_flag) 
-    if(!(SDL_GetModState()&KMOD_LSHIFT))
+    if(!(SDL_GetModState()&KMOD_SHIFT))
       {set_frame_delay(currentframe,frame[currentframe].delay+1);}
     else set_frame_gapy(currentframe,frame[currentframe].gapy-1);
 
   if(testkey(SDLK_DOWN)&&mode==FRAME&&!play_flag) 
-    if(!(SDL_GetModState()&KMOD_LSHIFT))
+    if(!(SDL_GetModState()&KMOD_SHIFT))
       {set_frame_delay(currentframe,frame[currentframe].delay-1);}
     else set_frame_gapy(currentframe,frame[currentframe].gapy+1);
 

@@ -456,12 +456,12 @@ void mapcharacter::update_editor_keys()
 
   if(testkey(SDLK_LEFT) && show_grid)
     {
-      if(SDL_GetModState()&KMOD_LSHIFT)
+      if(SDL_GetModState()&KMOD_SHIFT)
 	{ 
 	  if(anim[current_move]->xoffset)
 	    set_anim_xoffset(current_move,anim[current_move]->xoffset-1); 
 	}
-      else if(SDL_GetModState()&KMOD_LALT)
+      else if(SDL_GetModState() & (KMOD_META | KMOD_ALT))
 	{ 
 	  if((maptpl::get_length()-1)*MAPSQUARE_SIZE>=
 	     anim[current_move]->get_length()+anim[current_move]->xoffset)
@@ -472,25 +472,25 @@ void mapcharacter::update_editor_keys()
     }
   if(testkey(SDLK_RIGHT) && show_grid)
     {
-      if(SDL_GetModState()&KMOD_LSHIFT)
+      if(SDL_GetModState()&KMOD_SHIFT)
 	{ 
 	  if(anim[current_move]->xoffset+anim[current_move]->get_length()<
 	     maptpl::length*MAPSQUARE_SIZE)
 	    set_anim_xoffset(current_move,anim[current_move]->xoffset+1); 
 	}
-      else if(SDL_GetModState()&KMOD_LALT)
+      else if(SDL_GetModState() & (KMOD_META | KMOD_ALT))
 	{ maptpl::resize(maptpl::get_length()+1,maptpl::get_height()); }
       else
 	{ move_cursor_right(); }
     }
   if(testkey(SDLK_UP) && show_grid)
     {
-      if(SDL_GetModState()&KMOD_LSHIFT)
+      if(SDL_GetModState()&KMOD_SHIFT)
 	{ 
 	  if(anim[current_move]->yoffset)
 	    set_anim_yoffset(current_move,anim[current_move]->yoffset-1);
 	}
-      else if(SDL_GetModState()&KMOD_LALT)
+      else if(SDL_GetModState() & (KMOD_META | KMOD_ALT))
 	{ 
 	  if((maptpl::get_height()-1)*MAPSQUARE_SIZE>=
 	     anim[current_move]->get_height()+anim[current_move]->yoffset)
@@ -501,13 +501,13 @@ void mapcharacter::update_editor_keys()
     }
   if(testkey(SDLK_DOWN) && show_grid)
     {
-      if(SDL_GetModState()&KMOD_LSHIFT)
+      if(SDL_GetModState()&KMOD_SHIFT)
 	{ 
 	  if(anim[current_move]->yoffset+anim[current_move]->get_height()<
 	     maptpl::height*MAPSQUARE_SIZE)
 	    set_anim_yoffset(current_move,anim[current_move]->yoffset+1); 
 	}
-      else if(SDL_GetModState()&KMOD_LALT)
+      else if(SDL_GetModState() & (KMOD_META | KMOD_ALT))
 	{ maptpl::resize(maptpl::get_length(),maptpl::get_height()+1); }
       else
 	{ move_cursor_down(); }

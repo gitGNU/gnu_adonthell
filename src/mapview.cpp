@@ -803,13 +803,13 @@ void mapview::update_editor_keys()
     move_cursor_down();
   if(testkey(SDLK_KP_PLUS))
     {
-      if(SDL_GetModState()&KMOD_LSHIFT)
+      if(SDL_GetModState()&KMOD_SHIFT)
 	increase_obj_here();
       else increase_currentobj();
     }
   if(testkey(SDLK_KP_MINUS))
     {
-      if(SDL_GetModState()&KMOD_LSHIFT)
+      if(SDL_GetModState()&KMOD_SHIFT)
 	decrease_obj_here();
       else decrease_currentobj();
     }
