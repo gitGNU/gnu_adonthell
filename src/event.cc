@@ -25,7 +25,7 @@
 #include <algorithm>
 
 #include "fileops.h"
-#include "python.h"
+#include "python_class.h"
 #include "event.h"
 
 // Array with callbacks to return a newly instanciated event

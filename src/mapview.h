@@ -28,7 +28,7 @@
 #define MAPVIEW_H_
 
 #include "landmap.h"
-#include "python.h"
+#include "python_class.h"
 #include <list>
 
 

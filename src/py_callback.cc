@@ -24,7 +24,7 @@
 
 
 #include "py_callback.h"
-#include "python.h"
+#include "python_class.h"
 #include <iostream.h>
 
 py_callback::py_callback (PyObject *func, PyObject *args)

@@ -17,14 +17,16 @@
  * @file   python.h
  * @author Kai Sterker <kaisterker@linuxgames.com>
  * 
- * @brief  Defines the python class.
+ * @brief  Defines the python class. This file is named this way
+ *         so it doesn't conflicts with Python.h Python's include
+ *         file on non-case aware systems.
  * 
  * 
  */
  
 
-#ifndef PYTHON_H__
-#define PYTHON_H__
+#ifndef PYTHON_CLASS_H__
+#define PYTHON_CLASS_H__
 
 #include "Python.h"
 #include "compile.h"
@@ -109,4 +111,4 @@ namespace data
 }
 #endif
 
-#endif // PYTHON_H__
+#endif // PYTHON_CLASS_H__

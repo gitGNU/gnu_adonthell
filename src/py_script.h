@@ -30,7 +30,7 @@ Part of the Adonthell Project http://adonthell.linuxgames.com
 
 
 #include <string>
-#include "python.h"
+#include "python_class.h"
 
 
 using namespace std; 

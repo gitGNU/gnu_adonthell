@@ -14,7 +14,7 @@
 
 
 /**
- * @file   python.cc
+ * @file   python_class.cc
  * @author Kai Sterker <kaisterker@linuxgames.com>
  * 
  * @brief  Declares the python class.
@@ -22,7 +22,7 @@
  * 
  */
 
-#include "python.h"
+#include "python_class.h"
 #include <iostream>
  
 PyObject * data::globals; 

@@ -17,7 +17,7 @@
 #include <getopt.h>
 
 #include "game.h"
-#include "python.h"
+#include "python_class.h"
 
 using namespace std; 
 

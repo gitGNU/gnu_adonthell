@@ -249,8 +249,12 @@ int config::read_adonthellrc ()
     //     config *c;
 
     // try to create that directory in case it dosn't exist
+#ifdef WIN32
+    mkdir (adonthellrc.c_str ());
+#else
     mkdir (adonthellrc.c_str (), 0700);
-
+#endif
+    
     // prefsin is declared in lex.prefs.c
     prefsin = fopen (fname.c_str (), "r");
 

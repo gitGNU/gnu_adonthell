@@ -17,10 +17,10 @@
  */ 
 
  
-#ifndef _types_h
-#define _types_h 
+#ifndef TYPES_H__
+#define TYPES_H__
 
-#include <SDL/SDL.h>
+#include "SDL.h"
 
 // We should put ifdefs here to put the correct int values accordingly to the system type
 

@@ -30,7 +30,7 @@
 #include <sys/stat.h>
 
 #include "gamedata.h"
-#include "python.h"
+#include "python_class.h"
 
 vector<gamedata*> gamedata::saves;       // The list of available savegames
 string gamedata::user_data_dir_;         // The user's private adonthell directory
@@ -219,8 +219,12 @@ bool gamedata::save (u_int32 pos, string desc)
             filepath += "/" + game_name + "-save-";
             filepath += t;
             
+#ifdef WIN32
+            success = mkdir (filepath.c_str());
+#else
             success = mkdir (filepath.c_str(), 0700);
-
+#endif
+            
             // prevent infinite loop if we can't write to the directory
             if (pos >= 1000) 
             {

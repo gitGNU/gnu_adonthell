@@ -28,7 +28,7 @@
 #include "character.h"
 #include "input.h"
 #include "image.h"
-#include "python.h"
+#include "python_class.h"
 #include "input.h"
 #include "dialog_engine.h"
 #include "win_manager.h"

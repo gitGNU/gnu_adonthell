@@ -26,7 +26,7 @@
  */
 
 
-#include "python.h"
+#include "python_class.h"
 #include "types.h"
 #include <vector>
  

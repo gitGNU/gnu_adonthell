@@ -30,7 +30,7 @@
 
 #include "prefs.h"
 #include "gamedata.h"
-#include "python.h"
+#include "python_class.h"
 
 typedef
 enum

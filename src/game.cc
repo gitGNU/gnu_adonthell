@@ -22,7 +22,7 @@
 #include "quest.h"
 #include "mapengine.h"
 
-#include "python.h"
+#include "python_class.h"
  
 #include "audio.h"
 
