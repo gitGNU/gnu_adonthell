@@ -20,6 +20,7 @@
 #include "animation_off.h"
 #include "maptpl.h"
 #include "landmap.h"
+#include "py_inc.h"
 
 #ifdef _EDIT_
 #include "mapselect.h"
@@ -52,6 +53,8 @@
 #define NO_MOVE 65535
 
 class mapview;
+
+struct PyCodeObject;
 
 class mapcharacter : public maptpl
 {
@@ -107,6 +110,9 @@ class mapcharacter : public maptpl
   landmap * refmap;
   
   u_int16 length, height;
+
+  PyObject * locals;         // Locals that belong to that character
+  PyCodeObject * schedule;   // The character's schedule
 
 #ifdef _EDIT_
   char label_txt[500];

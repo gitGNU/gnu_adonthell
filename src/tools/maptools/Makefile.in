@@ -67,15 +67,29 @@ SDL_CONFIG = @SDL_CONFIG@
 SDL_LIBS = @SDL_LIBS@
 VERSION = @VERSION@
 
-bin_PROGRAMS = pydonthell
+bin_PROGRAMS = animedit mapobjedit mapcharedit mapedit
 
-pydonthell_SOURCES = pydonthell.cpp
+animedit_SOURCES = animedit.cpp
 
-LDADD = ../../animation.o ../../animation_off.o ../../audio.o ../../character.o ../../data.o ../../data_screen.o ../../dialog.o ../../dialog_engine.o ../../drawing_area.o ../../event.o ../../fileops.o ../../game.o ../../gametime.o ../../image.o ../../input.o ../../lex.prefs.o ../../mapselect.o ../../maptpl.o ../../mapobject.o ../../mapcharacter.o ../../landmap.o ../../mapview.o ../../pnm.o ../../prefs.o ../../py_character_wrap.o ../../py_landmap_wrap.o ../../py_input_wrap.o ../../py_mapview_wrap.o ../../py_dialog_engine_wrap.o ../../py_inc.o ../../py_modules.o ../../py_quest_wrap.o ../../py_screen_wrap.o ../../py_image_wrap.o ../../quest.o ../../screen.o ../../storage.o ../../win_base.o ../../win_border.o ../../win_container.o ../../win_font.o ../../win_theme.o ../../win_scrolled.o ../../win_background.o ../../win_scrollbar.o ../../win_file.o ../../win_image.o ../../win_label.o ../../win_select.o ../../win_write.o ../../yarg.cc ../../py_win_font_wrap.o ../../py_win_theme_wrap.o ../../py_win_base_wrap.o ../../py_win_label_wrap.o ../../py_win_container_wrap.o ../../py_audio_wrap.o ../../py_win_image_wrap.o
+animedit_LDADD = animation.o animation_off.o data.o event.o drawing_area.o fileops.o game.o gametime.o image.o input.o lex.prefs.o pnm.o prefs.o character.o screen.o storage.o py_inc.o quest.o win_base.o win_border.o win_container.o win_font.o win_theme.o win_scrolled.o win_background.o win_scrollbar.o win_file.o win_image.o win_label.o win_select.o win_write.o win_query.o win_info.o win_file_select.o yarg.o
 
 
-# Evil, but it works...
-CPPFLAGS =  -I../..
+mapobjedit_SOURCES = mapobjedit.cpp
+
+mapobjedit_LDADD = animation.o animation_off.o data.o event.o drawing_area.o fileops.o game.o gametime.o image.o input.o lex.prefs.o pnm.o prefs.o mapselect.o maptpl.o mapobject.o character.o screen.o storage.o py_inc.o quest.o win_base.o win_border.o win_container.o win_font.o win_theme.o win_scrolled.o win_background.o win_scrollbar.o win_file.o win_image.o win_label.o win_select.o win_write.o win_query.o win_info.o win_file_select.o yarg.o
+
+
+mapcharedit_SOURCES = mapcharedit.cpp
+
+mapcharedit_LDADD = animation.o animation_off.o data.o event.o drawing_area.o fileops.o game.o gametime.o image.o input.o lex.prefs.o pnm.o prefs.o mapselect.o maptpl.o screen.o storage.o py_inc.o quest.o win_base.o win_border.o win_container.o win_font.o win_theme.o win_scrolled.o mapcharacter.o character.o mapobject.o landmap.o mapview.o win_background.o win_scrollbar.o win_file.o win_image.o win_label.o win_select.o win_write.o win_query.o win_info.o win_file_select.o yarg.o
+
+
+mapedit_SOURCES = mapedit.cpp
+
+mapedit_LDADD = animation.o animation_off.o data.o event.o drawing_area.o fileops.o game.o gametime.o image.o input.o lex.prefs.o mapselect.o maptpl.o mapobject.o mapcharacter.o landmap.o character.o mapview.o pnm.o prefs.o screen.o storage.o py_inc.o quest.o win_base.o win_border.o win_container.o win_font.o win_theme.o win_scrolled.o win_background.o win_scrollbar.o win_file.o win_image.o win_label.o win_select.o win_write.o win_query.o win_info.o win_file_select.o yarg.o
+
+
+CPPFLAGS =  -I../.. -D_EDIT_
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = ../../../header.h
 CONFIG_CLEAN_FILES = 
@@ -85,28 +99,44 @@ PROGRAMS =  $(bin_PROGRAMS)
 DEFS = @DEFS@ -I. -I$(srcdir) -I../../..
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
-pydonthell_OBJECTS =  pydonthell.o
-pydonthell_LDADD = $(LDADD)
-pydonthell_DEPENDENCIES =  ../../animation.o ../../animation_off.o \
-../../audio.o ../../character.o ../../data.o ../../data_screen.o \
-../../dialog.o ../../dialog_engine.o ../../drawing_area.o ../../event.o \
-../../fileops.o ../../game.o ../../gametime.o ../../image.o \
-../../input.o ../../lex.prefs.o ../../mapselect.o ../../maptpl.o \
-../../mapobject.o ../../mapcharacter.o ../../landmap.o ../../mapview.o \
-../../pnm.o ../../prefs.o ../../py_character_wrap.o \
-../../py_landmap_wrap.o ../../py_input_wrap.o ../../py_mapview_wrap.o \
-../../py_dialog_engine_wrap.o ../../py_inc.o ../../py_modules.o \
-../../py_quest_wrap.o ../../py_screen_wrap.o ../../py_image_wrap.o \
-../../quest.o ../../screen.o ../../storage.o ../../win_base.o \
-../../win_border.o ../../win_container.o ../../win_font.o \
-../../win_theme.o ../../win_scrolled.o ../../win_background.o \
-../../win_scrollbar.o ../../win_file.o ../../win_image.o \
-../../win_label.o ../../win_select.o ../../win_write.o ../../yarg.cc \
-../../py_win_font_wrap.o ../../py_win_theme_wrap.o \
-../../py_win_base_wrap.o ../../py_win_label_wrap.o \
-../../py_win_container_wrap.o ../../py_audio_wrap.o \
-../../py_win_image_wrap.o
-pydonthell_LDFLAGS = 
+animedit_OBJECTS =  animedit.o
+animedit_DEPENDENCIES =  animation.o animation_off.o data.o event.o \
+drawing_area.o fileops.o game.o gametime.o image.o input.o lex.prefs.o \
+pnm.o prefs.o character.o screen.o storage.o py_inc.o quest.o \
+win_base.o win_border.o win_container.o win_font.o win_theme.o \
+win_scrolled.o win_background.o win_scrollbar.o win_file.o win_image.o \
+win_label.o win_select.o win_write.o win_query.o win_info.o \
+win_file_select.o yarg.o
+animedit_LDFLAGS = 
+mapobjedit_OBJECTS =  mapobjedit.o
+mapobjedit_DEPENDENCIES =  animation.o animation_off.o data.o event.o \
+drawing_area.o fileops.o game.o gametime.o image.o input.o lex.prefs.o \
+pnm.o prefs.o mapselect.o maptpl.o mapobject.o character.o screen.o \
+storage.o py_inc.o quest.o win_base.o win_border.o win_container.o \
+win_font.o win_theme.o win_scrolled.o win_background.o win_scrollbar.o \
+win_file.o win_image.o win_label.o win_select.o win_write.o win_query.o \
+win_info.o win_file_select.o yarg.o
+mapobjedit_LDFLAGS = 
+mapcharedit_OBJECTS =  mapcharedit.o
+mapcharedit_DEPENDENCIES =  animation.o animation_off.o data.o event.o \
+drawing_area.o fileops.o game.o gametime.o image.o input.o lex.prefs.o \
+pnm.o prefs.o mapselect.o maptpl.o screen.o storage.o py_inc.o quest.o \
+win_base.o win_border.o win_container.o win_font.o win_theme.o \
+win_scrolled.o mapcharacter.o character.o mapobject.o landmap.o \
+mapview.o win_background.o win_scrollbar.o win_file.o win_image.o \
+win_label.o win_select.o win_write.o win_query.o win_info.o \
+win_file_select.o yarg.o
+mapcharedit_LDFLAGS = 
+mapedit_OBJECTS =  mapedit.o
+mapedit_DEPENDENCIES =  animation.o animation_off.o data.o event.o \
+drawing_area.o fileops.o game.o gametime.o image.o input.o lex.prefs.o \
+mapselect.o maptpl.o mapobject.o mapcharacter.o landmap.o character.o \
+mapview.o pnm.o prefs.o screen.o storage.o py_inc.o quest.o win_base.o \
+win_border.o win_container.o win_font.o win_theme.o win_scrolled.o \
+win_background.o win_scrollbar.o win_file.o win_image.o win_label.o \
+win_select.o win_write.o win_query.o win_info.o win_file_select.o \
+yarg.o
+mapedit_LDFLAGS = 
 CXXFLAGS = @CXXFLAGS@
 CXXCOMPILE = $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
 CXXLD = $(CXX)
@@ -118,15 +148,16 @@ DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 
 TAR = gtar
 GZIP_ENV = --best
-DEP_FILES =  .deps/pydonthell.P
-SOURCES = $(pydonthell_SOURCES)
-OBJECTS = $(pydonthell_OBJECTS)
+DEP_FILES =  .deps/animedit.P .deps/mapcharedit.P .deps/mapedit.P \
+.deps/mapobjedit.P
+SOURCES = $(animedit_SOURCES) $(mapobjedit_SOURCES) $(mapcharedit_SOURCES) $(mapedit_SOURCES)
+OBJECTS = $(animedit_OBJECTS) $(mapobjedit_OBJECTS) $(mapcharedit_OBJECTS) $(mapedit_OBJECTS)
 
 all: all-redirect
 .SUFFIXES:
 .SUFFIXES: .S .c .cpp .o .s
 $(srcdir)/Makefile.in: Makefile.am $(top_srcdir)/configure.in $(ACLOCAL_M4) 
-	cd $(top_srcdir) && $(AUTOMAKE) --gnu src/tools/pydonthell/Makefile
+	cd $(top_srcdir) && $(AUTOMAKE) --gnu src/tools/maptools/Makefile
 
 Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status $(BUILT_SOURCES)
 	cd $(top_builddir) \
@@ -174,9 +205,21 @@ distclean-compile:
 
 maintainer-clean-compile:
 
-pydonthell: $(pydonthell_OBJECTS) $(pydonthell_DEPENDENCIES)
-	@rm -f pydonthell
-	$(CXXLINK) $(pydonthell_LDFLAGS) $(pydonthell_OBJECTS) $(pydonthell_LDADD) $(LIBS)
+animedit: $(animedit_OBJECTS) $(animedit_DEPENDENCIES)
+	@rm -f animedit
+	$(CXXLINK) $(animedit_LDFLAGS) $(animedit_OBJECTS) $(animedit_LDADD) $(LIBS)
+
+mapobjedit: $(mapobjedit_OBJECTS) $(mapobjedit_DEPENDENCIES)
+	@rm -f mapobjedit
+	$(CXXLINK) $(mapobjedit_LDFLAGS) $(mapobjedit_OBJECTS) $(mapobjedit_LDADD) $(LIBS)
+
+mapcharedit: $(mapcharedit_OBJECTS) $(mapcharedit_DEPENDENCIES)
+	@rm -f mapcharedit
+	$(CXXLINK) $(mapcharedit_LDFLAGS) $(mapcharedit_OBJECTS) $(mapcharedit_LDADD) $(LIBS)
+
+mapedit: $(mapedit_OBJECTS) $(mapedit_DEPENDENCIES)
+	@rm -f mapedit
+	$(CXXLINK) $(mapedit_LDFLAGS) $(mapedit_OBJECTS) $(mapedit_LDADD) $(LIBS)
 .cpp.o:
 	$(CXXCOMPILE) -c $<
 
@@ -211,14 +254,14 @@ maintainer-clean-tags:
 
 distdir = $(top_builddir)/$(PACKAGE)-$(VERSION)/$(subdir)
 
-subdir = src/tools/pydonthell
+subdir = src/tools/maptools
 
 distdir: $(DISTFILES)
 	here=`cd $(top_builddir) && pwd`; \
 	top_distdir=`cd $(top_distdir) && pwd`; \
 	distdir=`cd $(distdir) && pwd`; \
 	cd $(top_srcdir) \
-	  && $(AUTOMAKE) --include-deps --build-dir=$$here --srcdir-name=$(top_srcdir) --output-dir=$$top_distdir --gnu src/tools/pydonthell/Makefile
+	  && $(AUTOMAKE) --include-deps --build-dir=$$here --srcdir-name=$(top_srcdir) --output-dir=$$top_distdir --gnu src/tools/maptools/Makefile
 	@for file in $(DISTFILES); do \
 	  d=$(srcdir); \
 	  if test -d $$d/$$file; then \
@@ -353,68 +396,134 @@ mostlyclean-generic distclean-generic clean-generic \
 maintainer-clean-generic clean mostlyclean distclean maintainer-clean
 
 
-py_audio_wrap.cpp : py_audio.i
-	swig -python -shadow -c++ -make_default -o $*.cpp $< 
-	@mv audio.py ../scripts
+animation.o : ../../animation.cpp
+	$(CXXCOMPILE) -c $< -o $@
 
-py_input_wrap.cpp : py_input.i
-	swig -python -shadow -c++ -make_default -o $*.cpp $< 
-	@mv input.py ../scripts
+animation_off.o : ../../animation_off.cpp
+	$(CXXCOMPILE) -c $< -o $@
 
-py_screen_wrap.cpp : py_screen.i
-	swig -python -shadow -c++ -make_default -o $*.cpp $< 
-	@mv screen.py ../scripts
+audio.o : ../../audio.cpp
+	$(CXXCOMPILE) -c $< -o $@
 
-py_image_wrap.cpp : py_image.i
-	swig -python -shadow -c++ -make_default -o $*.cpp $< 
-	@mv image.py ../scripts
+data.o : ../../data.cpp
+	$(CXXCOMPILE) -c $< -o $@
 
-py_landmap_wrap.cpp : py_landmap.i
-	swig -python -shadow -c++ -make_default -o $*.cpp $< 
-	@mv landmap.py ../scripts
+event.o : ../../event.cpp
+	$(CXXCOMPILE) -c $< -o $@
 
-py_mapview_wrap.cpp : py_mapview.i
-	swig -python -shadow -c++ -make_default -o $*.cpp $< 
-	@mv mapview.py ../scripts
+drawing_area.o : ../../drawing_area.cpp
+	$(CXXCOMPILE) -c $< -o $@
 
-py_win_font_wrap.cpp : py_win_font.i
-	swig -python -shadow -c++ -make_default -o $*.cpp $< 
-	@mv win_font.py ../scripts
+fileops.o : ../../fileops.cpp
+	$(CXXCOMPILE) -c $< -o $@
 
-py_win_theme_wrap.cpp : py_win_theme.i
-	swig -python -shadow -c++ -make_default -o $*.cpp $< 
-	@mv win_theme.py ../scripts
+game.o : ../../game.cpp
+	$(CXXCOMPILE) -c $< -o $@
 
-py_win_base_wrap.cpp : py_win_base.i
-	swig -python -shadow -c++ -make_default -o $*.cpp $< 
-	@mv win_base.py ../scripts
+gametime.o : ../../gametime.cpp
+	$(CXXCOMPILE) -c $< -o $@
 
-py_win_label_wrap.cpp : py_win_label.i
-	swig -python -shadow -c++ -make_default -o $*.cpp $< 
-	@mv win_label.py ../scripts
+image.o : ../../image.cpp
+	$(CXXCOMPILE) -c $< -o $@
 
-py_win_container_wrap.cpp : py_win_container.i
-	swig -python -shadow -c++ -make_default -o $*.cpp $< 
-	@mv win_container.py ../scripts
+input.o : ../../input.cpp
+	$(CXXCOMPILE) -c $< -o $@
 
-py_dialog_engine_wrap.cpp : py_dialog_engine.i
-	swig -python -shadow -c++ -make_default -o $*.cpp $< 
-	@mv dialog_engine.py ../scripts
+lex.prefs.o : ../../lex.prefs.cpp
+	$(CXXCOMPILE) -c $< -o $@
 
-py_character_wrap.cpp : py_character.i
-	swig -python -shadow -c++ -make_default -o $*.cpp $< 
-	@mv character.py ../scripts
+../../lex.prefs.o : ../../prefs.l
+	flex -o../../lex.prefs.cpp $<
 
-py_quest_wrap.cpp : py_quest.i
-	swig -python -shadow -c++ -make_default -o $*.cpp $< 
-	@mv quest.py ../scripts
+mapselect.o : ../../mapselect.cpp
+	$(CXXCOMPILE) -c $< -o $@
 
-py_baseitem_wrap.cpp : py_baseitem.i
-	swig -python -shadow -c++ -o $*.cpp $< 
-	@mv baseitem.py ../scripts
+maptpl.o : ../../maptpl.cpp
+	$(CXXCOMPILE) -c $< -o $@
 
-lex.prefs.cpp : prefs.l
-	flex -olex.prefs.cpp $<
+mapobject.o : ../../mapobject.cpp
+	$(CXXCOMPILE) -c $< -o $@
+
+mapcharacter.o : ../../mapcharacter.cpp
+	$(CXXCOMPILE) -c $< -o $@
+
+character.o : ../../character.cpp
+	$(CXXCOMPILE) -c $< -o $@
+
+landmap.o : ../../landmap.cpp
+	$(CXXCOMPILE) -c $< -o $@
+
+mapview.o : ../../mapview.cpp
+	$(CXXCOMPILE) -c $< -o $@
+
+pnm.o : ../../pnm.cpp
+	$(CXXCOMPILE) -c $< -o $@
+
+prefs.o : ../../prefs.cpp
+	$(CXXCOMPILE) -c $< -o $@
+
+screen.o : ../../screen.cpp
+	$(CXXCOMPILE) -c $< -o $@
+
+storage.o : ../../storage.cpp
+	$(CXXCOMPILE) -c $< -o $@
+
+py_inc.o : ../../py_inc.cpp
+	$(CXXCOMPILE) -c $< -o $@
+
+quest.o : ../../quest.cpp
+	$(CXXCOMPILE) -c $< -o $@
+
+win_base.o : ../../win_base.cpp
+	$(CXXCOMPILE) -c $< -o $@
+
+win_border.o : ../../win_border.cpp
+	$(CXXCOMPILE) -c $< -o $@
+
+win_container.o : ../../win_container.cpp
+	$(CXXCOMPILE) -c $< -o $@
+
+win_font.o : ../../win_font.cpp
+	$(CXXCOMPILE) -c $< -o $@
+
+win_theme.o : ../../win_theme.cpp
+	$(CXXCOMPILE) -c $< -o $@
+
+win_scrolled.o : ../../win_scrolled.cpp
+	$(CXXCOMPILE) -c $< -o $@
+
+win_background.o : ../../win_background.cpp
+	$(CXXCOMPILE) -c $< -o $@
+
+win_scrollbar.o : ../../win_scrollbar.cpp
+	$(CXXCOMPILE) -c $< -o $@
+
+win_file.o : ../../win_file.cpp
+	$(CXXCOMPILE) -c $< -o $@
+
+win_image.o : ../../win_image.cpp
+	$(CXXCOMPILE) -c $< -o $@
+
+win_label.o : ../../win_label.cpp
+	$(CXXCOMPILE) -c $< -o $@
+
+win_select.o : ../../win_select.cpp
+	$(CXXCOMPILE) -c $< -o $@
+
+win_write.o : ../../win_write.cpp
+	$(CXXCOMPILE) -c $< -o $@
+
+win_query.o : ../../win_query.cpp
+	$(CXXCOMPILE) -c $< -o $@
+
+win_info.o : ../../win_info.cpp
+	$(CXXCOMPILE) -c $< -o $@
+
+win_file_select.o : ../../win_file_select.cpp
+	$(CXXCOMPILE) -c $< -o $@
+
+yarg.o : ../../yarg.cc
+	$(CXXCOMPILE) -c $< -o $@
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

@@ -1,3 +1,3 @@
-SUBDIRS=dlgedit pydonthell
+## Process this file with automake to produce Makefile.in
 
-all: dlgedit pydonthell
+SUBDIRS = dlgedit pydonthell maptools questedit charedit combat

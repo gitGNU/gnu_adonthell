@@ -830,6 +830,21 @@ static PyObject *_wrap_mapview_draw(PyObject *self, PyObject *args) {
 }
 
 
+static PyObject *_wrap_mapview_set_schedule(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    mapview *arg0 ;
+    char *arg1 ;
+    PyObject * argo0 =0 ;
+    
+    if(!PyArg_ParseTuple(args,"Os:mapview_set_schedule",&argo0,&arg1)) return NULL;
+    if ((SWIG_ConvertPtr(argo0,(void **) &arg0,SWIGTYPE_p_mapview,1)) == -1) return NULL;
+    arg0->set_schedule(arg1);
+    Py_INCREF(Py_None);
+    resultobj = Py_None;
+    return resultobj;
+}
+
+
 static PyMethodDef mapviewcMethods[] = {
 	 { "mapview_init", _wrap_mapview_init, METH_VARARGS },
 	 { "new_mapview", _wrap_new_mapview, METH_VARARGS },
@@ -853,6 +868,7 @@ static PyMethodDef mapviewcMethods[] = {
 	 { "mapview_resize", _wrap_mapview_resize, METH_VARARGS },
 	 { "mapview_update", _wrap_mapview_update, METH_VARARGS },
 	 { "mapview_draw", _wrap_mapview_draw, METH_VARARGS },
+	 { "mapview_set_schedule", _wrap_mapview_set_schedule, METH_VARARGS },
 	 { NULL, NULL }
 };
 

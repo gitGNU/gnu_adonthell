@@ -24,6 +24,7 @@ void mapcharacter::init()
     anim[i]=new animation_off;
   current_move=STAND_NORTH;
   ask_move=NO_MOVE;
+  locals=Py_BuildValue("");
 }
 
 void mapcharacter::clear()
@@ -392,6 +393,36 @@ void mapcharacter::calculate_dimensions()
 	height=th;
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #ifdef _EDIT_
 s_int8 mapcharacter::put(gzFile file)

@@ -59,6 +59,7 @@ bool game::init ()
 
     // init audio subsystem
 #ifdef SDL_MIXER
+#ifndef _EDIT_
     audio::init (configuration);
 
     /*    if (audio::is_initialized())
@@ -69,6 +70,7 @@ bool game::init ()
         printf ("Couldn't create audio thread: %s\n", SDL_GetError ());
         printf ("Audio will not be used\n");
 	}*/
+#endif
 #endif  
 
     // init input subsystem
@@ -100,13 +102,14 @@ game::~game ()
     
     // shutdown audio
 #ifdef SDL_MIXER
+#ifndef _EDIT_
     /*    if (audio_thread != NULL) 
     {
     SDL_KillThread (audio_thread);*/
         audio::cleanup ();
 	//    }
 #endif
-
+#endif
     // shutdown Python
 #ifndef _EDIT_
 	Py_Finalize ();

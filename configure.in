@@ -35,9 +35,9 @@ AM_PATH_SDL($SDL_VERSION,
 CFLAGS="$CFLAGS $SDL_CFLAGS"
 LIBS="$SDL_LIBS -lz"
 
-dnl**************************************************
-dnl Seems SDL 1.1.5+ uses 255 for opaque instead of 0
-dnl**************************************************
+dnl**********************************************
+dnl SDL 1.1.5+ uses 255 for opaque instead of 0
+dnl**********************************************
 
 if test "$SDL_CONFIG" != "no" ; then
     AC_MSG_CHECKING(whether to reverse alpha)
@@ -165,8 +165,14 @@ AC_SUBST(CXX) AC_SUBST(CXXFLAGS) AC_SUBST(LIBS) AC_SUBST(SUBDIRS)
   
 AC_OUTPUT([
 Makefile
+doc/Makefile
 src/Makefile
 src/tools/Makefile
 src/tools/pydonthell/Makefile
 src/tools/dlgedit/Makefile
+src/tools/dlgedit/examples/Makefile
+src/tools/maptools/Makefile
+src/tools/questedit/Makefile
+src/tools/charedit/Makefile
+src/tools/combat/Makefile
 ])

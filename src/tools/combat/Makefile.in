@@ -67,15 +67,9 @@ SDL_CONFIG = @SDL_CONFIG@
 SDL_LIBS = @SDL_LIBS@
 VERSION = @VERSION@
 
-bin_PROGRAMS = pydonthell
+bin_PROGRAMS = combat-test
 
-pydonthell_SOURCES = pydonthell.cpp
-
-LDADD = ../../animation.o ../../animation_off.o ../../audio.o ../../character.o ../../data.o ../../data_screen.o ../../dialog.o ../../dialog_engine.o ../../drawing_area.o ../../event.o ../../fileops.o ../../game.o ../../gametime.o ../../image.o ../../input.o ../../lex.prefs.o ../../mapselect.o ../../maptpl.o ../../mapobject.o ../../mapcharacter.o ../../landmap.o ../../mapview.o ../../pnm.o ../../prefs.o ../../py_character_wrap.o ../../py_landmap_wrap.o ../../py_input_wrap.o ../../py_mapview_wrap.o ../../py_dialog_engine_wrap.o ../../py_inc.o ../../py_modules.o ../../py_quest_wrap.o ../../py_screen_wrap.o ../../py_image_wrap.o ../../quest.o ../../screen.o ../../storage.o ../../win_base.o ../../win_border.o ../../win_container.o ../../win_font.o ../../win_theme.o ../../win_scrolled.o ../../win_background.o ../../win_scrollbar.o ../../win_file.o ../../win_image.o ../../win_label.o ../../win_select.o ../../win_write.o ../../yarg.cc ../../py_win_font_wrap.o ../../py_win_theme_wrap.o ../../py_win_base_wrap.o ../../py_win_label_wrap.o ../../py_win_container_wrap.o ../../py_audio_wrap.o ../../py_win_image_wrap.o
-
-
-# Evil, but it works...
-CPPFLAGS =  -I../..
+combat_test_SOURCES = combat-test.cpp melee.cpp yarg.cc
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = ../../../header.h
 CONFIG_CLEAN_FILES = 
@@ -83,30 +77,13 @@ PROGRAMS =  $(bin_PROGRAMS)
 
 
 DEFS = @DEFS@ -I. -I$(srcdir) -I../../..
+CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
-pydonthell_OBJECTS =  pydonthell.o
-pydonthell_LDADD = $(LDADD)
-pydonthell_DEPENDENCIES =  ../../animation.o ../../animation_off.o \
-../../audio.o ../../character.o ../../data.o ../../data_screen.o \
-../../dialog.o ../../dialog_engine.o ../../drawing_area.o ../../event.o \
-../../fileops.o ../../game.o ../../gametime.o ../../image.o \
-../../input.o ../../lex.prefs.o ../../mapselect.o ../../maptpl.o \
-../../mapobject.o ../../mapcharacter.o ../../landmap.o ../../mapview.o \
-../../pnm.o ../../prefs.o ../../py_character_wrap.o \
-../../py_landmap_wrap.o ../../py_input_wrap.o ../../py_mapview_wrap.o \
-../../py_dialog_engine_wrap.o ../../py_inc.o ../../py_modules.o \
-../../py_quest_wrap.o ../../py_screen_wrap.o ../../py_image_wrap.o \
-../../quest.o ../../screen.o ../../storage.o ../../win_base.o \
-../../win_border.o ../../win_container.o ../../win_font.o \
-../../win_theme.o ../../win_scrolled.o ../../win_background.o \
-../../win_scrollbar.o ../../win_file.o ../../win_image.o \
-../../win_label.o ../../win_select.o ../../win_write.o ../../yarg.cc \
-../../py_win_font_wrap.o ../../py_win_theme_wrap.o \
-../../py_win_base_wrap.o ../../py_win_label_wrap.o \
-../../py_win_container_wrap.o ../../py_audio_wrap.o \
-../../py_win_image_wrap.o
-pydonthell_LDFLAGS = 
+combat_test_OBJECTS =  combat-test.o melee.o yarg.o
+combat_test_LDADD = $(LDADD)
+combat_test_DEPENDENCIES = 
+combat_test_LDFLAGS = 
 CXXFLAGS = @CXXFLAGS@
 CXXCOMPILE = $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
 CXXLD = $(CXX)
@@ -118,15 +95,15 @@ DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 
 TAR = gtar
 GZIP_ENV = --best
-DEP_FILES =  .deps/pydonthell.P
-SOURCES = $(pydonthell_SOURCES)
-OBJECTS = $(pydonthell_OBJECTS)
+DEP_FILES =  .deps/combat-test.P .deps/melee.P .deps/yarg.P
+SOURCES = $(combat_test_SOURCES)
+OBJECTS = $(combat_test_OBJECTS)
 
 all: all-redirect
 .SUFFIXES:
-.SUFFIXES: .S .c .cpp .o .s
+.SUFFIXES: .S .c .cc .cpp .o .s
 $(srcdir)/Makefile.in: Makefile.am $(top_srcdir)/configure.in $(ACLOCAL_M4) 
-	cd $(top_srcdir) && $(AUTOMAKE) --gnu src/tools/pydonthell/Makefile
+	cd $(top_srcdir) && $(AUTOMAKE) --gnu src/tools/combat/Makefile
 
 Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status $(BUILT_SOURCES)
 	cd $(top_builddir) \
@@ -174,9 +151,11 @@ distclean-compile:
 
 maintainer-clean-compile:
 
-pydonthell: $(pydonthell_OBJECTS) $(pydonthell_DEPENDENCIES)
-	@rm -f pydonthell
-	$(CXXLINK) $(pydonthell_LDFLAGS) $(pydonthell_OBJECTS) $(pydonthell_LDADD) $(LIBS)
+combat-test: $(combat_test_OBJECTS) $(combat_test_DEPENDENCIES)
+	@rm -f combat-test
+	$(CXXLINK) $(combat_test_LDFLAGS) $(combat_test_OBJECTS) $(combat_test_LDADD) $(LIBS)
+.cc.o:
+	$(CXXCOMPILE) -c $<
 .cpp.o:
 	$(CXXCOMPILE) -c $<
 
@@ -211,14 +190,14 @@ maintainer-clean-tags:
 
 distdir = $(top_builddir)/$(PACKAGE)-$(VERSION)/$(subdir)
 
-subdir = src/tools/pydonthell
+subdir = src/tools/combat
 
 distdir: $(DISTFILES)
 	here=`cd $(top_builddir) && pwd`; \
 	top_distdir=`cd $(top_distdir) && pwd`; \
 	distdir=`cd $(distdir) && pwd`; \
 	cd $(top_srcdir) \
-	  && $(AUTOMAKE) --include-deps --build-dir=$$here --srcdir-name=$(top_srcdir) --output-dir=$$top_distdir --gnu src/tools/pydonthell/Makefile
+	  && $(AUTOMAKE) --include-deps --build-dir=$$here --srcdir-name=$(top_srcdir) --output-dir=$$top_distdir --gnu src/tools/combat/Makefile
 	@for file in $(DISTFILES); do \
 	  d=$(srcdir); \
 	  if test -d $$d/$$file; then \
@@ -255,6 +234,25 @@ maintainer-clean-depend:
 %.lo: %.c
 	@echo '$(LTCOMPILE) -c $<'; \
 	$(LTCOMPILE) -Wp,-MD,.deps/$(*F).pp -c $<
+	@-sed -e 's/^\([^:]*\)\.o[ 	]*:/\1.lo \1.o :/' \
+	  < .deps/$(*F).pp > .deps/$(*F).P; \
+	tr ' ' '\012' < .deps/$(*F).pp \
+	  | sed -e 's/^\\$$//' -e '/^$$/ d' -e '/:$$/ d' -e 's/$$/ :/' \
+	    >> .deps/$(*F).P; \
+	rm -f .deps/$(*F).pp
+
+%.o: %.cc
+	@echo '$(CXXCOMPILE) -c $<'; \
+	$(CXXCOMPILE) -Wp,-MD,.deps/$(*F).pp -c $<
+	@-cp .deps/$(*F).pp .deps/$(*F).P; \
+	tr ' ' '\012' < .deps/$(*F).pp \
+	  | sed -e 's/^\\$$//' -e '/^$$/ d' -e '/:$$/ d' -e 's/$$/ :/' \
+	    >> .deps/$(*F).P; \
+	rm .deps/$(*F).pp
+
+%.lo: %.cc
+	@echo '$(LTCXXCOMPILE) -c $<'; \
+	$(LTCXXCOMPILE) -Wp,-MD,.deps/$(*F).pp -c $<
 	@-sed -e 's/^\([^:]*\)\.o[ 	]*:/\1.lo \1.o :/' \
 	  < .deps/$(*F).pp > .deps/$(*F).P; \
 	tr ' ' '\012' < .deps/$(*F).pp \
@@ -352,69 +350,6 @@ uninstall-am uninstall all-redirect all-am all installdirs \
 mostlyclean-generic distclean-generic clean-generic \
 maintainer-clean-generic clean mostlyclean distclean maintainer-clean
 
-
-py_audio_wrap.cpp : py_audio.i
-	swig -python -shadow -c++ -make_default -o $*.cpp $< 
-	@mv audio.py ../scripts
-
-py_input_wrap.cpp : py_input.i
-	swig -python -shadow -c++ -make_default -o $*.cpp $< 
-	@mv input.py ../scripts
-
-py_screen_wrap.cpp : py_screen.i
-	swig -python -shadow -c++ -make_default -o $*.cpp $< 
-	@mv screen.py ../scripts
-
-py_image_wrap.cpp : py_image.i
-	swig -python -shadow -c++ -make_default -o $*.cpp $< 
-	@mv image.py ../scripts
-
-py_landmap_wrap.cpp : py_landmap.i
-	swig -python -shadow -c++ -make_default -o $*.cpp $< 
-	@mv landmap.py ../scripts
-
-py_mapview_wrap.cpp : py_mapview.i
-	swig -python -shadow -c++ -make_default -o $*.cpp $< 
-	@mv mapview.py ../scripts
-
-py_win_font_wrap.cpp : py_win_font.i
-	swig -python -shadow -c++ -make_default -o $*.cpp $< 
-	@mv win_font.py ../scripts
-
-py_win_theme_wrap.cpp : py_win_theme.i
-	swig -python -shadow -c++ -make_default -o $*.cpp $< 
-	@mv win_theme.py ../scripts
-
-py_win_base_wrap.cpp : py_win_base.i
-	swig -python -shadow -c++ -make_default -o $*.cpp $< 
-	@mv win_base.py ../scripts
-
-py_win_label_wrap.cpp : py_win_label.i
-	swig -python -shadow -c++ -make_default -o $*.cpp $< 
-	@mv win_label.py ../scripts
-
-py_win_container_wrap.cpp : py_win_container.i
-	swig -python -shadow -c++ -make_default -o $*.cpp $< 
-	@mv win_container.py ../scripts
-
-py_dialog_engine_wrap.cpp : py_dialog_engine.i
-	swig -python -shadow -c++ -make_default -o $*.cpp $< 
-	@mv dialog_engine.py ../scripts
-
-py_character_wrap.cpp : py_character.i
-	swig -python -shadow -c++ -make_default -o $*.cpp $< 
-	@mv character.py ../scripts
-
-py_quest_wrap.cpp : py_quest.i
-	swig -python -shadow -c++ -make_default -o $*.cpp $< 
-	@mv quest.py ../scripts
-
-py_baseitem_wrap.cpp : py_baseitem.i
-	swig -python -shadow -c++ -o $*.cpp $< 
-	@mv baseitem.py ../scripts
-
-lex.prefs.cpp : prefs.l
-	flex -olex.prefs.cpp $<
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
