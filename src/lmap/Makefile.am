@@ -13,7 +13,7 @@ libmap_a_SOURCES = coordinates.cc placeable_area.cc \
 	moving.h object.h object_with_gfx.h character.h \
 	character_with_gfx.h landmap.h
 
-CPPFLAGS += -I$(srcdir)/.. $(SDL_DEFS) $(SDL_CFLAGS) $(PY_CFLAGS)
+CPPFLAGS = -I$(srcdir)/.. $(SDL_DEFS) $(SDL_CFLAGS) $(PY_CFLAGS)
 
 SWIGFLAGS = -I$(srcdir)/.. $(SDL_CFLAGS)
 

@@ -4,7 +4,7 @@ noinst_LIBRARIES = libaudio.a
 
 libaudio_a_SOURCES =
 
-CPPFLAGS += -I$(srcdir)/.. $(SDL_DEFS) $(SDL_CFLAGS) $(PY_CFLAGS)
+CPPFLAGS = -I$(srcdir)/.. $(SDL_DEFS) $(SDL_CFLAGS) $(PY_CFLAGS)
 
 SWIGFLAGS = -I$(srcdir)/.. $(SDL_CFLAGS)
 

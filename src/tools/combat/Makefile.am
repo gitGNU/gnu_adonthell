@@ -2,7 +2,7 @@
 
 bin_PROGRAMS = combat-test itemtest
 
-CPPFLAGS += $(SDL_DEFS) $(SDL_CFLAGS) $(PY_CFLAGS)
+CPPFLAGS = $(SDL_DEFS) $(SDL_CFLAGS) $(PY_CFLAGS)
 
 EXTRA_DIST = py_itemtest_wrap.cc py_itemtest.i
 

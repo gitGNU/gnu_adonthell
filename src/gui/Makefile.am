@@ -14,4 +14,4 @@ libgui_a_SOURCES = box.cc misc.cc container.cc label.cc \
 	background_ui.h 
 
 
-CPPFLAGS += -I$(srcdir)/.. $(SDL_DEFS) $(SDL_CFLAGS) $(FT2_CFLAGS) $(PY_CFLAGS)
+CPPFLAGS = -I$(srcdir)/.. $(SDL_DEFS) $(SDL_CFLAGS) $(FT2_CFLAGS) $(PY_CFLAGS)

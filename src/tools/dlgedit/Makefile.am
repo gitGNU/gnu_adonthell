@@ -67,7 +67,7 @@ dlgedit_SOURCES = \
     gui_tooltip.h
 
 # Evil, but it works...
-CPPFLAGS +=-I../.. -D_VERSION_=\"0.8pre1\" $(PY_CFLAGS) $(GTK_CFLAGS) $(SDL_CFLAGS)
+CPPFLAGS =-I../.. -D_VERSION_=\"0.8pre1\" $(PY_CFLAGS) $(GTK_CFLAGS) $(SDL_CFLAGS)
 
 SWIGFLAGS = -D_DLGEDIT_ -D_DEBUG_
 

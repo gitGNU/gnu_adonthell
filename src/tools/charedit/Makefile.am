@@ -14,4 +14,4 @@ mergechars_SOURCES = mergechars.cc
 mergechars_LDADD = ../../libadonthell.a $(GTK_LIBS)
 
 # Evil, but it works...
-CPPFLAGS +=-I../.. $(SDL_CFLAGS) $(GTK_CFLAGS) $(PY_CFLAGS)
+CPPFLAGS =-I../.. $(SDL_CFLAGS) $(GTK_CFLAGS) $(PY_CFLAGS)
