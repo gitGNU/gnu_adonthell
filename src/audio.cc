@@ -33,8 +33,10 @@ audio::audio() {
   audio_initialized = false; // No audio connection yet
 
   // Unload any junk in memory (if there is any)
-  for (i = 0; i < NUM_WAVES; i++) unload_wave(i);
-  for (i = 0; i < NUM_MUSIC; i++) unload_background(i);
+  // for (i = 0; i < NUM_WAVES; i++) unload_wave(i);
+  // for (i = 0; i < NUM_MUSIC; i++) unload_background(i);
+
+  for (i = 0; i < NUM_MUSIC; i++) music[i] = NULL; 
 
   // Try opening the audio device at our defaults
   i=Mix_OpenAudio(audio_rate, audio_format,
