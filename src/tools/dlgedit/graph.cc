@@ -349,15 +349,23 @@ sort_nodes (MainFrame * wnd)
 int 
 new_mover (MainFrame * wnd, GdkPoint point)
 {
-    DlgNode *node;
+    DlgNode *node = get_cur_selection (wnd, point);
     GdkRectangle t;
+
+    // No node selected at all
+    if (node == NULL) 
+        return 0;
 
     // No dragging when multiple nodes are selected
     if (wnd->mode == MULTI_SELECT || wnd->mode == MULTI_MARKED)
         return 0;
 
-    // try to select node        
-    if (!select_object (wnd, point))
+    // if no node selected, select node for dragging        
+    if (wnd->selected_node == NULL)
+        select_object_index (wnd, node->number);
+        
+    // else check wether dragged and selected node are the same
+    else if (node != wnd->selected_node)
         return 0;
     
     // set app's new mode 
