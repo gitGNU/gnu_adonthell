@@ -201,7 +201,7 @@ main_wnd::write_character_source ()
         gtk_clist_get_text (GTK_CLIST (event_list), i, 1, &str);
         file << "script = " << str << "\n";
         gtk_clist_get_text (GTK_CLIST (event_list), i++, 2, &str);
-        file << "parameters = " << str << "\n";
+        if (str != NULL && str[0] != '\0') file << "parameters = " << str << "\n";
     }
 
     file << "\nactions:\n";

@@ -29,7 +29,6 @@ on_open_activate (GtkMenuItem * menuitem, gpointer user_data)
     GtkWidget *fs = create_fileselection (file, false);
 
     gtk_file_selection_set_filename ((GtkFileSelection *) fs, wnd->last_dir);
-    gtk_file_selection_complete ((GtkFileSelection *) fs, "*.character");
     
     // chose file
     gtk_widget_show (fs);

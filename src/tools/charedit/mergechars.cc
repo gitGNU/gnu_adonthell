@@ -21,13 +21,13 @@
 #include <unistd.h>
 
 #include "../../character.h"
-#include "../../prefs.h"
 #include "../../event.h"
 #include "../../game.h"
 
 PyObject *game::globals;
 objects game::characters;
 
+// A fake dialog_engine to avoid linking problems
 class dialog_engine
 {
 public:
@@ -45,15 +45,20 @@ void show_traceback(void)
 		PyErr_Print();
 }
 
+// Also used to avoid linking problems
 PyObject *pass_instance (void *instance, const char *class_name)
 {
 }
 
+// read the character source file and append it to the character data file
 void process_character (char *input, FILE *output)
 {
     ifstream in (input);
-    gchar str[256], **vals;
+    gchar str[256], **vals, **params, **pair;
+    event *myevent;
+    int event_type;
     int mode = 0;
+    int i = 0;
     
     if (!in)
     {
@@ -62,8 +67,7 @@ void process_character (char *input, FILE *output)
     }
 
     npc mynpc;
-    
-    
+        
     // read character data from source file
     while (!in.eof ())
     {
@@ -100,6 +104,7 @@ void process_character (char *input, FILE *output)
 
             switch (mode)
             {
+                // read basic attributes
                 case 1:
                 {
                     if (strcmp (vals[0], "name") == 0) mynpc.name = strdup (vals[1]);
@@ -110,7 +115,7 @@ void process_character (char *input, FILE *output)
                         if (strcmp (vals[1], "Elf") == 0) mynpc.set ("race", ELF);
                         if (strcmp (vals[1], "Half-Elf") == 0) mynpc.set ("race", HALFELF);
                         if (strcmp (vals[1], "Human") == 0) mynpc.set ("race", HUMAN);
-                        if (strcmp (vals[1], "Dwarf") == 0) mynpc.set ("race", DWARF);
+                        if (strcmp (vals[1], "Dwarf") == 0)  mynpc.set ("race", DWARF);
                     }
                     if (strcmp (vals[0], "gender") == 0)
                     {
@@ -119,30 +124,75 @@ void process_character (char *input, FILE *output)
                     }
                     break;
                 }
+
+                // read further attributes and flags
                 case 2:
                 {
                     mynpc.set (strdup (vals[0]), atoi (vals[1]));
 
                     break;
                 }
+
+                // read events
                 case 3:
                 {
+                    // create new event and attach it to the npc
                     if (strcmp (vals[0], "type") == 0)
                     {
-                        // gtk_clist_append (GTK_CLIST (event_list), dummy);
-                        // gtk_clist_set_text (GTK_CLIST (event_list), i, 0, vals[1]);
+                        if (strcmp (vals[1], "Enter") == 0)
+                        {
+                            myevent = new enter_event;
+                            ((enter_event *) myevent)->c = &mynpc;
+                            mynpc.events.push_back (myevent);
+                            event_type = ENTER_EVENT;
+                        }
                     }
-                    if (strcmp (vals[0], "script") == 0);
-                        // gtk_clist_set_text (GTK_CLIST (event_list), i, 1, vals[1]);
-                    if (strcmp (vals[0], "parameters") == 0);
-                        // gtk_clist_set_text (GTK_CLIST (event_list), i++, 2, vals[1]);
 
+                    // set event script
+                    if (strcmp (vals[0], "script") == 0)
+                        if (myevent) myevent->script_file = strdup (vals[1]);
+
+                    // set event parameters
+                    if (strcmp (vals[0], "parameters") == 0);
+                    {
+                        params = g_strsplit (vals[1], ", ", 0);
+
+                        while (params[i] != NULL)
+                        {
+                            pair = g_strsplit (params[i++], "=", 0);
+
+                            switch (event_type)
+                            {
+                                case ENTER_EVENT:
+                                {
+                                    if (strcmp (pair[0], "x coordinate") == 0) 
+                                        ((enter_event *) myevent)->x = atoi (pair[1]);
+                                    if (strcmp (pair[0], "y coordinate") == 0) 
+                                        ((enter_event *) myevent)->y = atoi (pair[1]);
+                                    if (strcmp (pair[0], "direction") == 0) 
+                                        ((enter_event *) myevent)->dir = atoi (pair[1]);
+                                    if (strcmp (pair[0], "map") == 0) 
+                                        ((enter_event *) myevent)->map = atoi (pair[1]);
+
+                                    break;
+                                }
+                            }
+
+                            g_strfreev (pair);
+                        }
+
+                        g_strfreev (params);
+                        i = 0;
+                    }
+                    
                     break;
                 }
+
+                // read schedule/dialogue script
                 case 4:
                 {
                     if (strcmp (vals[0], "dialogue") == 0) mynpc.set_dialogue (vals[1]);
-                    if (strcmp (vals[0], "schedule") == 0) mynpc.set_schedule (vals[1]);
+                    if (strcmp (vals[0], "schedule") == 0) mynpc.set_schedule (vals[1], false);
        
                     break;
                 }
@@ -152,8 +202,12 @@ void process_character (char *input, FILE *output)
         }
     }
 
+    // tell the character.data loader that another entry follows
     fputc (1, output);
+
+    // append the character data
     mynpc.save (output);
+
     cout << " done\n";
 }
 
@@ -161,7 +215,6 @@ int main (int argc, char* argv[])
 {
 	struct dirent *dirent;
 	struct stat statbuf;
-    config myconfig ("");
 	char *path = NULL, *cwd = NULL;
     FILE *outfile;
 	DIR *dir;
@@ -177,7 +230,7 @@ int main (int argc, char* argv[])
 
     if (!outfile)
     {
-        cout << "\ncannot open \"" << (argc == 2 ? argv[2] : "character.data") 
+        cout << "\ncannot open \"" << (argc == 3 ? argv[2] : "character.data") 
              << "\" for writing.\n\n";
         return 1;
     }
@@ -186,24 +239,12 @@ int main (int argc, char* argv[])
     chdir (argv[1]);
     cwd = getcwd (cwd, 0);
 
-    // try to read adonthellrc
-    if (!myconfig.read_adonthellrc ()) return 1;
-
     // We need Python for loading character schedules
 	Py_Initialize();
   
     // process all ".character" files in the given directory:
     if ((dir = opendir (cwd)) != NULL)
     {
-        // try to change into data directory
-        if (chdir (myconfig.datadir.c_str ()))
-        {
-            cout << "\nSeems like %s is no valid data directory." << myconfig.datadir.c_str ()
-                 << "\nIf you have installed the Adonthell data files into a different location,"
-                 << "\nplease make sure to update the $HOME/.adonthell/adonthellrc file\n" << flush;
-            return 1;
-        }  
-
         // grab the next file
         while ((dirent = readdir (dir)) != NULL)
         {
@@ -232,6 +273,7 @@ int main (int argc, char* argv[])
         return 1;
     }
 
+    // tell the character.data loader that the EOF has been reached
     fputc (0, outfile);
     fclose (outfile);
     
