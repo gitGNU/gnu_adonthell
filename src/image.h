@@ -82,7 +82,7 @@ class image
   void zoom(image * src);
   void reverse_lr(image * src);
   void reverse_ud(image * src);
-  void brightness(image * src, u_int16 cont);
+  void brightness(image * src, u_int16 cont, bool proceed_mask=false);
 
   void putbox_tile_img(image * source);
   void putbox_img(image * source, u_int16 x, u_int16 y);

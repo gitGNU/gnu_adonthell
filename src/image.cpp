@@ -572,7 +572,7 @@ void image::reverse_ud(image * src)
   SDL_UnlockSurface(data);
 }
 
-void image::brightness(image * src, u_int16 cont)
+void image::brightness(image * src, u_int16 cont, bool proceed_mask=false)
 {
   u_int16 i,j;
   u_int8 ir, ig, ib;
@@ -583,11 +583,14 @@ void image::brightness(image * src, u_int16 cont)
     for(i=0;i<length;i++)
       {
 	temp=src->get_pix(i,j);
-	SDL_GetRGB(temp,src->data->format,&ir,&ig,&ib);
-	ir=(ir*cont)>>8;
-	ig=(ig*cont)>>8;
-	ib=(ib*cont)>>8;
-	temp=SDL_MapRGB(data->format,ir,ig,ib);
+	if((proceed_mask) || temp!=screen::trans_pix)
+	  {
+	    SDL_GetRGB(temp,src->data->format,&ir,&ig,&ib);
+	    ir=(ir*cont)>>8;
+	    ig=(ig*cont)>>8;
+	    ib=(ib*cont)>>8;
+	    temp=SDL_MapRGB(data->format,ir,ig,ib);
+	  }
 	put_pix(i,j,temp);
       }
 }
