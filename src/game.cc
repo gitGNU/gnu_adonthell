@@ -78,7 +78,7 @@ bool game::init (int argc, char **argv, initflags to_init = INIT_ALL)
     // init video subsystem
     if (to_init & INIT_VIDEO) 
     { 
-        screen::set_video_mode (320, 240);
+        screen::set_video_mode (320, 240, 16);
         screen::set_fullscreen (configuration->screen_mode);
 
         // set the theme

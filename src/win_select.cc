@@ -438,8 +438,8 @@ bool win_select::activate___()
 {
   if(index_list!=list_obj.end()) 
     {
-      (*index_list)->set_activated(true);
       audio::play_wave (-1, 0); 
+      (*index_list)->set_activated(true);
       on_activate_key();
       return true;
     }
