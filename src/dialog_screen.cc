@@ -222,20 +222,14 @@ bool dialog_screen::update ()
 
 void dialog_screen::on_select ()
 {
-    vector<win_label*>::iterator i;
-
     // remember choice
     answer = sel->get_selected_position () - 1;
 
     // remove all the text
-    for (i = cur_answers.begin (); i != cur_answers.end (); i++)
-    {
-        sel->remove (*i);
-        delete *i;
-    }
     sel->destroy ();
 
     cur_answers.clear ();
+    
     run ();
 }
 
