@@ -318,7 +318,11 @@ bool config::read_adonthellrc ()
         write_adonthellrc ();
 
         // now try again
-        if (!(prefsin = fopen (fname.c_str (), "r"))) return false;
+        if (!(prefsin = fopen (fname.c_str (), "r")))
+        {
+            fprintf (stderr, "*** warning: prefs::read_adonthellrc: creating config file failed\n");
+            return false;
+        }
     }
 
     // adonthellrc opened -> read configuration

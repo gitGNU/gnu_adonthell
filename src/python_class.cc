@@ -55,7 +55,7 @@ void python::insert_path( char *name )
 {
     char buf[256];
     
-    sprintf ( buf, "import sys ; sys.path.insert(0, '%s')", name );
+    sprintf ( buf, "import sys ; sys.path.insert(0, \"%s\")", name );
     PyRun_SimpleString ( buf );
 }
 
@@ -81,9 +81,8 @@ bool python::exec_file (string filename)
     if (!mod)
     {
         cerr << "exec_file: " << filename << " load failed: " << endl;
-#ifdef PY_DEBUG
         show_traceback ();
-#endif
+
         return false;
     }
 
