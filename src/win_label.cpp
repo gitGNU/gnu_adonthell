@@ -31,6 +31,7 @@ win_label::win_label (s_int16 x, s_int16 y, u_int16 l, u_int16 h, win_font * fo,
     auto_height = false;
     auto_size = false;
     cursor = NULL;
+    texte[0]='\0';
     //x_pad_l = 0;
     size_texte = 0;
     cur_text_pos = 0;

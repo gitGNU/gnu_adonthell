@@ -169,8 +169,10 @@ class win_base
    void unselect();
    
    //update postion and etc.... 
-   void update_da();
- 
+   virtual void update_da();
+   virtual void draw()=0;
+   virtual void update()=0;
+
    //activate the object
    void activate();
 

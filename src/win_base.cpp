@@ -1,4 +1,3 @@
-
 /*
    $Id$
 
@@ -304,10 +303,10 @@ void win_base::draw_border()
 	      { 
 		if(wc)
 		  {
-		    select_h_border->putbox_mask(real_x,real_y-select_h_border->height,wc->get_drawing_area());
-		    select_h_border->putbox_mask(real_x,real_y+height,wc->get_drawing_area());
-		    select_v_border->putbox_mask(real_x-select_v_border->length,real_y,wc->get_drawing_area());
-		    select_v_border->putbox_mask(real_x+length,real_y,wc->get_drawing_area());
+		    select_h_border->putbox(real_x,real_y-select_h_border->height,wc->get_drawing_area());
+		    select_h_border->putbox(real_x,real_y+height,wc->get_drawing_area());
+		    select_v_border->putbox(real_x-select_v_border->length,real_y,wc->get_drawing_area());
+		    select_v_border->putbox(real_x+length,real_y,wc->get_drawing_area());
 		    select_corner_t_l->putbox_mask(real_x-WIN_CORNER_SELECT_RELX-((select_v_border->length)>>1),
 						   real_y-WIN_CORNER_SELECT_RELY-(select_h_border->height>>1),wc->get_drawing_area());   //t_l   
 		    select_corner_t_r->putbox_mask(real_x+length-WIN_CORNER_SELECT_RELX+(select_v_border->length>>1),
@@ -319,10 +318,10 @@ void win_base::draw_border()
 		  }
 		else
 		  {
-		    select_h_border->putbox_mask(real_x,real_y-select_h_border->height,wc->get_drawing_area());
-		    select_h_border->putbox_mask(real_x,real_y+height,wc->get_drawing_area());
-		    select_v_border->putbox_mask(real_x-select_v_border->length,real_y,wc->get_drawing_area());
-		    select_v_border->putbox_mask(real_x+length,real_y,wc->get_drawing_area());
+		    select_h_border->putbox(real_x,real_y-select_h_border->height,wc->get_drawing_area());
+		    select_h_border->putbox(real_x,real_y+height,wc->get_drawing_area());
+		    select_v_border->putbox(real_x-select_v_border->length,real_y,wc->get_drawing_area());
+		    select_v_border->putbox(real_x+length,real_y,wc->get_drawing_area());
 		    select_corner_t_l->putbox_mask(real_x-WIN_CORNER_SELECT_RELX-((select_v_border->length)>>1),
 						   real_y-WIN_CORNER_SELECT_RELY-(select_h_border->height>>1));   //t_l   
 		    select_corner_t_r->putbox_mask(real_x+length-WIN_CORNER_SELECT_RELX+(select_v_border->length>>1),
@@ -339,10 +338,10 @@ void win_base::draw_border()
 	      {
 		if(wc)
 		  { 
-		    h_border->putbox_mask(real_x,real_y-h_border->height,wc->get_drawing_area());
-		    h_border->putbox_mask(real_x,real_y+height,wc->get_drawing_area());
-		    v_border->putbox_mask(real_x-v_border->length,real_y,wc->get_drawing_area());
-		    v_border->putbox_mask(real_x+length,real_y,wc->get_drawing_area());
+		    h_border->putbox(real_x,real_y-h_border->height,wc->get_drawing_area());
+		    h_border->putbox(real_x,real_y+height,wc->get_drawing_area());
+		    v_border->putbox(real_x-v_border->length,real_y,wc->get_drawing_area());
+		    v_border->putbox(real_x+length,real_y,wc->get_drawing_area());
 		    
 		    corner_t_l->putbox_mask(real_x-WIN_CORNER_RELX-((v_border->length)>>1),
 					real_y-WIN_CORNER_RELY-(h_border->height>>1),wc->get_drawing_area());   //t_l   
@@ -355,10 +354,10 @@ void win_base::draw_border()
 		  }
 		else
 		  {
-		    h_border->putbox_mask(x,y-h_border->height);
-		    h_border->putbox_mask(x,y+height);
-		    v_border->putbox_mask(x-v_border->length,y);
-		    v_border->putbox_mask(x+length,y);
+		    h_border->putbox(x,y-h_border->height);
+		    h_border->putbox(x,y+height);
+		    v_border->putbox(x-v_border->length,y);
+		    v_border->putbox(x+length,y);
 		    
 		    corner_t_l->putbox_mask(x-WIN_CORNER_RELX-((v_border->length)>>1),
 					    y-WIN_CORNER_RELY-(h_border->height>>1));      
@@ -385,11 +384,11 @@ void win_base::draw_border()
 		    { 
 		  
 		      tmp.brightness(h_border,120);
-		      tmp.putbox_mask(real_x,real_y-h_border->height,wc->get_drawing_area());
-		      tmp.putbox_mask(real_x,real_y+height,wc->get_drawing_area());
+		      tmp.putbox(real_x,real_y-h_border->height,wc->get_drawing_area());
+		      tmp.putbox(real_x,real_y+height,wc->get_drawing_area());
 		      tmp.brightness(v_border,120);
-		      tmp.putbox_mask(real_x-v_border->length,real_y,wc->get_drawing_area());
-		      tmp.putbox_mask(real_x+length,real_y,wc->get_drawing_area());
+		      tmp.putbox(real_x-v_border->length,real_y,wc->get_drawing_area());
+		      tmp.putbox(real_x+length,real_y,wc->get_drawing_area());
 		      
 		      tmp.brightness(corner_t_l,120);
 		      tmp.putbox_mask(real_x-WIN_CORNER_RELX-((v_border->length)>>1),
@@ -407,12 +406,12 @@ void win_base::draw_border()
 		  else
 		    {
 		      tmp.brightness(h_border,120);
-		      tmp.putbox_mask(x,y-h_border->height);
-		      tmp.putbox_mask(x,y+height);
+		      tmp.putbox(x,y-h_border->height);
+		      tmp.putbox(x,y+height);
 		      
 		      tmp.brightness(v_border,120);
-		      tmp.putbox_mask(x-v_border->length,y);
-		      tmp.putbox_mask(x+length,y);
+		      tmp.putbox(x-v_border->length,y);
+		      tmp.putbox(x+length,y);
 		      
 		      tmp.brightness(corner_t_l,120);
 		      tmp.putbox_mask(x-WIN_CORNER_RELX-((v_border->length)>>1),
@@ -434,10 +433,10 @@ void win_base::draw_border()
 	      if(wborder)
 		if(wc)
 		  { 
-		    h_border->putbox_mask(real_x,real_y-h_border->height,wc->get_drawing_area());
-		    h_border->putbox_mask(real_x,real_y+height,wc->get_drawing_area());
-		    v_border->putbox_mask(real_x-v_border->length,real_y,wc->get_drawing_area());
-		    v_border->putbox_mask(real_x+length,real_y,wc->get_drawing_area());
+		    h_border->putbox(real_x,real_y-h_border->height,wc->get_drawing_area());
+		    h_border->putbox(real_x,real_y+height,wc->get_drawing_area());
+		    v_border->putbox(real_x-v_border->length,real_y,wc->get_drawing_area());
+		    v_border->putbox(real_x+length,real_y,wc->get_drawing_area());
 		    
 		    corner_t_l->putbox_mask(real_x-WIN_CORNER_RELX-((v_border->length)>>1),
 					    real_y-WIN_CORNER_RELY-(h_border->height>>1),wc->get_drawing_area());   //t_l   
@@ -450,10 +449,10 @@ void win_base::draw_border()
 		  }
 		else
 		  {
-		    h_border->putbox_mask(x,y-h_border->height);
-		    h_border->putbox_mask(x,y+height);
-		    v_border->putbox_mask(x-v_border->length,y);
-		    v_border->putbox_mask(x+length,y);
+		    h_border->putbox(x,y-h_border->height);
+		    h_border->putbox(x,y+height);
+		    v_border->putbox(x-v_border->length,y);
+		    v_border->putbox(x+length,y);
 		    
 		    corner_t_l->putbox_mask(x-WIN_CORNER_RELX-((v_border->length)>>1),
 					    y-WIN_CORNER_RELY-(h_border->height>>1));      
@@ -475,10 +474,10 @@ void win_base::draw_border()
       if(wborder)
 	if(wc)
 	  { 
-	    h_border->putbox_mask(real_x,real_y-h_border->height,wc->get_drawing_area());
-	    h_border->putbox_mask(real_x,real_y+height,wc->get_drawing_area());
-	    v_border->putbox_mask(real_x-v_border->length,real_y,wc->get_drawing_area());
-	    v_border->putbox_mask(real_x+length,real_y,wc->get_drawing_area());
+	    h_border->putbox(real_x,real_y-h_border->height,wc->get_drawing_area());
+	    h_border->putbox(real_x,real_y+height,wc->get_drawing_area());
+	    v_border->putbox(real_x-v_border->length,real_y,wc->get_drawing_area());
+	    v_border->putbox(real_x+length,real_y,wc->get_drawing_area());
 	    
 	    corner_t_l->putbox_mask(real_x-WIN_CORNER_RELX-((v_border->length)>>1),
 				    real_y-WIN_CORNER_RELY-(h_border->height>>1),wc->get_drawing_area());   //t_l   
@@ -491,10 +490,10 @@ void win_base::draw_border()
 	  }
 	else
 	  {
-	    h_border->putbox_mask(x,y-h_border->height);
-	    h_border->putbox_mask(x,y+height);
-	    v_border->putbox_mask(x-v_border->length,y);
-	    v_border->putbox_mask(x+length,y);
+	    h_border->putbox(x,y-h_border->height);
+	    h_border->putbox(x,y+height);
+	    v_border->putbox(x-v_border->length,y);
+	    v_border->putbox(x+length,y);
 	    
 	    corner_t_l->putbox_mask(x-WIN_CORNER_RELX-((v_border->length)>>1),
 				    y-WIN_CORNER_RELY-(h_border->height>>1));      
@@ -630,17 +629,4 @@ void win_base::dettach_select()
 {
   wselect=NULL;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 

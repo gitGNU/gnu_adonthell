@@ -133,7 +133,7 @@ void win_file::list_dir()
   struct stat buf;
   u_int16 nbfile=0;
   win_label * tmplabel=NULL;
-  if(combo) combo->destroy_all_label();
+  //  if(combo) combo->destroy_all_label();
   
   cout << cur_dir << " 3\n";
   if(chdir(cur_dir)==0)

@@ -32,7 +32,7 @@ win_write::win_write(s_int16 x,s_int16 y,u_int16 l,u_int16 h,win_font *fo,win_co
 {
   tmp_input[0]='\0';
   tmp_input[1]='\0';
-  text_get[0]='\0';
+  //  text_get[0]='\0';
   ok_text=false;
 }
 
@@ -46,12 +46,12 @@ char * win_write::get_text_entry()
 {
   if(ok_text)
     {
-      u_int16 j=0;
       ok_text=false;
-      for(int i=0;i<size_texte;i++)
+      /*      for(int i=0;i<size_texte;i++)
 	text_get[j++]=texte[i];
-      text_get[j]='\0';
-      return text_get;
+	text_get[j]='\0';
+	return text_get;*/
+      return texte;
     }
   else return NULL;
 }

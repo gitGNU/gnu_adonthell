@@ -31,16 +31,19 @@ class win_background;
 class win_scrollbar;
 class win_select;
 
+
 class win_container : public win_base
 {
  
  private:
-  list<win_label *> l_label; //label list
-  list<win_write *> l_write; //write list
-  list<win_container *> l_container; //container list
-  list<win_image *> l_image; //image list
-  list<win_anim *> l_anim; //image list
-  
+  //  list<win_label *> l_label; //label list
+  //  list<win_write *> l_write; //write list
+  //  list<win_container *> l_container; //container list
+  //  list<win_image *> l_image; //image list
+  //  list<win_anim *> l_anim; //image list
+  list<win_base *> l_base;
+
+
   // DATA TO SCROLLBAR
   s_int16 cur_pos_scrollbar;
   s_int16 max_y_object;
@@ -52,17 +55,21 @@ class win_container : public win_base
   image * scroll_bar_draw;
   win_scrollbar * sb;
   u_int16 pad_scroll;
-
+  
+  
   void init_scrollbar();
   void destroy_scrollbar();
   void draw_scrollbar();
   void update_scrollbar();
   void update_scrollbar_index();
   
-
+  //function activate in update
+  void (*func_update)();
+  
   
  public:
   
+
   /**************************************************************************/
    /****************************YOU CAN USE THIS *****************************/
    /**************************************************************************/
@@ -86,18 +93,20 @@ class win_container : public win_base
   win_anim * add_anim(s_int16,s_int16,animation *); 
  
   //used to remove object like win_label,win_write,win_container,win_image but NOT in MEMORY
-  void remove(win_label *);
+  /*void remove(win_label *);
   void remove(win_write *);
   void remove(win_container *);
   void remove(win_image *);
   void remove(win_anim *);
-  
+  */
+  void remove(win_base *);
   // Destroy all object in list && MEMORY
-  void destroy_all_label();
+  /*void destroy_all_label();
   void destroy_all_image();
   void destroy_all_anim();
   void destroy_all_write();
-  void destroy_all_container();
+  void destroy_all_container();*/
+  void destroy_all();
 
   //used to draw all object of this container
   void draw();
@@ -120,14 +129,14 @@ class win_container : public win_base
   void up_scrollbar();//use it to move up scrollbar
   void down_scrollbar(); //use it to move down scrollbar
   
-  // void assign_to_select();//if you use this you must set a scrollbar if not scrollbar select is the same 
-  // void desasign_to_select();//detach 
+  void attach_update_function(void (*f)());
+  
 
- 
   /**************************************************************************/
   /****************************NEVER USE THIS *****************************/
   /**************************************************************************/
-  void is_object_max_y(s_int16); //if the object have the Max y 
+ 
+ void is_object_max_y(s_int16); //if the object have the Max y 
   win_select * tree_select;
   void find_obj_max_y(); //search the object which have the max y
   // void attach_select(win_select *); //this function is called by win_select
@@ -137,6 +146,8 @@ class win_container : public win_base
   //you doesn't use this constructor !!!!!it's called by a creation of new container
   win_container(s_int16,s_int16,u_int16,u_int16,win_container *);
 };
+
+
 
 #endif
 
