@@ -70,12 +70,10 @@ class item
   // ===================================================================
 
 
-  // DEBUG FUNCTIONS
+  // PUBLIC DEBUG FUNCTIONS
   // ===================================================================
 
   bool debug( bool val = true ); // turns debug on or off
-  string pb( const bool val ) const; // returns a printable string for a
-                                     // bool value
 
   // ===================================================================
 
@@ -191,6 +189,13 @@ class item
 
   // ===================================================================
 
+  // PROTECTED DEBUG FUNCTIONS
+  // ===================================================================
+
+  string pb( const bool val ) const; // returns a printable string for a
+                                     // bool value
+
+  // ===================================================================
 
 };
 

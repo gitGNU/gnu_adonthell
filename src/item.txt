@@ -121,10 +121,9 @@ Overloaded operators:
   // included in the comparison test, so for two items that are the same except
   // for different IDs, == will be true and != will be false.
 
-Debug functions:
+Public debug functions:
 
   bool debug( bool ) // turns debug on (default) or off
-  string pb( bool ) // returns a printable string corresponding to a bool
 
 Value returning functions:
 
@@ -194,3 +193,9 @@ Modifying functions:
 
   bool attach( item& it );      // attaches an item
   bool detach();                // detaches the attached item
+
+Protected debug functions:
+  string pb( bool ) // returns a printable string corresponding to a bool
+
+Protected functions:
+  boot setAttached( bool )      // sets attached?
