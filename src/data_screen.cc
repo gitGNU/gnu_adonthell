@@ -23,7 +23,7 @@
  */
 
 
-#include <iostream.h>
+#include <string.h>
 
 #include "types.h"
 #include "pnm.h"
@@ -100,8 +100,7 @@ data_screen::~data_screen ()
 
 void data_screen::init ()
 {
-    int num = 0;
-    char filepath[256];
+    string filepath;
     win_image *shot;
     win_write *entry;
     win_container *box = NULL;
@@ -110,7 +109,8 @@ void data_screen::init ()
     // display all the available saved games
     while ((gdata = gamedata::next_save ()) != NULL)
     {
-        sprintf (filepath, "%s/preview.pnm", gdata->directory ());
+        filepath = gdata->directory ();
+        filepath += "/preview.pnm";
     
 	    shot = new win_image();
         shot->image::load_pnm (filepath); 
@@ -140,8 +140,6 @@ void data_screen::init ()
 	    box->set_focus_object(entry);
 
         image_list->add (box);
-
-        num++;
     }
     
     // If we're saving the game, add "Empty Slot"
@@ -176,8 +174,6 @@ void data_screen::init ()
 	
         image_list->add (box);
         image_list->set_default_object (box);
-	
-        num++;
     }
     else image_list->set_default_position (0);     
 }
@@ -234,8 +230,8 @@ void data_screen::on_save ()
     // save sucessful --> save preview
     if (gdata != NULL)
     {
-        char filepath[256];
-        sprintf (filepath, "%s/preview.pnm", gdata->directory ());
+        string filepath = gdata->directory ();
+        filepath += "/preview.pnm";
         save_preview (filepath);
     }
 
@@ -244,7 +240,7 @@ void data_screen::on_save ()
 }
 
 // Save the small thumbnail image
-void data_screen::save_preview (char *path)
+void data_screen::save_preview (string path)
 {
     image temp (screen::length (), screen::height ()); 
     image preview (72, 54);

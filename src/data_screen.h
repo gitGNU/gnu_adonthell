@@ -95,7 +95,7 @@ private:
      * Write the thumbnail to disk.
      * 
      */
-    void save_preview (char*);
+    void save_preview (string);
 
     win_font *font;                         // the font
     win_theme *theme;                       // the theme
