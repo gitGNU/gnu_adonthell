@@ -100,6 +100,8 @@ dnl checks the results of sdl-config to some extent
 dnl
       rm -f conf.sdltest
       AC_TRY_RUN([
+#define __cplusplus 0
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -246,6 +248,8 @@ dnl Now check if the installed Vorbis is sufficiently new.
 dnl
       rm -f conf.vorbistest
       AC_TRY_RUN([
+#define __cplusplus 0
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -371,6 +375,8 @@ dnl checks the results of gtk-config to some extent
 dnl
       rm -f conf.gtktest
       AC_TRY_RUN([
+#define __cplusplus 0
+
 #include <gtk/gtk.h>
 #include <stdio.h>
 #include <stdlib.h>
