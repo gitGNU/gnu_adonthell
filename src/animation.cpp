@@ -335,7 +335,7 @@ void animation::info_window(char * t_label)
       querycont->update();
       querycont->draw();
       screen::show();
-    } 
+    }
   while(input::get_next_key()<0);
   input::set_keyboard_mode(previous_mode);
   delete querycont;

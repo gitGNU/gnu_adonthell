@@ -65,7 +65,6 @@ char * win_write::get_text()
 	text_result[i]=text.text[i];
       text_result[i]='\0';
       ok_text=false;
-      cout << text_result << endl;
       return text_result;
     }
   else return NULL;
@@ -96,14 +95,20 @@ void win_write::update()
   win_write::write();
 }
 
-
-
 void win_write::write()
 {
   static s_int32 c;
   while((c=input::get_next_key())>0)
     {
-      if(text.lenght<TEXT_MAX)
+      if(c==SDLK_BACKSPACE) 
+	{
+	  if(text.lenght>0)
+	    {
+	      text.lenght--;
+	      if(text.pos>0) text.pos--;
+	    }
+	}
+      else if(text.lenght<TEXT_MAX)
 	{
 	  if(c==SDLK_RETURN)
 	    {
@@ -112,16 +117,7 @@ void win_write::write()
 	      ok_text=true;
 	      text.text[text.lenght++]='\0';
 	    }
-	  else
-	    {
-	      if(c==SDLK_BACKSPACE) 
-		{
-		  if(text.lenght<=0) return;
-		  text.lenght--;
-		  if(text.pos>0) text.pos--;
-		}
-	      else text.text[text.lenght++]=c;
-	    }
+	  else text.text[text.lenght++]=c;
 	}
     }
 }

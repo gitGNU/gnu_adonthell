@@ -105,17 +105,22 @@ s_int32 input::get_next_key()
     {
       if(p_keystate[event.key.keysym.sym]) p_keystate[event.key.keysym.sym]--;
       if(keyboard_mode==MODE_PUSHED) keystate[event.key.keysym.sym]=0;
-      if(keyboard_mode==MODE_CHAR) return(event.key.keysym.unicode);
+      if(keyboard_mode==MODE_CHAR) 
+	{
+	  return(event.key.keysym.unicode);
+	}
       else if((keyboard_mode==MODE_STATE)||(keyboard_mode==MODE_PUSHED)) 
-	return(event.key.keysym.sym);
+	{
+	  return(event.key.keysym.sym);
+	}
       else return(0);
     }
-  else return(-1);
+  while(SDL_PeepEvents
+	(&event,1,SDL_GETEVENT,SDL_ALLEVENTS-SDL_KEYDOWNMASK)==1);
+  return(-1);
 }
 
 void input::clear_keys_queue()
 {
-  cout << "Clearing\n";
   while(get_next_key()!=-1);
-  cout << "Done it\n";
 }
