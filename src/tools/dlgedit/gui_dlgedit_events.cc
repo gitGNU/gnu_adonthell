@@ -58,14 +58,6 @@ void on_file_load_recent_activate (GtkMenuItem * menuitem, gpointer user_data)
     dlgedit->loadDialogue (file);
 }
 
-
-// File Menu: Save
-void on_file_save_activate (GtkMenuItem * menuitem, gpointer user_data)
-{
-    GuiDlgedit *dlgedit = (GuiDlgedit *) user_data;
-    dlgedit->saveDialogue (dlgedit->filename ());
-}
-
 // File Menu: Save As
 void on_file_save_as_activate (GtkMenuItem * menuitem, gpointer user_data)
 {
@@ -74,6 +66,20 @@ void on_file_save_as_activate (GtkMenuItem * menuitem, gpointer user_data)
 
     // File selection closed with OK
     if (fs.run ()) dlgedit->saveDialogue (fs.getSelection ());
+}
+
+// File Menu: Save
+void on_file_save_activate (GtkMenuItem * menuitem, gpointer user_data)
+{
+    GuiDlgedit *dlgedit = (GuiDlgedit *) user_data;
+    std::string filename = dlgedit->filename ();
+
+    // only save dialogues that aren't 'untitled'
+    if (filename.find ("untitled.adlg") == filename.npos)
+        dlgedit->saveDialogue (filename);
+    // otherwise open file selection
+    else
+        on_file_save_as_activate (menuitem, user_data);
 }
 
 // File Menu: Close
