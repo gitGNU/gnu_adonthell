@@ -67,7 +67,17 @@ public:
      * @param args Addional arguments to pass to the script constructor.
      */
     void set_schedule (string file, PyObject * args = NULL);
-    
+
+    /**
+     * Call this to explicitly clear the attached schedule. This will
+     * also run the destructor (__del__ method) of the script, if it
+     * exists.
+     */
+    void clear_schedule ()
+    {
+        Schedule.clear ();
+    }
+
     /** 
      * Returns whether the %schedule is active or not. As long as the
      * %schedule is active, it is executed every %game cycle. If it's
@@ -126,9 +136,13 @@ public:
      * means, only one alarm can be active at any given time.
      *
      * @param time The amount of time the %schedule should be active,
-     *      in the format used by time_event::time_event (). 
+     *      in the format used by time_event::time_event ().
+     * @param absolute If <b>true</b>, the current day will be added
+     *      to the time. For example, set_alarm ("14h", true) means
+     *      "today at 14:00", whereas set_alarm ("14h", false) means
+     *      "14 hours from now on".
      */
-    void set_alarm (string time);
+    void set_alarm (string time, bool absolute = false);
                 
     /**
      * Restore the state of the %schedule class from disk. Loads

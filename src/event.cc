@@ -23,6 +23,14 @@
 
 #include "event.h"
 
+// constructor
+event::event ()
+{
+    Repeat = -1;
+    Shared = false;
+    Args = NULL;
+}
+
 // destructor
 event::~event ()
 {

@@ -155,6 +155,15 @@ public:
     PyObject* get_attribute (const string & name);
 
     /**
+     * Tests whether the object contains a certain attribute (i.e. method
+     * or variable).
+     *
+     * @param name Name of the attribute to test for
+     * @return <b>true</b> if the attribute exists, <b>false</b> otherwise.
+     */
+    bool has_attribute (const string & name);
+
+    /**
      * Saves the state of the associated script, so that it can be
      * completely restored later on. Writes the file- and class name
      * of the script, the arguments passed to its constructor and

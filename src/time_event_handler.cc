@@ -20,29 +20,33 @@
  */
 
 #include <algorithm>
+#include "gamedate.h"
 #include "time_event.h"
 #include "time_event_handler.h"
-
-// function returning a new time event
 
 // See whether a matching event is registered and execute the
 // according script(s) 
 void time_event_handler::raise_event (const event& e)
 {
-    // no time event registered
-    if (Events.empty ()) return;
-    
+    s_int32 repeat;
+    event *evt;
+
     // As long as matching events are in the list
-    while (Events.front ()->equals (e))
+    while (!Events.empty () && Events.front ()->equals (e))
     {
-        event *evt = Events.front ();
-        evt->execute (e);
-        
-        // remove event
+        evt = Events.front ();
+
+        // Note: we need to get the value of 'repeat' here, as
+        // executing the event might destroy it
+        repeat = evt->repeat ();
+
+        // remove event before executing (see above)
         Events.erase (Events.begin ());
-        
+
+        evt->execute (e);
+
         // re-register event if it needs be repeated
-        if (evt->repeat ()) register_event (evt);
+        if (repeat) register_event (evt);
     }
     
     return;
@@ -63,6 +67,13 @@ void time_event_handler::remove_event (event *e)
 // register an event with the handler
 void time_event_handler::register_event (event *e)
 {
+    // make sure the event is recent enough
+    if (((time_event *) e)->time () < gamedate::time ())
+    {
+        fprintf (stderr, "*** time_event_handler::register_event: event older than current time!\n");
+        return;
+    }
+
     vector<event*>::iterator i = Events.begin ();
 
     // search for the proper place to insert new event
@@ -72,6 +83,6 @@ void time_event_handler::register_event (event *e)
         if (((time_event *) e)->time () <= ((time_event *) (*i))->time ()) break;
         i++;
     }
-    
+
     Events.insert (i, e);
 }

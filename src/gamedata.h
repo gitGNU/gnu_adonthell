@@ -33,7 +33,7 @@
 
 #include "quest.h"
 #include "character.h"
-#include "adonthell.h"
+// #include "adonthell.h"
 
 /**
  * Contains all the attributes related to a saved %game and the
@@ -339,11 +339,12 @@ public:
      * 
      * @return Pointer to the global game engine.
      */
+/*
     static adonthell* engine ()
     {
         return data::engine;
     }
-
+*/
 private:
 #ifndef SWIG
     string directory_;                        // the game's location on the harddisk

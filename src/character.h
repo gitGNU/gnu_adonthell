@@ -27,13 +27,14 @@
 #define CHARACTER_H_
 
 #include "storage.h"
-#include "mapcharacter.h"
+#include "character_base.h"
+#include "schedule.h"
 
 /**
  * Class holding %game characters.
  * 
  */ 
-class character : public mapcharacter
+class character : public character_base
 {
 public:
     /** 
@@ -47,6 +48,12 @@ public:
      * 
      */ 
     ~character();
+
+    void set_schedule (schedule *s) { Schedule = s; }
+    schedule *get_schedule ()       { return Schedule; }
+
+private:
+    schedule *Schedule;
 };
 
 #ifndef SWIG

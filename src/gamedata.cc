@@ -29,7 +29,7 @@
 #include <dirent.h>
 #include <sys/stat.h>
 
-#include "audio.h"
+// #include "audio.h"
 #include "gamedata.h"
 #include "python_class.h"
 
@@ -176,6 +176,7 @@ bool gamedata::load_quests (u_int32 pos)
 
 bool gamedata::load_mapengine (u_int32 pos) 
 {
+/*
     igzstream in;
     
     string filepath;
@@ -201,12 +202,13 @@ bool gamedata::load_mapengine (u_int32 pos)
     }
     
     in.close (); 
-
+*/
     return true; 
 }
 
 bool gamedata::load_audio (u_int32 pos)
 {
+/*
     igzstream in;
     string filepath;
 
@@ -231,7 +233,7 @@ bool gamedata::load_audio (u_int32 pos)
     }
     
     in.close (); 
-
+*/
     return true; 
 }
 
@@ -361,7 +363,7 @@ bool gamedata::save (u_int32 pos, string desc)
     vnbr = 0; 
     vnbr >> file; 
     file.close ();
-    
+/*
     // Save mapengine state
     filepath = gdata->directory(); 
     filepath += "/mapengine.data";
@@ -405,7 +407,7 @@ bool gamedata::save (u_int32 pos, string desc)
     
     gdata->put (file);
     file.close ();
-    
+*/
     // only now it is safe to add the new record to the array
     if (pos >= saves.size ()) saves.push_back (gdata);
     
@@ -513,13 +515,13 @@ void gamedata::cleanup ()
 void gamedata::unload () 
 {
     // stop the music
-    audio::fade_out_background (500);
+    // audio::fade_out_background (500);
     
     // delete all characters
     dictionary <character *>::iterator itc;
     for (itc = data::characters.begin (); itc != data::characters.end (); itc++) 
     {
-        itc->second->remove_from_map (); 
+        // itc->second->remove_from_map ();
         delete itc->second;
     }
     data::characters.clear (); 

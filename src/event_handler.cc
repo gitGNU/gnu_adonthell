@@ -46,7 +46,7 @@ void event_handler::init ()
     REGISTER_EVENT (TIME_EVENT, time_event)
 }
 
-// Register a event with it's script
+// Clear the registered handlers
 void event_handler::cleanup ()
 {
     for (int i; i < MAX_EVENTS; i++)

@@ -51,6 +51,11 @@ enum
 class event
 {
 public:
+    /**
+     * Constructor
+     */
+    event ();
+
     /** 
      * Destructor.
      */ 
@@ -83,7 +88,19 @@ public:
         
         return Repeat;
     }
-    
+
+    /**
+     * Set whether this event should be repeated. A number greater than 0
+     * will repeat the event that many times, a number less than 0 will
+     * repeat the event forever. A number equal to 0 won't repeat the event.
+     *
+     *  @param count How often the event should be repeated.
+     */
+    void set_repeat (s_int32 count)
+    {
+        Repeat = count;
+    }
+
     /**
      * @name Event Handling
      */

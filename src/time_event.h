@@ -55,9 +55,9 @@ public:
 
 #ifndef SWIG
     /**
-     * Standart constructor.
+     * Standard constructor.
      */
-    time_event ()
+    time_event () : event ()
     {
         Type = TIME_EVENT;
     }
@@ -82,7 +82,7 @@ public:
      * @param count The number of times the %event shall be repeated.
      *      Specify -1 to repeat it an unlimited number of times.
      */
-    void repeat (const string & interval, s_int32 count = -1);
+    void set_repeat (const string & interval, s_int32 count = -1);
     //@}
     
     /**
@@ -133,7 +133,7 @@ public:
     bool get_state (igzstream& in);
 
     //@}
-    
+
     /**
      * Get the event's "alarm" time, i.e. the time when it needs to be
      * executed.
@@ -144,12 +144,9 @@ public:
     {
         return Time;
     }
-    
+
 private:
 #ifndef SWIG
-    // convert the time string to gametime minutes
-    u_int32 parse_time (const string & time);
-
     // the time when the event shall be triggered
     u_int32 Time;
 

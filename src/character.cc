@@ -27,7 +27,7 @@
 dictionary <character *> data::characters;
 character * data::the_player = NULL;
 
-character::character() : mapcharacter ()
+character::character()
 {
 }
 

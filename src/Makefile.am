@@ -20,11 +20,13 @@ CLEANFILES = $(moddata_SCRIPTS)
 
 libbase_a_SOURCES = \
         character_base.cc \
+        character.cc \
         event.cc \
         event_handler.cc \
         event_list.cc \
         fileops.cc \
         game.cc \
+        gamedata.cc \
         gamedate.cc \
         gametime.cc \
         py_base_wrap.cc \
@@ -35,6 +37,7 @@ libbase_a_SOURCES = \
         time_event_handler.cc \
         yarg.cc \
         callback.h \
+        character.h \
         character_base.h \
         event.h \
         event_handler.h \
@@ -42,6 +45,7 @@ libbase_a_SOURCES = \
         event_list.h \
         fileops.h \
         game.h \
+        gamedata.h \
         gamedate.h \
         gametime.h \
         quest.h \

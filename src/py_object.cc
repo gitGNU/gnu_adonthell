@@ -138,6 +138,15 @@ PyObject *py_object::get_attribute (const string &name)
         return NULL;
 }
 
+// check for a certain attribute
+bool py_object::has_attribute (const string & name)
+{
+    if (Instance)
+        return PyObject_HasAttrString (Instance, (char *) name.c_str ());
+    else
+        return false;
+}
+
 // Save internal state of the script to disk
 void py_object::put_state (ogzstream &file)
 {

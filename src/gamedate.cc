@@ -90,3 +90,61 @@ u_int16 gamedate::minute ()
 {
     return Time % 60; 
 }
+
+// convert the time string to gametime minutes
+u_int32 gamedate::parse_time (const string & time)
+{
+    u_int32 minutes = 0, number = 0;
+    char num[2] = "0";
+
+    for (u_int32 i = 0; i < time.length (); i++)
+    {
+        // got a number
+        if (isdigit (time[i]))
+        {
+            num[0] = time[i];
+            number = 10 * number + atoi (num);
+        }
+        // got a letter
+        else
+        {
+            switch (time[i])
+            {
+                // weeks
+                case 'w':
+                {
+                    minutes += number * DAYS_PER_WEEK * HOURS_PER_DAY * 60;
+                    break;
+                }
+                // days
+                case 'd':
+                {
+                    minutes += number * HOURS_PER_DAY * 60;
+                    break;
+                }
+                // hours
+                case 'h':
+                {
+                    minutes += number * 60;
+                    break;
+                }
+                // minutes
+                case 'm':
+                {
+                    minutes += number;
+                    break;
+                }
+                // error
+                default:
+                {
+                    fprintf (stderr, "*** time_event::parse_date: Unknown time specifier '%c'\n", time[i]);
+                    break;
+                }
+            }
+
+            number = 0;
+        }
+    }
+
+    return minutes;
+}

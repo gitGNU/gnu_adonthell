@@ -20,6 +20,7 @@
  */
  
 #include "schedule.h"
+#include "gamedate.h"
 #include "event_handler.h"
 
 // standart constructor
@@ -48,7 +49,7 @@ void schedule::update ()
     
     // no schedule running --> assign a new one
     if (!Running) Manager.run ();
-    
+
     // finally run schedule
     Schedule.run ();
 }
@@ -81,7 +82,7 @@ void schedule::set_manager (string file, PyObject *args)
 }
 
 // set the alarm
-void schedule::set_alarm (string time)
+void schedule::set_alarm (string time, bool absolute)
 {
     // get rid of the current alarm
     if (Alarm)
@@ -90,8 +91,24 @@ void schedule::set_alarm (string time)
         delete Alarm;        
     }
 
-    // create and register the new alarm    
-    Alarm = new time_event (time);
+    // absolute hour of the day
+    if (absolute)
+    {
+        char day[16];
+
+        // if that hour has already passed today, assume the
+        // same hour tomorrow
+        if (gamedate::parse_time (time) > (u_int32) gamedate::hour () * 60)
+            sprintf (day, "%id", gamedate::day ());
+        else
+            sprintf (day, "%id", gamedate::day () + 1);
+
+        time += day;
+    }
+
+    // create and register the new alarm
+    Alarm = new time_event (time, absolute);
+    Alarm->event::set_repeat (0);
     Alarm->set_shared_script (Manager);
     event_handler::register_event (Alarm);
 }

@@ -3,6 +3,7 @@
 #include "python_class.h"
 #include "event_handler.h"
 #include "input_manager.h"
+#include "character.h"
 #include "gametime.h"
 #include "gamedate.h"
 #include "schedule.h"
@@ -15,6 +16,7 @@ extern "C"
 
 // our global test scbedule
 schedule myschedule;
+character myself;
 
 // tell the program to quit
 int quit = 0;
@@ -85,9 +87,19 @@ int main (int argc, char* argv[])
 
     // a clock telling every hour
     time_event clock ("1h");
-    clock.repeat ("1h");
+    clock.set_repeat ("1h");
     clock.set_script ("clock");
     event_handler::register_event (&clock);
+
+    // create a character for the schedule
+    myself.set_name ("Kai Sterker");
+    myself.set_schedule (&myschedule);
+    data::characters[myself.get_id ().c_str ()] = &myself;
+
+    // all we need to do is setting the manager script;
+    PyObject *args = Py_BuildValue ("(s)", myself.get_id ().c_str ());
+    myschedule.set_manager ("student", args);
+    myschedule.set_active (true);
 
     // mainloop
     mainloop ();

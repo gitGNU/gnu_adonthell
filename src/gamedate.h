@@ -79,7 +79,18 @@ public:
      * @return minute of the current hour between 0 and 59.
      */
     static u_int16 minute ();
-    
+
+    /**
+     * convert the time string to gametime minutes. The time string
+     * has the format "<number>X", where X may be (w)eek, (d)ay,
+     * (h)our or (m)inute. Several such pairs can be concatenated.
+     * Valid examples are "1w1d1h", "30m1h" but also "1h1h".
+     *
+     * @param time The time format string.
+     * @return The time represented by the string in minutes.
+     */
+    static u_int32 parse_time (const string & time);
+
     /**
      * Load the state of the %gamedate class from disk
      * @param in stream to read the state from
