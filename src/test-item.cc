@@ -95,14 +95,14 @@ int main( int argc, char* argv[] )
   // Test the full constructor
 
   cout << "\tFull... ";
-  unsigned int at[NUM_ATT];
+  u_int16 at[NUM_ATT];
   bool ch[NUM_CHR], ae[NUM_EFF];
   effect ef[NUM_EFF];
-  for( unsigned int i = 0; i < NUM_ATT; i++ )
+  for( u_int8 i = 0; i < NUM_ATT; i++ )
     at[i] = 0;
-  for( unsigned int i = 0; i < NUM_CHR; i++ )
+  for( u_int8 i = 0; i < NUM_CHR; i++ )
     ch[i] = false;
-  for( unsigned int i = 0; i < NUM_EFF; i++ )
+  for( u_int8 i = 0; i < NUM_EFF; i++ )
     ae[i] = false;
   item CT_ful( 27, "Something", "something.gfx", 0, at, ch, ae, ef, 27 );
 

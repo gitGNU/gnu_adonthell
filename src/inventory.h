@@ -1,8 +1,4 @@
 /*
-  
-   $Id$
-
-   Copyright (C) 2000 Jayson S. Baird
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -29,102 +25,74 @@
 #ifndef _INVENTORY_H_
 #define _INVENTORY_H_
 
-#include <stdio.h>
+/*
 #include <stdlib.h>
-#include <iostream.h>
+*/
+
+#include <fstream>
+#include <string>
 #include <math.h>
+
 #include "item.h"
+
+using namespace std;
 
 class inventory
 {
-  public:
-    const static int base = 37;
-    const static int HASH_SIZE = 101;
+ public:
+
+  // CONSTANTS
+  // ========================================================================
+
+  const static int DEF_MAX_SIZE = 99;
     
-    inventory ()
-    {
-        for (int i = 0; i < HASH_SIZE; i++) 
-         inven[i] = NULL; 
-        total_weight = 0;
-    }
+  // ========================================================================
 
-    void insert (item * itm)
-    {
-        int index = 0;
-        index = hashcode (itm->getName());
-        total_weight += itm->getWeight();
+  // CONSTRUCTORS
+  // ========================================================================
 
-        // if (((inven + index)->getId ()) == 0)
-        if (inven[index] == NULL)
-        {
-            inven[index] = itm;
-        }
-        else
-        {
-            item *current = inven[index];
+  inventory(); // default constructor
 
-            while (current->next != NULL)
-                current = current->next;
-            current->next = itm;
-        }
-    }
+  // ========================================================================
 
 
-    void display ()
-    {
-        int i = 0;
-        cout << "id" << "   " << "name" << "                " << "weight" << endl;
-        cout << "--" << "   " << "-----------------" << "   " << "------" << endl;
-        while (i < HASH_SIZE)
-        {
-            item *t = inven[i]; 
-            if (t != NULL)
-            {
-                cout << t->getId () << "    " << t->getName () << "                 " << t->getWeight () << endl;
-                if (t->next != NULL)
-                {
-                    item *current = t->next;
-                    while (current != 0)
-                    {
-                        cout << current->getId () << "    " << current->getName () << "                 " << current->getWeight () << endl;
-                        current = current->next;
-                    }
-                }
-            }
-            i++;
-        }
-        cout << "total weight: " << total_weight << endl;
-    }
+  // PUBLIC DEBUG FUNCTIONS
+  // ========================================================================
 
-    int hashcode (char name[])
-    {
-        int index = 0;
-        int code = 0;
-        int length = strlen (name), max = strlen (name);
-        while (index < length)
-        {
-            code += ((int)name[index] * ((int)pow (base, max)));
-            index++;
-            max--;
-        }
-        int var = abs (code % HASH_SIZE);
+  bool debug( const bool val = true );
 
-       /** program segfaults without a cout here.. any ideas? **/
-        //cout << "weirdness.." << endl;     
-        return var;
-    }
+  // ========================================================================
 
-  private:
-    /* the main item inventory */
-    item *inven[HASH_SIZE];
-    /* the total weight in this inventory */
-    int total_weight;
+  // PUBLIC FUNCTIONS
+  // ========================================================================
 
-    // the number of items stored in this inventory
-    int num_items;
+  bool insert( item& it ); // add an item to the inventory
+  bool delete( const string name ); // delete an item from the inventory
+  item* getItem( const string name );
+  item* getItem( const unsigned int id );
 
-    // the maximum amount of items that can be stored by this inventory(good for containers...)
-    int max_items;
+  // ========================================================================
+
+ protected:
+
+  // PROTECTED MEMBER VARIABLES
+  // ========================================================================
+
+  bool debug_mode; // print debug messages?
+
+  item *inv; // start of the inventory list
+  unsigned int total_weight; // total weight
+  unsigned int num_items; // number of items stored
+  unsigned int max_items; // maximum number of items that may be stored
+
+  // ========================================================================
+
+  // PROTECTED DEBUG FUNCTIONS
+  // ========================================================================
+
+  string pb( const bool val ); // returns a printable string for a bool value
+
+  // ========================================================================
 };
 
 #endif

@@ -19,14 +19,15 @@
 #include <fstream>
 #include <string>
 
+#include "types.h"
 #include "effect.h"
 
 // CONSTANTS
 // ===================================================================
 
-const unsigned int NUM_ATT = 4;  // number of attributes
-const unsigned int NUM_CHR = 12; // number of characteristics
-const unsigned int NUM_EFF = 5;  // number of effects
+const u_int8 NUM_ATT = 4;  // number of attributes
+const u_int8 NUM_CHR = 12; // number of characteristics
+const u_int8 NUM_EFF = 5;  // number of effects
 
 // ===================================================================
 
@@ -39,12 +40,12 @@ class item
   // ===================================================================
 
   item(); // default constructor
-  item( const unsigned int ix, const string nm, const string gf,
-	const unsigned int ty, const unsigned int at[], const bool ch[],
-	const bool ae[], effect ef[], const unsigned int n );
+  item( const u_int32 ix, const string nm, const string gf,
+	const u_int8 ty, const u_int16 at[], const bool ch[],
+	const bool ae[], effect ef[], const u_int8 n );
           // "full" constructor
-  item( const unsigned int ix, const string nm, const string gf,
-	const unsigned int ty, const unsigned int n ); // "sparse" constructor
+  item( const u_int32 ix, const string nm, const string gf,
+	const u_int8 ty, const u_int8 n ); // "sparse" constructor
   item( const string fn ); // from file constructor
 
   // ===================================================================
@@ -65,7 +66,7 @@ class item
 
   item *next; // pointer to the next item in the container
   item *prev; // pointer to the previous item in the container
-  unsigned int number; // number of item of this type in this stack
+  u_int8 number; // number of item of this type in this stack
 
   // ===================================================================
 
@@ -81,15 +82,14 @@ class item
   // "GET" FUNCTIONS, VALUE RETURNING
   // ===================================================================
 
-  unsigned int getId() const; // returns ID number
-  unsigned int getNumCombined() const; // returns number of combined items
+  u_int32 getId() const; // returns ID number
   string getName() const; // returns name
   string getGfx() const; // returns gfx filename
-  unsigned int getType() const; // returns type
-  unsigned int getSize() const; // returns size
-  unsigned int getWeight() const; // returns weight
-  unsigned int getValue() const; // returns value
-  unsigned int getUses() const; // returns number of uses
+  u_int8 getType() const; // returns type
+  u_int16 getSize() const; // returns size
+  u_int16 getWeight() const; // returns weight
+  u_int16 getValue() const; // returns value
+  u_int16 getUses() const; // returns number of uses
   bool getMoveable() const; // returns moveable?
   bool getContainer() const; // returns container?
   bool getLight() const; // returns light?
@@ -120,14 +120,14 @@ class item
   // "SET" FUNCTIONS, MODIFY
   // ===================================================================
 
-  bool setId( const unsigned int val ); // sets ID number
+  bool setId( const u_int32 val ); // sets ID number
   bool setName( const string val ); // sets name
   bool setGfx( const string val ); // sets gfx filename
-  bool setType( const unsigned int val ); // sets type
-  bool setSize( const unsigned int val ); // sets size
-  bool setWeight( const unsigned int val ); // sets weight
-  bool setValue( const unsigned int val ); // sets value
-  bool setUses( const unsigned int val ); // sets number of uses
+  bool setType( const u_int8 val ); // sets type
+  bool setSize( const u_int16 val ); // sets size
+  bool setWeight( const u_int16 val ); // sets weight
+  bool setValue( const u_int16 val ); // sets value
+  bool setUses( const u_int16 val ); // sets number of uses
   bool setMoveable( const bool val ); // sets moveable?
   bool setContainer( const bool val ); // sets container?
   bool setLight( const bool val ); // sets light?
@@ -169,11 +169,11 @@ class item
   // ===================================================================
 
   bool debug_mode; // is debug mode on or off?
-  unsigned int id; // ID number
+  u_int32 id; // ID number
   string name; // name
   string gfx; // gfx filename
-  unsigned int type; // type of item, see item.txt for indexes
-  unsigned int item_att[NUM_ATT]; // attributes array, see item.txt
+  u_int8 type; // type of item, see item.txt for indexes
+  u_int16 item_att[NUM_ATT]; // attributes array, see item.txt
   bool item_chr[NUM_CHR]; // characteristics array, see item.txt
   bool item_ace[NUM_EFF]; // active effects array, see item.txt
   effect* item_eff[NUM_EFF]; // effects array, see item.txt

@@ -48,16 +48,16 @@ item::item() // default constructor
   setEquipEffAct( false );
   setUnequipEffAct( false );
   setUseEffAct( false );
-  for( unsigned int i = 0; i < NUM_EFF; i++ )
+  for( u_int8 i = 0; i < NUM_EFF; i++ )
     item_eff[i] = NULL;
   attached = NULL;
   number = 1;
 }
 
-item::item( const unsigned int ix, const string nm, const string gf,
-	    const unsigned int ty, const unsigned int at[],
+item::item( const u_int32 ix, const string nm, const string gf,
+	    const u_int8 ty, const u_int16 at[],
 	    const bool ch[], const bool ae[], effect ef[],
-	    const unsigned int n )
+	    const u_int8 n )
   // "full" constructor
 {
   debug_mode = false;
@@ -67,11 +67,11 @@ item::item( const unsigned int ix, const string nm, const string gf,
   setName( nm );
   setGfx( gf );
   setType( ty );
-  for( unsigned int i = 0; i < NUM_ATT; i++ )
+  for( u_int8 i = 0; i < NUM_ATT; i++ )
     item_att[i] = at[i];
-  for( unsigned int i = 0; i < NUM_CHR; i++ )
+  for( u_int8 i = 0; i < NUM_CHR; i++ )
     item_chr[i] = ch[i];
-  for( unsigned int i = 0; i < NUM_EFF; i++ )
+  for( u_int8 i = 0; i < NUM_EFF; i++ )
   {  
     item_ace[i] = ae[i];
     item_eff[i] = &ef[i];
@@ -80,8 +80,8 @@ item::item( const unsigned int ix, const string nm, const string gf,
   number = n;
 }
 
-item::item( const unsigned int ix, const string nm, const string gf,
-	    const unsigned int ty, const unsigned int n ) // sparse constructor
+item::item( const u_int32 ix, const string nm, const string gf,
+	    const u_int8 ty, const u_int8 n ) // sparse constructor
 {
   debug_mode = false;
   next = NULL;
@@ -111,7 +111,7 @@ item::item( const unsigned int ix, const string nm, const string gf,
   setEquipEffAct( false );
   setUnequipEffAct( false );
   setUseEffAct( false );
-  for( unsigned int i = 0; i < NUM_EFF; i++ )
+  for( u_int8 i = 0; i < NUM_EFF; i++ )
     item_eff[i] = NULL;
   attached = NULL;
   number = n;
@@ -241,7 +241,7 @@ string item::pb( const bool val ) const
 // GET FUNCTIONS (RETURNING A VALUE)
 // ===================================================================
 
-unsigned int item::getId() const // returns ID number
+u_int32 item::getId() const // returns ID number
 {
   if( debug_mode )
     cout << "getId(): ID is '" << id << "'\n";
@@ -262,35 +262,35 @@ string item::getGfx() const // returns gfx filename
   return gfx;
 }
 
-unsigned int item::getType() const // returns type
+u_int8 item::getType() const // returns type
 {
   if( debug_mode )
     cout << "getType(): type is " << type << endl;
   return type;
 }
 
-unsigned int item::getSize() const // returns size
+u_int16 item::getSize() const // returns size
 {
   if( debug_mode )
     cout << "getSize(): size is " << item_att[0] << endl;
   return item_att[0];
 }
 
-unsigned int item::getWeight() const // returns weight
+u_int16 item::getWeight() const // returns weight
 {
   if( debug_mode )
     cout << "getWeight(): weight is " << item_att[1] << endl;
   return item_att[1];
 }
 
-unsigned int item::getValue() const // returns value
+u_int16 item::getValue() const // returns value
 {
   if( debug_mode )
     cout << "getValue(): value is " << item_att[2] << endl;
   return item_att[2];
 }
 
-unsigned int item::getUses() const // returns number of uses
+u_int16 item::getUses() const // returns number of uses
 {
   if( debug_mode )
     cout << "getUses(): number of uses is " << item_att[3] << endl;
@@ -467,7 +467,7 @@ item* item::getAttItem() const // returns a pointer to the attached item
 // SET FUNCTIONS (MODIFYING)
 // ===================================================================
 
-bool item::setId( const unsigned int val ) // sets ID number
+bool item::setId( const u_int32 val ) // sets ID number
 {
   id = val;
   if( debug_mode )
@@ -491,7 +491,7 @@ bool item::setGfx( const string val ) // sets gfx filename
   return true;
 }
 
-bool item::setType( const unsigned int val ) // sets type
+bool item::setType( const u_int8 val ) // sets type
 {
   type = val;
   if( debug_mode )
@@ -499,7 +499,7 @@ bool item::setType( const unsigned int val ) // sets type
   return true;
 }
 
-bool item::setSize( const unsigned int val ) // sets size
+bool item::setSize( const u_int16 val ) // sets size
 {
   item_att[0] = val;
   if( debug_mode )
@@ -507,7 +507,7 @@ bool item::setSize( const unsigned int val ) // sets size
   return true;
 }
 
-bool item::setWeight( const unsigned int val ) // sets weight
+bool item::setWeight( const u_int16 val ) // sets weight
 {
   item_att[1] = val;
   if( debug_mode )
@@ -515,7 +515,7 @@ bool item::setWeight( const unsigned int val ) // sets weight
   return true;
 }
 
-bool item::setValue( const unsigned int val ) // sets value
+bool item::setValue( const u_int16 val ) // sets value
 {
   item_att[2] = val;
   if( debug_mode )
@@ -523,7 +523,7 @@ bool item::setValue( const unsigned int val ) // sets value
   return true;
 }
 
-bool item::setUses( const unsigned int val ) // sets number of uses
+bool item::setUses( const u_int16 val ) // sets number of uses
 {
   item_att[3] = val;
   if( debug_mode )

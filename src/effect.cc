@@ -87,9 +87,9 @@ string effect::getName() const // returns name
 
 bool effect::setName( const string val ) // sets name
 {
-  name = val;
   if( debug_mode )
     cout << "setName(): name set to '" << val << "'\n";
+  name = val;
   return true;
 }
 

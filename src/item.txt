@@ -11,29 +11,29 @@ This documentation is part of the Adonthell Project
 
 Public constants:
 
-  const unsigned int NUM_ATT // number of attributes
-  const unsigned int NUM_CHR // number of characteristics
-  const unsigned int NUM_EFF // number of effects
+  const u_int8 NUM_ATT // number of attributes
+  const u_int8 NUM_CHR // number of characteristics
+  const u_int8 NUM_EFF // number of effects
 
 Public member variables:
 
   item *next; // pointer to the next item in the container
   item *prev; // pointer to the previous item in the container
-  unsigned int number; // number of items in this stack (for simple items only)
+  u_int8 number; // number of items in this stack (for simple items only)
 
 Protected member variables:
 
   bool debug_mode; // is debug mode on or off?
-  unsigned int id; // ID number corresponding to the items database (MORE info
+  u_int32 id; // ID number corresponding to the items database (MORE info
 	           // when it becomes available)
   string name; // name of the item
   string gfx;  // filename of the graphic
-  unsigned int type; // type of the item, corresponds to:
+  u_int8 type; // type of the item, corresponds to:
                      // 0 -- item
                      // 1 -- weapon
                      // 2 -- armour
                      // 3 -- spell
-  unsigned int item_att[]; // attributes array:
+  u_int16 item_att[]; // attributes array:
                            // 0 -- size
                            // 1 -- weight
                            // 2 -- value
@@ -83,8 +83,8 @@ Constructors:
 	 // attached = NULL
 	 // number = 1
 
-  item( unsigned int i, string nm, string gf, unsigned int ty,
-	unsigned int at[], bool ch[], bool ae[], effect ef[], unsigned int n )
+  item( u_int32 i, string nm, string gf, u_int8 ty,
+	u_int16 at[], bool ch[], bool ae[], effect ef[], u_int8 n )
          // the "full" constructor:
          // id is the ID number of the item
 	 // nm is the name
@@ -97,7 +97,7 @@ Constructors:
 	 // n is the number
 	 // *** NOTE *** that prev, next, and attached are not set!
 
-  item( unsigned int i, string nm, string gf, unsigned int ty, unsigned int n )
+  item( u_int32 i, string nm, string gf, u_int8 ty, u_int8 n )
          // maybe the most useful constructor of all, the "sparse" constructor:
          // id is the ID number of the item
 	 // nm is the name
@@ -127,14 +127,14 @@ Public debug functions:
 
 Value returning functions:
 
-  unsigned int getId()     // returns ID number
+  u_int32 getId()     // returns ID number
   string getName()         // returns name
   string getGfx()          // returns gfx filename
-  unsigned int getType()   // returns type
-  unsigned int getSize()   // returns size
-  unsigned int getWeight() // returns weight
-  unsigned int getValue()  // returns value
-  unsigned int getUses()   // returns number of uses
+  u_int8 getType()   // returns type
+  u_int16 getSize()   // returns size
+  u_int16 getWeight() // returns weight
+  u_int16 getValue()  // returns value
+  u_int16 getUses()   // returns number of uses
   bool getMoveable()       // returns moveable?
   bool getContainer()      // returns container?
   bool getLight()          // returns light?
@@ -161,14 +161,14 @@ Value returning functions:
   
 Modifying functions:
 
-  bool setId( unsigned int )    // sets ID number
+  bool setId( u_int32 )    // sets ID number
   bool setName( string )        // sets name
   bool setGfx( string )         // sets gfx filename
-  bool setType( unsigned int )  // sets type
-  bool setSize( unsigned int )  // sets size
-  bool setWeight( unsigned int )// sets weight
-  bool setValue( unsigned int ) // sets value
-  bool setUses( unsigned int )  // sets number of uses
+  bool setType( u_int8 )  // sets type
+  bool setSize( u_int16 )  // sets size
+  bool setWeight( u_int16 )// sets weight
+  bool setValue( u_int16 ) // sets value
+  bool setUses( u_int16 )  // sets number of uses
   bool setMoveable( bool )      // sets moveable?
   bool setContainer( bool )     // sets container?
   bool setLight( bool )         // sets light?
