@@ -62,7 +62,7 @@ void create_mainframe (MainFrame * MainWnd)
     /* Project */
     menuitem = gtk_menu_item_new_with_label ("Project");
     gtk_container_add (GTK_CONTAINER (menu), menuitem);
-    gtk_widget_add_accelerator (menuitem, "activate", accel_group, GDK_p, GDK_MOD1_MASK, GTK_ACCEL_VISIBLE);
+    gtk_widget_add_accelerator (menuitem, "activate", accel_group, GDK_p, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
     gtk_signal_connect (GTK_OBJECT (menuitem), "activate", GTK_SIGNAL_FUNC (on_file_project_activate), (gpointer) MainWnd);
     gtk_widget_show (menuitem);
 
@@ -75,21 +75,21 @@ void create_mainframe (MainFrame * MainWnd)
     /* New */
     menuitem = gtk_menu_item_new_with_label ("New");
     gtk_container_add (GTK_CONTAINER (menu), menuitem);
-    gtk_widget_add_accelerator (menuitem, "activate", accel_group, GDK_n, GDK_MOD1_MASK, GTK_ACCEL_VISIBLE);
+    gtk_widget_add_accelerator (menuitem, "activate", accel_group, GDK_n, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
     gtk_signal_connect (GTK_OBJECT (menuitem), "activate", GTK_SIGNAL_FUNC (on_file_new_activate), (gpointer) MainWnd);
     gtk_widget_show (menuitem);
 
     /* Load */
-    menuitem = gtk_menu_item_new_with_label ("Load");
+    menuitem = gtk_menu_item_new_with_label ("Open");
     gtk_container_add (GTK_CONTAINER (menu), menuitem);
-    gtk_widget_add_accelerator (menuitem, "activate", accel_group, GDK_l, GDK_MOD1_MASK, GTK_ACCEL_VISIBLE);
+    gtk_widget_add_accelerator (menuitem, "activate", accel_group, GDK_o, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
     gtk_signal_connect (GTK_OBJECT (menuitem), "activate", GTK_SIGNAL_FUNC (on_file_load_activate), (gpointer) MainWnd);
     gtk_widget_show (menuitem);
 
     /* Save */
     menuitem = gtk_menu_item_new_with_label ("Save");
     gtk_container_add (GTK_CONTAINER (menu), menuitem);
-    gtk_widget_add_accelerator (menuitem, "activate", accel_group, GDK_s, GDK_MOD1_MASK, GTK_ACCEL_VISIBLE);
+    gtk_widget_add_accelerator (menuitem, "activate", accel_group, GDK_s, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
     gtk_signal_connect (GTK_OBJECT (menuitem), "activate", GTK_SIGNAL_FUNC (on_file_save_activate), (gpointer) MainWnd);
     gtk_widget_show (menuitem);
 
@@ -102,7 +102,7 @@ void create_mainframe (MainFrame * MainWnd)
     /* Quit */
     menuitem = gtk_menu_item_new_with_label ("Quit");
     gtk_menu_append (GTK_MENU (menu), menuitem);
-    gtk_widget_add_accelerator (menuitem, "activate", accel_group, GDK_F4, GDK_MOD1_MASK, GTK_ACCEL_VISIBLE);
+    gtk_widget_add_accelerator (menuitem, "activate", accel_group, GDK_q, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
     gtk_signal_connect (GTK_OBJECT (menuitem), "activate", GTK_SIGNAL_FUNC (on_widget_destroy), (gpointer) NULL);
     gtk_widget_show (menuitem);
 
@@ -118,21 +118,21 @@ void create_mainframe (MainFrame * MainWnd)
     /* Variables */
     menuitem = gtk_menu_item_new_with_label ("Variables");
     gtk_container_add (GTK_CONTAINER (menu), menuitem);
-    gtk_widget_add_accelerator (menuitem, "activate", accel_group, GDK_v, GDK_MOD1_MASK, GTK_ACCEL_VISIBLE);
+    gtk_widget_add_accelerator (menuitem, "activate", accel_group, GDK_v, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
     gtk_signal_connect (GTK_OBJECT (menuitem), "activate", GTK_SIGNAL_FUNC (on_dialogue_variables_activate), (gpointer) MainWnd);
     gtk_widget_show (menuitem);
 
     /* Compile */
     menuitem = gtk_menu_item_new_with_label ("Compile");
     gtk_container_add (GTK_CONTAINER (menu), menuitem);
-    gtk_widget_add_accelerator (menuitem, "activate", accel_group, GDK_c, GDK_MOD1_MASK, GTK_ACCEL_VISIBLE);
+    gtk_widget_add_accelerator (menuitem, "activate", accel_group, GDK_c, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
     gtk_signal_connect (GTK_OBJECT (menuitem), "activate", GTK_SIGNAL_FUNC (on_dialogue_compile_activate), (gpointer) MainWnd);
     gtk_widget_show (menuitem);
 
     /* Run */
     menuitem = gtk_menu_item_new_with_label ("Run");
     gtk_container_add (GTK_CONTAINER (menu), menuitem);
-    gtk_widget_add_accelerator (menuitem, "activate", accel_group, GDK_r, GDK_MOD1_MASK, GTK_ACCEL_VISIBLE);
+    gtk_widget_add_accelerator (menuitem, "activate", accel_group, GDK_r, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
     gtk_signal_connect (GTK_OBJECT (menuitem), "activate", GTK_SIGNAL_FUNC (on_dialogue_run_activate), (gpointer) MainWnd);
     gtk_widget_set_sensitive (menuitem, FALSE);
     gtk_widget_show (menuitem);
@@ -238,9 +238,11 @@ void create_mainframe (MainFrame * MainWnd)
 GtkWidget *
 create_tooltip (const gchar * text, s_int32 x, s_int32 y)
 {
+    // GdkWindow *wnd;
     GtkWidget *tip_window;
     GtkWidget *frame;
     GtkWidget *tip;
+    // int w,h;
 
     tip_window = gtk_window_new (GTK_WINDOW_POPUP);
     gtk_widget_set_uposition (tip_window, x, y);
@@ -252,7 +254,7 @@ create_tooltip (const gchar * text, s_int32 x, s_int32 y)
     gtk_object_set_data_full (GTK_OBJECT (tip_window), "frame", frame, (GtkDestroyNotify) gtk_widget_unref);
     gtk_widget_show (frame);
     gtk_container_add (GTK_CONTAINER (tip_window), frame);
-    gtk_frame_set_shadow_type (GTK_FRAME (frame), GTK_SHADOW_OUT);
+    gtk_frame_set_shadow_type (GTK_FRAME (frame), GTK_SHADOW_OUT); // GTK_SHADOW_NONE);
 
     tip = gtk_label_new (g_strdup (text));
     gtk_widget_ref (tip);
@@ -262,6 +264,11 @@ create_tooltip (const gchar * text, s_int32 x, s_int32 y)
     gtk_label_set_justify (GTK_LABEL (tip), GTK_JUSTIFY_LEFT);
     gtk_label_set_line_wrap (GTK_LABEL (tip), TRUE);
     gtk_misc_set_padding (GTK_MISC (tip), 4, 1);
+
+    // wnd = gtk_widget_get_parent_window (tip);   
+    // gdk_window_get_size (wnd, &w, &h);
+
+    // gdk_draw_rectangle (wnd, tip->style->black_gc, FALSE, 0, 0, w-1, h-1);
 
     return tip_window;
 }

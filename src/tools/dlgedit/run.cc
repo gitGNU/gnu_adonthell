@@ -122,7 +122,7 @@ void run_dlg::run ()
     if (dat->player_text.size () == index)
     {
         // Possibly  player_text  contains some NULL values, so we clear it
-        // first. I can't contain non-NULL values though, therefore we don't
+        // first. It can't contain non-NULL values though, therefore we don't
         // leave any memory unallocated
         dat->player_text.clear ();
         

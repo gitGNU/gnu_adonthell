@@ -167,7 +167,7 @@ create_dlg_list_item (const char *text, int mode, int num)
     /* create label */    
     label = gtk_label_new (text);
     gtk_widget_set_style (label, style);
-    gtk_widget_set_usize (label, 380, 0);
+    gtk_widget_set_usize (label, 370, 0);
     gtk_label_set_justify ((GtkLabel *) label, GTK_JUSTIFY_LEFT);
     gtk_label_set_line_wrap ((GtkLabel *) label, TRUE);
     gtk_widget_show (label);
