@@ -13,10 +13,17 @@ LIBS = -lpthread -lSDL -lSDLmixer
 OBJECTS = interpreter.o commands.o dialog_cmds.o main.o init.o fileops.o \
 	keyboard.o gfx.o pnm.o window.o array_tmpl.o mappattern.o \
 	mapsquare.o mapevent.o mapcharacter.o map.o mapengine.o \
-	audio.o audio_thread.o instruction_class.o instruction.o
+	audio.o audio_thread.o instruction_class.o instruction.o \
+	animation.o
 
 main:$(OBJECTS)
 	$(CC) $(OBJECTS) $(LIBS) -o ../mapengine
+
+animtest:animtest.o init.o fileops.o \
+	keyboard.o gfx.o pnm.o animation.o
+	$(CC)  animtest.o init.o fileops.o \
+	keyboard.o gfx.o pnm.o animation.o $(LIBS) -o ../animtest
+
 
 clean:
 	rm -f $(OBJECTS) test *~
