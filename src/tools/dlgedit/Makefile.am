@@ -19,14 +19,13 @@ preset.h ps_callbacks.h ps_dlg.h ps_interface.h pset_callbacks.h \
 pset_interface.h run.h run_callbacks.h run_interface.h
 
 # Evil, but it works...
-CPPFLAGS +=-I../.. -DUSE_PYTHON -D_VERSION_=\"0.7\" $(PY_CFLAGS) `gtk-config --cflags`
+CPPFLAGS +=-I../.. -DUSE_PYTHON -D_VERSION_=\"0.7\" $(PY_CFLAGS) $(GTK_CFLAGS) 
 
 SWIGFLAGS = -D_DLGEDIT_ -D_DEBUG_
 
 dlgedit_LDADD = character.o data.o dialog.o \
 event.o fileops.o lex.prefs.o prefs.o py_inc.o \
-quest.o storage.o yarg.o character_base.o $(PY_LIBS) -lm -lstdc++
-dlgedit_LDFLAGS = `gtk-config --libs`
+quest.o storage.o yarg.o character_base.o $(PY_LIBS) $(GTK_LIBS) -lm -lstdc++
 
 lex.loadlg.cc: loadlg.l
 	flex -olex.loadlg.cc loadlg.l

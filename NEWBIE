@@ -256,6 +256,19 @@ are even loaded into memory when the game is executed. Currently, no
 events trigger sound effects, so you won't hear any.
 
 
+Q: The configure script claims it cannot find SDL (or OggVorbis or
+GTK+) on my system, although I know it is there.
+
+A: If you have installed precompiled packages (e.g. RPM'S) of those
+liraries, you most likely have to install the corresponding -devel
+packages (e.g. SDL-devel.rpm). They should be available where you
+obtained the non-devel/runtime packages.
+
+On some systems, it might be necessary to recreate the configure
+script to work correctly. Do this by typing './autogen.sh' inside
+the adonthell-0.3 directory.
+
+
 Q: While compiling the Adonthell source code or the SDL_mixer library,
 I get an error similar to the following:
 

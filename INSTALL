@@ -28,7 +28,7 @@ version of Python by entering the command:
 For sound support, you'll also need the SDL_mixer library, Version 1.0 
 or later and OggVorbis.
 
-   See http://www.libsdl.org/projects/SDL_image/
+   See http://www.libsdl.org/projects/SDL_mixer/
    and http://www.xiph.org/ogg/vorbis/download/
 
 
@@ -65,24 +65,27 @@ for you. For a complete list, run 'configure --help'.
 --disable-gtktest
 
   If configure claims to not find the SDL library, OggVorbis or
-GTK+ although they are there, you can try disable the test. 
-Chances are good that you can compile Adonthell afterwards, but
-it's usually an indication that those libraries are not correctly
-installed.
+GTK+ although they are there, you can try to disable the test. 
+
+Another way to workaround such a problem might be to recreate 
+'configure' by running the 'autogen.sh' script.
+
 
 --with-<x>-prefix=PFX
 
   This allows you to specify the path to various libraries. (replace
-the <x> with the name of the library. This is useful if you have 
+the <x> with the name of the library.) This is useful if you have 
 installed those libraries in unusual locations, although it might be
 better to set the $LD_LIBRARY_PATH environment variable, or to add
 those directories to /etc/ld.so.conf.
 
+
 --enable-tools
 
-  Use this to build the Adonthell development tools. This include
-editors for our graphic objects, characters, maps dialogues and a
-few other tools.
+  Use this to build the Adonthell development tools. These include
+editors for our graphic objects, characters, maps, dialogues and a
+few other utilities.
+
 
 --enable-memleaks
 
