@@ -162,7 +162,7 @@ void binary_cmd::write (FILE *out)
     fwrite (target, l, 1, out);
     for (i = 4; i > l%4; i--) fputc (0, out);
     
-    if (!ptype & (TARGET_LOCAL | TARGET_GLOBAL)) 
+    if (!(ptype & TARGET_LOCAL) && !(ptype & TARGET_GLOBAL)) 
     {
         l = strlen (target_location);
         fwrite (&l, sizeof (l), 1, out);
@@ -179,7 +179,7 @@ void binary_cmd::write (FILE *out)
         fwrite (c_param1, l, 1, out);
         for (i = 4; i > l%4; i--) fputc (0, out);
 
-        if (!ptype & (PARAM1_LOCAL | PARAM1_GLOBAL))
+        if (!(ptype & PARAM1_LOCAL) && !(ptype & PARAM1_GLOBAL))
         {
             l = strlen (param1_location);
             fwrite (&l, sizeof (l), 1, out);
@@ -197,7 +197,7 @@ void binary_cmd::write (FILE *out)
         fwrite (c_param2, l, 1, out);
         for (i = 4; i > l%4; i--) fputc (0, out);
 
-        if (!ptype & (PARAM2_LOCAL | PARAM2_GLOBAL))
+        if (!(ptype & PARAM2_LOCAL) && !(ptype & PARAM2_GLOBAL))
         {
             l = strlen (param2_location) + 1;
             fwrite (&l, sizeof (l), 1, out);
