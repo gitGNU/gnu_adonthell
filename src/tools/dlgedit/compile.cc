@@ -12,8 +12,6 @@
    See the COPYING file for more details.
 */ 
 
-#include <stdlib.h>
-#include <stdio.h>
 #include <string.h>
 #include <algorithm>
 
@@ -41,13 +39,13 @@ void dlg_compiler::run ()
     // write the dialogue functions
     write_dialogue ();
     
-    // this creates the scripts "entry function"
+    // this creates the script's "entry function"
     write_entry_func ();
 
     // write start
     write_start ();
 
-    // write all the others
+    // write all the answers
     while (!todo_nodes.empty ())
     {
         get_cur_nodes ();
@@ -65,6 +63,7 @@ void dlg_compiler::write_strings ()
 
     // write the class name
     script << "class " << strrchr (filename.c_str (), '/') + 1 << ":\n";
+    script << "    loop = []\n";
     script << "    strings = [";
 
     // write all strings and build lookup table to get index when given
@@ -111,13 +110,13 @@ void dlg_compiler::write_dialogue ()
 void dlg_compiler::write_entry_func ()
 {
     // overwrite __getattr__, so that member variables need not be
-    // defined befor using them
+    // defined before using them
     script << "\n    def __getattr__ (self, var):"
 
 #ifdef _DEBUG_
            << "\n        print \"*** Warning: \\\"\" + var + \"\\\" not defined!\""
-
 #endif _DEBUG_
+
            << "\n        return 0\n"
 
     // Write the function to start/continue the dialogue
@@ -160,6 +159,10 @@ void dlg_compiler::write_npc (Circle *circle)
         }
     }
 
+    // allow loops
+    if (circle->actions[0] == '1')
+        script << "\n" << space << "self.loop.append (" << circle->number << ")";
+
     script << "\n";
 }
 
@@ -181,13 +184,21 @@ void dlg_compiler::write_player (Circle *circle)
     // write circle's text and "jump target"
     script << "\n" << space << "self.player.append (" << text_lookup[circle->number] << ")";
     script << "\n" << space << "self.cont.append (" << jump_lookup[circle->number] << ")";
+
+    // allow loops
+    if (circle->actions[0] == '1')
+        script << "\n" << space << "self.loop.append (" << circle->number << ")";
+
     script << "\n";
 }
 
+// Write the first bit of the dialogue
 void dlg_compiler::write_start ()
 {
     vector<DlgNode*>::iterator i;
 
+    // find the start of the dialogue (all nodes without parent), and while
+    // going through the dialogue anyway, write functions of all the nodes
     for (i = dlg.begin(); i != dlg.end (); i++)
         if ((*i)->type != LINK)
         {
@@ -218,6 +229,7 @@ void dlg_compiler::write_answer ()
         if ((*i)->type != NPC) cout << "\n*** Compile error: NPC node expected!"; 
 #endif _DEBUG_
 
+        // Write NPC stuff
         script << "\n" << space << "self.npc" << (*i)->number << " ()";
 
         // write following player nodes (if any)
@@ -232,8 +244,7 @@ void dlg_compiler::write_answer ()
 
         // add a delimiter to distinguish between player text's following
         // different NPC answers
-        if (i + 1 != cur_nodes.end ())
-            script << "\n" << space << "self.cont.append (-1)";
+        script << "\n" << space << "self.player.append (-1)";
     }
 
     if (cur_nodes.empty ())

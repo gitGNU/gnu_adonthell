@@ -26,8 +26,11 @@ configure:1308: c++ -o conftest -g -O2   conftest.C -lSDL -lpthread  -L/usr/loca
 configure:1391: checking for main in -lSDL_image
 configure:1430: checking for Mix_OpenAudio in -lSDLmixer
 configure:1477: checking for Mix_OpenAudio in -lSDL_mixer
-configure:1528: checking for pthread.h
-configure:1528: checking for SDL/SDL.h
-configure:1570: checking for SDL/SDL_mixer.h
-configure:1570: checking for SDL/SDL_audio.h
-configure:1610: checking for SDL/SDL_image.h
+configure:1529: checking for python
+configure:1577: checking for Python header files
+configure:1592: checking for Python library
+configure:1614: checking for pthread.h
+configure:1614: checking for SDL/SDL.h
+configure:1656: checking for SDL/SDL_mixer.h
+configure:1656: checking for SDL/SDL_audio.h
+configure:1696: checking for SDL/SDL_image.h

@@ -71,7 +71,7 @@ SUBDIRS = . tools
 
 bin_PROGRAMS = mapengine #alextest joltest
 
-mapengine_SOURCES = animation.cpp audio.cpp audio_thread.cpp character.cpp cutscene.cpp dialog_cmds.cpp fileops.cpp game.cpp generic_cmds.cpp image.cpp init.cpp interpreter.cpp input.cpp inventory.cpp lex.prefs.cpp main.cpp map.cpp mapcharacter.cpp mapengine.cpp mapevent.cpp mappattern.cpp mapsquare.cpp pnm.cpp prefs.cpp screen.cpp storage.cpp win_label.cpp win_write.cpp win_container.cpp win_select.cpp win_friend.cpp win_border.cpp win_image.cpp win_base.cpp win_font.cpp mapitem.cpp py_inc.cpp py_player_wrap.cpp py_mapengine_wrap.cpp py_baseitem_wrap.cpp yarg.cc py_dialogue.cpp
+mapengine_SOURCES = animation.cpp audio.cpp audio_thread.cpp character.cpp cutscene.cpp dialog.cpp fileops.cpp game.cpp image.cpp init.cpp input.cpp inventory.cpp lex.prefs.cpp main.cpp map.cpp mapcharacter.cpp mapengine.cpp mapevent.cpp mappattern.cpp mapsquare.cpp pnm.cpp prefs.cpp screen.cpp storage.cpp win_label.cpp win_write.cpp win_container.cpp win_select.cpp win_friend.cpp win_border.cpp win_image.cpp win_base.cpp win_font.cpp mapitem.cpp py_inc.cpp py_player_wrap.cpp py_mapengine_wrap.cpp yarg.cc py_dialogue.cpp
 
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = ../header.h
@@ -84,13 +84,12 @@ CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
 mapengine_OBJECTS =  animation.o audio.o audio_thread.o character.o \
-cutscene.o dialog_cmds.o fileops.o game.o generic_cmds.o image.o init.o \
-interpreter.o input.o inventory.o lex.prefs.o main.o map.o \
-mapcharacter.o mapengine.o mapevent.o mappattern.o mapsquare.o pnm.o \
-prefs.o screen.o storage.o win_label.o win_write.o win_container.o \
-win_select.o win_friend.o win_border.o win_image.o win_base.o \
-win_font.o mapitem.o py_inc.o py_player_wrap.o py_mapengine_wrap.o \
-py_baseitem_wrap.o yarg.o py_dialogue.o
+cutscene.o dialog.o fileops.o game.o image.o init.o input.o inventory.o \
+lex.prefs.o main.o map.o mapcharacter.o mapengine.o mapevent.o \
+mappattern.o mapsquare.o pnm.o prefs.o screen.o storage.o win_label.o \
+win_write.o win_container.o win_select.o win_friend.o win_border.o \
+win_image.o win_base.o win_font.o mapitem.o py_inc.o py_player_wrap.o \
+py_mapengine_wrap.o yarg.o py_dialogue.o
 mapengine_LDADD = $(LDADD)
 mapengine_DEPENDENCIES = 
 mapengine_LDFLAGS = 
@@ -106,12 +105,11 @@ DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 TAR = tar
 GZIP_ENV = --best
 DEP_FILES =  .deps/animation.P .deps/audio.P .deps/audio_thread.P \
-.deps/character.P .deps/cutscene.P .deps/dialog_cmds.P .deps/fileops.P \
-.deps/game.P .deps/generic_cmds.P .deps/image.P .deps/init.P \
-.deps/input.P .deps/interpreter.P .deps/inventory.P .deps/lex.prefs.P \
-.deps/main.P .deps/map.P .deps/mapcharacter.P .deps/mapengine.P \
-.deps/mapevent.P .deps/mapitem.P .deps/mappattern.P .deps/mapsquare.P \
-.deps/pnm.P .deps/prefs.P .deps/py_baseitem_wrap.P .deps/py_dialogue.P \
+.deps/character.P .deps/cutscene.P .deps/dialog.P .deps/fileops.P \
+.deps/game.P .deps/image.P .deps/init.P .deps/input.P .deps/inventory.P \
+.deps/lex.prefs.P .deps/main.P .deps/map.P .deps/mapcharacter.P \
+.deps/mapengine.P .deps/mapevent.P .deps/mapitem.P .deps/mappattern.P \
+.deps/mapsquare.P .deps/pnm.P .deps/prefs.P .deps/py_dialogue.P \
 .deps/py_inc.P .deps/py_mapengine_wrap.P .deps/py_player_wrap.P \
 .deps/screen.P .deps/storage.P .deps/win_base.P .deps/win_border.P \
 .deps/win_container.P .deps/win_font.P .deps/win_friend.P \

@@ -31,6 +31,8 @@ ac_given_INSTALL="/usr/bin/install -c"
 trap 'rm -fr 
 Makefile
 src/Makefile
+src/tools/Makefile
+src/tools/dlgedit/Makefile
  header.h conftest*; exit 1' 1 2 15
 
 # Protect against being on the right side of a sed subst in config.status.
@@ -39,13 +41,13 @@ sed 's/%@/@@/; s/@%/@@/; s/%g$/@g/; /@g$/s/[\\&%]/\\&/g;
 /^[ 	]*VPATH[ 	]*=[^:]*$/d
 
 s%@SHELL@%/bin/sh%g
-s%@CFLAGS@%-O6 -g -Wall -I/usr/local/include -I/usr/local/include/SDL -D_REENTRANT%g
+s%@CFLAGS@%-O6 -g -Wall -I/usr/local/include -I/usr/local/include/SDL -D_REENTRANT -I/usr/include/python1.5%g
 s%@CPPFLAGS@%%g
-s%@CXXFLAGS@%-O6 -g -Wall -I/usr/local/include -I/usr/local/include/SDL -D_REENTRANT  -DSDL_MIXER %g
+s%@CXXFLAGS@%-O6 -g -Wall -I/usr/local/include -I/usr/local/include/SDL -D_REENTRANT -I/usr/include/python1.5  -DSDL_MIXER %g
 s%@FFLAGS@%%g
 s%@DEFS@%-DHAVE_CONFIG_H%g
 s%@LDFLAGS@%%g
-s%@LIBS@%-L/usr/local/lib -lSDL -lpthread -lSDL_image -lSDL_mixer%g
+s%@LIBS@%-L/usr/local/lib -lSDL -lpthread -lSDL_image -lSDL_mixer -L/usr/lib/python1.5/config -lpython1.5%g
 s%@exec_prefix@%${prefix}%g
 s%@prefix@%/usr%g
 s%@program_transform_name@%s,x,x,%g
@@ -78,6 +80,7 @@ s%@CXXCPP@%c++ -E%g
 s%@SDL_CONFIG@%/usr/local/bin/sdl-config%g
 s%@SDL_CFLAGS@%-I/usr/local/include -I/usr/local/include/SDL -D_REENTRANT%g
 s%@SDL_LIBS@%-L/usr/local/lib -lSDL -lpthread%g
+s%@PYPACKAGE@%/usr/bin/python%g
 s%@SUBDIRS@%%g
 
 CEOF
@@ -116,6 +119,8 @@ fi
 
 CONFIG_FILES=${CONFIG_FILES-"Makefile
 src/Makefile
+src/tools/Makefile
+src/tools/dlgedit/Makefile
 "}
 for ac_file in .. $CONFIG_FILES; do if test "x$ac_file" != x..; then
   # Support "outfile[:infile[:infile...]]", defaulting infile="outfile.in".

@@ -16,35 +16,33 @@
 #define __DIALOG_H__
 
 #include "Python.h"
-
 #include <vector>
 
-
-class dlg_text                          // Contains a line of text & its attributes
-{
-public:
-    dlg_text (u_int32 i, s_int32 o) : id (i), offset (o) { }
-    dlg_text (dlg_text *d) : id (d->id), offset (d->offset) { }  
-        
-    u_int32 id;                         // Id of the string
-    s_int32 offset;                     // offset to next command in dialogue
-};
-
-
+// This is the lowlevel dialogue class 
 class dialog
 {
 public:
-	PyObject *class_obj;                // Points to the instantiated dialogue class
-	char *module;
+    ~dialog ();                     // Clean up stuff
+    bool init (char*, char*);       // Load & instanciate the dialogue object
+    void run (u_int32);             // Run the dialogue 
 
-    u_int32 speaker;                    // The current speaker 
-    u_int32 answer;                     // The text chosen by the player
-    char *text_file;                    // The file with the dialogues strings
-    char *player_name;                  // The players name
+    char **text;                    // NPC's speech and according Player responses
+    u_int32 text_size;              // Number of strings in text
 
+private:
+	PyObject *instance;             // Points to the instantiated dialogue class
+    char **strings;                 // The dialogue text
+
+    vector<u_int32> answers;        // The indices with which to call instane.run () 
+    vector<s_int32> choices;        // Strings player can chose from
+    vector<s_int32> used;           // Dialogue parts that are already spoken
+
+
+    void extract_strings ();        // Gets the dialogues text from 'instance'
 };
 
-#ifndef _DLGEDIT_                       // Don't need this for compiling dlgedit
+/*
+#ifndef _DLGEDIT_                   // Don't need this for compiling dlgedit
 class dialog_engine
 {
 public:
@@ -54,10 +52,11 @@ public:
 
 private:
     void run (window&);
-    void insert_plugin ();              // 'Merges' a dialogue with the loaded one
+    void insert_plugin ();          // 'Merges' a dialogue with the loaded one
 
     dialog *dlg;
 };
 #endif // _DLGEDIT_
+*/
 #endif // __DIALOG_H__
 

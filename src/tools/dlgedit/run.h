@@ -19,9 +19,11 @@
 #include <vector>
 #include <string>
 
+#include "Python.h"
+
 #include "../../character.h"
 #include "../../dialog.h"
-#include "../../yarg.h"
+#include "../../types.h"
 
 // Wrapper class for the Run Dialogue dialog
 class run_dlg
@@ -32,13 +34,13 @@ public:
 
     GtkWidget *dlg;             // The actual Dialogue Window
     GtkWidget *list;            // The List widget that holds the dialogue text
-    dialog *dat;                // Data to be used throughout the dialogue
+    u_int32 answer;             // The chosen answer
 
     void run ();                // Run the dialogue
     
 private:
     GList *tmp_list;            // Container for the Text to diaplay
-    yarg randgen;               // Random number generator
+    dialog *dat;                // Data to be used throughout the dialogue
 };
 
 #endif // __RUN_H__

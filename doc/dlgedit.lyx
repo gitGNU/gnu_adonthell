@@ -24,7 +24,7 @@
 
 \layout Title
 
-The Adonthell Dialogue Editor v0.4
+The Adonthell Dialogue Editor v0.4.1
 \layout Author
 
 Kai Sterker
@@ -43,7 +43,7 @@ A dialogue consists of a number of NPC and Player lines, arranged in a certain
  The rules for this are as follows:
 \layout Enumerate
 
-The dialogue starts with at least one NPC line.
+The dialogue starts with, at least, either one NPC or Player line.
 \layout Enumerate
 
 NPC lines may be followed by 0 or more Player lines.
@@ -62,7 +62,7 @@ This results in a directed graph which later on is traversed by the dialogue
  engine according to the following rules:
 \layout Enumerate
 
-Start with those NPC lines that have no predecessor.
+Start with those lines that have no predecessor.
 \layout Enumerate
 
 Chose randomly between multiple NPC lines.
@@ -71,7 +71,7 @@ Chose randomly between multiple NPC lines.
 Let the player chose if there are multiple Player lines.
 \layout Enumerate
 
-Don't chose lines twice.
+Don't chose lines twice (can be disabled for single lines).
 \layout Standard
 
 Apart from that, there are a number of additional features that influence
@@ -91,7 +91,7 @@ These 11 points cover most of the Dialogue System's functionality and should
  give you an idea what you can do with it, and what you can't.
  If you are interested how everything really works, take a look at the Dialogue
  Engine documentation.
- Else it is time for an example
+ Else it is time for an example.
 \layout Section
 
 An Example
@@ -368,6 +368,10 @@ indirect
 
  links start at each node, and when selecting a node with indirect links,
  the apropriate arrows are colored purple.
+\layout Standard
+
+Of course we could have used a direct link as well, but in more complex
+ dialogues, this technique avoids arrows criss-crossing all over the screen.
 \layout Subsection
 
 The Result

@@ -17,7 +17,6 @@
 #include "run.h"
 #include "run_callbacks.h"
 #include "run_interface.h"
-#include "../../dialog.h"
 
 
 void
@@ -26,51 +25,46 @@ on_dialogue_list_select_child (GtkList * list, GtkWidget * widget, gpointer user
     GList *new_items = NULL;
     GList *items = gtk_container_children ((GtkContainer *) list);
     int pos = gtk_list_child_position (list, widget);
-    dialog *dlg = ((run_dlg *) user_data)->dat;
+    run_dlg *dlg = (run_dlg *) user_data;
     GtkWidget *npc_text; 
     char *str;
         
     // Set the answer the player has chosen
     dlg->answer = GPOINTER_TO_INT (gtk_object_get_user_data (GTK_OBJECT (widget)));
+
     pos -= dlg->answer;
-  
-    npc_text = (GtkWidget *) g_list_nth_data (items, pos-1);
+
+    npc_text = (GtkWidget *) g_list_nth_data (items, pos);
 
     // Player text available!?
     switch (GPOINTER_TO_INT (gtk_object_get_user_data (GTK_OBJECT (npc_text))))
     {
-        case -2:
+        // Only NPC Text is available
+        case 0:
         {
             gtk_label_get ((GtkLabel *) ((GtkBin *) widget)->child, &str);
             new_items = g_list_append (new_items, create_dlg_list_item (str, 2, -3));
-            gtk_list_clear_items (list, pos-1, -1);
 
             break;
         }
+
+        // Player text is available
         case -1:
         {
             gtk_label_get ((GtkLabel *) ((GtkBin *) npc_text)->child, &str);
             new_items = g_list_append (new_items, create_dlg_list_item (str, 2, -3));
             gtk_label_get ((GtkLabel *) ((GtkBin *) widget)->child, &str);
             new_items = g_list_append (new_items, create_dlg_list_item (str, 1, -3));
-            gtk_list_clear_items (list, pos-2, -1);
-
-            break;
-        }
-        case 0:
-        {
-            gtk_label_get ((GtkLabel *) ((GtkBin *) widget)->child, &str);
-            new_items = g_list_append (new_items, create_dlg_list_item (str, 1, -3));
-            gtk_list_clear_items (list, pos-1, -1);
 
             break;
         }
     }
     
+    gtk_list_clear_items (list, pos-1, -1);
     gtk_list_append_items (list, new_items);
 
     // continue the dialogue
-    ((run_dlg *) user_data)->run ();    
+    dlg->run ();    
 }
 
 

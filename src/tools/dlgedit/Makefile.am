@@ -27,8 +27,8 @@ LDADD = ../../inventory.o ../../py_mapengine_wrap.o \
 ../../mapsquare.o ../../win_label.o \
 ../../image.o ../../pnm.o ../../win_select.o \
 ../../init.o ../../prefs.o ../../win_write.o \
-../../input.o ../../py_dialogue.o ../../yarg.o \
-../../py_inc.o
+../../input.o ../../yarg.o \
+../../py_inc.o ../../dialog.o
 
 LDFLAGS=-lm -lstdc++ `gtk-config --libs`
 
