@@ -16,7 +16,7 @@
 #include <sys/time.h>
 #include "types.h"
 #include "input.h"
-#include "gfx.h"
+#include "image.h"
 #include "animation.h"
 
 typedef struct imagekey

@@ -30,7 +30,8 @@ class mapsquare
 
  public:
   mapsquare();
-  void get(FILE * file);
+  void get(SDL_RWops * file);
+  void put(SDL_RWops * file);
   void put_character(mapcharacter * character);
   void leave_character();
   u_int16 is_occuped();

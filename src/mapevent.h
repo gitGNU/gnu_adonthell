@@ -15,27 +15,38 @@
 #ifndef _mapevent_h
 #define _mapevent_h
 
-#include <vector>
-
-class instruction;
 class map;
 class mapcharacter;
 class mapengine;
 
-class mapevent : vector<instruction*>
+class mapevent
 {
-  //  static u_int8 (*mapevent::event[256])
-  //    (mapcharacter*aguy,map*amap,u_int16 x,u_int16 y);
-
-   vector<instruction*> program;
-   u_int8 otherevent_val;           // Will switch to u_int16 after the
-                                    // map structure is changed
-
+  u_int16 type;
+  u_int16 param[10];
+  char param_str[100];
+  u_int8 otherevent;           // Will switch to u_int16 after the
+                               // map structure is changed
+  void mapevent::map_action_0(mapcharacter*aguy,map*amap,u_int16 x,u_int16 y);
+  void mapevent::map_action_1(mapcharacter*aguy,map*amap,u_int16 x,u_int16 y);
+  void mapevent::map_action_2(mapcharacter*aguy,map*amap,u_int16 x,u_int16 y);
+  void mapevent::map_action_3(mapcharacter*aguy,map*amap,u_int16 x,u_int16 y);
+  void mapevent::map_action_4(mapcharacter*aguy,map*amap,u_int16 x,u_int16 y);
+  void mapevent::map_action_5(mapcharacter*aguy,map*amap,u_int16 x,u_int16 y);
+  void mapevent::map_action_6(mapcharacter*aguy,map*amap,u_int16 x,u_int16 y);
+  void mapevent::map_action_7(mapcharacter*aguy,map*amap,u_int16 x,u_int16 y);
+  void mapevent::map_action_8(mapcharacter*aguy,map*amap,u_int16 x,u_int16 y);
+  void mapevent::map_action_9(mapcharacter*aguy,map*amap,u_int16 x,u_int16 y);
+  void mapevent::map_action_10(mapcharacter*aguy,map*amap,u_int16 x,u_int16 y);
+  void mapevent::map_action_11(mapcharacter*aguy,map*amap,u_int16 x,u_int16 y);
+  void mapevent::map_action_255(mapcharacter*aguy,map*amap,u_int16 x,u_int16 y);
+  
  public:
-  void get(FILE * file);
-  void run(mapcharacter*aguy, map*amap, u_int16 x, u_int16 y);
-  void set_otherevent(const u_int16&);
-  u_int16 otherevent();
+  void get(SDL_RWops * file);
+  void put(SDL_RWops * file);
+
+  u_int8 action (mapcharacter * aguy, map * amap, u_int16 x, u_int16 y);
 };
 
 #endif
+
+

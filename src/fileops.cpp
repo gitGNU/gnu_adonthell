@@ -16,20 +16,27 @@
 #include "types.h"
 #include "fileops.h"
 
-void getstringfromfile(char strg[],FILE * file)
+void getstringfromfile(char strg[],SDL_RWops * file)
 {
   char c;
-  int gc=0;
-  while ((c=fgetc(file))!=0)
+  u_int16 gc=0;
+  do
     {
+      SDL_RWread(file,&c,sizeof(c),1);
       strg[gc]=c;
       gc++;
     }
-  strg[gc]=0;
+  while(strg[gc-1]!=0);
 }
 
-void putstringtofile(char strg[],FILE * file)
+void putstringtofile(char strg[],SDL_RWops * file)
 {
-  fputs(strg,file);
-  fputc(0,file);
+  u_int16 gc=0;
+  do
+    {
+      SDL_RWwrite(file,&strg[gc],sizeof(strg[gc]),1);
+      gc++;
+    }
+  while(strg[gc-1]!=0);
 }
+

@@ -16,7 +16,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "types.h"
-#include "gfx.h"
+#include "image.h"
 #include "mapcharacter.h"
 #include "mapsquare.h"
 #include "mapevent.h"
@@ -54,11 +54,11 @@ mapcharacter::~mapcharacter()
   nbr_of_frames=0;
 }
 
-s_int8 mapcharacter::get(FILE * file)
+s_int8 mapcharacter::get(SDL_RWops * file)
 {
   s_int8 i,retvalue=0;
   walkcounter=11;
-  fread(&nbr_of_frames,sizeof(nbr_of_frames),1,file);
+  SDL_RWread(file,&nbr_of_frames,sizeof(nbr_of_frames),1);
   frame=new image[nbr_of_frames];
   for (i=0;i<nbr_of_frames;i++)
     if (!(frame[i].get(file)))retvalue=-1;
@@ -68,34 +68,51 @@ s_int8 mapcharacter::get(FILE * file)
 s_int8 mapcharacter::load(char * fname)
 {
   u_int16 retvalue;
-  FILE * file;
-  file=fopen(fname,"r");
+  SDL_RWops * file;
+  file=SDL_RWFromFile(fname,"r");
   if(!file) return(1);
   else
     {
       retvalue=get(file);
-      fclose(file);
+      SDL_RWclose(file);
       return(retvalue);
     }
 }
 
-void mapcharacter::get_heroe_stat(FILE * file)
+void mapcharacter::get_heroe_stat(SDL_RWops * file)
 {
-  fread(&posx,sizeof(posx),1,file);
-  fread(&posy,sizeof(posy),1,file);
-  fread(&speeddelay,sizeof(speeddelay),1,file);
-  fread(&framefactor,sizeof(framefactor),1,file);
+  SDL_RWread(file,&posx,sizeof(posx),1);
+  SDL_RWread(file,&posy,sizeof(posy),1);
+  SDL_RWread(file,&speeddelay,sizeof(speeddelay),1);
+  SDL_RWread(file,&framefactor,sizeof(framefactor),1);
   mapcharnbr=255;
 }
 
-void mapcharacter::get_NPC_stat(FILE * file, u_int16 nbr)
+void mapcharacter::put_heroe_stat(SDL_RWops * file)
 {
-  fread(&posx,sizeof(posx),1,file);
-  fread(&posy,sizeof(posy),1,file);
-  fread(&speeddelay,sizeof(speeddelay),1,file);
-  fread(&framefactor,sizeof(framefactor),1,file);
-  fread(&movtype,sizeof(movtype),1,file);
+  SDL_RWwrite(file,&posx,sizeof(posx),1);
+  SDL_RWwrite(file,&posy,sizeof(posy),1);
+  SDL_RWwrite(file,&speeddelay,sizeof(speeddelay),1);
+  SDL_RWwrite(file,&framefactor,sizeof(framefactor),1);
+}
+
+void mapcharacter::get_NPC_stat(SDL_RWops * file, u_int16 nbr)
+{
+  SDL_RWread(file,&posx,sizeof(posx),1);
+  SDL_RWread(file,&posy,sizeof(posy),1);
+  SDL_RWread(file,&speeddelay,sizeof(speeddelay),1);
+  SDL_RWread(file,&framefactor,sizeof(framefactor),1);
+  SDL_RWread(file,&movtype,sizeof(movtype),1);
   mapcharnbr=nbr;
+}
+
+void mapcharacter::put_NPC_stat(SDL_RWops * file)
+{
+  SDL_RWwrite(file,&posx,sizeof(posx),1);
+  SDL_RWwrite(file,&posy,sizeof(posy),1);
+  SDL_RWwrite(file,&speeddelay,sizeof(speeddelay),1);
+  SDL_RWwrite(file,&framefactor,sizeof(framefactor),1);
+  SDL_RWwrite(file,&movtype,sizeof(movtype),1);
 }
 
 u_int16 mapcharacter::mapcharacter::get_nbr()
@@ -157,17 +174,17 @@ void mapcharacter::init_moveframe()
   if ((posx%2)&&(posy%2)) moveframe=0;
 }
 
-void mapcharacter::draw(u_int16 x, u_int16 y)
+void mapcharacter::draw(u_int16 x, u_int16 y,drawing_area * da_opt)
 {
-  frame[currentframe].putbox_mask(x,y);
+  frame[currentframe].putbox_mask(x,y,da_opt);
 }
 
-void mapcharacter::draw_part(u_int16 x, u_int16 y, u_int16 bw, u_int16 bh, 
+/*void mapcharacter::draw_part(u_int16 x, u_int16 y, u_int16 bw, u_int16 bh, 
 	       u_int16 xo, u_int16 yo)
 {
   frame[currentframe].putbox_mask_part(x,y,bw,bh,xo,yo);
 }
-
+*/
 bool mapcharacter::is_ready()
 {
   return(speedcounter==0);

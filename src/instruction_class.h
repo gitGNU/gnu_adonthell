@@ -37,6 +37,7 @@ class instruction
   //u_int16 otherevent();
   char* string();
   void get(FILE*);
+  void put(FILE*);
 
   friend istream& operator>> (istream&, instruction&);
   friend ostream& operator<< (ostream&, instruction&);

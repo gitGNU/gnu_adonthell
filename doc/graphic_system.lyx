@@ -1,0 +1,204 @@
+#LyX 1.1 created this file. For more info see http://www.lyx.org/
+\lyxformat 2.15
+\textclass article
+\language default
+\inputencoding latin1
+\fontscheme default
+\graphics default
+\paperfontsize default
+\spacing single 
+\papersize Default
+\paperpackage a4
+\use_geometry 0
+\use_amsmath 0
+\paperorientation portrait
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\defskip medskip
+\quotes_language english
+\quotes_times 2
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+
+\layout Title
+
+Adonthell Graphic System
+\layout Author
+
+Alexandre Courbot
+\layout Section
+
+Goal of this document
+\layout Standard
+
+This document is to explain the principles of the graphic system, it's use
+ and it's capabalities so developers can quickly develop using it.
+\layout Section
+
+Principles
+\layout Subsection
+
+The 
+\emph on 
+image
+\emph default 
+ class
+\layout Standard
+
+The image class is the base class.
+ It just contain information about:
+\layout Itemize
+
+the size of the image,
+\layout Itemize
+
+it's depth (actually it's always the same than the screen's depth),
+\layout Itemize
+
+the image's data, as an SDL surface.
+\layout Subsubsection
+
+Loading an image
+\layout Standard
+
+Images are currently encoded as PNM files.
+ To load a PNM into an image, simply call
+\layout LyX-Code
+
+s_int8 image::load(char * fname);
+\layout Standard
+
+or
+\layout LyX-Code
+
+s_int8 image::get(SDL_RWops * file);
+\layout Standard
+
+to get a PNM encoded image from an open file.
+\layout Standard
+
+There are variants of these functions, which load the image but doesn't
+ adapt their depth to the screen's depth (usefull for image editing):
+\layout LyX-Code
+
+s_int8 image::simpleget(SDL_RWops * file); 
+\layout LyX-Code
+
+s_int8 image::simpleput(SDL_RWops * file); 
+\layout LyX-Code
+
+s_int8 image::simpleload(char * fname);
+\layout Standard
+
+Notice the 
+\emph on 
+simpleput
+\emph default 
+ function which records an image to an open file in PNM format.
+\layout Subsubsection
+
+Displaying an image
+\layout Standard
+
+Images display is done by the following functions:
+\layout LyX-Code
+
+void image::putbox (s_int16 x, s_int16 y, drawing_area * da_opt=NULL); 
+\layout LyX-Code
+
+void image::putbox_mask (s_int16 x, s_int16 y, drawing_area * da_opt=NULL);
+\layout LyX-Code
+
+void image::putbox_trans (s_int16 x, s_int16 y, u_int8 alpha, drawing_area
+ * da_opt=NULL);
+\layout LyX-Code
+
+void image::putbox_mask_trans (s_int16 x, s_int16 y, u_int8 alpha, drawing_area
+ * da_opt=NULL);
+\layout Standard
+
+Never mind the drawing_area parameter for the moment.
+\layout Standard
+
+
+\emph on 
+putbox
+\emph default 
+ is a simple blitting function, 
+\emph on 
+putbox_mask
+\emph default 
+ blit the image to the screen excepted the awfull pink (0xFF00FF) color,
+ while 
+\emph on 
+putbox_trans
+\emph default 
+ blits the image with an alpha blending (translucency) effect, defined by
+ the 
+\emph on 
+alpha
+\emph default 
+ parameter which goes from 0 (solid) to 255 (invisible).
+\layout Subsubsection
+
+Drawing Areas
+\layout Standard
+
+Sometimes you may want to display a game scene on a specific part of the
+ screen (the mapengine is a good example of that).
+ Or you may want to display semi offscreen images, but you fear the segfault
+ if you draw outside the screen.
+ The Drawing Areas are simply a rectangle that is defined by it's position
+ and it's size.
+ Any image can be 
+\emph on 
+attached
+\emph default 
+ to a Drawing Area.
+ When attached to a Drawing Area, an image will ONLY display the part that
+ is INSIDE the Drawing Area.
+\layout LyX-Code
+
+drawing_area::drawing_area(u_int16 px, u_int16 py, u_int16 pw, u_int16 ph);
+\layout LyX-Code
+
+void image::assign_drawing_area(drawing_area * da); 
+\layout LyX-Code
+
+void image::detach_drawing_area();
+\layout Standard
+
+The Drawing Area optionnal parameter of the 
+\emph on 
+putbox
+\emph default 
+ functions, when given and different of NULL, will 
+\emph on 
+attach
+\emph default 
+ the da_opt Drawing Area for the blitting operation, then 
+\emph on 
+detach
+\emph default 
+ it and re-
+\emph on 
+attach
+\emph default 
+ the old one (of attach nothing if there wasn't any).
+\layout Subsection
+
+The 
+\emph on 
+animation
+\emph default 
+ class
+\layout Standard
+
+The animation is an extension of the image class, allowing several images
+ to be continuously displayed as, well guess what, an animation (sometimes
+ you may find docs really assume the reader is an idiot - but hey, we never
+ know...).
+ It has the same features and possibilities as the image class.
+\the_end

@@ -30,6 +30,8 @@ class animation_frame : public image
  public:
   animation_frame();
   void init();
+  s_int8 get(SDL_RWops * file);
+  s_int8 load(char * fname);
   friend class animation;
 };
 
@@ -65,7 +67,9 @@ class animation
   void next_frame();
   // Increase nbr_of_frames and load the frame to the last position
   s_int8 load_frame(char * fname);
-  s_int8 get_frame(FILE * file);
+  s_int8 get_frame(SDL_RWops * file);
+  s_int8 get(SDL_RWops * file);
+  s_int8 load(char * fname);
   void set_delay(u_int16 framenbr, u_int16 delay);
   void set_mask(u_int16 framenbr, bool m);
   void set_alpha(u_int16 framenbr, bool a, u_int8 value);

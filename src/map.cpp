@@ -18,7 +18,7 @@
 #include "types.h"
 #include "fileops.h"
 #include "input.h"
-#include "gfx.h"
+#include "image.h"
 #include "mappattern.h"
 #include "mapevent.h"
 #include "mapcharacter.h"
@@ -32,18 +32,18 @@ using namespace std;
 
 map::map()
 {
-  themap=NULL;
-  maplong=0;
-  maphaut=0;
-  mapx=6;
-  mapy=5;
-  mapaddx=0;
-  mapaddy=0;
+  maparea=NULL;
+  length=0;
+  height=0;
+  posx=6;
+  posy=5;
+  addx=0;
+  addy=0;
   scrolltype=0;
-  mapmovtype=0;
+  movtype=0;
   scridx=0;
-  mapspeeddelay=0;
-  mapspeedcounter=0;
+  speeddelay=0;
+  speedcounter=0;
   ATTACKABLE=0;
   nbr_of_patternsets=0;
   nbr_of_patterns=0;
@@ -66,14 +66,15 @@ map::map()
   patternname=NULL;
   mapcharname=NULL;
   //  amap->toplayername=0;
+  draw_zone=new drawing_area(56,12,13*16,11*16);
 }
 /*
 map::~map()
 {
   u_int16 i;
-  for(i=0;i<maplong;i++)
-    free(themap[i]);
-  free(themap);
+  for(i=0;i<length;i++)
+    free(maparea[i]);
+  free(maparea);
   for(i=0;i<nbr_of_patterns;i++)
     pattern[i].~mappattern();
   free(pattern);
@@ -84,115 +85,167 @@ map::~map()
   free(othermapchar);
   free(mapcharname);
   free(event);
+  delete draw_zone;
   //  free(toplayername);
   //  for(i=0;i<amap->toplayer.nbr_of_frames;i++)
   //    free(amap->toplayer.pixmap[i]);
   //  free(amap->toplayer.pixmap);
 }
 */
-u_int16 map::get_patternset_to_map(FILE * file, u_int16 startpos)
+u_int16 map::get_patternset_to_map(SDL_RWops * file, u_int16 startpos)
 {
   u_int16 i;
   u_int16 nbr_read;
-  fread(&nbr_read,sizeof(nbr_read),1,file);
+  SDL_RWread(file,&nbr_read,sizeof(nbr_read),1);
+  nbr_of_patterns+=nbr_read;
   pattern=(mappattern*)realloc(pattern,
 			       sizeof(mappattern)*(nbr_of_patterns+nbr_read));
   for(i=startpos;i<nbr_read+startpos;i++)
     if(pattern[i].get(file)) return(0);
-  nbr_of_patternsets++;
   return(nbr_read);
 }
 
 u_int16 map::load_patternset_to_map(lstr fname, u_int16 startpos)
 {
   u_int16 retvalue;
-  FILE * file;
-  file=fopen(fname,"r");
+  SDL_RWops * file;
+  file=SDL_RWFromFile(fname,"r");
   if(!file)
   {
      printf("Error opening file %s",fname);
      exit(1);
   }
-  patternname=(lstr*)realloc(patternname,sizeof(lstr)*(nbr_of_patternsets+1));
-  strcpy(patternname[nbr_of_patternsets],fname);
   retvalue=get_patternset_to_map(file,startpos);
-  fclose(file);
+  SDL_RWclose(file);
   return(retvalue);
 }
 
-s_int8 map::get(FILE * file)
-  // FIXME: add a revision number to check compatibility between mapengine
-  // and maps
+s_int8 map::get(SDL_RWops * file)
 {
-  s_int8 retvalue=0;
   u_int16 i=0,j;
-  lstr filename;
-  
-  fread(&nbr_of_patterns,sizeof(nbr_of_patterns),1,file);
+  u_int16 rev_number=0;      // Revision number
 
-  nbr_of_patternsets=0;
-  
-  while(i<nbr_of_patterns)
-    {
-      getstringfromfile(filename,file);
-      j=i;
-      if ((i+=load_patternset_to_map(filename,i))==j)
-	{printf("Error loading patternset!\n");return(1);}
-    }
-  fread(&maplong,sizeof(maplong),1,file);
-  fread(&maphaut,sizeof(maphaut),1,file);
-  
-  themap=(mapsquare**)calloc(sizeof(mapsquare*),maplong);
-  for(i=0;i<maplong;i++)
-    themap[i]=(mapsquare*)calloc(sizeof(mapsquare),maphaut);
-  fread(&mapx,sizeof(mapx),1,file);
-  fread(&mapy,sizeof(mapy),1,file);
+  SDL_RWread(file,&rev_number,sizeof(rev_number),1);
+  SDL_RWread(file,&nbr_of_patternsets,sizeof(nbr_of_patternsets),1);
 
-  for(j=0;j<maphaut;j++)
-    for(i=0;i<maplong;i++)
-      themap[i][j].get(file);
+  patternname=(lstr*)calloc(sizeof(lstr),nbr_of_patternsets);
+  for(i=0;i<nbr_of_patternsets;i++)
+    getstringfromfile(patternname[i],file);
+
+  SDL_RWread(file,&length,sizeof(length),1);
+  SDL_RWread(file,&height,sizeof(height),1);
+
+  SDL_RWread(file,&posx,sizeof(posx),1);
+  SDL_RWread(file,&posy,sizeof(posy),1);
+
+  maparea=(mapsquare**)calloc(sizeof(mapsquare*),length);
+  for(i=0;i<length;i++)
+    maparea[i]=(mapsquare*)calloc(sizeof(mapsquare),height);
+
+  for(j=0;j<height;j++)
+    for(i=0;i<length;i++)
+      maparea[i][j].get(file);
+
   heroe.get_heroe_stat(file);
-  if(heroe.load("heroe.car")) retvalue=-2;
 
-  fread(&nbr_of_mapcharacters,sizeof(nbr_of_mapcharacters),1,file);
+  SDL_RWread(file,&nbr_of_mapcharacters,sizeof(nbr_of_mapcharacters),1);
+  mapcharname=(lstr*)calloc(sizeof(lstr),nbr_of_mapcharacters);
   othermapchar=(mapcharacter*)calloc(sizeof(mapcharacter),
 				     nbr_of_mapcharacters);
-  mapcharname=(lstr*)calloc(sizeof(lstr),nbr_of_mapcharacters);
   for(i=0;i<nbr_of_mapcharacters;i++)
     {
       getstringfromfile(mapcharname[i],file);
       othermapchar[i].get_NPC_stat(file,i+1);
-      if(othermapchar[i].load(mapcharname[i])) retvalue=-3;
-      
-      themap[othermapchar[i].get_posx()][othermapchar[i].get_posy()].put_character(&othermapchar[i]);
     }
 
-  /* Top layer */
-
-  toplayer.get(file);
-  fread(&toplayerspace,sizeof(toplayerspace),1,file);
-  fread(&toplayerspeed,sizeof(toplayerspeed),1,file);
-  fread(&toplayerparallaxspeed,sizeof(toplayerparallaxspeed),1,file);
-  fread(&toplayerflags,sizeof(toplayerflags),1,file);
-  /* Events */
-  fread(&nbr_of_events,sizeof(nbr_of_events),1,file);
+  SDL_RWread(file,&nbr_of_events,sizeof(nbr_of_events),1);
   event=(mapevent*)calloc(sizeof(mapevent),nbr_of_events+1);
   for(i=1;i<=nbr_of_events;i++)
     event[i].get(file);
-  fread(&scrolltype,sizeof(scrolltype),1,file);
+  SDL_RWread(file,&scrolltype,sizeof(scrolltype),1);
+
   status=MAP_STATUS_NORMAL;
+  return(0);
+}
+
+s_int8 map::load_map_data()
+{
+  u_int16 i,oldnbr;
+
+  // load patterns
+  for(i=0;i<nbr_of_patternsets;i++)
+    {
+      oldnbr=nbr_of_patterns;
+      load_patternset_to_map(patternname[i],nbr_of_patterns);
+      if(oldnbr==nbr_of_patterns)
+	{printf("Error loading patternset!\n");return(1);}
+    }
+  // load characters
+  heroe.load("heroe.car");
+  for(i=0;i<nbr_of_mapcharacters;i++)
+    othermapchar[i].load(mapcharname[i]);
   
+  return(0);
+}
+
+s_int8 map::put(SDL_RWops * file)
+{
+  u_int16 i=0,j;
+  u_int16 rev_number=0;      // Revision number
+
+  SDL_RWwrite(file,&rev_number,sizeof(rev_number),1);
+  SDL_RWwrite(file,&nbr_of_patternsets,sizeof(nbr_of_patternsets),1);
+
+  for(i=0;i<nbr_of_patternsets;i++)
+    putstringtofile(patternname[i],file);
+
+  SDL_RWwrite(file,&length,sizeof(length),1);
+  SDL_RWwrite(file,&height,sizeof(height),1);
+
+  SDL_RWwrite(file,&posx,sizeof(posx),1);
+  SDL_RWwrite(file,&posy,sizeof(posy),1);
+
+  for(j=0;j<height;j++)
+    for(i=0;i<length;i++)
+      maparea[i][j].put(file);
+
+  heroe.put_heroe_stat(file);
+
+  SDL_RWwrite(file,&nbr_of_mapcharacters,sizeof(nbr_of_mapcharacters),1);
+
+  for(i=0;i<nbr_of_mapcharacters;i++)
+    {
+      putstringtofile(mapcharname[i],file);
+      othermapchar[i].put_NPC_stat(file);
+    }
+
+  SDL_RWwrite(file,&nbr_of_events,sizeof(nbr_of_events),1);
+  for(i=1;i<=nbr_of_events;i++)
+    event[i].put(file);
+  SDL_RWwrite(file,&scrolltype,sizeof(scrolltype),1);
+
   return(0);
 }
 
 s_int8 map::load(const char * fname)
 {
-  FILE * file;
+  SDL_RWops * file;
   u_int8 retvalue;
-  file=fopen(fname,"r"); 
+  file=SDL_RWFromFile(fname,"r"); 
   if(!file) return(-1);
   retvalue=get(file);
-  fclose(file);
+  SDL_RWclose(file);
+  return(retvalue);
+}
+
+s_int8 map::save(const char * fname)
+{
+  SDL_RWops * file;
+  u_int8 retvalue;
+  file=SDL_RWFromFile(fname,"w"); 
+  if(!file) return(-1);
+  retvalue=put(file);
+  SDL_RWclose(file);
   return(retvalue);
 }
 
@@ -206,12 +259,12 @@ void map::init_for_scrolling()
   i=0;
   for (i=0;i<nbr_of_mapcharacters;i++)
     {
-      themap[othermapchar[i].get_posx()]
+      maparea[othermapchar[i].get_posx()]
 	[othermapchar[i].get_posy()].put_character(&othermapchar[i]);
       othermapchar[i].init_moveframe();
       othermapchar[i].update_frame();
     }
-  themap[heroe.get_posx()][heroe.get_posy()].put_character(&heroe);
+  maparea[heroe.get_posx()][heroe.get_posy()].put_character(&heroe);
   heroe.init_moveframe();
   heroe.set_speeddelay(1);
   heroe.update_frame();
@@ -222,37 +275,37 @@ void map::follow(mapcharacter*aguy)
 {
   if((aguy->get_posx()<6)||(aguy->get_posx()>=get_lenght()-7)
       ||(aguy->get_posy()<5)||(aguy->get_posy()>=get_height()-6)) return;
-  mapspeeddelay=aguy->get_speeddelay();
-  mapmovtype=aguy->get_movtype();
+  speeddelay=aguy->get_speeddelay();
+  movtype=aguy->get_movtype();
 }
 
 void map::center_on(mapcharacter*aguy)
 {
   if((aguy->get_posx()>5)&&(aguy->get_posx()<get_lenght()-7)&&(!H_SCROLL_DISABLED))
     {
-      mapx=aguy->get_posx();
-      mapaddx=aguy->get_addx();
+      posx=aguy->get_posx();
+      addx=aguy->get_addx();
     }
   else
     {
-      if(!H_SCROLL_DISABLED) mapx=(aguy->get_posx()<6)?6:get_lenght()-7;
-      mapaddx=0;
+      if(!H_SCROLL_DISABLED) posx=(aguy->get_posx()<6)?6:get_lenght()-7;
+      addx=0;
     }
   if((aguy->get_posy()>4)&&(aguy->get_posy()<get_height()-6)&&(!V_SCROLL_DISABLED))
     {
-      mapy=aguy->get_posy();
-      mapaddy=aguy->get_addy();
+      posy=aguy->get_posy();
+      addy=aguy->get_addy();
     }
   else 
     {
-      if(!V_SCROLL_DISABLED) mapy=(aguy->get_posy()<5)?5:get_height()-6;
-      mapaddy=0;
+      if(!V_SCROLL_DISABLED) posy=(aguy->get_posy()<5)?5:get_height()-6;
+      addy=0;
     }
 }
 
 void map::setspeeddelay(u_int8 sd)
 {
-  mapspeeddelay=sd;
+  speeddelay=sd;
 }
 
 void map::update_status()
@@ -337,9 +390,9 @@ void map::update_keyboard()
 
 bool map::is_ready()
 {
-  if (mapspeedcounter==mapspeeddelay)
+  if (speedcounter==speeddelay)
     {
-      mapspeedcounter=0;
+      speedcounter=0;
       return 1;
     }else return 0;
 }
@@ -350,21 +403,22 @@ void map::drawdownsquare(int x, int y, mapsquare * msqr)
   static u_int8 alpha;
   if((msqr->is_up())&&(!(msqr->is_mask()))
     &&(!(msqr->is_trans(NULL)))) return;
-  pattern[msqr->get_down_pattern_nbr()].putbox(x,y);
+  pattern[msqr->get_down_pattern_nbr()].putbox(x,y,draw_zone);
   if(msqr->is_up()) return;
   if((msqr->is_mask())&&(msqr->is_trans(&alpha)))
     {
-      pattern[msqr->get_up_pattern_nbr()].putbox_mask_trans(x,y,alpha);
+      pattern[msqr->get_up_pattern_nbr()].putbox_mask_trans(x,y,alpha,
+							    draw_zone);
       return;
     }
   if(msqr->is_trans(&alpha))
     {
-      pattern[msqr->get_up_pattern_nbr()].putbox_trans(x,y,alpha);
+      pattern[msqr->get_up_pattern_nbr()].putbox_trans(x,y,alpha,draw_zone);
       return;
     }
   if(msqr->is_mask())
     {
-      pattern[msqr->get_up_pattern_nbr()].putbox_mask(x,y);
+      pattern[msqr->get_up_pattern_nbr()].putbox_mask(x,y,draw_zone);
       return;
     }
 }
@@ -376,23 +430,24 @@ void map::drawupsquare(int x, int y, mapsquare * msqr)
 
   if((msqr->is_mask())&&(msqr->is_trans(&alpha)))
     {
-      pattern[msqr->get_up_pattern_nbr()].putbox_mask_trans(x,y,alpha);
+      pattern[msqr->get_up_pattern_nbr()].putbox_mask_trans(x,y,alpha,
+							    draw_zone);
       return;
     }
   if(msqr->is_trans(&alpha))
     {
-      pattern[msqr->get_up_pattern_nbr()].putbox_trans(x,y,alpha);
+      pattern[msqr->get_up_pattern_nbr()].putbox_trans(x,y,alpha,draw_zone);
       return;
     }
   if(msqr->is_mask())
     {
-      pattern[msqr->get_up_pattern_nbr()].putbox_mask(x,y);
+      pattern[msqr->get_up_pattern_nbr()].putbox_mask(x,y,draw_zone);
       return;
     }
-  pattern[msqr->get_up_pattern_nbr()].putbox(x,y);
+  pattern[msqr->get_up_pattern_nbr()].putbox(x,y,draw_zone);
 }
 
-void map::drawdownsquarepart(int x, int y, int w, int h, mapsquare * msqr, 
+/*void map::drawdownsquarepart(int x, int y, int w, int h, mapsquare * msqr, 
 			     int xo, int yo)
 {
   static u_int8 alpha;
@@ -444,117 +499,133 @@ void map::drawupsquarepart(int x, int y, int w, int h, mapsquare * msqr,
     }
   pattern[msqr->get_up_pattern_nbr()].putbox_part(x,y,w,h,xo,yo);
 }
-
+*/
 void map::draw_down(u_int16 depx=56, u_int16 depy=12, 
 		    u_int16 length=13, u_int16 height=11)
 {
   u_int16 i,j;
-  if((mapaddx==0)&&(mapaddy==0))
+  if(addx) length++;
+  if(addy) height++;
+  for(i=0;i<length;i++)
+    for(j=0;j<height;j++)
+      drawdownsquare((i*16)+depx-addx,
+		     (j*16)+depy-addy,
+		     &maparea[posx-6+i][posy-5+j]);
+  /*
+  if((addx==0)&&(addy==0))
     {
       for(i=0;i<length;i++)
 	for(j=0;j<height;j++)
 	  drawdownsquare((i*16)+depx,
 			 (j*16)+depy,
-			 &themap[mapx-6+i][mapy-5+j]);
+			 &maparea[posx-6+i][posy-5+j]);
     }
   else
     {
-      if(mapaddx) for(j=0;j<height;j++)
+      if(addx) for(j=0;j<height;j++)
 	{
 	  drawdownsquarepart(depx,
 			     (j*16)+depy,
-			     16-mapaddx,16,
-			     &themap[mapx-6][mapy-5+j],
-			     mapaddx,0);
+			     16-addx,16,
+			     &maparea[posx-6][posy-5+j],
+			     addx,0);
 	  
 	  for(i=1;i<length;i++)
-	    drawdownsquare((i*16)+depx-mapaddx,
-			   (j*16)+depy-mapaddy,
-			   &themap[mapx-6+i][mapy-5+j]);
+	    drawdownsquare((i*16)+depx-addx,
+			   (j*16)+depy-addy,
+			   &maparea[posx-6+i][posy-5+j]);
 	  
-	  drawdownsquarepart(depx+(length*16)-mapaddx,
+	  drawdownsquarepart(depx+(length*16)-addx,
 			     (j*16)+depy,
-			     mapaddx,16,
-			     &themap[mapx+7][mapy-5+j],0,0);
+			     addx,16,
+			     &maparea[posx+7][posy-5+j],0,0);
 	}
-      if(mapaddy) for(i=0;i<length;i++)
+      if(addy) for(i=0;i<length;i++)
 	{
-	  drawdownsquarepart((i*16)+depx,depy,16,16-mapaddy,
-			     &themap[mapx-6+i][mapy-5],0,mapaddy);
+	  drawdownsquarepart((i*16)+depx,depy,16,16-addy,
+			     &maparea[posx-6+i][posy-5],0,addy);
 		  
 	  for(j=1;j<height;j++)
-	    drawdownsquare((i*16)+depx-mapaddx,(j*16)+depy-mapaddy,
-			   &themap[mapx-6+i][mapy-5+j]);
+	    drawdownsquare((i*16)+depx-addx,(j*16)+depy-addy,
+			   &maparea[posx-6+i][posy-5+j]);
 	  
 	  drawdownsquarepart((i*16)+depx,
-			     depy+(height*16)-mapaddy,
-			     16,mapaddy,
-			     &themap[mapx-6+i][mapy+6],0,0);
+			     depy+(height*16)-addy,
+			     16,addy,
+			     &maparea[posx-6+i][posy+6],0,0);
 	}
-    }
+	}*/
 }
 
 void map::draw_up(u_int16 depx=56, u_int16 depy=12,
 		  u_int16 length=13, u_int16 height=11)
 {
   u_int16 i,j;
-  if((mapaddx==0)&&(mapaddy==0))
+  for(i=0;i<length+1;i++)
+    for(j=0;j<height+1;j++)
+      drawupsquare((i*16)+depx-addx,
+		   (j*16)+depy-addy,
+		   &maparea[posx-6+i][posy-5+j]);
+  /*
+  if((addx==0)&&(addy==0))
     {
       for(i=0;i<length;i++)
 	for(j=0;j<height;j++)
 	  drawupsquare((i*16)+depx,(j*16)+depy,
-		       &themap[mapx-6+i][mapy-5+j]);
+		       &maparea[posx-6+i][posy-5+j]);
     }
   else
     {
-      if (mapaddx) for(j=0;j<height;j++)
+      if (addx) for(j=0;j<height;j++)
 	{
-	  drawupsquarepart(depx,(j*16)+depy,16-mapaddx,16,
-			   &themap[mapx-6][mapy-5+j],mapaddx,0);
+	  drawupsquarepart(depx,(j*16)+depy,16-addx,16,
+			   &maparea[posx-6][posy-5+j],addx,0);
 	  
 	  for(i=1;i<length;i++)
-	    drawupsquare((i*16)+depx-mapaddx,
-			 (j*16)+depy-mapaddy,
-			 &themap[mapx-6+i][mapy-5+j]);
+	    drawupsquare((i*16)+depx-addx,
+			 (j*16)+depy-addy,
+			 &maparea[posx-6+i][posy-5+j]);
 	  
-	  drawupsquarepart(depx+(length*16)-mapaddx,
+	  drawupsquarepart(depx+(length*16)-addx,
 			   (j*16)+depy,
-			   mapaddx,16,
-			   &themap[mapx+7][mapy-5+j],
+			   addx,16,
+			   &maparea[posx+7][posy-5+j],
 			   0,0);
 	}      
-      if(mapaddy) for(i=0;i<length;i++)
+      if(addy) for(i=0;i<length;i++)
 	{
 	  drawupsquarepart((i*16)+depx,
 			   depy,
 			   16,
-			   16-mapaddy,
-			   &themap[mapx-6+i][mapy-5],
-			   0,mapaddy);
+			   16-addy,
+			   &maparea[posx-6+i][posy-5],
+			   0,addy);
 	  
 	  for(j=1;j<height;j++)
-	    drawupsquare((i*16)+depx-mapaddx,
-			 (j*16)+depy-mapaddy,
-			 &themap[mapx-6+i][mapy-5+j]);
+	    drawupsquare((i*16)+depx-addx,
+			 (j*16)+depy-addy,
+			 &maparea[posx-6+i][posy-5+j]);
 	  
 	  drawupsquarepart((i*16)+depx,
-			   depy+(height*16)-mapaddy,
-			   16,mapaddy,
-			   &themap[mapx-6+i][mapy+6],
+			   depy+(height*16)-addy,
+			   16,addy,
+			   &maparea[posx-6+i][posy+6],
 			   0,0);
 	}
-    }
+	}*/
 }
 
 void map::draw_character(mapcharacter * aguy, u_int16 depx=56, u_int16 depy=12)
 { 
   s_int16 drawx=depx+((96+(aguy->get_posx()*16)+aguy->get_addx()-
-			    ((mapx*16)+mapaddx)));
+		       ((posx*16)+addx)));
   
   s_int16 drawy=depy+((80+(aguy->get_posy()*16)+aguy->get_addy()-
-		       ((mapy*16)+mapaddy)));
-  s_int16 adrawx=drawx,adrawy=drawy,asizex=16,asizey=16,adepx=0,adepy=0;
-  u_int16 drawable=0;
+		       ((posy*16)+addy)));
+  aguy->draw(drawx,drawy,draw_zone);
+  
+  /*  s_int16 adrawx=drawx,adrawy=drawy,asizex=16,asizey=16,adepx=0,adepy=0;
+    u_int16 drawable=0;
   
   if ((drawx<(depx+(208)))&&
       (drawx>depx-(16))&&
@@ -601,7 +672,7 @@ void map::draw_character(mapcharacter * aguy, u_int16 depx=56, u_int16 depy=12)
 	  if(drawable) aguy->draw_part(adrawx,adrawy,asizex,asizey,
 				       adepx,adepy);
 	}
-    }
+	}*/
 }
 
 void map::draw_all_characters(u_int16 depx=56, u_int16 depy=12)
@@ -614,22 +685,22 @@ void map::draw_all_characters(u_int16 depx=56, u_int16 depy=12)
 
 bool map::is_unreachable(u_int16 x, u_int16 y)
 {
-  return(themap[x][y].is_unreachable());
+  return(maparea[x][y].is_unreachable());
 }
   
 bool map::is_others_unreachable(u_int16 x, u_int16 y)
 {
-  return(themap[x][y].is_others_unreachable());
+  return(maparea[x][y].is_others_unreachable());
 }
 
 u_int16 map::get_lenght()
 {
-  return(maplong);
+  return(length);
 }
 
 u_int16 map::get_height()
 {
-  return(maphaut);
+  return(height);
 }
 
 u_int8 map::get_status()
@@ -649,52 +720,52 @@ void map::set_status(u_int8 st)
 
 void map::put_character(u_int16 x, u_int16 y, mapcharacter * aguy)
 {
-  themap[x][y].put_character(aguy);
+  maparea[x][y].put_character(aguy);
 }
 
 void map::leave_character(u_int16 x, u_int16 y)
 {
-  themap[x][y].leave_character();
+  maparea[x][y].leave_character();
 }
 
 u_int16 map::is_occuped(u_int16 x, u_int16 y)
 {
-  return(themap[x][y].is_occuped());
+  return(maparea[x][y].is_occuped());
 }
 
 bool map::is_solid_up(u_int16 x, u_int16 y)
 {
-  return(themap[x][y].is_solid_up());
+  return(maparea[x][y].is_solid_up());
 }
 
 bool map::is_solid_down(u_int16 x, u_int16 y)
 {
-  return(themap[x][y].is_solid_down());
+  return(maparea[x][y].is_solid_down());
 }
 
 bool map::is_solid_left(u_int16 x, u_int16 y)
 {
-  return(themap[x][y].is_solid_left());
+  return(maparea[x][y].is_solid_left());
 }
 
 bool map::is_solid_right(u_int16 x, u_int16 y)
 {
-  return(themap[x][y].is_solid_right());
+  return(maparea[x][y].is_solid_right());
 }
 
 void map::set_posx(u_int16 x)
 {
-  mapx=x;
+  posx=x;
 }
 
 void map::set_posy(u_int16 y)
 {
-  mapy=y;
+  posy=y;
 }
 
 void map::set_movtype(u_int16 mt)
 {
-  mapmovtype=mt;
+  movtype=mt;
 }
 
 void map::set_scrolltype(u_int16 st)
@@ -724,28 +795,24 @@ void map::disable_vertical_scrolling()
 
 u_int16 map::get_square_eventcomenbr(u_int16 x, u_int16 y)
 {
-  return(themap[x][y].get_eventcomenbr());
+  return(maparea[x][y].get_eventcomenbr());
 }
 
 u_int16 map::get_square_eventleavenbr(u_int16 x, u_int16 y)
 {
-  return(themap[x][y].get_eventleavenbr());
+  return(maparea[x][y].get_eventleavenbr());
 }
 
 void map::launch_event(mapcharacter * aguy, u_int16 nbr)
 {
-  while(nbr!=0)
-  {
-    event[nbr].run(aguy,this,mapx,mapy);
-    nbr=event[nbr].otherevent();
-  }
+  u_int16 ev=nbr;
+  while(ev!=0)
+      ev=event[ev].action(aguy,this,posx,posy);
 }
 
 void map::run_event(u_int16 nbr, mapcharacter * aguy, u_int16 x, u_int16 y)
 {
-  while(nbr!=0)
-  {
-    event[nbr].run(aguy,this,x,y);
-    nbr=event[nbr].otherevent();
-  }
+  u_int16 ev=nbr;
+  while(ev!=0)
+      ev=event[ev].action(aguy,this,x,y);
 }

@@ -18,16 +18,16 @@
 #include <string>
 #include "types.h"
 #include "input.h"
-#include "gfx.h"
+#include "image.h"
 #include "mappattern.h"
 #include "mapcharacter.h"
 #include "mapsquare.h"
 #include "mapevent.h"
-#include "window.h"
 #include "map.h"
 #include "mapengine.h"
 #include "SDL.h"
 #include "SDL_thread.h"
+#include "game.h"
 #ifdef SDL_MIXER
 #include "SDL_mixer.h"
 #include "audio_thread.h"
@@ -37,7 +37,7 @@
 #include "cutscene.h"
 #include "prefs.h"
 
-int do_cutscene(void) {
+/*int do_cutscene(void) {
 
   cutscene *scene = new cutscene();
   animation *anim = new animation();
@@ -145,7 +145,7 @@ int do_cutscene(void) {
   return(1);
 }
 
-
+*/
 int main(int argc, char * argv[])
 {
     map * map1 = new map;
@@ -157,25 +157,26 @@ int main(int argc, char * argv[])
     // change into data directory
     chdir (myconfig.datadir.data ());
 
-    mapengine::init (myconfig);
-
+    game::init (myconfig);
+    
     if (map1->load (myconfig.mapname.data ())) 
     {
         printf("Error loading %s!\n",argv[1]);
         return 1;
     }
-
+    map1->load_map_data();
+    //    map1->save("okidoki.map");
     // Flip flop between the mapengine and the cutscene
     // The 'do_cutscene' returns 1 when you hit escape
     // during the cutscene...
 
     // Removed because of a segfault - seems to occur when calling
     //   scene->set_imagekey_anim(2,anim3);, line 79
-    do_cutscene();
+    //    do_cutscene();
 
     mapengine::map_engine(map1);
 
-    mapengine::cleanup();
+    game::cleanup();
   
     return 0;
 }

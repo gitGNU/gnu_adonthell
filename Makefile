@@ -57,7 +57,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 CXX = c++
 CXXCPP = c++ -E
-MAKEINFO = /home/kai/adonthell/adonthell/missing makeinfo
+MAKEINFO = makeinfo
 PACKAGE = mapengine
 SDL_CFLAGS = -I/usr/local/include -I/usr/local/include/SDL -D_REENTRANT
 SDL_CONFIG = /usr/local/bin/sdl-config
@@ -284,7 +284,7 @@ distdir: $(DISTFILES)
 	@for file in $(DISTFILES); do \
 	  d=$(srcdir); \
 	  if test -d $$d/$$file; then \
-	    cp -pr $$/$$file $(distdir)/$$file; \
+	    cp -pr $$d/$$file $(distdir)/$$file; \
 	  else \
 	    test -f $(distdir)/$$file \
 	    || ln $$d/$$file $(distdir)/$$file 2> /dev/null \

@@ -15,7 +15,7 @@
 #ifndef _fileops_h
 #define _fileops_h
 
-void getstringfromfile(char strg[],FILE * file);
-void putstringtofile(char strg[],FILE * file);
+void getstringfromfile(char strg[],SDL_RWops * file);
+void putstringtofile(char strg[],SDL_RWops * file);
 
 #endif

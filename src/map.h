@@ -19,7 +19,6 @@
 #include "mapsquare.h"
 #include "mappattern.h"
 #include "mapevent.h"
-#include "window.h"
 
 class mapitem;
 
@@ -28,25 +27,24 @@ typedef char lstr[100];
 class map
 {
  protected:
-  mapsquare ** themap;
-  u_int16 maplong,maphaut;
-  u_int16 mapx,mapy;
-  s_int8 mapaddx,mapaddy;
+  mapsquare ** maparea;
+  u_int16 length,height;
+  u_int16 posx,posy;
+  s_int8 addx,addy;
   u_int8 scrolltype;
-  u_int8 mapmovtype;
+  u_int8 movtype;
   u_int8 scridx;
-  u_int8 mapspeeddelay,mapspeedcounter;
+  u_int8 speeddelay,speedcounter;
   u_int8 ATTACKABLE;
   mappattern * pattern;
   u_int16 nbr_of_patternsets;
   u_int16 nbr_of_patterns;
-  mapcharacter heroe;
   int nbr_of_mapcharacters;       // u_int16!!!
   mapcharacter * othermapchar;
   u_int16 nbr_of_events;
   mapevent * event;
   mapitem * items;
-  sprite toplayer;
+  //  sprite toplayer;
   s_int16 * toplayerposx;
   s_int16 * toplayerposy;
   u_int16 toplayerflags;
@@ -69,16 +67,19 @@ class map
   u_int8 status; /* Quitting? */
   
  public:
-  window win;          /* status window */
-  //  static u_int8 (*stdevent[256])(mapevent * ev,mapcharacter * aguy,map * amap,
-  //				 u_int16 x, u_int16 y);
-  
+  //  window win;          /* status window */
+  drawing_area * draw_zone;
+  mapcharacter heroe;
+
   map();
   // ~map();
-  u_int16 get_patternset_to_map(FILE * file, u_int16 startpos);
+  u_int16 get_patternset_to_map(SDL_RWops * file, u_int16 startpos);
   u_int16 load_patternset_to_map(char * fname, u_int16 startpos);
-  s_int8 get(FILE * file);
+  s_int8 get(SDL_RWops * file);
+  s_int8 load_map_data();
+  s_int8 put(SDL_RWops * file);
   s_int8 load(const char * fname);
+  s_int8 save(const char * fname);
   void init_for_scrolling();
   void follow(mapcharacter*aguy);
   void center_on(mapcharacter*aguy);
@@ -106,10 +107,10 @@ class map
   void leave_character(u_int16 x, u_int16 y);
   void drawdownsquare(int x, int y, mapsquare * msqr);
   void drawupsquare(int x, int y, mapsquare * msqr);
-  void drawdownsquarepart(int x, int y, int w, int h, 
-			  mapsquare * msqr, int xo, int yo);
-  void drawupsquarepart(int x, int y, int w, int h, 
-			mapsquare * msqr, int xo, int yo);
+  //  void drawdownsquarepart(int x, int y, int w, int h, 
+  //			  mapsquare * msqr, int xo, int yo);
+  //  void drawupsquarepart(int x, int y, int w, int h, 
+  //			mapsquare * msqr, int xo, int yo);
   void draw_down(u_int16 depx=56, u_int16 depy=12,
 		 u_int16 length=13, u_int16 height=11);
   void draw_up(u_int16 depx=56, u_int16 depy=12,

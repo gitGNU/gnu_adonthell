@@ -16,7 +16,8 @@
 #include <string>
 
 #include "types.h"
-#include "gfx.h"
+#include "image.h"
+#include "array_tmpl.h"
 #include "interpreter.h"
 #include "commands.h"
 #include "window.h"

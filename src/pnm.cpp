@@ -19,37 +19,37 @@
 #include "types.h"
 #include "pnm.h"
 
-void pnm_gotonextline(FILE * file)
+void pnm_gotonextline(SDL_RWops * file)
 {
   char buff;
   do
     {
-      fread(&buff,1,1,file);
+      SDL_RWread(file,&buff,1,1);
     }while(buff!='\n');
 }
 
-int pnm_checkforcomment(FILE * file)
+int pnm_checkforcomment(SDL_RWops * file)
 {
   char buff;
-  fread(&buff,1,1,file);
+  SDL_RWread(file,&buff,1,1);
   if(buff=='#') {pnm_gotonextline(file); return(1);}
-  else {fseek(file,-1,SEEK_CUR);return(0);}
+  else {SDL_RWseek(file,-1,SEEK_CUR);return(0);}
 }
 
-void * read_pnm(FILE * file, u_int16 * lenght, u_int16 * height)
+void * read_pnm(SDL_RWops * file, u_int16 * lenght, u_int16 * height)
 {
   void * image;
   char sign[10];
   u_int16 l,h;
   u_int32 i=0;
-  fread(sign,2,1,file);
+  SDL_RWread(file,sign,2,1);
   if ((sign[0]!='P')||(sign[1]!='6')) {printf("Invalid format.\n");return(NULL);}
   pnm_gotonextline(file);
   /* Getting height and lenght */
   while(pnm_checkforcomment(file));
   do
     {
-      fread(&sign[i],1,1,file);
+      SDL_RWread(file,&sign[i],1,1);
       i++;
     }while(sign[i-1]!=' ');
   sign[i-1]=0;
@@ -57,7 +57,7 @@ void * read_pnm(FILE * file, u_int16 * lenght, u_int16 * height)
   i=0;
   do
     {
-      fread(&sign[i],1,1,file);
+      SDL_RWread(file,&sign[i],1,1);
       i++;
     }while(sign[i-1]!='\n');
   sign[i-1]=0;
@@ -66,27 +66,29 @@ void * read_pnm(FILE * file, u_int16 * lenght, u_int16 * height)
   pnm_gotonextline(file);
   /* Reading the image */
   image=calloc((l)*(h),3);
-  fread(image,3,(l)*(h),file);
+  SDL_RWread(file,image,3,(l)*(h));
   if(lenght) *lenght=l;
   if(height) *height=h;
   return(image);
 }
 
-void put_pnm(FILE * file, void * image, u_int16 lenght, u_int16 height)
+void put_pnm(SDL_RWops * file, void * image, u_int16 lenght, u_int16 height)
 {
-  fprintf(file,"P6\n%d %d\n255\n",lenght,height);
-  fwrite(image,lenght*height*3,1,file);
+  char s[30];
+  sprintf(s,"P6\n%d %d\n255\n",lenght,height);
+  SDL_RWwrite(file,s,sizeof(char),strlen(s)+1);
+  SDL_RWwrite(file,image,lenght*height*3,1);
 }
  
 int write_pnm(char * filename, void * image, u_int16 lenght, u_int16 height)
 {
-  FILE * file;
-  file=fopen(filename,"w"); 
+  SDL_RWops * file;
+  file=SDL_RWFromFile(filename,"w"); 
   if(!file) return(1);
   else
     {
       put_pnm(file,image,lenght,height);
-      fclose(file);
+      SDL_RWclose(file);
       return(0);
     }
 }

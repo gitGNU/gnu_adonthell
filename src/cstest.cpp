@@ -15,7 +15,7 @@
 #include <stdio.h>
 #include "types.h"
 #include "input.h"
-#include "gfx.h"
+#include "image.h"
 #include "globals.h"
 
 #include "SDL.h"

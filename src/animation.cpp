@@ -16,13 +16,33 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "types.h"
-#include "gfx.h"
+#include "image.h"
 #include "animation.h"
 
 animation_frame::animation_frame() : image()
 {
   gapx=0;
   gapy=0;
+}
+
+s_int8 animation_frame::get(SDL_RWops * file)
+{
+  SDL_RWread(file,&gapx,sizeof(gapx),1);
+  SDL_RWread(file,&gapy,sizeof(gapy),1);
+  SDL_RWread(file,&delay,sizeof(delay),1);
+  image::get(file);
+  return(0);
+}
+
+s_int8 animation_frame::load(char * fname)
+{
+  SDL_RWops * file;
+  u_int8 retvalue;
+  file=SDL_RWFromFile(fname,"r"); 
+  if(!file) return(-1);
+  retvalue=get(file);
+  SDL_RWclose(file);
+  return(retvalue);
 }
 
 void animation::init_frame(u_int16 nbr)
@@ -107,7 +127,7 @@ s_int8 animation::load_frame(char * fname)
   return(0);
 }
 
-s_int8 animation::get_frame(FILE * file)
+s_int8 animation::get_frame(SDL_RWops * file)
 {
   frame=(animation_frame*)realloc(frame,
 				  ++nbr_of_frames*sizeof(animation_frame));
@@ -118,6 +138,28 @@ s_int8 animation::get_frame(FILE * file)
       return(-1);
     }
   return(0);
+}
+
+s_int8 animation::get(SDL_RWops * file)
+{
+  u_int16 i;
+  SDL_RWread(file,&nbr_of_frames,sizeof(nbr_of_frames),1);
+  SDL_RWread(file,&speedcounter,sizeof(speedcounter),1);
+  SDL_RWread(file,&factor,sizeof(factor),1);
+  for(i=0;i<nbr_of_frames;i++)
+    frame[i].get(file);
+  return(0);
+}
+
+s_int8 animation::load(char * fname)
+{
+  SDL_RWops * file;
+  u_int8 retvalue;
+  file=SDL_RWFromFile(fname,"r"); 
+  if(!file) return(-1);
+  retvalue=get(file);
+  SDL_RWclose(file);
+  return(retvalue);
 }
 
 void animation::set_delay(u_int16 framenbr, u_int16 delay)

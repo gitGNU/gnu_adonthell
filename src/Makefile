@@ -59,16 +59,19 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 CXX = c++
 CXXCPP = c++ -E
-MAKEINFO = /home/kai/adonthell/adonthell/missing makeinfo
+MAKEINFO = makeinfo
 PACKAGE = mapengine
 SDL_CFLAGS = -I/usr/local/include -I/usr/local/include/SDL -D_REENTRANT
 SDL_CONFIG = /usr/local/bin/sdl-config
 SDL_LIBS = -L/usr/local/lib -lSDL -lpthread
 VERSION = 0.1.1.7
 
-bin_PROGRAMS = mapengine
+bin_PROGRAMS = mapengine joltest
 
-mapengine_SOURCES = animation.cpp audio.cpp audio_thread.cpp character.cpp commands.cpp cutscene.cpp dialog.cpp dialog_cmds.cpp fileops.cpp generic_cmds.cpp gfx.cpp init.cpp instruction.cpp instruction_class.cpp interpreter.cpp input.cpp lex.prefs.cpp main.cpp map.cpp mapcharacter.cpp mapengine.cpp mapevent.cpp mappattern.cpp mapsquare.cpp pnm.cpp prefs.cpp storage.cpp window.cpp
+mapengine_SOURCES = animation.cpp audio.cpp audio_thread.cpp character.cpp commands.cpp cutscene.cpp dialog_cmds.cpp fileops.cpp game.cpp generic_cmds.cpp image.cpp init.cpp interpreter.cpp input.cpp lex.prefs.cpp main.cpp map.cpp mapcharacter.cpp mapengine.cpp mapevent.cpp mappattern.cpp mapsquare.cpp pnm.cpp prefs.cpp screen.cpp storage.cpp win_label.cpp win_write.cpp win_container.cpp win_select.cpp win_friend.cpp win_border.cpp win_base.cpp win_font.cpp
+
+
+joltest_SOURCES = animation.cpp audio.cpp audio_thread.cpp character.cpp commands.cpp cutscene.cpp dialog_cmds.cpp fileops.cpp game.cpp generic_cmds.cpp image.cpp init.cpp interpreter.cpp input.cpp lex.prefs.cpp pnm.cpp prefs.cpp screen.cpp storage.cpp win_label.cpp win_write.cpp win_container.cpp win_select.cpp win_friend.cpp win_border.cpp win_base.cpp win_font.cpp joel.cpp
 
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = ../header.h
@@ -81,17 +84,26 @@ CPPFLAGS =
 LDFLAGS = 
 LIBS = -L/usr/local/lib -lSDL -lpthread -lSDL_image -lSDL_mixer
 mapengine_OBJECTS =  animation.o audio.o audio_thread.o character.o \
-commands.o cutscene.o dialog.o dialog_cmds.o fileops.o generic_cmds.o \
-gfx.o init.o instruction.o instruction_class.o interpreter.o input.o \
-lex.prefs.o main.o map.o mapcharacter.o mapengine.o mapevent.o \
-mappattern.o mapsquare.o pnm.o prefs.o storage.o window.o
+commands.o cutscene.o dialog_cmds.o fileops.o game.o generic_cmds.o \
+image.o init.o interpreter.o input.o lex.prefs.o main.o map.o \
+mapcharacter.o mapengine.o mapevent.o mappattern.o mapsquare.o pnm.o \
+prefs.o screen.o storage.o win_label.o win_write.o win_container.o \
+win_select.o win_friend.o win_border.o win_base.o win_font.o
 mapengine_LDADD = $(LDADD)
 mapengine_DEPENDENCIES = 
 mapengine_LDFLAGS = 
+joltest_OBJECTS =  animation.o audio.o audio_thread.o character.o \
+commands.o cutscene.o dialog_cmds.o fileops.o game.o generic_cmds.o \
+image.o init.o interpreter.o input.o lex.prefs.o pnm.o prefs.o screen.o \
+storage.o win_label.o win_write.o win_container.o win_select.o \
+win_friend.o win_border.o win_base.o win_font.o joel.o
+joltest_LDADD = $(LDADD)
+joltest_DEPENDENCIES = 
+joltest_LDFLAGS = 
 CXXFLAGS = -O6 -g -Wall -I/usr/local/include -I/usr/local/include/SDL -D_REENTRANT  -DSDL_MIXER 
 CXXCOMPILE = $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
 CXXLD = $(CXX)
-CXXLINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(LDFLAGS) -o ../$@
+CXXLINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(LDFLAGS) -o $@
 DIST_COMMON =  Makefile.am Makefile.in
 
 
@@ -100,15 +112,17 @@ DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 TAR = tar
 GZIP_ENV = --best
 DEP_FILES =  .deps/animation.P .deps/audio.P .deps/audio_thread.P \
-.deps/character.P .deps/commands.P .deps/cutscene.P .deps/dialog.P \
-.deps/dialog_cmds.P .deps/fileops.P .deps/generic_cmds.P .deps/gfx.P \
-.deps/init.P .deps/input.P .deps/instruction.P \
-.deps/instruction_class.P .deps/interpreter.P .deps/lex.prefs.P \
-.deps/main.P .deps/map.P .deps/mapcharacter.P .deps/mapengine.P \
-.deps/mapevent.P .deps/mappattern.P .deps/mapsquare.P .deps/pnm.P \
-.deps/prefs.P .deps/storage.P .deps/window.P
-SOURCES = $(mapengine_SOURCES)
-OBJECTS = $(mapengine_OBJECTS)
+.deps/character.P .deps/commands.P .deps/cutscene.P .deps/dialog_cmds.P \
+.deps/fileops.P .deps/game.P .deps/generic_cmds.P .deps/image.P \
+.deps/init.P .deps/input.P .deps/interpreter.P .deps/joel.P \
+.deps/lex.prefs.P .deps/main.P .deps/map.P .deps/mapcharacter.P \
+.deps/mapengine.P .deps/mapevent.P .deps/mappattern.P .deps/mapsquare.P \
+.deps/pnm.P .deps/prefs.P .deps/screen.P .deps/storage.P \
+.deps/win_base.P .deps/win_border.P .deps/win_container.P \
+.deps/win_font.P .deps/win_friend.P .deps/win_label.P \
+.deps/win_select.P .deps/win_write.P
+SOURCES = $(mapengine_SOURCES) $(joltest_SOURCES)
+OBJECTS = $(mapengine_OBJECTS) $(joltest_OBJECTS)
 
 all: all-redirect
 .SUFFIXES:
@@ -165,6 +179,10 @@ maintainer-clean-compile:
 mapengine: $(mapengine_OBJECTS) $(mapengine_DEPENDENCIES)
 	@rm -f mapengine
 	$(CXXLINK) $(mapengine_LDFLAGS) $(mapengine_OBJECTS) $(mapengine_LDADD) $(LIBS)
+
+joltest: $(joltest_OBJECTS) $(joltest_DEPENDENCIES)
+	@rm -f joltest
+	$(CXXLINK) $(joltest_LDFLAGS) $(joltest_OBJECTS) $(joltest_LDADD) $(LIBS)
 .cpp.o:
 	$(CXXCOMPILE) -c $<
 
@@ -210,7 +228,7 @@ distdir: $(DISTFILES)
 	@for file in $(DISTFILES); do \
 	  d=$(srcdir); \
 	  if test -d $$d/$$file; then \
-	    cp -pr $$/$$file $(distdir)/$$file; \
+	    cp -pr $$d/$$file $(distdir)/$$file; \
 	  else \
 	    test -f $(distdir)/$$file \
 	    || ln $$d/$$file $(distdir)/$$file 2> /dev/null \

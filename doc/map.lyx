@@ -1,0 +1,297 @@
+#This file was created by <alex> Mon May  8 14:51:40 2000
+#LyX 1.0 (C) 1995-1999 Matthias Ettrich and the LyX Team
+\lyxformat 2.15
+\textclass article
+\language default
+\inputencoding default
+\fontscheme default
+\graphics default
+\paperfontsize default
+\spacing single 
+\papersize Default
+\paperpackage a4
+\use_geometry 0
+\use_amsmath 0
+\paperorientation portrait
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\defskip medskip
+\quotes_language english
+\quotes_times 2
+\papercolumns 1
+\papersides 1
+\paperpagestyle fancy
+
+\layout Title
+
+ADONTHELL MAP STRUCTURE
+\layout Author
+
+by Alexandre Courbot
+\layout Date
+
+Last update: 05/09/00
+\layout Section
+
+Goal of this document
+\layout Standard
+
+The map is one of the important parts of the game.
+ Without being complicated, some explanations about it may allow people
+ who need to manipulate it to gain some time.
+\layout Section
+
+Map internals 
+\layout Subsection
+
+Mapsquare
+\layout Standard
+
+The map by itself is represented by a matrix of "mapsquares", a mapsquare
+ being the unit of the map.
+ When walking through the map, the player walk from one square to another.
+ The square has two layers: a bottom layer, which is not configurable, and
+ a top layer which following parameters can be configured:
+\layout Itemize
+
+whether it is on top or behind the characters
+\layout Itemize
+
+whether the pink 0xFF00FF color is masked or not
+\layout Itemize
+
+whether it is translucent, and which level of translucency to use
+\layout Standard
+
+Also, a square can be walkable or not for the main character and the NPCs,
+ and leaving it from a specific direction can be disabled for all characters.
+\layout Standard
+
+The top and bottom layers layout are refered by a number, which refer a
+ "pattern".
+\layout Subsection
+
+Patterns 
+\layout Standard
+
+A pattern is a graphical object of fixed size (20x20) which can be animated
+ or not.
+ Complex objects (like houses) can be rendered by correctly arranging the
+ corresponding patterns.
+ From the filesystem point of view, patterns are grouped into 
+\emph on 
+patternsets
+\emph default 
+, which usually groups patterns of a same theme, or of a bigger element
+ (house).
+\layout Subsection
+
+File format
+\layout Standard
+
+The file format for the map is the following:
+\layout Standard
+\added_space_top 0.3cm \added_space_bottom 0.3cm \align center \LyXTable
+multicol5
+15 4 0 0 -1 -1 -1 -1
+1 1 0 0
+1 0 0 0
+1 0 0 0
+1 0 0 0
+1 0 0 0
+1 0 0 0
+1 0 0 0
+1 0 0 0
+1 0 0 0
+1 0 0 0
+1 0 0 0
+1 0 0 0
+1 0 0 0
+1 0 0 0
+1 1 0 0
+2 1 0 "" ""
+2 1 0 "" ""
+2 1 0 "" ""
+2 1 1 "" ""
+0 8 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+
+Length
+\newline 
+type
+\newline 
+Map Variable
+\newline 
+Description
+\newline 
+2
+\newline 
+u_int16
+\newline 
+rev_number
+\newline 
+Revision Number (for compatibility checks)
+\newline 
+2
+\newline 
+u_int16
+\newline 
+nbr_of_patternsets
+\newline 
+Number of patternsets
+\newline 
+??
+\newline 
+string
+\newline 
+patternname[i]
+\newline 
+File names of the patternsets to load
+\newline 
+2
+\newline 
+u_int16
+\newline 
+length
+\newline 
+Map length
+\newline 
+2
+\newline 
+u_int16
+\newline 
+height
+\newline 
+Map height
+\newline 
+2
+\newline 
+u_int16
+\newline 
+posx
+\newline 
+X position of the map
+\newline 
+2
+\newline 
+u_int16
+\newline 
+posy
+\newline 
+Y position of the map
+\newline 
+??
+\newline 
+mapsquare
+\newline 
+maparea[i][j]
+\newline 
+Mapsquares information
+\newline 
+??
+\newline 
+mapcharacter
+\newline 
+heroe
+\newline 
+Main character stats (position, etc...)
+\newline 
+2
+\newline 
+u_int16
+\newline 
+nbr_of_mapcharacters
+\newline 
+Number of NPCs
+\newline 
+??
+\newline 
+mapcharacter
+\newline 
+othermapchar[i]
+\newline 
+NPC information
+\newline 
+2
+\newline 
+u_int16
+\newline 
+nbr_of_events
+\newline 
+Number of Map events
+\newline 
+??
+\newline 
+mapevent
+\newline 
+event[i]
+\newline 
+Map events
+\newline 
+1
+\newline 
+u_int8
+\newline 
+scrolltype
+\newline 
+Scrolling parameter
+\the_end

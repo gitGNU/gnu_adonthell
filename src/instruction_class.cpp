@@ -30,6 +30,15 @@ void instruction::get(FILE* file)
    getstringfromfile(string_val,file);
 }
 
+void instruction::put(FILE* file)
+{
+   int i;
+
+   for(i=0;i<9;++i)
+      fwrite(&param_val[i],sizeof(param_val[i]),1,file);
+   putstringtofile(string_val,file);
+}
+
 istream& operator >> (istream& stream, instruction &instr)
 {
   int i;

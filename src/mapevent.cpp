@@ -14,59 +14,199 @@
 
 #include <iostream.h>
 #include <stdio.h>
+#include <SDL/SDL.h>
+#include "fileops.h"
 #include "types.h"
 #include "mapevent.h"
-#include "instruction.h"
+#include "mapcharacter.h"
+#include "map.h"
+#include "mapengine.h"
 
-#define casei(x) case x : pi=new event_ ## x; break;
-
-void mapevent::get(FILE * file)
+void mapevent::get(SDL_RWops * file)
 {
-   instruction *pi;
-   u_int16 type;
-
-   fread(&type,sizeof(type),1,file);
-   switch (type)
-   {
-      casei(0);
-      casei(1);
-      casei(2);
-      casei(3);
-      casei(4);
-      casei(5);
-      casei(6);
-      casei(7);
-      casei(8);
-      casei(9);
-      casei(10);
-      casei(11);
-      casei(255);
-   }
-   
-   pi->get(file);
-   push_back(pi);
-   fread(&otherevent_val, sizeof(otherevent_val),1,file);
+  u_int16 i;
+  SDL_RWread(file,&type,sizeof(type),1);
+  for(i=1;i<10;i++)
+    SDL_RWread(file,&param[i],sizeof(param[i]),1);
+  getstringfromfile(param_str,file);
+  SDL_RWread(file,&otherevent,sizeof(otherevent),1);
 }
 
-void mapevent::run(mapcharacter*aguy, map*amap, u_int16 x, u_int16 y)
+void mapevent::put(SDL_RWops * file)
 {
-   iterator i;
-
-   i=begin();
-   while(i!=end())
-   {
-      (*i)->exec(aguy,amap,x,y);
-      i++;
-   }
+  u_int16 i;
+  SDL_RWwrite(file,&type,sizeof(type),1);
+  for(i=1;i<10;i++)
+    SDL_RWwrite(file,&param[i],sizeof(param[i]),1);
+  putstringtofile(param_str,file);
+  SDL_RWwrite(file,&otherevent,sizeof(otherevent),1);
 }
 
-void mapevent::set_otherevent(const u_int16& other)
+void mapevent::map_action_0(mapcharacter*aguy,map*amap,u_int16 x,u_int16 y)
 {
-    otherevent_val=other;
 }
 
-u_int16 mapevent::otherevent()
+void mapevent::map_action_1(mapcharacter*aguy,map*amap,u_int16 x,u_int16 y)
 {
-    return otherevent_val;
+  aguy->set_movtype(0);
+  if((param[7])&&(aguy->get_nbr()==255)) mapengine::fade_out(amap);
+  amap->leave_character(aguy->get_posx(),aguy->get_posy());
+  aguy->set_posx(param[1]);
+  aguy->set_posy(param[2]);
+  if(param[3]!=255) aguy->set_framefactor(param[3]);
+  amap->put_character(aguy->get_posx(),aguy->get_posy(),aguy);
+  aguy->init_moveframe();
+  if(aguy->get_nbr()==255)
+    {
+      amap->set_posx(param[4]);
+      amap->set_posy(param[5]);
+      if(param[6]!=255) amap->set_scrolltype(param[6]);
+      amap->set_movtype(0);
+    }
+  if((param[7])&&(aguy->get_nbr()==255)) mapengine::fade_in(amap);
 }
 
+
+void mapevent::map_action_2(mapcharacter*aguy,map*amap,u_int16 x,u_int16 y)
+{
+  if (aguy->get_nbr()==255)
+    {
+      if (amap->get_scrolltype()==1) amap->set_scrolltype(2);
+      else if (amap->get_scrolltype()==2) amap->set_scrolltype(1);
+    }
+}
+
+void mapevent::map_action_3(mapcharacter*aguy,map*amap,u_int16 x,u_int16 y)
+{
+  if (aguy->get_nbr()==255) amap->set_scrolltype(1);
+}
+
+void mapevent::map_action_4(mapcharacter*aguy,map*amap,u_int16 x,u_int16 y)
+{
+  if (aguy->get_nbr()==255) amap->set_scrolltype(2);
+}
+
+void mapevent::map_action_5(mapcharacter*aguy,map*amap,u_int16 x,u_int16 y)
+{
+  if (aguy->get_nbr()==255)
+    {
+      if (param[7]) mapengine::fade_out(amap);
+      amap->~map();
+      amap->load(param_str);
+      amap->init_for_scrolling();
+      if (param[7]) mapengine::fade_in(amap);
+    }
+}
+
+void mapevent::map_action_6(mapcharacter*aguy,map*amap,u_int16 x,u_int16 y)
+{
+  if (aguy->get_nbr()==255)
+    {
+      if (param[7]) mapengine::fade_out(amap);
+      amap->leave_character(aguy->get_posx(),aguy->get_posy());
+      amap->~map();
+      amap->load(param_str);
+      aguy->set_posx(param[1]);
+      aguy->set_posy(param[2]);
+      if(param[3]!=255) aguy->set_framefactor(param[3]);
+      amap->set_posx(param[4]);
+      amap->set_posy(param[5]);
+      if(param[6]!=255) amap->set_scrolltype(param[6]);
+      amap->init_for_scrolling();
+      if(param[7]) mapengine::fade_in(amap);
+    }
+}
+
+void mapevent::map_action_7(mapcharacter*aguy,map*amap,u_int16 x,u_int16 y)
+//      Enable Horizontal Scrolling
+{
+  if (aguy->get_nbr()==255)
+    {
+      if (param[1])
+	{
+	  if(aguy->get_movtype()!=param[1])
+	      return;
+	}
+      amap->enable_horizontal_scrolling();
+    }
+}
+
+void mapevent::map_action_8(mapcharacter*aguy,map*amap,u_int16 x,u_int16 y)
+//      Disable Horizontal Scrolling
+{
+  if (aguy->get_nbr()==255)
+    {
+      if (param[1])
+	{
+	  if(aguy->get_movtype()!=param[1])
+	      return;
+	}
+      amap->disable_horizontal_scrolling();
+    }
+}
+
+void mapevent::map_action_9(mapcharacter*aguy,map*amap,u_int16 x,u_int16 y)
+//      Enable Vertical Scrolling
+{
+  if (aguy->get_nbr()==255)
+    {
+      if (param[1])
+	{
+	  if(aguy->get_movtype()!=param[1])
+	      return;
+	}
+      amap->enable_vertical_scrolling();
+    }
+}
+
+void mapevent::map_action_10(mapcharacter*aguy,map*amap,u_int16 x,u_int16 y)
+//     Disable Vertical Scrolling
+{
+  if (aguy->get_nbr()==255)
+    {
+      if (param[1])
+	{
+	  if(aguy->get_movtype()!=param[1])
+	      return;
+	}
+      amap->disable_vertical_scrolling();
+    }
+}
+
+void mapevent::map_action_11(mapcharacter*aguy,map*amap,u_int16 x,u_int16 y)
+{
+  map tmap;
+  if(aguy->get_nbr()!=255) return;
+  aguy->set_movtype(0);
+  mapengine::fade_out(amap);
+  tmap.load(param_str);
+  // Launch mapengine on tmap
+  //  update_mapkeyboard(amap);
+  mapengine::fade_in(amap);
+}
+
+void mapevent::map_action_255(mapcharacter*aguy,map*amap,u_int16 x,u_int16 y)
+{
+  if (aguy->get_nbr()==255) amap->set_status(1);
+}
+
+u_int8 mapevent::action (mapcharacter * aguy, map * amap, u_int16 x, u_int16 y)
+{
+  switch(type)
+    {
+    case 0: map_action_0(aguy,amap,x,y); break;
+    case 1: map_action_1(aguy,amap,x,y); break;
+    case 2: map_action_2(aguy,amap,x,y); break;
+    case 3: map_action_3(aguy,amap,x,y); break;
+    case 4: map_action_4(aguy,amap,x,y); break;
+    case 5: map_action_5(aguy,amap,x,y); break;
+    case 6: map_action_6(aguy,amap,x,y); break;
+    case 7: map_action_7(aguy,amap,x,y); break;
+    case 8: map_action_8(aguy,amap,x,y); break;
+    case 9: map_action_9(aguy,amap,x,y); break;
+    case 10: map_action_10(aguy,amap,x,y); break;
+    case 11: map_action_11(aguy,amap,x,y); break;
+    case 255: map_action_255(aguy,amap,x,y); break;
+    }
+  return(otherevent);
+}

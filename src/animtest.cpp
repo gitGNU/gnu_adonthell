@@ -16,7 +16,7 @@
 #include <stdio.h>
 #include "types.h"
 #include "keyboard.h"
-#include "gfx.h"
+#include "image.h"
 #include "globals.h"
 #include "SDL.h"
 #include "SDL_thread.h"

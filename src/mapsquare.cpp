@@ -15,7 +15,7 @@
 #include <iostream.h>
 #include <stdio.h>
 #include "types.h"
-#include "gfx.h"
+#include "image.h"
 #include "mapcharacter.h"
 #include "mapsquare.h"
 
@@ -24,15 +24,26 @@ mapsquare::mapsquare()
   OCCUPED=0;
 }
 
-void mapsquare::get(FILE * file)
+void mapsquare::get(SDL_RWops * file)
 {
-  fread(&patternnbr,sizeof(patternnbr),1,file);
-  fread(&secpatternnbr,sizeof(secpatternnbr),1,file);
-  fread(&event,sizeof(event),1,file);
-  fread(&eventleave,sizeof(eventleave),1,file); 
-  fread(&flags,sizeof(flags),1,file);
-  fread(&alpha,sizeof(alpha),1,file); 
-  fread(&solid,sizeof(solid),1,file); 
+  SDL_RWread(file,&patternnbr,sizeof(patternnbr),1);
+  SDL_RWread(file,&secpatternnbr,sizeof(secpatternnbr),1);
+  SDL_RWread(file,&event,sizeof(event),1);
+  SDL_RWread(file,&eventleave,sizeof(eventleave),1); 
+  SDL_RWread(file,&flags,sizeof(flags),1);
+  SDL_RWread(file,&alpha,sizeof(alpha),1); 
+  SDL_RWread(file,&solid,sizeof(solid),1); 
+}
+
+void mapsquare::put(SDL_RWops * file)
+{
+  SDL_RWwrite(file,&patternnbr,sizeof(patternnbr),1);
+  SDL_RWwrite(file,&secpatternnbr,sizeof(secpatternnbr),1);
+  SDL_RWwrite(file,&event,sizeof(event),1);
+  SDL_RWwrite(file,&eventleave,sizeof(eventleave),1); 
+  SDL_RWwrite(file,&flags,sizeof(flags),1);
+  SDL_RWwrite(file,&alpha,sizeof(alpha),1); 
+  SDL_RWwrite(file,&solid,sizeof(solid),1); 
 }
 
 void mapsquare::put_character(mapcharacter * character)
