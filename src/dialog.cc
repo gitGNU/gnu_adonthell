@@ -199,9 +199,6 @@ void dialog::run (u_int32 index)
                 }
             }
             
-            cout << "NPC: " << npc << " says \"" << text_.back () << "\n\""
-                 << flush;
-                        
             // check whether we shall continue or not
             arg = Py_BuildValue ("(i)", answer);
             result = dialogue.call_method_ret ("stop", arg);
