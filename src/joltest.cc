@@ -31,11 +31,27 @@ int main (int argc, char * argv[])
       std::cout << "Error loading font!\n";
       exit (1);
     }
-  font.set_size (16);
+  font.set_size (32);
   font.set_color (255, 255, 255);
   font.build ();
   font.info ();
+
+//   gui::glyph_info & gl = font[L'f'];
+
+//   gfx::image myimage(500, 100);
+//   myimage.fillrect(0, 0, 500, 100, 0x0000FF);
+
+//   myimage.set_mask(true);
+
+//   gl.my_glyph->draw(0, 0, NULL, &myimage);
+//   gl.my_glyph->draw(gl.my_advance + gl.my_minx, 0, NULL, &myimage);
   
+//   myimage.draw(0, 0);
+
+//   gfx::screen::show();
+
+//   getchar();
+
   // define the label !
   label_input l;
   l.resize (200, 200);

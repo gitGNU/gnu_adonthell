@@ -188,7 +188,7 @@ void ttf::copy_bitmap_to_image (u_int8 * bitmap_data, gfx::image * dest, s_int16
   for (int j = 0; j < dest->height (); j++)
     for (int i = 0; i < dest->length () ; i++)
       {
-	if (*pbmp > 128)  dest->put_pix (dx + i, dy +j, pixelcol); 
+	if (*pbmp > 50)  dest->put_pix (dx + i, dy +j, pixelcol); 
 	else dest->put_pix (dx + i, dy + j, gfx::screen::trans_col ()); 
 	pbmp++; 
       } 
@@ -274,7 +274,7 @@ glyph_info::glyph_info (ttf & ft, wchar_t ch) : my_glyph (NULL)
   if (FT_Render_Glyph( face->glyph, ft_render_mode_normal )) return;
   
   my_glyph = new gfx::image (glyph->bitmap.width, glyph->bitmap.rows);
-  //  my_glyph->set_mask (true);
+  my_glyph->set_mask (true);
   ft.copy_bitmap_to_image ( glyph->bitmap.buffer, my_glyph);
 }
 

@@ -1,6 +1,6 @@
 ## Process this file with automake to produce Makefile.in
 
-MODULES_SUBDIRS = gfx input audio python lmap
+MODULES_SUBDIRS = gfx input audio python lmap gui
 
 if BUILD_TOOLS
 SUBDIRS = $(MODULES_SUBDIRS) . tools
