@@ -37,12 +37,39 @@ class mapsquare_tile
   mapsquare_tile();
   ~mapsquare_tile();
   
-  bool operator < (const mapsquare_tile & mt);
-  bool operator <= (const mapsquare_tile & mt);
-  
+  bool operator < (const mapsquare_tile & mt)
+    { return (mt.y>y || (mt.y==y && mt.x>x)); }
+  bool operator <= (const mapsquare_tile & mt)
+    { return (mt.y>y || (mt.y==y && mt.x>=x)); }
+  bool operator == (const mapsquare_tile & mt)
+    {  return (mt.y==y && mt.x==x); }
+
   void draw(mapview * mv);
   void draw_border(mapview * mv);
   void draw_base_tile(mapview * mv);
+  friend class mapsquare;
+  friend class landsubmap;
+  friend class landmap;
+  friend class mapview;
+};
+
+class mapsquare_char
+{
+  mapcharacter * mchar;
+  bool is_base;
+  list<mapsquare_char>::iterator base_tile;
+  u_int16 x,y;
+
+ public:
+  mapsquare_char();
+  ~mapsquare_char();
+  
+  bool operator < (const mapsquare_char & mt);
+  bool operator <= (const mapsquare_char & mt);
+  
+  void draw(mapview * mv);
+  /*  void draw_border(mapview * mv);
+      void draw_base_tile(mapview * mv);*/
   friend class mapsquare;
   friend class landsubmap;
   friend class landmap;
@@ -63,7 +90,7 @@ class mapsquare
 
   list<mapsquare_tile> tiles;
   list<mapsquare_tile>::iterator base_begin;
-  list<mapcharacter*> mapchars;
+  list<mapsquare_char> mapchars;
  public:
   mapsquare();
   ~mapsquare();
@@ -173,6 +200,8 @@ class landmap
   s_int8 save(const char * fname);
 #endif
 
+  void mapchar_occupy(mapcharacter * mchar, u_int16 smap, 
+		      u_int16 px, u_int16 py);
   void put_mapchar(mapcharacter * mchar, u_int16 smap, u_int16 px, u_int16 py);
   void remove_mapchar(mapcharacter * mchar, u_int16 smap, u_int16 px,
 		      u_int16 py);

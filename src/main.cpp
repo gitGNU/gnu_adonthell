@@ -71,6 +71,8 @@ int main(int argc, char * argv[])
     // The map view will display "mymap"
     mview.attach_map(&mymap);
 
+    mview.draw(10,10);
+
     // This is quite self-explicit...
     while(1)
       {
@@ -87,7 +89,6 @@ int main(int argc, char * argv[])
 	    if(input::is_pushed(SDLK_c)) heroe->go_south();
 	    if(input::is_pushed(SDLK_x)) heroe->go_west();
 	    if(input::is_pushed(SDLK_v)) heroe->go_east();
-
 	    mymap.update();
 	  }
 	//      	screen::clear();

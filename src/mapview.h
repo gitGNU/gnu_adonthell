@@ -18,6 +18,7 @@
 #include "mapobject.h"
 #include <list>
 class mapsquare_tile;
+class mapsquare_char;
 class landmap;
 
 class mapview
@@ -39,7 +40,7 @@ class mapview
   drawing_area * da;
 
   list<mapsquare_tile> critical_draw;
-  list<mapcharacter*> characters_draw;
+  list<mapsquare_char> characters_draw;
 
 #ifdef _EDIT_
   win_font * font;
@@ -118,6 +119,7 @@ class mapview
   void editor();
 #endif
   friend class mapsquare_tile;
+  friend class mapsquare_char;
   friend class mapsquare;
   friend class mapcharacter;
 };

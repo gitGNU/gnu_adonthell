@@ -40,8 +40,6 @@
 #include "win_background.h"
 #endif
 
-class mapcharacter : public maptpl
-{
 #define STAND_NORTH 0
 #define STAND_SOUTH 1
 #define STAND_WEST 2
@@ -54,6 +52,45 @@ class mapcharacter : public maptpl
 
 #define NO_MOVE 65535
 
+class mapcharacter : public maptpl
+{
+ public:
+  // Constructors and init functions
+  void init();
+  void clear();
+  mapcharacter();
+  ~mapcharacter();
+
+  // Loading
+  s_int8 get(gzFile file);
+  s_int8 load(const char * fname);
+
+  // Positioning
+  void set_on_map(landmap * m) {refmap=m;}
+  void remove_from_map() {refmap=NULL;}
+  void set_pos(u_int16 smap,u_int16 x,u_int16 y);
+  void set_offset(s_int8 x, s_int8 y) {offx=x; offy=y;}
+  
+  // Getting which movment the character is doing
+  u_int16 move() {return current_move;}
+  
+  void update();
+  void draw(s_int16 x, s_int16 y, drawing_area * da_opt=NULL);
+  void draw(mapview * mv);
+
+  // Giving the character instructions on what it should do
+  void stand_north();
+  void stand_south();
+  void stand_east();
+  void stand_west();
+  void go_north();
+  void go_south();
+  void go_east();
+  void go_west();
+
+  mapcharacter& operator =(mapcharacter &m);
+
+ private:
   u_int16 current_move;
   u_int16 ask_move;
   u_int16 submap;
@@ -79,39 +116,12 @@ class mapcharacter : public maptpl
 
   bool show_grid;
 #endif
-
- public:
-  void init();
-  void clear();
-  mapcharacter();
-  ~mapcharacter();
-
-  s_int8 get(gzFile file);
-  s_int8 load(const char * fname);
-
-  void set_on_map(landmap * m) {refmap=m;}
-  void remove_from_map() {refmap=NULL;}
-  void set_pos(u_int16 smap,u_int16 x,u_int16 y);
-  void set_offset(s_int8 x, s_int8 y) {offx=x; offy=y;}
-  
-  void update();
-  void draw(s_int16 x, s_int16 y, drawing_area * da_opt=NULL);
-  void draw(mapview * mv);
-
-  u_int16 move() {return current_move;}
-
-  void stand_north();
-  void stand_south();
-  void stand_east();
-  void stand_west();
-  void go_north();
-  void go_south();
-  void go_east();
-  void go_west();
-
-  mapcharacter& operator =(mapcharacter &m);
   void calculate_dimensions();
+
+
 #ifdef _EDIT_
+  // Editor specific functions
+ public:
   s_int8 put(gzFile file);
   s_int8 save(const char * fname);
 

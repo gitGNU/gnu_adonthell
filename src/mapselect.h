@@ -62,6 +62,8 @@ class mapselect
   void draw_cursor();
   void draw_grid();
   void draw();
+
+  friend class landmap;
 };
 
 #endif

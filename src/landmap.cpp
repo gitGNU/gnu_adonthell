@@ -35,16 +35,6 @@ mapsquare_tile::~mapsquare_tile()
 
 }
 
-bool mapsquare_tile::operator < (const mapsquare_tile & m)
-{
-  return (m.y>y || (m.y==y && m.x>x));
-}
-
-bool mapsquare_tile::operator <= (const mapsquare_tile & m)
-{
-  return (m.y>y || (m.y==y && m.x>=x));
-}
-
 void mapsquare_tile::draw(mapview * mv)
 {
   if(is_base)
@@ -87,6 +77,42 @@ void mapsquare_tile::draw_base_tile(mapview * mv)
     }
   else
     base_tile->draw_base_tile(mv);
+}
+
+mapsquare_char::mapsquare_char()
+{
+  mchar=NULL;
+  is_base=false;
+}
+
+mapsquare_char::~mapsquare_char()
+{
+}
+
+bool mapsquare_char::operator < (const mapsquare_char & m)
+{
+  return (m.y>y || (m.y==y && m.x>x));
+}
+
+bool mapsquare_char::operator <= (const mapsquare_char & m)
+{
+  return (m.y>y || (m.y==y && m.x>=x));
+}
+
+void mapsquare_char::draw(mapview * mv)
+{
+  if(is_base)
+    {
+      u_int16 rx, ry;
+      rx=(mv->posx>mv->ctrx)?x-(mv->posx-mv->ctrx):x;
+      ry=(mv->posy>mv->ctry)?y-(mv->posy-mv->ctry):y;
+      mchar->draw
+	((rx*MAPSQUARE_SIZE-mv->offx)+mv->x,
+	 (ry*MAPSQUARE_SIZE-mv->offy)+mv->y,
+	 mv->da);
+    }
+  else
+    base_tile->draw(mv);
 }
 
 mapsquare::mapsquare()
@@ -612,20 +638,91 @@ s_int8 landmap::save(const char * fname)
 
 #endif
 
+void landmap::mapchar_occupy(mapcharacter * mchar, u_int16 smap, 
+			       u_int16 px, u_int16 py)
+{
+  mapsquare_char mschar;
+  list<mapsquare_char>::iterator it;
+  u_int16 sx=(px-mchar->basex<0)?0:px-mchar->basex;
+  u_int16 sy=(py-mchar->basey<0)?0:py-mchar->basey;
+  u_int16 ex=(sx+mchar->maptpl::length>submap[smap]->length)?
+    submap[smap]->length:sx+mchar->maptpl::length;
+  u_int16 ey=(sy+mchar->maptpl::height>submap[smap]->height)?
+    submap[smap]->height:sy+mchar->maptpl::height;
+  u_int16 i,j;
+
+  for(it=submap[smap]->land[px][py].mapchars.begin();
+      it!=submap[smap]->land[px][py].mapchars.end() &&
+	it->mchar!=mchar;it++);
+  mschar.mchar=mchar;
+  mschar.base_tile=it;
+  mschar.is_base=false;
+  for(i=sx;i<ex;i++)
+    for(j=sy;j<ey;j++)
+      {
+	mschar.x=i;
+	mschar.y=j;
+	submap[smap]->land[i][j].mapchars.push_back(mschar);
+      }
+}
+
 void landmap::put_mapchar(mapcharacter * mchar, u_int16 smap, 
 			       u_int16 px, u_int16 py)
 {
-  submap[smap]->land[px][py].mapchars.push_back(mchar);
+  mapsquare_char mschar;
+  list<mapsquare_char>::iterator it;
+  u_int16 sx=(px-mchar->basex<0)?0:px-mchar->basex;
+  u_int16 sy=(py-mchar->basey<0)?0:py-mchar->basey;
+  u_int16 ex=(sx+mchar->maptpl::length>submap[smap]->length)?
+    submap[smap]->length:sx+mchar->maptpl::length;
+  u_int16 ey=(sy+mchar->maptpl::height>submap[smap]->height)?
+    submap[smap]->height:sy+mchar->maptpl::height;
+  u_int16 i,j;
+  // Placing the base tile first
+  mschar.mchar=mchar;
+  mschar.is_base=true;
+  mschar.x=px;mschar.y=py;
+  submap[smap]->land[px][py].mapchars.push_back(mschar);
+  it=--submap[smap]->land[px][py].mapchars.end();
+  it->base_tile=it;
+  mschar.base_tile=it;
+  mschar.is_base=false;
+  // Ready to place the rest now
+  for(i=sx;i<ex;i++)
+    for(j=sy;j<ey;j++)
+      if(i!=px || j!=py)
+	{
+	  mschar.x=i;
+	  mschar.y=j;
+	  submap[smap]->land[i][j].mapchars.push_back(mschar);
+	}
+  //  submap[smap]->land[px][py].mapchars.push_back(mchar);
   //  mchar->set_pos(smap,px,py);
 }
 
 void landmap::remove_mapchar(mapcharacter * mchar, u_int16 smap, 
 				  u_int16 px,u_int16 py)
 {
-  list<mapcharacter*>::iterator it=submap[smap]->land[px][py].mapchars.begin();
-  list<mapcharacter*>::iterator e=submap[smap]->land[px][py].mapchars.end();
-  while(it!=e && *it!=mchar) it++;
-  if(it!=e) submap[smap]->land[px][py].mapchars.erase(it);
+  list<mapsquare_char>::iterator it;
+  list<mapsquare_char>::iterator e;
+  u_int16 sx=(px-mchar->basex<0)?0:px-mchar->basex;
+  u_int16 sy=(py-mchar->basey<0)?0:py-mchar->basey;
+  u_int16 ex=(sx+mchar->maptpl::length>submap[smap]->length)?
+    submap[smap]->length:sx+mchar->maptpl::length;
+  u_int16 ey=(sy+mchar->maptpl::height>submap[smap]->height)?
+    submap[smap]->height:sy+mchar->maptpl::height;
+  u_int16 i,j;
+
+  
+  for(i=sx;i<ex;i++)
+    for(j=sy;j<ey;j++)
+      {
+	it=submap[smap]->land[i][j].mapchars.begin();
+	e=submap[smap]->land[i][j].mapchars.end();
+  
+	while(it!=e && it->mchar!=mchar) it++;
+	if(it!=e) submap[smap]->land[px][py].mapchars.erase(it);
+      }
 }
 
 s_int8 landmap::add_submap()
@@ -758,10 +855,11 @@ s_int8 landmap::insert_mapobject(mapobject &an, u_int16 pos,
 #ifdef _EDIT_
   oldpat=mini_pattern;
   mini_pattern=new (mapobject*)[nbr_of_patterns];
-  for(i=0;i<nbr_of_patterns-1;i++)
+  for(i=0;i<pos;i++)
     mini_pattern[i]=oldpat[i];
   mini_pattern[pos]=new mapobject;
   mini_pattern[pos]->zoom_to_fit(OBJSMPLSIZE,&an);
+  mini_pattern[pos]->play();
   for(i=pos+1;i<nbr_of_patterns;i++)
     mini_pattern[i]=oldpat[i-1];
   delete[] oldpat;

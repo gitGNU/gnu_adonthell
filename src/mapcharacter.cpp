@@ -105,7 +105,12 @@ void mapcharacter::stand_west()
 
 void mapcharacter::go_north() 
 {
-  if(!posy) {stand_north(); return;}
+  if(!posy) 
+    {
+      if(current_move>=WALK_NORTH && current_move!=WALK_NORTH) return;
+      stand_north(); 
+      return;
+    }
   ask_move=WALK_NORTH;
   if(current_move>=WALK_NORTH) return;
   anim[current_move]->stop();
@@ -117,7 +122,11 @@ void mapcharacter::go_north()
 void mapcharacter::go_south() 
 {
   if(posy==refmap->submap[submap]->height-1 && !offy)
-    {stand_south();return;}
+    {
+      if(current_move>=WALK_NORTH && current_move!=WALK_SOUTH) return;
+      stand_south();
+      return;
+    }
   ask_move=WALK_SOUTH;
   if(current_move>=WALK_NORTH) return;
   anim[current_move]->stop();
@@ -129,7 +138,11 @@ void mapcharacter::go_south()
 void mapcharacter::go_east() 
 {
   if(posx==refmap->submap[submap]->length-1 && !offx)
-    {stand_east();return;}
+    {
+      if(current_move>=WALK_NORTH && current_move!=WALK_EAST) return;
+      stand_east();
+      return;
+    }
   ask_move=WALK_EAST;
   if(current_move>=WALK_NORTH) return;
   anim[current_move]->stop();
@@ -140,7 +153,12 @@ void mapcharacter::go_east()
 
 void mapcharacter::go_west() 
 {
-  if(!posx) {stand_west(); return;}
+  if(!posx) 
+    {
+      if(current_move>=WALK_NORTH && current_move!=WALK_WEST) return;
+      stand_west(); 
+      return;
+    }
   ask_move=WALK_WEST;
   if(current_move>=WALK_NORTH) return;
   anim[current_move]->stop();
@@ -154,10 +172,12 @@ void mapcharacter::update()
   if(refmap) switch(current_move)
     {
     case WALK_NORTH:
+      if(!offy) refmap->mapchar_occupy(this,submap,posx,posy-1);
       offy--;
       if(offy==-MAPSQUARE_SIZE)
 	{
 	  refmap->remove_mapchar(this,submap,posx,posy);
+	  refmap->remove_mapchar(this,submap,posx,posy-1);
 	  set_pos(submap,posx,posy-1);
 	  if(ask_move!=WALK_NORTH) stand_north();
 	  offy=0;
@@ -166,6 +186,7 @@ void mapcharacter::update()
     case WALK_SOUTH:
       if(!offy)
 	{
+	  refmap->mapchar_occupy(this,submap,posx,posy);
 	  refmap->remove_mapchar(this,submap,posx,posy);
 	  set_pos(submap,posx,posy+1);
 	  set_offset(0,-(MAPSQUARE_SIZE-1));
@@ -173,14 +194,20 @@ void mapcharacter::update()
       else
 	{
 	  offy++;
-	  if(!offy && ask_move!=WALK_SOUTH) stand_south();
+	  if(!offy)
+	    {
+	      refmap->remove_mapchar(this,submap,posx,posy-1);
+	      if(ask_move!=WALK_SOUTH) stand_south();
+	    }
 	}
       break;
     case WALK_WEST:
+      if(!offx) refmap->mapchar_occupy(this,submap,posx-1,posy);
       offx--;
       if(offx==-MAPSQUARE_SIZE)
 	{
 	  refmap->remove_mapchar(this,submap,posx,posy);
+	  refmap->remove_mapchar(this,submap,posx-1,posy);
 	  set_pos(submap,posx-1,posy);
 	  if(ask_move!=WALK_WEST) stand_west();
 	  offx=0;
@@ -189,6 +216,7 @@ void mapcharacter::update()
     case WALK_EAST:
       if(!offx)
 	{
+	  refmap->mapchar_occupy(this,submap,posx,posy);
 	  refmap->remove_mapchar(this,submap,posx,posy);
 	  set_pos(submap,posx+1,posy);
 	  set_offset(-(MAPSQUARE_SIZE-1),0);
@@ -196,7 +224,11 @@ void mapcharacter::update()
       else
 	{
 	  offx++;
-	  if(!offx && ask_move!=WALK_EAST) stand_east();
+	  if(!offx)
+	    { 
+	      refmap->remove_mapchar(this,submap,posx-1,posy);
+	      if(ask_move!=WALK_EAST) stand_east();
+	    }
 	}
       break;
     }
