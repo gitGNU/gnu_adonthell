@@ -26,7 +26,14 @@
 #include "fileops.h"
 #include "dlg_module_entry.h"
 
+// ctor
 DlgModuleEntry::DlgModuleEntry ()
+{
+    init ();
+}
+
+// initialize the DlgModuleEntry to sane state
+void DlgModuleEntry::init ()
 {
     project_ = "";
     imports_ = "";
@@ -36,6 +43,16 @@ DlgModuleEntry::DlgModuleEntry ()
     
     itc = characters.end ();
     itq = quests.end ();
+}
+
+// reset everything to initial state
+void DlgModuleEntry::clear ()
+{
+    // empty character and quest array
+    characters.clear ();
+    quests.clear ();
+    
+    init ();
 }
 
 // set the project

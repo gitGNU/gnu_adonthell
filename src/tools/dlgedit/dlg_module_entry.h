@@ -32,7 +32,26 @@
 class DlgModuleEntry
 {
 public:
+    /**
+     * Create an empty %DlgModuleEntry.
+     */
     DlgModuleEntry ();
+    
+    /**
+     * @name Initialization / Cleanup
+     */
+    //@{
+    /**
+     * Initialize the entry to a sane state. All members are set to
+     * the empty string ("").
+     */
+    void init ();
+    /**
+     * Reset the entry to state after construction time. Erases all quest
+     * and character information. Sets other members to "".
+     */
+    void clear ();
+    //@}
     
     /**
      * Attribute access.

@@ -82,6 +82,12 @@ std::list<std::string> CfgData::getFiles ()
     return files;
 }
 
+// erase a file from the list
+void CfgData::removeFile (const std::string & file)
+{
+    Files.erase (remove (Files.begin (), Files.end (), file), Files.end ());    
+}
+
 // add entry to list of projects
 void CfgData::addProject (std::string &project)
 {

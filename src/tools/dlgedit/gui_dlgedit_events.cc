@@ -82,6 +82,12 @@ void on_file_save_activate (GtkMenuItem * menuitem, gpointer user_data)
         on_file_save_as_activate (menuitem, user_data);
 }
 
+// File Menu: Revert to Saved
+void on_file_revert_activate (GtkMenuItem * menuitem, gpointer user_data)
+{
+    GuiDlgedit::window->revertDialogue ();
+}
+
 // File Menu: Close
 void on_file_close_activate (GtkMenuItem * menuitem, gpointer user_data)
 {

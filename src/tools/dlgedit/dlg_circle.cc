@@ -32,6 +32,9 @@ DlgCircle::DlgCircle (DlgPoint &p, node_type t, DlgCircleEntry *e)
     // Align Circle to the (imaginary) grid
     top_left = DlgPoint (p.x () - (p.x () % CIRCLE_DIAMETER), p.y () - (p.y () % CIRCLE_DIAMETER));
     bottom_right = DlgPoint (x () + CIRCLE_DIAMETER, y () + CIRCLE_DIAMETER);
+    
+    // make sure the point lies still within the circle
+    p = center ();
 }
 
 // dtor

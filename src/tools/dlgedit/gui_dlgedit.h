@@ -130,6 +130,11 @@ public:
      */
     void saveDialogue (std::string file);
     /**
+     * Reload dialogue from disk if possible. This discards all
+     * changes since the last save.
+     */
+    void revertDialogue ();
+    /**
      * Close a dialogue
      */
     void closeDialogue ();

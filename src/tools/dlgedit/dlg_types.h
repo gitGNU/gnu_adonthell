@@ -91,7 +91,8 @@ enum menu_item
     PREVIEW         = 6,
     RUN             = 7,
     OPEN_RECENT     = 8,
-    MAX_ITEM        = 9
+    REVERT          = 9,
+    MAX_ITEM        = 10
 };
 
 /**

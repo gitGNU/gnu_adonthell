@@ -58,10 +58,15 @@ public:
     void addFile (std::string & file);
     /**
      * Get the list of files, sorted alphabetically.
-     * @return list of previously opened files.                                            
+     * @return list of previously opened files.
      */
     std::list<std::string> getFiles ();
-    
+    /**    
+     * Remove the given file from the list, if possible.
+     * @param file The file to remove.
+     */
+    void removeFile (const std::string & file);
+
     /**
      * Adds a project to the list of projects and loads all project
      * specific data. The number of projects isn't limited.

@@ -47,6 +47,19 @@ void DlgModule::init ()
     changed_ = false;
 }
 
+// reset dialogue to initial state
+void DlgModule::clear ()
+{
+    // delete all nodes
+    while (!nodes.empty ()) deleteNode (nodes.front ());
+    
+    // clear custom code and such
+    entry_.clear ();
+    
+    // reset all variables
+    init ();
+}
+
 // calculate shape of sub-dialogue
 void DlgModule::initShape (DlgPoint &center)
 {
@@ -130,6 +143,15 @@ bool DlgModule::deleteNode ()
     // otherwise, first deselect it
     DlgNode *node = deselectNode ();
     
+    // actually delete it
+    deleteNode (node);
+    
+    return true;
+}
+
+// delete the given node
+void DlgModule::deleteNode (DlgNode *node)
+{
     // if the node is a circle, also delete the attached arrows
     if (node->type () != LINK)
     {
@@ -154,8 +176,6 @@ bool DlgModule::deleteNode ()
     nodes.erase (remove (nodes.begin (), nodes.end (), node), nodes.end ());       
     if (highlighted_ == node) highlighted_ = NULL;
     delete node;
-    
-    return true;
 }
 
 // deselect the selected node
@@ -309,7 +329,8 @@ bool DlgModule::load ()
             default: break;
         }
     }
-
+    
+    fclose (loadlgin);
     return true;
 }
 

@@ -44,6 +44,16 @@ public:
     DlgModule (std::string p, std::string n, std::string s, std::string d);
 
     /**
+     * Reset the dialogue to its state after construction. Deletes all
+     * nodes and clears the DlgModuleEntry.
+     */
+    void clear ();
+    
+    /**
+     * @name Module drawing
+     */
+    //@{
+    /**
      * Calculate this module's shape. The shape is a rectangle centered
      * around the given DlgPoint. It is large enough to display the
      * module's name.
@@ -58,7 +68,12 @@ public:
      * @param offset the DlgPoint to use as offset
      */
     void draw (GdkPixmap *surface, DlgPoint &offset);
-
+    //@}
+    
+    /**
+     * @name Node handling
+     */
+    //@{
     /**
      * Add the given node to the dialogue.
      * @param node the DlgNode to add.
@@ -68,16 +83,20 @@ public:
     /**
      * Delete the currently selected node from the dialogue. If the node 
      * is a circle, also deletes all attached arrows.
-     * @return <b>true</b> if the node has been deleted, <b>false</b>
-     *         otherwise.
+     * @return \b true> if the node has been deleted, \b false otherwise.
      */
     bool deleteNode ();
     
     /**
+     * Delete the given node from the dialogue.
+     * @param node The node to delete.
+     */
+    void deleteNode (DlgNode *node);
+    
+    /**
      * Select a node from the list of nodes.
      * @param node The DlgNode to select.
-     * @return <b>true</b> if the node has been selected, <b>false</b>
-     *         otherwise.
+     * @return \b true if the node has been selected, \b false otherwise.
      */
     bool selectNode (DlgNode *node);
 
@@ -91,8 +110,7 @@ public:
     
     /**
      * Select the root node of the dialogue.
-     * @return <b>true</b> if the node has been selected, <b>false</b>
-     *         otherwise.
+     * @return \b true if the node has been selected, \b false otherwise.
      */
     bool selectRoot ();
 
@@ -114,7 +132,8 @@ public:
      * @return the DlgNode currently selected
      */
     DlgNode* selected ()                { return selected_; }
-
+    //@}
+    
     /**
      * Get the extension of the module for centering in view.
      *
@@ -123,11 +142,14 @@ public:
      * @param y will contain position of topmost node
      */
     void extension (int &min_x, int &max_x, int &y);
-    
+
+    /**
+     * @name Loading / Saving
+     */
+    //@{
     /**
      * Init the Dialogue from a file
-     * @return <b>true</b> if loading was successful, <b>false</b>
-     *         otherwise.
+     * @return \b true if loading was successful, \b false otherwise.
      */
     bool load ();
     
@@ -135,17 +157,30 @@ public:
      * Save the Dialogue to a file
      * @param path full path of the dialogue.
      * @param name file name without extension.
-     * @return <b>true</b> if saving was successful, <b>false</b> otherwise.
+     * @return \b true if saving was successful, \b false otherwise.
      */
     bool save (std::string &path, std::string &name);
     
     /**
-     * Save the Dialogue to a file. Not implemented - use 
-     * save (std::string, std::string) instead!
+     * Save module as sub-dialogue. In contrast to the method above,
+     * this only saves a 'reference' to the module. It will have to be
+     * restored from the actual source file. 
+     *
+     * In order to allow different users to work on the same dialogues,
+     * the reference will be relative to CfgProject::BaseDir. That way,
+     * a dialogue referencing sub-dialogues can be loaded even if it is
+     * moved to a different location, provided the relative paths of
+     * included modules have not changed.
+     *
      * @param file an opened file.
      */
     void save (std::ofstream &file)     { }
-    
+    //@}
+   
+    /**
+     * @name Member access
+     */
+    //@{
     /**
      * Get the list of nodes in this dialogue.
      * @return a reference to the list of nodes.
@@ -177,25 +212,25 @@ public:
      * @return string composed of path, filename and file extension.
      */
     std::string fullName ()             { return path_ + name_ + FILE_EXT; }
-    
+
     /**
      * Check whether this dialogue has been changed since it's been
      * opened or saved.
-     * @return <b>true</b> if that is the case, <b>false</b> otherwise.
+     * @return \b true if that is the case, \b false otherwise.
      */
     bool changed ()                     { return changed_; }
     /**
      * Mark this dialogue as changed.
-     * @param c Set to <b>true</b> to mark the dialogue as changed.
+     * @param c Set to \b true to mark the dialogue as changed.
      */
     void setChanged (bool c = true)     { changed_ = c; }
-
+    
     /**
      * Get a pointer to the module entry
      * @return the DlgModuleEntry of this module
      */
     DlgModuleEntry *entry ()            { return &entry_; }
-
+    
     /**
      * Get a pointer to the keyboard graph traversal helper. This keeps track
      * of the current selection's siblings. Users can navigate through them
@@ -203,6 +238,7 @@ public:
      * @return the KBTraverse of this module
      */
     KBTraverse *traverse ()             { return &traverse_; }
+    //@}
     
 protected:
     std::vector<DlgNode*> nodes;// all the nodes in this dialogue

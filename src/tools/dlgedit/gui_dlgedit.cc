@@ -174,6 +174,23 @@ GuiDlgedit::GuiDlgedit ()
     gtk_signal_connect (GTK_OBJECT (menuitem), "activate", GTK_SIGNAL_FUNC (on_file_save_as_activate), (gpointer) this);
     gtk_widget_show (menuitem);
     menuItem[SAVE_AS] = menuitem;
+
+    // Seperator
+    menuitem = gtk_menu_item_new ();
+    gtk_menu_append (GTK_MENU (submenu), menuitem);
+    gtk_widget_set_sensitive (menuitem, FALSE);
+    gtk_widget_show (menuitem);
+    
+    // Revert to Saved
+    menuitem = gtk_menu_item_new_with_label ("Revert to Saved");
+    gtk_container_add (GTK_CONTAINER (submenu), menuitem);
+    gtk_widget_add_accelerator (menuitem, "activate", accel_group, GDK_r, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
+    gtk_object_set_data (GTK_OBJECT (menuitem), "help-id", GINT_TO_POINTER (7));
+    gtk_signal_connect (GTK_OBJECT (menuitem), "enter-notify-event", GTK_SIGNAL_FUNC (on_display_help), message);
+    gtk_signal_connect (GTK_OBJECT (menuitem), "leave-notify-event", GTK_SIGNAL_FUNC (on_clear_help), message);
+    gtk_signal_connect (GTK_OBJECT (menuitem), "activate", GTK_SIGNAL_FUNC (on_file_revert_activate), (gpointer) NULL);
+    gtk_widget_show (menuitem);
+    menuItem[REVERT] = menuitem;
     
     // Close
     menuitem = gtk_menu_item_new_with_label ("Close");
@@ -264,9 +281,9 @@ GuiDlgedit::GuiDlgedit ()
 #endif
     
     // Run
-    menuitem = gtk_menu_item_new_with_label ("Run");
+    menuitem = gtk_menu_item_new_with_label ("Execute");
     gtk_container_add (GTK_CONTAINER (submenu), menuitem);
-    gtk_widget_add_accelerator (menuitem, "activate", accel_group, GDK_r, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
+    gtk_widget_add_accelerator (menuitem, "activate", accel_group, GDK_e, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
     gtk_object_set_data (GTK_OBJECT (menuitem), "help-id", GINT_TO_POINTER (14));
     gtk_signal_connect (GTK_OBJECT (menuitem), "enter-notify-event", GTK_SIGNAL_FUNC (on_display_help), message);
     gtk_signal_connect (GTK_OBJECT (menuitem), "leave-notify-event", GTK_SIGNAL_FUNC (on_clear_help), message);
@@ -384,16 +401,20 @@ void GuiDlgedit::newDialogue ()
 // load a new dialogue
 void GuiDlgedit::loadDialogue (std::string file)
 {
+    // make sure that file has an absolute path
+    if (file[0] != '/') file = directory_ + std::string ("/") + file;
+    
     // test if we have a valid dialogue
     if (!checkDialogue (file))
     {        
+        // update list of previously opened files
+        CfgData::data->removeFile (file);
+        initRecentFiles ();
+    
         message->display (-2, g_basename (file.c_str ()));
         return;
     }
 
-    // make sure that file has an absolute path
-    if (file[0] != '/') file = directory_ + std::string ("/") + file;
-    
     // remember the current directory for later use
     directory_ = g_dirname (file.c_str ());
     
@@ -459,6 +480,36 @@ DlgModule* GuiDlgedit::loadSubdialogue (std::string file)
     return module;    
 }
 
+// revert Dialogue to state on disk
+void GuiDlgedit::revertDialogue ()
+{
+    DlgModule *module = graph_->dialogue ();
+    if (module == NULL) return;
+
+    // check whether dialogue (still) exists on disk
+    if (!checkDialogue (module->fullName ()))
+    {
+        gtk_widget_set_sensitive (menuItem[REVERT], FALSE);
+        message->display (-2, module->name ().c_str ());
+        return;
+    }
+
+    // cleanup
+    module->clear ();
+    
+    // reload
+    if (!module->load ())
+    {
+        message->display (-3, module->name ().c_str ());
+        closeDialogue ();
+        return;
+    }
+    
+    // redisplay
+    graph_->detachModule ();
+    graph_->attachModule (module);
+}
+
 // save a dialogue
 void GuiDlgedit::saveDialogue (std::string file)
 {
@@ -485,6 +536,9 @@ void GuiDlgedit::saveDialogue (std::string file)
         // update list of previously opened files
         CfgData::data->addFile (file);
 
+        // update 'Revert to Saved' menu item
+        gtk_widget_set_sensitive (menuItem[REVERT], TRUE);
+             
         // update the dialogue's name in case it has changed
         initTitle ();
         initMenu ();
@@ -538,6 +592,12 @@ void GuiDlgedit::showDialogue (DlgModule *module, bool center)
     if (GuiSettings::dialog != NULL)
         GuiSettings::dialog->display (module->entry (), module->shortName ());
 
+    // update 'Revert to Saved' menu item
+    if (!checkDialogue (module->fullName ()))
+        gtk_widget_set_sensitive (menuItem[REVERT], FALSE);
+    else 
+        gtk_widget_set_sensitive (menuItem[REVERT], TRUE);
+             
     // update the window title
     initTitle ();
 }
@@ -712,8 +772,11 @@ bool GuiDlgedit::checkDialogue (std::string file)
     struct stat statbuf;
     fstat (fileno (loadlgin), &statbuf);
     if (!S_ISREG (statbuf.st_mode))
+    {
+        fclose (loadlgin);
         return false;
-
+    }
+    
     return true;
 }
 
@@ -907,6 +970,7 @@ void GuiDlgedit::clear ()
     // make the various menu-items insensitive
     gtk_widget_set_sensitive (menuItem[SAVE], FALSE);
     gtk_widget_set_sensitive (menuItem[SAVE_AS], FALSE);
+    gtk_widget_set_sensitive (menuItem[REVERT], FALSE);
     gtk_widget_set_sensitive (menuItem[CLOSE], FALSE);
     gtk_widget_set_sensitive (menuItem[SETTINGS], FALSE);
     gtk_widget_set_sensitive (menuItem[FUNCTIONS], FALSE);

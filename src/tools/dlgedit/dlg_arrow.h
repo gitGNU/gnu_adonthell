@@ -97,7 +97,7 @@ public:
 private:
     /**
      * Calculate intersection of arrow line and node shape. This works
-     * as follows.
+     * as follows:
      *
      * We have a rectangle that represents the shape of the start node.
      * The start of the arrow's line lies in the center of this rectangle,
@@ -105,14 +105,14 @@ private:
      *
      * To find out which side, we split the rectangle into four quadrants,
      * with the start point as origin. Then we check through which of the 
-     * four quadrants from start to end runs.
+     * four quadrants above line runs.
      *
      * That way, only two sides will remain for the intersection. To figure
      * out the right one, we compare the line with the angle bisection of
      * its quadrant.
      *
      * Now that we know the side, we also know one coordinate of the
-     * intersection. Now we simply insert this into the equation of the 
+     * intersection. We can simply insert this into the equation of the 
      * line and calculate the second coordinate. Voila: we have the point
      * where the arrow intersects with the node.
      *
