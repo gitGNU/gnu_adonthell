@@ -333,13 +333,18 @@ int main (int argc, char * argv[])
                         ((map_character_with_gfx *)
                          (*it)->obj)->draw ((*it)->x () * mapsquare_size + (*it)->ox (),
                                            (*it)->y () * mapsquare_size + (*it)->oy ());
+                        ((map_character_with_gfx *)
+                         (*it)->obj)->draw_walkable ((*it)->x () * mapsquare_size + (*it)->ox (),
+                                           (*it)->y () * mapsquare_size + (*it)->oy ());
                         break; 
                         
                     case OBJECT:
                         ((map_object_with_gfx *)
                          (*it)->obj)->draw ((*it)->x () * mapsquare_size + (*it)->ox (),
                                             (*it)->y () * mapsquare_size + (*it)->oy ());
-                        
+                        ((map_object_with_gfx *)
+                         (*it)->obj)->draw_walkable ((*it)->x () * mapsquare_size + (*it)->ox (),
+                                            (*it)->y () * mapsquare_size + (*it)->oy ());                        
                         break;
                         
                     default:

@@ -72,9 +72,12 @@ public:
      * @param da_opt Optionnal drawing area to use during the blit operation
      * @param target Optionnal surface to draw to (defaults to the screen)
      */
-    void draw (s_int16 x, s_int16 y, const drawing_area * da_opt = NULL,
-               surface * target = NULL) const;
+    void draw(s_int16 x, s_int16 y, const drawing_area * da_opt = NULL,
+              surface * target = NULL) const;
     
+    void draw_walkable(s_int16 x, s_int16 y, const drawing_area * da_opt = NULL,
+                       surface * target = NULL) const;
+
     void put(ogzstream & file) const;
 
     void get(igzstream & file);
