@@ -1,7 +1,7 @@
 /*
    $Id$
  
-   Copyright (C) 1999 - 2001 The Adonthell Project
+   Copyright (C) 1999/2000/2001 Alexandre Courbot
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
    This program is free software; you can redistribute it and/or modify
@@ -14,6 +14,7 @@
 
 #include <cstdio>
 #include <unistd.h>
+#include <getopt.h>
 
 #include "game.h"
 #include "python.h"
@@ -40,23 +41,25 @@ int main(int argc, char * argv[])
     myconfig.read_adonthellrc (); 
     myconfig.gamedir = "."; 
     
+    if (getopt (argc, argv, "g:") != -1)
+    {
+        myconfig.gamedir = optarg;
+        
+        // Python does not like the -g argument, so remove it
+        for (int i = 1; i < argc; i++)
+            if (strcmp (argv[i], "-g") == 0)
+            {
+                for (int j = i; j < argc-2; j++)
+                    argv[j] = argv[j+2];
+                
+                argc -= 2;
+                break;
+            }
+    }
+    
     if (!game::init (myconfig)) 
         return 1;
-
     
-//     char *cwd = getcwd (NULL, 0);
-//     char tmp[256];
-
-    
-//     if (argc > 1 && argv[1][0] != '/') 
-//     {
-//         sprintf (tmp, "%s/%s", cwd, argv[1]);
-//         argv[1] = tmp;
-//     }
-
-//     Py_Initialize (); 
-//     initadonthellc ();
-    return Py_Main(argc,argv);
-    //     return PyRun_AnyFile (stdin, NULL);
+    Py_Main (argc, argv);
     game::cleanup (); 
 }
