@@ -25,6 +25,7 @@
 #include <vector>
 #include <fstream.h>
 #include "dlg_module.h"
+#include "dlg_circle.h"
 
 /**
  * It transforms the dialogue into the Python script needed by
@@ -49,22 +50,30 @@ public:
     void run ();
     
 private:
-    void writeHeader (string &theClass);
+    void writeHeader (const string &theClass);
     void writeText ();
+    void writeCode ();
+    void writeConditions ();
     void writeStart ();
+    void writeDialogue ();
+    void writeFollower (DlgNode *node);
     
     void addStart (DlgNode *node);
-    void addCode (string cde);
-    void addCondition (string cnd);
+    void addCode (const string &cde, int index);
+    bool addCondition (const string &cnd, int index);
     
-    node_tyoe checkFollowers (DlgNode *node);
+    int checkFollowers (DlgCircle *node);
     
     ofstream file;
-    DlgModule dialogue;             // The dialogue to be compiled    
+    DlgModule *dialogue;            // The dialogue to be compiled    
     
     vector<DlgNode*> start;         // Start nodes of the dialogue
     vector<string> code;            // Temporary storage for all code
     vector<string> conditions;      // Temporary storage for all conditions
+
+    int *codeTable;                 // Mapping between nodes and code
+    int *conditionTable;            // Mapping between nodes and conditions
+    int *operationTable;            // Mapping between nodes and condition type
 };
 
 #endif // DLG_COMPILER_H

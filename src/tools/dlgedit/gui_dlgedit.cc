@@ -22,6 +22,7 @@
 #include <algorithm>
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
+#include "dlg_compiler.h"
 #include "gui_dlgedit.h"
 #include "gui_dlgedit_events.h"
 
@@ -423,6 +424,25 @@ void GuiDlgedit::showDialogue (DlgModule *module)
     
     // update the window title
     initTitle ();
+}
+
+// compile a dialogue
+void GuiDlgedit::compileDialogue ()
+{
+    DlgModule *module = graph_->dialogue ();
+    if (module == NULL) return;
+
+    // init the compiler
+    DlgCompiler compiler (module);
+    
+    // compile
+    compiler.run ();
+    
+    // enable the 'run' menuitem after successful compilation
+    gtk_widget_set_sensitive (menuItem[RUN], TRUE);
+    
+    // report success
+    message->display (212);
 }
 
 DlgModule *GuiDlgedit::initDialogue (string name)

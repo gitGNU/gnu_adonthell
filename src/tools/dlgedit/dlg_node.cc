@@ -101,7 +101,7 @@ void DlgNode::addNext (DlgNode *node)
 
     // search the proper place for insertion
     if (cmp != NULL && !next_.empty ()) 
-        while (i != next_.end () && *(*i) < *cmp) i++;
+        while (i != next_.end () && *cmp < *(*i)) i++;
     
     // insert
     next_.insert (i, node);
@@ -115,7 +115,7 @@ void DlgNode::addPrev (DlgNode *node)
     
     // search the proper place for insertion
     if (cmp != NULL && !prev_.empty ()) 
-        while (i != prev_.end () && *(*i) < *cmp) i++;
+        while (i != prev_.end () && *cmp < *(*i)) i++;
     
     // insert
     prev_.insert (i, node);

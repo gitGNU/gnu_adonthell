@@ -66,14 +66,7 @@ void on_file_close_activate (GtkMenuItem * menuitem, gpointer user_data)
 // Dialogue Menu: Compile
 void on_dialogue_compile_activate (GtkMenuItem * menuitem, gpointer user_data)
 {
-/*
-    MainFrame *wnd = (MainFrame *) user_data;
-    dlg_compiler compiler (wnd->nodes, wnd->file_name, wnd->cust_func, wnd->pset_vars, wnd->debug);
-
-    compiler.run ();
-
-    gtk_widget_set_sensitive (wnd->dialogue_run, TRUE);
-*/
+    GuiDlgedit::window->compileDialogue ();    
 }
 
 // Dialogue Menu: Settings

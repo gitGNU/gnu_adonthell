@@ -21,7 +21,7 @@ class base:
     #    This consists of the following steps:
     #
     #    1) Run the code of the selected line of text
-    #    2) Append all followes whose condition is true to the speech
+    #    2) Append all followers whose condition is true to the speech
     #       to be used for the next selection. Also append the speaker
     #       associated with each line of text.
     #    3) return whether the next choice is to be made by the Dialogue
@@ -37,7 +37,7 @@ class base:
         code, stop, follow = self.dlg[index][1:]
         
         # -- if there is code, try to execute it
-        if code != None: 
+        if code != -1: 
             self.execute (self.code[code])
     
         # -- for each following option:
@@ -48,7 +48,7 @@ class base:
             if operation == 1 and result == 1: continue
             
             # -- try to ececute the condition, if there is one
-            if cond != None:
+            if cond != -1:
                 result = self.execute (self.cond[cond])
             else
                 result = 1

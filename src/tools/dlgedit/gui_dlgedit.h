@@ -128,7 +128,11 @@ public:
      * @param module The dialogue to display.
      */
     void showDialogue (DlgModule *module);
-
+    /**
+     * Compile a dialogue
+     */
+    void compileDialogue ();
+    
     /**
      * Get the directory where the last fileselection took place.
      * @return Path to the directory last opened.

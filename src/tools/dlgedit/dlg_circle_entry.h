@@ -67,7 +67,7 @@ public:
     void setText (string t);
     void setAnnotation (string a)   { annotation_ = a; }
     void setNpc (string n)          { npc_ = n; }
-    void setCondition (string c)    { condition_ = c; }
+    void setCondition (string c);
     void setCode (string c)         { code_ = c; }
     //@}
         

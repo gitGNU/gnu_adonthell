@@ -53,3 +53,14 @@ void DlgCircleEntry::setText (string t)
         pos++;
     }
 }
+
+// set the node's condition
+void DlgCircleEntry::setCondition (string c)
+{
+    // remove all whitespace from the edges of the condition
+    condition_ = c.substr (c.find_first_not_of (" \n\t"), c.find_last_not_of (" \n\t") + 1);
+
+    // replace 'else if' by the shorter 'elif'
+    if (strncmp ("else if", condition_.c_str (), 7) == 0)
+        condition_.replace (0, 7, "elif");
+}
