@@ -24,7 +24,7 @@
 
 \layout Title
 
-The Adonthell Dialogue Editor
+The Adonthell Dialogue Editor v0.4
 \layout Author
 
 by Kai Sterker
@@ -36,186 +36,80 @@ Understanding the Dialogue Engine
 Before we start designing our first dialogues, it might be wise to have
  a look at the concept of the dialogue engine.
  Once you understand the basic rules, it will help you to avoid errors.
-\layout Subsection
-
-The Dialogue Language
 \layout Standard
 
-Basically, the Dialogue Engine is an interpreter for an assembler like language.
- That makes it fast and gives dialogues a maximum amount of freedom.
- One of the most obvious function of the Editor is to provide a easy to
- use interface to the dialogue language.
- 
-\newline 
+A dialogue consists of a number of NPC and Player lines, arranged in a certain
+ order.
+ The rules for this are as follows:
+\layout Enumerate
 
-\newline 
-Following structure is currently implemented:
-\newline 
+The dialogue starts with at least one NPC line.
+\layout Enumerate
 
-\family typewriter 
+NPC lines may be followed by 0 or more Player lines.
+\layout Enumerate
 
-\newline 
-conversation:
-\newline 
+NPC lines may be followed by 0 or more NPC lines.
+\layout Enumerate
 
-\protected_separator 
+Player lines may be followed by 0 or more NPC lines.
+\layout Enumerate
 
-\protected_separator 
-
-\protected_separator 
- [ IMPORT ]
-\newline 
-
-\protected_separator 
-
-\protected_separator 
-
-\protected_separator 
- [ block | END ]
-\newline 
-
-\newline 
-block:
-\newline 
-
-\protected_separator 
-
-\protected_separator 
-
-\protected_separator 
- CLEAR
-\newline 
-
-\protected_separator 
-
-\protected_separator 
-
-\protected_separator 
- monologue | [ dialogue ]
-\newline 
-
-\protected_separator 
-
-\protected_separator 
-
-\protected_separator 
- DISPLAY
-\newline 
-
-\newline 
-monologue:
-\newline 
-
-\protected_separator 
-
-\protected_separator 
-
-\protected_separator 
- [ SNPCTEXT ]
-\newline 
-
-\newline 
-dialogue:
-\newline 
-
-\protected_separator 
-
-\protected_separator 
-
-\protected_separator 
- NPCTEXT
-\newline 
-
-\protected_separator 
-
-\protected_separator 
-
-\protected_separator 
- [ PTEXT ]
-\newline 
-
-\newline 
-
-\family default 
-Each Dialogue starts with one or more 
-\family typewriter 
-IMPORT
-\family default 
- commands wich load the strings used during the conversation from the string
- file.
- Then follows a number of blocks that start with a 
-\family typewriter 
-CLEAR 
-\family default 
-command, then with the NPC's text, optional text of the player and end with
- the 
-\family typewriter 
-DISPLAY 
-\family default 
-command.
- Instead of a block, the command for ending the dialogue may appear.
-\layout Subsection
-
-Internals of the Interpreter
+The dialogue ends when no more lines follow.
 \layout Standard
 
-The actual interpreter is quite straightforward.
- The code of each dialogue is loaded into an array, a Program Counter points
- to the next command to execute.
- Furthermore there are two variables that contain the NPC's part of the
- dialogue as well as a list of the players possible reactions (may be zero).
- Running the interpreter by means of the function 
-\family typewriter 
-run_dlg (\SpecialChar \ldots{}
-)
-\family default 
- will first empty the two variables, set the PC to the correct position,
- write the new strings into the variables and return to the caller.
-\layout Subsection
+This results in a directed graph which later on is traversed by the dialogue
+ engine according to the following rules:
+\layout Enumerate
 
-What the Commands do
+Start with those NPC lines that have no predecessor.
+\layout Enumerate
+
+Chose randomly between multiple NPC lines.
+\layout Enumerate
+
+Let the player chose if there are multiple Player lines.
+\layout Enumerate
+
+Don't chose lines twice.
 \layout Standard
 
-This behaviour is controlled by the commands of course, wich do the following:
-\layout Description
+Apart from that, there are a number of additional features that influence
+ how the dialogue appears to the player:
+\layout Enumerate
 
-CLEAR frees the variables containing the player's and NPC's text.
- Therefore it is executed at the beginning of each block.
-\layout Description
+NPC and Player lines may be based on conditions, meaning they are only available
+ if a certain condition is met.
+\layout Enumerate
 
-SNPCTEXT (Single NPCTEXT) adds the NPC's part to the apropriate variable
- and indicates at the same time that no player part follows.
- It has the string to display and the new value of the PC as its arguments.
-\layout Description
+NPC lines can be attached to different characters, making conversations
+ with/between multiple NPC's possible.
+ (available soon)
+\layout Standard
 
-NPCTEXT adds the NPC's part to the apropriate variable.
- At least one player text has to follow.
- Its argument is the string to display.
-\layout Description
-
-PTEXT adds the players text to the array of possible responses.
- Its arguments are the string to display and the new value of the PC.
-\layout Description
-
-DISPLAY ends a block and tells the interpreter to return to the calling
- function.
+These 11 points cover most of the Dialogue System's functionality and should
+ give you an idea what you can do with it, and what you can't.
+ If you are interested how everything really works, take a look at the Dialogue
+ Engine documentation.
+ Else it is time for an example
 \layout Section
 
 An Example
 \layout Standard
 
-That was a lot of boring theory, therefore something more practical now.
+After the theory, something more practical now.
 \layout Subsection
 
 The Dialogue
 \layout Standard
 
-This is a very simplistic Dialogue, but you will see that it is sufficient
- to demonstrate the basic functionality of the Dialogue Editor.
+This is a very simplistic Dialogue we want to model, but you will see that
+ it is sufficient to demonstrate the basic functionality of the Dialogue
+ Editor.
 \layout Standard
 \added_space_top 0.3cm \added_space_bottom 0.3cm \align left \LyXTable
 multicol5
-5 3 0 0 -1 -1 -1 -1
+5 4 0 0 -1 -1 -1 -1
 0 0 0 0
 0 0 0 0
 0 0 0 0
@@ -224,6 +118,12 @@ multicol5
 2 0 0 "" ""
 2 0 0 "" ""
 2 0 0 "" ""
+2 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
 0 2 1 0 0 0 0 "" ""
 0 2 1 0 0 0 0 "" ""
 0 2 1 0 0 0 0 "" ""
@@ -240,7 +140,11 @@ multicol5
 0 2 1 0 0 0 0 "" ""
 0 2 1 0 0 0 0 "" ""
 
-NPC:
+
+\shape smallcaps 
+Npc
+\shape default 
+:
 \newline 
 
 \begin_inset Quotes eld
@@ -254,7 +158,13 @@ Hello, I am Eric.
 \newline 
 
 \newline 
-Player:
+
+\newline 
+
+\noun on 
+Player
+\noun default 
+:
 \newline 
 
 \begin_inset Quotes eld
@@ -264,7 +174,13 @@ I am Kai.
 \begin_inset Quotes erd
 \end_inset 
 
- or
+ 
+\newline 
+
+\shape italic 
+or
+\shape default 
+
 \newline 
 
 \begin_inset Quotes eld
@@ -276,7 +192,11 @@ Goodbye!
 
 
 \newline 
-NPC:
+
+\noun on 
+Npc
+\noun default 
+:
 \newline 
 
 \begin_inset Quotes eld
@@ -289,6 +209,8 @@ Nice to meet you.
 
 \newline 
 
+\newline 
+
 \begin_inset Quotes eld
 \end_inset 
 
@@ -298,7 +220,11 @@ Fare well.
 
 
 \newline 
-Player:
+
+\noun on 
+Player
+\noun default 
+:
 \newline 
 
 \begin_inset Quotes eld
@@ -312,7 +238,13 @@ Goodbye!
 \newline 
 
 \newline 
-NPC:
+
+\newline 
+N
+\noun on 
+pc
+\noun default 
+:
 \newline 
 
 \begin_inset Quotes eld
@@ -322,6 +254,8 @@ Fare well.
 \begin_inset Quotes erd
 \end_inset 
 
+
+\newline 
 
 \newline 
 
@@ -428,11 +362,11 @@ The numbers inside the nodes tell how many such
 \begin_inset Quotes eld
 \end_inset 
 
-symbolic
+indirect
 \begin_inset Quotes erd
 \end_inset 
 
- links start at each node, and when selecting a node with symbolic links,
+ links start at each node, and when selecting a node with indirect links,
  the apropriate arrows are colored purple.
 \layout Subsection
 
@@ -444,7 +378,7 @@ Now save and compile the Dialogue.
  The .dlg and .str files are for the Dialogue Engine, interesting to you might
  be the .txt file, wich contains an ASCII representation of the dialogues
  code.
- In our example it looks as following:
+ In our example it should look similar to the following:
 \newline 
 
 \layout Standard
@@ -722,13 +656,14 @@ Now save and compile the Dialogue.
 \newline 
 
 \layout Standard
-
+\pagebreak_bottom 
 You see, its a lot easier to use the Dialogue Editor than writing the Code
  by hand.
  So whats the use of this text file anyway? Its mainly for debugging purposes.
- Imagine you create, compile and test a Dialogue, and then it behaves different
- as you expected.
+ Imagine you create, compile and test a Dialogue, and then it behaves differentl
+y than you expected.
  Look into this file and you may find out the reason behind.
+ For a description of the commands refer to the Dialogue Engine Documentation.
 \layout Section
 
 The Dialogue Editor
@@ -736,204 +671,2448 @@ The Dialogue Editor
 
 After above example you should be able to start designing Dialogues right
  away.
- But if something is not clear yet, you will find help in this chapter.
-\layout Subsection
-
-The File Menu
-\layout Description
-
-Load enables you to open an existing Dialogue.
-\layout Description
-
-Save stores the actual Dialogue for later retrieval.
-\layout Description
-
-Quit exits the Dialogue Editor.
- Unsaved changes are lost.
-\layout Subsection
-
-The Dialogue Menu
-\layout Description
-
-Compile creates the files understandable by the dialogue engine as well
- as an ASCII version of the dialogue code.
-\layout Description
-
-Run invokes the dialogue engine with the current dialogue.
- You have to compile it before you can use that feature.
- You should also recompile the Dialogue after you have made changes to it,
- else you might encounter a few surprises.
-\layout Subsection
-
-Editing Dialogues
-\layout Description
-
-Select
-\protected_separator 
-node: Left-click on the node to select.
- NPC nodes and arrows are marked red to show the selection state, Player
- nodes orange.
- Left-clicking on a string of the instant preview will also select the apropriat
-e node.
-\layout Description
-
-Select
-\protected_separator 
-next
-\protected_separator 
-node: Press 
-\noun on 
-Tab
-\noun default 
-.
- This selects the node coming next in the internal list of nodes, not the
- node following next on the screen.
- If no node is selected at the moment, the first one gets selected.
-\layout Description
-
-Deselect
-\protected_separator 
-node: Right-click or press 
-\noun on 
-Esc
-\noun default 
-.
-\layout Description
-
-New
-\protected_separator 
-circle: Deselect any node and left-click on an empty location.
-\layout Description
-
-New
-\protected_separator 
-arrow: Select a circle and left-click either on another circle or a free
- space.
- You can link NPC- with either NPC- or Player nodes and Player- only with
- NPC nodes.
- When clicking on an empty space, the opposite of the selected node is newly
- created, but you can change this of course.
-\layout Description
-
-Edit
-\protected_separator 
-node: Select the node you want to edit and either middle-click or press
+ But for your convenience, and because some of the advanced editor features
+ are not described yet, this section contains the complete refernece guide.
  
-\noun on 
-Enter
-\noun default 
-.
-\layout Description
+\layout Subsection
 
-Delete
-\protected_separator 
-node: Select the node and press 
+The User Interface
+\layout Standard
+\added_space_top 0.3cm \added_space_bottom 0.3cm \align left 
+
+\begin_inset Figure size 503 402
+file dlgedit_main.ps
+subcaption The Main Interface
+flags 3
+subfigure
+
+\end_inset 
+
+
+\layout Paragraph
+
+1.
+ The Dialogue Area
+\layout Standard
+
+This is where you create the outline of the dialogue; what lines of text
+ exist and how they are linked to each other.
+ Most of the work is done with the mouse, but there are also a few shortcuts
+ on the keyboard and some functionality is only available through the keyboard.
+\layout Standard
+
+The actions taken when a mouse- or keypress occurs depend on the current
+ selection (none, circle, arrow) and the position of the cursor.
+ Below table shows all possible constellations:
+\layout Standard
+\added_space_top 0.3cm \added_space_bottom 0.3cm \align left \LyXTable
+multicol5
+18 4 0 0 -1 -1 -1 -1
+1 1 0 0
+0 0 0 0
+1 0 0 0
+1 1 0 0
+1 1 0 0
+0 1 0 0
+0 1 0 0
+0 1 0 0
+1 1 0 0
+0 1 0 0
+0 1 0 0
+0 1 0 0
+1 1 0 0
+0 1 0 0
+1 1 0 0
+0 1 0 0
+1 1 0 0
+0 1 0 0
+2 1 1 "" ""
+8 1 1 "" ""
+8 0 0 "" ""
+8 1 1 "" ""
+0 2 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+
+
+\series bold 
+Left-click
+\series default 
+
+\newline 
+
+\emph on 
+Nothing selected
+\newline 
+Circle selected
+\newline 
+Arrow selected
+\emph default 
+
+\newline 
+on empty space
+\newline 
+Create new Circle
+\newline 
+Create new Circle and link both
+\newline 
+-
+\newline 
+on Circle
+\newline 
+Select Circle
+\newline 
+Link both Circles
+\newline 
+-
+\newline 
+on Arrow
+\newline 
+Select Arrow
+\newline 
+Add Arrow as indirect Link
+\newline 
+-
+\newline 
+
+\series bold 
+Middle-click
+\series default 
+
+\newline 
+
+\emph on 
+Nothing selected
+\newline 
+Circle selected
+\newline 
+Arrow selected
+\emph default 
+
+\newline 
+on empty space
+\newline 
+-
+\newline 
+Edit selected Circle
+\newline 
+-
+\newline 
+on Circle
+\newline 
+Select & edit Circle
+\newline 
+Edit selected Circle
+\newline 
+-
+\newline 
+on Arrow
+\newline 
+Select Arrow
+\newline 
+Edit selected Circle
+\newline 
+-
+\newline 
+
+\series bold 
+Right-click
+\series default 
+
+\newline 
+
+\emph on 
+Nothing selected
+\newline 
+Circle selected
+\newline 
+Arrow selected
+\emph default 
+
+\newline 
+on empty space
+\newline 
+-
+\newline 
+Deselect Circle
+\newline 
+Deselect Arrow
+\newline 
+on Circle
+\newline 
+-
+\newline 
+Deselect Circle
+\newline 
+Deselect Arrow
+\newline 
+on Arrow
+\newline 
+-
+\newline 
+Remove indirect Link
+\newline 
+Deselect Arrow
+\newline 
+
+\series bold 
+\noun on 
+Return
+\series default 
+\noun default 
+
+\newline 
+
+\emph on 
+Nothing selected
+\newline 
+Circle selected
+\newline 
+Arrow selected
+\emph default 
+
+\newline 
+
+\newline 
+-
+\newline 
+Edit Circle
+\newline 
+-
+\newline 
+
+\series bold 
 \noun on 
 Del
+\series default 
 \noun default 
+
+\newline 
+
+\emph on 
+Nothing selected
+\newline 
+Circle selected
+\newline 
+Arrow selected
+\emph default 
+
+\newline 
+
+\newline 
+-
+\newline 
+Delete Circle and its Links
+\newline 
+Delete Arrow
+\newline 
+
+\series bold 
+\noun on 
+Esc
+\series default 
+\noun default 
+
+\newline 
+
+\emph on 
+Nothing selected
+\emph default 
+
+\newline 
+
+\emph on 
+Circle selected
+\newline 
+Arrow selected
+\emph default 
+
+\newline 
+
+\newline 
+-
+\newline 
+Deselect Circle
+\newline 
+Deselect Arrow
+\layout Standard
+
+Further key-commands are 
+\emph on 
+c
+\emph default 
+, which centers the view on the selected Node if it lies in the outer 20%
+ of the Dialogue Area, the 
+\emph on 
+cursor keys
+\emph default 
+ and the 
+\emph on 
+numpad
+\emph default 
+ to scroll the dialogue and finally 
+\emph on 
+tab
+\emph default 
+ to select the next Node.
+ (That is, the next node in the editors internal data representation, not
+ the next node on the screen!)
+\layout Paragraph
+
+2.
+ A Node with additional code
+\layout Standard
+
+An exclamation mark (!) inside a circle means that the node contains commands
+ other than just a line of text.
+ What commands that may be in detail is discussed later.
+\layout Paragraph
+
+3.
+ An indirect Link
+\layout Standard
+
+Whenever a node with indirect links is selected (5), they are hilighted
+ in purple.
+ Indirect links are equivalent to a normal link between it's start and end,
+ but to avoid arrows criss-crossing over the whole Dialogue Area, it's often
+ better to use an indirect link.
+ The number inside Circles tells how many indirect links they have.
+\layout Paragraph
+
+4.
+ Hilighted Node
+\layout Standard
+
+Nodes below the mousepointer appear in green to give you some feedback what
+ action a click will start at this point.
+\layout Paragraph
+
+5.
+ Selected Node
+\layout Standard
+
+Selected Player nodes are drawn orange, NPC nodes red.
+ Furthermore, the Instant preview (8) shows their text as well as that of
+ their predecessors and followers.
+\layout Paragraph
+
+6.
+ Tooltip
+\layout Standard
+
+Whenever a Circle is below the mousepointer, a tooltip with its text appears
+ to make it easier for you to find a certain position in the dialogue.
+\layout Paragraph
+
+7.
+ Text of preceding Nodes
+\layout Standard
+
+All the different lines of text that may preceed the selected circle (5).
+ The color of the entries gives some information of the type: Blue text
+ denotes lines of the Player, black text lines of the NPC.
+ Somewhat dimmed lines mean that the Circles are connected by indirect links
+ (3).
+\layout Paragraph
+
+8.
+ The Instant preview
+\layout Standard
+
+This shall give a first impression of what the Dialogue will look like in
+ the game.
+ Basically it displays the text of the selected circle, together with all
+ preceeding and following text.
+ With this you should be able to judge wether all the combinations of text
+ fit well together.
+ Furthermore, by clicking on a line of text, the attached Circle is selected,
+ meaning you can browse through the whole dialogue.
+ Note that additional code of Nodes won't be taken into account, so in the
+ game, the dialogue might be slightly different.
+\layout Paragraph
+
+9.
+ Text of selected node
+\layout Standard
+
+Again this is color-coded: as in the Dialogue Area (1), orange text means
+ a Player line, red text a NPC line.
+\layout Paragraph
+
+10.
+ Text following the selected node
+\layout Standard
+
+Text following the selected Node.
+ The colors have the same meaning as in (7).
+\layout Standard
+\added_space_top 0.3cm \added_space_bottom 0.3cm \align left 
+
+\begin_inset Figure size 388 333
+file dlgedit_edit.ps
+subcaption The Edit Node dialog
+flags 11
+subfigure
+
+\end_inset 
+
+
+\layout Paragraph
+
+1.
+ Edit Circle's Text
+\layout Standard
+
+When you create a new Circle, you should attach some text to it.
+ This is done on this page.
+ Simply type the text into the entry.
+ Player text will be displayed blue, NPC text black.
+ You can switch between both with (5).
+\layout Paragraph
+
+2.
+ Conditions for the Node
+\layout Standard
+
+On this page, you can specifiy a condition which then decides whether this
+ line of text will be available in the game or not.
+ Most likely, this will of course vary from game to game.
+ Basically the condition is just an 
+\emph on 
+if-statement
+\emph default 
+ as used in common programming languages like C, C++ or Java.
+ An exact specification of the syntax follows in section 3.2 on page 
+\begin_inset LatexCommand \pageref{syntax}
+
+\end_inset 
+
 .
- Be aware that when deleting a circle all attached arrows will be deleted
- too.
- (As you may have noticed, circles can exist seperate, arrows can't.)
-\layout Description
+\layout Paragraph
 
-Move
-\protected_separator 
-circle: Select the circle and drag the mouse with left button pressed.
- This function is good for rearranging the dialogue layout for better understand
-ing.
- It does not change the dialogues behaviour however.
-\layout Description
+3.
+ Set and/or change Variables
+\layout Standard
 
-Reassign
-\protected_separator 
-arrow: Select the arrow and drag it either by its tip or its tail with the
- left mouse button pressed, until it is over another circle.
- Then release the button.
- If you are not over a circle, nothing happens, else the dialogues structure
- is changed.
-\layout Description
+Here you can set the (gamestate) variables that make the use of Conditions
+ (2) possible at all and can also be accessed in other game modules than
+ the dialogue system.
+ Again, the code used reminds of common programming languages and is discribed
+ on page 
+\begin_inset LatexCommand \pageref{syntax}
 
-Link
-\protected_separator 
-nodes: Select the node where the link shall start and left-click on the
- arrow that points to the node to link to.
-\layout Description
+\end_inset 
 
-Unlink
-\protected_separator 
-nodes: Select the node you want to remove a link from.
- Right-click on the link you want to remove.
+.
+\layout Standard
+
+The green page label tells you at a glance that this Circle contains some
+ variable code, but neither Conditions nor miscellanous Commands.
+ The Text-page's label will always be black, as text isn't really optional.
+\layout Paragraph
+
+4.
+ Miscellanous Commands
+\layout Standard
+
+None of them are implemented yet, but they will contain commands to start
+ combat, change a NPC's active dialogue or plugin-dialogue and similar things.
+\layout Paragraph
+
+5.
+ Assign text to Player or NPC
+\layout Standard
+
+Use the Radiobuttons to assign the Circle either to the Player or to a NPC.
+ The Editor tries its best to guess to whom this line of text shall belong,
+ but as long as it can't read your thoughts, you'll have to correct it sometimes.
+\layout Paragraph
+
+6.
+ Set NPC
+\layout Standard
+
+You can select the NPC who shall speak here.
+ When using 
+\emph on 
+default
+\emph default 
+, this will be the NPC this dialogue is assigned to.
+ In case of a conversation between multiple NPC's, you might want to chose
+ somebody else though.
+\layout Paragraph
+
+7.
+ Set NPC's mood
+\layout Standard
+
+Here you can specify what picture of the selected NPC the player gets to
+ see.
+ This feature needs to be implemented yet.
+\layout Paragraph
+
+8.
+ Annotation
+\layout Standard
+
+Here is some room for personal notes of all kind.
+ Since a dialogue can get quite complex, you really should add some comments,
+ so that other people as well as you can easier understand what is going
+ on.
+\layout Standard
+\added_space_top 0.3cm \added_space_bottom 0.3cm \align left 
+
+\begin_inset Figure size 388 333
+file dlgedit_run.ps
+subcaption Testing the Dialogue
+flags 11
+subfigure
+
+\end_inset 
+
+
+\layout Paragraph
+
+1.
+ The conversation so far
+\layout Standard
+
+The top part of the Dialogue test window will display the conversation you
+ had so far.
+ As known from the Editor, Player lines are displayed blue, NPC lines black.
+\layout Paragraph
+
+2.
+ The current NPC line
+\layout Standard
+
+The NPC's reaction to your last speech is displayed in red.
+ If no responses of the player are available, click on this line to continue
+ the conversation.
+\layout Paragraph
+
+3.
+ Your possible responses
+\layout Standard
+
+Usually, a line of NPC text will be followed by one or more responses, the
+ player can chose from.
+ Simply click on the text you wish to say and the dialogue will continue.
+\layout Paragraph
+
+4.
+ Export this conversation
+\layout Standard
+\pagebreak_bottom 
+The idea is that you might be able to find flaws of, and make improvements
+ to your dialogue when having it available as an ASCII file.
+ This feature is not implemented yet, and maybe it will completely vanish
+ in later versions of the editor.
 \layout Subsection
 
-The Instant Preview
+
+\begin_inset LatexCommand \label{syntax}
+
+\end_inset 
+
+The Syntax of Conditions and Variables
 \layout Standard
 
-This is the list located in the lower part of the main window.
- When selecting a node, it is displayed there, with its preceding and following
- links and symbolic links.
- You can use the instant preview to make sure the different parts fit well
- together, but also to look through the dialogue without having to compile
- it first.
- Just be aware, that the preview behaves different than when actually running
- the dialogue.
+While other parts of a Dialogue are perfect for creating them with the help
+ of a tool rather than writing them completely by hand, Condition and Variable
+ code is created faster without a GUI once you've accustomed yourself to
+ the programming language used.
+ To make this as easy as possible (at least to people familiar with programming)
+ it is very similar to languages like C, C++ or Java, although without most
+ of these languages' features.
+\layout Subsubsection
+
+Language features
 \layout Standard
 
-Symbolic links are displayed grey, links in black and the text of the selected
- node in red.
- Preceding nodes come first, then the selected node and following links
- last.
+Basically, the language allows two different actions:
+\layout Enumerate
+
+The setting of variables and
+\layout Enumerate
+
+The querying of variables.
 \layout Standard
 
-Clicking on a text selects the apropriate node and therefore changes also
- the instant preview.
- So you can get a basic impression how the dialogue will look later.
-\layout Subsection
+As an addition, both actions can contain simple integer arithmetic and queries
+ may also contain the two basic logic operations AND and OR.
+\layout Standard
 
-Hot Keys
-\layout Description
+Both actions can be combined to allow setting of variables depending on
+ the value of (other) variables.
+ Programmers will know this as 
+\emph on 
+if-else-statements
+\emph default 
+.
+\layout Standard
 
-Alt-N New Dialogue
-\layout Description
+A Circles Condition is limited to a single 
+\emph on 
+if-statement
+\emph default 
+ (see below), the Variable code can consist of any number of different statement
+s.
+\layout Subsubsection
 
-Alt-L Load Dialogue
-\layout Description
+Language elements
+\layout Paragraph
 
-Alt-S Save Dialogue
-\layout Description
+Keywords
+\layout Standard
 
-Alt-C Compile Dialoge
-\layout Description
+These tokens are reserved by the language itself and may not be used except
+ where permitted:
+\layout Standard
 
-Alt-R Run Dialogue
-\layout Description
 
-Alt-F4 Quit Program
-\layout Description
+\family typewriter 
+if else
+\layout Paragraph
 
-ESC Deselect Node
-\layout Description
+Comments
+\layout Standard
 
-DEL Delete Node
-\layout Description
+Comments are mainly used to add annotations to the code.
+ Their syntax is the same as used in C++ or Java.
+ Single line comments begin with 
+\family typewriter 
+\emph on 
+//
+\family default 
+\emph default 
+and go to the end of the line.
+ Multiline comments start with 
+\family typewriter 
+/*
+\family default 
+ and end with 
+\family typewriter 
+*/
+\family default 
+.
+ They may span multiple lines, but the need not.
+ They mustn't be nested though.
+ Everything after the 
+\family typewriter 
+//
+\family default 
+ or between 
+\family typewriter 
+/*
+\family default 
+ \SpecialChar \ldots{}
 
-RETURN Edit selected Node
-\layout Description
+\family typewriter 
+*/
+\family default 
+ is not treated as code and may contain any character found on you keyboard
+ ;).
+\layout Paragraph
 
-TAB Select first / next Node
-\layout Description
+Variables
+\layout Standard
 
-C Center selected Node (only if Node is located in the outer region of the
- window)
-\layout Description
-
-Cursor
+In difference to above languages, variables have no type.
+ They are assumed 32 bit signed integers though.
+ To (ignorant) non-programmers ;): only whole numbers (0,1,2,3,\SpecialChar \ldots{}
+) out of
+ the interval [-2
 \protected_separator 
-Keys
+147
 \protected_separator 
+483
+\protected_separator 
+648; 2
+\protected_separator 
+147
+\protected_separator 
+483
+\protected_separator 
+647] are allowed as a variable's value.
+\layout Standard
+
+Since variables are untyped and the language as such is that simple, there
+ is no need to define/declare them, so you can start using them right away.
+\layout Standard
+
+Valid variable names have to start with a letter ([a-zA-Z]) or underscore
+ (_) and may continue with letters, numbers ([0-9]) and underscores.
+ The only restriction to their length are the capabilities of your machine.
+\layout Paragraph
+
+Values
+\layout Standard
+
+As said above, values have to be integers.
+ They may consist of numbers ([0-9]), optionally preceeded by a minus (-)
+ to indicate negative values.
+\layout Paragraph
+
+Operators
+\layout Standard
+
+The following table gives an overview of the available operators.
+\layout Standard
+\added_space_top 0.3cm \added_space_bottom 0.3cm \align center \LyXTable
+multicol5
+14 5 0 0 -1 -1 -1 -1
+1 1 0 0
+1 0 0 0
+1 0 0 0
+1 0 0 0
+1 0 0 0
+1 0 0 0
+1 0 0 0
+1 0 0 0
+1 0 0 0
+1 1 0 0
+0 1 0 0
+0 1 0 0
+0 1 0 0
+0 1 0 0
+8 1 0 "" ""
+8 1 0 "" ""
+8 1 0 "" ""
+8 1 0 "" ""
+8 1 1 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+
+
+\emph on 
+Operator
+\newline 
+Priority
+\newline 
+Operand Type(s)
+\newline 
+Associativity
+\newline 
+Operation Performed
+\emph default 
+
+\newline 
+
+\family typewriter 
+*
+\family default 
+
+\newline 
+1
+\newline 
+arithmetic
+\newline 
+left
+\newline 
+multiplication
+\newline 
+
+\family typewriter 
 /
+\family default 
+
+\newline 
+1
+\newline 
+arithmetic
+\newline 
+left
+\newline 
+division
+\newline 
+
+\family typewriter 
++
+\family default 
+
+\newline 
+2
+\newline 
+arithmetic
+\newline 
+left
+\newline 
+addition
+\newline 
+
+\family typewriter 
+-
+\family default 
+
+\newline 
+2
+\newline 
+arithmetic
+\newline 
+left
+\newline 
+subtraction
+\newline 
+
+\family typewriter 
+==
+\family default 
+
+\newline 
+3
+\newline 
+arithmetic
+\newline 
+none
+\newline 
+equal
+\newline 
+
+\family typewriter 
+!=
+\family default 
+
+\newline 
+3
+\newline 
+arithmetic
+\newline 
+none
+\newline 
+not equal
+\newline 
+
+\family typewriter 
+<
+\family default 
+
+\newline 
+3
+\newline 
+arithmetic
+\newline 
+none
+\newline 
+less than
+\newline 
+
+\family typewriter 
+<=
+\family default 
+
+\newline 
+3
+\newline 
+arithmetic
+\newline 
+none
+\newline 
+less than or equal
+\newline 
+
+\family typewriter 
+>
+\family default 
+
+\newline 
+3
+\newline 
+arithmetic
+\newline 
+none
+\newline 
+greater than
+\newline 
+
+\family typewriter 
+>=
+\family default 
+
+\newline 
+3
+\newline 
+arithmetic
+\newline 
+none
+\newline 
+greater than or equal
+\newline 
+
+\family typewriter 
+&&
+\family default 
+
+\newline 
+4
+\newline 
+boolean
+\newline 
+left
+\newline 
+boolean AND
+\newline 
+
+\family typewriter 
+||
+\family default 
+
+\newline 
+4
+\newline 
+boolean
+\newline 
+left
+\newline 
+boolean OR
+\newline 
+
+\family typewriter 
+=
+\family default 
+
+\newline 
+5
+\newline 
+variable, arithmetic
+\newline 
+right
+\newline 
+assignment
+\layout Standard
+
+The 
+\emph on 
+priority
+\emph default 
+ defines what expressions are evaluated first.
+ Basically, everything works like you should be used from Math, i.e 
+\family typewriter 
+*
+\family default 
+ before 
+\family typewriter 
++
+\family default 
+.
+ Use Parentheses (
+\family typewriter 
+()
+\family default 
+) to change this behaviour.
+\layout Standard
+
+
+\emph on 
+Associativity
+\emph default 
+ defines what expressions are evaluated first, if you concatenate operations
+ with equal 
+\emph on 
+priority
+\emph default 
+.
+ 
+\emph on 
+Left
+\emph default 
+ meaning the leftmost expression is calculated first, 
+\emph on 
+right
+\emph default 
+ meaning the rightmost and none that it isn't allowed to concatenate these
+ operations.
+\layout Paragraph
+
+Memory
+\layout Standard
+
+We know that values can be stored in variables, but what stands behind those
+ variables? Basically, the variables refer to attributes of game-objects
+ or gamestate variables.
+ To specifiy to which object a variable shall belong, you can write 
+\family typewriter 
+object_name.variable
+\family default 
+.
+ The object you want to access has to exist within the game, so there will
+ be a bit of organization necessary.
+ 
+\layout Standard
+
+Two objects that currently exist in Adonthell are 
+\family typewriter 
+game_state
+\family default 
+ and 
+\family typewriter 
+local
+\family default 
+.
+ 
+\emph on 
+Game_state
+\emph default 
+ is of course the gamestate array, a global storage that is accessible by
+ other modules than just the Dialogue System.
+ 
+\emph on 
+Local
+\emph default 
+ is the storage of the interpreter running this dialogue.
+ Everything you write into this storage will be destroyed at when the dialogue
+ ends, so make sure only temporary variables are stored there.
+\layout Standard
+
+If you omit the object, the interpreter assumes you wish to access the gamestate
+ array, as this will probably be the most frequent case.
+\layout Subsubsection
+
+Language Definition
+\layout Standard
+
+
+\series medium 
+Here follow all possible constructs supported by the language.
+ Expressions in 
+\family typewriter 
+typewriter
+\family default 
+ script are the symbols of the language, whereas 
+\shape italic 
+italics
+\shape default 
+ refer to the 
+\series bold 
+label
+\series medium 
+ of the same name.
+
+\series default 
+ The definitions of 
+\emph on 
+variable
+\emph default 
+ and 
+\emph on 
+digit
+\emph default 
+ are regular expressions.
+\layout Standard
+\added_space_top 0.3cm \added_space_bottom 0.3cm \align left \LyXTable
+multicol5
+3 2 0 0 -1 -1 -1 -1
+0 0 0 0
+0 0 0 0
+0 0 0 0
+4 0 0 "" ""
+2 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+1 2 0 0 0 0 0 "" ""
+2 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+
+
+\newline 
+
+\newline 
+
+\series bold 
+program: 
+\series default 
+
+\newline 
+
+\family typewriter 
+\series bold 
+
 \protected_separator 
-Num.
+
 \protected_separator 
-Pad Scrolling
+
+\protected_separator 
+
+\family default 
+\series default 
+
+\newline 
+
+\emph on 
+statement-list
+\layout Standard
+\added_space_top 0.3cm \added_space_bottom 0.3cm \align left \LyXTable
+multicol5
+3 2 0 0 -1 -1 -1 -1
+0 0 0 0
+0 0 0 0
+0 0 0 0
+4 0 0 "" ""
+2 0 0 "" ""
+1 2 0 0 0 0 0 "" ""
+2 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 4 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+
+
+\series bold 
+statement-list:
+\series default 
+
+\newline 
+
+\family typewriter 
+\series bold 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\family default 
+\series default 
+
+\newline 
+
+\emph on 
+statement-list
+\emph default 
+
+\newline 
+or
+\newline 
+
+\emph on 
+statement
+\layout Standard
+\added_space_top 0.3cm \added_space_bottom 0.3cm \align left \LyXTable
+multicol5
+4 2 0 0 -1 -1 -1 -1
+1 1 0 0
+0 0 0 0
+0 0 0 0
+0 0 0 0
+4 0 0 "" ""
+2 0 0 "" ""
+1 2 0 0 0 0 0 "" ""
+2 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 4 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+
+
+\series bold 
+statement:
+\series default 
+
+\newline 
+
+\family typewriter 
+\series bold 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\family default 
+\series default 
+
+\newline 
+
+\emph on 
+assignment
+\emph default 
+
+\newline 
+or
+\newline 
+
+\emph on 
+if-statement
+\emph default 
+
+\newline 
+or
+\newline 
+
+\emph on 
+if-else-statement
+\layout Standard
+\added_space_top 0.3cm \added_space_bottom 0.3cm \align left \LyXTable
+multicol5
+2 2 0 0 -1 -1 -1 -1
+0 0 0 0
+0 0 0 0
+4 0 0 "" ""
+2 0 0 "" ""
+1 2 0 0 0 0 0 "" ""
+2 2 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+
+
+\series bold 
+assignment:
+\series default 
+
+\newline 
+
+\family typewriter 
+\series bold 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\family default 
+\series default 
+
+\newline 
+
+\emph on 
+variable
+\emph default 
+ 
+\family typewriter 
+\shape italic 
+=
+\family default 
+\shape default 
+ 
+\emph on 
+arithmetic-expression 
+\family typewriter 
+\emph default 
+;
+\layout Standard
+\added_space_top 0.3cm \added_space_bottom 0.3cm \align left \LyXTable
+multicol5
+2 2 0 0 -1 -1 -1 -1
+0 0 0 0
+0 0 0 0
+2 0 0 "" ""
+2 0 0 "" ""
+1 2 0 0 0 0 0 "" ""
+2 8 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+
+
+\series bold 
+variable:
+\series default 
+
+\newline 
+
+\family typewriter 
+\series bold 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\family default 
+\series default 
+
+\newline 
+[
+\family typewriter 
+a
+\family default 
+-
+\family typewriter 
+zA
+\family default 
+-
+\family typewriter 
+Z_
+\family default 
+][
+\family typewriter 
+a
+\family default 
+-
+\family typewriter 
+zA
+\family default 
+-
+\family typewriter 
+Z0
+\family default 
+-
+\family typewriter 
+9_
+\family default 
+]*
+\layout Standard
+\added_space_top 0.3cm \added_space_bottom 0.3cm \align left \LyXTable
+multicol5
+7 2 0 0 -1 -1 -1 -1
+0 0 0 0
+0 0 0 0
+0 0 0 0
+0 0 0 0
+0 0 0 0
+0 0 0 0
+0 0 0 0
+4 0 0 "" ""
+2 0 0 "" ""
+1 2 0 0 0 0 0 "" ""
+2 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 4 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+
+
+\series bold 
+arithmetic-expression:
+\series default 
+
+\newline 
+
+\family typewriter 
+\series bold 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\family default 
+\series default 
+
+\newline 
+
+\emph on 
+value
+\emph default 
+ 
+\family typewriter 
++
+\family default 
+ 
+\emph on 
+arithmetic-expression
+\emph default 
+
+\newline 
+or
+\newline 
+
+\emph on 
+value
+\emph default 
+ 
+\family typewriter 
+-
+\family default 
+ 
+\emph on 
+arithmetic-expression
+\emph default 
+
+\newline 
+or
+\newline 
+
+\emph on 
+value
+\emph default 
+ 
+\family typewriter 
+*
+\family default 
+ 
+\emph on 
+arithmetic-expression
+\emph default 
+
+\newline 
+or
+\newline 
+
+\emph on 
+value
+\emph default 
+ 
+\family typewriter 
+/
+\family default 
+ 
+\emph on 
+arithmetic-expression
+\emph default 
+
+\newline 
+or
+\newline 
+
+\family typewriter 
+(
+\family default 
+\emph on 
+ arithmetic-expression
+\emph default 
+ 
+\family typewriter 
+)
+\family default 
+
+\newline 
+or
+\newline 
+
+\emph on 
+value
+\layout Standard
+\added_space_top 0.3cm \added_space_bottom 0.3cm \align left \LyXTable
+multicol5
+3 2 0 0 -1 -1 -1 -1
+0 0 0 0
+0 0 0 0
+0 0 0 0
+4 0 0 "" ""
+2 0 0 "" ""
+1 2 0 0 0 0 0 "" ""
+2 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 4 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+
+
+\series bold 
+value:
+\series default 
+
+\newline 
+
+\family typewriter 
+\series bold 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\family default 
+\series default 
+
+\newline 
+
+\emph on 
+variable
+\emph default 
+
+\newline 
+or
+\newline 
+
+\emph on 
+digit
+\layout Standard
+\added_space_top 0.3cm \added_space_bottom 0.3cm \align left \LyXTable
+multicol5
+2 2 0 0 -1 -1 -1 -1
+0 0 0 0
+0 0 0 0
+8 0 0 "" ""
+2 0 0 "" ""
+1 2 0 0 0 0 0 "" ""
+2 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+1 2 0 0 0 0 0 "" ""
+
+
+\series bold 
+digit:
+\series default 
+
+\newline 
+
+\family typewriter 
+\series bold 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\family default 
+\series default 
+
+\newline 
+
+\family typewriter 
+-
+\family default 
+?[
+\family typewriter 
+0
+\family default 
+-
+\family typewriter 
+9
+\family default 
+]+
+\layout Standard
+\added_space_top 0.3cm \added_space_bottom 0.3cm \align left \LyXTable
+multicol5
+8 3 0 0 -1 -1 -1 -1
+0 0 0 0
+0 0 0 0
+0 0 0 0
+0 0 0 0
+0 0 0 0
+0 0 0 0
+0 0 0 0
+0 0 0 0
+4 0 0 "" ""
+8 0 0 "" ""
+2 0 0 "" ""
+1 2 0 0 0 0 0 "" ""
+2 8 1 0 0 0 0 "" ""
+2 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+1 2 0 0 0 0 0 "" ""
+2 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+1 2 0 0 0 0 0 "" ""
+2 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+1 2 0 0 0 0 0 "" ""
+2 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 4 1 0 0 0 0 "" ""
+1 2 0 0 0 0 0 "" ""
+2 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+
+
+\series bold 
+if-statement: 
+\series default 
+
+\newline 
+
+\family typewriter 
+\series bold 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\family default 
+\series default 
+
+\newline 
+
+\family typewriter 
+if (
+\family default 
+ 
+\emph on 
+boolean-expression 
+\family typewriter 
+\emph default 
+)
+\family default 
+
+\newline 
+
+\newline 
+
+\family typewriter 
+{
+\family default 
+  
+\newline 
+
+\newline 
+
+\family typewriter 
+\series bold 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\family default 
+\series default 
+ 
+\newline 
+
+\emph on 
+statement-list
+\emph default 
+
+\newline 
+
+\newline 
+
+\family typewriter 
+\series bold 
+}
+\family default 
+\series default 
+ 
+\newline 
+
+\newline 
+
+\newline 
+
+\newline 
+or
+\newline 
+
+\family typewriter 
+if (
+\family default 
+ 
+\emph on 
+boolean-expression 
+\family typewriter 
+\emph default 
+)
+\family default 
+
+\newline 
+
+\newline 
+
+\newline 
+
+\emph on 
+statement
+\series medium 
+ 
+\layout Standard
+\added_space_top 0.3cm \added_space_bottom 0.3cm \align left \LyXTable
+multicol5
+5 2 0 0 -1 -1 -1 -1
+0 0 0 0
+0 0 0 0
+0 0 0 0
+0 0 0 0
+0 0 0 0
+4 0 0 "" ""
+2 0 0 "" ""
+1 2 0 0 0 0 0 "" ""
+2 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 4 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+
+
+\series bold 
+boolean-expression:
+\series default 
+
+\newline 
+
+\family typewriter 
+\series bold 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\family default 
+\series default 
+
+\newline 
+
+\emph on 
+conditional-expression
+\emph default 
+ 
+\family typewriter 
+&&
+\family default 
+ 
+\emph on 
+boolean-expression
+\emph default 
+
+\newline 
+or
+\newline 
+
+\emph on 
+conditional-expression
+\emph default 
+ 
+\family typewriter 
+||
+\family default 
+ 
+\emph on 
+boolean-expression
+\emph default 
+
+\newline 
+or
+\newline 
+
+\family typewriter 
+(
+\family default 
+ 
+\emph on 
+boolean-expression 
+\family typewriter 
+\emph default 
+)
+\family default 
+
+\newline 
+or
+\newline 
+
+\emph on 
+conditional-expression
+\layout Standard
+\added_space_top 0.3cm \added_space_bottom 0.3cm \align left \LyXTable
+multicol5
+7 2 0 0 -1 -1 -1 -1
+0 0 0 0
+0 0 0 0
+0 0 0 0
+0 0 0 0
+0 0 0 0
+0 0 0 0
+0 0 0 0
+4 0 0 "" ""
+2 0 0 "" ""
+1 2 0 0 0 0 0 "" ""
+2 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 4 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+
+
+\series bold 
+conditional-expression:
+\series default 
+
+\newline 
+
+\family typewriter 
+\series bold 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\family default 
+\series default 
+
+\newline 
+
+\emph on 
+arithmetic-expression
+\emph default 
+ 
+\family typewriter 
+\series bold 
+==
+\family default 
+\series default 
+ 
+\emph on 
+arithmetic-expression
+\emph default 
+
+\newline 
+or
+\newline 
+
+\emph on 
+arithmetic-expression
+\emph default 
+ 
+\family typewriter 
+!=
+\family default 
+ 
+\emph on 
+arithmetic-expression
+\emph default 
+
+\newline 
+or
+\newline 
+
+\emph on 
+arithmetic-expression 
+\family typewriter 
+\emph default 
+<
+\family default 
+\emph on 
+ arithmetic-expression
+\emph default 
+
+\newline 
+or
+\newline 
+
+\emph on 
+arithmetic-expression
+\emph default 
+ 
+\family typewriter 
+<
+\series bold 
+=
+\family default 
+\series default 
+ 
+\emph on 
+arithmetic-expression
+\emph default 
+
+\newline 
+or
+\newline 
+
+\emph on 
+arithmetic-expression
+\emph default 
+ 
+\family typewriter 
+>
+\family default 
+ 
+\emph on 
+arithmetic-expression
+\emph default 
+
+\newline 
+or
+\newline 
+
+\emph on 
+arithmetic-expression
+\emph default 
+ 
+\family typewriter 
+>=
+\family default 
+ 
+\emph on 
+arithmetic-expressio
+\emph default 
+n
+\layout Standard
+\added_space_top 0.3cm \added_space_bottom 0.3cm \align left \LyXTable
+multicol5
+10 3 0 0 -1 -1 -1 -1
+0 0 0 0
+0 0 0 0
+0 0 0 0
+0 0 0 0
+0 0 0 0
+0 0 0 0
+0 0 0 0
+0 0 0 0
+0 0 0 0
+0 0 0 0
+4 0 0 "" ""
+2 0 0 "" ""
+2 0 0 "" ""
+1 2 0 0 0 0 0 "" ""
+2 8 1 0 0 0 0 "" ""
+2 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+1 2 0 0 0 0 0 "" ""
+2 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+1 2 0 0 0 0 0 "" ""
+2 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+1 2 0 0 0 0 0 "" ""
+2 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 2 0 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+1 2 0 0 0 0 0 "" ""
+2 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 4 1 0 0 0 0 "" ""
+1 2 0 0 0 0 0 "" ""
+2 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+1 2 0 0 0 0 0 "" ""
+2 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+
+
+\series bold 
+if-else-statement:
+\emph on 
+ 
+\series default 
+\emph default 
+
+\newline 
+
+\family typewriter 
+\series bold 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\family default 
+\series default 
+
+\newline 
+
+\emph on 
+if-statement
+\emph default 
+ 
+\newline 
+
+\newline 
+
+\family typewriter 
+\series bold 
+else
+\family default 
+\series default 
+ 
+\newline 
+ 
+\newline 
+
+\family typewriter 
+{
+\family default 
+ 
+\newline 
+
+\newline 
+
+\family typewriter 
+\series bold 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\family default 
+\series default 
+ 
+\newline 
+
+\emph on 
+statement-list
+\emph default 
+
+\newline 
+
+\newline 
+
+\family typewriter 
+\series bold 
+}
+\family default 
+\series default 
+ 
+\newline 
+
+\newline 
+
+\newline 
+
+\newline 
+or
+\newline 
+
+\emph on 
+if-statement
+\emph default 
+ 
+\newline 
+ 
+\newline 
+
+\family typewriter 
+\series bold 
+else
+\family default 
+\series default 
+ 
+\newline 
+
+\newline 
+
+\newline 
+
+\emph on 
+statement
+\layout Standard
+
+Okay, that's been hard stuff, therefore an example:
+\layout Subsubsection
+
+Code Example
+\layout Standard
+\added_space_top 0.3cm \added_space_bottom 0.3cm \align left \LyXTable
+multicol5
+17 4 0 0 -1 -1 -1 -1
+0 0 0 0
+0 0 0 0
+0 0 0 0
+0 0 0 0
+0 0 0 0
+0 0 0 0
+0 0 0 0
+0 0 0 0
+0 0 0 0
+0 0 0 0
+0 0 0 0
+0 0 0 0
+0 0 0 0
+0 0 0 0
+0 0 0 0
+0 0 0 0
+0 0 0 0
+2 0 0 "" ""
+2 0 0 "" ""
+2 0 0 "" ""
+2 0 0 "" ""
+1 2 0 0 0 0 0 "" ""
+2 8 1 0 0 0 0 "" ""
+2 8 1 0 0 0 0 "" ""
+2 8 1 0 0 0 0 "" ""
+1 2 0 0 0 0 0 "" ""
+2 2 1 0 0 0 0 "" ""
+2 2 0 0 0 0 0 "" ""
+2 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+1 2 0 0 0 0 0 "" ""
+2 2 0 0 0 0 0 "" ""
+2 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+1 2 0 0 0 0 0 "" ""
+2 8 1 0 0 0 0 "" ""
+2 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+1 2 0 0 0 0 0 "" ""
+2 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+1 2 0 0 0 0 0 "" ""
+2 8 1 0 0 0 0 "" ""
+2 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+1 2 0 0 0 0 0 "" ""
+2 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+1 2 0 0 0 0 0 "" ""
+2 8 1 0 0 0 0 "" ""
+2 8 1 0 0 0 0 "" ""
+2 8 1 0 0 0 0 "" ""
+1 2 0 0 0 0 0 "" ""
+2 8 1 0 0 0 0 "" ""
+2 8 1 0 0 0 0 "" ""
+2 8 1 0 0 0 0 "" ""
+1 2 0 0 0 0 0 "" ""
+2 8 1 0 0 0 0 "" ""
+2 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+1 2 0 0 0 0 0 "" ""
+2 8 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 2 0 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+0 8 1 0 0 0 0 "" ""
+1 2 0 0 0 0 0 "" ""
+2 8 1 0 0 0 0 "" ""
+0 2 1 0 0 0 0 "" ""
+1 2 0 0 0 0 0 "" ""
+2 2 0 0 0 0 0 "" ""
+2 8 1 0 0 0 0 "" ""
+2 2 1 0 0 0 0 "" ""
+1 2 0 0 0 0 0 "" ""
+2 2 0 0 0 0 0 "" ""
+2 8 1 0 0 0 0 "" ""
+2 2 1 0 0 0 0 "" ""
+
+
+\family typewriter 
+\emph on 
+// assign the value one to a variable
+\emph default 
+ 
+\newline 
+one = 1;
+\newline 
+
+\newline 
+
+\newline 
+
+\newline 
+
+\newline 
+
+\emph on 
+// a if-else-statement 
+\newline 
+
+\emph default 
+
+\newline 
+
+\series bold 
+if
+\series default 
+ (one + 1 == 2) 
+\newline 
+
+\emph on 
+// this is true, therefore \SpecialChar \ldots{}
+
+\emph default 
+
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ 
+\newline 
+one = one + 1;
+\newline 
+
+\emph on 
+// \SpecialChar \ldots{}
+ this line is executed \SpecialChar \ldots{}
+
+\emph default 
+
+\newline 
+
+\series bold 
+else
+\series default 
+
+\newline 
+
+\newline 
+
+\newline 
+ one = -1;
+\newline 
+
+\emph on 
+// \SpecialChar \ldots{}
+ and this one not
+\emph default 
+
+\newline 
+
+\newline 
+
+\newline 
+
+\newline 
+
+\newline 
+
+\emph on 
+/* Note that 'one + 1 == 2' in the if-statement did 
+\newline 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+not change the value of one, therefore \SpecialChar \ldots{}
+ */
+\emph default 
+
+\newline 
+
+\series bold 
+if
+\series default 
+ (one == 4 / (1 + 1))
+\emph on 
+
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+
+\emph default 
+ 
+\newline 
+
+\emph on 
+/* \SpecialChar \ldots{}
+ is also true */
+\emph default 
+
+\newline 
+
+\newline 
+
+\series bold 
+if
+\series default 
+ ( one == one )
+\newline 
+
+\emph on 
+// Nested if's allowed as well
+\emph default 
+
+\newline 
+
+\newline 
+ 
+\protected_separator 
+
+\protected_separator 
+
+\protected_separator 
+ 
+\newline 
+one = 1;
+\newline 
+
+\newline 
+
+\newline 
+
+\newline 
+
+\newline 
+
+\emph on 
+// Okay, if you know the final value of one you'll 
+\newline 
+// have no trouble with this language :-)
 \the_end

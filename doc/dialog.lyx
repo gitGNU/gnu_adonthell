@@ -1,5 +1,4 @@
-#This file was created by <root> Sun Jan  2 20:35:59 2000
-#LyX 1.0 (C) 1995-1999 Matthias Ettrich and the LyX Team
+#LyX 1.1 created this file. For more info see http://www.lyx.org/
 \lyxformat 2.15
 \textclass article
 \language default
@@ -123,12 +122,12 @@ conversation:
 
 
 \family typewriter 
-[ IMPORT ] 
+IMPORT 
 \layout Standard
 
 
 \family typewriter 
-[ block | END ]
+[ block | end ]
 \newline 
 
 \newline 
@@ -142,21 +141,24 @@ CLEAR
 
 
 \family typewriter 
-monologue | [ dialogue ] 
+[ text ] 
 \layout Standard
 
 
 \family typewriter 
-DISPLAY
+RETURN 1
 \newline 
 
 \newline 
-monologue: 
+text: 
+\layout Standard
+
+SPEAKER
 \layout Standard
 
 
 \family typewriter 
-[ SNPCTEXT ]
+[ TEXT ]
 \newline 
 
 \newline 
@@ -171,6 +173,15 @@ NPCTEXT
 
 \family typewriter 
 [ PTEXT ]
+\newline 
+
+\newline 
+end:
+\layout Standard
+
+
+\family typewriter 
+RETURN 0
 \newline 
 
 \layout Standard
