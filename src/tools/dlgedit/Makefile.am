@@ -24,7 +24,7 @@ LDADD = ../../inventory.o ../../py_mapengine_wrap.o \
 ../../mapevent.o ../../win_font.o \
 ../../fileops.o ../../mapitem.o \
 ../../game.o ../../mappattern.o ../../win_image.o \
-../../mapsquare.o ../../win_label.o \
+../../mapsquare.o ../../win_label.o ../../drawing_area.o \
 ../../image.o ../../pnm.o ../../win_select.o \
 ../../init.o ../../prefs.o ../../win_write.o \
 ../../input.o ../../yarg.o ../../win_anim.o \
