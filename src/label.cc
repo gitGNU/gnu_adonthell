@@ -1,3 +1,15 @@
+/*
+   (C) Copyright 2000/2001 Joel Vennin
+   Part of the Adonthell Project http://adonthell.linuxgames.com
+
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License.
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY.
+
+   See the COPYING file for more details
+*/
+
 #include "label.h"
 
 u_int16 label::cursor_blink_speed_ = 75;
