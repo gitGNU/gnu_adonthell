@@ -60,6 +60,9 @@ class win_object : public win_base, public T
 };
 
 
+
+
+
 template<class T> 
 win_object<T>::win_object()
 {
@@ -89,17 +92,17 @@ win_object<T>::draw()
       assign_drawing_area(wb_father_);
       
       win_background::draw(this);
+
+      if( auto_refresh_ ) refresh();
       
       if(brightness_ || trans_)
 	{
-	  if( auto_refresh_ ) refresh();
+	  
 	  if( brightness_ ) img_brightness_->draw(win_base::real_x(), win_base::real_y(), this);
 	  else img_tmp_->draw(win_base::real_x(), win_base::real_y(), this);
 	}
-      else
-	{
-	  T::draw(win_base::real_x(), win_base::real_y(), this);
-	}
+      else T::draw(win_base::real_x(), win_base::real_y(), this);
+        
       
       win_border::draw(wb_father_);
       

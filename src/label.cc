@@ -62,8 +62,16 @@ bool label::input_update()
 {
   if( cursor_ && cursor_moveable_ )
     {
-      if(input::has_been_pushed(KEY_CURSOR_NEXT)) cursor_next();
-      else if(input::has_been_pushed(KEY_CURSOR_PREVIOUS)) cursor_previous();
+      if(input::has_been_pushed(KEY_CURSOR_NEXT)) 
+      {
+          cursor_next();
+          check_form (); 
+      }
+      else if(input::has_been_pushed(KEY_CURSOR_PREVIOUS)) 
+      {
+          cursor_previous();
+          check_form (); 
+      }
     }
   return true;
 }

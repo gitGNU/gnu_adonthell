@@ -655,9 +655,7 @@ class label_input : public label
  protected:
   void insert(const u_int16 pos, const char * letter);
 
-  void insert_char(const u_int16 pos, const char letter);
-  
-  
+   
 };
 
 class win_write : public label_input, public win_base
