@@ -128,16 +128,10 @@ int do_cutscene(void) {
   scene->set_imagekey_visible(3,2,true);
   scene->set_imagekey_visible(3,3,true);
 
-  // Takes 21-22 secs on hendersa's machine
-//  scene->set_cycles(0,130);
-//  scene->set_cycles(1,980);
-//  scene->set_cycles(2,600);
-//  scene->set_cycles(3,600);
-
   // Number of milliseconds, now ;>
   // ~44 secs for intro tune
-  scene->set_cycles(0,500); // Initial pause: ~.5 sec
-  scene->set_cycles(1,42000);  // Pan time: ~42 sec
+  scene->set_cycles(0,1500); // Initial pause: ~2.0 sec
+  scene->set_cycles(1,41000);  // Pan time: ~40.5 sec
   scene->set_cycles(2, 1000);   // Pause before dialog: ~1 sec
 //  scene->set_cycles(3, 10);  // Not needed
 
@@ -167,17 +161,32 @@ int do_cutscene(void) {
 
 
   // Fade in our intro background music
-  audio_in->fade_in_background(0, 500);
+  if (audio_in != NULL) audio_in->fade_in_background(0, 500);
 
   // Timing for animation is based on time from this point
   scene->initialize_timer();
 
   while(scene->render_scene()!=1)
   {
-    if(keyboard::is_pushed(Escape_Key)) return(1);
+    if(keyboard::is_pushed(Escape_Key)) {
+      if (audio_in != NULL) audio_in->fade_out_background(500);
+      free(scene);
+      free(anim);
+      free(anim2);
+      free(anim3);
+      free(anim4);
+      free(wnd);
+      return(1);
+    }
     if(keyboard::is_pushed(Enter_Key)) {
-      audio_in->fade_out_background(500);
+      if (audio_in != NULL) audio_in->fade_out_background(500);
       screen::drawbox(0,0,320,200,0x000000);
+      free(scene);
+      free(anim);
+      free(anim2);
+      free(anim3);
+      free(anim4);
+      free(wnd);
       return(0);
     }
     screen::show();
@@ -194,7 +203,13 @@ int do_cutscene(void) {
     if (keyboard::is_pushed(Enter_Key)) {
       // Clear all stuff out of the screen buffer
       screen::drawbox(0,0,320,200,0x000000);
-      audio_in->fade_out_background(500);
+      if (audio_in != NULL) audio_in->fade_out_background(500);
+      free(scene);
+      free(anim);
+      free(anim2);
+      free(anim3);
+      free(anim4);
+      free(wnd);
       return(0);
     }
   }
@@ -242,7 +257,7 @@ int main(int argc, char * argv[])
       map1 = new map();
       map1->load(argv[1]);
     }
-    audio_in->fade_in_background(1,500);
+     if (audio_in != NULL) audio_in->fade_in_background(1,500);
     mapengine::map_engine(map1);
     free(map1);
     map1 = NULL;
