@@ -20,8 +20,10 @@
 
 typedef win_object<label> win_label;
 
+//template class win_object<label> win_label;
 
-
+//#pragma _CRI instantiate win_object<label>
 
 
 #endif
+
