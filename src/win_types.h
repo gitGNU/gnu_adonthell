@@ -17,7 +17,7 @@
 
 #include <SDL/SDL_keysym.h>
 
-#define WIN_NB_TABLE_CHAR 255
+#define WIN_NB_TABLE_CHAR 127
 #define WIN_TEXT_MAX_LENGTH 5000
 #define WIN_FONT_HEIGHT 8
 #define WIN_FONT_LENGHT 8

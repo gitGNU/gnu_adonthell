@@ -223,18 +223,32 @@ void win_select::previous_()
   
   //set to unselect object
   set_select_object(*index_list,false);
-  
+
   list<win_base*>::iterator cur_i=index_list;
-  if(cur_i==list_obj.begin()) cur_i=list_obj.end();
+
   
-  cur_i--;
+      
+  if(select_circle_)
+    {
+     
+      if(cur_i==list_obj.begin()) cur_i=list_obj.end();
+      cur_i--;
+    }
+  else if(cur_i!=list_obj.begin()) cur_i--;
+    
+
+
+
    
+
+
   while(cur_i!=list_obj.begin() && !(*cur_i)->is_can_be_selected() && cur_i!=index_list) cur_i--; 
 
   if(cur_i==list_obj.begin() && !(*cur_i)->is_can_be_selected())
     {
       if(select_circle_)
 	{
+	 
 	  cur_i=list_obj.end();
 	  cur_i--;
 	  
@@ -242,15 +256,16 @@ void win_select::previous_()
 	  if((*cur_i)->is_can_be_selected()) index_list=cur_i;
 	}
     } else index_list=cur_i;
-  
+ 
   (*index_list)->on_select();
   
+ 
   //set to select object
   set_select_object(*index_list,true);
  
   update_position();
-  
   on_previous();
+ 
 }
 
 
@@ -280,6 +295,8 @@ void win_select::update_position()
   //this function is used to see the cur object which is selected
   static bool tmp_is_visible_;
 
+  //if(index_list==list_obj.end()){cout << "tets\n"; return;}
+
   switch(type_selected_)
     {
     case WIN_SELECT_TYPE_NORMAL:
@@ -288,8 +305,11 @@ void win_select::update_position()
       if(!max_amplitude_) {tmp_is_visible_=true;return;}
       while(!tmp_is_visible_)
 	{
-	  if(((*index_list)->y()+(*index_list)->pady()>space_between_border_) && 
-	     ((*index_list)->y()+(*index_list)->height()<height_-space_between_border_)) tmp_is_visible_=true;
+	 
+	  /* if(((*index_list)->y()+(*index_list)->pady()>space_between_border_) && 
+	     ((*index_list)->y()+(*index_list)->height()>height_-space_between_border_)) {tmp_is_visible_=true;cout << "16\n";}*/
+	  if((*index_list)->height()>height_+(space_between_border_<<1)) tmp_is_visible_=true;
+
 	  else if((*index_list)->y()+(*index_list)->pady()<space_between_border_) up();
 	  else if((*index_list)->y()+(*index_list)->pady()+(*index_list)->height()>height_-space_between_border_) down();
 	  else tmp_is_visible_=true;
