@@ -583,13 +583,13 @@ create_dlg_node_window (Circle *circle, crcle_dlg *dlg)
 
     gtk_signal_connect (GTK_OBJECT (notebook1), "switch_page", GTK_SIGNAL_FUNC (on_switch_page), dlg);
     gtk_signal_connect (GTK_OBJECT (text_entry), "changed", GTK_SIGNAL_FUNC (on_text_entry_changed), dlg);
-    gtk_signal_connect (GTK_OBJECT (player_button), "pressed", GTK_SIGNAL_FUNC (on_player_button_pressed), dlg);
-    gtk_signal_connect (GTK_OBJECT (npc_button), "pressed", GTK_SIGNAL_FUNC (on_npc_button_pressed), dlg);
+    gtk_signal_connect (GTK_OBJECT (player_button), "clicked", GTK_SIGNAL_FUNC (on_player_button_pressed), dlg);
+    gtk_signal_connect (GTK_OBJECT (npc_button), "clicked", GTK_SIGNAL_FUNC (on_npc_button_pressed), dlg);
     gtk_signal_connect (GTK_OBJECT (condition_entry), "changed", GTK_SIGNAL_FUNC (on_condition_entry_changed), dlg);
     gtk_signal_connect (GTK_OBJECT (variable_entry), "changed", GTK_SIGNAL_FUNC (on_variable_entry_changed), dlg);
     gtk_signal_connect (GTK_OBJECT (annotation_entry), "changed", GTK_SIGNAL_FUNC (on_annotation_entry_changed), dlg);
-    gtk_signal_connect (GTK_OBJECT (ok_button), "pressed", GTK_SIGNAL_FUNC (on_circle_ok_button_pressed), dlg);
-    gtk_signal_connect (GTK_OBJECT (cancel_button), "pressed", GTK_SIGNAL_FUNC (on_circle_cancel_button_pressed), dlg_node_window);
+    gtk_signal_connect (GTK_OBJECT (ok_button), "clicked", GTK_SIGNAL_FUNC (on_circle_ok_button_pressed), dlg);
+    gtk_signal_connect (GTK_OBJECT (cancel_button), "clicked", GTK_SIGNAL_FUNC (on_circle_cancel_button_pressed), dlg_node_window);
     gtk_signal_connect (GTK_OBJECT (dlg_node_window), "delete_event", GTK_SIGNAL_FUNC (on_widget_destroy), NULL);
     gtk_signal_connect (GTK_OBJECT (loop), "clicked",
 		      GTK_SIGNAL_FUNC (on_loop_clicked), dlg);

@@ -177,8 +177,8 @@ GtkWidget * create_ps_window (ps_dlg *dlg, const char* name, int race, int gende
     gtk_container_add (GTK_CONTAINER (hbuttonbox1), ps_cancel);
     GTK_WIDGET_SET_FLAGS (ps_cancel, GTK_CAN_DEFAULT);
 
-    gtk_signal_connect (GTK_OBJECT (ps_ok), "pressed", GTK_SIGNAL_FUNC (on_ps_ok_pressed), dlg);
-    gtk_signal_connect (GTK_OBJECT (ps_cancel), "pressed", GTK_SIGNAL_FUNC (on_ps_cancel_pressed), window1);
+    gtk_signal_connect (GTK_OBJECT (ps_ok), "clicked", GTK_SIGNAL_FUNC (on_ps_ok_pressed), dlg);
+    gtk_signal_connect (GTK_OBJECT (ps_cancel), "clicked", GTK_SIGNAL_FUNC (on_ps_cancel_pressed), window1);
     gtk_signal_connect (GTK_OBJECT (window1), "delete_event", GTK_SIGNAL_FUNC (on_widget_destroy), NULL);
 
     gtk_widget_show (window1);

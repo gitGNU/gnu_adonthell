@@ -100,8 +100,8 @@ create_preset_dlg (preset_dlg *dlg)
     gtk_container_add (GTK_CONTAINER (hbuttonbox1), preset_cancel);
     GTK_WIDGET_SET_FLAGS (preset_cancel, GTK_CAN_DEFAULT);
 
-    gtk_signal_connect (GTK_OBJECT (preset_ok), "pressed", GTK_SIGNAL_FUNC (on_preset_ok_pressed), dlg);
-    gtk_signal_connect (GTK_OBJECT (preset_cancel), "pressed", GTK_SIGNAL_FUNC (on_preset_cancel_pressed), preset_dlg);
+    gtk_signal_connect (GTK_OBJECT (preset_ok), "clicked", GTK_SIGNAL_FUNC (on_preset_ok_pressed), dlg);
+    gtk_signal_connect (GTK_OBJECT (preset_cancel), "clicked", GTK_SIGNAL_FUNC (on_preset_cancel_pressed), preset_dlg);
     gtk_signal_connect (GTK_OBJECT (preset_dlg), "delete_event", GTK_SIGNAL_FUNC (on_widget_destroy), NULL);
 
     gtk_widget_grab_focus (preset_entry);

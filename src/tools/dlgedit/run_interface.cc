@@ -96,8 +96,8 @@ create_run_dlg_wnd (run_dlg *dlg)
     gtk_tooltips_set_tip (tooltips, dialogue_close, "Close this window", (char*)NULL);
 
     gtk_signal_connect (GTK_OBJECT (dialogue_list), "select_child", GTK_SIGNAL_FUNC (on_dialogue_list_select_child), dlg);
-    gtk_signal_connect (GTK_OBJECT (dialogue_export), "pressed", GTK_SIGNAL_FUNC (on_dialogue_export_pressed), NULL);
-    gtk_signal_connect (GTK_OBJECT (dialogue_close), "pressed", GTK_SIGNAL_FUNC (on_dialogue_close_pressed), run_dlg_wnd);
+    gtk_signal_connect (GTK_OBJECT (dialogue_export), "clicked", GTK_SIGNAL_FUNC (on_dialogue_export_pressed), NULL);
+    gtk_signal_connect (GTK_OBJECT (dialogue_close), "clicked", GTK_SIGNAL_FUNC (on_dialogue_close_pressed), run_dlg_wnd);
     gtk_signal_connect (GTK_OBJECT (run_dlg_wnd), "delete_event", GTK_SIGNAL_FUNC (on_widget_destroy), NULL);
 
     gtk_widget_grab_default (dialogue_close);
