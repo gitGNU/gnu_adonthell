@@ -648,6 +648,7 @@ public:
      */
     void set_schedule_active (bool a)
     {
+        if (a && !schedule.has_attribute ("run")) return;
         schedule_activated = a; 
     }
 

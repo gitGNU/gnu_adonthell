@@ -152,6 +152,9 @@ void adonthell::fade_in ()
 s_int8 adonthell::get_state (igzstream& file)
 {
     string name;
+    
+    // get the current time
+    gamedate::get_state (file);
 
     // Get the map filename 
     name << file; 
@@ -173,6 +176,9 @@ s_int8 adonthell::get_state (igzstream& file)
 // save the engine state
 s_int8 adonthell::put_state (ogzstream& file)
 {
+    // save the current time
+    gamedate::put_state (file);
+    
     // Save the map filename
     string name = lmap.filename ();
     name >> file; 

@@ -180,6 +180,7 @@ s_int8 mapcharacter::get_state (igzstream& file)
     mypath.refmap = refmap; 
     
     pathindex << file; 
+    goal_reached_ << file;
     
     // Schedule state
     PyObject * args; 
@@ -222,7 +223,8 @@ s_int8 mapcharacter::put_state (ogzstream& file) const
     // Save the path state
     mypath.put_state (file);
     pathindex >> file; 
-
+    goal_reached_ >> file;
+    
     // Save the schedule script state
     schedule_file () >> file;
     if (schedule_args) 
@@ -693,7 +695,10 @@ void mapcharacter::set_schedule (string file, PyObject * args)
             PyTuple_SetItem (theargs, i, intref); 
         }
         schedule.create_instance ("schedules.mapcharacters." + file, file, theargs);
-        Py_DECREF (theargs); 
+        Py_DECREF (theargs);
+        
+        if (!schedule.has_attribute ("run"))
+            set_schedule_active (false);
     }
     schedule_file_ = file;
 }
@@ -733,7 +738,7 @@ bool mapcharacter::update ()
 {
     update_move ();
 
-    if (is_schedule_activated () && schedule.has_attribute ("run")) 
+    if (is_schedule_activated ()) 
         schedule.run ();
 
     // if we have a goal, then go there!

@@ -37,7 +37,7 @@
 
 // File format versions of the various data files
 // *** Increase when changing file format! ***
-#define ENGINE_DAT_VER  2
+#define ENGINE_DAT_VER  3
 #define AUDIO_DAT_VER   2
 #define CHAR_DAT_VER    4
 #define QUEST_DAT_VER   1

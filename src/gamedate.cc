@@ -91,7 +91,7 @@ u_int16 gamedate::hour ()
 // calculate minute of the hour
 u_int16 gamedate::minute ()
 {
-    return Time % 600; 
+    return (Time / 10) % 60; 
 }
 
 // convert the time string to gametime minutes
