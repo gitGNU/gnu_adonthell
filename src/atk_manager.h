@@ -37,31 +37,43 @@ class atk_manager
 {
 public :
 
-    /** constructor, init event */
-    atk_manager (); 
+    atk_manager ();
+    
 
+    /**
+     * init method
+     */
+    void init (); 
+         
     
     /** Add at the end of list a atk_window
      * @param widget to add
      */
-    void add (atk_window *w); 
+     void add (atk_window *w); 
     
     
-    /** Remove a atk_widget
+    /** Remove a atk_window
      * @param widget to remove
      */
-    void remove (atk_window * w);
+     void remove (atk_window * w);
     
     
     /** Clear the atk_manager and remove atk_window of the memory 
      */
-    void clear (); 
+     void clear (); 
     
     
     /**
      * draw all contains.
      */
-    void draw (); 
+     void draw (); 
+
+
+    /**
+     * update all the window system
+     * @return false if the system is shutdown 
+     */
+     bool update (); 
     
     
     // protected : 
@@ -69,15 +81,37 @@ public :
     /**
      * Executed when an keyboard event is processed
      */
-    int keyboard_event (input_event * ev);
+    //     int keyboard_event (input_event * ev);
     
     
     /**
      * Executed when an keyboard event is processed
      */
-    int mouse_event (input_event * ev);
+    //     int mouse_event (input_event * ev);
+
+    int input_update (input_event *ev); 
     
 
+    /**
+     * If this function is call,  alive_ variable become false and update function return  false
+     */
+    void shutdown (); 
+    
+
+    /**
+     * set the focus windows,  this function put the window on the foreground and cur_window_ at the param, in this contexte it is the first window updated
+     * by input event.
+     * @param a window 
+     */
+    void set_focus (atk_window *); 
+
+ 
+    /**
+     * Destructor
+     * Delelte from memory all component
+     */
+    ~atk_manager (); 
+    
 private : 
 
     /* input listener */ 
@@ -89,7 +123,18 @@ private :
     
     
     /* list of all window that contain this class */
-    std::deque<atk_window*> v_window_;    
+    std::deque<atk_window*> v_window_;
+
+    
+    /* alive,  return by update */
+    bool alive_; 
+
+
+    /* mouse position
+       WARNING replace this with a cursor*/
+    u_int16 mouse_x_;
+    u_int16 mouse_y_; 
+    
 };
 
 #endif

@@ -24,6 +24,8 @@
 #ifndef ATK_WIDGET_H_
 #define ATK_WIDGET_H_
 
+#include "input_event.h"
+
 #include "drawing_area.h"
 #include "surface.h"
 #include "callback_sig.h"
@@ -40,7 +42,7 @@ class atk_widget : protected drawing_area
 {
 public : 
     /**
-     * Constructor,  initialise some variable.
+     * Constructor,  initialise some variable. 
      */
      atk_widget (); 
 
@@ -61,7 +63,8 @@ public :
      */
 
 
-    /*draw the widget
+    /**
+     * draw the widget
      */
     virtual void draw (drawing_area * da = NULL, surface * sf = NULL); 
     
@@ -70,12 +73,17 @@ public :
      * @param x
      * @param y
      */
-    void set_position (s_int32 x, s_int32 y); 
+    virtual void set_position (s_int32 x, s_int32 y); 
 
+
+    /** update position
+     */
+    virtual void update_position (); 
+    
 
     /** get x position
      * @return x position in his parent
-    */
+     */
     s_int32 get_x () const; 
 
 
@@ -103,7 +111,7 @@ public :
      * @param length
      * @param height
      */
-    void set_size (u_int32 length, u_int32 height); 
+    virtual void set_size (u_int32 length, u_int32 height); 
 
     
     /** get length
@@ -116,8 +124,8 @@ public :
      * @return height 
      */
     u_int32 get_height () const; 
-
-
+    
+    
     /** set is this object is visible.
      * An event is executed on_show or on_hide depend on bool value.
      * @param b true visible, false hide.
@@ -141,7 +149,7 @@ public :
      *@return true is this object is sensible.
      */
     bool is_sensible () const; 
-
+    
     
     /** set if this object can have focus.
      * @param b true is this object can have focus .
@@ -160,7 +168,7 @@ public :
      * @param b true is this object has focus .
      */
     void set_has_focus (const bool b);
-
+    
     
     /**
      *@return true is this object has focus.
@@ -192,6 +200,20 @@ public :
     bool is_has_default () const;
 
 
+    /**
+     * input update function
+     * @return 1 if this object use the event,  else return 0
+     */
+    virtual int input_update (input_event *); 
+
+
+    /** 
+     * update the widget
+     * @return true if no problem,  it is very usefull in atk_window.
+     */
+    virtual bool update (); 
+    
+    
     /** Execute on_destroy callback 
      */
     virtual ~atk_widget (); 

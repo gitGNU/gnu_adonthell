@@ -9,6 +9,7 @@
 #include "atk_box.h"
 #include "atk_fixed.h"
 #include "atk_manager.h"
+#include "atk_window.h"
 #include "gametime.h"
 
 
@@ -17,22 +18,74 @@ int main (int argc, char * argv[])
     screen::init ();
     screen::set_video_mode (640, 480, 16); 
     screen::clear (); 
+    
+    
+    atk_manager manager;  
+    
 
-    atk_manager manager; 
-     
+    atk_window * wnd =  new atk_window; 
+    
+    wnd->set_visible (true);
+    wnd->set_position (20, 40);
+    wnd->set_size (350, 200);
+    wnd->on_delete.connect (new callback_slot (makeFunctor (manager, &atk_manager::shutdown))); 
+    
 
-    while (1)
+    atk_box * box = new atk_box; 
+    box->set_border_width (10); 
+    box->set_spacing (3); 
+    box->set_visible (true); 
+    box->set_size (200, 60);
+    box->set_position (50, 50); 
+    box->set_geometry (atk_box::VERTICAL); 
+    
+    
+    atk_widget * wid; 
+
+    wid = new atk_widget;
+    wid->set_size (30, 50);
+    wid->set_visible (true);
+    wid->realize (); 
+    box->add_start (wid, true, true, 0); 
+
+    
+    wid = new atk_widget;
+    wid->set_size (30, 20);
+    wid->set_visible (true);
+    wid->realize (); 
+    box->add_start (wid, true, true, 0); 
+
+    wid = new atk_widget;
+    wid->set_size (10, 50);
+    wid->set_visible (true);
+    wid->realize (); 
+    box->add_end (wid, true, true, 15) ; 
+ 
+    box->realize ();  
+
+
+
+    wnd->add (box);
+    wnd->set_resizeable (true); 
+    wnd->realize (); 
+    
+    manager.add (wnd); 
+    
+    
+    while (manager.update () )
     {
         input_manager::update(); 
-        gametime::update (); 
 
+        gametime::update (); 
         
         screen::display.fillrect (0, 0, 640, 480, 127, 127, 127);
         
+
+        manager.draw (); 
         
         screen::show ();
         
-        screen::clear ();  
+        screen::clear ();     
     }
 
     input_manager::cleanup();

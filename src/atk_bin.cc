@@ -25,8 +25,11 @@ void atk_bin::add (atk_widget * w)
     if (child) remove (child); 
 
     child = w;
-    w->set_parent (this); 
-
+    w->set_parent (this);
+    
+    w->set_position (0, 0);
+    
+    
     on_add (); 
 }
 
@@ -52,7 +55,19 @@ void atk_bin::clear ()
 }
 
 
+void atk_bin::set_position (s_int32 x, s_int32 y)
+{
+    atk_container::set_position (x, y);
+    if (child) child->update_position (); 
+    
+}
+
+
+
 atk_bin::~atk_bin ()
 {
     clear (); 
 }
+
+
+

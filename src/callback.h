@@ -28,14 +28,14 @@
 #define _CALL_BACK_H_
 
 #include <string.h> 
-#include <stddef.h> 
+#include <stddef.h>                     
 
 
 /**
  * All stuff is here is inspirated from Rich Hickey callback mechanics. Everybody know what is
  * callback, so i explain just how use it in example.
  *
- *  class A{
+ *  class A{                            
  *   public:
  *    void print() { cout << "Adonthell callback\n"; }
  * 

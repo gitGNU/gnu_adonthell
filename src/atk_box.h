@@ -115,6 +115,12 @@ public :
     void set_geometry (const u_int8 g); 
     
 
+    /**
+     * update position
+     */
+    void update_position (); 
+
+    
     ~atk_box (); 
     
     static const u_int8 VERTICAL = 0;

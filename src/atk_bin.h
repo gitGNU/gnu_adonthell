@@ -59,16 +59,20 @@ public :
      */
     void clear ();
 
+    
+    /** set position of this widget (but the layout can change this value) ,  position in his parent
+     * @param x
+     * @param y
+     */
+    void set_position (s_int32 x, s_int32 y);
+    
 
     /**destructor
      * call clear () 
      */
     ~atk_bin (); 
 protected :
-
-
-private : 
-    
+     
     atk_widget * child; 
 }; 
 

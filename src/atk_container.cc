@@ -12,12 +12,13 @@
    See the COPYING file for more details
 */
 
-
+#include "atk_border.h"
 #include "atk_container.h"
 
 
-atk_container::atk_container () : border_width_ (6)
+atk_container::atk_container () : border_width_ (5)
 { 
+    border_ = new atk_border (this); 
 }
 
 
@@ -33,6 +34,11 @@ u_int16 atk_container::get_border_width () const
 }
 
 
+
+atk_container::~atk_container ()
+{
+    delete border_; 
+}
 
 
 

@@ -109,8 +109,8 @@ void atk_box::realize_horizontal ()
     if (v_widget_.size () == 0) return; 
 
     /* init value with border width */
-    s_int32 x_tmp = border_width_;
-    s_int32 y_tmp = border_width_;
+    s_int32 x_tmp = 0; // border_width_;
+    s_int32 y_tmp = 0; // border_width_;
 
     /* calcul the max length for each widget*/
     s_int32 max_length = (get_length () - ((v_widget_.size () - 1)  * spacing_) - (border_width_ << 1) ) / v_widget_.size (); 
@@ -166,8 +166,8 @@ void atk_box::realize_vertical ()
     if (v_widget_.size () == 0) return; 
     
     /* init value with border width */
-    s_int32 x_tmp = border_width_;
-    s_int32 y_tmp = border_width_;
+    s_int32 x_tmp = 0; // border_width_;
+    s_int32 y_tmp = 0; // border_width_;
 
     /* calcul the max length for each widget*/
     s_int32 max_height = (get_height () - ((v_widget_.size () - 1)  * spacing_) - (border_width_ << 1) ) / v_widget_.size (); 
@@ -285,3 +285,10 @@ void atk_box::set_geometry (const u_int8 g)
 
 
 
+void atk_box::update_position () 
+{
+    atk_container::update_position (); 
+    
+    for (std::deque <atk_box_struct* >::iterator it = v_widget_.begin (); it != v_widget_.end (); it++)
+        (*it)->widget_->update_position ();
+}

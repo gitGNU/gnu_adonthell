@@ -19,7 +19,7 @@
 
 
 atk_widget::atk_widget () : parent_ (NULL) 
-{ 
+{    
 }
 
  
@@ -31,10 +31,17 @@ void atk_widget::set_parent (atk_container * parent)
 
 void atk_widget::set_position (s_int32 x, s_int32 y)
 {
-    if (parent_) drawing_area::move (parent_->get_x_real () + (x_ = x), parent_->get_y_real () + (y_ = y));
-    else drawing_area::move (x_ = x, y_ = y); 
+    x_ = x; 
+    y_ = y;
+
+    update_position (); 
 }
 
+void atk_widget::update_position ()
+{
+    if (parent_) drawing_area::move (parent_->get_x_real () + x_ + parent_->get_border_width (), parent_->get_y_real () + y_ +parent_->get_border_width () );
+    else drawing_area::move (x_, y_); 
+}
 
 s_int32 atk_widget::get_x () const
 {
@@ -170,4 +177,16 @@ void atk_widget::draw (drawing_area * da = NULL, surface * sf = NULL)
 
     screen::display.draw_line (get_x_real (), get_y_real (),get_x_real (),get_y_real ()+ get_height (),  0xFFFFFF); 
     screen::display.draw_line (get_x_real () + get_length (), get_y_real (),get_x_real () + get_length (),get_y_real () + get_height (),  0xFFFFFF);
+}
+
+
+int atk_widget::input_update (input_event * ev)
+{
+    return 0; 
+}
+
+
+bool atk_widget::update ()
+{
+    return true; 
 }

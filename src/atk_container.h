@@ -31,6 +31,7 @@
 #include "callback_sig.h"
 #include "atk_widget.h"
 
+class atk_border; 
 
 /** It's an abstract class, it's can contains lots of widget,  there are some method,  add,  remove a container...
  *
@@ -78,9 +79,9 @@ public :
     virtual void clear () = 0; 
 
 
-    virtual ~atk_container ()
-    {
-    }
+    virtual ~atk_container (); 
+    
+    
     
     /* call back */
     callback_sig on_add;
@@ -91,6 +92,10 @@ protected :
     
     /* the space between container and widgets childs */
     u_int16 border_width_; 
+
+
+    /* the border used by this container */
+    atk_border * border_; 
     
 private : 
 

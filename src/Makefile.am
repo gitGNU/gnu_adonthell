@@ -102,8 +102,10 @@ libgui_a_SOURCES = atk_box.cc atk_misc.cc atk_container.cc atk_label.cc \
 	atk_bin.cc atk_manager.cc \
 	callback_slot.h atk_box.h atk_misc.h atk_container.h \
 	atk_label.h atk_font.h atk_widget.h atk_fixed.h \
-	atk_bin.h atk_window.h atk_manager.h \
-	callback_sig.h
+	atk_bin.h atk_window.h atk_manager.h atk_window.cc\
+	atk_border_template.h atk_border_template.cc \
+	atk_border.cc atk_border.h \
+	callback_sig.h 
 
 libgui_LDADD = $(FT2_LIBS)
 
