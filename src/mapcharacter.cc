@@ -303,12 +303,12 @@ bool mapcharacter::can_go_north () const
     s_int16 ay = sy - (posy () - base_y ());
     u_int16 ex =
         (posx () - base_x () + area_length () >
-         refmap->submap[submap ()]->area_length ()) ? refmap->submap[submap ()]->area_length () -
-        1 : posx () - base_x () + area_length ();
+         refmap->submap[submap ()]->area_length ()) ? refmap->submap[submap ()]->area_length ()
+        : posx () - base_x () + area_length ();
     u_int16 ey =
         (posy () - base_y () + area_height () >
-         refmap->submap[submap ()]->area_height ()) ? refmap->submap[submap ()]->area_height () -
-        1 : posy () - base_y () + area_height ();
+         refmap->submap[submap ()]->area_height ()) ? refmap->submap[submap ()]->area_height ()
+        : posy () - base_y () + area_height ();
 
     for (j = sy; j < ey; j++)
         for (i = sx; i < ex; i++)
@@ -336,12 +336,12 @@ bool mapcharacter::can_go_south () const
     s_int16 ay = sy - (posy () - base_y ());
     u_int16 ex =
         (posx () - base_x () + area_length () >=
-         refmap->submap[submap ()]->area_length ()) ? refmap->submap[submap ()]->area_length () -
-        1 : posx () - base_x () + area_length ();
+         refmap->submap[submap ()]->area_length ()) ? refmap->submap[submap ()]->area_length ()
+        : posx () - base_x () + area_length ();
     u_int16 ey =
         (posy () - base_y () + area_height () >=
-         refmap->submap[submap ()]->area_height ()) ? refmap->submap[submap ()]->area_height () -
-        1 : posy () - base_y () + area_height ();
+         refmap->submap[submap ()]->area_height ()) ? refmap->submap[submap ()]->area_height ()
+        : posy () - base_y () + area_height ();
 
     for (j = sy; j < ey; j++)
         for (i = sx; i < ex; i++)
@@ -370,12 +370,12 @@ bool mapcharacter::can_go_east () const
     s_int16 ay = sy - (posy () - base_y ());
     u_int16 ex =
         (posx () - base_x () + area_length () >=
-         refmap->submap[submap ()]->area_length ()) ? refmap->submap[submap ()]->area_length () -
-        1 : posx () - base_x () + area_length ();
+         refmap->submap[submap ()]->area_length ()) ? refmap->submap[submap ()]->area_length ()
+        : posx () - base_x () + area_length ();
     u_int16 ey =
         (posy () - base_y () + area_height () >=
-         refmap->submap[submap ()]->area_height ()) ? refmap->submap[submap ()]->area_height () -
-        1 : posy () - base_y () + area_height ();
+         refmap->submap[submap ()]->area_height ()) ? refmap->submap[submap ()]->area_height ()
+        : posy () - base_y () + area_height ();
 
     for (j = sy; j < ey; j++)
         for (i = sx; i < ex; i++)
@@ -403,12 +403,12 @@ bool mapcharacter::can_go_west () const
     s_int16 ay = sy - (posy () - base_y ());
     u_int16 ex =
         (posx () - base_x () + area_length () >
-         refmap->submap[submap ()]->area_length ()) ? refmap->submap[submap ()]->area_length () -
-        1 : posx () - base_x () + area_length ();
+         refmap->submap[submap ()]->area_length ()) ? refmap->submap[submap ()]->area_length ()
+        : posx () - base_x () + area_length ();
     u_int16 ey =
         (posy () - base_y () + area_height () >
-         refmap->submap[submap ()]->area_height ()) ? refmap->submap[submap ()]->area_height () -
-        1 : posy () - base_y () + area_height ();
+         refmap->submap[submap ()]->area_height ()) ? refmap->submap[submap ()]->area_height ()
+        : posy () - base_y () + area_height ();
 
     for (j = sy; j < ey; j++)
         for (i = sx; i < ex; i++)
