@@ -2,34 +2,15 @@
 # First of all clean up the generated crud
 rm -f configure config.log config.cache
 rm -f config.status aclocal.m4
-mv intl/Makefile.in intl/Makefile.bak
 rm -f `find . -name 'Makefile.in'`
-mv intl/Makefile.bak intl/Makefile.in
 rm -f `find . -name 'Makefile'`
 
 # Regenerate everything
 
-#
-# use aclocal v1.6 if available
-#
-if test "x`which aclocal-1.6`" = "x" ; then
-  aclocal -I .
-else
-  aclocal-1.6 -I .
-fi
-
+aclocal -I m4
 libtoolize --automake --force --copy
 autoheader
-
-#
-# use Autmake v1.6 if available
-#
-if test "x`which automake-1.6`" = "x" ; then
-  automake --add-missing --gnu --copy
-else
-  automake-1.6 --add-missing --gnu --copy
-fi
-
+automake --add-missing --gnu --copy
 autoconf 
 
 echo

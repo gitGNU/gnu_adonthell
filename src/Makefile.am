@@ -10,7 +10,7 @@ bin_PROGRAMS = adonthell
 
 EXTRA_DIST = .indent.pro prefs.l py_adonthell.i
 
-CPPFLAGS =$(SDL_DEFS) $(OGG_DEFS) $(SDL_CFLAGS) $(OGG_CFLAGS) $(PY_CFLAGS)
+AM_CPPFLAGS =$(SDL_DEFS) $(OGG_DEFS) $(SDL_CFLAGS) $(OGG_CFLAGS) $(PY_CFLAGS)
 
 noinst_LIBRARIES = libadonthell.a
 
@@ -46,7 +46,7 @@ win_theme.cc win_event.cc yarg.cc mixer.c music.c music_cmd.c music_cmd.h \
 music_ogg.c music_ogg.h wave.h wavestream.c wavestream.h SDL_mixer.h \
 $(headers)
 
-libadonthell_LDADD = $(SDL_LIBS) $(OGG_LIBS) $(PY_LIBS)
+libadonthell_LDADD = $(SDL_LIBS) $(OGG_LIBS) $(PY_LIBS) $(INTLLIBS)
 
 adonthell_LDADD = libadonthell.a $(libadonthell_LDADD)
 

@@ -33,6 +33,8 @@
 #include "dlg_compiler.h"
 #include "gui_dlgedit.h"
 
+#define main main
+
 int main (int argc, char *argv[])
 {
     // dlgedit configuration

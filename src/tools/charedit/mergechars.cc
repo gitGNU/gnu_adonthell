@@ -24,6 +24,8 @@
 
 #include "../../character_base.h"
 #include "../../fileops.h"
+
+#define main main
  
 // read the character source file and append it to the character data file
 void process_character (char *input, ogzstream& output)

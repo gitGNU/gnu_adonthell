@@ -33,7 +33,7 @@ dnl i18n
 dnl ****
 
 ALL_LINGUAS=""
-AM_GNU_GETTEXT(use-libtool)
+AM_GNU_GETTEXT([external])
 
 dnl ********************
 dnl Additional arguments
@@ -193,15 +193,15 @@ if test x$pylibs = xnone; then
    changequote([, ])
 
    dnl look for a framework build of python first
-   dnl fw=`echo "$PYPREFIX" | sed 's/.*\(Python\.framework\).*/\1/;'`
-   dnl if test "x$fw" != x; then       
-   dnl    PY_LIBS="-framework Python"
-   dnl    PY_FWDIR="$PYPREFIX/lib/python$PYLIBVER/site-packages"
-   dnl    PY_SPDIR="$libdir/python$PYLIBVER/site-packages"
-   dnl    AC_SUBST(PY_FWDIR)
-   dnl    AC_SUBST(PY_SPDIR)
-   dnl    AC_MSG_RESULT(found)
-   dnl else
+   fw=`echo "$PYPREFIX" | sed 's/.*\(Python\.framework\).*/\1/;'`
+   if test "x$fw" != x; then       
+      PY_LIBS="-framework Python"
+      PY_FWDIR="$PYPREFIX/lib/python$PYLIBVER/site-packages"
+      PY_SPDIR="$libdir/python$PYLIBVER/site-packages"
+      AC_SUBST(PY_FWDIR)
+      AC_SUBST(PY_SPDIR)
+      AC_MSG_RESULT(found)
+   else
      py_paths="$PYPREFIX/lib/python$PYLIBVER/config $PYPREFIX/lib"
      py_suffix="$PYLIBVER.so $PYLIBVER.a .so .a"
    
@@ -226,7 +226,7 @@ if test x$pylibs = xnone; then
      else
        AC_MSG_ERROR([*** Python library not found])
      fi
-   dnl fi
+   fi
    dnl Get the libraries that python depends on
 
    AC_PATH_PROG(haveldd, ldd)
@@ -419,7 +419,7 @@ AC_SUBST(gamedatadir)
 dnl AC_SUBST(FT2_LIBS)
 dnl AC_SUBST(FT2_CFLAGS)
 
-AC_OUTPUT([
+AC_OUTPUT([ m4/Makefile 
 adonthell.spec
 Makefile
 doc/Makefile
@@ -427,7 +427,6 @@ doc/devel/Makefile
 doc/dlgedit/Makefile
 doc/dlgedit-api/Makefile
 doc/items/Makefile
-intl/Makefile 
 po/Makefile.in 
 src/Makefile
 src/modules/Makefile

@@ -17,7 +17,6 @@
 #include <stdlib.h>
 #include <libgen.h>
 #include <unistd.h>
-#include <getopt.h>
 
 #include "game.h"
 #include "prefs.h"

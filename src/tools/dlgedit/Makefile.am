@@ -83,7 +83,7 @@ dlgedit_SOURCES = \
     kb_traverse.h
 
 # Evil, but it works...
-CPPFLAGS =-I../.. -D_VERSION_=\"0.9pre\" $(GTK_CFLAGS) $(SDL_CFLAGS)
+AM_CPPFLAGS =-I../.. -D_VERSION_=\"0.9pre\" $(GTK_CFLAGS) $(SDL_CFLAGS)
 
 # SWIGFLAGS = -D_DLGEDIT_ -D_DEBUG_
 

@@ -1,4 +1,4 @@
-SUBDIRS = intl po src doc
+SUBDIRS = m4 po src doc
 EXTRA_DIST = config.rpath ABOUT-NLS NEWBIE autogen.sh README.BeOS \
         README.FreeBSD autogen.sh debian/README.debian debian/adonthell.6 \
         debian/changelog debian/control debian/copyright debian/dirs \
@@ -10,3 +10,4 @@ install-data-local:
 	mkdir $(DESTDIR)$(gamedatadir)/games; \
 	fi
 
+ACLOCAL_AMFLAGS = -I m4
