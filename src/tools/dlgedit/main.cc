@@ -1,4 +1,6 @@
 /*
+   $Id$
+   
    Copyright (C) 1999 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
@@ -38,6 +40,7 @@ main (int argc, char *argv[])
     MainWnd->wnd = NULL;
     MainWnd->text_dlg = NULL;
     MainWnd->pixmap = NULL;
+    MainWnd->project = NULL;
 
     /* Create Top Level Window and Controls */
     create_mainframe (MainWnd);

@@ -1,4 +1,6 @@
 /*
+   $Id$
+   
    Copyright (C) 1999 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
@@ -25,6 +27,7 @@ class dialog;
 #include "../../dialog.h"
 #include "dlgrun.h"
 #include "geometrie.h"
+#include "pjt_interface.h"
 #include "interface.h"
 
 /* Main Window: Destroy App */
@@ -151,6 +154,23 @@ on_fs_cancel_button_pressed (GtkButton * button, gpointer user_data)
 
     gtk_widget_destroy (GTK_WIDGET (fs));
     gtk_main_quit ();
+}
+
+// File menu: project
+void
+on_file_project_activate (GtkMenuItem *menuitem, gpointer user_data)
+{
+    MainFrame *wnd = (MainFrame *) user_data;
+    
+    // Create the project window
+    if (wnd->project == NULL)
+    {
+        wnd->project = create_project_window ();
+        gtk_widget_show (wnd->project);
+    }
+
+    // Bring the window to the front
+    gtk_widget_grab_focus (wnd->project);
 }
 
 /* File Menu: Load */

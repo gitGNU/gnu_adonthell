@@ -1,4 +1,6 @@
 /*
+   $Id$
+   
    Copyright (C) 1999 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
@@ -60,6 +62,19 @@ create_mainframe (MainFrame * MainWnd)
     /* File Menu */
     menu = gtk_menu_new ();
 
+    /* Project */
+    menuitem = gtk_menu_item_new_with_label ("Project");
+    gtk_container_add (GTK_CONTAINER (menu), menuitem);
+    gtk_widget_add_accelerator (menuitem, "activate", accel_group, GDK_p, GDK_MOD1_MASK, GTK_ACCEL_VISIBLE);
+    gtk_signal_connect (GTK_OBJECT (menuitem), "activate", GTK_SIGNAL_FUNC (on_file_project_activate), (gpointer) MainWnd);
+    gtk_widget_show (menuitem);
+
+    /* Seperator */
+    menuitem = gtk_menu_item_new ();
+    gtk_menu_append (GTK_MENU (menu), menuitem);
+    gtk_widget_set_sensitive (menuitem, FALSE);
+    gtk_widget_show (menuitem);
+
     /* New */
     menuitem = gtk_menu_item_new_with_label ("New");
     gtk_container_add (GTK_CONTAINER (menu), menuitem);
@@ -119,7 +134,7 @@ create_mainframe (MainFrame * MainWnd)
     gtk_widget_show (menuitem);
     MainWnd->dialogue_run = menuitem;
 
-    /* Attach File Menu */
+    /* Attach Dialogue Menu */
     menuitem = gtk_menu_item_new_with_label ("Dialogue");
     gtk_widget_show (menuitem);
     gtk_menu_item_set_submenu (GTK_MENU_ITEM (menuitem), menu);

@@ -57,7 +57,7 @@ LOADLIBES := -lm -lstdc++ `gtk-config --libs`
 
 # dlgedit
 
-dlgedit : ./callbacks.o ./compile.o ./dlgrun.o ./events.o ./geometrie.o ./graph.o ./interface.o ./main.o ./linked_list.o ../../dlg_io.o ../../interpreter.o ../../commands.o ../../dialog_cmds.o ../../array_tmpl.o
+dlgedit : ./callbacks.o ./compile.o ./dlgrun.o ./events.o ./geometrie.o ./graph.o ./interface.o ./main.o ./linked_list.o ../../dlg_io.o ../../interpreter.o ../../commands.o ../../dialog_cmds.o ../../array_tmpl.o ./pjt_interface.o ./pjt_callbacks.o
 	${LINKER} ${LDFLAGS} -o $@ ${filter-out %.a %.so, $^} ${LOADLIBES}
 
 # target for making everything
