@@ -34,6 +34,8 @@ bool dialog::init (char *fpath, char *name)
 	if (!module)
 		return false;
 
+    module = PyImport_ReloadModule (module);
+
 	// Extract the class from the dialogue module
 	classobj = PyObject_GetAttrString(module, name);
 
@@ -71,10 +73,8 @@ void dialog::extract_strings ()
     for (i = 0; i < index; i++)
     {
         s = PyList_GetItem (list, i);
-        if (s) strings[i] = strdup (PyString_AsString (s));
+        if (s) strings[i] = PyString_AsString (s);
     }
-
-    strings[index-1] = NULL;
 }
 
 dialog::dialog ()
@@ -85,15 +85,8 @@ dialog::dialog ()
 
 dialog::~dialog ()
 {
-    u_int32 i = 0;
     Py_XDECREF (instance);
-
-    if (strings)
-    {
-        while (strings[i] != NULL)
-            delete strings[i++]; 
-        delete strings;
-    }
+    if (strings) delete strings;
 }
 
 // Gets the index of either the player or npc array
@@ -141,8 +134,12 @@ void dialog::run (u_int32 index)
     }
 
     // 3. (Re)Init dialog::text
-    if (text) delete[] text;
-
+    if (text)
+    {
+        for (i = 0; i < text_size; i++) delete text[i];
+        delete text;
+    }
+    
     nsz = PyList_Size (npc);
     psz = PyList_Size (player);
 
@@ -167,9 +164,7 @@ void dialog::run (u_int32 index)
     s = PyInt_AsLong (PyList_GetItem (npc, i));
 
     // scan the string for { python code }
-    scan_string (s);
-    
-    text[0] = strings [s];
+    text[0] = scan_string (strings[s]);
     answers.push_back (0);
 
     // Mark the NPC text as used unless it's allowed to loop
@@ -189,11 +184,8 @@ void dialog::run (u_int32 index)
             // Only display unused text
             if (find (used.begin (), used.end (), s) == used.end ())
             {
-                // scan string for { python code } before displaying
-                scan_string (s);
-
                 // add string to current text list
-                text[l++] = strings[s];
+                text[l++] = scan_string (strings[s]);
                 
                 // Remember Player's possible replies to avoid loops
                 choices.push_back (s);               
@@ -214,12 +206,12 @@ void dialog::run (u_int32 index)
     Py_XDECREF (cont);
 }
 
-void dialog::scan_string (u_int32 index)
+char* dialog::scan_string (const char *s)
 {
     u_int32 begin, end, len;
     PyObject *result;
-    char *start, *string = NULL;
-    char *tmp, *newstr;
+    char *start, *mid, *string = NULL;
+    char *tmp, *newstr = strdup (s);
 
     /*
     // replace $... shortcuts
@@ -236,7 +228,7 @@ void dialog::scan_string (u_int32 index)
     while (1)
     {
         // check wether the string contains python code at all
-        start = strchr (strings[index], '{');
+        start = strchr (newstr, '{');
         if (start == NULL) break;
 
         end = strcspn (start, "}");
@@ -250,32 +242,34 @@ void dialog::scan_string (u_int32 index)
         // run the string
         result = PyObject_CallMethod (instance, string, NULL);
 
-        tmp = NULL;
+        mid = NULL;
 
         if (result)
             if (PyString_Check (result))
-                tmp = PyString_AS_STRING (result);    
+                mid = PyString_AS_STRING (result);    
         
         // Replace existing with new, changed string
         // 1. Calculate string's length
-        len = strlen(strings[index]);
+        len = strlen (newstr);
         begin = len - strlen (start);
-        newstr = new char[(tmp ? strlen(tmp) : 0) + len - strlen(string)];
+        tmp = new char[(mid ? strlen(mid) : 0) + len - strlen(string)];
 
         // 2. Merge prefix, resulting string and postfix into new string
-        strncpy (newstr, strings[index], begin);
-        newstr[begin] = 0;
-        if (tmp) strcat (newstr, tmp);
-        strcat (newstr, start+end+1);
+        strncpy (tmp, newstr, begin);
+        tmp[begin] = 0;
+        if (mid) strcat (tmp, mid);
+        strcat (tmp, start+end+1);
 
         // 3. Exchange strings
-        delete strings[index];
-        strings[index] = newstr;
+        delete newstr;
+        newstr = tmp;
 
         // Cleanup
         Py_XDECREF (result);
         delete string;
     }
+
+    return newstr;
 }
 
 /*

@@ -159,7 +159,7 @@ int main(int argc, char * argv[])
     if (chdir (myconfig.datadir.c_str ()))
     {
         printf ("\nSeems like %s is no valid data directory.", myconfig.datadir.c_str ());
-        printf ("\nIf you have installed the Adonthell date files into a different location,");
+        printf ("\nIf you have installed the Adonthell data files into a different location,");
         printf ("\nplease make sure to update the $HOME/.adonthell/adonthellrc file\n");
         return 1;
     }
@@ -168,7 +168,7 @@ int main(int argc, char * argv[])
     
     if (map1->load (myconfig.mapname.data ())) 
     {
-        printf("Error loading %s!\n",argv[1]);
+        printf("Error loading map %s!\n", myconfig.mapname.data ());
         return 1;
     }
     map1->load_map_data();
