@@ -42,11 +42,11 @@ void input::init()
   //  keyboard_mode=0;
   keystate=SDL_GetKeyState(&keystatelength);
   //  set_keyboard_mode(MODE_STATE);
+  p_keystate=new u_int8[keystatelength];
+  memset(p_keystate, 0, keystatelength);
   set_key_repeat(0,0);
   SDL_SetEventFilter(FilterEvents);
   SDL_EnableUNICODE(1);
-  p_keystate=new u_int8[keystatelength];
-  memset(p_keystate, 0, keystatelength);
 }
 
 void input::shutdown()
