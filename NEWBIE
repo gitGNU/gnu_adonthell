@@ -1,4 +1,8 @@
-The Beginner's Guide to Adonthell
+                    
+                    
+                    The Beginner's Guide to Adonthell
+                    
+                    
 Written by Andrew Henderson <hendersa@db.erau.edu>
 19 February 2000
 
@@ -6,6 +10,9 @@ Written by Andrew Henderson <hendersa@db.erau.edu>
 *******************
 * 0.0 - CHANGELOG *
 *******************
+
+* 17 September 2002 - Kai Sterker <kaisterker@linuxgames.com>
+  Updated for v0.3.3
 
 * 08 February 2002 - Kai Sterker <kaisterker@linuxgames.com>
   Added Building RPM's Howto
@@ -38,9 +45,6 @@ need a little help or are having problems, then read on.
 
 We're making a few assumptions. Take a quick look at them and see if
 you match:
-
-- You are using an Intel x86-based computer. If you aren't, you're out
-of luck this time around. Sorry.
 
 - You have a 2.x Linux kernel installed. If you aren't, ask the Linux
 guru who installed the 1.x kernel to upgrade, since you probably won't
@@ -98,54 +102,66 @@ Adonthell:
 * 3.0 - INSTALLING THE REQUIRED LIBRARIES *
 *******************************************
 
-There are four libraries that Adonthell depends on. Two of these
-libraries are required, the rest is optional. The two REQUIRED
-libraries (and where they can be downloaded from) are:
+There are three libraries that Adonthell depends on. Two of these
+libraries are required, one is optional. The two REQUIRED libraries 
+(and where they can be downloaded from) are:
 
 1. The Simple Directmedia Layer (SDL) library, version 1.2 or later.
+
+    http://www.libsdl.org/
+
 2. Python, version 1.5.2 or later.
+
+    http://www.python.org/
 
 Sound support under Adonthell is optional (but highly recommended!!).
 We suggest building Adonthell with sound support if you have a sound
 card configured to run under Linux. To do that, you'll need to build
 and install another library:
 
-3. OggVorbis, Version 1.0rc1 or later
-
-********
-* NOTE *
-********
-
-As of the writing of this guide, you can get the current
-version of SDL (1.2.4) at:
-
-    http://www.libsdl.org/download-1.2/
-
-... the current version of Python (2.2) at:
-
-    http://www.python.org/
-
-... and the current version of OggVorbis (1.0) at:
+3. Ogg Vorbis, Version 1.0rc1 or later
 
     http://www.xiph.org/ogg/vorbis/download/
 
-It usually is safe to use newer versions if available.
 
-***********
-* INSTALL *
-***********
+*****************************
+* 3.1 - INSTALLING BINARIES *
+*****************************
 
-The following steps show how to install the Python, SDL, SDL_mixer,
-and OggVorbis libraries. You must install Python and the SDL library 
-FIRST and Ogg Vorbis last.
+All of these libraries might already be part of your distribution,
+or at least available as binary package on the respective website.
+
+The package names might differ slightly on your distribution, but
+the following list should help you to find all required packages:
+
+For SDL you will need
+    SDL-1.2
+    SDL-devel-1.2
+
+for python
+    python-2.2
+    
+and for Ogg Vorbis
+    libogg-1.0
+    libogg-devel-1.0
+    libvorbis-1.0
+    libvorbis-devel-1.0
+    
+    
+********************************
+* 3.2 - INSTALLING FROM SOURCE *
+********************************
+
+The following steps show how to install the Python, SDL, and Ogg Vorbis libraries from source code. You may install Python, the SDL library and
+Ogg Vorbis in any order.
 
 Ogg Vorbis itself consists of two libraries: libogg and libvorbis
 that have to be installed in this order.
 
 
-Step #1: Download the tar file of the library to a convient
+Step #1: Download the source code of each library to a convient
 directory. We suggest downloading to /usr/local/src (if you want to
-keep the library source around after you'd built it) or /tmp (if
+keep the library source around after you've built it) or /tmp (if
 you don't).
 
 Step #2: Decompress the tar.gz file. Do this by typing:
@@ -181,6 +197,7 @@ Repeat these 4 steps for each library you want to install. If all
 went well, you now at least have Python, SDL, and Ogg Vorbis 
 installed and configured in your system.
 
+
 ******************************************
 * 4.0 BUILDING THE ADONTHELL SOURCE CODE *
 ******************************************
@@ -199,11 +216,11 @@ a convenient directory.
 
 Step #2: Decompress the tar.gz files. Do this by typing:
 
-	tar -xzf adonthell-0.3.tar.gz
-	tar -xzf wastesedge-0.3.tar.gz	
+	tar -xzf adonthell-0.3.3.tar.gz
+	tar -xzf wastesedge-0.3.3.tar.gz	
 
 Two new directories will be created in the current directory, named
-"adonthell-0.3" and "wastesedge-0.3". Complete step #3 and #4 for 
+"adonthell-0.3.3" and "wastesedge-0.3.3". Complete step #3 and #4 for 
 both directories.
 
 Step #3: Build Adonthell. Do this by changing into the newly created 
@@ -214,10 +231,10 @@ directory and typing:
 
 A successful configure will produce an output like this:
 
-	Adonthell v0.3
+	Adonthell v0.3.3
 
-    SDL ....................... : 1.2.0
-    Python .................... : 2.1
+    SDL ....................... : 1.2.4
+    Python .................... : 2.2
     Python debugging .......... : no
     Ogg music ................. : enabled
     Building editors .......... : no
@@ -236,6 +253,7 @@ Step #4: Install Adonthell. Finally, you can log in as root and type
 
 to copy the Adonthell binary to /usr/local/bin and the game data 
 to /usr/local/share/adonthell.
+
 
 *************************
 * 5.0 RUNNING ADONTHELL *
@@ -257,6 +275,7 @@ find yourself in the main menu. Here you can begin a new or continue
 an older game. The arrow keys let you move the cursor, and space 
 selects an option.
 
+
 **********************
 * 6.0 Questions/Help *
 **********************
@@ -268,7 +287,7 @@ are even loaded into memory when the game is executed. Currently, no
 events trigger sound effects, so you won't hear any.
 
 
-Q: The configure script claims it cannot find SDL (or OggVorbis or
+Q: The configure script claims it cannot find SDL (or Ogg Vorbis or
 GTK+) on my system, although I know it is there.
 
 A: If you have installed precompiled packages (e.g. RPM'S) of those
@@ -278,7 +297,7 @@ obtained the non-devel/runtime packages.
 
 On some systems, it might be necessary to recreate the configure
 script to work correctly. Do this by typing './autogen.sh' inside
-the adonthell-0.3 directory.
+the adonthell-0.3.3 directory.
 
 
 Q: While compiling the Adonthell source code I get an error similar
@@ -295,7 +314,7 @@ as a superuser account (i.e. root) after you installed the library.
 Q: When I run Adonthell in fullscreen mode I get a tiny window with
 a large black border around.
 
-A: See the Fullscreen Howto below for help.
+A: See the FULLSCREEN.howto file for help.
 
 
 Q: I have a problem that isn't listed above. Where can I go for
@@ -307,7 +326,9 @@ Any requests for help can be directed to the tech support manager.
 To report bugs, please write to the Adonthell developer mailing list. 
 There is usually a fairly short response time for any request of help.
 
-Tech support manager:	http://savannah.gnu.org/support/?group_id=702
+Tech support manager:	
+
+    http://savannah.gnu.org/support/?group_id=702
 
 The mailing list addresses are:
 
@@ -316,83 +337,21 @@ Developer list:		adonthell-devel@mail.freesoftware.fsf.org
 Artwork list:		adonthell-artwork@mail.freesoftware.fsf.org
 
 You can subscribe to these mailing lists by going to the URL:
-http://adonthell.linuxgames.com/contact/mailinglist.shtml
+    
+    http://adonthell.linuxgames.com/contact/mailinglist.shtml
 
 If you'd rather e-mail an Adonthell team member directly, you can get
 a list of contacts for the team from the Adonthell web page at:
-http://adonthell.linuxgames.com/development/team.shtml
+    
+    http://adonthell.linuxgames.com/development/team.shtml
+
 
 ************************
 * 7.0 Fullscreen Howto *
 ************************
 
-Unless you change the $HOME/.adonthell/adonthellrc configuration file,
-Adonthell will attempt to run in X11 Fullscreen mode by default.
-However, unless you have configured X for the low resolution Adonthell
-needs, you'll get a quite small game window with an ugly black border
-around. In here is described how to get rid of this.
+This section has been moved to a file called FULLSCREEN.howto.
 
-Since none of the X11 configuration tools I know can setup a 320x240
-resolution, you'll have to edit your XF86Config by hand. But don't worry,
-you have to do that only once, and none of your current settings will
-be lost in the process.
-
-Step #1: Log in as root and locate your X11 configuration file. You'll 
-find it in /etc/X11/ under the name of XF86Config or XF86Config-4.
-First of all make a backup, so you can revert to a working config 
-should something go wrong.
-
-Step #2: Locate the "Monitor" section in the file. Here you might 
-already see a number of "Modeline" entries, but probably none that
-starts with "320x240". Now pick one of the following modelines that
-best matches your monitor and copy it into the monitor section (but 
-don't change the HorizSync or VertRefresh entry):
-
-  # -- 15" --
-  HorizSync     29-65
-  VertRefresh   47-80
-  Modeline "320x240" 15.750 320 336 384 400 240 244 246 262 Doublescan
-
-  # -- 17" --
-  HorizSync    30-85
-  VertRefresh  50-100
-  Modeline "320x240" 15.750 320 336 384 400 240 244 246 262 Doublescan
-
-  # -- 19" --
-  HorizSync    30-110
-  VertRefresh  50-150
-  Modeline "320x240" 15.750 320 340 388 432 240 244 246 258 Doublescan
-
-When you are done, your monitor section might look similar to this:
-
-  Section "Monitor"
-     Identifier   "Monitor2"
-     VendorName   "Hyundai"
-     ModelName    "F910"
-     HorizSync    30-110
-     VertRefresh  50-150
-   
-     Modeline "1024x768" 85.12 1024 1028 1204 1348 768 768 778 794
-     Modeline "640x400" 31.50 640 672 736 832 400 401 404 445
-     Modeline "512x384" 22.00 512 564 628 696 384 389 392 404
-     Modeline "320x240" 15.75 320 340 388 432 240 244 246 258 Doublescan
-  EndSection
-
-Step #3: Locate the "Screen" section. Here you have to specify the
-resolutions X11 may use. Add the "320x240" mode to every "Display"
-subsection you have. Afterwards, it might look like:
-
-  SubSection "Display"
-     Depth  16
-     Modes  "1024x768" "800x600" "640x480" "320x240"
-  EndSubSection
-
-The first resolution in the line is the one used by default. When
-Adonthell starts, it will select the mode closest to 320x240.
-
-Step #4: Restart X11 and, if everything went well, enjoy Adonthell
-truly fullscreen. The first time you use a new mode, you might have 
-to adjust your monitor somewhat, but after that you'll be fine.
 
 ****************************
 * 8.0 Building RPM's Howto *
@@ -419,11 +378,9 @@ in the adonthell-0.3.x/ directory.
 
 Step #2: In the adonthell-0.3.x/ directory, run
 
-    configure --prefix=<path>
-    
-where <path> is the directory the RPM shall install to. By default,
-this is /usr/local, but you might want to change it to /usr or /opt
-or whatever.
+    configure 
+
+to create the adonthell.spec file.
 
 Step #3: Still in the adonthell-0.3.x/ directory, run
 

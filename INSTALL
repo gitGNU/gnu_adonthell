@@ -23,17 +23,14 @@ version of Python by entering the command:
    You can download Python directly from http://www.python.org.
 
 
-2. The Simple Direct media Layer (SDL) library, version 1.2 or later.
+2. SDL, version 1.2 or later.
 
    See http://www.libsdl.org/
 
 
-3. Freetype version 2
+3. Ogg Vorbis, version 1.0rc1 or later
 
-   See http://www.freetype.org
-
-
-For convenience, the SDL_mixer library is included with the source code;
+   For convenience, the SDL_mixer library is included with the source code;
 it will be replaced by a custom mixer anyway. However, you'll need OggVorbis
 1.0rc1 or later to enjoy the music.
 
@@ -66,10 +63,25 @@ Debian users:
 -------------
 
 You can automatically get an installable Debian package by typing
-'debuild', which comes in the 'devscripts' package. Check carefully
-that you have the python2.1, python2.1-dev, libsdl1.2 and
-libsdl1.2-dev packages installed (plus libvorbis0 & libvorbis-dev if
-you want sound), or the build will fail.
+
+$> debuild 
+
+within the adonthell-0.3.3 directory. 'debbuild' is part of the
+'devscripts' package. Check carefully that you have the python2.2,
+python2.2-dev, libsdl1.2 and libsdl1.2-dev packages installed (plus 
+libvorbis0 & libvorbis-dev if you want sound), or the build will fail.
+
+
+RPM users:
+----------
+
+To create an installable RPM package, type
+
+$> rpm -tb adonthell-0.3.3.tar.gz
+
+Note that the 4.x versions of rpm are currently unsupported. Feel free
+to change that, if you want. For more information, refer to section 8.0
+of the NEWBIE file.
 
 
 Advanced configure options:
@@ -77,6 +89,54 @@ Advanced configure options:
 
 There are a number of options to 'configure' that might be useful
 for you. For a complete list, run 'configure --help'.
+
+
+--enable-py-debug
+
+  This option turns on debugging output of the embedded python
+interpreter to locate bugs in our python scripts. If Adonthell
+behaves odd or hangs with no apparent error message, turning
+on Python debugging might reveal the source of error. On slower
+machines, you shouldn't enable this option unless you need it - 
+it may considerably increase Adonthell's CPU usage.
+
+
+--enable-tools
+
+  Use this to build the Adonthell development tools. These will
+include editors for our graphic objects, characters, maps, dialogues 
+and a few other utilities. Note that non of these tools will be 
+installed when running 'make install'. You will have to run them from 
+their source directory or install them manually.
+
+
+--enable-doc
+
+  Use this to build the Adonthell source code documentation. For 
+this to work you will need two additional tools: doxygen and dot.
+
+   See http://www.doxygen.org 
+
+for the first. Latter is a part of AT&T's graphviz toolkit which
+can be found at
+
+   http://www.research.att.com/sw/tools/graphviz/.
+
+  The documentation will end up in doc/<subdir>/html/ respectively
+doc/<subdir>/latex/, where subdir is one of devel or dlgedit.  It 
+is also made available for online browsing at our website,
+http://adonthell.linuxgames.com.
+
+
+--enable-memleaks
+
+  This enables support for mtrace, a tool to find memory leaks.
+After compiling you have to set the $MALLOC_TRACE environment 
+variable to any file. Running Adonthell will record debugging
+information in this file. Use 'mtrace adonthell $MALLOC_TRACE'
+to finally display any occurrence of memory leaks.
+  A much more convenient way to check for memory leaks is the
+'memprof' tool: http://people.redhat.com/~otaylor/memprof
 
 
 --with-included-gettext
@@ -119,54 +179,6 @@ those directories to /etc/ld.so.conf.
   Use this option to customise the location of the data directory.
 The default is /usr/local/share/adonthell. Once you have compiled
 Adonthell you can query the data directory with 'adonthell -d'.
-
-
---enable-tools
-
-  Use this to build the Adonthell development tools. These include
-editors for our graphic objects, characters, maps, dialogues and a
-few other utilities. Note that non of these tools will be installed
-when running 'make install'. You will have to run them from their
-source directory or install them manually.
-
-
---enable-doc
-
-  Use this to build the Adonthell source code documentation. For 
-this to work you will need two additional tools: doxygen and dot.
-
-   See http://www.doxygen.org 
-
-for the first. Latter is a part of AT&T's graphviz toolkit which
-can be found at
-
-   http://www.research.att.com/sw/tools/graphviz/.
-
-  The documentation will end up in doc/<subdir>/html/ respectively
-doc/<subdir>/latex/, where subdir is one of devel or dlgedit.  It 
-is also made available for online browsing at our website,
-http://adonthell.linuxgames.com.
-
-
---enable-memleaks
-
-  This enables support for mtrace, a tool to find memory leaks.
-After compiling you have to set the $MALLOC_TRACE environment 
-variable to any file. Running Adonthell will record debugging
-information in this file. Use 'mtrace adonthell $MALLOC_TRACE'
-to finally display any occurrence of memory leaks.
-  A much more convenient way to check for memory leaks is the
-'memprof' tool: http://people.redhat.com/~otaylor/memprof
-
-
---enable-py-debug
-
-  This option turns on debugging output of the embedded python
-interpreter to locate bugs in our python scripts. If Adonthell
-behaves odd or hangs with no apparent error message, turning
-on Python debugging might reveal the source of error. You
-shouldn't enable this option unless you need it, since it
-increases CPU usage considerably on older machines. 
 
 
 *********************************************************************

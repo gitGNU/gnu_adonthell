@@ -3,7 +3,6 @@
                              Adonthell 0.3 
                            
 
-
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation.
@@ -40,8 +39,8 @@ The available options and what they do are:
   Whether Adonthell should run fullscreen or in windowed mode 
   0 = Windowed mode, 1 = Fullscreen mode
   
-  (If you have trouble with the fullscreen mode, see the NEWBIE
-  file for help)
+  (If you have trouble with the fullscreen mode, refer to the 
+  FULLSCREEN.howto file for help)
 
 - Double-size
   Whether resolution should be scaled to 640x480 or not
@@ -62,7 +61,7 @@ The available options and what they do are:
   chose here, otherwise you'll get the default (i.e. English) text.
 
 - Quick-load
-  Whether the last game should be automatically continued at
+  Whether the last saved game should be automatically continued at
   startup. Only works if at least one saved game exists.
   0 = disable, 1 = enable
 
@@ -152,8 +151,9 @@ Tech support:  http://savannah.gnu.org/support/?group_id=702
 There is a Message Board for user to user discussion at
     http://www.3dforums.com/?action=forumpage&loc=49&forum_id=158
 
-If you want to rate Adonthell, feel free to do so at
+If you want to rate or comment on Adonthell, feel free to do so at
     http://www.happypenguin.org/show?Adonthell
+    http://www.freshmeat.net/projects/adonthell
 
 
 Reporting Bugs:
@@ -162,9 +162,9 @@ Reporting Bugs:
 We hope you'll never have to, but if you discover a problem, we
 would like to hear about it. Please use the Development mailing list
 (adonthell-devel@mail.freesoftware.fsf.org) for that. You can 
-subscribe to the mailing lists at 
+informations on this and other mailing lists at 
 
-  http://adonthell.linuxgames.com/contact/mailinglist.shtml
+    http://adonthell.linuxgames.com/contact/mailinglist.shtml
 
 
 Thank you for trying this software.
