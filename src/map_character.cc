@@ -28,8 +28,22 @@ map_character::map_character (landmap & mymap) : map_moving (mymap)
 {
     Type = CHARACTER;
     Speed = 2;
+    VSpeed = 0;
     Is_running = false;
     Current_dir = NONE;
+}
+
+void map_character::jump()
+{
+    VSpeed = 4.5;
+}
+
+void map_character::update()
+{
+    set_vertical_velocity(VSpeed);
+    map_moving::update();
+    if (!Is_falling) VSpeed = 0.0;
+    else VSpeed = vz() - 0.2;
 }
 
 void map_character::set_direction(int ndir)

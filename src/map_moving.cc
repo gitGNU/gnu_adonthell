@@ -29,12 +29,17 @@ map_moving::map_moving (landmap & mymap)
 {
     Vx = 0.0;
     Vy = 0.0; 
+    Vz = 0.0;
 
     Lx = 65535;
     Ly = 65535;
     
     fox = 0.0; 
     foy = 0.0; 
+    foz = 0.0;
+
+    Has_moved = false;
+    Is_falling = false;
 }
 
 void map_moving::set_offset (u_int16 ox, u_int16 oy)
@@ -48,6 +53,11 @@ void map_moving::set_velocity (float vx, float vy)
 {
     Vx = vx;
     Vy = vy;
+}
+
+void map_moving::set_vertical_velocity(float vz)
+{
+    Vz = vz;
 }
 
 void map_moving::set_limits (u_int16 mx, u_int16 my)
@@ -132,9 +142,25 @@ void map_moving::update_pos()
         }
         Oy = (u_int16) foy; 
     }
+
+    if (vz())
+    {
+        Has_moved = 1;
+        foz += vz();
+        while (foz <= -1.0)
+        {
+            Z--;
+            foz += 1.0;
+        }
+        while (foz >= 1.0)
+        {
+            Z++;
+            foz -= 1.0;
+        }
+    }
 }
 
-bool map_moving::should_fall()
+bool map_moving::should_fall(s_int32 prevz)
 {
     map_placeable_area * state = current_state();
 
@@ -154,10 +180,14 @@ bool map_moving::should_fall()
                     mapsquare * msqr = Mymap.get(px + k, py + l);
                     for (mapsquare::iterator it = msqr->begin(); it != msqr->end(); it++)
                     {
+                        s_int32 objz = it->z() + it->obj->current_state()->zsize;
+                        if ( objz < z() || objz > prevz) continue;
+
                         if (!it->obj->current_state()->get(px + k - it->x() + it->obj->current_state()->base.x(),
                                                            py + l - it->y() + it->obj->current_state()->base.y())
                             .is_walkable()) 
                         {
+                            set_altitude(objz);
                             return false;
                         }
                     }
@@ -169,20 +199,26 @@ bool map_moving::should_fall()
 
 bool map_moving::update()
 {
-    map_coordinates prevpos = *this;
-    float prevfox = fox;
-    float prevfoy = foy;
+//     map_coordinates prevpos = *this;
+//     float prevfox = fox;
+//     float prevfoy = foy;
+//     float prevfoz = foz;
+    s_int32 prevz = z();
 
     Mymap.remove(this);
 
     update_pos();
 
-    if (!should_fall())
+//     {
+//         fox = prevfox;
+//         foy = prevfoy;
+//         *((map_coordinates*)this) = prevpos;
+//     }
+
+    if (!should_fall(prevz))
     {
-        fox = prevfox;
-        foy = prevfoy;
-        *((map_coordinates*)this) = prevpos;
-    }
+        Is_falling = false;
+    }else Is_falling = true;
     
     Mymap.put(this);
     return true; 

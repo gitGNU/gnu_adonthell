@@ -37,10 +37,11 @@
  */
 class map_moving : public map_placeable, public map_coordinates
 {
-private:
-    float fox, foy; 
-    float Vx, Vy;
+protected:
+    float fox, foy, foz; 
+    float Vx, Vy, Vz;
     bool Has_moved; 
+    bool Is_falling;
 
     u_int16 Lx, Ly;
     
@@ -56,6 +57,11 @@ public:
     float vy () 
     {
         return Vy; 
+    }
+
+    float vz()
+    {
+        return Vz;
     }
 
     u_int16 lx () 
@@ -74,9 +80,11 @@ public:
 
     void set_velocity (float vx, float vy); 
 
+    void set_vertical_velocity(float vz);
+
     void update_pos();
 
-    bool should_fall();
+    bool should_fall(s_int32 prevz);
 
     bool update(); 
 }; 

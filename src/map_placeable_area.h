@@ -78,7 +78,14 @@ private:
     vector <vector <mapsquare_walkable_info> > area;
     
 public:
+    u_int16 zsize;
+    
     map_coordinates base; 
+
+    map_placeable_area()
+    {
+        zsize = 0;
+    }
 
     u_int16 area_length() const
     {

@@ -50,6 +50,7 @@ void map_object_with_gfx::get(igzstream & file)
 {
     map_object::get(file);
     map_placeable_model_gfx::get(file);
+    set_gfx(current_state_name());
 }
 
 s_int8 map_object_with_gfx::save(string fname) const
@@ -74,4 +75,10 @@ s_int8 map_object_with_gfx::load(string fname)
     get (file);
     file.close (); 
     return ret;
+}
+
+void map_object_with_gfx::draw (s_int16 x, s_int16 y, const drawing_area * da_opt = NULL,
+                                   surface * target = NULL) const
+{
+    map_placeable_model_gfx::draw(x, y, da_opt, target);
 }

@@ -42,12 +42,16 @@ public:
 
 protected:
     float Speed; 
+    float VSpeed;
+
     bool Is_running;
     int Current_dir;
 
 public:
     
     map_character (landmap & mymap);
+
+    void update();
 
     float speed () 
     {
@@ -75,6 +79,8 @@ public:
         Is_running = true;
         set_direction(current_dir());
     }
+
+    void jump();
 
     void stop()
     {

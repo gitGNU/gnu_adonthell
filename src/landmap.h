@@ -29,16 +29,22 @@ public:
 
     bool operator < (const mapsquare_info & mi) const
     {
+        if (z() + obj->current_state()->zsize <= mi.z()) return true;
+        if (mi.z() + mi.obj->current_state()->zsize <= z()) return false;
+//         if (z() + obj->current_state()->zsize >= mi.z()) return false;
         if (y() < mi.y()) return true;
-        if (y() != mi.y()) return false;
+        if (y() > mi.y()) return false;
+//         if (z() + obj->current_state()->zsize <= mi.z() + mi.obj->current_state()->zsize) return false;
+//         if (y() != mi.y()) return false;
         if (oy() < mi.oy()) return true;
-        if (oy() != mi.oy()) return false;
+        if (oy() >= mi.oy()) return false;
         // If the objects are at the same y position, we better
         // make an arbitrary test to make sure a moving object
         // won't go from behind to before another object when
         // their y coordinates are the same and the x coordinate
         // of the moving object become greater than the other object.
-        if (obj < mi.obj) return true;
+        cout << "not good\n";
+        if (obj > mi.obj) return true;
         return false;
     }
 

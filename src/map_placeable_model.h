@@ -48,6 +48,18 @@ protected:
     bool State_changed;
     
 public:
+    typedef map <string, map_placeable_area>::iterator iterator;
+
+    iterator begin () 
+    {
+        return States.begin (); 
+    }
+
+    iterator end () 
+    {
+        return States.end (); 
+    }
+
     map_placeable_model();
 
     map_placeable_area * current_state();

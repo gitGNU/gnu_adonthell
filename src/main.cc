@@ -105,6 +105,11 @@ public:
                 lmap.output_occupation();
             }            
 
+            if (kev->key() == keyboard_event::E_KEY)
+            {
+                mchar->jump();
+            }            
+
             if (kev->key() == keyboard_event::J_KEY)
             {
                 mchar2->add_direction(mchar2->SOUTH);
@@ -198,6 +203,9 @@ int main (int argc, char * argv[])
     gc.mchar->set_limits (16, 12);
     gc.mchar->set_speed (1.0);
     
+    for (map_placeable::iterator it = gc.mchar->begin(); it != gc.mchar->end(); it++)
+        it->second.zsize = 39;
+    
 //     gc.mchar->get_state("s_stand")->get(0, 1).set_walkable(0);
 //     gc.mchar->get_state("n_stand")->get(0, 1).set_walkable(0);
 //     gc.mchar->get_state("e_stand")->get(0, 1).set_walkable(0);
@@ -224,12 +232,22 @@ int main (int argc, char * argv[])
 
     mobj = (map_object_with_gfx *)gc.lmap.add_map_object();
     mobj->load("adontest/tree.mobj");
+    mobj->current_state()->zsize = 150;
 
     mobj = (map_object_with_gfx *)gc.lmap.add_map_object();
     mobj->load("adontest/sandy.mobj");
+    mobj->current_state()->get(0,0).set_walkable(false);
+    mobj->current_state()->zsize = 0;
 
     mobj = (map_object_with_gfx *)gc.lmap.add_map_object();
     mobj->load("adontest/rug.mobj");
+    mobj->current_state()->zsize = 0;
+
+    mobj = (map_object_with_gfx *)gc.lmap.add_map_object();
+    mobj->load("adontest/sandy.mobj");
+    mobj->current_state()->get(0,0).set_walkable(false);
+    mobj->current_gfx()->get_animation()->get_image(0)->fillrect(0, 0, 40, 40, 0xffffff);
+    mobj->current_state()->zsize = 0;
 
 //     mobj->get_state("default")->get(0, 0).set_walkable(0);
 //     mobj->get_state("default")->get(1, 0).set_walkable(0);
@@ -238,22 +256,35 @@ int main (int argc, char * argv[])
     //    cout << mobj->get_state("default")->get(0, 0).is_walkable() << endl;
 //     mobj->save("adontest/rug.mobj");
 
-//     for (int i = 0; i < gc.lmap.length(); i++)
-//         for (int j = 0; j < gc.lmap.height(); j++)
-//         {
-//             map_coordinates mc(i, j, 0, 0);
-//             gc.lmap.put_map_object(1, mc); 
-//         }
+    for (int i = 0; i < gc.lmap.length(); i++)
+        for (int j = 0; j < gc.lmap.height(); j++)
+        {
+            map_coordinates mc(i, j, 0, 0, 0);
+            gc.lmap.put_map_object(1, mc); 
+        }
+
+    for (int i = 10; i < 12; i++)
+        for (int j = 4; j < 6; j++)
+        {
+            map_coordinates mc(i, j, 40);
+            gc.lmap.put_map_object(3, mc); 
+        }
+
+    for (int i = 8; i < 10; i++)
+        for (int j = 4; j < 6; j++)
+        {
+            map_coordinates mc(i, j, 80);
+            gc.lmap.put_map_object(3, mc); 
+        }
 
 
-    map_coordinates rmc(7, 4);
-    gc.lmap.put_map_object(2, rmc);
+//     map_coordinates rmc(7, 4, 0);
+//     gc.lmap.put_map_object(2, rmc);
 
-    map_coordinates mobjmc (6, 6, 0, 0); 
+    map_coordinates mobjmc (6, 6, 1); 
     gc.lmap.put_map_object (0, mobjmc); 
 
     mobjmc.set_position (8, 7);
-    mobjmc.set_offset (0, 0);
     gc.lmap.put_map_object (0, mobjmc); 
         
     while (!gc.letsexit) 
@@ -266,10 +297,11 @@ int main (int argc, char * argv[])
             gc.lmap.update();
         }
 
+        list <mapsquare_info> drawqueue; 
+
         // Rendering phase        
         for (j = 0; j < gc.lmap.height (); j++)
         {
-            vector <const mapsquare_info *> drawqueue; 
 
             for (i = 0; i < gc.lmap.length (); i++) 
             {
@@ -278,39 +310,41 @@ int main (int argc, char * argv[])
                      it != sq->end (); it++)
                 {
                     if (it->x () == i && it->y () == j) 
-                        drawqueue.push_back (&(*it)); 
+                        drawqueue.push_back (*it); 
                 }
-            }
+            }            
+        }
+
+        drawqueue.sort();
+        //            sort (drawqueue.begin (), drawqueue.end (), boah); 
             
-            sort (drawqueue.begin (), drawqueue.end (), boah); 
-            
-            for (vector <const mapsquare_info *>::iterator it = drawqueue.begin ();
+            for (list <mapsquare_info>::iterator it = drawqueue.begin ();
                  it != drawqueue.end (); it++)
             {
-                switch ((*it)->obj->type ()) 
+                switch ((*it).obj->type ()) 
                 {
                     case CHARACTER:
                         ((map_character_with_gfx *)
-                         (*it)->obj)->draw ((*it)->x () * mapsquare_size + (*it)->ox (),
-                                           (*it)->y () * mapsquare_size + (*it)->oy ());
-                        ((map_character_with_gfx *)
-                         (*it)->obj)->draw_walkable ((*it)->x () * mapsquare_size + (*it)->ox (),
-                                           (*it)->y () * mapsquare_size + (*it)->oy ());
-                        ((map_character_with_gfx *)
-                         (*it)->obj)->draw_border ((*it)->x () * mapsquare_size + (*it)->ox (),
-                                           (*it)->y () * mapsquare_size + (*it)->oy ());
+                         (*it).obj)->draw ((*it).x () * mapsquare_size + (*it).ox (),
+                                           (*it).y () * mapsquare_size + (*it).oy ());
+//                         ((map_character_with_gfx *)
+//                          (*it).obj)->draw_walkable ((*it).x () * mapsquare_size + (*it).ox (),
+//                                            (*it).y () * mapsquare_size + (*it).oy ());
+//                         ((map_character_with_gfx *)
+//                          (*it).obj)->draw_border ((*it).x () * mapsquare_size + (*it).ox (),
+//                                            (*it).y () * mapsquare_size + (*it).oy ());
                         break; 
                         
                     case OBJECT:
                         ((map_object_with_gfx *)
-                         (*it)->obj)->draw ((*it)->x () * mapsquare_size + (*it)->ox (),
-                                            (*it)->y () * mapsquare_size + (*it)->oy ());
-                        ((map_object_with_gfx *)
-                         (*it)->obj)->draw_walkable ((*it)->x () * mapsquare_size + (*it)->ox (),
-                                            (*it)->y () * mapsquare_size + (*it)->oy ());                        
-                        ((map_object_with_gfx *)
-                         (*it)->obj)->draw_border ((*it)->x () * mapsquare_size + (*it)->ox (),
-                                            (*it)->y () * mapsquare_size + (*it)->oy ());                        
+                         (*it).obj)->draw ((*it).x () * mapsquare_size + (*it).ox (),
+                                            (*it).y () * mapsquare_size + (*it).oy () - (*it).z());
+//                         ((map_object_with_gfx *)
+//                          (*it).obj)->draw_walkable ((*it).x () * mapsquare_size + (*it).ox (),
+//                                             (*it).y () * mapsquare_size + (*it).oy ());                        
+//                         ((map_object_with_gfx *)
+//                          (*it).obj)->draw_border ((*it).x () * mapsquare_size + (*it).ox (),
+//                                             (*it).y () * mapsquare_size + (*it).oy ());                        
                         break;
                         
                     default:
@@ -319,7 +353,7 @@ int main (int argc, char * argv[])
             }
 
             drawqueue.clear ();             
-        }
+
 
         if (gc.draw_grid)
         {

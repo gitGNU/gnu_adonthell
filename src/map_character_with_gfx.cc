@@ -24,7 +24,8 @@
 #include "map_character_with_gfx.h"
 
 map_character_with_gfx::map_character_with_gfx (landmap & mymap) : map_character (mymap),
-                                                    map_placeable_gfx((map_placeable &)*this) 
+                                                                   map_placeable_gfx((map_placeable &)*this),
+                                                                   shadow (40, 15)
 {
 //     map_placeable_area * moa;
 
@@ -198,6 +199,7 @@ void map_character_with_gfx::get(igzstream & file)
 {
     map_character::get(file);
     map_placeable_model_gfx::get(file);
+    set_gfx(current_state_name());
 }
 
 s_int8 map_character_with_gfx::save(string fname) const
@@ -222,4 +224,12 @@ s_int8 map_character_with_gfx::load(string fname)
     get (file);
     file.close (); 
     return ret;
+}
+
+void map_character_with_gfx::draw (s_int16 x, s_int16 y, const drawing_area * da_opt = NULL,
+                                   surface * target = NULL) const
+{
+    shadow.draw(x, y + 25, da_opt, target);
+    y -= z();
+    map_placeable_model_gfx::draw(x, y, da_opt, target);
 }

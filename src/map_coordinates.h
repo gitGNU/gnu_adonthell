@@ -22,11 +22,12 @@ class map_coordinates
 {
 protected :
     u_int16 X, Y;
+    s_int32 Z;
     u_int16 Ox, Oy;
 
 public:
     map_coordinates ();
-    map_coordinates (u_int16 x, u_int16 y, u_int16 ox = 0, u_int16 oy = 0); 
+    map_coordinates (u_int16 x, u_int16 y, u_int16 z, u_int16 ox = 0, u_int16 oy = 0); 
 
     u_int16 x () const
     {
@@ -36,6 +37,11 @@ public:
     u_int16 y () const
     {
         return Y; 
+    }
+
+    s_int32 z() const
+    {
+        return Z;
     }
 
     u_int16 ox () const
@@ -52,6 +58,11 @@ public:
     {
         X = x;
         Y = y; 
+    }
+
+    void set_altitude(s_int32 z)
+    {
+        Z = z;
     }
 
     void set_offset (u_int16 ox, u_int16 oy) 
