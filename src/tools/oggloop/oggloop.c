@@ -29,16 +29,20 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <unistd.h>
+
 #include "vorbis/vorbisfile.h"
+#include "vorbis/codec.h"
+#include "vcedit.h"
 
 int main (int argc, char *argv[]) {
   OggVorbis_File ov;
-  char *infoname;
-  FILE *oggfile, *infofile;
+  vcedit_state *vc;
+  char tmp[32], file[512], changed = 0;
+  FILE *oggfile, *outfile;
   double start = 0;
   double end = 0;
-  int i, s, e, p_raw, p_pcm;
-  unsigned short version = 1;
+  int i, s, e, p_raw, p_pcm, size = 0;
 
   /* open the file, our last argument */
   oggfile = fopen (argv[argc-1], "r");
@@ -90,33 +94,117 @@ int main (int argc, char *argv[]) {
     e = ov_raw_tell (&ov);
     printf ("End (%gs):\t %i (raw bytes)\n", end, e);
     fflush (stdout);      
+
+    /* close the file */
+    ov_clear (&ov);
+
+    /* open it for vcedit */
+    oggfile = fopen (argv[argc-1], "rb");
+
+    /* add stuff to the oggvorbis comment header */
+    vc = vcedit_new_state ();
+    if (vcedit_open (vc, oggfile) == -1) {
+        printf ("\nError: %s\n", vcedit_error (vc));
+        exit (1);
+    }
+
+    /* Remove Adonthell related comments, else we might get duplicates */
+    for (i = 0; i < vc->vc->comments; i++)
+        if (strncmp (vc->vc->user_comments[i], "OldHeaderSize", 13) == 0 ||
+            strncmp (vc->vc->user_comments[i], "StartPagePCM", 12) == 0 ||
+            strncmp (vc->vc->user_comments[i], "StartPageRaw", 12) == 0 ||
+            strncmp (vc->vc->user_comments[i], "Start", 5) == 0 ||
+            strncmp (vc->vc->user_comments[i], "End", 3) == 0)
+            {
+                int j;
+                free (vc->vc->user_comments[i]);
+                
+                for (j = i; j < vc->vc->comments - 1; j++)
+                {
+                    vc->vc->user_comments[j] = vc->vc->user_comments[j+1];
+                    vc->vc->comment_lengths[j] = vc->vc->comment_lengths[j+1];
+                }
+
+                changed = 1;
+                vc->vc->comments--;
+                i--;
+            }
+
+    if (changed) {
+        /* rename the input file */
+        sprintf (file, "%s.tmp", argv[argc-1]);
+        rename (argv[argc-1], file);        
+        outfile = fopen (argv[argc-1], "wb");
     
-   /* write stuff to file */
-   infoname = strdup (argv[argc-1]);
-   memcpy (infoname+strlen(infoname)-4, ".lpp", 4);
+        /* write the changed file */
+        if (vcedit_write (vc, outfile) == -1) {
+            printf ("\nError: %s\n", vcedit_error (vc));
 
-   infofile = fopen (infoname, "w");
-   if (infofile) {
-     fputc ('v', infofile);
-     fwrite (&version, sizeof(version), 1, infofile);
+            /* cleanup */
+            fclose (outfile);
+            unlink (argv[argc-1]);
+            rename (file, argv[argc-1]);
+            exit (1);
+        }
 
-     fwrite (&p_pcm, sizeof(p_pcm), 1, infofile);
-     fwrite (&p_raw, sizeof(p_raw), 1, infofile);
-     fwrite (&s, sizeof(s), 1, infofile);
-     fwrite (&e, sizeof(e), 1, infofile);
-     fclose (infofile);
-     printf ("\nOK. Output written to %s.\n\n", infoname);
+        unlink (file);
+        
+        fclose (outfile);
+        fclose (oggfile);
 
-   } else {
-     printf ("\nError: couldn't write to %s.\n\n", infoname);
-   }
-   
-   free (infoname);
-   
+        /* reopen clean file */
+        oggfile = fopen (argv[argc-1], "rb");
+
+        if (vcedit_open (vc, oggfile) == -1) {
+            printf ("\nError: %s\n", vcedit_error (vc));
+            exit (1);
+        }
+    }
+
+    /* get the old file size */
+    i = ftell (oggfile);
+    fseek (oggfile, 0, SEEK_END);
+    size = ftell (oggfile);
+    fseek (oggfile, i, SEEK_SET);
+    
+    /* add the values */
+    sprintf (tmp, "%i", size);
+    vorbis_comment_add_tag (vc->vc, "OldHeaderSize", tmp);
+    sprintf (tmp, "%i", p_pcm);
+    vorbis_comment_add_tag (vc->vc, "StartPagePCM", tmp);
+    sprintf (tmp, "%i", p_raw);
+    vorbis_comment_add_tag (vc->vc, "StartPageRaw", tmp);
+    sprintf (tmp, "%i", s);
+    vorbis_comment_add_tag (vc->vc, "Start", tmp);
+    sprintf (tmp, "%i", e);
+    vorbis_comment_add_tag (vc->vc, "End", tmp);
+    
+    /* rename the input file */
+    sprintf (file, "%s.tmp", argv[argc-1]);
+    rename (argv[argc-1], file);        
+    outfile = fopen (argv[argc-1], "wb");
+    
+    /* write the changed file */
+    if (vcedit_write (vc, outfile) == -1) {
+        printf ("\nError: %s\n", vcedit_error (vc));
+
+        /* cleanup */
+        fclose (outfile);
+        unlink (argv[argc-1]);
+        rename (file, argv[argc-1]);
+        exit (1);
+    }
+
+    unlink (file);
+    vcedit_clear (vc);
+
+    fclose (outfile);
+    fclose (oggfile);
+    
   } else {
     printf ("Input was not seekable.\n");
+    ov_clear (&ov);
   }
 
-  ov_clear (&ov);
   return 0;
 }

@@ -26,7 +26,9 @@ extern unsigned short md_mode; // This is declared in MikMod
 
 int audio::background_volume;
 int audio::effects_volume;
+#ifdef OGG_VORBIS
 loop_info *audio::loop[NUM_MUSIC];
+#endif
 Mix_Music *audio::music[NUM_MUSIC];
 Mix_Chunk *audio::sounds[NUM_WAVES];
 bool audio::background_on;
@@ -155,14 +157,12 @@ int audio::load_background(int slot, char *filename) {
   
   // No music in slot, load new tune in, ...
   music[slot] = Mix_LoadMUS(filename);
-  loop[slot] = new loop_info;
 
 #ifdef OGG_VORBIS
   // read loop points and ...
-  if (!loop[slot]->load (filename))
-    loop[slot]->end = ov_raw_total (&music[slot]->data.ogg->vf, -1);
-
-  // enable looping
+  loop[slot] = new loop_info (&music[slot]->data.ogg->vf);
+  
+  // ... enable looping
   music[slot]->data.ogg->vf.callbacks.read_func = &ogg_read_callback;
 #endif
 #endif

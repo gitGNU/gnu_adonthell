@@ -17,22 +17,19 @@
 
 #ifdef OGG_VORBIS
 #include "vorbis/vorbisfile.h"
-#endif
 
 // Class containing the information necessary for looping .ogg files
 class loop_info
 {
 public:
-    loop_info ();
-    bool load (char*);
+    loop_info (OggVorbis_File *);
 
-    u_int32 start_page_pcm;
+    s_int32 start_page_pcm;
     u_int32 start_page_raw;
     u_int32 start;
     u_int32 end;
 };
 
-#ifdef OGG_VORBIS
 // Callback passed to OggVorbis to read/and loop our background music
 extern "C" size_t ogg_read_callback (void *, size_t, size_t, void*);
 extern "C" size_t fread_wrap (void *, size_t, size_t, void*);

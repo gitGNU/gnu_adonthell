@@ -38,7 +38,6 @@ class audio
   static int background_volume;
   static int effects_volume;
   static Mix_Music *music[NUM_MUSIC];
-  static loop_info *loop[NUM_MUSIC];
   static Mix_Chunk *sounds[NUM_WAVES];
   static bool background_on;
   static int current_background;
@@ -85,6 +84,8 @@ public:
     static bool is_initialized() { return audio_initialized; }
 
 #ifdef OGG_VORBIS
+    static loop_info *loop[NUM_MUSIC];
+
     static int get_loop_start() { return loop[current_background]->start; }
     static int get_loop_end() { return loop[current_background]->end; }
     static int get_start_page_pcm() { return loop[current_background]->start_page_pcm; }

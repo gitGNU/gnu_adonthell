@@ -16,9 +16,11 @@
    See the COPYING file for more details.
 */
 
-#ifdef SDL_MIXER
+#if defined (SDL_MIXER) && defined (OGG_VORBIS)
 
 #include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
 #include <errno.h>
 #include "SDL_mixer.h"
 
@@ -26,44 +28,49 @@
 #include "fileops.h"
 #include "audio.h"
 #include "audio_loop.h"
+#include "vorbis/codec.h"
 
-
-loop_info::loop_info ()
+// structure to store our looping point information
+loop_info::loop_info (OggVorbis_File *vf)
 {
-    start_page_pcm = 0;
-    start_page_raw = 0;
-    start = 0;
-    end = 0;
-}
+    // read stuff from the vorbis comment
+    vorbis_comment *vc = ov_comment (vf, -1);
+    s_int32 offset = 0;
+    char *tmp;
 
-bool loop_info::load (char *filename)
-{
-    bool retval = true;
-    char *info_file = strdup (filename);
-    memcpy (info_file+strlen(info_file)-4, ".lpp", 4);
-
-    FILE *info = fopen (info_file, "r");
-    if (info)
+    // since adding those information to the file header changes the
+    // raw offsets, we have to restore them from the original and the 
+    // current file size.
+    tmp = vorbis_comment_query (vc, "OldHeaderSize", 0);
+    if (tmp) 
     {
-        if (!fileops::get_version (info, 1, 1, info_file))
-            retval = false;
-        else
-        {
-            fread (&start_page_pcm, sizeof(start_page_pcm), 1, info);
-            fread (&start_page_raw, sizeof(start_page_raw), 1, info);
-            fread (&start, sizeof(start), 1, info);
-            fread (&end, sizeof(end), 1, info);
-        }
+        int new_size = ov_raw_total (vf, -1);
+        int old_size = atoi (tmp);
 
-        fclose (info);
+        offset = old_size - new_size;
     }
-    else retval = false;
 
-    free (info_file);
-    return retval;
+    // The PCM position of the page with the loop's start
+    tmp = vorbis_comment_query (vc, "StartPagePCM", 0);
+    if (tmp) start_page_pcm = atoi (tmp);
+    else start_page_pcm = -1;
+
+    // The raw position of the page containing the loop's start
+    // in the file stream
+    tmp = vorbis_comment_query (vc, "StartPageRaw", 0);
+    if (tmp) start_page_raw = atoi (tmp) + offset;
+    else start_page_raw = 0;
+
+    // The actual PCM position of the loop's start
+    tmp = vorbis_comment_query (vc, "Start", 0);
+    if (tmp) start = atoi (tmp);
+    else start = 0;
+
+    // The raw position of the loop's end point
+    tmp = vorbis_comment_query (vc, "End", 0);
+    if (tmp) end = atoi (tmp) + offset;
+    else end = ov_raw_total (vf, -1);
 }
-
-#ifdef OGG_VORBIS
 
 #define CHUNKSIZE 4096
 
@@ -323,6 +330,5 @@ size_t fread_wrap (void *ptr, size_t size, size_t nmemb, void *datasource)
     return fread (ptr, size, nmemb, (FILE*) datasource);
 }
 }
-#endif // OGG_VORBIS
-#endif // SDL_MIXER
+#endif // OGG_VORBIS && SDL_MIXER
 
