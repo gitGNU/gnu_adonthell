@@ -521,8 +521,6 @@ u_int32 image::get_pix(u_int16 x, u_int16 y)
 {
   const u_int32 offset=((y*length)+x);
   static u_int32 retvalue;
-  /*  memcpy(&retvalue,(char*)data->pixels+offset,bytes_per_pixel);
-      return(retvalue);*/
 
   switch (bytes_per_pixel)
     {
@@ -541,8 +539,7 @@ u_int32 image::get_pix(u_int16 x, u_int16 y)
 
 void image::put_pix(u_int16 x, u_int16 y, u_int32 col)
 {
-  const u_int32 offset=((y*length)+x);
-  //  memcpy((char*)data->pixels+offset,&col,bytes_per_pixel);
+  const u_int32 offset=((y*((length%2?length+1:length)))+x);
 
   switch (bytes_per_pixel)
     {
@@ -560,15 +557,26 @@ void image::put_pix(u_int16 x, u_int16 y, u_int32 col)
 
 void image::zoom(image * src)
 {
-  u_int16 i,j;
-  u_int32 temp;
+  static u_int16 i,j;
+  static u_int32 temp;
+  SDL_LockSurface(src->data);
+  SDL_LockSurface(data);
+  SDL_LockSurface(screen::vis);
   for(j=0;j<height;j++)
     for(i=0;i<length;i++)
       {
-	//	cout << "Getting " << (i*src->length/length) << " " << (j*src->height/height) << " for " << i << " " << j << endl;
-	temp=src->get_pix(i*src->length/length,j*src->height/height);
-	put_pix(i,j,temp);
+	//  cout << (float)src->length/length << " " << (int) src->length/length << endl;
+	//cout << (float)src->height/height << " " << (int) src->height/height << endl;
+       	temp=src->get_pix(i*src->length/length,j*src->height/height);
+	//  	*((u_int16*)screen::vis->pixels+((j*320)+i))=(u_int16)temp;
+	//      	*((u_int16*)data->pixels+((j*86)+i))=(u_int16)temp;
+       	put_pix(i,j,temp);
       }
+  SDL_UnlockSurface(screen::vis);
+  SDL_UnlockSurface(src->data);
+  SDL_UnlockSurface(data);
+  //  screen::show();
+  //  getchar();
 }
 
 void image::brightness(image * src, u_int16 cont)

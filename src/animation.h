@@ -23,7 +23,7 @@
 #include <string>
 #include "input.h"
 #include "prefs.h"
-#include "game.h"
+//#include "game.h"
 #include "win_types.h"
 #include "win_base.h"
 #include "win_font.h"
