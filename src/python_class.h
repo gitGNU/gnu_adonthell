@@ -124,12 +124,6 @@ public:
     static void put_tuple (PyObject * tuple, ogzstream & file);  
 
     static PyObject *module;
-private:
-    /**
-     * Convert a Pointer to a String, like SWIG 1.3.7+ does
-     *
-     */
-    static char *python::ptr_to_string (char *c, void *ptr, int sz);
 };
 
 #ifndef SWIG

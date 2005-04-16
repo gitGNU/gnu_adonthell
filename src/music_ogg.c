@@ -26,6 +26,7 @@
 
 /* This file supports Ogg Vorbis music streams */
 
+#include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 

@@ -62,7 +62,7 @@ void gametime::update ()
         // if the mainloop was performed faster than one frame
         // should take, we sleep for the time remaining
         if (timer2 >= gfx_cycle_length) break;
-        else SDL_Delay (3);
+        else SDL_Delay (50);
     }
     
     timer1 = SDL_GetTicks () - (timer2 % CYCLE_LENGTH);

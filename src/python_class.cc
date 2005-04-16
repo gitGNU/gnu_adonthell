@@ -26,8 +26,11 @@
 #include "game.h"
 #include <iostream> 
 
-PyObject * data::globals;
-PyObject * python::module;
+PyObject *data::globals;
+PyObject *python::module;
+
+// defined in py_adonthell_wrap.cc
+PyObject *pass_instance (void *instance, const char* class_name);
 
 using namespace std;
 
@@ -39,6 +42,9 @@ void python::init ()
     Py_Initialize ();
 }
 
+/**
+ * Stop Python
+ */
 void python::cleanup () 
 {
     // Cleanup the global namespace of python interpreter
@@ -117,51 +123,7 @@ PyObject *python::import_module (string filename)
 // Make a C++ instance available to Python
 PyObject *python::pass_instance (void *instance, const char *class_name)
 {
-    char class_ptr[256];
-    char class_addr[256];
-    char *buffer = class_addr;
-
-    // Construct the python shadow class matching the "instance" class 
-    strcat (strcpy (class_ptr, class_name), "Ptr");
-    
-    // Construct SWIG's representation of the "instance" pointer
-    *(buffer++) = '_';
-    buffer = ptr_to_string (buffer, &instance, sizeof (void *));
-    strcpy (buffer, "_p_");
-    strcpy (buffer+3, class_name);
-
-    // Now create the Python object corresponding to "instance"
-    PyObject *cls = PyDict_GetItemString (data::globals, class_ptr);
-    PyObject *arg = Py_BuildValue ("(s)", class_addr);
-    PyObject *res = PyObject_CallObject (cls, arg);
-    
-#ifdef PY_DEBUG
-    show_traceback ();
-#endif
-
-    // Clean up
-    Py_DECREF (arg);
-    
-    // Voila: "res" is 'identical' to "instance" :)
-    return res;
-}
-
-// Convert a pointer to a string (like SWIG 1.3.7 does)
-char *python::ptr_to_string (char *c, void *ptr, int sz)
-{
-    static char hex[17] = "0123456789abcdef";
-    int i;
-    unsigned char *u = (unsigned char *) ptr;
-    register unsigned char uu;
-
-    for (i = 0; i < sz; i++,u++)
-    {
-        uu = *u;
-        *(c++) = hex[(uu & 0xf0) >> 4];
-        *(c++) = hex[uu & 0xf];
-    }
-
-    return c;
+    return pass_instance (instance, class_name);
 }
 
 PyObject * python::get_tuple (igzstream & file)

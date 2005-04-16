@@ -15,7 +15,7 @@ AM_CONFIG_HEADER(config.h)
 
 CFLAGS="-g -Wall -fno-exceptions"
 CPPFLAGS=""
-DEFS="-DSWIG_GLOBAL"
+DEFS=""
 
 dnl ********************
 dnl Checks for programs.
@@ -41,9 +41,6 @@ dnl ********************
 AC_ARG_ENABLE(unix-install,
 [  --disable-unix-install Disable a Unix-like install (enabled by default)],
 	unixinst=$enableval, unixinst=yes)
-AC_ARG_ENABLE(tools,
-[  --enable-tools         Build the Adonthell dev tools (disabled by default)],
-	tools=$enableval, tools=no)
 AC_ARG_ENABLE(memleaks,
 [  --enable-memleaks      Enable check for memory leaks (disabled by default)],
 	memleaks=$enableval, memleaks=no)
@@ -332,28 +329,13 @@ dnl ********************************
 dnl Check whether to build our tools
 dnl ********************************
 
-AC_MSG_CHECKING(whether to build the various editors)
-if test x$tools = xno; then
-	AC_MSG_RESULT(no)
-else
-	AC_MSG_RESULT(yes)
-fi
-
-AM_CONDITIONAL(BUILD_TOOLS, test x$tools = xyes)
+AM_CONDITIONAL(BUILD_TOOLS, false)
 
 dnl ***************************
 dnl For some tools we need GTK+
 dnl ***************************
 
-if test x$tools = xyes; then
-	AM_PATH_GTK(1.2.5, havegtk=yes, havegtk=no)
-
-	if test "$havegtk" = no; then
-		AC_MSG_RESULT(disabling tools that need GTK+)
-	fi
-fi
-
-AM_CONDITIONAL(HAVE_GTK, test x$havegtk = xyes)
+AM_CONDITIONAL(HAVE_GTK, false)
 
 dnl ****************************************
 dnl Check whether to build the documentation
@@ -417,8 +399,6 @@ AC_SUBST(SDL_DEFS)
 AC_SUBST(OGG_CFLAGS)
 AC_SUBST(OGG_LIBS)
 AC_SUBST(OGG_DEFS)
-AC_SUBST(GTK_CFLAGS)
-AC_SUBST(GTK_LIBS)
 AC_SUBST(PY_CFLAGS)
 AC_SUBST(PY_LIBS)
 AC_SUBST(P_SWIG)
@@ -438,12 +418,7 @@ m4/Makefile
 po/Makefile.in 
 src/Makefile
 src/modules/Makefile
-src/tools/Makefile
-src/tools/charedit/Makefile
-src/tools/dlgedit/Makefile
-src/tools/dlgedit/examples/Makefile
 ])
-
 
 dnl ****************
 dnl Configure Status
@@ -455,15 +430,11 @@ echo
 echo "SDL ....................... : `$SDL_CONFIG --version`"
 echo "Python .................... : $PY_VERSION"
 echo "Python debugging .......... : $pydebug"
-dnl echo "Freetype .................. : `freetype-config --version`"
+echo "Freetype .................. : `freetype-config --version`"
 if test x$haveswig = xyes; then
 echo "SWIG ...................... : $SWIG_VERSION"
 fi
-if test x$havegtk = xyes; then
-echo "GTK+ ...................... : `gtk-config --version`"
-fi
 echo "Ogg music ................. : $ogg_music"
-echo "Building editors .......... : $tools"
 echo "Building API doc .......... : $builddoc"
 if test x$memleaks = xyes; then
 echo "Test for Memory Leaks ..... : enabled"

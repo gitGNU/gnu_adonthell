@@ -34,4 +34,5 @@ private:
     static u_int32 refcount;
 };
 
-#endif WIN_TTF_H
+#endif // WIN_TTF_H
+

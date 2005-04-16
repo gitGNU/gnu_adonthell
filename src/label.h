@@ -60,19 +60,19 @@ public :
        Set the form of the display
        NOTHING, AUTO_SIZE, AUTO_HEIGHT
     */
-    inline void set_form (const u_int8 form); 
+    void set_form (const u_int8 form); 
 
     
     /**
        Set visible cursor
     */
-    inline void set_cursor_visible (const bool b);
+    void set_cursor_visible (const bool b);
     
 
     /**
        Set if the cursor can be moved with arrow key
     */
-    inline void set_cursor_moveable (const bool b);
+    void set_cursor_moveable (const bool b);
     
     
     /**

@@ -15,9 +15,6 @@
 #include "input.h"
 #include "audio.h"
 #include "character_base.h"
-#include "item_storage.h"
-#include "inventory.h"
-#include "manager.h"
 #include "quest.h"
 #include "drawing_area.h"
 #include "drawable.h"
@@ -39,7 +36,7 @@
 #include "win_image.h"
 #include "win_write.h"
 #include "win_mapview.h"
-#include "win_font.h"
+#include "win_ttf.h"
 #include "win_theme.h"
 #include "win_base.h"
 #include "text_bubble.h"
@@ -58,69 +55,31 @@
 #define     SDLK_UNDO 322
 #endif
 
+// Workaround for bug in pyptrtypes.swg
+#define SWIG_append_msg SWIG_append_errmsg
+
 // This enum allows clearer ownership operation:
 // obj.thisown = Python (Python will destroy the object)
-// obj.thisown = C (C have to destroy the object)
+// obj.thisown = C (C has to destroy the object)
 enum {Python = 1, C = 0};
+
+// pass an instance to python
+PyObject *pass_instance (void *instance, const char* class_name)
+{
+    swig_type_info * ti = SWIG_TypeQuery (class_name);
+    if (ti) return SWIG_NewPointerObj (instance, ti, C);
+    else printf ("*** pass_instance: Type '%s' not known to SWIG!\n", class_name);
+    return NULL;
+}
 
 %}
 
 // Same enum available for Python
 enum {Python = 1, C = 0};
 
-%typemap(python,in) string
-{
-    if (PyString_Check ($input))
-    {
-        $1 = string (PyString_AsString($input));
-    }
-    else
-    {
-        PyErr_SetString (PyExc_TypeError, "not a String");
-        return NULL;
-    }
-}
-%typemap(python,in) const string = string;
+%include "std_string.i"
 
-%typemap(python,in) string &
-{
-    if (PyString_Check ($input))
-    {
-        $1 = new string (PyString_AsString($input));
-    }
-    else
-    {
-        PyErr_SetString (PyExc_TypeError, "not a String");
-        return NULL;
-    }
-}
-%typemap(python,in) const string & = string &;
-%typemap(python,in) const std::string & = string &;
-
-%typemap(python,out) string
-{
-    $result = PyString_FromString((const char *)$1.c_str()); 
-}
-%typemap(python,out) const string = string;
-
-%typemap(python,out) string &
-{
-    $result = PyString_FromString((const char *)$1->c_str());
-    // delete $1; 
-}
-%typemap(python,out) const string & = string &;
-
-%typemap (python, freearg) string &
-{
-    if ($1 != NULL)
-    {
-        delete $1;
-    }
-}
-%typemap (python, freearg) const string & = string &;
-%typemap (python, freearg) const std::string & = string &;
-
-%typemap (python,in) PyObject *pyfunc 
+%typemap (in) PyObject *pyfunc 
 { 
     if (!PyCallable_Check($input)) 
     { 
@@ -130,14 +89,10 @@ enum {Python = 1, C = 0};
     $1 = $input; 
 }
 
-%typemap (python,in) PyObject*
+%typemap (in) PyObject*
 { 
     $1 = $input; 
 }
-
-%include "typemaps.i"
-%apply unsigned int *INOUT { unsigned int *count };
-
 
 %include "types.h"
 %include "fileops.h"
@@ -153,12 +108,7 @@ enum {Python = 1, C = 0};
 %include "input.h"
 %include "audio.h"
 %include "character_base.h"
-%include "slot.h"
 %include "py_object.h"
-%include "item_base.h"
-%include "item_storage.h"
-%include "inventory.h"
-%include "manager.h"
 %include "drawing_area.h"
 %include "quest.h"
 %include "drawable.h"
