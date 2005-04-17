@@ -38,11 +38,14 @@ void nls::init (config &myconfig)
     // otherwise overwrite any environment variables
     else 
         set_language (myconfig.language);
-    
+
     // open the message catalogue
     std::string location = myconfig.gamedir + "/locale";
-    bindtextdomain (myconfig.game_name.c_str (), location.c_str ());
-    textdomain (myconfig.game_name.c_str ());
+    const char *domain = myconfig.game_name.c_str ();
+
+    bindtextdomain (domain, location.c_str ());
+    textdomain (domain);
+    bind_textdomain_codeset(domain, "UTF-8");
 #endif
 }
 
