@@ -30,7 +30,7 @@ PyObject *data::globals;
 PyObject *python::module;
 
 // defined in py_adonthell_wrap.cc
-PyObject *pass_instance (void *instance, const char* class_name);
+PyObject *get_py_obj (void *instance, const char* class_name);
 
 using namespace std;
 
@@ -123,7 +123,8 @@ PyObject *python::import_module (string filename)
 // Make a C++ instance available to Python
 PyObject *python::pass_instance (void *instance, const char *class_name)
 {
-    return pass_instance (instance, class_name);
+    string class_ptr = string(class_name) + "*";
+    return get_py_obj (instance, class_ptr.c_str());
 }
 
 PyObject * python::get_tuple (igzstream & file)

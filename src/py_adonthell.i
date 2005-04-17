@@ -64,11 +64,11 @@
 enum {Python = 1, C = 0};
 
 // pass an instance to python
-PyObject *pass_instance (void *instance, const char* class_name)
+PyObject *get_py_obj (void *instance, const char* class_name)
 {
     swig_type_info * ti = SWIG_TypeQuery (class_name);
     if (ti) return SWIG_NewPointerObj (instance, ti, C);
-    else printf ("*** pass_instance: Type '%s' not known to SWIG!\n", class_name);
+    else printf ("*** get_py_obj: Type '%s' not known to SWIG!\n", class_name);
     return NULL;
 }
 
