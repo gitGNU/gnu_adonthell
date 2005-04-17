@@ -59,9 +59,16 @@ The available options and what they do are:
   
   Of course, the game you run has to provide the translation you 
   chose here, otherwise you'll get the default (i.e. English) text.
-  
-  With Waste's Edge 0.3.4 comes a Dutch translation (nl_NL).
-  Others might become available later.
+  Languages available in this package:
+
+  Language    Locale
+  ------------------
+  Dutch       nl_NL
+  Englich
+  Italian     it_IT
+
+  If new languages become available, they will be announced on
+  our website: http://adonthell.linuxgames.com/
 
 - Font [font.ttf]
   Chose a true type font to use for displaying text. 
