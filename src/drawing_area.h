@@ -156,7 +156,7 @@ public:
      * 
      * @return drawing_area which has the same dimensions and location as r.
      */
-    drawing_area& drawing_area::operator = (SDL_Rect& r); 
+    drawing_area& operator = (SDL_Rect& r); 
 #endif
     
     /** 
