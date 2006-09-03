@@ -22,6 +22,7 @@
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
+#include <getopt.h>
 #include <stdio.h>
 #include <iostream> 
 #include <sys/stat.h>

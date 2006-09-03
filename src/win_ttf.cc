@@ -137,10 +137,20 @@ image & win_ttf::operator[](u_int16 glyph)
     if (s == NULL) return *(glyphs[' ']);
     
     image tmp (s, bg);
-    image shadow (TTF_RenderUNICODE_Solid (ttf, unichar, bg), white);
     image *glph = new image (tmp.length(), height_, false);
     glph->fillrect (0, 0, tmp.length()+1, height_+1, screen::trans_col(), NULL);
-    shadow.draw (1, 1+height_-shadow.height(), 0, 0, shadow.length(), shadow.height(), NULL, glph);
+
+    s = TTF_RenderUNICODE_Solid (ttf, unichar, bg);
+    if (s != NULL)
+    {
+    	image shadow (s, white);
+	    shadow.draw (1, 1+height_-shadow.height(), 0, 0, shadow.length(), shadow.height(), NULL, glph);
+    }
+    else
+    {
+    	fprintf (stderr, "%s\n", TTF_GetError ());
+    }
+    
     tmp.draw (0, height_-tmp.height(), 0, 0, tmp.length(), tmp.height(), NULL, glph);
     glyphs[glyph] = glph;
 

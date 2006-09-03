@@ -16,7 +16,7 @@ headers = \
 adonthell.h animation.h audio.h callback.h py_callback.h character_base.h \
 character.h gamedata.h data_screen.h dialog.h dialog_screen.h drawable.h \
 drawing_area.h event.h event_handler.h event_handler_base.h event_list.h \
-fileops.h game.h gamedate.h gametime.h gettext.h getopt.h image.h input.h \
+fileops.h game.h gamedate.h gametime.h gettext.h image.h input.h \
 landmap.h map_event.h map_event_handler.h mapsquare.h \
 mapsquare_walkable.h nls.h mapcharacter.h mapobject.h mapview.h path.h \
 pnm.h prefs.h python_class.h py_object.h quest.h screen.h surface.h storage.h \
@@ -52,6 +52,7 @@ adonthell_SOURCES = main.cc
 # Note: adonthell.py is also built by this target. 
 py_adonthell_wrap.cc : py_adonthell.i $(headers)
 	@if test "${P_SWIG}"; then \
+	   echo ${P_SWIG} -python -modern -shadow ${SDL_CFLAGS} -I$(srcdir) -I$(srcdir)/.. -c++ -makedefault -o $(srcdir)/$*.cc $(srcdir)/py_adonthell.i; \
 	   ${P_SWIG} -python -modern -shadow ${SDL_CFLAGS} -I$(srcdir) -I$(srcdir)/.. -c++ -makedefault -o $(srcdir)/$*.cc $(srcdir)/py_adonthell.i; \
            mv $(srcdir)/adonthell.py modules/adonthell.py; \
 	else \
