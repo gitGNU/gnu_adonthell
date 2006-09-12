@@ -12,7 +12,7 @@
    See the COPYING file for more details.
 */
 
-/** 
+/**
  * @file nls.cc
  *
  * @author Kai Sterker
@@ -32,11 +32,11 @@ void nls::init (config &myconfig)
 {
 #if ENABLE_NLS
     // if no language specified in the config file, determine
-    // the locale from the environment variables 
+    // the locale from the environment variables
     if (myconfig.language == "")
         setlocale (LC_MESSAGES, "");
     // otherwise overwrite any environment variables
-    else 
+    else
         set_language (myconfig.language);
 
     // open the message catalogue
@@ -51,18 +51,21 @@ void nls::init (config &myconfig)
 
 // Set the language to use
 void nls::set_language (const string &language)
-{    
+{
 #if ENABLE_NLS
-#if !defined (WIN32) && !defined (__BEOS__)
+#ifndef __BEOS__
     string lang = "LANGUAGE=" + language;
     putenv ((char *) lang.c_str ());
+#else
+	// TODO: no putenv on BEOS, but there should be setenv	
 #endif
     {
         // tell gettext that the language has changed
         extern int _nl_msg_cat_cntr;
         ++_nl_msg_cat_cntr;
     }
-    setlocale (LC_MESSAGES, language.c_str ());
+    
+    setlocale (LC_MESSAGES, language.c_str ());	
 #endif
 }
 
