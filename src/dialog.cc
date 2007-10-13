@@ -84,7 +84,7 @@ bool dialog::setup ()
     if (list && PyList_Check (list))
     {
         size = PyList_Size (list);
-        strings = new char*[size];
+        strings = new const char*[size];
 
         for (i = 1; i < size; i++)
         {
@@ -368,7 +368,7 @@ string dialog::scan_string (const char *s)
     return newstr;
 }
 
-char *dialog::get_substr (const char* string, char* begin, char* end)
+char *dialog::get_substr (const char* string, const char* begin, const char* end)
 {
     u_int32 b, e;
     b = strcspn (string, begin) + 1;

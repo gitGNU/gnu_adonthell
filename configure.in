@@ -2,8 +2,8 @@ dnl **************************************************************
 dnl Process this file with autoconf to produce a configure script.
 dnl **************************************************************
 
-AC_PREREQ(2.50)
-AC_INIT(adonthell, 0.3.4, adonthell-project@linuxgames.com, adonthell)
+AC_PREREQ(2.61)
+AC_INIT([adonthell],[0.3.4],[adonthell-project@linuxgames.com],[adonthell])
 dnl AC_PREFIX_PROGRAM(adonthell)
 
 dnl Detect the canonical host and target build environment
@@ -11,7 +11,7 @@ AC_CANONICAL_HOST
 AC_CANONICAL_TARGET
 
 AM_INIT_AUTOMAKE([])
-AM_CONFIG_HEADER(config.h)
+AC_CONFIG_HEADERS([config.h])
 
 CFLAGS="-g -Wall -fno-exceptions"
 CPPFLAGS=""
@@ -23,7 +23,7 @@ dnl ********************
 
 AC_PROG_CC
 AC_PROG_CXX
-AC_LANG_C
+AC_LANG([C])
 AC_PROG_CXXCPP
 AM_PROG_LIBTOOL
 AC_PROG_MAKE_SET
@@ -406,7 +406,7 @@ AC_SUBST(gamedatadir)
 dnl AC_SUBST(FT2_LIBS)
 dnl AC_SUBST(FT2_CFLAGS)
 
-AC_OUTPUT([ 
+AC_CONFIG_FILES([ 
 Makefile
 adonthell.spec
 doc/Makefile
@@ -419,6 +419,7 @@ po/Makefile.in
 src/Makefile
 src/modules/Makefile
 ])
+AC_OUTPUT
 
 dnl ****************
 dnl Configure Status
