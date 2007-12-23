@@ -416,15 +416,17 @@ void label::clean_surface (const bool erase_all)
 // return 0 if enough size for this word,  1 if enough but must return on the next line, 2 if the word is bigger than the length 
 u_int8 label::find_word (u_int16 & index, u_int16 & wlength, u_int16 & wlengthpix, const u_int16 rlength)
 {
-    wlength = 0;
+    wlength = index;
     wlengthpix = 0;
     while (index < my_text_.length ()  && my_text_[index] != ' ' && my_text_[index] != '\n')
     {
         wlengthpix += (*my_font_) [ucd (index)].length (); 
-        wlength++;
-        index++; 
+        index++;
     }
 
+    // count of characters (which is != count of letters due to utf-8 encoding)
+    wlength = index - wlength;
+    
     // if size of word is bigger than the length of label 
     if (wlengthpix < length () - rlength)  return 0;
     else if (wlengthpix < length ())  return 1; 
