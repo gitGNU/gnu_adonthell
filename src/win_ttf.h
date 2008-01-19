@@ -15,7 +15,7 @@
 #ifndef WIN_TTF_H
 #define WIN_TTF_H
 
-#include "SDL_ttf.h"
+#include <SDL/SDL_ttf.h>
 #include "win_font.h"
 
 class win_ttf : public win_font
