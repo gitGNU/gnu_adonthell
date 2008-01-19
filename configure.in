@@ -2,8 +2,8 @@ dnl **************************************************************
 dnl Process this file with autoconf to produce a configure script.
 dnl **************************************************************
 
-AC_PREREQ(2.61)
-AC_INIT([adonthell],[0.3.4],[adonthell-project@linuxgames.com],[adonthell])
+AC_PREREQ(2.59)
+AC_INIT([adonthell],[0.3.5],[adonthell-devel@nongnu.org],[adonthell])
 dnl AC_PREFIX_PROGRAM(adonthell)
 
 dnl Detect the canonical host and target build environment
@@ -11,7 +11,7 @@ AC_CANONICAL_HOST
 AC_CANONICAL_TARGET
 
 AM_INIT_AUTOMAKE([])
-AC_CONFIG_HEADERS([config.h])
+AM_CONFIG_HEADER([config.h])
 
 CFLAGS="-g -Wall -fno-exceptions"
 CPPFLAGS=""
@@ -126,6 +126,18 @@ SDL_VERSION=1.2.0
 AM_PATH_SDL($SDL_VERSION,
     :,
 	AC_MSG_ERROR([*** SDL version $SDL_VERSION not found!])
+)
+
+AC_CHECK_LIB([SDL_mixer], 
+	[Mix_OpenAudio], 
+	[LIBS="$LIBS -lSDL_mixer"], 
+	[AC_MSG_ERROR([*** SDL_mixer is required])]
+)
+
+AC_CHECK_LIB([SDL_ttf], 
+	[TTF_Init], 
+	[LIBS="$LIBS -lSDL_ttf"], 
+	[AC_MSG_ERROR([*** SDL_ttfis required])]
 )
 
 dnl *******************
@@ -372,6 +384,8 @@ dnl  Check for required headers
 dnl  **************************
 
 AC_CHECK_HEADERS([SDL/SDL.h zlib.h])
+AC_CHECK_HEADERS([SDL/SDL_mixer.h])
+AC_CHECK_HEADERS([SDL/SDL_ttf.h])
 
 if test x$PTHREADS = xyes; then
    AC_CHECK_HEADERS([pthread.h])

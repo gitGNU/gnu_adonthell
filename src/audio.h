@@ -15,7 +15,7 @@
 #ifndef __AUDIO_H__
 #define __AUDIO_H__
 
-#include "SDL_mixer.h"
+#include <SDL/SDL_mixer.h>
 #include "prefs.h"
 #include "py_object.h"
 // #include "audio_loop.h"

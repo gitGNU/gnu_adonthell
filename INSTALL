@@ -10,17 +10,11 @@ http://savannah.gnu.org/support/?group_id=702 .
 Requirements:
 =============
 
-There are four libraries that Adonthell depends on:
+There are sixlibraries that Adonthell depends on:
 
 1. Python, version 1.5.2 or later. 
    
-   Many Linux distributions (Debian, RedHat, SuSE, etc) include Python, but
-a few are still using Python 1.5 (or, worse, 1.4!). You can check your 
-version of Python by entering the command:
-
-       python -c 'import sys ; print sys.version'
-
-   You can download Python directly from http://www.python.org.
+   See http://www.python.org/
 
 
 2. SDL, version 1.2 or later.
@@ -28,16 +22,22 @@ version of Python by entering the command:
    See http://www.libsdl.org/
 
 
-3  Freetype, version 2.0 or later.
+3. SDL_mixer, version 1.2 or later.
+
+   See http://www.libsdl.org/projects/SDL_mixer/
+
+
+4. SDL_ttf, version 2.0 or later.
+
+   See http://www.libsdl.org/projects/SDL_ttf/
+
+
+5. Freetype, version 2.0 or later.
 
    See http://www.freetype.org/
    
    
-4. Ogg Vorbis, version 1.0rc3 or later
-
-   For convenience, the SDL_mixer library is included with the source code;
-it will be replaced by a custom mixer anyway. However, you'll need Ogg Vorbis
-1.0rc3 or later to enjoy the music.
+6. Ogg Vorbis, version 1.0rc3 or later
 
    See http://www.xiph.org/ogg/vorbis/download/
 
