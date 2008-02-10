@@ -50,8 +50,8 @@ adonthell_0_3_SOURCES = main.cc
 # Note: adonthell.py is also built by this target. 
 py_adonthell_wrap.cc : py_adonthell.i $(headers)
 	@if test "${P_SWIG}"; then \
-	   echo ${P_SWIG} -python -modern -shadow ${SDL_CFLAGS} -I$(srcdir) -I$(top_srcdir) -c++ -makedefault -o $*.cc $(srcdir)/py_adonthell.i; \
-	   ${P_SWIG} -python -modern -shadow ${SDL_CFLAGS} -I$(srcdir) -I$(top_srcdir) -c++ -makedefault -o $*cc $(srcdir)/py_adonthell.i; \
+	   echo ${P_SWIG} -python -modern -shadow ${SDL_CFLAGS} -I$(srcdir) -I$(top_srcdir) -c++ -makedefault -o $(srcdir)/$*.cc $(srcdir)/py_adonthell.i; \
+	   ${P_SWIG} -python -modern -shadow ${SDL_CFLAGS} -I$(srcdir) -I$(top_srcdir) -c++ -makedefault -o $(srcdir)/$*.cc $(srcdir)/py_adonthell.i; \
            mv $(srcdir)/adonthell.py modules/adonthell.py; \
 	else \
 	   echo "You need swig >= ${SWIG_MINVER} in order to re-build this file."; \

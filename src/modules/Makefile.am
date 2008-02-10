@@ -8,7 +8,7 @@ moddata_DATA = dialogue.pyc adonthell.pyc
 EXTRA_DIST = $(py_files)
 
 all: $(py_files)
-	$(top_builddir)/src/adonthell -c
+	$(top_builddir)/src/adonthell-0.3 -c
 
 dialogue.pyc: dialogue.py
 adonthell.pyc: adonthell.py
