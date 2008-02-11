@@ -64,7 +64,8 @@ The available options and what they do are:
   Language    Locale
   ------------------
   Dutch       nl_NL
-  Englich
+  English
+  French      fr_FR
   Italian     it_IT
 
   If new languages become available, they will be announced on
