@@ -13,7 +13,7 @@ Summary: A 2D graphical RPG game.
 Name: %name
 Version: %ver
 Release: %rel
-Copyright: GPL
+License: GPL
 Group: Amusements/Games
 Source: http://freesoftware.fsf.org/download/adonthell/%{name}-%{ver}.tar.gz
 URL: http://adonthell.linuxgames.com
