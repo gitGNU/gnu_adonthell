@@ -203,7 +203,10 @@ public:
      */
     PyObject *get_instance (const bool & incref = true) const
     {
-        if (incref) Py_XINCREF (Instance);
+        if (incref) 
+        {
+            Py_XINCREF (Instance);
+        }
         return Instance;
     }
 

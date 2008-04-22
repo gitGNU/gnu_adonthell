@@ -51,7 +51,7 @@ class win_scrollbar
   void set_trans_scrollbar(bool b)
     {
       if(!bar_draw_) return;
-      if(trans_=b){ bar_draw_->set_alpha(130);back_draw_->set_alpha(130); }
+      if((trans_=b)){ bar_draw_->set_alpha(130);back_draw_->set_alpha(130); }
       else{bar_draw_->set_alpha(255);back_draw_->set_alpha(255); }
     }
   

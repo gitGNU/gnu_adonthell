@@ -89,8 +89,8 @@ s_int8 mapview::set_pos (u_int16 sm, u_int16 px, u_int16 py, s_int16 ox, s_int16
 
 s_int8 mapview::center_on (u_int16 sm, u_int16 px, u_int16 py, s_int16 ox, s_int16 oy)
 {
-    s_int32 tpx = px * MAPSQUARE_SIZE + ox - (length () - MAPSQUARE_SIZE >> 1); 
-    s_int32 tpy = py * MAPSQUARE_SIZE + oy - (height () - MAPSQUARE_SIZE >> 1); 
+    s_int32 tpx = px * MAPSQUARE_SIZE + ox - ((length () - MAPSQUARE_SIZE) >> 1); 
+    s_int32 tpy = py * MAPSQUARE_SIZE + oy - ((height () - MAPSQUARE_SIZE) >> 1); 
 
     if (tpx < 0) tpx = 0; 
     if (tpy < 0) tpy = 0; 

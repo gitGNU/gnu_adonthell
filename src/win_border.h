@@ -32,11 +32,11 @@ class win_border
   
   win_border(win_border &);
 
-  win_border(char *rep ,char *size=WIN_BORDER_NORMAL_SIZE);
+  win_border(char *rep ,const char *size=WIN_BORDER_NORMAL_SIZE);
   
   ~win_border();
   
-  void load(char *,char *);
+  void load(char *,const char *);
   
   void update();
   

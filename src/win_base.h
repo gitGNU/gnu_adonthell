@@ -150,7 +150,7 @@ class win_base: public win_event, public win_border, public drawing_area, public
    * @param b true if the win_* should be visible, false otherwise
    */
   void set_activate(const bool b)
-    {if(activate_=b) {on_activate();input::clear_keys_queue();}else on_unactivate();}
+    {if((activate_=b)) {on_activate();input::clear_keys_queue();}else on_unactivate();}
   
   
   /** Test if win_* has focus on

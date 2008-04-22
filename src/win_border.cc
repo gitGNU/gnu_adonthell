@@ -42,7 +42,7 @@ win_border::win_border(win_base *wb)
   set_brightness_border( false );
 }
 
-win_border::win_border(char * rep,char * size)
+win_border::win_border(char * rep,const char * size)
 {
   wb_=NULL;
   
@@ -156,7 +156,7 @@ void win_border::destroy()
   init();
 }
 
-void win_border::load(char * rep,char *size)
+void win_border::load(char * rep,const char *size)
 {
   destroy();
   
