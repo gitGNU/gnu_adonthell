@@ -1,6 +1,6 @@
 ## Process this file with automake to produce Makefile.in
 
-EXTRA_DIST = items.tex items.cfg items.dxt items.sty Makefile.latex
+EXTRA_DIST = items.tex items.cfg items.dxt items.sty Makefile.latex header.html footer.html
 
 if BUILD_DOC
 all:
