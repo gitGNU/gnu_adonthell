@@ -1,6 +1,7 @@
 version 0.3.5
 - Bugfix with wrapping UTF-8 encoded text
 - Use external SDL_Mixer and SDL_ttf libraries
+- Support for 64bit GNU/Linux
 - Support gcc 4.x
 
 version 0.3.4
