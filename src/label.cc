@@ -186,7 +186,7 @@ void label::build (const bool erase_all)
 /**
    Set if cursor is visible
 */
-inline void label::set_cursor_visible (const bool b)
+void label::set_cursor_visible (const bool b)
 {
     visible_cursor_ = b; 
 }
@@ -195,7 +195,7 @@ inline void label::set_cursor_visible (const bool b)
 /**
    Set the cursor moveable with arrow
 */
-inline void label::set_cursor_moveable (const bool b)
+void label::set_cursor_moveable (const bool b)
 {
    moveable_cursor_ = b;   
 }

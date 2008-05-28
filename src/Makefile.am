@@ -79,5 +79,5 @@ install-exec-hook: Adonthell.app
 	cp -r $< $(DESTDIR)/Applications/
 else
 install-exec-hook:
-	$(LN_S) $(DESTDIR)/$(bindir)/adonthell-0.3 $(DESTDIR)/$(bindir)/adonthell
+	$(LN_S) adonthell-0.3 $(DESTDIR)/$(bindir)/adonthell
 endif
