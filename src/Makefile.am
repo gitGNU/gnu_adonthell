@@ -79,5 +79,9 @@ install-exec-hook: Adonthell.app
 	cp -r $< $(DESTDIR)/Applications/
 else
 install-exec-hook:
-	$(LN_S) adonthell-0.3 $(DESTDIR)$(bindir)/adonthell
+	if test ! -e $(DESTDIR)$(bindir)/adonthell ; then \
+	  $(LN_S) adonthell-0.3 $(DESTDIR)$(bindir)/adonthell; \
+	else \
+	  echo "*** warning: cannot create symlink to adonthell-0.3"; \
+	fi;
 endif
