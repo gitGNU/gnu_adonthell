@@ -12,7 +12,7 @@ Requirements:
 
 There are sixlibraries that Adonthell depends on:
 
-1. Python, version 1.5.2 or later. 
+1. Python, version 2.0 or later. 
    
    See http://www.python.org/
 
@@ -71,7 +71,7 @@ You can automatically get an installable Debian package by typing
 
 $> debuild 
 
-within the adonthell-0.3.4 directory. 'debbuild' is part of the
+within the adonthell-0.3.5 directory. 'debbuild' is part of the
 'devscripts' package. Check carefully that you have the python2.2,
 python2.2-dev, libsdl1.2 and libsdl1.2-dev packages installed (plus 
 libvorbis0 & libvorbis-dev if you want sound), or the build will fail.
@@ -82,7 +82,7 @@ RPM users:
 
 To create an installable RPM package, type
 
-$> rpm -tb adonthell-0.3.4.tar.gz
+$> rpm -tb adonthell-0.3.5.tar.gz
 
 Note that the 4.x versions of rpm are currently unsupported. Feel free
 to change that, if you want. For more information, refer to section 8.0

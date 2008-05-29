@@ -11,6 +11,9 @@ Written by Andrew Henderson <hendersa@db.erau.edu>
 * 0.0 - CHANGELOG *
 *******************
 
+* 30 May 2008 - Kai Sterker <kaisterker@linuxgames.com>
+  Updated for v0.3.5
+
 * 24 October 2004 - Kai Sterker <kaisterker@linuxgames.com>
   Updated for v0.3.4
 
@@ -113,23 +116,30 @@ libraries are required, one is optional. The three REQUIRED libraries
 
     http://www.libsdl.org/
 
-2. Python, version 1.5.2 or later.
+2. Python, version 2.0 or later.
 
     http://www.python.org/
 
 3. Freetype, version 2.0 or later.
 
     http://www.freetype.org/
-    
+
+4. SDL_ttf, version 2.0 or later.
+
+    http://www.libsdl.org/projects/SDL_ttf
+
 Sound support under Adonthell is optional (but highly recommended!!).
 We suggest building Adonthell with sound support if you have a sound
 card configured to run under Linux. To do that, you'll need to build
 and install another library:
 
-4. Ogg Vorbis, Version 1.0rc3 or later
+5. Ogg Vorbis, version 1.0rc3 or later
 
     http://www.xiph.org/ogg/vorbis/download/
 
+6. SDL Mixer, version 1.2 or later
+
+    http://www.libsdl.org/projects/SDL_mixer
 
 *****************************
 * 3.1 - INSTALLING BINARIES *
@@ -144,6 +154,10 @@ the following list should help you to find all required packages:
 For SDL you will need
     SDL-1.2
     SDL-devel-1.2
+    libSDL_mixer-1.2
+    libSDL_mixer-devel-1.2
+    libSDL_ttf-2.0
+    libSDL_ttf-devel-2.0
 
 for python
     python2-2.2
@@ -217,7 +231,7 @@ installed and configured in your system.
 
 Now that the required libraries are built and installed on your
 system, you need to build the Adonthell program itself. The
-latest version of Adonthell is 0.3.4. You can download it from the
+latest version of Adonthell is 0.3.5. You can download it from the
 Adonthell website: http://adonthell.linuxgames.com/download/.
 
 
@@ -229,11 +243,11 @@ a convenient directory.
 
 Step #2: Decompress the tar.gz files. Do this by typing:
 
-	tar -xzf adonthell-0.3.4.tar.gz
-	tar -xzf wastesedge-0.3.4.tar.gz	
+	tar -xzf adonthell-0.3.x.tar.gz
+	tar -xzf wastesedge-0.3.x.tar.gz	
 
 Two new directories will be created in the current directory, named
-"adonthell-0.3.4" and "wastesedge-0.3.4". Complete step #3 and #4 for 
+"adonthell-0.3.x" and "wastesedge-0.3.x". Complete step #3 and #4 for 
 both directories.
 
 Step #3: Build Adonthell. Do this by changing into the newly created 
@@ -244,7 +258,7 @@ directory and typing:
 
 A successful configure will produce an output like this:
 
-	Adonthell v0.3.4
+	Adonthell v0.3.5
 
     SDL ....................... : 1.2.7
     Python .................... : 2.3
@@ -277,7 +291,7 @@ will be created and installed in /usr/local/bin. After installing the
 data package, a script called 'adonthell-wastesedge' will be placed
 there as well. You can launch Adonthell either by typing
 
-	adonthell wastesedge
+	adonthell-0.3 wastesedge
 
 or by running the script:
 
@@ -311,7 +325,7 @@ obtained the non-devel/runtime packages.
 
 On some systems, it might be necessary to recreate the configure
 script to work correctly. Do this by typing './autogen.sh' inside
-the adonthell-0.3.4 directory.
+the adonthell-0.3.x directory.
 
 
 Q: While compiling the Adonthell source code I get an error similar
@@ -346,9 +360,9 @@ Tech support manager:
 
 The mailing list addresses are:
 
-General topic list:	adonthell-general@mail.freesoftware.fsf.org
-Developer list:		adonthell-devel@mail.freesoftware.fsf.org
-Artwork list:		adonthell-artwork@mail.freesoftware.fsf.org
+General topic list:	adonthell-general@nongnu.org
+Developer list:		adonthell-devel@nongnu.org
+Artwork list:		adonthell-artwork@nongnu.org
 
 You can subscribe to these mailing lists by going to the URL:
     
