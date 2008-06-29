@@ -306,9 +306,9 @@ if test "$P_SWIG" != "no" ; then
     $P_SWIG -version &> swig.ver
 
     changequote(<<, >>)
-    swig_major_ver=`more swig.ver | sed 's/.* \([0-9]*\)\.[0-9]*\.[0-9]*.*/\1/p; d'`
-    swig_minor_ver=`more swig.ver | sed 's/.* [0-9]*\.\([0-9]*\)\.[0-9]*.*/\1/p; d'`
-    swig_micro_ver=`more swig.ver | sed 's/.* [0-9]*\.[0-9]*\.\([0-9]*\).*/\1/p; d'`
+    swig_major_ver=`sed 's/.* \([0-9]*\)\.[0-9]*\.[0-9]*.*/\1/p; d' swig.ver`
+    swig_minor_ver=`sed 's/.* [0-9]*\.\([0-9]*\)\.[0-9]*.*/\1/p; d' swig.ver`
+    swig_micro_ver=`sed 's/.* [0-9]*\.[0-9]*\.\([0-9]*\).*/\1/p; d' swig.ver`
     changequote([, ])
 
     rm -f swig.ver
@@ -317,7 +317,7 @@ if test "$P_SWIG" != "no" ; then
 
     if test $swig_major_ver -gt 1 -o \
             $swig_major_ver -eq 1 -a $swig_minor_ver -gt 3 -o \
-            $swig_major_ver -eq 1 -a $swig_minor_ver -eq 3 -a $swig_micro_ver -gt 13 ;
+            $swig_major_ver -eq 1 -a $swig_minor_ver -eq 3 -a $swig_micro_ver -gt 19;
     then
         haveswig=yes
     fi
