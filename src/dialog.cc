@@ -265,7 +265,8 @@ string dialog::scan_string (const char *s)
 {
     u_int32 begin, end, len;
     PyObject *result;
-    char *tmp, *start, *mid, *str = NULL;
+    const char *start;
+    char *tmp, *mid, *str = NULL;
     character *the_player = data::the_player;
     string newstr (s); 
 
@@ -318,7 +319,7 @@ string dialog::scan_string (const char *s)
 
         // Error!
         cout << "\n*** Error, unknown macro " << start << flush;
-        start[0] = ' ';
+        newstr[newstr.length () - strlen (start)] = ' ';
     }
     
     // execute python functions
