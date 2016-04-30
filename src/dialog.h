@@ -156,7 +156,7 @@ public:
     
 private:
     py_object dialogue;             // Points to the instantiated dialogue class
-    const char **strings;           // The dialogue text
+    vector<string> strings;         // The dialogue text
     vector<string> text_;           // NPC's speech and according Player responses
     vector<string>::iterator i_text;// Iterator for the text_ vector
 
@@ -171,7 +171,7 @@ private:
     
     void clear ();                  // Cleanup
     bool setup ();                  // Further dialogue initialisation
-    string scan_string (const char*);// Look for enclosed code and execute it
+    string scan_string (const string & s);// Look for enclosed code and execute it
     char* get_substr (const char*, const char*, const char*); 
 };
 

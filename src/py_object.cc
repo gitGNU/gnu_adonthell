@@ -169,7 +169,7 @@ string py_object::get_attribute_string (const string &name)
         PyObject *attribute = PyObject_GetAttrString (Instance, (char *) name.c_str ());
         if (!attribute) return 0;
 
-        string value = PyString_AsString (attribute);
+        string value = python::as_string (attribute);
         Py_DECREF (attribute);
 
         return value;

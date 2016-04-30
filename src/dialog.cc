@@ -33,9 +33,9 @@
 // Constructor
 dialog::dialog (character_base *npc)
 {
-    strings = NULL;
     npc_portrait_= npc->get_portrait ();
     npc_name_ = npc->get_name ();
+    npc_color_ = npc->get_color ();
 }
 
 // Destructor
@@ -84,12 +84,12 @@ bool dialog::setup ()
     if (list && PyList_Check (list))
     {
         size = PyList_Size (list);
-        strings = new const char*[size];
+        strings.resize(size);
 
         for (i = 1; i < size; i++)
         {
             s = PyList_GetItem (list, i);
-            if (s && PyString_Check (s)) strings[i] = PyString_AsString (s);
+            if (s && PyString_Check (s)) strings[i] = python::as_string (s);
             else strings[i] = "*** Error";
         }
 
@@ -120,7 +120,7 @@ bool dialog::reload (string fpath, string name, PyObject *args)
 // Clean up
 void dialog::clear ()
 {
-    if (strings) delete[] strings;
+    strings.clear();
 }
 
 // iterate over the dialogue text
@@ -206,10 +206,10 @@ void dialog::run (u_int32 index)
             text_.push_back (scan_string (nls::translate (strings[answer])));
 
             // get the NPC color, portrait and name
-            char *npc = PyString_AsString (PyList_GetItem (speaker, rnd));
-            if (npc != NULL)
+            string npc = python::as_string (PyList_GetItem (speaker, rnd));
+            if (!npc.empty())
             {
-                if (strcmp ("Narrator", npc) == 0) npc_color_ = 0;
+                if (npc == "Narrator") npc_color_ = 0;
                 else
                 {
                     // set color and portrait of the NPC
@@ -261,7 +261,7 @@ void dialog::run (u_int32 index)
 
 // execute embedded functions and replace shortcuts
 // yeah, the c string library hurts, but at least it's fast ;)
-string dialog::scan_string (const char *s)
+string dialog::scan_string (const string & s)
 {
     u_int32 begin, end, len;
     PyObject *result;
@@ -323,14 +323,15 @@ string dialog::scan_string (const char *s)
     }
     
     // execute python functions
+    string repl;
     while (1)
     {
-        // check wether the string contains python code at all
+        // check whether the string contains python code at all
         start = strchr (newstr.c_str (), '{');
         if (start == NULL) break;
 
         end = strcspn (start, "}");
-        mid = NULL;
+        repl = "";
 
         str = new char[end];
         str[end-1] = 0;        
@@ -342,19 +343,27 @@ string dialog::scan_string (const char *s)
         result = PyObject_CallMethod (dialogue.get_instance (false), str, NULL);
 
         if (result)
+        {
             if (PyString_Check (result))
-                mid = (char*) nls::translate (PyString_AS_STRING (result));    
+            	repl = string(nls::translate (python::as_string(result)));
+        }
+#ifdef PY_DEBUG
+        else
+        {
+        	python::show_traceback();
+        }
+#endif
         
         // Replace existing with new, changed string
         // 1. Calculate string's length
         len = newstr.length ();
         begin = len - strlen (start);
-        tmp = new char[(mid ? strlen(mid) : 0) + len - strlen(str)];
+        tmp = new char[(repl.length()) + len - strlen(str)];
 
         // 2. Merge prefix, resulting string and postfix into new string
         strncpy (tmp, newstr.c_str (), begin);
         tmp[begin] = 0;
-        if (mid) strcat (tmp, mid);
+        if (!repl.empty()) strcat (tmp, repl.c_str());
         strcat (tmp, start+end+1);
 
         // 3. Exchange strings

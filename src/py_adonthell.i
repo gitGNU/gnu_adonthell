@@ -1,5 +1,7 @@
 %module adonthell
 
+%feature("compactdefaultargs");
+
 %{
 
 #include <string>

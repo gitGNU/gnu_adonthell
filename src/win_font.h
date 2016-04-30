@@ -17,13 +17,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#if __GNUG__ > 2
-#include <ext/hash_map>
-using __gnu_cxx::hash_map;
-#else
-#include <hash_map>
-#endif
-
+#include "str_hash.h"
 #include "win_types.h"
 #include "image.h"
 

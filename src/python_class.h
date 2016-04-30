@@ -34,6 +34,30 @@
 #include "node.h"
 #include "fileops.h"
 
+#ifndef SWIG
+#if PY_MAJOR_VERSION >= 3
+#ifndef PyInt_AsLong
+#define PyInt_AsLong PyLong_AsLong
+#endif
+
+#ifndef PyInt_Check
+#define PyInt_Check PyLong_Check
+#endif
+
+#ifndef PyInt_FromLong
+#define PyInt_FromLong PyLong_FromLong
+#endif
+
+#ifndef PyString_Check
+#define PyString_Check PyUnicode_Check
+#endif
+
+#ifndef PyString_FromString
+#define PyString_FromString PyUnicode_FromString
+#endif
+#endif
+#endif
+
 /**
  * Grant simplified access to the Python interpreter.
  * 
@@ -67,7 +91,7 @@ public:
      * 
      * @param s string containing Python statements to execute.
      */
-    static void exec_string(char * s);
+    static void exec_string(const char * s);
     
     /** 
      * Executes a Python script.
@@ -124,6 +148,8 @@ public:
     static void put_tuple (PyObject * tuple, ogzstream & file);  
 
     static PyObject *module;
+
+    static string as_string(PyObject *s);
 };
 
 #ifndef SWIG

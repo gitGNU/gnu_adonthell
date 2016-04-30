@@ -40,7 +40,7 @@ py_callback::py_callback ()
 py_callback::py_callback (PyObject *func, PyObject *args)
 {
     function = func;
-    arguments = args;
+    arguments = args == Py_None ? NULL : args;
     Py_XINCREF (function);
     Py_XINCREF (arguments);
 }
@@ -94,7 +94,7 @@ void py_callback::put_state (ogzstream & file) const
     // get name of callback function
     if (function) {
 	PyObject *p_name = PyObject_GetAttrString (function, "__name__");
-    	if (PyString_Check (p_name)) name = PyString_AsString (p_name);
+    	if (PyString_Check (p_name)) name = python::as_string (p_name);
     	else fprintf (stderr, "*** error: py_callback::put_state: Failed to retrieve callback name!");
      
         // cleanup

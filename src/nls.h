@@ -57,7 +57,7 @@ public:
      * @return either the translated text, or the given text if
      *      no translation was found.
      */
-    static const char* translate (const string &text);
+    static const string translate (const string &text);
 };
 
 #endif // __NLS_H__

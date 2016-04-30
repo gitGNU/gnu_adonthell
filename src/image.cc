@@ -25,6 +25,7 @@
 #include <SDL/SDL_endian.h>
 #include "image.h"
 #include "pnm.h"
+#include <iostream>
 
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
 #define R_MASK 0x00ff0000
@@ -142,7 +143,10 @@ s_int8 image::load_raw (string fname)
     s_int8 ret = 0; 
 
     if (!file.is_open ())
-        return 1;
+	{
+    	std::cout << "cannot find file " << fname << std::endl;
+    	return 1;
+	}
     ret = get_raw (file);
     file.close (); 
     return ret;
@@ -176,7 +180,10 @@ s_int8 image::load_pnm (string fname)
 
     file = SDL_RWFromFile (fname.c_str (), "rb"); 
     if (!file)
-        return 1;
+    {
+    	std::cout << "cannot find file " << fname << std::endl;
+    	return 1;
+    }
     ret = get_pnm (file);
     SDL_RWclose (file);
     return ret;

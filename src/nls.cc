@@ -70,11 +70,11 @@ void nls::set_language (const string &language)
 }
 
 // Translate some text
-const char* nls::translate (const string &text)
+const string nls::translate (const string &text)
 {
 #if ENABLE_NLS
     return gettext (text.c_str ());
 #else
-    return text.c_str ();
+    return text;
 #endif
 }

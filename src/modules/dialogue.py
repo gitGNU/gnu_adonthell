@@ -15,7 +15,7 @@
 import sys
 
 # -- Base class for all dialogue scripts
-class base:
+class base(object):
 
     # -- Execute one iteration of the dialogue
     #    This consists of the following steps:
@@ -76,8 +76,8 @@ class base:
         except:
             # -- in case of an error, print what happened and continue
             err_type, value = sys.exc_info ()[:2]
-            print "Error in statement\n  %s  %s:\n    '%s'" \
-                % (statement, str (err_type), str (value))
+            print ("Error in statement\n  %s  %s:\n    '%s'" \
+                % (statement, str (err_type), str (value)))
 
         return 0
 

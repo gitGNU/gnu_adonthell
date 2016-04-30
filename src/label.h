@@ -90,7 +90,7 @@ public :
     /**
        Get the text in string
     */
-    const string text_string () const;
+    const string & text_string () const;
 
 
     /**

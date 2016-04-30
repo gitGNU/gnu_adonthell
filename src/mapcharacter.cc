@@ -725,7 +725,7 @@ mapcharacter *mapcharacter::whosnext () const
 bool mapcharacter::do_stuff (string method, PyObject *args)
 {
     if (!schedule.has_attribute (method)) return false;
-    else schedule.call_method (method, args);
+    else schedule.call_method (method, args == Py_None ? NULL : args);
     
     return true;
 }
@@ -740,6 +740,7 @@ void mapcharacter::set_schedule (string file, PyObject * args)
     // Set new schedule
     if (file != "")
     {
+    	if (args == Py_None) args = NULL;
         Py_XINCREF (args); 
         schedule_args = args; 
         u_int16 argssize = args == NULL ? 1 : PyTuple_Size (args) + 1; 

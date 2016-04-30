@@ -145,7 +145,13 @@ void config::parse_arguments (int argc, char * argv[])
             case 'c':
             {
                 python::init (); 
-                python::exec_string ("import compileall; compileall.compile_dir (\".\", 0);");  
+#if PY_VERSION_HEX < 0x03020000
+                python::exec_string ("import compileall; compileall.compile_dir (\".\", 0);");
+#else
+                // starting with Python 3.2, .pyc files end up in the __pycache__ directory unless
+                // legacy=True parameter is used. See https://www.python.org/dev/peps/pep-3147/
+                python::exec_string ("import compileall; compileall.compile_dir (\".\", maxlevels=0, legacy=True);");
+#endif
                 python::cleanup (); 
                 exit (0); 
                 break;

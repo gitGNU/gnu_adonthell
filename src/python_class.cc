@@ -72,7 +72,7 @@ void python::insert_path( char *name )
 /*
  * Executes the Python statements in the string
  */
-void python::exec_string(char * s)
+void python::exec_string(const char * s)
 {
     PyRun_SimpleString(s);
 }
@@ -174,8 +174,8 @@ void python::put_tuple (PyObject * tuple, ogzstream & file)
         if (PyString_Check (item)) 
         {
             's' >> file;
-            char * s = PyString_AsString (item); 
-            string (s) >> file;
+            string s = python::as_string (item);
+            s >> file;
         }
         
         // Integer?
@@ -186,4 +186,22 @@ void python::put_tuple (PyObject * tuple, ogzstream & file)
             li >> file;
         }
     }
+}
+
+string python::as_string(PyObject *s)
+{
+#if PY_MAJOR_VERSION >= 3
+	PyObject *byteArr = PyUnicode_AsUTF8String(s);
+	char* str = PyBytes_AsString(byteArr);
+#else
+	char* str = PyString_AsString(s);
+#endif
+	if (str)
+	{
+		string result(str);
+		Py_DECREF(byteArr);
+		return result;
+	}
+	Py_DECREF(byteArr);
+	return string("");
 }

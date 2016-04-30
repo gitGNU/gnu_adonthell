@@ -38,7 +38,7 @@
 #include <mcheck.h>
 #endif
 
-using namespace std; 
+using namespace std;
 
 /*
  * SWIG init prototypes. Should we use dynamic linking??? 
@@ -49,11 +49,34 @@ extern "C"
      * SWIG init prototype.
      * 
      */
-    void init_adonthell (void);
+#if PY_VERSION_HEX >= 0x03000000
+	PyObject* PyInit__adonthell (void);
+#else
+	void init_adonthell (void);
+#endif
 }
 
-bool init_python()
+static bool init_python(const char *application)
 {
+#if PY_VERSION_HEX >= 0x03000000
+	// one would assume that this is properly handled by SWIG,
+	// but it seems some extra effort is required on our side
+	// to use a static module
+	if (PyImport_AppendInittab ("_adonthell", PyInit__adonthell) < 0)
+	{
+		return false;
+	}
+#if PY_VERSION_HEX >= 0x03050000
+	wchar_t *program = Py_DecodeLocale(application, NULL);
+	if (program != NULL)
+	{
+		Py_SetProgramName(program);
+	}
+#endif
+#endif
+
+    python::init ();
+
     // Initialise the import path.
     // Shared modules path 
     string t;
@@ -68,9 +91,11 @@ bool init_python()
     
     // Initialise SWIG module. This should go if we ever switch 
     // to dynamic linking
-    init_adonthell ();
+#if PY_VERSION_HEX < 0x03000000
+    init_adonthell();
+#endif
     
-    python::module = python::import_module ("adonthell"); 
+    python::module = python::import_module ("adonthell");
     if (!python::module) return false;     
     
     data::globals = PyModule_GetDict (python::module);
@@ -162,8 +187,11 @@ int main(int argc, char * argv[])
     input::init ();
     
     // init python interpreter
-    python::init (); 
-    init_python();
+    if (!init_python(argv[0]))
+    {
+    	std::cout << "Initializing Python module failed" << std::endl;
+    	return false;
+    }
 
     // init the game data
     data::engine = new adonthell;

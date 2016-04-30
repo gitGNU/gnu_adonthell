@@ -279,7 +279,7 @@ std::vector<string> item_base::categories () const
     {
         str = PySequence_GetItem (list, i);
         if (PyString_Check (str))
-            categories.push_back (PyString_AsString (str));
+            categories.push_back (python::as_string (str));
         Py_XDECREF (str);
     }
     

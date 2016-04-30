@@ -44,14 +44,13 @@ win_theme.cc win_event.cc yarg.cc $(headers)
 libadonthell_LDADD = $(SDL_LIBS) $(OGG_LIBS) $(PY_LIBS) $(INTLLIBS) $(FT2_LIBS)
 
 adonthell_0_3_LDADD = libadonthell.a $(libadonthell_LDADD)
-
 adonthell_0_3_SOURCES = main.cc
 
 # Note: adonthell.py is also built by this target. 
 py_adonthell_wrap.cc : py_adonthell.i $(headers)
-	@if test "${P_SWIG}"; then \
-	   echo ${P_SWIG} -python -modern -shadow ${SDL_CFLAGS} -I$(srcdir) -I$(top_srcdir) -c++ -makedefault -o $(srcdir)/$*.cc $(srcdir)/py_adonthell.i; \
-	   ${P_SWIG} -python -modern -shadow ${SDL_CFLAGS} -I$(srcdir) -I$(top_srcdir) -c++ -makedefault -o $(srcdir)/$*.cc $(srcdir)/py_adonthell.i; \
+	@if test "${SWIG}" != "no" ; then \
+	   echo ${SWIG} -python -modern -shadow ${SDL_CFLAGS} -I$(srcdir) -I$(top_srcdir) -c++ -makedefault -o $(srcdir)/$*.cc $(srcdir)/py_adonthell.i; \
+	   ${SWIG} -python -modern -shadow ${SDL_CFLAGS} -I$(srcdir) -I$(top_srcdir) -c++ -makedefault -o $(srcdir)/$*.cc $(srcdir)/py_adonthell.i; \
            mv $(srcdir)/adonthell.py modules/adonthell.py; \
 	else \
 	   echo "You need swig >= ${SWIG_MINVER} in order to re-build this file."; \

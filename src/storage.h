@@ -26,7 +26,7 @@
 #ifndef STORAGE_H_
 #define STORAGE_H_
 
-#include <string.h>
+#include <string>
 #include <map>
 #include <vector>
 

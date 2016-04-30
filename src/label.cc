@@ -645,7 +645,7 @@ void label::cursor_previous ()
 }
 
 
-const string label::text_string () const
+const string & label::text_string () const
 {
     return my_text_;  
 }
