@@ -72,13 +72,19 @@ if test x$gamedatadir = xnone; then
     gamedatadir=""
     DEFS="$DEFS -DSINGLE_DIR_INST"
     case "$target" in
-      *-*-darwin*)
+      *-apple-darwin*)
+	osx="yes"
         makebundle="yes"
         DEFS="$DEFS -Wno-long-double"
       ;;
     esac        
   else
     case "$target" in
+      *-apple-darwin*)
+	osx="yes"
+        gamedatadir="${datadir}/adonthell"
+        DEFS="$DEFS -DDATA_DIR=\"\\\"$gamedatadir\\\"\""
+      ;;
       *-*-cygwin* | *-*-mingw32*)
         gamedatadir=""
         DEFS="$DEFS -DSINGLE_DIR_INST"
@@ -230,10 +236,10 @@ if test "x$pylibs" = xnone; then
    fw=`echo "$PYPREFIX" | sed 's/.*\(Python\.framework\).*/\1/;'`
    if test "x$fw" != x && test "x$osx" = "xyes"; then
        PY_LIBS="-framework Python"
-       PY_FWDIR=`$PYTHON -c 'import distutils.sysconfig; print (distutils.sysconfig.get_python_lib())'`
-       PY_SPDIR="$pyexecdir"
-       AC_SUBST(PY_FWDIR)
-       AC_SUBST(PY_SPDIR)
+dnl       PY_FWDIR=`$PYTHON -c 'import distutils.sysconfig; print (distutils.sysconfig.get_python_lib())'`
+dnl       PY_SPDIR="$pyexecdir"
+dnl       AC_SUBST(PY_FWDIR)
+dnl       AC_SUBST(PY_SPDIR)
        AC_MSG_RESULT(found)
    else
        dnl Try for specific version first, then the generic version, then panic
