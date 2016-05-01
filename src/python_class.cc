@@ -199,9 +199,13 @@ string python::as_string(PyObject *s)
 	if (str)
 	{
 		string result(str);
+#if PY_MAJOR_VERSION >= 3
 		Py_DECREF(byteArr);
+#endif
 		return result;
 	}
+#if PY_MAJOR_VERSION >= 3
 	Py_DECREF(byteArr);
-	return string("");
+#endif
+        return string("");
 }
