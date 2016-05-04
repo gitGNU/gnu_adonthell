@@ -38,29 +38,29 @@ dnl Additional arguments
 dnl ********************
 
 AC_ARG_ENABLE(unix-install,
-[  --disable-unix-install Disable a Unix-like install (enabled by default)],
+[  --disable-unix-install  disable a Unix-like install (enabled by default)],
 	unixinst=$enableval, unixinst=yes)
 AC_ARG_ENABLE(memleaks,
-[  --enable-memleaks      Enable check for memory leaks (disabled by default)],
+[  --enable-memleaks       enable check for memory leaks (disabled by default)],
 	memleaks=$enableval, memleaks=no)
 AC_ARG_ENABLE(doc,
-[  --enable-doc           Build the Adonthell developer documentation (disabled by default)],
+[  --enable-doc            build the Adonthell developer documentation (disabled by default)],
 	builddoc=$enableval, builddoc=no)
 AC_ARG_ENABLE(py-debug,
-[  --disable-py-debug     Disable debugging of Python scripts (enabled by default)],
+[  --disable-py-debug      disable debugging of Python scripts (enabled by default)],
 	pydebug=$enableval, pydebug=yes)
 AC_ARG_WITH(ogg,
-[  --with-ogg=DIR         Set where the Ogg library is located], ogg=none) 
+[  --with-ogg=DIR          set where the Ogg library is located], ogg=none) 
 AC_ARG_WITH(vorbis,
-[  --with-vorbis=DIR      Set where the Vorbis library is located], vorbis=none)
+[  --with-vorbis=DIR       set where the Vorbis library is located], vorbis=none)
 AC_ARG_WITH(data-dir,
-[  --with-data-dir=DIR    Directory where datas will be installed],
+[  --with-data-dir=DIR     directory where datas will be installed],
             gamedatadir="$withval", gamedatadir=none)
 AC_ARG_WITH(py-libs,
-[  --with-py-libs=LIBS     Override Python libraries auto-detection],
+[  --with-py-libs=LIBS     override Python libraries auto-detection],
             pylibs="$withval", pylibs=none)
 AC_ARG_WITH(py-cflags,
-[  --with-py-cflags=FLAGS  Override Python cflags auto-detection],
+[  --with-py-cflags=FLAGS  override Python cflags auto-detection],
             pycflags="$withval", pycflags=none)
 
 dnl **********************
@@ -183,11 +183,11 @@ fi
 dnl Extract the version using Python, check against 2.2+
 
 changequote(<<, >>)
-PYTHON_VERSION=`$PYTHON -c 'import sys ; version=sys.version.split(" ")[0].split(".") ; print (int(version[0]) * 100 + int(version[1]) * 10 + int(version[2]))'`
-PY_VERSION=`$PYTHON -c 'import sys ; print (sys.version[0:3])'`
+PY_HEX_VERSION=`$PYTHON -c 'import sys ; print (int(sys.hexversion))'`
+PY_VERSION=`$PYTHON -c 'import sys ; print (sys.version.split(" ")[0])'`
 changequote([, ])
 
-if test $PYTHON_VERSION -lt 221; then
+if test $PY_HEX_VERSION -lt `printf %d 0x020201F0`; then
 		echo "Sorry, you need to have Python 2.2.1 or greater installed - update your version!"
 		AC_MSG_ERROR([*** Python 2.2.1 or better required])
 fi
@@ -236,10 +236,6 @@ if test "x$pylibs" = xnone; then
    fw=`echo "$PYPREFIX" | sed 's/.*\(Python\.framework\).*/\1/;'`
    if test "x$fw" != x && test "x$osx" = "xyes"; then
        PY_LIBS="-framework Python"
-dnl       PY_FWDIR=`$PYTHON -c 'import distutils.sysconfig; print (distutils.sysconfig.get_python_lib())'`
-dnl       PY_SPDIR="$pyexecdir"
-dnl       AC_SUBST(PY_FWDIR)
-dnl       AC_SUBST(PY_SPDIR)
        AC_MSG_RESULT(found)
    else
        dnl Try for specific version first, then the generic version, then panic
@@ -299,10 +295,38 @@ dnl **************
 dnl Check for SWIG
 dnl **************
 
-dnl SWIG >= 2.0.4 to generate code for Python 3.2 and above.
+dnl minimum SWIG version depends on version of the Python interpreter
 
-SWIG_MINVER=3.0.0
+if test $PY_HEX_VERSION -ge `printf %d 0x03050000` ; then
+	swig_req_major=3
+	swig_req_minor=0
+	swig_req_micro=8
+elif test $PY_HEX_VERSION -ge `printf %d 0x03030000` ; then
+	swig_req_major=3
+	swig_req_minor=0
+	swig_req_micro=0
+elif test $PY_HEX_VERSION -ge `printf %d 0x03020000` ; then
+	swig_req_major=2
+	swig_req_minor=0
+	swig_req_micro=4
+elif test $PY_HEX_VERSION -ge `printf %d 0x03000000` ; then
+	swig_req_major=1
+	swig_req_minor=3
+	swig_req_micro=37
+elif test $PY_HEX_VERSION -ge `printf %d 0x02050000` ; then
+	swig_req_major=1
+	swig_req_minor=3
+	swig_req_micro=30
+else
+dnl that is the absolute minimum version for Python < 2.5
+	swig_req_major=1
+	swig_req_minor=3
+	swig_req_micro=24
+fi
+
+SWIG_MINVER=$swig_req_major.$swig_req_minor.$swig_req_micro
 haveswig=no
+
 
 AC_PATH_PROGS([SWIG], [swig3.0 swig2.0 swig], no)
 if test "$SWIG" != "no" ; then
@@ -318,9 +342,9 @@ if test "$SWIG" != "no" ; then
 
     SWIG_VERSION="$swig_major_ver.$swig_minor_ver.$swig_micro_ver"
 
-    if test $swig_major_ver -gt 1 -o \
-            $swig_major_ver -eq 1 -a $swig_minor_ver -gt 3 -o \
-            $swig_major_ver -eq 1 -a $swig_minor_ver -eq 3 -a $swig_micro_ver -gt 19;
+    if test $swig_major_ver -gt $swig_req_major -o \
+            $swig_major_ver -eq $swig_req_major -a $swig_minor_ver -gt $swig_req_minor -o \
+            $swig_major_ver -eq $swig_req_major -a $swig_minor_ver -eq $swig_req_minor -a $swig_micro_ver -ge $swig_req_micro;
     then
         haveswig=yes
     fi
