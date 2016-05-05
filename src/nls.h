@@ -58,6 +58,12 @@ public:
      *      no translation was found.
      */
     static const string translate (const string &text);
+
+private:
+#ifndef SWIG
+	/** current content of the LANGUAGE environment variable */
+    static std::string current_lang;
+#endif
 };
 
 #endif // __NLS_H__

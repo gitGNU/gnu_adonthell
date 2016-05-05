@@ -27,6 +27,8 @@
 #include "gettext.h"
 #include "nls.h"
 
+std::string nls::current_lang;
+
 // Initialize NLS
 void nls::init (config &myconfig)
 {
@@ -54,8 +56,8 @@ void nls::set_language (const string &language)
 {
 #if ENABLE_NLS
 #ifndef __BEOS__
-    string lang = "LANGUAGE=" + language;
-    putenv ((char *) lang.c_str ());
+    current_lang = language.empty() ? "LANGUAGE" : "LANGUAGE=" + language;
+    putenv ((char *) current_lang.c_str ());
 #else
 	// TODO: no putenv on BEOS, but there should be setenv	
 #endif
@@ -64,8 +66,9 @@ void nls::set_language (const string &language)
         extern int _nl_msg_cat_cntr;
         ++_nl_msg_cat_cntr;
     }
-    
-    setlocale (LC_MESSAGES, language.c_str ());	
+
+	setlocale (LC_ALL,"");
+    setlocale (LC_MESSAGES, language.c_str ());
 #endif
 }
 
