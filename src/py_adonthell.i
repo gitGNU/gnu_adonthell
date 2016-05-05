@@ -135,3 +135,4 @@ enum {Python = 1, C = 0};
 %include "gamedata.h"
 %include "game.h"
 %include "nls.h"
+%include "prefs.h"

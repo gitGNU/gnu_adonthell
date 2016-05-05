@@ -28,7 +28,6 @@
 
 #ifndef SWIG
 using namespace std; 
-#endif
 
 /**
  * The config file opened by the lexical scanner
@@ -62,6 +61,7 @@ enum
     PREFS_DOUBLE_SCREEN = 12,
 };
 
+#endif
 
 /**
  * This class contains the engine's configuration read either from the
@@ -162,9 +162,11 @@ public:
     //@}
     
 private:
+#ifndef SWIG
     config & operator = (const config*);
     
     string adonthellrc;             // Path to the adonthellrc file: $HOME/.adonthell/  
+#endif
 };
 
 #endif // __PREFS_H__
