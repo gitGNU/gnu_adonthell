@@ -55,13 +55,15 @@ AC_ARG_WITH(vorbis,
 [  --with-vorbis=DIR       set where the Vorbis library is located], vorbis=none)
 AC_ARG_WITH(data-dir,
 [  --with-data-dir=DIR     directory where datas will be installed],
-            gamedatadir="$withval", gamedatadir=none)
+	gamedatadir="$withval", gamedatadir=none)
+AC_ARG_WITH(python,
+[  --with-python=CMD       name of python executable],,[with_python=no])
 AC_ARG_WITH(py-libs,
 [  --with-py-libs=LIBS     override Python libraries auto-detection],
-            pylibs="$withval", pylibs=none)
+	pylibs="$withval", pylibs=none)
 AC_ARG_WITH(py-cflags,
 [  --with-py-cflags=FLAGS  override Python cflags auto-detection],
-            pycflags="$withval", pycflags=none)
+	pycflags="$withval", pycflags=none)
 
 dnl **********************
 dnl Set the data directory
@@ -174,12 +176,17 @@ dnl Check for Python
 dnl ****************
 
 dnl Find Python executable
-AC_PATH_PROGS([PYTHON], [python3 python], no)
-if test x$PYTHON == xno ; then
-        echo "Adonthell requires Python. Exiting..."
-        exit 1
+if test "x$with_python" != "xno"; then
+    AC_PATH_PROG([PYTHON], [$with_python], no)
+else
+    AC_PATH_PROGS([PYTHON], [python3 python], no)
 fi
-        
+
+if test x$PYTHON == xno ; then
+    echo "Adonthell requires Python. Exiting..."
+    exit 1
+fi
+  
 dnl Extract the version using Python, check against 2.2+
 
 changequote(<<, >>)
