@@ -4,12 +4,19 @@
    Copyright (C) 2002 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
-   This program is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License.
-   This program is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY.
+   Dlgedit is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
 
-   See the COPYING file for more details.
+   Dlgedit is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with Dlgedit; if not, write to the Free Software 
+   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 /** 
@@ -19,6 +26,7 @@
  * @brief Base class for the dialogue objects.
  */
 
+#include <math.h>
 #include "dlg_node.h"
 
 // Coonstructor
@@ -76,7 +84,7 @@ DlgNode* DlgNode::getNode (std::list<DlgNode*>::iterator &it,
     }
     
     // forward iteration
-    if (offset > 0)
+    if (offset >= 0)
     {
         for (int i = 0; i < offset && it != lst.end (); i++, it++);
         if (it != lst.end ()) return *it;
@@ -143,7 +151,7 @@ void DlgNode::removePrev (DlgNode *node)
 }
 
 // draw the node (with a certain mode)
-void DlgNode::draw (GdkPixmap *surface, DlgPoint &offset, GtkWidget *widget, mode_type m)
+void DlgNode::draw (cairo_surface_t *surface, DlgPoint &offset, GtkWidget *widget, mode_type m)
 {
     // change the mode temporarily
     mode_type oldMode = mode_;
@@ -156,3 +164,30 @@ void DlgNode::draw (GdkPixmap *surface, DlgPoint &offset, GtkWidget *widget, mod
     mode_ = oldMode; 
 }
 
+void DlgNode::drawPolygon (cairo_t *cr, const GdkColor *color, const bool & filled, const DlgPoint *points, const int &num_points)
+{
+    gdk_cairo_set_source_color (cr, color);
+    cairo_set_line_width (cr, 0.6);
+    cairo_move_to (cr, points[0].x(), points[0].y());
+    for (int i = 1; i < num_points; i++)
+    {
+        cairo_line_to (cr, points[i].x(), points[i].y());
+    }
+    filled ? cairo_fill (cr) : cairo_stroke (cr);
+}
+
+void DlgNode::drawCircle (cairo_t *cr, const GdkColor *color, const bool & filled, const int & x, const int & y, const int & radius)
+{
+    gdk_cairo_set_source_color (cr, color);
+    cairo_set_line_width (cr, 0.6);
+    cairo_arc (cr, x, y, radius, 0, 2 * M_PI);
+    filled ? cairo_fill (cr) : cairo_stroke (cr);
+}
+
+void DlgNode::drawRectangle (cairo_t *cr, const GdkColor *color, const bool & filled, const int & x, const int & y, const int & width, const int & height)
+{
+    gdk_cairo_set_source_color (cr, color);
+    cairo_set_line_width (cr, 0.6);
+    cairo_rectangle (cr, x, y, width, height);
+    filled ? cairo_fill (cr) : cairo_stroke (cr);
+}

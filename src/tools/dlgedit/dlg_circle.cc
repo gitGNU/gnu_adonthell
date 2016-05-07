@@ -1,15 +1,20 @@
 /*
-   $Id$
-
    Copyright (C) 2002 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
-   This program is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License.
-   This program is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY.
+   Dlgedit is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
 
-   See the COPYING file for more details.
+   Dlgedit is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with Dlgedit; if not, write to the Free Software 
+   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 /** 
@@ -52,15 +57,12 @@ DlgCircle *DlgCircle::parent (query_type pos, int offset)
     else return NULL;
 }
 
-// get a certain child-circle of this circle and remember the parent circle
+// get a certain child-circle of this circle
 DlgCircle *DlgCircle::child (query_type pos, int offset)
 {
     DlgNode *arrow = next (pos, offset);
-    if (arrow == NULL) return NULL;
-        
-    DlgCircle *child = (DlgCircle *) arrow->next (FIRST);
-
-    return child;
+    if (arrow != NULL) return (DlgCircle *) arrow->next (FIRST);
+    else return NULL;
 }
 
 // check whether the given node is a child of this circle
@@ -76,24 +78,23 @@ bool DlgCircle::hasChild (DlgNode *child)
 }
 
 // draw the circle
-void DlgCircle::draw (GdkPixmap *surface, DlgPoint &os, GtkWidget *widget)
+void DlgCircle::draw (cairo_surface_t *surface, DlgPoint &os, GtkWidget *widget)
 {
+    cairo_t *cr = cairo_create (surface);
+
     // get the color and fill for drawing the circle
-    GdkGC *gc  = GuiResources::getColor  (mode_, type_);
-    GdkGC *fgc = GuiResources::getFill   (mode_, type_);
+    const GdkColor *gc  = GuiResources::getColor  (mode_, type_);
+    const GdkColor *fgc = GuiResources::getFill   (mode_, type_);
     
     // offset circle
-    DlgPoint position = topLeft ().offset (os);
-    DlgRect area (position, width () + 1, height () + 1);
+    DlgPoint position = center ().offset (os);
+    DlgPoint tmp = topLeft ().offset (os);
+    DlgRect area (tmp, width () + 1, height () + 1);
     
     // draw everything to the surface - First border 
-    gdk_draw_arc (surface, gc,  TRUE, 
-		  position.x (), position.y (), 
-		  CIRCLE_DIAMETER, CIRCLE_DIAMETER, 0, 360*64);
+    drawCircle (cr, gc,  TRUE, position.x (), position.y (), CIRCLE_RADIUS);
     // add a small circle inside that indicates the type (NPC, Player)
-    gdk_draw_arc (surface, fgc, TRUE, 
-		  position.x ()+2, position.y ()+2, 
-		  CIRCLE_DIAMETER-4, CIRCLE_DIAMETER-4, 0, 360*64);
+    drawCircle (cr, fgc, TRUE, position.x (), position.y (), CIRCLE_RADIUS-2);
 
     // Indicate whether node contains additional code
     if (hasCode () || entry_->loop ())
@@ -104,18 +105,36 @@ void DlgCircle::draw (GdkPixmap *surface, DlgPoint &os, GtkWidget *widget)
         if (entry_->loop ()) g_string_append_c (code, 'o');
         
         // get the font to use
-        GdkFont *font = GuiResources::font ();
-    
+        const PangoFontDescription *desc = pango_layout_get_font_description (GuiResources::font ());
+
+        // create pango cairo compatible layout
+        PangoLayout *font = pango_cairo_create_layout(cr);
+        pango_layout_set_font_description (font, desc);
+        pango_layout_set_text (font, code->str, -1);
+
         // place text in circles center
-        int x = position.x () + (width () - gdk_string_width (font, code->str)) / 2;
-        int y = position.y () + (height () + 1 + gdk_string_height (font, code->str)) / 2;
-        gdk_draw_string (surface, font, gc, x, y, code->str);
+        int w, h;
+        pango_layout_get_pixel_size (font, &w, &h);
+        
+        int x = tmp.x () + (width () - w) / 2;
+        int y = tmp.y () + (height () + 1 - h) / 2;
+
+        // set font color and position
+        gdk_cairo_set_source_color(cr, gc);
+        pango_cairo_update_layout (cr, font);
+        cairo_move_to(cr, x, y);
+
+        // draw text
+        pango_cairo_show_layout (cr, font);
+        g_object_unref(font);
 
         g_string_free (code, TRUE);
     }
     
     // Update the drawing area
     update (widget, area);
+
+    cairo_destroy(cr);
 }
 
 // load a circle from a file
@@ -231,22 +250,22 @@ void DlgCircle::save (std::ofstream &file)
 
     // circle's annotation
     if (entry_->annotation () != "")
-        file << "  Note §" << entry_->annotation () << "§\n";
+        file << "  Note ï¿½" << entry_->annotation () << "ï¿½\n";
 
     // circle's text
-    file << "  Text §" << entry_->text () << "§\n";
+    file << "  Text ï¿½" << entry_->text () << "ï¿½\n";
 
     // circle's character
     if (type_ == NPC && entry_->npc () != "Default")
-        file << "  NPC §" << entry_->npc () << "§\n";
+        file << "  NPC ï¿½" << entry_->npc () << "ï¿½\n";
 
     // circle's condition(s)
     if (entry_->condition () != "")
-        file << "  Cond §" << entry_->condition () << "§\n";
+        file << "  Cond ï¿½" << entry_->condition () << "ï¿½\n";
 
     // circle's code
     if (entry_->code () != "")
-        file << "  Vars §" << entry_->code () << "§\n";
+        file << "  Vars ï¿½" << entry_->code () << "ï¿½\n";
     
     // loop
     if (entry_->loop () != false)

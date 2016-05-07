@@ -1,15 +1,20 @@
 /*
-   $Id$
-
    Copyright (C) 2002/2003 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
-   This program is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License.
-   This program is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY.
+   Dlgedit is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
 
-   See the COPYING file for more details.
+   Dlgedit is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with Dlgedit; if not, write to the Free Software 
+   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 /** 
@@ -121,20 +126,20 @@ public:
     /**
      * Draw this node to the given surface. During drawing, the mode is
      * temporarily changed to the given mode.
-     * @param surface the GdkPixmap to draw to
+     * @param surface the cairo_surface_t to draw to
      * @param offset the DlgPoint to use as offset
      * @param widget the GtkWidget to update after drawing
      * @param mode the new mode of the node
      */
-    void draw (GdkPixmap *surface, DlgPoint &offset, GtkWidget *widget, mode_type mode);
+    void draw (cairo_surface_t *surface, DlgPoint &offset, GtkWidget *widget, mode_type mode);
     
     /**
      * Draw this node to the given surface.
-     * @param surface the GdkPixmap to draw to
+     * @param surface the cairo_surface_t to draw to
      * @param offset the DlgPoint to use as offset
      * @param widget the GtkWidget to update after drawing
      */
-    virtual void draw (GdkPixmap *surface, DlgPoint &offset, GtkWidget *widget)
+    virtual void draw (cairo_surface_t *surface, DlgPoint &offset, GtkWidget *widget)
     { 
     }
     
@@ -192,6 +197,10 @@ protected:
     
     DlgNode* getNode (std::list<DlgNode*>::iterator &it, 
         std::list<DlgNode*> &lst, query_type &pos, int &offset);
+
+    void drawPolygon (cairo_t *cr, const GdkColor *color, const bool & filled, const DlgPoint *points, const int &num_points);
+    void drawCircle (cairo_t *cr, const GdkColor *color, const bool & filled, const int & x, const int & y, const int & radius);
+    void drawRectangle (cairo_t *cr, const GdkColor *color, const bool & filled, const int & x, const int & y, const int & width, const int & height);
 };
 
 #endif // DLG_NODE_H

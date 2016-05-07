@@ -4,12 +4,19 @@
    Copyright (C) 2002 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
-   This program is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License.
-   This program is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY.
+   Dlgedit is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
 
-   See the COPYING file for more details.
+   Dlgedit is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with Dlgedit; if not, write to the Free Software 
+   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 /** 
@@ -91,20 +98,9 @@ enum menu_item
     COMPILE         = 5,
     PREVIEW         = 6,
     RUN             = 7,
-    OPEN_RECENT     = 8,
-    REVERT          = 9,
-    MAX_ITEM        = 10
+    REVERT          = 8,
+    MAX_ITEM        = 9
 };
-
-/**
- * Load node of file selction box.
- */
-#define FS_LOAD     1
-
-/**
- * Save mode of file selction box.
- */
-#define FS_SAVE     2
 
 /**
  * Defines for the various parts of a dialogue source file.
@@ -147,6 +143,7 @@ enum
  * The size of a DlgCircle.
  */
 #define CIRCLE_DIAMETER 20
+#define CIRCLE_RADIUS 10
 
 /**
  * File extension of dialogue source files.

@@ -1,15 +1,20 @@
 /*
-   $Id$
-
    Copyright (C) 2002 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
-   This program is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License.
-   This program is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY.
+   Dlgedit is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
 
-   See the COPYING file for more details.
+   Dlgedit is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with Dlgedit; if not, write to the Free Software 
+   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 /** 
@@ -20,7 +25,6 @@
  */
 
 #include <string>
-#include <gtk/gtk.h>
 #include "gui_messages.h"
 
 // define all the different messages
@@ -58,7 +62,7 @@ GuiMessages::GuiMessages (GtkWidget *sb)
     
     messages[120]   = " Release LEFT mouse button to attach Arrow to this Circle";
     
-    messages[130]   = " All editing functions are disabled.  Press CTRL+P to leave preview mode";
+    messages[130]   = " All editing functions are disabled.  Press CTRL+V to leave preview mode";
             
     // Report Success
     messages[200]   = " Loading successful";
@@ -108,7 +112,7 @@ void GuiMessages::display (int id, const char* text)
     if (id == current) return;
     
     std::string message (messages[id]);
-    unsigned int pos = message.find ("%s");
+    unsigned long pos = message.find ("%s");
     
     // insert text into the message
     if (pos != message.npos)

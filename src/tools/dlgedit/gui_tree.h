@@ -1,15 +1,20 @@
 /*
-   $Id$
-
    Copyright (C) 2002/2003 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
-   This program is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License.
-   This program is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY.
+   Dlgedit is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
 
-   See the COPYING file for more details.
+   Dlgedit is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with Dlgedit; if not, write to the Free Software 
+   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 /** 
@@ -22,7 +27,6 @@
 #ifndef GUI_TREE_H
 #define GUI_TREE_H
 
-#include <gtk/gtkctree.h>
 #include "dlg_module.h"
 
 /**
@@ -126,13 +130,18 @@ public:
      * it will be deselected first.
      * @param node The node to be selected.
      */
-    void select (GtkCTreeNode *node);
+    void select (GtkTreeIter *node);
     /**
      * Select the given module in the tree. If a node is currently
      * selected, it will be deselected first.
      * @param module The module to select.
      */
     void select (DlgModule *module);
+    /**
+     * Deselect the given module in the tree.
+     * @param module The module to deselect.
+     */
+    void unselect (DlgModule *module);
     
 private:
     /**
@@ -140,42 +149,40 @@ private:
      * into the module's sub-dialogues, sub-sub-dialogues, and so on.
      * @param root The root of the (sub-)tree to be build.
      */
-    void build (GtkCTreeNode *root);
+    void build (GtkTreeIter root);
     /**
      * Insert a module into the tree, as child of the given parent.
      * @param parent The parent of the module to add.
-     * @param sibling The sibling after which module should be added.
      * @param module The module to add.
      * @return The node that has been added.
      */
-    GtkCTreeNode *insert (GtkCTreeNode *parent, GtkCTreeNode *sibling, DlgModule *module);
+    GtkTreeIter insert (GtkTreeIter parent, DlgModule *module);
     /**
      * Set the icon of the given node to the appropriate state.
      * @param node Node whose icon to change.
      * @param select Whether to use the selected or normal icon.
      * @param changed Whether the given node is saved or modified.
      */
-    void setIcon (GtkCTreeNode *node, bool select, bool changed);
+    void setIcon (GtkTreeIter node, bool select, bool changed);
     /**
      * Find the node associated with the given module.
      * @param module DlgModule whose node to retrieve.
-     * @return Node associated with the module, or NULL if it isn't found.
+     * @param node iterator set to the node associated with the module
+     * @return true if node associated with the module was found, false otherwise.
      */
-    GtkCTreeNode *locate (DlgModule *module);
+    bool locate (DlgModule *module, GtkTreeIter *node);
     /**
      * Find the node associated with the given project. If no such node
      * exists, it will be created.
      * @param project Name of the project
      * @return Node associated with project
      */
-    GtkCTreeNode *locateProject (const std::string &project);
-    
+    GtkTreeIter locateProject (const std::string &project);
+
     GtkWidget *tree;        // The actual GTK+ tree widget
-    GtkCTreeNode *selected; // The node currently 'selected'
     
     // Icons to display next to tree nodes
-    GdkPixmap *icon[MAX_ICONS];
-    GdkBitmap *mask[MAX_ICONS];
+    GdkPixbuf *icon[MAX_ICONS];
 };
 
 #endif // GUI_TREE_H

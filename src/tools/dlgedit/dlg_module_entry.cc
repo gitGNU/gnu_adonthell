@@ -1,15 +1,22 @@
 /*
    $Id$
 
-   Copyright (C) 2002 Kai Sterker <kaisterker@linuxgames.com>
+   Copyright (C) 2002/2004 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
-   This program is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License.
-   This program is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY.
+   Dlgedit is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
 
-   See the COPYING file for more details.
+   Dlgedit is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with Dlgedit; if not, write to the Free Software 
+   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 /** 
@@ -18,6 +25,7 @@
  * @author Kai Sterker
  * @brief The textual contents of a DlgModule.
  */
+
 
 #include <algorithm>
 #include "game.h"
@@ -51,7 +59,7 @@ void DlgModuleEntry::clear ()
     // empty character and quest array
     characters.clear ();
     quests.clear ();
-    
+
     init ();
 }
 
@@ -67,7 +75,7 @@ bool DlgModuleEntry::setProject (std::string p)
         // empty character and quest array
         characters.clear ();
         quests.clear ();
-        
+
         if (p != "none")
         {
             retval &= loadCharacters ();
@@ -84,38 +92,38 @@ bool DlgModuleEntry::loadCharacters ()
     // look for a character file
     std::string file = game::find_file (project_ + "/character.data");
     if (file == "") return false;
-    
+
     // open the file
     igzstream in;
     in.open (file);
-    
+
     // version check
     if (!fileops::get_version (in, 3, 4, file))
         return false;
-    
+
     // load characters
-    character_base *mychar; 
+    character_base *mychar;
     char ctemp;
 
     do
     {
         mychar = new character_base;
         mychar->get_state (in);
- 
+
         // save the name of the NPC's
-        if (mychar->get_id () != "Player") 
+        if (mychar->get_id () != "Player")
             addCharacter (mychar->get_name ());
-        
+
         delete mychar;
     }
     while (ctemp << in);
-    
+
     // close file
     in.close ();
-    
+
     itc = characters.begin ();
-    
-    return true; 
+
+    return true;
 }
 
 // load the quest names
@@ -124,7 +132,7 @@ bool DlgModuleEntry::loadQuests ()
     // look for a character file
     std::string file = game::find_file (project_ + "/quest.data");
     if (file == "") return false;
-    
+
     // open the file
     igzstream in;
     in.open (file);
@@ -142,23 +150,23 @@ bool DlgModuleEntry::loadQuests ()
         myquest.load (in);
         addQuest (myquest.name);
     }
-    
+
     // close file
     in.close ();
-    
+
     itq = quests.begin ();
-    
-    return true; 
+
+    return true;
 }
 
 // add a character
 void DlgModuleEntry::addCharacter (std::string character)
 {
     std::vector<std::string>::iterator i;
-    
+
     for (i = characters.begin (); i != characters.end (); i++)
         if (character < *i) break;
-    
+
     characters.insert (i, character);
 }
 
@@ -166,10 +174,10 @@ void DlgModuleEntry::addCharacter (std::string character)
 void DlgModuleEntry::addQuest (std::string quest)
 {
     std::vector<std::string>::iterator i;
-    
+
     for (i = quests.begin (); i != quests.end (); i++)
         if (quest < *i) break;
-    
+
     quests.insert (i, quest);
 }
 
@@ -178,7 +186,7 @@ bool DlgModuleEntry::isCharacter (const std::string &character)
 {
     if (find (characters.begin (), characters.end (), character) == characters.end ())
         return false;
-    
+
     return true;
 }
 

@@ -1,14 +1,51 @@
 ## Process this file with automake to produce Makefile.in
 
-if HAVE_GTK
-noinst_PROGRAMS = dlgedit
-endif
-
-SUBDIRS = examples
-
 EXTRA_DIST = loadlg.l loadcfg.l
 
-dlgedit_SOURCES = \
+bin_PROGRAMS = adonthell-dlgedit
+
+headers = \
+    cfg_data.h \
+    cfg_io.h \
+    cfg_project.h \
+    dlg_arrow.h \
+    dlg_circle.h \
+    dlg_circle_entry.h \
+    dlg_cmdline.h \
+    dlg_compiler.h \
+    dlg_module.h \
+    dlg_module_entry.h \
+    dlg_mover.h \
+    dlg_node.h \
+    dlg_node_gfx.h \
+    dlg_point.h \
+    dlg_rect.h \
+    dlg_types.h \
+    gettext.h \
+    gui_circle.h \
+    gui_circle_events.h \
+    gui_code.h \
+    gui_dlgedit.h \
+    gui_dlgedit_events.h \
+    gui_edit.h \
+    gui_error.h \
+    gui_file.h \
+    gui_graph.h \
+    gui_graph_events.h \
+    gui_list.h \
+    gui_list_events.h \
+    gui_messages.h \
+    gui_modal_dialog.h \
+    gui_recent_files.h \
+    gui_resources.h \
+    gui_scrollable.h \
+    gui_settings.h \
+    gui_tooltip.h \
+    gui_tree.h \
+    kb_traverse.h \
+    util.h
+
+adonthell_dlgedit_SOURCES = \
     cfg_data.cc \
     cfg_io.cc \
     cfg_project.cc \
@@ -39,6 +76,8 @@ dlgedit_SOURCES = \
     gui_messages.cc \
     gui_modal_dialog.cc \
     gui_resources.cc \
+    gui_recent_files.cc \
+    gui_scrollable.cc \
     gui_settings.cc \
     gui_tooltip.cc \
     gui_tree.cc \
@@ -46,55 +85,18 @@ dlgedit_SOURCES = \
     lex.loadcfg.cc \
     lex.loadlg.cc \
     main.cc \
-    cfg_data.h \
-    cfg_io.h \
-    cfg_project.h \
-    dlg_arrow.h \
-    dlg_circle.h \
-    dlg_circle_entry.h \
-    dlg_cmdline.h \
-    dlg_compiler.h \
-    dlg_module.h \
-    dlg_module_entry.h \
-    dlg_mover.h \
-    dlg_node.h \
-    dlg_node_gfx.h \
-    dlg_point.h \
-    dlg_rect.h \
-    dlg_types.h \
-    gui_circle.h \
-    gui_circle_events.h \
-    gui_code.h \
-    gui_dlgedit.h \
-    gui_dlgedit_events.h \
-    gui_edit.h \
-    gui_error.h \
-    gui_file.h \
-    gui_graph.h \
-    gui_graph_events.h \
-    gui_list.h \
-    gui_list_events.h \
-    gui_messages.h \
-    gui_modal_dialog.h \
-    gui_resources.h \
-    gui_settings.h \
-    gui_tooltip.h \
-    gui_tree.h \
-    kb_traverse.h
+    util.cc \
+    $(headers)
+    
+# preparation for switching to GTK+ 3.0
+GTK_3_0_FLAGS = -DGSEAL_ENABLE -DGDK_DISABLE_DEPRECATED -DGTK_DISABLE_DEPRECATED
 
-# Evil, but it works...
-AM_CPPFLAGS =-I../.. -D_VERSION_=\"0.9pre\" $(GTK_CFLAGS) $(SDL_CFLAGS)
-
-# SWIGFLAGS = -D_DLGEDIT_ -D_DEBUG_
-
-# dlgedit_LDADD = ../../libadonthell.a \
-# $(SDL_LIBS) $(PY_LIBS) $(GTK_LIBS)
-
-dlgedit_LDADD = $(GTK_LIBS) ../../libadonthell.a
-#dlgedit_LDFLAGS = -Wl,-E
+AM_CPPFLAGS = -I@top_srcdir@/src
+adonthell_dlgedit_CXXFLAGS = -D_VERSION_=\"0.3.6\" $(SDL_CFLAGS) $(GTK_CFLAGS) $(GTK_3_0_FLAGS) $(PY_CFLAGS) $(IGE_MAC_CFLAGS)
+adonthell_dlgedit_LDADD = ../../libadonthell.a $(GTK_LIBS) $(PY_LIBS) $(IGE_MAC_LIBS)
 
 lex.loadlg.cc: loadlg.l
-	flex -olex.loadlg.cc loadlg.l
+	flex -olex.loadlg.cc $<
 
 lex.loadcfg.cc: loadcfg.l
-	flex -olex.loadcfg.cc loadcfg.l
+	flex -olex.loadcfg.cc $<

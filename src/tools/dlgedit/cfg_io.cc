@@ -4,12 +4,19 @@
    Copyright (C) 2002 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
-   This program is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License.
-   This program is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY.
+   Dlgedit is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
 
-   See the COPYING file for more details.
+   Dlgedit is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with Dlgedit; if not, write to the Free Software 
+   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 /**
@@ -20,6 +27,8 @@
  */
 
 #include <stdio.h>
+#include <cstdlib>
+#include <glib/gstdio.h>
 #include "cfg_io.h"
 #include "dlg_types.h"
 
@@ -31,10 +40,14 @@ extern int parse_cfgfile (std::string&, int&);
 // ctor; load config
 CfgIO::CfgIO ()
 {
+#ifndef WIN32
     Dlgeditrc = std::string (getenv ("HOME")) + "/.adonthell/dlgeditrc";
-       
+#else
+    Dlgeditrc = std::string ("./dlgeditrc");
+#endif
+    
     // loadcfgin is declared in lex.loadcfg.cc
-    loadcfgin = fopen (Dlgeditrc.c_str (), "r");
+    loadcfgin = g_fopen (Dlgeditrc.c_str (), "rb");
 
     // open succeeded -> read configuration
     if (loadcfgin)
@@ -64,12 +77,6 @@ void CfgIO::load ()
         // get next token
         switch (token = parse_cfgfile (s, n))
         {
-            case LOAD_FILE:
-            {
-                if (parse_cfgfile (s, n) == LOAD_STR) Data.addFile (s);               
-                break;
-            }
-            
             case LOAD_PROJECT:
             {
                 if (parse_cfgfile (s, n) == LOAD_STR) Data.addProject (s);

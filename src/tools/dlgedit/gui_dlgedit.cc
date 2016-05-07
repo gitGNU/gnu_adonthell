@@ -1,15 +1,20 @@
 /*
-   $Id$
-
    Copyright (C) 2002/2003 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
-   This program is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License.
-   This program is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY.
+   Dlgedit is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
 
-   See the COPYING file for more details.
+   Dlgedit is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with Dlgedit; if not, write to the Free Software 
+   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 /** 
@@ -23,13 +28,24 @@
 #include <config.h>
 #endif
 
+#ifdef MAC_INTEGRATION
+#include <ige-mac-integration.h>
+#endif
+
+#ifdef WIN32
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#endif
+
+#define MIME_TYPE "application/x-adonthell-dlg"
+
 #include <algorithm>
-#include <gtk/gtk.h>
+#include <gdk-pixbuf/gdk-pixbuf.h>
 #include <gdk/gdkkeysyms.h>
-#include <stdio.h>
+#include <glib/gstdio.h>
 #include <sys/stat.h>
 #include <unistd.h>
-#include <stdio.h>
+#include <cstring>
 #include "gettext.h"
 #include "cfg_data.h"
 #include "dlg_cmdline.h"
@@ -54,41 +70,6 @@ extern void parser_switch_input ();
 extern void parser_restore_input ();
 
 /**
- * Icon of the main window
- */
-static char * icon_xpm[] = {
-"16 16 13 1",
-" 	c None",
-".	c #888888",
-"+	c #777777",
-"@	c #999999",
-"#	c #111111",
-"$	c #222222",
-"%	c #000000",
-"&	c #333333",
-"*	c #555555",
-"=	c #666666",
-"-	c #444444",
-";	c #070707",
-">	c #AAAAAA",
-"     .+++.@     ",
-"    .#$%&**@    ",
-"    =%-#=  $*   ",
-"    #*+%+  .%-  ",
-"   .# .;+   *%= ",
-"   =- =;+   .## ",
-"   #= =#=    $%.",
-"  .%%##%$*==.&%+",
-"  +-  =%-@   *%*",
-"  #%%$#%$**=.&%+",
-"  %-++*#=    $%.",
-" =#+  =%+   .%& ",
-" -$   =%+   $%. ",
-"+%+   +%+  *#+  ",
-"-%.   =%-*=$.   ",
-"=*.   @=+..>    "};
-
-/**
  * Global pointer to the main window
  */
 GuiDlgedit *GuiDlgedit::window = NULL;
@@ -96,7 +77,7 @@ GuiDlgedit *GuiDlgedit::window = NULL;
 /**
  * Strings describing the various program states
  */
-char *GuiDlgedit::progState[NUM_MODES] = 
+const char *GuiDlgedit::progState[NUM_MODES] =
     { " IDLE", " SELECTED", " HIGHLIGHTED", " DRAGGED", " PREVIEW" };
 
 // Create the main window
@@ -108,26 +89,28 @@ GuiDlgedit::GuiDlgedit ()
     GtkWidget *submenu;
     GtkWidget *menuitem;
     GtkWidget *hpaned, *vpaned;
-    GdkPixmap *icon;
-    GdkBitmap *mask;
-    GtkAccelGroup *accel_group;
     
     window = this;
-
     number = 0;
     
+    // recent file management
+    std::string cmdline = "-g" + DlgCmdline::datadir + " -p" + DlgCmdline::project;
+    RecentFiles = new GuiRecentFiles ("dlgedit", cmdline);
+    RecentFiles->setListener(this);
+
     // Statusbar for displaying help and error messages
     GtkWidget *status_help = gtk_statusbar_new ();
+    // gtk_statusbar_set_has_resize_grip (GTK_STATUSBAR(status_help), FALSE);
     message = new GuiMessages (status_help);
         
     // Main Window
     wnd = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-    gtk_widget_set_usize (GTK_WIDGET (wnd), 800, 600);
-    gtk_signal_connect (GTK_OBJECT (wnd), "delete_event", GTK_SIGNAL_FUNC (on_widget_destroy), NULL);
+    gtk_window_set_default_size(GTK_WINDOW(wnd), 900, 700);
+    g_signal_connect (G_OBJECT (wnd), "delete_event", G_CALLBACK (on_widget_destroy), NULL);
             
     // Menu Accelerators
-    accel_group = gtk_accel_group_get_default ();
-
+    GtkAccelGroup *accel_group = gtk_accel_group_new ();
+    
     // Main Windows Menu
     menu = gtk_menu_bar_new ();
 
@@ -142,204 +125,197 @@ GuiDlgedit::GuiDlgedit ()
     submenu = gtk_menu_new ();
 
     // New
-    menuitem = gtk_menu_item_new_with_label ("New");
+    menuitem =gtk_image_menu_item_new_from_stock ("gtk-new", accel_group);
     gtk_container_add (GTK_CONTAINER (submenu), menuitem);
-    gtk_widget_add_accelerator (menuitem, "activate", accel_group, GDK_n, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
-    gtk_object_set_data (GTK_OBJECT (menuitem), "help-id", GINT_TO_POINTER (1));
-    gtk_signal_connect (GTK_OBJECT (menuitem), "enter-notify-event", GTK_SIGNAL_FUNC (on_display_help), message);
-    gtk_signal_connect (GTK_OBJECT (menuitem), "leave-notify-event", GTK_SIGNAL_FUNC (on_clear_help), message);
-    gtk_signal_connect (GTK_OBJECT (menuitem), "activate", GTK_SIGNAL_FUNC (on_file_new_activate), (gpointer) this);
+    g_object_set_data (G_OBJECT (menuitem), "help-id", GINT_TO_POINTER (1));
+    g_signal_connect (G_OBJECT (menuitem), "enter-notify-event", G_CALLBACK (on_display_help), message);
+    g_signal_connect (G_OBJECT (menuitem), "leave-notify-event", G_CALLBACK (on_clear_help), message);
+    g_signal_connect (G_OBJECT (menuitem), "activate", G_CALLBACK (on_file_new_activate), (gpointer) this);
     gtk_widget_show (menuitem);
 
     // Open
-    menuitem = gtk_menu_item_new_with_label ("Open ...");
+    menuitem =  gtk_image_menu_item_new_from_stock ("gtk-open", accel_group);
     gtk_container_add (GTK_CONTAINER (submenu), menuitem);
-    gtk_widget_add_accelerator (menuitem, "activate", accel_group, GDK_o, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
-    gtk_object_set_data (GTK_OBJECT (menuitem), "help-id", GINT_TO_POINTER (2));
-    gtk_signal_connect (GTK_OBJECT (menuitem), "enter-notify-event", GTK_SIGNAL_FUNC (on_display_help), message);
-    gtk_signal_connect (GTK_OBJECT (menuitem), "leave-notify-event", GTK_SIGNAL_FUNC (on_clear_help), message);
-    gtk_signal_connect (GTK_OBJECT (menuitem), "activate", GTK_SIGNAL_FUNC (on_file_load_activate), (gpointer) this);
+    g_object_set_data (G_OBJECT (menuitem), "help-id", GINT_TO_POINTER (2));
+    g_signal_connect (G_OBJECT (menuitem), "enter-notify-event", G_CALLBACK (on_display_help), message);
+    g_signal_connect (G_OBJECT (menuitem), "leave-notify-event", G_CALLBACK (on_clear_help), message);
+    g_signal_connect (G_OBJECT (menuitem), "activate", G_CALLBACK (on_file_load_activate), (gpointer) this);
     gtk_widget_show (menuitem);
 
     // Open Previous >
     menuitem = gtk_menu_item_new_with_label ("Open Previous");
     gtk_container_add (GTK_CONTAINER (submenu), menuitem);
-    gtk_object_set_data (GTK_OBJECT (menuitem), "help-id", GINT_TO_POINTER (2));
-    gtk_signal_connect (GTK_OBJECT (menuitem), "enter-notify-event", GTK_SIGNAL_FUNC (on_display_help), message);
-    gtk_signal_connect (GTK_OBJECT (menuitem), "leave-notify-event", GTK_SIGNAL_FUNC (on_clear_help), message);
-    gtk_widget_show (menuitem);
-    menuItem[OPEN_RECENT] = menuitem;
+    g_object_set_data (G_OBJECT (menuitem), "help-id", GINT_TO_POINTER (2));
+    g_signal_connect (G_OBJECT (menuitem), "enter-notify-event", G_CALLBACK (on_display_help), message);
+    g_signal_connect (G_OBJECT (menuitem), "leave-notify-event", G_CALLBACK (on_clear_help), message);
+    gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), RecentFiles->recentFileMenu());
     
     // Save
-    menuitem = gtk_menu_item_new_with_label ("Save");
+    menuitem = gtk_image_menu_item_new_from_stock ("gtk-save", accel_group);
     gtk_container_add (GTK_CONTAINER (submenu), menuitem);
-    gtk_widget_add_accelerator (menuitem, "activate", accel_group, GDK_s, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
-    gtk_object_set_data (GTK_OBJECT (menuitem), "help-id", GINT_TO_POINTER (3));
-    gtk_signal_connect (GTK_OBJECT (menuitem), "enter-notify-event", GTK_SIGNAL_FUNC (on_display_help), message);
-    gtk_signal_connect (GTK_OBJECT (menuitem), "leave-notify-event", GTK_SIGNAL_FUNC (on_clear_help), message);
-    gtk_signal_connect (GTK_OBJECT (menuitem), "activate", GTK_SIGNAL_FUNC (on_file_save_activate), (gpointer) this);
-    gtk_widget_show (menuitem);
+    g_object_set_data (G_OBJECT (menuitem), "help-id", GINT_TO_POINTER (3));
+    g_signal_connect (G_OBJECT (menuitem), "enter-notify-event", G_CALLBACK (on_display_help), message);
+    g_signal_connect (G_OBJECT (menuitem), "leave-notify-event", G_CALLBACK (on_clear_help), message);
+    g_signal_connect (G_OBJECT (menuitem), "activate", G_CALLBACK (on_file_save_activate), (gpointer) this);
     menuItem[SAVE] = menuitem;
      
     // Save As
-    menuitem = gtk_menu_item_new_with_label ("Save As ...");
+    menuitem = gtk_image_menu_item_new_from_stock ("gtk-save-as", accel_group);
     gtk_container_add (GTK_CONTAINER (submenu), menuitem);
-    gtk_widget_add_accelerator (menuitem, "activate", accel_group, GDK_a, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
-    gtk_object_set_data (GTK_OBJECT (menuitem), "help-id", GINT_TO_POINTER (4));
-    gtk_signal_connect (GTK_OBJECT (menuitem), "enter-notify-event", GTK_SIGNAL_FUNC (on_display_help), message);
-    gtk_signal_connect (GTK_OBJECT (menuitem), "leave-notify-event", GTK_SIGNAL_FUNC (on_clear_help), message);
-    gtk_signal_connect (GTK_OBJECT (menuitem), "activate", GTK_SIGNAL_FUNC (on_file_save_as_activate), (gpointer) this);
-    gtk_widget_show (menuitem);
+    g_object_set_data (G_OBJECT (menuitem), "help-id", GINT_TO_POINTER (4));
+    g_signal_connect (G_OBJECT (menuitem), "enter-notify-event", G_CALLBACK (on_display_help), message);
+    g_signal_connect (G_OBJECT (menuitem), "leave-notify-event", G_CALLBACK (on_clear_help), message);
+    g_signal_connect (G_OBJECT (menuitem), "activate", G_CALLBACK (on_file_save_as_activate), (gpointer) this);
     menuItem[SAVE_AS] = menuitem;
 
     // Seperator
     menuitem = gtk_menu_item_new ();
-    gtk_menu_append (GTK_MENU (submenu), menuitem);
+    gtk_menu_shell_append (GTK_MENU_SHELL (submenu), menuitem);
     gtk_widget_set_sensitive (menuitem, FALSE);
-    gtk_widget_show (menuitem);
     
     // Revert to Saved
-    menuitem = gtk_menu_item_new_with_label ("Revert to Saved");
+    menuitem = gtk_image_menu_item_new_from_stock ("gtk-revert-to-saved", accel_group);
     gtk_container_add (GTK_CONTAINER (submenu), menuitem);
-    gtk_widget_add_accelerator (menuitem, "activate", accel_group, GDK_r, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
-    gtk_object_set_data (GTK_OBJECT (menuitem), "help-id", GINT_TO_POINTER (7));
-    gtk_signal_connect (GTK_OBJECT (menuitem), "enter-notify-event", GTK_SIGNAL_FUNC (on_display_help), message);
-    gtk_signal_connect (GTK_OBJECT (menuitem), "leave-notify-event", GTK_SIGNAL_FUNC (on_clear_help), message);
-    gtk_signal_connect (GTK_OBJECT (menuitem), "activate", GTK_SIGNAL_FUNC (on_file_revert_activate), (gpointer) NULL);
-    gtk_widget_show (menuitem);
+    g_object_set_data (G_OBJECT (menuitem), "help-id", GINT_TO_POINTER (7));
+    g_signal_connect (G_OBJECT (menuitem), "enter-notify-event", G_CALLBACK (on_display_help), message);
+    g_signal_connect (G_OBJECT (menuitem), "leave-notify-event", G_CALLBACK (on_clear_help), message);
+    g_signal_connect (G_OBJECT (menuitem), "activate", G_CALLBACK (on_file_revert_activate), (gpointer) NULL);
     menuItem[REVERT] = menuitem;
     
     // Close
-    menuitem = gtk_menu_item_new_with_label ("Close");
+    menuitem = gtk_image_menu_item_new_from_stock ("gtk-close", accel_group);
     gtk_container_add (GTK_CONTAINER (submenu), menuitem);
-    gtk_widget_add_accelerator (menuitem, "activate", accel_group, GDK_w, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
-    gtk_object_set_data (GTK_OBJECT (menuitem), "help-id", GINT_TO_POINTER (5));
-    gtk_signal_connect (GTK_OBJECT (menuitem), "enter-notify-event", GTK_SIGNAL_FUNC (on_display_help), message);
-    gtk_signal_connect (GTK_OBJECT (menuitem), "leave-notify-event", GTK_SIGNAL_FUNC (on_clear_help), message);
-    gtk_signal_connect (GTK_OBJECT (menuitem), "activate", GTK_SIGNAL_FUNC (on_file_close_activate), (gpointer) NULL);
-    gtk_widget_show (menuitem);
+    g_object_set_data (G_OBJECT (menuitem), "help-id", GINT_TO_POINTER (5));
+    g_signal_connect (G_OBJECT (menuitem), "enter-notify-event", G_CALLBACK (on_display_help), message);
+    g_signal_connect (G_OBJECT (menuitem), "leave-notify-event", G_CALLBACK (on_clear_help), message);
+    g_signal_connect (G_OBJECT (menuitem), "activate", G_CALLBACK (on_file_close_activate), (gpointer) NULL);
     menuItem[CLOSE] = menuitem;
     
     // Seperator
+#ifndef MAC_INTEGRATION
     menuitem = gtk_menu_item_new ();
-    gtk_menu_append (GTK_MENU (submenu), menuitem);
+    gtk_menu_shell_append (GTK_MENU_SHELL (submenu), menuitem);
     gtk_widget_set_sensitive (menuitem, FALSE);
-    gtk_widget_show (menuitem);
+#endif
 
     // Quit
-    menuitem = gtk_menu_item_new_with_label ("Quit");
-    gtk_menu_append (GTK_MENU (submenu), menuitem);
-    gtk_widget_add_accelerator (menuitem, "activate", accel_group, GDK_q, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
-    gtk_object_set_data (GTK_OBJECT (menuitem), "help-id", GINT_TO_POINTER (6));
-    gtk_signal_connect (GTK_OBJECT (menuitem), "enter-notify-event", GTK_SIGNAL_FUNC (on_display_help), message);
-    gtk_signal_connect (GTK_OBJECT (menuitem), "leave-notify-event", GTK_SIGNAL_FUNC (on_clear_help), message);
-    gtk_signal_connect (GTK_OBJECT (menuitem), "activate", GTK_SIGNAL_FUNC (on_widget_destroy), (gpointer) NULL);
-    gtk_widget_show (menuitem);
+    GtkWidget *quit_item = gtk_image_menu_item_new_from_stock ("gtk-quit", accel_group);
+    gtk_menu_shell_append (GTK_MENU_SHELL (submenu), quit_item);
+    g_object_set_data (G_OBJECT (quit_item), "help-id", GINT_TO_POINTER (6));
+    g_signal_connect (G_OBJECT (quit_item), "enter-notify-event", G_CALLBACK (on_display_help), message);
+    g_signal_connect (G_OBJECT (quit_item), "leave-notify-event", G_CALLBACK (on_clear_help), message);
+    g_signal_connect (G_OBJECT (quit_item), "activate", G_CALLBACK (on_widget_destroy), (gpointer) NULL);
 
     // Attach File Menu
-    menuitem = gtk_menu_item_new_with_label ("File");
-    gtk_widget_show (menuitem);
+    menuitem = gtk_menu_item_new_with_mnemonic ("_File");
     gtk_menu_item_set_submenu (GTK_MENU_ITEM (menuitem), submenu);
-    gtk_menu_bar_append (GTK_MENU_BAR (menu), menuitem);
+    gtk_container_add (GTK_CONTAINER (menu), menuitem);
 
     // Dialogue Menu
     submenu = gtk_menu_new ();
     
     // Settings
-    menuitem = gtk_menu_item_new_with_label ("Settings ...");
+    menuitem = gtk_image_menu_item_new_with_mnemonic ("_Settings ...");
+    gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (menuitem), gtk_image_new_from_stock ("gtk-preferences", GTK_ICON_SIZE_MENU));
     gtk_container_add (GTK_CONTAINER (submenu), menuitem);
-    gtk_widget_add_accelerator (menuitem, "activate", accel_group, GDK_t, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
-    gtk_object_set_data (GTK_OBJECT (menuitem), "help-id", GINT_TO_POINTER (10));
-    gtk_signal_connect (GTK_OBJECT (menuitem), "enter-notify-event", GTK_SIGNAL_FUNC (on_display_help), message);
-    gtk_signal_connect (GTK_OBJECT (menuitem), "leave-notify-event", GTK_SIGNAL_FUNC (on_clear_help), message);
-    gtk_signal_connect (GTK_OBJECT (menuitem), "activate", GTK_SIGNAL_FUNC (on_dialogue_player_activate), (gpointer) NULL);
-    gtk_widget_show (menuitem);
+    gtk_widget_add_accelerator (menuitem, "activate", accel_group, GDK_KEY_t, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
+    g_object_set_data (G_OBJECT (menuitem), "help-id", GINT_TO_POINTER (10));
+    g_signal_connect (G_OBJECT (menuitem), "enter-notify-event", G_CALLBACK (on_display_help), message);
+    g_signal_connect (G_OBJECT (menuitem), "leave-notify-event", G_CALLBACK (on_clear_help), message);
+    g_signal_connect (G_OBJECT (menuitem), "activate", G_CALLBACK (on_dialogue_player_activate), (gpointer) NULL);
     menuItem[SETTINGS] = menuitem;
 
     // Custom Functions
-    menuitem = gtk_menu_item_new_with_label ("Python Code ...");
+    menuitem = gtk_image_menu_item_new_with_mnemonic ("_Python Code ...");
+    gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (menuitem), gtk_image_new_from_stock ("gtk-justify-fill", GTK_ICON_SIZE_MENU));
     gtk_container_add (GTK_CONTAINER (submenu), menuitem);
-    gtk_widget_add_accelerator (menuitem, "activate", accel_group, GDK_p, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
-    gtk_object_set_data (GTK_OBJECT (menuitem), "help-id", GINT_TO_POINTER (11));
-    gtk_signal_connect (GTK_OBJECT (menuitem), "enter-notify-event", GTK_SIGNAL_FUNC (on_display_help), message);
-    gtk_signal_connect (GTK_OBJECT (menuitem), "leave-notify-event", GTK_SIGNAL_FUNC (on_clear_help), message);
-    gtk_signal_connect (GTK_OBJECT (menuitem), "activate", GTK_SIGNAL_FUNC (on_dialogue_functions_activate), (gpointer) this);
-    gtk_widget_show (menuitem);
+    gtk_widget_add_accelerator (menuitem, "activate", accel_group, GDK_KEY_p, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
+    g_object_set_data (G_OBJECT (menuitem), "help-id", GINT_TO_POINTER (11));
+    g_signal_connect (G_OBJECT (menuitem), "enter-notify-event", G_CALLBACK (on_display_help), message);
+    g_signal_connect (G_OBJECT (menuitem), "leave-notify-event", G_CALLBACK (on_clear_help), message);
+    g_signal_connect (G_OBJECT (menuitem), "activate", G_CALLBACK (on_dialogue_functions_activate), (gpointer) this);
     menuItem[FUNCTIONS] = menuitem;
 
     // Seperator
     menuitem = gtk_menu_item_new ();
-    gtk_menu_append (GTK_MENU (submenu), menuitem);
+    gtk_menu_shell_append (GTK_MENU_SHELL (submenu), menuitem);
     gtk_widget_set_sensitive (menuitem, FALSE);
-    gtk_widget_show (menuitem);
 
     // Compile
-    menuitem = gtk_menu_item_new_with_label ("Compile");
+    menuitem = gtk_image_menu_item_new_with_mnemonic ("_Compile");
+    gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (menuitem), gtk_image_new_from_stock ("gtk-convert", GTK_ICON_SIZE_MENU));
     gtk_container_add (GTK_CONTAINER (submenu), menuitem);
-    gtk_widget_add_accelerator (menuitem, "activate", accel_group, GDK_c, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
-    gtk_object_set_data (GTK_OBJECT (menuitem), "help-id", GINT_TO_POINTER (12));
-    gtk_signal_connect (GTK_OBJECT (menuitem), "enter-notify-event", GTK_SIGNAL_FUNC (on_display_help), message);
-    gtk_signal_connect (GTK_OBJECT (menuitem), "leave-notify-event", GTK_SIGNAL_FUNC (on_clear_help), message);
-    gtk_signal_connect (GTK_OBJECT (menuitem), "activate", GTK_SIGNAL_FUNC (on_dialogue_compile_activate), (gpointer) NULL);
-    gtk_widget_show (menuitem);
+    gtk_widget_add_accelerator (menuitem, "activate", accel_group, GDK_KEY_c, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
+    g_object_set_data (G_OBJECT (menuitem), "help-id", GINT_TO_POINTER (12));
+    g_signal_connect (G_OBJECT (menuitem), "enter-notify-event", G_CALLBACK (on_display_help), message);
+    g_signal_connect (G_OBJECT (menuitem), "leave-notify-event", G_CALLBACK (on_clear_help), message);
+    g_signal_connect (G_OBJECT (menuitem), "activate", G_CALLBACK (on_dialogue_compile_activate), (gpointer) NULL);
     menuItem[COMPILE] = menuitem;
 
     // Preview i18n
 #ifdef ENABLE_NLS 
-    menuitem = gtk_menu_item_new_with_label ("Preview L10n ...");
+    menuitem = gtk_menu_item_new_with_label ("Preview L10n");
     gtk_container_add (GTK_CONTAINER (submenu), menuitem);
-    gtk_widget_add_accelerator (menuitem, "activate", accel_group, GDK_l, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
-    gtk_object_set_data (GTK_OBJECT (menuitem), "help-id", GINT_TO_POINTER (13));
-    gtk_signal_connect (GTK_OBJECT (menuitem), "enter-notify-event", GTK_SIGNAL_FUNC (on_display_help), message);
-    gtk_signal_connect (GTK_OBJECT (menuitem), "leave-notify-event", GTK_SIGNAL_FUNC (on_clear_help), message);
-    gtk_signal_connect (GTK_OBJECT (menuitem), "activate", GTK_SIGNAL_FUNC (on_dialogue_preview_activate), (gpointer) this);
+    gtk_widget_add_accelerator (menuitem, "activate", accel_group, GDK_KEY_v, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
+    g_object_set_data (G_OBJECT (menuitem), "help-id", GINT_TO_POINTER (13));
+    g_signal_connect (G_OBJECT (menuitem), "enter-notify-event", G_CALLBACK (on_display_help), message);
+    g_signal_connect (G_OBJECT (menuitem), "leave-notify-event", G_CALLBACK (on_clear_help), message);
+    g_signal_connect (G_OBJECT (menuitem), "activate", G_CALLBACK (on_dialogue_preview_activate), (gpointer) this);
     gtk_widget_show (menuitem);
     menuItem[PREVIEW] = menuitem;
 #endif
     
     // Run
-    menuitem = gtk_menu_item_new_with_label ("Execute");
+    menuitem = gtk_image_menu_item_new_with_mnemonic ("_Execute ...");
+    gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (menuitem), gtk_image_new_from_stock ("gtk-execute", GTK_ICON_SIZE_MENU));
     gtk_container_add (GTK_CONTAINER (submenu), menuitem);
-    gtk_widget_add_accelerator (menuitem, "activate", accel_group, GDK_e, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
-    gtk_object_set_data (GTK_OBJECT (menuitem), "help-id", GINT_TO_POINTER (14));
-    gtk_signal_connect (GTK_OBJECT (menuitem), "enter-notify-event", GTK_SIGNAL_FUNC (on_display_help), message);
-    gtk_signal_connect (GTK_OBJECT (menuitem), "leave-notify-event", GTK_SIGNAL_FUNC (on_clear_help), message);
-    gtk_signal_connect (GTK_OBJECT (menuitem), "activate", GTK_SIGNAL_FUNC (on_dialogue_run_activate), (gpointer) NULL);
+    gtk_widget_add_accelerator (menuitem, "activate", accel_group, GDK_KEY_e, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
+    g_object_set_data (G_OBJECT (menuitem), "help-id", GINT_TO_POINTER (14));
+    g_signal_connect (G_OBJECT (menuitem), "enter-notify-event", G_CALLBACK (on_display_help), message);
+    g_signal_connect (G_OBJECT (menuitem), "leave-notify-event", G_CALLBACK (on_clear_help), message);
+    g_signal_connect (G_OBJECT (menuitem), "activate", G_CALLBACK (on_dialogue_run_activate), (gpointer) NULL);
     gtk_widget_show (menuitem);
     menuItem[RUN] = menuitem;
 
     // Attach Dialogue Menu
-    menuitem = gtk_menu_item_new_with_label ("Dialogue");
+    menuitem = gtk_menu_item_new_with_mnemonic ("_Dialogue");
     gtk_widget_show (menuitem);
     gtk_menu_item_set_submenu (GTK_MENU_ITEM (menuitem), submenu);
-    gtk_menu_bar_append (GTK_MENU_BAR (menu), menuitem);
+    gtk_menu_shell_append (GTK_MENU_SHELL (menu), menuitem);
 
     // Window Menu
     windowMenu = gtk_menu_new ();
 
     // Attach Window Menu
-    menuitem = gtk_menu_item_new_with_label ("Windows");
-    gtk_widget_show (menuitem);
+    menuitem = gtk_menu_item_new_with_mnemonic ("_Windows");
     gtk_menu_item_set_submenu (GTK_MENU_ITEM (menuitem), windowMenu);
-    gtk_menu_bar_append (GTK_MENU_BAR (menu), menuitem);
+    gtk_menu_shell_append (GTK_MENU_SHELL (menu), menuitem);
 
-    gtk_widget_show (menu);
+    gtk_widget_show_all (menu);
 
+#ifdef MAC_INTEGRATION
+    // Mac OSX-Style menu
+    gtk_widget_hide (menu);
+    
+    mainMenu = menu;
+    
+    ige_mac_menu_set_menu_bar (GTK_MENU_SHELL (menu));
+    ige_mac_menu_set_quit_menu_item (GTK_MENU_ITEM (quit_item));
+    
+    // IgeMacMenuGroup *group = ige_mac_menu_add_app_menu_group ();
+    // ige_mac_menu_add_app_menu_item (group, GTK_MENU_ITEM (quit_item), NULL);
+#endif    
+    
     vpaned = gtk_vpaned_new ();
     gtk_box_pack_start (GTK_BOX (vbox), vpaned, TRUE, TRUE, 2);
-    gtk_paned_set_handle_size (GTK_PANED (vpaned), 5);
-    gtk_paned_set_gutter_size (GTK_PANED (vpaned), 7);
     gtk_widget_show (vpaned);
 
     hpaned = gtk_hpaned_new ();
     gtk_paned_add1 (GTK_PANED (vpaned), hpaned);
-    gtk_paned_set_handle_size (GTK_PANED (hpaned), 5);
-    gtk_paned_set_gutter_size (GTK_PANED (hpaned), 7);
     gtk_widget_show (hpaned);
     
     // Accelerators
     gtk_window_add_accel_group (GTK_WINDOW (wnd), accel_group);
-
     gtk_widget_realize (wnd);
     
     // Tree
@@ -353,32 +329,27 @@ GuiDlgedit::GuiDlgedit ()
     
     // Status bars
     hbox = gtk_hbox_new (FALSE, 0);
-    gtk_widget_ref (hbox);
-    gtk_object_set_data_full (GTK_OBJECT (wnd), "hbox", hbox, (GtkDestroyNotify) gtk_widget_unref);
+    g_object_ref (hbox);
+    g_object_set_data_full (G_OBJECT (wnd), "hbox", hbox, (GDestroyNotify)  g_object_unref);
     gtk_widget_show (hbox);
     gtk_box_pack_start (GTK_BOX (vbox), hbox, FALSE, TRUE, 0);
-    gtk_widget_set_usize (hbox, -2, 20);
+    gtk_widget_set_size_request (hbox, -1, 20);
 
     // help message
-    gtk_widget_ref (status_help);
-    gtk_object_set_data_full (GTK_OBJECT (wnd), "status_help", status_help, (GtkDestroyNotify) gtk_widget_unref);
+    g_object_ref (status_help);
+    g_object_set_data_full (G_OBJECT (wnd), "status_help", status_help, (GDestroyNotify)  g_object_unref);
     gtk_widget_show (status_help);
     gtk_box_pack_start (GTK_BOX (hbox), status_help, TRUE, TRUE, 0);
-    gtk_widget_set_usize (status_help, -2, 20);
+    gtk_widget_set_size_request (status_help, -1, 20);
 
     // program mode
     status_mode = gtk_statusbar_new ();
-    gtk_widget_ref (status_mode);
-    gtk_object_set_data_full (GTK_OBJECT (wnd), "status_mode", status_mode, (GtkDestroyNotify) gtk_widget_unref);
+    g_object_ref (status_mode);
+    g_object_set_data_full (G_OBJECT (wnd), "status_mode", status_mode, (GDestroyNotify)  g_object_unref);
     gtk_widget_show (status_mode);
     gtk_box_pack_start (GTK_BOX (hbox), status_mode, FALSE, TRUE, 0);
-    gtk_widget_set_usize (status_mode, 150, -2);
+    gtk_widget_set_size_request (status_mode, 150, -1);
     
-    // set the editor's icon    
-    gtk_widget_realize (wnd);
-    icon = gdk_pixmap_create_from_xpm_d (wnd->window, &mask, NULL, icon_xpm);
-    gdk_window_set_icon (wnd->window, wnd->window, icon, mask);
-
     // Display MainWindow
     gtk_widget_show (wnd);
 
@@ -387,9 +358,6 @@ GuiDlgedit::GuiDlgedit ()
 
     // Display welcome message
     message->display (1000);
-
-    // init list of previously opened files
-    initRecentFiles ();
     
     // get the current working directory
     directory_ = g_get_current_dir ();
@@ -423,20 +391,24 @@ void GuiDlgedit::newDialogue ()
     showDialogue (module);
 }
 
+// open recent file
+void GuiDlgedit::OnRecentFileActivated (const std::string & file)
+{
+    loadDialogue (file);
+}
+
 // load a new dialogue
 void GuiDlgedit::loadDialogue (const std::string &f)
 {
     // make sure that file has an absolute path
-    std::string file = (f[0] == '/' ? f : directory_ + std::string ("/") + f);
+    std::string file = ((f[0] == '/' || f[1] == ':') ? f : directory_ + std::string ("/") + f);
+    gchar *fname = g_path_get_basename (file.c_str ());
     
     // test if we have a valid dialogue
     if (!checkDialogue (file))
     {        
-        // update list of previously opened files
-        CfgData::data->removeFile (file);
-        initRecentFiles ();
-    
-        message->display (-2, g_basename (file.c_str ()));
+        message->display (-2, fname);
+        g_free(fname);
         return;
     }
 
@@ -444,10 +416,10 @@ void GuiDlgedit::loadDialogue (const std::string &f)
     directory_ = g_dirname (file.c_str ());
     
     // get the name to use for the dialogue
-    std::string filename = g_basename (file.c_str ());
+    std::string filename (fname);
     
     // remove file extension
-    unsigned int pos = filename.rfind (FILE_EXT);
+    unsigned long pos = filename.rfind (FILE_EXT);
     if (pos != filename.npos) filename.erase (pos);
 
     // the new dialogue
@@ -464,12 +436,13 @@ void GuiDlgedit::loadDialogue (const std::string &f)
     else 
     {
         // update list of previously opened files
-        CfgData::data->addFile (file);
-        initRecentFiles ();
+        RecentFiles->registerFile(file, MIME_TYPE);
 
         message->display (200);     
         showDialogue (module, true);
     }
+
+    g_free(fname);
 }
 
 // load a sub-dialogue
@@ -482,10 +455,12 @@ DlgModule* GuiDlgedit::loadSubdialogue (const std::string &file)
     directory_ = g_dirname (file.c_str ());
 
     // get the name to use for the dialogue
-    std::string filename = g_basename (file.c_str ());
+    gchar *fname = g_path_get_basename (file.c_str ());
+    std::string filename (fname);
+    g_free (fname);
 
     // remove file extension
-    unsigned int pos = filename.rfind (FILE_EXT);
+    unsigned long pos = filename.rfind (FILE_EXT);
     if (pos != filename.npos) filename.erase (pos);
 
     // the sub-dialogue
@@ -547,10 +522,12 @@ void GuiDlgedit::saveDialogue (const std::string &file)
     directory_ = g_dirname (file.c_str ());
     
     // get the filename
-    std::string filename = g_basename (file.c_str ());
+    gchar *fname = g_path_get_basename (file.c_str ());
+    std::string filename (fname);
+    g_free (fname);
     
     // remove file extension
-    unsigned int pos = filename.rfind (FILE_EXT);
+    unsigned long pos = filename.rfind (FILE_EXT);
     if (pos != filename.npos) filename.erase (pos);
 
     // try to save file
@@ -561,8 +538,7 @@ void GuiDlgedit::saveDialogue (const std::string &file)
         message->display (201);
         
         // update list of previously opened files
-        CfgData::data->addFile (file);
-        initRecentFiles ();
+        RecentFiles->registerFile(file, MIME_TYPE);
 
         // update 'Revert to Saved' menu item
         gtk_widget_set_sensitive (menuItem[REVERT], TRUE);
@@ -595,9 +571,6 @@ void GuiDlgedit::closeDialogue ()
     
     // rebuild the 'windows' menu
     initMenu ();
-    
-    // update list of previously opened files
-    initRecentFiles ();
     
     // delete the dialogue
     delete module;
@@ -696,16 +669,20 @@ void GuiDlgedit::previewTranslation (const std::string &catalogue)
     // check if we have a proper catalogue
     if (strncmp (catalogue.substr (catalogue.length ()-3).c_str (), ".mo", 3))
     {
-        message->display (-130, g_basename (catalogue.c_str ()));
+        gchar *cname = g_path_get_basename (catalogue.c_str ());
+        message->display (-130, cname);
+        g_free (cname);
         return;
     }
     
     // see if the file exists at all
-    FILE *exists = fopen (catalogue.c_str (), "rb");
+    FILE *exists = g_fopen (catalogue.c_str (), "rb");
 
     if (!exists)
     {
-        message->display (-2, g_basename (catalogue.c_str ()));
+        gchar *cname = g_path_get_basename (catalogue.c_str ());
+        message->display (-2, cname);
+        g_free (cname);
         return;
     }
     // if it does, check magic number of catalogue file
@@ -719,27 +696,45 @@ void GuiDlgedit::previewTranslation (const std::string &catalogue)
     
         if (magic != 0x950412de)
         {
-            message->display (-130, g_basename (catalogue.c_str ()));
+            gchar *cname = g_path_get_basename (catalogue.c_str ());
+            message->display (-130, cname);
+            g_free (cname);
             return;
         }
     }
     
     // create temporary locale directory
+#ifndef WIN32
     if (mkdir ("/tmp/locale/", 0750) ||
         mkdir ("/tmp/locale/xy", 0750) ||
         mkdir ("/tmp/locale/xy/LC_MESSAGES", 0750))
+#else
+    if (mkdir ("tmp/locale/") ||
+        mkdir ("tmp/locale/xy") ||
+        mkdir ("tmp/locale/xy/LC_MESSAGES"))
+#endif
     {
         message->display (-131);
         return;
     }
             
+#ifndef WIN32
     // create a symlink to the given catalogue
     symlink (catalogue.c_str (), "/tmp/locale/xy/LC_MESSAGES/preview.mo");
     
     // set the language to use  
     setenv ("LANGUAGE", "xy", 1);
+#else
+    // create a symlink to the given catalogue
+    // VISTA only: CreateSymbolicLink ()
+    
+    // set the language to use  
+    SetEnvironmentVariable ("LANGUAGE", "xy");
+#endif
     
 #ifdef ENABLE_NLS
+    setlocale(LC_MESSAGES, "xy");
+
     {
         // tell gettext that the language has changed
         extern int _nl_msg_cat_cntr;
@@ -755,7 +750,7 @@ void GuiDlgedit::previewTranslation (const std::string &catalogue)
     DlgNode *node = module->deselectNode ();
     
     // update menuitem
-    gtk_label_set_text (GTK_LABEL (GTK_BIN (menuItem[PREVIEW])->child), "Exit Preview mode");
+    gtk_label_set_text (GTK_LABEL (gtk_bin_get_child (GTK_BIN(menuItem[PREVIEW]))), "Exit Preview mode");
     
     // set program mode
     setMode (L10N_PREVIEW);
@@ -772,7 +767,7 @@ void GuiDlgedit::exitPreview ()
 
     // clear the program mode
     setMode (NUM_MODES);
-    
+
     // restore the program mode
     if (module != NULL) 
     {
@@ -786,7 +781,7 @@ void GuiDlgedit::exitPreview ()
     }
     
     // update menuitem
-    gtk_label_set_text (GTK_LABEL (GTK_BIN (menuItem[PREVIEW])->child), "Preview Translation");
+    gtk_label_set_text (GTK_LABEL (gtk_bin_get_child (GTK_BIN(menuItem[PREVIEW]))), "Preview Translation");
 
     // cleanup
     unlink ("/tmp/locale/xy/LC_MESSAGES/preview.mo");
@@ -816,7 +811,7 @@ void GuiDlgedit::updateProject ()
 bool GuiDlgedit::checkDialogue (const std::string &file)
 {
     // first, open the file
-    FILE *test = fopen (file.c_str (), "rb");
+    FILE *test = g_fopen (file.c_str (), "rb");
 
     if (!test)
         return false;
@@ -868,7 +863,7 @@ DlgModule *GuiDlgedit::initDialogue (std::string name)
 // sets the window title
 void GuiDlgedit::initTitle ()
 {
-    gchar *title = "Adonthell Dialogue Editor v"_VERSION_;
+    gchar *title = (char*) "Adonthell Dialogue Editor v" _VERSION_;
     DlgModule *module = graph_->dialogue ();
   
     if (module != NULL)
@@ -894,53 +889,28 @@ void GuiDlgedit::initMenu ()
 
     int position = 0;   
     std::vector<DlgModule*>::iterator i;
-    GtkAccelGroup *accel_group = gtk_accel_group_get_default ();
+    // GtkAccelGroup *accel_group = gtk_accel_group_get_default ();
     GtkWidget *menuitem;
     
     for (i = dialogues_.begin (); i != dialogues_.end (); i++, position++)
     {
         menuitem = gtk_menu_item_new_with_label ((*i)->shortName ().c_str ());
         gtk_container_add (GTK_CONTAINER (windowMenu), menuitem);
-        gtk_signal_connect (GTK_OBJECT (menuitem), "activate", GTK_SIGNAL_FUNC (on_window_activate), (gpointer) *i);
-        gtk_object_set_data (GTK_OBJECT (menuitem), "help-id", GINT_TO_POINTER (20));
-        gtk_signal_connect (GTK_OBJECT (menuitem), "enter-notify-event", GTK_SIGNAL_FUNC (on_display_help), message);
-        gtk_signal_connect (GTK_OBJECT (menuitem), "leave-notify-event", GTK_SIGNAL_FUNC (on_clear_help), message);
+        g_signal_connect (G_OBJECT (menuitem), "activate", G_CALLBACK (on_window_activate), (gpointer) *i);
+        g_object_set_data (G_OBJECT (menuitem), "help-id", GINT_TO_POINTER (20));
+        g_signal_connect (G_OBJECT (menuitem), "enter-notify-event", G_CALLBACK (on_display_help), message);
+        g_signal_connect (G_OBJECT (menuitem), "leave-notify-event", G_CALLBACK (on_clear_help), message);
         gtk_widget_show (menuitem);
     
         // Menu Accelerators
-        if (position < 9)
-            gtk_widget_add_accelerator (menuitem, "activate", accel_group, 
-                GDK_1 + position, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
+        // if (position < 9)
+        //    gtk_widget_add_accelerator (menuitem, "activate", accel_group, 
+        //        GDK_1 + position, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
     }
-}
-
-// initialize the list of recently opened files
-void GuiDlgedit::initRecentFiles ()
-{
-    GtkWidget *submenu = GTK_MENU_ITEM(menuItem[OPEN_RECENT])->submenu;
-    GtkWidget *menuitem;
     
-    // first, remove everything from the submenu
-    if (submenu != NULL)
-        gtk_container_foreach (GTK_CONTAINER (submenu), (GtkCallback) gtk_widget_destroy, NULL);
-    else
-        submenu = gtk_menu_new ();
-
-    // get list of files
-    std::list<std::string> files = CfgData::data->getFiles ();
-    
-    // now recreate the recent files list
-    for (std::list<std::string>::iterator i = files.begin (); i != files.end (); i++)
-    {
-        menuitem = gtk_menu_item_new_with_label ((*i).c_str ());
-        gtk_container_add (GTK_CONTAINER (submenu), menuitem);
-        gtk_object_set_user_data (GTK_OBJECT (menuitem), (void *) (*i).c_str ());
-        gtk_signal_connect (GTK_OBJECT (menuitem), "activate", GTK_SIGNAL_FUNC (on_file_load_recent_activate), (gpointer) this);
-        gtk_widget_show (menuitem);          
-    }
-
-    // append submenu
-    gtk_menu_item_set_submenu (GTK_MENU_ITEM(menuItem[OPEN_RECENT]), submenu);
+#ifdef MAC_INTEGRATION
+    ige_mac_menu_sync(GTK_MENU_SHELL(mainMenu));
+#endif
 }
 
 void GuiDlgedit::clear ()
@@ -968,7 +938,7 @@ void GuiDlgedit::clear ()
 
 void GuiDlgedit::setMode (mode_type mode)
 {
-    char *text;
+    const char *text;
     
     // get the string representing the current program state   
     if (mode < IDLE || mode >= NUM_MODES)

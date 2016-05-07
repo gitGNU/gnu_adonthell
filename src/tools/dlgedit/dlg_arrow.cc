@@ -1,15 +1,20 @@
 /*
-   $Id$
-
    Copyright (C) 2002/2003 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
-   This program is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License.
-   This program is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY.
+   Dlgedit is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
 
-   See the COPYING file for more details.
+   Dlgedit is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with Dlgedit; if not, write to the Free Software 
+   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 /** 
@@ -113,6 +118,7 @@ DlgPoint DlgArrow::getIntersection (DlgPoint &start, DlgPoint &end, DlgRect &sha
 
     // tangens of angle between line(start, end) and x-axis
     double m = x == 0 ? 1.0 : double (y) / x;
+    double n = y == 0 ? 1.0 : double (x) / y;
     
     // direction where line(start, end) intersects with border of start
     enum { NORTH, EAST, SOUTH, WEST };
@@ -167,22 +173,22 @@ DlgPoint DlgArrow::getIntersection (DlgPoint &start, DlgPoint &end, DlgRect &sha
     {
         case NORTH:
         {
-            p = DlgPoint ((tl.y () - start.y ()) * x / y + start.x (), tl.y ());
+            p = DlgPoint ((tl.y () - start.y ()) * n + start.x (), tl.y ());
             break;
         }
         case EAST:
         {
-            p = DlgPoint (br.x (), start.y () + y / x * (br.x () - start.x ()));
+            p = DlgPoint (br.x (), start.y () + m * (br.x () - start.x ()));
             break;
         }
         case SOUTH: 
         {
-            p = DlgPoint ((br.y () - start.y ()) * x / y + start.x (), br.y ());
+            p = DlgPoint ((br.y () - start.y ()) * n + start.x (), br.y ());
             break;
         }
         case WEST:
         {
-            p = DlgPoint (tl.x (), start.y () + y / x * (tl.x () - start.x ()));
+            p = DlgPoint (tl.x (), start.y () + m * (tl.x () - start.x ()));
             break;
         }
     }
@@ -191,28 +197,34 @@ DlgPoint DlgArrow::getIntersection (DlgPoint &start, DlgPoint &end, DlgRect &sha
 }
 
 // draw the Arrow
-void DlgArrow::draw (GdkPixmap *surface, DlgPoint &point, GtkWidget *widget)
+void DlgArrow::draw (cairo_surface_t *surface, DlgPoint &point, GtkWidget *widget)
 {
-    GdkPoint l[2];
-    GdkPoint t[3];
-    GdkGC *gc = GuiResources::getColor (mode_, type_);
+    cairo_t *cr = cairo_create (surface);
+    const GdkColor *color = GuiResources::getColor (mode_, type_);
+
+    DlgPoint l[2];
+    DlgPoint t[4];
     DlgRect area = inflate (10, 10);
     
     // Current position
     area.move (point);
-    l[0] = (GdkPoint) DlgPoint (line[0]).offset (point);
-    l[1] = (GdkPoint) DlgPoint (line[1]).offset (point);
-    t[0] = (GdkPoint) DlgPoint (tip[0]).offset (point);
-    t[1] = (GdkPoint) DlgPoint (tip[1]).offset (point);
-    t[2] = (GdkPoint) DlgPoint (tip[2]).offset (point);
+
+    l[0] = DlgPoint (line[0]).offset (point);
+    l[1] = DlgPoint (line[1]).offset (point);
+    t[0] = DlgPoint (tip[0]).offset (point);
+    t[1] = DlgPoint (tip[1]).offset (point);
+    t[2] = DlgPoint (tip[2]).offset (point);
+    t[3] = DlgPoint (tip[0]).offset (point);
 
     // draw everything
-    gdk_draw_polygon (surface, gc, FALSE, l, 2);
-    gdk_draw_polygon (surface, GuiResources::getColor (GC_WHITE), TRUE, t, 3);
-    gdk_draw_polygon (surface, gc, FALSE, t, 3);
+    drawPolygon (cr, color, FALSE, l, 2);
+    drawPolygon (cr, GuiResources::getColor (GC_WHITE), TRUE, t, 3);
+    drawPolygon (cr, color, FALSE, t, 4);
 
     // update drawing area
     update (widget, area);
+
+    cairo_destroy(cr);
 }
     
 bool DlgArrow::operator== (DlgPoint &point)

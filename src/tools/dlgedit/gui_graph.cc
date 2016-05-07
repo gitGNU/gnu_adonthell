@@ -1,15 +1,20 @@
 /*
-   $Id$
-
    Copyright (C) 2002 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
-   This program is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License.
-   This program is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY.
+   Dlgedit is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
 
-   See the COPYING file for more details.
+   Dlgedit is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with Dlgedit; if not, write to the Free Software 
+   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 /** 
@@ -19,7 +24,6 @@
  * @brief View for the dialogue graph
  */
 
-#include <gtk/gtk.h>
 #include "cfg_data.h"
 #include "dlg_mover.h"
 #include "gui_dlgedit.h"
@@ -29,7 +33,7 @@
 #include "gui_file.h"
 
 // Constructor
-GuiGraph::GuiGraph (GtkWidget *paned)
+GuiGraph::GuiGraph (GtkWidget *paned) : Scrollable ()
 {
     // initialize members to sane values
     mover = NULL;
@@ -37,25 +41,30 @@ GuiGraph::GuiGraph (GtkWidget *paned)
     offset = NULL;
     surface = NULL;
     tooltip = NULL;
-    scrolling = false;
     
     // create drawing area for the graph
     graph = gtk_drawing_area_new ();
-    gtk_drawing_area_size (GTK_DRAWING_AREA (graph), 200, 450);
+    gtk_widget_set_size_request (graph, 200, 450);
     gtk_paned_add2 (GTK_PANED (paned), graph);
     gtk_widget_show (graph);
     gtk_widget_grab_focus (graph);
     
     // register our event callbacks
-    gtk_signal_connect (GTK_OBJECT (graph), "expose_event", (GtkSignalFunc) expose_event, this);
-    gtk_signal_connect (GTK_OBJECT (graph), "configure_event", (GtkSignalFunc) configure_event, this);
-    gtk_signal_connect (GTK_OBJECT (graph), "button_press_event", (GtkSignalFunc) button_press_event, this);
-    gtk_signal_connect (GTK_OBJECT (graph), "button_release_event", (GtkSignalFunc) button_release_event, this);
-    gtk_signal_connect (GTK_OBJECT (graph), "motion_notify_event", (GtkSignalFunc) motion_notify_event, this);
-    gtk_signal_connect (GTK_OBJECT (GuiDlgedit::window->getWindow ()), "key_press_event", (GtkSignalFunc) key_press_notify_event, this);
+    g_signal_connect (G_OBJECT (graph), "expose_event", G_CALLBACK(expose_event), this);
+    g_signal_connect (G_OBJECT (graph), "configure_event", G_CALLBACK(configure_event), this);
+    g_signal_connect (G_OBJECT (graph), "button_press_event", G_CALLBACK(button_press_event), this);
+    g_signal_connect (G_OBJECT (graph), "button_release_event", G_CALLBACK(button_release_event), this);
+    g_signal_connect (G_OBJECT (graph), "motion_notify_event", G_CALLBACK(motion_notify_event), this);
+    g_signal_connect (G_OBJECT (GuiDlgedit::window->getWindow ()), "key_press_event", G_CALLBACK(key_press_notify_event), this);
     
     gtk_widget_set_events (graph, GDK_EXPOSURE_MASK | GDK_LEAVE_NOTIFY_MASK | GDK_BUTTON_PRESS_MASK |
-        GDK_BUTTON_RELEASE_MASK | GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_KEY_PRESS_MASK);
+        GDK_BUTTON_RELEASE_MASK | GDK_POINTER_MOTION_MASK | GDK_KEY_PRESS_MASK);
+}
+
+// dtor
+GuiGraph::~GuiGraph()
+{
+    cairo_surface_destroy(surface);
 }
 
 // attach a module
@@ -78,8 +87,11 @@ void GuiGraph::attachModule (DlgModule *m, bool cntr)
     // update the program state
     GuiDlgedit::window->setMode (module->state ());
 
+    GtkAllocation allocation;
+    gtk_widget_get_allocation (graph, &allocation);
+
     // set the size of the dialogue
-    drawing_area.resize (graph->allocation.width, graph->allocation.height);
+    drawing_area.resize (allocation.width, allocation.height);
 
     // tell the module that it is in view
     module->setDisplayed (true);
@@ -144,6 +156,9 @@ bool GuiGraph::newCircle (DlgPoint &point, node_type type)
         return false;
     }
     
+    // update the program state
+    GuiDlgedit::window->setMode (NODE_SELECTED);
+
     // node created -> increase serial number for next node
     serial++;
     
@@ -166,7 +181,6 @@ bool GuiGraph::newArrow (DlgPoint &point)
     // sanity checks
     if (!start || start->type () == LINK) return false;
     if (end && end->type () == LINK) return false;
-    if (start == end || ((DlgCircle *) start)->hasChild (end)) return false; 
     
     // if no end selected, create a new circle first
     if (end == NULL)
@@ -178,19 +192,23 @@ bool GuiGraph::newArrow (DlgPoint &point)
         module->deselectNode ();
         
         // try to create a new circle
-        newCircle (point, type);
-        
-        // chose the newly created circle as end of the arrow
-        end = module->getNode (point);
-        
-        // restore selection
-        deselectNode ();
-        selectNode (start);
+        if (newCircle (point, type))
+        {
+            // chose the newly created circle as end of the arrow
+            end = module->getNode (point);
+            
+            // restore selection
+            deselectNode ();
+            selectNode (start);
+        }
         
         // do we have a valid end now?
         if (end == NULL) return false;
     }
 
+    // no loops and no duplicate connections
+    if (start == end || ((DlgCircle *) start)->hasChild (end)) return false; 
+    
     // no connection between start and end if both are PLAYER nodes   
     if (start->type () == PLAYER && end->type () == PLAYER) return false;
 
@@ -221,7 +239,18 @@ bool GuiGraph::newModule (DlgPoint &point)
     if (dir == "") dir = GuiDlgedit::window->directory ();
     
     // allow the user to select a module
-    GuiFile fs = GuiFile (FS_LOAD, "Select sub-dialogue to add", dir + "/");
+    GtkWindow *parent = GTK_WINDOW (GuiDlgedit::window->getWindow());
+    GuiFile fs (parent, GTK_FILE_CHOOSER_ACTION_OPEN, "Select sub-dialogue to add", dir + "/");
+    fs.add_filter ("*" FILE_EXT, "Adonthell Dialogue Source");
+
+    // set shortcuts
+    const std::vector<std::string> & projects = CfgData::data->projectsFromDatadir ();
+    for (std::vector<std::string>::const_iterator i = projects.begin (); i != projects.end (); i++)
+    {
+        const std::string &dir = CfgData::data->getBasedir (*i);
+        fs.add_shortcut (dir);
+    }
+
     if (fs.run ())
     {
         DlgModule *subdlg = GuiDlgedit::window->loadSubdialogue (fs.getSelection());
@@ -493,7 +522,10 @@ void GuiGraph::center ()
     
     module->extension (min_x, max_x, y);
     
-    int x_off = (graph->allocation.width - (max_x - min_x))/2 - min_x;
+    GtkAllocation allocation;
+    gtk_widget_get_allocation (graph, &allocation);
+
+    int x_off = (allocation.width - (max_x - min_x))/2 - min_x;
     int y_off = -y + 20;
     
     offset->move (x_off, y_off);
@@ -508,7 +540,7 @@ bool GuiGraph::editNode ()
     DlgNode *selected = module->selected ();
 
     // disable scrolling (just in case)
-    scrolling = false;
+    stopScrolling();
 
     // if we have a sub-dialogue, descent for editing
     if (selected->type () == MODULE)
@@ -520,7 +552,8 @@ bool GuiGraph::editNode ()
     // if we have a circle, open edit dialog
     if (selected && selected->type () != LINK)
     {
-        GuiCircle edit (&selected->type (), ((DlgCircle *) selected)->entry (), module->entry ());
+        GtkWindow *parent = GTK_WINDOW (GuiDlgedit::window->getWindow());
+        GuiCircle edit (parent, &selected->type (), ((DlgCircle *) selected)->entry (), module->entry ());
 
 	    // editing aborted?
 	    if (!edit.run ()) return false;
@@ -599,6 +632,8 @@ bool GuiGraph::prepareDragging (DlgPoint &point)
 // drag a node around
 void GuiGraph::drag (DlgPoint &point)
 {
+    static int redraw = 0;
+    
     // if there is no module assigned to the view, there is nothing to do
     if (module == NULL) return;
 
@@ -606,7 +641,8 @@ void GuiGraph::drag (DlgPoint &point)
     point.move (-offset->x (), -offset->y ());
     
     // move node
-    mover->setPos (point);
+    mover->setPos (DlgPoint (point.x () - (point.x () % CIRCLE_DIAMETER), 
+                             point.y () - (point.y () % CIRCLE_DIAMETER)));
         
     // update arrows
     for (DlgNode *a = mover->prev (FIRST); a != NULL; a = mover->prev (NEXT))
@@ -616,7 +652,25 @@ void GuiGraph::drag (DlgPoint &point)
         ((DlgArrow *) a)->initShape ();
     
     // update view
-    draw ();
+    switch (redraw) 
+    {
+        case 0:
+        {
+            draw ();
+            redraw++;
+            break;
+        }
+        case 7:
+        {
+            redraw = 0;
+            break;
+        }
+        default:
+        {
+            redraw++;
+            break;
+        }
+    }
 }
 
 // stop dragging node
@@ -644,10 +698,17 @@ void GuiGraph::stopDragging (DlgPoint &point)
     // if circle moved, realign it to the grid
     else 
     {
-        mover->setPos ( 
-            DlgPoint (point.x () - (point.x () % CIRCLE_DIAMETER), 
-                      point.y () - (point.y () % CIRCLE_DIAMETER)));
-    
+        // make sure we drop on an empty location
+        DlgNode *node = module->getNode (point);
+        while (node != NULL && node != mover && node->type() != LINK)
+        {
+            point.move (0, 2*CIRCLE_DIAMETER);
+            node = module->getNode (point);
+        }
+
+        mover->setPos (DlgPoint (point.x () - (point.x () % CIRCLE_DIAMETER), 
+                                 point.y () - (point.y () % CIRCLE_DIAMETER)));
+        
         // also need to update arrows and reorder children and parents 
         for (DlgNode *a = mover->prev (FIRST); a != NULL; a = mover->prev (NEXT))
         {
@@ -662,8 +723,7 @@ void GuiGraph::stopDragging (DlgPoint &point)
             a->next (FIRST)->addPrev (a);
             ((DlgArrow *) a)->initShape ();
         }
-    }
-    
+    }    
     // update everything
     if (mover->type() == MODULE)
         deselectNode ();
@@ -684,18 +744,20 @@ void GuiGraph::stopDragging (DlgPoint &point)
 // resize the drawing area
 void GuiGraph::resizeSurface (GtkWidget *widget)
 {
+    GtkAllocation allocation;
+    gtk_widget_get_allocation (widget, &allocation);
+
     // delete the old surface
-    if (surface) gdk_pixmap_unref (surface);
+    if (surface) cairo_surface_destroy (surface);
     
     // create a new one with the proper size
-    surface = gdk_pixmap_new (widget->window, widget->allocation.width,
-        widget->allocation.height, -1);
+    surface = gdk_window_create_similar_surface (gtk_widget_get_window(widget), CAIRO_CONTENT_COLOR, allocation.width, allocation.height);
 
     // init the surface
     if (GuiResources::getColor (GC_GREY)) clear ();
             
     // set the size of the attached dialogues
-    drawing_area.resize (widget->allocation.width, widget->allocation.height);
+    drawing_area.resize (allocation.width, allocation.height);
 }
 
 // empty the drawing area
@@ -703,15 +765,21 @@ void GuiGraph::clear ()
 {
     GdkRectangle t;
 
-    gdk_draw_rectangle (surface, GuiResources::getColor (GC_GREY), 
-        TRUE, 0, 0, graph->allocation.width, graph->allocation.height);
+    GtkAllocation allocation;
+    gtk_widget_get_allocation (graph, &allocation);
+
+    cairo_t *cr = cairo_create (surface);
+    gdk_cairo_set_source_color(cr, GuiResources::getColor (GC_GREY));
+    cairo_rectangle(cr, 0, 0, allocation.width, allocation.height);
+    cairo_fill(cr);
+    cairo_destroy(cr);
 
     t.x = 0;
     t.y = 0;
-    t.width = graph->allocation.width;
-    t.height = graph->allocation.height;
+    t.width = allocation.width;
+    t.height = allocation.height;
 
-    gtk_widget_draw (graph, &t);        
+    gdk_window_invalidate_rect (gtk_widget_get_window (graph), &t, FALSE);
 }
 
 // draw the graph to the surface
@@ -733,7 +801,11 @@ void GuiGraph::draw ()
     DlgRect rect (t);
 
     // Clear graph
-    gdk_draw_rectangle (surface, GuiResources::getColor (GC_WHITE), TRUE, 0, 0, t.width, t.height);
+    cairo_t *cr = cairo_create (surface);
+    gdk_cairo_set_source_color(cr, GuiResources::getColor (GC_WHITE));
+    cairo_rectangle(cr, 0, 0, t.width, t.height);
+    cairo_fill(cr);
+    cairo_destroy(cr);
 
     // normalize rect
     t.x = 0;
@@ -746,7 +818,7 @@ void GuiGraph::draw ()
             (*i)->draw (surface, *offset, NULL);
 
     // draw backing image to screen
-    gtk_widget_draw (graph, &t);
+    gdk_window_invalidate_rect (gtk_widget_get_window (graph), &t, FALSE);
 }
 
 // the mouse has been moved
@@ -779,7 +851,7 @@ void GuiGraph::mouseMoved (DlgPoint &point)
         }
         
         // then highlight the new one
-        if (node != NULL) 
+        if (node != NULL && gtk_window_is_active(GTK_WINDOW(gtk_widget_get_toplevel(graph))))
         {
             node->draw (surface, *offset, graph, NODE_HILIGHTED);
             tooltip = new GuiTooltip (node);
@@ -790,40 +862,19 @@ void GuiGraph::mouseMoved (DlgPoint &point)
     return;
 }
 
-// prepare everything for 'auto-scrolling' (TM) ;-)
-void GuiGraph::prepareScrolling (DlgPoint &point)
+// is scrolling allowed?
+bool GuiGraph::scrollingAllowed () const
 {
     // if there is no module assigned to the view or no nodes
     // in the module yet, there is nothing to do
-    if (module == NULL || module->getNodes ().empty ()) return;
-
-    int scroll_x = 0;
-    int scroll_y = 0;
-
-    // set scrolling offset and direction    
-    if (point.x () < 20) scroll_x = 15;
-    if (point.y () < 20) scroll_y = 15;
-    if (point.x () + 20 > drawing_area.width ()) scroll_x = -15;
-    if (point.y () + 20 > drawing_area.height ()) scroll_y = -15;
-
-    // enable scrolling
-    if (scroll_x || scroll_y)
-    {
-        scroll_offset = DlgPoint (scroll_x, scroll_y);
-
-        if (!scrolling)
-        {
-            scrolling = true;
-            gtk_timeout_add (100, on_scroll_graph, this);
-        }
-    }
-    else scrolling = false;
+    if (module == NULL || module->getNodes ().empty ()) return false;
+    return true;
 }
 
 // the actual scrolling
 void GuiGraph::scroll ()
 {
-    offset->move (scroll_offset);
+    offset->move (scroll_offset.x, scroll_offset.y);
     draw ();
 }
 

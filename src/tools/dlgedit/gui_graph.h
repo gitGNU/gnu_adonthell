@@ -4,12 +4,19 @@
    Copyright (C) 2002 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
-   This program is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License.
-   This program is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY.
+   Dlgedit is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
 
-   See the COPYING file for more details.
+   Dlgedit is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with Dlgedit; if not, write to the Free Software 
+   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 /** 
@@ -22,6 +29,7 @@
 #ifndef GUI_GRAPH_H
 #define GUI_GRAPH_H
 
+#include "gui_scrollable.h"
 #include "gui_tooltip.h"
 #include "dlg_module.h"
 
@@ -31,7 +39,7 @@
  * the dialogue. Only one instance of this class exists throughout the whole
  * dlgedit session.
  */
-class GuiGraph
+class GuiGraph : public Scrollable
 {
 public:
     /** 
@@ -44,7 +52,7 @@ public:
     /**
      * Standard desctructor.
      */
-    ~GuiGraph ();
+    virtual ~GuiGraph ();
     
     /**
      * @name Changing the view
@@ -214,30 +222,26 @@ public:
      */
     void stopDragging (DlgPoint &point);
     //@}
-    
+        
     /**
      * @name Auto-Scrolling (TM) ;) functionality.
      */
     //@{
     /**
-     * Method deciding whether to start with scrolling. The cursor has to
-     * remain in the outer 20 pixel of the view to enable scrolling.
-     * @param point The current cursor position.
-     */
-    void prepareScrolling (DlgPoint &point);
-    /**
      * Moves the view in the desired direction.
      */
-    void scroll ();
+    virtual void scroll ();
     /**
-     * Check whether we are currently scrolling
-     * @return <b>true</b> if that is the case, <b>false</b> otherwise.
+     * Check whether it is allowed to initiate
+     * scrolling.
+     * @return false if scrolling is forbidden, true otherwise.
      */
-    bool isScrolling ()         { return scrolling; }
+    virtual bool scrollingAllowed () const;
     /**
-     * Finish scrolling.
+     * Return a pointer to the drawing area
+     * @return the GtkDrawingArea widget
      */
-    void stopScrolling ()       { scrolling = false; }
+    virtual GtkWidget *drawingArea () const { return graph; }
     //@}
     
     /**
@@ -253,12 +257,7 @@ public:
      * Return a pointer to the drawing surface.
      * @return the drawing surface
      */
-    GdkPixmap *pixmap ()        { return surface; }
-    /**
-     * Return a pointer to the drawing area
-     * @return the GtkDrawingArea widget
-     */
-    GtkWidget *drawingArea ()   { return graph; }
+    cairo_surface_t *pixmap ()  { return surface; }
     /**
      * Return the attached dialogue module.
      * @return the DlgModule currently attached to the view 
@@ -282,11 +281,9 @@ private:
     DlgModule *module;      // Module assigned to the graph view
     DlgPoint *offset;       // Module's relative position to the origin
     GtkWidget *graph;       // Drawing Area
-    GdkPixmap *surface;     // Drawing surface
+    cairo_surface_t *surface;   // Drawing surface
     DlgRect drawing_area;   // Size of the Drawing Area
     GuiTooltip *tooltip;    // Tooltip for displaying node-text
-    bool scrolling;         // Indicates whether autoscrolling is active
-    DlgPoint scroll_offset; // Offset by which the view moves during scrolling
 };
 
 #endif // GUI_GRAPH_H

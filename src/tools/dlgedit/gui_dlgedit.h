@@ -4,12 +4,19 @@
    Copyright (C) 2002/2003 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
-   This program is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License.
-   This program is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY.
+   Dlgedit is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
 
-   See the COPYING file for more details.
+   Dlgedit is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with Dlgedit; if not, write to the Free Software 
+   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 /** 
@@ -21,6 +28,8 @@
 
 #ifndef GUI_DLGEDIT_H
 #define GUI_DLGEDIT_H
+
+#include "gui_recent_files.h"
 
 #include "gui_messages.h"
 #include "gui_graph.h"
@@ -34,7 +43,7 @@
  * be only one main window at a time, but several dialogues may be open
  * simultanously.
  */
-class GuiDlgedit
+class GuiDlgedit : public GuiRecentFileListener
 {
 public:
     /** 
@@ -45,7 +54,7 @@ public:
     /**
      * Destructor.
      */
-    ~GuiDlgedit ();
+    virtual ~GuiDlgedit ();
     
     /**
      * Global pointer to the main window, to allow easy access from anywhere.
@@ -175,6 +184,11 @@ public:
      * @return Filename of the current dialogue.
      */
     std::string filename ();
+    /**
+     * Callback when user chooses to load a previously opened file.
+     * @param full path to the filename.
+     */
+    virtual void OnRecentFileActivated (const std::string & file);
                         
 private:
     /**
@@ -198,19 +212,36 @@ private:
      */
     void clear ();
 
-    int number;                     // serial number of open dialogues
-    mode_type mode_;                // the program mode
-    GuiList *list_;                 // instant preview widget
-    GuiTree *tree_;                 // dialogue structure view
-    GuiGraph *graph_;               // dialogue view
-    GuiMessages *message;           // statusbar for displaying help/error texts
-    GtkWidget *wnd;                 // actual main window
-    GtkWidget *menuItem[MAX_ITEM];  // pointers to a few menu-items
-    GtkWidget *windowMenu;          // the 'Windows' dropdown menu
-    GtkWidget *status_mode;         // statusbar displaying the program state
-    std::vector<DlgModule*> dialogues_;// dialogues currently loaded
-    std::string directory_;            // directory used in last file-selection
-    static char *progState[NUM_MODES]; // Textual program states
+    /// serial number of open dialogues
+    int number;
+    /// the program mode
+    mode_type mode_;
+    /// instant preview widget
+    GuiList *list_;
+    /// dialogue structure view
+    GuiTree *tree_;
+    /// dialogue view
+    GuiGraph *graph_;
+    /// statusbar for displaying help/error texts
+    GuiMessages *message;
+    /// actual main window
+    GtkWidget *wnd;
+    /// pointers to a few menu-items
+    GtkWidget *menuItem[MAX_ITEM];
+    /// the 'Windows' dropdown menu
+    GtkWidget *windowMenu;
+    /// the menu bar
+    GtkWidget *mainMenu;
+    /// statusbar displaying the program state
+    GtkWidget *status_mode;
+    /// dialogues currently loaded
+    std::vector<DlgModule*> dialogues_;
+    /// directory used in last file-selection
+    std::string directory_;
+    /// Textual program states
+    static const char *progState[NUM_MODES];
+    /// recent files
+    GuiRecentFiles *RecentFiles;
 };
 
 #endif // GUI_DLGEDIT_H

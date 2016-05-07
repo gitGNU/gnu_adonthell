@@ -1,15 +1,20 @@
 /*
-   $Id$
-
    Copyright (C) 2002/2003 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
-   This program is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License.
-   This program is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY.
+   Dlgedit is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
 
-   See the COPYING file for more details.
+   Dlgedit is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with Dlgedit; if not, write to the Free Software
+   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 /** 
@@ -21,7 +26,6 @@
 
 #include <algorithm>
 #include "dlg_module.h"
-#include "dlg_circle.h"
 #include "dlg_arrow.h"
 #include "gui_dlgedit.h"
 #include "gui_resources.h"
@@ -74,9 +78,14 @@ void DlgModule::clear ()
 // calculate shape of sub-dialogue
 void DlgModule::initShape (const DlgPoint &center)
 {
+    int width;
+    
     // calculate width of the module icon
-    GdkFont *font = GuiResources::font ();
-    int width = gdk_string_width (font, name ().c_str ()) + 10;
+    PangoLayout *font = GuiResources::font ();
+    pango_layout_set_text (font, name().c_str(), -1);
+    pango_layout_get_pixel_size (font, &width, NULL);
+
+    width += 10;
     
     // align module to the (imaginary) grid and set shape
     top_left = DlgPoint (center.x (), center.y ());
@@ -176,6 +185,7 @@ DlgModule* DlgModule::getModule (int id)
     for (i = nodes.begin (); i != nodes.end (); i++)
         if ((*i)->type () == MODULE) 
         {
+        	// FIXME shouldn't this be (*i)->getModule(id) ???
             module = getModule (id);
             if (module) return module;
         }
@@ -211,6 +221,9 @@ void DlgModule::deleteNode (DlgNode *node)
     // if the node is a circle, also delete the attached arrows
     if (node->type () != LINK)
     {
+        // reset traversal info if current node gets deleted
+        traverse_.clear();
+
         // delete all preceding arrows
         for (DlgNode *i = node->prev (FIRST); i != NULL; i = node->prev (FIRST))
         {
@@ -266,29 +279,49 @@ void DlgModule::setChanged (bool changed)
 }
 
 // draw the module
-void DlgModule::draw (GdkPixmap *surface, DlgPoint &offset, GtkWidget *widget)
+void DlgModule::draw (cairo_surface_t *surface, DlgPoint &offset, GtkWidget *widget)
 {
+    cairo_t *cr = cairo_create (surface);
+
     // get the color for drawing the circle
-    GdkGC *gc = GuiResources::getColor (mode_, type_);
+    const GdkColor *gc = GuiResources::getColor (mode_, type_);
 
     // offset circle
     DlgPoint position = topLeft ().offset (offset);
     DlgRect area (position, width () + 1, height () + 1);
 
     // draw everything to the surface
-    gdk_draw_rectangle (surface, GuiResources::getColor (GC_WHITE), TRUE, position.x (), position.y (), width (), height ());
-    gdk_draw_rectangle (surface, gc, FALSE, position.x (), position.y (), width (), height ());
+    drawRectangle (cr, GuiResources::getColor (GC_WHITE), TRUE, position.x (), position.y (), width (), height ());
+    drawRectangle (cr, gc, FALSE, position.x (), position.y (), width (), height ());
 
     // get the font to draw name
-    GdkFont *font = GuiResources::font ();
+    const PangoFontDescription *desc = pango_layout_get_font_description (GuiResources::font ());
 
+    // create pango cairo compatible layout
+    PangoLayout *font = pango_cairo_create_layout(cr);
+    pango_layout_set_font_description (font, desc);
+    pango_layout_set_text (font, name().c_str(), -1);
+    
     // place text in module's center
+    int h;
+    pango_layout_get_pixel_size (font, NULL, &h);
+    
     int x = position.x () + 5;
-    int y = position.y () + (height () + gdk_string_height (font, name ().c_str ())) / 2;
-    gdk_draw_string (surface, font, gc, x, y, name ().c_str ());
+    int y = position.y () + (height () - h) / 2;
+
+    // set font color and position
+    gdk_cairo_set_source_color(cr, gc);
+    pango_cairo_update_layout (cr, font);
+    cairo_move_to(cr, x, y);
+
+    // draw text
+    pango_cairo_show_layout (cr, font);
+    g_object_unref(font);
 
     // Update the drawing area
     update (widget, area);
+
+    cairo_destroy(cr);
 }
 
 // get toplevel module
@@ -473,13 +506,18 @@ void DlgModule::loadSubdialogue ()
             case LOAD_POS:
             {
                 int x, y;
-                GdkFont *font = GuiResources::font ();
-                int width = gdk_string_width (font, name ().c_str ()) + 10;
+                int width;
+                
+                PangoLayout *font = GuiResources::font ();
+                pango_layout_set_text (font, name().c_str(), -1);
+                pango_layout_get_pixel_size (font, &width, NULL);
+                
                 if (parse_dlgfile (s, n) == LOAD_NUM) x = n;
                 if (parse_dlgfile (s, n) == LOAD_NUM) y = n;
 
                 top_left = DlgPoint (x, y);
-                bottom_right = DlgPoint (x + width, y + 20);
+                bottom_right = DlgPoint (x + width + 10, y + 20);
+                break;
             }
 
            default: break;
@@ -509,26 +547,26 @@ bool DlgModule::save (std::string &path, std::string &name)
         << "# Produced by Adonthell Dlgedit v" << _VERSION_ << "\n"
         << "# (C) 2000/2001/2002/2003 The Adonthell Team & Kai Sterker\n#\n"
         << "# $I" << "d$\n\n"
-        << "Note §" << entry_.description () << "§\n\n";
+        << "Note ï¿½" << entry_.description () << "ï¿½\n\n";
 
     // Node ID
     out << "Id " << serial_ << "\n";
     
     // Save settings and stuff
     if (entry_.project () != "none")
-        out << "Proj §" << entry_.project () << "§\n";
+        out << "Proj ï¿½" << entry_.project () << "ï¿½\n";
     
     if (entry_.imports () != "")
-        out << "Inc  §" << entry_.imports () << "§\n";
+        out << "Inc  ï¿½" << entry_.imports () << "ï¿½\n";
     
     if (entry_.ctor () != "")
-        out << "Ctor §" << entry_.ctor () << "§\n";
+        out << "Ctor ï¿½" << entry_.ctor () << "ï¿½\n";
 
     if (entry_.dtor () != "")
-        out << "Dtor §" << entry_.dtor () << "§\n";
+        out << "Dtor ï¿½" << entry_.dtor () << "ï¿½\n";
     
     if (entry_.methods () != "")
-        out << "Func §" << entry_.methods () << "§\n";
+        out << "Func ï¿½" << entry_.methods () << "ï¿½\n";
     
     // Save Circles first, as arrows depend on them when loading later on
     for (std::vector<DlgNode*>::iterator i = nodes.begin (); i != nodes.end (); i++)
@@ -571,7 +609,7 @@ std::string DlgModule::relativeName ()
     std::string m_path = path_;             // module path
     std::string r_path = "";                // module's path relative to parent
     
-    unsigned int pos = 0;
+    unsigned long pos = 0;
     
     // find the part of the filename that matches
     while (pos < m_path.length () && pos < p_path.length () &&
@@ -596,7 +634,7 @@ std::string DlgModule::relativeName ()
     else
     {
         // sub-dialogue is in a different directory on a higher level
-        unsigned int i = pos;
+        unsigned long i = pos;
         while ((i = p_path.find ('/', i)) != p_path.npos) r_path += "../";
         r_path += m_path.substr (pos);
     }

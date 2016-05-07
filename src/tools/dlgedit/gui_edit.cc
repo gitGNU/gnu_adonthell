@@ -1,15 +1,20 @@
 /*
-   $Id$ 
-
    Copyright (C) 2002 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
-   This program is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License.
-   This program is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY.
+   Dlgedit is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
 
-   See the COPYING file for more details.
+   Dlgedit is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with Dlgedit; if not, write to the Free Software 
+   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 /**
@@ -19,7 +24,7 @@
  * @brief Wrapper around the gtkeditor widget.
  */
 
-#include <gtk/gtk.h>
+#include <pango/pango-font.h>
 #include "gui_edit.h"
 
 // ctor
@@ -33,17 +38,18 @@ GuiEdit::GuiEdit (GtkWidget *container)
     gtk_widget_show (scrolled);
 
     // create the editor
-    entry = gtk_text_new (0, 0);
-    gtk_container_add (GTK_CONTAINER (scrolled), entry);
-    GTK_WIDGET_SET_FLAGS (entry, GTK_CAN_DEFAULT);
-    gtk_text_set_editable (GTK_TEXT (entry), TRUE);
-    gtk_text_set_word_wrap (GTK_TEXT (entry), TRUE);
-    gtk_widget_show (entry);
+    entry = gtk_text_buffer_new (NULL);
+    view = gtk_text_view_new_with_buffer (entry);
+    gtk_container_add (GTK_CONTAINER (scrolled), view);
+    gtk_widget_set_can_default(view, TRUE);
+    gtk_text_view_set_editable (GTK_TEXT_VIEW(view), TRUE);
+    gtk_text_view_set_wrap_mode (GTK_TEXT_VIEW(view), GTK_WRAP_WORD);
+    gtk_widget_show (view);
 
     // use a fixed size font
-    GtkStyle *style = gtk_style_copy (gtk_widget_get_default_style ());
-    style->font = gdk_font_load ("-*-lucidatypewriter-medium-*-*-*-12-*-*-*-*-*-iso8859-1");
-    gtk_widget_set_style (entry, style);
+    PangoFontDescription *font_desc = pango_font_description_from_string ("Fixed Monospace 12");
+    gtk_widget_modify_font (view, font_desc);
+    pango_font_description_free (font_desc);
 }
 
 // dtor
@@ -54,17 +60,16 @@ GuiEdit::~GuiEdit ()
 // set the entry's text
 void GuiEdit::setText (const std::string &text)
 {
-    if (gtk_text_get_length (GTK_TEXT (entry)) > 0)
-        gtk_editable_delete_text (GTK_EDITABLE (entry), 0, -1);
-    
-    gtk_text_insert (GTK_TEXT (entry), entry->style->font, 
-        &entry->style->black, &entry->style->white, text.c_str (), -1);
+    gtk_text_buffer_set_text (entry, text.c_str (), -1);
 }
 
 // return the entry's text
 std::string GuiEdit::getText ()
 {
-    gchar *tmp = gtk_editable_get_chars (GTK_EDITABLE (entry), 0, -1);
+    GtkTextIter start, end;
+    gtk_text_buffer_get_bounds (entry, &start, &end);
+    
+    gchar *tmp = gtk_text_buffer_get_text (entry, &start, &end, TRUE);
     std::string text (tmp);
     g_free (tmp);
 

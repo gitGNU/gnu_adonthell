@@ -4,12 +4,19 @@
    Copyright (C) 2002 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
-   This program is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License.
-   This program is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY.
+   Dlgedit is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
 
-   See the COPYING file for more details.
+   Dlgedit is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with Dlgedit; if not, write to the Free Software 
+   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 /** 
@@ -42,7 +49,7 @@ bool DlgCmdline::parse (int argc, char* argv[])
     int c;
     
     // Check for options
-    while ((c = getopt (argc, argv, "cdhvp:j:")) != -1)
+    while ((c = getopt (argc, argv, "cdhvg:p:")) != -1)
     {
         switch (c)
         {
@@ -64,13 +71,13 @@ bool DlgCmdline::parse (int argc, char* argv[])
                 break;
             }
             
-            case 'j':
+            case 'p':
             {
                 project = optarg;
                 break;
             }
             
-            case 'p':
+            case 'g':
             {
                 datadir = optarg;
                 
@@ -113,6 +120,6 @@ void DlgCmdline::help (const std::string &program)
     std::cout << "-d         print the project directory and exit" << std::endl; 
     std::cout << "-v         print version and exit" << std::endl; 
     std::cout << "-c         compile all SOURCES and exit" << std::endl;
-    std::cout << "-p dir     specify a custom project directory" << std::endl;
-    std::cout << "-j project specify a default project" << std::endl;
+    std::cout << "-g dir     specify a custom project directory" << std::endl;
+    std::cout << "-p project specify a default project" << std::endl;
 }

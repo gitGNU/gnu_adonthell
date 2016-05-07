@@ -1,15 +1,20 @@
 /*
-   $Id$ 
-
    Copyright (C) 2002 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
-   This program is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License.
-   This program is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY.
+   Dlgedit is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
 
-   See the COPYING file for more details.
+   Dlgedit is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with Dlgedit; if not, write to the Free Software 
+   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 /**
@@ -22,9 +27,9 @@
 #ifndef GUI_CIRCLE_H
 #define GUI_CIRCLE_H
 
+#include "dlg_types.h"
 #include "dlg_circle_entry.h"
 #include "dlg_module_entry.h"
-#include "dlg_types.h"
 #include "gui_edit.h"
 #include "gui_modal_dialog.h"
 
@@ -40,11 +45,12 @@ class GuiCircle : public GuiModalDialog
 public:
     /**
      * Open the "Edit Dialogue Node" dialog. 
+     * @param parent The parent of the dialog
      * @param type The type of the circle to display (NPC, PLAYER or NARRATOR)
      * @param entry The contents of the circle
      * @param dme The contents of the dialogue
      */
-    GuiCircle (node_type *type, DlgCircleEntry *entry, DlgModuleEntry *dme);
+    GuiCircle (GtkWindow *parent, node_type *type, DlgCircleEntry *entry, DlgModuleEntry *dme);
 
     /**
      * Apply the values entered in the dialogue to the edited node. This
@@ -53,15 +59,15 @@ public:
     void applyChanges ();
 
 private:
-    gchar *getOption (GtkOptionMenu * o);
-    void setOption (GtkOptionMenu *o, const gchar *label);
+    const gchar *getOption (GtkComboBox * cbox);
+    void setOption (GtkComboBox *o, const gchar *label);
 
     GuiEdit *cond_edit;             // Text entry for conditions
     GuiEdit *code_edit;             // Text entry for code
     GtkWidget *loop;                // Checkbox for looping text
-    GtkWidget *text_entry;          // Entry for dialogue text
-    GtkWidget *annotation_entry;    // Entry for annotations
-    GtkWidget *npc_selection;       // The dropdown list with the various NPC's
+    GtkTextBuffer *text_entry;      // Entry for dialogue text
+    GtkTextBuffer *annotation_entry;// Entry for annotations
+    GtkComboBox *npc_selection;     // The dropdown list with the various NPC's
     DlgCircleEntry *entry;          // The data to display
     node_type *type;                // The type of the node
 };

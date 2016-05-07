@@ -1,6 +1,9 @@
 ## Process this file with automake to produce Makefile.in
- 
-SUBDIRS = . modules
+
+if BUILD_DLGEDIT
+  TOOLS_DIR = tools
+endif
+SUBDIRS = . modules $(TOOLS_DIR)
 
 bin_PROGRAMS = adonthell-0.3
 

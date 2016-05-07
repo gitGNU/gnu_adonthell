@@ -1,15 +1,20 @@
 /*
-   $Id$
-
    Copyright (C) 2002 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
-   This program is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License.
-   This program is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY.
+   Dlgedit is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
 
-   See the COPYING file for more details.
+   Dlgedit is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with Dlgedit; if not, write to the Free Software 
+   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 /** 
@@ -19,7 +24,6 @@
  * @brief Event-callbacks for the dialogue graph view
  */
 
-#include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
 #include "gui_dlgedit.h"
 
@@ -45,9 +49,11 @@ gint expose_event (GtkWidget * widget, GdkEventExpose * event, gpointer data)
 {
     GuiGraph *graph = (GuiGraph *) data;
 
-    gdk_draw_pixmap (widget->window, widget->style->fg_gc[GTK_WIDGET_STATE (widget)],
-        graph->pixmap (), event->area.x, event->area.y, event->area.x, event->area.y,
-        event->area.width, event->area.height);
+    cairo_t *cr = gdk_cairo_create (GDK_WINDOW(gtk_widget_get_window(widget)));
+    cairo_set_source_surface (cr, graph->pixmap (), 0, 0);
+    gdk_cairo_rectangle (cr, &event->area);
+    cairo_fill (cr);
+    cairo_destroy(cr);
 
     return FALSE;
 }
@@ -58,6 +64,14 @@ gint button_press_event (GtkWidget *widget, GdkEventButton *event, gpointer data
     GuiGraph *graph = (GuiGraph *) data;
     DlgPoint point ((int) event->x, (int) event->y);
 
+#ifdef __APPLE__
+    // simulate right click on OSX
+    if (event->state & GDK_CONTROL_MASK)
+    {
+        event->button = 3;
+    }
+#endif
+    
     switch (event->button)
     {
         // Middle button pressed
@@ -107,7 +121,7 @@ gint motion_notify_event (GtkWidget *widget, GdkEventMotion *event, gpointer dat
     graph->prepareScrolling (point);
 
     // Dragging dialogue nodes
-    if (event->state == GDK_BUTTON_PRESS_MASK)
+    if (event->state & GDK_BUTTON1_MASK)
     {
         // don't allow dragging if in preview mode
         if (GuiDlgedit::window->mode () == L10N_PREVIEW)
@@ -131,6 +145,14 @@ gint button_release_event (GtkWidget *widget, GdkEventButton *event, gpointer da
 {
     GuiGraph *graph = (GuiGraph *) data;
     DlgPoint point ((int) event->x, (int) event->y);
+    
+#ifdef __APPLE__
+    // simulate right click on OSX
+    if (event->state & GDK_CONTROL_MASK)
+    {
+        event->button = 3;
+    }
+#endif    
     
     // Left button released
     if (event->button == 1)
@@ -172,69 +194,6 @@ gint button_release_event (GtkWidget *widget, GdkEventButton *event, gpointer da
             default: break;
         }
     }
-/*    
-    MainFrame *MainWnd = (MainFrame *) data;
-    GdkPoint point;
-    u_int32 index;
-
-    point.x = (s_int32) event->x - MainWnd->x_offset;
-    point.y = (s_int32) event->y - MainWnd->y_offset;
-
-    if (event->button == 1)
-    {
-        switch (MainWnd->mode)
-        {
-            // Unoccupied location -> create new Circle
-            // Circle hit -> mark Circle
-            case IDLE:
-            {
-                if (!select_object (MainWnd, point))
-                    new_circle (MainWnd, point, NODE_NPC);
-                break;
-            }
-
-            // Arrow hit -> add to marked Circles links
-            // Else -> Create new Arrow
-            case OBJECT_MARKED:
-            {
-                if (!new_link (MainWnd, point))
-                   new_arrow (MainWnd, point);
-                break;
-            }
-
-            case OBJECT_DRAGGED:
-            {
-                if (MainWnd->dragged_node != NULL)
-                    end_moving (MainWnd, point);
-                break;
-            }
-
-            case MULTI_SELECT:
-            {
-                multsel_objects (MainWnd);
-                break;
-            }
-
-            // If single node selected -> cancel multi-selection 
-            case MULTI_MARKED:
-            {
-                if (get_cur_selection (MainWnd, point))
-                {
-                    for (index = 0; index < MainWnd->multsel.size (); index++)
-                    {
-                        MainWnd->selected_node = MainWnd->multsel[index];
-                        deselect_object (MainWnd);                      
-                    }
-
-                    MainWnd->multsel.clear ();
-                    select_object (MainWnd, point);
-                }
-            }
-            
-            default: break;
-        }
-    }
-*/
     return TRUE;
 }
 
@@ -245,36 +204,87 @@ guint key_press_notify_event (GtkWidget * widget, GdkEventKey * event, gpointer 
 
     switch (event->keyval)
     {
+	    // scroll up
+	    case GDK_KEY_Up:
+	    {
+	    	if (graph->scrollingAllowed()) 
+	    	{
+	    		graph->setScrollOffset(0, 40);
+	    		graph->scroll();
+	    	}
+	        break;
+	    }
+            
+        // scroll down
+	    case GDK_KEY_Down:
+	    {
+	    	if (graph->scrollingAllowed()) 
+	    	{
+	    		graph->setScrollOffset(0, -40);
+	    		graph->scroll();
+	    	}
+	        break;
+	    }
+            
+        // scroll left
+	    case GDK_KEY_Left:
+	    {
+	    	if (graph->scrollingAllowed()) 
+	    	{
+	    		graph->setScrollOffset(40, 0);
+	    		graph->scroll();
+	    	}
+	        break;
+	    }
+            
+        // scroll right
+	    case GDK_KEY_Right:
+	    {
+	    	if (graph->scrollingAllowed())
+	    	{
+	    		graph->setScrollOffset(-40, 0);
+	    		graph->scroll();
+	    	}
+	        break;
+	    }
+
+        // center current node
+        case 'c':
+        {
+            graph->centerNode ();
+            break;
+        }
+            
         // select parent node
-        case GDK_Up:
+        case 'w':
         {
             if (graph->selectParent ()) graph->centerNode ();
             break;
         }
-        
+            
         // select child node
-        case GDK_Down:
+        case 's':
         {
             if (graph->selectChild ()) graph->centerNode ();
             break;
         }
-        
+            
         // select sibling to the left
-        case GDK_Left:
+        case 'a':
         {
             if (graph->selectSibling (PREV)) graph->centerNode ();
             break;
         }
-        
+            
         // select sibling to the right
-        case GDK_Right:
+        case 'd':
         {
             if (graph->selectSibling (NEXT)) graph->centerNode ();
             break;
         }
-        
+            
         // edit selected node
-        case GDK_Return:
+        case GDK_KEY_Return:
         {
             int x, y;
 
@@ -282,7 +292,7 @@ guint key_press_notify_event (GtkWidget * widget, GdkEventKey * event, gpointer 
             if (GuiDlgedit::window->mode () == L10N_PREVIEW)
                 break;            
 
-            // get cursoer position
+            // get cursor position
             gtk_widget_get_pointer (graph->drawingArea (), &x, &y);
             DlgPoint point (x, y);                              
 
@@ -300,14 +310,15 @@ guint key_press_notify_event (GtkWidget * widget, GdkEventKey * event, gpointer 
         }
         
         // deselect Node
-        case GDK_Escape:
+        case GDK_KEY_Escape:
         {
             graph->deselectNode ();
             break;
         }
         
         // delete node
-        case GDK_Delete:
+        case GDK_KEY_BackSpace: // fall through
+        case GDK_KEY_Delete:
         {
             // ignore delete command if in preview mode
             if (GuiDlgedit::window->mode () == L10N_PREVIEW)
@@ -316,197 +327,13 @@ guint key_press_notify_event (GtkWidget * widget, GdkEventKey * event, gpointer 
             graph->deleteNode ();
             break;
         }
-    }
-/*
-    MainFrame *MainWnd = (MainFrame *) data;
-    u_int32 index, offset = 5;
-
-    if (event->state & GDK_SHIFT_MASK) offset *= 10;
-
-    switch (event->keyval)
-    {
-        // Edit selected node
-        case GDK_Return:
-        {
-            edit_node (MainWnd);
-            break;
-        }
-
-        // Deselect selected node
-        case GDK_Escape:
-        {
-            if (MainWnd->mode == OBJECT_MARKED)
-                deselect_object (MainWnd);
-
-            if (MainWnd->mode == MULTI_MARKED)
-            {
-                for (index = 0; index < MainWnd->multsel.size (); index++)
-                {
-                    MainWnd->selected_node = MainWnd->multsel[index];
-                    deselect_object (MainWnd);                      
-                }
-
-                MainWnd->multsel.clear ();
-            }
-
-            break;
-        }
-
-        // Delete selected node
-        case GDK_Delete:
-        {
-            if (MainWnd->mode == OBJECT_MARKED)
-                delete_node (MainWnd);
-
-            if (MainWnd->mode == MULTI_MARKED)
-            {
-                for (index = 0; index < MainWnd->multsel.size (); index++)
-                {
-                    MainWnd->selected_node = MainWnd->multsel[index];
-                    delete_node (MainWnd);                      
-                }
-
-                MainWnd->multsel.clear ();
-            }
-
-            break;
-        }
-
-        // Cycle through Circles
-        case GDK_Tab:
-        {
-            if (MainWnd->nodes.empty ())
-                break;
-
-            // multiple nodes selected -> deselect 'em all
-            if (MainWnd->mode == MULTI_MARKED)
-                for (index = 0; index < MainWnd->multsel.size (); index++)
-                {
-                     MainWnd->selected_node = MainWnd->multsel[index];
-                     deselect_object (MainWnd);                      
-                }
-
-            // nothing selected -> select first 
-            if (MainWnd->selected_node == NULL) index = 0;            
-
-            // a node selected -> select next
-            else 
-            {   
-                index = (MainWnd->number == MainWnd->selected_node->number + 1) ? 0 : MainWnd->selected_node->number + 1;
-                deselect_object (MainWnd);
-            }
-
-            // Skip Arrows
-            while (MainWnd->nodes[index]->type == NODE_LINK)
-                index = (MainWnd->number == index + 1) ? 0 : index + 1;
-            
-            center_object (MainWnd, MainWnd->nodes[index]);
-            select_object_index (MainWnd, index);
-
-            break;
-        }
-        // Center screen on selected node
-        case GDK_c:
-        {
-            if (MainWnd->selected_node != NULL)
-            {
-                center_object (MainWnd, MainWnd->selected_node);
-            }
-            
-            break;
-        }
-        // scrolling
-        case GDK_Up:
-        case GDK_KP_Up:
-        {
-            MainWnd->y_offset += offset;
-            redraw_graph (MainWnd);
-            break;
-        }
-        case GDK_Down:
-        case GDK_KP_Down:
-        {
-            MainWnd->y_offset -= offset;
-            redraw_graph (MainWnd);
-            break;
-        }
-        case GDK_Left:
-        case GDK_KP_Left:
-        {
-            MainWnd->x_offset += offset;
-            redraw_graph (MainWnd);
-            break;
-        }
-        case GDK_Right:
-        case GDK_KP_Right:
-        {
-            MainWnd->x_offset -= offset;
-            redraw_graph (MainWnd);
-            break;
-        }
-        case GDK_KP_Home:
-        {
-            MainWnd->x_offset += offset;
-            MainWnd->y_offset += offset;
-            redraw_graph (MainWnd);
-            break;
-        }
-        case GDK_KP_End:
-        {
-            MainWnd->x_offset += offset;
-            MainWnd->y_offset -= offset;
-            redraw_graph (MainWnd);
-            break;
-        }
-        case GDK_KP_Page_Up:
-        {
-            MainWnd->x_offset -= offset;
-            MainWnd->y_offset += offset;
-            redraw_graph (MainWnd);
-            break;
-        }
-        case GDK_KP_Page_Down:
-        {
-            MainWnd->x_offset -= offset;
-            MainWnd->y_offset -= offset;
-            redraw_graph (MainWnd);
-            break;
-        }
+        
+        // key not consumed
         default:
-            break;
+        {
+            return FALSE;
+        }
     }
-*/
+    
     return TRUE;
-}
-
-
-// Once 'auto-scrolling' is activated, this function is called every
-// 10th of a second until it returns FALSE
-int on_scroll_graph (gpointer data)
-{
-    int x, y;
-    static int delay = 0;
-    GuiGraph *graph = (GuiGraph *) data;
-    GtkWidget *widget = graph->drawingArea ();
-
-    // get the present cursor position (relative to the graph)    
-    gtk_widget_get_pointer (widget, &x, &y);
-    
-    // stop scrolling if outside widget or too far from widget's border
-    if (x < 0 || x > widget->allocation.width || 
-        y < 0 || y > widget->allocation.height ||
-        !graph->isScrolling ())
-    {
-        graph->stopScrolling ();
-        delay = 0; 
-        return FALSE;
-    }
-    
-    // wait approx. 1 second before starting to scroll
-    if (delay++ < 6) return TRUE;
-    
-    // move the view
-    graph->scroll ();
-    
-    return TRUE; 
 }

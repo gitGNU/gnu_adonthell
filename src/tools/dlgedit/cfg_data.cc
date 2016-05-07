@@ -4,12 +4,19 @@
    Copyright (C) 2002 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
-   This program is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License.
-   This program is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY.
+   Dlgedit is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
 
-   See the COPYING file for more details.
+   Dlgedit is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with Dlgedit; if not, write to the Free Software 
+   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 /**
@@ -22,6 +29,7 @@
 #include <stdio.h>
 #include <algorithm>
 #include <sys/stat.h>
+#include <glib/gstdio.h>
 #include <dirent.h>
 #include "cfg_data.h"
 #include "dlg_cmdline.h"
@@ -46,49 +54,6 @@ CfgData::~CfgData ()
     // delete all projects
     for (std::vector<CfgProject*>::iterator i = Projects.begin (); i != Projects.end (); i++)
         delete *i;
-}
-
-// add entry to list of recently opened files
-void CfgData::addFile (const std::string &file)
-{
-    // check whether the file already exists
-    std::deque<std::string>::iterator i = find (Files.begin (), Files.end (), file);
-
-    // if that's the case, remove it
-    if (i != Files.end ()) Files.erase (i);
-    
-    // otherwise make sure that we can add it 
-    else 
-    {
-        // check whether the file exists at all
-        FILE* test = fopen (file.c_str (), "r");
-        if (!test) return;
-        else fclose (test);
-        
-        // check whether there's enough room
-        if (Files.size () == 15) Files.pop_front ();
-    }
-    
-    // add file
-    Files.push_back (file);
-}
-
-// get list of previously opened files
-std::list<std::string> CfgData::getFiles ()
-{
-    // copy contents of Files into the list
-    std::list<std::string> files (Files.begin (), Files.end ());
-
-    // sort the list
-    files.sort ();
-
-    return files;
-}
-
-// erase a file from the list
-void CfgData::removeFile (const std::string & file)
-{
-    Files.erase (remove (Files.begin (), Files.end (), file), Files.end ());    
 }
 
 // add entry to list of projects
@@ -187,10 +152,6 @@ std::vector<std::string> CfgData::projectsFromDatadir ()
 // save configuration data
 void CfgData::save (std::ofstream &out)
 {
-    // save list of files
-    for (std::deque<std::string>::iterator i = Files.begin (); i != Files.end (); i++)
-        out << "File [" << *i << "]\n";
-
     // save list of projects
     for (std::vector<CfgProject*>::iterator i = Projects.begin (); i != Projects.end (); i++)
         (*i)->save (out);    

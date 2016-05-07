@@ -4,12 +4,19 @@
    Copyright (C) 2002 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
-   This program is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License.
-   This program is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY.
+   Dlgedit is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
 
-   See the COPYING file for more details.
+   Dlgedit is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with Dlgedit; if not, write to the Free Software 
+   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 /** 
@@ -27,41 +34,41 @@
 
 /**
  * Python tokens
- */ 
-enum token 
-{ 
-    EQ      = 0, 
-    NEQ     = 1, 
-    LT      = 2, 
-    LEQ     = 3, 
-    GT      = 4, 
-    GEQ     = 5, 
-    ASSIGN  = 6, 
-    ACCESS  = 7, 
-    COLON   = 8, 
-    IF      = 9, 
-    ELIF    = 10, 
-    ELSE    = 11, 
-    PASS    = 12, 
-    RETURN  = 13, 
-    BAND    = 14, 
-    BOR     = 15, 
-    NOT     = 16, 
-    ADD     = 17, 
-    SUB     = 18, 
-    MUL     = 19, 
-    DIV     = 20, 
-    QUOT    = 21, 
-    SQUOT   = 22, 
-    LBRACE  = 23, 
-    RBRACE  = 24, 
-    LBRACKET= 25, 
-    RBRACKET= 26, 
-    COMMA   = 27, 
-    COMMENT = 28, 
-    MOD     = 29, 
-    AND     = 30, 
-    OR      = 31, 
+ */
+enum token
+{
+    EQ      = 0,
+    NEQ     = 1,
+    LT      = 2,
+    LEQ     = 3,
+    GT      = 4,
+    GEQ     = 5,
+    ASSIGN  = 6,
+    ACCESS  = 7,
+    COLON   = 8,
+    IF      = 9,
+    ELIF    = 10,
+    ELSE    = 11,
+    PASS    = 12,
+    RETURN  = 13,
+    BAND    = 14,
+    BOR     = 15,
+    NOT     = 16,
+    ADD     = 17,
+    SUB     = 18,
+    MUL     = 19,
+    DIV     = 20,
+    QUOT    = 21,
+    SQUOT   = 22,
+    LBRACE  = 23,
+    RBRACE  = 24,
+    LBRACKET= 25,
+    RBRACKET= 26,
+    COMMA   = 27,
+    COMMENT = 28,
+    MOD     = 29,
+    AND     = 30,
+    OR      = 31,
     XOR     = 32,
     FIXED   = 33,
     VARIABLE= 34,

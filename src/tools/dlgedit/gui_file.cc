@@ -1,58 +1,78 @@
 /*
    $Id$
 
-   Copyright (C) 2002 Kai Sterker <kaisterker@linuxgames.com>
+   Copyright (C) 2002/2004 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
-   This program is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License.
-   This program is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY.
+   The Adonthell Tools are free software; you can redistribute them and/or modify
+   them under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
 
-   See the COPYING file for more details.
+   The Adonthell Tools are distributed in the hope that they will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with Dlgedit; if not, write to the Free Software 
+   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 /**
- * @file gui_file.cc
+ * @file common/gui_file.cc
  *
  * @author Kai Sterker
- * @brief Wrapper for the GtkFileSelection widget
+ * @brief Wrapper for the GtkFileChooser widget
  */
 
 #include <gtk/gtk.h>
 #include "gui_file.h"
-#include "dlg_types.h"
+#include "util.h"
 
 // create a new file selection window
-GuiFile::GuiFile (int type, const std::string &title, const std::string &file) : GuiModalDialog ()
+GuiFile::GuiFile (GtkWindow *parent, GtkFileChooserAction action, const std::string &title, const std::string &file) 
+: GuiModalDialog (parent)
 {
-    GtkWidget *fs_cancel_button;
-    GtkWidget *fs_ok_button;
-
-    window = gtk_file_selection_new (title.c_str ());
-    gtk_container_set_border_width (GTK_CONTAINER (window), 10);
-    GTK_WINDOW (window)->type = GTK_WINDOW_DIALOG;
-    gtk_window_set_modal (GTK_WINDOW (window), TRUE);
-    gtk_window_set_policy (GTK_WINDOW (window), FALSE, FALSE, FALSE);
-
-    // hide new/delete/rename directory buttons if we're loading a file
-    if (type == FS_LOAD) gtk_file_selection_hide_fileop_buttons (GTK_FILE_SELECTION (window));
-
-    // open the directory browsed last 
-    gtk_file_selection_set_filename (GTK_FILE_SELECTION (window), file.c_str ());
+    const gchar *label;
     
-    // get OK and Cancel buttons
-    fs_cancel_button = GTK_FILE_SELECTION (window)->cancel_button;
-    fs_ok_button = GTK_FILE_SELECTION (window)->ok_button;
-
-    // attach the callbacks to them
-    gtk_signal_connect (GTK_OBJECT (fs_cancel_button), "clicked", GTK_SIGNAL_FUNC (gtk_main_quit), NULL);
-    gtk_signal_connect (GTK_OBJECT (fs_ok_button), "clicked", GTK_SIGNAL_FUNC (on_ok_button_pressed), this);
-
-    // give focus to the OK button
-    GTK_WIDGET_SET_FLAGS (fs_ok_button, GTK_CAN_DEFAULT);
-    gtk_widget_grab_focus (fs_ok_button);
-    gtk_widget_grab_default (fs_ok_button);
+    switch (action)
+    {
+        case GTK_FILE_CHOOSER_ACTION_SAVE:
+        {
+            label = GTK_STOCK_SAVE;
+            break;
+        }
+        case GTK_FILE_CHOOSER_ACTION_CREATE_FOLDER:
+        {
+            label = GTK_STOCK_NEW;
+            break;
+        }
+        default: label = GTK_STOCK_OPEN;
+    }
+    
+    window = gtk_file_chooser_dialog_new (title.c_str (), parent, action,
+        GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, label, GTK_RESPONSE_ACCEPT, NULL);
+    
+    // forbid multiple selections
+    gtk_file_chooser_set_select_multiple (GTK_FILE_CHOOSER(window), FALSE);
+    
+    // set current directory or file
+    if (file[file.length()-1] == '/')
+    {
+        gtk_file_chooser_set_current_folder (GTK_FILE_CHOOSER(window), file.c_str ());
+    }
+    else
+    {
+        gtk_file_chooser_set_filename (GTK_FILE_CHOOSER(window), file.c_str ());
+    }
+    
+    if (action == GTK_FILE_CHOOSER_ACTION_SAVE || action == GTK_FILE_CHOOSER_ACTION_CREATE_FOLDER)
+    {
+        gchar *name = g_path_get_basename (file.c_str ());
+        gtk_file_chooser_set_current_name (GTK_FILE_CHOOSER(window), name);
+        g_free (name);
+    }
 }
 
 // clean up
@@ -60,11 +80,44 @@ GuiFile::~GuiFile ()
 {
 }
 
-// event callback
-void on_ok_button_pressed (GtkButton * button, gpointer user_data)
+// display file select widget
+bool GuiFile::run ()
 {
-    GuiFile *fs = (GuiFile *) user_data;
-    fs->okButtonPressed (true);
-    fs->setSelection (gtk_file_selection_get_filename (GTK_FILE_SELECTION (fs->getWindow ())));
-    gtk_main_quit ();
+    if (gtk_dialog_run (GTK_DIALOG (window)) == GTK_RESPONSE_ACCEPT)
+    {
+        gchar *filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (window));
+        File = MK_UNIX_PATH (filename);
+        g_free (filename);
+        
+        return true;
+    }
+    
+    return false;
+}
+
+void GuiFile::add_shortcut (const std::string & shortcut)
+{
+    if (shortcut.length () > 0) 
+    {
+    	gtk_file_chooser_add_shortcut_folder (GTK_FILE_CHOOSER(window), shortcut.c_str (), NULL);
+    }
+}
+
+void GuiFile::add_filter (const std::string & pattern, const std::string & name)
+{
+    unsigned long pos;
+    std::string pattern_str = pattern;
+    GtkFileFilter *filter = gtk_file_filter_new ();
+    gtk_file_filter_set_name (filter, name.c_str ());
+
+    while ((pos = pattern_str.find ('|')) != std::string::npos)
+    {
+        std::string filter_str = pattern_str.substr (0, pos);
+        pattern_str = pattern_str.substr (pos + 1);
+        gtk_file_filter_add_pattern (filter, filter_str.c_str ());
+    }
+    
+    gtk_file_filter_add_pattern (filter, pattern_str.c_str ());
+    gtk_file_chooser_add_filter (GTK_FILE_CHOOSER(window), filter);    
+    gtk_file_chooser_set_filter (GTK_FILE_CHOOSER(window), filter);
 }

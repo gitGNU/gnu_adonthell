@@ -1,15 +1,20 @@
 /*
-   $Id$
-
-   Copyright (C) 2002 Kai Sterker <kaisterker@linuxgames.com>
+   Copyright (C) 2002/2006 Kai Sterker <kaisterker@linuxgames.com>
    Part of the Adonthell Project http://adonthell.linuxgames.com
 
-   This program is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License.
-   This program is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY.
+   Dlgedit is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
 
-   See the COPYING file for more details.
+   Dlgedit is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with Dlgedit; if not, write to the Free Software 
+   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 /** 
@@ -21,11 +26,14 @@
 
 #include <iterator>
 #include <iostream>
+#include <string.h>
 #include "dlg_cmdline.h"
 #include "dlg_compiler.h"
 #include "dlg_types.h"
 #include "dlg_arrow.h"
 #include "gui_error.h"
+
+#define _DEBUG_ 1
 
 // Operators that may appear in Python code
 std::string DlgCompiler::operators[NUM_OPS] = { "==", "!=", "<", "<=", ">", 
@@ -84,15 +92,17 @@ void DlgCompiler::run ()
     std::string fname = dialogue->fullName ();
 
     // remove the file extension
-    unsigned int pos = fname.rfind (FILE_EXT);
+    unsigned long pos = fname.rfind (FILE_EXT);
     if (pos != fname.npos) fname.erase (pos);
 
     // try to open the file
     file.open ((fname + ".py").c_str ());
     if (file.eof ()) return;
     
+    gchar *basename = g_path_get_basename(fname.c_str ());
+
     // write the script header
-    writeHeader (g_basename (fname.c_str ()));
+    writeHeader (basename);
     
     // write the dialogue text
     writeText ();
@@ -118,6 +128,8 @@ void DlgCompiler::run ()
     // display errors if there were any
     if (DlgCmdline::compile == false && errors > 0)
         GuiError::console->display ();
+
+    g_free(basename);
 }
 
 // write the topmost part of the dialogue 
@@ -304,7 +316,8 @@ std::string DlgCompiler::splitCode (std::string code, int space)
 
 std::string DlgCompiler::inflateCode (std::string code)
 {
-    unsigned int i, begin = 0, pos, prefix, suffix;
+	unsigned long pos;
+    unsigned int i, begin = 0, prefix, suffix;
     std::string token, stripped, last_op = "";
     bool is_local = true;
 
@@ -497,7 +510,7 @@ void DlgCompiler::writeDialogue ()
         entry = circle->entry ();
         
         file << ")),\\\n\t\t(";
-        
+
         // write Speaker
         switch (circle->type ())
         {
@@ -526,7 +539,7 @@ void DlgCompiler::writeDialogue ()
     
     // end of array
     file << "))]\n\n";
-} 
+}
 
 // write a single follower
 void DlgCompiler::writeFollower (DlgNode *node)
