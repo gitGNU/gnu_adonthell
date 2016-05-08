@@ -23,11 +23,8 @@
 #include <config.h>
 #endif
 #include <getopt.h>
-#include <stdio.h>
-#include <iostream> 
-#include <sys/stat.h>
+#include <iostream>
 #include <dirent.h>
-#include <unistd.h>
 #include "prefs.h"
 #include "python_class.h"
 #include "game.h"
@@ -53,12 +50,8 @@ config::config ()
     language = "";                  // Let the user's environment decide
     font = "";						// use default font
 
-    // set the path to the adonthellrc file:
-#ifndef SINGLE_DIR_INST
-    adonthellrc = string (getenv ("HOME")) + "/.adonthell";
-#else
-    adonthellrc = string (".");
-#endif
+    // set OS specific directory containing the adonthellrc file
+    adonthellrc = game::get_system_dir(CONFIG);
 }
  
 /**
@@ -311,13 +304,6 @@ bool config::read_adonthellrc ()
     fname = adonthellrc + "/adonthell.ini";
 #endif
 
-    // try to create that directory in case it dosn't exist
-#ifdef WIN32
-    mkdir (adonthellrc.c_str ());
-#else
-    mkdir (adonthellrc.c_str (), 0700);
-#endif
-    
     // prefsin is declared in lex.prefs.c
     prefsin = fopen (fname.c_str (), "r");
 

@@ -37,6 +37,8 @@
 using std::string; 
 #endif
 
+typedef enum { CONFIG, USER_DATA } sys_dir_type;
+
 /**
  * Holds information about global settings.
  *
@@ -50,7 +52,6 @@ public:
     static string User_data_dir;
     static string Global_data_dir;
     static string Game_data_dir; 
-
 
     /** 
      * Initialise the game framework.
@@ -128,10 +129,22 @@ public:
      *         path was already absolute, or "" if the directory wasn't found.
      */
     static string find_directory (const string & dirname); 
-    
+
+#ifndef SWIG
+    /**
+     * Return the OS-specific directory of the given type. If the directory does
+     * not yet exist, it is also created.
+     *
+     * @param type Either CONFIG or USER_DATA
+     *
+     * @return appropriate system directory for the current user.
+     */
+    static string get_system_dir(const sys_dir_type & type);
+
 private:
     static bool directory_exist (const string & dirname); 
     static bool file_exist (const string & fname); 
+#endif
 };
 
 

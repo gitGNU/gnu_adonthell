@@ -25,7 +25,10 @@
 
 
 #include "game.h"
+#include <iostream>
+#include <errno.h>
 #include <stdlib.h>
+#include <sys/stat.h>
 #include <sys/types.h>
 #include <dirent.h>
 
@@ -38,17 +41,60 @@ string game::Game_data_dir;
 void game::init (string game_dir) 
 {
     Global_data_dir = game_dir;
-#ifndef SINGLE_DIR_INST
-    User_data_dir = getenv ("HOME");
-    User_data_dir += "/.adonthell";
-#else
-    User_data_dir = Global_data_dir;
-#endif
+
+    // set OS specific directory containing the saved games
+    User_data_dir = get_system_dir(USER_DATA);
 }
 
 void game::set_game_data_dir(string game_dir)
 {
     Game_data_dir = game_dir;
+}
+
+string game::get_system_dir(const sys_dir_type & type)
+{
+    std::string result;
+#if defined(__APPLE__)		
+    // OSX
+    result = string (getenv ("HOME")) + "/Library/Application Support/Adonthell/";
+#elif defined (WIN32)
+    // Windows
+    char *appDataDir = getenv ("APPDATA");
+    if (appDataDir != NULL && strlen (appDataDir) > 0)
+        result = string (getenv("APPDATA")) + "/Adonthell/";
+    else
+	result = "./";
+#else
+    // Unix
+    const char* xdgEnv = type == USER_DATA ? "XDG_DATA_HOME" : "XDG_CONFIG_HOME";
+    char *xdgDir = getenv (xdgEnv);
+    if (xdgDir != NULL && strlen (xdgDir) > 0)
+        result = string (xdgDir) + "/adonthell";
+    else
+    {
+        if (type == USER_DATA)
+	    result = string (getenv ("HOME")) + "/.local/share/adonthell/";
+        else
+            result = string (getenv ("HOME")) + "/.config/adonthell/";
+    }
+#endif
+
+    // make sure save data directory exists, otherwise create it
+    if (!game::directory_exist (result))
+    {
+#ifndef WIN32
+        if (mkdir (result.c_str (), 0700) == -1)
+#else
+	if (mkdir (result.c_str ()) == -1)
+#endif
+        {
+            int ecd = errno;
+            std::cerr << "Creating directory '" << result << "' failed: "
+                       << strerror (ecd) << std::endl;
+        }
+    }
+
+    return result;
 }
 
 bool game::directory_exist (const string & dirname)
