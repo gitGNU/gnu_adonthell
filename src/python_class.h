@@ -28,6 +28,7 @@
 #ifndef PYTHON_CLASS_H__
 #define PYTHON_CLASS_H__
 
+#include <locale>
 #include "Python.h"
 #include "compile.h"
 #include "eval.h"

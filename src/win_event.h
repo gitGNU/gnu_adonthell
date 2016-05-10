@@ -15,6 +15,7 @@
 #ifndef _WIN_EVENT_H_
 #define _WIN_EVENT_H_
 
+#include <locale>
 #include "Python.h"
 #include <vector>
 

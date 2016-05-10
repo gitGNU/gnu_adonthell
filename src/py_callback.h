@@ -26,6 +26,7 @@
  */
 
  
+#include <locale>
 #include "Python.h"
 #include "fileops.h"
 

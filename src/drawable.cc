@@ -22,7 +22,6 @@
 
 #include "drawable.h"
  
-using namespace std; 
 
 // Public methods.
 

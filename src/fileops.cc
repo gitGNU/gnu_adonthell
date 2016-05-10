@@ -349,7 +349,7 @@ const float& operator >> (const float& f, ogzstream& gfile)
     
     // floats saved as strings to remain independent of architecture
     snprintf (sf, 16, "%f", f);
-    sf >> gfile;
+    (char*)sf >> gfile;
     
     return f;
 }

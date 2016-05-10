@@ -65,7 +65,7 @@ public:
      * @sa operator <=  ()
      * @sa operator ==  () 
      */
-    bool operator < (const mapsquare_tile & mt)
+    bool operator < (const mapsquare_tile & mt) const
     {
         return (mt.y > y || (mt.y == y && mt.x > x));
     }
@@ -81,7 +81,7 @@ public:
      * @sa operator < ()
      * @sa operator == () 
      */
-    bool operator <= (const mapsquare_tile & mt)
+    bool operator <= (const mapsquare_tile & mt) const
     {
         return (mt.y > y || (mt.y == y && mt.x >= x));
     }
@@ -96,7 +96,7 @@ public:
      * @sa operator < ()
      * @sa operator <= () 
      */
-    bool operator == (const mapsquare_tile & mt)
+    bool operator == (const mapsquare_tile & mt) const
     {
         return (mt.y == y && mt.x == x);
     } 
@@ -156,7 +156,7 @@ public:
      * @sa operator <=  ()
      * @sa operator ==  () 
      */
-    bool operator < (const mapsquare_char & mt)
+    bool operator < (const mapsquare_char & mt) const
     {
         return (mt.y > y || (mt.y == y && mt.x > x));
     }
@@ -169,7 +169,7 @@ public:
      * @sa operator < ()
      * @sa operator == () 
      */
-    bool operator <= (const mapsquare_char & mt)
+    bool operator <= (const mapsquare_char & mt) const
     {
         return (mt.y > y || (mt.y == y && mt.x >= x));
     }
@@ -181,7 +181,7 @@ public:
      * @sa operator < ()
      * @sa operator <= () 
      */
-    bool operator == (const mapsquare_char & mt)
+    bool operator == (const mapsquare_char & mt) const
     {
         return (mt.y == y && mt.x == x);
     }
