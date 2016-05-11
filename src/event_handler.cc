@@ -33,9 +33,9 @@ event_handler_base* event_handler::Handler[MAX_EVENTS];
 // functions that return newly instanciated events
 // of a certain type
 NEW_EVENT (time_event)
-NEW_EVENT (enter_event); 
-NEW_EVENT (leave_event); 
-NEW_EVENT (action_event); 
+NEW_EVENT (enter_event)
+NEW_EVENT (leave_event)
+NEW_EVENT (action_event)
 
 // Initialize the game event system
 void event_handler::init ()

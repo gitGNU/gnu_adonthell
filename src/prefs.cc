@@ -381,7 +381,7 @@ bool config::read_adonthellrc ()
             {
                 // get config file version number
                 if (parse_adonthellrc (n, s) == PREFS_STR) 
-                    sscanf (s.c_str (), "%d.%d.%d%15s", &major, &minor, &micro, suffix);
+                    sscanf (s.c_str (), "%u.%u.%u%15s", &major, &minor, &micro, suffix);
                 break;
             }
             default: break;
@@ -391,7 +391,7 @@ bool config::read_adonthellrc ()
     fclose (prefsin);
 
     // get engine version numbers
-    sscanf (VERSION, "%d.%d.%d%15s", &MAJOR, &MINOR, &MICRO, SUFFIX);
+    sscanf (VERSION, "%u.%u.%u%15s", &MAJOR, &MINOR, &MICRO, SUFFIX);
     
     // compare version of config file and engine
     if (major < MAJOR || 
