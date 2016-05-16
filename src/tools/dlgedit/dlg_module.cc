@@ -44,7 +44,10 @@ DlgModule::DlgModule (std::string p, std::string n, std::string u, std::string d
 // dtor
 DlgModule::~DlgModule ()
 {
-    GuiDlgedit::window->tree ()->removeModule (this);
+	if (GuiDlgedit::window != NULL)
+    {
+		GuiDlgedit::window->tree ()->removeModule (this);
+    }
 }
 
 // initialize a newly constructed DlgModule

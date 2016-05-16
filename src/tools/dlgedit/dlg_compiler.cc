@@ -33,8 +33,6 @@
 #include "dlg_arrow.h"
 #include "gui_error.h"
 
-#define _DEBUG_ 1
-
 // Operators that may appear in Python code
 std::string DlgCompiler::operators[NUM_OPS] = { "==", "!=", "<", "<=", ">", 
     ">=", "=", ".", ":", "if", "elif", "else", "pass", "return", "and", "or", 
@@ -97,7 +95,11 @@ void DlgCompiler::run ()
 
     // try to open the file
     file.open ((fname + ".py").c_str ());
-    if (file.eof ()) return;
+    if (!file.is_open())
+    {
+    	if (DlgCmdline::compile) std::cout << "*** error creating " << fname << std::endl;
+    	return;
+    }
     
     gchar *basename = g_path_get_basename(fname.c_str ());
 
@@ -128,6 +130,9 @@ void DlgCompiler::run ()
     // display errors if there were any
     if (DlgCmdline::compile == false && errors > 0)
         GuiError::console->display ();
+
+    file.flush();
+    file.close();
 
     g_free(basename);
 }
@@ -317,7 +322,8 @@ std::string DlgCompiler::splitCode (std::string code, int space)
 std::string DlgCompiler::inflateCode (std::string code)
 {
 	unsigned long pos;
-    unsigned int i, begin = 0, prefix, suffix;
+    unsigned int i, begin = 0, prefix;
+    int suffix;
     std::string token, stripped, last_op = "";
     bool is_local = true;
 

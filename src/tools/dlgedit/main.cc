@@ -86,19 +86,32 @@ int main (int argc, char *argv[])
     {
         DlgModule *module;
         std::string dialogue;
+        std::string directory = g_get_current_dir();
         
         while (DlgCmdline::sources < argc)
         {
             dialogue = argv[DlgCmdline::sources++];
             
-            // check whether the file is a valid dialoge
+            // make sure that file has an absolute path
+            std::string file = ((dialogue[0] == '/' || dialogue[1] == ':') ? dialogue : directory + std::string ("/") + dialogue);
+            gchar *fname = g_path_get_basename (file.c_str ());
+
+            // check whether the file is a valid dialogue
             if (!GuiDlgedit::checkDialogue (dialogue))
             {
                 std::cout << "Loading of '" << dialogue << "' failed\n";
+                g_free(fname);
                 continue;
             }
-            
-            module = new DlgModule ("", dialogue, "-1", "");
+
+            // get the name to use for the dialogue
+            std::string filename (fname);
+
+            // remove file extension
+            unsigned long pos = filename.rfind (FILE_EXT);
+            if (pos != filename.npos) filename.erase (pos);
+
+            module = new DlgModule (g_path_get_dirname (file.c_str ()), filename, "-1", "");
             
             // try to load from file
             if (!module->load ())
@@ -116,6 +129,7 @@ int main (int argc, char *argv[])
                 compiler.run ();
             }
             
+            g_free(fname);
             delete module;
         }
     }
