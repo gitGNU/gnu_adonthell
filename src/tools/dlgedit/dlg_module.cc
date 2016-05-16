@@ -543,33 +543,33 @@ bool DlgModule::save (std::string &path, std::string &name)
     std::ofstream out (fullName ().c_str ());
     
     // opening failed for some reasons    
-    if (!out) return false;
+    if (!out.is_open()) return false;
 
     // Write Header: Adonthell Dialogue System file version 2
     out << "# Dlgedit File Format 2\n#\n"
         << "# Produced by Adonthell Dlgedit v" << _VERSION_ << "\n"
         << "# (C) 2000/2001/2002/2003 The Adonthell Team & Kai Sterker\n#\n"
         << "# $I" << "d$\n\n"
-        << "Note �" << entry_.description () << "�\n\n";
+        << "Note \xa7" << entry_.description () << "\xa7\n\n";
 
     // Node ID
     out << "Id " << serial_ << "\n";
     
     // Save settings and stuff
     if (entry_.project () != "none")
-        out << "Proj �" << entry_.project () << "�\n";
+        out << "Proj \xa7" << entry_.project () << "\xa7\n";
     
     if (entry_.imports () != "")
-        out << "Inc  �" << entry_.imports () << "�\n";
+        out << "Inc  \xa7" << entry_.imports () << "\xa7\n";
     
     if (entry_.ctor () != "")
-        out << "Ctor �" << entry_.ctor () << "�\n";
+        out << "Ctor \xa7" << entry_.ctor () << "\xa7\n";
 
     if (entry_.dtor () != "")
-        out << "Dtor �" << entry_.dtor () << "�\n";
+        out << "Dtor \xa7" << entry_.dtor () << "\xa7\n";
     
     if (entry_.methods () != "")
-        out << "Func �" << entry_.methods () << "�\n";
+        out << "Func \xa7" << entry_.methods () << "\xa7\n";
     
     // Save Circles first, as arrows depend on them when loading later on
     for (std::vector<DlgNode*>::iterator i = nodes.begin (); i != nodes.end (); i++)
@@ -580,6 +580,9 @@ bool DlgModule::save (std::string &path, std::string &name)
     for (std::vector<DlgNode*>::iterator i = nodes.begin (); i != nodes.end (); i++)
         if ((*i)->type () == LINK)
             (*i)->save (out);
+
+    out.flush();
+    out.close();
 
     // mark dialogue as unchanged
     setChanged (false);

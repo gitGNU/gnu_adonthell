@@ -102,9 +102,9 @@ Module          mytext = ""; BEGIN(module); return LOAD_MODULE;
                 }
                 }
              
-§               mytext = ""; BEGIN(text);
-<text>§         BEGIN(INITIAL); return LOAD_STR;
-<text>[^§]+     mytext += yytext;
+\xa7            mytext = ""; BEGIN(text);
+<text>\xa7      BEGIN(INITIAL); return LOAD_STR;
+<text>[^\xa7]+  mytext += yytext;
 
 {num}           mynum = atoi (yytext); return LOAD_NUM;
 

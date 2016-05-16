@@ -250,22 +250,22 @@ void DlgCircle::save (std::ofstream &file)
 
     // circle's annotation
     if (entry_->annotation () != "")
-        file << "  Note �" << entry_->annotation () << "�\n";
+        file << "  Note \xa7" << entry_->annotation () << "\xa7\n";
 
     // circle's text
-    file << "  Text �" << entry_->text () << "�\n";
+    file << "  Text \xa7" << entry_->text () << "\xa7\n";
 
     // circle's character
     if (type_ == NPC && entry_->npc () != "Default")
-        file << "  NPC �" << entry_->npc () << "�\n";
+        file << "  NPC \xa7" << entry_->npc () << "\xa7\n";
 
     // circle's condition(s)
     if (entry_->condition () != "")
-        file << "  Cond �" << entry_->condition () << "�\n";
+        file << "  Cond \xa7" << entry_->condition () << "\xa7\n";
 
     // circle's code
     if (entry_->code () != "")
-        file << "  Vars �" << entry_->code () << "�\n";
+        file << "  Vars \xa7" << entry_->code () << "\xa7\n";
     
     // loop
     if (entry_->loop () != false)
