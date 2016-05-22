@@ -22,6 +22,7 @@
  * 
  */
  
+#include "achievements.h"
 #include "audio.h"
 #include "event_handler.h"
 #include "game.h"
@@ -171,6 +172,9 @@ int main(int argc, char * argv[])
     // init game loading/saving system
     gamedata::init (game::user_data_dir(), game::game_data_dir(),
         myconfig.game_name, myconfig.quick_load); 
+
+    // init achievements
+    achievements::init();
 
     // init video subsystem
     screen::set_video_mode (320, 240, 0, myconfig.double_screen, myconfig.screen_mode);

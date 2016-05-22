@@ -30,6 +30,7 @@
 #include <dirent.h>
 #include <sys/stat.h>
 
+#include "achievements.h"
 #include "audio.h"
 #include "gamedata.h"
 #include "python_class.h"
@@ -42,6 +43,7 @@
 #define CHAR_DAT_VER    4
 #define QUEST_DAT_VER   1
 #define SAVE_DAT_VER    3
+#define ACVMENT_DAT_VER 1
 
 vector<gamedata*> gamedata::saves;      // The list of available savegames
 string gamedata::user_data_dir_;        // The user's private adonthell directory
@@ -128,7 +130,10 @@ bool gamedata::load_characters (u_int32 pos)
     }
     
     if (!fileops::get_version (in, CHAR_DAT_VER, CHAR_DAT_VER, filepath))
-        return false;
+    {
+        in.close ();
+    	return false;
+    }
     
     // load characters     
     char ctemp;
@@ -147,8 +152,8 @@ bool gamedata::load_characters (u_int32 pos)
         // Make this character available to the engine
         data::characters[mynpc->get_id ().c_str ()] = mynpc;
     }
-    in.close ();
 
+    in.close ();
     return true; 
 }
 
@@ -171,7 +176,10 @@ bool gamedata::load_quests (u_int32 pos)
     }
     
     if (!fileops::get_version (in, QUEST_DAT_VER, QUEST_DAT_VER, filepath))
-        return false;
+    {
+        in.close ();
+    	return false;
+    }
     
     // load quests
     char ctemp;
@@ -185,7 +193,6 @@ bool gamedata::load_quests (u_int32 pos)
     }
 
     in.close ();
-    
     return true; 
 }
 
@@ -207,16 +214,19 @@ bool gamedata::load_mapengine (u_int32 pos)
     }
     
     if (!fileops::get_version (in, ENGINE_DAT_VER, ENGINE_DAT_VER, filepath))
-        return false;
+    {
+        in.close ();
+    	return false;
+    }
 
     if (!data::engine->get_state(in))
     {
         cerr << "Couldn't load \"" << filepath << " - stopping\n" << endl;
+        in.close ();
         return false;
     }
     
     in.close (); 
-
     return true; 
 }
 
@@ -237,17 +247,53 @@ bool gamedata::load_audio (u_int32 pos)
     }
     
     if (!fileops::get_version (in, AUDIO_DAT_VER, AUDIO_DAT_VER, filepath))
-        return false;
+    {
+        in.close ();
+    	return false;
+    }
 
     if (!audio::get_state (in))
     {
         cerr << "Couldn't load \"" << filepath << " - stopping\n" << endl;
+        in.close ();
         return false;
     }
     
     in.close (); 
-
     return true; 
+}
+
+bool gamedata::load_achievements (u_int32 pos)
+{
+    igzstream in;
+    string filepath;
+
+    // Load mapengine state
+    filepath = saves[pos]->directory();
+    filepath += "/achievements.data";
+    in.open (filepath);
+
+    if (!in.is_open ())
+    {
+        cerr <<  "Couldn't open \"" << filepath << " - stopping\n" << endl;
+        return false;
+    }
+
+    if (!fileops::get_version (in, ACVMENT_DAT_VER, ACVMENT_DAT_VER, filepath))
+    {
+        in.close ();
+    	return false;
+    }
+
+    if (!achievements::get_state (in))
+    {
+        cerr << "Couldn't load \"" << filepath << " - stopping\n" << endl;
+        in.close ();
+        return false;
+    }
+
+    in.close ();
+    return true;
 }
 
 bool gamedata::load (u_int32 pos)
@@ -259,6 +305,7 @@ bool gamedata::load (u_int32 pos)
     if (!load_quests (pos)) return false;
     if (!load_mapengine (pos)) return false; 
     if (!load_audio (pos)) return false;
+    if (!load_achievements(pos)) return false;
     
     return true; 
 }
@@ -430,6 +477,21 @@ bool gamedata::save (u_int32 pos, string desc, string time)
     fileops::put_version (file, AUDIO_DAT_VER);
     audio::put_state (file);
     file.close ();
+
+    // save achievements
+    filepath = gdata->directory ();
+    filepath += "/achievements.data";
+    file.open (filepath);
+
+    if (!file.is_open ())
+    {
+        cerr << "Couldn't create \"" << filepath << "\" - save failed\n";
+        return false;
+    }
+
+    fileops::put_version (file, ACVMENT_DAT_VER);
+    achievements::put_state (file);
+    file.close ();
     
     // save gamedata
     filepath = gdata->directory ();
@@ -444,6 +506,7 @@ bool gamedata::save (u_int32 pos, string desc, string time)
     
     gdata->put (file);
     file.close ();
+
     
     // only now it is safe to add the new record to the array
     if (pos >= saves.size ()) saves.push_back (gdata);

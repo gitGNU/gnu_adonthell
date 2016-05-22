@@ -205,7 +205,9 @@ public:
      * 
      * @return \e true in case of success, \e false otherwise.
      */
-    static bool load_audio (u_int32 pos); 
+    static bool load_audio (u_int32 pos);
+
+    static bool load_achievements (u_int32 pos);
 
     /** 
      * Loads a previously saved %game. Slot 0 points to the
