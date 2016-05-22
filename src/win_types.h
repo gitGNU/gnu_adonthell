@@ -64,6 +64,6 @@
 #define WIN_BORDER_NORMAL_SIZE "normal/"
 #define WIN_BORDER_MINI_SIZE "mini/"
  
-#define WIN_BRIGHTNESS_LEVEL 130
+#define WIN_BRIGHTNESS_LEVEL 180
 
 #endif
