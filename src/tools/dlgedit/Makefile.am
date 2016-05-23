@@ -21,7 +21,6 @@ headers = \
     dlg_point.h \
     dlg_rect.h \
     dlg_types.h \
-    gettext.h \
     gui_circle.h \
     gui_circle_events.h \
     gui_code.h \
