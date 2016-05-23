@@ -400,7 +400,7 @@ dnl *****************
 dnl GTK+
 dnl *****************
 
-	PKG_CHECK_MODULES(GTK, [gtk+-2.0 >= 2.16.0])
+	PKG_CHECK_MODULES(GTK, [gtk+-2.0 >= 2.18.0])
 	AC_SUBST(GTK_CFLAGS)
 	AC_SUBST(GTK_LIBS)
 
