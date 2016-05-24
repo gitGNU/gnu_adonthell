@@ -11,19 +11,22 @@ Written by Andrew Henderson <hendersa@db.erau.edu>
 * 0.0 - CHANGELOG *
 *******************
 
-* 30 May 2008 - Kai Sterker <kaisterker@linuxgames.com>
+* 24 May 2016 - Kai Sterker <kai.sterker@gmail.com>
+  Updated for v0.3.6
+  
+* 30 May 2008 - Kai Sterker <kai.sterker@gmail.com>
   Updated for v0.3.5
 
-* 24 October 2004 - Kai Sterker <kaisterker@linuxgames.com>
+* 24 October 2004 - Kai Sterker <kai.sterker@gmail.com>
   Updated for v0.3.4
 
-* 17 September 2002 - Kai Sterker <kaisterker@linuxgames.com>
+* 17 September 2002 - Kai Sterker <kai.sterker@gmail.com>
   Updated for v0.3.3
 
-* 08 February 2002 - Kai Sterker <kaisterker@linuxgames.com>
+* 08 February 2002 - Kai Sterker <kai.sterker@gmail.com>
   Added Building RPM's Howto
 
-* 12 January 2002 - Kai Sterker <kaisterker@linuxgames.com>
+* 12 January 2002 - Kai Sterker <kai.sterker@gmail.com>
   Added Fullscreen Howto
 
 
@@ -100,10 +103,6 @@ Adonthell:
 
 * Questions/Help
 
-* Fullscreen Howto
-
-* Building RPM's Howto
-
 *******************************************
 * 3.0 - INSTALLING THE REQUIRED LIBRARIES *
 *******************************************
@@ -116,7 +115,7 @@ libraries are required, one is optional. The three REQUIRED libraries
 
     http://www.libsdl.org/
 
-2. Python, version 2.0 or later.
+2. Python, version 2.2.1 or later.
 
     http://www.python.org/
 
@@ -126,7 +125,7 @@ libraries are required, one is optional. The three REQUIRED libraries
 
 4. SDL_ttf, version 2.0 or later.
 
-    http://www.libsdl.org/projects/SDL_ttf
+   See http://www.libsdl.org/projects/SDL_ttf/release-1.2.html
 
 Sound support under Adonthell is optional (but highly recommended!!).
 We suggest building Adonthell with sound support if you have a sound
@@ -135,11 +134,11 @@ and install another library:
 
 5. Ogg Vorbis, version 1.0rc3 or later
 
-    http://www.xiph.org/ogg/vorbis/download/
+   See http://www.xiph.org/downloads/
 
-6. SDL Mixer, version 1.2 or later
+6. SDL_mixer, version 1.2 or later.
 
-    http://www.libsdl.org/projects/SDL_mixer
+   See http://www.libsdl.org/projects/SDL_mixer/release-1.2.html
 
 *****************************
 * 3.1 - INSTALLING BINARIES *
@@ -231,8 +230,8 @@ installed and configured in your system.
 
 Now that the required libraries are built and installed on your
 system, you need to build the Adonthell program itself. The
-latest version of Adonthell is 0.3.5. You can download it from the
-Adonthell website: http://adonthell.linuxgames.com/download/.
+latest version of Adonthell is 0.3.6. You can download it from the
+Adonthell website: http://adonthell.nongnu.org/download/.
 
 
 The steps for installing Adonthell are similar to the steps for
@@ -258,15 +257,17 @@ directory and typing:
 
 A successful configure will produce an output like this:
 
-	Adonthell v0.3.5
+	Adonthell v0.3.6
 
-    SDL ....................... : 1.2.7
-    Python .................... : 2.3
-    Python debugging .......... : no
-    Ogg music ................. : enabled
-    Building editors .......... : no
-    Building API doc .......... : no
-    Data directory ............ : /usr/local/share/adonthell
+	SDL ....................... : 1.2.15
+	Python .................... : 3.5.1+
+	Python debugging .......... : yes
+	Freetype .................. : 18.1.12
+	SWIG ...................... : 3.0.8
+	Ogg music ................. : enabled
+	Building dlgedit .......... : no
+	Building API doc .......... : no
+	Data directory ............ : ${datarootdir}/adonthell
 
 If everything configured and built with no errors (which it should,
 if the SDL libraries were correctly installed), Adonthell will now
@@ -339,12 +340,6 @@ complaining about or you forgot to type the command 'ldconfig'
 as a superuser account (i.e. root) after you installed the library.
 
 
-Q: When I run Adonthell in fullscreen mode I get a tiny window with
-a large black border around.
-
-A: See the FULLSCREEN.howto file for help.
-
-
 Q: I have a problem that isn't listed above. Where can I go for
 help? How do I contact you?
 
@@ -366,61 +361,7 @@ Artwork list:		adonthell-artwork@nongnu.org
 
 You can subscribe to these mailing lists by going to the URL:
     
-    http://adonthell.linuxgames.com/contact/mailinglist.shtml
-
-If you'd rather e-mail an Adonthell team member directly, you can get
-a list of contacts for the team from the Adonthell web page at:
-    
-    http://adonthell.linuxgames.com/development/team.shtml
-
-
-************************
-* 7.0 Fullscreen Howto *
-************************
-
-This section has been moved to a file called FULLSCREEN.howto.
-
-
-****************************
-* 8.0 Building RPM's Howto *
-****************************
-
-Normally, you don't have to do this (as you can download premade
-binaries from our website), but if you want to make your own
-package for some reason or another, here is the procedure.
-
-Adonthell is already prepared for building RPM packages. The only
-requirements you have to meet is the ability to compile Adonthell
-from the sources; the larger part of this Guide deals with that. 
-
-Once you are able to compile Adonthell, there are three more steps
-to complete.
-
-Step #1: Copy adonthell-0.3.x.tar.gz to /usr/src/packages/SOURCES/
-If you do not have the source archive, because you obtained the 
-sources through CVS, you can build it by typing
-
-    make dist
-    
-in the adonthell-0.3.x/ directory.
-
-Step #2: In the adonthell-0.3.x/ directory, run
-
-    configure 
-
-to create the adonthell.spec file.
-
-Step #3: Still in the adonthell-0.3.x/ directory, run
-
-    rpm -bb adonthell.spec
-    
-This command will compile Adonthell from the sources you placed in
-/usr/src/packages/SOURCES/ and then build a RPM package from the
-executables resulting from that compilation. They will end up in
-/usr/src/packages/RPMS/i386/.
-
-Voila, if all went well you'll now have a RPM package you can install
-on your box in the usual way, or distribute among your friends.
+    http://adonthell.nongnu.org/contact/mailinglist.html
 
 
 *********************************************************************

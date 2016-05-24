@@ -3,9 +3,9 @@
                              Adonthell 0.3 
                            
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation.
+    This program is free software; you can redistribute it and/or
+    modify it under the terms of the GNU General Public License as
+    published by the Free Software Foundation.
 
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -29,9 +29,12 @@ this package.
 Configuring Adonthell:
 ======================
 
-The first time you run Adonthell, a configuration file is created:
-$HOME/.adonthell/adonthellrc. Edit it to customise the game to your
-convenience.
+The most important settings (Screen Mode, Audio Volume and Language)
+can be changed within the game itself. Some additional settings can
+only be changed by manually editing the configuration file. This
+file is create the first time you run Adonthell, and can usually be
+found in: $HOME/.config/adonthell/adonthellrc.
+
 
 The available options and what they do are:
 
@@ -46,10 +49,9 @@ The available options and what they do are:
   Whether resolution should be scaled to 640x480 or not
   0 = disable, 1 = enable
   
-  Enabling double-size mode significantly increases CPU usage. On
-  old hardware you should consider turning this option off and run
-  Adonthell in fullscreen mode instead.
-
+  You should probably not change this setting, unless you want to
+  see the game in its original 320x240 resolution.
+  
 - Language [locale]
   Specifies which language to use. As long as this option is unset,
   the language is determined by one of the following environment
@@ -63,13 +65,13 @@ The available options and what they do are:
 
   Language    Locale
   ------------------
+  Danish      da_DA
   Dutch       nl_NL
   English
-  French      fr_FR
   Italian     it_IT
 
   If new languages become available, they will be announced on
-  our website: http://adonthell.linuxgames.com/
+  our website: http://adonthell.nongnu.org/
 
 - Font [font.ttf]
   Chose a true type font to use for displaying text. 
@@ -107,12 +109,12 @@ Running Adonthell:
 
 Okay, now you're ready to launch the program. Type
 
-$> adonthell <gamename>
+$> adonthell-0.3 <gamename>
 
 to run the game named <gamename>. To get a list of currently 
 installed games you can play, type:
 
-$> adonthell -l
+$> adonthell-0.3 -l
 
 This will print a list of the installed games you can launch
 with above command.
@@ -124,7 +126,7 @@ PLAYING file that comes with the game data.
 Directories:
 ============
 
-- $HOME/.adonthell 
+- $HOME/.config/adonthell 
   contains the configuration file and your saved games.
 
 - Global data directory
@@ -137,22 +139,17 @@ Directories:
 Release Notes:
 ==============
 
-The main purpose of this release is to attract new programmers, 
-artists and writers in order to shorten the time until the next 
-version.  So if you have experience in C++ (and optionally Python), 
-or if you are good at computer graphics or writing we would like to
-hear from you.  Please have a look at our development site 
-  
-  http://adonthell.linuxgames.com/development/
-
-for further details.
+The main purpose of this release is to ensure that Adonthell -
+Waste's Edge can still be enjoyed on modern operating systems.
+To that end, support for newer versions of GCC and Python have
+been implemented.
 
 Adonthell - Waste's Edge -, or v0.3 for short is no complete RPG.
 As the v0.3 implies, the engine is far from being finished, although
 it should be free of severe bugs.  Missing features include combat, 
-items and magic.  But you can interact with NPC's and the game world, 
-and the internals enable us to create a basic plot, so v0.3 is actually
-playable!
+items and magic.  But you can interact with NPC's and the game
+world, and the internals enable us to create a basic plot, so v0.3
+is actually playable!
 
 You're greatly invited to report us bugs, problems, or anything you
 think we should know. Any feedback is appreciated, so don't hesitate!
@@ -163,17 +160,9 @@ Contact:
 
 You can reach us in various ways:
 
-Email:         adonthell-project@linuxgames.com
 Mailing list:  adonthell-general@nongnu.org
-Web site:      http://adonthell.linuxgames.com
+Web site:      http://adonthell.nongnu.org
 Tech support:  http://savannah.nongnu.org/support/?group_id=702
-
-There is a Message Board for user to user discussion at
-    http://www.3dforums.com/?action=forumpage&loc=49&forum_id=158
-
-If you want to rate or comment on Adonthell, feel free to do so at
-    http://www.happypenguin.org/show?Adonthell
-    http://www.freshmeat.net/projects/adonthell
 
 
 Reporting Bugs:
@@ -184,7 +173,7 @@ would like to hear about it. Please use the Development mailing list
 (adonthell-devel@nongnu.org) for that. You can find informations on
 this and other mailing lists at 
 
-    http://adonthell.linuxgames.com/contact/mailinglist.shtml
+    http://adonthell.nongnu.org/contact/mailinglist.html
 
 
 Thank you for trying this software.

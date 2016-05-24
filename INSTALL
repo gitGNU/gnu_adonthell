@@ -10,9 +10,9 @@ http://savannah.gnu.org/support/?group_id=702 .
 Requirements:
 =============
 
-There are sixlibraries that Adonthell depends on:
+There are six libraries that Adonthell depends on:
 
-1. Python, version 2.0 or later. 
+1. Python, version 2.2.1 or later. 
    
    See http://www.python.org/
 
@@ -24,12 +24,12 @@ There are sixlibraries that Adonthell depends on:
 
 3. SDL_mixer, version 1.2 or later.
 
-   See http://www.libsdl.org/projects/SDL_mixer/
+   See http://www.libsdl.org/projects/SDL_mixer/release-1.2.html
 
 
 4. SDL_ttf, version 2.0 or later.
 
-   See http://www.libsdl.org/projects/SDL_ttf/
+   See http://www.libsdl.org/projects/SDL_ttf/release-1.2.html
 
 
 5. Freetype, version 2.0 or later.
@@ -39,7 +39,7 @@ There are sixlibraries that Adonthell depends on:
    
 6. Ogg Vorbis, version 1.0rc3 or later
 
-   See http://www.xiph.org/ogg/vorbis/download/
+   See http://www.xiph.org/downloads/
 
 
 Installing:
@@ -61,7 +61,7 @@ For more information, see the README file. Problems? Don't have
 the right libraries? Please look at the NEWBIE file or our website
 for answers:
 
-   http://adonthell.linuxgames.com
+   http://adonthell.nongnu.org
 
 
 Debian users:
@@ -84,9 +84,9 @@ To create an installable RPM package, type
 
 $> rpm -tb adonthell-0.3.5.tar.gz
 
-Note that the 4.x versions of rpm are currently unsupported. Feel free
-to change that, if you want. For more information, refer to section 8.0
-of the NEWBIE file.
+Note that the 4.x versions of rpm are currently unsupported. Feel
+free to change that, if you want. For more information, refer to
+section 8.0 of the NEWBIE file.
 
 
 Advanced configure options:
@@ -106,13 +106,11 @@ machines, you shouldn't enable this option unless you need it -
 it may considerably increase Adonthell's CPU usage.
 
 
---enable-tools
+--enable-dlgedit
 
-  Use this to build the Adonthell development tools. These will
-include editors for our graphic objects, characters, maps, dialogues 
-and a few other utilities. Note that non of these tools will be 
-installed when running 'make install'. You will have to run them from 
-their source directory or install them manually.
+  Use this to build the Adonthell dialogue editor. Note that 
+this requires additional dependencies for compilation, namely
+Cairo 1.2.6 or higher and GTK+ 2.18 or higher.
 
 
 --enable-doc
@@ -128,9 +126,7 @@ can be found at
    http://www.research.att.com/sw/tools/graphviz/.
 
   The documentation will end up in doc/<subdir>/html/ respectively
-doc/<subdir>/latex/, where subdir is one of devel or dlgedit.  It 
-is also made available for online browsing at our website,
-http://adonthell.linuxgames.com.
+doc/<subdir>/latex/, where subdir is one of devel or dlgedit.
 
 
 --enable-memleaks
@@ -148,13 +144,6 @@ to finally display any occurrence of memory leaks.
 http://developer.kde.org/~sewardj/
 
 
---with-included-gettext
-
-  If you want to build Adonthell with national language support (NLS),
-you'll have to use this option on systems that do not provide the
-required services themselves.
-
-
 --disable-nls
 
   Use this option to disable NLS completely. For more information
@@ -164,10 +153,10 @@ this directory.
 
 --disable-sdltest
 --disable-vorbistest
---disable-gtktest
+--disable-freetypetest
 
   If configure claims to not find the SDL library, Ogg Vorbis or
-GTK+ although they are there, or if you try to cross-compile, 
+Freetype, although they are there, or if you try to cross-compile, 
 you can disable the respective test. 
 
 Another way to workaround such a problem might be to recreate 
@@ -183,7 +172,7 @@ better to set the $LD_LIBRARY_PATH environment variable, or to add
 those directories to /etc/ld.so.conf.
 
 
---with-dir=DIR
+--with-data-dir=DIR
 
   Use this option to customise the location of the data directory.
 The default is /usr/local/share/adonthell. Once you have compiled

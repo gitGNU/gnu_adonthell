@@ -1,3 +1,10 @@
+version 0.3.6
+- Save configuration and game states to standard locations
+- Fixes for NLS support
+- Adonthell dialogue editor included again
+- Support Python 3.x
+- Support gcc 6.x
+
 version 0.3.5
 - Bugfix with wrapping UTF-8 encoded text
 - Use external SDL_Mixer and SDL_ttf libraries
@@ -35,5 +42,5 @@ _________________________________________________________________________
 For the latest news on the functionality of the Adonthell Project,  
 please visit the project's website:
 
-http://adonthell.linuxgames.com/news/
+http://adonthell.nongnu.org/news/
 
