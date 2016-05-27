@@ -40,10 +40,23 @@ extern int parse_cfgfile (std::string&, int&);
 // ctor; load config
 CfgIO::CfgIO ()
 {
-#ifndef WIN32
-    Dlgeditrc = std::string (getenv ("HOME")) + "/.adonthell/dlgeditrc";
+#if defined(__APPLE__)
+    // OSX
+	Dlgeditrc = string (getenv ("HOME")) + "/Library/Application Support/Adonthell/dlgeditrc";
+#elif defined (WIN32)
+    // Windows
+    char *appDataDir = getenv ("APPDATA");
+    if (appDataDir != NULL && strlen (appDataDir) > 0)
+    	Dlgeditrc = string (getenv("APPDATA")) + "/Adonthell/dlgeditrc";
+    else
+    	Dlgeditrc = "./dlgeditrc";
 #else
-    Dlgeditrc = std::string ("./dlgeditrc");
+    // Unix
+    char *xdgDir = getenv ("XDG_CONFIG_HOME");
+    if (xdgDir != NULL && strlen (xdgDir) > 0)
+        result = string (xdgDir) + "/adonthell/dlgeditrc";
+    else
+       result = string (getenv ("HOME")) + "/.config/adonthell/dlgeditrc";
 #endif
     
     // loadcfgin is declared in lex.loadcfg.cc
