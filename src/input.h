@@ -28,8 +28,9 @@
 #define INPUT_H__
 
 #include "types.h"
-#include "SDL_keysym.h"
-
+#include <string>
+#include <queue>
+#include <SDL2/SDL_keycode.h>
 
 /**
  * Handles keyboard and mouse input.
@@ -66,7 +67,13 @@ public:
      * 
      * @return true if key is currently pushed, false otherwise.
      */
-    static bool is_pushed(SDLKey key);
+    static bool is_pushed(SDL_Keycode key);
+#ifdef SWIG
+    static bool is_pushed(char key)
+    {
+    	is_pushed((SDL_Keycode)key);
+    }
+#endif
 
     /** 
      * Returns whether a key has been pushed since last function call, false otherwise.
@@ -75,8 +82,13 @@ public:
      * 
      * @return true if the key has been pushed since last call, false otherwise.
      */
-    static bool has_been_pushed(SDLKey key);
-    
+    static bool has_been_pushed(SDL_Keycode key);
+#ifdef SWIG
+    static bool has_been_pushed(char key)
+    {
+    	has_been_pushed((SDL_Keycode)key);
+    }
+#endif
     
     /** 
      * Returns the code of the next key on the input queue.
@@ -84,23 +96,19 @@ public:
      * 
      * @return Code of the next key that has been pushed.
      */
-    static s_int32 get_next_key();
+    static SDL_Keycode get_next_key();
      
     /** 
-     * Returns the next unicode on the input queue.
+     * Returns the next text input on the input queue encoded as utf8.
      * 
      * 
-     * @return Unicode of the next key that has been pushed.
+     * @return utf8 representation of the next character that has been input.
      */
-    static s_int32 get_next_unicode();
-    
-    /** 
-     * Sets whether the key repeat is active or not.
-     * 
-     * @param delay delay (in ms) before repetition.
-     * @param interval interval (in ms) between repetitions.
-     */
-    static void set_key_repeat(int delay=SDL_DEFAULT_REPEAT_DELAY, int interval=SDL_DEFAULT_REPEAT_INTERVAL);
+    static std::string get_next_unicode();
+
+    static void start_text_input();
+    static void stop_text_input();
+    static bool is_text_input() { return text_input; }
 
     /** 
      * Totally clears the key queue.
@@ -108,12 +116,9 @@ public:
      */
     static void clear_keys_queue();
     
-
 private:
-    static u_int16 last_key;
+    static bool text_input;
 
-    static int filterevents(const SDL_Event *event);
-    
     static u_int16 mouse_posx, mouse_posy;
     static u_int8 * keystate;
     static u_int8 * p_keystate;
@@ -121,7 +126,7 @@ private:
 #ifndef SWIG
     static bool mouse_button[3];
 #endif
-    
+    static std::queue<std::string> input_queue;
 };
 
 #endif

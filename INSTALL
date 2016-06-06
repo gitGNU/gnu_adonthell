@@ -17,19 +17,19 @@ There are six libraries that Adonthell depends on:
    See http://www.python.org/
 
 
-2. SDL, version 1.2 or later.
+2. SDL, version 2.0 or later.
 
    See http://www.libsdl.org/
 
 
-3. SDL_mixer, version 1.2 or later.
+3. SDL_mixer, version 2.0.0 or later.
 
-   See http://www.libsdl.org/projects/SDL_mixer/release-1.2.html
+   See https://www.libsdl.org/projects/SDL_mixer/
 
 
-4. SDL_ttf, version 2.0 or later.
+4. SDL_ttf, version 2.0.12 or later.
 
-   See http://www.libsdl.org/projects/SDL_ttf/release-1.2.html
+   See https://www.libsdl.org/projects/SDL_ttf/
 
 
 5. Freetype, version 2.0 or later.
@@ -63,30 +63,6 @@ for answers:
 
    http://adonthell.nongnu.org
 
-
-Debian users:
--------------
-
-You can automatically get an installable Debian package by typing
-
-$> debuild 
-
-within the adonthell-0.3.5 directory. 'debbuild' is part of the
-'devscripts' package. Check carefully that you have the python2.2,
-python2.2-dev, libsdl1.2 and libsdl1.2-dev packages installed (plus 
-libvorbis0 & libvorbis-dev if you want sound), or the build will fail.
-
-
-RPM users:
-----------
-
-To create an installable RPM package, type
-
-$> rpm -tb adonthell-0.3.5.tar.gz
-
-Note that the 4.x versions of rpm are currently unsupported. Feel
-free to change that, if you want. For more information, refer to
-section 8.0 of the NEWBIE file.
 
 
 Advanced configure options:

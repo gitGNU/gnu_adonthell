@@ -35,7 +35,7 @@ public :
     /**
        Destructor
     */
-    ~label ();
+    virtual ~label ();
 
     
     /**
@@ -123,13 +123,19 @@ public :
     static const u_int8 AUTO_SIZE = 2; 
 
     
-    const static SDLKey KEY_CURSOR_NEXT = SDLK_RIGHT;
-    const static SDLKey KEY_CURSOR_PREVIOUS = SDLK_LEFT;
+    const static SDL_Keycode KEY_CURSOR_NEXT = SDLK_RIGHT;
+    const static SDL_Keycode KEY_CURSOR_PREVIOUS = SDLK_LEFT;
 
     
 
 protected :
-    u_int16 ucd (u_int16 & idx);
+
+    u_int16 ucd (u_int16 & idx) const
+    {
+    	return ucd(my_text_, idx);
+    }
+
+    u_int16 ucd (const std::string & text, u_int16 & idx) const;
     
     struct Sline_text
     {

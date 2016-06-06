@@ -44,33 +44,33 @@ adonthell::adonthell ()
 // start and execute the game's main loop 
 void adonthell::main (win_base *wnd, const string name)
 {
-    win_manager mgr;
-    
-    if (wnd != NULL)
-    {
-        mgr.add (wnd /*, name */);
-        mgr.set_focus (wnd);       
-    }
-    else
-    {
-        mapview_start ();
-        set_control_active (true);
-        fade_in ();
-    }
+	win_manager mgr;
 
-    while (letsexit == false)
-    {
-        main_loop ();
-    
-        // blit the surface to the physical screen
-        screen::show ();
-    
-        // perform operations to keep the game's speed constant
-        gametime::update ();
-        
-        // update the internal clock
-        gamedate::update ();
-    }
+	if (wnd != NULL)
+	{
+		mgr.add (wnd /*, name */);
+		mgr.set_focus (wnd);
+	}
+	else
+	{
+		mapview_start ();
+		set_control_active (true);
+		fade_in ();
+	}
+
+	while (letsexit == false)
+	{
+		main_loop ();
+
+		// blit the surface to the physical screen
+		screen::show ();
+
+		// perform operations to keep the game's speed constant
+		gametime::update ();
+
+		// update the internal clock
+		gamedate::update ();
+	}
 
     // only leave one main loop at a time
     letsexit = false;    
@@ -95,12 +95,12 @@ void adonthell::main_loop ()
         win_manager::active->update ();
         if (control_active ()) control.run ();
     }
-   
-    if (!letsexit) 
+
+    // first clear the screen to avoid artifacts
+    screen::clear ();
+
+    if (!letsexit)
     {
-        // first clear the screen to avoid artifacts
-        screen::clear ();
-    
         // draw everything to our display surface
         win_manager::active->draw ();
     }

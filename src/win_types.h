@@ -15,7 +15,7 @@
 #ifndef TYPES_WIN_H_
 #define TYPES_WIN_H_
 
-#include <SDL/SDL_keysym.h>
+#include <SDL2/SDL_keycode.h>
 
 #define WIN_NB_TABLE_CHAR 127
 #define WIN_TEXT_MAX_LENGTH 5000

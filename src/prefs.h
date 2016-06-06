@@ -58,7 +58,7 @@ enum
     PREFS_VERSION = 9,
     PREFS_NUM = 10,
     PREFS_STR = 11,
-    PREFS_DOUBLE_SCREEN = 12,
+	PREFS_DISPLAY = 12,
 };
 
 #endif
@@ -137,7 +137,10 @@ public:
      * Whether the engine shall run in window (0) or fullscreen (1) mode.
      */
     u_int8 screen_mode;
-    u_int8 double_screen;
+    /**
+     * Index of the display to use for fullscreen mode
+     */
+    u_int8 display;
     /**
      * Whether the quick-load feature is enabled (1) or not (0)
      */

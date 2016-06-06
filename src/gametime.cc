@@ -20,7 +20,7 @@
   */
 
 #include "gametime.h"
-#include <SDL/SDL.h>
+#include <SDL2/SDL.h>
 
 double gametime::Minute;
 u_int32 gametime::timer1;

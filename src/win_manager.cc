@@ -68,6 +68,11 @@ void win_manager::destroy()
         (*i)->set_manager (NULL);
         // delete *i;
     }
+
+    if (input::is_text_input())
+    {
+    	input::stop_text_input();
+    }
     
     wnd_list.clear ();
     wnd_focus = NULL;
@@ -157,7 +162,7 @@ void win_manager::draw ()
 void win_manager::input_update ()
 {  
     // only the window with the focus may recieve input
-    if (wnd_focus) wnd_focus->input_update (); 
+    if (wnd_focus) wnd_focus->input_update ();
 }
 
 // update the state of the topmost window(s)
@@ -188,7 +193,7 @@ void win_manager::set_focus (win_base *tmp)
         // and give it to the new one
         wnd_focus = tmp;
         wnd_focus->set_focus (true);
-    }   
+    }
 }
 
 // load a theme from disk

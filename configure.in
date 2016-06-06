@@ -132,21 +132,21 @@ dnl *************
 dnl Check for SDL
 dnl *************
 
-SDL_VERSION=1.2.0
-AM_PATH_SDL($SDL_VERSION,
+SDL_VERSION=2.0.0
+AM_PATH_SDL2($SDL_VERSION,
     :,
 	AC_MSG_ERROR([*** SDL version $SDL_VERSION not found!])
 )
 
-AC_CHECK_LIB([SDL_mixer], 
+AC_CHECK_LIB([SDL2_mixer], 
 	[Mix_OpenAudio], 
-	[LIBS="$LIBS -lSDL_mixer"], 
+	[LIBS="$LIBS -lSDL2_mixer"], 
 	[AC_MSG_ERROR([*** SDL_mixer is required])]
 )
 
-AC_CHECK_LIB([SDL_ttf], 
+AC_CHECK_LIB([SDL2_ttf], 
 	[TTF_Init], 
-	[LIBS="$LIBS -lSDL_ttf"], 
+	[LIBS="$LIBS -lSDL2_ttf"], 
 	[AC_MSG_ERROR([*** SDL_ttfis required])]
 )
 
@@ -450,9 +450,9 @@ dnl  **************************
 dnl  Check for required headers
 dnl  **************************
 
-AC_CHECK_HEADER([SDL/SDL.h])
-AC_CHECK_HEADER([SDL/SDL_mixer.h])
-AC_CHECK_HEADER([SDL/SDL_ttf.h])
+AC_CHECK_HEADER([SDL2/SDL.h])
+AC_CHECK_HEADER([SDL2/SDL_mixer.h])
+AC_CHECK_HEADER([SDL2/SDL_ttf.h])
 AC_CHECK_HEADER([zlib.h])
 
 if test x$PTHREADS = xyes; then
@@ -510,7 +510,7 @@ dnl ****************
 echo
 echo "Adonthell v$VERSION"
 echo
-echo "SDL ....................... : `$SDL_CONFIG --version`"
+echo "SDL ....................... : `sdl2-config --version`"
 echo "Python .................... : $PY_VERSION"
 echo "Python debugging .......... : $pydebug"
 echo "Freetype .................. : `freetype-config --version`"

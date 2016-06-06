@@ -31,7 +31,7 @@ num    {digit}+
 "#".*[\n]? ;        /* Eat up comments */
 
 Screen-mode         return PREFS_SCREEN_MODE;
-Double-size         return PREFS_DOUBLE_SCREEN;
+Display             return PREFS_DISPLAY;
 Language            return PREFS_LANGUAGE;
 Font				return PREFS_FONT;
 Quick-load          return PREFS_QUICK_LOAD;

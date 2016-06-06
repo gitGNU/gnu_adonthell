@@ -51,21 +51,21 @@ SDL_Rect drawing_area::setup_rects () const
     {
         SDL_Rect ret;
         SDL_Rect temp = draw_to->setup_rects ();
-        
-        ret.x = temp.x > x ()? temp.x : x (); 
+
+        ret.x = temp.x > x ()? temp.x : x ();
         ret.y = temp.y > y ()? temp.y : y ();
 
         // Precalculated for faster operation.
-        s_int32 xpl = x () + length (); 
+        s_int32 xpl = x () + length ();
         s_int32 txw = temp.x + temp.w;
         s_int32 txwmrx = txw - ret.x;
-        s_int32 xplmrx = xpl - ret.x;  
-        s_int32 yph = y () + height (); 
+        s_int32 xplmrx = xpl - ret.x;
+        s_int32 yph = y () + height ();
         s_int32 tyh = temp.y + temp.h;
         s_int32 tyhmry = tyh - ret.y;
-        s_int32 yphmry = yph - ret.y; 
-        
-        
+        s_int32 yphmry = yph - ret.y;
+
+
         ret.w = txw < xpl ? txwmrx > 0 ? txwmrx : 0 : xplmrx > 0 ? xplmrx : 0;
         ret.h = tyh < yph ? tyhmry > 0 ? tyhmry : 0 : yphmry > 0 ? yphmry : 0;
         

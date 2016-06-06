@@ -51,11 +51,11 @@ public:
     /** Creates an image with a specified size.
      *  @param l length of the image.
      *  @param h height of the image.
-     *  @param mode use screen::dblmode or set dbl_mode to false
+     *  @param scale the initial scale of the image (default 1)
      *
      *  @attention Not accessible from Python.
      */ 
-    image (u_int16 l, u_int16 h, bool mode = true);
+    image (u_int16 l, u_int16 h, const u_int8 & scale = 1);
     
     /**
      * Create image from SDL_Surface.
@@ -66,7 +66,7 @@ public:
     
     /** Destructor.
      */ 
-    ~image (); 
+    virtual ~image ();
 
     /** 
      * Resize this image.

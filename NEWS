@@ -1,8 +1,10 @@
 version 0.3.6
+- Letterbox fullscreen mode that preserves 4:3 aspect ratio
 - Save configuration and game states to standard locations
 - Fixes for NLS support
 - Adonthell dialogue editor included again
 - Support Python 3.x
+- Support SDL 2.x
 - Support gcc 6.x
 
 version 0.3.5

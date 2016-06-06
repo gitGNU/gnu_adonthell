@@ -12,15 +12,15 @@
 
 #include "win_keys.h"
 
-SDLKey win_keys::KEY_ACTIVATE_ENTRY = SDLK_RETURN;
+SDL_Keycode win_keys::KEY_ACTIVATE_ENTRY = SDLK_RETURN;
 
-SDLKey win_keys::KEY_UP = SDLK_PAGEUP;
+SDL_Keycode win_keys::KEY_UP = SDLK_PAGEUP;
 
-SDLKey win_keys::KEY_DOWN = SDLK_PAGEDOWN;
+SDL_Keycode win_keys::KEY_DOWN = SDLK_PAGEDOWN;
 
-SDLKey win_keys::KEY_PREVIOUS = SDLK_UP;
+SDL_Keycode win_keys::KEY_PREVIOUS = SDLK_UP;
 
-SDLKey win_keys::KEY_NEXT = SDLK_DOWN;
+SDL_Keycode win_keys::KEY_NEXT = SDLK_DOWN;
 
-SDLKey win_keys::KEY_ACTIVATE = SDLK_SPACE;
+SDL_Keycode win_keys::KEY_ACTIVATE = SDLK_SPACE;
 

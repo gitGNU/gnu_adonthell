@@ -24,7 +24,7 @@
 
 #include <stdio.h>
 #include <iostream>
-#include <SDL/SDL_endian.h>
+#include <SDL2/SDL_endian.h>
 #include "fileops.h"
 
 

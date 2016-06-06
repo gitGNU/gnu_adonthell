@@ -177,7 +177,12 @@ int main(int argc, char * argv[])
     achievements::init();
 
     // init video subsystem
-    screen::set_video_mode (320, 240, 0, myconfig.double_screen, myconfig.screen_mode);
+    if (!screen::set_video_mode (320, 240, 0, myconfig.display, myconfig.screen_mode))
+    {
+        printf("%s\n", screen::info().c_str());
+        SDL_Quit();
+        return 1;
+    }
 
 #ifdef DEBUG
     printf("%s\n", screen::info().c_str());
@@ -194,6 +199,7 @@ int main(int argc, char * argv[])
     if (!init_python(argv[0]))
     {
     	std::cout << "Initializing Python module failed" << std::endl;
+        SDL_Quit ();
     	return false;
     }
 
@@ -240,7 +246,10 @@ int main(int argc, char * argv[])
     event_handler::cleanup ();
     
     // shutdown python
-    python::cleanup ();     
+    python::cleanup ();
+
+    // shutdown screen
+    screen::cleanup ();
 
     // shutdown video and SDL
     SDL_Quit ();

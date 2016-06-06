@@ -42,6 +42,18 @@ class screen
 {
 public:
 
+	static void cleanup();
+
+    static SDL_Renderer *get_renderer()
+    {
+        return Renderer;
+    }
+
+    static u_int32 format()
+    {
+        return Window != NULL ? SDL_GetWindowPixelFormat(Window) : SDL_PIXELFORMAT_UNKNOWN;
+    }
+
     /**
      * The actual screen surface.
      * It is publicly available so you can do fast operations on the screen.
@@ -54,8 +66,11 @@ public:
      *  @param nl X screen resolution.
      *  @param nh Y screen resolution.
      *  @param depth desired screen depth.
+     *  @param display the display to use.
+     *  @param screen_mode whether to start in window or fullscreen mode
+     *  @return true on success, false otherwise.
      */ 
-    static void set_video_mode (u_int16 nl, u_int16 nh, u_int8 depth = 0, bool dbl = false, bool fscreen = false);
+    static bool set_video_mode (u_int16 nl, u_int16 nh, u_int8 depth, u_int8 display, u_int8 screen_mode);
 
     /** Returns the length of the screen.
      *  @return length of the screen.
@@ -91,39 +106,69 @@ public:
         return trans;
     }
 
+    /**
+     * Scale factor of the screen.
+     */
+    static u_int8 scale ()
+    {
+    	return scale_;
+    }
+
+    /**
+     * X offset of the viewport
+     */
+    static u_int16 offset_x()
+    {
+    	return offset_x_;
+    }
+
+    /**
+     * Y offset of the viewport
+     */
+    static u_int16 offset_y()
+    {
+    	return offset_y_;
+    }
+
     /** 
      * Totally clears the screen with black.
      * 
      */
     static void clear () 
     {
-        display.fillrect (0, 0, display.length (), display.height (), 0x0); 
+        SDL_SetRenderDrawColor(Renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
+        SDL_RenderClear(Renderer);
     }
     
     /** Ensure the framebuffer is copied to the physical screen.
      */ 
-    static void show (); 
+    static void show ()
+    {
+        SDL_RenderPresent(Renderer);
+    }
 
     /** Returns whether the current mode is fullscreen or windowed.
      *  @return
-     *     - true: fullscreen.
-     *     - false: windowed.
+     *     - 0: windowed mode.
+     *     - 1: letterbox mode
+     *     - 2: fullscreen mode
      */ 
-    static bool is_fullscreen ()
+    static u_int8 mode ()
     {
-        return fullscreen_; 
+        return mode_; 
     }
 
     /** Sets fullscreen/windowed mode.
      *  @param mode
-     *     - true: fullscreen mode.
-     *     - false: windowed mode.
+     *     - 0: windowed mode.
+     *     - 1: letterbox mode
+     *     - 2: fullscreen mode
      *  @return
      *    @li true if the operation succeed.
      *    @li false if the mode is already set, or the system doesn't support
      *        this mode.
      */ 
-    static bool set_fullscreen (bool m); 
+    static bool set_fullscreen (const u_int8 & m);
     
     /** 
      * Returns information about the current screen settings,
@@ -134,8 +179,6 @@ public:
      */
     static string info (); 
 
-    static bool dbl_mode () { return dblmode; }
-    
     /** 
      * Make a nice transition effect.
      * 
@@ -144,17 +187,34 @@ public:
     static void transition (u_int16 i); 
 
 private:
-    /// Bytes per pixel.
+
+	static u_int8 get_scale_for_display(u_int8 screen, u_int16 nl, u_int16 nh);
+	static void update_scale();
+
+	/// Bytes per pixel.
     static u_int8 bytes_per_pixel_; 
 
     /// Transparent color.
     static u_int32 trans; 
 
     /// Whether fullscreen is on or not.
-    static bool fullscreen_;
+    static u_int8 mode_;
     
-    static bool dblmode;
-}; 
+    /// The output window
+    static SDL_Window *Window;
+
+    /// the render target
+    static SDL_Renderer *Renderer;
+
+    /// scale factor of the screen
+    static u_int8 scale_;
+
+    /// x offset of viewport
+    static u_int16 offset_x_;
+
+    /// y offset of viewport
+    static u_int16 offset_y_;
+};
 
 
 #endif

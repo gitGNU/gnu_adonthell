@@ -13,7 +13,7 @@
 #include "storage.h"
 #include "gametime.h"
 #include "gamedate.h"
-#include "SDL_keysym.h"
+#include <SDL2/SDL_keycode.h>
 #include "input.h"
 #include "audio.h"
 #include "character_base.h"
@@ -97,6 +97,10 @@ enum {Python = 1, C = 0};
     $1 = $input; 
 }
 
+#ifndef Sint32
+#define Sint32 s_int32
+#endif
+
 %include "types.h"
 %include "fileops.h"
 %include "event.h"
@@ -107,7 +111,7 @@ enum {Python = 1, C = 0};
 %include "storage.h"
 %include "gametime.h"
 %include "gamedate.h"
-%include "SDL_keysym.h"
+%include "SDL_keycode.h"
 %include "input.h"
 %include "audio.h"
 %include "character_base.h"

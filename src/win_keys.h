@@ -21,17 +21,17 @@ class win_keys
 {
  public:
   
-  static SDLKey KEY_ACTIVATE_ENTRY;
+  static SDL_Keycode KEY_ACTIVATE_ENTRY;
 
-  static SDLKey KEY_UP;
+  static SDL_Keycode KEY_UP;
   
-  static SDLKey KEY_DOWN;
+  static SDL_Keycode KEY_DOWN;
   
-  static SDLKey KEY_PREVIOUS;
+  static SDL_Keycode KEY_PREVIOUS;
 
-  static SDLKey KEY_NEXT;
+  static SDL_Keycode KEY_NEXT;
 
-  static SDLKey KEY_ACTIVATE;
+  static SDL_Keycode KEY_ACTIVATE;
 
 };
 

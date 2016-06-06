@@ -29,7 +29,35 @@
 
 #include "drawable.h"
 
+#ifdef __BIG_ENDIAN__
+#   define R_MASK 0x00ff0000
+#   define G_MASK 0x0000ff00
+#   define B_MASK 0x000000ff
+#   define A_MASK 0xff000000
+#else
+#   define R_MASK 0x000000ff
+#   define G_MASK 0x0000ff00
+#   define B_MASK 0x00ff0000
+#   define A_MASK 0xff000000
+#endif
+#define BYTES_PER_PIXEL 4
 
+
+class pixel_info
+{
+public:
+	pixel_info() : Pixels(NULL), Pitch(0), Format(0), BytesPerPixel(0)
+	{ }
+
+	/// the pixel data of the locked Surface
+	void *Pixels;
+	/// the pitch of the locked Surface
+	int Pitch;
+	/// the format of the surface
+	u_int32 Format;
+	/// number of bytes used to represent the format
+	u_int32 BytesPerPixel;
+};
 
 /**
  * Class where drawables can actually be drawn to.
@@ -58,7 +86,7 @@ public:
      * (0, 0) sized, no mask, alpha value of 255 (opaque).
      * 
      */ 
-    surface (bool mode = true);
+    surface (const u_int8 & scale = 1);
 
     /**
      * Destructor.
@@ -83,7 +111,7 @@ public:
      */
     bool is_masked () const
     {
-        return mask_on; 
+        return is_masked_;
     }
 
     /** 
@@ -105,16 +133,35 @@ public:
     }
 
     /** 
-     * Sets the alpha value of the surface.
-     * 
-     * @param a The new alpha value for this surface.
+	 * Sets the alpha value of the surface. If alpha_channel is set to true,
+	 * then the surface_alpha value will be silently ignored. Needs to
+	 * be called before surface::resize to take effect.
+	 *
+	 * @param surface_alpha The new alpha value for this surface.
+	 * @param alpha_channel Whether to enable per-pixel alpha for the surface.
+	 */
+    void set_alpha (u_int8 a, const bool & alpha_channel = false);
+    
+    /**
+     * Returns whether the surface has an alpha channel.
+     * @return true if it has an alpha channel, false otherwise.
      */
-    void set_alpha (u_int8 a); 
-    
-    
-    bool is_dbl_mode () const { return dbl_mode; }
+    bool has_alpha_channel () const
+    {
+        return alpha_channel_;
+    }
 
-    void set_dbl_mode (bool mode) { dbl_mode = mode; }
+    /**
+     * Get the surfaces current scaling factor.
+     */
+    u_int8 scale () const { return scale_; }
+
+    /**
+     * Change the scale of the surface to the given value,
+     * resizing the internal texture appropriately.
+     * @param scale the new scale to set.
+     */
+    void set_scale (const u_int8 & scale);
 
     //@}
 
@@ -193,45 +240,6 @@ public:
      */
     void fillrect (s_int16 x, s_int16 y, u_int16 l, u_int16 h,
                    u_int32 col, drawing_area * da_opt = NULL);
-    
-#ifndef SWIG
-    /** 
-     * Fills an area of the surface with a given color.
-     *
-     * This function is independant of the screen depth. You just give
-     * the red, green and blue triplets of the color you want to fill with.
-     * 
-     * @param x X position where to fill.
-     * @param y Y position where to fill.
-     * @param l length of the area to fill.
-     * @param h height of the area to fill.
-     * @param r red value of the color to fill with.
-     * @param g green value of the color to fill with.
-     * @param b blue value of the color to fill with.
-     * @param da_opt optionnal drawing_area to use during the fill operation.
-     *
-     * @attention Not accessible from Python. Use fillrect_rgb from Python instead.
-     * @sa fillrect_rgb ()  
-     */
-    void fillrect (s_int16 x, s_int16 y, u_int16 l, u_int16 h, u_int8 r,
-                   u_int8 g, u_int8 b, drawing_area * da_opt = NULL)
-    {
-        fillrect (x, y, l, h, SDL_MapRGB (vis->format, r, g, b), da_opt);
-    }
-#endif
-
-    /**
-     * Synonym of fillrect () to guarantee its access from Python.
-     * 
-     * @sa fillrect () 
-     */ 
-    void fillrect_rgb (s_int16 x, s_int16 y, u_int16 l, u_int16 h, u_int8 r,
-                       u_int8 g, u_int8 b, drawing_area * da_opt = NULL)
-    {
-        fillrect (x, y, l, h, r, g, b, da_opt); 
-    }
-
-
     //@}
 
     /**
@@ -242,7 +250,9 @@ public:
      */ 
     //@{
          
-    
+    u_int32 map_color(const u_int8 & r, const u_int8 & g, const u_int8 & b, const u_int8 & a = 255) const;
+    void unmap_color(u_int32 col, u_int8 & r, u_int8 & g, u_int8 & b, u_int8 & a) const;
+
     /** 
      * Locks the surface.
      * Sometimes you may want to access directly the pixels of a surface. This
@@ -252,7 +262,10 @@ public:
      * may result in unpredictable behavior, crashes included.
      * 
      */
-    void lock () const; 
+    void lock () const
+    {
+    	lock(NULL);
+    }
     
     /** 
      * Unlock the surface after you've worked on it's pixels with the
@@ -293,7 +306,11 @@ public:
      */ 
     void put_pix (u_int16 x, u_int16 y, u_int8 r, u_int8 g, u_int8 b) 
     {
-        put_pix (x, y, SDL_MapRGB (vis->format, r, g, b)); 
+#ifdef __BIG_ENDIAN__
+        put_pix (x, y, map_color(b, SDL_ALPHA_OPAQUE, g, r));
+#else
+        put_pix (x, y, map_color(r, g, b, SDL_ALPHA_OPAQUE));
+#endif
     }
 #endif
     
@@ -315,9 +332,9 @@ public:
      * 
      * @param x X position of the pixel to change.
      * @param y Y position of the pixel to change.
-     * @param col returned color.
+     * @returnl returned color.
      */
-    void get_pix (u_int16 x, u_int16 y, u_int32& col) const; 
+    u_int32 get_pix (u_int16 x, u_int16 y) const;
 
 #ifndef SWIG
     /** 
@@ -336,9 +353,14 @@ public:
      */
     void get_pix (u_int16 x, u_int16 y, u_int8& r, u_int8& g, u_int8& b) const
     {
-        u_int32 col;
-        get_pix (x, y, col); 
-        SDL_GetRGB (col, vis->format, &r, &g, &b); 
+    	u_int8 a;
+        u_int32 col = get_pix(x, y);
+
+#ifdef __BIG_ENDIAN__
+        unmap_color(col, g, r, a, b);
+#else
+        unmap_color(col, r, g, b, a);
+#endif
     }
 #endif
     
@@ -362,7 +384,7 @@ public:
      * @attention Not available from Python. Use copy () from Python instead.
      * @sa copy ()
      */
-    surface& operator = (surface& src); 
+    surface& operator = (const surface& src);
 #endif
 
     /**
@@ -370,16 +392,11 @@ public:
      *
      * @sa operator = 
      */
-    void copy (surface& src) 
+    void copy (const surface& src)
     {
         *this = src; 
     }
-         
-    /**
-     * The actual surface.
-     *
-     */
-    SDL_Surface *vis;
+
 protected: 
 
     /** 
@@ -397,51 +414,53 @@ protected:
      */
     void clear (); 
 
-    /**
-     * Must be set to true when you change the surface
-     * by something else than class surface operations.
-     * 
-     */ 
-    mutable bool changed; 
+    void set_data (void * data, u_int16 l, u_int16 h,
+                   u_int8 bytes_per_pixel = BYTES_PER_PIXEL,
+                   u_int32 red_mask = R_MASK, u_int32 green_mask = G_MASK,
+                   u_int32 blue_mask = B_MASK, u_int32 alpha_mask = 0);
 
-#ifndef SWIG
-    void resize_aux (u_int16 l, u_int16 h);
-    void double_size(const surface & src);
-    void half_size(const surface & src);
-    void get_pix_aux (u_int16 x, u_int16 y, u_int32& col) const; 
-    void put_pix_aux (u_int16 x, u_int16 y, u_int32 col); 
-#endif
+    void * get_data (u_int8 bytes_per_pixel,
+                     u_int32 red_mask, u_int32 green_mask,
+                     u_int32 blue_mask, u_int32 alpha_mask) const;
 
-    /// double mode
-    bool dbl_mode;    
-     
+
+    /// Create a software surface backed by the (streaming) texture data.
+    SDL_Surface *to_sw_surface(SDL_Rect *rect = NULL) const;
+
+    /// lock part of the surface specified by rect
+    void lock (SDL_Rect *rect) const;
+
+    /// the surface
+    SDL_Texture *Surface;
+
+    /// current scale
+    u_int8 scale_;
+
 private:
-
     /**
-     * Forbid value passing.
-     * 
-     */ 
-    surface (surface & src); 
-    
-    /// SDL_Rects used in every blitting function.
-    static SDL_Rect srcrect, dstrect; 
+     * Forbid copy construction.
+     *
+     */
+    surface (const surface & src);
+
+    /// some meta-information about the surface
+    pixel_info *Info;
 
     /// Mask
-    bool mask_on; 
+    bool is_masked_;
 
-    /// Alpha value
+    /// Whether mask has been requested, but not yet set
+    bool mask_changed_;
+
+    /// Per-Surface Alpha value
     u_int8 alpha_;
 
-    /// Set at true by screen's contructor to prevent screen surface from
-    /// being deleted two times.
-    bool not_screen; 
+    /// Whether Per-Pixel alpha is enabled
+    bool alpha_channel_;
 
-    /// Used internally for blitting operations with drawing_areas.
-    void setup_rects (u_int16 x, u_int16 y, const drawing_area * draw_to) const
-    {
-        setup_rects (x, y, 0, 0, length (), height (), draw_to); 
-    }
-    
+    /// SDL_Rects used in every blitting function.
+    static SDL_Rect srcrect, dstrect;
+
     /// Used internally for blitting operations with drawing_areas.
     void setup_rects (s_int16 x, s_int16 y, s_int16 sx, s_int16 sy,
                       u_int16 sl, u_int16 sh, const drawing_area * draw_to) const; 

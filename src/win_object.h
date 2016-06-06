@@ -62,11 +62,11 @@ template<class T>
 win_object<T>::win_object()
 {
   img_tmp_ = new image();
-  img_tmp_->set_mask(true);  
-  img_tmp_->set_dbl_mode (false);
+  // FIXME: img_tmp_->set_mask(true);
+  // img_tmp_->set_dbl_mode (false);
   
   img_brightness_ = new image();
-  img_brightness_->set_dbl_mode (false);
+  // img_brightness_->set_dbl_mode (false);
       
   set_auto_refresh(false);
 }
@@ -179,9 +179,7 @@ win_object<T>::refresh()
   //put the T drawable object in image  
   if(T::length() && T::height())
     {
-        img_tmp_->lock (); 
         img_tmp_->fillrect(0,0,T::length(),T::height(),screen::trans_col());
-        img_tmp_->unlock (); 
       
       T::draw(0,0,NULL,img_tmp_);
       
@@ -195,5 +193,5 @@ win_object<T>::refresh()
       else {img_tmp_->set_alpha(255);img_brightness_->set_alpha(255);}
     }
 }
- 
+
 #endif

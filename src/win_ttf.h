@@ -15,7 +15,7 @@
 #ifndef WIN_TTF_H
 #define WIN_TTF_H
 
-#include <SDL/SDL_ttf.h>
+#include <SDL2/SDL_ttf.h>
 #include "win_font.h"
 
 class win_ttf : public win_font
@@ -30,6 +30,7 @@ public:
 
 private:
     SDL_Color Color;
+    static std::string path_;
     static TTF_Font *ttf;
     static u_int32 refcount;
 };

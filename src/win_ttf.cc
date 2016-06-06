@@ -17,6 +17,8 @@
 
 // number of references to font file
 u_int32 win_ttf::refcount = 0;
+// path of the font file
+std::string win_ttf::path_;
 // font file used
 TTF_Font *win_ttf::ttf = NULL;
 
@@ -47,10 +49,10 @@ win_ttf::win_ttf (const char *color, const string & file) : win_font ()
         
     refcount++;
     
-    if (load (file)) 
+    if (load (file))
     {
-        u_int16 real_height_ = TTF_FontAscent (ttf);
-        height_ = screen::dbl_mode () ? (real_height_+3) >> 1 : real_height_+1;
+    	int real_height_ = TTF_FontHeight(ttf);
+        height_ = real_height_ / screen::scale();
         cursor = &operator[]('_');
         length_ = cursor->length ();
     }
@@ -71,7 +73,7 @@ bool win_ttf::load (const string & file)
     string path;
 
     // size of font
-    u_int32 size = screen::dbl_mode () ? 22 : 12;
+    u_int32 size = screen::scale () * 12;
     
     // load font only once 
     if (ttf != NULL) return true;
@@ -84,10 +86,10 @@ bool win_ttf::load (const string & file)
     else 
     {
         // path where is the file
-        path = WIN_DIRECTORY; 
+        path = WIN_DIRECTORY;
   
         // add win font directory path
-        path += WIN_FONT_DIRECTORY; 
+        path += WIN_FONT_DIRECTORY;
 
         // font name from config file
         path += file == "" ? "avatar.ttf" : file;
@@ -102,12 +104,15 @@ bool win_ttf::load (const string & file)
         return false;
     }
     
-    // make sure our font doesn't exceed a pixel size of 24/13
-    while (TTF_FontAscent (ttf) > (screen::dbl_mode () ? 24 : 13)) {
+    // make sure our font doesn't exceed a pixel size of 12
+    while (TTF_FontHeight(ttf) > (12 * screen::scale())) {
         TTF_CloseFont (ttf);
-        TTF_OpenFont (path.c_str (), --size);
+        ttf = TTF_OpenFont (path.c_str (), --size);
     }
     
+    TTF_SetFontHinting(ttf, TTF_HINTING_LIGHT);
+
+    path_ = file;
     return true;
 }
 
@@ -125,20 +130,50 @@ bool win_ttf::in_table(u_int16 tmp)
 
 image & win_ttf::operator[](u_int16 glyph)
 {
-    static u_int16 unichar[2] = { 0, 0 };
+    u_int16 unichar[2] = { 0, 0 };
     unichar[0] = glyph;
 
     static SDL_Color bg = { 0x00, 0x00, 0x00, 0 };
     static SDL_Color white = { 0xff, 0xff, 0xff, 0 };
-    if (win_font::in_table (glyph)) return *(glyphs[glyph]);
-    if (ttf == NULL) return *(glyphs[' ']);
+
+    if (cursor && cursor->scale() != screen::scale())
+    {
+    	// if screen scale changed since creating the glyph,
+    	// it needs to be recreated with the new size
+    	TTF_CloseFont (ttf);
+    	cursor = NULL;
+    	ttf = NULL;
+    	erase();
+
+        if (load (path_))
+        {
+        	int real_height_ = TTF_FontHeight(ttf);
+            height_ = real_height_ / screen::scale();
+            cursor = &operator[]('_');
+            length_ = cursor->length ();
+        }
+    }
+
+    else if (win_font::in_table (glyph))
+	{
+    	return *(glyphs[glyph]);
+	}
+
+    if (ttf == NULL)
+    {
+    	return *(glyphs[' ']);
+    }
     
     SDL_Surface *s = TTF_RenderUNICODE_Shaded (ttf, unichar, Color, bg);
-    if (s == NULL) return *(glyphs[' ']);
+    if (s == NULL)
+	{
+    	return *(glyphs[' ']);
+	}
     
     image tmp (s, bg);
-    image *glph = new image (tmp.length(), height_, false);
-    glph->fillrect (0, 0, tmp.length()+1, height_+1, screen::trans_col(), NULL);
+
+    image *glph = new image (tmp.length(), height_, screen::scale());
+    glph->fillrect (0, 0, tmp.length(), height_, screen::trans_col(), NULL);
 
     s = TTF_RenderUNICODE_Solid (ttf, unichar, bg);
     if (s != NULL)

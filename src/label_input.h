@@ -26,6 +26,8 @@ class label_input : public label
     */ 
     label_input (); 
 
+    virtual ~label_input ();
+
     /**
        Set the label input in editable
     */
@@ -37,7 +39,7 @@ class label_input : public label
     bool input_update();
 
 protected:
-    bool editable_; 
+    bool editable_;
 };
 
 

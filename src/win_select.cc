@@ -445,10 +445,10 @@ bool win_select::update()
     {
       if(focus_ && activate_keyboard_ && activated_)
 	{
-	  if(input::has_been_pushed (SDLKey (next_key))) next_();
-	  if(input::has_been_pushed (SDLKey (previous_key))) previous_();
-	  if(input::has_been_pushed (SDLKey (back_key))) back();
-	  if(input::has_been_pushed (SDLKey (activate_key))) activate___();
+	  if(input::has_been_pushed (SDL_Keycode (next_key))) next_();
+	  if(input::has_been_pushed (SDL_Keycode (previous_key))) previous_();
+	  if(input::has_been_pushed (SDL_Keycode (back_key))) back();
+	  if(input::has_been_pushed (SDL_Keycode (activate_key))) activate___();
 	} 
       return true;
     }

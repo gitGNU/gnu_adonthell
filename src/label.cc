@@ -54,8 +54,7 @@ label::~label ()
 */
 void label::set_font (win_font & font)
 {
-    my_font_ = &font; 
-    //  build (true); 
+    my_font_ = &font;
 }
 
 
@@ -156,7 +155,7 @@ void label::init_vec_cursor ()
 
 void label::build (const bool erase_all)
 {
-    if (my_font_ == NULL) return; 
+    if (my_font_ == NULL) return;
     set_mask (false);  
     switch (my_form_)
     {
@@ -176,7 +175,7 @@ void label::build (const bool erase_all)
             build_form_auto_size ();
             update_cursor ();
             draw_string (false);
-            break; 
+            break;
     }
     set_mask (true); 
 }
@@ -276,12 +275,10 @@ void label::build_form_nothing ()
                     if (length () && height ())
                     {
                         
-                        lock ();
                         fillrect (line_tmp.pos_x,
                                   (my_vect_.size () - start_line_) * my_font_->height (),
                                   length () - line_tmp.pos_x,
                                   my_font_->height (), screen::trans_col () );  
-                        unlock (); 
                     }
                     line_tmp.idx_end = (start_idx - word_length) - 1;   
                     my_vect_.push_back (line_tmp); 
@@ -331,9 +328,7 @@ void label::build_form_auto_height ()
     if (new_size  != height ())
     {
         image tmp (length (), new_size);
-        tmp.lock (); 
         tmp.fillrect (0, 0, length (), new_size, screen::trans_col ()); 
-        tmp.unlock (); 
         draw (0, 0, 0, 0, length (), my_old_cursor_.pos_y + my_font_->height (), NULL, &tmp); 
         image::resize (length (), new_size); 
         tmp.draw (0, 0, NULL, this); 
@@ -388,17 +383,14 @@ void label::clean_surface (const bool erase_all)
     {     
         if ( my_cursor_.idx != my_text_.length ())
         {
-            lock (); 
             fillrect ( my_old_cursor_.pos_x, my_old_cursor_.pos_y, length () - my_old_cursor_.pos_x,
                        my_font_->height (), screen::trans_col ()); 
             fillrect (0, my_old_cursor_.pos_y + my_font_->height (), length (),
                       height () -my_old_cursor_.pos_y + my_font_->height (), screen::trans_col ()); 
-            unlock ();  
-        } else if (erase_all) 
+        }
+        else if (erase_all)
         {
-            lock ();
             fillrect (0, 0, length (), height (), screen::trans_col ()); 
-            unlock ();  
         }
     }
 }
@@ -547,7 +539,8 @@ bool label::update ()
         if (! (height () && length ())) return true;  
         if (cursor_cur_blink_ == cursor_blink_cycle)
         {
-            cursor_draw (); 
+            cursor_draw ();
+            set_mask(true);
             cursor_cur_blink_ = 0; 
         }else if (cursor_cur_blink_ == (cursor_blink_cycle >> 1))
             cursor_undraw ();   
@@ -576,12 +569,10 @@ void label::cursor_undraw ()
     u_int16 idx = my_cursor_.idx;
     if (last_letter (idx) || my_text_[idx] == '\n') 
     {
-        lock (); 
         fillrect(my_cursor_.pos_x, my_cursor_.pos_y,
                  my_font_->cursor->length () ,
                  my_font_->cursor->height(),
                  screen::trans_col());
-        unlock (); 
     }
     else (*my_font_) [ucd (idx)].draw (my_cursor_.pos_x, my_cursor_.pos_y, NULL, this);
 }
@@ -656,22 +647,21 @@ const char * label::text_char () const
 }
 
 // utf-8 --> utf-16
-u_int16 label::ucd (u_int16 & idx)
+u_int16 label::ucd (const std::string & text, u_int16 & i) const
 {
-    u_int8 c = my_text_[idx];
+    const u_int8 c = text.at(i);
     if (c < 0x80) return c;
 
     if (c < 0xe0) 
     {
-        u_int8 c1 = my_text_[++idx];
+        const u_int8 c1 = text.at(++i);
         return ((u_int16) (c & 0x1f) << 6)
             |   (u_int16) (c1 ^ 0x80);
     }
     
-    u_int8 c1 = my_text_[++idx];
-    u_int8 c2 = my_text_[++idx];
+    const u_int8 c1 = text.at(++i);
+    const u_int8 c2 = text.at(++i);
     return ((u_int16) (c & 0x0f) << 12)
         |  ((u_int16) (c1 ^ 0x80) << 6)
         |   (u_int16) (c2 ^ 0x80);
 }
-

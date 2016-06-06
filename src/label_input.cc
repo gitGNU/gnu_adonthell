@@ -21,6 +21,14 @@ label_input::label_input () : label ()
     set_editable (true); 
 }
 
+label_input::~label_input()
+{
+	if (input::is_text_input())
+	{
+		input::stop_text_input();
+	}
+}
+
 void label_input::set_editable (const bool b)
 {
     editable_ = b; 
@@ -29,18 +37,23 @@ void label_input::set_editable (const bool b)
 bool label_input::input_update()
 {
     if (!editable_) return false; 
-    
+
+	if (!input::is_text_input())
+	{
+		input::start_text_input();
+	}
+
     label::input_update();
 
     if (my_font_ == NULL) return false; 
     
     int count;
-    static s_int32 c; 
+    std::string c = input::get_next_unicode ();
 
-    while ((c = input::get_next_unicode ()) > 0)
+    while (!c.empty())
     {
         cursor_undraw ();
-        if (c == SDLK_BACKSPACE || c == SDLK_DELETE)
+        if (c[0] == SDLK_BACKSPACE || c[0] == SDLK_DELETE)
         {            
             if (my_text_.empty () || my_cursor_.idx == 0) return true;
             
@@ -57,36 +70,28 @@ bool label_input::input_update()
             update_cursor ();
             my_old_cursor_ = my_cursor_; 
 
-            lock (); 
             fillrect (my_cursor_.pos_x, my_cursor_.pos_y,
                       (*my_font_) [glyph].length (),
                       my_font_->height (), screen::trans_col ()); 
-            unlock (); 
             
             build (false);
         }
-        else if (c == SDLK_RETURN) add_text ("\n"); 
-        else if (my_font_->in_table (c))
+        else if (c[0] == SDLK_RETURN) add_text ("\n");
+        else
         {
-            char r[3];
-            
-            // convert unicode to utf-8
-            if (c < 0x80) count = 1;
-            else if (c < 0x800) count = 2;
-            else if (c < 0x10000) count = 3;
-            
-            switch (count) { /* note: code falls through cases! */
-                case 3: r[2] = 0x80 | (c & 0x3f); c = c >> 6; c |= 0x800;
-                case 2: r[1] = 0x80 | (c & 0x3f); c = c >> 6; c |= 0xc0;
-                case 1: r[0] = c;
-            }
-            
-            add_text (string (r, count)); 
+        	u_int16 idx = 0;
+        	if (my_font_->in_table (ucd(c, idx)))
+        	{
+        		add_text (c);
+        	}
+        	else
+        	{
+        		add_text("?");
+        	}
         }
-    }  
+
+        c = input::get_next_unicode ();
+    }
+
     return true;
 }
-
- 
-
-

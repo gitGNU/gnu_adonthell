@@ -111,7 +111,7 @@ There are four libraries that Adonthell depends on. Two of these
 libraries are required, one is optional. The three REQUIRED libraries 
 (and where they can be downloaded from) are:
 
-1. The Simple Directmedia Layer (SDL) library, version 1.2 or later.
+1. The Simple Directmedia Layer (SDL) library, version 2.0 or later.
 
     http://www.libsdl.org/
 
@@ -123,9 +123,9 @@ libraries are required, one is optional. The three REQUIRED libraries
 
     http://www.freetype.org/
 
-4. SDL_ttf, version 2.0 or later.
+4. SDL_ttf, version 2.0.12 or later.
 
-   See http://www.libsdl.org/projects/SDL_ttf/release-1.2.html
+   See http://www.libsdl.org/projects/SDL_ttf/
 
 Sound support under Adonthell is optional (but highly recommended!!).
 We suggest building Adonthell with sound support if you have a sound
@@ -136,9 +136,9 @@ and install another library:
 
    See http://www.xiph.org/downloads/
 
-6. SDL_mixer, version 1.2 or later.
+6. SDL_mixer, version 2.0 or later.
 
-   See http://www.libsdl.org/projects/SDL_mixer/release-1.2.html
+   See http://www.libsdl.org/projects/SDL_mixer/
 
 *****************************
 * 3.1 - INSTALLING BINARIES *
@@ -151,26 +151,27 @@ The package names might differ slightly on your distribution, but
 the following list should help you to find all required packages:
 
 For SDL you will need
-    SDL-1.2
-    SDL-devel-1.2
-    libSDL_mixer-1.2
-    libSDL_mixer-devel-1.2
-    libSDL_ttf-2.0
-    libSDL_ttf-devel-2.0
+	libsdl2-2.0-0
+	libsdl2-dev
+	libsdl2-mixer-2.0-0
+    libsdl2-mixer-dev
+    libsdl2-ttf-2.0-0
+    libsdl2-ttf-dev 
 
 for python
-    python2-2.2
-    python2-devel-2.2
+	python3.5
+    libpython3.5
+    libpython3.5-dev
 
 for freetype
-    freetype2
-    freetype2-devel
-
+	libfreetype6
+    libfreetype6-dev
+    
 and for Ogg Vorbis
-    libogg-1.0
-    libogg-devel-1.0
-    libvorbis-1.0
-    libvorbis-devel-1.0
+	libogg0
+    libogg-dev
+    libvorbis0a
+    libvorbis-dev
     
     
 ********************************
@@ -259,7 +260,7 @@ A successful configure will produce an output like this:
 
 	Adonthell v0.3.6
 
-	SDL ....................... : 1.2.15
+	SDL ....................... : 2.0.4
 	Python .................... : 3.5.1+
 	Python debugging .......... : yes
 	Freetype .................. : 18.1.12

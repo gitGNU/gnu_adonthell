@@ -32,16 +32,8 @@
 config::config () 
 {
     // set some default values where possible
-#if defined (WIN32) || defined (__APPLE__)
-    screen_mode = 1;                // Fullscreen
-#else
-    screen_mode = 0;                // Fullscreen
-#endif
-#if defined (QTOPIA)
-    double_screen = 0;              // Double screen
-#else
-    double_screen = 1;              // Double screen
-#endif
+    screen_mode = 1;                // Letterbox
+    display = 0;					// Display for fullscreen mode
     quick_load = 0;                 // Quick-load disabled
     audio_channels = 1;             // Stereo
     audio_resolution = 1;           // 16 bit
@@ -236,6 +228,7 @@ void config::parse_arguments (int argc, char * argv[])
 // That's more or less a move operator, as the source is destroyed
 config& config::operator =(const config *c)
 {
+	display = c->display;
     screen_mode = c->screen_mode;
     audio_channels = c->audio_channels; 
     audio_resolution = c->audio_resolution;
@@ -267,11 +260,10 @@ void config::write_adonthellrc ()
 
     rc << "# Sample Adonthell configuration file;\n"
        << "# edit to your needs!\n\n"
-       << "# Screen-mode num\n#   0  Windowed mode\n"
-       << "#   1  Fullscreen mode\n    Screen-mode " << (int) screen_mode 
-       << "\n\n" << "# Double-size num\n#   0  320x240 mode\n"
-       << "#   1  640x480 (double) mode\n    Double-size " 
-       << (int) double_screen << "\n\n"
+       << "# Screen-mode num\n#   0  Windowed mode\n#   1  Letterbox mode\n"
+       << "#   2  Fullscreen mode\n    Screen-mode " << (int) screen_mode
+       << "\n\n" << "# Display num\n#   Index of the display to use in fullscreen mode"
+       << "\n    Display " << (int) display << "\n\n"
        << "# Language [locale]\n#   Where locale has the form fr_FR or de_DE, etc.\n"
        << "    Language [" << language << "]\n\n"
        << "# Font [font.ttf]\n#   Path to a true type font to use. Leave empty for default\n"
@@ -341,9 +333,9 @@ bool config::read_adonthellrc ()
                 break;
             }
 
-            case PREFS_DOUBLE_SCREEN:
+            case PREFS_DISPLAY:
             {
-                if (parse_adonthellrc (n, s) == PREFS_NUM) double_screen = n;
+                if (parse_adonthellrc (n, s) == PREFS_NUM) display = n;
                 break;
             }
 

@@ -22,22 +22,9 @@
  * 
  */
 
-#include <SDL/SDL_endian.h>
 #include "image.h"
 #include "pnm.h"
 #include <iostream>
-
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
-#define R_MASK 0x00ff0000
-#define G_MASK 0x0000ff00
-#define B_MASK 0x000000ff
-#define A_MASK 0xff000000
-#else
-#define R_MASK 0x000000ff
-#define G_MASK 0x0000ff00
-#define B_MASK 0x00ff0000
-#define A_MASK 0xff000000
-#endif
 
 using namespace std; 
 
@@ -45,26 +32,23 @@ image::image () : surface ()
 {
 }
 
-image::image (u_int16 l, u_int16 h, bool mode) : surface (mode) 
+image::image (u_int16 l, u_int16 h, const u_int8 & scale) : surface (scale)
 {
-    resize (l, h); 
+    resize (l, h);
 }
 
-image::image (SDL_Surface *s, const SDL_Color & color) : surface (false)
+image::image (SDL_Surface *s, const SDL_Color & color) : surface (screen::scale())
 {
-    if (screen::dbl_mode ()) {
-        set_length (s->w >> 1);
-        set_height (s->h >> 1);
-    } else {
-        set_length (s->w);
-        set_height (s->h);
-    }
-    
-    vis = SDL_DisplayFormat (s);
-    SDL_SetColorKey (vis, SDL_SRCCOLORKEY | SDL_RLEACCEL, 
-        SDL_MapRGB (vis->format, color.r, color.g, color.b)); 
+	set_alpha(SDL_ALPHA_OPAQUE, true);
+	resize((s->w + screen::scale()/2)/screen::scale(), s->h/screen::scale());
+
+    SDL_Surface *dest = to_sw_surface(NULL);
+    SDL_SetColorKey (s, 1, SDL_MapRGB (s->format, color.r, color.g, color.b));
+    SDL_BlitSurface (s, NULL, dest, NULL);
+
+    unlock();
+
     SDL_FreeSurface (s);
-    changed = false;
 }
 
 image::~image () 
@@ -130,9 +114,8 @@ s_int8 image::get_raw (igzstream& file)
 
     delete[] (char *) rawdata;
     
-    if (!vis) return -1;
+    if (!Surface) return -1;
 
-    changed = true; 
     return 0;
 }
 
@@ -166,9 +149,8 @@ s_int8 image::get_pnm (SDL_RWops * file)
 
     free (rawdata);
 
-    if (!vis) return -1;
+    if (!Surface) return -1;
 
-    changed = true; 
     return 0;
 }
 
@@ -221,40 +203,10 @@ s_int8 image::put_raw (ogzstream& file) const
 
     if (!length () || !height ()) return 0; 
 
-    SDL_Surface *tmp2 = SDL_CreateRGBSurface (0, 1, 1, 24, 
-                                              R_MASK, G_MASK,
-                                              B_MASK, 0);
+    void *rawdata = get_data(3, R_MASK, G_MASK, B_MASK, 0);
+	file.put_block ((u_int8 *) rawdata, length () * height() * 3);
+	free(rawdata);
 
-    image * imt;
-    SDL_Surface * toconvert;
-    
-    if (dbl_mode)
-    {
-        imt = new image();
-        imt->double_size(*this);
-        toconvert = imt->vis;
-    }
-    else
-    {
-        toconvert = vis;
-    }
-
-    SDL_Surface * temp = SDL_ConvertSurface (toconvert, tmp2->format, 0);
-    
-    SDL_LockSurface (temp); 
-    
-    // The pitch is ALWAYS a multiple of 4, no matter the length of the image.
-    // We must be carefull not to record the pitch overlap.
-    for (u_int16 j = 0; j < height (); j++) 
-    { 
-        file.put_block ((u_int8 *) temp->pixels + (temp->pitch * j), length () * 3); 
-    }
-
-    SDL_UnlockSurface (temp); 
-
-    SDL_FreeSurface (temp);
-    SDL_FreeSurface (tmp2); 
-    if (dbl_mode) delete imt;
     return 0;
 }
 
@@ -272,27 +224,9 @@ s_int8 image::save_raw (string fname) const
 
 s_int8 image::put_pnm (SDL_RWops * file) const
 {
-    SDL_Surface *tmp2 = SDL_CreateRGBSurface (0, 1, 1, 24, 
-                                              R_MASK, G_MASK,
-                                              B_MASK, 0);
-    
-    SDL_Surface * temp;
-
-    if (dbl_mode)
-    {
-        image imt;
-        imt.half_size(*this);
-        temp = SDL_ConvertSurface (imt.vis, tmp2->format, 0);
-    }
-    else
-    {
-        temp = SDL_ConvertSurface (vis, tmp2->format, 0);
-    }
-
-    pnm::put (file, temp->pixels, length (), height ()); 
-
-    SDL_FreeSurface (temp);
-    SDL_FreeSurface (tmp2); 
+    void *rawdata = get_data(3, R_MASK, G_MASK, B_MASK, 0);
+    pnm::put (file, rawdata, length (), height ());
+    free(rawdata);
 
     return 0; 
 }
@@ -334,7 +268,7 @@ void image::zoom (const surface& src, u_int16 l, u_int16 h, u_int16 x, u_int16 y
         xcur = 0; 
         for (i = x; i < l + x; i++)
         {
-            src.get_pix (xcur >> 16, ycur >> 16, col);
+            col = src.get_pix ((u_int16)(xcur >> 16), (u_int16)(ycur >> 16));
             put_pix (i, j, col); 
             xcur += xstep; 
         }
@@ -359,33 +293,31 @@ void image::tile (const surface& src, u_int16 l, u_int16 h, u_int16 x, u_int16 y
 void image::brightness (const surface& src, u_int8 cont, bool proceed_mask)
 {
     u_int16 i, j;
-    u_int8 ir, ig, ib;
+    u_int8 ir, ig, ib, ia;
     u_int32 temp = 0;
-    
-    if (screen::dbl_mode () && !dbl_mode) resize (src.length () << 1, src.height () << 1);
-    else resize (src.length (), src.height ());
-    
+
+    clear();
+    set_scale(src.scale());
+    resize (src.length (), src.height ());
+
     lock ();
-    src.lock (); 
-    for (j = 0; j < height (); j++)
-        for (i = 0; i < length (); i++)
+    src.lock ();
+    for (j = 0; j < height () * scale(); j++)
+        for (i = 0; i < length () * scale(); i++)
         {
-            src.get_pix (i, j, temp);
+            temp = src.get_pix (i, j);
             if ((proceed_mask) || temp != screen::trans_col ())
             {
-                src.get_pix (i, j, ir, ig, ib);
+            	unmap_color (temp, ir, ig, ib, ia);
                 ir = (ir * cont) >> 8;
                 ig = (ig * cont) >> 8;
                 ib = (ib * cont) >> 8;
-                put_pix (i, j, ir, ig, ib);
+                temp = map_color(ir, ig, ib, ia);
             }
-            else put_pix (i, j, temp);
+            put_pix (i, j, temp);
         }
     src.unlock ();
     unlock ();
-
-    set_mask (false);
-    set_alpha (255); 
 }  
 
 image& image::operator = (const image& src)
@@ -403,20 +335,5 @@ image& image::operator = (const image& src)
 
 void image::raw2display (void * rawdata, u_int16 l, u_int16 h)
 {
-    set_length (l);
-    set_height (h);
-   
-    SDL_Surface *tmp2 = SDL_CreateRGBSurfaceFrom (rawdata, length (),
-                                                  height (), 24,
-                                                  length () * 3,
-                                                  R_MASK, G_MASK,
-                                                  B_MASK, 0);
-    vis = SDL_DisplayFormat (tmp2);
-    if (dbl_mode)
-    {
-        image imt;
-        imt.double_size(*this);
-        *this = imt;
-    }
-    SDL_FreeSurface (tmp2);
+	set_data(rawdata, l, h, 3, R_MASK, G_MASK, B_MASK, 0);
 }
