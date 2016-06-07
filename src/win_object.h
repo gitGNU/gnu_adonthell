@@ -62,11 +62,7 @@ template<class T>
 win_object<T>::win_object()
 {
   img_tmp_ = new image();
-  // FIXME: img_tmp_->set_mask(true);
-  // img_tmp_->set_dbl_mode (false);
-  
   img_brightness_ = new image();
-  // img_brightness_->set_dbl_mode (false);
       
   set_auto_refresh(false);
 }

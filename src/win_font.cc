@@ -117,20 +117,3 @@ image & win_font::operator[](u_int16 i)
     else return *(glyphs[' ']);
 }
 
-
-/*
-win_font & win_font::operator=(win_font & tmpfont)
-{
-  erase();
-  table=new image[WIN_NB_TABLE_CHAR];
-  cursor=new image();
-  *cursor=*(tmpfont.cursor);
-  for(u_int16 i=0;i<WIN_NB_TABLE_CHAR;i++)
-    if(table_core[i]=tmpfont.in_table(i))
-      table[i]=tmpfont.table[i];
-  height_=tmpfont.height();
-  length_=tmpfont.length();
-  return * this;
-}
-*/
- 

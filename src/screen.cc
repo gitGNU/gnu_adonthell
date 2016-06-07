@@ -21,17 +21,18 @@
  * 
  */
 
+#include <config.h>
 #include "screen.h"
 #include <iostream>
 #include <sstream> 
 
 using namespace std; 
 
-#ifndef SDL_WINDOW_ALLOW_HIGHDPI
+#ifndef HAVE_DECL_SDL_WINDOW_ALLOW_HIGHDPI
 #define SDL_WINDOW_ALLOW_HIGHDPI 0
 #endif
 
-#ifndef SDL_GetDisplayUsableBounds
+#ifndef HAVE_SDL_GETDISPLAYUSABLEBOUNDS
 #define SDL_GetDisplayUsableBounds SDL_GetDisplayBounds
 #endif
 
@@ -55,7 +56,7 @@ void screen::cleanup()
     Window = NULL;
 }
 
-bool screen::set_video_mode (u_int16 nl, u_int16 nh, u_int8 depth, u_int8 screen, u_int8 screen_mode)
+bool screen::init (u_int16 nl, u_int16 nh, u_int8 depth, u_int8 screen, u_int8 screen_mode)
 {
     if (SDL_Init (SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0)
     {

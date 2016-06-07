@@ -137,6 +137,9 @@ AM_PATH_SDL2($SDL_VERSION,
     :,
 	AC_MSG_ERROR([*** SDL version $SDL_VERSION not found!])
 )
+AC_CHECK_LIB([SDL2], [SDL_Init], [LIBS="$LIBS -lSDL2"])
+AC_CHECK_FUNCS([SDL_GetDisplayUsableBounds])
+AC_CHECK_DECLS([SDL_WINDOW_ALLOW_HIGHDPI], [], [], [[#include <SDL2/SDL_video.h>]])
 
 AC_CHECK_LIB([SDL2_mixer], 
 	[Mix_OpenAudio], 
@@ -147,8 +150,10 @@ AC_CHECK_LIB([SDL2_mixer],
 AC_CHECK_LIB([SDL2_ttf], 
 	[TTF_Init], 
 	[LIBS="$LIBS -lSDL2_ttf"], 
-	[AC_MSG_ERROR([*** SDL_ttfis required])]
+	[AC_MSG_ERROR([*** SDL_ttf is required])]
 )
+AC_CHECK_FUNCS([TTF_GetFontKerningSizeGlyphs])
+
 
 dnl *******************
 dnl Check for FreeType2

@@ -51,6 +51,11 @@ class win_font{
   
   virtual image & operator[](u_int16);
   
+  virtual s_int8 kerning(const u_int16 & char1, const u_int16 & char2) const
+  {
+	  return 0;
+  }
+
   //win_font & operator=(win_font &);
   
   u_int16 height(){return height_;}

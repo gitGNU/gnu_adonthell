@@ -27,6 +27,7 @@ public:
     bool load (const string & file);
   	bool in_table (u_int16 tmp);
     image & operator[] (u_int16);
+    s_int8 kerning(const u_int16 & char1, const u_int16 & char2) const;
 
 private:
     SDL_Color Color;

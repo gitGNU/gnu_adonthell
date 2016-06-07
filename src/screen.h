@@ -62,7 +62,7 @@ public:
      */
     static surface display; 
 
-    /** Sets the video mode.
+    /** Initializes the video subsystem and creates the required resources.
      *  @param nl X screen resolution.
      *  @param nh Y screen resolution.
      *  @param depth desired screen depth.
@@ -70,7 +70,7 @@ public:
      *  @param screen_mode whether to start in window or fullscreen mode
      *  @return true on success, false otherwise.
      */ 
-    static bool set_video_mode (u_int16 nl, u_int16 nh, u_int8 depth, u_int8 display, u_int8 screen_mode);
+    static bool init (u_int16 nl, u_int16 nh, u_int8 depth, u_int8 display, u_int8 screen_mode);
 
     /** Returns the length of the screen.
      *  @return length of the screen.
