@@ -324,7 +324,7 @@ bool config::read_adonthellrc ()
             }
             case PREFS_FONT:
             {
-                if (parse_adonthellrc (n, s) == PREFS_NUM) font = s;
+                if (parse_adonthellrc (n, s) == PREFS_STR) font = s;
                 break;
             }
             case PREFS_SCREEN_MODE:
