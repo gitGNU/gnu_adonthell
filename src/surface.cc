@@ -33,6 +33,7 @@ SDL_Rect surface::dstrect;
 surface::surface (const u_int8 & scale) : drawable ()
 {
 	scale_ = scale;
+	offset_x_ = 0;
 	is_masked_ = false;
 	mask_changed_ = false;
 	alpha_ = SDL_ALPHA_OPAQUE;
@@ -189,7 +190,7 @@ void surface::draw (s_int16 x, s_int16 y, s_int16 sx, s_int16 sy, u_int16 sl,
 			srcrect.w *= scale();
 			srcrect.h *= scale();
 
-			dstrect.x *= scale();
+			dstrect.x = dstrect.x * scale() + target->offset_x_;
 			dstrect.y *= scale();
 			dstrect.w *= scale();
 			dstrect.h *= scale();
@@ -253,7 +254,7 @@ void surface::fillrect (s_int16 x, s_int16 y, u_int16 l, u_int16 h, u_int32 col,
 
         if (scale() > 1)
         {
-            dstrect.x *= scale();
+            dstrect.x = dstrect.x * scale() + offset_x_;
             dstrect.y *= scale();
             dstrect.w *= scale();
             dstrect.h *= scale();

@@ -142,7 +142,8 @@ protected :
         u_int16 idx_beg;
         s_int16 idx_end;
         u_int16 pos_x;
-    }; 
+        s_int16 offset_x;
+    };
     
     struct Scursor
     {
@@ -150,6 +151,7 @@ protected :
         u_int16 pos_y;
         u_int16 idx;
         u_int16 line; 
+        s_int16 offset_x;
     };
     
     /**
@@ -187,7 +189,7 @@ protected :
 
     /**
      */
-    u_int8 find_word (u_int16 & index, u_int16 & wlength, u_int16 & wlengthpix, const u_int16 rlength); 
+    u_int8 find_word (u_int16 & index, u_int16 & wlength, u_int16 & wlengthpix, s_int16 & woffset, u_int16 & last_letter, const u_int16 rlength);
 
     /**
      */

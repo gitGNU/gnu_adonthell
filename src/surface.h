@@ -436,6 +436,8 @@ protected:
     /// current scale
     u_int8 scale_;
 
+    /// sub-pixel offset
+    s_int16 offset_x_;
 private:
     /**
      * Forbid copy construction.

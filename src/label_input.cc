@@ -70,6 +70,7 @@ bool label_input::input_update()
             update_cursor ();
             my_old_cursor_ = my_cursor_; 
 
+            offset_x_ = my_cursor_.offset_x;
             fillrect (my_cursor_.pos_x, my_cursor_.pos_y,
                       (*my_font_) [glyph].length (),
                       my_font_->height (), screen::trans_col ()); 

@@ -27,13 +27,14 @@ public:
     bool load (const string & file);
   	bool in_table (u_int16 tmp);
     image & operator[] (u_int16);
-    s_int8 kerning(const u_int16 & char1, const u_int16 & char2) const;
+    s_int8 kerning(const u_int16 & char1, const u_int16 & char2);
 
 private:
     SDL_Color Color;
     static std::string path_;
     static TTF_Font *ttf;
     static u_int32 refcount;
+    hash_map<u_int16, s_int16> overflow;
 };
 
 #endif // WIN_TTF_H

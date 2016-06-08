@@ -172,6 +172,7 @@ image & win_ttf::operator[](u_int16 glyph)
 	}
     
     image tmp (s, bg);
+    overflow[glyph] = s->w - tmp.length() * screen::scale();
 
     image *glph = new image (tmp.length(), height_, screen::scale());
     glph->fillrect (0, 0, tmp.length(), height_, screen::trans_col(), NULL);
@@ -180,26 +181,26 @@ image & win_ttf::operator[](u_int16 glyph)
     if (s != NULL)
     {
     	image shadow (s, white);
-	    shadow.draw (1, height_-shadow.height(), 0, 0, shadow.length(), shadow.height(), NULL, glph);
+	    shadow.draw (1, 1+height_-shadow.height(), 0, 0, shadow.length(), shadow.height(), NULL, glph);
     }
     else
     {
     	fprintf (stderr, "%s\n", TTF_GetError ());
     }
 
-    tmp.draw (0, height_-tmp.height()-1, 0, 0, tmp.length(), tmp.height(), NULL, glph);
+    tmp.draw (0, height_-tmp.height(), 0, 0, tmp.length(), tmp.height(), NULL, glph);
     glyphs[glyph] = glph;
 
     return *glph;
 }
 
-s_int8 win_ttf::kerning(const u_int16 & char1, const u_int16 & char2) const
+s_int8 win_ttf::kerning(const u_int16 & char1, const u_int16 & char2)
 {
 #ifdef HAVE_TTF_GETFONTKERNINGSIZEGLYPHS
 	if (ttf)
 	{
-		return TTF_GetFontKerningSizeGlyphs(ttf, char1, char2);
+		return TTF_GetFontKerningSizeGlyphs(ttf, char1, char2) + overflow[char1];
 	}
 #endif
-	return 0;
+	return overflow[char1];
 }

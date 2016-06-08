@@ -130,14 +130,14 @@ void label::set_form (const u_int8 form)
 void label::init_vec_cursor ()
 {
     // init the cursor
-    my_cursor_.pos_x = my_cursor_.pos_y = my_cursor_.line = my_cursor_.idx = 0;  
+	memset(&my_cursor_, 0, sizeof(Scursor));
     
     // init the vector
     my_vect_.clear ();
     
     // create a line in the vector
     Sline_text tmp;
-    tmp.pos_x = tmp.idx_beg = tmp.idx_end = 0; 
+    memset(&tmp, 0, sizeof(Sline_text));
     
     // add the new line at the beginning of the vector
     my_vect_.push_back (tmp);
@@ -156,7 +156,7 @@ void label::init_vec_cursor ()
 void label::build (const bool erase_all)
 {
     if (my_font_ == NULL) return;
-    set_mask (false);  
+    set_mask (false);
     switch (my_form_)
     {
         case NOTHING :
@@ -207,6 +207,7 @@ void label::build_form_nothing ()
 {
     // temporary variable
     u_int16 j, word_length, word_length_pix, start_idx;
+    s_int16 word_offset_x;
     
     // temporary line
     Sline_text line_tmp;
@@ -214,6 +215,7 @@ void label::build_form_nothing ()
     // we start at the beginning index of cursor line
     line_tmp.idx_beg = my_vect_[my_old_cursor_.line].idx_beg;  
     line_tmp.pos_x = 0;
+    line_tmp.offset_x = 0;
 
     // we start always at the begin index of the line
     start_idx = line_tmp.idx_beg;   
@@ -224,6 +226,7 @@ void label::build_form_nothing ()
     while (i != my_old_cursor_.line) { i++; ii++; } 
     my_vect_.erase (ii, my_vect_.end ());
 
+    u_int16 prev_c = 0;
     
     while (start_idx < my_text_.length () )
     { 
@@ -238,7 +241,10 @@ void label::build_form_nothing ()
             
             // init a Sline_text
             line_tmp.pos_x = 0; 
+            line_tmp.offset_x = 0;
             line_tmp.idx_beg = ++start_idx; 
+
+            prev_c = 0;
         }
         else if (my_text_[start_idx] == ' ')
         {
@@ -251,22 +257,30 @@ void label::build_form_nothing ()
                 
                 // init a Sline_text
                 line_tmp.pos_x = 0;
+                line_tmp.offset_x = 0;
                 line_tmp.idx_beg = ++start_idx; 
                 
-            } else 
+                prev_c = 0;
+            }
+            else
             {
                 line_tmp.pos_x += (*my_font_) [' '].length ();
+                if (prev_c != 0) line_tmp.offset_x += my_font_->kerning(prev_c, ' ');
                 start_idx++;
+
+                prev_c = ' ';
             }
         }
         else
         { 
             // find a word
             
-            switch (find_word (start_idx, word_length, word_length_pix, line_tmp.pos_x))
+            switch (find_word (start_idx, word_length, word_length_pix, word_offset_x, prev_c, line_tmp.pos_x))
             {
                 case 0 : // enough place
                     line_tmp.pos_x += word_length_pix;
+                    line_tmp.offset_x += word_offset_x;
+
                     break;
                     
                 case 1 : // enough place,  but return at the next line 
@@ -274,7 +288,7 @@ void label::build_form_nothing ()
 
                     if (length () && height ())
                     {
-                        
+                        offset_x_ = line_tmp.offset_x;
                         fillrect (line_tmp.pos_x,
                                   (my_vect_.size () - start_line_) * my_font_->height (),
                                   length () - line_tmp.pos_x,
@@ -284,6 +298,7 @@ void label::build_form_nothing ()
                     my_vect_.push_back (line_tmp); 
                     
                     line_tmp.pos_x = word_length_pix; 
+                    line_tmp.offset_x = word_offset_x;
                     line_tmp.idx_beg = start_idx - word_length;
                     
                     break;
@@ -300,10 +315,14 @@ void label::build_form_nothing ()
                             my_vect_.push_back (line_tmp);
                             
                             line_tmp.pos_x = 0;
+                            line_tmp.offset_x = 0;
                             line_tmp.idx_beg = j; 
                         }
                         line_tmp.pos_x += (*my_font_) [c].length (); 
+                        if (prev_c != 0) line_tmp.offset_x += my_font_->kerning(prev_c, c);
                         j++; 
+
+                        prev_c = c;
                     }
                     break;  
             } 
@@ -349,6 +368,7 @@ void label::build_form_auto_size ()
     line_tmp.pos_x = 0;
     line_tmp.idx_beg = 0;
     u_int16 i = 0, max_length = 0; 
+    u_int16 prev_c = 0;
     
     while ( i < my_text_.size ())
     {
@@ -360,10 +380,16 @@ void label::build_form_auto_size ()
             
             line_tmp.idx_beg = i+1;
             line_tmp.pos_x = 0; 
+            line_tmp.offset_x = 0;
+
+            prev_c = 0;
         }
         else
         {
-            line_tmp.pos_x += (*my_font_) [ucd (i)].length (); 
+        	u_int16 c = ucd (i);
+            line_tmp.pos_x += (*my_font_) [c].length ();
+            if (prev_c != 0) line_tmp.offset_x += my_font_->kerning(prev_c, c);
+            prev_c = c;
         }
         i++; 
     }
@@ -383,13 +409,16 @@ void label::clean_surface (const bool erase_all)
     {     
         if ( my_cursor_.idx != my_text_.length ())
         {
+        	offset_x_ = my_old_cursor_.offset_x;
             fillrect ( my_old_cursor_.pos_x, my_old_cursor_.pos_y, length () - my_old_cursor_.pos_x,
-                       my_font_->height (), screen::trans_col ()); 
+                       my_font_->height (), screen::trans_col (), NULL);
+            offset_x_ = 0;
             fillrect (0, my_old_cursor_.pos_y + my_font_->height (), length (),
                       height () -my_old_cursor_.pos_y + my_font_->height (), screen::trans_col ()); 
         }
         else if (erase_all)
         {
+            offset_x_ = 0;
             fillrect (0, 0, length (), height (), screen::trans_col ()); 
         }
     }
@@ -406,18 +435,25 @@ void label::clean_surface (const bool erase_all)
 // length :
 
 // return 0 if enough size for this word,  1 if enough but must return on the next line, 2 if the word is bigger than the length 
-u_int8 label::find_word (u_int16 & index, u_int16 & wlength, u_int16 & wlengthpix, const u_int16 rlength)
+u_int8 label::find_word (u_int16 & index, u_int16 & wlength, u_int16 & wlengthpix, s_int16 & woffset, u_int16 & last_letter, const u_int16 rlength)
 {
+	u_int16 c = 0;
+
     wlength = index;
     wlengthpix = 0;
+    woffset = 0;
     while (index < my_text_.length ()  && my_text_[index] != ' ' && my_text_[index] != '\n')
     {
-        wlengthpix += (*my_font_) [ucd (index)].length (); 
+    	c = ucd (index);
+        wlengthpix += (*my_font_) [c].length ();
+        if (last_letter != 0) woffset += my_font_->kerning(last_letter, c);
+    	last_letter = c;
         index++;
     }
 
     // count of characters (which is != count of letters due to utf-8 encoding)
     wlength = index - wlength;
+	last_letter = c;
     
     // if size of word is bigger than the length of label 
     if (wlengthpix < length () - rlength)  return 0;
@@ -453,20 +489,20 @@ void label::update_cursor ()
  
     // now find the x position of the cursor
     my_cursor_.pos_x = 0;
+    my_cursor_.offset_x = 0;
     
+    u_int16 prev_c = 0;
     u_int16 j = my_vect_[my_cursor_.line].idx_beg;
     while (j < my_cursor_.idx) {
-        my_cursor_.pos_x+= (*my_font_) [ucd (j)].length ();     
+    	u_int16 c = ucd (j);
+        my_cursor_.pos_x+= (*my_font_) [c].length ();
+        if (prev_c != 0) my_cursor_.offset_x += my_font_->kerning(prev_c, c);
+    	prev_c = c;
         j++;
     }
+
     // find y position
     my_cursor_.pos_y = (my_cursor_.line - start_line_) * my_font_->height (); 
-
-    if (my_cursor_.pos_y > height ())
-    {
-        
-
-    } 
 }
 
 
@@ -477,17 +513,19 @@ void label::draw_string (const bool at_cursor)
     u_int16 tmp_start_line;
     u_int16 tx = 0, ty = 0;
     u_int16 idx_cur_line, j; 
-    u_int16 c;
+    u_int16 c, prev_c = 0;
+    s_int16 ox = 0;
     
     // if not at cursor, we erase all
     clean_surface (!at_cursor); 
     
     if (at_cursor)
     { 
-        tmp_start_line =  my_old_cursor_.line; 
+        tmp_start_line = my_old_cursor_.line;
         tx = my_old_cursor_.pos_x;
+        ox = my_cursor_.offset_x; // my_cursor_ has been updated with the correct offset!
         idx_cur_line = my_old_cursor_.idx;
-        ty = (tmp_start_line - start_line_) * my_font_->height (); 
+        ty = (tmp_start_line - start_line_) * my_font_->height ();
     }
     else
     { 
@@ -503,9 +541,13 @@ void label::draw_string (const bool at_cursor)
         c = ucd (j);
         if (c != '\n' && my_font_->in_table (c))
         {
+            if (prev_c != 0) ox += my_font_->kerning(prev_c, c);
+        	offset_x_ = ox;
             (*my_font_) [c].draw (tx, ty, NULL, this);
             tx += (*my_font_) [c].length ();
+            prev_c = c;
         }
+        else prev_c = 0;
     }
     ty += my_font_->height ();
     tmp_start_line++; 
@@ -515,6 +557,7 @@ void label::draw_string (const bool at_cursor)
     while (tmp_start_line < my_vect_.size ())
     {
         tx = 0; 
+        ox = 0;
         for (j = my_vect_[tmp_start_line].idx_beg;
              j <  my_vect_[tmp_start_line].idx_end + 1 ;
              j++)
@@ -522,9 +565,13 @@ void label::draw_string (const bool at_cursor)
             c = ucd (j);
             if (my_font_->in_table (c))
             {
+                if (prev_c != 0) ox += my_font_->kerning(prev_c, c);
+            	offset_x_ = ox;
                 (*my_font_) [c].draw (tx, ty, NULL, this);
                 tx += (*my_font_) [c].length (); 
+                prev_c = c;
             }
+            else prev_c = 0;
         }
         ty += my_font_->height ();
         tmp_start_line++;
@@ -555,8 +602,9 @@ void label::cursor_draw ()
 {
      // draw the cursor
     u_int16 idx = my_cursor_.idx;
+	offset_x_ = my_cursor_.offset_x;
     if (last_letter (idx)  || my_text_[idx] == '\n')  
-        my_font_->cursor->draw (my_cursor_.pos_x, my_cursor_.pos_y,NULL, this);  
+        my_font_->cursor->draw (my_cursor_.pos_x, my_cursor_.pos_y,NULL, this);
     else
         my_font_->cursor->draw (my_cursor_.pos_x, my_cursor_.pos_y,0, 0, 
                                 (*my_font_) [ucd (idx)].length (),
@@ -567,6 +615,7 @@ void label::cursor_undraw ()
 { 
     // draw letter instead  
     u_int16 idx = my_cursor_.idx;
+	offset_x_ = my_cursor_.offset_x;
     if (last_letter (idx) || my_text_[idx] == '\n') 
     {
         fillrect(my_cursor_.pos_x, my_cursor_.pos_y,
@@ -609,6 +658,7 @@ void label::cursor_next ()
     if (!moveable_cursor_) return; 
     if (my_cursor_.idx < my_text_.length ()) 
     {
+    	// TODO: kerning
         u_int8 count;
         if (my_cursor_.idx < my_text_.length () - 2 && (u_int8) my_text_[my_cursor_.idx+1] == 0xEF) count = 3;
         else if (my_cursor_.idx < my_text_.length () - 1 && (u_int8) my_text_[my_cursor_.idx+1] == 0xC3) count = 2;
@@ -625,6 +675,7 @@ void label::cursor_previous ()
     if (!moveable_cursor_) return; 
     if (my_cursor_.idx > 0) 
     {
+    	// TODO: kerning
         u_int8 count;
         if (my_cursor_.idx > 2 && (u_int8) my_text_[my_cursor_.idx-3] == 0xEF) count = 3;
         else if (my_cursor_.idx > 1 && (u_int8) my_text_[my_cursor_.idx-2] == 0xC3) count = 2;
