@@ -137,7 +137,7 @@ image & win_ttf::operator[](u_int16 glyph)
     static SDL_Color bg = { 0x00, 0x00, 0x00, 0 };
     static SDL_Color white = { 0xff, 0xff, 0xff, 0 };
 
-    if (cursor && cursor->scale() != screen::scale())
+    if (ttf && cursor && cursor->scale() != screen::scale())
     {
     	// if screen scale changed since creating the glyph,
     	// it needs to be recreated with the new size
