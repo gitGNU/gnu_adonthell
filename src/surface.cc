@@ -61,9 +61,9 @@ void surface::set_mask (bool m)
     	return;
     }
 
-    if (m)
+    if (m && !is_masked_)
     {
-        is_masked_ = true;
+    	is_masked_ = true;
 
         SDL_Surface *s1 = to_sw_surface();
         SDL_Surface *s2 = SDL_CreateRGBSurfaceFrom(NULL, s1->w, s1->h,
@@ -89,6 +89,8 @@ void surface::set_mask (bool m)
         Surface = tmp;
         alpha_channel_ = true;
     }
+
+    is_masked_ = m;
 }
 
 
@@ -112,13 +114,22 @@ void surface::set_alpha (u_int8 t, const bool & alpha_channel)
 SDL_Surface *surface::to_sw_surface(SDL_Rect *rect) const
 {
     int bpp;
+    SDL_Surface *s;
     u_int32 rmask, gmask, bmask, amask;
 
     lock(rect);
 
     SDL_PixelFormatEnumToMasks(Info->Format, &bpp, &rmask, &gmask, &bmask, &amask);
-    SDL_Surface *s = SDL_CreateRGBSurfaceFrom(Info->Pixels, length() * scale(), height() * scale(),
-            bpp, Info->Pitch, rmask, gmask, bmask, amask);
+    if (!rect)
+    {
+    	s = SDL_CreateRGBSurfaceFrom(Info->Pixels, length() * scale(), height() * scale(),
+                bpp, Info->Pitch, rmask, gmask, bmask, amask);
+    }
+    else
+    {
+    	s = SDL_CreateRGBSurfaceFrom(Info->Pixels, rect->w, rect->h,
+                bpp, Info->Pitch, rmask, gmask, bmask, amask);
+    }
 
     if (is_masked_)
     {
@@ -179,10 +190,6 @@ void surface::draw (s_int16 x, s_int16 y, s_int16 sx, s_int16 sy, u_int16 sl,
     		target->set_scale(scale());
     	}
 
-        // blit from one surface to another (--> needs to be in software)
-        SDL_Surface *source_surf = to_sw_surface ();
-        SDL_Surface *target_surf = target->to_sw_surface ();
-
         if (scale() > 1)
 		{
 			srcrect.x *= scale();
@@ -194,9 +201,23 @@ void surface::draw (s_int16 x, s_int16 y, s_int16 sx, s_int16 sy, u_int16 sl,
 			dstrect.y *= scale();
 			dstrect.w *= scale();
 			dstrect.h *= scale();
+
+			if (dstrect.x < 0) dstrect.x = 0;
 		}
 
-        SDL_BlitSurface (source_surf, &srcrect, target_surf, &dstrect);
+        // make sure we only update the part of the target texture that is actually changed
+    	if (dstrect.x + dstrect.w > target->length() * scale()) dstrect.w = target->length() * scale() - dstrect.x;
+    	if (dstrect.y + dstrect.h > target->height() * scale()) dstrect.h = target->height() * scale() - dstrect.y;
+    	if (dstrect.w <= 0 || dstrect.h <= 0) return;
+
+    	srcrect.w = dstrect.w;
+    	srcrect.h = dstrect.h;
+
+        // blit from one surface to another (--> needs to be in software)
+        SDL_Surface *source_surf = to_sw_surface ();
+        SDL_Surface *target_surf = target->to_sw_surface (&dstrect);
+
+        SDL_BlitSurface (source_surf, &srcrect, target_surf, NULL);
 
         target->unlock();
 
@@ -250,7 +271,7 @@ void surface::fillrect (s_int16 x, s_int16 y, u_int16 l, u_int16 h, u_int32 col,
 
     	if (dstrect.x + dstrect.w > length()) dstrect.w = length() - dstrect.x;
     	if (dstrect.y + dstrect.h > height()) dstrect.h = height() - dstrect.y;
-    	if (dstrect.w < 0 || dstrect.h < 0) return;
+    	if (dstrect.w <= 0 || dstrect.h <= 0) return;
 
         if (scale() > 1)
         {

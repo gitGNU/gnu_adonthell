@@ -241,7 +241,7 @@ void dialog_screen::insert_plugin ()
 void dialog_screen::set_portrait (const string & new_portrait)
 {
     if (new_portrait == portrait) return;
-    else portrait = new_portrait;
+    portrait = new_portrait;
 
     if (new_portrait == "")
     {
@@ -257,6 +257,8 @@ void dialog_screen::set_portrait (const string & new_portrait)
 // Set / change the NPC-name
 void dialog_screen::set_name (const string & new_name)
 {
+	if (new_name == name->text_string()) return;
+
     name->set_text (new_name);
     name->pack ();
 }

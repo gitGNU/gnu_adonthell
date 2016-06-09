@@ -300,10 +300,13 @@ void image::brightness (const surface& src, u_int8 cont, bool proceed_mask)
     set_scale(src.scale());
     resize (src.length (), src.height ());
 
+    u_int16 real_height = height() * scale();
+	u_int16 real_length = length() * scale();
+
     lock ();
     src.lock ();
-    for (j = 0; j < height () * scale(); j++)
-        for (i = 0; i < length () * scale(); i++)
+	for (j = 0; j < real_height; j++)
+		for (i = 0; i < real_length; i++)
         {
             temp = src.get_pix (i, j);
             if ((proceed_mask) || temp != screen::trans_col ())

@@ -586,6 +586,7 @@ bool label::update ()
         if (! (height () && length ())) return true;  
         if (cursor_cur_blink_ == cursor_blink_cycle)
         {
+            set_mask(false);
             cursor_draw ();
             set_mask(true);
             cursor_cur_blink_ = 0; 
