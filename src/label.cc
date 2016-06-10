@@ -130,14 +130,14 @@ void label::set_form (const u_int8 form)
 void label::init_vec_cursor ()
 {
     // init the cursor
-	memset(&my_cursor_, 0, sizeof(Scursor));
+	memset(&my_cursor_, 0, sizeof my_cursor_);
     
     // init the vector
     my_vect_.clear ();
     
     // create a line in the vector
     Sline_text tmp;
-    memset(&tmp, 0, sizeof(Sline_text));
+    memset(&tmp, 0, sizeof tmp);
     
     // add the new line at the beginning of the vector
     my_vect_.push_back (tmp);
@@ -366,7 +366,9 @@ void label::build_form_auto_size ()
     Sline_text line_tmp;
     
     line_tmp.pos_x = 0;
+    line_tmp.offset_x = 0;
     line_tmp.idx_beg = 0;
+    
     u_int16 i = 0, max_length = 0; 
     u_int16 prev_c = 0;
     

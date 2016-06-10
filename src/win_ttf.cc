@@ -52,7 +52,7 @@ win_ttf::win_ttf (const char *color, const string & file) : win_font ()
     
     if (load (file))
     {
-    	int real_height_ = TTF_FontHeight(ttf);
+        int real_height_ = TTF_FontHeight(ttf) + screen::scale() - 1;
         height_ = real_height_ / screen::scale();
         cursor = &operator[]('_');
         length_ = cursor->length ();
@@ -148,7 +148,7 @@ image & win_ttf::operator[](u_int16 glyph)
 
         if (load (path_))
         {
-        	int real_height_ = TTF_FontHeight(ttf);
+            int real_height_ = TTF_FontHeight(ttf) + screen::scale() - 1;
             height_ = real_height_ / screen::scale();
             cursor = &operator[]('_');
             length_ = cursor->length ();
@@ -171,8 +171,9 @@ image & win_ttf::operator[](u_int16 glyph)
     	return *(glyphs[' ']);
 	}
     
+    u_int16 width = s->w;
     image tmp (s, bg);
-    overflow[glyph] = s->w - tmp.length() * screen::scale();
+    overflow[glyph] = width - tmp.length() * screen::scale();
 
     image *glph = new image (tmp.length(), height_, screen::scale());
     glph->fillrect (0, 0, tmp.length(), height_, screen::trans_col(), NULL);

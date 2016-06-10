@@ -64,7 +64,8 @@ void surface::set_mask (bool m)
     if (m && !is_masked_)
     {
     	is_masked_ = true;
-
+        mask_changed_ = false;
+        
         SDL_Surface *s1 = to_sw_surface();
         SDL_Surface *s2 = SDL_CreateRGBSurfaceFrom(NULL, s1->w, s1->h,
                         32, 0, R_MASK, G_MASK, B_MASK, A_MASK);
@@ -269,17 +270,19 @@ void surface::fillrect (s_int16 x, s_int16 y, u_int16 l, u_int16 h, u_int32 col,
     		col = map_color(255, 0, 255, SDL_ALPHA_TRANSPARENT);
     	}
 
-    	if (dstrect.x + dstrect.w > length()) dstrect.w = length() - dstrect.x;
-    	if (dstrect.y + dstrect.h > height()) dstrect.h = height() - dstrect.y;
-    	if (dstrect.w <= 0 || dstrect.h <= 0) return;
-
         if (scale() > 1)
         {
             dstrect.x = dstrect.x * scale() + offset_x_;
             dstrect.y *= scale();
             dstrect.w *= scale();
             dstrect.h *= scale();
+
+            if (dstrect.x < 0) dstrect.x = 0;
         }
+
+        if (dstrect.x + dstrect.w > length() * scale()) dstrect.w = length() * scale() - dstrect.x;
+        if (dstrect.y + dstrect.h > height() * scale()) dstrect.h = height() * scale() - dstrect.y;
+        if (dstrect.w <= 0 || dstrect.h <= 0) return;
 
         lock(&dstrect);
 
