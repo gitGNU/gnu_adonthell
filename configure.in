@@ -37,36 +37,44 @@ dnl ********************
 dnl Additional arguments
 dnl ********************
 
-AC_ARG_ENABLE(unix-install,
-[  --disable-unix-install  disable a Unix-like install (enabled by default)],
-	unixinst=$enableval, unixinst=yes)
-AC_ARG_ENABLE(dlgedit,
-[  --enable-dlgedit        Build the Adonthell dialogue editior (disabled by default)], 	 
-    dlgedit=$enableval, dlgedit=no)
-AC_ARG_ENABLE(memleaks,
-[  --enable-memleaks       enable check for memory leaks (disabled by default)],
-	memleaks=$enableval, memleaks=no)
-AC_ARG_ENABLE(doc,
-[  --enable-doc            build the Adonthell developer documentation (disabled by default)],
-	builddoc=$enableval, builddoc=no)
-AC_ARG_ENABLE(py-debug,
-[  --disable-py-debug      disable debugging of Python scripts (enabled by default)],
-	pydebug=$enableval, pydebug=yes)
-AC_ARG_WITH(ogg,
-[  --with-ogg=DIR          set where the Ogg library is located], ogg=none) 
-AC_ARG_WITH(vorbis,
-[  --with-vorbis=DIR       set where the Vorbis library is located], vorbis=none)
-AC_ARG_WITH(data-dir,
-[  --with-data-dir=DIR     directory where datas will be installed],
-	gamedatadir="$withval", gamedatadir=none)
-AC_ARG_WITH(python,
-[  --with-python=CMD       name of python executable],,[with_python=no])
-AC_ARG_WITH(py-libs,
-[  --with-py-libs=LIBS     override Python libraries auto-detection],
-	pylibs="$withval", pylibs=none)
-AC_ARG_WITH(py-cflags,
-[  --with-py-cflags=FLAGS  override Python cflags auto-detection],
-	pycflags="$withval", pycflags=none)
+AC_ARG_ENABLE([unix-install],
+    [AS_HELP_STRING([--disable-unix-install],[disable a Unix-like install (enabled by default)])],
+    [unixinst=$enableval], [unixinst=yes])
+AC_ARG_ENABLE([dlgedit],
+    [AS_HELP_STRING([--enable-dlgedit], [Build the Adonthell dialogue editior (disabled by default)])],
+    [dlgedit=$enableval], [dlgedit=no])
+AC_ARG_ENABLE([memleaks],
+    [AS_HELP_STRING([--enable-memleaks], [enable check for memory leaks (disabled by default)])],
+    [memleaks=$enableval], [memleaks=no])
+AC_ARG_ENABLE([doc],
+    [AS_HELP_STRING([--enable-doc], [build the Adonthell developer documentation (disabled by default)])],
+    [builddoc=$enableval], [builddoc=no])
+AC_ARG_ENABLE([py-debug],
+    [AS_HELP_STRING([--disable-py-debug], [disable debugging of Python scripts (enabled by default)])],
+    [pydebug=$enableval], [pydebug=yes])
+AC_ARG_ENABLE([pyc],
+    [AS_HELP_STRING([--disable-pyc], [Do not compile Python scripts])])
+AC_ARG_WITH([ogg],
+    [AS_HELP_STRING([--with-ogg=DIR], [set where the Ogg library is located])],
+    [ogg=none])
+AC_ARG_WITH([vorbis],
+    [AS_HELP_STRING([--with-vorbis=DIR], [set where the Vorbis library is located])],
+    [vorbis=none])
+AC_ARG_WITH([data-dir],
+    [AS_HELP_STRING([--with-data-dir=DIR], [directory where data will be installed])],
+    [gamedatadir="$withval"], [gamedatadir=none])
+AC_ARG_WITH([python],
+    [AS_HELP_STRING([--with-python=CMD], [name of python executable])],,
+    [with_python=no])
+AC_ARG_WITH([py-libs],
+    [AS_HELP_STRING([--with-py-libs=LIBS], [override Python libraries auto-detection])],
+    [pylibs="$withval"], [pylibs=none])
+AC_ARG_WITH([py-cflags],
+    [AS_HELP_STRING([--with-py-cflags=FLAGS], [override Python cflags auto-detection])],
+    [pycflags="$withval"], [pycflags=none])
+
+
+AM_CONDITIONAL([COMPILE_SCRIPTS], [test "x$enable_pyc" != "xno"])
 
 dnl **********************
 dnl Set the data directory
@@ -78,25 +86,22 @@ if test x$gamedatadir = xnone; then
     DEFS="$DEFS -DSINGLE_DIR_INST"
     case "$target" in
       *-apple-darwin*)
-	osx="yes"
-        makebundle="yes"
-        DEFS="$DEFS -Wno-long-double"
+        osx="yes"
+        gamedatadir="${datadir}/Resources"
+        DEFS="$DEFS -DDATA_DIR=\"\\\"../Resources\\\"\""
+        LDFLAGS="$LDFLAGS -headerpad_max_install_names"
       ;;
     esac        
   else
     case "$target" in
       *-apple-darwin*)
-	osx="yes"
+        osx="yes"
         gamedatadir="${datadir}/adonthell"
         DEFS="$DEFS -DDATA_DIR=\"\\\"$gamedatadir\\\"\""
       ;;
       *-*-cygwin* | *-*-mingw32*)
         gamedatadir=""
         DEFS="$DEFS -DSINGLE_DIR_INST"
-      ;;
-      *-*-beos*)
-        gamedatadir="/boot/home/config/share/adonthell"
-        DEFS="$DEFS -DDATA_DIR=\"\\\"$gamedatadir\\\"\""
       ;;
       *)
         gamedatadir="${datadir}/adonthell"
@@ -107,8 +112,6 @@ if test x$gamedatadir = xnone; then
 else
   DEFS="$DEFS -DDATA_DIR=\"\\\"$gamedatadir\\\"\""
 fi
-
-AM_CONDITIONAL(MAKE_BUNDLE, test x$makebundle = xyes)
 
 dnl **********************
 dnl Check for memory leaks
@@ -392,12 +395,13 @@ fi
 
 AM_CONDITIONAL(BUILD_DLGEDIT, test x$dlgedit = xyes)
 
-if test "x$dlgedit" = "xyes" ; then
+AS_IF([test "x$dlgedit" = "xyes"], [
+
 dnl *****************
 dnl Cairo
 dnl *****************
 
-	PKG_CHECK_MODULES(CAIRO, [cairo >= 1.2.6])
+	PKG_CHECK_MODULES([CAIRO], [cairo >= 1.2.6])
 	AC_SUBST(CAIRO_CFLAGS)
 	AC_SUBST(CAIRO_LIBS)
 
@@ -419,7 +423,7 @@ dnl *****************
 	   AC_SUBST(IGE_MAC_LIBS)
 	   AC_SUBST(IGE_MAC_CFLAGS)
 	fi
-fi
+])
 
 dnl ****************************************
 dnl Check whether to build the documentation

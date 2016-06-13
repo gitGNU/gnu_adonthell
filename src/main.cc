@@ -142,9 +142,6 @@ int main(int argc, char * argv[])
         *(str + 1) = 0;
         chdir (argv[0]);
 
-        // FIXME: this should go once we have our 'game launcher' gui 
-        myconfig.gamedir = string (argv[0]) + "/games/wastesedge";
-
         *(str + 1) = '/';
     }
     
@@ -156,7 +153,19 @@ int main(int argc, char * argv[])
     do if (*str == '\\') *str = '/'; 
     while (*(str++));
     
-    game::init (buf);
+    // get absolute path to data directory
+    string data_dir(DATA_DIR);
+    while (data_dir.size() >= 3 && data_dir.compare(0, 3, "../") == 0)
+    {
+        str = strrchr (buf, '/');
+        if (str != NULL)
+        {
+            *(str+1) = 0;
+        }
+        data_dir = data_dir.substr(3);
+    }
+    
+    game::init (string(buf) + data_dir);
 #endif
 
     // read the $HOME/.adonthell/adonthellrc file

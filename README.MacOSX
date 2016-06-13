@@ -17,7 +17,7 @@ Open the terminal and type
 
 Now you can go about installing SDL and Ogg Vorbis. See the INSTALL file
 for the URLs. Again, you'll have to use the terminal. Extract the SDL
-tarball (tar xzf SDL-1.2.x.tar.gz) and cd into the SDL-1.2.x directory.
+tarball (tar xzf SDL-2.x.x.tar.gz) and cd into the SDL-2.x.x directory.
 There type
 
     ./configure
@@ -41,5 +41,28 @@ another
 to compile and install Adonthell. Repeat the same steps for the Waste's
 Edge data and you are done. You can now launch Adonthell by typing
 
-    /usr/local/bin/adonthell wastesedge
+    /usr/local/bin/adonthell-0.3 wastesedge
 
+
+Creating a .App bundle:
+=======================
+If you'd rather create nice bundle that can be placed into your Applications
+folder, you can use the included make_bundle.sh scripts instead of manually
+compiling Adonthell and Waste's Edge. However, make sure all prerequisite
+libraries are still installed under /usr/local.
+
+Now, in the adonthell-0.3.x directory, run
+
+    make_bundle.sh
+
+If all goes well, it should configure, build and install Adonthell into
+Adonthell.app and copy and prepare all the required libs from /usr/local.
+All that is mising now in the bundle is the actual game data.
+
+Change into the wastesedge-0.3.x directory and run
+
+    make_bundle.sh ../adonthell-0.3.x/Adonthell.app
+
+(adjusting the location to the bundle as needed). This will configure,
+build and install Waste's Edge into the Adonthell.app bundle, making it
+ready to use.

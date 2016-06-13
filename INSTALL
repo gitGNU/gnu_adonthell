@@ -89,6 +89,13 @@ this requires additional dependencies for compilation, namely
 Cairo 1.2.6 or higher and GTK+ 2.18 or higher.
 
 
+--disable-pyc
+
+  This option can be used to disable byte-compiling any included
+python scripts. Instead of compiled (.pyc) files, the raw (.py)
+source files get installed upon 'make install'.
+
+
 --enable-doc
 
   Use this to build the Adonthell source code documentation. For 

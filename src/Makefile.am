@@ -171,28 +171,3 @@ py_adonthell_wrap.cc : py_adonthell.i $(headers)
 
 lex.prefs.cc : prefs.l
 	flex -olex.prefs.cc $<
-
-# -- MacOS X App Bundle
-if MAKE_BUNDLE
-bundle_contents = Adonthell.app/Contents
-
-Adonthell.app: Adonthell $(srcdir)/modules/*.py $(srcdir)/modules/*.pyc
-	mkdir -p $(bundle_contents)/MacOS/modules
-	mkdir -p $(bundle_contents)/Resources
-	echo "APPL????" > $(bundle_contents)/PkgInfo
-	$(INSTALL_PROGRAM) $< $(bundle_contents)/MacOS/
-	$(INSTALL_DATA) modules/*.py $(bundle_contents)/MacOS/modules/
-	$(INSTALL_DATA) modules/*.pyc $(bundle_contents)/MacOS/modules/
-	
-install-exec-hook: Adonthell.app
-	rm -rf $(DESTDIR)/Applications/Adonthell.app
-	mkdir -p $(DESTDIR)/Applications
-	cp -r $< $(DESTDIR)/Applications/
-else
-install-exec-hook:
-	if test ! -e $(DESTDIR)$(bindir)/adonthell ; then \
-	  $(LN_S) adonthell-0.3 $(DESTDIR)$(bindir)/adonthell; \
-	else \
-	  echo "*** warning: cannot create symlink to adonthell-0.3"; \
-	fi;
-endif
