@@ -190,7 +190,6 @@ bool screen::set_fullscreen (const u_int8 & m)
 #ifdef DEBUG
     	std::cout << "Switching from " << (int)mode_ << " to " << (int)m << std::endl;
 #endif
-    	u_int8 prev_mode = mode_;
     	if (mode_ != 0)
     	{
 			r = SDL_SetWindowFullscreen(Window, SDL_FALSE) == 0;
@@ -275,6 +274,8 @@ u_int8 screen::get_scale_for_display(u_int8 screen, u_int16 nl, u_int16 nh)
 void screen::update_scale()
 {
 	int w, h;
+	static SDL_Rect clip = {};
+
 	SDL_GetRendererOutputSize(Renderer, &w, &h);
 	if (w != length() * scale_ || h != height() * scale_)
 	{
@@ -288,12 +289,21 @@ void screen::update_scale()
 			// center viewport in letterbox mode
 			offset_x_ = (w - length() * scale_) / 2;
 			offset_y_ = (h - height() * scale_) / 2;
+
+			clip.x = offset_x_;
+			clip.y = offset_y_;
+			clip.w = length() * scale_;
+			clip.h = height() * scale_;
+
+			SDL_RenderSetClipRect(Renderer, &clip);
 		}
 		else
 		{
 			// no rendering offset required when running in window or fullscreen modes
 			offset_x_ = 0;
 			offset_y_ = 0;
+
+			SDL_RenderSetClipRect(Renderer, NULL);
 		}
 	}
 
