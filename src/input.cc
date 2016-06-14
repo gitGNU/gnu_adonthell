@@ -68,8 +68,8 @@ void input::update()
 				SDL_Scancode idx = event.key.keysym.scancode;
 				if (!event.key.repeat)
 				{
-					p_keystate[idx]++;
 					keystate[idx]=1;
+					p_keystate[idx]++;
 
 					if (text_input)
 					{
@@ -154,6 +154,7 @@ void input::start_text_input()
 
 void input::stop_text_input()
 {
+	clear_keys_queue();
 	text_input = false;
 	SDL_StopTextInput();
 }
