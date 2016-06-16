@@ -25,11 +25,19 @@
 #define STR_HASH_H
 
 #ifdef __clang__
+#if MAC_OS_X_VERSION_MIN_REQUIRED > 1060
 #include <unordered_map>
 #include <unordered_set>
 
 #define hash_map unordered_map
 #define hash_set unordered_set
+#else
+#include <tr1/unordered_map>
+#include <tr1/unordered_set>
+
+#define hash_map tr1::unordered_map
+#define hash_set tr1::unordered_set
+#endif
 
 #else
 

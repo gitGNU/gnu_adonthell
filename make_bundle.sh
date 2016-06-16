@@ -2,6 +2,10 @@
 
 cwd=`pwd`
 
+if [ -z $MACOSX_DEPLOYMENT_TARGET ]; then
+  export MACOSX_DEPLOYMENT_TARGET=`sw_vers -productVersion | sed 's/\(.*\)\..*$/\1/'`
+fi
+
 # -- build adonthell
 if [ ! -f "configure" ]; then
   if [ ! -f "autogen.sh" ]; then
@@ -50,6 +54,8 @@ cat > $bundle/Contents/Info.plist <<EOF
 <!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+        <key>MinimumOSVersion</key>
+        <string>${MACOSX_DEPLOYMENT_TARGET}</string>
         <key>CFBundleDevelopmentRegion</key>
         <string>en_GB</string>
         <key>CFBundleExecutable</key>
@@ -89,14 +95,20 @@ EOF
 # -- prepare application
 prefix=${cwd}/${bundle}/Contents
 
+configure_args="--disable-unix-install --disable-pyc --prefix=$prefix/MacOS --bindir=$prefix/MacOS --datadir=$prefix"
+if test $MACOSX_DEPLOYMENT_TARGET = "10.6" ; then
+    configure_args="$configure_args --with-python=python2.6"
+fi
+
 cd build
 echo "Configuring $appname. This may take a while ..."
-../configure --disable-unix-install --disable-pyc --prefix=$prefix/MacOS --bindir=$prefix/MacOS --datadir=$prefix > /dev/null
+../configure $configure_args > /dev/null
 if [ $? -ne 0 ]; then
    exit 1
 fi
 
 # -- compile application
+echo "Building for OSX version $MACOSX_DEPLOYMENT_TARGET and higher"
 make V=0 -j 2
 if [ $? -ne 0 ]; then
    exit 1

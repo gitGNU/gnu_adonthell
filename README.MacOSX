@@ -8,25 +8,50 @@ INSTALL file. Even more details are found within the NEWBIE file.
 
 Preparations:
 =============
-Install the Developer Tools from
+Install the Developer command line tools or XCode from
+
     http://developer.apple.com/macosx/
 
-Then you should create the /usr/local/ folder, if it is not there already.
+or the App Store.
+
+If you plan to create a proper application bundle for Adonthell, it is
+advised to install all the required dependencies under /usr/local. If
+this folder does not exist yet, you should create it now.
+
 Open the terminal and type
+
     sudo mkdir /usr/local/
 
-Now you can go about installing SDL and Ogg Vorbis. See the INSTALL file
-for the URLs. Again, you'll have to use the terminal. Extract the SDL
-tarball (tar xzf SDL-2.x.x.tar.gz) and cd into the SDL-2.x.x directory.
-There type
+Before installing any dependencies, you should also consider which 
+version of OSX to target. By default, this will be the version you
+build it on (and likely newer versions). If support for older versions
+are desired, this can be achieved via the MACOSX_DEPLOYMENT_TARGET
+environment variable. E.g.
+
+    export MACOSX_DEPLOYMENT_TARGET=10.6
+
+Due to limitations of recent SDL2 versions, the minimum supported 
+target as of June 2016 is OSX 10.6 Snow Leopard and may be higher in 
+the future. Use an older version of SDL2, if this proves to be an
+issue.
+
+Now you can go about installing all the dependencies listed in the 
+INSTALL file. Extract each archive, cd into the respective directory
+and run the usual commands
 
     ./configure
     make
     sudo make install
 
-That will install SDL into /usr/local/. Do the same steps for libogg and
-libvorbis (in that order). Refer to the documentation of each library for
-more detailed instructions.
+Please refer to the documentation of each library for more detailed 
+instructions.
+
+Note that for the official OSX binaries, the following configure 
+options were used instead of the default
+
+    Freetype   : ./configure --with-png=no --with-bzip2=no
+    SDL2       : ./configure --without-x
+    SDL2_mixer : ./configure --disable-music-ogg-shared
 
 
 Compiling Adonthell:
@@ -38,8 +63,9 @@ another
     make
     sudo make install
 
-to compile and install Adonthell. Repeat the same steps for the Waste's
-Edge data and you are done. You can now launch Adonthell by typing
+to compile and install Adonthell locally. Repeat the same steps for
+the Waste's Edge data and you are done. You can now launch Adonthell
+by typing
 
     /usr/local/bin/adonthell-0.3 wastesedge
 
