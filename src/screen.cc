@@ -295,6 +295,7 @@ void screen::update_scale()
 			clip.w = length() * scale_;
 			clip.h = height() * scale_;
 
+            clear();
 			SDL_RenderSetClipRect(Renderer, &clip);
 		}
 		else
