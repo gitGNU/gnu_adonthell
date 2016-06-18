@@ -163,7 +163,7 @@ py_adonthell_wrap.cc : py_adonthell.i $(headers)
 	@if test "${SWIG}" != "no" ; then \
 	   echo ${SWIG} -python -modern -shadow ${SDL_CFLAGS} -I$(srcdir) -I$(top_srcdir) -c++ -makedefault -o $(srcdir)/$*.cc $(srcdir)/py_adonthell.i; \
 	   ${SWIG} -python -modern -shadow ${SDL_CFLAGS} -I$(srcdir) -I$(top_srcdir) -c++ -makedefault -o $(srcdir)/$*.cc $(srcdir)/py_adonthell.i; \
-           mv $(srcdir)/adonthell.py modules/adonthell.py; \
+           mv $(srcdir)/adonthell.py $(srcdir)/modules/adonthell.py; \
 	else \
 	   echo "You need swig >= ${SWIG_MINVER} in order to re-build this file."; \
 	   exit 1; \
