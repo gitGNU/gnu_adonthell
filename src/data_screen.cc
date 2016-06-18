@@ -95,7 +95,7 @@ data_screen::data_screen (int m)
 data_screen::~data_screen ()
 {
     // fade in from black after loading a game
-    // if (mode == LOAD_SCREEN && !aborted) data::engine->fade_in ();
+    if (mode == LOAD_SCREEN && !aborted && data::engine->update_map()) data::engine->fade_in ();
 }
 
 void data_screen::init ()

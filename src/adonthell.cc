@@ -96,11 +96,11 @@ void adonthell::main_loop ()
         if (control_active ()) control.run ();
     }
 
-    // first clear the screen to avoid artifacts
-    screen::clear ();
-
     if (!letsexit)
     {
+        // first clear the screen to avoid artifacts
+        screen::clear ();
+
         // draw everything to our display surface
         win_manager::active->draw ();
     }
@@ -142,6 +142,14 @@ void adonthell::fade_in ()
         if (i < 0) i = 0;
         
         main_loop ();
+
+        if (letsexit)
+        {
+            // if we're fading in while a window is closing
+        	// ensure that everything is rendered properly
+            screen::clear ();
+            win_manager::active->draw ();
+        }
 
         screen::transition (i * 2);
         screen::show ();

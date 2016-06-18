@@ -303,8 +303,6 @@ else
     AC_SUBST(PY_LIBS)
 fi
 
-AM_CONDITIONAL(PY_FRAMEWORK, test x$PY_SPDIR != x$PY_FWDIR)
-
 if test "$pydebug" == "yes" ; then
 	DEFS="$DEFS -DPY_DEBUG"
 fi
