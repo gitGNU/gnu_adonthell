@@ -39,8 +39,8 @@ image::image (u_int16 l, u_int16 h, const u_int8 & scale) : surface (scale)
 
 image::image (SDL_Surface *s, const SDL_Color & color) : surface (screen::scale())
 {
-	set_alpha(SDL_ALPHA_OPAQUE, true);
-	resize((s->w+screen::scale()-1)/screen::scale(), (s->h+screen::scale()-1)/screen::scale());
+    set_alpha(SDL_ALPHA_OPAQUE, true);
+    resize((s->w+screen::scale()-1)/screen::scale(), (s->h+screen::scale()-1)/screen::scale());
 
     SDL_Surface *dest = to_sw_surface(NULL);
     SDL_SetColorKey (s, 1, SDL_MapRGB (s->format, color.r, color.g, color.b));
@@ -48,6 +48,7 @@ image::image (SDL_Surface *s, const SDL_Color & color) : surface (screen::scale(
 
     unlock();
 
+    SDL_FreeSurface (dest);
     SDL_FreeSurface (s);
 }
 
