@@ -82,8 +82,8 @@ dnl **********************
 
 if test x$gamedatadir = xnone; then
   if test x$unixinst = xno; then
-    gamedatadir=""
     DEFS="$DEFS -DSINGLE_DIR_INST"
+    
     case "$target" in
       *-apple-darwin*)
         osx="yes"
@@ -91,21 +91,17 @@ if test x$gamedatadir = xnone; then
         DEFS="$DEFS -DDATA_DIR=\"\\\"../Resources\\\"\""
         LDFLAGS="$LDFLAGS -headerpad_max_install_names"
       ;;
+      *-*-cygwin* | *-*-mingw32 | *-*-mingw64 )
+        gamedatadir=""
+      ;;
     esac        
   else
+    gamedatadir="${datadir}/adonthell"
+    DEFS="$DEFS -DDATA_DIR=\"\\\"$gamedatadir\\\"\""
+
     case "$target" in
       *-apple-darwin*)
         osx="yes"
-        gamedatadir="${datadir}/adonthell"
-        DEFS="$DEFS -DDATA_DIR=\"\\\"$gamedatadir\\\"\""
-      ;;
-      *-*-cygwin* | *-*-mingw32*)
-        gamedatadir=""
-        DEFS="$DEFS -DSINGLE_DIR_INST"
-      ;;
-      *)
-        gamedatadir="${datadir}/adonthell"
-        DEFS="$DEFS -DDATA_DIR=\"\\\"$gamedatadir\\\"\""
       ;;
     esac
   fi
@@ -157,6 +153,13 @@ AC_CHECK_LIB([SDL2_ttf],
 )
 AC_CHECK_FUNCS([TTF_GetFontKerningSizeGlyphs])
 
+dnl on a mingw build, we do not want SDL to redefine 'main'
+case "$target" in
+  *-*-cygwin* | *-*-mingw32 | *-*-mingw64 )
+     SDL_CFLAGS=`echo $SDL_CFLAGS | sed 's/ -Dmain=SDL_main//'`
+     SDL_DEFS="-DSDL_MAIN_HANDLED"
+  ;;
+esac
 
 dnl *******************
 dnl Check for FreeType2
@@ -215,7 +218,7 @@ dnl Find the Python.h header file
 if test "x$pycflags" = xnone; then
    AC_MSG_CHECKING(for Python header files)
    changequote(<<, >>)
-   PYINCLUDE=`$PYTHON -c 'import sys ; print ("%s/include/python%s" % (sys.prefix, sys.version[:3]))'`
+   PYINCLUDE=`$PYTHON -c 'import distutils.sysconfig; print(distutils.sysconfig.get_config_var("INCLUDEPY"))'`
    changequote([, ])
 
    dnl convert windows paths to cygwin paths
