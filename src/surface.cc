@@ -526,7 +526,10 @@ void surface::set_scale(const u_int8 & new_scale)
 
     SDL_PixelFormatEnumToMasks(Info->Format, &bpp, &rmask, &gmask, &bmask, &amask);
 	SDL_Texture *target = SDL_CreateTexture (screen::get_renderer(), Info->Format, SDL_TEXTUREACCESS_STREAMING, length()*new_scale, height()*new_scale);
-    SDL_LockTexture(target, NULL, (void**)&target_data, &pitch);
+    if (!target) std::cout << "*** surface_sdl::set_scale: " << SDL_GetError() << std::endl;
+
+	
+	SDL_LockTexture(target, NULL, (void**)&target_data, &pitch);
 	SDL_Surface *target_surf = SDL_CreateRGBSurfaceFrom(target_data, length()*new_scale, height()*new_scale, bpp, pitch, rmask, gmask, bmask, amask);
 
     s_int32 target_line_length = target_surf->format->BytesPerPixel * length()*new_scale;
@@ -592,6 +595,7 @@ surface& surface::operator = (const surface& src)
 
         SDL_QueryTexture(src.Surface, &Info->Format, NULL, &l, &h);
         Surface = SDL_CreateTexture (screen::get_renderer(), Info->Format, SDL_TEXTUREACCESS_STREAMING, l, h);
+	    if (!Surface) std::cout << "*** surface_sdl::operator=: " << SDL_GetError() << std::endl;
 
         SDL_LockTexture(src.Surface, NULL, &src_pixels, &pitch);
         SDL_LockTexture(Surface, NULL, &dst_pixels, &pitch);
