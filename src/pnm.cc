@@ -24,8 +24,9 @@
 
 
 #include "pnm.h"
-#include <stdlib.h>
-#include <string.h>
+#include <cstdlib>
+#include <cstdio>
+#include <cstring>
 
 void *pnm::get (SDL_RWops * file, u_int16 * length, u_int16 * height)
 {
