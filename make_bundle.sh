@@ -1,9 +1,10 @@
 #!/bin/sh
 
 cwd=`pwd`
+osversion=`sw_vers -productVersion | sed 's/\(.*\)\..*$/\1/'`
 
 if [ -z $MACOSX_DEPLOYMENT_TARGET ]; then
-  export MACOSX_DEPLOYMENT_TARGET=`sw_vers -productVersion | sed 's/\(.*\)\..*$/\1/'`
+  export MACOSX_DEPLOYMENT_TARGET=$osversion
 fi
 
 # -- build adonthell
@@ -102,7 +103,9 @@ fi
 
 cd build
 echo "Configuring $appname. This may take a while ..."
-../configure $configure_args > /dev/null
+
+# -- Python distutils used in confgure script are picky about the deployment target; make sure they are happy
+MACOSX_DEPLOYMENT_TARGET=$osversion ../configure $configure_args > /dev/null
 if [ $? -ne 0 ]; then
    exit 1
 fi
