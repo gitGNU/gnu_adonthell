@@ -92,7 +92,8 @@ if test x$gamedatadir = xnone; then
         LDFLAGS="$LDFLAGS -headerpad_max_install_names"
       ;;
       *-*-cygwin* | *-*-mingw32 | *-*-mingw64 )
-        gamedatadir=""
+        gamedatadir="${datadir}"
+        DEFS="$DEFS -DDATA_DIR=\"\\\"../\\\"\""
       ;;
     esac        
   else
@@ -156,7 +157,7 @@ AC_CHECK_FUNCS([TTF_GetFontKerningSizeGlyphs])
 dnl on a mingw build, we do not want SDL to redefine 'main'
 case "$target" in
   *-*-cygwin* | *-*-mingw32 | *-*-mingw64 )
-     SDL_CFLAGS=`echo $SDL_CFLAGS | sed 's/ -Dmain=SDL_main//'`
+     SDL_CFLAGS=`echo $SDL_CFLAGS | sed 's/ -Dmain=SDL_main//' | sed 's/SDL2//'`
      SDL_DEFS="-DSDL_MAIN_HANDLED"
   ;;
 esac
