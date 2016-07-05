@@ -130,6 +130,8 @@ public :
 
 protected :
 
+    void fit_text_width();
+
     u_int16 ucd (u_int16 & idx) const
     {
     	return ucd(my_text_, idx);

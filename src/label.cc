@@ -16,6 +16,8 @@
 
 u_int16 label::cursor_blink_cycle = 75; 
 
+#define LINE_LENGTH(line) (line.pos_x + line.offset_x/screen::scale())
+
 /**
    Constructor
 */
@@ -120,6 +122,10 @@ void label::resize (u_int16 l, u_int16 h)
 void label::set_form (const u_int8 form)
 {
     my_form_ = form;
+
+    if (my_text_.empty())
+    	return;
+
     build (true); 
 }
 
@@ -248,7 +254,7 @@ void label::build_form_nothing ()
         }
         else if (my_text_[start_idx] == ' ')
         {
-            if ((*my_font_) [' '].length () + line_tmp.pos_x > length ())
+            if ((*my_font_) [' '].length () + LINE_LENGTH(line_tmp) > length ())
             {
                 line_tmp.idx_end = start_idx;
                 
@@ -275,7 +281,7 @@ void label::build_form_nothing ()
         { 
             // find a word
             
-            switch (find_word (start_idx, word_length, word_length_pix, word_offset_x, prev_c, line_tmp.pos_x))
+            switch (find_word (start_idx, word_length, word_length_pix, word_offset_x, prev_c, LINE_LENGTH(line_tmp)))
             {
                 case 0 : // enough place
                     line_tmp.pos_x += word_length_pix;
@@ -291,7 +297,7 @@ void label::build_form_nothing ()
                         offset_x_ = line_tmp.offset_x;
                         fillrect (line_tmp.pos_x,
                                   (my_vect_.size () - start_line_) * my_font_->height (),
-                                  length () - line_tmp.pos_x,
+                                  length () - LINE_LENGTH(line_tmp),
                                   my_font_->height (), screen::trans_col () );  
                     }
                     line_tmp.idx_end = (start_idx - word_length) - 1;   
@@ -376,7 +382,10 @@ void label::build_form_auto_size ()
     {
         if (my_text_[i] == '\n')
         {
-            if (line_tmp.pos_x > max_length) max_length = line_tmp.pos_x; 
+            if (line_tmp.pos_x + LINE_LENGTH(line_tmp) > max_length)
+			{
+            	max_length = LINE_LENGTH(line_tmp);
+			}
             line_tmp.idx_end = i; 
             my_vect_.push_back (line_tmp);
             
@@ -396,13 +405,34 @@ void label::build_form_auto_size ()
         i++; 
     }
     
-    if (line_tmp.pos_x > max_length) max_length = line_tmp.pos_x;
+    if (LINE_LENGTH(line_tmp) > max_length)
+	{
+    	max_length = LINE_LENGTH(line_tmp);
+	}
+
     // the last line
     line_tmp.idx_end = i-1;
     my_vect_.push_back (line_tmp);
     
     // now resize the label
     image::resize (max_length, my_vect_.size () * my_font_->height ());  
+}
+
+void label::fit_text_width()
+{
+	u_int16 new_size = 0;
+	for (vector<Sline_text>::iterator i = my_vect_.begin(); i != my_vect_.end(); i++)
+	{
+	    if (LINE_LENGTH((*i)) > new_size)
+		{
+	    	new_size = LINE_LENGTH((*i));
+		}
+	}
+
+    if (new_size < length ())
+    {
+    	set_length(new_size);
+    }
 }
 
 void label::clean_surface (const bool erase_all)
@@ -458,8 +488,8 @@ u_int8 label::find_word (u_int16 & index, u_int16 & wlength, u_int16 & wlengthpi
 	last_letter = c;
     
     // if size of word is bigger than the length of label 
-    if (wlengthpix < length () - rlength)  return 0;
-    else if (wlengthpix < length ())  return 1; 
+    if (wlengthpix + woffset/screen::scale() < length () - rlength)  return 0;
+    else if (wlengthpix + woffset/screen::scale() < length ())  return 1;
     return 2;
 }
 
@@ -638,7 +668,6 @@ bool label::last_letter (u_int16 idx)
 
 bool label::input_update ()
 {
-
     if(input::has_been_pushed(KEY_CURSOR_NEXT)) 
     {
         if (! (height () && length ())) return false;  

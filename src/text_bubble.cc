@@ -43,6 +43,7 @@ text_bubble::text_bubble (const string & text, const string & textcolor,
     label::resize (len, 0);
     set_form (label::AUTO_HEIGHT); 
     set_text (nls::translate (text));
+    fit_text_width();
     set_visible_border (true);
     set_visible_background (true);
     set_trans_background (true);
