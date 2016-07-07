@@ -214,6 +214,11 @@ bool screen::set_fullscreen (const u_int8 & m)
 
     	switch(mode_)
     	{
+			case 0:
+			{
+				SDL_SetWindowPosition(Window, SDL_WINDOWPOS_CENTERED_DISPLAY(screen), SDL_WINDOWPOS_CENTERED_DISPLAY(screen));
+				break;
+			}
 			case 1:
 			{
 				r = SDL_SetWindowFullscreen(Window, SDL_WINDOW_FULLSCREEN_DESKTOP) == 0;
