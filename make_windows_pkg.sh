@@ -23,7 +23,7 @@ mkdir build
 
 APP=adonthell-0.3.exe
 
-# -- strip path from application name
+# -- strip version from application name
 appname=`echo "$APP" | sed 's/-.*//'`
 
 # -- application folder name starts with capital
@@ -44,14 +44,45 @@ mkdir -p $bindir
 mkdir -p $moduledir
 mkdir -p $pythondir
 
+cd build
+
+# -- create resource file
+cat > adonthell.rc << EOF
+1 VERSIONINFO
+FILEVERSION     0,3,6,0
+PRODUCTVERSION  0,3,6,0
+BEGIN
+  BLOCK "StringFileInfo"
+  BEGIN
+    BLOCK "080904E4"
+    BEGIN
+      VALUE "CompanyName", "The Adonthell Team"
+      VALUE "FileDescription", "Adonthell RPG Engine"
+      VALUE "FileVersion", "0.3.6"
+      VALUE "InternalName", "adonthell"
+      VALUE "LegalCopyright", "© 2016 The Adonthell Team"
+      VALUE "OriginalFilename", "adonthell-0.3.exe"
+      VALUE "ProductName", "Adonthell"
+      VALUE "ProductVersion", "0.3.6"
+    END
+  END
+
+  BLOCK "VarFileInfo"
+  BEGIN
+    VALUE "Translation", 0x809, 1252
+  END
+END
+EOF
+windres adonthell.rc -O coff -o adonthell.res
+
 # -- prepare application
 prefix=${cwd}/${bundle}
 
 configure_args="--disable-unix-install --disable-pyc --prefix=$prefix --datadir=$prefix"
+linker_args="$cwd/build/adonthell.res -static-libgcc -static-libstdc++"
 
-cd build
 echo "Configuring $appname. This may take a while ..."
-../configure $configure_args > /dev/null
+LDFLAGS=$linker_args ../configure $configure_args > /dev/null
 if [ $? -ne 0 ]; then
    exit 1
 fi
