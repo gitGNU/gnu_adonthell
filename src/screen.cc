@@ -23,6 +23,7 @@
 
 #include <config.h>
 #include "screen.h"
+#include "game.h"
 #include <iostream>
 #include <sstream> 
 
@@ -119,6 +120,18 @@ bool screen::init (u_int16 nl, u_int16 nh, u_int8 depth, u_int8 screen, u_int8 s
         std::cout << "Failed creating window: " << SDL_GetError() << std::endl;
     	return false;
     }
+#ifdef WIN32
+    const string icon_name = game::find_file("gfx/icon32.bmp");
+    if (!icon_name.empty())
+    {
+    	SDL_Surface* icon = SDL_LoadBMP(icon_name.c_str());
+		if (icon != NULL)
+		{
+			SDL_SetWindowIcon(Window, icon);
+			SDL_FreeSurface(icon);
+		}
+    }
+#endif
     if (SDL_SetWindowDisplayMode(Window, &fullscreen_mode) < 0)
     {
         std::cout << "Failed setting display mode: " << SDL_GetError() << std::endl;
