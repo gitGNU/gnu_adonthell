@@ -16,3 +16,7 @@ config.h
 adonthell.spec
 autom4te.cache
 config.h.in
+stamp-h1
+install-sh
+depcomp
+compile
