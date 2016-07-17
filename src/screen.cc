@@ -239,7 +239,10 @@ bool screen::set_fullscreen (const u_int8 & m)
 			}
 			case 2:
 			{
-				SDL_SetWindowPosition(Window, 0, 0);
+				SDL_Rect bounds;
+				SDL_GetDisplayBounds(screen, &bounds);
+				SDL_SetWindowPosition(Window, bounds.x, bounds.y);
+				// SDL_SetWindowPosition(Window, 0, 0);
 				r = SDL_SetWindowFullscreen(Window, SDL_WINDOW_FULLSCREEN) == 0;
 				break;
 			}
@@ -313,7 +316,11 @@ void screen::update_scale()
 			clip.w = length() * scale_;
 			clip.h = height() * scale_;
 
+			// make sure both buffers are clear before setting clip rect
             clear();
+            show();
+            clear();
+
 			SDL_RenderSetClipRect(Renderer, &clip);
 		}
 		else
