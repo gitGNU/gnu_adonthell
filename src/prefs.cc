@@ -32,7 +32,7 @@
 config::config () 
 {
     // set some default values where possible
-    screen_mode = 1;                // Letterbox
+    screen_mode = 0;                // Letterbox
     display = 0;					// Display for fullscreen mode
     quick_load = 0;                 // Quick-load disabled
     audio_channels = 1;             // Stereo
