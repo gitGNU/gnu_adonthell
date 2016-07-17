@@ -64,7 +64,6 @@ win_ttf::win_ttf (const char *color, const string & file) : win_font ()
 win_ttf::~win_ttf ()
 {
     refcount--;
-    cursor = NULL;
     if (refcount == 0 && ttf != NULL)
         TTF_CloseFont (ttf);
 }
@@ -142,7 +141,6 @@ image & win_ttf::operator[](u_int16 glyph)
     	// if screen scale changed since creating the glyph,
     	// it needs to be recreated with the new size
     	TTF_CloseFont (ttf);
-    	cursor = NULL;
     	ttf = NULL;
     	erase();
 
@@ -190,7 +188,10 @@ image & win_ttf::operator[](u_int16 glyph)
     }
 
     tmp.draw (0, height_-tmp.height(), 0, 0, tmp.length(), tmp.height(), NULL, glph);
-    glyphs[glyph] = glph;
+    if (cursor != NULL)
+    {
+    	glyphs[glyph] = glph;
+    }
 
     return *glph;
 }

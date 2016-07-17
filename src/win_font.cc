@@ -35,7 +35,11 @@ win_font::~win_font()
 }
 void win_font::erase()
 {
-  if(cursor) delete cursor;
+  if(cursor)
+  {
+	  delete cursor;
+	  cursor = NULL;
+  }
   for(hash_map<u_int16, image*>::iterator i = glyphs.begin(); i != glyphs.end(); i++)
   {
 	  delete i->second;
