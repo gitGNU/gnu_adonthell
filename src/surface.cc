@@ -204,6 +204,7 @@ void surface::draw (s_int16 x, s_int16 y, s_int16 sx, s_int16 sy, u_int16 sl,
 			dstrect.h *= scale();
 
 			if (dstrect.x < 0) dstrect.x = 0;
+			if (dstrect.y < 0) dstrect.y = 0;
 		}
 
         // make sure we only update the part of the target texture that is actually changed
