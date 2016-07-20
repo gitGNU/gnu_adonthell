@@ -242,7 +242,6 @@ bool screen::set_fullscreen (const u_int8 & m)
 				SDL_Rect bounds;
 				SDL_GetDisplayBounds(screen, &bounds);
 				SDL_SetWindowPosition(Window, bounds.x, bounds.y);
-				// SDL_SetWindowPosition(Window, 0, 0);
 				r = SDL_SetWindowFullscreen(Window, SDL_WINDOW_FULLSCREEN) == 0;
 				break;
 			}
@@ -266,6 +265,7 @@ u_int8 screen::get_scale_for_display(u_int8 screen, u_int16 nl, u_int16 nh)
 		case 0:
 		{
 			// window mode
+			SDL_Delay(250);
 			SDL_GetDisplayUsableBounds(screen, &bounds);
 			break;
 		}
