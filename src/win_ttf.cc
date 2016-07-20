@@ -52,7 +52,7 @@ win_ttf::win_ttf (const char *color, const string & file) : win_font ()
     
     if (load (file))
     {
-        int real_height_ = TTF_FontHeight(ttf) + screen::scale() - 1;
+        int real_height_ =  TTF_FontHeight(ttf) + screen::scale() - 1;
         height_ = real_height_ / screen::scale();
         cursor = &operator[]('_');
         length_ = cursor->length ();
@@ -67,10 +67,22 @@ win_ttf::~win_ttf ()
     if (refcount == 0 && ttf != NULL)
         TTF_CloseFont (ttf);
 }
-    
+
+static int glyph_height (TTF_Font *ttf, const u_int16 & chr)
+{
+    int miny, maxy;
+    if (TTF_GlyphIsProvided(ttf, chr))
+    {
+    	TTF_GlyphMetrics(ttf, chr, NULL, NULL, &miny, &maxy, NULL);
+    	return maxy - miny;
+    }
+    return TTF_FontHeight(ttf)/2;
+}
+
 bool win_ttf::load (const string & file)
 {
     string path;
+    int avg_size = 0;
 
     // size of font
     u_int32 size = screen::scale () * 12;
@@ -79,7 +91,7 @@ bool win_ttf::load (const string & file)
     if (ttf != NULL) return true;
     
     // absolute or relative font file from config?
-    if (file != "" && file[0] == '/')
+    if (file.size() > 1 && (file[0] == '/' || file[1] == ':'))
     {
         path = file;
     }
@@ -92,7 +104,7 @@ bool win_ttf::load (const string & file)
         path += WIN_FONT_DIRECTORY;
 
         // font name from config file
-        path += file == "" ? "avatar.ttf" : file;
+        path += file == "" ? "Aclonica.ttf" : file;
     }
     
     // try to load font specified in cfg file
@@ -103,14 +115,30 @@ bool win_ttf::load (const string & file)
         printf ("*** error loading font '%s':\n %s\n", path.c_str (), TTF_GetError ());
         return false;
     }
-    
-    // make sure our font doesn't exceed a pixel size of 12
-    while (TTF_FontHeight(ttf) > (12 * screen::scale())) {
-        TTF_CloseFont (ttf);
-        ttf = TTF_OpenFont (path.c_str (), --size);
-    }
-    
+
     TTF_SetFontHinting(ttf, TTF_HINTING_LIGHT);
+
+    // determine average pixel height of font, based on a number of glyphs
+    avg_size += glyph_height(ttf, 'c');
+    avg_size += glyph_height(ttf, 'C');
+    avg_size += glyph_height(ttf, '0');
+    avg_size += glyph_height(ttf, ':');
+    
+    // make sure our font doesn't exceed a certain height
+    // since every font is different, this really only is an
+    // approximation and results are not perfect for each and
+    // every font out there
+    while (avg_size > (22.5 * screen::scale())) {
+    	avg_size = 0;
+    	TTF_CloseFont (ttf);
+        ttf = TTF_OpenFont (path.c_str (), --size);
+        TTF_SetFontHinting(ttf, TTF_HINTING_LIGHT);
+
+        avg_size += glyph_height(ttf, 'c');
+        avg_size += glyph_height(ttf, 'C');
+        avg_size += glyph_height(ttf, '0');
+        avg_size += glyph_height(ttf, ':');
+    }
 
     path_ = file;
     return true;
@@ -146,7 +174,7 @@ image & win_ttf::operator[](u_int16 glyph)
 
         if (load (path_))
         {
-            int real_height_ = TTF_FontHeight(ttf) + screen::scale() - 1;
+            int real_height_ =  TTF_FontHeight(ttf) + screen::scale() - 1;
             height_ = real_height_ / screen::scale();
             cursor = &operator[]('_');
             length_ = cursor->length ();
