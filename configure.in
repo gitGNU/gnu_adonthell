@@ -157,7 +157,7 @@ AC_CHECK_FUNCS([TTF_GetFontKerningSizeGlyphs])
 dnl on a mingw build, we do not want SDL to redefine 'main'
 case "$target" in
   *-*-cygwin* | *-*-mingw32 | *-*-mingw64 )
-     SDL_CFLAGS=`echo $SDL_CFLAGS | sed 's/ -Dmain=SDL_main//' | sed 's/SDL2//'`
+     SDL_CFLAGS=`echo $SDL_CFLAGS | sed 's/ -Dmain=SDL_main//'`
      SDL_DEFS="-DSDL_MAIN_HANDLED"
   ;;
 esac

@@ -82,7 +82,7 @@ configure_args="--disable-unix-install --disable-pyc --prefix=$prefix --datadir=
 linker_args="$cwd/build/adonthell.res -static-libgcc -static-libstdc++"
 
 echo "Configuring $appname. This may take a while ..."
-LDFLAGS=$linker_args ../configure $configure_args > /dev/null
+CXXFLAGS="-I$MINGW_PREFIX/usr/local/include" LDFLAGS=$linker_args ../configure $configure_args > /dev/null
 if [ $? -ne 0 ]; then
    exit 1
 fi
@@ -156,7 +156,7 @@ collections/__init__.py
 collections/abc.py
 encodings/__init__.py
 encodings/aliases.py
-encodings/cp1252.py
+encodings/cp*.py
 encodings/latin_1.py
 encodings/mbcs.py
 encodings/utf_8.py
@@ -167,6 +167,7 @@ heapq.py
 importlib/__init__.py
 io.py
 keyword.py
+lib-dynload/_codecs_*-cpython-35m.dll
 lib-dynload/_md5-cpython-35m.dll
 lib-dynload/_random-cpython-35m.dll
 lib-dynload/_sha1-cpython-35m.dll
@@ -197,5 +198,5 @@ for i in $py3_modules ; do
   if [ ! -d $pythondir/$target ] ; then
     mkdir $pythondir/$target
   fi
-  cp /mingw64/lib/python3.5/$i $pythondir/$i 
+  cp /mingw64/lib/python3.5/$i $pythondir/$target 
 done
