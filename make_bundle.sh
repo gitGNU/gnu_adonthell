@@ -96,7 +96,7 @@ EOF
 # -- prepare application
 prefix=${cwd}/${bundle}/Contents
 
-configure_args="--disable-unix-install --disable-pyc --prefix=$prefix/MacOS --bindir=$prefix/MacOS --datadir=$prefix"
+configure_args="--disable-unix-install --disable-pyc --prefix=$prefix/MacOS --bindir=$prefix/MacOS --datadir=$prefix --mandir=/tmp"
 if test $MACOSX_DEPLOYMENT_TARGET = "10.6" ; then
     configure_args="$configure_args --with-python=python2.6"
 fi
