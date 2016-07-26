@@ -1,7 +1,13 @@
+.cproject
+.project
+remove-potcdate.sed
+*.o
 *.pyc
 .deps
 .libs
 py_adonthell_wrap.cc
+libadonthell.a
+adonthell-0.3
 dlgedit
 html
 latex
@@ -30,6 +36,4 @@ depcomp
 compile
 POTFILES
 __pycache__
-
-B
-
+/src/modules/adonthell.py
