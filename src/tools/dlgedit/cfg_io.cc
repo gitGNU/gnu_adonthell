@@ -27,6 +27,7 @@
  */
 
 #include <stdio.h>
+#include <cstring>
 #include <cstdlib>
 #include <glib/gstdio.h>
 #include "cfg_io.h"
@@ -42,21 +43,21 @@ CfgIO::CfgIO ()
 {
 #if defined(__APPLE__)
     // OSX
-	Dlgeditrc = string (getenv ("HOME")) + "/Library/Application Support/Adonthell/dlgeditrc";
+	Dlgeditrc = std::string (getenv ("HOME")) + "/Library/Application Support/Adonthell/dlgeditrc";
 #elif defined (WIN32)
     // Windows
     char *appDataDir = getenv ("APPDATA");
     if (appDataDir != NULL && strlen (appDataDir) > 0)
-    	Dlgeditrc = string (getenv("APPDATA")) + "/Adonthell/dlgeditrc";
+    	Dlgeditrc = std::string (getenv("APPDATA")) + "/Adonthell/dlgeditrc";
     else
     	Dlgeditrc = "./dlgeditrc";
 #else
     // Unix
     char *xdgDir = getenv ("XDG_CONFIG_HOME");
     if (xdgDir != NULL && strlen (xdgDir) > 0)
-        result = string (xdgDir) + "/adonthell/dlgeditrc";
+    	Dlgeditrc = std::string (xdgDir) + "/adonthell/dlgeditrc";
     else
-       result = string (getenv ("HOME")) + "/.config/adonthell/dlgeditrc";
+    	Dlgeditrc = std::string (getenv ("HOME")) + "/.config/adonthell/dlgeditrc";
 #endif
     
     // loadcfgin is declared in lex.loadcfg.cc
