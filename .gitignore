@@ -1,3 +1,11 @@
+*.pyc
+.deps
+.libs
+py_adonthell_wrap.cc
+dlgedit
+html
+latex
+reference.tag
 Makefile
 Makefile.in
 aclocal.m4
@@ -20,3 +28,8 @@ stamp-h1
 install-sh
 depcomp
 compile
+POTFILES
+__pycache__
+
+B
+

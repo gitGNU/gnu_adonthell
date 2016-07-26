@@ -1,16 +1,4 @@
-2007-10-13  gettextize  <bug-gnu-gettext@gnu.org>
-
-	* m4/gettext.m4: Upgrade to gettext-0.16.1.
-	* m4/iconv.m4: Upgrade to gettext-0.16.1.
-	* m4/lib-ld.m4: Upgrade to gettext-0.16.1.
-	* m4/lib-link.m4: Upgrade to gettext-0.16.1.
-	* m4/lib-prefix.m4: Upgrade to gettext-0.16.1.
-	* m4/nls.m4: Upgrade to gettext-0.16.1.
-	* m4/po.m4: Upgrade to gettext-0.16.1.
-	* m4/progtest.m4: Upgrade to gettext-0.16.1.
-
-Currently, our change log is our CVS ;>
+Currently, our change log is our GIT repository ;>
 
 You can find it at:
-    http://savannah.nongnu.org/cgi-bin/viewcvs/adonthell/adonthell-0.3/
-
+    http://git.savannah.gnu.org/cgit/adonthell.git/log/

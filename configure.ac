@@ -370,12 +370,12 @@ if test "$SWIG" != "no" ; then
     fi
 fi
 
-dnl SWIG is needed to compile the code from CVS
+dnl SWIG is needed to compile the code from GIT 
 dnl or after making changes to the distributed code
 
 if test "x$haveswig" = "xno" ; then
-    if test -d "CVS"; then
-        echo "*** To compile Adonthell from CVS, you will need SWIG ${SWIG_MINVER} or higher."
+    if test -d ".git"; then
+        echo "*** To compile Adonthell from GIT, you will need SWIG ${SWIG_MINVER} or higher."
         echo "*** You can obtain the most recent version from http://www.swig.org."
         exit 1;
     else

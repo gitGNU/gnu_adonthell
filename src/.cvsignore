@@ -1,9 +1,0 @@
-.deps
-.libs
-Makefile
-Makefile.in
-adonthell
-adonthell.py
-py_adonthell_wrap.cc
-py_adonthell_wrap.doc
-TAGS
