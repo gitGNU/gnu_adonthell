@@ -45,8 +45,7 @@ SDL_Renderer *screen::Renderer = NULL;
 
 u_int8 screen::mode_ = 0;
 u_int8 screen::scale_;
-u_int16 screen::offset_x_;
-u_int16 screen::offset_y_;
+SDL_Rect screen::clip_rect_ = {};
 
 void screen::cleanup()
 {
@@ -295,7 +294,6 @@ u_int8 screen::get_scale_for_display(u_int8 screen, u_int16 nl, u_int16 nh)
 void screen::update_scale()
 {
 	int w, h;
-	static SDL_Rect clip = {};
 
 	SDL_GetRendererOutputSize(Renderer, &w, &h);
 	if (w != length() * scale_ || h != height() * scale_)
@@ -308,26 +306,20 @@ void screen::update_scale()
 		if (mode_ == 1)
 		{
 			// center viewport in letterbox mode
-			offset_x_ = (w - length() * scale_) / 2;
-			offset_y_ = (h - height() * scale_) / 2;
+			clip_rect_.x = (w - length() * scale_) / 2;
+			clip_rect_.y = (h - height() * scale_) / 2;
+			clip_rect_.w = length() * scale_;
+			clip_rect_.h = height() * scale_;
 
-			clip.x = offset_x_;
-			clip.y = offset_y_;
-			clip.w = length() * scale_;
-			clip.h = height() * scale_;
-
-			// make sure both buffers are clear before setting clip rect
-            clear();
-            show();
-            clear();
-
-			SDL_RenderSetClipRect(Renderer, &clip);
+			SDL_RenderSetClipRect(Renderer, &clip_rect_);
 		}
 		else
 		{
 			// no rendering offset required when running in window or fullscreen modes
-			offset_x_ = 0;
-			offset_y_ = 0;
+			clip_rect_.x = 0;
+			clip_rect_.y = 0;
+			clip_rect_.w = length() * scale_;
+			clip_rect_.h = height() * scale_;
 
 			SDL_RenderSetClipRect(Renderer, NULL);
 		}

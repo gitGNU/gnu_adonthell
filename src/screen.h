@@ -119,7 +119,7 @@ public:
      */
     static u_int16 offset_x()
     {
-    	return offset_x_;
+    	return clip_rect_.x;
     }
 
     /**
@@ -127,7 +127,7 @@ public:
      */
     static u_int16 offset_y()
     {
-    	return offset_y_;
+    	return clip_rect_.y;
     }
 
     /** 
@@ -137,7 +137,17 @@ public:
     static void clear () 
     {
         SDL_SetRenderDrawColor(Renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
-        SDL_RenderClear(Renderer);
+        if (clip_rect_.x || clip_rect_.y)
+        {
+        	// SDL renderers do not treat clip rect identical when clearing screen
+			SDL_RenderSetClipRect(Renderer, NULL);
+			SDL_RenderClear(Renderer);
+			SDL_RenderSetClipRect(Renderer, &clip_rect_);
+        }
+        else
+        {
+			SDL_RenderClear(Renderer);
+        }
     }
     
     /** Ensure the framebuffer is copied to the physical screen.
@@ -209,11 +219,8 @@ private:
     /// scale factor of the screen
     static u_int8 scale_;
 
-    /// x offset of viewport
-    static u_int16 offset_x_;
-
-    /// y offset of viewport
-    static u_int16 offset_y_;
+    /// clipping rectangle for letterbox mode
+    static SDL_Rect clip_rect_;
 };
 
 
