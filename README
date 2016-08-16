@@ -17,7 +17,10 @@
 Installation:
 =============
 
-See the INSTALL and NEWBIE files for details.
+When compiling Adonthell from source, refer to the INSTALL and 
+NEWBIE files for details. Additional information for compiling
+on a specific platform can be found in the respective README.<os>
+files.
 
 Note that this package alone doesn't allow you to play anything - 
 you'll need a game package in addition to this one. The official

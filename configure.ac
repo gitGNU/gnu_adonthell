@@ -95,6 +95,10 @@ if test x$gamedatadir = xnone; then
         gamedatadir="${datadir}"
         DEFS="$DEFS -DDATA_DIR=\"\\\"../\\\"\""
       ;;
+      *)
+        gamedatadir="${datadir}/adonthell"
+        DEFS="$DEFS -DDATA_DIR=\"\\\"../share/adonthell\\\"\""
+      ;;
     esac        
   else
     gamedatadir="${datadir}/adonthell"

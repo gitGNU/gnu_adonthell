@@ -1,6 +1,7 @@
 .cproject
 .project
 remove-potcdate.sed
+*~
 *.o
 *.pyc
 .deps
@@ -37,3 +38,4 @@ compile
 POTFILES
 __pycache__
 /src/modules/adonthell.py
+Adonthell.AppDir

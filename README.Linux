@@ -1,0 +1,54 @@
+					
+					Adonthell on GNU/Linux
+
+This file contains additional information for compiling Adonthell 
+under GNU/Linux. For general compilation instructions refer to the 
+INSTALL file. Even more details are found within the NEWBIE file.
+
+"Universal" AppImage package:
+=============================
+In order to create a binary distributable package of Adonthell 
+that is not tied to any single distribution, a set of scripts are
+provided to create a standalone AppImage package, that works in
+a similar fashion as application bundles on MacOS X.
+
+Prerequisites
+-------------
+In addition to the dependencies listed in the INSTALL file, the
+following extra packages are required:
+
+* AppImageKit 
+  https://github.com/probonopd/AppImageKit
+  
+  See https://github.com/probonopd/AppImageKit/wiki/Creating-AppImages
+  for detailed installation instructions.
+  
+* virtualenv
+  https://pypi.python.org/pypi/virtualenv
+
+  See https://virtualenv.pypa.io/en/stable/ for installation
+  instructions.
+  
+Creating Adonthell AppImage
+---------------------------
+
+In the adonthell-0.3.x directory, run
+
+    make_linux_appimg.sh
+
+If all goes well, it should configure, build and install Adonthell into
+Adonthell.AppDir, including all shared libraries and a complete Python
+environment. All that is mising now in the bundle is the actual game data.
+
+Change into the wastesedge-0.3.x directory and run
+
+    make_linux_appimg.sh ../adonthell-0.3.x/Adonthell.AppDir
+
+(adjusting the location to the .AppDir as needed). This will configure,
+build and install Waste's Edge into the Adonthell.AddDir folder, which
+then will be turned into a self-extracting, executable, compressed ISO
+image containing Adonthell and all it's dependencies, ready to run on
+(almost) any Linux system with a recent enough version of glibc.
+
+For maximum compatibility, it is recommended to create the AppImage on
+a fairly old build system.
