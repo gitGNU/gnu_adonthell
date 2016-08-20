@@ -1,5 +1,7 @@
 .cproject
 .project
+.settings
+adonthell-*.tar.gz
 remove-potcdate.sed
 *~
 *.o
@@ -12,6 +14,8 @@ adonthell-0.3
 adonthell-0.3.exe
 src/lex.prefs.cc
 src/tools/dlgedit/adonthell-dlgedit
+src/tools/dlgedit/lex.loadcfg.cc
+src/tools/dlgedit/lex.loadlg.cc
 html
 latex
 reference.tag

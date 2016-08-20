@@ -1,173 +1,141 @@
 
-                       Adonthell on Win32
+                       Adonthell on Windows
 
-This file contains additional information for compiling Adonthell
-under Windows for x86. For general compilation instructions refer to
-the INSTALL file. Even more details are found within the NEWBIE file.
+This file contains additional information for compiling Adonthell under 
+Windows for x86 and/or x64. For general compilation instructions refer 
+to the INSTALL file. Even more details are found within the NEWBIE file.
 
 
-Preparations:
+Build Environment:
+==================
+
+The recommended way to compile Adonthell for Windows is to use the mingw64
+distribution of the GNU Compiler Collection. Since Adonthell uses a build
+system based on GNU Autotools, a unixish environment such as provided by
+MSys2 is also required. So start by downloading the latest version from:
+
+  https://sourceforge.net/projects/msys2/files/Base/x86_64/
+
+For detailed installation instructions please refer to:
+
+  https://sourceforge.net/p/msys2/wiki/MSYS2%20installation/
+
+As an alternative, https://msys2.github.io/ also links to the download and
+runs you through the installation with a number of screenshots.
+
+Using the 64 bit version of MSys2 is recommended as it can create both 32bit
+and 64bit binaries.
+
+
+Dependencies:
 =============
 
-The instructions below assume that you want to use mingw on top of
-cygwin, which will produce binaries without additional dependencies
-on cygwin.dll. You might find it less painfull to use plain cygwin,
-in which case you should be able to substitute most of the libraries
-found below with their prebuild cygwin counterparts.
+Once MSys2 has been installed, you will need to install a number of packages
+through the MSys2 package manager (pacman) which are required by Adonthell.
 
-Also note that many of the issues and their workarounds might be
-specific to the version used below. If you resort to using different
-versions, your mileage may vary.
+The package names below are the 64bit variants and as such result in a 64bit
+version of Adonthell. To create 32bit binaries, replace x86_64 with i686 in
+the package names below. Install each package by typing
 
-1) Install Cygwin (http://www.cygwin.com/)
-	* Download and run Setup.exe. Apart from the cygwin core packages,
-	  the following tools and libraries will be required:
+  pacman -S <package name>
 
-	    From package 'Devel' install
-		  - autoconf2.5
-		  - automake1.9
-		  - gcc-mingw-g++
-		  - gdb
-		  - libtool1.5
-		  - make
-		  - pkg-config
-		  - swig
-	    From package 'Mingw' install
-		  - mingw-zlib
-	    From package 'Python' install
-		  - python
-
-	* Finally, add cygwin bin directory to the windows system PATH
-	  (only required if you plan to use an external IDE for compiling
-	  Adonthell later on)
-
-
-2) Install Python for MingW
-   (http://jove.prohosting.com/iwave/ipython/pyMinGW.html)
-	* Download pyMinGW-bin-core-2.4.3.1.zip
-	* Extract and replace corresponding files in your cygwin Python
-	  installation
-
-
-3) Install SDL (http://www.libsdl.org/)
-	* Get source code, extract and compile/install in cygwin. This is
-	  as easy as following these steps:
-
-		$ ./configure
-		$ make
-		$ make install
-		$ cp /usr/local/share/aclocal/sdl.m4 /usr/share/aclocal
-		$ ln -s /usr/local/include/SDL /usr/local/include/SDL/SDL
-
-
-4) Install Freetype2 (http://www.freetype.org/)
-	* Download freetype 2.2.1 source code, extract and compile by
-	  following the steps lined out below:
-
-		$ export CC="gcc -mno-cygwin"
-		$ export LDFLAGS=-mno-cygwin
-	  	$ ./configure
-	  	$ make
-
-	  	Just before linking, you will run into an error. Execute
-	  	the looooong line below, then run 'make' again.
-
-		$ ./objs/apinames -o ./objs/ftexport.sym  ./include/freetype/freetype.h ./include/freetype/ftbbox.h ./include/freetype/ftbdf.h ./include/freetype/ftbitmap.h ./include/freetype/ftcache.h ./include/freetype/ftchapters.h ./include/freetype/fterrdef.h ./include/freetype/fterrors.h ./include/freetype/ftglyph.h ./include/freetype/ftgxval.h ./include/freetype/ftgzip.h ./include/freetype/ftimage.h ./include/freetype/ftincrem.h ./include/freetype/ftlist.h ./include/freetype/ftlzw.h ./include/freetype/ftmac.h ./include/freetype/ftmm.h ./include/freetype/ftmodapi.h ./include/freetype/ftmoderr.h ./include/freetype/ftotval.h ./include/freetype/ftoutln.h ./include/freetype/ftpfr.h ./include/freetype/ftrender.h ./include/freetype/ftsizes.h ./include/freetype/ftsnames.h ./include/freetype/ftstroke.h ./include/freetype/ftsynth.h ./include/freetype/ftsystem.h ./include/freetype/fttrigon.h ./include/freetype/fttypes.h ./include/freetype/ftwinfnt.h ./include/freetype/ftxf86.h ./include/freetype/t1tables.h ./include/freetype/ttnameid.h ./include/freetype/tttables.h ./include/freetype/tttags.h ./include/freetype/ttunpat.h
-		$ make install
-
-	* Note: this does not create a freetype DLL, but we should be
-	  able to live with that.
-
-
-5) Install Libxml2 (http://xmlsoft.org/)
-	* Download libxml-sources-2.6.26, extract and compile in cygwin by
-	  following the steps below:
-
-		$ export CC="gcc -mno-cygwin"
-		$ export LDFLAGS=-mno-cygwin
-		$ ./configure --without-ftp --without-http
-		$ make
-    	$ make install
-
-    * Note: the resulting DLL will be named cyglibxml2-2.dll. It does
-      not depend on cygwin however.
-
-
-6) Install OggVorbis (http://www.xiph.org/downloads/)
-
-	* Download libogg 1.1.3, extract and compile within cygwin:
-
-		$ export CC="gcc -mno-cygwin"
-		$ export LDFLAGS=-mno-cygwin
-		$ ./configure
-		$ make
-		$ make install
-
-	* Download libvorbis 1.1.2, extract and compile within cygwin:
-
-		$ ln -s /usr/local/lib/pkgconfig /usr/lib/pkgconfig
-		$ export CC="gcc -mno-cygwin"
-		$ export LDFLAGS=-mno-cygwin
-		$ ./configure
-
-		Edit lib/Makefile and replace line
-			libvorbisfile_la_LIBADD = libvorbis.la
-		with
-			libvorbisfile_la_LIBADD = -logg libvorbis.la
-
-		$ make
-		$ make install
+The following packages are required:
+  
+  tar
+  make
+  mingw-w64-x86_64-gcc
+  mingw-w64-x86_64-gettext
+  mingw-w64-x86_64-pkg-config
+  mingw-w64-x86_64-python3
+  mingw-w64-x86_64-SDL2_mixer
+  mingw-w64-x86_64-SDL2_ttf
 
 
 Compiling Adonthell:
 ====================
 
 After installing all the libraries and tools above, we're finally
-ready to compile Adonthell.
+ready to compile Adonthell. For this, make sure to exit the MSys2 shell
+and open the mingw64 (or mingw32) environment instead. 
 
-	$ ln -s /usr/bin/less /usr/bin/more
-	$ export CFLAGS=-mno-cygwin
-	$ export LDFLAGS=-mno-cygwin
-	$ ./autogen.sh
-	$ ./configure --disable-nls --prefix=/usr/local --with-py-libs="/bin/python24.dll" --with-py-cflags="-I/usr/include/python2.4"
+Extract both adonthell-0.3.x.tar.gz and wastesedge-0.3.x.tar.gz and
+in each directory, run the usual commands:
 
-This should result into output similar to the following:
+    ./configure
+    make
+    make install
 
-	Adonthell v0.3.4
+to compile and install Adonthell locally. You can now launch Adonthell
+by typing
 
-	SDL ....................... : 1.2.11
-	Python .................... : Manually specified
-	Python debugging .......... : yes
-	Freetype .................. : 9.10.3
-	SWIG ...................... : 1.3.29
-	Ogg music ................. : enabled
-	Building API doc .......... : no
-	Data directory ............ :
+    adonthell-wastesedge
 
-Before you continue with 'make', you have to execute the following
-command:
 
-	$ cd src && /usr/bin/swig -python -modern -shadow -I/usr/local/include/SDL -I/usr/include/mingw -Dmain=SDL_main -I. -I./.. -c++ -makedefault -o ./py_adonthell_wrap.cc ./py_adonthell.i
+Distributable Package:
+======================
 
-From then on, you should be able to go to your Eclipse IDE and build
-Adonthell from there (see below), or just type 'make' to start the
-build from cygwin.
+To create a version of Adonthell that can be used outside the mingw
+environment, or on a different computer running Windows, a set of scripts
+are provided. Make sure that the dependencies listed above are installed
+and the compile step worked. Then, in the adonthell-0.3.x directory, run
 
-Using Eclipse IDE for Adonthell development:
-============================================
+    ./make_windows_pkg.sh 
 
-If you plan to do programming work on Adonthell and want to use a
-modern IDE, Eclipse is a good choice as it works transparently with
-the toolchain we set up in preparation to compile Adonthell.
+If all goes well, it will configure, build and install into a directory
+called Adonthell/, including all the required DLLs not present in the
+Windows System32 folder. Now only the actual game data is missing.
 
-To use Eclipse to develop C/C++, download and install the following:
+Change into the wastesedge-0.3.x directory and run
 
-	* Eclipse SDK 3.2
-	  http://www.eclipse.org/downloads/
+    make_windows_pkg.sh ../adonthell-0.3.x/Adonthell
 
-	* CTD Runtime 3.1
-	  http://download.eclipse.org/tools/cdt/releases/callisto/dist/3.1.0/
+(adjusting the location to the Adonthell directory as needed). This will 
+configure, build and install Waste's Edge and make the package ready to 
+use. You can now zip it up and transfer to any other Windows system. 
 
-Then follow the tutorial at [1] to import the Adonthell source code.
+To start the game, use the adonthell-wastesedge.bat script.
 
-[1] http://download.eclipse.org/tools/cdt/docs/tutorials/import_standard_tutorial/cdt_w_std_import.htm
+
+Installer:
+==========
+
+To make distribution of the Windows package a little more professional,
+a .msi installer can be built once the steps above are complete.
+
+This requires the WIX Toolset, downloadable from
+
+    http://wixtoolset.org/
+
+Make sure it is in your PATH, i.e.
+
+    export PATH=$PATH:/C/Program\ Files\ \(x86\)/WiX\ Toolset\ v3.10/bin
+
+(adjusting the location to the WiX bin directory accordingly)
+
+Change into the wastesedge-0.3.x/win32 directory and run
+
+	./make_msi.sh ../../adonthell-0.3.x/Adonthell
+
+(adjusting the location to the Adonthell directory as needed).
+
+If all goes well, the installer will be created in the current directory.
+
+
+Additional Notes:
+=================
+
+(1) In order to embed the correct icon in the Adonthell executable,
+    the rcedit program needs to be present in the PATH. It can be
+    dowloaded from
+
+		https://github.com/electron/node-rcedit/tree/master/bin
+
+(2) In order to keep the list of external DLLs included in the package 
+    at a minimum, it pays to use custom compiled versions of SDL2_mixer, 
+    Freetype and SDL2_tff. Configure those with the following flags
+
+    Freetype   : ./configure --with-png=no --with-bzip2=no
+    SDL2_mixer : ./configure --disable-music-ogg-shared
+
+    In this case, make sure to install mingw-w64-x86_64-libvorbis
+    using pacman.

@@ -12,7 +12,7 @@ all: $(py_files)
 	    done \
 	fi ;
 
-	$(top_builddir)/src/adonthell-0.3 -c
+	PYTHONHOME=@PY_PREFIX@ $(top_builddir)/src/adonthell-0.3 -c
 else
 nodist_moddata_DATA = $(py_files)
 endif

@@ -60,7 +60,7 @@ BEGIN
       VALUE "FileDescription", "Adonthell RPG Engine"
       VALUE "FileVersion", "0.3.6"
       VALUE "InternalName", "adonthell"
-      VALUE "LegalCopyright", "© 2016 The Adonthell Team"
+      VALUE "LegalCopyright", "Â© 2016 The Adonthell Team"
       VALUE "OriginalFilename", "adonthell-0.3.exe"
       VALUE "ProductName", "Adonthell"
       VALUE "ProductVersion", "0.3.6"
@@ -78,8 +78,8 @@ windres adonthell.rc -O coff -o adonthell.res
 # -- prepare application
 prefix=${cwd}/${bundle}
 
-configure_args="--disable-unix-install --disable-pyc --prefix=$prefix --datadir=$prefix"
-linker_args="$cwd/build/adonthell.res -static-libgcc -static-libstdc++"
+configure_args="--disable-unix-install --disable-pyc --prefix=$prefix --datadir=$prefix --mandir=/tmp"
+linker_args="-L$MINGW_PREFIX/lib $cwd/build/adonthell.res -static-libgcc -static-libstdc++"
 
 echo "Configuring $appname. This may take a while ..."
 CXXFLAGS="-I$MINGW_PREFIX/usr/local/include" LDFLAGS=$linker_args ../configure $configure_args > /dev/null
@@ -106,7 +106,7 @@ cd ..
 function copyLibs
 {
     # -- find all non-standard shared libraries used by app
-    for i in `ldd $1 | awk '{ print $3 }' | grep -i -v system32` ; do
+    for i in `ldd $1 | awk '/=>/ { print $3 }' | grep -i -v -e system32 -e '?'` ; do
   
         # -- strip path from library name
         libname=`echo "$i" | sed 's/.*\///'`
@@ -121,7 +121,7 @@ function copyLibs
 }
 
 # -- copy shared libraries used by application
-copyLibs $bindir/$APP
+copyLibs "$bindir/$APP"
 
 function removeDbgSyms
 {
@@ -140,9 +140,12 @@ done
 
 # -- copy required python modules from the standard library
 #
-# Note that this list is for Python 3.5.0 as provided by
+# Note that this list is for Python 3.5.2 as provided by
 # mingw64 and will have to be adjusted for other versions
 # of Python. 
+#
+# Instead of hardcoding the required files, perhaps a similar
+# approach as with the make_linux_appimg.sh could be used.
 py3_modules="
 __future__.py
 _bootlocale.py
@@ -154,6 +157,8 @@ abc.py
 codecs.py
 collections/__init__.py
 collections/abc.py
+contextlib.py
+copyreg.py
 encodings/__init__.py
 encodings/aliases.py
 encodings/cp*.py
@@ -165,6 +170,10 @@ genericpath.py
 hashlib.py
 heapq.py
 importlib/__init__.py
+importlib/abc.py
+importlib/machinery.py
+importlib/util.py
+imp.py
 io.py
 keyword.py
 lib-dynload/_codecs_*-cpython-35m.dll
@@ -180,7 +189,11 @@ operator.py
 os.py
 random.py
 reprlib.py
+re.py
 site.py
+sre_compile.py
+sre_constants.py
+sre_parse.py
 stat.py
 sysconfig.py
 traceback.py
@@ -198,5 +211,5 @@ for i in $py3_modules ; do
   if [ ! -d $pythondir/$target ] ; then
     mkdir $pythondir/$target
   fi
-  cp /mingw64/lib/python3.5/$i $pythondir/$target 
+  cp $MINGW_PREFIX/lib/python3.5/$i $pythondir/$target 
 done

@@ -3,7 +3,7 @@ dnl Process this file with autoconf to produce a configure script.
 dnl **************************************************************
 
 AC_PREREQ(2.59)
-AC_INIT([Adonthell], [0.3.6])
+AC_INIT([Adonthell], [0.3.6], [adonthell-general@nongnu.org], [adonthell], [http://adonthell.nongnu.org])
 AC_CONFIG_SRCDIR([README])
 AC_CONFIG_AUX_DIR(.)
 
@@ -218,6 +218,11 @@ if test $PY_HEX_VERSION -lt `printf %d 0x020201F0`; then
 		AC_MSG_ERROR([*** Python 2.2.1 or better required])
 fi
 
+dnl Get the Path to the Python standard library
+
+PY_PREFIX=`$PYTHON -c 'import sys; print (sys.prefix)'`
+AC_SUBST(PY_PREFIX)
+
 dnl Find the Python.h header file
 
 if test "x$pycflags" = xnone; then
@@ -254,14 +259,13 @@ if test "x$pylibs" = xnone; then
    AC_MSG_CHECKING(for Python library)
    PYLIB=""
    changequote(<<, >>)
-   PYPREFIX=`$PYTHON -c 'import sys; print (sys.prefix)'`
    PYLIBVER=`$PYTHON -c 'import sys; print (sys.version[:3])'`
    changequote([, ])
 
    dnl look for a framework build of python first
-   fw=`echo "$PYPREFIX" | sed 's/.*\(Python\.framework\).*/\1/;'`
+   fw=`echo "$PY_PREFIX" | sed 's/.*\(Python\.framework\).*/\1/;'`
    if test "x$fw" != x && test "x$osx" = "xyes"; then
-       PY_LIBS="$PYPREFIX/Python"
+       PY_LIBS="$PY_PREFIX/Python"
        AC_MSG_RESULT(found)
    else
        dnl Try for specific version first, then the generic version, then panic
@@ -381,6 +385,9 @@ if test "x$haveswig" = "xno" ; then
     if test -d ".git"; then
         echo "*** To compile Adonthell from GIT, you will need SWIG ${SWIG_MINVER} or higher."
         echo "*** You can obtain the most recent version from http://www.swig.org."
+        echo "***"
+        echo "*** As an alternative, you can try using an older version of Python"
+        echo "*** by specifying the --with-python=<python-exe> configure option"
         exit 1;
     else
         echo "*** NOTE: If you plan to make changes to the code you will need"
