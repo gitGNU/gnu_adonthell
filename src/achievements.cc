@@ -1,6 +1,4 @@
 /*
-   $Id$
-
    Copyright (C) 2016 Kai Sterker <kai.sterker@gmail.com>
    Part of the Adonthell Project <http://adonthell.nongnu.org>
 

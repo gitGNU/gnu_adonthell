@@ -9,7 +9,7 @@ remove-potcdate.sed
 py_adonthell_wrap.cc
 libadonthell.a
 adonthell-0.3
-dlgedit
+src/tools/dlgedit/adonthell-dlgedit
 html
 latex
 reference.tag
