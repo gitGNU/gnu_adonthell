@@ -13,7 +13,7 @@
 #include "storage.h"
 #include "gametime.h"
 #include "gamedate.h"
-#include <SDL2/SDL_keycode.h>
+#include <SDL_keycode.h>
 #include "input.h"
 #include "audio.h"
 #include "character_base.h"

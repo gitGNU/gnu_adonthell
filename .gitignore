@@ -9,6 +9,8 @@ remove-potcdate.sed
 py_adonthell_wrap.cc
 libadonthell.a
 adonthell-0.3
+adonthell-0.3.exe
+src/lex.prefs.cc
 src/tools/dlgedit/adonthell-dlgedit
 html
 latex
