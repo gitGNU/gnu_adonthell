@@ -8,7 +8,6 @@ to the INSTALL file. Even more details are found within the NEWBIE file.
 
 Build Environment:
 ==================
-
 The recommended way to compile Adonthell for Windows is to use the mingw64
 distribution of the GNU Compiler Collection. Since Adonthell uses a build
 system based on GNU Autotools, a unixish environment such as provided by
@@ -29,7 +28,6 @@ and 64bit binaries.
 
 Dependencies:
 =============
-
 Once MSys2 has been installed, you will need to install a number of packages
 through the MSys2 package manager (pacman) which are required by Adonthell.
 
@@ -53,7 +51,6 @@ The following packages are required:
 
 Compiling Adonthell:
 ====================
-
 After installing all the libraries and tools above, we're finally
 ready to compile Adonthell. For this, make sure to exit the MSys2 shell
 and open the mingw64 (or mingw32) environment instead. 
@@ -73,7 +70,6 @@ by typing
 
 Distributable Package:
 ======================
-
 To create a version of Adonthell that can be used outside the mingw
 environment, or on a different computer running Windows, a set of scripts
 are provided. Make sure that the dependencies listed above are installed
@@ -91,18 +87,17 @@ Change into the wastesedge-0.3.x directory and run
 
 (adjusting the location to the Adonthell directory as needed). This will 
 configure, build and install Waste's Edge and make the package ready to 
-use. You can now zip it up and transfer to any other Windows system. 
+use. You can now zip it up and transfer it to any other Windows system. 
 
 To start the game, use the adonthell-wastesedge.bat script.
 
 
 Installer:
 ==========
-
 To make distribution of the Windows package a little more professional,
 a .msi installer can be built once the steps above are complete.
 
-This requires the WIX Toolset, downloadable from
+This requires the WiX Toolset, downloadable from
 
     http://wixtoolset.org/
 
@@ -114,7 +109,7 @@ Make sure it is in your PATH, i.e.
 
 Change into the wastesedge-0.3.x/win32 directory and run
 
-	./make_msi.sh ../../adonthell-0.3.x/Adonthell
+    ./make_msi.sh ../../adonthell-0.3.x/Adonthell
 
 (adjusting the location to the Adonthell directory as needed).
 
@@ -123,12 +118,11 @@ If all goes well, the installer will be created in the current directory.
 
 Additional Notes:
 =================
-
 (1) In order to embed the correct icon in the Adonthell executable,
     the rcedit program needs to be present in the PATH. It can be
     dowloaded from
 
-		https://github.com/electron/node-rcedit/tree/master/bin
+        https://github.com/electron/node-rcedit/tree/master/bin
 
 (2) In order to keep the list of external DLLs included in the package 
     at a minimum, it pays to use custom compiled versions of SDL2_mixer, 
@@ -137,5 +131,16 @@ Additional Notes:
     Freetype   : ./configure --with-png=no --with-bzip2=no
     SDL2_mixer : ./configure --disable-music-ogg-shared
 
-    In this case, make sure to install mingw-w64-x86_64-libvorbis
-    using pacman.
+    In this case, make sure to install mingw-w64-x86_64-libvorbis and
+    mingw-w64-x86_64-SDL2 instead of SDL2_mixer and SDL2_ttf.
+
+(3) Due to bugs present in SDL 2.0.4, it is recommended to use version
+    2.0.5 (once available), or to compile SDL from source as well, using
+    at least revision 17e0ded12e6f:
+    
+        https://hg.libsdl.org/SDL/archive/17e0ded12e6f.tar.bz2
+    
+    To compile this using mingw, the following patch also needs to be
+    applied
+    
+        https://bugzilla.libsdl.org/show_bug.cgi?id=3399
