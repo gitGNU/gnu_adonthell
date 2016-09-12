@@ -62,8 +62,16 @@ void screen::cleanup()
     Window = NULL;
 }
 
-bool screen::init (u_int16 nl, u_int16 nh, u_int8 depth, u_int8 screen, u_int8 screen_mode)
+bool screen::init (u_int16 nl, u_int16 nh, u_int8 depth, const config & myconfig)
 {
+	u_int8 screen = myconfig.display;
+	u_int8 screen_mode = myconfig.screen_mode;
+
+#if defined(SDL_VIDEO_DRIVER_X11) || defined(SDL_VIDEO_DRIVER_WAYLAND)
+	std::string wm_class = "SDL_VIDEO_X11_WMCLASS=" + myconfig.game_name;
+	putenv ((char *) wm_class.c_str ());
+#endif
+
     if (SDL_Init (SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0)
     {
     	std::cout << "Couldn't init SDL: " << SDL_GetError () << std::endl;
@@ -302,33 +310,31 @@ void screen::update_scale()
 	int w, h;
 
 	SDL_GetRendererOutputSize(Renderer, &w, &h);
-	if (w != length() * scale_ || h != height() * scale_)
+
+	int scale_x = w / length();
+	int scale_y = h / height();
+
+	scale_ = scale_x > scale_y ? scale_y : scale_x;
+
+	if (mode_ == 1)
 	{
-		int scale_x = w / length();
-		int scale_y = h / height();
+		// center viewport in letterbox mode
+		clip_rect_.x = (w - length() * scale_) / 2;
+		clip_rect_.y = (h - height() * scale_) / 2;
+		clip_rect_.w = length() * scale_;
+		clip_rect_.h = height() * scale_;
 
-		scale_ = scale_x > scale_y ? scale_y : scale_x;
+		SDL_RenderSetClipRect(Renderer, &clip_rect_);
+	}
+	else
+	{
+		// no rendering offset required when running in window or fullscreen modes
+		clip_rect_.x = 0;
+		clip_rect_.y = 0;
+		clip_rect_.w = length() * scale_;
+		clip_rect_.h = height() * scale_;
 
-		if (mode_ == 1)
-		{
-			// center viewport in letterbox mode
-			clip_rect_.x = (w - length() * scale_) / 2;
-			clip_rect_.y = (h - height() * scale_) / 2;
-			clip_rect_.w = length() * scale_;
-			clip_rect_.h = height() * scale_;
-
-			SDL_RenderSetClipRect(Renderer, &clip_rect_);
-		}
-		else
-		{
-			// no rendering offset required when running in window or fullscreen modes
-			clip_rect_.x = 0;
-			clip_rect_.y = 0;
-			clip_rect_.w = length() * scale_;
-			clip_rect_.h = height() * scale_;
-
-			SDL_RenderSetClipRect(Renderer, NULL);
-		}
+		SDL_RenderSetClipRect(Renderer, NULL);
 	}
 
 #ifdef DEBUG

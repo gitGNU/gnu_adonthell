@@ -190,7 +190,7 @@ int main(int argc, char * argv[])
     achievements::init();
 
     // init video subsystem
-    if (!screen::init (320, 240, 0, myconfig.display, myconfig.screen_mode))
+    if (!screen::init (320, 240, 0, myconfig))
     {
         printf("%s\n", screen::info().c_str());
         SDL_Quit();

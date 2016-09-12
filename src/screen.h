@@ -31,6 +31,7 @@
 #define SCREEN_H_
 
 #include "surface.h"
+#include "prefs.h"
 #include <string>
 
 
@@ -72,11 +73,10 @@ public:
      *  @param nl X screen resolution.
      *  @param nh Y screen resolution.
      *  @param depth desired screen depth.
-     *  @param display the display to use.
-     *  @param screen_mode whether to start in window or fullscreen mode
+     *  @param myconfig configuration data.
      *  @return true on success, false otherwise.
      */ 
-    static bool init (u_int16 nl, u_int16 nh, u_int8 depth, u_int8 display, u_int8 screen_mode);
+    static bool init (u_int16 nl, u_int16 nh, u_int8 depth, const config & myconfig);
 
     /** Returns the length of the screen.
      *  @return length of the screen.
