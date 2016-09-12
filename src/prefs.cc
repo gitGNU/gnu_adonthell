@@ -42,7 +42,7 @@ config::config ()
     audio_channels = 1;             // Stereo
     audio_resolution = 1;           // 16 bit
     audio_sample_rate = 2;          // 11025, 22050 or 44100 Hz
-    audio_volume = 100;             // 0 - 100%
+    audio_volume = 35;              // 0 - 100%
     language = "";                  // Let the user's environment decide
     font = "";						// use default font
 
