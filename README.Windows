@@ -144,3 +144,10 @@ Additional Notes:
     applied
     
         https://bugzilla.libsdl.org/show_bug.cgi?id=3399
+
+(4) Codesigning of the Adonthell executable and the MSI installer will
+    be done automatically by the make_msi.sh script, provided you have  
+    Microsofts signtool from the Windows Platform SDK in your PATH and 
+    a suitable certificate added to the Windows certificate store.
+    
+    
