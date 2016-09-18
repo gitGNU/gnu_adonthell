@@ -92,3 +92,38 @@ Change into the wastesedge-0.3.x directory and run
 (adjusting the location to the bundle as needed). This will configure,
 build and install Waste's Edge into the Adonthell.app bundle, making it
 ready to use.
+
+
+Codesigning and creating a disk image:
+======================================
+In order to distribute the app bundle created above, the usual way on OSX is
+to package everything into a disk image (.dmg). In order to automate this, the
+make_dmg.sh in the osx/ directory can be used. This also contains the required
+commands to sign the bundle and resulting image, provided a suitable certificate
+is present in your keychain. Signing of the image itself requires OSX 10.11.4 or
+newer.
+
+Creating of the disk image requires the dmgbuild Python module, available from
+
+    https://pypi.python.org/pypi/dmgbuild
+
+Download, extract, then install by running
+
+    python setup.py install --user
+
+In case installation fails because of conflicting pyobjc system packages, update
+those by running before repeating the installation
+
+    sudo env CC=clang easy_install -U pyobjc-core
+
+In order to enable code signing, set the environment variable CODESIGN_IDENTITY
+to the name of the certificate, as shown by the Keychain Access.app, i.e.:
+
+    export CODESIGN_IDENTITY="<certificate name>"
+
+Now change into the wastesedge-0.3.x/osx directory and run
+
+    make_dmg.sh ../../adonthell-0.3.x/Adonthell.app
+
+You will be prompted for your password, as dmgbuild requires admin priviledges to
+set some of the attributes of the newly created disk image.
