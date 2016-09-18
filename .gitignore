@@ -1,6 +1,7 @@
 .cproject
 .project
 .settings
+.DS_store
 adonthell-*.tar.gz
 remove-potcdate.sed
 *~
@@ -16,6 +17,7 @@ src/lex.prefs.cc
 src/tools/dlgedit/adonthell-dlgedit
 src/tools/dlgedit/lex.loadcfg.cc
 src/tools/dlgedit/lex.loadlg.cc
+build
 html
 latex
 reference.tag
@@ -44,4 +46,5 @@ compile
 POTFILES
 __pycache__
 /src/modules/adonthell.py
+Adonthell.App
 Adonthell.AppDir
