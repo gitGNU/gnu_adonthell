@@ -66,7 +66,7 @@ void audio::init (config *myconfig) {
   }
   
   // Output in signed 8/16-bit form
-  audio_format = myconfig->audio_resolution == 0 ? AUDIO_S8 : AUDIO_S16; 
+  audio_format = myconfig->audio_resolution == 0 ? AUDIO_S8 : AUDIO_S16SYS;
 
   // 1 is mono, 2 is stereo
   audio_channels = myconfig->audio_channels == 0 ? 1 : 2;  
