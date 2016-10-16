@@ -32,7 +32,7 @@
 #ifndef PYTHON_CLASS_H__
 #define PYTHON_CLASS_H__
 
-#include <locale>
+#include <locale.h>
 #include "Python.h"
 #include "compile.h"
 #include "eval.h"

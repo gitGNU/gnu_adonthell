@@ -29,6 +29,7 @@
 #include "surface.h"
 #include "screen.h"
 
+#include <algorithm>
 #include <iostream>
 
 using namespace std; 

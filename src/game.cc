@@ -68,6 +68,13 @@ string game::get_system_dir(const sys_dir_type & type)
         result = string (getenv("APPDATA")) + "/Adonthell/";
     else
 	result = "./";
+#elif defined(__HAIKU__)
+    // Haiku
+    char *homeDir = getenv ("HOME");
+    if (homeDir != NULL)
+        result = string (homeDir) + "/config/settings/adonthell/";
+    else
+        result = string ("/boot/home/config/settings/adonthell/");
 #else
     // Unix
     const char* xdgEnv = type == USER_DATA ? "XDG_DATA_HOME" : "XDG_CONFIG_HOME";
@@ -77,7 +84,7 @@ string game::get_system_dir(const sys_dir_type & type)
     else
     {
         if (type == USER_DATA)
-	    result = string (getenv ("HOME")) + "/.local/share/adonthell/";
+            result = string (getenv ("HOME")) + "/.local/share/adonthell/";
         else
             result = string (getenv ("HOME")) + "/.config/adonthell/";
     }
@@ -89,7 +96,7 @@ string game::get_system_dir(const sys_dir_type & type)
 #ifndef WIN32
         if (mkdir (result.c_str (), 0700) == -1)
 #else
-	if (mkdir (result.c_str ()) == -1)
+        if (mkdir (result.c_str ()) == -1)
 #endif
         {
             int ecd = errno;

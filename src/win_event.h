@@ -19,7 +19,7 @@
 #ifndef _WIN_EVENT_H_
 #define _WIN_EVENT_H_
 
-#include <locale>
+#include <locale.h>
 #include "Python.h"
 #include <vector>
 

@@ -29,8 +29,7 @@
  * 
  */
 
- 
-#include <locale>
+#include <locale.h>
 #include "Python.h"
 #include "fileops.h"
 

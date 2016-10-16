@@ -132,6 +132,30 @@ AC_CHECK_LIB(pthread, main,
 
 AC_CHECK_LIB(z, main,,echo "Adonthell requires Zlib. Exitting...";exit 1)
 
+dnl *******************
+dnl Check for FreeType2
+dnl *******************
+
+AC_CHECK_FT2(6.0.0,
+    [LIBS="$LIBS $FT2_LIBS"],
+    AC_MSG_ERROR([*** Freetype version >= 6.0.0 not found!])
+)
+
+dnl *******************
+dnl Check for OggVorbis
+dnl *******************
+
+OGG_VORBIS=no
+XIPH_PATH_VORBIS(
+        OGG_VORBIS="yes"
+        ogg_music="enabled"
+        OGG_LIBS="$VORBISFILE_LIBS $VORBIS_LIBS"
+        OGG_DEFS="-DOGG_MUSIC"
+        OGG_CFLAGS="$VORBIS_CFLAGS",
+        AC_MSG_RESULT(Disabling OggVorbis support)
+        ogg_music="disabled"
+)
+
 dnl *************
 dnl Check for SDL
 dnl *************
@@ -165,30 +189,6 @@ case "$target" in
      SDL_DEFS="-DSDL_MAIN_HANDLED"
   ;;
 esac
-
-dnl *******************
-dnl Check for FreeType2
-dnl *******************
-
-AC_CHECK_FT2(6.0.0,
-    :,
-    AC_MSG_ERROR([*** Freetype version >= 6.0.0 not found!])
-)
-
-dnl *******************
-dnl Check for OggVorbis
-dnl *******************
-
-OGG_VORBIS=no
-XIPH_PATH_VORBIS(
-        OGG_VORBIS="yes"
-        ogg_music="enabled"
-        OGG_LIBS="$VORBISFILE_LIBS $VORBIS_LIBS"
-        OGG_DEFS="-DOGG_MUSIC"
-        OGG_CFLAGS="$VORBIS_CFLAGS",
-        AC_MSG_RESULT(Disabling OggVorbis support)
-        ogg_music="disabled"
-)
 
 dnl ****************
 dnl Check for Python
