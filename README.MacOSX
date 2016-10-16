@@ -79,7 +79,7 @@ libraries are still installed under /usr/local.
 
 Now, in the adonthell-0.3.x directory, run
 
-    make_osx_bundle.sh
+    ./make_osx_bundle.sh
 
 If all goes well, it should configure, build and install Adonthell into
 Adonthell.app and copy and prepare all the required libs from /usr/local.
@@ -87,7 +87,7 @@ All that is mising now in the bundle is the actual game data.
 
 Change into the wastesedge-0.3.x directory and run
 
-    make_osx_bundle.sh ../adonthell-0.3.x/Adonthell.app
+    ./make_osx_bundle.sh ../adonthell-0.3.x/Adonthell.app
 
 (adjusting the location to the bundle as needed). This will configure,
 build and install Waste's Edge into the Adonthell.app bundle, making it
@@ -123,7 +123,4 @@ to the name of the certificate, as shown by the Keychain Access.app, i.e.:
 
 Now change into the wastesedge-0.3.x/osx directory and run
 
-    make_dmg.sh ../../adonthell-0.3.x/Adonthell.app
-
-You will be prompted for your password, as dmgbuild requires admin priviledges to
-set some of the attributes of the newly created disk image.
+    ./make_dmg.sh ../../adonthell-0.3.x/Adonthell.app
