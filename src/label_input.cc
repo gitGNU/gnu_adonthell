@@ -69,8 +69,15 @@ bool label_input::input_update()
             my_cursor_.idx -= count;
             u_int16 idx = my_cursor_.idx;
             u_int16 glyph = ucd (idx);
+#ifndef __HAIKU__
             my_text_.erase (my_cursor_.idx, count);
-
+#else
+            while(count > 0)
+            {
+                my_text_.erase (my_cursor_.idx, 1);
+                count--;
+            }
+#endif
             update_cursor ();
             my_old_cursor_ = my_cursor_; 
 
