@@ -68,7 +68,7 @@ bool screen::init (u_int16 nl, u_int16 nh, u_int8 depth, const config & myconfig
 	u_int8 screen_mode = myconfig.screen_mode;
 
 #if defined(SDL_VIDEO_DRIVER_X11) || defined(SDL_VIDEO_DRIVER_WAYLAND)
-	std::string wm_class = "SDL_VIDEO_X11_WMCLASS=" + myconfig.game_name;
+	static std::string wm_class = "SDL_VIDEO_X11_WMCLASS=" + myconfig.game_name;
 	putenv ((char *) wm_class.c_str ());
 #endif
 
